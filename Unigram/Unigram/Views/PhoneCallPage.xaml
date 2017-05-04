@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    d:DesignHeight="200"
     SizeChanged="OnSizeChanged">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark">
@@ -33,7 +34,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
+                    <RowDefinition MinHeight="72"/>
                 </Grid.RowDefinitions>
 
                 <Border x:Name="LargeEmojiLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,8">

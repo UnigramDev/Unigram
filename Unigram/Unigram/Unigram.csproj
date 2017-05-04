@@ -212,6 +212,7 @@
     </Compile>
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
+    <Compile Include="Converters\UsernameConverter.cs" />
     <Compile Include="Selectors\GalleryTemplateSelector.cs" />
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
@@ -238,6 +239,7 @@
     <Compile Include="ViewModels\Payments\PaymentFormStep5ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsGenericViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStatsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
@@ -299,6 +301,9 @@
     </Compile>
     <Compile Include="Views\PlaygroundPage2.xaml.cs">
       <DependentUpon>PlaygroundPage2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsGenericPage.xaml.cs">
+      <DependentUpon>SettingsGenericPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
       <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
@@ -1312,6 +1317,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PlaygroundPage2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsGenericPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

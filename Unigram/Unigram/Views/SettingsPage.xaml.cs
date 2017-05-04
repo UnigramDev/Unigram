@@ -28,10 +28,10 @@ namespace Unigram.Views
         public SettingsPage()
         {
             InitializeComponent();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsViewModel>();
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-            DataContext = UnigramContainer.Current.ResolveType<SettingsViewModel>();
 
             Loaded += OnLoaded;
 
@@ -100,6 +100,11 @@ namespace Unigram.Views
             }
 
             ViewModel.NavigationService = MasterDetail.NavigationService;
+        }
+
+        private void Generic_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsGenericPage));
         }
 
         private void Username_Click(object sender, RoutedEventArgs e)
@@ -173,6 +178,11 @@ namespace Unigram.Views
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
             }
+        }
+
+        private async void Questions_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
         }
     }
 

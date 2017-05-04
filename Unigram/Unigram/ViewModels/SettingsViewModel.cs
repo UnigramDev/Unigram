@@ -13,7 +13,9 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Core.Helpers;
+using Unigram.Views;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -63,30 +65,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        public bool IsSendByEnterEnabled
-        {
-            get
-            {
-                return ApplicationSettings.Current.IsSendByEnterEnabled;
-            }
-            set
-            {
-                ApplicationSettings.Current.IsSendByEnterEnabled = value;
-            }
-        }
-
-        public bool IsReplaceEmojiEnabled
-        {
-            get
-            {
-                return ApplicationSettings.Current.IsReplaceEmojiEnabled;
-            }
-            set
-            {
-                ApplicationSettings.Current.IsReplaceEmojiEnabled = value;
-            }
-        }
-
         public RelayCommand<StorageFile> EditPhotoCommand => new RelayCommand<StorageFile>(EditPhotoExecute);
         private async void EditPhotoExecute(StorageFile file)
         {
@@ -117,6 +95,24 @@ namespace Unigram.ViewModels
                 if (response.IsSucceeded)
                 {
                     var photo = response.Result.Photo as TLPhoto;
+                }
+            }
+        }
+
+        public RelayCommand AskCommand => new RelayCommand(AskExecute);
+        private async void AskExecute()
+        {
+            var confirm = await TLMessageDialog.ShowAsync("Plase note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlase take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.", "Telegram", "FAQ", "OK");
+            if (confirm == ContentDialogResult.Primary)
+            {
+                await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
+            }
+            else
+            {
+                var response = await ProtoService.GetSupportAsync();
+                if (response.IsSucceeded)
+                {
+                    NavigationService.Navigate(typeof(DialogPage), response.Result.User.ToPeer());
                 }
             }
         }

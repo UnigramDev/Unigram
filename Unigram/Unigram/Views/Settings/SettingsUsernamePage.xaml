@@ -57,7 +57,7 @@
                 <Run Text="This link opens a chat with you on Telegram:"/>
                 <LineBreak/>
                 <Hyperlink Click="Copy_Click">
-                    <Run Text="https://t.me/"/><Run Text="{x:Bind ViewModel.Username, Mode=OneWay}"/>
+                    <Run Text="{x:Bind ViewModel.MeUrlPrefix, Mode=OneWay}"/><Run Text="{x:Bind ViewModel.Username, Mode=OneWay}"/>
                 </Hyperlink>
             </TextBlock>
         </Grid>

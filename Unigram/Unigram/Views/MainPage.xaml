@@ -460,7 +460,17 @@
                                                 </Grid.ColumnDefinitions>
                                                 <controls:ProfilePictureView x:Phase="3" Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="64" Height="64" Margin="12" Grid.RowSpan="2"/>
 
-                                                <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
+                                                <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{x:Bind FullName, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                                                    <Grid Margin="4,0,0,-2" Visibility="{x:Bind (Visibility)IsVerified, Mode=OneWay}" Grid.Column="2">
+                                                        <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
+                                                        <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
+                                                    </Grid>
+                                                </Grid>
                                                 <TextBlock Text="{x:Bind Phone, Converter={StaticResource PhoneNumberFormatConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
                                             </Grid>
                                         </Button>
