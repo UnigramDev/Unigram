@@ -228,8 +228,31 @@
                                           Style="{StaticResource HyperButtonStyle}"
                                           Grid.Row="1"/>
 
-                            
-                            
+                    <local:TableStackPanel x:Name="Group1"
+                                           BorderThickness="0,0,0,1"
+                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                        <controls:HyperButton Tag="Mobile"
+                                              Style="{StaticResource SubtitleButtonStyle}">
+                            <TextBlock Text="{x:Bind ViewModel.Self.Phone, Converter={StaticResource PhoneNumberFormatConverter}}"/>
+                        </controls:HyperButton>
+
+                        <controls:HyperButton Tag="Username"
+                                              Style="{StaticResource SubtitleButtonStyle}"
+                                              Click="Username_Click">
+                            <TextBlock>
+                                <Run Text="@"/><Run Text="{x:Bind ViewModel.Self.Username, Mode=OneWay}"/>
+                            </TextBlock>
+                        </controls:HyperButton>
+                        <controls:HyperButton Tag="Link"
+                                              Style="{StaticResource SubtitleButtonStyle}"
+                                              Click="Copy_Click">
+                            <TextBlock>
+                                <Run Text="https://t.me/"/><Run Text="{x:Bind ViewModel.Self.Username, Mode=OneWay}"/>
+                            </TextBlock>
+                        </controls:HyperButton>
+                    </local:TableStackPanel>
+
                     <local:TableStackPanel x:Name="SwitchGroup1"
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"

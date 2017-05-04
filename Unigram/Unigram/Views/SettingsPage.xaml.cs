@@ -174,6 +174,17 @@ namespace Unigram.Views
                 }
             }
         }
+
+        private async void Copy_Click(object sender, RoutedEventArgs e)
+        {
+            var package = new DataPackage();
+            package.SetText($"https://t.me/{ViewModel.Self.Username}");
+            package.SetWebLink(new Uri($"https://t.me/{ViewModel.Self.Username}"));
+
+            Clipboard.SetContent(package);
+
+            await new TLMessageDialog("Link copied to clipboard").ShowAsync();
+        }
     }
 
     // Experiment
