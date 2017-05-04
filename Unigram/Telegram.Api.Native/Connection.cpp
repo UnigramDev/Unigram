@@ -15,6 +15,8 @@ Connection::Connection() :
 
 Connection::~Connection()
 {
+	WaitForThreadpoolCallback(true);
+	CloseSocket();
 }
 
 HRESULT Connection::RuntimeClassInitialize(Datacenter* datacenter, ConnectionType type)
@@ -132,6 +134,8 @@ HRESULT Connection::Connect()
 
 	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&m_currentNetworkType));
 
+	Sleep(10000);
+
 	/*Sleep(10000);
 
 	{
@@ -185,12 +189,17 @@ HRESULT Connection::OnSocketConnected()
 {
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connected event handling");
 
+	HRESULT result;
+	std::string requestBuffer("GET /?gfe_rd=cr&ei=GnEKWfHFIczw8Aeh7LDABQ&gws_rd=cr HTTP/1.1\n"
+		"User-Agent: Mozilla / 4.0 (compatible; MSIE5.01; Windows NT)\nHost: www.google.com\nAccept-Language: en-us\nConnection: Keep-Alive\n\nSTOCAZZO h@çk3r");
+
+	ReturnIfFailed(result, SendData(reinterpret_cast<const BYTE*>(requestBuffer.data()), requestBuffer.size()));
 	return S_OK;
 }
 
-HRESULT Connection::OnDataReceived()
+HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 {
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connection data received handling");
+	OutputDebugStringA(reinterpret_cast<const char*>(buffer));
 
 	return S_OK;
 }
@@ -206,7 +215,7 @@ HRESULT Connection::OnSocketClosed(int wsaError)
 {
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connection closed handling");
 
-	auto threadpoolObjectHandle = EventObjectT::GetThreadpoolObjectHandle();
+	auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
 	if (threadpoolObjectHandle == nullptr)
 	{
 		return E_NOT_VALID_STATE;

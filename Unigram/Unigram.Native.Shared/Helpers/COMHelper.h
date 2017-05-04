@@ -15,6 +15,7 @@ using namespace Microsoft::WRL::Wrappers;
 	if(FAILED(result = method)) \
 		break
 
+#define WIN32_FROM_HRESULT(result) ((result) & 0x0000FFFF)
 
 inline HRESULT WindowsCreateString(std::wstring const& wstring, _Out_ HSTRING* hstring)
 {

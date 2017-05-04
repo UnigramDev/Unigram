@@ -12,7 +12,8 @@
 	if((result = method) != NO_ERROR) \
 		break
 
-#define READ_BUFFER_SIZE 1024 * 128
+#define SEND_BUFFER_SIZE 0
+#define RECEIVE_BUFFER_SIZE 1024 * 128
 
 using namespace Telegram::Api::Native;
 
@@ -24,7 +25,6 @@ ConnectionSocket::ConnectionSocket() :
 
 ConnectionSocket::~ConnectionSocket()
 {
-	CloseSocket(WSA_OPERATION_ABORTED, false);
 }
 
 HRESULT ConnectionSocket::ConnectSocket(std::wstring address, UINT16 port, boolean ipv6)
@@ -58,6 +58,9 @@ HRESULT ConnectionSocket::ConnectSocket(std::wstring address, UINT16 port, boole
 		}
 	}
 
+	m_sendBuffer.resize(SEND_BUFFER_SIZE);
+	m_receiveBuffer.resize(RECEIVE_BUFFER_SIZE);
+
 	m_socketEvent.Attach(WSACreateEvent());
 	if (!m_socketEvent.IsValid())
 	{
@@ -75,7 +78,7 @@ HRESULT ConnectionSocket::ConnectSocket(std::wstring address, UINT16 port, boole
 	HRESULT result;
 	if (FAILED(result = OnSocketCreated()))
 	{
-		CloseSocket(WSA_OPERATION_ABORTED, true);
+		CloseSocket(WIN32_FROM_HRESULT(result), true);
 
 		return result;
 	}
@@ -114,6 +117,39 @@ HRESULT ConnectionSocket::DisconnectSocket()
 	return S_OK;
 }
 
+HRESULT ConnectionSocket::CloseSocket()
+{
+	return CloseSocket(NO_ERROR, false);
+}
+
+HRESULT ConnectionSocket::SendData(BYTE const* buffer, UINT32 length)
+{
+	if (m_socket == INVALID_SOCKET)
+	{
+		return E_NOT_VALID_STATE;
+	}
+
+	int bytesSent = send(m_socket, reinterpret_cast<const char*>(buffer), length, 0);
+	if (bytesSent == SOCKET_ERROR)
+	{
+		auto wsaLastError = WSAGetLastError();
+		if (wsaLastError != WSAEWOULDBLOCK)
+		{
+			return HRESULT_FROM_WIN32(wsaLastError);
+		}
+	}
+	else if (bytesSent < length)
+	{
+		auto remainingSize = length - bytesSent;
+		auto availableSize = m_sendBuffer.size();
+
+		m_sendBuffer.resize(availableSize + remainingSize);
+		CopyMemory(m_sendBuffer.data() + availableSize, buffer, remainingSize);
+	}
+
+	return S_OK;
+}
+
 HRESULT ConnectionSocket::GetLastErrorAndCloseSocket()
 {
 	auto wsaLastError = WSAGetLastError();
@@ -137,6 +173,8 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, boolean raiseEvent)
 
 	m_socket = INVALID_SOCKET;
 	m_socketEvent.Close();
+	m_sendBuffer = {};
+	m_receiveBuffer = {};
 
 	if (raiseEvent)
 	{
@@ -168,46 +206,60 @@ HRESULT ConnectionSocket::OnSocketEvent(PTP_CALLBACK_INSTANCE callbackInstance, 
 		{
 			BreakIfError(wsaLastError, networkEvents.iErrorCode[FD_CONNECT_BIT]);
 
-			I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connection event");
+			HRESULT result;
+			if (FAILED(result = OnSocketConnected()))
+			{
+				*closed = true;
+				CloseSocket(WIN32_FROM_HRESULT(result), true);
+
+				return result;
+			}
 		}
 
 		if (networkEvents.lNetworkEvents & FD_WRITE)
 		{
 			BreakIfError(wsaLastError, networkEvents.iErrorCode[FD_WRITE_BIT]);
 
-			std::string requestBuffer("GET /?gfe_rd=cr&ei=GnEKWfHFIczw8Aeh7LDABQ&gws_rd=cr HTTP/1.1\nUser-Agent: Mozilla / 4.0 (compatible; MSIE5.01; Windows NT)\nHost: www.google.com\nAccept-Language: en-us\nConnection: Keep-Alive\n\n");
-
-			int sentBytes;
-			if ((sentBytes = send(m_socket, requestBuffer.data(), requestBuffer.size(), 0)) == SOCKET_ERROR)
+			auto availableBytes = m_sendBuffer.size();
+			if (availableBytes > 0)
 			{
-				if ((wsaLastError = WSAGetLastError()) != WSAEWOULDBLOCK)
+				int sentBytes;
+				if ((sentBytes = send(m_socket, reinterpret_cast<char*>(m_sendBuffer.data()), availableBytes, 0)) == SOCKET_ERROR)
 				{
-					break;
+					if ((wsaLastError = WSAGetLastError()) != WSAEWOULDBLOCK)
+					{
+						break;
+					}
 				}
-			}
 
-			I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket writing");
+				auto remainingBytes = availableBytes - sentBytes;
+				MoveMemory(m_sendBuffer.data(), m_sendBuffer.data() + sentBytes, remainingBytes);
+
+				m_sendBuffer.resize(remainingBytes);
+			}
 		}
 
 		if (networkEvents.lNetworkEvents & FD_READ)
 		{
 			BreakIfError(wsaLastError, networkEvents.iErrorCode[FD_READ_BIT]);
 
-			std::string responseBuffer(READ_BUFFER_SIZE, '\0');
-
+			HRESULT result;
 			int receivedBytes;
-			int totalReceivedBytes = 0;
-			while ((receivedBytes = recv(m_socket, &responseBuffer[totalReceivedBytes], responseBuffer.size() - totalReceivedBytes, 0)) > 0)
+			while ((receivedBytes = recv(m_socket, reinterpret_cast<char*>(m_receiveBuffer.data()), RECEIVE_BUFFER_SIZE, 0)) > 0)
 			{
-				totalReceivedBytes += receivedBytes;
+				if (FAILED(result = OnDataReceived(m_receiveBuffer.data(), receivedBytes)))
+				{
+					*closed = true;
+					CloseSocket(WIN32_FROM_HRESULT(result), true);
+
+					return result;
+				}
 			}
 
 			if (receivedBytes == SOCKET_ERROR && (wsaLastError = WSAGetLastError()) != WSAEWOULDBLOCK)
 			{
 				break;
 			}
-
-			I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket reading");
 		}
 
 		return S_OK;

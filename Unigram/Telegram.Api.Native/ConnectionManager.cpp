@@ -24,7 +24,7 @@ ConnectionManager::~ConnectionManager()
 {
 	if (m_threadpoolCleanupGroup != nullptr)
 	{
-		CloseThreadpoolCleanupGroupMembers(m_threadpoolCleanupGroup, FALSE, nullptr);
+		CloseThreadpoolCleanupGroupMembers(m_threadpoolCleanupGroup, TRUE, nullptr);
 		CloseThreadpoolCleanupGroup(m_threadpoolCleanupGroup);
 	}
 
@@ -175,7 +175,7 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 HRESULT ConnectionManager::BoomBaby()
 {
 	HRESULT result;
-	Connection* connection;
+	ComPtr<Connection> connection;
 	ReturnIfFailed(result, MakeAndInitialize<Connection>(&connection, nullptr, ConnectionType::Generic));
 	ReturnIfFailed(result, connection->AttachToThreadpool(&m_threadpoolEnvironment));
 	ReturnIfFailed(result, connection->Connect());

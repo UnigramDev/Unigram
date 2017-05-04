@@ -155,6 +155,17 @@ namespace Telegram
 					return m_handle;
 				}
 
+				inline HRESULT WaitForThreadpoolCallback(boolean cancelPendingCallbacks)
+				{
+					if (m_handle == nullptr)
+					{
+						return E_NOT_VALID_STATE;
+					}
+
+					EventTraits::Wait(m_handle, cancelPendingCallbacks);
+					return S_OK;
+				}
+
 			private:
 				virtual STDMETHODIMP AttachToThreadpool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) final
 				{
@@ -183,8 +194,6 @@ namespace Telegram
 					{
 						return E_NOT_VALID_STATE;
 					}
-
-#pragma message("Check if this can cause a nullpointer exception")
 
 					EventTraits::Wait(m_handle, TRUE);
 					EventTraits::Close(m_handle);

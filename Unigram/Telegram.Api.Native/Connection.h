@@ -45,7 +45,7 @@ namespace Telegram
 				HRESULT Suspend();
 				virtual HRESULT OnSocketCreated() override;
 				virtual HRESULT OnSocketConnected() override;
-				virtual HRESULT OnDataReceived() override;
+				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) override;
 				virtual HRESULT OnSocketDisconnected() override;
 				virtual HRESULT OnSocketClosed(int wsaError) override;
 				void OnEventObjectError(_In_ EventObject* eventObject, HRESULT result);
