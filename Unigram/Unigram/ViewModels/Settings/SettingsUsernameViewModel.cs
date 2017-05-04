@@ -10,6 +10,8 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Controls;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -26,6 +28,12 @@ namespace Unigram.ViewModels.Settings
             IsValid = false;
             IsLoading = false;
             ErrorMessage = null;
+
+            var config = CacheService.GetConfig();
+            if (config != null)
+            {
+                MeUrlPrefix = string.IsNullOrEmpty(config.MeUrlPrefix) ? "https://t.me/" : config.MeUrlPrefix;
+            }
 
             var cached = CacheService.GetUser(SettingsHelper.UserId) as TLUser;
             if (cached != null)
@@ -46,6 +54,19 @@ namespace Unigram.ViewModels.Settings
             }
 
             RaisePropertyChanged(() => Username);
+        }
+
+        private string _meUrlPrefix;
+        public string MeUrlPrefix
+        {
+            get
+            {
+                return _meUrlPrefix;
+            }
+            set
+            {
+                Set(ref _meUrlPrefix, value);
+            }
         }
 
         private string _username;
@@ -269,6 +290,18 @@ namespace Unigram.ViewModels.Settings
                     //Telegram.Api.Helpers.Execute.ShowDebugMessage("account.updateUsername error " + error);
                 }
             }
+        }
+
+        public RelayCommand CopyCommand => new RelayCommand(CopyExecute);
+        private async void CopyExecute()
+        {
+            var package = new DataPackage();
+            package.SetText($"{_meUrlPrefix}{_username}");
+            package.SetWebLink(new Uri($"{_meUrlPrefix}{_username}"));
+
+            Clipboard.SetContent(package);
+
+            await new TLMessageDialog("Link copied to clipboard").ShowAsync();
         }
     }
 }

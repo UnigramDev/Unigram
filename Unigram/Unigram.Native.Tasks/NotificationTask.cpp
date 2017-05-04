@@ -77,7 +77,7 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 
 	log << L"[";
 	log << str2;
-	log << L"] Quitting background task\n";
+	log << L"] Quitting background task\n\n";
 
 	deferral->Complete();
 }
@@ -110,7 +110,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content, std::wofstream* log)
 		auto custom = data->GetNamedObject("custom");
 		auto group = GetGroup(custom);
 
-		ToastNotificationManager::History->RemoveGroup(group);
+		ToastNotificationManager::History->RemoveGroup(group, L"App");
 		return;
 	}
 	
@@ -157,6 +157,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content, std::wofstream* log)
 
 		if (loc_key->Equals(L"PHONE_CALL_REQUEST")) 
 		{
+			UpdateToast(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 		}
 		else
@@ -401,7 +402,7 @@ String^ NotificationTask::GetDate(JsonObject^ notification)
 
 void NotificationTask::UpdateBadge(int badgeNumber)
 {
-	auto updater = BadgeUpdateManager::CreateBadgeUpdaterForApplication();
+	auto updater = BadgeUpdateManager::CreateBadgeUpdaterForApplication(L"App");
 	if (badgeNumber == 0)
 	{
 		updater->Clear();
@@ -432,7 +433,7 @@ void NotificationTask::UpdateTile(String^ caption, String^ message)
 	xml += body;
 	xml += L"</binding></visual></tile>";
 
-	auto updater = TileUpdateManager::CreateTileUpdaterForApplication();
+	auto updater = TileUpdateManager::CreateTileUpdaterForApplication(L"App");
 	//updater->EnableNotificationQueue(false);
 	//updater->EnableNotificationQueueForSquare150x150(false);
 
@@ -484,7 +485,7 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 	xml += audio;
 	xml += L"</toast>";
 
-	auto notifier = ToastNotificationManager::CreateToastNotifier();
+	auto notifier = ToastNotificationManager::CreateToastNotifier(L"App");
 
 	auto document = ref new XmlDocument();
 	document->LoadXml(ref new String(xml.c_str()));
@@ -502,6 +503,7 @@ void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^
 	auto coordinator = VoipCallCoordinator::GetDefault();
 	create_task(coordinator->ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask")).then([this, coordinator, caption, message, sound, launch, tag, group, picture, date, loc_key](VoipPhoneCallResourceReservationStatus status)
 	{
+		Sleep(1000000);
 		//VoIPCallTask::Current->UpdatePhoneCall(caption, message, sound, launch, tag, group, picture, date, loc_key);
 	});
 }

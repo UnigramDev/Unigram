@@ -41,6 +41,7 @@ using Telegram.Api.TL;
 using System.Collections.Generic;
 using Unigram.Core.Services;
 using Template10.Controls;
+using Windows.Foundation;
 
 namespace Unigram
 {
@@ -159,20 +160,41 @@ namespace Unigram
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            //NavigationService.Navigate(typeof(PlaygroundPage));
-            //return Task.CompletedTask;
+            //NavigationService.Navigate(typeof(BlankPage));
+            ////return Task.CompletedTask;
 
-            //ModalDialog.ModalBackground = (SolidColorBrush)Resources["ContentDialogLightDismissOverlayBackground"];
-            //ModalDialog.ModalBackground = new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00));
-            //ModalDialog.CanBackButtonDismiss = true;
-            //ModalDialog.DisableBackButtonWhenModal = false;
+            //PhoneCallPage newPlayer = null;
+            //CoreApplicationView newView = CoreApplication.CreateNewView();
+            //var newViewId = 0;
+            //await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            //{
+            //    newPlayer = new PhoneCallPage();
+            //    Window.Current.Content = newPlayer;
+            //    Window.Current.Activate();
+            //    newViewId = ApplicationView.GetForCurrentView().Id;
+            //});
 
-            var timer = Stopwatch.StartNew();
+            //await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            //{
+            //    var overlay = ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay);
+            //    if (overlay)
+            //    {
+            //        var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+            //        preferences.CustomSize = new Size(340, 200);
+
+            //        var viewShown = await ApplicationViewSwitcher.TryShowAsViewModeAsync(newViewId, ApplicationViewMode.CompactOverlay, preferences);
+            //    }
+            //    else
+            //    {
+            //        //await ApplicationViewSwitcher.SwitchAsync(newViewId);
+            //        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
+            //    }
+            //});
+
+            //return;
 
             if (SettingsHelper.IsAuthorized)
             {
-                //MTProtoService.Current.CurrentUserId = SettingsHelper.UserId;
-
                 var share = args as ShareTargetActivatedEventArgs;
                 var voice = args as VoiceCommandActivatedEventArgs;
 
@@ -206,9 +228,6 @@ namespace Unigram
                     var launch = activate?.Argument ?? null;
 
                     NavigationService.Navigate(typeof(MainPage), launch);
-
-                    timer.Stop();
-                    Debug.WriteLine($"LAUNCH TIME: {timer.Elapsed}");
                 }
             }
             else
@@ -239,11 +258,13 @@ namespace Unigram
             await VoIPConnection.Current.ConnectAsync();
             await Toast.RegisterBackgroundTasks();
 
+#if !DEBUG
             BadgeUpdateManager.CreateBadgeUpdaterForApplication().Clear();
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
             ToastNotificationManager.History.Clear();
+#endif
 
-#if !DEBUG && !PREVIEW && !RELEASE
+#if !DEBUG && !PREVIEW
             Execute.BeginOnThreadPool(async () =>
             {
                 await new AppUpdateService().CheckForUpdatesAsync();
@@ -309,37 +330,45 @@ namespace Unigram
             try
             {
                 // Changes to the titlebar (colour, and such)
-                ApplicationViewTitleBar titlebar = ApplicationView.GetForCurrentView().TitleBar;
                 CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
 
-                // Accent Color
-                var accentBrush = Application.Current.Resources["SystemControlHighlightAccentBrush"] as SolidColorBrush;
-                var titleBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
-                var subtitleBrush = Application.Current.Resources["TelegramBackgroundSubtitleBarBrush"] as SolidColorBrush;
+                var titlebar = ApplicationView.GetForCurrentView().TitleBar;
+                var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+                var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
 
-                // Foreground
-                titlebar.ButtonForegroundColor = Colors.White;
-                titlebar.ButtonHoverForegroundColor = Colors.White;
-                titlebar.ButtonInactiveForegroundColor = Colors.LightGray;
-                titlebar.ButtonPressedForegroundColor = Colors.White;
-                titlebar.ForegroundColor = Colors.White;
-                titlebar.InactiveForegroundColor = Colors.LightGray;
+                titlebar.BackgroundColor = backgroundBrush.Color;
+                titlebar.ForegroundColor = foregroundBrush.Color;
+                titlebar.ButtonBackgroundColor = backgroundBrush.Color;
+                titlebar.ButtonForegroundColor = foregroundBrush.Color;
 
-                // Background
-                titlebar.BackgroundColor = titleBrush.Color;
-                titlebar.ButtonBackgroundColor = titleBrush.Color;
+                //// Accent Color
+                //var accentBrush = Application.Current.Resources["SystemControlHighlightAccentBrush"] as SolidColorBrush;
+                //var titleBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+                //var subtitleBrush = Application.Current.Resources["TelegramBackgroundSubtitleBarBrush"] as SolidColorBrush;
 
-                titlebar.InactiveBackgroundColor = subtitleBrush.Color;
-                titlebar.ButtonInactiveBackgroundColor = subtitleBrush.Color;
+                //// Foreground
+                //titlebar.ButtonForegroundColor = Colors.White;
+                //titlebar.ButtonHoverForegroundColor = Colors.White;
+                //titlebar.ButtonInactiveForegroundColor = Colors.LightGray;
+                //titlebar.ButtonPressedForegroundColor = Colors.White;
+                //titlebar.ForegroundColor = Colors.White;
+                //titlebar.InactiveForegroundColor = Colors.LightGray;
 
-                titlebar.ButtonHoverBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.06f);
-                titlebar.ButtonPressedBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.09f);
+                //// Background
+                //titlebar.BackgroundColor = titleBrush.Color;
+                //titlebar.ButtonBackgroundColor = titleBrush.Color;
 
-                // Branding colours
-                //titlebar.BackgroundColor = Color.FromArgb(255, 54, 173, 225);
-                //titlebar.ButtonBackgroundColor = Color.FromArgb(255, 54, 173, 225);
-                //titlebar.ButtonHoverBackgroundColor = Color.FromArgb(255, 69, 179, 227);
-                //titlebar.ButtonPressedBackgroundColor = Color.FromArgb(255, 84, 185, 229);
+                //titlebar.InactiveBackgroundColor = subtitleBrush.Color;
+                //titlebar.ButtonInactiveBackgroundColor = subtitleBrush.Color;
+
+                //titlebar.ButtonHoverBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.06f);
+                //titlebar.ButtonPressedBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.09f);
+
+                //// Branding colours
+                ////titlebar.BackgroundColor = Color.FromArgb(255, 54, 173, 225);
+                ////titlebar.ButtonBackgroundColor = Color.FromArgb(255, 54, 173, 225);
+                ////titlebar.ButtonHoverBackgroundColor = Color.FromArgb(255, 69, 179, 227);
+                ////titlebar.ButtonPressedBackgroundColor = Color.FromArgb(255, 84, 185, 229);
             }
             catch (Exception ex)
             {

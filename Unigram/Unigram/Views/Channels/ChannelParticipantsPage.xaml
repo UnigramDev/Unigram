@@ -14,7 +14,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Title="Members"
+        <controls:ButtonPageHeader Text="Members"
                                    Glyph="&#xE109;"
                                    CommandVisibility="{x:Bind (Visibility)ViewModel.Item.IsCreator, Mode=OneWay}"/>
 

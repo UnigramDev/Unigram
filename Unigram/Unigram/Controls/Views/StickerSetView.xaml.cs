@@ -24,8 +24,6 @@ using Windows.Foundation.Metadata;
 using Windows.UI;
 using Template10.Utils;
 
-// The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace Unigram.Controls.Views
 {
     public sealed partial class StickerSetView : ContentDialogBase
@@ -36,11 +34,6 @@ namespace Unigram.Controls.Views
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<StickerSetViewModel>();
-
-            //Loaded += async (s, args) =>
-            //{
-            //    await ViewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
-            //};
         }
 
         private static StickerSetView _current;

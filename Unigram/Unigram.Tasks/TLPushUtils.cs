@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.Resources;
 using Windows.Data.Xml.Dom;
 using Windows.Networking.PushNotifications;
@@ -15,7 +16,7 @@ namespace Unigram.Tasks
 {
     internal static class TLPushUtils
     {
-        public static void UpdateToastAndTiles(RawNotification rawNotification)
+        public static async void UpdateToastAndTiles(RawNotification rawNotification)
         {
             var payload = (rawNotification != null) ? rawNotification.Content : null;
             if (payload == null)
@@ -46,6 +47,13 @@ namespace Unigram.Tasks
             var launch = GetLaunch(notification.data);
             var tag = GetTag(notification.data);
             var group = GetGroup(notification.data);
+
+            if (notification.data.loc_key.Equals("PHONE_CALL_REQUEST"))
+            {
+                AddToast("PHONE_CALL_REQUEST", "PHONE_CALL_REQUEST", null, "launch", null, null, "voip");
+                await VoipCallCoordinator.GetDefault().ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask");
+                return;
+            }
 
             if (!IsMuted(notification.data))
             {
@@ -180,7 +188,7 @@ namespace Unigram.Tasks
 
         private static void UpdateBadge(int badgeNumber)
         {
-            var updater = BadgeUpdateManager.CreateBadgeUpdaterForApplication();
+            var updater = BadgeUpdateManager.CreateBadgeUpdaterForApplication("App");
             if (badgeNumber == 0)
             {
                 updater.Clear();
@@ -225,7 +233,7 @@ namespace Unigram.Tasks
                     {actions}
                </toast>";
 
-            var notifier = ToastNotificationManager.CreateToastNotifier();
+            var notifier = ToastNotificationManager.CreateToastNotifier("App");
             var document = new XmlDocument();
             document.LoadXml(xml);
 
@@ -251,7 +259,7 @@ namespace Unigram.Tasks
 
         private static void RemoveToastGroup(string groupname)
         {
-            ToastNotificationManager.History.RemoveGroup(groupname);
+            ToastNotificationManager.History.RemoveGroup(groupname, "App");
         }
 
         private static void UpdateTile(string caption, string message)
@@ -281,7 +289,7 @@ namespace Unigram.Tasks
                     </visual>
                 </tile>";
 
-            var updater = TileUpdateManager.CreateTileUpdaterForApplication();
+            var updater = TileUpdateManager.CreateTileUpdaterForApplication("App");
             updater.EnableNotificationQueue(false);
             updater.EnableNotificationQueueForSquare150x150(false);
 

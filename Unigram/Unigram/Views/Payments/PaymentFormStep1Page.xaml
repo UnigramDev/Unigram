@@ -30,7 +30,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Title="Shipping informations" 
+        <controls:ButtonPageHeader Text="Shipping informations" 
                                    Command="{x:Bind ViewModel.SendCommand}"
                                    IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                                    Glyph="&#xE10B;"/>

@@ -22,7 +22,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Title="Data usage"/>
+        <controls:PageHeader Text="Data usage"/>
 
         <controls:ScrollViewerBackground 
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"

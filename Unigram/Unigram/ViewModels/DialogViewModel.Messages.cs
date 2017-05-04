@@ -242,10 +242,13 @@ namespace Unigram.ViewModels
         #region Forward
 
         public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
-        private void MessageForwardExecute(TLMessageBase message)
+        private async void MessageForwardExecute(TLMessageBase message)
         {
             if (message is TLMessage)
             {
+                await ShareView.Current.ShowAsync(new TLStickerSet());
+                return;
+
                 App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
                 NavigationService.GoBackAt(0);
             }
@@ -256,7 +259,7 @@ namespace Unigram.ViewModels
         #region Multiple Delete
 
         private RelayCommand _messagesDeleteCommand;
-        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages?.Count > 0));
+        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages.Any()));
 
         private void MessagesDeleteExecute()
         {
@@ -305,7 +308,7 @@ namespace Unigram.ViewModels
         #region Multiple Forward
 
         private RelayCommand _messagesForwardCommand;
-        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedMessages?.Count > 0));
+        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedMessages.All(x => x is TLMessage)));
 
         private void MessagesForwardExecute()
         {

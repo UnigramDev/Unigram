@@ -38,7 +38,7 @@ namespace Unigram.Controls
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            if (Owner.SelectionMode == ListViewSelectionMode.Multiple && Content is TLMessageService)
+            if (Owner.SelectionMode == ListViewSelectionMode.Multiple && Content is TLMessageService service && service.Action.TypeId != TLType.MessageActionPhoneCall)
             {
                 e.Handled = true;
             }

@@ -366,7 +366,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- TODO: not the right way -->
-                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -416,7 +416,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- TODO: not the right way -->
-                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
                     <controls:StickerView
@@ -483,7 +483,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <!-- TODO: not the right way -->
-                    <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                    <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                     <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
                         <controls:StickerView

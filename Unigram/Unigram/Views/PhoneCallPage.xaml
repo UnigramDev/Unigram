@@ -1,0 +1,65 @@
+﻿<Page
+    x:Class="Unigram.Views.PhoneCallPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="200"
+    SizeChanged="OnSizeChanged">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark">
+        <Image x:Name="Image" Source="http://i.imgur.com/kx2hM3N.jpg" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Border x:Name="BlurPanel"/>
+
+        <Border x:Name="SmallEmojiLabel" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,20">
+            <StackPanel x:Name="SmallPanel" Orientation="Horizontal" Width="108" Height="24" Margin="12"/>
+        </Border>
+        
+        <Grid Padding="12,0" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Fela Ameghino" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" Margin="0,0,0,8" Grid.Row="1"/>
+            <TextBlock Text="00:00" TextAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="2"/>
+        </Grid>
+
+        <Grid x:Name="EmojifyPanel">
+            <!--<controls:BackDrop/>-->
+            <Grid Padding="12,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition MinHeight="72"/>
+                </Grid.RowDefinitions>
+
+                <Border x:Name="LargeEmojiLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,8">
+                    <StackPanel x:Name="LargePanel" Tapped="LargeEmojiLabel_Tapped" Background="Transparent" Orientation="Horizontal">
+                        <Image x:Name="LargeEmoji0" Source="ms-appx:///Assets/Emojis/0030-20e3.png" Height="48" Margin="0,0,4,0"/>
+                        <Image x:Name="LargeEmoji1" Source="ms-appx:///Assets/Emojis/0031-20e3.png" Height="48" Margin="4,0"/>
+                        <Image x:Name="LargeEmoji2" Source="ms-appx:///Assets/Emojis/0032-20e3.png" Height="48" Margin="4,0"/>
+                        <Image x:Name="LargeEmoji3" Source="ms-appx:///Assets/Emojis/0033-20e3.png" Height="48" Margin="4,0,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock x:Name="DescriptionLabel" Text="If these emoji are the same on {0}'s screen, this call is 100% secure." TextAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1"/>
+            </Grid>
+        </Grid>
+        
+        <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Margin="12">
+            <Border Margin="0,0,6,0" Background="Red" CornerRadius="24">
+                <controls:GlyphButton Click="Hangup_Click" Glyph="&#xE137;" CornerRadius="24"/>
+            </Border>
+            <Border Margin="6,0,0,0" Background="{ThemeResource SystemControlBackgroundAccentBrush}" CornerRadius="24">
+                <controls:GlyphButton Glyph="&#xE1D6;" CornerRadius="24"/>
+            </Border>
+        </StackPanel>
+    </Grid>
+</Page>

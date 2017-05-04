@@ -27,13 +27,13 @@
                     <Grid Height="96"
                           Width="96">
                         <!-- Logo background -->
-                        <Ellipse Height="60"
-                                 Width="60"
+                        <Ellipse Height="64"
+                                 Width="64"
                                  Fill="White"
                                  VerticalAlignment="Center"
                                  HorizontalAlignment="Center"/>
-                        <Ellipse Height="56"
-                                 Width="56"
+                        <Ellipse Height="60"
+                                 Width="60"
                                  Fill="{ThemeResource TelegramBackgroundAccentBrush}"
                                  VerticalAlignment="Center"
                                  HorizontalAlignment="Center"/>

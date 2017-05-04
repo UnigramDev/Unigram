@@ -39,7 +39,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Title="Payment info" 
+        <controls:ButtonPageHeader Text="Payment info" 
                                    Command="{x:Bind ViewModel.SendCommand}"
                                    CommandVisibility="{x:Bind ViewModel.IsNativeUsed, Converter={StaticResource BooleanToVisibilityConverter}}"
                                    IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"

@@ -70,6 +70,60 @@
             </Setter>
         </Style>
 
+        <Style x:Key="HyperDetailButtonStyle" TargetType="controls:HyperButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,0,0,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:HyperButton">
+                        <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid>
+                                <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="12,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                <ContentPresenter x:Name="DetailPresenter" AutomationProperties.AccessibilityView="Raw" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Content="{TemplateBinding Tag}" HorizontalContentAlignment="Right" Padding="12,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Grid>
+                            <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" Margin="{TemplateBinding Padding}"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="SubtitleButtonStyle" TargetType="controls:HyperButton">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
@@ -188,11 +242,9 @@
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged">
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="48" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-
-            <!-- Titlebar -->
             <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -222,7 +274,17 @@
                         </Grid.ColumnDefinitions>
                         <controls:ProfilePictureView x:Name="Photo" Click="Photo_Click" Source="{x:Bind ViewModel.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Height="64" Width="64" Margin="12" Grid.RowSpan="2"/>
 
-                        <TextBlock Text="{x:Bind ViewModel.Self.FullName, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
+                        <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{x:Bind ViewModel.Self.FullName, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                            <Grid Margin="4,0,0,-2" Visibility="{x:Bind (Visibility)ViewModel.Self.IsVerified, Mode=OneWay}" Grid.Column="2">
+                                <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
+                                <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
+                            </Grid>
+                        </Grid>
                         <TextBlock Text="online" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
                     </Grid>
                     <controls:HyperButton Content="Set profile photo"
@@ -230,34 +292,32 @@
                                           Style="{StaticResource HyperButtonStyle}"
                                           Grid.Row="1"/>
 
-                            
-                            
+                    <local:TableStackPanel x:Name="Group1"
+                                           BorderThickness="0,0,0,1"
+                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                        <controls:HyperButton Tag="Phone"
+                                              Content="{x:Bind ViewModel.Self.Phone, Mode=OneWay, Converter={StaticResource PhoneNumberFormatConverter}}"
+                                              Style="{StaticResource SubtitleButtonStyle}"/>
+
+                        <controls:HyperButton Tag="Username"
+                                              Content="{x:Bind ViewModel.Self.Username, Mode=OneWay, Converter={StaticResource UsernameConverter}}"
+                                              Style="{StaticResource SubtitleButtonStyle}"
+                                              Click="Username_Click"/>
+                    </local:TableStackPanel>
+
                     <local:TableStackPanel x:Name="SwitchGroup1"
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                            Margin="0,24,0,0">
-                        <controls:HyperCheckButton Tag="Send by Enter"
-                                                   IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
-                                                   Style="{ThemeResource CheckButtonStyle}"/>
-                        
-                        <!-- Manually hidden -->
-                        <controls:HyperCheckButton Content="Enabled"
-                                                   Visibility="Collapsed"
-                                                   IsEnabled="False"
-                                                   Tag="Enable Location Services"
-                                                   Style="{ThemeResource CheckButtonStyle}"/>
-                        <!-- Manually hidden -->
-                        <controls:HyperCheckButton Content="Enabled"
-                                                   Visibility="Collapsed"
-                                                   IsEnabled="False"
-                                                   Tag="Sync with People Hub"
-                                                   Style="{ThemeResource CheckButtonStyle}"/>
+                        <controls:HyperButton Content="Generic"
+                                              Click="Generic_Click"
+                                              Style="{StaticResource HyperButtonStyle}"/>
                     </local:TableStackPanel>
                     <local:TableStackPanel x:Name="OptionsGroup1"
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                            Margin="0,24,0,0">
-                        <!-- Manually hidden -->
                         <controls:HyperButton Content="Notifications and sounds"
                                               Click="Notifications_Click"
                                               Style="{StaticResource HyperButtonStyle}"/>
@@ -276,17 +336,15 @@
                                               Command="{x:Bind WallpaperPageCommand}"
                                               Style="{StaticResource HyperButtonStyle}"/>
                     </local:TableStackPanel>
-                    <local:TableStackPanel x:Name="OptionsGroup2"
+                    <local:TableStackPanel x:Name="OptionsGroup4"
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                            Margin="0,24,0,0">
-                        <!-- Manually hidden -->
-                        <controls:HyperButton Content="Phone"
-                                              Visibility="Collapsed"
-                                              IsEnabled="False"
+                        <controls:HyperButton Content="Ask a Question"
+                                              Command="{x:Bind ViewModel.AskCommand}"
                                               Style="{StaticResource HyperButtonStyle}"/>
-                        <controls:HyperButton Content="Username"
-                                              Click="Username_Click"
+                        <controls:HyperButton Content="Telegram FAQ"
+                                              Click="Questions_Click"
                                               Style="{StaticResource HyperButtonStyle}"/>
                     </local:TableStackPanel>
                     <local:TableStackPanel x:Name="OptionsGroup3"
@@ -296,11 +354,6 @@
                         <!--<controls:HyperButton Content="Accounts management"
                                               Click="Accounts_Click"
                                               Style="{StaticResource HyperButtonStyle}"/>-->
-                    </local:TableStackPanel>
-                    <local:TableStackPanel x:Name="OptionsGroup4"
-                                           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                           BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                           Margin="0,24,0,0">
                     </local:TableStackPanel>
                 </StackPanel>
             </ScrollViewer>

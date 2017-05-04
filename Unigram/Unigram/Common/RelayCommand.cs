@@ -120,6 +120,14 @@ namespace Unigram.Common
         /// <summary>
         /// Defines the method to be called when the command is invoked. 
         /// </summary>
+        public void Execute()
+        {
+            Execute(null);
+        }
+
+        /// <summary>
+        /// Defines the method to be called when the command is invoked. 
+        /// </summary>
         /// <param name="parameter">This parameter will always be ignored.</param>
         public virtual void Execute(object parameter)
         {

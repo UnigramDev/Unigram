@@ -55,7 +55,7 @@ namespace Unigram.Controls.Messages
             if (action is TLMessageActionPhoneCall phoneCallAction)
             {
                 var missed = phoneCallAction.Reason is TLPhoneCallDiscardReasonMissed || phoneCallAction.Reason is TLPhoneCallDiscardReasonBusy;
-                if (!missed)
+                if (!missed && (phoneCallAction.Duration ?? 0) > 0)
                 {
                     var duration = Convert.CallDuration(phoneCallAction.Duration ?? 0);
                     return $", {duration}";
