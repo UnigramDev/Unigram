@@ -177,8 +177,7 @@ HRESULT ConnectionManager::BoomBaby()
 	HRESULT result;
 	Connection* connection;
 	ReturnIfFailed(result, MakeAndInitialize<Connection>(&connection, nullptr, ConnectionType::Generic));
-	ReturnIfFailed(result, connection->AttachToThreadoool(&m_threadpoolEnvironment));
-
+	ReturnIfFailed(result, connection->AttachToThreadpool(&m_threadpoolEnvironment));
 	ReturnIfFailed(result, connection->Connect());
 
 	/*ComPtr<Timer> timer;

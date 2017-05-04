@@ -4,6 +4,16 @@
 #include "EventObject.h"
 #include "Helpers\COMHelper.h"
 
+#define BreakIfSocketError(result, method) \
+	if((result = method) == SOCKET_ERROR) \
+		break
+
+#define BreakIfError(result, method) \
+	if((result = method) != NO_ERROR) \
+		break
+
+#define READ_BUFFER_SIZE 1024 * 128
+
 using namespace Telegram::Api::Native;
 
 
@@ -14,17 +24,16 @@ ConnectionSocket::ConnectionSocket() :
 
 ConnectionSocket::~ConnectionSocket()
 {
+	CloseSocket(WSA_OPERATION_ABORTED, false);
 }
 
-HRESULT ConnectionSocket::OpenSocket(std::wstring address, UINT16 port, boolean ipv6)
+HRESULT ConnectionSocket::ConnectSocket(std::wstring address, UINT16 port, boolean ipv6)
 {
 	if (m_socket != INVALID_SOCKET)
 	{
 		return E_NOT_VALID_STATE;
 	}
 
-	HRESULT result;
-	int wsaLastError;
 	sockaddr_storage socketAddress = {};
 	if (ipv6)
 	{
@@ -34,10 +43,7 @@ HRESULT ConnectionSocket::OpenSocket(std::wstring address, UINT16 port, boolean 
 
 		if (InetPton(AF_INET6, address.c_str(), &socketAddressIpv6->sin6_addr) != 1)
 		{
-			wsaLastError = WSAGetLastError();
-			CloseSocket(wsaLastError);
-
-			return HRESULT_FROM_WIN32(wsaLastError);
+			return WSAGetLastHRESULT();
 		}
 	}
 	else
@@ -48,55 +54,35 @@ HRESULT ConnectionSocket::OpenSocket(std::wstring address, UINT16 port, boolean 
 
 		if (InetPton(AF_INET, address.c_str(), &socketAddressIpv4->sin_addr) != 1)
 		{
-			wsaLastError = WSAGetLastError();
-			CloseSocket(wsaLastError);
-
-			return HRESULT_FROM_WIN32(wsaLastError);
+			return WSAGetLastHRESULT();
 		}
-	}
-
-	if ((m_socket = socket(socketAddress.ss_family, SOCK_STREAM, 0)) == INVALID_SOCKET)
-	{
-		wsaLastError = WSAGetLastError();
-		CloseSocket(wsaLastError);
-
-		return HRESULT_FROM_WIN32(wsaLastError);
-	}
-
-	int noDelay = 1;
-	setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&noDelay), sizeof(int));
-
-	u_long nonBlock = 1;
-	if (ioctlsocket(m_socket, FIONBIO, &nonBlock) == SOCKET_ERROR)
-	{
-		wsaLastError = WSAGetLastError();
-		CloseSocket(wsaLastError);
-
-		return HRESULT_FROM_WIN32(wsaLastError);
 	}
 
 	m_socketEvent.Attach(WSACreateEvent());
 	if (!m_socketEvent.IsValid())
 	{
-		wsaLastError = WSAGetLastError();
-		CloseSocket(wsaLastError);
-
-		return HRESULT_FROM_WIN32(wsaLastError);
+		return WSAGetLastHRESULT();
 	}
 
+	if ((m_socket = socket(socketAddress.ss_family, SOCK_STREAM, 0)) == INVALID_SOCKET)
+	{
+		return GetLastErrorAndCloseSocket();
+	}
+
+	int noDelay = 1;
+	setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&noDelay), sizeof(int));
+
+	HRESULT result;
 	if (FAILED(result = OnSocketCreated()))
 	{
-		CloseSocket(WSA_OPERATION_ABORTED);
+		CloseSocket(WSA_OPERATION_ABORTED, true);
 
 		return result;
 	}
 
 	if (WSAEventSelect(m_socket, m_socketEvent.Get(), FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE) == SOCKET_ERROR)
 	{
-		wsaLastError = WSAGetLastError();
-		CloseSocket(wsaLastError);
-
-		return HRESULT_FROM_WIN32(wsaLastError);
+		return GetLastErrorAndCloseSocket();
 	}
 
 	if (connect(m_socket, reinterpret_cast<sockaddr*>(&socketAddress), ipv6 ? sizeof(sockaddr_in6) : sizeof(sockaddr_in)) == SOCKET_ERROR)
@@ -104,8 +90,7 @@ HRESULT ConnectionSocket::OpenSocket(std::wstring address, UINT16 port, boolean 
 		auto wsaLastError = WSAGetLastError();
 		if (wsaLastError != WSAEWOULDBLOCK)
 		{
-			wsaLastError = WSAGetLastError();
-			CloseSocket(wsaLastError);
+			CloseSocket(wsaLastError, true);
 
 			return HRESULT_FROM_WIN32(wsaLastError);
 		}
@@ -114,12 +99,31 @@ HRESULT ConnectionSocket::OpenSocket(std::wstring address, UINT16 port, boolean 
 	return S_OK;
 }
 
-HRESULT ConnectionSocket::CloseSocket()
+HRESULT ConnectionSocket::DisconnectSocket()
 {
-	return CloseSocket(NO_ERROR);
+	if (m_socket == INVALID_SOCKET)
+	{
+		return E_NOT_VALID_STATE;
+	}
+
+	if (shutdown(m_socket, SD_SEND) == SOCKET_ERROR)
+	{
+		return WSAGetLastHRESULT();
+	}
+
+	return S_OK;
 }
 
-HRESULT ConnectionSocket::CloseSocket(int wsaError)
+HRESULT ConnectionSocket::GetLastErrorAndCloseSocket()
+{
+	auto wsaLastError = WSAGetLastError();
+
+	CloseSocket(wsaLastError, true);
+
+	return HRESULT_FROM_WIN32(wsaLastError);
+}
+
+HRESULT ConnectionSocket::CloseSocket(int wsaError, boolean raiseEvent)
 {
 	if (m_socket == INVALID_SOCKET)
 	{
@@ -132,56 +136,85 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError)
 	}
 
 	m_socket = INVALID_SOCKET;
+	m_socketEvent.Close();
 
-	return OnSocketClosed(wsaError);
+	if (raiseEvent)
+	{
+		return OnSocketClosed(wsaError);
+	}
+
+	return S_OK;
 }
 
-HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
+HRESULT ConnectionSocket::OnSocketEvent(PTP_CALLBACK_INSTANCE callbackInstance, boolean* closed)
 {
 	int wsaLastError;
 	WSANETWORKEVENTS networkEvents;
 	if (WSAEnumNetworkEvents(m_socket, m_socketEvent.Get(), &networkEvents) == SOCKET_ERROR)
 	{
-		wsaLastError = WSAGetLastError();
-
-		return HRESULT_FROM_WIN32(wsaLastError);
+		*closed = true;
+		return GetLastErrorAndCloseSocket();
 	}
 
 	if (networkEvents.lNetworkEvents & FD_CLOSE)
 	{
-		if ((wsaLastError = networkEvents.iErrorCode[FD_CLOSE_BIT]) != NO_ERROR)
-		{
-		}
-
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket close event");
+		*closed = true;
+		return CloseSocket(networkEvents.iErrorCode[FD_CLOSE_BIT], true);
 	}
 
-	if (networkEvents.lNetworkEvents & FD_CONNECT)
+	do
 	{
-		if ((wsaLastError = networkEvents.iErrorCode[FD_CONNECT_BIT]) != NO_ERROR)
+		if (networkEvents.lNetworkEvents & FD_CONNECT)
 		{
+			BreakIfError(wsaLastError, networkEvents.iErrorCode[FD_CONNECT_BIT]);
+
+			I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connection event");
 		}
 
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connection event");
-	}
-
-	if (networkEvents.lNetworkEvents & FD_WRITE)
-	{
-		if ((wsaLastError = networkEvents.iErrorCode[FD_WRITE_BIT]) != NO_ERROR)
+		if (networkEvents.lNetworkEvents & FD_WRITE)
 		{
+			BreakIfError(wsaLastError, networkEvents.iErrorCode[FD_WRITE_BIT]);
+
+			std::string requestBuffer("GET /?gfe_rd=cr&ei=GnEKWfHFIczw8Aeh7LDABQ&gws_rd=cr HTTP/1.1\nUser-Agent: Mozilla / 4.0 (compatible; MSIE5.01; Windows NT)\nHost: www.google.com\nAccept-Language: en-us\nConnection: Keep-Alive\n\n");
+
+			int sentBytes;
+			if ((sentBytes = send(m_socket, requestBuffer.data(), requestBuffer.size(), 0)) == SOCKET_ERROR)
+			{
+				if ((wsaLastError = WSAGetLastError()) != WSAEWOULDBLOCK)
+				{
+					break;
+				}
+			}
+
+			I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket writing");
 		}
 
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket write event");
-	}
-
-	if (networkEvents.lNetworkEvents & FD_READ)
-	{
-		if ((wsaLastError = networkEvents.iErrorCode[FD_READ_BIT]) != NO_ERROR)
+		if (networkEvents.lNetworkEvents & FD_READ)
 		{
+			BreakIfError(wsaLastError, networkEvents.iErrorCode[FD_READ_BIT]);
+
+			std::string responseBuffer(READ_BUFFER_SIZE, '\0');
+
+			int receivedBytes;
+			int totalReceivedBytes = 0;
+			while ((receivedBytes = recv(m_socket, &responseBuffer[totalReceivedBytes], responseBuffer.size() - totalReceivedBytes, 0)) > 0)
+			{
+				totalReceivedBytes += receivedBytes;
+			}
+
+			if (receivedBytes == SOCKET_ERROR && (wsaLastError = WSAGetLastError()) != WSAEWOULDBLOCK)
+			{
+				break;
+			}
+
+			I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket reading");
 		}
 
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket read event");
-	}
+		return S_OK;
+	} while (false);
 
-	return S_OK;
+	*closed = true;
+	CloseSocket(wsaLastError, true);
+
+	return HRESULT_FROM_WIN32(wsaLastError);
 }

@@ -32,16 +32,19 @@ namespace Telegram
 					return m_socketEvent.Get();
 				}
 
-				HRESULT OpenSocket(std::wstring address, UINT16 port, boolean ipv6);
-				HRESULT CloseSocket();
-				HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
+				HRESULT ConnectSocket(std::wstring address, UINT16 port, boolean ipv6);
+				HRESULT DisconnectSocket();
+				HRESULT OnSocketEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _Out_ boolean* closed);
 
 				virtual HRESULT OnSocketCreated() = 0;
+				virtual HRESULT OnSocketConnected() = 0;
 				virtual HRESULT OnDataReceived() = 0;
+				virtual HRESULT OnSocketDisconnected() = 0;
 				virtual HRESULT OnSocketClosed(int wsaError) = 0;
 
 			private:
-				HRESULT CloseSocket(int wsaError);
+				HRESULT CloseSocket(int wsaError, boolean raiseEvent);
+				HRESULT GetLastErrorAndCloseSocket();
 
 				SOCKET m_socket;
 				WSAEvent m_socketEvent;

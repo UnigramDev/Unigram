@@ -83,8 +83,10 @@ HRESULT Connection::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 {
 	auto lock = m_criticalSection.Lock();
 
-	HRESULT result;
-	if (SUCCEEDED(result = ConnectionSocket::OnEvent(callbackInstance)))
+	boolean socketClosed = false;
+	HRESULT result = OnSocketEvent(callbackInstance, &socketClosed);
+
+	if (!socketClosed)
 	{
 		SetThreadpoolWait(GetThreadpoolObjectHandle(), GetSocketEvent(), nullptr);
 	}
@@ -124,25 +126,25 @@ HRESULT Connection::Connect()
 
 	{
 		auto lock = m_criticalSection.Lock();
-		ReturnIfFailed(result, OpenSocket(L"172.217.23.68", 80, false));
+		ReturnIfFailed(result, ConnectSocket(L"172.217.23.68", 80, false));
 	}
 
 
 	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&m_currentNetworkType));
 
-	Sleep(10000);
+	/*Sleep(10000);
 
 	{
 		auto lock = m_criticalSection.Lock();
-		ReturnIfFailed(result, CloseSocket());
+		ReturnIfFailed(result, DisconnectSocket());
 	}
 
 	Sleep(10000);
 
 	{
 		auto lock = m_criticalSection.Lock();
-		ReturnIfFailed(result, OpenSocket(L"172.217.23.68", 80, false));
-	}
+		ReturnIfFailed(result, ConnectSocket(L"172.217.23.68", 80, false));
+	}*/
 
 	return S_OK;
 }
@@ -169,13 +171,20 @@ HRESULT Connection::Suspend()
 
 HRESULT Connection::OnSocketCreated()
 {
-	auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
+	auto threadpoolObjectHandle = EventObjectT::GetThreadpoolObjectHandle();
 	if (threadpoolObjectHandle == nullptr)
 	{
 		return E_NOT_VALID_STATE;
 	}
 
 	SetThreadpoolWait(threadpoolObjectHandle, GetSocketEvent(), nullptr);
+	return S_OK;
+}
+
+HRESULT Connection::OnSocketConnected()
+{
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connected event handling");
+
 	return S_OK;
 }
 
@@ -186,11 +195,18 @@ HRESULT Connection::OnDataReceived()
 	return S_OK;
 }
 
+HRESULT Connection::OnSocketDisconnected()
+{
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket disconnected event handling");
+
+	return S_OK;
+}
+
 HRESULT Connection::OnSocketClosed(int wsaError)
 {
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connection closed handling");
 
-	auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
+	auto threadpoolObjectHandle = EventObjectT::GetThreadpoolObjectHandle();
 	if (threadpoolObjectHandle == nullptr)
 	{
 		return E_NOT_VALID_STATE;

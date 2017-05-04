@@ -22,7 +22,7 @@ namespace Telegram
 			MIDL_INTERFACE("8225DD5F-F2C1-4D1B-B354-F353BCE37427") IEventObject : public IUnknown
 			{
 			public:
-				virtual STDMETHODIMP AttachToThreadoool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) = 0;
+				virtual STDMETHODIMP AttachToThreadpool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) = 0;
 				virtual STDMETHODIMP DetachFromThreadpool() = 0;
 				virtual STDMETHODIMP OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance) = 0;
 			};
@@ -37,7 +37,7 @@ namespace Telegram
 				virtual STDMETHODIMP OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance) = 0;
 
 			private:
-				virtual STDMETHODIMP AttachToThreadoool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) = 0;
+				virtual STDMETHODIMP AttachToThreadpool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) = 0;
 				virtual STDMETHODIMP DetachFromThreadpool() = 0;
 				void OnThreadpoolCallback(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
 			};
@@ -156,7 +156,7 @@ namespace Telegram
 				}
 
 			private:
-				virtual STDMETHODIMP AttachToThreadoool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) final
+				virtual STDMETHODIMP AttachToThreadpool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) final
 				{
 					if (threadpoolEnvironment == nullptr)
 					{

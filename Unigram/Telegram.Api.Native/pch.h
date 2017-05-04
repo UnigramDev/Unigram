@@ -5,7 +5,6 @@
 #endif
 
 #include <windows.h>
-#include "Helpers\DebugHelper.h"
 
 #define __STRINGIFY(x) #x
 #define _STRINGIFY(x) __STRINGIFY(x)

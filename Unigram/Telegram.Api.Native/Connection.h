@@ -44,9 +44,11 @@ namespace Telegram
 				HRESULT Reconnect();
 				HRESULT Suspend();
 				virtual HRESULT OnSocketCreated() override;
+				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnDataReceived() override;
+				virtual HRESULT OnSocketDisconnected() override;
 				virtual HRESULT OnSocketClosed(int wsaError) override;
-				void OnEventObjectError(EventObject* eventObject, HRESULT result);
+				void OnEventObjectError(_In_ EventObject* eventObject, HRESULT result);
 
 				CriticalSection m_criticalSection;
 				UINT32 m_token;
