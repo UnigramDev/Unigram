@@ -3350,7 +3350,10 @@ namespace Telegram.Api.Services.Cache
             get
             {
                 if (_config == null)
+                {
                     _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
+                    UpdateConfigResources();
+                }
 
                 return _config;
             }
@@ -3359,7 +3362,10 @@ namespace Telegram.Api.Services.Cache
         public TLConfig GetConfig()
         {
             if (_config == null)
+            {
                 _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
+                UpdateConfigResources();
+            }
 
             return _config;
         }
@@ -3370,6 +3376,7 @@ namespace Telegram.Api.Services.Cache
             if (_config == null)
             {
                 _config = SettingsHelper.GetValue(Constants.ConfigKey) as TLConfig;
+                UpdateConfigResources();
             }
 #endif
             callback?.Invoke(_config);
@@ -3380,6 +3387,23 @@ namespace Telegram.Api.Services.Cache
             _config = config;
 #if SILVERLIGHT || WIN_RT
             SettingsHelper.SetValue(Constants.ConfigKey, config);
+#endif
+
+            UpdateConfigResources();
+        }
+
+        private void UpdateConfigResources()
+        {
+#if WIN_RT
+
+            if (_config != null)
+            {
+                var prefix = _config.MeUrlPrefix ?? "https://t.me/";
+
+                Windows.UI.Xaml.Application.Current.Resources["MeUrlPrefix"] = prefix;
+                Windows.UI.Xaml.Application.Current.Resources["MeUrlPrefixShort"] = prefix.TrimStart("https://");
+            }
+
 #endif
         }
 

@@ -18,12 +18,30 @@
                                    Glyph="&#xE109;"
                                    CommandVisibility="{x:Bind (Visibility)ViewModel.Item.IsCreator, Mode=OneWay}"/>
 
+        <controls:ScrollViewerBackground 
+            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"
+            VerticalAlignment="Top"
+            Grid.Row="1"/>
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Participants}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   Grid.Row="1">
+            <ListView.Header>
+                <Border Visibility="{x:Bind (Visibility)ViewModel.CanEditDemocracy, Mode=OneWay}"
+                        Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                        Padding="12,12,12,12">
+                    <ComboBox Header="Who can add new members?"
+                              SelectedIndex="{x:Bind ViewModel.IsDemocracy, Mode=TwoWay, Converter={StaticResource BooleanToIndexConverter}, ConverterParameter=invert}"
+                              HorizontalAlignment="Stretch"
+                              Style="{StaticResource SolidComboBoxStyle}">
+                        <ComboBoxItem Content="All Members"/>
+                        <ComboBoxItem Content="Only Admins"/>
+                    </ComboBox>
+                </Border>
+            </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="tl:TLChannelParticipantBase">
                     <Grid Margin="0,6">

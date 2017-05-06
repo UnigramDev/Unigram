@@ -271,6 +271,11 @@ namespace Unigram
             });
 #endif
 
+            //if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
+            //{
+            //    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+            //}
+
             try
             {
                 // Prepare stuff for Cortana

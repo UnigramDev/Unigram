@@ -30,19 +30,18 @@
             VerticalAlignment="Top"
             Grid.Row="1"/>
         <ScrollViewer x:Name="ScrollingHost"
-                        Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                        VerticalScrollBarVisibility="Auto"
-                        VerticalScrollMode="Auto"
-                        Grid.Row="1">
+                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
             <StackPanel>
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                         Padding="12,12,12,4">
-                    
-                <ComboBox Header="Show usage from:"
-                          ItemsSource="{x:Bind ViewModel.Items}"
-                          SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-                          DisplayMemberPath="Title"
-                          HorizontalAlignment="Stretch"/>
+                    <ComboBox Header="Show usage from:"
+                              ItemsSource="{x:Bind ViewModel.Items}"
+                              SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                              DisplayMemberPath="Title"
+                              HorizontalAlignment="Stretch"/>
                 </Border>
 
                 <ItemsControl ItemsSource="{x:Bind ViewModel.SelectedItem.Items, Mode=OneWay}">

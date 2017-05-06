@@ -28,13 +28,15 @@
                         Content="Trending stickers"
                         Click="FeaturedStickers_Click"
                         Badge="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}"
-                        BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Style="{StaticResource BadgeButtonStyle}"/>
                     <controls:BadgeButton
                         Content="Archived stickers"
                         Click="ArchivedStickers_Click"
                         Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                    <Button Content="Masks" Click="Masks_Click" Padding="12,4"/>
+                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Style="{StaticResource BadgeButtonStyle}"/>
+                    <controls:HyperButton Content="Masks" Click="Masks_Click" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Style="{StaticResource HyperButtonStyle}"/>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>

@@ -13,7 +13,7 @@ namespace Unigram.ViewModels.Channels
     public class ChannelParticipantsViewModel : ChannelParticipantsViewModelBase
     {
         public ChannelParticipantsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
-            : base(protoService, cacheService, aggregator, null)
+            : base(protoService, cacheService, aggregator, new TLChannelParticipantsRecent())
         {
         }
     }

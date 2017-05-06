@@ -29,12 +29,6 @@ namespace Unigram.ViewModels.Settings
             IsLoading = false;
             ErrorMessage = null;
 
-            var config = CacheService.GetConfig();
-            if (config != null)
-            {
-                MeUrlPrefix = string.IsNullOrEmpty(config.MeUrlPrefix) ? "https://t.me/" : config.MeUrlPrefix;
-            }
-
             var cached = CacheService.GetUser(SettingsHelper.UserId) as TLUser;
             if (cached != null)
             {
@@ -54,19 +48,6 @@ namespace Unigram.ViewModels.Settings
             }
 
             RaisePropertyChanged(() => Username);
-        }
-
-        private string _meUrlPrefix;
-        public string MeUrlPrefix
-        {
-            get
-            {
-                return _meUrlPrefix;
-            }
-            set
-            {
-                Set(ref _meUrlPrefix, value);
-            }
         }
 
         private string _username;
