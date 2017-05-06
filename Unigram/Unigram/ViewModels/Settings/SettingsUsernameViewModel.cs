@@ -276,13 +276,15 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand CopyCommand => new RelayCommand(CopyExecute);
         private async void CopyExecute()
         {
-            var package = new DataPackage();
-            package.SetText($"{_meUrlPrefix}{_username}");
-            package.SetWebLink(new Uri($"{_meUrlPrefix}{_username}"));
+            var config = CacheService.GetConfig();
+            if (config != null)
+            {
+                var package = new DataPackage();
+                package.SetWebLink(new Uri($"{config.MeUrlPrefix}{_username}"));
+                Clipboard.SetContent(package);
 
-            Clipboard.SetContent(package);
-
-            await new TLMessageDialog("Link copied to clipboard").ShowAsync();
+                await new TLMessageDialog("Link copied to clipboard").ShowAsync();
+            }
         }
     }
 }

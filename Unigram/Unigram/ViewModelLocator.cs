@@ -116,6 +116,8 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<UserDetailsViewModel>();
             container.ContainerBuilder.RegisterType<UserCommonChatsViewModel>();
             container.ContainerBuilder.RegisterType<ChatDetailsViewModel>();// .SingleInstance();
+            container.ContainerBuilder.RegisterType<ChatInviteViewModel>();// .SingleInstance();
+            container.ContainerBuilder.RegisterType<ChatInviteLinkViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelDetailsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelEditViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelEditTypeViewModel>();// .SingleInstance();

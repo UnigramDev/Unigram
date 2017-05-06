@@ -15,7 +15,7 @@
         <RowDefinition Height="Auto" />
         <RowDefinition />
     </Grid.RowDefinitions>
-    <Grid x:Name="Header" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+    <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
@@ -26,7 +26,7 @@
                 <Run Text="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"/><Run Text="/"/><Run Text="{x:Bind ViewModel.Maximum}"/>
             </TextBlock>
         </StackPanel>
-        <controls:GlyphButton Command="{x:Bind ViewModel.SendCommand}" Glyph="&#xE10B;" Grid.Column="1"/>
+        <controls:GlyphButton Command="{x:Bind ViewModel.SendCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE10B;" Grid.Column="1"/>
         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
     </Grid>
 
@@ -43,6 +43,8 @@
               ItemsSource="{x:Bind ViewModel.Items}"
               SelectionMode="{x:Bind ViewModel.SelectionMode}"
               SelectionChanged="ListView_SelectionChanged"
+              Header="{x:Bind Header, Mode=OneWay}"
+              HeaderTemplate="{x:Bind HeaderTemplate, Mode=OneWay}"
               Grid.Row="2">
         <ListView.ItemTemplate>
             <DataTemplate x:DataType="tl:TLUser">

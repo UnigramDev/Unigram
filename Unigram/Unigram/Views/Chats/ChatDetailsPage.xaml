@@ -70,7 +70,7 @@
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                            Margin="0,24,0,18">
                         <controls:HyperButton Content="Shared media"
-                                              Command="{Binding MediaCommand}"
+                                              Command="{x:Bind ViewModel.MediaCommand}"
                                               Style="{StaticResource HyperButtonStyle}"
                                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
 
@@ -83,7 +83,12 @@
                                               Command="{Binding MediaCommand}"
                                               Style="{StaticResource HyperButtonStyle}"
                                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-                        
+
+                        <controls:HyperButton Content="Add members"
+                                              Command="{x:Bind ViewModel.InviteCommand}"
+                                              Style="{StaticResource HyperButtonStyle}"
+                                              Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+
                         <controls:HyperButton Content="Add admins"
                                               Command="{Binding MediaCommand}"
                                               Style="{StaticResource HyperButtonStyle}"

@@ -74,6 +74,7 @@
                     Margin="0,24,0,0">
                     <controls:BadgeButton
                         Content="Group Type"
+                        IsEnabled="{x:Bind ViewModel.Full.IsCanSetUsername, Mode=OneWay}"
                         Badge="{x:Bind ViewModel.Item.HasUsername, Mode=OneWay, Converter={StaticResource ChannelTypeToStringConverter}}"
                         Command="{x:Bind ViewModel.EditTypeCommand}"
                         Style="{StaticResource BadgeButtonStyle}"/>

@@ -233,6 +233,8 @@
     <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelKickedViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
     <Compile Include="ViewModels\DialogStickersViewModel.cs" />
@@ -285,6 +287,12 @@
     </Compile>
     <Compile Include="Views\Channels\CreateChannelStep3Page.xaml.cs">
       <DependentUpon>CreateChannelStep3Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatInviteLinkPage.xaml.cs">
+      <DependentUpon>ChatInviteLinkPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatInvitePage.xaml.cs">
+      <DependentUpon>ChatInvitePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\CreateChatStep2Page.xaml.cs">
       <DependentUpon>CreateChatStep2Page.xaml</DependentUpon>
@@ -1240,6 +1248,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Channels\ChannelEditTypePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\ChatInviteLinkPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\ChatInvitePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -15,6 +15,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Views;
 using Unigram.Views.Channels;
+using Unigram.Views.Chats;
 using Windows.Storage;
 using Windows.UI.Xaml.Navigation;
 
@@ -116,6 +117,12 @@ namespace Unigram.ViewModels.Channels
         private void EditExecute()
         {
             NavigationService.Navigate(typeof(ChannelEditPage), _item.ToPeer());
+        }
+
+        public RelayCommand InviteCommand => new RelayCommand(InviteExecute);
+        private void InviteExecute()
+        {
+            NavigationService.Navigate(typeof(ChatInvitePage), _item.ToPeer());
         }
 
         public RelayCommand MediaCommand => new RelayCommand(MediaExecute);

@@ -1,0 +1,32 @@
+﻿<Page
+    x:Class="Unigram.Views.Chats.ChatInviteLinkPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Chats"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:PageHeader Text="Invite Link"/>
+
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel>
+                <TextBox Text="{x:Bind ViewModel.InviteLink, Mode=OneWay}" Header="Link" IsReadOnly="True" Margin="12,12,12,8" Grid.Row="1"/>
+                <TextBlock Text="People can join your channel by following this link. You can revoke the link at any time." Margin="12,0,12,24" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+
+                <controls:HyperButton Command="{x:Bind ViewModel.CopyCommand}" Content="Copy Link" Style="{StaticResource HyperButtonStyle}"/>
+                <controls:HyperButton Command="{x:Bind ViewModel.RevokeCommand}" Content="Revoke Link" Style="{StaticResource HyperButtonStyle}"/>
+                <controls:HyperButton Click="Share_Click" Content="Share Link" Style="{StaticResource HyperButtonStyle}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

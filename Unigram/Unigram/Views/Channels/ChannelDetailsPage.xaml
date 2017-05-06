@@ -98,11 +98,10 @@
                                               Style="{StaticResource HyperButtonStyle}"
                                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
 
-                        <controls:HyperButton Content="Add admins"
-                                              Command="{Binding MediaCommand}"
+                        <controls:HyperButton Content="Add members"
+                                              Command="{x:Bind ViewModel.InviteCommand}"
                                               Style="{StaticResource HyperButtonStyle}"
                                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
-
                     </local:TableStackPanel>
 
                     <local:TableStackPanel x:Name="Group2"
