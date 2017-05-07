@@ -61,6 +61,7 @@ namespace Unigram.Controls
                 _animation = _compositor.CreateExpressionAnimation("Max(Scroll.Translation.Y, 0)");
                 _animation.SetReferenceParameter("Scroll", props);
 
+                _visual.StopAnimation("Size.Y");
                 _visual.StartAnimation("Size.Y", _animation);
             }
         }
