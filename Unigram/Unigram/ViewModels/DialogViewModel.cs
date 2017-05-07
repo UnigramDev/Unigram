@@ -2138,9 +2138,9 @@ namespace Unigram.ViewModels
         private async void ToggleMuteExecute()
         {
             var channel = With as TLChannel;
-            if (channel != null)
+            if (channel != null && _currentDialog != null)
             {
-                var notifySettings = channel.NotifySettings as TLPeerNotifySettings;
+                var notifySettings = _currentDialog.NotifySettings as TLPeerNotifySettings;
                 if (notifySettings != null)
                 {
                     var muteUntil = notifySettings.MuteUntil == int.MaxValue ? 0 : int.MaxValue;
@@ -2156,20 +2156,28 @@ namespace Unigram.ViewModels
                     if (response.IsSucceeded)
                     {
                         notifySettings.MuteUntil = muteUntil;
-                        channel.RaisePropertyChanged(() => channel.NotifySettings);
+                        channel.RaisePropertyChanged(() => _currentDialog.NotifySettings);
 
                         var dialog = CacheService.GetDialog(Peer.ToPeer());
                         if (dialog != null)
                         {
-                            dialog.NotifySettings = channel.NotifySettings;
+                            dialog.NotifySettings = _currentDialog.NotifySettings;
                             dialog.RaisePropertyChanged(() => dialog.NotifySettings);
                             dialog.RaisePropertyChanged(() => dialog.Self);
 
-                            var dialogChannel = dialog.With as TLChannel;
-                            if (dialogChannel != null)
+                            var chatFull = CacheService.GetFullChat(channel.Id);
+                            if (chatFull != null)
                             {
-                                dialogChannel.NotifySettings = channel.NotifySettings;
+                                chatFull.NotifySettings = _currentDialog.NotifySettings;
+                                chatFull.RaisePropertyChanged(() => chatFull.NotifySettings);
                             }
+
+                            // TODO: 06/05/2017
+                            //var dialogChannel = dialog.With as TLChannel;
+                            //if (dialogChannel != null)
+                            //{
+                            //    dialogChannel.NotifySettings = channel.NotifySettings;
+                            //}
                         }
 
                         CacheService.Commit();
@@ -2187,9 +2195,9 @@ namespace Unigram.ViewModels
         private async void ToggleSilentExecute()
         {
             var channel = With as TLChannel;
-            if (channel != null)
+            if (channel != null && _currentDialog != null)
             {
-                var notifySettings = channel.NotifySettings as TLPeerNotifySettings;
+                var notifySettings = _currentDialog.NotifySettings as TLPeerNotifySettings;
                 if (notifySettings != null)
                 {
                     var silent = !notifySettings.IsSilent;
@@ -2205,20 +2213,28 @@ namespace Unigram.ViewModels
                     if (response.IsSucceeded)
                     {
                         notifySettings.IsSilent = silent;
-                        channel.RaisePropertyChanged(() => channel.NotifySettings);
+                        channel.RaisePropertyChanged(() => _currentDialog.NotifySettings);
 
                         var dialog = CacheService.GetDialog(Peer.ToPeer());
                         if (dialog != null)
                         {
-                            dialog.NotifySettings = channel.NotifySettings;
+                            dialog.NotifySettings = _currentDialog.NotifySettings;
                             dialog.RaisePropertyChanged(() => dialog.NotifySettings);
                             dialog.RaisePropertyChanged(() => dialog.Self);
 
-                            var dialogChannel = dialog.With as TLChannel;
-                            if (dialogChannel != null)
+                            var chatFull = CacheService.GetFullChat(channel.Id);
+                            if (chatFull != null)
                             {
-                                dialogChannel.NotifySettings = channel.NotifySettings;
+                                chatFull.NotifySettings = _currentDialog.NotifySettings;
+                                chatFull.RaisePropertyChanged(() => chatFull.NotifySettings);
                             }
+
+                            // TODO: 06/05/2017
+                            //var dialogChannel = dialog.With as TLChannel;
+                            //if (dialogChannel != null)
+                            //{
+                            //    dialogChannel.NotifySettings = channel.NotifySettings;
+                            //}
                         }
 
                         CacheService.Commit();

@@ -115,7 +115,8 @@ namespace Unigram.ViewModels.Users
         {
             if (Item != null && Full != null && Item.Id == message.UserId)
             {
-                Item.IsBlocked = message.Blocked;
+                // TODO: 06/05/2017
+                //Item.IsBlocked = message.Blocked;
                 Full.IsBlocked = message.Blocked;
                 Execute.BeginOnUIThread(() =>
                 {
@@ -137,8 +138,8 @@ namespace Unigram.ViewModels.Users
                 {
                     Execute.BeginOnUIThread(() =>
                     {
-                        Item.NotifySettings = message.NotifySettings;
-                        Item.RaisePropertyChanged(() => Item.NotifySettings);
+                        Full.NotifySettings = message.NotifySettings;
+                        Full.RaisePropertyChanged(() => Full.NotifySettings);
                         RaisePropertyChanged(() => AreNotificationsEnabled);
 
                         //var notifySettings = updateNotifySettings.NotifySettings as TLPeerNotifySettings;
@@ -243,10 +244,6 @@ namespace Unigram.ViewModels.Users
                     ContactPhone userPhone = new ContactPhone();
                     userPhone.Number = user.Phone;
                     userContact.Phones.Add(userPhone);
-                }
-                if (user.ProfilePhoto != null)
-                {
-                    // TODO Add user profile picture
                 }
 
                 // Set options for the Dialog-window
@@ -371,7 +368,7 @@ namespace Unigram.ViewModels.Users
         {
             get
             {
-                var settings = Item?.NotifySettings as TLPeerNotifySettings;
+                var settings = Full?.NotifySettings as TLPeerNotifySettings;
                 if (settings != null)
                 {
                     return settings.MuteUntil == 0;

@@ -55,8 +55,10 @@ namespace Telegram.Api.Services.Cache
         public Context<TLDialog> DialogsContext = new Context<TLDialog>();
 
         public Context<TLUserBase> UsersContext = new Context<TLUserBase>();
+        public Context<TLUserFull> FullUsersContext = new Context<TLUserFull>();
 
         public Context<TLChatBase> ChatsContext = new Context<TLChatBase>();
+        public Context<TLChatFullBase> FullChatsContext = new Context<TLChatFullBase>();
 
         public Context<TLEncryptedChatBase> EncryptedChatsContext = new Context<TLEncryptedChatBase>(); 
 
@@ -248,6 +250,14 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
+        public void AddFullUser(TLUserFull user)
+        {
+            if (user != null)
+            {
+                FullUsersContext[user.User.Id] = user;
+            }
+        }
+
         public void AddChat(TLChatBase chat)
         {
             if (chat != null)
@@ -259,6 +269,14 @@ namespace Telegram.Api.Services.Cache
                 }
 
                 ChatsContext[chat.Id] = chat;
+            }
+        }
+
+        public void AddFullChat(TLChatFullBase chat)
+        {
+            if (chat != null)
+            {
+                FullChatsContext[chat.Id] = chat;
             }
         }
 

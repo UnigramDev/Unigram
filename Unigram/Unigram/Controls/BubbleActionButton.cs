@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Telegram.Api.Services;
+using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -171,14 +172,18 @@ namespace Unigram.Controls
                         }
                         else
                         {
-                            var settings = channel.NotifySettings as TLPeerNotifySettings;
-                            if (settings != null)
+                            var dialog = InMemoryCacheService.Current.GetDialog(channel.ToPeer());
+                            if (dialog != null)
                             {
-                                Content = settings.MuteUntil > 0 ? "Unmute" : "Mute";
-                            }
-                            else
-                            {
-                                Content = "Mute";
+                                var settings = dialog.NotifySettings as TLPeerNotifySettings;
+                                if (settings != null)
+                                {
+                                    Content = settings.MuteUntil > 0 ? "Unmute" : "Mute";
+                                }
+                                else
+                                {
+                                    Content = "Mute";
+                                }
                             }
 
                             return Visibility.Visible;

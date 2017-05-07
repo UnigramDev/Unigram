@@ -90,15 +90,19 @@ namespace Unigram.ViewModels.Chats
                 {
                     Item = chat;
 
-                    _exportedInvite = chat.ExportedInvite;
+                    var response = await ProtoService.GetFullChatAsync(chat.Id);
+                    if (response.IsSucceeded)
+                    {
+                        _exportedInvite = response.Result.FullChat.ExportedInvite;
 
-                    if (chat.ExportedInvite is TLChatInviteExported invite)
-                    {
-                        InviteLink = invite.Link;
-                    }
-                    else
-                    {
-                        task = ProtoService.ExportChatInviteAsync(chat.Id);
+                        if (response.Result.FullChat.ExportedInvite is TLChatInviteExported invite)
+                        {
+                            InviteLink = invite.Link;
+                        }
+                        else
+                        {
+                            task = ProtoService.ExportChatInviteAsync(chat.Id);
+                        }
                     }
                 }
             }

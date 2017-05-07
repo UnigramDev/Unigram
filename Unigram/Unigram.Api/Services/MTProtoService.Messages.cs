@@ -611,12 +611,14 @@ namespace Telegram.Api.Services
                 var user = userBase as TLUser;
                 if (userBase != null)
                 {
-                    var botInfo = userBase.BotInfo as TLBotInfo;
+                    // TODO: 06/05/2017
+                    /*var botInfo = userBase.BotInfo as TLBotInfo;
                     if (botInfo != null)
                     {
                         status = TLMessageState.Read;
                     }
-                    else if (user != null && user.IsSelf)
+                    else*/
+                    if (user != null && user.IsSelf)
                     {
                         status = TLMessageState.Read;
                     }
