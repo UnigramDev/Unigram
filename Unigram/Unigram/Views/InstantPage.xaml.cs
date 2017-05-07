@@ -85,10 +85,11 @@ namespace Unigram.Views
                 {
                     var element = ProcessBlock(webpage.CachedPage, block, photos, videos);
                     var spacing = SpacingBetweenBlocks(previousBlock, block);
+                    var padding = PaddingForBlock(block);
 
                     if (element != null)
                     {
-                        element.Margin = new Thickness(_padding, spacing, _padding, 0);
+                        element.Margin = new Thickness(padding, spacing, padding, 0);
                         LayoutRoot.Children.Add(element);
                     }
 
@@ -115,12 +116,14 @@ namespace Unigram.Views
 
                             for (int i = processed; i < newpage.CachedPage.Blocks.Count; i++)
                             {
-                                var element = ProcessBlock(newpage.CachedPage, newpage.CachedPage.Blocks[i], photos, videos);
-                                var spacing = SpacingBetweenBlocks(previousBlock, newpage.CachedPage.Blocks[i]);
+                                var block = newpage.CachedPage.Blocks[i];
+                                var element = ProcessBlock(newpage.CachedPage, block, photos, videos);
+                                var spacing = SpacingBetweenBlocks(previousBlock, block);
+                                var padding = PaddingForBlock(block);
 
                                 if (element != null)
                                 {
-                                    element.Margin = new Thickness(_padding, spacing, _padding, 0);
+                                    element.Margin = new Thickness(padding, spacing, padding, 0);
                                     LayoutRoot.Children.Add(element);
                                 }
 
@@ -196,6 +199,7 @@ namespace Unigram.Views
         private FrameworkElement ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             var textBlock = new TextBlock { Style = Resources["AuthorDateTextBlockStyle"] as Style };
+            textBlock.FontSize = 15;
 
             if (block.Author.TypeId != TLType.TextEmpty)
             {
@@ -273,47 +277,66 @@ namespace Unigram.Views
                 switch (block.TypeId)
                 {
                     case TLType.PageBlockTitle:
-                        textBlock.FontSize = 24;
+                        textBlock.FontSize = 28;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubtitle:
-                        textBlock.FontSize = 21;
-                        textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                        textBlock.FontSize = 17;
+                        //textBlock.FontFamily = new FontFamily("Times New Roman");
+                        //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockHeader:
-                        textBlock.FontSize = 21;
+                        textBlock.FontSize = 24;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubheader:
-                        textBlock.FontSize = 18;
+                        textBlock.FontSize = 19;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
+                    case TLType.PageBlockParagraph:
+                        textBlock.FontSize = 17;
+                        break;
+                    case TLType.PageBlockPreformatted:
+                        textBlock.FontSize = 16;
+                        break;
                     case TLType.PageBlockFooter:
-                        textBlock.FontSize = 14;
+                        textBlock.FontSize = 15;
+                        textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+                        textBlock.TextAlignment = TextAlignment.Center;
                         break;
                     case TLType.PageBlockPhoto:
                     case TLType.PageBlockVideo:
                     case TLType.PageBlockSlideshow:
                     case TLType.PageBlockEmbed:
                     case TLType.PageBlockEmbedPost:
-                        textBlock.FontSize = 14;
+                        textBlock.FontSize = 15;
                         textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-                        break;
-                    case TLType.PageBlockParagraph:
-                        textBlock.FontSize = 16;
+                        textBlock.TextAlignment = TextAlignment.Center;
                         break;
                     case TLType.PageBlockBlockquote:
-                        textBlock.FontSize = caption ? 14 : 15;
+                        textBlock.FontSize = caption ? 15 : 17;
+                        if (caption)
+                        {
+                            textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+                            textBlock.TextAlignment = TextAlignment.Center;
+                        }
                         break;
                     case TLType.PageBlockPullquote:
                         var pullquoteBlock = block as TLPageBlockPullquote;
-                        textBlock.FontSize = caption ? 14 : 18;
-                        textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.TextAlignment = TextAlignment.Center;
+                        textBlock.FontSize = caption ? 15 : 17;
+                        if (caption)
+                        {
+                            textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+                        }
+                        else
+                        {
+                            textBlock.FontFamily = new FontFamily("Times New Roman");
+                            textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                            textBlock.TextAlignment = TextAlignment.Center;
+                        }
                         break;
                 }
 
@@ -342,6 +365,7 @@ namespace Unigram.Views
         private FrameworkElement ProcessList(TLPageBase page, TLPageBlockList block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             var textBlock = new RichTextBlock();
+            textBlock.FontSize = 17;
             textBlock.TextWrapping = TextWrapping.Wrap;
             textBlock.IsTextSelectionEnabled = false;
 
@@ -874,6 +898,16 @@ namespace Unigram.Views
                 }
             }
             return 20.0f;
+        }
+
+        private double PaddingForBlock(TLPageBlockBase block)
+        {
+            if (block is TLPageBlockCover || block is TLPageBlockPreformatted)
+            {
+                return 0.0;
+            }
+
+            return _padding;
         }
 
         private async void Image_Click(object sender, RoutedEventArgs e)
