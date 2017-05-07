@@ -138,7 +138,6 @@ namespace Unigram.Views
 
         //private Stack<Panel> _containers = new Stack<Panel>();
         private double _padding = 12;
-        private Stack<TLPageBlockBase> _parents = new Stack<TLPageBlockBase>();
 
         private Dictionary<string, Border> _anchors = new Dictionary<string, Border>();
 
@@ -191,11 +190,7 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessCover(TLPageBase page, TLPageBlockCover block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
-            _parents.Push(block);
-            var result = ProcessBlock(page, block.Cover, photos, videos);
-            _parents.Pop();
-
-            return result;
+            return ProcessBlock(page, block.Cover, photos, videos);
         }
 
         private FrameworkElement ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
