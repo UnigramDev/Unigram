@@ -56,8 +56,6 @@ namespace Unigram.Views
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             LayoutRoot.Children.Clear();
-            _containers.Clear();
-            _containers.Push(LayoutRoot);
             _anchors.Clear();
 
             var parameter = TLSerializationService.Current.Deserialize((string)e.Parameter);
@@ -82,9 +80,19 @@ namespace Unigram.Views
                 }
 
                 var processed = 0;
+                TLPageBlockBase previousBlock = null;
                 foreach (var block in webpage.CachedPage.Blocks)
                 {
-                    ProcessBlock(webpage.CachedPage, block, photos, videos);
+                    var element = ProcessBlock(webpage.CachedPage, block, photos, videos);
+                    var spacing = SpacingBetweenBlocks(previousBlock, block);
+
+                    if (element != null)
+                    {
+                        element.Margin = new Thickness(_padding, spacing, _padding, 0);
+                        LayoutRoot.Children.Add(element);
+                    }
+
+                    previousBlock = block;
                     processed++;
                 }
 
@@ -107,7 +115,16 @@ namespace Unigram.Views
 
                             for (int i = processed; i < newpage.CachedPage.Blocks.Count; i++)
                             {
-                                ProcessBlock(newpage.CachedPage, newpage.CachedPage.Blocks[i], photos, videos);
+                                var element = ProcessBlock(newpage.CachedPage, newpage.CachedPage.Blocks[i], photos, videos);
+                                var spacing = SpacingBetweenBlocks(previousBlock, newpage.CachedPage.Blocks[i]);
+
+                                if (element != null)
+                                {
+                                    element.Margin = new Thickness(_padding, spacing, _padding, 0);
+                                    LayoutRoot.Children.Add(element);
+                                }
+
+                                previousBlock = newpage.CachedPage.Blocks[i];
                             }
                         }
                     }
@@ -119,445 +136,88 @@ namespace Unigram.Views
 
         private long _webpageId;
 
-        private Stack<Panel> _containers = new Stack<Panel>();
+        //private Stack<Panel> _containers = new Stack<Panel>();
+        private double _padding = 12;
         private Stack<TLPageBlockBase> _parents = new Stack<TLPageBlockBase>();
 
         private Dictionary<string, Border> _anchors = new Dictionary<string, Border>();
 
-        private void ProcessBlock(TLPageBase page, TLPageBlockBase block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessBlock(TLPageBase page, TLPageBlockBase block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
             switch (block)
             {
                 case TLPageBlockCover cover:
-                    ProcessCover(page, cover, photos, videos);
-                    break;
+                    return ProcessCover(page, cover, photos, videos);
                 case TLPageBlockAuthorDate authorDate:
-                    ProcessAuthorDate(page, authorDate, photos, videos);
-                    break;
+                    return ProcessAuthorDate(page, authorDate, photos, videos);
                 case TLPageBlockHeader header:
                 case TLPageBlockSubheader subheader:
                 case TLPageBlockTitle title:
                 case TLPageBlockSubtitle subtitle:
                 case TLPageBlockFooter footer:
                 case TLPageBlockParagraph paragraph:
-                    ProcessTextBlock(page, block, photos, videos, false);
-                    break;
+                    return ProcessText(page, block, photos, videos, false);
                 case TLPageBlockBlockquote blockquote:
-                    ProcessBlockquote(page, blockquote, photos, videos);
-                    break;
+                    return ProcessBlockquote(page, blockquote, photos, videos);
                 case TLPageBlockDivider divider:
-                    ProcessDivider(page, divider, photos, videos);
-                    break;
+                    return ProcessDivider(page, divider, photos, videos);
                 case TLPageBlockPhoto photo:
-                    ProcessPhoto(page, photo, photos, videos);
-                    break;
+                    return ProcessPhoto(page, photo, photos, videos);
                 case TLPageBlockList list:
-                    ProcessList(page, list, photos, videos);
-                    break;
+                    return ProcessList(page, list, photos, videos);
                 case TLPageBlockVideo video:
-                    ProcessVideo(page, video, photos, videos);
-                    break;
+                    return ProcessVideo(page, video, photos, videos);
                 case TLPageBlockEmbedPost embedPost:
-                    ProcessEmbedPost(page, embedPost, photos, videos);
-                    break;
+                    return ProcessEmbedPost(page, embedPost, photos, videos);
                 case TLPageBlockSlideshow slideshow:
-                    ProcessSlideshow(page, slideshow, photos, videos);
-                    break;
+                    return ProcessSlideshow(page, slideshow, photos, videos);
                 case TLPageBlockCollage collage:
-                    ProcessCollage(page, collage, photos, videos);
-                    break;
+                    return ProcessCollage(page, collage, photos, videos);
                 case TLPageBlockEmbed embed:
-                    ProcessEmbed(page, embed, photos, videos);
-                    break;
+                    return ProcessEmbed(page, embed, photos, videos);
                 case TLPageBlockPullquote pullquote:
-                    ProcessPullquote(page, pullquote, photos, videos);
-                    break;
+                    return ProcessPullquote(page, pullquote, photos, videos);
                 case TLPageBlockAnchor anchor:
-                    ProcessAnchor(page, anchor, photos, videos);
-                    break;
+                    return ProcessAnchor(page, anchor, photos, videos);
                 case TLPageBlockPreformatted preformatted:
-                    ProcessPreformatted(page, preformatted, photos, videos);
-                    break;
+                    return ProcessPreformatted(page, preformatted, photos, videos);
                 case TLPageBlockUnsupported unsupported:
                     Debug.WriteLine("Unsupported block type: " + block.GetType());
                     break;
             }
+
+            return null;
         }
 
-        private void ProcessPreformatted(TLPageBase page, TLPageBlockPreformatted block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessCover(TLPageBase page, TLPageBlockCover block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
-            _containers.Push(new StackPanel
-            {
-                Style = Resources["BlockPreformattedStyle"] as Style,
-                Margin = new Thickness(0, 0, 0, 12),
-                Padding = new Thickness(0, 8, 0, 0)
-            });
+            _parents.Push(block);
+            var result = ProcessBlock(page, block.Cover, photos, videos);
+            _parents.Pop();
 
-            ProcessTextBlock(page, block, photos, videos, false);
-
-            var panel = _containers.Pop();
-            _containers.Peek().Children.Add(panel);
+            return result;
         }
 
-        private void ProcessAnchor(TLPageBase page, TLPageBlockAnchor block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
-            var child = new Border();
-            _containers.Peek().Children.Add(child);
-            _anchors[block.Name] = child;
-        }
+            var textBlock = new TextBlock { Style = Resources["AuthorDateTextBlockStyle"] as Style };
 
-        private void ProcessEmbed(TLPageBase page, TLPageBlockEmbed block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
-        {
-            if (block.Caption.TypeId != TLType.TextEmpty)
+            if (block.Author.TypeId != TLType.TextEmpty)
             {
-                _containers.Push(new StackPanel { HorizontalAlignment = HorizontalAlignment.Center });
-            }
-
-            FrameworkElement child = null;
-
-            //if (block.HasPosterPhotoId)
-            //{
-            //    var photo = page.Photos.FirstOrDefault(x => x.Id == block.PosterPhotoId);
-            //    var image = new ImageView();
-            //    image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, "thumbnail");
-            //    image.Constraint = photo;
-            //    child = image;
-            //}
-            if (block.HasHtml)
-            {
-                var view = new WebView();
-                view.NavigationCompleted += OnWebViewNavigationCompleted;
-                view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
-
-                var ratio = new RatioControl();
-                ratio.MaxWidth = block.W;
-                ratio.MaxHeight = block.H;
-                ratio.Content = view;
-                ratio.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-                ratio.VerticalContentAlignment = VerticalAlignment.Stretch;
-                child = ratio;
-            }
-            else if (block.HasUrl)
-            {
-                var view = new WebView();
-                view.NavigationCompleted += OnWebViewNavigationCompleted;
-                view.Navigate(new Uri(block.Url));
-
-                var ratio = new RatioControl();
-                ratio.MaxWidth = block.W;
-                ratio.MaxHeight = block.H;
-                ratio.Content = view;
-                ratio.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-                ratio.VerticalContentAlignment = VerticalAlignment.Stretch;
-                child = ratio;
-            }
-
-            _containers.Peek().Children.Add(child);
-
-            if (block.Caption.TypeId != TLType.TextEmpty)
-            {
-                ProcessTextBlock(page, block, photos, videos, true);
-
-                var panel = _containers.Pop();
-                _containers.Peek().Children.Add(panel);
-            }
-            else
-            {
-                child.Margin = new Thickness(0, 0, 0, 12);
-            }
-
-            if (_parents.Count > 0 && _parents.Peek().TypeId == TLType.PageBlockCover)
-            {
-                child.Margin = new Thickness(0, -12, 0, 12);
-            }
-        }
-
-        private async void OnWebViewNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
-        {
-            var jss = _injectedJs;
-            await sender.InvokeScriptAsync("eval", new[] { jss });
-        }
-
-        private void ProcessCollage(TLPageBase page, TLPageBlockCollage block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
-        {
-            if (block.Caption.TypeId != TLType.TextEmpty)
-            {
-                _containers.Push(new StackPanel { HorizontalAlignment = HorizontalAlignment.Center });
-            }
-
-            var items = new List<Image>();
-            foreach (var item in block.Items)
-            {
-                var photoBlock = item as TLPageBlockPhoto;
-                if (photoBlock != null)
-                {
-                    var photo = photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
-                    var image = new Image();
-                    image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
-                    image.Width = 72;
-                    image.Height = 72;
-                    image.Stretch = Stretch.UniformToFill;
-                    image.Margin = new Thickness(0, 0, 4, 4);
-
-                    items.Add(image);
-                }
-
-                var videoBlock = item as TLPageBlockVideo;
-                if (videoBlock != null)
-                {
-                    var video = videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
-                    var image = new Image();
-                    image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
-                    image.Width = 72;
-                    image.Height = 72;
-                    image.Stretch = Stretch.UniformToFill;
-                    image.Margin = new Thickness(0, 0, 4, 4);
-
-                    items.Add(image);
-                }
-            }
-
-            var grid = new Grid();
-            grid.Margin = new Thickness(12, 0, 0, 0);
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-
-            for (int i = 0; i < items.Count; i++)
-            {
-                var y = i / 3;
-                var x = i % 3;
-
-                grid.Children.Add(items[i]);
-                Grid.SetRow(items[i], y);
-                Grid.SetColumn(items[i], x);
-
-                if (x == 0)
-                {
-                    grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
-                }
-            }
-
-            _containers.Peek().Children.Add(grid);
-
-            if (block.Caption.TypeId != TLType.TextEmpty)
-            {
-                ProcessTextBlock(page, block, photos, videos, true);
-
-                var panel = _containers.Pop();
-                _containers.Peek().Children.Add(panel);
-            }
-            else
-            {
-                grid.Margin = new Thickness(12, 0, 0, 12);
-            }
-        }
-
-        private void ProcessSlideshow(TLPageBase page, TLPageBlockSlideshow block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
-        {
-            if (block.Caption.TypeId != TLType.TextEmpty)
-            {
-                _containers.Push(new StackPanel { HorizontalAlignment = HorizontalAlignment.Center });
-            }
-
-            var items = new List<ImageView>();
-            foreach (var item in block.Items)
-            {
-                var photoBlock = item as TLPageBlockPhoto;
-                if (photoBlock != null)
-                {
-                    var photo = photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
-                    var image = new ImageView();
-                    image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
-                    image.Constraint = photo;
-
-                    items.Add(image);
-                }
-
-                var videoBlock = item as TLPageBlockVideo;
-                if (videoBlock != null)
-                {
-                    var video = videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
-                    var image = new ImageView();
-                    image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
-                    image.Constraint = video;
-
-                    items.Add(image);
-                }
-            }
-
-            var flip = new FlipView();
-            flip.ItemsSource = items;
-
-            _containers.Peek().Children.Add(flip);
-
-            if (block.Caption.TypeId != TLType.TextEmpty)
-            {
-                ProcessTextBlock(page, block, photos, videos, true);
-
-                var panel = _containers.Pop();
-                _containers.Peek().Children.Add(panel);
-            }
-            else
-            {
-                flip.Margin = new Thickness(0, 0, 0, 12);
-            }
-        }
-
-        private void ProcessEmbedPost(TLPageBase page, TLPageBlockEmbedPost block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
-        {
-            _containers.Push(new StackPanel
-            {
-                BorderBrush = new SolidColorBrush(Colors.Black),
-                BorderThickness = new Thickness(2, 0, 0, 0),
-                Margin = new Thickness(12, 0, 0, 12)
-            });
-
-            var header = new Grid();
-            header.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
-            header.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
-            header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-            header.ColumnDefinitions.Add(new ColumnDefinition());
-            header.Margin = new Thickness(12, 0, 0, 12);
-
-            var photo = photos.FirstOrDefault(x => x.Id == block.AuthorPhotoId);
-
-            var ellipse = new Ellipse();
-            ellipse.Width = 36;
-            ellipse.Height = 36;
-            ellipse.Margin = new Thickness(0, 0, 12, 0);
-            ellipse.Fill = new ImageBrush { ImageSource = (ImageSource)DefaultPhotoConverter.Convert(photo, true), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-            Grid.SetRowSpan(ellipse, 2);
-
-            var textAuthor = new TextBlock();
-            textAuthor.Text = block.Author;
-            textAuthor.VerticalAlignment = VerticalAlignment.Bottom;
-            Grid.SetColumn(textAuthor, 1);
-            Grid.SetRow(textAuthor, 0);
-
-            var textDate = new TextBlock();
-            textDate.Text = BindConvert.Current.DateTime(block.Date).ToString("dd MMMM yyyy");
-            textDate.VerticalAlignment = VerticalAlignment.Top;
-            textDate.Style = (Style)Resources["CaptionTextBlockStyle"];
-            textDate.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-            Grid.SetColumn(textDate, 1);
-            Grid.SetRow(textDate, 1);
-
-            header.Children.Add(ellipse);
-            header.Children.Add(textAuthor);
-            header.Children.Add(textDate);
-
-            _containers.Peek().Children.Add(header);
-
-            foreach (var sub in block.Blocks)
-            {
-                ProcessBlock(page, sub, photos, videos);
-            }
-
-            var panel = _containers.Pop();
-            _containers.Peek().Children.Add(panel);
-        }
-
-        private void ProcessVideo(TLPageBase page, TLPageBlockVideo block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
-        {
-            if (block.Caption.TypeId != TLType.TextEmpty)
-            {
-                _containers.Push(new StackPanel { HorizontalAlignment = HorizontalAlignment.Center });
-            }
-
-            var video = videos.FirstOrDefault(x => x.Id == block.VideoId);
-            var galleryItem = new GalleryDocumentItem(video as TLDocument, block.Caption?.ToString());
-            var image = new ImageView();
-            image.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
-            image.Constraint = video;
-            image.DataContext = galleryItem;
-            image.Click += Image_Click;
-            image.HorizontalAlignment = HorizontalAlignment.Center;
-
-            ViewModel.Gallery.Items.Add(galleryItem);
-
-            _containers.Peek().Children.Add(image);
-
-            if (block.Caption.TypeId != TLType.TextEmpty)
-            {
-                ProcessTextBlock(page, block, photos, videos, true);
-
-                var panel = _containers.Pop();
-                _containers.Peek().Children.Add(panel);
-            }
-            else
-            {
-                image.Margin = new Thickness(0, 0, 0, 12);
-            }
-        }
-
-        private void ProcessList(TLPageBase page, TLPageBlockList block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
-        {
-            var textBlock = new RichTextBlock();
-            textBlock.TextWrapping = TextWrapping.Wrap;
-            textBlock.Margin = new Thickness(12, 0, 12, 12);
-            textBlock.IsTextSelectionEnabled = false;
-
-            for (int i = 0; i < block.Items.Count; i++)
-            {
-                var text = block.Items[i];
-                var par = new Paragraph();
-                par.TextIndent = -24;
-                par.Margin = new Thickness(24, 0, 0, 0);
-
                 var span = new Span();
-                par.Inlines.Add(new Run { Text = block.Ordered ? (i + 1) + ".\t" : "•\t" });
-                par.Inlines.Add(span);
-                ProcessText(text, span);
-                textBlock.Blocks.Add(par);
+                textBlock.Inlines.Add(new Run { Text = "By " });
+                textBlock.Inlines.Add(span);
+                ProcessRichText(block.Author, span);
+
+                textBlock.Inlines.Add(new Run { Text = " — " });
             }
 
-            _containers.Peek().Children.Add(textBlock);
+            //textBlock.Inlines.Add(new Run { Text = DateTimeFormatter.LongDate.Format(BindConvert.Current.DateTime(block.PublishedDate)) });
+            textBlock.Inlines.Add(new Run { Text = BindConvert.Current.DateTime(block.PublishedDate).ToString("dd MMMM yyyy") });
+            return textBlock;
         }
 
-        private void ProcessDivider(TLPageBase page, TLPageBlockDivider block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
-        {
-            _containers.Peek().Children.Add(new Rectangle
-            {
-                Height = 1,
-                Fill = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"],
-                Margin = new Thickness(72, 0, 72, 12)
-            });
-        }
-
-        private void ProcessBlockquote(TLPageBase page, TLPageBlockBlockquote block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
-        {
-            _containers.Push(new StackPanel
-            {
-                BorderBrush = new SolidColorBrush(Colors.Black),
-                BorderThickness = new Thickness(2, 0, 0, 0),
-                Margin = new Thickness(12, 0, 0, 12)
-            });
-
-            ProcessTextBlock(page, block, photos, videos, false);
-            ProcessTextBlock(page, block, photos, videos, true);
-
-            var panel = _containers.Pop();
-            _containers.Peek().Children.Add(panel);
-        }
-
-        private void ProcessPullquote(TLPageBase page, TLPageBlockPullquote block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
-        {
-            _containers.Push(new StackPanel
-            {
-                //BorderBrush = new SolidColorBrush(Colors.Black),
-                //BorderThickness = new Thickness(2, 0, 0, 0),
-                Margin = new Thickness(0, 0, 0, 12)
-            });
-
-            ProcessTextBlock(page, block, photos, videos, false);
-            ProcessTextBlock(page, block, photos, videos, true);
-
-            var panel = _containers.Pop();
-            _containers.Peek().Children.Add(panel);
-        }
-
-        private void ProcessTextBlock(TLPageBase page, TLPageBlockBase block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos, bool caption)
+        private FrameworkElement ProcessText(TLPageBase page, TLPageBlockBase block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos, bool caption)
         {
             TLRichTextBase text = null;
             switch (block)
@@ -612,33 +272,29 @@ namespace Unigram.Views
                 var span = new Span();
                 textBlock.Inlines.Add(span);
                 textBlock.TextWrapping = TextWrapping.Wrap;
-                textBlock.Margin = new Thickness(12, 0, 12, 12);
-                ProcessText(text, span);
+                //textBlock.Margin = new Thickness(12, 0, 12, 12);
+                ProcessRichText(text, span);
 
                 switch (block.TypeId)
                 {
                     case TLType.PageBlockTitle:
                         textBlock.FontSize = 24;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.Margin = new Thickness(12, 8, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubtitle:
                         textBlock.FontSize = 21;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.Margin = new Thickness(12, 8, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockHeader:
                         textBlock.FontSize = 21;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.Margin = new Thickness(12, 8, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubheader:
                         textBlock.FontSize = 18;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.Margin = new Thickness(12, 8, 12, 12);
                         textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockFooter:
@@ -651,15 +307,12 @@ namespace Unigram.Views
                     case TLType.PageBlockEmbedPost:
                         textBlock.FontSize = 14;
                         textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-                        textBlock.Margin = new Thickness(12, 4, 12, 12);
                         break;
                     case TLType.PageBlockParagraph:
                         textBlock.FontSize = 16;
-                        textBlock.Margin = new Thickness(12, 0, 12, 12);
                         break;
                     case TLType.PageBlockBlockquote:
                         textBlock.FontSize = caption ? 14 : 15;
-                        textBlock.Margin = new Thickness(8, 0, 12, 0);
                         break;
                     case TLType.PageBlockPullquote:
                         var pullquoteBlock = block as TLPageBlockPullquote;
@@ -669,53 +322,563 @@ namespace Unigram.Views
                         break;
                 }
 
-                _containers.Peek().Children.Add(textBlock);
+                return textBlock;
             }
+
+            return null;
         }
 
-        private void ProcessCover(TLPageBase page, TLPageBlockCover block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessPreformatted(TLPageBase page, TLPageBlockPreformatted block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
-            _parents.Push(block);
-            ProcessBlock(page, block.Cover, photos, videos);
-            _parents.Pop();
+            var element = new StackPanel { Style = Resources["BlockPreformattedStyle"] as Style };
+
+            var text = ProcessText(page, block, photos, videos, false);
+            if (text != null) element.Children.Add(text);
+
+            return element;
         }
 
-        private void ProcessPhoto(TLPageBase page, TLPageBlockPhoto block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessDivider(TLPageBase page, TLPageBlockDivider block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
-            if (block.Caption.TypeId != TLType.TextEmpty)
+            var element = new Rectangle { Style = Resources["BlockDividerStyle"] as Style };
+            return element;
+        }
+
+        private FrameworkElement ProcessList(TLPageBase page, TLPageBlockList block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
+            var textBlock = new RichTextBlock();
+            textBlock.TextWrapping = TextWrapping.Wrap;
+            textBlock.IsTextSelectionEnabled = false;
+
+            for (int i = 0; i < block.Items.Count; i++)
             {
-                _containers.Push(new StackPanel { HorizontalAlignment = HorizontalAlignment.Center });
+                var text = block.Items[i];
+                var par = new Paragraph();
+                par.TextIndent = -24;
+                par.Margin = new Thickness(24, 0, 0, 0);
+
+                var span = new Span();
+                par.Inlines.Add(new Run { Text = block.Ordered ? (i + 1) + ".\t" : "•\t" });
+                par.Inlines.Add(span);
+                ProcessRichText(text, span);
+                textBlock.Blocks.Add(par);
             }
 
+            return textBlock;
+        }
+
+        private FrameworkElement ProcessBlockquote(TLPageBase page, TLPageBlockBlockquote block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
+            var element = new StackPanel { Style = Resources["BlockBlockquoteStyle"] as Style };
+
+            var text = ProcessText(page, block, photos, videos, false);
+            if (text != null) element.Children.Add(text);
+
+            var caption = ProcessText(page, block, photos, videos, true);
+            if (caption != null) element.Children.Add(caption);
+
+            return element;
+        }
+
+        private FrameworkElement ProcessPullquote(TLPageBase page, TLPageBlockPullquote block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
+            var element = new StackPanel { Style = Resources["BlockPullquoteStyle"] as Style };
+
+            var text = ProcessText(page, block, photos, videos, false);
+            if (text != null) element.Children.Add(text);
+
+            var caption = ProcessText(page, block, photos, videos, true);
+            if (caption != null) element.Children.Add(caption);
+
+            return element;
+        }
+
+        private FrameworkElement ProcessPhoto(TLPageBase page, TLPageBlockPhoto block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
             var photo = photos.FirstOrDefault(x => x.Id == block.PhotoId);
-            var galleryItem = new GalleryPhotoItem(photo as TLPhoto, block.Caption?.ToString());
-            var image = new ImageView();
-            image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
-            image.Constraint = photo;
-            image.DataContext = galleryItem;
-            image.Click += Image_Click;
-            image.HorizontalAlignment = HorizontalAlignment.Center;
-
-            ViewModel.Gallery.Items.Add(galleryItem);
-
-            _containers.Peek().Children.Add(image);
-
-            if (block.Caption.TypeId != TLType.TextEmpty)
+            if (photo != null)
             {
-                ProcessTextBlock(page, block, photos, videos, true);
+                var element = new StackPanel { Style = Resources["BlockPhotoStyle"] as Style };
 
-                var panel = _containers.Pop();
-                _containers.Peek().Children.Add(panel);
-            }
-            else
-            {
-                image.Margin = new Thickness(0, 0, 0, 12);
+                var galleryItem = new GalleryPhotoItem(photo as TLPhoto, block.Caption?.ToString());
+                var child = new ImageView();
+                child.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
+                child.Constraint = photo;
+                child.DataContext = galleryItem;
+                child.Click += Image_Click;
+                child.HorizontalAlignment = HorizontalAlignment.Center;
+
+                ViewModel.Gallery.Items.Add(galleryItem);
+
+                element.Children.Add(child);
+
+                var caption = ProcessText(page, block, photos, videos, true);
+                if (caption != null)
+                {
+                    caption.Margin = new Thickness(0, 12, 0, 0);
+                    element.Children.Add(caption);
+                }
+
+                return element;
             }
 
-            if (_parents.Count > 0 && _parents.Peek().TypeId == TLType.PageBlockCover)
+            return null;
+        }
+
+        private FrameworkElement ProcessVideo(TLPageBase page, TLPageBlockVideo block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
+            var video = videos.FirstOrDefault(x => x.Id == block.VideoId);
+            if (video != null)
             {
-                image.Margin = new Thickness(0, -12, 0, 12);
+                var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
+
+                var galleryItem = new GalleryDocumentItem(video as TLDocument, block.Caption?.ToString());
+                var child = new ImageView();
+                child.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
+                child.Constraint = video;
+                child.DataContext = galleryItem;
+                child.Click += Image_Click;
+                child.HorizontalAlignment = HorizontalAlignment.Center;
+
+                ViewModel.Gallery.Items.Add(galleryItem);
+
+                element.Children.Add(child);
+
+                var caption = ProcessText(page, block, photos, videos, true);
+                if (caption != null)
+                {
+                    caption.Margin = new Thickness(0, _padding, 0, 0);
+                    element.Children.Add(caption);
+                }
+
+                return element;
             }
+
+            return null;
+        }
+
+        private FrameworkElement ProcessEmbed(TLPageBase page, TLPageBlockEmbed block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
+            var element = new StackPanel { Style = Resources["BlockEmbedStyle"] as Style };
+
+            FrameworkElement child = null;
+
+            //if (block.HasPosterPhotoId)
+            //{
+            //    var photo = page.Photos.FirstOrDefault(x => x.Id == block.PosterPhotoId);
+            //    var image = new ImageView();
+            //    image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, "thumbnail");
+            //    image.Constraint = photo;
+            //    child = image;
+            //}
+            if (block.HasHtml)
+            {
+                var view = new WebView();
+                view.NavigationCompleted += OnWebViewNavigationCompleted;
+                view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
+
+                var ratio = new RatioControl();
+                ratio.MaxWidth = block.W;
+                ratio.MaxHeight = block.H;
+                ratio.Content = view;
+                ratio.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                ratio.VerticalContentAlignment = VerticalAlignment.Stretch;
+                child = ratio;
+            }
+            else if (block.HasUrl)
+            {
+                var view = new WebView();
+                view.NavigationCompleted += OnWebViewNavigationCompleted;
+                view.Navigate(new Uri(block.Url));
+
+                var ratio = new RatioControl();
+                ratio.MaxWidth = block.W;
+                ratio.MaxHeight = block.H;
+                ratio.Content = view;
+                ratio.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                ratio.VerticalContentAlignment = VerticalAlignment.Stretch;
+                child = ratio;
+            }
+
+            element.Children.Add(child);
+
+            var caption = ProcessText(page, block, photos, videos, true);
+            if (caption != null)
+            {
+                caption.Margin = new Thickness(0, _padding, 0, 0);
+                element.Children.Add(caption);
+            }
+
+            return element;
+        }
+
+        private FrameworkElement ProcessSlideshow(TLPageBase page, TLPageBlockSlideshow block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
+            var element = new StackPanel { Style = Resources["BlockSlideshowStyle"] as Style };
+
+            var items = new List<ImageView>();
+            foreach (var item in block.Items)
+            {
+                if (item is TLPageBlockPhoto photoBlock)
+                {
+                    var photo = photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
+                    if (photo != null)
+                    {
+                        var image = new ImageView();
+                        image.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
+                        image.Constraint = photo;
+
+                        items.Add(image);
+                    }
+                }
+                else if (item is TLPageBlockVideo videoBlock)
+                {
+                    var video = videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
+                    if (video != null)
+                    {
+                        var child = new ImageView();
+                        child.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
+                        child.Constraint = video;
+
+                        items.Add(child);
+                    }
+                }
+            }
+
+            var flip = new FlipView();
+            flip.ItemsSource = items;
+
+            element.Children.Add(flip);
+
+            var caption = ProcessText(page, block, photos, videos, true);
+            if (caption != null)
+            {
+                caption.Margin = new Thickness(0, _padding, 0, 0);
+                element.Children.Add(caption);
+            }
+
+            return element;
+        }
+
+        private FrameworkElement ProcessCollage(TLPageBase page, TLPageBlockCollage block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
+            var element = new StackPanel { Style = Resources["BlockCollageStyle"] as Style };
+
+            var items = new List<Image>();
+            foreach (var item in block.Items)
+            {
+                if (item is TLPageBlockPhoto photoBlock)
+                {
+                    var photo = photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
+                    if (photo != null)
+                    {
+                        var child = new Image();
+                        child.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
+                        child.Width = 72;
+                        child.Height = 72;
+                        child.Stretch = Stretch.UniformToFill;
+                        child.Margin = new Thickness(0, 0, 4, 4);
+
+                        items.Add(child);
+                    }
+                }
+                else if (item is TLPageBlockVideo videoBlock)
+                {
+                    var video = videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
+                    if (video != null)
+                    {
+                        var child = new Image();
+                        child.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
+                        child.Width = 72;
+                        child.Height = 72;
+                        child.Stretch = Stretch.UniformToFill;
+                        child.Margin = new Thickness(0, 0, 4, 4);
+
+                        items.Add(child);
+                    }
+                }
+            }
+
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                var y = i / 3;
+                var x = i % 3;
+
+                grid.Children.Add(items[i]);
+                Grid.SetRow(items[i], y);
+                Grid.SetColumn(items[i], x);
+
+                if (x == 0)
+                {
+                    grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+                }
+            }
+
+            element.Children.Add(grid);
+
+            var caption = ProcessText(page, block, photos, videos, true);
+            if (caption != null)
+            {
+                caption.Margin = new Thickness(0, _padding, 0, 0);
+                element.Children.Add(caption);
+            }
+
+            return element;
+        }
+
+        private FrameworkElement ProcessEmbedPost(TLPageBase page, TLPageBlockEmbedPost block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
+            var element = new StackPanel { Style = Resources["BlockEmbedPostStyle"] as Style };
+
+            var header = new Grid();
+            header.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+            header.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
+            header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            header.ColumnDefinitions.Add(new ColumnDefinition());
+            header.Margin = new Thickness(_padding, 0, 0, _padding);
+
+            var photo = photos.FirstOrDefault(x => x.Id == block.AuthorPhotoId);
+            var ellipse = new Ellipse();
+            ellipse.Width = 36;
+            ellipse.Height = 36;
+            ellipse.Margin = new Thickness(0, 0, _padding, 0);
+            ellipse.Fill = new ImageBrush { ImageSource = (ImageSource)DefaultPhotoConverter.Convert(photo, true), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+            Grid.SetRowSpan(ellipse, 2);
+
+            var textAuthor = new TextBlock();
+            textAuthor.Text = block.Author;
+            textAuthor.VerticalAlignment = VerticalAlignment.Bottom;
+            Grid.SetColumn(textAuthor, 1);
+            Grid.SetRow(textAuthor, 0);
+
+            var textDate = new TextBlock();
+            textDate.Text = BindConvert.Current.DateTime(block.Date).ToString("dd MMMM yyyy");
+            textDate.VerticalAlignment = VerticalAlignment.Top;
+            textDate.Style = (Style)Resources["CaptionTextBlockStyle"];
+            textDate.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+            Grid.SetColumn(textDate, 1);
+            Grid.SetRow(textDate, 1);
+
+            header.Children.Add(ellipse);
+            header.Children.Add(textAuthor);
+            header.Children.Add(textDate);
+
+            element.Children.Add(header);
+
+            TLPageBlockBase previousBlock = null;
+            foreach (var subBlock in block.Blocks)
+            {
+                var subLayout = ProcessBlock(page, subBlock, photos, videos);
+                var spacing = SpacingBetweenBlocks(previousBlock, block);
+
+                if (subLayout != null)
+                {
+                    subLayout.Margin = new Thickness(_padding, spacing, _padding, 0);
+                    element.Children.Add(subLayout);
+                }
+
+                previousBlock = block;
+            }
+
+            return element;
+        }
+
+        private FrameworkElement ProcessAnchor(TLPageBase page, TLPageBlockAnchor block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
+            var element = new Border();
+            _anchors[block.Name] = element;
+
+            return element;
+        }
+
+        private void ProcessRichText(TLRichTextBase text, Span span)
+        {
+            switch (text)
+            {
+                case TLTextPlain plainText:
+                    if (GetIsStrikethrough(span))
+                    {
+                        span.Inlines.Add(new Run { Text = StrikethroughFallback(plainText.Text) });
+                    }
+                    else
+                    {
+                        span.Inlines.Add(new Run { Text = plainText.Text });
+                    }
+                    break;
+                case TLTextConcat concatText:
+                    foreach (var concat in concatText.Texts)
+                    {
+                        var concatRun = new Span();
+                        span.Inlines.Add(concatRun);
+                        ProcessRichText(concat, concatRun);
+                    }
+                    break;
+                case TLTextBold boldText:
+                    span.FontWeight = FontWeights.SemiBold;
+                    ProcessRichText(boldText.Text, span);
+                    break;
+                case TLTextEmail emailText:
+                    ProcessRichText(emailText.Text, span);
+                    break;
+                case TLTextFixed fixedText:
+                    span.FontFamily = new FontFamily("Consolas");
+                    ProcessRichText(fixedText.Text, span);
+                    break;
+                case TLTextItalic italicText:
+                    span.FontStyle |= FontStyle.Italic;
+                    ProcessRichText(italicText.Text, span);
+                    break;
+                case TLTextStrike strikeText:
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
+                    {
+                        span.TextDecorations |= TextDecorations.Strikethrough;
+                        ProcessRichText(strikeText.Text, span);
+                    }
+                    else
+                    {
+                        SetIsStrikethrough(span, true);
+                        ProcessRichText(strikeText.Text, span);
+                    }
+                    break;
+                case TLTextUnderline underlineText:
+                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
+                    {
+                        span.TextDecorations |= TextDecorations.Underline;
+                        ProcessRichText(underlineText.Text, span);
+                    }
+                    else
+                    {
+                        var underline = new Underline();
+                        span.Inlines.Add(underline);
+                        ProcessRichText(underlineText.Text, underline);
+                    }
+                    break;
+                case TLTextUrl urlText:
+                    var hyperlink = new Hyperlink();
+                    span.Inlines.Add(hyperlink);
+                    hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
+                    ProcessRichText(urlText.Text, hyperlink);
+                    break;
+                case TLTextEmpty emptyText:
+                    break;
+            }
+        }
+
+        private double SpacingBetweenBlocks(TLPageBlockBase upper, TLPageBlockBase lower)
+        {
+            if (lower is TLPageBlockCover)
+            {
+                return 0.0f;
+            }
+            else if (lower is TLPageBlockDivider || upper is TLPageBlockDivider)
+            {
+                return 25.0f;
+            }
+            else if (lower is TLPageBlockBlockquote || upper is TLPageBlockBlockquote || lower is TLPageBlockPullquote || upper is TLPageBlockPullquote)
+            {
+                return 27.0f;
+            }
+            else if (lower is TLPageBlockTitle)
+            {
+                return 20.0f;
+            }
+            else if (lower is TLPageBlockAuthorDate)
+            {
+                if (upper is TLPageBlockTitle)
+                {
+                    return 26.0f;
+                }
+                else
+                {
+                    return 20.0f;
+                }
+            }
+            else if (lower is TLPageBlockParagraph)
+            {
+                if (upper is TLPageBlockTitle || upper is TLPageBlockAuthorDate)
+                {
+                    return 34.0f;
+                }
+                else if (upper is TLPageBlockHeader || upper is TLPageBlockSubheader)
+                {
+                    return 25.0f;
+                }
+                else if (upper is TLPageBlockParagraph)
+                {
+                    return 25.0f;
+                }
+                else if (upper is TLPageBlockList)
+                {
+                    return 31.0f;
+                }
+                else if (upper is TLPageBlockPreformatted)
+                {
+                    return 19.0f;
+                }
+                else
+                {
+                    return 20.0f;
+                }
+            }
+            else if (lower is TLPageBlockList)
+            {
+                if (upper is TLPageBlockTitle || upper is TLPageBlockAuthorDate)
+                {
+                    return 34.0f;
+                }
+                else if (upper is TLPageBlockHeader || upper is TLPageBlockSubheader)
+                {
+                    return 31.0f;
+                }
+                else if (upper is TLPageBlockParagraph || upper is TLPageBlockList)
+                {
+                    return 31.0f;
+                }
+                else if (upper is TLPageBlockPreformatted)
+                {
+                    return 19.0f;
+                }
+                else
+                {
+                    return 20.0f;
+                }
+            }
+            else if (lower is TLPageBlockPreformatted)
+            {
+                if (upper is TLPageBlockParagraph)
+                {
+                    return 19.0f;
+                }
+                else
+                {
+                    return 20.0f;
+                }
+            }
+            else if (lower is TLPageBlockHeader)
+            {
+                return 32.0f;
+            }
+            else if (lower is TLPageBlockSubheader)
+            {
+                return 32.0f;
+            }
+            else if (lower == null)
+            {
+                if (upper is TLPageBlockFooter)
+                {
+                    return 24.0f;
+                }
+                else
+                {
+                    return 24.0f;
+                }
+            }
+            return 20.0f;
         }
 
         private async void Image_Click(object sender, RoutedEventArgs e)
@@ -736,99 +899,6 @@ namespace Unigram.Views
                         animation.TryStart(image);
                     }
                 });
-            }
-        }
-
-        private void ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
-        {
-            var textBlock = new TextBlock { Style = Resources["AuthorDateTextBlockStyle"] as Style };
-
-            if (block.Author.TypeId != TLType.TextEmpty)
-            {
-                var span = new Span();
-                textBlock.Inlines.Add(new Run { Text = "By " });
-                textBlock.Inlines.Add(span);
-                ProcessText(block.Author, span);
-
-                textBlock.Inlines.Add(new Run { Text = " — " });
-            }
-
-            //textBlock.Inlines.Add(new Run { Text = DateTimeFormatter.LongDate.Format(BindConvert.Current.DateTime(block.PublishedDate)) });
-            textBlock.Inlines.Add(new Run { Text = BindConvert.Current.DateTime(block.PublishedDate).ToString("dd MMMM yyyy") });
-
-            _containers.Peek().Children.Add(textBlock);
-        }
-
-        private void ProcessText(TLRichTextBase text, Span span)
-        {
-            switch (text)
-            {
-                case TLTextPlain plainText:
-                    if (GetIsStrikethrough(span))
-                    {
-                        span.Inlines.Add(new Run { Text = StrikethroughFallback(plainText.Text) });
-                    }
-                    else
-                    {
-                        span.Inlines.Add(new Run { Text = plainText.Text });
-                    }
-                    break;
-                case TLTextConcat concatText:
-                    foreach (var concat in concatText.Texts)
-                    {
-                        var concatRun = new Span();
-                        span.Inlines.Add(concatRun);
-                        ProcessText(concat, concatRun);
-                    }
-                    break;
-                case TLTextBold boldText:
-                    span.FontWeight = FontWeights.SemiBold;
-                    ProcessText(boldText.Text, span);
-                    break;
-                case TLTextEmail emailText:
-                    ProcessText(emailText.Text, span);
-                    break;
-                case TLTextFixed fixedText:
-                    span.FontFamily = new FontFamily("Consolas");
-                    ProcessText(fixedText.Text, span);
-                    break;
-                case TLTextItalic italicText:
-                    span.FontStyle |= FontStyle.Italic;
-                    ProcessText(italicText.Text, span);
-                    break;
-                case TLTextStrike strikeText:
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
-                    {
-                        span.TextDecorations |= TextDecorations.Strikethrough;
-                        ProcessText(strikeText.Text, span);
-                    }
-                    else
-                    {
-                        SetIsStrikethrough(span, true);
-                        ProcessText(strikeText.Text, span);
-                    }
-                    break;
-                case TLTextUnderline underlineText:
-                    if (ApiInformation.IsPropertyPresent("Windows.UI.Xaml.Documents.TextElement", "TextDecorations"))
-                    {
-                        span.TextDecorations |= TextDecorations.Underline;
-                        ProcessText(underlineText.Text, span);
-                    }
-                    else
-                    {
-                        var underline = new Underline();
-                        span.Inlines.Add(underline);
-                        ProcessText(underlineText.Text, underline);
-                    }
-                    break;
-                case TLTextUrl urlText:
-                    var hyperlink = new Hyperlink();
-                    span.Inlines.Add(hyperlink);
-                    hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
-                    ProcessText(urlText.Text, hyperlink);
-                    break;
-                case TLTextEmpty emptyText:
-                    break;
             }
         }
 
@@ -885,6 +955,12 @@ namespace Unigram.Views
                     }
                 }
             }
+        }
+
+        private async void OnWebViewNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
+        {
+            var jss = _injectedJs;
+            await sender.InvokeScriptAsync("eval", new[] { jss });
         }
 
         #region Strikethrough
