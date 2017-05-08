@@ -2,10 +2,15 @@
 #include <string>
 #include <vector>
 #include <wrl.h>
+#include <windows.foundation.h>
 #include "Telegram.Api.Native.h"
+
+#define DOWNLOAD_CONNECTIONS_COUNT 2
+#define UPLOAD_CONNECTIONS_COUNT 2
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
+using ABI::Windows::Foundation::IClosable;
 
 namespace Telegram
 {
@@ -14,9 +19,10 @@ namespace Telegram
 		namespace Native
 		{
 
-			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IDatacenter, FtmBase>
+			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IDatacenter, CloakedIid<IClosable>, FtmBase>
 			{
 				friend class Connection;
+				friend class ConnectionManager;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_Datacenter, BaseTrust);
 
@@ -28,10 +34,11 @@ namespace Telegram
 				STDMETHODIMP get_Id(_Out_ UINT32* value);
 				STDMETHODIMP GetCurrentAddress(ConnectionType connectionType, boolean ipv6, _Out_ HSTRING* value);
 				STDMETHODIMP GetCurrentPort(ConnectionType connectionType, boolean ipv6, _Out_ UINT32* value);
-				STDMETHODIMP GetDownloadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
-				STDMETHODIMP GetUploadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
-				STDMETHODIMP GetGenericConnection(boolean create, _Out_ IConnection** value);
-				STDMETHODIMP GetPushConnection(boolean create, _Out_ IConnection** value);
+				//STDMETHODIMP GetDownloadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
+				//STDMETHODIMP GetUploadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
+				//STDMETHODIMP GetGenericConnection(boolean create, _Out_ IConnection** value);
+				//STDMETHODIMP GetPushConnection(boolean create, _Out_ IConnection** value);
+
 
 			private:
 				struct DatacenterEndpoint
@@ -40,8 +47,16 @@ namespace Telegram
 					UINT32 Port;
 				};
 
+				STDMETHODIMP Close();
 				void SwitchTo443Port();
+				void RecreateSessions();
+				HRESULT GetDownloadConnection(UINT32 index, boolean create, _Out_ Connection** value);
+				HRESULT GetUploadConnection(UINT32 index, boolean create, _Out_ Connection** value);
+				HRESULT GetGenericConnection(boolean create, _Out_ Connection** value);
+				HRESULT GetPushConnection(boolean create, _Out_ Connection** value);
 				HRESULT GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, _Out_ DatacenterEndpoint** endpoint);
+				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
+				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
 
 				CriticalSection m_criticalSection;
 				UINT32 m_id;
@@ -53,6 +68,11 @@ namespace Telegram
 				size_t m_currentIpv4DownloadEndpointIndex;
 				size_t m_currentIpv6EndpointIndex;
 				size_t m_currentIpv6DownloadEndpointIndex;
+
+				ComPtr<Connection> m_genericConnection;
+				ComPtr<Connection> m_downloadConnections[DOWNLOAD_CONNECTIONS_COUNT];
+				ComPtr<Connection> m_uploadConnections[UPLOAD_CONNECTIONS_COUNT];
+				ComPtr<Connection> m_pushConnection;
 			};
 
 		}

@@ -132,6 +132,11 @@ HRESULT ConnectionSocket::DisconnectSocket()
 
 HRESULT ConnectionSocket::SendData(BYTE const* buffer, UINT32 length)
 {
+	/*if (buffer == nullptr)
+	{
+		return E_POINTER;
+	}*/
+
 	if (m_socket == INVALID_SOCKET)
 	{
 		return E_NOT_VALID_STATE;
@@ -146,7 +151,7 @@ HRESULT ConnectionSocket::SendData(BYTE const* buffer, UINT32 length)
 			return HRESULT_FROM_WIN32(wsaLastError);
 		}
 	}
-	else if (bytesSent < length)
+	else if (static_cast<UINT32>(bytesSent) < length)
 	{
 		auto remainingSize = length - bytesSent;
 		auto availableSize = m_sendBuffer.size();
@@ -234,7 +239,7 @@ HRESULT ConnectionSocket::OnSocketEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 			if (availableBytes > 0)
 			{
 				int sentBytes;
-				if ((sentBytes = send(m_socket, reinterpret_cast<char*>(m_sendBuffer.data()), availableBytes, 0)) == SOCKET_ERROR)
+				if ((sentBytes = send(m_socket, reinterpret_cast<char*>(m_sendBuffer.data()), static_cast<int>(availableBytes), 0)) == SOCKET_ERROR)
 				{
 					if ((wsaLastError = WSAGetLastError()) != WSAEWOULDBLOCK)
 					{

@@ -38,8 +38,11 @@ namespace Telegram
 			{
 				HRESULT ReadByte([out][retval] BYTE* value);
 				HRESULT ReadInt16([out][retval] INT16* value);
+				HRESULT ReadUInt16([out][retval] UINT16* value);
 				HRESULT ReadInt32([out][retval] INT32* value);
+				HRESULT ReadUInt32([out][retval] UINT32* value);
 				HRESULT ReadInt64([out][retval] INT64* value);
+				HRESULT ReadUInt64([out][retval] UINT64* value);
 				HRESULT ReadBool([out][retval] boolean* value);	
 				HRESULT ReadString([out][retval] HSTRING* value);
 				HRESULT ReadByteArray([out] UINT32* __valueSize, [out][size_is(, *__valueSize)] BYTE** value);
@@ -62,8 +65,11 @@ namespace Telegram
 			{
 				HRESULT WriteByte([in] BYTE value);
 				HRESULT WriteInt16([in] INT16 value);
+				HRESULT WriteUInt16([in] UINT16 value);
 				HRESULT WriteInt32([in] INT32 value);
+				HRESULT WriteUInt32([in] UINT32 value);
 				HRESULT WriteInt64([in] INT64 value);
+				HRESULT WriteUInt64([in] UINT64 value);
 				HRESULT WriteBool([in] boolean value);
 				HRESULT WriteString([in] HSTRING value);
 				HRESULT WriteByteArray([in] UINT32 __valueSize, [in][size_is(__valueSize)] BYTE* value);
@@ -96,10 +102,10 @@ namespace Telegram
 				[propget] HRESULT Id([out][retval] UINT32* value);
 				HRESULT GetCurrentAddress([in] ConnectionType connectionType, [in] boolean ipv6, [out][retval] HSTRING* value);
 				HRESULT GetCurrentPort([in] ConnectionType connectionType, [in] boolean ipv6, [out][retval] UINT32* value);
-				HRESULT GetDownloadConnection([in] UINT32 index,[in] boolean create, [out][retval] Connection** value);
-				HRESULT GetUploadConnection([in] UINT32 index, [in] boolean create, [out][retval] Connection** value);
-				HRESULT GetGenericConnection([in] boolean create, [out][retval] Connection** value);
-				HRESULT GetPushConnection([in] boolean create, [out][retval] Connection** value);
+				//HRESULT GetDownloadConnection([in] UINT32 index,[in] boolean create, [out][retval] Connection** value);
+				//HRESULT GetUploadConnection([in] UINT32 index, [in] boolean create, [out][retval] Connection** value);
+				//HRESULT GetGenericConnection([in] boolean create, [out][retval] Connection** value);
+				//HRESULT GetPushConnection([in] boolean create, [out][retval] Connection** value);
 			}
 
 			[marshaling_behavior(agile)]

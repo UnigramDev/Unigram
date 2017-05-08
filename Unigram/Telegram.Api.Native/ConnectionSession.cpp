@@ -10,7 +10,7 @@ using namespace Telegram::Api::Native;
 ConnectionSession::ConnectionSession() :
 	m_nextSequenceNumber(0),
 	m_minProcessedMessageId(0),
-	m_id(GenereateNewId())
+	m_id(GenereateNewSessionId())
 {
 }
 
@@ -18,14 +18,14 @@ ConnectionSession::~ConnectionSession()
 {
 }
 
-void ConnectionSession::Recreate()
+void ConnectionSession::RecreateSession()
 {
 	m_processedMessageIds.clear();
 	m_messagesIdsForConfirmation.clear();
 	m_processedSessionChanges.clear();
 	m_nextSequenceNumber = 0;
 
-	m_id = GenereateNewId();
+	m_id = GenereateNewSessionId();
 }
 
 UINT32 ConnectionSession::GenerateMessageSequenceNumber(boolean increment)
@@ -75,7 +75,7 @@ void ConnectionSession::AddProcessedSession(INT64 sessionId)
 	m_processedSessionChanges.push_back(sessionId);
 }
 
-INT64 ConnectionSession::GenereateNewId()
+INT64 ConnectionSession::GenereateNewSessionId()
 {
 	INT64 newSessionId;
 	RAND_bytes(reinterpret_cast<UINT8*>(&newSessionId), 8);

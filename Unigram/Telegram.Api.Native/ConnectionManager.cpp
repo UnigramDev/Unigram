@@ -159,6 +159,16 @@ HRESULT ConnectionManager::OnConnectionDataReceived(Connection* connection)
 	return S_OK;
 }
 
+HRESULT ConnectionManager::OnConnectionQuickAckReceived(Connection* connection, INT32 ack)
+{
+	HRESULT result;
+	auto lock = m_criticalSection.Lock();
+
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+
+	return S_OK;
+}
+
 HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 {
 	HRESULT result;
@@ -175,55 +185,13 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 HRESULT ConnectionManager::BoomBaby()
 {
 	HRESULT result;
+	ComPtr<Datacenter> datacenter;
+	ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&datacenter, 0));
+
 	ComPtr<Connection> connection;
-	ReturnIfFailed(result, MakeAndInitialize<Connection>(&connection, nullptr, ConnectionType::Generic));
+	ReturnIfFailed(result, datacenter->GetGenericConnection(true, &connection));
 	ReturnIfFailed(result, connection->AttachToThreadpool(&m_threadpoolEnvironment));
 	ReturnIfFailed(result, connection->Connect());
-
-	Sleep(1000000);
-
-	/*ComPtr<Timer> timer;
-	ComPtr<IEventObject> eventObject;
-
-	Event evnt(CreateEvent(nullptr, FALSE, FALSE, nullptr));
-
-	DWORD count = 0;
-	ULONGLONG lastTimestamp = GetTickCount64();
-
-	HRESULT result = MakeAndInitialize<Timer>(&timer, [&]
-	{
-	ULONGLONG newLastTimestamp = GetTickCount64();
-	OutputDebugStringFormat(L"Count: %d, timestamp: %I64u\n", count, newLastTimestamp - lastTimestamp);
-	lastTimestamp = newLastTimestamp;
-
-	if (++count == 10)
-	{
-	SetEvent(evnt.Get());
-
-	return S_OK;
-	}
-
-	return S_OK;
-	});
-
-	result = timer.CopyTo(IID_PPV_ARGS(&eventObject));
-	result = timer->AttachToThreadoool(&m_threadpoolEnvironment);
-
-	result = timer->SetTimeout(1000, true);
-	result = timer->Start();
-
-	WaitForSingleObject(evnt.Get(), INFINITE);
-
-	count = 0;
-	lastTimestamp = GetTickCount64();
-
-	result = timer->Stop();
-	result = timer->SetTimeout(100, true);
-	result = timer->Start();
-
-	WaitForSingleObject(evnt.Get(), INFINITE);
-
-	result = eventObject->DetachFromThreadpool();*/
 
 	return S_OK;
 }

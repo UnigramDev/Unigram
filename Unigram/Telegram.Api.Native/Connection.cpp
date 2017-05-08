@@ -3,13 +3,17 @@
 #include "Datacenter.h"
 #include "ConnectionManager.h"
 
+#define CONNECTION_MAX_ATTEMPTS 5 
+
 using namespace Telegram::Api::Native;
 
 
 Connection::Connection() :
 	m_token(0),
 	m_type(ConnectionType::Generic),
-	m_currentNetworkType(ConnectionNeworkType::WiFi)
+	m_currentNetworkType(ConnectionNeworkType::WiFi),
+	m_failedConnectionCount(0),
+	m_connectionAttemptCount(CONNECTION_MAX_ATTEMPTS)
 {
 }
 
@@ -156,6 +160,23 @@ HRESULT Connection::Suspend()
 	return S_OK;
 }
 
+HRESULT Connection::Close()
+{
+	HRESULT result;
+	auto lock = m_criticalSection.Lock();
+
+	/*if (m_closed)
+	{
+		return RO_E_CLOSED;
+	}*/
+
+	m_datacenter.Reset();
+
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement connection disposal to avoid circular reference");
+
+	return S_OK;
+}
+
 HRESULT Connection::OnSocketCreated()
 {
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket created event handling");
@@ -171,7 +192,7 @@ HRESULT Connection::OnSocketConnected()
 	std::string requestBuffer("GET /?gfe_rd=cr&ei=GnEKWfHFIczw8Aeh7LDABQ&gws_rd=cr HTTP/1.1\n"
 		"User-Agent: Mozilla / 4.0 (compatible; MSIE5.01; Windows NT)\nHost: www.google.com\nAccept-Language: en-us\nConnection: Keep-Alive\n\nSTOCAZZO h@çk3r");
 
-	ReturnIfFailed(result, SendData(reinterpret_cast<const BYTE*>(requestBuffer.data()), requestBuffer.size()));
+	ReturnIfFailed(result, SendData(reinterpret_cast<const BYTE*>(requestBuffer.data()), static_cast<UINT32>(requestBuffer.size())));
 	return S_OK;
 }
 

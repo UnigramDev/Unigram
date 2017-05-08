@@ -280,6 +280,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Connection.h" />
+    <ClInclude Include="ConnectionCryptograpy.h" />
     <ClInclude Include="ConnectionManager.h" />
     <ClInclude Include="ConnectionSession.h" />
     <ClInclude Include="Datacenter.h" />
@@ -293,6 +294,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="ConnectionCryptograpy.cpp" />
     <ClCompile Include="ConnectionManager.cpp" />
     <ClCompile Include="ConnectionSession.cpp" />
     <ClCompile Include="Datacenter.cpp" />

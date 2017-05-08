@@ -19,7 +19,7 @@ using namespace Microsoft::WRL::Wrappers;
 
 inline HRESULT WindowsCreateString(std::wstring const& wstring, _Out_ HSTRING* hstring)
 {
-	return WindowsCreateString(wstring.c_str(), wstring.length(), hstring);
+	return WindowsCreateString(wstring.c_str(), static_cast<UINT32>(wstring.length()), hstring);
 }
 
 inline HRESULT GetLastHRESULT()

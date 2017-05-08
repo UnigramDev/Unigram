@@ -34,6 +34,13 @@ HRESULT TLBinaryWriter::WriteInt16(INT16 value)
 	return S_OK;
 }
 
+HRESULT TLBinaryWriter::WriteUInt16(UINT16 value)
+{
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+
+	return S_OK;
+}
+
 HRESULT TLBinaryWriter::WriteInt32(INT32 value)
 {
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
@@ -41,7 +48,21 @@ HRESULT TLBinaryWriter::WriteInt32(INT32 value)
 	return S_OK;
 }
 
+HRESULT TLBinaryWriter::WriteUInt32(UINT32 value)
+{
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+
+	return S_OK;
+}
+
 HRESULT TLBinaryWriter::WriteInt64(INT64 value)
+{
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+
+	return S_OK;
+}
+
+HRESULT TLBinaryWriter::WriteUInt64(UINT64 value)
 {
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
 

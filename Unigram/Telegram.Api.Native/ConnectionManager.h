@@ -40,6 +40,7 @@ namespace Telegram
 			private:
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionDataReceived(_In_ Connection* connection);
+				HRESULT OnConnectionQuickAckReceived(_In_ Connection* connection, INT32 ack);
 				HRESULT OnConnectionClosed(_In_ Connection* connection);
 				void OnEventObjectError(_In_ EventObject const* eventObject, HRESULT error);
 

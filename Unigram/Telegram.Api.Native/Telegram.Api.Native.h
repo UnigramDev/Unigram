@@ -6,8 +6,8 @@
  /* File created by MIDL compiler version 8.01.0622 */
 /* at Tue Jan 19 04:14:07 2038
  */
-/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-9dc09b4c:
-    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0622 
+/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-b73b2c8c:
+    Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.01.0622 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
@@ -514,11 +514,20 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryReader;
                     virtual HRESULT STDMETHODCALLTYPE ReadInt16( 
                         /* [out][retval] */ INT16 *value) = 0;
                     
+                    virtual HRESULT STDMETHODCALLTYPE ReadUInt16( 
+                        /* [out][retval] */ UINT16 *value) = 0;
+                    
                     virtual HRESULT STDMETHODCALLTYPE ReadInt32( 
                         /* [out][retval] */ INT32 *value) = 0;
                     
+                    virtual HRESULT STDMETHODCALLTYPE ReadUInt32( 
+                        /* [out][retval] */ UINT32 *value) = 0;
+                    
                     virtual HRESULT STDMETHODCALLTYPE ReadInt64( 
                         /* [out][retval] */ INT64 *value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE ReadUInt64( 
+                        /* [out][retval] */ UINT64 *value) = 0;
                     
                     virtual HRESULT STDMETHODCALLTYPE ReadBool( 
                         /* [out][retval] */ boolean *value) = 0;
@@ -582,13 +591,25 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryReader;
             __x_Telegram_CApi_CNative_CITLBinaryReader * This,
             /* [out][retval] */ INT16 *value);
         
+        HRESULT ( STDMETHODCALLTYPE *ReadUInt16 )( 
+            __x_Telegram_CApi_CNative_CITLBinaryReader * This,
+            /* [out][retval] */ UINT16 *value);
+        
         HRESULT ( STDMETHODCALLTYPE *ReadInt32 )( 
             __x_Telegram_CApi_CNative_CITLBinaryReader * This,
             /* [out][retval] */ INT32 *value);
         
+        HRESULT ( STDMETHODCALLTYPE *ReadUInt32 )( 
+            __x_Telegram_CApi_CNative_CITLBinaryReader * This,
+            /* [out][retval] */ UINT32 *value);
+        
         HRESULT ( STDMETHODCALLTYPE *ReadInt64 )( 
             __x_Telegram_CApi_CNative_CITLBinaryReader * This,
             /* [out][retval] */ INT64 *value);
+        
+        HRESULT ( STDMETHODCALLTYPE *ReadUInt64 )( 
+            __x_Telegram_CApi_CNative_CITLBinaryReader * This,
+            /* [out][retval] */ UINT64 *value);
         
         HRESULT ( STDMETHODCALLTYPE *ReadBool )( 
             __x_Telegram_CApi_CNative_CITLBinaryReader * This,
@@ -646,11 +667,20 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryReader;
 #define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadInt16(This,value)	\
     ( (This)->lpVtbl -> ReadInt16(This,value) ) 
 
+#define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadUInt16(This,value)	\
+    ( (This)->lpVtbl -> ReadUInt16(This,value) ) 
+
 #define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadInt32(This,value)	\
     ( (This)->lpVtbl -> ReadInt32(This,value) ) 
 
+#define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadUInt32(This,value)	\
+    ( (This)->lpVtbl -> ReadUInt32(This,value) ) 
+
 #define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadInt64(This,value)	\
     ( (This)->lpVtbl -> ReadInt64(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadUInt64(This,value)	\
+    ( (This)->lpVtbl -> ReadUInt64(This,value) ) 
 
 #define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadBool(This,value)	\
     ( (This)->lpVtbl -> ReadBool(This,value) ) 
@@ -725,11 +755,20 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryWriter;
                     virtual HRESULT STDMETHODCALLTYPE WriteInt16( 
                         /* [in] */ INT16 value) = 0;
                     
+                    virtual HRESULT STDMETHODCALLTYPE WriteUInt16( 
+                        /* [in] */ UINT16 value) = 0;
+                    
                     virtual HRESULT STDMETHODCALLTYPE WriteInt32( 
                         /* [in] */ INT32 value) = 0;
                     
+                    virtual HRESULT STDMETHODCALLTYPE WriteUInt32( 
+                        /* [in] */ UINT32 value) = 0;
+                    
                     virtual HRESULT STDMETHODCALLTYPE WriteInt64( 
                         /* [in] */ INT64 value) = 0;
+                    
+                    virtual HRESULT STDMETHODCALLTYPE WriteUInt64( 
+                        /* [in] */ UINT64 value) = 0;
                     
                     virtual HRESULT STDMETHODCALLTYPE WriteBool( 
                         /* [in] */ boolean value) = 0;
@@ -793,13 +832,25 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryWriter;
             __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
             /* [in] */ INT16 value);
         
+        HRESULT ( STDMETHODCALLTYPE *WriteUInt16 )( 
+            __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
+            /* [in] */ UINT16 value);
+        
         HRESULT ( STDMETHODCALLTYPE *WriteInt32 )( 
             __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
             /* [in] */ INT32 value);
         
+        HRESULT ( STDMETHODCALLTYPE *WriteUInt32 )( 
+            __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
+            /* [in] */ UINT32 value);
+        
         HRESULT ( STDMETHODCALLTYPE *WriteInt64 )( 
             __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
             /* [in] */ INT64 value);
+        
+        HRESULT ( STDMETHODCALLTYPE *WriteUInt64 )( 
+            __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
+            /* [in] */ UINT64 value);
         
         HRESULT ( STDMETHODCALLTYPE *WriteBool )( 
             __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
@@ -857,11 +908,20 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryWriter;
 #define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteInt16(This,value)	\
     ( (This)->lpVtbl -> WriteInt16(This,value) ) 
 
+#define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteUInt16(This,value)	\
+    ( (This)->lpVtbl -> WriteUInt16(This,value) ) 
+
 #define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteInt32(This,value)	\
     ( (This)->lpVtbl -> WriteInt32(This,value) ) 
 
+#define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteUInt32(This,value)	\
+    ( (This)->lpVtbl -> WriteUInt32(This,value) ) 
+
 #define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteInt64(This,value)	\
     ( (This)->lpVtbl -> WriteInt64(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteUInt64(This,value)	\
+    ( (This)->lpVtbl -> WriteUInt64(This,value) ) 
 
 #define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteBool(This,value)	\
     ( (This)->lpVtbl -> WriteBool(This,value) ) 
@@ -984,24 +1044,6 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIDatacenter;
                         /* [in] */ boolean ipv6,
                         /* [out][retval] */ UINT32 *value) = 0;
                     
-                    virtual HRESULT STDMETHODCALLTYPE GetDownloadConnection( 
-                        /* [in] */ UINT32 index,
-                        /* [in] */ boolean create,
-                        /* [out][retval] */ Telegram::Api::Native::IConnection **value) = 0;
-                    
-                    virtual HRESULT STDMETHODCALLTYPE GetUploadConnection( 
-                        /* [in] */ UINT32 index,
-                        /* [in] */ boolean create,
-                        /* [out][retval] */ Telegram::Api::Native::IConnection **value) = 0;
-                    
-                    virtual HRESULT STDMETHODCALLTYPE GetGenericConnection( 
-                        /* [in] */ boolean create,
-                        /* [out][retval] */ Telegram::Api::Native::IConnection **value) = 0;
-                    
-                    virtual HRESULT STDMETHODCALLTYPE GetPushConnection( 
-                        /* [in] */ boolean create,
-                        /* [out][retval] */ Telegram::Api::Native::IConnection **value) = 0;
-                    
                 };
 
                 extern const __declspec(selectany) IID & IID_IDatacenter = __uuidof(IDatacenter);
@@ -1059,28 +1101,6 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIDatacenter;
             /* [in] */ boolean ipv6,
             /* [out][retval] */ UINT32 *value);
         
-        HRESULT ( STDMETHODCALLTYPE *GetDownloadConnection )( 
-            __x_Telegram_CApi_CNative_CIDatacenter * This,
-            /* [in] */ UINT32 index,
-            /* [in] */ boolean create,
-            /* [out][retval] */ __x_Telegram_CApi_CNative_CIConnection **value);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetUploadConnection )( 
-            __x_Telegram_CApi_CNative_CIDatacenter * This,
-            /* [in] */ UINT32 index,
-            /* [in] */ boolean create,
-            /* [out][retval] */ __x_Telegram_CApi_CNative_CIConnection **value);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetGenericConnection )( 
-            __x_Telegram_CApi_CNative_CIDatacenter * This,
-            /* [in] */ boolean create,
-            /* [out][retval] */ __x_Telegram_CApi_CNative_CIConnection **value);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetPushConnection )( 
-            __x_Telegram_CApi_CNative_CIDatacenter * This,
-            /* [in] */ boolean create,
-            /* [out][retval] */ __x_Telegram_CApi_CNative_CIConnection **value);
-        
         END_INTERFACE
     } __x_Telegram_CApi_CNative_CIDatacenterVtbl;
 
@@ -1122,18 +1142,6 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIDatacenter;
 
 #define __x_Telegram_CApi_CNative_CIDatacenter_GetCurrentPort(This,connectionType,ipv6,value)	\
     ( (This)->lpVtbl -> GetCurrentPort(This,connectionType,ipv6,value) ) 
-
-#define __x_Telegram_CApi_CNative_CIDatacenter_GetDownloadConnection(This,index,create,value)	\
-    ( (This)->lpVtbl -> GetDownloadConnection(This,index,create,value) ) 
-
-#define __x_Telegram_CApi_CNative_CIDatacenter_GetUploadConnection(This,index,create,value)	\
-    ( (This)->lpVtbl -> GetUploadConnection(This,index,create,value) ) 
-
-#define __x_Telegram_CApi_CNative_CIDatacenter_GetGenericConnection(This,create,value)	\
-    ( (This)->lpVtbl -> GetGenericConnection(This,create,value) ) 
-
-#define __x_Telegram_CApi_CNative_CIDatacenter_GetPushConnection(This,create,value)	\
-    ( (This)->lpVtbl -> GetPushConnection(This,create,value) ) 
 
 #endif /* COBJMACROS */
 

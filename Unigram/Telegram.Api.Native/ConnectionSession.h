@@ -17,7 +17,7 @@ namespace Telegram
 				~ConnectionSession();
 
 			protected:
-				inline INT64 GetId() const
+				inline INT64 GetSessionId() const
 				{
 					return m_id;
 				}
@@ -27,7 +27,7 @@ namespace Telegram
 					return !m_messagesIdsForConfirmation.empty();
 				}
 
-				void Recreate();
+				void RecreateSession();
 				UINT32 GenerateMessageSequenceNumber(boolean increment);
 				bool IsMessageIdProcessed(INT64 messageId);
 				void AddProcessedMessageId(INT64 messageId);
@@ -35,7 +35,7 @@ namespace Telegram
 				bool IsSessionProcessed(INT64 sessionId);
 				void AddProcessedSession(INT64 sessionId);
 
-				static INT64 GenereateNewId();
+				static INT64 GenereateNewSessionId();
 
 			private:
 				INT64 m_id;

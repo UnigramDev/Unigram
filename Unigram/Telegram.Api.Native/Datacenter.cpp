@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Datacenter.h"
+#include "Connection.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
@@ -44,7 +45,6 @@ HRESULT Datacenter::GetCurrentAddress(ConnectionType connectionType, boolean ipv
 
 	HRESULT result;
 	DatacenterEndpoint* endpoint;
-
 	ReturnIfFailed(result, GetCurrentEndpoint(connectionType, ipv6, &endpoint));
 
 	return WindowsCreateString(endpoint->Address, value);
@@ -59,68 +59,113 @@ HRESULT Datacenter::GetCurrentPort(ConnectionType connectionType, boolean ipv6, 
 
 	HRESULT result;
 	DatacenterEndpoint* endpoint;
-
 	ReturnIfFailed(result, GetCurrentEndpoint(connectionType, ipv6, &endpoint));
 
 	*value = endpoint->Port;
 	return S_OK;
 }
 
-HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, IConnection** value)
+HRESULT Datacenter::Close()
 {
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
+	HRESULT result;
 	auto lock = m_criticalSection.Lock();
 
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+	/*if (m_closed)
+	{
+		return RO_E_CLOSED;
+	}*/
 
+	if (m_genericConnection != nullptr)
+	{
+		m_genericConnection->Close();
+		m_genericConnection.Reset();
+	}
+
+	if (m_pushConnection != nullptr)
+	{
+		m_pushConnection->Close();
+		m_pushConnection.Reset();
+	}
+
+	for (size_t i = 0; i < UPLOAD_CONNECTIONS_COUNT; i++)
+	{
+		if (m_uploadConnections[i] != nullptr)
+		{
+			m_uploadConnections[i]->Close();
+			m_uploadConnections[i].Reset();
+		}
+	}
+
+	for (size_t i = 0; i < DOWNLOAD_CONNECTIONS_COUNT; i++)
+	{
+		if (m_downloadConnections[i] != nullptr)
+		{
+			m_downloadConnections[i]->Close();
+			m_downloadConnections[i].Reset();
+		}
+	}
 	return S_OK;
 }
 
-HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, IConnection** value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	auto lock = m_criticalSection.Lock();
-
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
-
-	return S_OK;
-}
-
-HRESULT Datacenter::GetGenericConnection(boolean create, IConnection** value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	auto lock = m_criticalSection.Lock();
-
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
-
-	return S_OK;
-}
-
-HRESULT Datacenter::GetPushConnection(boolean create, IConnection** value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	auto lock = m_criticalSection.Lock();
-
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
-
-	return S_OK;
-}
+//HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, IConnection** value)
+//{
+//	if (value == nullptr)
+//	{
+//		return E_POINTER;
+//	}
+//
+//	HRESULT result;
+//	ComPtr<Connection> connection;
+//	ReturnIfFailed(result, GetDownloadConnection(index, create, &connection));
+//
+//	*value = connection.Detach();
+//	return S_OK;
+//}
+//
+//HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, IConnection** value)
+//{
+//	if (value == nullptr)
+//	{
+//		return E_POINTER;
+//	}
+//
+//	HRESULT result;
+//	ComPtr<Connection> connection;
+//	ReturnIfFailed(result, GetUploadConnection(index, create, &connection));
+//
+//	*value = connection.Detach();
+//	return S_OK;
+//}
+//
+//HRESULT Datacenter::GetGenericConnection(boolean create, IConnection** value)
+//{
+//	if (value == nullptr)
+//	{
+//		return E_POINTER;
+//	}
+//
+//	HRESULT result;
+//	ComPtr<Connection> connection;
+//	ReturnIfFailed(result, GetGenericConnection(create, &connection));
+//
+//	*value = connection.Detach();
+//	return S_OK;
+//}
+//
+//HRESULT Datacenter::GetPushConnection(boolean create, IConnection** value)
+//{
+//	if (value == nullptr)
+//	{
+//		return E_POINTER;
+//	}
+//
+//	HRESULT result;
+//	ComPtr<Connection> connection;
+//	ReturnIfFailed(result, GetPushConnection(create, &connection));
+//
+//	*value = connection.Detach();
+//	return S_OK;
+//}
 
 void Datacenter::SwitchTo443Port()
 {
@@ -159,6 +204,127 @@ void Datacenter::SwitchTo443Port()
 		{
 			m_currentIpv6DownloadEndpointIndex = i;
 			break;
+		}
+	}
+}
+
+HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, Connection** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	if (index >= DOWNLOAD_CONNECTIONS_COUNT)
+	{
+		return E_BOUNDS;
+	}
+
+	auto lock = m_criticalSection.Lock();
+
+	if (m_downloadConnections[index] == nullptr && create)
+	{
+		HRESULT result;
+		ComPtr<Connection> connection;
+		ReturnIfFailed(result, MakeAndInitialize<Connection>(&m_downloadConnections[index], this, ConnectionType::Download));
+		//ReturnIfFailed(result, connection->Connect());
+	}
+
+	return m_downloadConnections[index].CopyTo(value);
+}
+
+HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, Connection** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	if (index >= UPLOAD_CONNECTIONS_COUNT)
+	{
+		return E_BOUNDS;
+	}
+
+	auto lock = m_criticalSection.Lock();
+
+	if (m_uploadConnections[index] == nullptr && create)
+	{
+		HRESULT result;
+		ComPtr<Connection> connection;
+		ReturnIfFailed(result, MakeAndInitialize<Connection>(&m_uploadConnections[index], this, ConnectionType::Upload));
+		//ReturnIfFailed(result, connection->Connect());
+	}
+
+	return m_uploadConnections[index].CopyTo(value);
+}
+
+HRESULT Datacenter::GetGenericConnection(boolean create, Connection** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	auto lock = m_criticalSection.Lock();
+
+	if (m_genericConnection == nullptr && create)
+	{
+		HRESULT result;
+		ComPtr<Connection> connection;
+		ReturnIfFailed(result, MakeAndInitialize<Connection>(&m_genericConnection, this, ConnectionType::Generic));
+		//ReturnIfFailed(result, connection->Connect());
+	}
+
+	return m_genericConnection.CopyTo(value);
+}
+
+HRESULT Datacenter::GetPushConnection(boolean create, Connection** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	auto lock = m_criticalSection.Lock();
+
+	if (m_pushConnection == nullptr && create)
+	{
+		HRESULT result;
+		ComPtr<Connection> connection;
+		ReturnIfFailed(result, MakeAndInitialize<Connection>(&m_pushConnection, this, ConnectionType::Push));
+		//ReturnIfFailed(result, connection->Connect());
+	}
+
+	return m_pushConnection.CopyTo(value);
+}
+
+void Datacenter::RecreateSessions()
+{
+	auto lock = m_criticalSection.Lock();
+
+	if (m_genericConnection != nullptr)
+	{
+		m_genericConnection->RecreateSession();
+	}
+
+	/*if (m_pushConnection != nullptr)
+	{
+		m_pushConnection->RecreateSession();
+	}*/
+
+	for (size_t i = 0; i < UPLOAD_CONNECTIONS_COUNT; i++)
+	{
+		if (m_uploadConnections[i] != nullptr)
+		{
+			m_uploadConnections[i]->RecreateSession();
+		}
+	}
+
+	for (size_t i = 0; i < DOWNLOAD_CONNECTIONS_COUNT; i++)
+	{
+		if (m_downloadConnections[i] != nullptr)
+		{
+			m_downloadConnections[i]->RecreateSession();
 		}
 	}
 }

@@ -1,13 +1,16 @@
 #pragma once
 #include <wrl.h>
+#include <windows.foundation.h>
 #include "Telegram.Api.Native.h"
 #include "EventObject.h"
 #include "Timer.h"
 #include "ConnectionSession.h"
 #include "ConnectionSocket.h"
+#include "ConnectionCryptograpy.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
+using ABI::Windows::Foundation::IClosable;
 
 namespace Telegram
 {
@@ -16,9 +19,10 @@ namespace Telegram
 		namespace Native
 		{
 
-			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, FtmBase>,
-				public virtual EventObjectT<EventTraits::WaitTraits>, public ConnectionSession, public ConnectionSocket
+			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, CloakedIid<IClosable>, FtmBase>,
+				public virtual EventObjectT<EventTraits::WaitTraits>, ConnectionSession, ConnectionSocket, ConnectionCryptograpy
 			{
+				friend class Datacenter;
 				friend class ConnectionManager;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_Connection, BaseTrust);
@@ -39,6 +43,7 @@ namespace Telegram
 					return m_datacenter.Get();
 				}
 
+				STDMETHODIMP Close();
 				HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
 				HRESULT Connect();
 				HRESULT Reconnect();
@@ -56,6 +61,9 @@ namespace Telegram
 				ConnectionNeworkType m_currentNetworkType;
 				ComPtr<Datacenter> m_datacenter;
 				ComPtr<Timer> m_reconnectionTimer;
+
+				UINT32 m_failedConnectionCount;
+				UINT32 m_connectionAttemptCount;
 			};
 
 		}

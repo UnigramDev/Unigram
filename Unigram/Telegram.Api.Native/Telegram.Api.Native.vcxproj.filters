@@ -16,6 +16,7 @@
     <ClCompile Include="TLBinaryReader.cpp" />
     <ClCompile Include="TLBinaryWriter.cpp" />
     <ClCompile Include="EventObject.cpp" />
+    <ClCompile Include="ConnectionCryptograpy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -31,6 +32,7 @@
     <ClInclude Include="WSAEvent.h">
       <Filter>Wrappers</Filter>
     </ClInclude>
+    <ClInclude Include="ConnectionCryptograpy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

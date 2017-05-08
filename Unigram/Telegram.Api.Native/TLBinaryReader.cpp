@@ -45,6 +45,18 @@ HRESULT TLBinaryReader::ReadInt16(INT16* value)
 	return S_OK;
 }
 
+HRESULT TLBinaryReader::ReadUInt16(UINT16* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+
+	return S_OK;
+}
+
 HRESULT TLBinaryReader::ReadInt32(INT32* value)
 {
 	if (value == nullptr)
@@ -57,7 +69,31 @@ HRESULT TLBinaryReader::ReadInt32(INT32* value)
 	return S_OK;
 }
 
+HRESULT TLBinaryReader::ReadUInt32(UINT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+
+	return S_OK;
+}
+
 HRESULT TLBinaryReader::ReadInt64(INT64* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+
+	return S_OK;
+}
+
+HRESULT TLBinaryReader::ReadUInt64(UINT64* value)
 {
 	if (value == nullptr)
 	{
