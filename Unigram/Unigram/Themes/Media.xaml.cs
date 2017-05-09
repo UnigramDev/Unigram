@@ -174,5 +174,19 @@ namespace Unigram.Themes
         {
             MessageHelper.HandleTelegramUrl("t.me/unigramchannel");
         }
+
+        private void Contact_Click(object sender, RoutedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+            var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
+            if (bubble != null && bubble.Context != null)
+            {
+                if (message.Media is TLMessageMediaContact contactMedia && contactMedia.User.HasAccessHash)
+                {
+                    bubble.Context.NavigationService.Navigate(typeof(DialogPage), contactMedia.User.ToPeer());
+                }
+            }
+        }
     }
 }

@@ -129,11 +129,7 @@
                  <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
                  </Grid>-->
 
-            <Ellipse Width="48" Height="48" Margin="0,0,12,0" Grid.RowSpan="2">
-                <Ellipse.Fill>
-                    <ImageBrush ImageSource="{Binding Media.User, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                </Ellipse.Fill>
-            </Ellipse>
+            <controls:ProfilePictureView Click="Contact_Click" Source="{Binding Media.User, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
             <TextBlock Text="{Binding Media.FullName}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
             <TextBlock Text="{Binding Media.PhoneNumber, Converter={StaticResource PhoneNumberFormatConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>

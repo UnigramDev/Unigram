@@ -778,7 +778,7 @@ namespace Unigram.Views
                     }
                     break;
                 case TLTextUrl urlText:
-                    var hyperlink = new Hyperlink();
+                    var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
                     span.Inlines.Add(hyperlink);
                     hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
                     ProcessRichText(urlText.Text, hyperlink);

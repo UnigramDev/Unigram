@@ -258,11 +258,9 @@ namespace Unigram
             await VoIPConnection.Current.ConnectAsync();
             await Toast.RegisterBackgroundTasks();
 
-#if !DEBUG
             BadgeUpdateManager.CreateBadgeUpdaterForApplication().Clear();
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
             ToastNotificationManager.History.Clear();
-#endif
 
 #if !DEBUG && !PREVIEW
             Execute.BeginOnThreadPool(async () =>
