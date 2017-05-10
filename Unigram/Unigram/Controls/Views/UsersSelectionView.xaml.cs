@@ -76,6 +76,15 @@ namespace Unigram.Controls.Views
             }
         }
 
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                ViewModel.SelectedItems.Add(e.ClickedItem as TLUser);
+                ViewModel.SendCommand.Execute();
+            }
+        }
+
         private void TagsTextBox_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ScrollingHost.ChangeView(null, ScrollingHost.ScrollableHeight, null);

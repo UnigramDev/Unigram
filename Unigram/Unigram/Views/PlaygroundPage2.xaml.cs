@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
+using Unigram.Media;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -26,18 +29,20 @@ namespace Unigram.Views
         {
             this.InitializeComponent();
         }
-    }
 
-    public class CiccioConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            return (double)(int)value;
-        }
+            var id = "d5NTPDG7Js0";
+            var token = new CancellationTokenSource();
+            var youtube = new YouTubeVideoPlayerTask();
+            var result = await youtube.DoWork(id, token.Token);
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return (int)(double)value;
+            //var id = "9430705";
+            //var vimeo = new VimeoVideoPlayerTask();
+            //var result = await vimeo.DoWork(id, new CancellationTokenSource().Token);
+
+            //Element.Source = MediaSource.CreateFromUri(new Uri(result));
+            //Element.MediaPlayer.Play();
         }
     }
 }

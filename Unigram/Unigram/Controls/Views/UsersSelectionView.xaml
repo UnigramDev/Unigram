@@ -43,6 +43,8 @@
               ItemsSource="{x:Bind ViewModel.Items}"
               SelectionMode="{x:Bind ViewModel.SelectionMode}"
               SelectionChanged="ListView_SelectionChanged"
+              IsItemClickEnabled="True"
+              ItemClick="ListView_ItemClick"
               Header="{x:Bind Header, Mode=OneWay}"
               HeaderTemplate="{x:Bind HeaderTemplate, Mode=OneWay}"
               Grid.Row="2">
