@@ -160,8 +160,8 @@ namespace Unigram
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            NavigationService.Navigate(typeof(PlaygroundPage2));
-            return Task.CompletedTask;
+            //NavigationService.Navigate(typeof(PlaygroundPage2));
+            //return Task.CompletedTask;
 
             //PhoneCallPage newPlayer = null;
             //CoreApplicationView newView = CoreApplication.CreateNewView();
