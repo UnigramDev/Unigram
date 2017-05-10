@@ -63,13 +63,7 @@ namespace Telegram.Api.Services.Cache
         {
             _path = FileUtils.GetFileName("database.sqlite");
             Sqlite3.sqlite3_open_v2(_path, out _database, 2 | 4, string.Empty);
-
-            var boh = CreateDatabase.Query;
-
-            Statement statement;
-            Sqlite3.sqlite3_prepare_v2(_database, CreateDatabase.Query, out statement);
-            Sqlite3.sqlite3_step(statement);
-            Sqlite3.sqlite3_finalize(statement);
+            CreateDatabase.Execute(_database);
 
             UsersContext = new UsersContext(_database);
             //ChatsContext = new Context<TLChatBase>(_database);

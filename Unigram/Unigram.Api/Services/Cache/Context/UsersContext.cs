@@ -32,8 +32,6 @@ namespace Telegram.Api.Services.Cache.Context
                 TLUserBase result = null;
                 if (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
                 {
-                    Debug.WriteLine("Loading from database");
-
                     var flags = (TLUser.Flag)Sqlite3.sqlite3_column_int(statement, 2);
                     var id = Sqlite3.sqlite3_column_int(statement, 0);
 
