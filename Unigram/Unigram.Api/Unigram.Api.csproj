@@ -123,6 +123,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Helpers\PhoneNumber.cs" />
+    <Compile Include="Services\Cache\Context\CreateDatabase.cs" />
     <Compile Include="Services\Cache\Context\UsersContext.cs" />
     <Compile Include="Services\FileManager\DownloadAudioFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadDocumentFileManager.cs" />
