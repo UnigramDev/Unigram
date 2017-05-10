@@ -38,7 +38,7 @@ namespace Telegram
 				HRESULT ConnectSocket(std::wstring address, UINT16 port, boolean ipv6);
 				HRESULT DisconnectSocket();
 				HRESULT SendData(_In_reads_(length) BYTE const* buffer, UINT32 length);
-				HRESULT OnSocketEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
+				HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
 
 				virtual HRESULT OnSocketCreated() = 0;
 				virtual HRESULT OnSocketConnected() = 0;

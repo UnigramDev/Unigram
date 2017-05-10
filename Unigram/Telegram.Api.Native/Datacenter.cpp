@@ -1,4 +1,6 @@
 #include "pch.h"
+#include <algorithm>
+#include <Ws2tcpip.h>
 #include "Datacenter.h"
 #include "Connection.h"
 #include "Helpers\COMHelper.h"
@@ -67,8 +69,7 @@ HRESULT Datacenter::GetCurrentPort(ConnectionType connectionType, boolean ipv6, 
 
 HRESULT Datacenter::Close()
 {
-	HRESULT result;
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	/*if (m_closed)
 	{
@@ -79,12 +80,6 @@ HRESULT Datacenter::Close()
 	{
 		m_genericConnection->Close();
 		m_genericConnection.Reset();
-	}
-
-	if (m_pushConnection != nullptr)
-	{
-		m_pushConnection->Close();
-		m_pushConnection.Reset();
 	}
 
 	for (size_t i = 0; i < UPLOAD_CONNECTIONS_COUNT; i++)
@@ -107,69 +102,9 @@ HRESULT Datacenter::Close()
 	return S_OK;
 }
 
-//HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, IConnection** value)
-//{
-//	if (value == nullptr)
-//	{
-//		return E_POINTER;
-//	}
-//
-//	HRESULT result;
-//	ComPtr<Connection> connection;
-//	ReturnIfFailed(result, GetDownloadConnection(index, create, &connection));
-//
-//	*value = connection.Detach();
-//	return S_OK;
-//}
-//
-//HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, IConnection** value)
-//{
-//	if (value == nullptr)
-//	{
-//		return E_POINTER;
-//	}
-//
-//	HRESULT result;
-//	ComPtr<Connection> connection;
-//	ReturnIfFailed(result, GetUploadConnection(index, create, &connection));
-//
-//	*value = connection.Detach();
-//	return S_OK;
-//}
-//
-//HRESULT Datacenter::GetGenericConnection(boolean create, IConnection** value)
-//{
-//	if (value == nullptr)
-//	{
-//		return E_POINTER;
-//	}
-//
-//	HRESULT result;
-//	ComPtr<Connection> connection;
-//	ReturnIfFailed(result, GetGenericConnection(create, &connection));
-//
-//	*value = connection.Detach();
-//	return S_OK;
-//}
-//
-//HRESULT Datacenter::GetPushConnection(boolean create, IConnection** value)
-//{
-//	if (value == nullptr)
-//	{
-//		return E_POINTER;
-//	}
-//
-//	HRESULT result;
-//	ComPtr<Connection> connection;
-//	ReturnIfFailed(result, GetPushConnection(create, &connection));
-//
-//	*value = connection.Detach();
-//	return S_OK;
-//}
-
 void Datacenter::SwitchTo443Port()
 {
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	for (size_t i = 0; i < m_ipv4Endpoints.size(); i++)
 	{
@@ -208,6 +143,131 @@ void Datacenter::SwitchTo443Port()
 	}
 }
 
+void Datacenter::RecreateSessions()
+{
+	auto lock = LockCriticalSection();
+
+	if (m_genericConnection != nullptr)
+	{
+		m_genericConnection->RecreateSession();
+	}
+
+	for (size_t i = 0; i < UPLOAD_CONNECTIONS_COUNT; i++)
+	{
+		if (m_uploadConnections[i] != nullptr)
+		{
+			m_uploadConnections[i]->RecreateSession();
+		}
+	}
+
+	for (size_t i = 0; i < DOWNLOAD_CONNECTIONS_COUNT; i++)
+	{
+		if (m_downloadConnections[i] != nullptr)
+		{
+			m_downloadConnections[i]->RecreateSession();
+		}
+	}
+}
+
+void Datacenter::GetSessionsIds(std::vector<INT64>& sessionIds)
+{
+	auto lock = LockCriticalSection();
+
+	if (m_genericConnection != nullptr)
+	{
+		sessionIds.push_back(m_genericConnection->GetSessionId());
+	}
+
+	for (size_t i = 0; i < UPLOAD_CONNECTIONS_COUNT; i++)
+	{
+		if (m_uploadConnections[i] != nullptr)
+		{
+			sessionIds.push_back(m_uploadConnections[i]->GetSessionId());
+		}
+	}
+
+	for (size_t i = 0; i < DOWNLOAD_CONNECTIONS_COUNT; i++)
+	{
+		if (m_downloadConnections[i] != nullptr)
+		{
+			sessionIds.push_back(m_downloadConnections[i]->GetSessionId());
+		}
+	}
+}
+
+void Datacenter::NextEndpoint(ConnectionType connectionType, boolean ipv6)
+{
+	auto lock = LockCriticalSection();
+
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement Datacenter next endpoint switching");
+}
+
+void Datacenter::ResetEndpoint()
+{
+	auto lock = LockCriticalSection();
+
+	m_currentIpv4EndpointIndex = 0;
+	m_currentIpv4DownloadEndpointIndex = 0;
+	m_currentIpv6EndpointIndex = 0;
+	m_currentIpv6DownloadEndpointIndex = 0;
+
+	//StoreCurrentEndpoint();
+}
+
+HRESULT Datacenter::AddEndpoint(std::wstring address, UINT32 port, ConnectionType connectionType, boolean ipv6)
+{
+#if _DEBUG
+	ADDRINFOW* addressInfo;
+	if (GetAddrInfo(address.data(), nullptr, nullptr, &addressInfo) != NO_ERROR)
+	{
+		return WS_E_ENDPOINT_NOT_FOUND;
+	}
+
+	FreeAddrInfo(addressInfo);
+#endif
+
+	std::vector<DatacenterEndpoint>* endpoints;
+	auto lock = LockCriticalSection();
+
+	switch (connectionType)
+	{
+	case ConnectionType::Generic:
+	case ConnectionType::Upload:
+		if (ipv6)
+		{
+			endpoints = &m_ipv6Endpoints;
+		}
+		else
+		{
+			endpoints = &m_ipv4Endpoints;
+		}
+		break;
+	case ConnectionType::Download:
+		if (ipv6)
+		{
+			endpoints = &m_ipv6DownloadEndpoints;
+		}
+		else
+		{
+			endpoints = &m_ipv4DownloadEndpoints;
+		}
+		break;
+	default:
+		return E_INVALIDARG;
+	}
+
+	if (std::find_if(endpoints->begin(), endpoints->end(), [&](DatacenterEndpoint const& endpoint)
+	{
+		return endpoint.Address.compare(address) == 0; // && endpoint.Port == port;
+	}) != endpoints->end())
+	{
+		return PLA_E_NO_DUPLICATES;
+	}
+
+	endpoints->push_back({ address, port });
+	return S_OK;
+}
+
 HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, Connection** value)
 {
 	if (value == nullptr)
@@ -220,7 +280,7 @@ HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, Connecti
 		return E_BOUNDS;
 	}
 
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	if (m_downloadConnections[index] == nullptr && create)
 	{
@@ -245,7 +305,7 @@ HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, Connection
 		return E_BOUNDS;
 	}
 
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	if (m_uploadConnections[index] == nullptr && create)
 	{
@@ -265,7 +325,7 @@ HRESULT Datacenter::GetGenericConnection(boolean create, Connection** value)
 		return E_POINTER;
 	}
 
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	if (m_genericConnection == nullptr && create)
 	{
@@ -278,45 +338,21 @@ HRESULT Datacenter::GetGenericConnection(boolean create, Connection** value)
 	return m_genericConnection.CopyTo(value);
 }
 
-HRESULT Datacenter::GetPushConnection(boolean create, Connection** value)
+HRESULT Datacenter::SuspendConnections()
 {
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	auto lock = m_criticalSection.Lock();
-
-	if (m_pushConnection == nullptr && create)
-	{
-		HRESULT result;
-		ComPtr<Connection> connection;
-		ReturnIfFailed(result, MakeAndInitialize<Connection>(&m_pushConnection, this, ConnectionType::Push));
-		//ReturnIfFailed(result, connection->Connect());
-	}
-
-	return m_pushConnection.CopyTo(value);
-}
-
-void Datacenter::RecreateSessions()
-{
-	auto lock = m_criticalSection.Lock();
+	HRESULT result;
+	auto lock = LockCriticalSection();
 
 	if (m_genericConnection != nullptr)
 	{
-		m_genericConnection->RecreateSession();
+		ReturnIfFailed(result, m_genericConnection->Suspend());
 	}
-
-	/*if (m_pushConnection != nullptr)
-	{
-		m_pushConnection->RecreateSession();
-	}*/
 
 	for (size_t i = 0; i < UPLOAD_CONNECTIONS_COUNT; i++)
 	{
 		if (m_uploadConnections[i] != nullptr)
 		{
-			m_uploadConnections[i]->RecreateSession();
+			ReturnIfFailed(result, m_uploadConnections[i]->Suspend());
 		}
 	}
 
@@ -324,9 +360,11 @@ void Datacenter::RecreateSessions()
 	{
 		if (m_downloadConnections[i] != nullptr)
 		{
-			m_downloadConnections[i]->RecreateSession();
+			ReturnIfFailed(result, m_downloadConnections[i]->Suspend());
 		}
 	}
+
+	return S_OK;
 }
 
 HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, DatacenterEndpoint** endpoint)
@@ -338,13 +376,12 @@ HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ip
 
 	size_t currentEndpointIndex;
 	std::vector<DatacenterEndpoint>* endpoints;
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	switch (connectionType)
 	{
 	case ConnectionType::Generic:
 	case ConnectionType::Upload:
-	case ConnectionType::Push:
 		if (ipv6)
 		{
 			currentEndpointIndex = m_currentIpv6EndpointIndex;

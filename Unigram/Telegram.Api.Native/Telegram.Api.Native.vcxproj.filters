@@ -33,6 +33,7 @@
       <Filter>Wrappers</Filter>
     </ClInclude>
     <ClInclude Include="ConnectionCryptograpy.h" />
+    <ClInclude Include="MultiThreadObject.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

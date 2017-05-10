@@ -12,7 +12,7 @@ void EventObject::OnThreadpoolCallback(PTP_CALLBACK_INSTANCE callbackInstance)
 	if (FAILED(result = OnEvent(callbackInstance)))
 	{
 		ComPtr<ConnectionManager> connectionManager;
-		if (SUCCEEDED(ConnectionManagerStatics::GetInstance(connectionManager)))
+		if (SUCCEEDED(ConnectionManager::GetInstance(connectionManager)))
 		{
 			connectionManager->OnEventObjectError(this, result);
 		}

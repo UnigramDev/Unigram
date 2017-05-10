@@ -4,6 +4,7 @@
 #include <wrl.h>
 #include <windows.foundation.h>
 #include "Telegram.Api.Native.h"
+#include "MultiThreadObject.h"
 
 #define DOWNLOAD_CONNECTIONS_COUNT 2
 #define UPLOAD_CONNECTIONS_COUNT 2
@@ -19,7 +20,7 @@ namespace Telegram
 		namespace Native
 		{
 
-			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IDatacenter, CloakedIid<IClosable>, FtmBase>
+			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IDatacenter, CloakedIid<IClosable>, FtmBase>, public MultiThreadObject
 			{
 				friend class Connection;
 				friend class ConnectionManager;
@@ -30,6 +31,7 @@ namespace Telegram
 				Datacenter();
 				~Datacenter();
 
+				//COM exported methods
 				STDMETHODIMP RuntimeClassInitialize(UINT32 id);
 				STDMETHODIMP get_Id(_Out_ UINT32* value);
 				STDMETHODIMP GetCurrentAddress(ConnectionType connectionType, boolean ipv6, _Out_ HSTRING* value);
@@ -37,8 +39,18 @@ namespace Telegram
 				//STDMETHODIMP GetDownloadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
 				//STDMETHODIMP GetUploadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
 				//STDMETHODIMP GetGenericConnection(boolean create, _Out_ IConnection** value);
-				//STDMETHODIMP GetPushConnection(boolean create, _Out_ IConnection** value);
 
+				//Internal methods
+				void SwitchTo443Port();
+				void RecreateSessions();
+				void GetSessionsIds(_Out_ std::vector<INT64>& sessionIds);
+				void NextEndpoint(ConnectionType connectionType, boolean ipv6);
+				void ResetEndpoint();
+				HRESULT AddEndpoint(_In_ std::wstring address, UINT32 port, ConnectionType connectionType, boolean ipv6);
+				HRESULT GetDownloadConnection(UINT32 index, boolean create, _Out_ Connection** value);
+				HRESULT GetUploadConnection(UINT32 index, boolean create, _Out_ Connection** value);
+				HRESULT GetGenericConnection(boolean create, _Out_ Connection** value);
+				HRESULT SuspendConnections();
 
 			private:
 				struct DatacenterEndpoint
@@ -48,17 +60,10 @@ namespace Telegram
 				};
 
 				STDMETHODIMP Close();
-				void SwitchTo443Port();
-				void RecreateSessions();
-				HRESULT GetDownloadConnection(UINT32 index, boolean create, _Out_ Connection** value);
-				HRESULT GetUploadConnection(UINT32 index, boolean create, _Out_ Connection** value);
-				HRESULT GetGenericConnection(boolean create, _Out_ Connection** value);
-				HRESULT GetPushConnection(boolean create, _Out_ Connection** value);
 				HRESULT GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, _Out_ DatacenterEndpoint** endpoint);
 				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
 
-				CriticalSection m_criticalSection;
 				UINT32 m_id;
 				std::vector<DatacenterEndpoint> m_ipv4Endpoints;
 				std::vector<DatacenterEndpoint> m_ipv4DownloadEndpoints;
@@ -72,7 +77,6 @@ namespace Telegram
 				ComPtr<Connection> m_genericConnection;
 				ComPtr<Connection> m_downloadConnections[DOWNLOAD_CONNECTIONS_COUNT];
 				ComPtr<Connection> m_uploadConnections[UPLOAD_CONNECTIONS_COUNT];
-				ComPtr<Connection> m_pushConnection;
 			};
 
 		}

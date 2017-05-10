@@ -42,7 +42,7 @@ HRESULT Connection::get_Token(UINT32* value)
 		return E_POINTER;
 	}
 
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	*value = m_token;
 	return S_OK;
@@ -55,7 +55,7 @@ HRESULT Connection::get_Datacenter(IDatacenter** value)
 		return E_POINTER;
 	}
 
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 	return m_datacenter.CopyTo(value);
 }
 
@@ -77,25 +77,30 @@ HRESULT Connection::get_CurrentNetworkType(ConnectionNeworkType* value)
 		return E_POINTER;
 	}
 
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	*value = m_currentNetworkType;
 	return S_OK;
 }
 
-HRESULT Connection::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
+HRESULT Connection::get_SessionId(INT64* value)
 {
-	auto lock = m_criticalSection.Lock();
-	return OnSocketEvent(callbackInstance);
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = GetSessionId();
+	return S_OK;
 }
 
 HRESULT Connection::Connect()
 {
 	HRESULT result;
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManagerStatics::GetInstance(connectionManager));
+	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 
 	//I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement connection start");
 
@@ -151,7 +156,7 @@ HRESULT Connection::Reconnect()
 HRESULT Connection::Suspend()
 {
 	HRESULT result;
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement connection suspension");
 
@@ -163,7 +168,7 @@ HRESULT Connection::Suspend()
 HRESULT Connection::Close()
 {
 	HRESULT result;
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	/*if (m_closed)
 	{

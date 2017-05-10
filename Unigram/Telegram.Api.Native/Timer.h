@@ -41,7 +41,6 @@ namespace Telegram
 				HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
 				HRESULT SetTimerTimeout();
 
-				CriticalSection m_criticalSection;
 				boolean m_started;
 				boolean m_repeatable;
 				UINT32 m_timeout;

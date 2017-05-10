@@ -2,6 +2,7 @@
 #include <vector>
 #include <rpc.h>
 #include <rpcndr.h>
+#include "MultiThreadObject.h"
 
 namespace Telegram
 {
@@ -10,16 +11,19 @@ namespace Telegram
 		namespace Native
 		{
 
-			class ConnectionSession abstract
+			class ConnectionSession abstract : public virtual MultiThreadObject
 			{
 			public:
 				ConnectionSession();
 				~ConnectionSession();
 
+				INT64 GetSessionId();
+				void RecreateSession();
+
 			protected:
-				inline INT64 GetSessionId() const
+				inline void SetSessionId(INT64 sessionId)
 				{
-					return m_id;
+					m_id = sessionId;
 				}
 
 				inline boolean GetHasMessagesToConfirm() const
@@ -27,7 +31,6 @@ namespace Telegram
 					return !m_messagesIdsForConfirmation.empty();
 				}
 
-				void RecreateSession();
 				UINT32 GenerateMessageSequenceNumber(boolean increment);
 				bool IsMessageIdProcessed(INT64 messageId);
 				void AddProcessedMessageId(INT64 messageId);

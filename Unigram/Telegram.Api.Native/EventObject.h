@@ -1,5 +1,6 @@
 #pragma once
 #include <wrl.h>
+#include "MultiThreadObject.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Microsoft::WRL;
@@ -20,7 +21,7 @@ namespace Telegram
 			}
 
 
-			class EventObject abstract 
+			class EventObject abstract : public virtual MultiThreadObject
 			{
 				friend class ConnectionManager;
 				friend struct EventTraits::TimerTraits;

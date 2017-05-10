@@ -26,6 +26,7 @@ namespace Telegram
 			[version(API_VERSION)]
 			interface ITLObject : IInspectable
 			{
+				[propget] HRESULT Size([out][retval] UINT32* value);
 				HRESULT Read([in] TLBinaryReader* reader);
 				HRESULT Write([in] TLBinaryWriter* writer);
 			}
@@ -90,8 +91,7 @@ namespace Telegram
 			{
 				Generic = 1,
 				Download = 2,
-				Upload = 4,
-				Push = 8
+				Upload = 4
 			};
 
 			[exclusiveto(Datacenter)]
@@ -105,7 +105,6 @@ namespace Telegram
 				//HRESULT GetDownloadConnection([in] UINT32 index,[in] boolean create, [out][retval] Connection** value);
 				//HRESULT GetUploadConnection([in] UINT32 index, [in] boolean create, [out][retval] Connection** value);
 				//HRESULT GetGenericConnection([in] boolean create, [out][retval] Connection** value);
-				//HRESULT GetPushConnection([in] boolean create, [out][retval] Connection** value);
 			}
 
 			[marshaling_behavior(agile)]
@@ -134,6 +133,7 @@ namespace Telegram
 				[propget] HRESULT Datacenter([out][retval] Datacenter** value);
 				[propget] HRESULT Type([out][retval] ConnectionType* value);
 				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
+				[propget] HRESULT SessionId([out][retval] INT64* value);
 			}
 
 			[marshaling_behavior(agile)]
@@ -169,10 +169,12 @@ namespace Telegram
 				[propget] HRESULT ConnectionState([out][retval] ConnectionState* value);
 				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
 				[propget] HRESULT IsIpv6Enabled([out][retval] boolean* value);
+				[propget] HRESULT IsNetworkAvailable([out][retval] boolean* value);
 				HRESULT SendRequest([in] ITLObject* object,[in] UINT32 datacenterId, [in] ConnectionType connetionType, [in] boolean immediate, [out] INT32* requestToken);
 				HRESULT CancelRequest(INT32 requestToken, boolean notifyServer);
+				HRESULT GetDatacenterById(UINT32 id, [out][retval] Datacenter** value);
 
-				HRESULT BoomBaby();
+				HRESULT BoomBaby([out][retval] Connection** value);
 			}
 
 			[static(IConnectionManagerStatics, API_VERSION)]

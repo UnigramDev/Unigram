@@ -202,10 +202,12 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 	return S_OK;
 }
 
-HRESULT ConnectionSocket::OnSocketEvent(PTP_CALLBACK_INSTANCE callbackInstance)
+HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 {
 	int wsaLastError;
 	WSANETWORKEVENTS networkEvents;
+	auto lock = LockCriticalSection();
+
 	if (WSAEnumNetworkEvents(m_socket, m_socketEvent.Get(), &networkEvents) == SOCKET_ERROR)
 	{
 		return GetLastErrorAndCloseSocket(SOCKET_CLOSE_RAISEEVENT);

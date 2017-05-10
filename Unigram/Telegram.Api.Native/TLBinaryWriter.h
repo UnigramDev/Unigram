@@ -36,7 +36,6 @@ namespace Telegram
 				STDMETHODIMP WriteDouble(double value);
 
 			private:
-
 			};
 
 		}

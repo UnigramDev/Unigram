@@ -29,7 +29,7 @@ HRESULT Timer::get_IsStarted(boolean* value)
 		return E_POINTER;
 	}
 
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	/*auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
 	if (threadpoolObjectHandle == nullptr)
@@ -45,7 +45,7 @@ HRESULT Timer::get_IsStarted(boolean* value)
 
 HRESULT Timer::SetTimeout(UINT32 msTimeout, boolean repeat)
 {
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	if (msTimeout != m_timeout || repeat != m_repeatable)
 	{
@@ -63,7 +63,7 @@ HRESULT Timer::SetTimeout(UINT32 msTimeout, boolean repeat)
 
 HRESULT Timer::Start()
 {
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	if (m_timeout == 0)
 	{
@@ -75,7 +75,7 @@ HRESULT Timer::Start()
 
 HRESULT Timer::Stop()
 {
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	if (m_started)
 	{
@@ -87,7 +87,7 @@ HRESULT Timer::Stop()
 
 HRESULT Timer::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 {
-	auto lock = m_criticalSection.Lock();
+	auto lock = LockCriticalSection();
 
 	HRESULT result = m_callback();
 
