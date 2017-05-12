@@ -144,7 +144,6 @@
     <Compile Include="Services\MTProtoService.Phone.cs" />
     <Compile Include="Services\Stats\StatsService.cs" />
     <Compile Include="TLExtensions.cs" />
-    <Compile Include="Hash\CRC32.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Services\MTProtoResponse.cs" />
     <Compile Include="Services\MTProtoService.Channel.cs" />
@@ -454,8 +453,6 @@
     <Compile Include="Services\DeviceInfo\IDeviceInfoService.cs" />
     <Compile Include="Services\HistoryItem.cs" />
     <Compile Include="Services\IMTProtoService.cs" />
-    <Compile Include="Services\Messages\ISenderService.cs" />
-    <Compile Include="Services\Messages\SenderService.cs" />
     <Compile Include="Services\MTProtoService.Account.cs" />
     <Compile Include="Services\MTProtoService.Auth.cs" />
     <Compile Include="Services\MTProtoService.ByTransport.cs" />

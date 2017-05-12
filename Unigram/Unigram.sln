@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram", "Unigram\Unigram.csproj", "{2235E8EE-374A-4E49-8050-9B701467775D}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -42,6 +42,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native.Shared", "Unigram.Native.Shared\Unigram.Native.Shared.vcxitems", "{C50F57B3-33E1-4235-9D02-0C9F1C4176A8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnigramHost", "UnigramHost\UnigramHost.vcxproj", "{0DBCF059-2952-4809-9003-193CA0C6D499}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtgvoip", "Libraries\libtgvoip\libtgvoip.UWP.vcxproj", "{88803693-7606-484B-9D2F-4BB789D57C29}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -303,6 +305,23 @@ Global
 		{0DBCF059-2952-4809-9003-193CA0C6D499}.Release|x64.Build.0 = Release|x64
 		{0DBCF059-2952-4809-9003-193CA0C6D499}.Release|x86.ActiveCfg = Release|Win32
 		{0DBCF059-2952-4809-9003-193CA0C6D499}.Release|x86.Build.0 = Release|Win32
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Debug|ARM.ActiveCfg = Debug|ARM
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Debug|ARM.Build.0 = Debug|ARM
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Debug|x64.ActiveCfg = Debug|Win32
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Debug|x86.ActiveCfg = Debug|Win32
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Debug|x86.Build.0 = Debug|Win32
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Preview|ARM.ActiveCfg = Preview|ARM
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Preview|ARM.Build.0 = Preview|ARM
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Preview|x64.ActiveCfg = Preview|x64
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Preview|x64.Build.0 = Preview|x64
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Preview|x86.ActiveCfg = Preview|Win32
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Preview|x86.Build.0 = Preview|Win32
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Release|ARM.ActiveCfg = Release|ARM
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Release|ARM.Build.0 = Release|ARM
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Release|x64.ActiveCfg = Release|x64
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Release|x64.Build.0 = Release|x64
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Release|x86.ActiveCfg = Release|Win32
+		{88803693-7606-484B-9D2F-4BB789D57C29}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -312,5 +331,6 @@ Global
 		{904AC506-51A0-474E-9F55-EC3FEBBCCCD9} = {C385BB20-B82D-496E-A38D-835D017AC0EA}
 		{3520C5E6-F0C2-468F-8970-372414C233DC} = {C385BB20-B82D-496E-A38D-835D017AC0EA}
 		{6766A2C0-AB30-43CC-9EF3-7DDC13736A38} = {C385BB20-B82D-496E-A38D-835D017AC0EA}
+		{88803693-7606-484B-9D2F-4BB789D57C29} = {C385BB20-B82D-496E-A38D-835D017AC0EA}
 	EndGlobalSection
 EndGlobal
