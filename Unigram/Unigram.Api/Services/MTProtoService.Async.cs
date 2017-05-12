@@ -1869,20 +1869,6 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesArchivedStickers>> GetArchivedStickersAsync(bool full, long offsetId, int limit, bool masks)
-        {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesArchivedStickers>>();
-            GetArchivedStickersAsync(full, offsetId, limit, masks, (callback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLMessagesArchivedStickers>(callback));
-            }, (faultCallback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLMessagesArchivedStickers>(faultCallback));
-            });
-            return tsc.Task;
-        }
-
-        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesArchivedStickers>> GetArchivedStickersAsync(long offsetId, int limit, bool masks)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesArchivedStickers>>();
@@ -2186,20 +2172,6 @@ namespace Telegram.Api.Services
             }, (faultCallback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<bool>(faultCallback));
-            });
-            return tsc.Task;
-        }
-
-        [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesAllStickersBase>> GetAllStickersAsync(byte[] hash)
-        {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAllStickersBase>>();
-            GetAllStickersAsync(hash, (callback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLMessagesAllStickersBase>(callback));
-            }, (faultCallback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLMessagesAllStickersBase>(faultCallback));
             });
             return tsc.Task;
         }
