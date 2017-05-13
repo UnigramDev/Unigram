@@ -88,7 +88,7 @@ namespace Unigram.Core.Notifications
         public static Dictionary<string, string> SplitArguments(string arguments)
         {
             var dictionary = new Dictionary<string, string>();
-            if (arguments == null || arguments == string.Empty || !arguments.Contains("&"))
+            if (arguments == null || arguments == string.Empty || !arguments.Contains("="))
             {
                 return dictionary;
             }

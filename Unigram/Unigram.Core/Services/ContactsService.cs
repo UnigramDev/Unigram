@@ -34,7 +34,7 @@ namespace Unigram.Core.Services
             {
                 foreach (var item in contacts.Users.OfType<TLUser>())
                 {
-                    var contact = await contactList.GetContactFromRemoteIdAsync(item.Id.ToString());
+                    var contact = await contactList.GetContactFromRemoteIdAsync("u" + item.Id);
                     if (contact == null)
                     {
                         contact = new Contact();
@@ -42,7 +42,7 @@ namespace Unigram.Core.Services
 
                     contact.FirstName = item.FirstName ?? string.Empty;
                     contact.LastName = item.LastName ?? string.Empty;
-                    contact.RemoteId = item.Id.ToString();
+                    contact.RemoteId = "u" + item.Id;
                     //contact.Id = item.Id.ToString();
 
                     var phone = contact.Phones.FirstOrDefault();

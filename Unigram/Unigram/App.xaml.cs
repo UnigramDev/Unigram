@@ -42,7 +42,7 @@ using System.Collections.Generic;
 using Unigram.Core.Services;
 using Template10.Controls;
 using Windows.Foundation;
-using libtgvoip;
+using Windows.ApplicationModel.Contacts;
 
 namespace Unigram
 {
@@ -159,7 +159,7 @@ namespace Unigram
             return base.OnInitializeAsync(args);
         }
 
-        public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
+        public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
             //NavigationService.Navigate(typeof(PlaygroundPage2));
             //return Task.CompletedTask;
@@ -226,7 +226,24 @@ namespace Unigram
                 }
                 else if (contact != null)
                 {
-                    NavigationService.Navigate(typeof(MainPage), $"{{\"from_id\":{contact.Contact.RemoteId}}}");
+                    var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+                    contact.ContactPanel.HeaderColor = backgroundBrush.Color;
+
+                    var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
+                    var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
+                    var full = await store.GetContactAsync(contact.Contact.Id);
+                    var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
+
+                    var remote = annotations[0].RemoteId;
+
+                    //var user = InMemoryCacheService.Current.GetUser(int.Parse(remote.Substring(1)));
+                    //if (user != null)
+                    //{
+                    //    NavigationService.Navigate(typeof(DialogPage), user.ToPeer());
+                    //}
+
+                    //NavigationService.Navigate(typeof(MainPage), $"from_id={remote.Substring(1)}");
+                    NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = int.Parse(remote.Substring(1)) });
                 }
                 else
                 {
@@ -256,7 +273,7 @@ namespace Unigram
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             Task.Run(() => OnStartSync());
-            return Task.CompletedTask;
+            //return Task.CompletedTask;
         }
 
         private async void OnStartSync()
