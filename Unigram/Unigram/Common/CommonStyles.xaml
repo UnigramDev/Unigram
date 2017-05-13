@@ -10,6 +10,12 @@
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
     </Style>
 
+    <Style x:Key="SettingsGroupTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>
+        <Setter Property="Margin" Value="0,8"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
     <Style x:Key="HyperButtonStyle" TargetType="controls:HyperButton">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>

@@ -268,10 +268,6 @@ namespace Telegram.Api.Services
         void GetAppChangelogAsync(string prevAppVersion, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null); 
         void GetTermsOfServiceAsync(string langCode, Action<TLHelpTermsOfService> callback, Action<TLRPCError> faultCallback = null);
 
-
-        // encrypted chats
-        void RekeyAsync(TLEncryptedChatBase chat, Action<long> callback);
-
         // background task
         void SendActionsAsync(List<TLObject> actions, Action<TLObject, object> callback, Action<TLRPCError> faultCallback = null);
         void ClearQueue();

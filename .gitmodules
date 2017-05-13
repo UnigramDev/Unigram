@@ -3,4 +3,4 @@
 	url = https://www.tablix.org/~avian/git/unidecode.git
 [submodule "Unigram/Libraries/libtgvoip"]
 	path = Unigram/Libraries/libtgvoip
-	url = https://github.com/grishka/libtgvoip.git
+	url = https://github.com/UnigramDev/libtgvoip.git

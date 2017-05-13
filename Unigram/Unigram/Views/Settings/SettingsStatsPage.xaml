@@ -50,7 +50,7 @@
                             <selectors:StatsDataTemplateSelector.BaseTemplate>
                                 <DataTemplate x:DataType="viewModels:SettingsStatsDataBase">
                                     <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                                        <TextBlock Text="{x:Bind Title}" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                        <TextBlock Text="{x:Bind Title}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition/>
@@ -68,7 +68,7 @@
                             <selectors:StatsDataTemplateSelector.ItemTemplate>
                                 <DataTemplate x:DataType="viewModels:SettingsStatsData">
                                     <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                                        <TextBlock Text="{x:Bind Title}" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                        <TextBlock Text="{x:Bind Title}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition/>
@@ -92,7 +92,7 @@
                             <selectors:StatsDataTemplateSelector.CallTemplate>
                                 <DataTemplate x:DataType="viewModels:SettingsStatsCallData">
                                     <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                                        <TextBlock Text="{x:Bind Title}" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                        <TextBlock Text="{x:Bind Title}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition/>

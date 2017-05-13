@@ -84,6 +84,8 @@ namespace Unigram.Tasks
         private MTProtoService _protoService;
         private TransportService _transportService;
 
+        private VoIPControllerWrapper _controller;
+
         private VoipPhoneCall _systemCall;
         private TLPhoneCallBase _phoneCall;
         private TLUserBase _user;
@@ -210,7 +212,21 @@ namespace Unigram.Tasks
                 }
                 else if (update.PhoneCall is TLPhoneCallDiscarded)
                 {
-                    _deferral.Complete();
+                    if (_controller != null)
+                    {
+                        _controller.Dispose();
+                        _controller = null;
+                    }
+
+                    if (_systemCall != null)
+                    {
+                        _systemCall.NotifyCallEnded();
+                        _systemCall = null;
+                    }
+                    else if (_deferral != null)
+                    {
+                        _deferral.Complete();
+                    }
                 }
                 else if (update.PhoneCall is TLPhoneCall call)
                 {
@@ -235,11 +251,17 @@ namespace Unigram.Tasks
                         var logFile = ApplicationData.Current.LocalFolder.Path + "\\tgvoip.logFile.txt";
                         var statsDumpFile = ApplicationData.Current.LocalFolder.Path + "\\tgvoip.statsDump.txt";
 
-                        var controller = new VoIPControllerWrapper();
-                        controller.SetConfig(config.CallPacketTimeoutMs / 1000.0, config.CallConnectTimeoutMs / 1000.0, DataSavingMode.Never, false, false, true, logFile, statsDumpFile);
+                        if (_controller != null)
+                        {
+                            _controller.Dispose();
+                            _controller = null;
+                        }
 
-                        controller.SetStateCallback(new Boh(controller));
-                        controller.SetEncryptionKey(auth_key, false);
+                        _controller = new VoIPControllerWrapper();
+                        _controller.SetConfig(config.CallPacketTimeoutMs / 1000.0, config.CallConnectTimeoutMs / 1000.0, DataSavingMode.Never, false, false, true, logFile, statsDumpFile);
+
+                        _controller.SetStateCallback(new Boh(_controller));
+                        _controller.SetEncryptionKey(auth_key, false);
 
                         var connection = call.Connection;
                         var endpoints = new Endpoint[call.AlternativeConnections.Count + 1];
@@ -251,9 +273,9 @@ namespace Unigram.Tasks
                             endpoints[i + 1] = new Endpoint { id = connection.Id, ipv4 = connection.Ip, ipv6 = connection.Ipv6, port = (ushort)connection.Port, peerTag = connection.PeerTag };
                         }
 
-                        controller.SetPublicEndpoints(endpoints, call.Protocol.IsUdpP2p);
-                        controller.Start();
-                        controller.Connect();
+                        _controller.SetPublicEndpoints(endpoints, call.Protocol.IsUdpP2p);
+                        _controller.Start();
+                        _controller.Connect();
                     }
 
                     //await Task.Delay(50000);
@@ -460,6 +482,13 @@ namespace Unigram.Tasks
                         await SendRequestAsync<TLUpdatesBase>(caption2, req);
 
                         _systemCall.NotifyCallEnded();
+                    }
+                }
+                else if (caption.Equals("phone.mute") || caption.Equals("phone.unmute"))
+                {
+                    if (_controller != null)
+                    {
+                        _controller.SetMicMute(caption.Equals("phone.mute"));
                     }
                 }
             }

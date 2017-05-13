@@ -781,8 +781,6 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-
-
         public void SendEncryptedAsync(TLInputEncryptedChat peer, long randomId, byte[] data, Action<TLMessagesSentEncryptedMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesSendEncrypted { Peer = peer, RandomId = randomId, Data = data };
@@ -799,7 +797,6 @@ namespace Telegram.Api.Services
                 },
                 faultCallback);
         }
-
 
         public void SendEncryptedFileAsync(TLInputEncryptedChat peer, long randomId, byte[] data, TLInputEncryptedFileBase file, Action<TLMessagesSentEncryptedFile> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
         {
@@ -829,8 +826,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ReadEncryptedHistoryAsync(TLInputEncryptedChat peer, int maxDate, Action<bool> callback,
-            Action<TLRPCError> faultCallback = null)
+        public void ReadEncryptedHistoryAsync(TLInputEncryptedChat peer, int maxDate, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesReadEncryptedHistory { Peer = peer, MaxDate = maxDate };
 
@@ -1068,7 +1064,6 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-
         public void GetChannelHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetHistory { Peer = inputPeer, AddOffset = offset, OffsetId = maxId, OffsetDate = 0, Limit = limit, MaxId = int.MaxValue, MinId = 0 };
@@ -1275,14 +1270,6 @@ namespace Telegram.Api.Services
                 },
                 faultCallback);
         }
-
-        // TODO: Probably deprecated.
-        //public void RestoreMessagesAsync(TLVector<int> id, Action<TLVector<int>> callback, Action<TLRPCError> faultCallback = null)
-        //{
-        //    var obj = new TLMessagesRestoreMessages { Id = id };
-
-        //    SendInformativeMessage("messages.restoreMessages", obj, callback, faultCallback);
-        //}
 
         public void ReceivedMessagesAsync(int maxId, Action<TLVector<TLReceivedNotifyMessage>> callback, Action<TLRPCError> faultCallback = null)
         {
@@ -1728,30 +1715,6 @@ namespace Telegram.Api.Services
 
             SendInformativeMessage("messages.editChatAdmin", obj, callback, faultCallback);
         }
-
-        // TODO: Probably deprecated
-        //public void DeactivateChatAsync(int chatId, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
-        //{
-        //    var obj = new TLDeactivateChat { ChatId = chatId, Enabled = enabled };
-
-        //    const string caption = "messages.deactivateChat";
-        //    SendInformativeMessage<TLUpdatesBase>(caption, obj,
-        //        result =>
-        //        {
-        //            var multiPts = result as ITLMultiPts;
-        //            if (multiPts != null)
-        //            {
-        //                _updatesService.SetState(multiPts, caption);
-        //            }
-        //            else
-        //            {
-        //                ProcessUpdates(result, null);
-        //            }
-
-        //            callback?.Invoke(result);
-        //        },
-        //        faultCallback);
-        //}
 
         public void GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit, Action<TLMessagesChatsBase> callback, Action<TLRPCError> faultCallback = null)
         {

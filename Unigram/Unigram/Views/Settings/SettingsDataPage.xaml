@@ -15,9 +15,32 @@
         </Grid.RowDefinitions>
         <controls:PageHeader Text="Data and storage"/>
 
-        <StackPanel Grid.Row="1">
-            <Button Content="Storage usage" Click="Storage_Click"/>
-            <Button Content="Data usage" Click="Stats_Click"/>
-        </StackPanel>
+        <controls:ScrollViewerBackground 
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"
+            VerticalAlignment="Top"
+            Grid.Row="1"/>
+        <ScrollViewer x:Name="ScrollingHost"
+                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+
+            <StackPanel Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Grid.Row="1">
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="DATA AND NETWORK USAGE" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:HyperButton Tag="Storage usage" Click="Storage_Click" Margin="-12,0" Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton Tag="Data usage" Click="Stats_Click" Margin="-12,0,-12,-12" BorderBrush="Transparent" Style="{StaticResource HyperDetailButtonStyle}"/>
+                </StackPanel>
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="CALLS" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ComboBox Header="Use less data for calls" SelectedIndex="0">
+                        <ComboBoxItem Content="Never"/>
+                        <ComboBoxItem Content="Only on mobile data"/>
+                        <ComboBoxItem Content="Always"/>
+                    </ComboBox>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>
