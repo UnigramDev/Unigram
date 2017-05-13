@@ -16,110 +16,6 @@ using System.Diagnostics;
 
 namespace Telegram.Api.Helpers
 {
-    public class PollardRhoLong
-    {
-        public static long Gcd(long ths, long val)
-        {
-            if (val == 0)
-                return Math.Abs(ths);
-            if (ths == 0)
-                return Math.Abs(val);
-
-            long r;
-            long u = ths;
-            long v = val;
-
-            while (v != 0)
-            {
-                r = u % v;
-                u = v;
-                v = r;
-            }
-
-            return u;
-        }
-
-        public static long Rho(long N)
-        {
-            var random = new Random();
-
-            long divisor;
-            var bytes = new byte[8];
-            random.NextBytes(bytes);
-            var c = BitConverter.ToInt64(bytes, 0);
-            random.NextBytes(bytes);
-            var x = BitConverter.ToInt64(bytes, 0);
-            var xx = x;
-
-            // check divisibility by 2
-            if (N % 2 == 0) return 2;
-
-            do
-            {
-                x = (x * x % N + c) % N;
-                xx = (xx * xx % N + c) % N;
-                xx = (xx * xx % N + c) % N;
-                divisor = Gcd(x - xx, N);
-            } while (divisor == 1);
-
-            return divisor;
-        }
-    }
-
-    public class PollardRho
-    {
-        private static readonly BigInteger ZERO = new BigInteger("0");
-        private static readonly BigInteger ONE = new BigInteger("1");
-        private static readonly BigInteger TWO = new BigInteger("2");
-        private static readonly SecureRandom random = new SecureRandom();
-
-        public static BigInteger Rho(BigInteger N)
-        {
-            BigInteger divisor;
-            var c = new BigInteger(N.BitLength, random);
-            var x = new BigInteger(N.BitLength, random);
-            var xx = x;
-
-            // check divisibility by 2
-            if (N.Mod(TWO).CompareTo(ZERO) == 0) return TWO;
-
-            do
-            {
-                x = x.Multiply(x).Mod(N).Add(c).Mod(N);
-                xx = xx.Multiply(xx).Mod(N).Add(c).Mod(N);
-                xx = xx.Multiply(xx).Mod(N).Add(c).Mod(N);
-                divisor = x.Subtract(xx).Gcd(N);
-            } while ((divisor.CompareTo(ONE)) == 0);
-
-            return divisor;
-        }
-
-        public static Tuple<BigInteger, BigInteger> Factor(BigInteger N)
-        {
-            //if (N.CompareTo(ONE) == 0)
-            //{
-            //    return new Tuple<BigInteger, BigInteger>(ONE, N);
-            //}
-            //if (N.IsProbablePrime(20))
-            //{
-            //    return new Tuple<BigInteger, BigInteger>(ONE, N);
-            //}
-            var divisor = Rho(N);
-
-            var divisor2 = N.Divide(divisor);
-
-            return divisor.CompareTo(divisor2) > 0
-                ? new Tuple<BigInteger, BigInteger>(divisor2, divisor)
-                : new Tuple<BigInteger, BigInteger>(divisor, divisor2);
-        }
-
-
-        //public static void main(String[] args) {
-        //    BigInteger N = new BigInteger(args[0]);
-        //    factor(N);
-        //}
-    }
-
     public static class Utils
     {
         public static string GetShortTimePattern(ref CultureInfo ci)
@@ -699,5 +595,109 @@ namespace Telegram.Api.Helpers
 
             return id % 8;
         }
+    }
+
+    internal class PollardRhoLong
+    {
+        public static long Gcd(long ths, long val)
+        {
+            if (val == 0)
+                return Math.Abs(ths);
+            if (ths == 0)
+                return Math.Abs(val);
+
+            long r;
+            long u = ths;
+            long v = val;
+
+            while (v != 0)
+            {
+                r = u % v;
+                u = v;
+                v = r;
+            }
+
+            return u;
+        }
+
+        public static long Rho(long N)
+        {
+            var random = new Random();
+
+            long divisor;
+            var bytes = new byte[8];
+            random.NextBytes(bytes);
+            var c = BitConverter.ToInt64(bytes, 0);
+            random.NextBytes(bytes);
+            var x = BitConverter.ToInt64(bytes, 0);
+            var xx = x;
+
+            // check divisibility by 2
+            if (N % 2 == 0) return 2;
+
+            do
+            {
+                x = (x * x % N + c) % N;
+                xx = (xx * xx % N + c) % N;
+                xx = (xx * xx % N + c) % N;
+                divisor = Gcd(x - xx, N);
+            } while (divisor == 1);
+
+            return divisor;
+        }
+    }
+
+    internal class PollardRho
+    {
+        private static readonly BigInteger ZERO = new BigInteger("0");
+        private static readonly BigInteger ONE = new BigInteger("1");
+        private static readonly BigInteger TWO = new BigInteger("2");
+        private static readonly SecureRandom random = new SecureRandom();
+
+        public static BigInteger Rho(BigInteger N)
+        {
+            BigInteger divisor;
+            var c = new BigInteger(N.BitLength, random);
+            var x = new BigInteger(N.BitLength, random);
+            var xx = x;
+
+            // check divisibility by 2
+            if (N.Mod(TWO).CompareTo(ZERO) == 0) return TWO;
+
+            do
+            {
+                x = x.Multiply(x).Mod(N).Add(c).Mod(N);
+                xx = xx.Multiply(xx).Mod(N).Add(c).Mod(N);
+                xx = xx.Multiply(xx).Mod(N).Add(c).Mod(N);
+                divisor = x.Subtract(xx).Gcd(N);
+            } while ((divisor.CompareTo(ONE)) == 0);
+
+            return divisor;
+        }
+
+        public static Tuple<BigInteger, BigInteger> Factor(BigInteger N)
+        {
+            //if (N.CompareTo(ONE) == 0)
+            //{
+            //    return new Tuple<BigInteger, BigInteger>(ONE, N);
+            //}
+            //if (N.IsProbablePrime(20))
+            //{
+            //    return new Tuple<BigInteger, BigInteger>(ONE, N);
+            //}
+            var divisor = Rho(N);
+
+            var divisor2 = N.Divide(divisor);
+
+            return divisor.CompareTo(divisor2) > 0
+                ? new Tuple<BigInteger, BigInteger>(divisor2, divisor)
+                : new Tuple<BigInteger, BigInteger>(divisor, divisor2);
+        }
+
+
+        //public static void main(String[] args) {
+        //    BigInteger N = new BigInteger(args[0]);
+        //    factor(N);
+        //}
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;
 
 namespace Unigram.Core.Services
@@ -74,6 +75,12 @@ namespace Unigram.Core.Services
                     annotation.ContactId = contact.Id;
                     annotation.RemoteId = contact.RemoteId;
                     annotation.SupportedOperations = ContactAnnotationOperations.ContactProfile | ContactAnnotationOperations.Message | ContactAnnotationOperations.AudioCall;
+
+                    if (annotation.ProviderProperties.Count == 0)
+                    {
+                        annotation.ProviderProperties.Add("ContactPanelAppID", Package.Current.Id.FamilyName + "!App");
+                        annotation.ProviderProperties.Add("ContactShareAppID", Package.Current.Id.FamilyName + "!App");
+                    }
 
                     await annotationList.TrySaveAnnotationAsync(annotation);
                 }

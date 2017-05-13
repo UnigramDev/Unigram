@@ -96,6 +96,11 @@ namespace Unigram.Common
                             await args.Request.SendResponseAsync(new ValueSet { { "error", TLSerializationService.Current.Serialize(new TLRPCError { ErrorMessage = "USER_NOT_FOUND", ErrorCode = 404 }) } });
                         }
                     }
+                    else if (caption.Equals("voip.getConfig"))
+                    {
+                        var config = InMemoryCacheService.Current.GetConfig();
+                        await args.Request.SendResponseAsync(new ValueSet { { "result", TLSerializationService.Current.Serialize(config) } });
+                    }
                     else if (caption.Equals("voip.callInfo") && req is byte[] data)
                     {
                         using (var from = new TLBinaryReader(data))
