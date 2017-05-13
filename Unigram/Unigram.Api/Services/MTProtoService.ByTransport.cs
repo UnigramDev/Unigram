@@ -39,7 +39,7 @@ namespace Telegram.Api.Services
             SendNonEncryptedMessageByTransport(transport, "set_client_DH_params", obj, callback, faultCallback);
         }
 
-        public void InitTransportAsync(ITransport transport, Action<Tuple<byte[], long?, long?>> callback, Action<TLRPCError> faultCallback = null)
+        private void InitTransportAsync(ITransport transport, Action<Tuple<byte[], long?, long?>> callback, Action<TLRPCError> faultCallback = null)
         {
             var authTime = Stopwatch.StartNew();
             var newNonce = TLInt256.Random();
@@ -854,7 +854,7 @@ namespace Telegram.Api.Services
                 });
         }
 
-        public void MessageAcknowledgmentsByTransport(ITransport transport, TLVector<long> ids)
+        private void MessageAcknowledgmentsByTransport(ITransport transport, TLVector<long> ids)
         {
             PrintCaption("msgs_ack");
             TLUtils.WriteLine("ids");
@@ -1793,7 +1793,7 @@ namespace Telegram.Api.Services
             }
         }
 
-        public void ClearHistoryByTransport(ITransport transport)
+        private void ClearHistoryByTransport(ITransport transport)
         {
             _transportService.CloseTransport(transport);
 

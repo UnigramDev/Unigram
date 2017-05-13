@@ -448,7 +448,6 @@
     <Compile Include="Services\Cache\InMemoryCacheService.cs" />
     <Compile Include="Services\Cache\InMemoryDatabase.cs" />
     <Compile Include="Services\Connection\ConnectionService.cs" />
-    <Compile Include="Services\DCOptionItem.cs" />
     <Compile Include="Services\DelayedItem.cs" />
     <Compile Include="Services\DeviceInfo\IDeviceInfoService.cs" />
     <Compile Include="Services\HistoryItem.cs" />

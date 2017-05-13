@@ -106,6 +106,7 @@ namespace Unigram.Views
             if (tuple.Item2 is TLUser user)
             {
                 Image.Source = DefaultPhotoConverter.Convert(user.Photo, true) as ImageSource;
+                TextBlockHelper.SetMarkdown(DescriptionLabel, string.Format("If these emoji are the same on **{0}**'s screen, this call is 100% secure.", user.FirstName));
             }
 
             if (tuple.Item3.Length > 0)
