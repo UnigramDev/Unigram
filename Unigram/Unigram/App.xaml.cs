@@ -197,6 +197,7 @@ namespace Unigram
             {
                 var share = args as ShareTargetActivatedEventArgs;
                 var voice = args as VoiceCommandActivatedEventArgs;
+                var contact = args as ContactPanelActivatedEventArgs;
 
                 if (share != null)
                 {
@@ -221,6 +222,10 @@ namespace Unigram
                     {
                         NavigationService.Navigate(typeof(MainPage));
                     }
+                }
+                else if (contact != null)
+                {
+                    NavigationService.Navigate(typeof(MainPage), $"{{\"from_id\":{contact.Contact.RemoteId}}}");
                 }
                 else
                 {
