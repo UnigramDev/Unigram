@@ -22,6 +22,7 @@ namespace Telegram
 				TLBinaryWriter();
 				~TLBinaryWriter();
 
+				//COM exported methods
 				STDMETHODIMP RuntimeClassInitialize();
 				STDMETHODIMP WriteByte(BYTE value);
 				STDMETHODIMP WriteInt16(INT16 value);
@@ -34,8 +35,20 @@ namespace Telegram
 				STDMETHODIMP WriteString(HSTRING value);
 				STDMETHODIMP WriteByteArray(UINT32 __valueSize, _In_reads_(__valueSize) BYTE* value);
 				STDMETHODIMP WriteDouble(double value);
+				STDMETHODIMP WriteFloat(float value);
+
+				//Internal methods
+				void Reset();
+				void Skip(UINT32 length);
+				HRESULT WriteString(_In_ std::wstring string);
+				HRESULT WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length);
 
 			private:
+				HRESULT WriteString(_In_ LPCWCHAR buffer, UINT32 length);
+				
+				BYTE* m_buffer;
+				UINT32 m_position;
+				UINT32 m_length;
 			};
 
 		}

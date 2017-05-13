@@ -48,6 +48,7 @@ namespace Telegram
 				HRESULT ReadString([out][retval] HSTRING* value);
 				HRESULT ReadByteArray([out] UINT32* __valueSize, [out][size_is(, *__valueSize)] BYTE** value);
 				HRESULT ReadDouble([out][retval] double* value);
+				HRESULT ReadFloat([out][retval] float* value);
 			}
 
 			//[marshaling_behavior(agile)]
@@ -75,6 +76,7 @@ namespace Telegram
 				HRESULT WriteString([in] HSTRING value);
 				HRESULT WriteByteArray([in] UINT32 __valueSize, [in][size_is(__valueSize)] BYTE* value);
 				HRESULT WriteDouble([in] double value);
+				HRESULT WriteFloat([in] float value);
 			}
 
 			/*[marshaling_behavior(agile)]

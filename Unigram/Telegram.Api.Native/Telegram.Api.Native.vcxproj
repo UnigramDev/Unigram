@@ -292,6 +292,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="Datacenter.h" />
     <ClInclude Include="EventObject.h" />
     <ClInclude Include="MultiThreadObject.h" />
+    <ClInclude Include="Request.h" />
     <ClInclude Include="WSAEvent.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ConnectionSocket.h" />
@@ -315,6 +316,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ConnectionSocket.cpp" />
+    <ClCompile Include="Request.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TLBinaryReader.cpp" />
     <ClCompile Include="TLBinaryWriter.cpp" />

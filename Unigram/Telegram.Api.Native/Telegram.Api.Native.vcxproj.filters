@@ -17,6 +17,7 @@
     <ClCompile Include="TLBinaryWriter.cpp" />
     <ClCompile Include="EventObject.cpp" />
     <ClCompile Include="ConnectionCryptograpy.cpp" />
+    <ClCompile Include="Request.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -34,6 +35,7 @@
     </ClInclude>
     <ClInclude Include="ConnectionCryptograpy.h" />
     <ClInclude Include="MultiThreadObject.h" />
+    <ClInclude Include="Request.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

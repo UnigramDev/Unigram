@@ -22,6 +22,7 @@ namespace Telegram
 				TLBinaryReader();
 				~TLBinaryReader();
 
+				//COM exported methods
 				STDMETHODIMP RuntimeClassInitialize();
 				STDMETHODIMP ReadByte(_Out_ BYTE* value);
 				STDMETHODIMP ReadInt16(_Out_ INT16* value);
@@ -34,9 +35,21 @@ namespace Telegram
 				STDMETHODIMP ReadString(_Out_ HSTRING* value);
 				STDMETHODIMP ReadByteArray(_Out_ UINT32* __valueSize, _Out_writes_(*__valueSize) BYTE** value);
 				STDMETHODIMP ReadDouble(_Out_ double* value);
+				STDMETHODIMP ReadFloat(_Out_ float* value);
+
+				//Internal methods
+				void Reset();
+				void Skip(UINT32 length);
+				HRESULT ReadBigEndianInt32(_Out_ INT32* value);
+				HRESULT ReadString(_Out_ std::wstring& string);
+				HRESULT ReadBuffer(_Out_writes_(length) BYTE* buffer, UINT32 length);
 
 			private:
+				HRESULT ReadBuffer(_Out_ BYTE const** padding, _Out_ UINT32* length);
 
+				BYTE const* m_buffer;
+				UINT32 m_position;
+				UINT32 m_length;
 			};
 
 		}

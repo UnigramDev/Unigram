@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0622 */
 /* at Tue Jan 19 04:14:07 2038
  */
-/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-c068c241:
+/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-4072f799:
     Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.01.0622 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -552,6 +552,9 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryReader;
                     virtual HRESULT STDMETHODCALLTYPE ReadDouble( 
                         /* [out][retval] */ double *value) = 0;
                     
+                    virtual HRESULT STDMETHODCALLTYPE ReadFloat( 
+                        /* [out][retval] */ float *value) = 0;
+                    
                 };
 
                 extern const __declspec(selectany) IID & IID_ITLBinaryReader = __uuidof(ITLBinaryReader);
@@ -638,6 +641,10 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryReader;
             __x_Telegram_CApi_CNative_CITLBinaryReader * This,
             /* [out][retval] */ double *value);
         
+        HRESULT ( STDMETHODCALLTYPE *ReadFloat )( 
+            __x_Telegram_CApi_CNative_CITLBinaryReader * This,
+            /* [out][retval] */ float *value);
+        
         END_INTERFACE
     } __x_Telegram_CApi_CNative_CITLBinaryReaderVtbl;
 
@@ -703,6 +710,9 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryReader;
 
 #define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadDouble(This,value)	\
     ( (This)->lpVtbl -> ReadDouble(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryReader_ReadFloat(This,value)	\
+    ( (This)->lpVtbl -> ReadFloat(This,value) ) 
 
 #endif /* COBJMACROS */
 
@@ -793,6 +803,9 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryWriter;
                     virtual HRESULT STDMETHODCALLTYPE WriteDouble( 
                         /* [in] */ double value) = 0;
                     
+                    virtual HRESULT STDMETHODCALLTYPE WriteFloat( 
+                        /* [in] */ float value) = 0;
+                    
                 };
 
                 extern const __declspec(selectany) IID & IID_ITLBinaryWriter = __uuidof(ITLBinaryWriter);
@@ -879,6 +892,10 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryWriter;
             __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
             /* [in] */ double value);
         
+        HRESULT ( STDMETHODCALLTYPE *WriteFloat )( 
+            __x_Telegram_CApi_CNative_CITLBinaryWriter * This,
+            /* [in] */ float value);
+        
         END_INTERFACE
     } __x_Telegram_CApi_CNative_CITLBinaryWriterVtbl;
 
@@ -944,6 +961,9 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CITLBinaryWriter;
 
 #define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteDouble(This,value)	\
     ( (This)->lpVtbl -> WriteDouble(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CITLBinaryWriter_WriteFloat(This,value)	\
+    ( (This)->lpVtbl -> WriteFloat(This,value) ) 
 
 #endif /* COBJMACROS */
 
