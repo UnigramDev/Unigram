@@ -161,8 +161,6 @@ namespace Unigram
 
         public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            var aes = VoIPControllerWrapper.TestAesIge();
-
             //NavigationService.Navigate(typeof(PlaygroundPage2));
             //return Task.CompletedTask;
 
