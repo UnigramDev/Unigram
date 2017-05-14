@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Services;
@@ -63,12 +65,26 @@ namespace Unigram.Common
 
         public IAsyncOperation<AppServiceResponse> SendUpdateAsync(TLUpdateBase update)
         {
-            return _appConnection.SendMessageAsync(new ValueSet { { nameof(update), TLSerializationService.Current.Serialize(update) } });
+            try
+            {
+                return _appConnection.SendMessageAsync(new ValueSet { { nameof(update), TLSerializationService.Current.Serialize(update) } });
+            }
+            catch
+            {
+                return AsyncInfo.Run(token => Task.FromResult(null as AppServiceResponse));
+            }
         }
 
         public IAsyncOperation<AppServiceResponse> SendRequestAsync(string caption)
         {
-            return _appConnection.SendMessageAsync(new ValueSet { { nameof(caption), caption } });
+            try
+            {
+                return _appConnection.SendMessageAsync(new ValueSet { { nameof(caption), caption } });
+            }
+            catch
+            {
+                return AsyncInfo.Run(token => Task.FromResult(null as AppServiceResponse));
+            }
         }
 
         private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
@@ -161,7 +177,7 @@ namespace Unigram.Common
         private async void OnServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
             IsConnected = false;
-            Debug.WriteLine("HubClient.OnServiceClosed()");
+            Debug.WriteLine("VoIPConnection.OnServiceClosed()");
 
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await ConnectAsync());
         }
