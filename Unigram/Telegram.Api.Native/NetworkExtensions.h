@@ -6,6 +6,10 @@
 #define NDIS_IF_MAX_STRING_SIZE 256 
 #endif
 
+#ifndef NETIOAPI_API
+#define NETIOAPI_API NTSTATUS WINAPI
+#endif 
+
 
 typedef _Return_type_success_(return >= 0) LONG NTSTATUS;
 typedef ULONG NET_IFINDEX, *PNET_IFINDEX;
@@ -63,7 +67,12 @@ typedef struct _MIB_IPINTERFACE_ROW {
 typedef VOID(WINAPI *PIPINTERFACE_CHANGE_CALLBACK) (_In_ PVOID CallerContext, _In_ PMIB_IPINTERFACE_ROW Row OPTIONAL, _In_ MIB_NOTIFICATION_TYPE NotificationType);
 
 
-NTSTATUS WINAPI NotifyIpInterfaceChange(_In_ ADDRESS_FAMILY Family, _In_ PIPINTERFACE_CHANGE_CALLBACK Callback, _In_opt_ PVOID CallerContext, _In_ BOOLEAN InitialNotification, _Inout_ HANDLE* NotificationHandle);
-NTSTATUS WINAPI CancelMibChangeNotify2(_In_ HANDLE NotificationHandle);
-NTSTATUS WINAPI ConvertInterfaceLuidToName(_In_ const NET_LUID* InterfaceLuid,_Out_ PWSTR InterfaceName, _In_ SIZE_T Length);
-DWORD WINAPI GetBestInterfaceEx( _In_  struct sockaddr* pDestAddr, _Out_ PDWORD pdwBestIfIndex);
+NETIOAPI_API NotifyIpInterfaceChange(_In_ ADDRESS_FAMILY Family, _In_ PIPINTERFACE_CHANGE_CALLBACK Callback, _In_opt_ PVOID CallerContext, _In_ BOOLEAN InitialNotification, _Inout_ HANDLE* NotificationHandle);
+NETIOAPI_API CancelMibChangeNotify2(_In_ HANDLE NotificationHandle);
+NETIOAPI_API ConvertInterfaceLuidToName(_In_ const NET_LUID* InterfaceLuid, _Out_ PWSTR InterfaceName, _In_ SIZE_T Length);
+NETIOAPI_API ConvertInterfaceGuidToLuid(_In_ const GUID* InterfaceGuid, _Out_ PNET_LUID InterfaceLuid);
+NETIOAPI_API ConvertInterfaceLuidToIndex(_In_ const NET_LUID* InterfaceLuid, _Out_ PNET_IFINDEX InterfaceIndex);
+NETIOAPI_API GetIpInterfaceEntry(_Inout_ PMIB_IPINTERFACE_ROW Row);
+VOID WINAPI InitializeIpInterfaceEntry(_Inout_ PMIB_IPINTERFACE_ROW Row);
+DWORD WINAPI GetBestInterfaceEx(_In_  struct sockaddr* pDestAddr, _Out_ PDWORD pdwBestIfIndex);
+DWORD WINAPI GetPerAdapterInfo(_In_ ULONG IfIndex, _Out_ PIP_PER_ADAPTER_INFO pPerAdapterInfo, _In_ PULONG pOutBufLen);

@@ -48,7 +48,7 @@ HRESULT Connection::get_Token(UINT32* value)
 	return S_OK;
 }
 
-HRESULT Connection::get_Datacenter(IDatacenter** value)
+HRESULT Connection::get_Datacenter(ABI::Telegram::Api::Native::IDatacenter** value)
 {
 	if (value == nullptr)
 	{

@@ -1,4 +1,4 @@
-import "inspectable.idl";
+import "Windows.Foundation.idl";
 
 #define API_VERSION 1.0
 
@@ -21,7 +21,6 @@ namespace Telegram
 			runtimeclass ConnectionManager;
 			runtimeclass TLBinaryReader;
 			runtimeclass TLBinaryWriter;
-
 
 			[uuid(B93C4F8A-0308-4598-8C0A-52ACC91E45E3)]
 			[version(API_VERSION)]
@@ -133,9 +132,10 @@ namespace Telegram
 			[version(API_VERSION)]
 			enum ConnectionNeworkType
 			{
-				Mobile = 0,
-				WiFi = 1,
-				Roaming = 2
+				None = 0,
+				Mobile = 1,
+				WiFi = 2,
+				Roaming = 3
 			};
 
 			[exclusiveto(Connection)]
@@ -180,6 +180,8 @@ namespace Telegram
 			[version(API_VERSION)]
 			interface IConnectionManager : IInspectable
 			{
+				[eventadd] HRESULT CurrentNetworkTypeChanged([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler,[out][retval] EventRegistrationToken* token);
+				[eventremove] HRESULT CurrentNetworkTypeChanged([in] EventRegistrationToken token);
 				[propget] HRESULT ConnectionState([out][retval] ConnectionState* value);
 				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
 				[propget] HRESULT IsIpv6Enabled([out][retval] boolean* value);
@@ -199,7 +201,6 @@ namespace Telegram
 			{
 				[default] interface IConnectionManager;
 			}
-
 
 		}
 	}

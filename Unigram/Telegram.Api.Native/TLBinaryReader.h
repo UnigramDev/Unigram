@@ -14,7 +14,7 @@ namespace Telegram
 		namespace Native
 		{
 
-			class TLBinaryReader WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLBinaryReader>
+			class TLBinaryReader WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ABI::Telegram::Api::Native::ITLBinaryReader>
 			{
 				InspectableClass(RuntimeClass_Telegram_Api_Native_TLBinaryReader, BaseTrust);
 

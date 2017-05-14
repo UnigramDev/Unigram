@@ -11,7 +11,8 @@
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
-using ABI::Windows::Foundation::IClosable;
+using ABI::Telegram::Api::Native::ConnectionType;
+using ABI::Telegram::Api::Native::HandshakeState;
 
 namespace Telegram
 {
@@ -20,7 +21,7 @@ namespace Telegram
 		namespace Native
 		{
 
-			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IDatacenter, CloakedIid<IClosable>, FtmBase>, public MultiThreadObject
+			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ABI::Telegram::Api::Native::IDatacenter, CloakedIid<ABI::Windows::Foundation::IClosable>, FtmBase>, public MultiThreadObject
 			{
 				friend class Connection;
 				friend class ConnectionManager;

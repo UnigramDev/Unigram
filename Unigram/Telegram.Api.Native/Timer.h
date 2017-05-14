@@ -7,6 +7,29 @@
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 
+namespace ABI
+{
+	namespace Telegram
+	{
+		namespace Api
+		{
+			namespace Native
+			{
+
+				MIDL_INTERFACE("9980B73C-F2A3-4F89-91A7-EC679F3B018B") ITimer : public IUnknown
+				{
+				public:
+					virtual HRESULT STDMETHODCALLTYPE get_IsStarted(_Out_ boolean* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE SetTimeout(UINT32 msTimeout, boolean repeat) = 0;
+					virtual HRESULT STDMETHODCALLTYPE Start() = 0;
+					virtual HRESULT STDMETHODCALLTYPE Stop() = 0;
+				};
+
+			}
+		}
+	}
+}
+
 namespace Telegram
 {
 	namespace Api
@@ -14,16 +37,7 @@ namespace Telegram
 		namespace Native
 		{
 
-			MIDL_INTERFACE("9980B73C-F2A3-4F89-91A7-EC679F3B018B") ITimer : public IUnknown
-			{
-			public:
-				virtual HRESULT STDMETHODCALLTYPE get_IsStarted(_Out_ boolean* value) = 0;
-				virtual HRESULT STDMETHODCALLTYPE SetTimeout(UINT32 msTimeout, boolean repeat) = 0;
-				virtual HRESULT STDMETHODCALLTYPE Start() = 0;
-				virtual HRESULT STDMETHODCALLTYPE Stop() = 0;
-			};
-
-			class Timer WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ITimer>, public EventObjectT<EventTraits::TimerTraits>
+			class Timer WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ABI::Telegram::Api::Native::ITimer>, public EventObjectT<EventTraits::TimerTraits>
 			{
 				typedef std::function<HRESULT()> TimerCallback;
 

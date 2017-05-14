@@ -1,5 +1,5 @@
 #include "pch.h"
-#include <memory>
+#include <iphlpapi.h>
 #include "ConnectionManager.h"
 #include "EventObject.h"
 #include "Datacenter.h"
@@ -8,15 +8,12 @@
 
 using namespace Telegram::Api::Native;
 
-#define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x))
-#define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
-
 ActivatableStaticOnlyFactory(ConnectionManagerStatics);
 
 
 ConnectionManager::ConnectionManager() :
 	m_connectionState(ConnectionState::Connecting),
-	m_currentNetworkType(ConnectionNeworkType::WiFi),
+	m_currentNetworkType(ConnectionNeworkType::None),
 	m_threadpool(nullptr),
 	m_threadpoolCleanupGroup(nullptr),
 	m_isIpv6Enabled(false),
@@ -28,7 +25,7 @@ ConnectionManager::ConnectionManager() :
 
 ConnectionManager::~ConnectionManager()
 {
-	CancelMibChangeNotify2(m_networkChangedNotificationHandle);
+	m_networkInformation->remove_NetworkStatusChanged(m_networkChangedEventToken);
 
 	if (m_threadpoolCleanupGroup != nullptr)
 	{
@@ -82,13 +79,21 @@ HRESULT ConnectionManager::RuntimeClassInitialize(DWORD minimumThreadCount, DWOR
 	SetThreadpoolCallbackPool(&m_threadpoolEnvironment, m_threadpool);
 	SetThreadpoolCallbackCleanupGroup(&m_threadpoolEnvironment, m_threadpoolCleanupGroup, nullptr);
 
-	NTSTATUS status;
-	if ((status = NotifyIpInterfaceChange(AF_UNSPEC, ConnectionManager::OnInterfaceChanged, this, FALSE, &m_networkChangedNotificationHandle)) != NO_ERROR)
-	{
-		return HRESULT_FROM_NT(status);
-	}
+	HRESULT result;
+	ReturnIfFailed(result, ::Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Networking_Connectivity_NetworkInformation).Get(), &m_networkInformation));
+	ReturnIfFailed(result, m_networkInformation->add_NetworkStatusChanged(Callback<INetworkStatusChangedEventHandler>(this, &ConnectionManager::OnNetworkStatusChanged).Get(), &m_networkChangedEventToken));
 
-	return S_OK;
+	return UpdateNetworkStatus(false);
+}
+
+HRESULT ConnectionManager::add_CurrentNetworkTypeChanged(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, EventRegistrationToken* token)
+{
+	return m_currentNetworkTypeChangedEventSource.Add(handler, token);
+}
+
+HRESULT ConnectionManager::remove_CurrentNetworkTypeChanged(EventRegistrationToken token)
+{
+	return m_currentNetworkTypeChangedEventSource.Remove(token);
 }
 
 HRESULT ConnectionManager::get_ConnectionState(ConnectionState* value)
@@ -139,11 +144,11 @@ HRESULT ConnectionManager::get_IsNetworkAvailable(boolean* value)
 
 	auto lock = LockCriticalSection();
 
-	*value = true;
+	*value = m_currentNetworkType != ConnectionNeworkType::None;
 	return S_OK;
 }
 
-HRESULT ConnectionManager::SendRequest(ITLObject* object, UINT32 datacenterId, ConnectionType connetionType, boolean immediate, INT32* requestToken)
+HRESULT ConnectionManager::SendRequest(ABI::Telegram::Api::Native::ITLObject* object, UINT32 datacenterId, ConnectionType connetionType, boolean immediate, INT32* requestToken)
 {
 	if (object == nullptr || requestToken == nullptr)
 	{
@@ -166,7 +171,7 @@ HRESULT ConnectionManager::CancelRequest(INT32 requestToken, boolean notifyServe
 	return S_OK;
 }
 
-HRESULT ConnectionManager::GetDatacenterById(UINT32 id, IDatacenter** value)
+HRESULT ConnectionManager::GetDatacenterById(UINT32 id, ABI::Telegram::Api::Native::IDatacenter** value)
 {
 	if (value == nullptr)
 	{
@@ -187,6 +192,75 @@ HRESULT ConnectionManager::GetDatacenterById(UINT32 id, IDatacenter** value)
 	}
 
 	return datacenter->second.CopyTo(value);
+}
+
+HRESULT ConnectionManager::UpdateNetworkStatus(boolean raiseEvent)
+{
+	HRESULT result;
+	ComPtr<IConnectionProfile> connectionProfile;
+	ReturnIfFailed(result, m_networkInformation->GetInternetConnectionProfile(&connectionProfile));
+
+	ConnectionNeworkType currentNetworkType;
+	if (connectionProfile == nullptr)
+	{
+		currentNetworkType = ConnectionNeworkType::None;
+	}
+	else
+	{
+		ComPtr<IConnectionCost> connectionCost;
+		ReturnIfFailed(result, connectionProfile->GetConnectionCost(&connectionCost));
+
+		NetworkCostType networkCostType;
+		ReturnIfFailed(result, connectionCost->get_NetworkCostType(&networkCostType));
+
+		boolean isRoaming;
+		ReturnIfFailed(result, connectionCost->get_Roaming(&isRoaming));
+
+		if (isRoaming)
+		{
+			currentNetworkType = ConnectionNeworkType::Roaming;
+		}
+		else
+		{
+			ComPtr<INetworkAdapter> networkAdapter;
+			ReturnIfFailed(result, connectionProfile->get_NetworkAdapter(&networkAdapter));
+
+			UINT32 interfaceIanaType;
+			ReturnIfFailed(result, networkAdapter->get_IanaInterfaceType(&interfaceIanaType));
+
+			switch (interfaceIanaType)
+			{
+			case IF_TYPE_ETHERNET_CSMACD:
+			case IF_TYPE_IEEE80211:
+				currentNetworkType = ConnectionNeworkType::WiFi;
+				break;
+			case IF_TYPE_WWANPP:
+			case IF_TYPE_WWANPP2:
+				currentNetworkType = ConnectionNeworkType::Mobile;
+				break;
+			default:
+				currentNetworkType = ConnectionNeworkType::None;
+				break;
+			}
+		}
+	}
+
+	if (currentNetworkType != m_currentNetworkType)
+	{
+		m_currentNetworkType = currentNetworkType;
+
+		return m_currentNetworkTypeChangedEventSource.InvokeAll(this, nullptr);
+	}
+
+	return S_OK;
+}
+
+HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
+{
+	HRESULT result;
+	auto lock = LockCriticalSection();
+
+	return UpdateNetworkStatus(true);
 }
 
 HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
@@ -268,7 +342,7 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 	return S_OK;
 }
 
-HRESULT ConnectionManager::BoomBaby(_Out_ IConnection** value)
+HRESULT ConnectionManager::BoomBaby(_Out_ ABI::Telegram::Api::Native::IConnection** value)
 {
 	if (value == nullptr)
 	{
@@ -314,6 +388,13 @@ INT64 ConnectionManager::GenerateMessageId()
 	return messageId;
 }
 
+boolean ConnectionManager::IsNetworkAvailable()
+{
+	auto lock = LockCriticalSection();
+
+	return m_currentNetworkType != ConnectionNeworkType::None;
+}
+
 HRESULT ConnectionManager::GetInstance(ComPtr<ConnectionManager>& value)
 {
 	if (ConnectionManagerStatics::s_instance == nullptr)
@@ -324,28 +405,6 @@ HRESULT ConnectionManager::GetInstance(ComPtr<ConnectionManager>& value)
 
 	value = ConnectionManagerStatics::s_instance;
 	return S_OK;
-}
-
-void ConnectionManager::OnInterfaceChanged(PVOID callerContext, PMIB_IPINTERFACE_ROW row, MIB_NOTIFICATION_TYPE notificationType)
-{
-	//auto connectionManager = reinterpret_cast<ConnectionManager*>(callerContext);
-
-	WCHAR interfaceName[NDIS_IF_MAX_STRING_SIZE + 1];
-	ConvertInterfaceLuidToName(&row->InterfaceLuid, interfaceName, ARRAYSIZE(interfaceName));
-
-	//ULONG bufferSize = 0;
-	//GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_SKIP_UNICAST | GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER, nullptr, nullptr, &bufferSize);
-
-	//auto address = reinterpret_cast<IP_ADAPTER_ADDRESSES*>(MALLOC(bufferSize));
-	//if (GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_SKIP_UNICAST | GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER, nullptr, address, &bufferSize) == NO_ERROR)
-	//{
-	//	while (address != nullptr)
-	//	{
-	//		address = address->Next;
-	//	}
-	//}
-
-	//FREE(address);
 }
 
 
@@ -359,7 +418,7 @@ ConnectionManagerStatics::~ConnectionManagerStatics()
 {
 }
 
-HRESULT ConnectionManagerStatics::get_Instance(IConnectionManager** value)
+HRESULT ConnectionManagerStatics::get_Instance(ABI::Telegram::Api::Native::IConnectionManager** value)
 {
 	if (value == nullptr)
 	{

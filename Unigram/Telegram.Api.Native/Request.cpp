@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Request.h"
 
-using namespace Telegram::Api::Native;
+using namespace ABI::Telegram::Api::Native;
 
 Request::Request()
 {

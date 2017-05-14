@@ -26,8 +26,15 @@ namespace Telegram.Api.Native.Test
         {
             this.InitializeComponent();
 
+
+            ConnectionManager.Instance.CurrentNetworkTypeChanged += Instance_CurrentNetworkTypeChanged;
+
             var connection = ConnectionManager.Instance.BoomBaby();
             var datacenter = connection.Datacenter;
+        }
+
+        private void Instance_CurrentNetworkTypeChanged(ConnectionManager sender, object e)
+        {
         }
     }
 }

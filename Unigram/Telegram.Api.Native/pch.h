@@ -6,6 +6,8 @@
 
 #include <windows.h>
 
+#define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x)) 
+#define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
 #define __STRINGIFY(x) #x
 #define _STRINGIFY(x) __STRINGIFY(x)
 #define __STRINGIFY_W(x) L##x

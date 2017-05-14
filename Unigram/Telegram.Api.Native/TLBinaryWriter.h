@@ -14,7 +14,7 @@ namespace Telegram
 		namespace Native
 		{
 
-			class TLBinaryWriter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLBinaryWriter>
+			class TLBinaryWriter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ABI::Telegram::Api::Native::ITLBinaryWriter>
 			{
 				InspectableClass(RuntimeClass_Telegram_Api_Native_TLBinaryWriter, BaseTrust);
 
@@ -45,7 +45,7 @@ namespace Telegram
 
 			private:
 				HRESULT WriteString(_In_ LPCWCHAR buffer, UINT32 length);
-				
+
 				BYTE* m_buffer;
 				UINT32 m_position;
 				UINT32 m_length;

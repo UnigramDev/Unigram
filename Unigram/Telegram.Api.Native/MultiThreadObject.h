@@ -1,5 +1,6 @@
 #pragma once
 #include <wrl.h>
+#include "Telegram.Api.Native.h"
 
 using namespace Microsoft::WRL::Wrappers;
 
