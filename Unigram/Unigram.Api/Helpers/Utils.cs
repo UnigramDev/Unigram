@@ -13,6 +13,7 @@ using Telegram.Api.Services;
 using Windows.Security.Cryptography;
 using Windows.Storage.Streams;
 using System.Diagnostics;
+using Org.BouncyCastle.OpenSsl;
 
 namespace Telegram.Api.Helpers
 {
@@ -38,51 +39,60 @@ namespace Telegram.Api.Helpers
 
         public static byte[] GetRSABytes(byte[] bytes)
         {
-            // big-endian exponent and modulus
-            const string exponentString = "010001";
-            const string modulusString = "C150023E2F70DB7985DED064759CFECF" +
-                                     "0AF328E69A41DAF4D6F01B538135A6F91F8F8B2A0EC9BA9720CE352EFCF6C5680FFC424BD6348649" +
-                                     "02DE0B4BD6D49F4E580230E3AE97D95C8B19442B3C0A10D8F5633FECEDD6926A7F6DAB0DDB7D457F" +
-                                     "9EA81B8465FCD6FFFEED114011DF91C059CAEDAF97625F6C96ECC74725556934EF781D866B34F011" +
-                                     "FCE4D835A090196E9A5F0E4449AF7EB697DDB9076494CA5F81104A305B6DD27665722C46B60E5DF6" +
-                                     "80FB16B210607EF217652E60236C255F6A28315F4083A96791D7214BF64C1DF4FD0DB1944FB26A2A" +
-                                     "57031B32EEE64AD15A8BA68885CDE74A5BFC920F6ABF59BA5C75506373E7130F9042DA922179251F";
-            var modulusBytes = StringToByteArray(modulusString);
-            var exponentBytes = StringToByteArray(exponentString);
-            var modulus = new System.Numerics.BigInteger(modulusBytes.Reverse().Concat(new byte[] { 0x00 }).ToArray());
-            var exponent = new System.Numerics.BigInteger(exponentBytes.Reverse().Concat(new byte[] { 0x00 }).ToArray());
-            var num = new System.Numerics.BigInteger(bytes.Reverse().Concat(new byte[] { 0x00 }).ToArray());
+            var key =
+"-----BEGIN RSA PUBLIC KEY-----\n" +
+"MIIBCgKCAQEAwVACPi9w23mF3tBkdZz+zwrzKOaaQdr01vAbU4E1pvkfj4sqDsm6\n" +
+"lyDONS789sVoD/xCS9Y0hkkC3gtL1tSfTlgCMOOul9lcixlEKzwKENj1Yz/s7daS\n" +
+"an9tqw3bfUV/nqgbhGX81v/+7RFAEd+RwFnK7a+XYl9sluzHRyVVaTTveB2GazTw\n" +
+"Efzk2DWgkBluml8OREmvfraX3bkHZJTKX4EQSjBbbdJ2ZXIsRrYOXfaA+xayEGB+\n" +
+"8hdlLmAjbCVfaigxX0CDqWeR1yFL9kwd9P0NsZRPsmoqVwMbMu7mStFai6aIhc3n\n" +
+"Slv8kg9qv1m6XHVQY3PnEw+QQtqSIXklHwIDAQAB\n" +
+"-----END RSA PUBLIC KEY-----";
 
-            var rsa = System.Numerics.BigInteger.ModPow(num, exponent, modulus).ToByteArray().Reverse().ToArray();
+            using (var text = new StringReader(key))
+            {
+                var reader = new PemReader(text);
+                var parameter = reader.ReadObject() as RsaKeyParameters;
+                if (parameter != null)
+                {
+                    var modulus = parameter.Modulus;
+                    var exponent = parameter.Exponent;
+
+                    var num = new BigInteger(new byte[] { 0x00 }.Concat(bytes).ToArray());
+                    var rsa = num.ModPow(exponent, modulus).ToByteArray();
 
 #if LOG_REGISTRATION
             TLUtils.WriteLog("RSA bytes length " + rsa.Length);
 #endif
-            if (rsa.Length == 257)
-            {
-                if (rsa[0] != 0x00) throw new Exception("rsa last byte is " + rsa[0]);
+                    if (rsa.Length == 257)
+                    {
+                        if (rsa[0] != 0x00) throw new Exception("rsa last byte is " + rsa[0]);
 
 #if LOG_REGISTRATION
                 TLUtils.WriteLog("First RSA byte removes: byte value is " + rsa[0]);
 #endif
-                TLUtils.WriteLine("First RSA byte removes: byte value is " + rsa[0]);
-                rsa = rsa.SubArray(1, 256);
-            }
-            else if (rsa.Length < 256)
-            {
-                var correctedRsa = new byte[256];
-                Array.Copy(rsa, 0, correctedRsa, 256 - rsa.Length, rsa.Length);
-                for (var i = 0; i < 256 - rsa.Length; i++)
-                {
-                    correctedRsa[i] = 0;
+                        TLUtils.WriteLine("First RSA byte removes: byte value is " + rsa[0]);
+                        rsa = rsa.SubArray(1, 256);
+                    }
+                    else if (rsa.Length < 256)
+                    {
+                        var correctedRsa = new byte[256];
+                        Array.Copy(rsa, 0, correctedRsa, 256 - rsa.Length, rsa.Length);
+                        for (var i = 0; i < 256 - rsa.Length; i++)
+                        {
+                            correctedRsa[i] = 0;
 #if LOG_REGISTRATION
                     TLUtils.WriteLog("First RSA bytes added i=" + i + " " + correctedRsa[i]);
-#endif           
+#endif
+                        }
+                        rsa = correctedRsa;
+                    }
+
+                    return rsa;
                 }
-                rsa = correctedRsa;
             }
 
-            return rsa;
+            return null;
         }
 
         // Note: ivec - big-endian, but BigInterger.ctor and BigInteger.ToByteArray return little-endian
