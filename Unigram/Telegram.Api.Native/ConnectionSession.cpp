@@ -18,13 +18,6 @@ ConnectionSession::~ConnectionSession()
 {
 }
 
-INT64 ConnectionSession::GetSessionId()
-{
-	auto lock = LockCriticalSection();
-
-	return m_id;
-}
-
 void ConnectionSession::RecreateSession()
 {
 	auto lock = LockCriticalSection();

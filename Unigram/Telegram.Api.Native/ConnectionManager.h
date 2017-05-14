@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include <wrl.h>
+#include "NetworkExtensions.h"
 #include "MultiThreadObject.h"
 #include "Telegram.Api.Native.h"
 
@@ -55,6 +56,8 @@ namespace Telegram
 				HRESULT OnConnectionClosed(_In_ Connection* connection);
 				void OnEventObjectError(_In_ EventObject const* eventObject, HRESULT error);
 
+				static void WINAPI OnInterfaceChanged(_In_ PVOID callerContext, _In_ PMIB_IPINTERFACE_ROW row OPTIONAL, _In_ MIB_NOTIFICATION_TYPE notificationType);
+
 				inline static UINT64 GetCurrentRealTime()
 				{
 					FILETIME time;
@@ -71,6 +74,7 @@ namespace Telegram
 				TP_CALLBACK_ENVIRON m_threadpoolEnvironment;
 				PTP_POOL m_threadpool;
 				PTP_CLEANUP_GROUP m_threadpoolCleanupGroup;
+				HANDLE m_networkChangedNotificationHandle;
 				ConnectionState m_connectionState;
 				ConnectionNeworkType m_currentNetworkType;
 				boolean m_isIpv6Enabled;

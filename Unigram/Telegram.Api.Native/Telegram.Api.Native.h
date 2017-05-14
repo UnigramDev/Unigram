@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0622 */
 /* at Tue Jan 19 04:14:07 2038
  */
-/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-4072f799:
+/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-c0c9dca4:
     Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.01.0622 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -221,6 +221,16 @@ typedef enum __x_Telegram_CApi_CNative_CConnectionState __x_Telegram_CApi_CNativ
 
 
 #endif
+#if !defined(__cplusplus)
+#if !defined(__cplusplus)
+
+typedef enum __x_Telegram_CApi_CNative_CHandshakeState __x_Telegram_CApi_CNative_CHandshakeState;
+
+
+#endif /* end if !defined(__cplusplus) */
+
+
+#endif
 
 #ifdef __cplusplus
 namespace Telegram {
@@ -320,6 +330,22 @@ namespace Telegram {
         namespace Native {
             
             typedef MIDL_ENUM ConnectionState ConnectionState;
+            
+        } /* end namespace */
+    } /* end namespace */
+} /* end namespace */
+
+extern "C" { 
+#endif
+
+#ifdef __cplusplus
+
+} /* end extern "C" */
+namespace Telegram {
+    namespace Api {
+        namespace Native {
+            
+            typedef MIDL_ENUM HandshakeState HandshakeState;
             
         } /* end namespace */
     } /* end namespace */
@@ -996,6 +1022,21 @@ enum __x_Telegram_CApi_CNative_CConnectionType
 #endif /* end if !defined(__cplusplus) */
 
 #endif
+#if !defined(__cplusplus)
+
+#if !defined(__cplusplus)
+/* [v1_enum] */ 
+enum __x_Telegram_CApi_CNative_CHandshakeState
+    {
+        HandshakeState_None	= 0,
+        HandshakeState_Started	= 1,
+        HandshakeState_PQ	= 2,
+        HandshakeState_ServerDH	= 3,
+        HandshakeState_ClientDH	= 4
+    } ;
+#endif /* end if !defined(__cplusplus) */
+
+#endif
 #if !defined(____x_Telegram_CApi_CNative_CIDatacenter_INTERFACE_DEFINED__)
 extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegram_Api_Native_IDatacenter[] = L"Telegram.Api.Native.IDatacenter";
 #endif /* !defined(____x_Telegram_CApi_CNative_CIDatacenter_INTERFACE_DEFINED__) */
@@ -1021,6 +1062,35 @@ namespace Telegram {
             const MIDL_ENUM ConnectionType ConnectionType_Generic = ConnectionType::Generic;
             const MIDL_ENUM ConnectionType ConnectionType_Download = ConnectionType::Download;
             const MIDL_ENUM ConnectionType ConnectionType_Upload = ConnectionType::Upload;
+            
+        } /* end namespace */
+    } /* end namespace */
+} /* end namespace */
+
+extern "C" { 
+#endif
+
+#ifdef __cplusplus
+} /* end extern "C" */
+namespace Telegram {
+    namespace Api {
+        namespace Native {
+            
+            /* [v1_enum] */ 
+            MIDL_ENUM HandshakeState
+                {
+                    None	= 0,
+                    Started	= 1,
+                    PQ	= 2,
+                    ServerDH	= 3,
+                    ClientDH	= 4
+                } ;
+
+            const MIDL_ENUM HandshakeState HandshakeState_None = HandshakeState::None;
+            const MIDL_ENUM HandshakeState HandshakeState_Started = HandshakeState::Started;
+            const MIDL_ENUM HandshakeState HandshakeState_PQ = HandshakeState::PQ;
+            const MIDL_ENUM HandshakeState HandshakeState_ServerDH = HandshakeState::ServerDH;
+            const MIDL_ENUM HandshakeState HandshakeState_ClientDH = HandshakeState::ClientDH;
             
         } /* end namespace */
     } /* end namespace */
@@ -1060,6 +1130,9 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIDatacenter;
                 public:
                     virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Id( 
                         /* [out][retval] */ UINT32 *value) = 0;
+                    
+                    virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_HandshakeState( 
+                        /* [out][retval] */ Telegram::Api::Native::HandshakeState *value) = 0;
                     
                     virtual HRESULT STDMETHODCALLTYPE GetCurrentAddress( 
                         /* [in] */ Telegram::Api::Native::ConnectionType connectionType,
@@ -1116,6 +1189,10 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIDatacenter;
             __x_Telegram_CApi_CNative_CIDatacenter * This,
             /* [out][retval] */ UINT32 *value);
         
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_HandshakeState )( 
+            __x_Telegram_CApi_CNative_CIDatacenter * This,
+            /* [out][retval] */ __x_Telegram_CApi_CNative_CHandshakeState *value);
+        
         HRESULT ( STDMETHODCALLTYPE *GetCurrentAddress )( 
             __x_Telegram_CApi_CNative_CIDatacenter * This,
             /* [in] */ __x_Telegram_CApi_CNative_CConnectionType connectionType,
@@ -1163,6 +1240,9 @@ EXTERN_C const IID IID___x_Telegram_CApi_CNative_CIDatacenter;
 
 #define __x_Telegram_CApi_CNative_CIDatacenter_get_Id(This,value)	\
     ( (This)->lpVtbl -> get_Id(This,value) ) 
+
+#define __x_Telegram_CApi_CNative_CIDatacenter_get_HandshakeState(This,value)	\
+    ( (This)->lpVtbl -> get_HandshakeState(This,value) ) 
 
 #define __x_Telegram_CApi_CNative_CIDatacenter_GetCurrentAddress(This,connectionType,ipv6,value)	\
     ( (This)->lpVtbl -> GetCurrentAddress(This,connectionType,ipv6,value) ) 

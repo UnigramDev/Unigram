@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <memory>
 #include "ConnectionManager.h"
 #include "EventObject.h"
 #include "Datacenter.h"
@@ -7,6 +8,8 @@
 
 using namespace Telegram::Api::Native;
 
+#define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x))
+#define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
 
 ActivatableStaticOnlyFactory(ConnectionManagerStatics);
 
@@ -25,6 +28,8 @@ ConnectionManager::ConnectionManager() :
 
 ConnectionManager::~ConnectionManager()
 {
+	CancelMibChangeNotify2(m_networkChangedNotificationHandle);
+
 	if (m_threadpoolCleanupGroup != nullptr)
 	{
 		CloseThreadpoolCleanupGroupMembers(m_threadpoolCleanupGroup, TRUE, nullptr);
@@ -76,6 +81,12 @@ HRESULT ConnectionManager::RuntimeClassInitialize(DWORD minimumThreadCount, DWOR
 
 	SetThreadpoolCallbackPool(&m_threadpoolEnvironment, m_threadpool);
 	SetThreadpoolCallbackCleanupGroup(&m_threadpoolEnvironment, m_threadpoolCleanupGroup, nullptr);
+
+	NTSTATUS status;
+	if ((status = NotifyIpInterfaceChange(AF_UNSPEC, ConnectionManager::OnInterfaceChanged, this, FALSE, &m_networkChangedNotificationHandle)) != NO_ERROR)
+	{
+		return HRESULT_FROM_NT(status);
+	}
 
 	return S_OK;
 }
@@ -217,13 +228,45 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 	HRESULT result;
 	auto lock = LockCriticalSection();
 
-	auto datacenter = connection->GetDatacenter();
+	if (connection->GetType() == ConnectionType::Generic)
+	{
+		auto datacenter = connection->GetDatacenter();
+		if (datacenter->GetHandshakeState() != HandshakeState::None)
+		{
+			ReturnIfFailed(result, datacenter->OnHandshakeConnectionClosed(connection));
+		}
 
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+		if (datacenter->GetId() == m_currentDatacenterId)
+		{
+			//if (networkAvailable)
+			//{
+			//	if (m_connectionState != ConnectionState::Connecting)
+			//	{
+			//		m_connectionState = ConnectionState::Connecting;
+
+			//		/*if (delegate != nullptr)
+			//		{
+			//			delegate->onConnectionStateChanged(connectionState);
+			//		}*/
+			//	}
+			//}
+			//else
+			//{
+			//	if (m_connectionState != ConnectionState::WaitingForNetwork)
+			//	{
+			//		m_connectionState = ConnectionState::WaitingForNetwork;
+
+			//		/*if (delegate != nullptr)
+			//		{
+			//			delegate->onConnectionStateChanged(connectionState);
+			//		}*/
+			//	}
+			//}
+		}
+	}
 
 	return S_OK;
 }
-
 
 HRESULT ConnectionManager::BoomBaby(_Out_ IConnection** value)
 {
@@ -281,6 +324,28 @@ HRESULT ConnectionManager::GetInstance(ComPtr<ConnectionManager>& value)
 
 	value = ConnectionManagerStatics::s_instance;
 	return S_OK;
+}
+
+void ConnectionManager::OnInterfaceChanged(PVOID callerContext, PMIB_IPINTERFACE_ROW row, MIB_NOTIFICATION_TYPE notificationType)
+{
+	//auto connectionManager = reinterpret_cast<ConnectionManager*>(callerContext);
+
+	WCHAR interfaceName[NDIS_IF_MAX_STRING_SIZE + 1];
+	ConvertInterfaceLuidToName(&row->InterfaceLuid, interfaceName, ARRAYSIZE(interfaceName));
+
+	//ULONG bufferSize = 0;
+	//GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_SKIP_UNICAST | GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER, nullptr, nullptr, &bufferSize);
+
+	//auto address = reinterpret_cast<IP_ADAPTER_ADDRESSES*>(MALLOC(bufferSize));
+	//if (GetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_SKIP_UNICAST | GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER, nullptr, address, &bufferSize) == NO_ERROR)
+	//{
+	//	while (address != nullptr)
+	//	{
+	//		address = address->Next;
+	//	}
+	//}
+
+	//FREE(address);
 }
 
 

@@ -23,7 +23,7 @@ namespace Telegram
 				~TLBinaryReader();
 
 				//COM exported methods
-				STDMETHODIMP RuntimeClassInitialize();
+				STDMETHODIMP RuntimeClassInitialize(_In_ BYTE const* buffer, UINT32 length);
 				STDMETHODIMP ReadByte(_Out_ BYTE* value);
 				STDMETHODIMP ReadInt16(_Out_ INT16* value);
 				STDMETHODIMP ReadUInt16(_Out_ UINT16* value);

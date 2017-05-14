@@ -23,7 +23,7 @@ namespace Telegram
 				~TLBinaryWriter();
 
 				//COM exported methods
-				STDMETHODIMP RuntimeClassInitialize();
+				STDMETHODIMP RuntimeClassInitialize(_In_ BYTE* buffer, UINT32 length);
 				STDMETHODIMP WriteByte(BYTE value);
 				STDMETHODIMP WriteInt16(INT16 value);
 				STDMETHODIMP WriteUInt16(UINT16 value);

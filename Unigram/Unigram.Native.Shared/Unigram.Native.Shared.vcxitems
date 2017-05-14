@@ -16,5 +16,6 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)Helpers\COMHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Helpers\DebugHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Helpers\LibraryHelper.h" />
   </ItemGroup>
 </Project>

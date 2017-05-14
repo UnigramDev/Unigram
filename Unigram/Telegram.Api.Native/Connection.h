@@ -51,6 +51,16 @@ namespace Telegram
 					return m_datacenter.Get();
 				}
 
+				inline ConnectionType GetType() const
+				{
+					return m_type;
+				}
+
+				inline ConnectionNeworkType GetCurrentNeworkType() const
+				{
+					return m_currentNetworkType;
+				}
+
 				virtual HRESULT OnSocketCreated() override;
 				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) override;

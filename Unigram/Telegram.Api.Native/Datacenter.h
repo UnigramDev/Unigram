@@ -34,6 +34,7 @@ namespace Telegram
 				//COM exported methods
 				STDMETHODIMP RuntimeClassInitialize(UINT32 id);
 				STDMETHODIMP get_Id(_Out_ UINT32* value);
+				STDMETHODIMP get_HandshakeState(_Out_ HandshakeState* value);
 				STDMETHODIMP GetCurrentAddress(ConnectionType connectionType, boolean ipv6, _Out_ HSTRING* value);
 				STDMETHODIMP GetCurrentPort(ConnectionType connectionType, boolean ipv6, _Out_ UINT32* value);
 				//STDMETHODIMP GetDownloadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
@@ -46,11 +47,17 @@ namespace Telegram
 				void GetSessionsIds(_Out_ std::vector<INT64>& sessionIds);
 				void NextEndpoint(ConnectionType connectionType, boolean ipv6);
 				void ResetEndpoint();
+				HandshakeState GetHandshakeState();
 				HRESULT AddEndpoint(_In_ std::wstring address, UINT32 port, ConnectionType connectionType, boolean ipv6);
 				HRESULT GetDownloadConnection(UINT32 index, boolean create, _Out_ Connection** value);
 				HRESULT GetUploadConnection(UINT32 index, boolean create, _Out_ Connection** value);
 				HRESULT GetGenericConnection(boolean create, _Out_ Connection** value);
 				HRESULT SuspendConnections();
+
+				inline UINT32 GetId() const
+				{
+					return m_id;
+				}
 
 			private:
 				struct DatacenterEndpoint
@@ -65,6 +72,7 @@ namespace Telegram
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
 
 				UINT32 m_id;
+				HandshakeState m_handshakeState;
 				std::vector<DatacenterEndpoint> m_ipv4Endpoints;
 				std::vector<DatacenterEndpoint> m_ipv4DownloadEndpoints;
 				std::vector<DatacenterEndpoint> m_ipv6Endpoints;

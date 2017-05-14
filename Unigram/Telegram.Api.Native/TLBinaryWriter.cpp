@@ -17,10 +17,15 @@ TLBinaryWriter::~TLBinaryWriter()
 {
 }
 
-HRESULT TLBinaryWriter::RuntimeClassInitialize()
+HRESULT TLBinaryWriter::RuntimeClassInitialize(BYTE* buffer, UINT32 length)
 {
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+	if (buffer == nullptr)
+	{
+		return E_POINTER;
+	}
 
+	m_buffer = buffer;
+	m_length = length;
 	return S_OK;
 }
 

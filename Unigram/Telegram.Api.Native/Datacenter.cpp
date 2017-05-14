@@ -10,6 +10,7 @@ using namespace Telegram::Api::Native;
 
 Datacenter::Datacenter() :
 	m_id(0),
+	m_handshakeState(HandshakeState::None),
 	m_currentIpv4EndpointIndex(0),
 	m_currentIpv4DownloadEndpointIndex(0),
 	m_currentIpv6EndpointIndex(0),
@@ -35,6 +36,17 @@ HRESULT Datacenter::get_Id(UINT32* value)
 	}
 
 	*value = m_id;
+	return S_OK;
+}
+
+HRESULT Datacenter::get_HandshakeState(HandshakeState* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_handshakeState;
 	return S_OK;
 }
 
@@ -212,6 +224,13 @@ void Datacenter::ResetEndpoint()
 	m_currentIpv6DownloadEndpointIndex = 0;
 
 	//StoreCurrentEndpoint();
+}
+
+HandshakeState Datacenter::GetHandshakeState()
+{
+	auto lock = LockCriticalSection();
+
+	return m_handshakeState;
 }
 
 HRESULT Datacenter::AddEndpoint(std::wstring address, UINT32 port, ConnectionType connectionType, boolean ipv6)
@@ -415,5 +434,19 @@ HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ip
 	}
 
 	*endpoint = &(*endpoints)[currentEndpointIndex];
+	return S_OK;
+}
+
+HRESULT Datacenter::OnHandshakeConnectionClosed(Connection* connection)
+{
+	auto lock = LockCriticalSection();
+
+	return S_OK;
+}
+
+HRESULT Datacenter::OnHandshakeConnectionConnected(Connection* connection)
+{
+	auto lock = LockCriticalSection();
+
 	return S_OK;
 }

@@ -18,6 +18,7 @@
     <ClCompile Include="EventObject.cpp" />
     <ClCompile Include="ConnectionCryptograpy.cpp" />
     <ClCompile Include="Request.cpp" />
+    <ClCompile Include="NetworkExtensions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -36,6 +37,7 @@
     <ClInclude Include="ConnectionCryptograpy.h" />
     <ClInclude Include="MultiThreadObject.h" />
     <ClInclude Include="Request.h" />
+    <ClInclude Include="NetworkExtensions.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

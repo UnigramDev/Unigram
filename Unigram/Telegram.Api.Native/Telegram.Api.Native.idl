@@ -12,6 +12,7 @@ namespace Telegram
 			typedef enum ConnectionType ConnectionType;
 			typedef enum ConnectionNeworkType ConnectionNeworkType;
 			typedef enum ConnectionState ConnectionState;
+			typedef enum HandshakeState HandshakeState;
 
 			interface ITLObject;
 
@@ -44,9 +45,9 @@ namespace Telegram
 				HRESULT ReadUInt32([out][retval] UINT32* value);
 				HRESULT ReadInt64([out][retval] INT64* value);
 				HRESULT ReadUInt64([out][retval] UINT64* value);
-				HRESULT ReadBool([out][retval] boolean* value);	
+				HRESULT ReadBool([out][retval] boolean* value);
 				HRESULT ReadString([out][retval] HSTRING* value);
-				HRESULT ReadByteArray([out] UINT32* __valueSize, [out][size_is(, *__valueSize)] BYTE** value);
+				HRESULT ReadByteArray([out] UINT32* __valueSize,[out][size_is(, *__valueSize)] BYTE** value);
 				HRESULT ReadDouble([out][retval] double* value);
 				HRESULT ReadFloat([out][retval] float* value);
 			}
@@ -74,7 +75,7 @@ namespace Telegram
 				HRESULT WriteUInt64([in] UINT64 value);
 				HRESULT WriteBool([in] boolean value);
 				HRESULT WriteString([in] HSTRING value);
-				HRESULT WriteByteArray([in] UINT32 __valueSize, [in][size_is(__valueSize)] BYTE* value);
+				HRESULT WriteByteArray([in] UINT32 __valueSize,[in][size_is(__valueSize)] BYTE* value);
 				HRESULT WriteDouble([in] double value);
 				HRESULT WriteFloat([in] float value);
 			}
@@ -96,14 +97,25 @@ namespace Telegram
 				Upload = 4
 			};
 
+			[version(API_VERSION)]
+			enum HandshakeState
+			{
+				None = 0,
+				Started = 1,
+				PQ = 2,
+				ServerDH = 3,
+				ClientDH = 4
+			};
+
 			[exclusiveto(Datacenter)]
 			[uuid(ACBC9624-7B96-417D-A9F9-A7F93C195C86)]
 			[version(API_VERSION)]
 			interface IDatacenter : IInspectable
 			{
 				[propget] HRESULT Id([out][retval] UINT32* value);
-				HRESULT GetCurrentAddress([in] ConnectionType connectionType, [in] boolean ipv6, [out][retval] HSTRING* value);
-				HRESULT GetCurrentPort([in] ConnectionType connectionType, [in] boolean ipv6, [out][retval] UINT32* value);
+				[propget] HRESULT HandshakeState([out][retval] HandshakeState* value);
+				HRESULT GetCurrentAddress([in] ConnectionType connectionType,[in] boolean ipv6,[out][retval] HSTRING* value);
+				HRESULT GetCurrentPort([in] ConnectionType connectionType,[in] boolean ipv6,[out][retval] UINT32* value);
 				//HRESULT GetDownloadConnection([in] UINT32 index,[in] boolean create, [out][retval] Connection** value);
 				//HRESULT GetUploadConnection([in] UINT32 index, [in] boolean create, [out][retval] Connection** value);
 				//HRESULT GetGenericConnection([in] boolean create, [out][retval] Connection** value);
@@ -172,9 +184,9 @@ namespace Telegram
 				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
 				[propget] HRESULT IsIpv6Enabled([out][retval] boolean* value);
 				[propget] HRESULT IsNetworkAvailable([out][retval] boolean* value);
-				HRESULT SendRequest([in] ITLObject* object,[in] UINT32 datacenterId, [in] ConnectionType connetionType, [in] boolean immediate, [out] INT32* requestToken);
+				HRESULT SendRequest([in] ITLObject* object,[in] UINT32 datacenterId,[in] ConnectionType connetionType,[in] boolean immediate,[out] INT32* requestToken);
 				HRESULT CancelRequest(INT32 requestToken, boolean notifyServer);
-				HRESULT GetDatacenterById(UINT32 id, [out][retval] Datacenter** value);
+				HRESULT GetDatacenterById(UINT32 id,[out][retval] Datacenter** value);
 
 				HRESULT BoomBaby([out][retval] Connection** value);
 			}
