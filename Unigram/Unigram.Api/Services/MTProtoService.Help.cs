@@ -129,7 +129,13 @@ namespace Telegram.Api.Services
         {
             var obj = new TLHelpGetSupport();
 
-            SendInformativeMessage("help.getSupport", obj, callback, faultCallback);
+            SendInformativeMessage<TLHelpSupport>("help.getSupport", obj, 
+                result =>
+                {
+                    _cacheService.SyncUser(result.User, _ => { });
+                    callback(result);
+                }, 
+                faultCallback);
         }
 
         public void GetAppChangelogAsync(string prevAppVersion, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)

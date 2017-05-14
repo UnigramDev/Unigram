@@ -21,7 +21,7 @@ using SocketError = System.Net.Sockets.SocketError;
 
 namespace Telegram.Api.Transport
 {
-    public class TcpTransport : TcpTransportBase
+    internal class TcpTransport : TcpTransportBase
     {
 
         private readonly object _isConnectedSocketRoot = new object();

@@ -919,7 +919,7 @@ namespace Telegram.Api.Services.Updates
             var updateUserBlocked = update as TLUpdateUserBlocked;
             if (updateUserBlocked != null)
             {
-                var user = _cacheService.GetUser(updateUserBlocked.UserId);
+                var user = _cacheService.GetFullUser(updateUserBlocked.UserId);
                 if (user != null)
                 {
                     user.IsBlocked = updateUserBlocked.Blocked;
@@ -1736,11 +1736,12 @@ namespace Telegram.Api.Services.Updates
             var updateChatParticipants = update as TLUpdateChatParticipants;
             if (updateChatParticipants != null)
             {
+                var chatFull = _cacheService.GetFullChat(updateChatParticipants.Participants.ChatId) as TLChatFull;
                 var chat = _cacheService.GetChat(updateChatParticipants.Participants.ChatId) as TLChat;
-                if (chat != null)
+                if (chat != null && chatFull != null)
                 {
-                    chat.Participants = updateChatParticipants.Participants;
-                    var participants = chat.Participants as TLChatParticipants;
+                    chatFull.Participants = updateChatParticipants.Participants;
+                    var participants = chatFull.Participants as TLChatParticipants;
                     if (participants != null)
                     {
                         chat.Version = participants.Version;
@@ -1846,7 +1847,8 @@ namespace Telegram.Api.Services.Updates
                     GetFullUserAsync(new TLInputUser { UserId = contactRegistered.UserId, AccessHash = 0 },
                         userFull =>
                         {
-                            user = userFull.ToUser();
+                            // TODO: 06/05/2017
+                            //user = userFull.ToUser();
                             CreateContactRegisteredMessage(contactRegistered, notifyNewMessage);
                         },
                         error =>
@@ -1936,17 +1938,18 @@ namespace Telegram.Api.Services.Updates
                         var peerUser = dialog.Peer as TLPeerUser;
                         if (peerUser != null)
                         {
-                            var user = _cacheService.GetUser(peerUser.Id);
+                            var user = _cacheService.GetFullUser(peerUser.Id);
                             if (user != null)
                             {
                                 user.NotifySettings = updateNotifySettings.NotifySettings;
                                 if (dialog.With != null)
                                 {
-                                    var dialogUser = dialog.With as TLUserBase;
-                                    if (dialogUser != null)
-                                    {
-                                        dialogUser.NotifySettings = updateNotifySettings.NotifySettings;
-                                    }
+                                    // TODO: 06/05/2017
+                                    //var dialogUser = dialog.With as TLUserBase;
+                                    //if (dialogUser != null)
+                                    //{
+                                    //    dialogUser.NotifySettings = updateNotifySettings.NotifySettings;
+                                    //}
                                 }
                             }
                         }
@@ -1954,17 +1957,18 @@ namespace Telegram.Api.Services.Updates
                         var peerChat = dialog.Peer as TLPeerChat;
                         if (peerChat != null)
                         {
-                            var chat = _cacheService.GetChat(peerChat.Id);
+                            var chat = _cacheService.GetFullChat(peerChat.Id);
                             if (chat != null)
                             {
                                 chat.NotifySettings = updateNotifySettings.NotifySettings;
                                 if (dialog.With != null)
                                 {
-                                    var dialogChat = dialog.With as TLChatBase;
-                                    if (dialogChat != null)
-                                    {
-                                        dialogChat.NotifySettings = updateNotifySettings.NotifySettings;
-                                    }
+                                    // TODO: 06/05/2017
+                                    //var dialogChat = dialog.With as TLChatBase;
+                                    //if (dialogChat != null)
+                                    //{
+                                    //    dialogChat.NotifySettings = updateNotifySettings.NotifySettings;
+                                    //}
                                 }
                             }
                         }

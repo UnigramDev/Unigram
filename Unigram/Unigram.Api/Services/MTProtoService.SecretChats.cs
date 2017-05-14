@@ -7,16 +7,12 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
-        public void RekeyAsync(TLEncryptedChatBase chat, Action<long> callback)
-        {
-            //GetGA()
-        }
-
         public void GetDHConfigAsync(int version, int randomLength, Action<TLMessagesDHConfig> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetDHConfig { Version = version, RandomLength = randomLength };
 
-            SendInformativeMessage("messages.getDhConfig", obj, callback, faultCallback);
+            const string caption = "messages.getDhConfig";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         // TODO: Encrypted 

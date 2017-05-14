@@ -132,6 +132,10 @@
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Managers\BackgroundTaskManager.cs" />
     <Compile Include="Managers\ResourcesManager.cs" />
+    <Compile Include="Media\JSExtractor.cs" />
+    <Compile Include="Media\VideoPlayerTask.cs" />
+    <Compile Include="Media\VimeoVideoPlayerTask.cs" />
+    <Compile Include="Media\YouTubeVideoPlayerTask.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\FoursquareRootObject.cs" />
     <Compile Include="Models\StorageMedia.cs" />

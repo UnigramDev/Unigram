@@ -148,7 +148,6 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLAccountAuthorizations>> GetAuthorizationsAsync();
         Task<MTProtoResponse<bool>> EditChatAdminAsync(int chatId, TLInputUserBase userId, bool isAdmin);
         Task<MTProtoResponse<TLUpdatesBase>> InviteToChannelAsync(TLInputChannelBase channel, TLVector<TLInputUserBase> users);
-        Task<MTProtoResponse<TLMessagesArchivedStickers>> GetArchivedStickersAsync(bool full, long offsetId, int limit, bool masks);
         Task<MTProtoResponse<TLMessagesArchivedStickers>> GetArchivedStickersAsync(long offsetId, int limit, bool masks);
         Task<MTProtoResponse<bool>> UpdateDeviceLockedAsync(int period);
         Task<MTProtoResponse<TLContactsLink>> DeleteContactAsync(TLInputUserBase id);
@@ -171,7 +170,6 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLMessagesSavedGifsBase>> GetSavedGifsAsync(int hash);
         Task<MTProtoResponse<bool>> SetInlineBotResultsAsync(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM);
         Task<MTProtoResponse<bool>> ReadFeaturedStickersAsync(TLVector<long> id);
-        Task<MTProtoResponse<TLMessagesAllStickersBase>> GetAllStickersAsync(byte[] hash);
         Task<MTProtoResponse<TLMessagesAllStickersBase>> GetAllStickersAsync(int hash);
         Task<MTProtoResponse<TLVector<TLWallPaperBase>>> GetWallpapersAsync();
         Task<MTProtoResponse<TLContactsResolvedPeer>> ResolveUsernameAsync(string username);

@@ -307,50 +307,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesGetFeaturedStickers { Hash = hash };
 
             const string caption = "messages.getFeaturedStickers";
-            SendInformativeMessage<TLMessagesFeaturedStickersBase>(caption, obj, callback, faultCallback);
-        }
-
-        public void GetArchivedStickersAsync(bool full, long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLMessagesGetArchivedStickers { OffsetId = offsetId, Limit = limit, IsMasks = masks };
-
-            const string caption = "messages.getArchivedStickers";
-
-            var results = new List<TLMessagesStickerSet>();
-            var resultsSyncRoot = new object();
-            SendInformativeMessage<TLMessagesArchivedStickers>(caption, obj,
-                result =>
-                {
-                    if (full)
-                    {
-                        GetStickerSetsAsync(result, r => callback(r as TLMessagesArchivedStickers),
-                            stickerSetResult =>
-                            {
-                                var messagesStickerSet = stickerSetResult as TLMessagesStickerSet;
-                                if (messagesStickerSet != null)
-                                {
-                                    bool processStickerSets;
-                                    lock (resultsSyncRoot)
-                                    {
-                                        results.Add(messagesStickerSet);
-                                        processStickerSets = results.Count == result.Sets.Count;
-                                    }
-
-                                    if (processStickerSets)
-                                    {
-                                        ProcessStickerSets(result, results);
-                                        result.MessagesStickerSets = new TLVector<TLMessagesStickerSet>(results);
-                                        callback?.Invoke(result);
-                                    }
-                                }
-                            },
-                            faultCallback);
-                    }
-                    else
-                    {
-                        callback?.Invoke(result);
-                    }
-                });
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetArchivedStickersAsync(long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null)
@@ -358,7 +315,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesGetArchivedStickers { OffsetId = offsetId, Limit = limit, IsMasks = masks };
 
             const string caption = "messages.getArchivedStickers";
-            SendInformativeMessage<TLMessagesArchivedStickers>(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetAllStickersAsync(int hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null)
@@ -366,166 +323,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesGetAllStickers { Hash = hash };
 
             const string caption = "messages.getAllStickers";
-            SendInformativeMessage<TLMessagesAllStickersBase>(caption, obj, callback, faultCallback);
-        }
-
-        public void GetAllStickersAsync(byte[] hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLMessagesGetAllStickers { Hash = TLUtils.ToTLInt(hash) ?? 0 };
-
-            const string caption = "messages.getAllStickers";
-
-            var results = new List<TLMessagesStickerSet>();
-            var resultsSyncRoot = new object();
-            SendInformativeMessage<TLMessagesAllStickersBase>(caption, obj,
-                result =>
-                {
-                    var allStickers32 = result as TLMessagesAllStickers;
-                    if (allStickers32 != null)
-                    {
-                        GetStickerSetsAsync(allStickers32, r => callback(r as TLMessagesAllStickersBase),
-                            stickerSetResult =>
-                            {
-                                var messagesStickerSet = stickerSetResult as TLMessagesStickerSet;
-                                if (messagesStickerSet != null)
-                                {
-                                    bool processStickerSets;
-                                    lock (resultsSyncRoot)
-                                    {
-                                        results.Add(messagesStickerSet);
-                                        processStickerSets = results.Count == allStickers32.Sets.Count;
-                                    }
-
-                                    if (processStickerSets)
-                                    {
-                                        ProcessStickerSets(allStickers32, results);
-
-                                        callback?.Invoke(allStickers32);
-                                    }
-                                }
-                            },
-                            faultCallback);
-                    }
-                    else
-                    {
-                        callback?.Invoke(result);
-                    }
-                });
-        }
-
-        private static void ProcessStickerSets(ITLStickers stickers, List<TLMessagesStickerSet> results)
-        {
-            var documentsDict = new Dictionary<long, TLDocumentBase>();
-            var packsDict = new Dictionary<string, TLStickerPack>();
-            foreach (var result in results)
-            {
-                foreach (var pack in result.Packs)
-                {
-                    var emoticon = pack.Emoticon.ToString();
-                    TLStickerPack currentPack;
-                    if (packsDict.TryGetValue(emoticon, out currentPack))
-                    {
-                        var docDict = new Dictionary<long, long>();
-                        foreach (var document in currentPack.Documents)
-                        {
-                            docDict[document] = document;
-                        }
-                        foreach (var document in pack.Documents)
-                        {
-                            if (!docDict.ContainsKey(document))
-                            {
-                                docDict[document] = document;
-                                currentPack.Documents.Add(document);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        packsDict[emoticon] = pack;
-                    }
-                }
-
-                foreach (var document in result.Documents)
-                {
-                    documentsDict[document.Id] = document;
-                }
-            }
-            stickers.Packs = new TLVector<TLStickerPack>();
-            foreach (var pack in packsDict.Values)
-            {
-                stickers.Packs.Add(pack);
-            }
-            stickers.Documents = new TLVector<TLDocumentBase>();
-            foreach (var document in documentsDict.Values)
-            {
-                stickers.Documents.Add(document);
-            }
-        }
-
-        public void GetStickerSetsAsync(ITLStickers stickers, Action<ITLStickers> callback, Action<object> getStickerSetCallback, Action<TLRPCError> faultCallback)
-        {
-            var sets = stickers.Sets;
-            if (sets.Count == 0)
-            {
-                callback?.Invoke(stickers);
-                return;
-            }
-
-            var container = new TLMsgContainer { Messages = new List<TLContainerTransportMessage>() };
-            var historyItems = new List<HistoryItem>();
-            for (var i = 0; i < sets.Count; i++)
-            {
-                var set = sets[i];
-                var obj = new TLMessagesGetStickerSet { StickerSet = new TLInputStickerSetID { Id = set.Id, AccessHash = set.AccessHash } };
-                int sequenceNumber;
-                long messageId;
-                lock (_activeTransportRoot)
-                {
-                    sequenceNumber = _activeTransport.SequenceNumber * 2 + 1;
-                    _activeTransport.SequenceNumber++;
-                    messageId = _activeTransport.GenerateMessageId(true);
-                }
-
-                var data = i > 0 ? (TLObject)new TLInvokeAfterMsg { MsgId = container.Messages[i - 1].MsgId, Query = obj } : obj;
-
-                // TODO:!!!
-                var transportMessage = new TLContainerTransportMessage
-                {
-                    MsgId = messageId,
-                    SeqNo = sequenceNumber,
-                    Query = data
-                };
-
-                var historyItem = new HistoryItem
-                {
-                    SendTime = DateTime.Now,
-                    Caption = "stickers.containerGetStickerSetPart" + i,
-                    Object = obj,
-                    Message = transportMessage,
-                    Callback = getStickerSetCallback,
-                    AttemptFailed = null,
-                    FaultCallback = faultCallback,
-                    ClientTicksDelta = ClientTicksDelta,
-                    Status = RequestStatus.Sent,
-                };
-                historyItems.Add(historyItem);
-
-                container.Messages.Add(transportMessage);
-            }
-
-
-            lock (_historyRoot)
-            {
-                foreach (var historyItem in historyItems)
-                {
-                    _history[historyItem.Hash] = historyItem;
-                }
-            }
-#if DEBUG
-            RaisePropertyChanged(() => History);
-#endif
-
-            SendNonInformativeMessage<TLObject>("stickers.container", container, result => callback(null), faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetStickerSetAsync(TLInputStickerSetBase stickerset, Action<TLMessagesStickerSet> callback, Action<TLRPCError> faultCallback = null)
@@ -541,57 +339,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesInstallStickerSet { StickerSet = stickerset, Archived = archived };
 
             const string caption = "messages.installStickerSet";
-
-            var results = new List<TLMessagesStickerSet>();
-            var resultsSyncRoot = new object();
-            SendInformativeMessage<TLMessagesStickerSetInstallResultBase>(caption, obj,
-                result =>
-                {
-                    var resultArchive = result as TLMessagesStickerSetInstallResultArchive;
-                    if (resultArchive != null)
-                    {
-                        GetStickerSetsAsync(resultArchive, r => callback(r as TLMessagesStickerSetInstallResultArchive),
-                            stickerSetResult =>
-                            {
-                                var messagesStickerSet = stickerSetResult as TLMessagesStickerSet;
-                                if (messagesStickerSet != null)
-                                {
-
-
-
-                                    var set32 = messagesStickerSet.Set as TLStickerSet;
-                                    if (set32 != null)
-                                    {
-                                        //set32.Installed = true;
-                                        //set32.Archived = true;
-                                    }
-
-
-
-
-                                    bool processStickerSets;
-                                    lock (resultsSyncRoot)
-                                    {
-                                        results.Add(messagesStickerSet);
-                                        processStickerSets = results.Count == resultArchive.Sets.Count;
-                                    }
-
-                                    if (processStickerSets)
-                                    {
-                                        ProcessStickerSets(resultArchive, results);
-                                        resultArchive.MessagesStickerSets = new TLVector<TLMessagesStickerSet>(results);
-                                        callback?.Invoke(result);
-                                    }
-                                }
-                            },
-                            faultCallback);
-                    }
-                    else
-                    {
-                        callback?.Invoke(result);
-                    }
-                },
-                faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void UninstallStickerSetAsync(TLInputStickerSetBase stickerset, Action<bool> callback, Action<TLRPCError> faultCallback = null)
@@ -611,12 +359,14 @@ namespace Telegram.Api.Services
                 var user = userBase as TLUser;
                 if (userBase != null)
                 {
-                    var botInfo = userBase.BotInfo as TLBotInfo;
+                    // TODO: 06/05/2017
+                    /*var botInfo = userBase.BotInfo as TLBotInfo;
                     if (botInfo != null)
                     {
                         status = TLMessageState.Read;
                     }
-                    else if (user != null && user.IsSelf)
+                    else*/
+                    if (user != null && user.IsSelf)
                     {
                         status = TLMessageState.Read;
                     }
@@ -1031,8 +781,6 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-
-
         public void SendEncryptedAsync(TLInputEncryptedChat peer, long randomId, byte[] data, Action<TLMessagesSentEncryptedMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesSendEncrypted { Peer = peer, RandomId = randomId, Data = data };
@@ -1049,7 +797,6 @@ namespace Telegram.Api.Services
                 },
                 faultCallback);
         }
-
 
         public void SendEncryptedFileAsync(TLInputEncryptedChat peer, long randomId, byte[] data, TLInputEncryptedFileBase file, Action<TLMessagesSentEncryptedFile> callback, Action fastCallback, Action<TLRPCError> faultCallback = null)
         {
@@ -1079,8 +826,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void ReadEncryptedHistoryAsync(TLInputEncryptedChat peer, int maxDate, Action<bool> callback,
-            Action<TLRPCError> faultCallback = null)
+        public void ReadEncryptedHistoryAsync(TLInputEncryptedChat peer, int maxDate, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesReadEncryptedHistory { Peer = peer, MaxDate = maxDate };
 
@@ -1318,7 +1064,6 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-
         public void GetChannelHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetHistory { Peer = inputPeer, AddOffset = offset, OffsetId = maxId, OffsetDate = 0, Limit = limit, MaxId = int.MaxValue, MinId = 0 };
@@ -1525,14 +1270,6 @@ namespace Telegram.Api.Services
                 },
                 faultCallback);
         }
-
-        // TODO: Probably deprecated.
-        //public void RestoreMessagesAsync(TLVector<int> id, Action<TLVector<int>> callback, Action<TLRPCError> faultCallback = null)
-        //{
-        //    var obj = new TLMessagesRestoreMessages { Id = id };
-
-        //    SendInformativeMessage("messages.restoreMessages", obj, callback, faultCallback);
-        //}
 
         public void ReceivedMessagesAsync(int maxId, Action<TLVector<TLReceivedNotifyMessage>> callback, Action<TLRPCError> faultCallback = null)
         {
@@ -1978,30 +1715,6 @@ namespace Telegram.Api.Services
 
             SendInformativeMessage("messages.editChatAdmin", obj, callback, faultCallback);
         }
-
-        // TODO: Probably deprecated
-        //public void DeactivateChatAsync(int chatId, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
-        //{
-        //    var obj = new TLDeactivateChat { ChatId = chatId, Enabled = enabled };
-
-        //    const string caption = "messages.deactivateChat";
-        //    SendInformativeMessage<TLUpdatesBase>(caption, obj,
-        //        result =>
-        //        {
-        //            var multiPts = result as ITLMultiPts;
-        //            if (multiPts != null)
-        //            {
-        //                _updatesService.SetState(multiPts, caption);
-        //            }
-        //            else
-        //            {
-        //                ProcessUpdates(result, null);
-        //            }
-
-        //            callback?.Invoke(result);
-        //        },
-        //        faultCallback);
-        //}
 
         public void GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit, Action<TLMessagesChatsBase> callback, Action<TLRPCError> faultCallback = null)
         {

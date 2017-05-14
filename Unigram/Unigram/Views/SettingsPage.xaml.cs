@@ -40,7 +40,7 @@ namespace Unigram.Views
             if (Telegram.Api.Constants.FirstServerIpAddress.Equals("149.154.167.40"))
             {
                 var optionDelete = new HyperButton();
-                optionDelete.Style = Resources["HyperButtonStyle"] as Style;
+                optionDelete.Style = App.Current.Resources["HyperButtonStyle"] as Style;
                 optionDelete.Command = ViewModel.DeleteAccountCommand;
                 optionDelete.Content = "!!! DELETE ACCOUNT !!!";
 
@@ -49,7 +49,7 @@ namespace Unigram.Views
             }
 
             var optionAccounts = new HyperButton();
-            optionAccounts.Style = Resources["HyperButtonStyle"] as Style;
+            optionAccounts.Style = App.Current.Resources["HyperButtonStyle"] as Style;
             optionAccounts.Click += Accounts_Click;
             optionAccounts.Content = "Accounts management";
 
@@ -75,11 +75,6 @@ namespace Unigram.Views
                 Separator.BorderThickness = new Thickness(0, 0, 1, 0);
             }
         }
-
-        RelayCommand NotifcationPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage)));
-        RelayCommand PrivacyPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyPage)));
-        RelayCommand StickersPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsStickersPage)));
-        RelayCommand WallpaperPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsWallpaperPage)));
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {

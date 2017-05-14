@@ -10,40 +10,40 @@ namespace Telegram.Api.TL
 {
     public abstract partial class TLChatBase : ITLDialogWith, ITLInputPeer
     {
-        #region Full chat information
+        //#region Full chat information
 
-        public TLChatParticipantsBase Participants { get; set; }
+        //public TLChatParticipantsBase Participants { get; set; }
 
-        public TLPhotoBase ChatPhoto { get; set; }
+        //public TLPhotoBase ChatPhoto { get; set; }
 
-        public TLPeerNotifySettingsBase NotifySettings { get; set; }
+        //public TLPeerNotifySettingsBase NotifySettings { get; set; }
 
-        public int UsersOnline { get; set; }
+        //public int UsersOnline { get; set; }
 
-        public TLExportedChatInviteBase ExportedInvite { get; set; }
+        //public TLExportedChatInviteBase ExportedInvite { get; set; }
 
-        public TLVector<TLBotInfo> BotInfo { get; set; }
+        //public TLVector<TLBotInfo> BotInfo { get; set; }
 
-        #endregion
+        //#endregion
 
         public virtual void Update(TLChatBase chat)
         {
             Id = chat.Id;
 
-            if (chat.Participants != null)
-            {
-                Participants = chat.Participants;
-            }
+            //if (chat.Participants != null)
+            //{
+            //    Participants = chat.Participants;
+            //}
 
-            if (chat.ChatPhoto != null)
-            {
-                ChatPhoto = chat.ChatPhoto;
-            }
+            //if (chat.ChatPhoto != null)
+            //{
+            //    ChatPhoto = chat.ChatPhoto;
+            //}
 
-            if (chat.NotifySettings != null)
-            {
-                NotifySettings = chat.NotifySettings;
-            }
+            //if (chat.NotifySettings != null)
+            //{
+            //    NotifySettings = chat.NotifySettings;
+            //}
         }
 
         #region Add

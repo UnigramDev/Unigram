@@ -24,6 +24,8 @@ using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.Calls;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using libtgvoip;
+using Windows.Storage;
 
 namespace Unigram.Tasks
 {
@@ -81,6 +83,8 @@ namespace Unigram.Tasks
         private AppServiceConnection _connection;
         private MTProtoService _protoService;
         private TransportService _transportService;
+
+        private VoIPControllerWrapper _controller;
 
         private VoipPhoneCall _systemCall;
         private TLPhoneCallBase _phoneCall;
@@ -144,7 +148,7 @@ namespace Unigram.Tasks
                 {
                     TLPushUtils.AddToast("ProtoService initialized", "waiting for updates", "default", "started", null, null, "voip");
 
-                    updatesService.LoadStateAndUpdate(() => 
+                    updatesService.LoadStateAndUpdate(() =>
                     {
                         TLPushUtils.AddToast("Difference processed", "Difference processed", "default", "started", null, null, "voip");
 
@@ -197,9 +201,17 @@ namespace Unigram.Tasks
                     }
 
                     var user = responseUser.Result;
+                    var photo = new Uri("ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png");
+                    if (user.Photo is TLUserProfilePhoto profile && profile.PhotoSmall is TLFileLocation location)
+                    {
+                        var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+                        var temp = FileUtils.GetTempFileUri(fileName);
+
+                        photo = temp;
+                    }
 
                     var coordinator = VoipCallCoordinator.GetDefault();
-                    var call = coordinator.RequestNewIncomingCall("Unigram", user.FullName, user.DisplayName, null, "Unigram", null, "Unigram", null, VoipPhoneCallMedia.Audio, TimeSpan.FromSeconds(128));
+                    var call = coordinator.RequestNewIncomingCall("Unigram", user.FullName, user.DisplayName, photo, "Unigram", null, "Unigram", null, VoipPhoneCallMedia.Audio, TimeSpan.FromSeconds(128));
 
                     _user = user;
                     _systemCall = call;
@@ -208,7 +220,21 @@ namespace Unigram.Tasks
                 }
                 else if (update.PhoneCall is TLPhoneCallDiscarded)
                 {
-                    _deferral.Complete();
+                    if (_controller != null)
+                    {
+                        _controller.Dispose();
+                        _controller = null;
+                    }
+
+                    if (_systemCall != null)
+                    {
+                        _systemCall.NotifyCallEnded();
+                        _systemCall = null;
+                    }
+                    else if (_deferral != null)
+                    {
+                        _deferral.Complete();
+                    }
                 }
                 else if (update.PhoneCall is TLPhoneCall call)
                 {
@@ -221,6 +247,45 @@ namespace Unigram.Tasks
                     var emoji = EncryptionKeyEmojifier.EmojifyForCall(sha256);
 
                     await UpdateCallAsync(string.Join(" ", emoji));
+
+                    var response = await SendRequestAsync<TLDataJSON>("phone.getCallConfig", new TLPhoneGetCallConfig());
+                    if (response.IsSucceeded)
+                    {
+                        var responseConfig = await SendRequestAsync<TLConfig>("voip.getConfig", new TLPeerUser());
+                        var config = responseConfig.Result;
+
+                        VoIPControllerWrapper.UpdateServerConfig(response.Result.Data);
+
+                        var logFile = ApplicationData.Current.LocalFolder.Path + "\\tgvoip.logFile.txt";
+                        var statsDumpFile = ApplicationData.Current.LocalFolder.Path + "\\tgvoip.statsDump.txt";
+
+                        if (_controller != null)
+                        {
+                            _controller.Dispose();
+                            _controller = null;
+                        }
+
+                        _controller = new VoIPControllerWrapper();
+                        _controller.SetConfig(config.CallPacketTimeoutMs / 1000.0, config.CallConnectTimeoutMs / 1000.0, DataSavingMode.Never, false, false, true, logFile, statsDumpFile);
+
+                        _controller.SetStateCallback(new Boh(_controller));
+                        _controller.SetEncryptionKey(auth_key, false);
+
+                        var connection = call.Connection;
+                        var endpoints = new Endpoint[call.AlternativeConnections.Count + 1];
+                        endpoints[0] = new Endpoint { id = connection.Id, ipv4 = connection.Ip, ipv6 = connection.Ipv6, port = (ushort)connection.Port, peerTag = connection.PeerTag };
+
+                        for (int i = 0; i < call.AlternativeConnections.Count; i++)
+                        {
+                            connection = call.AlternativeConnections[i];
+                            endpoints[i + 1] = new Endpoint { id = connection.Id, ipv4 = connection.Ip, ipv6 = connection.Ipv6, port = (ushort)connection.Port, peerTag = connection.PeerTag };
+                        }
+
+                        _controller.SetPublicEndpoints(endpoints, call.Protocol.IsUdpP2p);
+                        _controller.Start();
+                        _controller.Connect();
+                    }
+
                     //await Task.Delay(50000);
 
                     //var req = new TLPhoneDiscardCall { Peer = new TLInputPhoneCall { Id = call.Id, AccessHash = call.AccessHash }, Reason = new TLPhoneCallDiscardReasonHangup() };
@@ -229,6 +294,24 @@ namespace Unigram.Tasks
                     //await SendRequestAsync<TLUpdatesBase>(caption, req);
 
                     //_systemCall.NotifyCallEnded();
+                }
+            }
+        }
+
+        class Boh : IStateCallback
+        {
+            private readonly VoIPControllerWrapper controller;
+
+            public Boh(VoIPControllerWrapper contr)
+            {
+                controller = contr;
+            }
+
+            public void OnCallStateChanged(CallState newState)
+            {
+                if (newState == CallState.Failed)
+                {
+                    var error = controller.GetLastError();
                 }
             }
         }
@@ -407,6 +490,13 @@ namespace Unigram.Tasks
                         await SendRequestAsync<TLUpdatesBase>(caption2, req);
 
                         _systemCall.NotifyCallEnded();
+                    }
+                }
+                else if (caption.Equals("phone.mute") || caption.Equals("phone.unmute"))
+                {
+                    if (_controller != null)
+                    {
+                        _controller.SetMicMute(caption.Equals("phone.mute"));
                     }
                 }
             }

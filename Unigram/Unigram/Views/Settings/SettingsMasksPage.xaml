@@ -28,7 +28,8 @@
                         Content="Archived stickers"
                         Click="ArchivedStickers_Click"
                         Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Style="{StaticResource BadgeButtonStyle}"/>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>

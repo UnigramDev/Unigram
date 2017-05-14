@@ -15,6 +15,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
 using Unigram.Views;
+using Unigram.Views.Chats;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -137,6 +138,12 @@ namespace Unigram.ViewModels.Chats
                     //var photo = response.Result.Photo as TLPhoto;
                 }
             }
+        }
+
+        public RelayCommand InviteCommand => new RelayCommand(InviteExecute);
+        private void InviteExecute()
+        {
+            NavigationService.Navigate(typeof(ChatInvitePage), _item.ToPeer());
         }
 
         public RelayCommand MediaCommand => new RelayCommand(MediaExecute);

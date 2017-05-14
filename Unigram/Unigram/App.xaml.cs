@@ -42,6 +42,7 @@ using System.Collections.Generic;
 using Unigram.Core.Services;
 using Template10.Controls;
 using Windows.Foundation;
+using Windows.ApplicationModel.Contacts;
 
 namespace Unigram
 {
@@ -158,10 +159,10 @@ namespace Unigram
             return base.OnInitializeAsync(args);
         }
 
-        public override Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
+        public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            //NavigationService.Navigate(typeof(BlankPage));
-            ////return Task.CompletedTask;
+            //NavigationService.Navigate(typeof(PlaygroundPage2));
+            //return Task.CompletedTask;
 
             //PhoneCallPage newPlayer = null;
             //CoreApplicationView newView = CoreApplication.CreateNewView();
@@ -197,6 +198,7 @@ namespace Unigram
             {
                 var share = args as ShareTargetActivatedEventArgs;
                 var voice = args as VoiceCommandActivatedEventArgs;
+                var contact = args as ContactPanelActivatedEventArgs;
 
                 if (share != null)
                 {
@@ -221,6 +223,27 @@ namespace Unigram
                     {
                         NavigationService.Navigate(typeof(MainPage));
                     }
+                }
+                else if (contact != null)
+                {
+                    var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+                    contact.ContactPanel.HeaderColor = backgroundBrush.Color;
+
+                    var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
+                    var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
+                    var full = await store.GetContactAsync(contact.Contact.Id);
+                    var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
+
+                    var remote = annotations[0].RemoteId;
+
+                    //var user = InMemoryCacheService.Current.GetUser(int.Parse(remote.Substring(1)));
+                    //if (user != null)
+                    //{
+                    //    NavigationService.Navigate(typeof(DialogPage), user.ToPeer());
+                    //}
+
+                    //NavigationService.Navigate(typeof(MainPage), $"from_id={remote.Substring(1)}");
+                    NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = int.Parse(remote.Substring(1)) });
                 }
                 else
                 {
@@ -250,7 +273,7 @@ namespace Unigram
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             Task.Run(() => OnStartSync());
-            return Task.CompletedTask;
+            //return Task.CompletedTask;
         }
 
         private async void OnStartSync()
@@ -258,11 +281,9 @@ namespace Unigram
             await VoIPConnection.Current.ConnectAsync();
             await Toast.RegisterBackgroundTasks();
 
-#if !DEBUG
             BadgeUpdateManager.CreateBadgeUpdaterForApplication().Clear();
             TileUpdateManager.CreateTileUpdaterForApplication().Clear();
             ToastNotificationManager.History.Clear();
-#endif
 
 #if !DEBUG && !PREVIEW
             Execute.BeginOnThreadPool(async () =>
@@ -270,6 +291,11 @@ namespace Unigram
                 await new AppUpdateService().CheckForUpdatesAsync();
             });
 #endif
+
+            //if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
+            //{
+            //    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+            //}
 
             try
             {

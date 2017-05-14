@@ -6,6 +6,7 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="2000"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -15,28 +16,47 @@
         </Grid.RowDefinitions>
         <controls:PageHeader Text="Privacy and security"/>
 
-        <StackPanel Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Grid.Row="1">
-            <StackPanel BorderThickness="0,0,0,1" Padding="0,8" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
-                <TextBlock Text="PRIVACY" Margin="12,0,12,4" Style="{StaticResource CaptionTextBlockStyle}"/>
-                <Button Content="Blocked Users" Click="BlockedUsers_Click"/>
-                <Button IsEnabled="False" Content="Last Seen" Click="Sessions_Click"/>
-                <Button IsEnabled="False" Content="Groups" Click="Sessions_Click"/>
+        <controls:ScrollViewerBackground 
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"
+            VerticalAlignment="Top"
+            Grid.Row="1"/>
+        <ScrollViewer x:Name="ScrollingHost"
+                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Grid.Row="1">
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="PRIVACY" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:HyperButton Tag="Blocked Users" Click="BlockedUsers_Click" Margin="-12,0" Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton IsEnabled="False" Tag="Last Seen" Click="Sessions_Click" Margin="-12,0" Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton IsEnabled="False" Tag="Groups" Click="Sessions_Click" Margin="-12,0,-12,-12" BorderBrush="Transparent" Style="{StaticResource HyperDetailButtonStyle}"/>
+                </StackPanel>
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="SECURITY" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:HyperButton IsEnabled="False" Tag="Passcode Lock" Click="Sessions_Click" Margin="-12,0" Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton IsEnabled="False" Tag="Two-Step Verification" Click="Sessions_Click" Margin="-12,0" Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton Tag="Active Sessions" Click="Sessions_Click" Margin="-12,0,-12,-12" BorderBrush="Transparent" Style="{StaticResource HyperDetailButtonStyle}"/>
+                </StackPanel>
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="DELETE MY ACCOUNT" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ComboBox Header="If Away For" SelectedIndex="0">
+                        <ComboBoxItem Content="1 month"/>
+                        <ComboBoxItem Content="3 months"/>
+                        <ComboBoxItem Content="6 months"/>
+                        <ComboBoxItem Content="1 year"/>
+                    </ComboBox>
+
+                    <TextBlock Text="If you do not come online at least once within this period, your account will be deleted along with all groups, messages and contacts." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="PAYMENTS" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:HyperButton Tag="Clear patment &amp; shipping info" Click="Sessions_Click" Margin="-12,0,-12,-0" Style="{StaticResource HyperDetailButtonStyle}"/>
+
+                    <TextBlock Text="You can delete your shipping info and instruct all payment providers to remove your saved credit cards. Note that Telegram never stores your credit card data." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
             </StackPanel>
-            <StackPanel BorderThickness="0,0,0,1" Padding="0,8" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
-                <TextBlock Text="SECURITY" Margin="12,0,12,4" Style="{StaticResource CaptionTextBlockStyle}"/>
-                <Button IsEnabled="False" Content="Passcode Lock" Click="Sessions_Click"/>
-                <Button IsEnabled="False" Content="Two-Step Verification" Click="Sessions_Click"/>
-                <Button Content="Active Sessions" Click="Sessions_Click"/>
-            </StackPanel>
-            <StackPanel BorderThickness="0,0,0,1" Padding="0,8" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
-                <TextBlock Text="DELETE MY ACCOUNT" Margin="12,0,12,4" Style="{StaticResource CaptionTextBlockStyle}"/>
-                <ComboBox IsEnabled="False" Header="If Away For" SelectedIndex="0">
-                    <ComboBoxItem Content="1 month"/>
-                    <ComboBoxItem Content="3 months"/>
-                    <ComboBoxItem Content="6 months"/>
-                    <ComboBoxItem Content="1 year"/>
-                </ComboBox>
-            </StackPanel>
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

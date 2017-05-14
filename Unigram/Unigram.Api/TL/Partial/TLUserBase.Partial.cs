@@ -15,18 +15,19 @@ namespace Telegram.Api.TL
 
         public long? ClientId { get; set; }
 
-        #region UserFull information
+        //#region UserFull information
 
-        public TLContactsLink Link { get; set; }
+        //public TLContactsLink Link { get; set; }
 
-        public TLPhotoBase ProfilePhoto { get; set; }
+        //public TLPhotoBase ProfilePhoto { get; set; }
 
-        public TLPeerNotifySettingsBase NotifySettings { get; set; }
+        //public TLPeerNotifySettingsBase NotifySettings { get; set; }
 
-        public virtual bool IsBlocked { get; set; }
+        //public virtual bool IsBlocked { get; set; }
 
-        public TLBotInfo BotInfo { get; set; }
-        #endregion
+        //public TLBotInfo BotInfo { get; set; }
+
+        //#endregion
 
         public virtual void Update(TLUserBase user)
         {
@@ -37,20 +38,20 @@ namespace Telegram.Api.TL
                     Contact = user.Contact;
                 }
 
-                if (user.Link != null)
-                {
-                    Link = user.Link;
-                }
+                //if (user.Link != null)
+                //{
+                //    Link = user.Link;
+                //}
 
-                if (user.ProfilePhoto != null)
-                {
-                    ProfilePhoto = user.ProfilePhoto;
-                }
+                //if (user.ProfilePhoto != null)
+                //{
+                //    ProfilePhoto = user.ProfilePhoto;
+                //}
 
-                if (user.NotifySettings != null)
-                {
-                    NotifySettings = user.NotifySettings;
-                }
+                //if (user.NotifySettings != null)
+                //{
+                //    NotifySettings = user.NotifySettings;
+                //}
                 if (user.ReadInboxMaxId != 0 && (ReadInboxMaxId == 0 || ReadInboxMaxId < user.ReadInboxMaxId))
                 {
                     ReadInboxMaxId = user.ReadInboxMaxId;
@@ -65,10 +66,10 @@ namespace Telegram.Api.TL
                 //    ExtendedInfo = user.ExtendedInfo;
                 //}
 
-                if (user.IsBlocked != null)
-                {
-                    IsBlocked = user.IsBlocked;
-                }
+                //if (user.IsBlocked != null)
+                //{
+                //    IsBlocked = user.IsBlocked;
+                //}
             }
             catch (Exception e)
             {

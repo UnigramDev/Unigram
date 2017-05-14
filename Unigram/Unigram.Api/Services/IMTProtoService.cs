@@ -152,9 +152,7 @@ namespace Telegram.Api.Services
         void SendChangePhoneCodeAsync(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
         void ChangePhoneAsync(string phoneNumber, string phoneCodeHash, string phoneCode, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null);
         void GetWallpapersAsync(Action<TLVector<TLWallPaperBase>> callback, Action<TLRPCError> faultCallback = null);
-        void GetAllStickersAsync(byte[] hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null);
         void GetAllStickersAsync(int hash, Action<TLMessagesAllStickersBase> callback, Action<TLRPCError> faultCallback = null);
-        void GetStickerSetsAsync(ITLStickers stickers, Action<ITLStickers> callback, Action<object> getStickerSetCallback, Action<TLRPCError> faultCallback);
 
         void UpdateDeviceLockedAsync(int period, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
@@ -164,7 +162,6 @@ namespace Telegram.Api.Services
 
         // messages
         void GetFeaturedStickersAsync(int hash, Action<TLMessagesFeaturedStickersBase> callback, Action<TLRPCError> faultCallback = null);
-        void GetArchivedStickersAsync(bool full, long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null);
         void GetArchivedStickersAsync(long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null);
         void ReadFeaturedStickersAsync(TLVector<long> id, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void GetAllDraftsAsync(Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null);
@@ -273,10 +270,6 @@ namespace Telegram.Api.Services
         // help
         void GetAppChangelogAsync(string prevAppVersion, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null); 
         void GetTermsOfServiceAsync(string langCode, Action<TLHelpTermsOfService> callback, Action<TLRPCError> faultCallback = null);
-
-
-        // encrypted chats
-        void RekeyAsync(TLEncryptedChatBase chat, Action<long> callback);
 
         // background task
         void SendActionsAsync(List<TLObject> actions, Action<TLObject, object> callback, Action<TLRPCError> faultCallback = null);

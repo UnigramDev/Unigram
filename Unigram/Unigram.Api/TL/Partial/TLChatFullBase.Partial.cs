@@ -8,24 +8,69 @@ namespace Telegram.Api.TL
 {
     public abstract partial class TLChatFullBase
     {
-        public TLChatBase ToChat(TLChatBase chat)
+        public virtual void Update(TLChatFullBase chatFull)
         {
-            //chat.NotifySettings = NotifySettings;
-            //chat.Participants = Participants;
-            //chat.ChatPhoto = ChatPhoto;
+            this.BotInfo = chatFull.BotInfo;
+            this.ChatPhoto = chatFull.ChatPhoto;
+            this.ExportedInvite = chatFull.ExportedInvite;
+            this.Id = chatFull.Id;
+            this.NotifySettings = chatFull.NotifySettings;
+        }
 
-            //var channel = chat as TLChannel;
-            //if (channel != null)
-            //{
-            //    channel.ExportedInvite = ExportedInvite;
-            //    channel.About = About;
-            //    channel.ParticipantsCount = ParticipantsCount;
-            //    channel.AdminsCount = AdminsCount;
-            //    channel.KickedCount = KickedCount;
-            //    channel.ReadInboxMaxId = ReadInboxMaxId;
-            //}
+        //public TLChatBase ToChat(TLChatBase chat)
+        //{
+        //    //chat.NotifySettings = NotifySettings;
+        //    //chat.Participants = Participants;
+        //    //chat.ChatPhoto = ChatPhoto;
 
-            return chat;
+        //    //var channel = chat as TLChannel;
+        //    //if (channel != null)
+        //    //{
+        //    //    channel.ExportedInvite = ExportedInvite;
+        //    //    channel.About = About;
+        //    //    channel.ParticipantsCount = ParticipantsCount;
+        //    //    channel.AdminsCount = AdminsCount;
+        //    //    channel.KickedCount = KickedCount;
+        //    //    channel.ReadInboxMaxId = ReadInboxMaxId;
+        //    //}
+
+        //    return chat;
+        //}
+    }
+
+    public partial class TLChatFull
+    {
+        public override void Update(TLChatFullBase chatFull)
+        {
+            if (chatFull is TLChatFull chat)
+            {
+                this.Participants = chat.Participants;
+            }
+
+            base.Update(chatFull);
+        }
+    }
+
+    public partial class TLChannelFull
+    {
+        public override void Update(TLChatFullBase chatFull)
+        {
+            if (chatFull is TLChannelFull channel)
+            {
+                this.Flags = channel.Flags;
+                this.About = channel.About;
+                this.ParticipantsCount = channel.ParticipantsCount;
+                this.AdminsCount = channel.AdminsCount;
+                this.KickedCount = channel.KickedCount;
+                this.ReadInboxMaxId = channel.ReadInboxMaxId;
+                this.ReadOutboxMaxId = channel.ReadOutboxMaxId;
+                this.UnreadCount = channel.UnreadCount;
+                this.MigratedFromChatId = channel.MigratedFromChatId;
+                this.MigratedFromMaxId = channel.MigratedFromMaxId;
+                this.PinnedMsgId = channel.PinnedMsgId;
+            }
+
+            base.Update(chatFull);
         }
     }
 }

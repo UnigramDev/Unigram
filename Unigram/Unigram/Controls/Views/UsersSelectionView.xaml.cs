@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
 using Unigram.ViewModels;
+using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -25,6 +26,11 @@ namespace Unigram.Controls.Views
 
         public UsersSelectionView()
         {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                DataContext = new SettingsBlockUserViewModel(null, null, null);
+            }
+
             InitializeComponent();
         }
 
@@ -70,6 +76,15 @@ namespace Unigram.Controls.Views
             }
         }
 
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                ViewModel.SelectedItems.Add(e.ClickedItem as TLUser);
+                ViewModel.SendCommand.Execute();
+            }
+        }
+
         private void TagsTextBox_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ScrollingHost.ChangeView(null, ScrollingHost.ScrollableHeight, null);
@@ -83,5 +98,9 @@ namespace Unigram.Controls.Views
         }
 
         #endregion
+
+        public object Header { get; set; }
+
+        public DataTemplate HeaderTemplate { get; set; }
     }
 }

@@ -15,7 +15,7 @@ using Windows.Security.Cryptography;
 
 namespace Telegram.Api.Transport
 {
-    public class TcpTransportWinRT : TcpTransportBase
+    internal class TcpTransportWinRT : TcpTransportBase
     {
         private readonly StreamSocket _socket;
 
@@ -337,7 +337,7 @@ namespace Telegram.Api.Transport
         }
     }
 
-    public static class AsyncExtensions
+    internal static class AsyncExtensions
     {
         public static async Task WithTimeout(this IAsyncAction task, double timeout)
         {

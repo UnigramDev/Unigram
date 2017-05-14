@@ -11,7 +11,8 @@ namespace Telegram.Api.Services
         {
             var obj = new TLUsersGetUsers { Id = id };
 
-            SendInformativeMessage<TLVector<TLUserBase>>("users.getUsers", obj, result =>
+            const string caption = "users.getUsers";
+            SendInformativeMessage<TLVector<TLUserBase>>(caption, obj, result =>
             {
                 _cacheService.SyncUsers(result, callback);
             }, 
@@ -22,10 +23,12 @@ namespace Telegram.Api.Services
         {
             var obj = new TLUsersGetFullUser { Id = id };
 
-            SendInformativeMessage<TLUserFull>("users.getFullUser", obj, userFull =>
+            const string caption = "users.getFullUser";
+            SendInformativeMessage<TLUserFull>(caption, obj, userFull =>
             {
                 _cacheService.SyncUser(userFull, result => callback?.Invoke(result));
-            }, faultCallback);
+            },
+            faultCallback);
         }
 	}
 }
