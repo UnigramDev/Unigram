@@ -201,9 +201,17 @@ namespace Unigram.Tasks
                     }
 
                     var user = responseUser.Result;
+                    var photo = new Uri("ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png");
+                    if (user.Photo is TLUserProfilePhoto profile && profile.PhotoSmall is TLFileLocation location)
+                    {
+                        var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+                        var temp = FileUtils.GetTempFileUri(fileName);
+
+                        photo = temp;
+                    }
 
                     var coordinator = VoipCallCoordinator.GetDefault();
-                    var call = coordinator.RequestNewIncomingCall("Unigram", user.FullName, user.DisplayName, null, "Unigram", null, "Unigram", null, VoipPhoneCallMedia.Audio, TimeSpan.FromSeconds(128));
+                    var call = coordinator.RequestNewIncomingCall("Unigram", user.FullName, user.DisplayName, photo, "Unigram", null, "Unigram", null, VoipPhoneCallMedia.Audio, TimeSpan.FromSeconds(128));
 
                     _user = user;
                     _systemCall = call;
