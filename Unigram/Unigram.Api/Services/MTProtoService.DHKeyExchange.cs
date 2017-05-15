@@ -79,7 +79,7 @@ namespace Telegram.Api.Services
                     TimeSpan calcTime;
                     Tuple<ulong, ulong> pqPair;
                     var innerData = GetInnerData(resPQ, newNonce, out calcTime, out pqPair);
-                    var encryptedInnerData = GetEncryptedInnerData(innerData);
+                    var encryptedInnerData = GetEncryptedInnerData(innerData, null);
 
 #if LOG_REGISTRATION
                     var pq = BitConverter.ToUInt64(resPQ.PQ.Reverse().ToArray(), 0);
@@ -357,7 +357,7 @@ namespace Telegram.Api.Services
             return aesEncryptClientDHInnerDataWithHash;
         }
 
-        public static byte[] GetEncryptedInnerData(TLPQInnerData innerData)
+        public static byte[] GetEncryptedInnerData(TLPQInnerData innerData, string publicKey)
         {
             var innerDataBytes = innerData.ToArray();
 #if LOG_REGISTRATION
@@ -387,7 +387,7 @@ namespace Telegram.Api.Services
             Array.Copy(dataWithHash, data255, dataWithHash.Length);
 
 
-            var reverseRSABytes = Utils.GetRSABytes(data255);               // NOTE: remove Reverse here
+            var reverseRSABytes = Utils.GetRSABytes(data255, publicKey);               // NOTE: remove Reverse here
 
             // TODO: verify
             //var encryptedData = new string { Data = reverseRSABytes };

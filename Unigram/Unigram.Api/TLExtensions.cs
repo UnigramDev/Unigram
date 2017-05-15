@@ -98,6 +98,7 @@ namespace Telegram.Api
                         newDCOption.Salt = dcOption.Salt;
                         newDCOption.SessionId = dcOption.SessionId;
                         newDCOption.ClientTicksDelta = dcOption.ClientTicksDelta;
+                        newDCOption.PublicKeys = dcOption.PublicKeys;
                     }
                 }
             }
@@ -111,6 +112,7 @@ namespace Telegram.Api
                 var dcId = oldConfig.DCOptions[oldConfig.ActiveDCOptionIndex].Id;
                 var ipv6 = oldActiveDCOption.IsIpv6;
                 var media = oldActiveDCOption.IsMediaOnly;
+                var cdn = oldActiveDCOption.IsCdn;
 
                 TLDCOption newActiveDCOption = null;
                 int newActiveDCOptionIndex = 0;
@@ -118,7 +120,8 @@ namespace Telegram.Api
                 {
                     if (newConfig.DCOptions[i].Id == dcId
                         && newConfig.DCOptions[i].IsIpv6 == ipv6
-                        && newConfig.DCOptions[i].IsMediaOnly == media)
+                        && newConfig.DCOptions[i].IsMediaOnly == media
+                        && newConfig.DCOptions[i].IsCdn == cdn)
                     {
                         newActiveDCOption = newConfig.DCOptions[i];
                         newActiveDCOptionIndex = i;

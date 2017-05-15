@@ -71,7 +71,7 @@ namespace Telegram.Api.Services
                     TimeSpan calcTime;
                     Tuple<ulong, ulong> pqPair;
                     var innerData = GetInnerData(resPQ, newNonce, out calcTime, out pqPair);
-                    var encryptedInnerData = GetEncryptedInnerData(innerData);
+                    var encryptedInnerData = GetEncryptedInnerData(innerData, transport.PublicKeys.FirstOrDefault());
 
 #if LOG_REGISTRATION
                     TLUtils.WriteLog("Start ReqDHParams");
@@ -516,9 +516,35 @@ namespace Telegram.Api.Services
             }
         }
 
-        public void SendRequestAsync<T>(string caption, TLObject obj, int dcId, Action<T> callback, Action<TLRPCError> faultCallback = null)
+        public async void SendRequestAsync<T>(string caption, TLObject obj, int dcId, bool cdn, Action<T> callback, Action<TLRPCError> faultCallback = null)
         {
             var transport = GetMediaTransportByDCId(dcId);
+
+            if (cdn && transport.PublicKeys == null)
+            {
+                var response = await GetCdnConfigAsync();
+                if (response.IsSucceeded)
+                {
+                    transport.PublicKeys = response.Result.PublicKeys.Where(x => x.DCId == dcId).Select(x => x.PublicKey).ToArray();
+                }
+                else
+                {
+                    faultCallback?.Invoke(response.Error);
+                }
+
+                //var manualReset = new ManualResetEvent(false);
+                //GetCdnConfigAsync(result =>
+                //{
+
+                //},
+                //fault =>
+                //{
+                //    faultCallback?.Invoke(fault);
+                //});
+
+
+                //manualReset.WaitOne();
+            }
 
             lock (_activeTransportRoot)
             {
@@ -583,6 +609,12 @@ namespace Telegram.Api.Services
                             }
                         }
 
+                        if (cdn)
+                        {
+                            SendInformativeMessageByTransport(transport, caption, obj, callback, faultCallback);
+                            return;
+                        }
+
                         ExportImportAuthorizationAsync(
                             transport,
                             () =>
@@ -624,6 +656,12 @@ namespace Telegram.Api.Services
             }
             else
             {
+                if (cdn)
+                {
+                    SendInformativeMessageByTransport(transport, caption, obj, callback, faultCallback);
+                    return;
+                }
+
                 ExportImportAuthorizationAsync(
                     transport,
                     () =>
@@ -736,6 +774,7 @@ namespace Telegram.Api.Services
                 {
                     transport.DCId = dcId;
                     transport.AuthKey = dcOption.AuthKey;
+                    transport.PublicKeys = dcOption.PublicKeys;
                     //transport.IsAuthorized = (_activeTransport != null && _activeTransport.DCId == dcOption.Id.Value) || dcOption.IsAuthorized;
                     transport.Salt = dcOption.Salt;
                     transport.SessionId = TLLong.Random();

@@ -897,7 +897,7 @@ namespace Telegram.Api.Services.FileManager
                 }
 
                 //var reset = new ManualResetEvent(false);
-                MTProtoService.Current.SendRequestAsync<TLObject>("", request, dcId, result =>
+                MTProtoService.Current.SendRequestAsync<TLObject>("", request, dcId, isCdn, result =>
                 {
                     //reset.Set();
                     if (result is TLUploadFileCdnRedirect redirect)
@@ -918,7 +918,7 @@ namespace Telegram.Api.Services.FileManager
                         req.FileToken = cdnToken;
                         req.RequestToken = reuploadNeeded.RequestToken;
 
-                        MTProtoService.Current.SendRequestAsync<TLObject>("upload.reuploadCdnFile", req, datacenter_id, resultReupload =>
+                        MTProtoService.Current.SendRequestAsync<TLObject>("upload.reuploadCdnFile", req, datacenter_id, isCdn, resultReupload =>
                         {
                             reuploadingCdn = false;
                             startDownloadRequest();

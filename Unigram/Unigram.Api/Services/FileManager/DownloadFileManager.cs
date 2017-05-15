@@ -10,6 +10,7 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Methods.Upload;
 using Windows.Foundation;
 using Windows.Storage;
 
@@ -221,12 +222,41 @@ namespace Telegram.Api.Services.FileManager
             _mtProtoService.GetFileAsync(location.DCId, location.ToInputFileLocation(), offset, limit,
                 file =>
                 {
-                    result = file;
-                    manualResetEvent.Set();
-
                     if (file is TLUploadFile full)
                     {
+                        result = file;
+                        manualResetEvent.Set();
+
                         _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, 4 + 4 + full.Bytes.Length + 4);
+                    }
+                    else if (file is TLUploadFileCdnRedirect redirect)
+                    {
+                        var req = new TLUploadGetCdnFile();
+                        req.FileToken = redirect.FileToken;
+                        req.Limit = limit;
+                        req.Offset = offset;
+
+                        _mtProtoService.SendRequestAsync<TLUploadCdnFileBase>("upload.getCdnFile", req, redirect.DCId, true, callback =>
+                        {
+                            if (callback is TLUploadCdnFileReuploadNeeded reupload)
+                            {
+                                var req2 = new TLUploadReuploadCdnFile();
+                                req2.FileToken = redirect.FileToken;
+                                req2.RequestToken = reupload.RequestToken;
+
+                                _mtProtoService.SendRequestAsync<bool>("upload.reuploadCdnFile", req2, callback2 =>
+                                {
+                                    _mtProtoService.SendRequestAsync<TLUploadCdnFileBase>("upload.getCdnFile", req, redirect.DCId, true, callback3 =>
+                                    {
+                                        Debugger.Break();
+                                    });
+                                });
+                            }
+                            else
+                            {
+                                Debugger.Break();
+                            }
+                        });
                     }
                 },
                 error =>

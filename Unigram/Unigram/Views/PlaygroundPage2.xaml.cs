@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
-using Unigram.Media;
+using Unigram.Core.Media;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Core;
