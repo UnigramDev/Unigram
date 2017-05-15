@@ -4,7 +4,7 @@
 
 static LibraryInstance s_iphlpapi(L"Iphlpapi.dll");
 
-NTSTATUS NotifyIpInterfaceChange(ADDRESS_FAMILY Family, PIPINTERFACE_CHANGE_CALLBACK Callback, PVOID CallerContext, BOOLEAN InitialNotification, HANDLE* NotificationHandle)
+NTSTATUS WINAPI NotifyIpInterfaceChange(ADDRESS_FAMILY Family, PIPINTERFACE_CHANGE_CALLBACK Callback, PVOID CallerContext, BOOLEAN InitialNotification, HANDLE* NotificationHandle)
 {
 	typedef NTSTATUS(WINAPI *pNotifyIpInterfaceChange)(_In_ ADDRESS_FAMILY, _In_ PIPINTERFACE_CHANGE_CALLBACK, _In_opt_ PVOID, _In_ BOOLEAN, _Inout_ HANDLE*);
 	static const auto procNotifyIpInterfaceChange = s_iphlpapi.GetMethod<pNotifyIpInterfaceChange>("NotifyIpInterfaceChange");
@@ -12,7 +12,7 @@ NTSTATUS NotifyIpInterfaceChange(ADDRESS_FAMILY Family, PIPINTERFACE_CHANGE_CALL
 	return procNotifyIpInterfaceChange(Family, Callback, CallerContext, InitialNotification, NotificationHandle);
 }
 
-NTSTATUS CancelMibChangeNotify2(HANDLE NotificationHandle)
+NTSTATUS WINAPI CancelMibChangeNotify2(HANDLE NotificationHandle)
 {
 	typedef NTSTATUS(WINAPI *pCancelMibChangeNotify2)(_In_ HANDLE);
 	static const auto procCancelMibChangeNotify2 = s_iphlpapi.GetMethod<pCancelMibChangeNotify2>("CancelMibChangeNotify2");
@@ -20,7 +20,7 @@ NTSTATUS CancelMibChangeNotify2(HANDLE NotificationHandle)
 	return procCancelMibChangeNotify2(NotificationHandle);
 }
 
-NTSTATUS ConvertInterfaceLuidToName(const NET_LUID* InterfaceLuid, PWSTR InterfaceName, SIZE_T Length)
+NTSTATUS WINAPI ConvertInterfaceLuidToName(const NET_LUID* InterfaceLuid, PWSTR InterfaceName, SIZE_T Length)
 {
 	typedef NTSTATUS(WINAPI *pConvertInterfaceLuidToName)(_In_ const NET_LUID*, _Out_ PWSTR, _In_ SIZE_T);
 	static const auto procConvertInterfaceLuidToName = s_iphlpapi.GetMethod<pConvertInterfaceLuidToName>("ConvertInterfaceLuidToNameW");
@@ -29,7 +29,7 @@ NTSTATUS ConvertInterfaceLuidToName(const NET_LUID* InterfaceLuid, PWSTR Interfa
 }
 
 
-NTSTATUS ConvertInterfaceGuidToLuid(const GUID* InterfaceGuid, PNET_LUID InterfaceLuid)
+NTSTATUS WINAPI ConvertInterfaceGuidToLuid(const GUID* InterfaceGuid, PNET_LUID InterfaceLuid)
 {
 	typedef NTSTATUS(WINAPI *pConvertInterfaceGuidToLuid)(_In_ const GUID*, _Out_ PNET_LUID);
 	static const auto procConvertInterfaceGuidToLuid = s_iphlpapi.GetMethod<pConvertInterfaceGuidToLuid>("ConvertInterfaceGuidToLuid");
@@ -37,7 +37,7 @@ NTSTATUS ConvertInterfaceGuidToLuid(const GUID* InterfaceGuid, PNET_LUID Interfa
 	return procConvertInterfaceGuidToLuid(InterfaceGuid, InterfaceLuid);
 }
 
-NTSTATUS ConvertInterfaceLuidToIndex(const NET_LUID* InterfaceLuid, PNET_IFINDEX InterfaceIndex)
+NTSTATUS WINAPI ConvertInterfaceLuidToIndex(const NET_LUID* InterfaceLuid, PNET_IFINDEX InterfaceIndex)
 {
 	typedef NTSTATUS(WINAPI *pConvertInterfaceLuidToIndex)(_In_ const NET_LUID*, _Out_ PNET_IFINDEX);
 	static const auto procConvertInterfaceLuidToIndex = s_iphlpapi.GetMethod<pConvertInterfaceLuidToIndex>("ConvertInterfaceLuidToIndex");
@@ -45,7 +45,7 @@ NTSTATUS ConvertInterfaceLuidToIndex(const NET_LUID* InterfaceLuid, PNET_IFINDEX
 	return procConvertInterfaceLuidToIndex(InterfaceLuid, InterfaceIndex);
 }
 
-NTSTATUS GetIpInterfaceEntry(PMIB_IPINTERFACE_ROW Row)
+NTSTATUS WINAPI GetIpInterfaceEntry(PMIB_IPINTERFACE_ROW Row)
 {
 	typedef NTSTATUS(WINAPI *pGetIpInterfaceEntry)(_Inout_ PMIB_IPINTERFACE_ROW);
 	static const auto procGetIpInterfaceEntry = s_iphlpapi.GetMethod<pGetIpInterfaceEntry>("GetIpInterfaceEntry");
@@ -53,7 +53,7 @@ NTSTATUS GetIpInterfaceEntry(PMIB_IPINTERFACE_ROW Row)
 	return procGetIpInterfaceEntry(Row);
 }
 
-VOID InitializeIpInterfaceEntry(PMIB_IPINTERFACE_ROW Row)
+VOID WINAPI InitializeIpInterfaceEntry(PMIB_IPINTERFACE_ROW Row)
 {
 	typedef VOID(WINAPI *pInitializeIpInterfaceEntry)(_Inout_ PMIB_IPINTERFACE_ROW);
 	static const auto procInitializeIpInterfaceEntry = s_iphlpapi.GetMethod<pInitializeIpInterfaceEntry>("InitializeIpInterfaceEntry");
@@ -61,7 +61,7 @@ VOID InitializeIpInterfaceEntry(PMIB_IPINTERFACE_ROW Row)
 	return procInitializeIpInterfaceEntry(Row);
 }
 
-DWORD GetBestInterfaceEx(struct sockaddr* pDestAddr, PDWORD pdwBestIfIndex)
+DWORD WINAPI GetBestInterfaceEx(struct sockaddr* pDestAddr, PDWORD pdwBestIfIndex)
 {
 	typedef DWORD(WINAPI *pGetBestInterfaceEx)(_In_ struct sockaddr*, _Out_ PDWORD);
 	static const auto procGetBestInterfaceEx = s_iphlpapi.GetMethod<pGetBestInterfaceEx>("GetBestInterfaceEx");
@@ -69,7 +69,7 @@ DWORD GetBestInterfaceEx(struct sockaddr* pDestAddr, PDWORD pdwBestIfIndex)
 	return procGetBestInterfaceEx(pDestAddr, pdwBestIfIndex);
 }
 
-DWORD GetPerAdapterInfo(ULONG IfIndex, PIP_PER_ADAPTER_INFO pPerAdapterInfo, PULONG pOutBufLen)
+DWORD WINAPI GetPerAdapterInfo(ULONG IfIndex, PIP_PER_ADAPTER_INFO pPerAdapterInfo, PULONG pOutBufLen)
 {
 	typedef DWORD(WINAPI *pGetPerAdapterInfo)(_In_ ULONG, _Out_ PIP_PER_ADAPTER_INFO, _In_ PULONG);
 	static const auto procGetPerAdapterInfo = s_iphlpapi.GetMethod<pGetPerAdapterInfo>("GetPerAdapterInfo");

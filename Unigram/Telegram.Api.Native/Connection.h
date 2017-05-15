@@ -11,6 +11,7 @@
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 using ABI::Telegram::Api::Native::IConnection;
+using ABI::Windows::Foundation::IClosable;
 using ABI::Telegram::Api::Native::IDatacenter;
 using ABI::Telegram::Api::Native::ConnectionNeworkType;
 using ABI::Telegram::Api::Native::ConnectionType;
@@ -24,7 +25,7 @@ namespace Telegram
 
 			class Datacenter;
 
-			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, CloakedIid<ABI::Windows::Foundation::IClosable>, FtmBase>,
+			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, CloakedIid<IClosable>, FtmBase>,
 				public virtual EventObjectT<EventTraits::WaitTraits>, public ConnectionSession, public ConnectionSocket, public ConnectionCryptograpy
 			{
 				friend class ConnectionManager;
@@ -43,7 +44,6 @@ namespace Telegram
 				STDMETHODIMP get_SessionId(_Out_ INT64* value);
 
 				//Internal methods
-				STDMETHODIMP RuntimeClassInitialize(_In_ Datacenter* datacenter, ConnectionType type);
 				STDMETHODIMP Close();
 				HRESULT Connect();
 				HRESULT Reconnect();

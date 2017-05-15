@@ -4,6 +4,9 @@
     <Filter Include="Wrappers">
       <UniqueIdentifier>{d0d3fe16-1c5b-45b1-94e2-fd6c97a380f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TLObjects">
+      <UniqueIdentifier>{78734155-0c44-4232-992f-b30f7426e722}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -13,13 +16,22 @@
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="ConnectionManager.cpp" />
     <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="TLBinaryReader.cpp" />
-    <ClCompile Include="TLBinaryWriter.cpp" />
     <ClCompile Include="EventObject.cpp" />
     <ClCompile Include="ConnectionCryptograpy.cpp" />
     <ClCompile Include="Request.cpp" />
     <ClCompile Include="NetworkExtensions.cpp" />
-    <ClCompile Include="TLUnparsedMessage.cpp" />
+    <ClCompile Include="TLUnparsedMessage.cpp">
+      <Filter>TLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="TLBinaryReader.cpp">
+      <Filter>TLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="TLBinaryWriter.cpp">
+      <Filter>TLObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="TLObjectWithQuery.cpp">
+      <Filter>TLObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -30,8 +42,6 @@
     <ClInclude Include="ConnectionSocket.h" />
     <ClInclude Include="ConnectionManager.h" />
     <ClInclude Include="Timer.h" />
-    <ClInclude Include="TLBinaryReader.h" />
-    <ClInclude Include="TLBinaryWriter.h" />
     <ClInclude Include="WSAEvent.h">
       <Filter>Wrappers</Filter>
     </ClInclude>
@@ -39,7 +49,21 @@
     <ClInclude Include="MultiThreadObject.h" />
     <ClInclude Include="Request.h" />
     <ClInclude Include="NetworkExtensions.h" />
-    <ClInclude Include="TLUnparsedMessage.h" />
+    <ClInclude Include="TLBinaryReader.h">
+      <Filter>TLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="TLBinaryWriter.h">
+      <Filter>TLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="TLUnparsedMessage.h">
+      <Filter>TLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="TLObjectWithQuery.h">
+      <Filter>TLObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="TLObject.h">
+      <Filter>TLObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

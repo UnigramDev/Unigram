@@ -179,7 +179,25 @@ HRESULT ConnectionManager::SendRequest(ITLObject* object, ISendRequestCompletedC
 	}
 
 	auto lock = LockCriticalSection();
-	auto request = Make<Request>(object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived);
+	auto datacenter = GetDatacenterById(datacenterId);
+	if (datacenter == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	HRESULT result;
+	boolean isLayerNeeded;
+	ReturnIfFailed(result, object->get_IsLayerNeeded(&isLayerNeeded));
+
+	ComPtr<Request> request;
+	if (isLayerNeeded)
+	{
+
+	}
+	else
+	{
+		request = Make<Request>(object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived);
+	}
 
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
 
