@@ -34,7 +34,7 @@ namespace Telegram
 			class Datacenter;
 			class Request;
 
-			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager, FtmBase>, public MultiThreadObject
+			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager>, public MultiThreadObject
 			{
 				friend class Connection;
 				friend class EventObject;
@@ -46,22 +46,22 @@ namespace Telegram
 				~ConnectionManager();
 
 				//COM exported methods		
-				STDMETHODIMP add_CurrentNetworkTypeChanged(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
-				STDMETHODIMP remove_CurrentNetworkTypeChanged(EventRegistrationToken token);
-				STDMETHODIMP add_ConnectionStateChanged(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
-				STDMETHODIMP remove_ConnectionStateChanged(EventRegistrationToken token);
-				STDMETHODIMP add_UnparsedMessageReceived(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage* handler, _Out_ EventRegistrationToken* token);
-				STDMETHODIMP remove_UnparsedMessageReceived(EventRegistrationToken token);
-				STDMETHODIMP get_ConnectionState(_Out_ ConnectionState* value);
-				STDMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
-				STDMETHODIMP get_IsIpv6Enabled(_Out_ boolean* value);
-				STDMETHODIMP get_IsNetworkAvailable(_Out_ boolean* value);
-				STDMETHODIMP SendRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
+				IFACEMETHODIMP add_CurrentNetworkTypeChanged(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
+				IFACEMETHODIMP remove_CurrentNetworkTypeChanged(EventRegistrationToken token);
+				IFACEMETHODIMP add_ConnectionStateChanged(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
+				IFACEMETHODIMP remove_ConnectionStateChanged(EventRegistrationToken token);
+				IFACEMETHODIMP add_UnparsedMessageReceived(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage* handler, _Out_ EventRegistrationToken* token);
+				IFACEMETHODIMP remove_UnparsedMessageReceived(EventRegistrationToken token);
+				IFACEMETHODIMP get_ConnectionState(_Out_ ConnectionState* value);
+				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
+				IFACEMETHODIMP get_IsIpv6Enabled(_Out_ boolean* value);
+				IFACEMETHODIMP get_IsNetworkAvailable(_Out_ boolean* value);
+				IFACEMETHODIMP SendRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
 					UINT32 datacenterId, ConnectionType connectionType, boolean immediate, INT32 requestToken);
-				STDMETHODIMP CancelRequest(INT32 requestToken, boolean notifyServer);
-				STDMETHODIMP GetDatacenterById(UINT32 id, _Out_ IDatacenter** value);
+				IFACEMETHODIMP CancelRequest(INT32 requestToken, boolean notifyServer);
+				IFACEMETHODIMP GetDatacenterById(UINT32 id, _Out_ IDatacenter** value);
 
-				STDMETHODIMP BoomBaby(_Out_ IConnection** value);
+				IFACEMETHODIMP BoomBaby(_Out_ ITLObject** object, _Out_ IConnection** value);
 
 				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize(DWORD minimumThreadCount = THREAD_COUNT, DWORD maximumThreadCount = THREAD_COUNT);
@@ -114,7 +114,7 @@ namespace Telegram
 			};
 
 
-			class ConnectionManagerStatics WrlSealed : public ActivationFactory<IConnectionManagerStatics, FtmBase>
+			class ConnectionManagerStatics WrlSealed : public ActivationFactory<IConnectionManagerStatics>
 			{
 				friend class ConnectionManager;
 
@@ -124,7 +124,8 @@ namespace Telegram
 				ConnectionManagerStatics();
 				~ConnectionManagerStatics();
 
-				STDMETHODIMP get_Instance(_Out_ IConnectionManager** value);
+				IFACEMETHODIMP get_Instance(_Out_ IConnectionManager** value);
+
 			private:
 				static ComPtr<ConnectionManager> s_instance;
 			};

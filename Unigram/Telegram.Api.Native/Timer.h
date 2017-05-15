@@ -49,10 +49,10 @@ namespace Telegram
 				~Timer();
 
 				//COM exported methods		
-				STDMETHODIMP get_IsStarted(_Out_ boolean* value);
-				STDMETHODIMP SetTimeout(UINT32 msTimeout, boolean repeat);
-				STDMETHODIMP Start();
-				STDMETHODIMP Stop();
+				IFACEMETHODIMP get_IsStarted(_Out_ boolean* value);
+				IFACEMETHODIMP SetTimeout(UINT32 msTimeout, boolean repeat);
+				IFACEMETHODIMP Start();
+				IFACEMETHODIMP Stop();
 
 			private:
 				HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);

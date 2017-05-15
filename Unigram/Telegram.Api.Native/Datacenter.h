@@ -25,7 +25,7 @@ namespace Telegram
 
 			class TLBinaryReader;
 
-			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IDatacenter, CloakedIid<IClosable>, FtmBase>, public MultiThreadObject
+			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IDatacenter, CloakedIid<IClosable>>, public MultiThreadObject
 			{
 				friend class Connection;
 				friend class ConnectionManager;
@@ -38,16 +38,16 @@ namespace Telegram
 				~Datacenter();
 
 				//COM exported methods			
-				STDMETHODIMP get_Id(_Out_ UINT32* value);
-				STDMETHODIMP get_HandshakeState(_Out_ HandshakeState* value);
-				STDMETHODIMP GetCurrentAddress(ConnectionType connectionType, boolean ipv6, _Out_ HSTRING* value);
-				STDMETHODIMP GetCurrentPort(ConnectionType connectionType, boolean ipv6, _Out_ UINT32* value);
-				//STDMETHODIMP GetDownloadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
-				//STDMETHODIMP GetUploadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
-				//STDMETHODIMP GetGenericConnection(boolean create, _Out_ IConnection** value);
+				IFACEMETHODIMP get_Id(_Out_ UINT32* value);
+				IFACEMETHODIMP get_HandshakeState(_Out_ HandshakeState* value);
+				IFACEMETHODIMP GetCurrentAddress(ConnectionType connectionType, boolean ipv6, _Out_ HSTRING* value);
+				IFACEMETHODIMP GetCurrentPort(ConnectionType connectionType, boolean ipv6, _Out_ UINT32* value);
+				//IFACEMETHODIMP GetDownloadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
+				//IFACEMETHODIMP GetUploadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
+				//IFACEMETHODIMP GetGenericConnection(boolean create, _Out_ IConnection** value);
 
 				//Internal methods
-				STDMETHODIMP RuntimeClassInitialize(_In_ TLBinaryReader* reader);
+				IFACEMETHODIMP RuntimeClassInitialize(_In_ TLBinaryReader* reader);
 				void SwitchTo443Port();
 				void RecreateSessions();
 				void GetSessionsIds(_Out_ std::vector<INT64>& sessionIds);
@@ -72,7 +72,7 @@ namespace Telegram
 					UINT32 Port;
 				};
 
-				STDMETHODIMP Close();
+				IFACEMETHODIMP Close();
 				HRESULT GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, _Out_ DatacenterEndpoint** endpoint);
 				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);

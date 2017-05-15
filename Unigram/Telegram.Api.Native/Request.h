@@ -51,10 +51,10 @@ namespace Telegram
 				~Request();
 
 				//COM exported methods
-				STDMETHODIMP get_Object(_Out_ ITLObject** value);
-				STDMETHODIMP get_Token(_Out_ INT32* value);
-				STDMETHODIMP get_ConnectionType(_Out_ ConnectionType* value);
-				STDMETHODIMP get_DatacenterId(_Out_ UINT32* value);
+				IFACEMETHODIMP get_Object(_Out_ ITLObject** value);
+				IFACEMETHODIMP get_Token(_Out_ INT32* value);
+				IFACEMETHODIMP get_ConnectionType(_Out_ ConnectionType* value);
+				IFACEMETHODIMP get_DatacenterId(_Out_ UINT32* value);
 
 				//Internal methods
 				inline ITLObject* GetObject() const

@@ -36,21 +36,21 @@ namespace Unigram
 			~MediaCapturePreviewMediaSink();
 
 			STDMETHODIMP RuntimeClassInitialize(_In_ MediaCapturePreviewSource^ previewSource, _In_ IMFMediaType* mediaType);
-			STDMETHODIMP SetProperties(ABI::Windows::Foundation::Collections::IPropertySet* configuration);
-			STDMETHODIMP GetCharacteristics(DWORD* pdwCharacteristics);
-			STDMETHODIMP AddStreamSink(DWORD dwStreamSinkIdentifier, IMFMediaType* pMediaType, IMFStreamSink** ppStreamSink);
-			STDMETHODIMP RemoveStreamSink(DWORD dwStreamSinkIdentifier);
-			STDMETHODIMP GetStreamSinkById(DWORD dwIdentifier, IMFStreamSink** ppStreamSink);
-			STDMETHODIMP GetStreamSinkByIndex(DWORD dwIndex, IMFStreamSink** ppStreamSink);
-			STDMETHODIMP GetStreamSinkCount(DWORD* pcStreamSinkCount);
-			STDMETHODIMP GetPresentationClock(IMFPresentationClock** ppPresentationClock);
-			STDMETHODIMP SetPresentationClock(IMFPresentationClock* pPresentationClock);
-			STDMETHODIMP Shutdown();
-			STDMETHODIMP OnClockPause(MFTIME hnsSystemTime);
-			STDMETHODIMP OnClockRestart(MFTIME hnsSystemTime);
-			STDMETHODIMP OnClockSetRate(MFTIME hnsSystemTime, float flRate);
-			STDMETHODIMP OnClockStart(MFTIME hnsSystemTime, LONGLONG llClockStartOffset);
-			STDMETHODIMP OnClockStop(MFTIME hnsSystemTime);
+			IFACEMETHODIMP SetProperties(ABI::Windows::Foundation::Collections::IPropertySet* configuration);
+			IFACEMETHODIMP GetCharacteristics(DWORD* pdwCharacteristics);
+			IFACEMETHODIMP AddStreamSink(DWORD dwStreamSinkIdentifier, IMFMediaType* pMediaType, IMFStreamSink** ppStreamSink);
+			IFACEMETHODIMP RemoveStreamSink(DWORD dwStreamSinkIdentifier);
+			IFACEMETHODIMP GetStreamSinkById(DWORD dwIdentifier, IMFStreamSink** ppStreamSink);
+			IFACEMETHODIMP GetStreamSinkByIndex(DWORD dwIndex, IMFStreamSink** ppStreamSink);
+			IFACEMETHODIMP GetStreamSinkCount(DWORD* pcStreamSinkCount);
+			IFACEMETHODIMP GetPresentationClock(IMFPresentationClock** ppPresentationClock);
+			IFACEMETHODIMP SetPresentationClock(IMFPresentationClock* pPresentationClock);
+			IFACEMETHODIMP Shutdown();
+			IFACEMETHODIMP OnClockPause(MFTIME hnsSystemTime);
+			IFACEMETHODIMP OnClockRestart(MFTIME hnsSystemTime);
+			IFACEMETHODIMP OnClockSetRate(MFTIME hnsSystemTime, float flRate);
+			IFACEMETHODIMP OnClockStart(MFTIME hnsSystemTime, LONGLONG llClockStartOffset);
+			IFACEMETHODIMP OnClockStop(MFTIME hnsSystemTime);
 			HRESULT RequestSample();
 
 		private:
@@ -92,17 +92,17 @@ namespace Unigram
 			~MediaCapturePreviewMediaSource();
 
 			STDMETHODIMP RuntimeClassInitialize(_In_ MediaCapturePreviewSource^ previewSource, _In_ IMFMediaType* mediaType);
-			STDMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState);
-			STDMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent);
-			STDMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent);
-			STDMETHODIMP QueueEvent(MediaEventType type, REFGUID guid, HRESULT status, PROPVARIANT const* val);
-			STDMETHODIMP GetService(REFGUID guidService, REFIID riid, LPVOID* ppvObject);
-			STDMETHODIMP GetCharacteristics(DWORD* pdwCharacteristics);
-			STDMETHODIMP CreatePresentationDescriptor(IMFPresentationDescriptor** ppPresentationDescriptor);
-			STDMETHODIMP Start(IMFPresentationDescriptor* pPresentationDescriptor, GUID const* pguidTimeFormat, PROPVARIANT const* pvarStartPosition);
-			STDMETHODIMP Stop();
-			STDMETHODIMP Pause();
-			STDMETHODIMP Shutdown();
+			IFACEMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState);
+			IFACEMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent);
+			IFACEMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent);
+			IFACEMETHODIMP QueueEvent(MediaEventType type, REFGUID guid, HRESULT status, PROPVARIANT const* val);
+			IFACEMETHODIMP GetService(REFGUID guidService, REFIID riid, LPVOID* ppvObject);
+			IFACEMETHODIMP GetCharacteristics(DWORD* pdwCharacteristics);
+			IFACEMETHODIMP CreatePresentationDescriptor(IMFPresentationDescriptor** ppPresentationDescriptor);
+			IFACEMETHODIMP Start(IMFPresentationDescriptor* pPresentationDescriptor, GUID const* pguidTimeFormat, PROPVARIANT const* pvarStartPosition);
+			IFACEMETHODIMP Stop();
+			IFACEMETHODIMP Pause();
+			IFACEMETHODIMP Shutdown();
 			HRESULT NotifyEndOfStream();
 			HRESULT DeliverSample(_In_ IMFSample* sample);
 
@@ -137,8 +137,8 @@ namespace Unigram
 				return m_previewSource;
 			}
 
-			STDMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
-			STDMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
+			IFACEMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
+			IFACEMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
 			HRESULT OnAsyncStart(_In_ IMFAsyncResult* asyncResult);
 			HRESULT OnAsyncStop(_In_ IMFAsyncResult* asyncResult);
 
@@ -159,25 +159,25 @@ namespace Unigram
 			MediaCapturePreviewStreamSink();
 			~MediaCapturePreviewStreamSink();
 
-			STDMETHODIMP RuntimeClassInitialize(_In_ MediaCapturePreviewMediaSink* mediaSink, _In_ IMFMediaType* mediaType);
-			STDMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState);
-			STDMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent);
-			STDMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent);
-			STDMETHODIMP QueueEvent(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, PROPVARIANT const* pvValue);
-			STDMETHODIMP GetMediaSource(IMFMediaSource** ppMediaSource);
-			STDMETHODIMP Shutdown();
-			STDMETHODIMP IsMediaTypeSupported(IMFMediaType* pMediaType, IMFMediaType** ppMediaType);
-			STDMETHODIMP GetMediaTypeCount(DWORD* pdwTypeCount);
-			STDMETHODIMP GetMediaTypeByIndex(DWORD dwIndex, IMFMediaType** ppType);
-			STDMETHODIMP SetCurrentMediaType(IMFMediaType* pMediaType);
-			STDMETHODIMP GetCurrentMediaType(IMFMediaType** ppMediaType);
-			STDMETHODIMP GetMajorType(GUID* pguidMajorType);
-			STDMETHODIMP GetMediaSink(IMFMediaSink** ppMediaSink);
-			STDMETHODIMP GetIdentifier(DWORD* pdwIdentifier);
-			STDMETHODIMP GetMediaTypeHandler(IMFMediaTypeHandler** ppHandler);
-			STDMETHODIMP ProcessSample(IMFSample* pSample);
-			STDMETHODIMP PlaceMarker(MFSTREAMSINK_MARKER_TYPE eMarkerType, PROPVARIANT const* pvarMarkerValue, PROPVARIANT const* pvarContextValue);
-			STDMETHODIMP Flush();
+			IFACEMETHODIMP RuntimeClassInitialize(_In_ MediaCapturePreviewMediaSink* mediaSink, _In_ IMFMediaType* mediaType);
+			IFACEMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState);
+			IFACEMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent);
+			IFACEMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent);
+			IFACEMETHODIMP QueueEvent(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, PROPVARIANT const* pvValue);
+			IFACEMETHODIMP GetMediaSource(IMFMediaSource** ppMediaSource);
+			IFACEMETHODIMP Shutdown();
+			IFACEMETHODIMP IsMediaTypeSupported(IMFMediaType* pMediaType, IMFMediaType** ppMediaType);
+			IFACEMETHODIMP GetMediaTypeCount(DWORD* pdwTypeCount);
+			IFACEMETHODIMP GetMediaTypeByIndex(DWORD dwIndex, IMFMediaType** ppType);
+			IFACEMETHODIMP SetCurrentMediaType(IMFMediaType* pMediaType);
+			IFACEMETHODIMP GetCurrentMediaType(IMFMediaType** ppMediaType);
+			IFACEMETHODIMP GetMajorType(GUID* pguidMajorType);
+			IFACEMETHODIMP GetMediaSink(IMFMediaSink** ppMediaSink);
+			IFACEMETHODIMP GetIdentifier(DWORD* pdwIdentifier);
+			IFACEMETHODIMP GetMediaTypeHandler(IMFMediaTypeHandler** ppHandler);
+			IFACEMETHODIMP ProcessSample(IMFSample* pSample);
+			IFACEMETHODIMP PlaceMarker(MFSTREAMSINK_MARKER_TYPE eMarkerType, PROPVARIANT const* pvarMarkerValue, PROPVARIANT const* pvarContextValue);
+			IFACEMETHODIMP Flush();
 			HRESULT RequestSample();
 
 		private:
@@ -219,8 +219,8 @@ namespace Unigram
 				return m_state;
 			}
 
-			STDMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
-			STDMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
+			IFACEMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
+			IFACEMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
 			HRESULT Start(MFTIME position, LONGLONG clockStartOffset);
 			HRESULT Stop();
 			HRESULT OnAsyncStart(_In_ IMFAsyncResult* asyncResult);
@@ -244,14 +244,14 @@ namespace Unigram
 			MediaCapturePreviewMediaStream();
 			~MediaCapturePreviewMediaStream();
 
-			STDMETHODIMP RuntimeClassInitialize(_In_ MediaCapturePreviewMediaSource* mediaSource, _In_ IMFMediaType* mediaType);
-			STDMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState);
-			STDMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent);
-			STDMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent);
-			STDMETHODIMP QueueEvent(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, PROPVARIANT const* pvValue);
-			STDMETHODIMP GetMediaSource(IMFMediaSource** ppMediaSource);
-			STDMETHODIMP GetStreamDescriptor(IMFStreamDescriptor** ppStreamDescriptor);
-			STDMETHODIMP RequestSample(IUnknown* pToken);
+			IFACEMETHODIMP RuntimeClassInitialize(_In_ MediaCapturePreviewMediaSource* mediaSource, _In_ IMFMediaType* mediaType);
+			IFACEMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState);
+			IFACEMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent);
+			IFACEMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent);
+			IFACEMETHODIMP QueueEvent(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, PROPVARIANT const* pvValue);
+			IFACEMETHODIMP GetMediaSource(IMFMediaSource** ppMediaSource);
+			IFACEMETHODIMP GetStreamDescriptor(IMFStreamDescriptor** ppStreamDescriptor);
+			IFACEMETHODIMP RequestSample(IUnknown* pToken);
 			HRESULT Shutdown();
 			HRESULT Start(_In_ PROPVARIANT const* position);
 			HRESULT Stop();
@@ -276,8 +276,8 @@ namespace Unigram
 				return m_isActive;
 			}
 
-			STDMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
-			STDMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
+			IFACEMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
+			IFACEMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
 			HRESULT Activate(bool active);
 
 			bool m_isActive;

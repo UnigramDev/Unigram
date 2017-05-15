@@ -34,7 +34,7 @@ HRESULT TLBinaryReader::ReadByte(BYTE* value)
 		return E_POINTER;
 	}
 
-	if (m_position + sizeof(value) > m_length)
+	if (m_position + sizeof(BYTE) > m_length)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -50,7 +50,7 @@ HRESULT TLBinaryReader::ReadInt16(INT16* value)
 		return E_POINTER;
 	}
 
-	if (m_position + sizeof(value) > m_length)
+	if (m_position + sizeof(INT16) > m_length)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -71,7 +71,7 @@ HRESULT TLBinaryReader::ReadInt32(INT32* value)
 		return E_POINTER;
 	}
 
-	if (m_position + sizeof(value) > m_length)
+	if (m_position + sizeof(INT32) > m_length)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -93,7 +93,7 @@ HRESULT TLBinaryReader::ReadInt64(INT64* value)
 		return E_POINTER;
 	}
 
-	if (m_position + sizeof(value) > m_length)
+	if (m_position + sizeof(INT64) > m_length)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -186,7 +186,7 @@ HRESULT TLBinaryReader::ReadBigEndianInt32(INT32* value)
 		return E_POINTER;
 	}
 
-	if (m_position + sizeof(value) > m_length)
+	if (m_position + sizeof(INT32) > m_length)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}

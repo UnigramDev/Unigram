@@ -30,20 +30,20 @@ namespace Unigram
 			MediaSource();
 			virtual ~MediaSource();
 
-			STDMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState);
-			STDMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent);
-			STDMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent);
-			STDMETHODIMP QueueEvent(MediaEventType type, REFGUID guid, HRESULT status, PROPVARIANT const* val);
-			STDMETHODIMP CreatePresentationDescriptor(IMFPresentationDescriptor** ppPresentationDescriptor);
-			STDMETHODIMP GetCharacteristics(DWORD* pdwCharacteristics);
-			STDMETHODIMP Start(IMFPresentationDescriptor* pPresentationDescriptor, GUID const* pguidTimeFormat, PROPVARIANT const* pvarStartPosition);
-			STDMETHODIMP Stop();
-			STDMETHODIMP Pause();
-			STDMETHODIMP Shutdown();
-			STDMETHODIMP GetService(REFGUID guidService, REFIID riid, LPVOID* ppvObject);
-			STDMETHODIMP GetSourceAttributes(IMFAttributes** ppAttributes);
-			STDMETHODIMP GetStreamAttributes(DWORD dwStreamIdentifier, IMFAttributes** ppAttributes);
-			STDMETHODIMP SetD3DManager(IUnknown* pManager);
+			IFACEMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState);
+			IFACEMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent);
+			IFACEMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent);
+			IFACEMETHODIMP QueueEvent(MediaEventType type, REFGUID guid, HRESULT status, PROPVARIANT const* val);
+			IFACEMETHODIMP CreatePresentationDescriptor(IMFPresentationDescriptor** ppPresentationDescriptor);
+			IFACEMETHODIMP GetCharacteristics(DWORD* pdwCharacteristics);
+			IFACEMETHODIMP Start(IMFPresentationDescriptor* pPresentationDescriptor, GUID const* pguidTimeFormat, PROPVARIANT const* pvarStartPosition);
+			IFACEMETHODIMP Stop();
+			IFACEMETHODIMP Pause();
+			IFACEMETHODIMP Shutdown();
+			IFACEMETHODIMP GetService(REFGUID guidService, REFIID riid, LPVOID* ppvObject);
+			IFACEMETHODIMP GetSourceAttributes(IMFAttributes** ppAttributes);
+			IFACEMETHODIMP GetStreamAttributes(DWORD dwStreamIdentifier, IMFAttributes** ppAttributes);
+			IFACEMETHODIMP SetD3DManager(IUnknown* pManager);
 
 		protected:
 			enum class MediaSourceState
@@ -91,9 +91,9 @@ namespace Unigram
 				PROPVARIANT StartPosition;
 			};
 
-			STDMETHODIMP Close();
-			STDMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
-			STDMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
+			IFACEMETHODIMP Close();
+			IFACEMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
+			IFACEMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
 			HRESULT NotifyEndOfStream();
 			HRESULT OnAsyncStart(_In_ IMFAsyncResult* asyncResult);
 			HRESULT OnAsyncStop(_In_ IMFAsyncResult* asyncResult);
@@ -115,13 +115,13 @@ namespace Unigram
 			MediaStream();
 			virtual ~MediaStream();
 
-			STDMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState);
-			STDMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent);
-			STDMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent);
-			STDMETHODIMP QueueEvent(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, PROPVARIANT const* pvValue);
-			STDMETHODIMP GetMediaSource(IMFMediaSource** ppMediaSource);
-			STDMETHODIMP GetStreamDescriptor(IMFStreamDescriptor** ppStreamDescriptor);
-			STDMETHODIMP RequestSample(IUnknown* pToken);
+			IFACEMETHODIMP BeginGetEvent(IMFAsyncCallback* pCallback, IUnknown* punkState);
+			IFACEMETHODIMP EndGetEvent(IMFAsyncResult* pResult, IMFMediaEvent** ppEvent);
+			IFACEMETHODIMP GetEvent(DWORD dwFlags, IMFMediaEvent** ppEvent);
+			IFACEMETHODIMP QueueEvent(MediaEventType met, REFGUID guidExtendedType, HRESULT hrStatus, PROPVARIANT const* pvValue);
+			IFACEMETHODIMP GetMediaSource(IMFMediaSource** ppMediaSource);
+			IFACEMETHODIMP GetStreamDescriptor(IMFStreamDescriptor** ppStreamDescriptor);
+			IFACEMETHODIMP RequestSample(IUnknown* pToken);
 			HRESULT Shutdown();
 
 		protected:

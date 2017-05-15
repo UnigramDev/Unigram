@@ -15,6 +15,8 @@ namespace Telegram
 			typedef enum HandshakeState HandshakeState;
 
 			interface ITLObject;
+			interface ITLBinaryReader;
+			interface ITLBinaryWriter;
 
 			runtimeclass Datacenter;
 			runtimeclass Connection;
@@ -22,6 +24,7 @@ namespace Telegram
 			runtimeclass ConnectionManager;
 			runtimeclass TLBinaryReader;
 			runtimeclass TLBinaryWriter;
+			runtimeclass TLBinarySizeCalculator;
 
 			delegate SendRequestCompletedCallback;
 			delegate RequestQuickAckReceivedCallback;
@@ -32,12 +35,11 @@ namespace Telegram
 			{
 				[propget] HRESULT IsLayerNeeded([out][retval] boolean* value);
 				[propget] HRESULT Size([out][retval] UINT32* value);
-				HRESULT Read([in] TLBinaryReader* reader);
-				HRESULT Write([in] TLBinaryWriter* writer);
+				HRESULT Read([in] ITLBinaryReader* reader);
+				HRESULT Write([in] ITLBinaryWriter* writer);
 			}
 
 
-			[exclusiveto(TLBinaryReader)]
 			[uuid(7F865F69-62F1-4BC9-AD8C-717D0D8DD7F8)]
 			[version(API_VERSION)]
 			interface ITLBinaryReader : IInspectable
@@ -57,8 +59,8 @@ namespace Telegram
 				HRESULT ReadFloat([out][retval] float* value);
 			}
 
-			//[marshaling_behavior(agile)]
-			//[threading(both)]
+			[marshaling_behavior(agile)]
+			[threading(both)]
 			[version(API_VERSION)]
 			runtimeclass TLBinaryReader
 			{
@@ -66,7 +68,6 @@ namespace Telegram
 			}
 
 
-			[exclusiveto(TLBinaryWriter)]
 			[uuid(732B4B01-0603-4ADB-8F29-24096FCDF7C6)]
 			[version(API_VERSION)]
 			interface ITLBinaryWriter : IInspectable
@@ -86,12 +87,39 @@ namespace Telegram
 				HRESULT WriteFloat([in] float value);
 			}
 
-			/*[marshaling_behavior(agile)]
-			[threading(both)]*/
+			[marshaling_behavior(agile)]
+			[threading(both)]
 			[version(API_VERSION)]
 			runtimeclass TLBinaryWriter
 			{
 				[default] interface ITLBinaryWriter;
+			}
+
+
+			[exclusiveto(TLBinarySizeCalculator)]
+			[uuid(14735BB5-2FDF-4650-9999-B877EF13061A)]
+			[version(API_VERSION)]
+			interface ITLBinarySizeCalculatorStatics : IInspectable
+			{
+				[propget] HRESULT Instance([out][retval] TLBinarySizeCalculator** value);
+			}
+
+			[exclusiveto(TLBinarySizeCalculator)]
+			[uuid(49A65276-CE4A-431D-985C-46D3060DFEDA)]
+			[version(API_VERSION)]
+			interface ITLBinarySizeCalculator : IInspectable
+			{
+				[propget] HRESULT TotalLength([out][retval] UINT32* value);
+			}
+
+			[static(ITLBinarySizeCalculatorStatics, API_VERSION)]
+			[marshaling_behavior(agile)]
+			[threading(both)]
+			[version(API_VERSION)]
+			runtimeclass TLBinarySizeCalculator
+			{
+				[default] interface ITLBinarySizeCalculator;
+				interface ITLBinaryWriter;
 			}
 
 
@@ -176,8 +204,8 @@ namespace Telegram
 				[propget] HRESULT Reader([out][retval] TLBinaryReader** value);
 			}
 
-			/*[marshaling_behavior(agile)]
-			[threading(both)]*/
+			[marshaling_behavior(agile)]
+			[threading(both)]
 			[version(API_VERSION)]
 			runtimeclass TLUnparsedMessage
 			{
@@ -229,7 +257,7 @@ namespace Telegram
 				HRESULT CancelRequest(INT32 requestToken, boolean notifyServer);
 				HRESULT GetDatacenterById(UINT32 id,[out][retval] Datacenter** value);
 
-				HRESULT BoomBaby([out][retval] Connection** value);
+				HRESULT BoomBaby([out]ITLObject** object,[out][retval] Connection** value);
 			}
 
 			[static(IConnectionManagerStatics, API_VERSION)]

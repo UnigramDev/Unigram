@@ -25,7 +25,7 @@ namespace Telegram
 
 			class Datacenter;
 
-			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, CloakedIid<IClosable>, FtmBase>,
+			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, CloakedIid<IClosable>>,
 				public virtual EventObjectT<EventTraits::WaitTraits>, public ConnectionSession, public ConnectionSocket, public ConnectionCryptograpy
 			{
 				friend class ConnectionManager;
@@ -37,14 +37,14 @@ namespace Telegram
 				~Connection();
 
 				//COM exported methods
-				STDMETHODIMP get_Token(_Out_ UINT32* value);
-				STDMETHODIMP get_Datacenter(_Out_ IDatacenter** value);
-				STDMETHODIMP get_Type(_Out_ ConnectionType* value);
-				STDMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
-				STDMETHODIMP get_SessionId(_Out_ INT64* value);
+				IFACEMETHODIMP get_Token(_Out_ UINT32* value);
+				IFACEMETHODIMP get_Datacenter(_Out_ IDatacenter** value);
+				IFACEMETHODIMP get_Type(_Out_ ConnectionType* value);
+				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
+				IFACEMETHODIMP get_SessionId(_Out_ INT64* value);
 
 				//Internal methods
-				STDMETHODIMP Close();
+				IFACEMETHODIMP Close();
 				HRESULT Connect();
 				HRESULT Reconnect();
 				HRESULT Suspend();

@@ -3,6 +3,7 @@
 
 using namespace Telegram::Api::Native;
 
+
 Request::Request(ITLObject* object, INT32 token, ConnectionType connectionType, UINT32 datacenterId, ISendRequestCompletedCallback* sendCompletedCallback, IRequestQuickAckReceivedCallback* quickAckReceivedCallback) :
 	m_object(object),
 	m_token(token),

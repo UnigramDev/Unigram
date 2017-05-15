@@ -29,7 +29,7 @@
     <ClCompile Include="TLBinaryWriter.cpp">
       <Filter>TLObjects</Filter>
     </ClCompile>
-    <ClCompile Include="TLObjectWithQuery.cpp">
+    <ClCompile Include="TLObject.cpp">
       <Filter>TLObjects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,9 +56,6 @@
       <Filter>TLObjects</Filter>
     </ClInclude>
     <ClInclude Include="TLUnparsedMessage.h">
-      <Filter>TLObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="TLObjectWithQuery.h">
       <Filter>TLObjects</Filter>
     </ClInclude>
     <ClInclude Include="TLObject.h">

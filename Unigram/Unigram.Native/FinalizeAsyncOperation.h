@@ -27,8 +27,8 @@ namespace Unigram
 			HRESULT Cancel(HRESULT result);
 
 		private:
-			STDMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
-			STDMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
+			IFACEMETHODIMP GetParameters(DWORD* pdwFlags, DWORD* pdwQueue);
+			IFACEMETHODIMP Invoke(IMFAsyncResult* pAsyncResult);
 
 			CriticalSection m_criticalSection;
 			DWORD m_pendingOperationCount;

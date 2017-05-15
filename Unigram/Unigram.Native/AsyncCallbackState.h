@@ -33,7 +33,7 @@ namespace Details
 		}
 
 	private:
-		STDMETHODIMP Invoke(_In_ IMFAsyncResult* asyncResult)
+		IFACEMETHODIMP Invoke(_In_ IMFAsyncResult* asyncResult)
 		{
 			return (m_owner->*_AsyncCallback)(asyncResult);
 		}

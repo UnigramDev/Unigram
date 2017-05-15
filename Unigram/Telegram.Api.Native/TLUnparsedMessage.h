@@ -25,14 +25,14 @@ namespace Telegram
 				~TLUnparsedMessage();
 
 				//COM exported methods
-				STDMETHODIMP get_MessageId(_Out_ INT64* value);
-				STDMETHODIMP get_ConnectionType(_Out_ ConnectionType* value);
-				STDMETHODIMP get_Reader(_Out_ ITLBinaryReader** value);
+				IFACEMETHODIMP get_MessageId(_Out_ INT64* value);
+				IFACEMETHODIMP get_ConnectionType(_Out_ ConnectionType* value);
+				IFACEMETHODIMP get_Reader(_Out_ ITLBinaryReader** value);
 
 			private:
 				UINT64 m_messageId;
 				ConnectionType m_connectionType;
-				ComPtr<ITLBinaryReader> m_reader;
+				ComPtr<TLBinaryReader> m_reader;
 			};
 
 		}

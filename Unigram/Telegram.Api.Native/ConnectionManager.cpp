@@ -6,6 +6,7 @@
 #include "Connection.h"
 #include "TLUnparsedMessage.h"
 #include "Request.h"
+#include "TLObject.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
@@ -373,14 +374,17 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 	return S_OK;
 }
 
-HRESULT ConnectionManager::BoomBaby(IConnection** value)
+HRESULT ConnectionManager::BoomBaby(ITLObject** object, IConnection** value)
 {
-	if (value == nullptr)
+	if (object == nullptr || value == nullptr)
 	{
 		return E_POINTER;
 	}
 
 	HRESULT result;
+	auto initConnectionObject = Make<TLInitConnectionObject>();
+
+
 	auto datacenter = Make<Datacenter>();
 	ReturnIfFailed(result, datacenter->AddEndpoint(L"192.168.1.1", 80, ConnectionType::Generic, false));
 
@@ -389,6 +393,7 @@ HRESULT ConnectionManager::BoomBaby(IConnection** value)
 	ReturnIfFailed(result, connection->AttachToThreadpool(&m_threadpoolEnvironment));
 	ReturnIfFailed(result, connection->Connect());
 
+	initConnectionObject.CopyTo(object);
 	*value = connection.Detach();
 	return S_OK;
 }

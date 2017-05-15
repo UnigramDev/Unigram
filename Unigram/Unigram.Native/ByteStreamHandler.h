@@ -12,12 +12,12 @@ namespace Unigram
 			ABI::Windows::Media::IMediaExtension, IMFByteStreamHandler>
 		{
 		public:
-			STDMETHODIMP SetProperties(ABI::Windows::Foundation::Collections::IPropertySet* pConfiguration);
-			STDMETHODIMP BeginCreateObject(IMFByteStream* pByteStream, LPCWSTR pwszURL, DWORD dwFlags, IPropertyStore* pProps,
+			IFACEMETHODIMP SetProperties(ABI::Windows::Foundation::Collections::IPropertySet* pConfiguration);
+			IFACEMETHODIMP BeginCreateObject(IMFByteStream* pByteStream, LPCWSTR pwszURL, DWORD dwFlags, IPropertyStore* pProps,
 				IUnknown** ppIUnknownCancelCookie, IMFAsyncCallback* pCallback, IUnknown* punkState);
-			STDMETHODIMP EndCreateObject(IMFAsyncResult* pResult, MF_OBJECT_TYPE* pObjectType, IUnknown** ppObject);
-			STDMETHODIMP CancelObjectCreation(IUnknown* pIUnknownCancelCookie);
-			STDMETHODIMP GetMaxNumberOfBytesRequiredForResolution(QWORD* pqwBytes);
+			IFACEMETHODIMP EndCreateObject(IMFAsyncResult* pResult, MF_OBJECT_TYPE* pObjectType, IUnknown** ppObject);
+			IFACEMETHODIMP CancelObjectCreation(IUnknown* pIUnknownCancelCookie);
+			IFACEMETHODIMP GetMaxNumberOfBytesRequiredForResolution(QWORD* pqwBytes);
 
 		protected:
 			virtual QWORD GetMaxNumberOfBytesRequiredForResolution() noexcept = 0;

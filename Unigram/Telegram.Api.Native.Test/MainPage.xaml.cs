@@ -32,15 +32,19 @@ namespace Telegram.Api.Native.Test
             connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
             connectionManager.UnparsedMessageReceived += ConnectionManager_UnparsedMessageReceived;
 
-            connectionManager.SendRequest(null, null, null, 0, ConnectionType.Download, true);
+            //connectionManager.SendRequest(null, null, null, 0, ConnectionType.Download, true, 0);
 
-            var connection = connectionManager.BoomBaby();
+            ITLObject @object;
+            var connection = connectionManager.BoomBaby(out @object);
             var datacenter = connection.Datacenter;
+
+            var sizeCalculator = TLBinarySizeCalculator.Instance;
+            var size = @object.Size;
+            @object.Write(sizeCalculator);
         }
 
         private void ConnectionManager_ConnectionStateChanged(ConnectionManager sender, object args)
         {
-
         }
 
         private void ConnectionManager_UnparsedMessageReceived(ConnectionManager sender, TLUnparsedMessage args)
