@@ -150,16 +150,16 @@
                 Click="GeoPoint_Click"
                 MaxWidth="320"
                 MaxHeight="240"/>
-            <Border Width="20" Height="20" CornerRadius="10" Background="#54000000" IsHitTestVisible="False">
+            <!--<Border Width="20" Height="20" CornerRadius="10" Background="#54000000" IsHitTestVisible="False">
                 <Border CornerRadius="10" Margin="1" Background="White">
                     <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
                 </Border>
-            </Border>
-            <!--<Canvas Width="26" Height="31" VerticalAlignment="Center" Margin="0,-31,0,0">
+            </Border>-->
+            <Canvas Width="26" Height="31" VerticalAlignment="Center" Margin="0,-31,0,0">
                 <Path Canvas.Left="0.5" Canvas.Top="0.5" Width="25.162" Height="30" Data="F1M12.581,30C12.581,30 0,21.29 0,12.581 0,5.632 5.633,0 12.581,0 19.529,0 25.162,5.632 25.162,12.581 25.162,21.29 12.581,30 12.581,30" Fill="{ThemeResource MessageHeaderForegroundBrush}" StrokeThickness="0" />
                 <Path Width="26" Height="31" Data="F1M13,0C5.82,0 0,5.82 0,13 0,22 13,31 13,31 13,31 26,22 26,13 26,5.82 20.18,0 13,0 M13,2C19.065,2 24,6.935 24,13 24,18.866 16.876,25.546 13,28.521 9.124,25.546 2,18.866 2,13 2,6.935 6.935,2 13,2" Fill="White" StrokeThickness="0" />
                 <Path Canvas.Left="8" Canvas.Top="8" Width="10" Height="10" Data="F1M5,0C2.238,0 0,2.239 0,5 0,7.762 2.238,10 5,10 7.762,10 10,7.762 10,5 10,2.239 7.762,0 5,0" Fill="White" StrokeThickness="0" />
-            </Canvas>-->
+            </Canvas>
         </Grid>
     </DataTemplate>
 
@@ -176,16 +176,16 @@
                     Click="Venue_Click"
                     MaxWidth="320"
                     MaxHeight="240"/>
-                <Border Width="20" Height="20" CornerRadius="10" Background="#54000000" IsHitTestVisible="False">
-                    <Border CornerRadius="10" Margin="1" Background="White">
-                        <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
-                    </Border>
+                <!--<Border Width="20" Height="20" CornerRadius="10" Background="#54000000" IsHitTestVisible="False">
+                <Border CornerRadius="10" Margin="1" Background="White">
+                    <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
                 </Border>
-                <!--<Canvas Width="26" Height="31" VerticalAlignment="Center" Margin="0,-31,0,0">
+            </Border>-->
+                <Canvas Width="26" Height="31" VerticalAlignment="Center" Margin="0,-31,0,0">
                     <Path Canvas.Left="0.5" Canvas.Top="0.5" Width="25.162" Height="30" Data="F1M12.581,30C12.581,30 0,21.29 0,12.581 0,5.632 5.633,0 12.581,0 19.529,0 25.162,5.632 25.162,12.581 25.162,21.29 12.581,30 12.581,30" Fill="{ThemeResource MessageHeaderForegroundBrush}" StrokeThickness="0" />
                     <Path Width="26" Height="31" Data="F1M13,0C5.82,0 0,5.82 0,13 0,22 13,31 13,31 13,31 26,22 26,13 26,5.82 20.18,0 13,0 M13,2C19.065,2 24,6.935 24,13 24,18.866 16.876,25.546 13,28.521 9.124,25.546 2,18.866 2,13 2,6.935 6.935,2 13,2" Fill="White" StrokeThickness="0" />
                     <Path Canvas.Left="8" Canvas.Top="8" Width="10" Height="10" Data="F1M5,0C2.238,0 0,2.239 0,5 0,7.762 2.238,10 5,10 7.762,10 10,7.762 10,5 10,2.239 7.762,0 5,0" Fill="White" StrokeThickness="0" />
-                </Canvas>-->
+                </Canvas>
             </Grid>
         </StackPanel>
     </DataTemplate>

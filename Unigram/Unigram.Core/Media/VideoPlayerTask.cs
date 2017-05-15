@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Unigram.Media
+namespace Unigram.Core.Media
 {
     public class VideoPlayerTask
     {
