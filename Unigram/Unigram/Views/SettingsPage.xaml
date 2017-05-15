@@ -89,8 +89,8 @@
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                            Margin="0,24,0,0">
-                        <controls:HyperButton Content="Generic"
-                                              Click="Generic_Click"
+                        <controls:HyperButton Content="General"
+                                              Click="General_Click"
                                               Style="{StaticResource HyperButtonStyle}"/>
                     </local:TableStackPanel>
                     <local:TableStackPanel x:Name="OptionsGroup1"

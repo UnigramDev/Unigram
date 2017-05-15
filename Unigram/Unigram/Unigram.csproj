@@ -246,7 +246,7 @@
     <Compile Include="ViewModels\Payments\PaymentFormStep5ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsGenericViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsGeneralViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStatsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
@@ -321,8 +321,8 @@
     <Compile Include="Views\PlaygroundPage2.xaml.cs">
       <DependentUpon>PlaygroundPage2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsGenericPage.xaml.cs">
-      <DependentUpon>SettingsGenericPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsGeneralPage.xaml.cs">
+      <DependentUpon>SettingsGeneralPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
       <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
@@ -1355,7 +1355,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\SettingsGenericPage.xaml">
+    <Page Include="Views\Settings\SettingsGeneralPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

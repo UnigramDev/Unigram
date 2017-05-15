@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Unigram.Views.Settings.SettingsGenericPage"
+    x:Class="Unigram.Views.Settings.SettingsGeneralPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
@@ -91,8 +91,12 @@
                                                    IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
                                                    Style="{ThemeResource CheckButtonStyle}"/>
 
-                    <controls:HyperCheckButton Tag="Replace emoji"
+                    <controls:HyperCheckButton Tag="Replace emojis"
                                                    IsOn="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
+                                                   Style="{ThemeResource CheckButtonStyle}"/>
+
+                    <controls:HyperCheckButton Tag="Sync contacts"
+                                                   IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
                                                    Style="{ThemeResource CheckButtonStyle}"/>
 
                     <!-- Manually hidden -->

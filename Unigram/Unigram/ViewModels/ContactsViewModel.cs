@@ -91,7 +91,10 @@ namespace Unigram.ViewModels
                         }
                     });
 
-                    await _contactsService.SyncContactsAsync(response.Result);
+                    if (ApplicationSettings.Current.IsContactsSyncEnabled)
+                    {
+                        await _contactsService.SyncContactsAsync(response.Result);
+                    }
                 }
             }
 

@@ -111,6 +111,23 @@ namespace Unigram.Common
             }
         }
 
+        private bool? _isContactsSyncEnabled;
+        public bool IsContactsSyncEnabled
+        {
+            get
+            {
+                if (_isContactsSyncEnabled == null)
+                    _isContactsSyncEnabled = GetValueOrDefault("IsContactsSyncEnabled", true);
+
+                return _isContactsSyncEnabled ?? true;
+            }
+            set
+            {
+                _isContactsSyncEnabled = value;
+                AddOrUpdateValue("IsContactsSyncEnabled", value);
+            }
+        }
+
         private TLAccountTmpPassword _tmpPassword;
         public TLAccountTmpPassword TmpPassword
         {
