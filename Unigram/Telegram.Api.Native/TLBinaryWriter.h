@@ -6,6 +6,7 @@
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
+using ABI::Telegram::Api::Native::ITLBinaryWriter;
 
 namespace Telegram
 {
@@ -14,16 +15,16 @@ namespace Telegram
 		namespace Native
 		{
 
-			class TLBinaryWriter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ABI::Telegram::Api::Native::ITLBinaryWriter>
+			class TLBinaryWriter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLBinaryWriter>
 			{
 				InspectableClass(RuntimeClass_Telegram_Api_Native_TLBinaryWriter, BaseTrust);
 
 			public:
-				TLBinaryWriter();
+				TLBinaryWriter(_In_ BYTE* buffer, UINT32 length);
 				~TLBinaryWriter();
 
 				//COM exported methods
-				STDMETHODIMP RuntimeClassInitialize(_In_ BYTE* buffer, UINT32 length);
+				STDMETHODIMP get_UnstoredBufferLength(_Out_ UINT32* value);
 				STDMETHODIMP WriteByte(BYTE value);
 				STDMETHODIMP WriteInt16(INT16 value);
 				STDMETHODIMP WriteUInt16(UINT16 value);

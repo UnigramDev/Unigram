@@ -4,6 +4,8 @@
 #include "EventObject.h"
 #include "Datacenter.h"
 #include "Connection.h"
+#include "TLUnparsedMessage.h"
+#include "Request.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
@@ -96,6 +98,26 @@ HRESULT ConnectionManager::remove_CurrentNetworkTypeChanged(EventRegistrationTok
 	return m_currentNetworkTypeChangedEventSource.Remove(token);
 }
 
+HRESULT ConnectionManager::add_ConnectionStateChanged(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, EventRegistrationToken* token)
+{
+	return m_connectionStateChangedEventSource.Add(handler, token);
+}
+
+HRESULT ConnectionManager::remove_ConnectionStateChanged(EventRegistrationToken token)
+{
+	return m_connectionStateChangedEventSource.Remove(token);
+}
+
+HRESULT ConnectionManager::add_UnparsedMessageReceived(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage* handler, EventRegistrationToken* token)
+{
+	return m_unparsedMessageReceivedEventSource.Add(handler, token);
+}
+
+HRESULT ConnectionManager::remove_UnparsedMessageReceived(EventRegistrationToken token)
+{
+	return m_unparsedMessageReceivedEventSource.Remove(token);
+}
+
 HRESULT ConnectionManager::get_ConnectionState(ConnectionState* value)
 {
 	if (value == nullptr)
@@ -148,14 +170,16 @@ HRESULT ConnectionManager::get_IsNetworkAvailable(boolean* value)
 	return S_OK;
 }
 
-HRESULT ConnectionManager::SendRequest(ABI::Telegram::Api::Native::ITLObject* object, UINT32 datacenterId, ConnectionType connetionType, boolean immediate, INT32* requestToken)
+HRESULT ConnectionManager::SendRequest(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived,
+	UINT32 datacenterId, ConnectionType connectionType, boolean immediate, INT32 requestToken)
 {
-	if (object == nullptr || requestToken == nullptr)
+	if (object == nullptr)
 	{
 		return E_POINTER;
 	}
 
 	auto lock = LockCriticalSection();
+	auto request = Make<Request>(object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived);
 
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
 
@@ -171,7 +195,7 @@ HRESULT ConnectionManager::CancelRequest(INT32 requestToken, boolean notifyServe
 	return S_OK;
 }
 
-HRESULT ConnectionManager::GetDatacenterById(UINT32 id, ABI::Telegram::Api::Native::IDatacenter** value)
+HRESULT ConnectionManager::GetDatacenterById(UINT32 id, IDatacenter** value)
 {
 	if (value == nullptr)
 	{
@@ -185,13 +209,15 @@ HRESULT ConnectionManager::GetDatacenterById(UINT32 id, ABI::Telegram::Api::Nati
 		return m_datacenters[m_currentDatacenterId].CopyTo(value);
 	}
 
-	auto& datacenter = m_datacenters.find(id);
-	if (datacenter == m_datacenters.end())
+	auto datacenter = GetDatacenterById(id);
+	if (datacenter == nullptr)
 	{
 		return E_INVALIDARG;
 	}
 
-	return datacenter->second.CopyTo(value);
+	*value = datacenter;
+	(*value)->AddRef();
+	return S_OK;
 }
 
 HRESULT ConnectionManager::UpdateNetworkStatus(boolean raiseEvent)
@@ -248,7 +274,6 @@ HRESULT ConnectionManager::UpdateNetworkStatus(boolean raiseEvent)
 	if (currentNetworkType != m_currentNetworkType)
 	{
 		m_currentNetworkType = currentNetworkType;
-
 		return m_currentNetworkTypeChangedEventSource.InvokeAll(this, nullptr);
 	}
 
@@ -257,9 +282,7 @@ HRESULT ConnectionManager::UpdateNetworkStatus(boolean raiseEvent)
 
 HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
 {
-	HRESULT result;
 	auto lock = LockCriticalSection();
-
 	return UpdateNetworkStatus(true);
 }
 
@@ -267,7 +290,6 @@ HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
 {
 	HRESULT result;
 	auto lock = LockCriticalSection();
-
 	auto datacenter = connection->GetDatacenter();
 
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
@@ -279,7 +301,6 @@ HRESULT ConnectionManager::OnConnectionDataReceived(Connection* connection)
 {
 	HRESULT result;
 	auto lock = LockCriticalSection();
-
 	auto datacenter = connection->GetDatacenter();
 
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
@@ -312,37 +333,29 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 
 		if (datacenter->GetId() == m_currentDatacenterId)
 		{
-			//if (networkAvailable)
-			//{
-			//	if (m_connectionState != ConnectionState::Connecting)
-			//	{
-			//		m_connectionState = ConnectionState::Connecting;
-
-			//		/*if (delegate != nullptr)
-			//		{
-			//			delegate->onConnectionStateChanged(connectionState);
-			//		}*/
-			//	}
-			//}
-			//else
-			//{
-			//	if (m_connectionState != ConnectionState::WaitingForNetwork)
-			//	{
-			//		m_connectionState = ConnectionState::WaitingForNetwork;
-
-			//		/*if (delegate != nullptr)
-			//		{
-			//			delegate->onConnectionStateChanged(connectionState);
-			//		}*/
-			//	}
-			//}
+			if (m_currentNetworkType == ConnectionNeworkType::None)
+			{
+				if (m_connectionState != ConnectionState::WaitingForNetwork)
+				{
+					m_connectionState = ConnectionState::WaitingForNetwork;
+					return m_connectionStateChangedEventSource.InvokeAll(this, nullptr);
+				}
+			}
+			else
+			{
+				if (m_connectionState != ConnectionState::Connecting)
+				{
+					m_connectionState = ConnectionState::Connecting;
+					return m_connectionStateChangedEventSource.InvokeAll(this, nullptr);
+				}
+			}
 		}
 	}
 
 	return S_OK;
 }
 
-HRESULT ConnectionManager::BoomBaby(_Out_ ABI::Telegram::Api::Native::IConnection** value)
+HRESULT ConnectionManager::BoomBaby(IConnection** value)
 {
 	if (value == nullptr)
 	{
@@ -350,9 +363,7 @@ HRESULT ConnectionManager::BoomBaby(_Out_ ABI::Telegram::Api::Native::IConnectio
 	}
 
 	HRESULT result;
-	ComPtr<Datacenter> datacenter;
-	ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&datacenter, 0));
-
+	auto datacenter = Make<Datacenter>();
 	ReturnIfFailed(result, datacenter->AddEndpoint(L"192.168.1.1", 80, ConnectionType::Generic, false));
 
 	ComPtr<Connection> connection;
@@ -369,10 +380,25 @@ void ConnectionManager::OnEventObjectError(EventObject const* eventObject, HRESU
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement EventObject callback error tracing");
 }
 
+Datacenter* ConnectionManager::GetDatacenterById(UINT32 id)
+{
+	if (id == DEFAULT_DATACENTER_ID)
+	{
+		return m_datacenters[m_currentDatacenterId].Get();
+	}
+
+	auto& datacenter = m_datacenters.find(id);
+	if (datacenter == m_datacenters.end())
+	{
+		return nullptr;;
+	}
+
+	return datacenter->second.Get();
+}
+
 INT64 ConnectionManager::GenerateMessageId()
 {
 	auto lock = LockCriticalSection();
-
 	auto messageId = static_cast<INT64>(((static_cast<double>(GetCurrentRealTime()) + static_cast<double>(m_timeDelta) * 1000) * 4294967296.0) / 1000.0);
 	if (messageId <= m_lastOutgoingMessageId)
 	{
@@ -391,7 +417,6 @@ INT64 ConnectionManager::GenerateMessageId()
 boolean ConnectionManager::IsNetworkAvailable()
 {
 	auto lock = LockCriticalSection();
-
 	return m_currentNetworkType != ConnectionNeworkType::None;
 }
 
@@ -418,7 +443,7 @@ ConnectionManagerStatics::~ConnectionManagerStatics()
 {
 }
 
-HRESULT ConnectionManagerStatics::get_Instance(ABI::Telegram::Api::Native::IConnectionManager** value)
+HRESULT ConnectionManagerStatics::get_Instance(IConnectionManager** value)
 {
 	if (value == nullptr)
 	{

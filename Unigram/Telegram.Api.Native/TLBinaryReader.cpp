@@ -5,10 +5,10 @@
 using namespace Telegram::Api::Native;
 
 
-TLBinaryReader::TLBinaryReader() :
-	m_buffer(nullptr),
+TLBinaryReader::TLBinaryReader(BYTE const* buffer, UINT32 length) :
+	m_buffer(buffer),
 	m_position(0),
-	m_length(0)
+	m_length(length)
 {
 }
 
@@ -16,15 +16,14 @@ TLBinaryReader::~TLBinaryReader()
 {
 }
 
-HRESULT TLBinaryReader::RuntimeClassInitialize(BYTE const* buffer, UINT32 length)
+HRESULT TLBinaryReader::get_UnconsumedBufferLength(UINT32* value)
 {
-	if (buffer == nullptr)
+	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	m_buffer = buffer;
-	m_length = length;
+	*value = m_length - m_position;
 	return S_OK;
 }
 

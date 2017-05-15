@@ -8,31 +8,22 @@
 using namespace Telegram::Api::Native;
 
 
-Connection::Connection() :
+Connection::Connection(Datacenter* datacenter, ConnectionType type) :
 	m_token(0),
-	m_type(ConnectionType::Generic),
+	m_type(type),
+	m_datacenter(datacenter),
 	m_currentNetworkType(ConnectionNeworkType::WiFi),
 	m_failedConnectionCount(0),
 	m_connectionAttemptCount(CONNECTION_MAX_ATTEMPTS)
 {
+	m_reconnectionTimer = Make<Timer>([&]
+	{
+		return Connect();
+	});
 }
 
 Connection::~Connection()
 {
-}
-
-HRESULT Connection::RuntimeClassInitialize(Datacenter* datacenter, ConnectionType type)
-{
-	HRESULT result;
-	ReturnIfFailed(result, MakeAndInitialize<Timer>(&m_reconnectionTimer, [&]
-	{
-		return Connect();
-	}));
-
-	m_datacenter = datacenter;
-	m_type = type;
-
-	return S_OK;
 }
 
 HRESULT Connection::get_Token(UINT32* value)
@@ -48,7 +39,7 @@ HRESULT Connection::get_Token(UINT32* value)
 	return S_OK;
 }
 
-HRESULT Connection::get_Datacenter(ABI::Telegram::Api::Native::IDatacenter** value)
+HRESULT Connection::get_Datacenter(IDatacenter** value)
 {
 	if (value == nullptr)
 	{

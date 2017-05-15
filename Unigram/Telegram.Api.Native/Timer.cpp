@@ -5,7 +5,8 @@
 using namespace Telegram::Api::Native;
 
 
-Timer::Timer() :
+Timer::Timer(TimerCallback callback) :
+	m_callback(callback),
 	m_started(false),
 	m_repeatable(false),
 	m_timeout(0)
@@ -14,12 +15,6 @@ Timer::Timer() :
 
 Timer::~Timer()
 {
-}
-
-HRESULT Timer::RuntimeClassInitialize(TimerCallback callback)
-{
-	m_callback = callback;
-	return S_OK;
 }
 
 HRESULT Timer::get_IsStarted(boolean* value)

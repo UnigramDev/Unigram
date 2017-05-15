@@ -10,6 +10,8 @@
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
+using ABI::Telegram::Api::Native::IConnection;
+using ABI::Telegram::Api::Native::IDatacenter;
 using ABI::Telegram::Api::Native::ConnectionNeworkType;
 using ABI::Telegram::Api::Native::ConnectionType;
 
@@ -22,7 +24,7 @@ namespace Telegram
 
 			class Datacenter;
 
-			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ABI::Telegram::Api::Native::IConnection, CloakedIid<ABI::Windows::Foundation::IClosable>, FtmBase>,
+			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, CloakedIid<ABI::Windows::Foundation::IClosable>, FtmBase>,
 				public virtual EventObjectT<EventTraits::WaitTraits>, public ConnectionSession, public ConnectionSocket, public ConnectionCryptograpy
 			{
 				friend class ConnectionManager;
@@ -30,18 +32,18 @@ namespace Telegram
 				InspectableClass(RuntimeClass_Telegram_Api_Native_Connection, BaseTrust);
 
 			public:
-				Connection();
+				Connection(_In_ Datacenter* datacenter, ConnectionType type);
 				~Connection();
 
 				//COM exported methods
-				STDMETHODIMP RuntimeClassInitialize(_In_ Datacenter* datacenter, ConnectionType type);
 				STDMETHODIMP get_Token(_Out_ UINT32* value);
-				STDMETHODIMP get_Datacenter(_Out_ ABI::Telegram::Api::Native::IDatacenter** value);
+				STDMETHODIMP get_Datacenter(_Out_ IDatacenter** value);
 				STDMETHODIMP get_Type(_Out_ ConnectionType* value);
 				STDMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
 				STDMETHODIMP get_SessionId(_Out_ INT64* value);
 
 				//Internal methods
+				STDMETHODIMP RuntimeClassInitialize(_In_ Datacenter* datacenter, ConnectionType type);
 				STDMETHODIMP Close();
 				HRESULT Connect();
 				HRESULT Reconnect();

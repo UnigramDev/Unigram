@@ -2,13 +2,14 @@
 #include <algorithm>
 #include <Ws2tcpip.h>
 #include "Datacenter.h"
+#include "TLBinaryReader.h"
 #include "Connection.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
 
 
-Datacenter::Datacenter() :
+Datacenter::Datacenter(UINT32 id) :
 	m_id(0),
 	m_handshakeState(HandshakeState::None),
 	m_currentIpv4EndpointIndex(0),
@@ -18,13 +19,19 @@ Datacenter::Datacenter() :
 {
 }
 
+Datacenter::Datacenter() :
+	Datacenter(0)
+{
+}
+
 Datacenter::~Datacenter()
 {
 }
 
-HRESULT Datacenter::RuntimeClassInitialize(UINT32 id)
+HRESULT Datacenter::RuntimeClassInitialize(TLBinaryReader* reader)
 {
-	m_id = id;
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement Datacenter initialization from reader");
+
 	return S_OK;
 }
 
@@ -303,9 +310,9 @@ HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, Connecti
 
 	if (m_downloadConnections[index] == nullptr && create)
 	{
-		HRESULT result;
-		ComPtr<Connection> connection;
-		ReturnIfFailed(result, MakeAndInitialize<Connection>(&m_downloadConnections[index], this, ConnectionType::Download));
+		m_downloadConnections[index] = Make<Connection>(this, ConnectionType::Download);
+
+		//HRESULT result;
 		//ReturnIfFailed(result, connection->Connect());
 	}
 
@@ -328,9 +335,9 @@ HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, Connection
 
 	if (m_uploadConnections[index] == nullptr && create)
 	{
-		HRESULT result;
-		ComPtr<Connection> connection;
-		ReturnIfFailed(result, MakeAndInitialize<Connection>(&m_uploadConnections[index], this, ConnectionType::Upload));
+		m_uploadConnections[index] = Make<Connection>(this, ConnectionType::Upload);
+
+		//HRESULT result;
 		//ReturnIfFailed(result, connection->Connect());
 	}
 
@@ -348,9 +355,9 @@ HRESULT Datacenter::GetGenericConnection(boolean create, Connection** value)
 
 	if (m_genericConnection == nullptr && create)
 	{
-		HRESULT result;
-		ComPtr<Connection> connection;
-		ReturnIfFailed(result, MakeAndInitialize<Connection>(&m_genericConnection, this, ConnectionType::Generic));
+		m_genericConnection = Make<Connection>(this, ConnectionType::Generic);
+
+		//HRESULT result;
 		//ReturnIfFailed(result, connection->Connect());
 	}
 

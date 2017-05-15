@@ -11,6 +11,8 @@
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
+using ABI::Telegram::Api::Native::IDatacenter;
+using ABI::Windows::Foundation::IClosable;
 using ABI::Telegram::Api::Native::ConnectionType;
 using ABI::Telegram::Api::Native::HandshakeState;
 
@@ -21,7 +23,9 @@ namespace Telegram
 		namespace Native
 		{
 
-			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ABI::Telegram::Api::Native::IDatacenter, CloakedIid<ABI::Windows::Foundation::IClosable>, FtmBase>, public MultiThreadObject
+			class TLBinaryReader;
+
+			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IDatacenter, CloakedIid<IClosable>, FtmBase>, public MultiThreadObject
 			{
 				friend class Connection;
 				friend class ConnectionManager;
@@ -29,11 +33,11 @@ namespace Telegram
 				InspectableClass(RuntimeClass_Telegram_Api_Native_Datacenter, BaseTrust);
 
 			public:
+				Datacenter(UINT32 id);
 				Datacenter();
 				~Datacenter();
 
-				//COM exported methods
-				STDMETHODIMP RuntimeClassInitialize(UINT32 id);
+				//COM exported methods			
 				STDMETHODIMP get_Id(_Out_ UINT32* value);
 				STDMETHODIMP get_HandshakeState(_Out_ HandshakeState* value);
 				STDMETHODIMP GetCurrentAddress(ConnectionType connectionType, boolean ipv6, _Out_ HSTRING* value);
@@ -43,6 +47,7 @@ namespace Telegram
 				//STDMETHODIMP GetGenericConnection(boolean create, _Out_ IConnection** value);
 
 				//Internal methods
+				STDMETHODIMP RuntimeClassInitialize(_In_ TLBinaryReader* reader);
 				void SwitchTo443Port();
 				void RecreateSessions();
 				void GetSessionsIds(_Out_ std::vector<INT64>& sessionIds);
@@ -71,6 +76,7 @@ namespace Telegram
 				HRESULT GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, _Out_ DatacenterEndpoint** endpoint);
 				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
+				HRESULT OnHandshakeResponseReceived(_In_ Connection* connection, INT64 messageId);
 
 				UINT32 m_id;
 				HandshakeState m_handshakeState;

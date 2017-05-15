@@ -18,14 +18,19 @@ namespace Telegram
 
 			runtimeclass Datacenter;
 			runtimeclass Connection;
+			runtimeclass TLUnparsedMessage;
 			runtimeclass ConnectionManager;
 			runtimeclass TLBinaryReader;
 			runtimeclass TLBinaryWriter;
+
+			delegate SendRequestCompletedCallback;
+			delegate RequestQuickAckReceivedCallback;
 
 			[uuid(B93C4F8A-0308-4598-8C0A-52ACC91E45E3)]
 			[version(API_VERSION)]
 			interface ITLObject : IInspectable
 			{
+				[propget] HRESULT IsLayerNeeded([out][retval] boolean* value);
 				[propget] HRESULT Size([out][retval] UINT32* value);
 				HRESULT Read([in] TLBinaryReader* reader);
 				HRESULT Write([in] TLBinaryWriter* writer);
@@ -37,6 +42,7 @@ namespace Telegram
 			[version(API_VERSION)]
 			interface ITLBinaryReader : IInspectable
 			{
+				[propget] HRESULT UnconsumedBufferLength([out][retval] UINT32* value);
 				HRESULT ReadByte([out][retval] BYTE* value);
 				HRESULT ReadInt16([out][retval] INT16* value);
 				HRESULT ReadUInt16([out][retval] UINT16* value);
@@ -65,6 +71,7 @@ namespace Telegram
 			[version(API_VERSION)]
 			interface ITLBinaryWriter : IInspectable
 			{
+				[propget] HRESULT UnstoredBufferLength([out][retval] UINT32* value);
 				HRESULT WriteByte([in] BYTE value);
 				HRESULT WriteInt16([in] INT16 value);
 				HRESULT WriteUInt16([in] UINT16 value);
@@ -159,13 +166,24 @@ namespace Telegram
 			}
 
 
+			[exclusiveto(TLUnparsedMessage)]
+			[uuid(7C4C00BC-3D6A-4623-B6BB-C8CF22F5A839)]
 			[version(API_VERSION)]
-			enum ConnectionState
+			interface ITLUnparsedMessage : IInspectable
 			{
-				Connecting = 1,
-				WaitingForNetwork = 2,
-				Connected = 3
-			};
+				[propget] HRESULT MessageId([out][retval] INT64* value);
+				[propget] HRESULT ConnectionType([out][retval] ConnectionType* value);
+				[propget] HRESULT Reader([out][retval] TLBinaryReader** value);
+			}
+
+			/*[marshaling_behavior(agile)]
+			[threading(both)]*/
+			[version(API_VERSION)]
+			runtimeclass TLUnparsedMessage
+			{
+				[default] interface ITLUnparsedMessage;
+			}
+
 
 			[exclusiveto(ConnectionManager)]
 			[uuid(6945B11D-9663-4E6E-B866-7A1AB6A98349)]
@@ -175,6 +193,22 @@ namespace Telegram
 				[propget] HRESULT Instance([out][retval] ConnectionManager** value);
 			}
 
+			[version(API_VERSION)]
+			enum ConnectionState
+			{
+				Connecting = 1,
+				WaitingForNetwork = 2,
+				Connected = 3
+			};
+
+			[uuid(CA172FA9-416D-4BD9-AB8C-B8696391D38F)]
+			[version(API_VERSION)]
+			delegate HRESULT SendRequestCompletedCallback([in] TLUnparsedMessage* response, HRESULT error);
+
+			[uuid(8F88DCA2-FC97-4C94-B564-3DDBF1675477)]
+			[version(API_VERSION)]
+			delegate HRESULT RequestQuickAckReceivedCallback();
+
 			[exclusiveto(ConnectionManager)]
 			[uuid(1C986C1D-56D3-4DA5-8027-5240F0CD2DFF)]
 			[version(API_VERSION)]
@@ -182,11 +216,16 @@ namespace Telegram
 			{
 				[eventadd] HRESULT CurrentNetworkTypeChanged([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler,[out][retval] EventRegistrationToken* token);
 				[eventremove] HRESULT CurrentNetworkTypeChanged([in] EventRegistrationToken token);
+				[eventadd] HRESULT ConnectionStateChanged([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler,[out][retval] EventRegistrationToken* token);
+				[eventremove] HRESULT ConnectionStateChanged([in] EventRegistrationToken token);
+				[eventadd] HRESULT UnparsedMessageReceived([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, TLUnparsedMessage*>* handler,[out][retval] EventRegistrationToken* token);
+				[eventremove] HRESULT UnparsedMessageReceived([in] EventRegistrationToken token);
 				[propget] HRESULT ConnectionState([out][retval] ConnectionState* value);
 				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
 				[propget] HRESULT IsIpv6Enabled([out][retval] boolean* value);
 				[propget] HRESULT IsNetworkAvailable([out][retval] boolean* value);
-				HRESULT SendRequest([in] ITLObject* object,[in] UINT32 datacenterId,[in] ConnectionType connetionType,[in] boolean immediate,[out] INT32* requestToken);
+				HRESULT SendRequest([in] ITLObject* object,[in]SendRequestCompletedCallback* onCompleted,[in]RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
+					[in] UINT32 datacenterId,[in] ConnectionType connectionType,[in] boolean immediate,[in] INT32 requestToken);
 				HRESULT CancelRequest(INT32 requestToken, boolean notifyServer);
 				HRESULT GetDatacenterById(UINT32 id,[out][retval] Datacenter** value);
 

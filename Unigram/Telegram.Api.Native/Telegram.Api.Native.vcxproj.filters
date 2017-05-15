@@ -19,6 +19,7 @@
     <ClCompile Include="ConnectionCryptograpy.cpp" />
     <ClCompile Include="Request.cpp" />
     <ClCompile Include="NetworkExtensions.cpp" />
+    <ClCompile Include="TLUnparsedMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="MultiThreadObject.h" />
     <ClInclude Include="Request.h" />
     <ClInclude Include="NetworkExtensions.h" />
+    <ClInclude Include="TLUnparsedMessage.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

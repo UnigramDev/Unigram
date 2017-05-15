@@ -27,10 +27,25 @@ namespace Telegram.Api.Native.Test
             this.InitializeComponent();
 
 
-            ConnectionManager.Instance.CurrentNetworkTypeChanged += Instance_CurrentNetworkTypeChanged;
+            var connectionManager = ConnectionManager.Instance;
+            connectionManager.CurrentNetworkTypeChanged += Instance_CurrentNetworkTypeChanged;
+            connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
+            connectionManager.UnparsedMessageReceived += ConnectionManager_UnparsedMessageReceived;
 
-            var connection = ConnectionManager.Instance.BoomBaby();
+            connectionManager.SendRequest(null, null, null, 0, ConnectionType.Download, true);
+
+            var connection = connectionManager.BoomBaby();
             var datacenter = connection.Datacenter;
+        }
+
+        private void ConnectionManager_ConnectionStateChanged(ConnectionManager sender, object args)
+        {
+
+        }
+
+        private void ConnectionManager_UnparsedMessageReceived(ConnectionManager sender, TLUnparsedMessage args)
+        {
+
         }
 
         private void Instance_CurrentNetworkTypeChanged(ConnectionManager sender, object e)

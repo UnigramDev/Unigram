@@ -294,6 +294,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="MultiThreadObject.h" />
     <ClInclude Include="NetworkExtensions.h" />
     <ClInclude Include="Request.h" />
+    <ClInclude Include="TLUnparsedMessage.h" />
     <ClInclude Include="WSAEvent.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ConnectionSocket.h" />
@@ -322,6 +323,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TLBinaryReader.cpp" />
     <ClCompile Include="TLBinaryWriter.cpp" />
+    <ClCompile Include="TLUnparsedMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

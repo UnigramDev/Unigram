@@ -39,12 +39,6 @@ HRESULT ConnectionSocket::ConnectSocket(std::wstring address, UINT16 port, boole
 		return E_NOT_VALID_STATE;
 	}
 
-	auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
-	if (threadpoolObjectHandle == nullptr)
-	{
-		return E_NOT_VALID_STATE;
-	}
-
 	sockaddr_storage socketAddress = {};
 	if (ipv6)
 	{
@@ -86,15 +80,23 @@ HRESULT ConnectionSocket::ConnectSocket(std::wstring address, UINT16 port, boole
 	int noDelay = 1;
 	setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&noDelay), sizeof(int));
 
-	SetThreadpoolWait(threadpoolObjectHandle, GetSocketEvent(), nullptr);
-
 	HRESULT result;
 	if (FAILED(result = OnSocketCreated()))
 	{
-		CloseSocket(WIN32_FROM_HRESULT(result), SOCKET_CLOSE_DEFAULT);
+		CloseSocket(WIN32_FROM_HRESULT(result), SOCKET_CLOSE_RAISEEVENT);
 
 		return result;
 	}
+
+	auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
+	if (threadpoolObjectHandle == nullptr)
+	{
+		CloseSocket(WIN32_FROM_HRESULT(E_NOT_VALID_STATE), SOCKET_CLOSE_RAISEEVENT);
+
+		return E_NOT_VALID_STATE;
+	}
+
+	SetThreadpoolWait(threadpoolObjectHandle, GetSocketEvent(), nullptr);
 
 	if (WSAEventSelect(m_socket, m_socketEvent.Get(), FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE) == SOCKET_ERROR)
 	{

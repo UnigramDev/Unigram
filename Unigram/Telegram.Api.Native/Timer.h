@@ -30,6 +30,9 @@ namespace ABI
 	}
 }
 
+
+using ABI::Telegram::Api::Native::ITimer;
+
 namespace Telegram
 {
 	namespace Api
@@ -37,15 +40,15 @@ namespace Telegram
 		namespace Native
 		{
 
-			class Timer WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ABI::Telegram::Api::Native::ITimer>, public EventObjectT<EventTraits::TimerTraits>
+			class Timer WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ITimer>, public EventObjectT<EventTraits::TimerTraits>
 			{
 				typedef std::function<HRESULT()> TimerCallback;
 
 			public:
-				Timer();
+				Timer(TimerCallback callback);
 				~Timer();
 
-				STDMETHODIMP RuntimeClassInitialize(TimerCallback callback);
+				//COM exported methods		
 				STDMETHODIMP get_IsStarted(_Out_ boolean* value);
 				STDMETHODIMP SetTimeout(UINT32 msTimeout, boolean repeat);
 				STDMETHODIMP Start();
