@@ -338,10 +338,10 @@
 
                 <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
                     <!--<Ellipse>
-                        <Ellipse.Fill>
-                            <ImageBrush ImageSource="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}"/>
-                        </Ellipse.Fill>
-                    </Ellipse>-->
+                         <Ellipse.Fill>
+                         <ImageBrush ImageSource="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}"/>
+                         </Ellipse.Fill>
+                         </Ellipse>-->
                     <controls:ProfilePictureView Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                 </Border>
             </StackPanel>
@@ -566,123 +566,119 @@
         </Grid.RowDefinitions>
 
         <!-- Titlebar -->
-        <Grid x:Name="Header" Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+        <Grid x:Name="Header"
+              Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Button x:Name="btnDialogInfo"
-                    Click="btnDialogInfo_Click"
-                    Style="{StaticResource EmptyButtonStyle}"
-                    Padding="0,0,48,0"
-                    Grid.ColumnSpan="2">
-                <Button.Content>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <!--User icon-->
-                        <!--<Grid Width="36" Height="36" Margin="12,0">
-                            <Ellipse Fill="{Binding With.Id, Converter={StaticResource BubblePlaceholderConverter}}"/>
-                            <TextBlock Foreground="White" x:Name="InitialName" Text="{x:Bind ViewModel.With, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <Ellipse x:Name="elpDialogIcon">
-                                <Ellipse.Fill>
-                                    <ImageBrush ImageSource="{Binding With.Photo, Converter={StaticResource DefaultPhotoConverter}}" />
-                                </Ellipse.Fill>
-                            </Ellipse>
-                            <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="18" Width="36" Height="36"/>
-                        </Grid>-->
+            <Grid x:Name="InfoPanel">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="btnDialogInfo"
+                        Click="btnDialogInfo_Click"
+                        Style="{StaticResource EmptyButtonStyle}"
+                        Padding="0,0,48,0"
+                        Grid.ColumnSpan="3">
+                    <Button.Content>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <controls:ProfilePictureView Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0"/>
 
-                        <Ellipse Width="36" Height="36" Margin="12,0">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="{Binding With.PhotoSelf, Converter={StaticResource DefaultPhotoConverter}}" />
-                            </Ellipse.Fill>
-                        </Ellipse>
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
+                                <TextBlock x:Name="tblDialogName"
+                                           Text="{x:Bind ViewModel.With.DisplayName, Mode=OneWay}"
+                                           Style="{StaticResource BaseTextBlockStyle}"
+                                           TextWrapping="NoWrap"
+                                           TextTrimming="CharacterEllipsis"
+                                           MaxLines="1"/>
+                                <Grid>
+                                    <TextBlock x:Name="tblDialogStatus"
+                                               Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                               Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}" />
+                                    <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}">
+                                        <!--<ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0,0,4,2" Style="{StaticResource UploadProgressRingStyle}"/>-->
+                                        <TextBlock Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
+                                                   Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+                                                   Style="{StaticResource CaptionTextBlockStyle}"/>
+                                        <ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
 
+                            <Border Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable,Mode=OneWay}" Width="48" Grid.Column="2"/>
+                        </Grid>
+                    </Button.Content>
+                </Button>
 
+                <controls:GlyphButton
+                    Command="{x:Bind ViewModel.CallCommand}"
+                    Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable,Mode=OneWay}"
+                    Glyph="&#xE13A;"
+                    Grid.Column="1"/>
 
-                        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
-                            <TextBlock x:Name="tblDialogName"
-                                       Text="{x:Bind ViewModel.With.DisplayName, Mode=OneWay}"
-                                       Style="{StaticResource BaseTextBlockStyle}"
-                                       TextWrapping="NoWrap"
-                                       TextTrimming="CharacterEllipsis"
-                                       MaxLines="1"/>
-                            <Grid>
-                                <TextBlock x:Name="tblDialogStatus"
-                                           Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                           Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}" />
-                                <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}">
-                                    <!--<ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0,0,4,2" Style="{StaticResource UploadProgressRingStyle}"/>-->
-                                    <TextBlock Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
-                                               Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
-                                               Style="{StaticResource CaptionTextBlockStyle}"/>
-                                    <ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </Grid>
-                </Button.Content>
-            </Button>
-            <Button x:Name="btnOptions"
-                    Padding="16,23,16,0"
-                    Style="{StaticResource EllipsisButton}"
-                    Grid.Column="1">
-                <FontIcon x:Name="EllipsisIcon"
-                          VerticalAlignment="Center"
-                          FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                          FontSize="16"
-                          Glyph="&#xE10C;"
-                          Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                <Button.Flyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                        Click="Manage_Click"
-                                        Tag="&#xE133;"
-                                        Text="Manage"
-                                        MinWidth="120"/>
-                        <MenuFlyoutSeparator/>
-                        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                        Command="{x:Bind ViewModel.CallCommand}"
-                                        x:Name="cbtnCall"
-                                        x:Uid="FCBTN-Call"
-                                        Visibility="Visible"
-                                        IsEnabled="True"
-                                        Tag="&#xE13A;"
-                                        Text="Call" />
-                        <!-- Manually hidden -->
-                        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                        x:Name="cbtnReportSpam"
-                                        x:Uid="FCBTN-ReportSpam"
-                                        Visibility="Collapsed"
-                                        IsEnabled="False"
-                                        Tag="&#xE1DE;"
-                                        Text="Report spam" />
-                        <!-- Manually hidden -->
-                        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                        x:Name="cbtnSearch"
-                                        x:Uid="FCBTN-Search"
-                                        Visibility="Collapsed"
-                                        IsEnabled="False"
-                                        Tag="&#xE11A;"
-                                        Text="Search" />
-                        <!-- Manually hidden -->
-                        <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                        x:Name="cbtnPinToStart"
-                                        x:Uid="FCBTN-Pin"
-                                        Visibility="Collapsed"
-                                        IsEnabled="False"
-                                        Tag="&#xE141;"
-                                        Text="Pin to Start"/>
-                    </MenuFlyout>
-                </Button.Flyout>
-            </Button>
-
-            <Grid x:Name="ManagePanel" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Visibility="Collapsed" Grid.ColumnSpan="2">
+                <Button x:Name="btnOptions"
+                        Padding="16,23,16,0"
+                        Style="{StaticResource EllipsisButton}"
+                        Grid.Column="2">
+                    <FontIcon x:Name="EllipsisIcon"
+                              VerticalAlignment="Center"
+                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                              FontSize="16"
+                              Glyph="&#xE10C;"
+                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            Click="Manage_Click"
+                                            Tag="&#xE133;"
+                                            Text="Manage"
+                                            MinWidth="120"/>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            Command="{x:Bind ViewModel.CallCommand}"
+                                            x:Name="cbtnCall"
+                                            x:Uid="FCBTN-Call"
+                                            Visibility="Visible"
+                                            IsEnabled="True"
+                                            Tag="&#xE13A;"
+                                            Text="Call" />
+                            <!-- Manually hidden -->
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            x:Name="cbtnReportSpam"
+                                            x:Uid="FCBTN-ReportSpam"
+                                            Visibility="Collapsed"
+                                            IsEnabled="False"
+                                            Tag="&#xE1DE;"
+                                            Text="Report spam" />
+                            <!-- Manually hidden -->
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            x:Name="cbtnSearch"
+                                            x:Uid="FCBTN-Search"
+                                            Visibility="Collapsed"
+                                            IsEnabled="False"
+                                            Tag="&#xE11A;"
+                                            Text="Search" />
+                            <!-- Manually hidden -->
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            x:Name="cbtnPinToStart"
+                                            x:Uid="FCBTN-Pin"
+                                            Visibility="Collapsed"
+                                            IsEnabled="False"
+                                            Tag="&#xE141;"
+                                            Text="Pin to Start"/>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+            </Grid>
+            
+            <Grid x:Name="ManagePanel" Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Visibility="Collapsed" Grid.ColumnSpan="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
@@ -723,7 +719,7 @@
                 <controls:GlyphButton Click="Manage_Click" Glyph="&#xE106;" FontSize="16" Grid.Column="3"/>
             </Grid>
 
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
         </Grid>
         <!-- END OF Titlebar -->
 
@@ -1020,7 +1016,7 @@
                     MinHeight="48"
                     MaxHeight="96"
                     TextChanging="txtMessage_TextChanging"/>
-                
+
                 <controls:GlyphButton x:Name="ButtonAttach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">
                     <FlyoutBase.AttachedFlyout>
                         <MenuFlyout Placement="Top">
@@ -1182,14 +1178,14 @@
             <Border BorderThickness="0,1,0,0" VerticalAlignment="Top" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="4" Grid.RowSpan="2"/>
 
             <!--<ScrollViewer x:Name="ReplyMarkupViewer"
-                          VerticalScrollBarVisibility="Auto"
-                          VerticalScrollMode="Auto"
-                          HorizontalScrollBarVisibility="Disabled"
-                          HorizontalScrollMode="Disabled"
-                          Grid.ColumnSpan="4"
-                          Grid.Row="2">
-                <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick" Margin="4,0"/>
-            </ScrollViewer>-->
+                 VerticalScrollBarVisibility="Auto"
+                 VerticalScrollMode="Auto"
+                 HorizontalScrollBarVisibility="Disabled"
+                 HorizontalScrollMode="Disabled"
+                 Grid.ColumnSpan="4"
+                 Grid.Row="2">
+                 <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick" Margin="4,0"/>
+                 </ScrollViewer>-->
         </Grid>
     </Grid>
 </Page>

@@ -177,6 +177,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private bool _isPhoneCallsAvailable;
+        public bool IsPhoneCallsAvailable
+        {
+            get
+            {
+                return _isPhoneCallsAvailable;
+            }
+            set
+            {
+                Set(ref _isPhoneCallsAvailable, value);
+            }
+        }
+
         private ItemsUpdatingScrollMode _updatingScrollMode;
         public ItemsUpdatingScrollMode UpdatingScrollMode
         {
@@ -597,10 +610,14 @@ namespace Unigram.ViewModels
             var participant = GetParticipant(parameter as TLPeerBase);
             if (participant is TLUser user)
             {
-                var full = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 });
-
                 With = user;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
+
+                var full = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 });
+                if (full.IsSucceeded)
+                {
+                    IsPhoneCallsAvailable = full.Result.IsPhoneCallsAvailable;
+                }
             }
             else if (participant is TLChannel channel)
             {
@@ -615,6 +632,8 @@ namespace Unigram.ViewModels
                         return;
                     }
                 }
+
+                IsPhoneCallsAvailable = false;
 
                 With = channel;
                 Peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 };
@@ -665,6 +684,8 @@ namespace Unigram.ViewModels
             }
             else if (participant is TLChat chat)
             {
+                IsPhoneCallsAvailable = false;
+
                 With = chat;
                 Peer = new TLInputPeerChat { ChatId = chat.Id };
 
