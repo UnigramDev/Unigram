@@ -38,6 +38,14 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
+        public void GetCdnConfigAsync(Action<TLCdnConfig> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLHelpGetCdnConfig();
+
+            const string caption = "help.getCdnConfig";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
         private Timer _getConfigTimer;
 
 	    private volatile bool _isGettingConfig;

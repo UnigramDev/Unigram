@@ -190,5 +190,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLAuthSentCode>> ResendCodeAsync(string phoneNumber, string phoneCodeHash);
         Task<MTProtoResponse<bool>> ToggleDialogPinAsync(TLInputPeerBase peer, bool pin);
         Task<MTProtoResponse<bool>> ReorderPinnedDialogsAsync(TLVector<TLInputPeerBase> order, bool force);
+        Task<MTProtoResponse<TLCdnConfig>> GetCdnConfigAsync();
+
     }
 }

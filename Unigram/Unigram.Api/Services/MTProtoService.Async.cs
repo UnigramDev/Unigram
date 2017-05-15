@@ -847,6 +847,20 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLCdnConfig>> GetCdnConfigAsync()
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLCdnConfig>>();
+            GetCdnConfigAsync((callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLCdnConfig>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLCdnConfig>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUploadFileBase>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFileBase>>();
