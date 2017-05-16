@@ -4,8 +4,11 @@
     <Filter Include="Wrappers">
       <UniqueIdentifier>{d0d3fe16-1c5b-45b1-94e2-fd6c97a380f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="TLObjects">
+    <Filter Include="TLProtocolScheme">
       <UniqueIdentifier>{78734155-0c44-4232-992f-b30f7426e722}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MIDL">
+      <UniqueIdentifier>{36575a01-6c0e-49e0-8bc8-0faa4d2c20b3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -21,16 +24,19 @@
     <ClCompile Include="Request.cpp" />
     <ClCompile Include="NetworkExtensions.cpp" />
     <ClCompile Include="TLUnparsedMessage.cpp">
-      <Filter>TLObjects</Filter>
+      <Filter>TLProtocolScheme</Filter>
     </ClCompile>
     <ClCompile Include="TLBinaryReader.cpp">
-      <Filter>TLObjects</Filter>
+      <Filter>TLProtocolScheme</Filter>
     </ClCompile>
     <ClCompile Include="TLBinaryWriter.cpp">
-      <Filter>TLObjects</Filter>
+      <Filter>TLProtocolScheme</Filter>
     </ClCompile>
     <ClCompile Include="TLObject.cpp">
-      <Filter>TLObjects</Filter>
+      <Filter>TLProtocolScheme</Filter>
+    </ClCompile>
+    <ClCompile Include="TLProtocolScheme.cpp">
+      <Filter>TLProtocolScheme</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,16 +56,19 @@
     <ClInclude Include="Request.h" />
     <ClInclude Include="NetworkExtensions.h" />
     <ClInclude Include="TLBinaryReader.h">
-      <Filter>TLObjects</Filter>
+      <Filter>TLProtocolScheme</Filter>
     </ClInclude>
     <ClInclude Include="TLBinaryWriter.h">
-      <Filter>TLObjects</Filter>
+      <Filter>TLProtocolScheme</Filter>
     </ClInclude>
     <ClInclude Include="TLUnparsedMessage.h">
-      <Filter>TLObjects</Filter>
+      <Filter>TLProtocolScheme</Filter>
     </ClInclude>
     <ClInclude Include="TLObject.h">
-      <Filter>TLObjects</Filter>
+      <Filter>TLProtocolScheme</Filter>
+    </ClInclude>
+    <ClInclude Include="TLProtocolScheme.h">
+      <Filter>TLProtocolScheme</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +76,8 @@
     <None Include="Telegram.Api.Native.def" />
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="Telegram.Api.Native.idl" />
+    <Midl Include="Telegram.Api.Native.idl">
+      <Filter>MIDL</Filter>
+    </Midl>
   </ItemGroup>
 </Project>

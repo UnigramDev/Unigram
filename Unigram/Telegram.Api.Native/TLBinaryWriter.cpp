@@ -4,6 +4,7 @@
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
+using namespace Telegram::Api::Native::TL;
 
 ActivatableStaticOnlyFactory(TLBinarySizeCalculatorStatics);
 
@@ -136,7 +137,7 @@ HRESULT TLBinaryWriter::WriteFloat(float value)
 	return WriteInt32(*reinterpret_cast<INT32*>(&value));
 }
 
-HRESULT TLBinaryWriter::WriteString(std::wstring string)
+HRESULT TLBinaryWriter::WriteWString(std::wstring string)
 {
 	return WriteString(string.data(), static_cast<UINT32>(string.size()));
 }
@@ -310,7 +311,7 @@ HRESULT TLBinarySizeCalculator::WriteFloat(float value)
 	return S_OK;
 }
 
-HRESULT TLBinarySizeCalculator::WriteString(std::wstring string)
+HRESULT TLBinarySizeCalculator::WriteWString(std::wstring string)
 {
 	auto mbLength = WideCharToMultiByte(CP_UTF8, 0, string.data(), static_cast<UINT32>(string.size()), nullptr, 0, nullptr, nullptr);
 	return WriteBuffer(nullptr, mbLength);
@@ -352,7 +353,7 @@ void TLBinarySizeCalculator::Skip(UINT32 length)
 	m_length += length;
 }
 
-HRESULT TLBinarySizeCalculator::GetInstance(ComPtr<TLBinarySizeCalculator>& value)
+HRESULT TLBinarySizeCalculator::GetTLObjectSize(ITLObject* object, UINT32* value)
 {
 	if (TLBinarySizeCalculatorStatics::s_instance == nullptr)
 	{
@@ -363,7 +364,10 @@ HRESULT TLBinarySizeCalculator::GetInstance(ComPtr<TLBinarySizeCalculator>& valu
 		TLBinarySizeCalculatorStatics::s_instance->Reset();
 	}
 
-	value = TLBinarySizeCalculatorStatics::s_instance;
+	HRESULT result;
+	ReturnIfFailed(result, object->Write(TLBinarySizeCalculatorStatics::s_instance.Get()));
+
+	*value = TLBinarySizeCalculatorStatics::s_instance->m_length;
 	return S_OK;
 }
 
@@ -378,17 +382,12 @@ TLBinarySizeCalculatorStatics::~TLBinarySizeCalculatorStatics()
 {
 }
 
-HRESULT TLBinarySizeCalculatorStatics::get_Instance(ITLBinarySizeCalculator** value)
+HRESULT TLBinarySizeCalculatorStatics::GetTLObjectSize(ITLObject* object, UINT32* value)
 {
-	if (value == nullptr)
+	if (object == nullptr || value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	HRESULT result;
-	ComPtr<TLBinarySizeCalculator> binarySizeCalculator;
-	ReturnIfFailed(result, TLBinarySizeCalculator::GetInstance(binarySizeCalculator));
-
-	*value = binarySizeCalculator.Detach();
-	return S_OK;
+	return TLBinarySizeCalculator::GetTLObjectSize(object, value);
 }

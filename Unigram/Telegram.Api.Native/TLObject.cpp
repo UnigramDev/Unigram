@@ -1,34 +1,10 @@
 #include "pch.h"
 #include "TLObject.h"
-#include "TLBinaryReader.h"
-#include "TLBinaryWriter.h"
-#include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
+using namespace Telegram::Api::Native::TL;
 
-TLObject::TLObject()
-{
-}
-
-TLObject::~TLObject()
-{
-}
-
-HRESULT TLObject::get_Size(UINT32* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	HRESULT result;
-	ComPtr<TLBinarySizeCalculator> binarySizeCalulator;
-	ReturnIfFailed(result, TLBinarySizeCalculator::GetInstance(binarySizeCalulator));
-	ReturnIfFailed(result, Write(static_cast<ITLBinaryWriterEx*>(binarySizeCalulator.Get())));
-
-	*value = binarySizeCalulator->GetTotalLength();
-	return S_OK;
-}
+std::unordered_map<UINT32, TLObject::TLObjectConstructor> TLObject::s_constructors = std::unordered_map<UINT32, TLObject::TLObjectConstructor>();
 
 HRESULT TLObject::Read(ITLBinaryReader* reader)
 {
@@ -50,57 +26,18 @@ HRESULT TLObject::Write(ITLBinaryWriter* writer)
 	return Write(static_cast<ITLBinaryWriterEx*>(writer));
 }
 
-
-TLObjectWithQuery::TLObjectWithQuery()
+HRESULT TLObject::Deserialize(ITLBinaryReaderEx* reader, UINT32 constructor, ITLObject** object)
 {
-}
-
-TLObjectWithQuery::~TLObjectWithQuery()
-{
-}
-
-HRESULT TLObjectWithQuery::RuntimeClassInitialize(ITLObject* query)
-{
-	m_query = query;
-	return S_OK;
-}
-
-HRESULT TLObjectWithQuery::get_Query(ITLObject** value)
-{
-	if (value == nullptr)
+	if (reader == nullptr || object == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	return m_query.CopyTo(value);
-}
+	auto objectConstructor = s_constructors.find(constructor);
+	if (objectConstructor == s_constructors.end())
+	{
+		return E_INVALIDARG;
+	}
 
-
-TLInitConnectionObject::TLInitConnectionObject()
-{
-}
-
-TLInitConnectionObject::~TLInitConnectionObject()
-{
-}
-
-HRESULT TLInitConnectionObject::RuntimeClassInitialize(ITLObject* query)
-{
-	return TLObjectWithQuery::RuntimeClassInitialize(query);
-}
-
-HRESULT TLInitConnectionObject::Read(ITLBinaryReaderEx* reader)
-{
-	HRESULT result;
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLInitConnectionObject read");
-
-	return S_OK;
-}
-
-HRESULT TLInitConnectionObject::Write(ITLBinaryWriterEx* writer)
-{
-	HRESULT result;
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLInitConnectionObject write");
-
-	return S_OK;
+	return objectConstructor->second(object);
 }

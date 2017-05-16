@@ -3,6 +3,7 @@
 #include "TLBinaryReader.h"
 
 using namespace Telegram::Api::Native;
+using namespace Telegram::Api::Native::TL;
 
 
 TLUnparsedMessage::TLUnparsedMessage(INT64 messageId, ConnectionType connectionType, TLBinaryReader* reader) :

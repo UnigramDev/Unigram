@@ -4,10 +4,10 @@
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
-using ABI::Telegram::Api::Native::ITLObject;
 using ABI::Telegram::Api::Native::ConnectionType;
 using ABI::Telegram::Api::Native::ISendRequestCompletedCallback;
 using ABI::Telegram::Api::Native::IRequestQuickAckReceivedCallback;
+using ABI::Telegram::Api::Native::TL::ITLObject;
 
 namespace ABI
 {
@@ -22,6 +22,7 @@ namespace ABI
 				{
 				public:
 					virtual HRESULT STDMETHODCALLTYPE get_Object(_Out_ ITLObject** value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE get_RawObject(_Out_ ITLObject** value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_Token(_Out_ INT32* value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_ConnectionType(_Out_ ConnectionType* value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_DatacenterId(_Out_ UINT32* value) = 0;
@@ -52,6 +53,7 @@ namespace Telegram
 
 				//COM exported methods
 				IFACEMETHODIMP get_Object(_Out_ ITLObject** value);
+				IFACEMETHODIMP get_RawObject(_Out_ ITLObject** value);
 				IFACEMETHODIMP get_Token(_Out_ INT32* value);
 				IFACEMETHODIMP get_ConnectionType(_Out_ ConnectionType* value);
 				IFACEMETHODIMP get_DatacenterId(_Out_ UINT32* value);

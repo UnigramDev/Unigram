@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Telegram.Api.Native.TL;
 
 // Il modello di elemento Pagina vuota è documentato all'indirizzo https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x410
 
@@ -38,9 +39,7 @@ namespace Telegram.Api.Native.Test
             var connection = connectionManager.BoomBaby(out @object);
             var datacenter = connection.Datacenter;
 
-            var sizeCalculator = TLBinarySizeCalculator.Instance;
-            var size = @object.Size;
-            @object.Write(sizeCalculator);
+            var sizeCalculator = TLBinarySizeCalculator.GetTLObjectSize(@object);
         }
 
         private void ConnectionManager_ConnectionStateChanged(ConnectionManager sender, object args)

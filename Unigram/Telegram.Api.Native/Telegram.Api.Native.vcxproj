@@ -135,7 +135,7 @@
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)Metadata\"
 move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
-mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
+mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n 3 /partial /v
 rmdir "$(OutDir)Metadata" /s /q</Command>
     </PostBuildEvent>
     <Midl>
@@ -163,7 +163,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)Metadata\"
 move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
-mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
+mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n 3 /partial /v
 rmdir "$(OutDir)Metadata" /s /q</Command>
     </PostBuildEvent>
     <Midl>
@@ -191,7 +191,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)Metadata\"
 move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
-mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
+mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n 3 /partial /v
 rmdir "$(OutDir)Metadata" /s /q</Command>
     </PostBuildEvent>
     <Midl>
@@ -219,7 +219,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)Metadata\"
 move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
-mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
+mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n 3 /partial /v
 rmdir "$(OutDir)Metadata" /s /q</Command>
     </PostBuildEvent>
     <Midl>
@@ -247,7 +247,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)Metadata\"
 move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
-mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
+mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n 3 /partial /v
 rmdir "$(OutDir)Metadata" /s /q</Command>
     </PostBuildEvent>
     <Midl>
@@ -275,7 +275,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <PostBuildEvent>
       <Command>mkdir "$(OutDir)Metadata\"
 move /Y "$(OutDir)*.winmd" "$(OutDir)Metadata\"
-mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n -1 /partial /v
+mdmerge /metadata_dir "$(WindowsSDK_MetadataPath)\..\UnionMetadata" /i "$(OutDir)Metadata" /o "$(OutDir)." /n 3 /partial /v
 rmdir "$(OutDir)Metadata" /s /q</Command>
     </PostBuildEvent>
     <Midl>
@@ -295,6 +295,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="MultiThreadObject.h" />
     <ClInclude Include="NetworkExtensions.h" />
     <ClInclude Include="Request.h" />
+    <ClInclude Include="TLProtocolScheme.h" />
     <ClInclude Include="TLUnparsedMessage.h" />
     <ClInclude Include="WSAEvent.h" />
     <ClInclude Include="pch.h" />
@@ -325,6 +326,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClCompile Include="TLBinaryReader.cpp" />
     <ClCompile Include="TLBinaryWriter.cpp" />
     <ClCompile Include="TLObject.cpp" />
+    <ClCompile Include="TLProtocolScheme.cpp" />
     <ClCompile Include="TLUnparsedMessage.cpp" />
   </ItemGroup>
   <ItemGroup>

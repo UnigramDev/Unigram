@@ -3,7 +3,7 @@
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
-
+using namespace Telegram::Api::Native::TL;
 
 TLBinaryReader::TLBinaryReader(BYTE const* buffer, UINT32 length) :
 	m_buffer(buffer),
@@ -146,7 +146,7 @@ HRESULT TLBinaryReader::ReadString(HSTRING* value)
 
 	HRESULT result;
 	std::wstring string;
-	ReturnIfFailed(result, ReadString(string));
+	ReturnIfFailed(result, ReadWString(string));
 
 	return WindowsCreateString(string, value);
 }
@@ -196,7 +196,7 @@ HRESULT TLBinaryReader::ReadBigEndianInt32(INT32* value)
 	return S_OK;
 }
 
-HRESULT TLBinaryReader::ReadString(std::wstring& string)
+HRESULT TLBinaryReader::ReadWString(std::wstring& string)
 {
 	HRESULT result;
 	UINT32 mbLength;

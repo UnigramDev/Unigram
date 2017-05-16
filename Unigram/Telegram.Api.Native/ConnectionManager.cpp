@@ -6,10 +6,11 @@
 #include "Connection.h"
 #include "TLUnparsedMessage.h"
 #include "Request.h"
-#include "TLObject.h"
+#include "TLProtocolScheme.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
+using namespace Telegram::Api::Native::TL;
 
 ActivatableStaticOnlyFactory(ConnectionManagerStatics);
 
@@ -109,7 +110,7 @@ HRESULT ConnectionManager::remove_ConnectionStateChanged(EventRegistrationToken 
 	return m_connectionStateChangedEventSource.Remove(token);
 }
 
-HRESULT ConnectionManager::add_UnparsedMessageReceived(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage* handler, EventRegistrationToken* token)
+HRESULT ConnectionManager::add_UnparsedMessageReceived(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTL__CTLUnparsedMessage* handler, EventRegistrationToken* token)
 {
 	return m_unparsedMessageReceivedEventSource.Add(handler, token);
 }
@@ -374,7 +375,7 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 	return S_OK;
 }
 
-HRESULT ConnectionManager::BoomBaby(ITLObject** object, IConnection** value)
+HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLObject** object, IConnection** value)
 {
 	if (object == nullptr || value == nullptr)
 	{
@@ -458,14 +459,6 @@ HRESULT ConnectionManager::GetInstance(ComPtr<ConnectionManager>& value)
 
 ComPtr<ConnectionManager> ConnectionManagerStatics::s_instance = nullptr;
 
-ConnectionManagerStatics::ConnectionManagerStatics()
-{
-}
-
-ConnectionManagerStatics::~ConnectionManagerStatics()
-{
-}
-
 HRESULT ConnectionManagerStatics::get_Instance(IConnectionManager** value)
 {
 	if (value == nullptr)
@@ -478,5 +471,19 @@ HRESULT ConnectionManagerStatics::get_Instance(IConnectionManager** value)
 	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 
 	*value = connectionManager.Detach();
+	return S_OK;
+}
+
+HRESULT ConnectionManagerStatics::get_Version(Version* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	//value->ConfigurationVersion = TELEGRAM_API_NATIVE_CONFIGVERSION;
+	value->ProtocolVersion = TELEGRAM_API_NATIVE_PROTOVERSION;
+	value->Layer = TELEGRAM_API_NATIVE_LAYER;
+	value->ApiId = TELEGRAM_API_NATIVE_APIID;
 	return S_OK;
 }

@@ -9,20 +9,27 @@
 
 #define THREAD_COUNT 1
 #define DEFAULT_DATACENTER_ID INT_MAX
+//#define TELEGRAM_API_NATIVE_CONFIGVERSION 2
+#define TELEGRAM_API_NATIVE_PROTOVERSION 1
+#define TELEGRAM_API_NATIVE_VERSION 1
+#define TELEGRAM_API_NATIVE_LAYER 65
+#define TELEGRAM_API_NATIVE_APIID 6
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 using namespace ABI::Windows::Networking::Connectivity;
 using ABI::Telegram::Api::Native::IConnectionManager;
 using ABI::Telegram::Api::Native::IConnectionManagerStatics;
+using ABI::Telegram::Api::Native::IUserConfiguration;
+using ABI::Telegram::Api::Native::Version;
 using ABI::Telegram::Api::Native::ConnectionState;
 using ABI::Telegram::Api::Native::ConnectionNeworkType;
 using ABI::Telegram::Api::Native::ConnectionType;
-using ABI::Telegram::Api::Native::ITLObject;
 using ABI::Telegram::Api::Native::ISendRequestCompletedCallback;
 using ABI::Telegram::Api::Native::IRequestQuickAckReceivedCallback;
 using ABI::Telegram::Api::Native::IDatacenter;
 using ABI::Telegram::Api::Native::IConnection;
+using ABI::Telegram::Api::Native::TL::ITLObject;
 
 namespace Telegram
 {
@@ -50,7 +57,7 @@ namespace Telegram
 				IFACEMETHODIMP remove_CurrentNetworkTypeChanged(EventRegistrationToken token);
 				IFACEMETHODIMP add_ConnectionStateChanged(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
 				IFACEMETHODIMP remove_ConnectionStateChanged(EventRegistrationToken token);
-				IFACEMETHODIMP add_UnparsedMessageReceived(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage* handler, _Out_ EventRegistrationToken* token);
+				IFACEMETHODIMP add_UnparsedMessageReceived(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTL__CTLUnparsedMessage* handler, _Out_ EventRegistrationToken* token);
 				IFACEMETHODIMP remove_UnparsedMessageReceived(EventRegistrationToken token);
 				IFACEMETHODIMP get_ConnectionState(_Out_ ConnectionState* value);
 				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
@@ -61,7 +68,7 @@ namespace Telegram
 				IFACEMETHODIMP CancelRequest(INT32 requestToken, boolean notifyServer);
 				IFACEMETHODIMP GetDatacenterById(UINT32 id, _Out_ IDatacenter** value);
 
-				IFACEMETHODIMP BoomBaby(_Out_ ITLObject** object, _Out_ IConnection** value);
+				IFACEMETHODIMP BoomBaby(_In_ IUserConfiguration* userConfiguration, _Out_ ITLObject** object, _Out_ IConnection** value);
 
 				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize(DWORD minimumThreadCount = THREAD_COUNT, DWORD maximumThreadCount = THREAD_COUNT);
@@ -110,7 +117,7 @@ namespace Telegram
 
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_currentNetworkTypeChangedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_connectionStateChangedEventSource;
-				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage> m_unparsedMessageReceivedEventSource;
+				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTL__CTLUnparsedMessage> m_unparsedMessageReceivedEventSource;
 			};
 
 
@@ -121,10 +128,8 @@ namespace Telegram
 				InspectableClassStatic(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
 
 			public:
-				ConnectionManagerStatics();
-				~ConnectionManagerStatics();
-
 				IFACEMETHODIMP get_Instance(_Out_ IConnectionManager** value);
+				IFACEMETHODIMP get_Version(_Out_ Version* value);
 
 			private:
 				static ComPtr<ConnectionManager> s_instance;

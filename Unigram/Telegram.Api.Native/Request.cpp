@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Request.h"
+#include "TLObject.h"
 
 using namespace Telegram::Api::Native;
 
@@ -23,6 +24,22 @@ HRESULT Request::get_Object(_Out_ ITLObject** value)
 	if (value == nullptr)
 	{
 		return E_POINTER;
+	}
+
+	return m_object.CopyTo(value);
+}
+
+HRESULT Request::get_RawObject(_Out_ ITLObject** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	ComPtr<ITLObjectWithQuery> objectWithQuery;
+	if (SUCCEEDED(m_object.As(&objectWithQuery)))
+	{
+		return objectWithQuery->get_Query(value);
 	}
 
 	return m_object.CopyTo(value);

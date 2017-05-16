@@ -14,113 +14,152 @@ namespace Telegram
 			typedef enum ConnectionState ConnectionState;
 			typedef enum HandshakeState HandshakeState;
 
-			interface ITLObject;
-			interface ITLBinaryReader;
-			interface ITLBinaryWriter;
+			typedef struct Version Version;
+
+			interface IUserConfiguration;
 
 			runtimeclass Datacenter;
 			runtimeclass Connection;
-			runtimeclass TLUnparsedMessage;
 			runtimeclass ConnectionManager;
-			runtimeclass TLBinaryReader;
-			runtimeclass TLBinaryWriter;
-			runtimeclass TLBinarySizeCalculator;
 
 			delegate SendRequestCompletedCallback;
 			delegate RequestQuickAckReceivedCallback;
 
-			[uuid(B93C4F8A-0308-4598-8C0A-52ACC91E45E3)]
-			[version(API_VERSION)]
-			interface ITLObject : IInspectable
+
+			namespace TL
 			{
-				[propget] HRESULT IsLayerNeeded([out][retval] boolean* value);
-				[propget] HRESULT Size([out][retval] UINT32* value);
-				HRESULT Read([in] ITLBinaryReader* reader);
-				HRESULT Write([in] ITLBinaryWriter* writer);
-			}
 
-
-			[uuid(7F865F69-62F1-4BC9-AD8C-717D0D8DD7F8)]
-			[version(API_VERSION)]
-			interface ITLBinaryReader : IInspectable
-			{
-				[propget] HRESULT UnconsumedBufferLength([out][retval] UINT32* value);
-				HRESULT ReadByte([out][retval] BYTE* value);
-				HRESULT ReadInt16([out][retval] INT16* value);
-				HRESULT ReadUInt16([out][retval] UINT16* value);
-				HRESULT ReadInt32([out][retval] INT32* value);
-				HRESULT ReadUInt32([out][retval] UINT32* value);
-				HRESULT ReadInt64([out][retval] INT64* value);
-				HRESULT ReadUInt64([out][retval] UINT64* value);
-				HRESULT ReadBool([out][retval] boolean* value);
-				HRESULT ReadString([out][retval] HSTRING* value);
-				HRESULT ReadByteArray([out] UINT32* __valueSize,[out][size_is(, *__valueSize)] BYTE** value);
-				HRESULT ReadDouble([out][retval] double* value);
-				HRESULT ReadFloat([out][retval] float* value);
-			}
-
-			[marshaling_behavior(agile)]
-			[threading(both)]
-			[version(API_VERSION)]
-			runtimeclass TLBinaryReader
-			{
-				[default] interface ITLBinaryReader;
-			}
-
-
-			[uuid(732B4B01-0603-4ADB-8F29-24096FCDF7C6)]
-			[version(API_VERSION)]
-			interface ITLBinaryWriter : IInspectable
-			{
-				[propget] HRESULT UnstoredBufferLength([out][retval] UINT32* value);
-				HRESULT WriteByte([in] BYTE value);
-				HRESULT WriteInt16([in] INT16 value);
-				HRESULT WriteUInt16([in] UINT16 value);
-				HRESULT WriteInt32([in] INT32 value);
-				HRESULT WriteUInt32([in] UINT32 value);
-				HRESULT WriteInt64([in] INT64 value);
-				HRESULT WriteUInt64([in] UINT64 value);
-				HRESULT WriteBool([in] boolean value);
-				HRESULT WriteString([in] HSTRING value);
-				HRESULT WriteByteArray([in] UINT32 __valueSize,[in][size_is(__valueSize)] BYTE* value);
-				HRESULT WriteDouble([in] double value);
-				HRESULT WriteFloat([in] float value);
-			}
-
-			[marshaling_behavior(agile)]
-			[threading(both)]
-			[version(API_VERSION)]
-			runtimeclass TLBinaryWriter
-			{
-				[default] interface ITLBinaryWriter;
-			}
-
-
-			[exclusiveto(TLBinarySizeCalculator)]
-			[uuid(14735BB5-2FDF-4650-9999-B877EF13061A)]
-			[version(API_VERSION)]
-			interface ITLBinarySizeCalculatorStatics : IInspectable
-			{
-				[propget] HRESULT Instance([out][retval] TLBinarySizeCalculator** value);
-			}
-
-			[exclusiveto(TLBinarySizeCalculator)]
-			[uuid(49A65276-CE4A-431D-985C-46D3060DFEDA)]
-			[version(API_VERSION)]
-			interface ITLBinarySizeCalculator : IInspectable
-			{
-				[propget] HRESULT TotalLength([out][retval] UINT32* value);
-			}
-
-			[static(ITLBinarySizeCalculatorStatics, API_VERSION)]
-			[marshaling_behavior(agile)]
-			[threading(both)]
-			[version(API_VERSION)]
-			runtimeclass TLBinarySizeCalculator
-			{
-				[default] interface ITLBinarySizeCalculator;
+				interface ITLObject;
+				interface ITLBinaryReader;
 				interface ITLBinaryWriter;
+
+				runtimeclass TLBinaryReader;
+				runtimeclass TLBinaryWriter;
+				runtimeclass TLBinarySizeCalculator;
+				runtimeclass TLUnparsedMessage;
+
+				[uuid(B93C4F8A-0308-4598-8C0A-52ACC91E45E3)]
+				[version(API_VERSION)]
+				interface ITLObject : IInspectable
+				{
+					[propget] HRESULT IsLayerNeeded([out][retval] boolean* value);
+					HRESULT Read([in] TLBinaryReader* reader);
+					HRESULT Write([in] TLBinaryWriter* writer);
+				}
+
+
+				[exclusiveto(TLBinaryReader)]
+				[uuid(7F865F69-62F1-4BC9-AD8C-717D0D8DD7F8)]
+				[version(API_VERSION)]
+				interface ITLBinaryReader : IInspectable
+				{
+					[propget] HRESULT UnconsumedBufferLength([out][retval] UINT32* value);
+					HRESULT ReadByte([out][retval] BYTE* value);
+					HRESULT ReadInt16([out][retval] INT16* value);
+					HRESULT ReadUInt16([out][retval] UINT16* value);
+					HRESULT ReadInt32([out][retval] INT32* value);
+					HRESULT ReadUInt32([out][retval] UINT32* value);
+					HRESULT ReadInt64([out][retval] INT64* value);
+					HRESULT ReadUInt64([out][retval] UINT64* value);
+					HRESULT ReadBool([out][retval] boolean* value);
+					HRESULT ReadString([out][retval] HSTRING* value);
+					HRESULT ReadByteArray([out] UINT32* __valueSize,[out][size_is(, *__valueSize)] BYTE** value);
+					HRESULT ReadDouble([out][retval] double* value);
+					HRESULT ReadFloat([out][retval] float* value);
+				}
+
+				[marshaling_behavior(agile)]
+				[threading(both)]
+				[version(API_VERSION)]
+				runtimeclass TLBinaryReader
+				{
+					[default] interface ITLBinaryReader;
+				}
+
+
+				[exclusiveto(TLBinaryWriter)]
+				[uuid(732B4B01-0603-4ADB-8F29-24096FCDF7C6)]
+				[version(API_VERSION)]
+				interface ITLBinaryWriter : IInspectable
+				{
+					[propget] HRESULT UnstoredBufferLength([out][retval] UINT32* value);
+					HRESULT WriteByte([in] BYTE value);
+					HRESULT WriteInt16([in] INT16 value);
+					HRESULT WriteUInt16([in] UINT16 value);
+					HRESULT WriteInt32([in] INT32 value);
+					HRESULT WriteUInt32([in] UINT32 value);
+					HRESULT WriteInt64([in] INT64 value);
+					HRESULT WriteUInt64([in] UINT64 value);
+					HRESULT WriteBool([in] boolean value);
+					HRESULT WriteString([in] HSTRING value);
+					HRESULT WriteByteArray([in] UINT32 __valueSize,[in][size_is(__valueSize)] BYTE* value);
+					HRESULT WriteDouble([in] double value);
+					HRESULT WriteFloat([in] float value);
+				}
+
+				[marshaling_behavior(agile)]
+				[threading(both)]
+				[version(API_VERSION)]
+				runtimeclass TLBinaryWriter
+				{
+					[default] interface ITLBinaryWriter;
+				}
+
+
+				[exclusiveto(TLBinarySizeCalculator)]
+				[uuid(14735BB5-2FDF-4650-9999-B877EF13061A)]
+				[version(API_VERSION)]
+				interface ITLBinarySizeCalculatorStatics : IInspectable
+				{
+					HRESULT GetTLObjectSize([in]ITLObject* object,[out][retval] UINT32* value);
+				}
+
+				[exclusiveto(TLBinarySizeCalculator)]
+				[uuid(49A65276-CE4A-431D-985C-46D3060DFEDA)]
+				[version(API_VERSION)]
+				interface ITLBinarySizeCalculator : IInspectable
+				{
+				}
+
+				[static(ITLBinarySizeCalculatorStatics, API_VERSION)]
+				[marshaling_behavior(agile)]
+				[threading(both)]
+				[version(API_VERSION)]
+				runtimeclass TLBinarySizeCalculator
+				{
+					[default] interface ITLBinarySizeCalculator;
+				}
+
+
+				[exclusiveto(TLUnparsedMessage)]
+				[uuid(7C4C00BC-3D6A-4623-B6BB-C8CF22F5A839)]
+				[version(API_VERSION)]
+				interface ITLUnparsedMessage : IInspectable
+				{
+					[propget] HRESULT MessageId([out][retval] INT64* value);
+					[propget] HRESULT ConnectionType([out][retval] Telegram.Api.Native.ConnectionType* value);
+					[propget] HRESULT Reader([out][retval] TLBinaryReader** value);
+				}
+
+				[marshaling_behavior(agile)]
+				[threading(both)]
+				[version(API_VERSION)]
+				runtimeclass TLUnparsedMessage
+				{
+					[default] interface ITLUnparsedMessage;
+				}
+
 			}
+
+
+			[version(API_VERSION)]
+			struct Version
+			{
+				//UINT32 ConfigurationVersion;
+				UINT32 ProtocolVersion;
+				UINT32 Layer;
+				UINT32 ApiId;
+			};
 
 
 			[version(API_VERSION)]
@@ -140,6 +179,47 @@ namespace Telegram
 				ServerDH = 3,
 				ClientDH = 4
 			};
+
+			[version(API_VERSION)]
+			enum ConnectionNeworkType
+			{
+				None = 0,
+				Mobile = 1,
+				WiFi = 2,
+				Roaming = 3
+			};
+
+			[version(API_VERSION)]
+			enum ConnectionState
+			{
+				Connecting = 1,
+				WaitingForNetwork = 2,
+				Connected = 3
+			};
+
+
+			[uuid(CA172FA9-416D-4BD9-AB8C-B8696391D38F)]
+			[version(API_VERSION)]
+			delegate HRESULT SendRequestCompletedCallback([in] Telegram.Api.Native.TL.TLUnparsedMessage* response, HRESULT error);
+
+			[uuid(8F88DCA2-FC97-4C94-B564-3DDBF1675477)]
+			[version(API_VERSION)]
+			delegate HRESULT RequestQuickAckReceivedCallback();
+
+
+			[uuid(27960B7A-14F2-4F63-AA65-6201B9A190EC)]
+			[version(API_VERSION)]
+			interface IUserConfiguration : IInspectable
+			{
+				[propget] HRESULT DeviceModel([out][retval] HSTRING* value);
+				[propget] HRESULT SystemVersion([out][retval] HSTRING* value);
+				[propget] HRESULT AppVersion([out][retval] HSTRING* value);
+				[propget] HRESULT Language([out][retval] HSTRING* value);
+				//[propget] HRESULT ConfigurationPath([out][retval] HSTRING* value);
+				//[propget] HRESULT LogPath([out][retval] HSTRING* value);
+				[propget] HRESULT UserId([out][retval] INT32* value);
+			}
+
 
 			[exclusiveto(Datacenter)]
 			[uuid(ACBC9624-7B96-417D-A9F9-A7F93C195C86)]
@@ -164,15 +244,6 @@ namespace Telegram
 			}
 
 
-			[version(API_VERSION)]
-			enum ConnectionNeworkType
-			{
-				None = 0,
-				Mobile = 1,
-				WiFi = 2,
-				Roaming = 3
-			};
-
 			[exclusiveto(Connection)]
 			[uuid(108FB951-3940-4FF5-A8A1-ED449D305029)]
 			[version(API_VERSION)]
@@ -194,48 +265,14 @@ namespace Telegram
 			}
 
 
-			[exclusiveto(TLUnparsedMessage)]
-			[uuid(7C4C00BC-3D6A-4623-B6BB-C8CF22F5A839)]
-			[version(API_VERSION)]
-			interface ITLUnparsedMessage : IInspectable
-			{
-				[propget] HRESULT MessageId([out][retval] INT64* value);
-				[propget] HRESULT ConnectionType([out][retval] ConnectionType* value);
-				[propget] HRESULT Reader([out][retval] TLBinaryReader** value);
-			}
-
-			[marshaling_behavior(agile)]
-			[threading(both)]
-			[version(API_VERSION)]
-			runtimeclass TLUnparsedMessage
-			{
-				[default] interface ITLUnparsedMessage;
-			}
-
-
 			[exclusiveto(ConnectionManager)]
 			[uuid(6945B11D-9663-4E6E-B866-7A1AB6A98349)]
 			[version(API_VERSION)]
 			interface IConnectionManagerStatics : IInspectable
 			{
 				[propget] HRESULT Instance([out][retval] ConnectionManager** value);
+				[propget] HRESULT Version([out][retval] Version* value);
 			}
-
-			[version(API_VERSION)]
-			enum ConnectionState
-			{
-				Connecting = 1,
-				WaitingForNetwork = 2,
-				Connected = 3
-			};
-
-			[uuid(CA172FA9-416D-4BD9-AB8C-B8696391D38F)]
-			[version(API_VERSION)]
-			delegate HRESULT SendRequestCompletedCallback([in] TLUnparsedMessage* response, HRESULT error);
-
-			[uuid(8F88DCA2-FC97-4C94-B564-3DDBF1675477)]
-			[version(API_VERSION)]
-			delegate HRESULT RequestQuickAckReceivedCallback();
 
 			[exclusiveto(ConnectionManager)]
 			[uuid(1C986C1D-56D3-4DA5-8027-5240F0CD2DFF)]
@@ -246,18 +283,18 @@ namespace Telegram
 				[eventremove] HRESULT CurrentNetworkTypeChanged([in] EventRegistrationToken token);
 				[eventadd] HRESULT ConnectionStateChanged([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler,[out][retval] EventRegistrationToken* token);
 				[eventremove] HRESULT ConnectionStateChanged([in] EventRegistrationToken token);
-				[eventadd] HRESULT UnparsedMessageReceived([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, TLUnparsedMessage*>* handler,[out][retval] EventRegistrationToken* token);
+				[eventadd] HRESULT UnparsedMessageReceived([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, Telegram.Api.Native.TL.TLUnparsedMessage*>* handler,[out][retval] EventRegistrationToken* token);
 				[eventremove] HRESULT UnparsedMessageReceived([in] EventRegistrationToken token);
 				[propget] HRESULT ConnectionState([out][retval] ConnectionState* value);
 				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
 				[propget] HRESULT IsIpv6Enabled([out][retval] boolean* value);
 				[propget] HRESULT IsNetworkAvailable([out][retval] boolean* value);
-				HRESULT SendRequest([in] ITLObject* object,[in]SendRequestCompletedCallback* onCompleted,[in]RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
+				HRESULT SendRequest([in] Telegram.Api.Native.TL.ITLObject* object,[in] SendRequestCompletedCallback* onCompleted,[in] RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
 					[in] UINT32 datacenterId,[in] ConnectionType connectionType,[in] boolean immediate,[in] INT32 requestToken);
-				HRESULT CancelRequest(INT32 requestToken, boolean notifyServer);
+				HRESULT CancelRequest([in]INT32 requestToken,[in] boolean notifyServer);
 				HRESULT GetDatacenterById(UINT32 id,[out][retval] Datacenter** value);
 
-				HRESULT BoomBaby([out]ITLObject** object,[out][retval] Connection** value);
+				HRESULT BoomBaby([in] IUserConfiguration* userConfiguration, [out] Telegram.Api.Native.TL.ITLObject** object,[out][retval] Connection** value);
 			}
 
 			[static(IConnectionManagerStatics, API_VERSION)]
