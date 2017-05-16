@@ -25,7 +25,7 @@ namespace Unigram.Tasks
             {
                 _deferral = taskInstance.GetDeferral();
 
-                TLPushUtils.AddToast("VoIPServiceTask started", GetCurrentProcessId().ToString(), "default", "started", null, null, "voip");
+                VoIPCallTask.Log("VoIPServiceTask started", GetCurrentProcessId().ToString());
 
                 var details = taskInstance.TriggerDetails as AppServiceTriggerDetails;
 

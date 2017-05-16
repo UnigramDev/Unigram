@@ -49,6 +49,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI;
 using Unigram.Views.Channels;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Views
 {

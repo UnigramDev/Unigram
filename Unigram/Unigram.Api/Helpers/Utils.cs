@@ -19,6 +19,12 @@ namespace Telegram.Api.Helpers
 {
     public static class Utils
     {
+        public static long BytesToLong(byte[] bytes)
+        {
+            return ((long)bytes[7] << 56) + (((long)bytes[6] & 0xFF) << 48) + (((long)bytes[5] & 0xFF) << 40) + (((long)bytes[4] & 0xFF) << 32)
+                    + (((long)bytes[3] & 0xFF) << 24) + (((long)bytes[2] & 0xFF) << 16) + (((long)bytes[1] & 0xFF) << 8) + ((long)bytes[0] & 0xFF);
+        }
+
         public static string GetShortTimePattern(ref CultureInfo ci)
         {
             if (ci.DateTimeFormat.ShortTimePattern.Contains("H"))

@@ -87,6 +87,21 @@ namespace Unigram.Common
             }
         }
 
+        public IAsyncOperation<AppServiceResponse> SendRequestAsync(string caption, TLObject request)
+        {
+            try
+            {
+                return _appConnection.SendMessageAsync(new ValueSet { { nameof(caption), caption }, { nameof(request), TLSerializationService.Current.Serialize(request) } });
+            }
+            catch
+            {
+                return AsyncInfo.Run(token => Task.FromResult(null as AppServiceResponse));
+            }
+        }
+
+        private PhoneCallPage _phoneView;
+        private bool _phoneViewExists;
+
         private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             var deferral = args.GetDeferral();
@@ -121,37 +136,68 @@ namespace Unigram.Common
                     {
                         using (var from = new TLBinaryReader(data))
                         {
-                            var tuple = new TLTuple<TLPhoneCallBase, TLUserBase, string>(from);
+                            var tupleBase = new TLTuple<int, TLPhoneCallBase, TLUserBase, string>(from);
+                            var tuple = new TLTuple<TLPhoneCallState, TLPhoneCallBase, TLUserBase, string>((TLPhoneCallState)tupleBase.Item1, tupleBase.Item2, tupleBase.Item3, tupleBase.Item4);
 
-                            PhoneCallPage newPlayer = null;
-                            CoreApplicationView newView = CoreApplication.CreateNewView();
-                            var newViewId = 0;
-                            await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                            if (tuple.Item2 is TLPhoneCallDiscarded && _phoneView != null)
                             {
-                                newPlayer = new PhoneCallPage();
-                                Window.Current.Content = newPlayer;
-                                Window.Current.Activate();
-                                newViewId = ApplicationView.GetForCurrentView().Id;
 
-                                newPlayer.SetCall(tuple);
-                            });
+                                var newView = _phoneView;
+                                _phoneViewExists = false;
+                                _phoneView = null;
 
-                            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                                await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                                {
+                                    tuple = new TLTuple<TLPhoneCallState, TLPhoneCallBase, TLUserBase, string>(TLPhoneCallState.Ended, tupleBase.Item2, tupleBase.Item3, tupleBase.Item4);
+                                    newView.SetCall(tuple);
+                                    CoreApplication.GetCurrentView().CoreWindow.Close();
+                                });
+
+                                return;
+                            }
+
+                            if (_phoneViewExists == false)
                             {
-                                var overlay = ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay);
-                                if (overlay)
-                                {
-                                    var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
-                                    preferences.CustomSize = new Size(340, 200);
+                                _phoneViewExists = true;
 
-                                    var viewShown = await ApplicationViewSwitcher.TryShowAsViewModeAsync(newViewId, ApplicationViewMode.CompactOverlay, preferences);
-                                }
-                                else
+                                PhoneCallPage newPlayer = null;
+                                CoreApplicationView newView = CoreApplication.CreateNewView();
+                                var newViewId = 0;
+                                await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                                 {
-                                    //await ApplicationViewSwitcher.SwitchAsync(newViewId);
-                                    await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
-                                }
-                            });
+                                    newPlayer = new PhoneCallPage();
+                                    Window.Current.Content = newPlayer;
+                                    Window.Current.Activate();
+                                    newViewId = ApplicationView.GetForCurrentView().Id;
+
+                                    newPlayer.SetCall(tuple);
+                                    _phoneView = newPlayer;
+                                });
+
+                                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                                {
+                                    var overlay = ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay);
+                                    if (overlay)
+                                    {
+                                        var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+                                        preferences.CustomSize = new Size(340, 200);
+
+                                        var viewShown = await ApplicationViewSwitcher.TryShowAsViewModeAsync(newViewId, ApplicationViewMode.CompactOverlay, preferences);
+                                    }
+                                    else
+                                    {
+                                        //await ApplicationViewSwitcher.SwitchAsync(newViewId);
+                                        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
+                                    }
+                                });
+                            }
+                            else if (_phoneView != null)
+                            {
+                                await _phoneView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                                {
+                                    _phoneView.SetCall(tuple);
+                                });
+                            }
                         }
                     }
                     else

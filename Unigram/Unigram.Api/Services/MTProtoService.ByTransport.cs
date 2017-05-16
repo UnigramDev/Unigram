@@ -694,7 +694,7 @@ namespace Telegram.Api.Services
                         ApiId = Constants.ApiId,
                         AppVersion = _deviceInfo.AppVersion,
                         Query = obj,
-                        DeviceModel = _deviceInfo.Model,
+                        DeviceModel = _deviceInfo.DeviceModel,
                         LangCode = Utils.CurrentUICulture(),
                         SystemVersion = _deviceInfo.SystemVersion
                     };

@@ -175,24 +175,36 @@
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark">
         <Image x:Name="Image" Source="http://i.imgur.com/kx2hM3N.jpg" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Border x:Name="BlurPanel"/>
-
-        <Border x:Name="SmallEmojiLabel" Background="Transparent" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,20">
-            <StackPanel x:Name="SmallPanel" Orientation="Horizontal" Width="108" Height="24" Margin="12"/>
-        </Border>
         
-        <Grid Padding="12,0" Visibility="Collapsed">
+        <Grid Padding="12,0">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition MinHeight="72"/>
             </Grid.RowDefinitions>
-            <TextBlock Text="Fela Ameghino" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,8"/>
-            <TextBlock Text="00:00" TextAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1"/>
+            <TextBlock x:Name="FromLabel" Text="Fela Ameghino" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom" Margin="0,0,0,8"/>
+            <TextBlock x:Name="DurationLabel" Opacity="0" Text="00:00" TextAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1"/>
+
+            <ContentControl x:Name="StateLabel" HorizontalContentAlignment="Center" Grid.Row="1">
+                <ContentControl.ContentTransitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition/>
+                    </TransitionCollection>
+                </ContentControl.ContentTransitions>
+                <ContentControl.Clip>
+                    <RectangleGeometry Rect="0,0,320,32"/>
+                </ContentControl.Clip>
+            </ContentControl>
         </Grid>
 
+        <Border x:Name="SmallEmojiLabel" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">
+            <StackPanel x:Name="SmallPanel" Orientation="Horizontal" Width="108" Height="24" Margin="12,6"/>
+        </Border>
+
+        <Border x:Name="BlurPanel"/>
+        <Border x:Name="GrabPanel" Background="Transparent"/>
+
         <Grid x:Name="EmojifyPanel">
-            <!--<controls:BackDrop/>-->
             <Grid Padding="12,0">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -202,10 +214,10 @@
 
                 <Border x:Name="LargeEmojiLabel" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,8">
                     <StackPanel x:Name="LargePanel" Tapped="LargeEmojiLabel_Tapped" Background="Transparent" Orientation="Horizontal">
-                        <Image x:Name="LargeEmoji0" Source="ms-appx:///Assets/Emojis/0030-20e3.png" Height="48" Margin="0,0,4,0"/>
-                        <Image x:Name="LargeEmoji1" Source="ms-appx:///Assets/Emojis/0031-20e3.png" Height="48" Margin="4,0"/>
-                        <Image x:Name="LargeEmoji2" Source="ms-appx:///Assets/Emojis/0032-20e3.png" Height="48" Margin="4,0"/>
-                        <Image x:Name="LargeEmoji3" Source="ms-appx:///Assets/Emojis/0033-20e3.png" Height="48" Margin="4,0,0,0"/>
+                        <Image x:Name="LargeEmoji0" Source="ms-appx:///Assets/Emojis/0030-20e3.png" Height="48" Width="48" Margin="0,0,4,0"/>
+                        <Image x:Name="LargeEmoji1" Source="ms-appx:///Assets/Emojis/0031-20e3.png" Height="48" Width="48" Margin="4,0"/>
+                        <Image x:Name="LargeEmoji2" Source="ms-appx:///Assets/Emojis/0032-20e3.png" Height="48" Width="48" Margin="4,0"/>
+                        <Image x:Name="LargeEmoji3" Source="ms-appx:///Assets/Emojis/0033-20e3.png" Height="48" Width="48" Margin="4,0,0,0"/>
                     </StackPanel>
                 </Border>
 
@@ -227,5 +239,6 @@
             
             <controls:GlyphToggleButton x:Name="Routing" Click="Routing_Click" CheckedGlyph="&#xE767;" HorizontalAlignment="Left" Margin="12,0,0,0" Grid.Column="2"/>
         </Grid>
+
     </Grid>
 </Page>

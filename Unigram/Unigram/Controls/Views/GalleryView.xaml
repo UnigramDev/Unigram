@@ -121,7 +121,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <MediaTransportControls x:Name="Transport" IsCompact="True" Grid.ColumnSpan="2"/>
+                <MediaTransportControls x:Name="Transport" Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.IsVideo, Mode=OneWay}" IsCompact="True" Grid.ColumnSpan="2"/>
 
                 <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.SelectedItem.Caption, Converter={StaticResource NullToVisibilityConverter}}"

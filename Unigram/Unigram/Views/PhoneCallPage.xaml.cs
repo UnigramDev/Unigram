@@ -18,6 +18,7 @@ using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.Graphics.Effects;
 using Windows.Phone.Media.Devices;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -48,9 +49,28 @@ namespace Unigram.Views
 
         private bool _collapsed = true;
 
+        private TLPhoneCallState _state;
+        private string[] _emojis;
+        private DateTime _started;
+
+        private DispatcherTimer _durationTimer;
+
         public PhoneCallPage()
         {
             this.InitializeComponent();
+
+            _durationTimer = new DispatcherTimer();
+            _durationTimer.Interval = TimeSpan.FromMilliseconds(500);
+            _durationTimer.Tick += DurationTimer_Tick;
+
+            #region Reset
+
+            LargeEmoji0.Source = null;
+            LargeEmoji1.Source = null;
+            LargeEmoji2.Source = null;
+            LargeEmoji3.Source = null;
+
+            #endregion
 
             #region Routing
 
@@ -94,10 +114,17 @@ namespace Unigram.Views
 
             #endregion
 
-            //var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            //var coreBar = CoreApplication.GetCurrentView().TitleBar;
-            //coreBar.IsVisibleChanged += CoreBar_IsVisibleChanged;
-            //coreBar.ExtendViewIntoTitleBar = true;
+            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            //coreTitleBar.IsVisibleChanged += CoreBar_IsVisibleChanged;
+            coreTitleBar.ExtendViewIntoTitleBar = true;
+
+            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            titleBar.ButtonBackgroundColor = Colors.Transparent;
+            titleBar.ButtonForegroundColor = Colors.White;
+            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            titleBar.ButtonInactiveForegroundColor = Colors.White;
+
+            Window.Current.SetTitleBar(GrabPanel);
         }
 
         //private void CoreBar_IsVisibleChanged(CoreApplicationViewTitleBar sender, object args)
@@ -124,30 +151,103 @@ namespace Unigram.Views
             }
         }
 
-        public void SetCall(TLTuple<TLPhoneCallBase, TLUserBase, string> tuple)
+        public void SetCall(TLTuple<TLPhoneCallState, TLPhoneCallBase, TLUserBase, string> tuple)
         {
-            if (tuple.Item1 is TLPhoneCallRequested call)
+            if (_state != tuple.Item1)
+            {
+                Debug.WriteLine("State changed in app: " + tuple.Item1);
+
+                _state = tuple.Item1;
+                StateLabel.Content = StateToLabel(tuple.Item1);
+
+                if (tuple.Item1 == TLPhoneCallState.Established)
+                {
+                    StartUpdatingCallDuration();
+
+                    if (_emojis != null)
+                    {
+                        for (int i = 0; i < _emojis.Length; i++)
+                        {
+                            var imageLarge = FindName($"LargeEmoji{i}") as Image;
+                            var source = Emoji.BuildUri(_emojis[i]);
+
+                            imageLarge.Source = new BitmapImage(new Uri(source));
+                        }
+                    }
+                }
+            }
+
+            if (tuple.Item2 is TLPhoneCallRequested call)
             {
             }
 
-            if (tuple.Item2 is TLUser user)
+            if (tuple.Item3 is TLUser user)
             {
                 Image.Source = DefaultPhotoConverter.Convert(user.Photo, true) as ImageSource;
+                FromLabel.Text = user.FullName;
                 TextBlockHelper.SetMarkdown(DescriptionLabel, string.Format("If these emoji are the same on **{0}**'s screen, this call is 100% secure.", user.FirstName));
             }
 
-            if (tuple.Item3.Length > 0)
+            if (tuple.Item4.Length > 0)
             {
-                var split = tuple.Item3.Split(' ');
-                for (int i = 0; i < split.Length; i++)
-                {
-                    //var imageSmall = FindName($"SmallEmoji{i}") as Image;
-                    var imageLarge = FindName($"LargeEmoji{i}") as Image;
-                    var source = Emoji.BuildUri(split[i]);
+                _emojis = tuple.Item4.Split(' ');
+            }
+        }
 
-                    //imageSmall.Source = new BitmapImage(new Uri(source));
-                    imageLarge.Source = new BitmapImage(new Uri(source));
-                }
+        private string StateToLabel(TLPhoneCallState state)
+        {
+            switch (state)
+            {
+                case TLPhoneCallState.WaitingIncoming:
+                    return "Incoming call";
+                case TLPhoneCallState.WaitInit:
+                case TLPhoneCallState.WaitInitAck:
+                    return "Connecting";
+                case TLPhoneCallState.ExchangingKeys:
+                    return "Exchanging encryption keys";
+                case TLPhoneCallState.Waiting:
+                    return "Waiting";
+                case TLPhoneCallState.Ringing:
+                    return "Ringing";
+                case TLPhoneCallState.Requesting:
+                    return "Requesting";
+                case TLPhoneCallState.HangingUp:
+                    return "Hanging up";
+                case TLPhoneCallState.Ended:
+                    return "Call ended";
+                case TLPhoneCallState.Busy:
+                    return "Line busy";
+                case TLPhoneCallState.Established:
+                    return "00:00";
+                case TLPhoneCallState.Failed:
+                    return "Failed to connect";
+            }
+
+            return null;
+        }
+
+        private void StartUpdatingCallDuration()
+        {
+            _started = DateTime.Now;
+            _durationTimer.Start();
+        }
+
+        private void DurationTimer_Tick(object sender, object e)
+        {
+            if (DurationLabel.Opacity == 0)
+            {
+                DurationLabel.Opacity = 1;
+                StateLabel.Opacity = 0;
+            }
+
+            if (_state == TLPhoneCallState.Established)
+            {
+                var duration = DateTime.Now - _started;
+                DurationLabel.Text = duration.ToString(duration.TotalHours >= 1 ? "hh\\:mm\\:ss" : "mm\\:ss");
+            }
+            else
+            {
+                _durationTimer.Stop();
             }
         }
 

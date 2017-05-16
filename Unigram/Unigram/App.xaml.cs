@@ -269,7 +269,7 @@ namespace Unigram
 
             ShowStatusBar();
             ColourTitleBar();
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(360, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             Task.Run(() => OnStartSync());
@@ -355,11 +355,14 @@ namespace Unigram
         {
             try
             {
+                Window.Current.Activated -= Window_Activated;
+                Window.Current.Activated += Window_Activated;
+
                 // Changes to the titlebar (colour, and such)
                 CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
 
                 var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-                var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+                var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrushBase"] as SolidColorBrush;
                 var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
 
                 titlebar.BackgroundColor = backgroundBrush.Color;
@@ -400,6 +403,11 @@ namespace Unigram
             {
                 Debug.WriteLine("Device does not have a Titlebar");
             }
+        }
+
+        private void Window_Activated(object sender, WindowActivatedEventArgs e)
+        {
+            ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrush"]).Color = e.WindowActivationState != CoreWindowActivationState.Deactivated ? ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushBase"]).Color : ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushDeactivated"]).Color;
         }
     }
 

@@ -160,6 +160,7 @@
     <Compile Include="TL\Core\TLInt.cs" />
     <Compile Include="TL\Core\TLMessageActionUnreadMessages.cs" />
     <Compile Include="TL\Core\TLTuple.cs" />
+    <Compile Include="TL\Local\TLPhoneCallState.cs" />
     <Compile Include="TL\Local\TLMessageActionDate.cs" />
     <Compile Include="TL\Local\TLMessagesContainer.cs" />
     <Compile Include="TL\Methods\Account\TLAccountChangePhone.cs" />
@@ -418,6 +419,8 @@
     <Compile Include="TL\Partial\TLFileLocationBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesDialogsBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesMessagesBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLPhoneCallBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLPhoneConnection.Partial.cs" />
     <Compile Include="TL\Partial\TLPhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLPhotoBase.Partial.cs" />
     <Compile Include="TL\Partial\TLRPCError.Partial.cs" />
@@ -1212,6 +1215,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TL\Partial\TLRichTextBase.Partial.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Libraries\libtgvoip\libtgvoip.UWP.vcxproj">
+      <Project>{88803693-7606-484b-9d2f-4bb789d57c29}</Project>
+      <Name>libtgvoip</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
