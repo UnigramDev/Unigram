@@ -34,12 +34,16 @@ HRESULT MediaSink::SetProperties(ABI::Windows::Foundation::Collections::IPropert
 HRESULT MediaSink::AddStreamSink(DWORD dwStreamSinkIdentifier, IMFMediaType* pMediaType, IMFStreamSink** ppStreamSink)
 {
 	if (ppStreamSink == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	HRESULT result;
 	StreamSink* streamSink;
@@ -57,7 +61,9 @@ HRESULT MediaSink::GetCharacteristics(DWORD* pdwCharacteristics)
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	*pdwCharacteristics = GetCharacteristics();
 	return S_OK;
@@ -66,15 +72,21 @@ HRESULT MediaSink::GetCharacteristics(DWORD* pdwCharacteristics)
 HRESULT MediaSink::GetPresentationClock(IMFPresentationClock** ppPresentationClock)
 {
 	if (ppPresentationClock == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	if (m_clock == nullptr)
+	{
 		return MF_E_NO_CLOCK;
+	}
 
 	return m_clock.CopyTo(ppPresentationClock);
 }
@@ -82,16 +94,22 @@ HRESULT MediaSink::GetPresentationClock(IMFPresentationClock** ppPresentationClo
 HRESULT MediaSink::GetStreamSinkById(DWORD dwStreamSinkIdentifier, IMFStreamSink** ppStreamSink)
 {
 	if (ppStreamSink == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	auto streamSink = GetStreamSinkById(dwStreamSinkIdentifier);
 	if (streamSink == nullptr)
+	{
 		return MF_E_INVALIDSTREAMNUMBER;
+	}
 
 	return streamSink->CastToUnknown()->QueryInterface(ppStreamSink);
 }
@@ -99,16 +117,22 @@ HRESULT MediaSink::GetStreamSinkById(DWORD dwStreamSinkIdentifier, IMFStreamSink
 HRESULT MediaSink::GetStreamSinkByIndex(DWORD dwIndex, IMFStreamSink** ppStreamSink)
 {
 	if (ppStreamSink == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	auto streamSink = GetStreamSinkById(dwIndex);
 	if (streamSink == nullptr)
-		return E_BOUNDS;
+	{
+		return MF_E_OUT_OF_RANGE;
+	}
 
 	return streamSink->CastToUnknown()->QueryInterface(ppStreamSink);
 }
@@ -116,12 +140,16 @@ HRESULT MediaSink::GetStreamSinkByIndex(DWORD dwIndex, IMFStreamSink** ppStreamS
 HRESULT MediaSink::GetStreamSinkCount(DWORD* pcStreamSinkCount)
 {
 	if (pcStreamSinkCount == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	*pcStreamSinkCount = GetStreamSinkCount();
 	return S_OK;
@@ -132,7 +160,9 @@ HRESULT MediaSink::RemoveStreamSink(DWORD dwStreamSinkIdentifier)
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	return OnRemoveStream(dwStreamSinkIdentifier);
 }
@@ -142,18 +172,26 @@ HRESULT MediaSink::SetPresentationClock(IMFPresentationClock* pPresentationClock
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
-	auto result = S_OK;
+	HRESULT result = S_OK;
 
 	if (m_clock != nullptr)
+	{
 		result = m_clock->RemoveClockStateSink(this);
+	}
 
 	if (SUCCEEDED(result) || pPresentationClock != nullptr)
+	{
 		result = pPresentationClock->AddClockStateSink(this);
+	}
 
 	if (SUCCEEDED(result))
+	{
 		m_clock = pPresentationClock;
+	}
 
 	return result;
 }
@@ -163,7 +201,9 @@ HRESULT MediaSink::Shutdown()
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	HRESULT result;
 	ReturnIfFailed(result, OnShutdown());
@@ -177,7 +217,9 @@ HRESULT MediaSink::Close()
 {
 	HRESULT result = Shutdown();
 	if (result == MF_E_SHUTDOWN)
+	{
 		return RO_E_CLOSED;
+	}
 
 	return result;
 }
@@ -187,14 +229,18 @@ HRESULT MediaSink::OnClockPause(MFTIME hnsSystemTime)
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	HRESULT result;
 	for (DWORD i = 0; i < GetStreamSinkCount(); i++)
 	{
 		auto stream = GetStreamSinkByIndex(i);
 		if (stream == nullptr)
+		{
 			return MF_E_INVALIDSTREAMNUMBER;
+		}
 
 		ReturnIfFailed(result, stream->Pause());
 	}
@@ -208,14 +254,18 @@ HRESULT MediaSink::OnClockRestart(MFTIME hnsSystemTime)
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	HRESULT result;
 	for (DWORD i = 0; i < GetStreamSinkCount(); i++)
 	{
 		auto stream = GetStreamSinkByIndex(i);
 		if (stream == nullptr)
+		{
 			return MF_E_INVALIDSTREAMNUMBER;
+		}
 
 		ReturnIfFailed(result, stream->Restart(hnsSystemTime));
 	}
@@ -234,14 +284,18 @@ HRESULT MediaSink::OnClockStart(MFTIME hnsSystemTime, LONGLONG llClockStartOffse
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	HRESULT result;
 	for (DWORD i = 0; i < GetStreamSinkCount(); i++)
 	{
 		auto stream = GetStreamSinkByIndex(i);
 		if (stream == nullptr)
+		{
 			return MF_E_INVALIDSTREAMNUMBER;
+		}
 
 		ReturnIfFailed(result, stream->Start(hnsSystemTime, llClockStartOffset));
 	}
@@ -255,14 +309,18 @@ HRESULT MediaSink::OnClockStop(MFTIME hnsSystemTime)
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	HRESULT result;
 	for (DWORD i = 0; i < GetStreamSinkCount(); i++)
 	{
 		auto stream = GetStreamSinkByIndex(i);
 		if (stream == nullptr)
+		{
 			return MF_E_INVALIDSTREAMNUMBER;
+		}
 
 		ReturnIfFailed(result, stream->Stop());
 	}
@@ -276,7 +334,9 @@ HRESULT MediaSink::BeginFinalize(IMFAsyncCallback* pCallback, IUnknown* punkStat
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	HRESULT result;
 	auto streamCount = GetStreamSinkCount();
@@ -287,13 +347,17 @@ HRESULT MediaSink::BeginFinalize(IMFAsyncCallback* pCallback, IUnknown* punkStat
 	{
 		auto stream = GetStreamSinkByIndex(i);
 		if (stream == nullptr)
+		{
 			return MF_E_INVALIDSTREAMNUMBER;
+		}
 
 		BreakIfFailed(result, stream->Finalize(finalizeAsyncOperation.Get()));
 	}
 
 	if (FAILED(result))
+	{
 		return finalizeAsyncOperation->Cancel(result);
+	}
 
 	return S_OK;
 }
@@ -301,12 +365,16 @@ HRESULT MediaSink::BeginFinalize(IMFAsyncCallback* pCallback, IUnknown* punkStat
 HRESULT MediaSink::EndFinalize(IMFAsyncResult* pResult)
 {
 	if (pResult == nullptr)
-		return E_POINTER;
+	{
+		return E_INVALIDARG;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == MediaSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	HRESULT result;
 	ReturnIfFailed(result, pResult->GetStatus());
@@ -361,7 +429,9 @@ HRESULT StreamSink::BeginGetEvent(IMFAsyncCallback* caller, IUnknown* state)
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	return m_events->BeginGetEvent(caller, state);
 }
@@ -371,7 +441,9 @@ HRESULT StreamSink::EndGetEvent(IMFAsyncResult* result, IMFMediaEvent** out)
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	return m_events->EndGetEvent(result, out);
 }
@@ -383,7 +455,9 @@ HRESULT StreamSink::GetEvent(DWORD flags, IMFMediaEvent** out)
 		auto lock = m_criticalSection.Lock();
 
 		if (m_state == StreamSinkState::Shutdown)
+		{
 			return MF_E_SHUTDOWN;
+		}
 
 		events = m_events.Get();
 	}
@@ -396,20 +470,21 @@ HRESULT StreamSink::QueueEvent(MediaEventType type, REFGUID guid, HRESULT status
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	return m_events->QueueEventParamVar(type, guid, status, val);
 }
 
 HRESULT StreamSink::SetCurrentMediaType(IMFMediaType* pMediaType)
 {
-	if (pMediaType == nullptr)
-		return E_POINTER;
-
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	HRESULT result;
 	if (pMediaType == nullptr)
@@ -426,7 +501,9 @@ HRESULT StreamSink::SetCurrentMediaType(IMFMediaType* pMediaType)
 			ReturnIfFailed(result, m_mediaType->Compare(pMediaType, MF_ATTRIBUTES_MATCH_ALL_ITEMS, &areEquals));
 
 			if (areEquals)
+			{
 				return S_OK;
+			}
 		}
 
 		ReturnIfFailed(result, ValidateMediaType(pMediaType));
@@ -441,15 +518,21 @@ HRESULT StreamSink::SetCurrentMediaType(IMFMediaType* pMediaType)
 HRESULT StreamSink::GetCurrentMediaType(IMFMediaType** ppMediaType)
 {
 	if (ppMediaType == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	if (m_mediaType == nullptr)
+	{
 		return MF_E_NOT_INITIALIZED;
+	}
 
 	return m_mediaType.CopyTo(ppMediaType);
 }
@@ -457,12 +540,16 @@ HRESULT StreamSink::GetCurrentMediaType(IMFMediaType** ppMediaType)
 HRESULT StreamSink::GetMajorType(GUID* pguidMajorType)
 {
 	if (pguidMajorType == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	*pguidMajorType = GetMajorType();
 	return S_OK;
@@ -471,12 +558,16 @@ HRESULT StreamSink::GetMajorType(GUID* pguidMajorType)
 HRESULT StreamSink::GetMediaTypeCount(DWORD* pdwTypeCount)
 {
 	if (pdwTypeCount == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	*pdwTypeCount = GetMediaTypeCount();
 	return S_OK;
@@ -485,12 +576,16 @@ HRESULT StreamSink::GetMediaTypeCount(DWORD* pdwTypeCount)
 HRESULT StreamSink::GetMediaTypeByIndex(DWORD dwIndex, IMFMediaType** ppType)
 {
 	if (ppType == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	return GetSupportedMediaType(dwIndex, ppType);
 }
@@ -498,7 +593,9 @@ HRESULT StreamSink::GetMediaTypeByIndex(DWORD dwIndex, IMFMediaType** ppType)
 HRESULT StreamSink::IsMediaTypeSupported(IMFMediaType* pMediaType, IMFMediaType** ppMediaType)
 {
 	if (pMediaType == nullptr)
-		return E_POINTER;
+	{
+		return E_INVALIDARG;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
@@ -531,7 +628,9 @@ HRESULT StreamSink::Flush()
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	HRESULT result;
 	ReturnIfFailed(result, OnFlush());
@@ -543,15 +642,21 @@ HRESULT StreamSink::Flush()
 HRESULT StreamSink::GetMediaSink(IMFMediaSink** ppMediaSink)
 {
 	if (ppMediaSink == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	if (m_mediaSink == nullptr)
+	{
 		return E_UNEXPECTED;
+	}
 
 	return m_mediaSink->CastToUnknown()->QueryInterface(ppMediaSink);
 }
@@ -559,12 +664,16 @@ HRESULT StreamSink::GetMediaSink(IMFMediaSink** ppMediaSink)
 HRESULT StreamSink::GetIdentifier(DWORD* pdwIdentifier)
 {
 	if (pdwIdentifier == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	*pdwIdentifier = GetIdentifier();
 	return S_OK;
@@ -573,12 +682,16 @@ HRESULT StreamSink::GetIdentifier(DWORD* pdwIdentifier)
 HRESULT StreamSink::GetMediaTypeHandler(IMFMediaTypeHandler** ppHandler)
 {
 	if (ppHandler == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	return CastToUnknown()->QueryInterface(IID_PPV_ARGS(ppHandler));
 }
@@ -586,12 +699,16 @@ HRESULT StreamSink::GetMediaTypeHandler(IMFMediaTypeHandler** ppHandler)
 HRESULT StreamSink::ProcessSample(IMFSample* pSample)
 {
 	if (pSample == nullptr)
-		return E_POINTER;
+	{
+		return E_INVALIDARG;
+	}
 
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	return AsyncCallbackState::QueueAsyncCallback<StreamSink, &StreamSink::OnAsyncProcessSamples>(this, m_workQueueId, pSample);
 }
@@ -601,7 +718,9 @@ HRESULT StreamSink::PlaceMarker(MFSTREAMSINK_MARKER_TYPE eMarkerType, PROPVARIAN
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	auto markerInfo = Make<MarkerInfo>(eMarkerType, pvarMarkerValue, pvarContextValue);
 	return AsyncCallbackState::QueueAsyncCallback<StreamSink, &StreamSink::OnAsyncPlaceMarker>(this, m_workQueueId, markerInfo.Get());
@@ -610,7 +729,9 @@ HRESULT StreamSink::PlaceMarker(MFSTREAMSINK_MARKER_TYPE eMarkerType, PROPVARIAN
 HRESULT StreamSink::GetParameters(DWORD* pdwFlags, DWORD* pdwQueue)
 {
 	if (pdwFlags == nullptr || pdwQueue == nullptr)
+	{
 		return E_POINTER;
+	}
 
 	*pdwQueue = m_workQueueId;
 	return S_OK;
@@ -628,7 +749,9 @@ HRESULT StreamSink::Shutdown()
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	HRESULT result;
 	ReturnIfFailed(result, OnShutdown());
@@ -666,7 +789,9 @@ HRESULT StreamSink::Start(MFTIME position, LONGLONG clockStartOffset)
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	auto startInfo = Make<StartInfo>(position, clockStartOffset);
 	return AsyncCallbackState::QueueAsyncCallback<StreamSink, &StreamSink::OnAsyncStart>(this, m_workQueueId, startInfo.Get());
@@ -677,7 +802,9 @@ HRESULT StreamSink::Restart(MFTIME position)
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	auto startInfo = Make<StartInfo>(position, 0);
 	return AsyncCallbackState::QueueAsyncCallback<StreamSink, &StreamSink::OnAsyncRestart>(this, m_workQueueId, startInfo.Get());
@@ -688,7 +815,9 @@ HRESULT StreamSink::Pause()
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	return AsyncCallbackState::QueueAsyncCallback<StreamSink, &StreamSink::OnAsyncPause>(this, m_workQueueId);
 }
@@ -698,7 +827,9 @@ HRESULT StreamSink::Stop()
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	return AsyncCallbackState::QueueAsyncCallback<StreamSink, &StreamSink::OnAsyncStop>(this, m_workQueueId);
 }
@@ -774,7 +905,9 @@ HRESULT StreamSink::OnAsyncProcessSamples(IMFAsyncResult* asyncResult)
 		if (m_state == StreamSinkState::Started)
 		{
 			if (SUCCEEDED(result = OnProcessSample(sample.Get())))
+			{
 				return S_OK;
+			}
 		}
 		else
 		{
@@ -827,7 +960,9 @@ HRESULT StreamSink::Finalize(IMFAsyncCallback* callback)
 	auto lock = m_criticalSection.Lock();
 
 	if (m_state == StreamSinkState::Shutdown)
+	{
 		return MF_E_SHUTDOWN;
+	}
 
 	HRESULT result;
 	ComPtr<IMFAsyncResult> asyncResult;

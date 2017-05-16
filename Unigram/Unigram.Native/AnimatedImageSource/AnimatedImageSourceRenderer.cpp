@@ -6,6 +6,7 @@
 #include "AnimatedImageSourceRendererFactory.h"
 #include "AnimatedImageSourceRenderer.h"
 #include "ReadFramesAsyncOperation.h"
+#include "Helpers\COMHelper.h"
 
 using namespace Unigram::Native;
 using namespace Platform;
@@ -86,11 +87,15 @@ HRESULT AnimatedImageSourceRenderer::Draw(RECT const& drawingBounds)
 HRESULT AnimatedImageSourceRenderer::Invalidate(bool resize)
 {
 	if (m_imageSourceNative == nullptr)
+	{
 		return WS_E_INVALID_OPERATION;
+	}
 
 	HRESULT result;
 	if (resize)
+	{
 		ReturnIfFailed(result, m_imageSourceNative->Resize(m_size.width, m_size.height));
+	}
 
 	RECT bounds = { 0, 0, static_cast<LONG>(m_size.width), static_cast<LONG>(m_size.height) };
 	return m_imageSourceNative->Invalidate(bounds);
@@ -333,7 +338,9 @@ task<void> AnimatedImageSourceRenderer::Initialize(ComPtr<ReadFramesAsyncOperati
 			} while (false);
 
 			if (FAILED(result))
+			{
 				return task_from_exception<void>(Exception::CreateException(result));
+			}
 		}
 
 		return task_from_result();

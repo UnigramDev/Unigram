@@ -5,13 +5,15 @@
 using namespace Telegram::Api::Native;
 
 
-Request::Request(ITLObject* object, INT32 token, ConnectionType connectionType, UINT32 datacenterId, ISendRequestCompletedCallback* sendCompletedCallback, IRequestQuickAckReceivedCallback* quickAckReceivedCallback) :
+Request::Request(ITLObject* object, INT32 token, ConnectionType connectionType, UINT32 datacenterId, ISendRequestCompletedCallback* sendCompletedCallback,
+	IRequestQuickAckReceivedCallback* quickAckReceivedCallback, RequestFlag flags) :
 	m_object(object),
 	m_token(token),
 	m_connectionType(connectionType),
 	m_datacenterId(datacenterId),
 	m_sendCompletedCallback(sendCompletedCallback),
-	m_quickAckReceivedCallback(quickAckReceivedCallback)
+	m_quickAckReceivedCallback(quickAckReceivedCallback),
+	m_flags(flags)
 {
 }
 
@@ -75,5 +77,16 @@ HRESULT Request::get_DatacenterId(UINT32* value)
 	}
 
 	*value = m_datacenterId;
+	return S_OK;
+}
+
+HRESULT Request::get_Flags(RequestFlag* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_flags;
 	return S_OK;
 }

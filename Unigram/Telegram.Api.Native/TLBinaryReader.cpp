@@ -5,6 +5,7 @@
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
 
+
 TLBinaryReader::TLBinaryReader(BYTE const* buffer, UINT32 length) :
 	m_buffer(buffer),
 	m_position(0),
@@ -14,6 +15,28 @@ TLBinaryReader::TLBinaryReader(BYTE const* buffer, UINT32 length) :
 
 TLBinaryReader::~TLBinaryReader()
 {
+}
+
+HRESULT TLBinaryReader::get_Position(UINT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_position;
+	return S_OK;
+}
+
+HRESULT TLBinaryReader::put_Position(UINT32 value)
+{
+	if (value > m_length)
+	{
+		return E_BOUNDS;
+	}
+
+	m_position = value;
+	return S_OK;
 }
 
 HRESULT TLBinaryReader::get_UnconsumedBufferLength(UINT32* value)
@@ -145,10 +168,19 @@ HRESULT TLBinaryReader::ReadString(HSTRING* value)
 	}
 
 	HRESULT result;
-	std::wstring string;
-	ReturnIfFailed(result, ReadWString(string));
+	UINT32 mbLength;
+	LPCCH mbString;
+	ReturnIfFailed(result, ReadBuffer(reinterpret_cast<BYTE const**>(&mbString), &mbLength));
 
-	return WindowsCreateString(string, value);
+	auto length = MultiByteToWideChar(CP_UTF8, 0, mbString, mbLength, nullptr, 0);
+	 
+	WCHAR* string;
+	HSTRING_BUFFER stringBuffer;
+	ReturnIfFailed(result, WindowsPreallocateStringBuffer(length, &string, &stringBuffer));
+
+	MultiByteToWideChar(CP_UTF8, 0, mbString, mbLength, string, length);
+
+	return WindowsPromoteStringBuffer(stringBuffer, value);
 }
 
 HRESULT TLBinaryReader::ReadByteArray(UINT32* __valueSize, BYTE** value)

@@ -10,7 +10,7 @@ HRESULT TLObject::Read(ITLBinaryReader* reader)
 {
 	if (reader == nullptr)
 	{
-		return E_POINTER;
+		return E_INVALIDARG;
 	}
 
 	return Read(static_cast<ITLBinaryReaderEx*>(reader));
@@ -20,7 +20,7 @@ HRESULT TLObject::Write(ITLBinaryWriter* writer)
 {
 	if (writer == nullptr)
 	{
-		return E_POINTER;
+		return E_INVALIDARG;
 	}
 
 	return Write(static_cast<ITLBinaryWriterEx*>(writer));
@@ -28,7 +28,12 @@ HRESULT TLObject::Write(ITLBinaryWriter* writer)
 
 HRESULT TLObject::Deserialize(ITLBinaryReaderEx* reader, UINT32 constructor, ITLObject** object)
 {
-	if (reader == nullptr || object == nullptr)
+	if (reader == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (object == nullptr)
 	{
 		return E_POINTER;
 	}
@@ -40,4 +45,26 @@ HRESULT TLObject::Deserialize(ITLBinaryReaderEx* reader, UINT32 constructor, ITL
 	}
 
 	return objectConstructor->second(object);
+}
+
+
+HRESULT TLObjectWithQuery::RuntimeClassInitialize(ITLObject* query)
+{
+	if (query == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	m_query = query;
+	return S_OK;
+}
+
+HRESULT TLObjectWithQuery::get_Query(ITLObject** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	return m_query.CopyTo(value);
 }

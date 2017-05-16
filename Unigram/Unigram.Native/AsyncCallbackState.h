@@ -14,11 +14,10 @@ using namespace Microsoft::WRL;
 namespace Details
 {
 
-	MIDL_INTERFACE("f6f81ff1-2731-49b8-9217-c4f78d8dc3f7")
-		IAsyncCallbackState : public IUnknown
+	MIDL_INTERFACE("f6f81ff1-2731-49b8-9217-c4f78d8dc3f7") IAsyncCallbackState : public IUnknown
 	{
 	public:
-		virtual HRESULT STDMETHODCALLTYPE Invoke(/* [in] */ _In_ IMFAsyncResult* asyncResult) = 0;
+		virtual HRESULT STDMETHODCALLTYPE Invoke(_In_ IMFAsyncResult* asyncResult) = 0;
 	};
 
 	template<class _Owner, HRESULT(_Owner::*_AsyncCallback)(IMFAsyncResult*)>
@@ -50,7 +49,9 @@ public:
 		_Owner>::value, _Owner>::type* owner, DWORD workQueueId, _In_ IUnknown* state)
 	{
 		if (owner == nullptr)
-			return E_POINTER;
+		{
+			return E_INVALIDARG;
+		}
 
 		HRESULT result;
 		ComPtr<IMFAsyncResult> asyncResult;
@@ -70,7 +71,9 @@ public:
 	inline static HRESULT CompleteAsyncCallback(_In_ IMFAsyncResult* asyncResult)
 	{
 		if (asyncResult == nullptr)
+		{
 			return E_POINTER;
+		}
 
 		HRESULT result;
 		//ReturnIfFailed(result, asyncResult->GetStatus());

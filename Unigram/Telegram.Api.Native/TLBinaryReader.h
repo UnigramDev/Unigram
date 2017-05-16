@@ -25,8 +25,8 @@ namespace ABI
 						virtual HRESULT STDMETHODCALLTYPE ReadBigEndianInt32(_Out_ INT32* value) = 0;
 						virtual HRESULT STDMETHODCALLTYPE ReadWString(_Out_ std::wstring& string) = 0;
 						virtual HRESULT STDMETHODCALLTYPE ReadBuffer(_Out_writes_(length) BYTE* buffer, UINT32 length) = 0;
-						virtual void Skip(UINT32 length) = 0;
-						virtual void Reset() = 0;
+						virtual void STDMETHODCALLTYPE Skip(UINT32 length) = 0;
+						virtual void STDMETHODCALLTYPE Reset() = 0;
 					};
 
 				}
@@ -56,6 +56,8 @@ namespace Telegram
 					~TLBinaryReader();
 
 					//COM exported methods
+					IFACEMETHODIMP get_Position(_Out_ UINT32* value);
+					IFACEMETHODIMP put_Position(UINT32 value);
 					IFACEMETHODIMP get_UnconsumedBufferLength(_Out_ UINT32* value);
 					IFACEMETHODIMP ReadByte(_Out_ BYTE* value);
 					IFACEMETHODIMP ReadInt16(_Out_ INT16* value);

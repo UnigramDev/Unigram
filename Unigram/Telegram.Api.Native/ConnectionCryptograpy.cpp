@@ -24,10 +24,10 @@ ConnectionCryptograpy::~ConnectionCryptograpy()
 
 HRESULT ConnectionCryptograpy::SetEncryptKey(BYTE const* key, BYTE const* iv)
 {
-	if (key == nullptr || iv == nullptr)
+	/*if (key == nullptr || iv == nullptr)
 	{
-		return E_POINTER;
-	}
+		return E_INVALIDARG;
+	}*/
 
 	if (AES_set_encrypt_key(key, 256, &m_encryptKey) < 0)
 	{
@@ -45,7 +45,7 @@ HRESULT ConnectionCryptograpy::SetDecryptKey(BYTE const* key, BYTE const* iv)
 {
 	/*if (key == nullptr || iv == nullptr)
 	{
-		return E_POINTER;
+		return E_INVALIDARG;
 	}*/
 
 	if (AES_set_encrypt_key(key, 256, &m_decryptKey) < 0)

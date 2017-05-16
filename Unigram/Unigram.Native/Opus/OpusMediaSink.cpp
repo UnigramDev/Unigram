@@ -3,6 +3,7 @@
 #include "pch.h"
 #include "BufferLock.h"
 #include "OpusMediaSink.h"
+#include "Helpers\COMHelper.h"
 
 using namespace Unigram::Native;
 
@@ -22,7 +23,9 @@ DWORD OpusMediaSink::GetStreamSinkCount() noexcept
 StreamSink* OpusMediaSink::GetStreamSinkByIndex(DWORD streamIndex) noexcept
 {
 	if (streamIndex != 0)
+	{
 		return nullptr;
+	}
 
 	return m_streamSink.Get();
 }
@@ -30,7 +33,9 @@ StreamSink* OpusMediaSink::GetStreamSinkByIndex(DWORD streamIndex) noexcept
 StreamSink* OpusMediaSink::GetStreamSinkById(DWORD streamId) noexcept
 {
 	if (streamId != 0)
+	{
 		return nullptr;
+	}
 
 	return m_streamSink.Get();
 }
@@ -53,7 +58,9 @@ HRESULT OpusMediaSink::OnStop()
 HRESULT OpusMediaSink::OnShutdown()
 {
 	if (m_streamSink != nullptr)
+	{
 		m_streamSink->Shutdown();
+	}
 
 	m_streamSink.Reset();
 	return S_OK;
@@ -93,23 +100,31 @@ HRESULT OpusStreamSink::ValidateMediaType(IMFMediaType* mediaType)
 	ReturnIfFailed(result, mediaType->GetMajorType(&majorType));
 
 	if (majorType != MFMediaType_Audio)
+	{
 		return MF_E_INVALIDMEDIATYPE;
+	}
 
 	GUID subType;
 	ReturnIfFailed(result, mediaType->GetGUID(MF_MT_SUBTYPE, &subType));
 
 	if (subType != MFAudioFormat_PCM)
+	{
 		return MF_E_INVALIDMEDIATYPE;
+	}
 
 	UINT32 allSamplesIndependent;
 	ReturnIfFailed(result, mediaType->GetUINT32(MF_MT_ALL_SAMPLES_INDEPENDENT, &allSamplesIndependent));
 	if (allSamplesIndependent == FALSE)
+	{
 		return MF_E_INVALIDMEDIATYPE;
+	}
 
 	UINT32 bitPerSample;
 	ReturnIfFailed(result, mediaType->GetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, &bitPerSample));
 	if (bitPerSample != 16)
+	{
 		return MF_E_INVALIDMEDIATYPE;
+	}
 
 	UINT32 channelCount;
 	ReturnIfFailed(result, mediaType->GetUINT32(MF_MT_AUDIO_NUM_CHANNELS, &channelCount));
@@ -117,17 +132,23 @@ HRESULT OpusStreamSink::ValidateMediaType(IMFMediaType* mediaType)
 	UINT32 samplesPerSecond;
 	ReturnIfFailed(result, mediaType->GetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, &samplesPerSecond));
 	if (samplesPerSecond != OPUS_SAMPLES_PER_SECOND)
+	{
 		return MF_E_INVALIDMEDIATYPE;
+	}
 
 	UINT32 blockAlignment;
 	ReturnIfFailed(result, mediaType->GetUINT32(MF_MT_AUDIO_BLOCK_ALIGNMENT, &blockAlignment));
 	if (blockAlignment != channelCount * 2)
+	{
 		return MF_E_INVALIDMEDIATYPE;
+	}
 
 	UINT32 avgBytesPerSecond;
 	ReturnIfFailed(result, mediaType->GetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND, &avgBytesPerSecond));
 	if (avgBytesPerSecond != blockAlignment * samplesPerSecond)
+	{
 		return MF_E_INVALIDMEDIATYPE;
+	}
 
 	return S_OK;
 }
@@ -158,7 +179,9 @@ HRESULT OpusStreamSink::OnProcessSample(IMFSample* sample)
 	HRESULT result;
 	BufferLock bufferLock(sample);
 	if (!bufferLock.IsValid())
+	{
 		return MF_E_SINK_NO_SAMPLES_PROCESSED;
+	}
 
 	ReturnIfFailed(result, m_opusStream->WriteFrame(bufferLock.GetBuffer(), bufferLock.GetLength()));
 

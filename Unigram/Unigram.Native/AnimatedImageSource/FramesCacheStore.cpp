@@ -15,7 +15,9 @@ FramesCacheStore::FramesCacheStore() :
 FramesCacheStore::~FramesCacheStore()
 {
 	if (m_frameEntries != nullptr)
+	{
 		UnmapViewOfFile(m_frameEntries);
+	}
 }
 
 HRESULT FramesCacheStore::RuntimeClassInitialize()
@@ -26,14 +28,20 @@ HRESULT FramesCacheStore::RuntimeClassInitialize()
 HRESULT FramesCacheStore::Lock()
 {
 	if (m_mappedCacheFile.IsValid())
+	{
 		return E_NOT_VALID_STATE;
+	}
 
 	if (!SetEndOfFile(m_cacheFile.Get()))
+	{
 		return GetLastHRESULT();
+	}
 
 	m_mappedCacheFile.Attach(CreateFileMapping(m_cacheFile.Get(), nullptr, PAGE_READONLY, 0, 0, nullptr));
 	if (!m_mappedCacheFile.IsValid())
+	{
 		return GetLastHRESULT();
+	}
 
 	m_frameEntries = reinterpret_cast<CachedFrameEntry*>(MapViewOfFile(m_mappedCacheFile.Get(), FILE_MAP_READ, 0, 0, 0));
 	return S_OK;
@@ -42,14 +50,20 @@ HRESULT FramesCacheStore::Lock()
 HRESULT FramesCacheStore::WriteBitmapEntry(byte* buffer, DWORD bufferLength, DWORD rowPitch, LONGLONG delay)
 {
 	if (m_mappedCacheFile.IsValid())
+	{
 		return E_NOT_VALID_STATE;
+	}
 
 	CachedFrameEntry frameEntry = { delay, rowPitch, bufferLength };
 	if (!WriteFile(m_cacheFile.Get(), &frameEntry, sizeof(CachedFrameEntry), nullptr, nullptr))
+	{
 		return GetLastHRESULT();
+	}
 
 	if (!WriteFile(m_cacheFile.Get(), buffer, bufferLength, nullptr, nullptr))
+	{
 		return GetLastHRESULT();
+	}
 
 	if (m_frameDefinitionOffsets.empty())
 	{
@@ -66,10 +80,14 @@ HRESULT FramesCacheStore::WriteBitmapEntry(byte* buffer, DWORD bufferLength, DWO
 HRESULT FramesCacheStore::ReadBitmapEntry(DWORD index, ID2D1Bitmap* bitmap, LONGLONG* delay)
 {
 	if (!m_mappedCacheFile.IsValid())
+	{
 		return E_NOT_VALID_STATE;
+	}
 
 	if (index >= m_frameDefinitionOffsets.size())
+	{
 		return E_BOUNDS;
+	}
 
 	auto frameEntry = reinterpret_cast<CachedFrameEntry*>(reinterpret_cast<byte*>(m_frameEntries) +
 		m_frameDefinitionOffsets[index]);
@@ -97,7 +115,9 @@ HRESULT FramesCacheStore::CreateTemporaryFile(HANDLE* temporaryFile)
 
 	*temporaryFile = CreateFile2(fileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, CREATE_ALWAYS, &extendedParams);
 	if (*temporaryFile == INVALID_HANDLE_VALUE)
+	{
 		return GetLastHRESULT();
+	}
 
 	return S_OK;
 }

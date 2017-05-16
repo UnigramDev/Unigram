@@ -6,8 +6,6 @@
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
 
-ActivatableStaticOnlyFactory(TLBinarySizeCalculatorStatics);
-
 
 TLBinaryWriter::TLBinaryWriter(BYTE* buffer, UINT32 length) :
 	m_buffer(buffer),
@@ -18,6 +16,33 @@ TLBinaryWriter::TLBinaryWriter(BYTE* buffer, UINT32 length) :
 
 TLBinaryWriter::~TLBinaryWriter()
 {
+}
+
+HRESULT TLBinaryWriter::get_Position(UINT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_position;
+	return S_OK;
+}
+
+HRESULT TLBinaryWriter::put_Position(UINT32 value)
+{
+	if (value > m_length)
+	{
+		return E_BOUNDS;
+	}
+
+	if (value > m_position)
+	{
+		ZeroMemory(&m_buffer[m_position], value - m_position);
+	}
+
+	m_position = value;
+	return S_OK;
 }
 
 HRESULT TLBinaryWriter::get_UnstoredBufferLength(UINT32* value)
@@ -207,86 +232,115 @@ void TLBinaryWriter::Skip(UINT32 length)
 }
 
 
-TLBinarySizeCalculator::TLBinarySizeCalculator() :
+thread_local ComPtr<TLObjectSizeCalculator> TLObjectSizeCalculator::s_instance = nullptr;
+
+TLObjectSizeCalculator::TLObjectSizeCalculator() :
+	m_position(0),
 	m_length(0)
 {
 }
 
-TLBinarySizeCalculator::~TLBinarySizeCalculator()
+TLObjectSizeCalculator::~TLObjectSizeCalculator()
 {
 }
 
-HRESULT TLBinarySizeCalculator::get_TotalLength(UINT32* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	*value = m_length;
-	return S_OK;
-}
-
-HRESULT TLBinarySizeCalculator::get_UnstoredBufferLength(UINT32* value)
+HRESULT TLObjectSizeCalculator::get_TotalLength(UINT32* value)
 {
 	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	*value = UINT32_MAX - m_length;
+	*value = max(m_position, m_length);
 	return S_OK;
 }
 
-HRESULT TLBinarySizeCalculator::WriteByte(BYTE value)
+HRESULT TLObjectSizeCalculator::get_Position(UINT32* value)
 {
-	m_length += sizeof(BYTE);
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_position;
 	return S_OK;
 }
 
-HRESULT TLBinarySizeCalculator::WriteInt16(INT16 value)
+HRESULT TLObjectSizeCalculator::put_Position(UINT32 value)
 {
-	m_length += sizeof(INT16);
+	if (value > m_position)
+	{
+		m_length = value;
+	}
+	else
+	{
+		m_length = m_position;
+	}
+
+	m_position = value;
 	return S_OK;
 }
 
-HRESULT TLBinarySizeCalculator::WriteUInt16(UINT16 value)
+HRESULT TLObjectSizeCalculator::get_UnstoredBufferLength(UINT32* value)
 {
-	m_length += sizeof(UINT16);
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = UINT32_MAX - max(m_position, m_length);;
 	return S_OK;
 }
 
-HRESULT TLBinarySizeCalculator::WriteInt32(INT32 value)
+HRESULT TLObjectSizeCalculator::WriteByte(BYTE value)
 {
-	m_length += sizeof(INT32);
+	m_position += sizeof(BYTE);
 	return S_OK;
 }
 
-HRESULT TLBinarySizeCalculator::WriteUInt32(UINT32 value)
+HRESULT TLObjectSizeCalculator::WriteInt16(INT16 value)
 {
-	m_length += sizeof(UINT32);
+	m_position += sizeof(INT16);
 	return S_OK;
 }
 
-HRESULT TLBinarySizeCalculator::WriteInt64(INT64 value)
+HRESULT TLObjectSizeCalculator::WriteUInt16(UINT16 value)
 {
-	m_length += sizeof(INT64);
+	m_position += sizeof(UINT16);
 	return S_OK;
 }
 
-HRESULT TLBinarySizeCalculator::WriteUInt64(UINT64 value)
+HRESULT TLObjectSizeCalculator::WriteInt32(INT32 value)
 {
-	m_length += sizeof(UINT64);
+	m_position += sizeof(INT32);
 	return S_OK;
 }
 
-HRESULT TLBinarySizeCalculator::WriteBool(boolean value)
+HRESULT TLObjectSizeCalculator::WriteUInt32(UINT32 value)
 {
-	m_length += sizeof(UINT32);
+	m_position += sizeof(UINT32);
 	return S_OK;
 }
 
-HRESULT TLBinarySizeCalculator::WriteString(HSTRING value)
+HRESULT TLObjectSizeCalculator::WriteInt64(INT64 value)
+{
+	m_position += sizeof(INT64);
+	return S_OK;
+}
+
+HRESULT TLObjectSizeCalculator::WriteUInt64(UINT64 value)
+{
+	m_position += sizeof(UINT64);
+	return S_OK;
+}
+
+HRESULT TLObjectSizeCalculator::WriteBool(boolean value)
+{
+	m_position += sizeof(UINT32);
+	return S_OK;
+}
+
+HRESULT TLObjectSizeCalculator::WriteString(HSTRING value)
 {
 	UINT32 length;
 	auto buffer = WindowsGetStringRawBuffer(value, &length);
@@ -294,30 +348,30 @@ HRESULT TLBinarySizeCalculator::WriteString(HSTRING value)
 	return WriteBuffer(nullptr, mbLength);
 }
 
-HRESULT TLBinarySizeCalculator::WriteByteArray(UINT32 __valueSize, BYTE* value)
+HRESULT TLObjectSizeCalculator::WriteByteArray(UINT32 __valueSize, BYTE* value)
 {
 	return WriteBuffer(value, __valueSize);
 }
 
-HRESULT TLBinarySizeCalculator::WriteDouble(double value)
+HRESULT TLObjectSizeCalculator::WriteDouble(double value)
 {
-	m_length += sizeof(double);
+	m_position += sizeof(double);
 	return S_OK;
 }
 
-HRESULT TLBinarySizeCalculator::WriteFloat(float value)
+HRESULT TLObjectSizeCalculator::WriteFloat(float value)
 {
-	m_length += sizeof(float);
+	m_position += sizeof(float);
 	return S_OK;
 }
 
-HRESULT TLBinarySizeCalculator::WriteWString(std::wstring string)
+HRESULT TLObjectSizeCalculator::WriteWString(std::wstring string)
 {
 	auto mbLength = WideCharToMultiByte(CP_UTF8, 0, string.data(), static_cast<UINT32>(string.size()), nullptr, 0, nullptr, nullptr);
 	return WriteBuffer(nullptr, mbLength);
 }
 
-HRESULT TLBinarySizeCalculator::WriteBuffer(BYTE const* buffer, UINT32 length)
+HRESULT TLObjectSizeCalculator::WriteBuffer(BYTE const* buffer, UINT32 length)
 {
 	if (length < 254)
 	{
@@ -327,7 +381,7 @@ HRESULT TLBinarySizeCalculator::WriteBuffer(BYTE const* buffer, UINT32 length)
 			padding = 4 - padding;
 		}
 
-		m_length += 1 + length + padding;
+		m_position += 1 + length + padding;
 	}
 	else
 	{
@@ -337,57 +391,37 @@ HRESULT TLBinarySizeCalculator::WriteBuffer(BYTE const* buffer, UINT32 length)
 			padding = 4 - padding;
 		}
 
-		m_length += 4 + length + padding;
+		m_position += 4 + length + padding;
 	}
 
 	return S_OK;
 }
 
-void TLBinarySizeCalculator::Reset()
+void TLObjectSizeCalculator::Reset()
 {
+	m_position = 0;
 	m_length = 0;
 }
 
-void TLBinarySizeCalculator::Skip(UINT32 length)
+void TLObjectSizeCalculator::Skip(UINT32 length)
 {
-	m_length += length;
+	m_position += length;
 }
 
-HRESULT TLBinarySizeCalculator::GetTLObjectSize(ITLObject* object, UINT32* value)
+HRESULT TLObjectSizeCalculator::GetSize(ITLObject* object, UINT32* value)
 {
-	if (TLBinarySizeCalculatorStatics::s_instance == nullptr)
+	if (s_instance == nullptr)
 	{
-		TLBinarySizeCalculatorStatics::s_instance = Make<TLBinarySizeCalculator>();
+		s_instance = Make<TLObjectSizeCalculator>();
 	}
 	else
 	{
-		TLBinarySizeCalculatorStatics::s_instance->Reset();
+		s_instance->Reset();
 	}
 
 	HRESULT result;
-	ReturnIfFailed(result, object->Write(TLBinarySizeCalculatorStatics::s_instance.Get()));
+	ReturnIfFailed(result, object->Write(s_instance.Get()));
 
-	*value = TLBinarySizeCalculatorStatics::s_instance->m_length;
+	*value = max(s_instance->m_position, s_instance->m_length);
 	return S_OK;
-}
-
-
-thread_local ComPtr<TLBinarySizeCalculator> TLBinarySizeCalculatorStatics::s_instance = nullptr;
-
-TLBinarySizeCalculatorStatics::TLBinarySizeCalculatorStatics()
-{
-}
-
-TLBinarySizeCalculatorStatics::~TLBinarySizeCalculatorStatics()
-{
-}
-
-HRESULT TLBinarySizeCalculatorStatics::GetTLObjectSize(ITLObject* object, UINT32* value)
-{
-	if (object == nullptr || value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	return TLBinarySizeCalculator::GetTLObjectSize(object, value);
 }

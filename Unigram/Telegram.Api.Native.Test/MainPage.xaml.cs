@@ -36,10 +36,17 @@ namespace Telegram.Api.Native.Test
             //connectionManager.SendRequest(null, null, null, 0, ConnectionType.Download, true, 0);
 
             ITLObject @object;
-            var connection = connectionManager.BoomBaby(out @object);
+            var connection = connectionManager.BoomBaby(new UserConfiguration(), out @object);
             var datacenter = connection.Datacenter;
 
-            var sizeCalculator = TLBinarySizeCalculator.GetTLObjectSize(@object);
+            var xx = new TLError(0, "Succhiapeni");
+            var yy = @object as TLError;
+
+            var sizeCalculator = TLObjectSerializer.GetObjectSize(@object);
+            var buffer = TLObjectSerializer.Serialize(@object);
+            var reader = TLObjectSerializer.Deserialize(buffer);
+
+            var xxx = new IndexOutOfRangeException();
         }
 
         private void ConnectionManager_ConnectionStateChanged(ConnectionManager sender, object args)

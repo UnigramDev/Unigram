@@ -8,8 +8,6 @@ using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 using ABI::Telegram::Api::Native::TL::ITLBinaryWriter;
 using ABI::Telegram::Api::Native::TL::ITLObject;
-using ABI::Telegram::Api::Native::TL::ITLBinarySizeCalculator;
-using ABI::Telegram::Api::Native::TL::ITLBinarySizeCalculatorStatics;
 
 namespace ABI
 {
@@ -58,6 +56,8 @@ namespace Telegram
 					~TLBinaryWriter();
 
 					//COM exported methods
+					IFACEMETHODIMP get_Position(_Out_ UINT32* value);
+					IFACEMETHODIMP put_Position(UINT32 value);
 					IFACEMETHODIMP get_UnstoredBufferLength(_Out_ UINT32* value);
 					IFACEMETHODIMP WriteByte(BYTE value);
 					IFACEMETHODIMP WriteInt16(INT16 value);
@@ -84,16 +84,18 @@ namespace Telegram
 					UINT32 m_length;
 				};
 
-				class TLBinarySizeCalculator : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLBinarySizeCalculator, CloakedIid<ITLBinaryWriterEx>>
+				class TLObjectSizeCalculator : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryWriterEx>>
 				{
 					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLBinaryWriter, BaseTrust);
 
 				public:
-					TLBinarySizeCalculator();
-					~TLBinarySizeCalculator();
+					TLObjectSizeCalculator();
+					~TLObjectSizeCalculator();
 
 					//COM exported methods
 					IFACEMETHODIMP get_TotalLength(_Out_  UINT32* value);
+					IFACEMETHODIMP get_Position(_Out_ UINT32* value);
+					IFACEMETHODIMP put_Position(UINT32 value);
 					IFACEMETHODIMP get_UnstoredBufferLength(_Out_ UINT32* value);
 					IFACEMETHODIMP WriteByte(BYTE value);
 					IFACEMETHODIMP WriteInt16(INT16 value);
@@ -112,26 +114,13 @@ namespace Telegram
 					IFACEMETHODIMP_(void) Reset();
 					IFACEMETHODIMP_(void) Skip(UINT32 length);
 
-					static HRESULT GetTLObjectSize(_In_ ITLObject* object, _Out_ UINT32* value);
+					static HRESULT GetSize(_In_ ITLObject* object, _Out_ UINT32* value);
 
 				private:
+					UINT32 m_position;
 					UINT32 m_length;
-				};
 
-				class TLBinarySizeCalculatorStatics WrlSealed : public ActivationFactory<ITLBinarySizeCalculatorStatics>
-				{
-					friend class TLBinarySizeCalculator;
-
-					InspectableClassStatic(RuntimeClass_Telegram_Api_Native_TL_TLBinarySizeCalculator, BaseTrust);
-
-				public:
-					TLBinarySizeCalculatorStatics();
-					~TLBinarySizeCalculatorStatics();
-
-					IFACEMETHODIMP GetTLObjectSize(_In_ ITLObject* object, _Out_ UINT32* value);
-
-				private:
-					static thread_local ComPtr<TLBinarySizeCalculator> s_instance;
+					static thread_local ComPtr<TLObjectSizeCalculator> s_instance;
 				};
 
 			}

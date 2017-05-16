@@ -63,6 +63,8 @@ namespace Telegram
 				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
 				IFACEMETHODIMP get_IsIpv6Enabled(_Out_ boolean* value);
 				IFACEMETHODIMP get_IsNetworkAvailable(_Out_ boolean* value);
+				IFACEMETHODIMP get_UserConfiguration(_Out_ IUserConfiguration** value);
+				IFACEMETHODIMP put_UserConfiguration(_In_ IUserConfiguration* value);
 				IFACEMETHODIMP SendRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
 					UINT32 datacenterId, ConnectionType connectionType, boolean immediate, INT32 requestToken);
 				IFACEMETHODIMP CancelRequest(INT32 requestToken, boolean notifyServer);
@@ -79,6 +81,8 @@ namespace Telegram
 
 			private:
 				HRESULT UpdateNetworkStatus(boolean raiseEvent);
+				HRESULT CreateRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
+					UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, _Out_ ComPtr<Request>& request);
 				HRESULT OnNetworkStatusChanged(_In_ IInspectable* sender);
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionDataReceived(_In_ Connection* connection);
@@ -114,25 +118,23 @@ namespace Telegram
 				std::queue<ComPtr<Request>> m_requestsQueue;
 				INT32 m_timeDelta;
 				INT64 m_lastOutgoingMessageId;
+				ComPtr<IUserConfiguration> m_userConfiguration;
 
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_currentNetworkTypeChangedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_connectionStateChangedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTL__CTLUnparsedMessage> m_unparsedMessageReceivedEventSource;
+
+				static ComPtr<ConnectionManager> s_instance;
 			};
 
 
-			class ConnectionManagerStatics WrlSealed : public ActivationFactory<IConnectionManagerStatics>
+			class ConnectionManagerStatics WrlSealed : public AgileActivationFactory<IConnectionManagerStatics>
 			{
-				friend class ConnectionManager;
-
 				InspectableClassStatic(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
 
 			public:
 				IFACEMETHODIMP get_Instance(_Out_ IConnectionManager** value);
 				IFACEMETHODIMP get_Version(_Out_ Version* value);
-
-			private:
-				static ComPtr<ConnectionManager> s_instance;
 			};
 
 		}

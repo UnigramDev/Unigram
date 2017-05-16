@@ -7,6 +7,7 @@
 #include "TLUnparsedMessage.h"
 #include "Request.h"
 #include "TLProtocolScheme.h"
+#include "DefaultUserConfiguration.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
@@ -14,6 +15,8 @@ using namespace Telegram::Api::Native::TL;
 
 ActivatableStaticOnlyFactory(ConnectionManagerStatics);
 
+
+ComPtr<ConnectionManager> ConnectionManager::s_instance = nullptr;
 
 ConnectionManager::ConnectionManager() :
 	m_connectionState(ConnectionState::Connecting),
@@ -54,6 +57,9 @@ HRESULT ConnectionManager::RuntimeClassInitialize(DWORD minimumThreadCount, DWOR
 		return E_INVALIDARG;
 	}
 
+	HRESULT result;
+	ReturnIfFailed(result, MakeAndInitialize<DefaultUserConfiguration>(&m_userConfiguration));
+
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
 	{
@@ -83,8 +89,8 @@ HRESULT ConnectionManager::RuntimeClassInitialize(DWORD minimumThreadCount, DWOR
 	SetThreadpoolCallbackPool(&m_threadpoolEnvironment, m_threadpool);
 	SetThreadpoolCallbackCleanupGroup(&m_threadpoolEnvironment, m_threadpoolCleanupGroup, nullptr);
 
-	HRESULT result;
-	ReturnIfFailed(result, ::Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Networking_Connectivity_NetworkInformation).Get(), &m_networkInformation));
+
+	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Networking_Connectivity_NetworkInformation).Get(), &m_networkInformation));
 	ReturnIfFailed(result, m_networkInformation->add_NetworkStatusChanged(Callback<INetworkStatusChangedEventHandler>(this, &ConnectionManager::OnNetworkStatusChanged).Get(), &m_networkChangedEventToken));
 
 	return UpdateNetworkStatus(false);
@@ -172,34 +178,60 @@ HRESULT ConnectionManager::get_IsNetworkAvailable(boolean* value)
 	return S_OK;
 }
 
-HRESULT ConnectionManager::SendRequest(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived,
-	UINT32 datacenterId, ConnectionType connectionType, boolean immediate, INT32 requestToken)
+HRESULT ConnectionManager::get_UserConfiguration(IUserConfiguration** value)
 {
-	if (object == nullptr)
+	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
 	auto lock = LockCriticalSection();
-	auto datacenter = GetDatacenterById(datacenterId);
-	if (datacenter == nullptr)
+	return m_userConfiguration.CopyTo(value);
+}
+
+HRESULT ConnectionManager::put_UserConfiguration(IUserConfiguration* value)
+{
+	auto lock = LockCriticalSection();
+
+	if (value != m_userConfiguration.Get())
+	{
+		if (value == nullptr)
+		{
+			ComPtr<IDefaultUserConfiguration> defaultUserConfiguration;
+			if (FAILED(m_userConfiguration.As(&defaultUserConfiguration)))
+			{
+				return MakeAndInitialize<DefaultUserConfiguration>(&m_userConfiguration);
+			}
+		}
+		else
+		{
+			m_userConfiguration = value;
+
+			I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle UserConfiguration changes");
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT ConnectionManager::SendRequest(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived,
+	UINT32 datacenterId, ConnectionType connectionType, boolean immediate, INT32 requestToken)
+{
+	if (object == nullptr)
 	{
 		return E_INVALIDARG;
 	}
 
+	auto lock = LockCriticalSection();
+	/*auto datacenter = GetDatacenterById(datacenterId);
+	if (datacenter == nullptr)
+	{
+		return E_INVALIDARG;
+	}*/
+
 	HRESULT result;
-	boolean isLayerNeeded;
-	ReturnIfFailed(result, object->get_IsLayerNeeded(&isLayerNeeded));
-
 	ComPtr<Request> request;
-	if (isLayerNeeded)
-	{
-
-	}
-	else
-	{
-		request = Make<Request>(object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived);
-	}
+	ReturnIfFailed(result, CreateRequest(object, onCompleted, onQuickAckReceived, datacenterId, connectionType, requestToken, request));
 
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
 
@@ -300,6 +332,31 @@ HRESULT ConnectionManager::UpdateNetworkStatus(boolean raiseEvent)
 	return S_OK;
 }
 
+HRESULT ConnectionManager::CreateRequest(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived,
+	UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, ComPtr<Request>& request)
+{
+	HRESULT result;
+	boolean isLayerNeeded;
+	ReturnIfFailed(result, object->get_IsLayerNeeded(&isLayerNeeded));
+
+	if (isLayerNeeded)
+	{
+		ComPtr<TLInvokeWithLayer> invokeWithLayer;
+		ReturnIfFailed(result, MakeAndInitialize<TLInvokeWithLayer>(&invokeWithLayer, object));
+
+		ComPtr<TLInitConnection> initConnectionObject;
+		ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, nullptr, invokeWithLayer.Get()));
+
+		request = Make<Request>(initConnectionObject.Get(), requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived);
+	}
+	else
+	{
+		request = Make<Request>(object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived);
+	}
+
+	return S_OK;
+}
+
 HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
 {
 	auto lock = LockCriticalSection();
@@ -383,8 +440,12 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 	}
 
 	HRESULT result;
-	auto initConnectionObject = Make<TLInitConnectionObject>();
+	ComPtr<TLError> errorObject;
+	ReturnIfFailed(result, MakeAndInitialize<TLError>(&errorObject, 0, L"Ciao bellezza"));
 
+	ComPtr<TLInitConnection> initConnectionObject;
+	ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, userConfiguration, errorObject.Get()));
+	ReturnIfFailed(result, initConnectionObject->get_Query(object));
 
 	auto datacenter = Make<Datacenter>();
 	ReturnIfFailed(result, datacenter->AddEndpoint(L"192.168.1.1", 80, ConnectionType::Generic, false));
@@ -394,7 +455,6 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 	ReturnIfFailed(result, connection->AttachToThreadpool(&m_threadpoolEnvironment));
 	ReturnIfFailed(result, connection->Connect());
 
-	initConnectionObject.CopyTo(object);
 	*value = connection.Detach();
 	return S_OK;
 }
@@ -446,18 +506,16 @@ boolean ConnectionManager::IsNetworkAvailable()
 
 HRESULT ConnectionManager::GetInstance(ComPtr<ConnectionManager>& value)
 {
-	if (ConnectionManagerStatics::s_instance == nullptr)
+	if (s_instance == nullptr)
 	{
 		HRESULT result;
-		ReturnIfFailed(result, MakeAndInitialize<ConnectionManager>(&ConnectionManagerStatics::s_instance));
+		ReturnIfFailed(result, MakeAndInitialize<ConnectionManager>(&s_instance));
 	}
 
-	value = ConnectionManagerStatics::s_instance;
+	value = s_instance;
 	return S_OK;
 }
 
-
-ComPtr<ConnectionManager> ConnectionManagerStatics::s_instance = nullptr;
 
 HRESULT ConnectionManagerStatics::get_Instance(IConnectionManager** value)
 {

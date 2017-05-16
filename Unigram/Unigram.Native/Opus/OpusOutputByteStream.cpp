@@ -3,6 +3,7 @@
 #include "pch.h"
 #include <mferror.h>
 #include "OpusOutputByteStream.h"
+#include "Helpers\COMHelper.h"
 
 using namespace Unigram::Native;
 using namespace Opus;
@@ -78,12 +79,16 @@ HRESULT OpusOutputByteStream::Initialize(IMFMediaType* mediaType)
 	int opusResult;
 	m_opusEncoder = opus_encoder_create(samplesPerSecond, channelCount, OPUS_APPLICATION_AUDIO, &opusResult);
 	if (opusResult != OPUS_OK)
+	{
 		return OpusResultToHRESULT(opusResult);
+	}
 
 	opus_int32 lookahead;
 	opusResult = opus_encoder_ctl(m_opusEncoder, OPUS_GET_LOOKAHEAD(&lookahead));
 	if (result != OPUS_OK)
+	{
 		return OpusResultToHRESULT(opusResult);
+	}
 
 	m_lastSegments = 0;
 	m_sizeSegments = 0;
@@ -101,6 +106,7 @@ HRESULT OpusOutputByteStream::Initialize(IMFMediaType* mediaType)
 
 	if (ogg_stream_init(&m_oggStreamState, rand()) < 0)
 		return E_FAIL;
+	{ }
 
 	ReturnIfFailed(result, WriteOpusHeader(&m_header));
 
@@ -154,7 +160,9 @@ HRESULT OpusOutputByteStream::WriteOpusFrame(byte const* buffer, DWORD bufferLen
 
 	auto sampleCount = bufferLength / bytesPerSample;
 	if (sampleCount > FRAME_SIZE)
+	{
 		return MF_E_INVALID_STREAM_DATA;
+	}
 
 	m_totalSamples += sampleCount;
 
@@ -216,6 +224,7 @@ HRESULT OpusOutputByteStream::WriteOpusFrame(byte const* buffer, DWORD bufferLen
 
 	if (m_oggPacket.e_o_s)
 		m_oggPacket.granulepos = ((m_totalSamples * OPUS_SAMPLES_PER_SECOND + m_header.input_sample_rate - 1) / m_header.input_sample_rate) + m_header.pre_skip;
+	{ }
 
 	m_oggPacket.packetno += 1;
 	ogg_stream_packetin(&m_oggStreamState, &m_oggPacket);
@@ -226,7 +235,9 @@ HRESULT OpusOutputByteStream::WriteOpusFrame(byte const* buffer, DWORD bufferLen
 		ogg_stream_pageout_fill(&m_oggStreamState, &m_oggPage, 255 * 255))
 	{
 		if (ogg_page_packets(&m_oggPage) != 0)
+		{
 			m_lastGranulePosition = ogg_page_granulepos(&m_oggPage);
+		}
 
 		m_lastSegments -= m_oggPage.header[26];
 
@@ -240,7 +251,9 @@ HRESULT OpusOutputByteStream::WriteOpusFrame(byte const* buffer, DWORD bufferLen
 HRESULT OpusOutputByteStream::Finalize()
 {
 	if (m_opusEncoder == nullptr)
+	{
 		return E_UNEXPECTED;
+	}
 
 	if (m_inputBuffer.size() > 0)
 	{
@@ -265,7 +278,9 @@ HRESULT OpusOutputByteStream::Finalize()
 HRESULT OpusOutputByteStream::WriteOggPacket(Opus::ogg_packet* packet)
 {
 	if (ogg_stream_packetin(&m_oggStreamState, packet) < 0)
+	{
 		return E_FAIL;
+	}
 
 	HRESULT result;
 	int oggResult;
@@ -285,12 +300,15 @@ HRESULT OpusOutputByteStream::WriteOggPage(Opus::ogg_page const* page, DWORD* pB
 	ReturnIfFailed(result, m_byteStream->Write(m_oggPage.header, m_oggPage.header_len, &bytesWritten));
 	if (bytesWritten != m_oggPage.header_len)
 		return E_FAIL;
+	{ }
 
 	*pBytesWritten = bytesWritten;
 
 	ReturnIfFailed(result, m_byteStream->Write(m_oggPage.body, m_oggPage.body_len, &bytesWritten));
 	if (bytesWritten != m_oggPage.body_len)
+	{
 		return E_FAIL;
+	}
 
 	*pBytesWritten += bytesWritten;
 	return S_OK;

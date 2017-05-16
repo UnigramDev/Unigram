@@ -6,8 +6,8 @@
  /* File created by MIDL compiler version 8.01.0622 */
 /* at Tue Jan 19 04:14:07 2038
  */
-/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-a4c59d8b:
-    Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.01.0622 
+/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-ab4676db:
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0622 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
@@ -120,9 +120,9 @@ namespace ABI {
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter_FWD_DEFINED__ */
 
 
-#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_FWD_DEFINED__
-#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_FWD_DEFINED__
-typedef interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics;
+#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_FWD_DEFINED__
+#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_FWD_DEFINED__
+typedef interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics;
 
 #ifdef __cplusplus
 namespace ABI {
@@ -130,7 +130,7 @@ namespace ABI {
         namespace Api {
             namespace Native {
                 namespace TL {
-                    interface ITLBinarySizeCalculatorStatics;
+                    interface ITLObjectSerializerStatics;
                 } /* end namespace */
             } /* end namespace */
         } /* end namespace */
@@ -139,12 +139,12 @@ namespace ABI {
 
 #endif /* __cplusplus */
 
-#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_FWD_DEFINED__ */
+#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_FWD_DEFINED__ */
 
 
-#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_FWD_DEFINED__
-#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_FWD_DEFINED__
-typedef interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator;
+#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_FWD_DEFINED__
+#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_FWD_DEFINED__
+typedef interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer;
 
 #ifdef __cplusplus
 namespace ABI {
@@ -152,7 +152,7 @@ namespace ABI {
         namespace Api {
             namespace Native {
                 namespace TL {
-                    interface ITLBinarySizeCalculator;
+                    interface ITLObjectSerializer;
                 } /* end namespace */
             } /* end namespace */
         } /* end namespace */
@@ -161,7 +161,7 @@ namespace ABI {
 
 #endif /* __cplusplus */
 
-#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_FWD_DEFINED__ */
+#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_FWD_DEFINED__ */
 
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedMessage_FWD_DEFINED__
@@ -184,6 +184,50 @@ namespace ABI {
 #endif /* __cplusplus */
 
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedMessage_FWD_DEFINED__ */
+
+
+#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_FWD_DEFINED__
+#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_FWD_DEFINED__
+typedef interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLError __x_ABI_CTelegram_CApi_CNative_CTL_CITLError;
+
+#ifdef __cplusplus
+namespace ABI {
+    namespace Telegram {
+        namespace Api {
+            namespace Native {
+                namespace TL {
+                    interface ITLError;
+                } /* end namespace */
+            } /* end namespace */
+        } /* end namespace */
+    } /* end namespace */
+} /* end namespace */
+
+#endif /* __cplusplus */
+
+#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_FWD_DEFINED__ */
+
+
+#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_FWD_DEFINED__
+#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_FWD_DEFINED__
+typedef interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory;
+
+#ifdef __cplusplus
+namespace ABI {
+    namespace Telegram {
+        namespace Api {
+            namespace Native {
+                namespace TL {
+                    interface ITLErrorFactory;
+                } /* end namespace */
+            } /* end namespace */
+        } /* end namespace */
+    } /* end namespace */
+} /* end namespace */
+
+#endif /* __cplusplus */
+
+#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_FWD_DEFINED__ */
 
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CISendRequestCompletedCallback_FWD_DEFINED__
@@ -610,7 +654,21 @@ namespace Telegram {
 namespace Api {
 namespace Native {
 namespace TL {
-class TLBinarySizeCalculator;
+class TLObjectSerializer;
+} /*TL*/
+} /*Native*/
+} /*Api*/
+} /*Telegram*/
+}
+#endif
+
+#ifdef __cplusplus
+namespace ABI {
+namespace Telegram {
+namespace Api {
+namespace Native {
+namespace TL {
+class TLError;
 } /*TL*/
 } /*Native*/
 } /*Api*/
@@ -716,6 +774,7 @@ namespace ABI {
 
 extern "C" { 
 #endif
+
 
 
 
@@ -916,6 +975,12 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader;
                         ITLBinaryReader : public IInspectable
                         {
                         public:
+                            virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Position( 
+                                /* [out][retval] */ UINT32 *value) = 0;
+                            
+                            virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_Position( 
+                                /* [in] */ UINT32 value) = 0;
+                            
                             virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UnconsumedBufferLength( 
                                 /* [out][retval] */ UINT32 *value) = 0;
                             
@@ -948,7 +1013,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader;
                             
                             virtual HRESULT STDMETHODCALLTYPE ReadByteArray( 
                                 /* [out] */ UINT32 *__valueSize,
-                                /* [out][size_is][size_is] */ BYTE **value) = 0;
+                                /* [out][retval][size_is][size_is] */ BYTE **value) = 0;
                             
                             virtual HRESULT STDMETHODCALLTYPE ReadDouble( 
                                 /* [out][retval] */ double *value) = 0;
@@ -999,6 +1064,14 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader;
             __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader * This,
             /* [out] */ TrustLevel *trustLevel);
         
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Position )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader * This,
+            /* [out][retval] */ UINT32 *value);
+        
+        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_Position )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader * This,
+            /* [in] */ UINT32 value);
+        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UnconsumedBufferLength )( 
             __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader * This,
             /* [out][retval] */ UINT32 *value);
@@ -1042,7 +1115,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader;
         HRESULT ( STDMETHODCALLTYPE *ReadByteArray )( 
             __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader * This,
             /* [out] */ UINT32 *__valueSize,
-            /* [out][size_is][size_is] */ BYTE **value);
+            /* [out][retval][size_is][size_is] */ BYTE **value);
         
         HRESULT ( STDMETHODCALLTYPE *ReadDouble )( 
             __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader * This,
@@ -1084,6 +1157,12 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader;
 #define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader_GetTrustLevel(This,trustLevel)	\
     ( (This)->lpVtbl -> GetTrustLevel(This,trustLevel) ) 
 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader_get_Position(This,value)	\
+    ( (This)->lpVtbl -> get_Position(This,value) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader_put_Position(This,value)	\
+    ( (This)->lpVtbl -> put_Position(This,value) ) 
 
 #define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader_get_UnconsumedBufferLength(This,value)	\
     ( (This)->lpVtbl -> get_UnconsumedBufferLength(This,value) ) 
@@ -1181,6 +1260,12 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter;
                         ITLBinaryWriter : public IInspectable
                         {
                         public:
+                            virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Position( 
+                                /* [out][retval] */ UINT32 *value) = 0;
+                            
+                            virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_Position( 
+                                /* [in] */ UINT32 value) = 0;
+                            
                             virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UnstoredBufferLength( 
                                 /* [out][retval] */ UINT32 *value) = 0;
                             
@@ -1263,6 +1348,14 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter;
         HRESULT ( STDMETHODCALLTYPE *GetTrustLevel )( 
             __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter * This,
             /* [out] */ TrustLevel *trustLevel);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Position )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter * This,
+            /* [out][retval] */ UINT32 *value);
+        
+        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_Position )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter * This,
+            /* [in] */ UINT32 value);
         
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UnstoredBufferLength )( 
             __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter * This,
@@ -1350,6 +1443,12 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter;
     ( (This)->lpVtbl -> GetTrustLevel(This,trustLevel) ) 
 
 
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter_get_Position(This,value)	\
+    ( (This)->lpVtbl -> get_Position(This,value) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter_put_Position(This,value)	\
+    ( (This)->lpVtbl -> put_Position(This,value) ) 
+
 #define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter_get_UnstoredBufferLength(This,value)	\
     ( (This)->lpVtbl -> get_UnstoredBufferLength(This,value) ) 
 
@@ -1407,9 +1506,9 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter;
 #define RUNTIMECLASS_Telegram_Api_Native_TL_TLBinaryWriter_DEFINED
 extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_Telegram_Api_Native_TL_TLBinaryWriter[] = L"Telegram.Api.Native.TL.TLBinaryWriter";
 #endif
-#if !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_INTERFACE_DEFINED__)
-extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegram_Api_Native_TL_ITLBinarySizeCalculatorStatics[] = L"Telegram.Api.Native.TL.ITLBinarySizeCalculatorStatics";
-#endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_INTERFACE_DEFINED__) */
+#if !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_INTERFACE_DEFINED__)
+extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegram_Api_Native_TL_ITLObjectSerializerStatics[] = L"Telegram.Api.Native.TL.ITLObjectSerializerStatics";
+#endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_INTERFACE_DEFINED__) */
 
 
 /* interface __MIDL_itf_Telegram2EApi2ENative_0000_0005 */
@@ -1420,19 +1519,19 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0005_v0_0_c_ifspec;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0005_v0_0_s_ifspec;
 
-#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_INTERFACE_DEFINED__
-#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_INTERFACE_DEFINED__
+#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_INTERFACE_DEFINED__
+#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_INTERFACE_DEFINED__
 
-/* interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics */
+/* interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics */
 /* [uuid][object] */ 
 
 
 
-/* interface ABI::Telegram::Api::Native::TL::ITLBinarySizeCalculatorStatics */
+/* interface ABI::Telegram::Api::Native::TL::ITLObjectSerializerStatics */
 /* [uuid][object] */ 
 
 
-EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics;
+EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     } /* end extern "C" */
@@ -1442,17 +1541,27 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculat
                 namespace Native {
                     namespace TL {
                         
-                        MIDL_INTERFACE("14735BB5-2FDF-4650-9999-B877EF13061A")
-                        ITLBinarySizeCalculatorStatics : public IInspectable
+                        MIDL_INTERFACE("3AD8B674-5A82-4CC3-A1D6-9BBBF550EC27")
+                        ITLObjectSerializerStatics : public IInspectable
                         {
                         public:
-                            virtual HRESULT STDMETHODCALLTYPE GetTLObjectSize( 
+                            virtual HRESULT STDMETHODCALLTYPE Serialize( 
+                                /* [in] */ ABI::Telegram::Api::Native::TL::ITLObject *object,
+                                /* [out] */ UINT32 *__valueSize,
+                                /* [out][retval][size_is][size_is] */ BYTE **value) = 0;
+                            
+                            virtual HRESULT STDMETHODCALLTYPE Deserialize( 
+                                /* [in] */ UINT32 __bufferSize,
+                                /* [in][size_is] */ BYTE *buffer,
+                                /* [out][retval] */ ABI::Telegram::Api::Native::TL::ITLBinaryReader **value) = 0;
+                            
+                            virtual HRESULT STDMETHODCALLTYPE GetObjectSize( 
                                 /* [in] */ ABI::Telegram::Api::Native::TL::ITLObject *object,
                                 /* [out][retval] */ UINT32 *value) = 0;
                             
                         };
 
-                        extern const __declspec(selectany) IID & IID_ITLBinarySizeCalculatorStatics = __uuidof(ITLBinarySizeCalculatorStatics);
+                        extern const __declspec(selectany) IID & IID_ITLObjectSerializerStatics = __uuidof(ITLObjectSerializerStatics);
 
                         
                     }  /* end namespace */
@@ -1464,46 +1573,58 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculat
     
 #else 	/* C style interface */
 
-    typedef struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStaticsVtbl
+    typedef struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStaticsVtbl
     {
         BEGIN_INTERFACE
         
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics * This,
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
             _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics * This);
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics * This);
         
         ULONG ( STDMETHODCALLTYPE *Release )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics * This);
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics * This);
         
         HRESULT ( STDMETHODCALLTYPE *GetIids )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics * This,
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics * This,
             /* [out] */ ULONG *iidCount,
             /* [size_is][size_is][out] */ IID **iids);
         
         HRESULT ( STDMETHODCALLTYPE *GetRuntimeClassName )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics * This,
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics * This,
             /* [out] */ HSTRING *className);
         
         HRESULT ( STDMETHODCALLTYPE *GetTrustLevel )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics * This,
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics * This,
             /* [out] */ TrustLevel *trustLevel);
         
-        HRESULT ( STDMETHODCALLTYPE *GetTLObjectSize )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics * This,
+        HRESULT ( STDMETHODCALLTYPE *Serialize )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics * This,
+            /* [in] */ __x_ABI_CTelegram_CApi_CNative_CTL_CITLObject *object,
+            /* [out] */ UINT32 *__valueSize,
+            /* [out][retval][size_is][size_is] */ BYTE **value);
+        
+        HRESULT ( STDMETHODCALLTYPE *Deserialize )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics * This,
+            /* [in] */ UINT32 __bufferSize,
+            /* [in][size_is] */ BYTE *buffer,
+            /* [out][retval] */ __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader **value);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetObjectSize )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics * This,
             /* [in] */ __x_ABI_CTelegram_CApi_CNative_CTL_CITLObject *object,
             /* [out][retval] */ UINT32 *value);
         
         END_INTERFACE
-    } __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStaticsVtbl;
+    } __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStaticsVtbl;
 
-    interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics
+    interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics
     {
-        CONST_VTBL struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStaticsVtbl *lpVtbl;
+        CONST_VTBL struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStaticsVtbl *lpVtbl;
     };
 
     
@@ -1511,28 +1632,34 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculat
 #ifdef COBJMACROS
 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_QueryInterface(This,riid,ppvObject)	\
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_QueryInterface(This,riid,ppvObject)	\
     ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_AddRef(This)	\
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_AddRef(This)	\
     ( (This)->lpVtbl -> AddRef(This) ) 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_Release(This)	\
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_Release(This)	\
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_GetIids(This,iidCount,iids)	\
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_GetIids(This,iidCount,iids)	\
     ( (This)->lpVtbl -> GetIids(This,iidCount,iids) ) 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_GetRuntimeClassName(This,className)	\
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_GetRuntimeClassName(This,className)	\
     ( (This)->lpVtbl -> GetRuntimeClassName(This,className) ) 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_GetTrustLevel(This,trustLevel)	\
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_GetTrustLevel(This,trustLevel)	\
     ( (This)->lpVtbl -> GetTrustLevel(This,trustLevel) ) 
 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_GetTLObjectSize(This,object,value)	\
-    ( (This)->lpVtbl -> GetTLObjectSize(This,object,value) ) 
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_Serialize(This,object,__valueSize,value)	\
+    ( (This)->lpVtbl -> Serialize(This,object,__valueSize,value) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_Deserialize(This,__bufferSize,buffer,value)	\
+    ( (This)->lpVtbl -> Deserialize(This,__bufferSize,buffer,value) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_GetObjectSize(This,object,value)	\
+    ( (This)->lpVtbl -> GetObjectSize(This,object,value) ) 
 
 #endif /* COBJMACROS */
 
@@ -1542,15 +1669,15 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculat
 
 
 
-#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorStatics_INTERFACE_DEFINED__ */
+#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_INTERFACE_DEFINED__ */
 
 
 /* interface __MIDL_itf_Telegram2EApi2ENative_0000_0006 */
 /* [local] */ 
 
-#if !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_INTERFACE_DEFINED__)
-extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegram_Api_Native_TL_ITLBinarySizeCalculator[] = L"Telegram.Api.Native.TL.ITLBinarySizeCalculator";
-#endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_INTERFACE_DEFINED__) */
+#if !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_INTERFACE_DEFINED__)
+extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegram_Api_Native_TL_ITLObjectSerializer[] = L"Telegram.Api.Native.TL.ITLObjectSerializer";
+#endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_INTERFACE_DEFINED__) */
 
 
 /* interface __MIDL_itf_Telegram2EApi2ENative_0000_0006 */
@@ -1561,19 +1688,19 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0006_v0_0_c_ifspec;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0006_v0_0_s_ifspec;
 
-#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_INTERFACE_DEFINED__
-#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_INTERFACE_DEFINED__
+#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_INTERFACE_DEFINED__
+#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_INTERFACE_DEFINED__
 
-/* interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator */
+/* interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer */
 /* [uuid][object] */ 
 
 
 
-/* interface ABI::Telegram::Api::Native::TL::ITLBinarySizeCalculator */
+/* interface ABI::Telegram::Api::Native::TL::ITLObjectSerializer */
 /* [uuid][object] */ 
 
 
-EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator;
+EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     } /* end extern "C" */
@@ -1583,13 +1710,13 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculat
                 namespace Native {
                     namespace TL {
                         
-                        MIDL_INTERFACE("49A65276-CE4A-431D-985C-46D3060DFEDA")
-                        ITLBinarySizeCalculator : public IInspectable
+                        MIDL_INTERFACE("99B0AD68-1843-4F3F-A2A9-9B0144912557")
+                        ITLObjectSerializer : public IInspectable
                         {
                         public:
                         };
 
-                        extern const __declspec(selectany) IID & IID_ITLBinarySizeCalculator = __uuidof(ITLBinarySizeCalculator);
+                        extern const __declspec(selectany) IID & IID_ITLObjectSerializer = __uuidof(ITLObjectSerializer);
 
                         
                     }  /* end namespace */
@@ -1601,41 +1728,41 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculat
     
 #else 	/* C style interface */
 
-    typedef struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorVtbl
+    typedef struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerVtbl
     {
         BEGIN_INTERFACE
         
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator * This,
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
             _COM_Outptr_  void **ppvObject);
         
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator * This);
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer * This);
         
         ULONG ( STDMETHODCALLTYPE *Release )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator * This);
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer * This);
         
         HRESULT ( STDMETHODCALLTYPE *GetIids )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator * This,
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer * This,
             /* [out] */ ULONG *iidCount,
             /* [size_is][size_is][out] */ IID **iids);
         
         HRESULT ( STDMETHODCALLTYPE *GetRuntimeClassName )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator * This,
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer * This,
             /* [out] */ HSTRING *className);
         
         HRESULT ( STDMETHODCALLTYPE *GetTrustLevel )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator * This,
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer * This,
             /* [out] */ TrustLevel *trustLevel);
         
         END_INTERFACE
-    } __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorVtbl;
+    } __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerVtbl;
 
-    interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator
+    interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer
     {
-        CONST_VTBL struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculatorVtbl *lpVtbl;
+        CONST_VTBL struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerVtbl *lpVtbl;
     };
 
     
@@ -1643,23 +1770,23 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculat
 #ifdef COBJMACROS
 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_QueryInterface(This,riid,ppvObject)	\
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_QueryInterface(This,riid,ppvObject)	\
     ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_AddRef(This)	\
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_AddRef(This)	\
     ( (This)->lpVtbl -> AddRef(This) ) 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_Release(This)	\
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_Release(This)	\
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_GetIids(This,iidCount,iids)	\
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_GetIids(This,iidCount,iids)	\
     ( (This)->lpVtbl -> GetIids(This,iidCount,iids) ) 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_GetRuntimeClassName(This,className)	\
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_GetRuntimeClassName(This,className)	\
     ( (This)->lpVtbl -> GetRuntimeClassName(This,className) ) 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_GetTrustLevel(This,trustLevel)	\
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_GetTrustLevel(This,trustLevel)	\
     ( (This)->lpVtbl -> GetTrustLevel(This,trustLevel) ) 
 
 
@@ -1671,15 +1798,15 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculat
 
 
 
-#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLBinarySizeCalculator_INTERFACE_DEFINED__ */
+#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_INTERFACE_DEFINED__ */
 
 
 /* interface __MIDL_itf_Telegram2EApi2ENative_0000_0007 */
 /* [local] */ 
 
-#ifndef RUNTIMECLASS_Telegram_Api_Native_TL_TLBinarySizeCalculator_DEFINED
-#define RUNTIMECLASS_Telegram_Api_Native_TL_TLBinarySizeCalculator_DEFINED
-extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_Telegram_Api_Native_TL_TLBinarySizeCalculator[] = L"Telegram.Api.Native.TL.TLBinarySizeCalculator";
+#ifndef RUNTIMECLASS_Telegram_Api_Native_TL_TLObjectSerializer_DEFINED
+#define RUNTIMECLASS_Telegram_Api_Native_TL_TLObjectSerializer_DEFINED
+extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_Telegram_Api_Native_TL_TLObjectSerializer[] = L"Telegram.Api.Native.TL.TLObjectSerializer";
 #endif
 #if !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedMessage_INTERFACE_DEFINED__)
 extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegram_Api_Native_TL_ITLUnparsedMessage[] = L"Telegram.Api.Native.TL.ITLUnparsedMessage";
@@ -1844,6 +1971,302 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedMessage;
 #define RUNTIMECLASS_Telegram_Api_Native_TL_TLUnparsedMessage_DEFINED
 extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_Telegram_Api_Native_TL_TLUnparsedMessage[] = L"Telegram.Api.Native.TL.TLUnparsedMessage";
 #endif
+#if !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_INTERFACE_DEFINED__)
+extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegram_Api_Native_TL_ITLError[] = L"Telegram.Api.Native.TL.ITLError";
+#endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_INTERFACE_DEFINED__) */
+
+
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0008 */
+/* [local] */ 
+
+
+
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0008_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0008_v0_0_s_ifspec;
+
+#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_INTERFACE_DEFINED__
+#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_INTERFACE_DEFINED__
+
+/* interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLError */
+/* [uuid][object] */ 
+
+
+
+/* interface ABI::Telegram::Api::Native::TL::ITLError */
+/* [uuid][object] */ 
+
+
+EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLError;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    } /* end extern "C" */
+    namespace ABI {
+        namespace Telegram {
+            namespace Api {
+                namespace Native {
+                    namespace TL {
+                        
+                        MIDL_INTERFACE("7E992965-E9B1-4804-9C1C-E578B5C397AF")
+                        ITLError : public IInspectable
+                        {
+                        public:
+                            virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Code( 
+                                /* [out][retval] */ UINT32 *value) = 0;
+                            
+                            virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Text( 
+                                /* [out][retval] */ HSTRING *value) = 0;
+                            
+                        };
+
+                        extern const __declspec(selectany) IID & IID_ITLError = __uuidof(ITLError);
+
+                        
+                    }  /* end namespace */
+                }  /* end namespace */
+            }  /* end namespace */
+        }  /* end namespace */
+    }  /* end namespace */
+    extern "C" { 
+    
+#else 	/* C style interface */
+
+    typedef struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLError * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLError * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLError * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIids )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLError * This,
+            /* [out] */ ULONG *iidCount,
+            /* [size_is][size_is][out] */ IID **iids);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetRuntimeClassName )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLError * This,
+            /* [out] */ HSTRING *className);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTrustLevel )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLError * This,
+            /* [out] */ TrustLevel *trustLevel);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Code )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLError * This,
+            /* [out][retval] */ UINT32 *value);
+        
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Text )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLError * This,
+            /* [out][retval] */ HSTRING *value);
+        
+        END_INTERFACE
+    } __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorVtbl;
+
+    interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLError
+    {
+        CONST_VTBL struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLError_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLError_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLError_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLError_GetIids(This,iidCount,iids)	\
+    ( (This)->lpVtbl -> GetIids(This,iidCount,iids) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLError_GetRuntimeClassName(This,className)	\
+    ( (This)->lpVtbl -> GetRuntimeClassName(This,className) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLError_GetTrustLevel(This,trustLevel)	\
+    ( (This)->lpVtbl -> GetTrustLevel(This,trustLevel) ) 
+
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLError_get_Code(This,value)	\
+    ( (This)->lpVtbl -> get_Code(This,value) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLError_get_Text(This,value)	\
+    ( (This)->lpVtbl -> get_Text(This,value) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_INTERFACE_DEFINED__ */
+
+
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0009 */
+/* [local] */ 
+
+#if !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_INTERFACE_DEFINED__)
+extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegram_Api_Native_TL_ITLErrorFactory[] = L"Telegram.Api.Native.TL.ITLErrorFactory";
+#endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_INTERFACE_DEFINED__) */
+
+
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0009 */
+/* [local] */ 
+
+
+
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0009_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0009_v0_0_s_ifspec;
+
+#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_INTERFACE_DEFINED__
+#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_INTERFACE_DEFINED__
+
+/* interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory */
+/* [uuid][object] */ 
+
+
+
+/* interface ABI::Telegram::Api::Native::TL::ITLErrorFactory */
+/* [uuid][object] */ 
+
+
+EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    } /* end extern "C" */
+    namespace ABI {
+        namespace Telegram {
+            namespace Api {
+                namespace Native {
+                    namespace TL {
+                        
+                        MIDL_INTERFACE("80E1E4F5-C91C-4785-A6B0-25CE6A6C7825")
+                        ITLErrorFactory : public IInspectable
+                        {
+                        public:
+                            virtual HRESULT STDMETHODCALLTYPE CreateTLError( 
+                                /* [in] */ UINT32 code,
+                                /* [in] */ HSTRING text,
+                                /* [out][retval] */ ABI::Telegram::Api::Native::TL::ITLError **instance) = 0;
+                            
+                        };
+
+                        extern const __declspec(selectany) IID & IID_ITLErrorFactory = __uuidof(ITLErrorFactory);
+
+                        
+                    }  /* end namespace */
+                }  /* end namespace */
+            }  /* end namespace */
+        }  /* end namespace */
+    }  /* end namespace */
+    extern "C" { 
+    
+#else 	/* C style interface */
+
+    typedef struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactoryVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIids )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory * This,
+            /* [out] */ ULONG *iidCount,
+            /* [size_is][size_is][out] */ IID **iids);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetRuntimeClassName )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory * This,
+            /* [out] */ HSTRING *className);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTrustLevel )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory * This,
+            /* [out] */ TrustLevel *trustLevel);
+        
+        HRESULT ( STDMETHODCALLTYPE *CreateTLError )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory * This,
+            /* [in] */ UINT32 code,
+            /* [in] */ HSTRING text,
+            /* [out][retval] */ __x_ABI_CTelegram_CApi_CNative_CTL_CITLError **instance);
+        
+        END_INTERFACE
+    } __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactoryVtbl;
+
+    interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory
+    {
+        CONST_VTBL struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactoryVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_GetIids(This,iidCount,iids)	\
+    ( (This)->lpVtbl -> GetIids(This,iidCount,iids) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_GetRuntimeClassName(This,className)	\
+    ( (This)->lpVtbl -> GetRuntimeClassName(This,className) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_GetTrustLevel(This,trustLevel)	\
+    ( (This)->lpVtbl -> GetTrustLevel(This,trustLevel) ) 
+
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_CreateTLError(This,code,text,instance)	\
+    ( (This)->lpVtbl -> CreateTLError(This,code,text,instance) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_INTERFACE_DEFINED__ */
+
+
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0010 */
+/* [local] */ 
+
+#ifndef RUNTIMECLASS_Telegram_Api_Native_TL_TLError_DEFINED
+#define RUNTIMECLASS_Telegram_Api_Native_TL_TLError_DEFINED
+extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_Telegram_Api_Native_TL_TLError[] = L"Telegram.Api.Native.TL.TLError";
+#endif
 #if !defined(__cplusplus)
 struct __x_ABI_CTelegram_CApi_CNative_CVersion
     {
@@ -1909,7 +2332,7 @@ enum __x_ABI_CTelegram_CApi_CNative_CConnectionState
 #endif
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0008 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0010 */
 /* [local] */ 
 
 #ifdef __cplusplus
@@ -2049,8 +2472,8 @@ extern "C" {
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0008_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0008_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0010_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0010_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CISendRequestCompletedCallback_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CISendRequestCompletedCallback_INTERFACE_DEFINED__
@@ -2248,7 +2671,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIRequestQuickAckReceivedC
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CIRequestQuickAckReceivedCallback_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0010 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0012 */
 /* [local] */ 
 
 #if !defined(____x_ABI_CTelegram_CApi_CNative_CIUserConfiguration_INTERFACE_DEFINED__)
@@ -2256,13 +2679,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 #endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CIUserConfiguration_INTERFACE_DEFINED__) */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0010 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0012 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0010_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0010_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0012_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0012_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CIUserConfiguration_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CIUserConfiguration_INTERFACE_DEFINED__
@@ -2300,9 +2723,6 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIUserConfiguration;
                         
                         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Language( 
                             /* [out][retval] */ HSTRING *value) = 0;
-                        
-                        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UserId( 
-                            /* [out][retval] */ INT32 *value) = 0;
                         
                     };
 
@@ -2362,10 +2782,6 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIUserConfiguration;
             __x_ABI_CTelegram_CApi_CNative_CIUserConfiguration * This,
             /* [out][retval] */ HSTRING *value);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UserId )( 
-            __x_ABI_CTelegram_CApi_CNative_CIUserConfiguration * This,
-            /* [out][retval] */ INT32 *value);
-        
         END_INTERFACE
     } __x_ABI_CTelegram_CApi_CNative_CIUserConfigurationVtbl;
 
@@ -2411,9 +2827,6 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIUserConfiguration;
 #define __x_ABI_CTelegram_CApi_CNative_CIUserConfiguration_get_Language(This,value)	\
     ( (This)->lpVtbl -> get_Language(This,value) ) 
 
-#define __x_ABI_CTelegram_CApi_CNative_CIUserConfiguration_get_UserId(This,value)	\
-    ( (This)->lpVtbl -> get_UserId(This,value) ) 
-
 #endif /* COBJMACROS */
 
 
@@ -2425,7 +2838,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIUserConfiguration;
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CIUserConfiguration_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0011 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0013 */
 /* [local] */ 
 
 #if !defined(____x_ABI_CTelegram_CApi_CNative_CIDatacenter_INTERFACE_DEFINED__)
@@ -2433,13 +2846,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 #endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CIDatacenter_INTERFACE_DEFINED__) */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0011 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0013 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0011_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0011_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0013_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0013_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CIDatacenter_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CIDatacenter_INTERFACE_DEFINED__
@@ -2600,7 +3013,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIDatacenter;
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CIDatacenter_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0012 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0014 */
 /* [local] */ 
 
 #ifndef RUNTIMECLASS_Telegram_Api_Native_Datacenter_DEFINED
@@ -2612,13 +3025,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 #endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CIConnection_INTERFACE_DEFINED__) */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0012 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0014 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0012_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0012_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0014_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0014_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CIConnection_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CIConnection_INTERFACE_DEFINED__
@@ -2781,7 +3194,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIConnection;
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CIConnection_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0013 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0015 */
 /* [local] */ 
 
 #ifndef RUNTIMECLASS_Telegram_Api_Native_Connection_DEFINED
@@ -2793,13 +3206,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 #endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CIConnectionManagerStatics_INTERFACE_DEFINED__) */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0013 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0015 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0013_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0013_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0015_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0015_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CIConnectionManagerStatics_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CIConnectionManagerStatics_INTERFACE_DEFINED__
@@ -2945,7 +3358,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIConnectionManagerStatics
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0330_v0_0_c_ifspec;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0330_v0_0_s_ifspec;
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0015 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0017 */
 /* [local] */ 
 
 #ifndef DEF___FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable
@@ -2953,13 +3366,13 @@ extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0330_v0_0_s_ifsp
 #if !defined(__cplusplus) || defined(RO_NO_TEMPLATE_NAME)
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0015 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0017 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0015_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0015_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0017_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0017_v0_0_s_ifspec;
 
 #ifndef ____FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable_INTERFACE_DEFINED__
 #define ____FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable_INTERFACE_DEFINED__
@@ -3048,20 +3461,20 @@ EXTERN_C const IID IID___FITypedEventHandler_2_Telegram__CApi__CNative__CConnect
 #endif 	/* ____FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0016 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0018 */
 /* [local] */ 
 
 #endif /* pinterface */
 #endif /* DEF___FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0016 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0018 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0016_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0016_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0018_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0018_v0_0_s_ifspec;
 
 /* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0331 */
 
@@ -3076,7 +3489,7 @@ extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0016_v0_0_s_ifspec;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0331_v0_0_c_ifspec;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0331_v0_0_s_ifspec;
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0017 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0019 */
 /* [local] */ 
 
 #ifndef DEF___FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTL__CTLUnparsedMessage
@@ -3084,13 +3497,13 @@ extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0331_v0_0_s_ifsp
 #if !defined(__cplusplus) || defined(RO_NO_TEMPLATE_NAME)
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0017 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0019 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0017_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0017_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0019_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0019_v0_0_s_ifspec;
 
 #ifndef ____FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTL__CTLUnparsedMessage_INTERFACE_DEFINED__
 #define ____FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTL__CTLUnparsedMessage_INTERFACE_DEFINED__
@@ -3179,7 +3592,7 @@ EXTERN_C const IID IID___FITypedEventHandler_2_Telegram__CApi__CNative__CConnect
 #endif 	/* ____FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTL__CTLUnparsedMessage_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0018 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0020 */
 /* [local] */ 
 
 #endif /* pinterface */
@@ -3189,13 +3602,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 #endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CIConnectionManager_INTERFACE_DEFINED__) */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0018 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0020 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0018_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0018_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0020_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0020_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CIConnectionManager_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CIConnectionManager_INTERFACE_DEFINED__
@@ -3255,6 +3668,12 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIConnectionManager;
                         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_IsNetworkAvailable( 
                             /* [out][retval] */ boolean *value) = 0;
                         
+                        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_UserConfiguration( 
+                            /* [out][retval] */ ABI::Telegram::Api::Native::IUserConfiguration **value) = 0;
+                        
+                        virtual /* [propput] */ HRESULT STDMETHODCALLTYPE put_UserConfiguration( 
+                            /* [in] */ ABI::Telegram::Api::Native::IUserConfiguration *value) = 0;
+                        
                         virtual HRESULT STDMETHODCALLTYPE SendRequest( 
                             /* [in] */ ABI::Telegram::Api::Native::TL::ITLObject *object,
                             /* [in] */ ABI::Telegram::Api::Native::ISendRequestCompletedCallback *onCompleted,
@@ -3273,6 +3692,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIConnectionManager;
                             /* [out][retval] */ ABI::Telegram::Api::Native::IDatacenter **value) = 0;
                         
                         virtual HRESULT STDMETHODCALLTYPE BoomBaby( 
+                            /* [in] */ ABI::Telegram::Api::Native::IUserConfiguration *userConfiguration,
                             /* [out] */ ABI::Telegram::Api::Native::TL::ITLObject **object,
                             /* [out][retval] */ ABI::Telegram::Api::Native::IConnection **value) = 0;
                         
@@ -3361,6 +3781,14 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIConnectionManager;
             __x_ABI_CTelegram_CApi_CNative_CIConnectionManager * This,
             /* [out][retval] */ boolean *value);
         
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_UserConfiguration )( 
+            __x_ABI_CTelegram_CApi_CNative_CIConnectionManager * This,
+            /* [out][retval] */ __x_ABI_CTelegram_CApi_CNative_CIUserConfiguration **value);
+        
+        /* [propput] */ HRESULT ( STDMETHODCALLTYPE *put_UserConfiguration )( 
+            __x_ABI_CTelegram_CApi_CNative_CIConnectionManager * This,
+            /* [in] */ __x_ABI_CTelegram_CApi_CNative_CIUserConfiguration *value);
+        
         HRESULT ( STDMETHODCALLTYPE *SendRequest )( 
             __x_ABI_CTelegram_CApi_CNative_CIConnectionManager * This,
             /* [in] */ __x_ABI_CTelegram_CApi_CNative_CTL_CITLObject *object,
@@ -3383,6 +3811,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIConnectionManager;
         
         HRESULT ( STDMETHODCALLTYPE *BoomBaby )( 
             __x_ABI_CTelegram_CApi_CNative_CIConnectionManager * This,
+            /* [in] */ __x_ABI_CTelegram_CApi_CNative_CIUserConfiguration *userConfiguration,
             /* [out] */ __x_ABI_CTelegram_CApi_CNative_CTL_CITLObject **object,
             /* [out][retval] */ __x_ABI_CTelegram_CApi_CNative_CIConnection **value);
         
@@ -3449,6 +3878,12 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIConnectionManager;
 #define __x_ABI_CTelegram_CApi_CNative_CIConnectionManager_get_IsNetworkAvailable(This,value)	\
     ( (This)->lpVtbl -> get_IsNetworkAvailable(This,value) ) 
 
+#define __x_ABI_CTelegram_CApi_CNative_CIConnectionManager_get_UserConfiguration(This,value)	\
+    ( (This)->lpVtbl -> get_UserConfiguration(This,value) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CIConnectionManager_put_UserConfiguration(This,value)	\
+    ( (This)->lpVtbl -> put_UserConfiguration(This,value) ) 
+
 #define __x_ABI_CTelegram_CApi_CNative_CIConnectionManager_SendRequest(This,object,onCompleted,onQuickAckReceivedCallback,datacenterId,connectionType,immediate,requestToken)	\
     ( (This)->lpVtbl -> SendRequest(This,object,onCompleted,onQuickAckReceivedCallback,datacenterId,connectionType,immediate,requestToken) ) 
 
@@ -3458,8 +3893,8 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIConnectionManager;
 #define __x_ABI_CTelegram_CApi_CNative_CIConnectionManager_GetDatacenterById(This,id,value)	\
     ( (This)->lpVtbl -> GetDatacenterById(This,id,value) ) 
 
-#define __x_ABI_CTelegram_CApi_CNative_CIConnectionManager_BoomBaby(This,object,value)	\
-    ( (This)->lpVtbl -> BoomBaby(This,object,value) ) 
+#define __x_ABI_CTelegram_CApi_CNative_CIConnectionManager_BoomBaby(This,userConfiguration,object,value)	\
+    ( (This)->lpVtbl -> BoomBaby(This,userConfiguration,object,value) ) 
 
 #endif /* COBJMACROS */
 
@@ -3472,7 +3907,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIConnectionManager;
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CIConnectionManager_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0019 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0021 */
 /* [local] */ 
 
 #ifndef RUNTIMECLASS_Telegram_Api_Native_ConnectionManager_DEFINED
@@ -3481,13 +3916,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_Telegram
 #endif
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0019 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0021 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0019_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0019_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0021_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0021_v0_0_s_ifspec;
 
 /* Additional Prototypes for ALL interfaces */
 

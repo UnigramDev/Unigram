@@ -3,6 +3,7 @@
 #include "pch.h"
 #include "MediaFoundationExtensions.h"
 #include "AnimatedImageSourceRendererFactory.h"
+#include "Helpers\COMHelper.h"
 
 using namespace Unigram::Native;
 using Windows::UI::Xaml::Media::CompositionTarget;
@@ -131,7 +132,9 @@ HRESULT AnimatedImageSourceRendererFactory::DrawFrame(IVirtualSurfaceImageSource
 		m_d2dDeviceContext->Clear(D2D1::ColorF(D2D1::ColorF::Black, 0.0f));
 
 		if (frameBitmap != nullptr)
+		{
 			m_d2dDeviceContext->DrawBitmap(frameBitmap);
+		}
 
 		m_d2dDeviceContext->SetTransform(D2D1::IdentityMatrix());
 		m_d2dDeviceContext->SetTarget(nullptr);
@@ -152,10 +155,14 @@ HRESULT AnimatedImageSourceRendererFactory::DrawFrame(IVirtualSurfaceImageSource
 AnimatedImageSourceRenderer^ AnimatedImageSourceRendererFactory::CreateRenderer(int maximumWidth, int maximumHeight)
 {
 	if (maximumWidth < 0)
+	{
 		throw ref new OutOfBoundsException(L"The parameter maximumWidth must be greater or equal to 0");
+	}
 
 	if (maximumWidth < 0)
+	{
 		throw ref new OutOfBoundsException(L"The parameter maximumWidth must be greater or equal to 0");
+	}
 
 	return ref new AnimatedImageSourceRenderer(maximumWidth, maximumHeight, this);
 }

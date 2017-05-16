@@ -2,6 +2,7 @@
 
 #pragma once
 #include <queue>
+#include <memory>
 #include <windows.media.core.h>
 #include <windows.media.h>
 #include <windows.foundation.h>

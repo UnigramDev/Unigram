@@ -38,6 +38,8 @@
     <ClCompile Include="TLProtocolScheme.cpp">
       <Filter>TLProtocolScheme</Filter>
     </ClCompile>
+    <ClCompile Include="DefaultUserConfiguration.cpp" />
+    <ClCompile Include="TLObjectSerializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -70,6 +72,8 @@
     <ClInclude Include="TLProtocolScheme.h">
       <Filter>TLProtocolScheme</Filter>
     </ClInclude>
+    <ClInclude Include="DefaultUserConfiguration.h" />
+    <ClInclude Include="TLObjectSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
