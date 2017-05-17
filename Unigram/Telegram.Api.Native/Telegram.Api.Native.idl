@@ -37,7 +37,6 @@ namespace Telegram
 				runtimeclass TLBinaryWriter;
 				runtimeclass TLObjectSerializer;
 				runtimeclass TLError;
-				runtimeclass TLUnparsedObject;
 
 				delegate TLObjectConstructorDelegate;
 
@@ -146,24 +145,6 @@ namespace Telegram
 				runtimeclass TLObjectSerializer
 				{
 					[default] interface ITLObjectSerializer;
-				}
-
-
-				[exclusiveto(TLUnparsedObject)]
-				[uuid(2FFC4E2B-D5F9-4DDE-857A-393473AE0800)]
-				[version(API_VERSION)]
-				interface ITLUnparsedObject : IInspectable
-				{
-					[propget] HRESULT Reader([out][retval] TLBinaryReader** value);
-				}
-
-				[marshaling_behavior(agile)]
-				[threading(both)]
-				[version(API_VERSION)]
-				runtimeclass TLUnparsedObject
-				{
-					[default] interface ITLUnparsedObject;
-					interface ITLObject;
 				}
 
 

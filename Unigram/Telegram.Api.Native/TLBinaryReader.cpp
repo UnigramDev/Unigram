@@ -243,16 +243,9 @@ HRESULT TLBinaryReader::ReadObject(ITLObject** value)
 	{
 		ComPtr<ITLObject> object;
 		ComPtr<ITLObjectConstructorDelegate> constructorDelegate;
-		if (SUCCEEDED(TLObject::GetObjectConstructor(constructor, constructorDelegate)))
-		{
-			ReturnIfFailed(result, constructorDelegate->Invoke(&object));
-			ReturnIfFailed(result, object->Read(static_cast<ITLBinaryReaderEx*>(this)));
-		}
-		else
-		{
-			ReturnIfFailed(result, AcquireBuffer());
-			object = Make<TLUnparsedObject>(constructor, static_cast<ITLBinaryReaderEx*>(this));
-		}
+		ReturnIfFailed(result, TLObject::GetObjectConstructor(constructor, constructorDelegate));
+		ReturnIfFailed(result, constructorDelegate->Invoke(&object));
+		ReturnIfFailed(result, object->Read(static_cast<ITLBinaryReaderEx*>(this)));
 
 		*value = object.Detach();
 		return S_OK;

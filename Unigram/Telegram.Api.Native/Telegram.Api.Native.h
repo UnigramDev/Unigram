@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0622 */
 /* at Tue Jan 19 04:14:07 2038
  */
-/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-1915e6d2:
+/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-74dde995:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0622 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -184,28 +184,6 @@ namespace ABI {
 #endif /* __cplusplus */
 
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer_FWD_DEFINED__ */
-
-
-#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_FWD_DEFINED__
-#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_FWD_DEFINED__
-typedef interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject;
-
-#ifdef __cplusplus
-namespace ABI {
-    namespace Telegram {
-        namespace Api {
-            namespace Native {
-                namespace TL {
-                    interface ITLUnparsedObject;
-                } /* end namespace */
-            } /* end namespace */
-        } /* end namespace */
-    } /* end namespace */
-} /* end namespace */
-
-#endif /* __cplusplus */
-
-#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_FWD_DEFINED__ */
 
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_FWD_DEFINED__
@@ -714,20 +692,6 @@ class TLError;
 }
 #endif
 
-#ifdef __cplusplus
-namespace ABI {
-namespace Telegram {
-namespace Api {
-namespace Native {
-namespace TL {
-class TLUnparsedObject;
-} /*TL*/
-} /*Native*/
-} /*Api*/
-} /*Telegram*/
-}
-#endif
-
 
 #if !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLObject_INTERFACE_DEFINED__)
 extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegram_Api_Native_TL_ITLObject[] = L"Telegram.Api.Native.TL.ITLObject";
@@ -827,7 +791,6 @@ namespace ABI {
 
 extern "C" { 
 #endif
-
 
 
 
@@ -2032,9 +1995,9 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializer;
 #define RUNTIMECLASS_Telegram_Api_Native_TL_TLObjectSerializer_DEFINED
 extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_Telegram_Api_Native_TL_TLObjectSerializer[] = L"Telegram.Api.Native.TL.TLObjectSerializer";
 #endif
-#if !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_INTERFACE_DEFINED__)
-extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegram_Api_Native_TL_ITLUnparsedObject[] = L"Telegram.Api.Native.TL.ITLUnparsedObject";
-#endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_INTERFACE_DEFINED__) */
+#if !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_INTERFACE_DEFINED__)
+extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegram_Api_Native_TL_ITLError[] = L"Telegram.Api.Native.TL.ITLError";
+#endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_INTERFACE_DEFINED__) */
 
 
 /* interface __MIDL_itf_Telegram2EApi2ENative_0000_0008 */
@@ -2044,149 +2007,6 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0008_v0_0_c_ifspec;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0008_v0_0_s_ifspec;
-
-#ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_INTERFACE_DEFINED__
-#define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_INTERFACE_DEFINED__
-
-/* interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject */
-/* [uuid][object] */ 
-
-
-
-/* interface ABI::Telegram::Api::Native::TL::ITLUnparsedObject */
-/* [uuid][object] */ 
-
-
-EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject;
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    } /* end extern "C" */
-    namespace ABI {
-        namespace Telegram {
-            namespace Api {
-                namespace Native {
-                    namespace TL {
-                        
-                        MIDL_INTERFACE("2FFC4E2B-D5F9-4DDE-857A-393473AE0800")
-                        ITLUnparsedObject : public IInspectable
-                        {
-                        public:
-                            virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Reader( 
-                                /* [out][retval] */ ABI::Telegram::Api::Native::TL::ITLBinaryReader **value) = 0;
-                            
-                        };
-
-                        extern const __declspec(selectany) IID & IID_ITLUnparsedObject = __uuidof(ITLUnparsedObject);
-
-                        
-                    }  /* end namespace */
-                }  /* end namespace */
-            }  /* end namespace */
-        }  /* end namespace */
-    }  /* end namespace */
-    extern "C" { 
-    
-#else 	/* C style interface */
-
-    typedef struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObjectVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetIids )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject * This,
-            /* [out] */ ULONG *iidCount,
-            /* [size_is][size_is][out] */ IID **iids);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetRuntimeClassName )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject * This,
-            /* [out] */ HSTRING *className);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTrustLevel )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject * This,
-            /* [out] */ TrustLevel *trustLevel);
-        
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_Reader )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject * This,
-            /* [out][retval] */ __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader **value);
-        
-        END_INTERFACE
-    } __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObjectVtbl;
-
-    interface __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject
-    {
-        CONST_VTBL struct __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObjectVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_GetIids(This,iidCount,iids)	\
-    ( (This)->lpVtbl -> GetIids(This,iidCount,iids) ) 
-
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_GetRuntimeClassName(This,className)	\
-    ( (This)->lpVtbl -> GetRuntimeClassName(This,className) ) 
-
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_GetTrustLevel(This,trustLevel)	\
-    ( (This)->lpVtbl -> GetTrustLevel(This,trustLevel) ) 
-
-
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_get_Reader(This,value)	\
-    ( (This)->lpVtbl -> get_Reader(This,value) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLUnparsedObject_INTERFACE_DEFINED__ */
-
-
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0009 */
-/* [local] */ 
-
-#ifndef RUNTIMECLASS_Telegram_Api_Native_TL_TLUnparsedObject_DEFINED
-#define RUNTIMECLASS_Telegram_Api_Native_TL_TLUnparsedObject_DEFINED
-extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_Telegram_Api_Native_TL_TLUnparsedObject[] = L"Telegram.Api.Native.TL.TLUnparsedObject";
-#endif
-#if !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_INTERFACE_DEFINED__)
-extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegram_Api_Native_TL_ITLError[] = L"Telegram.Api.Native.TL.ITLError";
-#endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_INTERFACE_DEFINED__) */
-
-
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0009 */
-/* [local] */ 
-
-
-
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0009_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0009_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_INTERFACE_DEFINED__
@@ -2321,7 +2141,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLError;
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLError_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0010 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0009 */
 /* [local] */ 
 
 #if !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_INTERFACE_DEFINED__)
@@ -2329,13 +2149,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 #endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_INTERFACE_DEFINED__) */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0010 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0009 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0010_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0010_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0009_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0009_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_INTERFACE_DEFINED__
@@ -2464,7 +2284,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory;
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CTL_CITLErrorFactory_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0011 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0010 */
 /* [local] */ 
 
 #ifndef RUNTIMECLASS_Telegram_Api_Native_TL_TLError_DEFINED
@@ -2539,7 +2359,7 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 #endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CITLUnparsedMessage_INTERFACE_DEFINED__) */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0011 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0010 */
 /* [local] */ 
 
 #ifdef __cplusplus
@@ -2679,8 +2499,8 @@ extern "C" {
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0011_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0011_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0010_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0010_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CITLUnparsedMessage_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CITLUnparsedMessage_INTERFACE_DEFINED__
@@ -2823,7 +2643,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CITLUnparsedMessage;
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CITLUnparsedMessage_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0012 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0011 */
 /* [local] */ 
 
 #ifndef RUNTIMECLASS_Telegram_Api_Native_TLUnparsedMessage_DEFINED
@@ -2832,13 +2652,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_Telegram
 #endif
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0012 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0011 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0012_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0012_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0011_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0011_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CISendRequestCompletedCallback_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CISendRequestCompletedCallback_INTERFACE_DEFINED__
@@ -3036,7 +2856,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIRequestQuickAckReceivedC
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CIRequestQuickAckReceivedCallback_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0014 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0013 */
 /* [local] */ 
 
 #if !defined(____x_ABI_CTelegram_CApi_CNative_CIUserConfiguration_INTERFACE_DEFINED__)
@@ -3044,13 +2864,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 #endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CIUserConfiguration_INTERFACE_DEFINED__) */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0014 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0013 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0014_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0014_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0013_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0013_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CIUserConfiguration_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CIUserConfiguration_INTERFACE_DEFINED__
@@ -3203,7 +3023,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIUserConfiguration;
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CIUserConfiguration_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0015 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0014 */
 /* [local] */ 
 
 #if !defined(____x_ABI_CTelegram_CApi_CNative_CIDatacenter_INTERFACE_DEFINED__)
@@ -3211,13 +3031,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 #endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CIDatacenter_INTERFACE_DEFINED__) */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0015 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0014 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0015_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0015_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0014_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0014_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CIDatacenter_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CIDatacenter_INTERFACE_DEFINED__
@@ -3378,7 +3198,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIDatacenter;
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CIDatacenter_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0016 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0015 */
 /* [local] */ 
 
 #ifndef RUNTIMECLASS_Telegram_Api_Native_Datacenter_DEFINED
@@ -3390,13 +3210,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 #endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CIConnection_INTERFACE_DEFINED__) */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0016 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0015 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0016_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0016_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0015_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0015_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CIConnection_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CIConnection_INTERFACE_DEFINED__
@@ -3559,7 +3379,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIConnection;
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CIConnection_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0017 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0016 */
 /* [local] */ 
 
 #ifndef RUNTIMECLASS_Telegram_Api_Native_Connection_DEFINED
@@ -3571,13 +3391,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 #endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CIConnectionManagerStatics_INTERFACE_DEFINED__) */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0017 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0016 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0017_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0017_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0016_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0016_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CIConnectionManagerStatics_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CIConnectionManagerStatics_INTERFACE_DEFINED__
@@ -3723,7 +3543,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIConnectionManagerStatics
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0330_v0_0_c_ifspec;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0330_v0_0_s_ifspec;
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0019 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0018 */
 /* [local] */ 
 
 #ifndef DEF___FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable
@@ -3731,13 +3551,13 @@ extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0330_v0_0_s_ifsp
 #if !defined(__cplusplus) || defined(RO_NO_TEMPLATE_NAME)
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0019 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0018 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0019_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0019_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0018_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0018_v0_0_s_ifspec;
 
 #ifndef ____FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable_INTERFACE_DEFINED__
 #define ____FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable_INTERFACE_DEFINED__
@@ -3826,20 +3646,20 @@ EXTERN_C const IID IID___FITypedEventHandler_2_Telegram__CApi__CNative__CConnect
 #endif 	/* ____FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0020 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0019 */
 /* [local] */ 
 
 #endif /* pinterface */
 #endif /* DEF___FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0020 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0019 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0020_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0020_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0019_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0019_v0_0_s_ifspec;
 
 /* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0331 */
 
@@ -3854,7 +3674,7 @@ extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0020_v0_0_s_ifspec;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0331_v0_0_c_ifspec;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0331_v0_0_s_ifspec;
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0021 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0020 */
 /* [local] */ 
 
 #ifndef DEF___FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage
@@ -3862,13 +3682,13 @@ extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0331_v0_0_s_ifsp
 #if !defined(__cplusplus) || defined(RO_NO_TEMPLATE_NAME)
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0021 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0020 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0021_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0021_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0020_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0020_v0_0_s_ifspec;
 
 #ifndef ____FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage_INTERFACE_DEFINED__
 #define ____FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage_INTERFACE_DEFINED__
@@ -3957,7 +3777,7 @@ EXTERN_C const IID IID___FITypedEventHandler_2_Telegram__CApi__CNative__CConnect
 #endif 	/* ____FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0022 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0021 */
 /* [local] */ 
 
 #endif /* pinterface */
@@ -3967,13 +3787,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR InterfaceName_Telegra
 #endif /* !defined(____x_ABI_CTelegram_CApi_CNative_CIConnectionManager_INTERFACE_DEFINED__) */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0022 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0021 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0022_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0022_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0021_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0021_v0_0_s_ifspec;
 
 #ifndef ____x_ABI_CTelegram_CApi_CNative_CIConnectionManager_INTERFACE_DEFINED__
 #define ____x_ABI_CTelegram_CApi_CNative_CIConnectionManager_INTERFACE_DEFINED__
@@ -4292,7 +4112,7 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIConnectionManager;
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CIConnectionManager_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0023 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0022 */
 /* [local] */ 
 
 #ifndef RUNTIMECLASS_Telegram_Api_Native_ConnectionManager_DEFINED
@@ -4301,13 +4121,13 @@ extern const __declspec(selectany) _Null_terminated_ WCHAR RuntimeClass_Telegram
 #endif
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0023 */
+/* interface __MIDL_itf_Telegram2EApi2ENative_0000_0022 */
 /* [local] */ 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0023_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0023_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0022_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0022_v0_0_s_ifspec;
 
 /* Additional Prototypes for ALL interfaces */
 

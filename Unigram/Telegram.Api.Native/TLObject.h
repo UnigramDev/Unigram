@@ -30,7 +30,6 @@
 using namespace Microsoft::WRL;
 using ABI::Telegram::Api::Native::IUserConfiguration;
 using ABI::Telegram::Api::Native::TL::ITLObject;
-using ABI::Telegram::Api::Native::TL::ITLUnparsedObject;
 using ABI::Telegram::Api::Native::TL::ITLBinaryReader;
 using ABI::Telegram::Api::Native::TL::ITLBinaryWriter;
 using ABI::Telegram::Api::Native::TL::ITLBinaryReaderEx;
@@ -178,23 +177,6 @@ namespace Telegram
 
 				private:
 					static Details::TLObjectInitializer<TLObjectTraits> Initializer;
-				};
-
-				class TLUnparsedObject WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLUnparsedObject, TLObject>
-				{
-					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLUnparsedObject, BaseTrust);
-
-				public:
-					TLUnparsedObject(UINT32 constructor, _In_ ITLBinaryReader* reader);
-
-					//COM exported methods
-					STDMETHODIMP get_Constructor(_Out_ UINT32* value);
-					STDMETHODIMP get_Reader(_Out_ ITLBinaryReader** value);
-					STDMETHODIMP get_IsLayerNeeded(_Out_ boolean* value);
-
-				private:
-					UINT32 m_constructor;
-					ComPtr<ITLBinaryReader> m_reader;
 				};
 
 			}
