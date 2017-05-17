@@ -242,12 +242,12 @@ namespace Unigram.ViewModels
         #region Forward
 
         public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
-        private async void MessageForwardExecute(TLMessageBase message)
+        private void MessageForwardExecute(TLMessageBase message)
         {
             if (message is TLMessage)
             {
-                await ShareView.Current.ShowAsync(new TLStickerSet());
-                return;
+                //await ShareView.Current.ShowAsync(new TLStickerSet());
+                //return;
 
                 App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
                 NavigationService.GoBackAt(0);
@@ -394,6 +394,16 @@ namespace Unigram.ViewModels
         #endregion
 
         #region Edit
+
+        public RelayCommand MessageEditLastCommand => new RelayCommand(MessageEditLastExecute);
+        private void MessageEditLastExecute()
+        {
+            var last = Messages.LastOrDefault(x => x is TLMessage message && message.IsOut);
+            if (last != null)
+            {
+                MessageEditCommand.Execute(last);
+            }
+        }
 
         public RelayCommand<TLMessage> MessageEditCommand => new RelayCommand<TLMessage>(MessageEditExecute);
         private async void MessageEditExecute(TLMessage message)
