@@ -56,6 +56,9 @@ namespace Unigram.Views
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             ScrollingHost.Items.Clear();
+            ViewModel.Gallery.Items.Clear();
+            ViewModel.Gallery.TotalItems = 0;
+            ViewModel.Gallery.SelectedItem = null;
             _anchors.Clear();
 
             var parameter = TLSerializationService.Current.Deserialize((string)e.Parameter);
