@@ -175,13 +175,9 @@ namespace Unigram.ViewModels
 
         public override int Date => _document.Date;
 
-        public override bool IsVideo
-        {
-            get
-            {
-                return TLMessage.IsVideo(_document);
-            }
-        }
+        public override bool IsVideo => TLMessage.IsVideo(_document);
+
+        public override bool IsLoop => TLMessage.IsGif(_document, true);
 
         public override bool HasStickers => _document.Attributes.Any(x => x is TLDocumentAttributeHasStickers);
 

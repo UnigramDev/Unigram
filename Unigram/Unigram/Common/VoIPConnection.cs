@@ -63,8 +63,10 @@ namespace Unigram.Common
             return IsConnected;
         }
 
-        public IAsyncOperation<AppServiceResponse> SendUpdateAsync(TLUpdateBase update)
+        public IAsyncOperation<AppServiceResponse> SendUpdateAsync(TLUpdatePhoneCall update)
         {
+            Debug.WriteLine("[{0:HH:mm:ss.fff}] Received VoIP update: " + update.PhoneCall, DateTime.Now);
+
             try
             {
                 return _appConnection.SendMessageAsync(new ValueSet { { nameof(update), TLSerializationService.Current.Serialize(update) } });
@@ -148,7 +150,6 @@ namespace Unigram.Common
 
                                 await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                                 {
-                                    tuple = new TLTuple<TLPhoneCallState, TLPhoneCallBase, TLUserBase, string>(TLPhoneCallState.Ended, tupleBase.Item2, tupleBase.Item3, tupleBase.Item4);
                                     newView.SetCall(tuple);
                                     CoreApplication.GetCurrentView().CoreWindow.Close();
                                 });

@@ -155,7 +155,7 @@ namespace Unigram.Views
         {
             if (_state != tuple.Item1)
             {
-                Debug.WriteLine("State changed in app: " + tuple.Item1);
+                Debug.WriteLine("[{0:HH:mm:ss.fff}] State changed in app: " + tuple.Item1, DateTime.Now);
 
                 _state = tuple.Item1;
                 StateLabel.Content = StateToLabel(tuple.Item1);
@@ -183,7 +183,12 @@ namespace Unigram.Views
 
             if (tuple.Item3 is TLUser user)
             {
-                Image.Source = DefaultPhotoConverter.Convert(user.Photo, true) as ImageSource;
+                //try
+                //{
+                //    Image.Source = DefaultPhotoConverter.Convert(user.Photo, true) as ImageSource;
+                //}
+                //catch { }
+
                 FromLabel.Text = user.FullName;
                 TextBlockHelper.SetMarkdown(DescriptionLabel, string.Format("If these emoji are the same on **{0}**'s screen, this call is 100% secure.", user.FirstName));
             }
@@ -295,7 +300,8 @@ namespace Unigram.Views
 
         private async void Hangup_Click(object sender, RoutedEventArgs e)
         {
-            await VoIPConnection.Current.SendRequestAsync("phone.discardCall");
+            var duration = _state == TLPhoneCallState.Established ? DateTime.Now - _started : TimeSpan.Zero;
+            await VoIPConnection.Current.SendRequestAsync("phone.discardCall", TLTuple.Create(duration.TotalSeconds));
         }
 
         private void LargeEmojiLabel_Tapped(object sender, TappedRoutedEventArgs e)

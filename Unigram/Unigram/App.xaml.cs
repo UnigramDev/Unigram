@@ -343,7 +343,7 @@ namespace Unigram
             {
                 var statusBar = StatusBar.GetForCurrentView();
 
-                var bgcolor = Application.Current.Resources["SystemControlBackgroundChromeMediumBrush"] as SolidColorBrush;
+                var bgcolor = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
 
                 // Background
                 statusBar.BackgroundColor = bgcolor.Color;
@@ -360,14 +360,14 @@ namespace Unigram
         {
             try
             {
-                Window.Current.Activated -= Window_Activated;
-                Window.Current.Activated += Window_Activated;
+                //Window.Current.Activated -= Window_Activated;
+                //Window.Current.Activated += Window_Activated;
 
                 // Changes to the titlebar (colour, and such)
                 CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
 
                 var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-                var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrushBase"] as SolidColorBrush;
+                var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
                 var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
 
                 titlebar.BackgroundColor = backgroundBrush.Color;

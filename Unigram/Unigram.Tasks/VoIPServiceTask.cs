@@ -13,8 +13,11 @@ namespace Unigram.Tasks
     {
         private BackgroundTaskDeferral _deferral;
 
-        internal static VoIPServiceTask Current { get; private set; }
-        internal static AppServiceConnection Connection { get; private set; }
+        public static VoIPServiceTask Current => _current;
+        public static AppServiceConnection Connection => _connection;
+
+        internal static VoIPServiceTask _current;
+        internal static AppServiceConnection _connection;
 
         [DllImport("kernel32.dll")]
         static extern uint GetCurrentProcessId();
@@ -29,8 +32,8 @@ namespace Unigram.Tasks
 
                 var details = taskInstance.TriggerDetails as AppServiceTriggerDetails;
 
-                Connection = details.AppServiceConnection;
-                Current = this;
+                _connection = details.AppServiceConnection;
+                _current = this;
                 VoIPCallTask.Mediator.Initialize(details.AppServiceConnection);
 
                 taskInstance.Canceled += (s, e) => Close();
@@ -44,9 +47,12 @@ namespace Unigram.Tasks
 
         private void Close()
         {
-            Current = null;
-            Connection = null;
+            VoIPCallTask.Log("Releasing background task", "Releasing VoIPCallTask");
+
             VoIPCallTask.Mediator.Initialize(null as AppServiceConnection);
+
+            _current = null;
+            _connection = null;
             _deferral?.Complete();
         }
     }

@@ -36,9 +36,11 @@ namespace Unigram.Tasks
     {
         private BackgroundTaskDeferral _deferral;
 
-        internal static IBackgroundTaskInstance _instance;
-        public static VoIPCallTask Current { get; private set; }
+        public static VoIPCallTask Current => _current;
+
+        internal static VoIPCallTask _current;
         internal static VoIPCallMediator _mediator;
+
         internal static VoIPCallMediator Mediator
         {
             get
@@ -46,7 +48,9 @@ namespace Unigram.Tasks
                 if (_mediator == null)
                 {
                     VoIPCallTask.Log("Mediator doesn't exists", "Creating mediator");
+
                     _mediator = new VoIPCallMediator();
+                    _mediator.Initialize(VoIPServiceTask.Connection);
                 }
 
                 return _mediator;
@@ -59,11 +63,10 @@ namespace Unigram.Tasks
         public void Run(IBackgroundTaskInstance taskInstance)
         {
             _deferral = taskInstance.GetDeferral();
-            _instance = taskInstance;
+            _current = this;
 
             VoIPCallTask.Log("VoIPCallTask started", GetCurrentProcessId().ToString());
 
-            Current = this;
             Mediator.Initialize(_deferral);
             taskInstance.Canceled += OnCanceled;
         }
@@ -77,8 +80,9 @@ namespace Unigram.Tasks
         {
             _mediator?.Dispose();
             _mediator = null;
+            _current = null;
 
-            VoIPCallTask.Log("Releasing background task", "Releasing background task");
+            VoIPCallTask.Log("Releasing background task", "Releasing VoIPCallTask");
 
             _deferral.Complete();
         }
@@ -128,6 +132,7 @@ namespace Unigram.Tasks
         private TLPhoneCallBase _phoneCall;
         private TLPhoneCallState _state;
         private TLUserBase _user;
+        private string[] _emojis;
         private bool _outgoing;
 
         private BackgroundTaskDeferral _deferral;
@@ -145,6 +150,7 @@ namespace Unigram.Tasks
                 VoIPCallTask.Log("Mediator initialized", "Connecting app service");
 
                 _connection = connection;
+                _connection.RequestReceived -= OnRequestReceived;
                 _connection.RequestReceived += OnRequestReceived;
             }
             else
@@ -168,7 +174,7 @@ namespace Unigram.Tasks
 
             if (_phoneCall != null && _connection != null)
             {
-                await UpdateCallAsync(string.Empty);
+                await UpdateCallAsync();
             }
         }
 
@@ -228,10 +234,11 @@ namespace Unigram.Tasks
             while (_queue.Count > 0)
             {
                 var update = _queue.Dequeue();
+
+                _phoneCall = update.PhoneCall;
+
                 if (update.PhoneCall is TLPhoneCallRequested requested)
                 {
-                    _phoneCall = requested;
-
                     var req = new TLPhoneReceivedCall { Peer = new TLInputPhoneCall { Id = requested.Id, AccessHash = requested.AccessHash } };
 
                     const string caption = "phone.receivedCall";
@@ -265,6 +272,8 @@ namespace Unigram.Tasks
                 else if (update.PhoneCall is TLPhoneCallDiscarded discarded)
                 {
                     _phoneCall = discarded;
+
+                    await UpdateStateAsync(TLPhoneCallState.Ended);
 
                     if (_controller != null)
                     {
@@ -338,9 +347,7 @@ namespace Unigram.Tasks
                     var buffer = TLUtils.Combine(auth_key, g_a);
                     var sha256 = Utils.ComputeSHA256(buffer);
 
-                    var emoji = EncryptionKeyEmojifier.EmojifyForCall(sha256);
-
-                    await UpdateCallAsync(string.Join(" ", emoji));
+                    _emojis = EncryptionKeyEmojifier.EmojifyForCall(sha256);
 
                     var response = await SendRequestAsync<TLDataJSON>("phone.getCallConfig", new TLPhoneGetCallConfig());
                     if (response.IsSucceeded)
@@ -409,13 +416,13 @@ namespace Unigram.Tasks
             await UpdateStateAsync((TLPhoneCallState)newState);
         }
 
-        private async Task UpdateCallAsync(string emoji)
+        private async Task UpdateCallAsync()
         {
             if (_connection != null)
             {
                 VoIPCallTask.Log("Mediator initialized", "Informing foreground about current call");
 
-                var data = TLTuple.Create((int)_state, _phoneCall, _user, emoji);
+                var data = TLTuple.Create((int)_state, _phoneCall, _user, _emojis != null ? string.Join(" ", _emojis) : string.Empty);
                 await _connection.SendMessageAsync(new ValueSet { { "caption", "voip.callInfo" }, { "request", TLSerializationService.Current.Serialize(data) } });
             }
         }
@@ -424,10 +431,10 @@ namespace Unigram.Tasks
         {
             if (_state != state)
             {
-                Debug.WriteLine("State changed in task: " + state);
+                Debug.WriteLine("[{0:HH:mm:ss.fff}] State changed in task: " + state, DateTime.Now);
 
                 _state = state;
-                return UpdateCallAsync(string.Empty);
+                return UpdateCallAsync();
             }
 
             return Task.CompletedTask;
@@ -601,14 +608,7 @@ namespace Unigram.Tasks
                 var update = TLSerializationService.Current.Deserialize(buffer) as TLUpdatePhoneCall;
                 if (update != null)
                 {
-                    Debug.WriteLine(update.PhoneCall);
-                    _queue.Enqueue(update);
-
-                    if (_initialized)
-                    {
-                        ProcessUpdates();
-                        await UpdateCallAsync(string.Empty);
-                    }
+                    Handle(update);
                 }
             }
             else if (message.ContainsKey("caption"))
@@ -618,10 +618,16 @@ namespace Unigram.Tasks
                 {
                     if (_phoneCall != null)
                     {
-                        var req = new TLPhoneDiscardCall { Peer = _phoneCall.ToInputPhoneCall(), Reason = new TLPhoneCallDiscardReasonHangup() };
+                        var buffer = message["request"] as string;
+                        var payload = TLSerializationService.Current.Deserialize<byte[]>(buffer);
+                        var reader = new TLBinaryReader(payload);
+                        var req = new TLTuple<double>(reader);
+                        reader.Dispose();
+
+                        var req2 = new TLPhoneDiscardCall { Peer = _phoneCall.ToInputPhoneCall(), Reason = new TLPhoneCallDiscardReasonHangup(), Duration = (int)req.Item1 };
 
                         const string caption2 = "phone.discardCall";
-                        var response = await SendRequestAsync<TLUpdatesBase>(caption2, req);
+                        var response = await SendRequestAsync<TLUpdatesBase>(caption2, req2);
                         if (response.IsSucceeded)
                         {
                             if (response.Result is TLUpdates updates)
@@ -666,15 +672,15 @@ namespace Unigram.Tasks
             deferral.Complete();
         }
 
-        public async void Handle(TLUpdatePhoneCall update)
+        public void Handle(TLUpdatePhoneCall update)
         {
-            Debug.WriteLine(update.PhoneCall);
+            Debug.WriteLine("[{0:HH:mm:ss.fff}] Processing VoIP update: " + update.PhoneCall, DateTime.Now);
             _queue.Enqueue(update);
 
             if (_initialized)
             {
                 ProcessUpdates();
-                await UpdateCallAsync(string.Empty);
+                //await UpdateCallAsync(string.Empty);
             }
         }
 
@@ -739,8 +745,8 @@ namespace Unigram.Tasks
                 {
                     var update = new TLUpdatePhoneCall { PhoneCall = response.Result.PhoneCall };
 
-                    _state = TLPhoneCallState.Waiting;
                     Handle(update);
+                    await UpdateStateAsync(TLPhoneCallState.Waiting);
                 }
                 else
                 {

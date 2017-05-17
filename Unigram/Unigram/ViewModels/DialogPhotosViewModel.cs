@@ -135,17 +135,13 @@ namespace Unigram.ViewModels
             }
         }
 
-        public override ITLDialogWith From => _message.From;
+        public override ITLDialogWith From => _message.IsPost ? _message.Parent : _message.From;
 
         public override int Date => _message.Date;
 
-        public override bool IsVideo
-        {
-            get
-            {
-                return _message.IsVideo();
-            }
-        }
+        public override bool IsVideo => _message.IsVideo();
+
+        public override bool IsLoop => _message.IsGif(true);
 
         public override bool HasStickers
         {

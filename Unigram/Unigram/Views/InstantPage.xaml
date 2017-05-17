@@ -9,12 +9,18 @@
     mc:Ignorable="d">
 
     <Page.Resources>
+        <Style x:Key="AuthorDateBlockStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
         <Style x:Key="AuthorDateTextBlockStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="TextWrapping" Value="Wrap"/>
         </Style>
-        
+
         <Style x:Key="BlockPreformattedStyle" TargetType="StackPanel">
             <Setter Property="Background" Value="{ThemeResource CommandBarOverflowPresenterBackground}"/>
             <Setter Property="Padding" Value="12,8,0,8"/>
@@ -42,7 +48,6 @@
             <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
             <Setter Property="BorderThickness" Value="2,0,0,0"/>
         </Style>
-
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -52,23 +57,53 @@
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader Glyph="&#xE72D;"/>
 
-        <ScrollViewer x:Name="ScrollingHost"
-                      Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
-                      VerticalScrollBarVisibility="Auto"
-                      VerticalScrollMode="Auto"
-                      Grid.Row="1">
-            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <StackPanel x:Name="LayoutRoot" Margin="0,0,0,20"/>
-
-                <Border Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Grid.Row="1">
+        <ListView x:Name="ScrollingHost"
+                  Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+                  SelectionMode="None"
+                  Grid.Row="1">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MinHeight" Value="0"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <ContentPresenter/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" GroupPadding="0,0,0,20"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.Footer>
+                <Border Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
                     <Button Command="{x:Bind ViewModel.FeedbackCommand}" Content="Leave feedback about this preview" HorizontalContentAlignment="Center" VerticalAlignment="Center" Padding="8,6" Style="{StaticResource EmptyButtonStyle}"/>
                 </Border>
-            </Grid>
-        </ScrollViewer>
+            </ListView.Footer>
+        </ListView>
+
+        <!--<ScrollViewer x:Name="ScrollingHost"
+             Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+             VerticalScrollBarVisibility="Auto"
+             VerticalScrollMode="Auto"
+             Grid.Row="1">
+             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+             <Grid.RowDefinitions>
+             <RowDefinition/>
+             <RowDefinition Height="Auto"/>
+             </Grid.RowDefinitions>
+             <StackPanel x:Name="LayoutRoot" Margin="0,0,0,20"/>
+             
+             <Border Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Grid.Row="1">
+             <Button Command="{x:Bind ViewModel.FeedbackCommand}" Content="Leave feedback about this preview" HorizontalContentAlignment="Center" VerticalAlignment="Center" Padding="8,6" Style="{StaticResource EmptyButtonStyle}"/>
+             </Border>
+             </Grid>
+             </ScrollViewer>-->
         <controls:ScrollViewerBackground
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             ScrollingHost="{x:Bind ScrollingHost}"
