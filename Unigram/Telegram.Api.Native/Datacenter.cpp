@@ -65,7 +65,7 @@ HRESULT Datacenter::GetCurrentAddress(ConnectionType connectionType, boolean ipv
 	}
 
 	HRESULT result;
-	DatacenterEndpoint* endpoint;
+	ServerEndpoint* endpoint;
 	ReturnIfFailed(result, GetCurrentEndpoint(connectionType, ipv6, &endpoint));
 
 	return WindowsCreateString(endpoint->Address, value);
@@ -79,7 +79,7 @@ HRESULT Datacenter::GetCurrentPort(ConnectionType connectionType, boolean ipv6, 
 	}
 
 	HRESULT result;
-	DatacenterEndpoint* endpoint;
+	ServerEndpoint* endpoint;
 	ReturnIfFailed(result, GetCurrentEndpoint(connectionType, ipv6, &endpoint));
 
 	*value = endpoint->Port;
@@ -240,7 +240,7 @@ HandshakeState Datacenter::GetHandshakeState()
 	return m_handshakeState;
 }
 
-HRESULT Datacenter::AddEndpoint(std::wstring address, UINT32 port, ConnectionType connectionType, boolean ipv6)
+HRESULT Datacenter::AddEndpoint(std::wstring const& address, UINT32 port, ConnectionType connectionType, boolean ipv6)
 {
 #if _DEBUG
 	ADDRINFOW* addressInfo;
@@ -252,7 +252,7 @@ HRESULT Datacenter::AddEndpoint(std::wstring address, UINT32 port, ConnectionTyp
 	FreeAddrInfo(addressInfo);
 #endif
 
-	std::vector<DatacenterEndpoint>* endpoints;
+	std::vector<ServerEndpoint>* endpoints;
 	auto lock = LockCriticalSection();
 
 	switch (connectionType)
@@ -282,7 +282,7 @@ HRESULT Datacenter::AddEndpoint(std::wstring address, UINT32 port, ConnectionTyp
 		return E_INVALIDARG;
 	}
 
-	if (std::find_if(endpoints->begin(), endpoints->end(), [&](DatacenterEndpoint const& endpoint)
+	if (std::find_if(endpoints->begin(), endpoints->end(), [&](ServerEndpoint const& endpoint)
 	{
 		return endpoint.Address.compare(address) == 0; // && endpoint.Port == port;
 	}) != endpoints->end())
@@ -393,7 +393,7 @@ HRESULT Datacenter::SuspendConnections()
 	return S_OK;
 }
 
-HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, DatacenterEndpoint** endpoint)
+HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, ServerEndpoint** endpoint)
 {
 	if (endpoint == nullptr)
 	{
@@ -401,7 +401,7 @@ HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ip
 	}
 
 	size_t currentEndpointIndex;
-	std::vector<DatacenterEndpoint>* endpoints;
+	std::vector<ServerEndpoint>* endpoints;
 	auto lock = LockCriticalSection();
 
 	switch (connectionType)

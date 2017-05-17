@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <memory>
 #include <wrl.h>
 #include "Telegram.Api.Native.h"
 #include "TLBinaryReader.h"
@@ -20,14 +21,20 @@
 		} \
 	} \
 
+
+#define REGISTER_TLOBJECT_CONSTRUCTOR(objectTypeName) \
+	template<> \
+	Telegram::Api::Native::TL::Details::TLObjectInitializer<##objectTypeName##::Traits> TLObjectT<##objectTypeName##::Traits>::Initializer = Telegram::Api::Native::TL::Details::TLObjectInitializer<##objectTypeName##::Traits>()\
+
+
 using namespace Microsoft::WRL;
 using ABI::Telegram::Api::Native::IUserConfiguration;
 using ABI::Telegram::Api::Native::TL::ITLObject;
+using ABI::Telegram::Api::Native::TL::ITLUnparsedObject;
 using ABI::Telegram::Api::Native::TL::ITLBinaryReader;
 using ABI::Telegram::Api::Native::TL::ITLBinaryWriter;
 using ABI::Telegram::Api::Native::TL::ITLBinaryReaderEx;
 using ABI::Telegram::Api::Native::TL::ITLBinaryWriterEx;
-
 
 namespace ABI
 {
@@ -39,12 +46,6 @@ namespace ABI
 			{
 				namespace TL
 				{
-
-					MIDL_INTERFACE("6BE8E0F6-9152-4420-AEFC-7DF53FB0238E") ITLObjectWithConstructor : public IUnknown
-					{
-					public:
-						virtual HRESULT STDMETHODCALLTYPE get_Constructor(_Out_ UINT32* value) = 0;
-					};
 
 					MIDL_INTERFACE("CCCED6D5-978D-4719-81BA-A61E74EECE29") ITLObjectWithQuery : public IUnknown
 					{
@@ -59,8 +60,8 @@ namespace ABI
 }
 
 
-using ABI::Telegram::Api::Native::TL::ITLObjectWithConstructor;
 using ABI::Telegram::Api::Native::TL::ITLObjectWithQuery;
+using ABI::Telegram::Api::Native::TL::ITLObjectConstructorDelegate;
 
 namespace Telegram
 {
@@ -70,11 +71,25 @@ namespace Telegram
 		{
 			namespace TL
 			{
+				namespace Details
+				{
+
+					template<typename TLObjectTraits>
+					struct TLObjectInitializer
+					{
+						TLObjectInitializer()
+						{
+							TLObject::RegisterTLObjecConstructor<TLObjectTraits>();
+						}
+					};
+
+				}
 
 				class TLObject abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, ITLObject>
 				{
 					template<typename TLObjectTraits>
-					friend class TLObjectT;
+					friend struct Details::TLObjectInitializer;
+					friend class TLObjectSerializerStatics;
 
 				public:
 					//COM exported methods
@@ -82,15 +97,30 @@ namespace Telegram
 					IFACEMETHODIMP Write(_In_ ITLBinaryWriter* writer);
 
 					//Internal methods
-					virtual HRESULT Read(_In_ ITLBinaryReaderEx* reader) = 0;
-					virtual HRESULT Write(_In_ ITLBinaryWriterEx* writer) = 0;
+					static HRESULT GetObjectConstructor(UINT32 constructor, _Out_ ComPtr<ITLObjectConstructorDelegate>& delegate);
 
-					static HRESULT Deserialize(_In_ ITLBinaryReaderEx* reader, UINT32 constructor, _Out_ ITLObject** object);
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader)
+					{
+						return E_NOTIMPL;
+					}
+
+					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer)
+					{
+						return E_NOTIMPL;
+					}
 
 				private:
 					typedef HRESULT(*TLObjectConstructor)(_Out_ ITLObject**);
 
-					static std::unordered_map<UINT32, TLObjectConstructor> s_constructors;
+					static HRESULT RegisterTLObjecConstructor(UINT32 constructor, _In_ ITLObjectConstructorDelegate* delegate);
+					static std::unordered_map<UINT32, ComPtr<ITLObjectConstructorDelegate>>& GetObjectConstructors();
+				
+					template<typename TLObjectTraits>
+					inline static void RegisterTLObjecConstructor()
+					{
+						GetObjectConstructors()[TLObjectTraits::Constructor] = Callback<ITLObjectConstructorDelegate>(&TLObjectTraits::CreateInstance);
+					}
 				};
 
 				class TLObjectWithQuery abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLObjectWithQuery>>
@@ -107,9 +137,9 @@ namespace Telegram
 						return m_query.Get();
 					}
 
-					inline HRESULT Write(_In_ ITLBinaryWriterEx* writer)
+					inline HRESULT WriteQuery(_In_ ITLBinaryWriterEx* writer)
 					{
-						return m_query->Write(writer);
+						return writer->WriteObject(m_query.Get());
 					}
 
 				private:
@@ -117,11 +147,12 @@ namespace Telegram
 				};
 
 				template<typename TLObjectTraits>
-				class TLObjectT abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLObjectWithConstructor>, TLObject>
+				class TLObjectT abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, TLObject>
 				{
-					typedef typename TLObjectTraits Traits;
-
 				public:
+					typedef typename TLObjectTraits Traits;
+					static constexpr UINT32 Constructor = TLObjectTraits::Constructor;
+
 					//COM exported methods
 					IFACEMETHODIMP get_Constructor(_Out_ UINT32* value)
 					{
@@ -145,34 +176,25 @@ namespace Telegram
 						return S_OK;
 					}
 
-					//Internal methods
-					virtual HRESULT Read(_In_ ITLBinaryReaderEx* reader) override final
-					{
-						return ReadBody(reader);
-					}
+				private:
+					static Details::TLObjectInitializer<TLObjectTraits> Initializer;
+				};
 
-					virtual HRESULT Write(_In_ ITLBinaryWriterEx* writer) override final
-					{
-						HRESULT result;
-						ReturnIfFailed(result, writer->WriteUInt32(TLObjectTraits::Constructor));
+				class TLUnparsedObject WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLUnparsedObject, TLObject>
+				{
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLUnparsedObject, BaseTrust);
 
-						return WriteBody(writer);
-					}
+				public:
+					TLUnparsedObject(UINT32 constructor, _In_ ITLBinaryReader* reader);
 
-				protected:
-					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) = 0;
-					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) = 0;
+					//COM exported methods
+					STDMETHODIMP get_Constructor(_Out_ UINT32* value);
+					STDMETHODIMP get_Reader(_Out_ ITLBinaryReader** value);
+					STDMETHODIMP get_IsLayerNeeded(_Out_ boolean* value);
 
 				private:
-					struct Initializer
-					{
-						Initializer()
-						{
-							TLObject::s_objectConstructors[TLObjectTraits::Constructor] = &TLObjectTraits::CreateInstance;
-						}
-					};
-
-					static Initializer s_initializer;
+					UINT32 m_constructor;
+					ComPtr<ITLBinaryReader> m_reader;
 				};
 
 			}

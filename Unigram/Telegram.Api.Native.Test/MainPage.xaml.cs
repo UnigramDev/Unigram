@@ -27,7 +27,6 @@ namespace Telegram.Api.Native.Test
         {
             this.InitializeComponent();
 
-
             var connectionManager = ConnectionManager.Instance;
             connectionManager.CurrentNetworkTypeChanged += Instance_CurrentNetworkTypeChanged;
             connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
@@ -39,14 +38,18 @@ namespace Telegram.Api.Native.Test
             var connection = connectionManager.BoomBaby(new UserConfiguration(), out @object);
             var datacenter = connection.Datacenter;
 
-            var xx = new TLError(0, "Succhiapeni");
+            var xx = new TLTestObject();
             var yy = @object as TLError;
 
-            var sizeCalculator = TLObjectSerializer.GetObjectSize(@object);
-            var buffer = TLObjectSerializer.Serialize(@object);
+            TLObjectSerializer.RegisterObjectConstructor(0, () => new TLTestObject());
+
+            var sizeCalculator = TLObjectSerializer.GetObjectSize(xx);
+            var buffer = TLObjectSerializer.Serialize(xx);
             var reader = TLObjectSerializer.Deserialize(buffer);
 
-            var xxx = new IndexOutOfRangeException();
+            reader = null;
+
+            GC.Collect();
         }
 
         private void ConnectionManager_ConnectionStateChanged(ConnectionManager sender, object args)
@@ -55,7 +58,6 @@ namespace Telegram.Api.Native.Test
 
         private void ConnectionManager_UnparsedMessageReceived(ConnectionManager sender, TLUnparsedMessage args)
         {
-
         }
 
         private void Instance_CurrentNetworkTypeChanged(ConnectionManager sender, object e)

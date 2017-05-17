@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Native.TL;
 using Windows.ApplicationModel;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.System.Profile;
@@ -47,6 +49,31 @@ namespace Telegram.Api.Native.Test
             }
         }
         #endregion
+
+    }
+
+
+    public class TLTestObject : ITLObject
+    {
+        public string TestString
+        {
+            get;
+            set;
+        } = "Bello di padella";
+
+        public void Read(TLBinaryReader reader)
+        {
+            TestString = reader.ReadString();
+        }
+
+        public void Write(TLBinaryWriter writer)
+        {
+            writer.WriteString(TestString);
+        }
+
+        public bool IsLayerNeeded => false;
+
+        public uint Constructor => 0;
     }
 
 }

@@ -26,7 +26,8 @@ ConnectionManager::ConnectionManager() :
 	m_isIpv6Enabled(false),
 	m_currentDatacenterId(0),
 	m_timeDelta(0),
-	m_lastOutgoingMessageId(0)
+	m_lastOutgoingMessageId(0),
+	m_userId(0)
 {
 }
 
@@ -116,7 +117,7 @@ HRESULT ConnectionManager::remove_ConnectionStateChanged(EventRegistrationToken 
 	return m_connectionStateChangedEventSource.Remove(token);
 }
 
-HRESULT ConnectionManager::add_UnparsedMessageReceived(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTL__CTLUnparsedMessage* handler, EventRegistrationToken* token)
+HRESULT ConnectionManager::add_UnparsedMessageReceived(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage* handler, EventRegistrationToken* token)
 {
 	return m_unparsedMessageReceivedEventSource.Add(handler, token);
 }
@@ -210,6 +211,31 @@ HRESULT ConnectionManager::put_UserConfiguration(IUserConfiguration* value)
 			I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle UserConfiguration changes");
 		}
 	}
+	 
+	return S_OK;
+}
+
+HRESULT ConnectionManager::get_UserId(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_userId;
+	return S_OK;
+}
+
+HRESULT ConnectionManager::put_UserId(INT32 value)
+{
+	auto lock = LockCriticalSection();
+
+	if (value != m_userId)
+	{
+		m_userId = value;
+
+		I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle UserId changes");
+	}
 
 	return S_OK;
 }
@@ -231,7 +257,7 @@ HRESULT ConnectionManager::SendRequest(ITLObject* object, ISendRequestCompletedC
 
 	HRESULT result;
 	ComPtr<Request> request;
-	ReturnIfFailed(result, CreateRequest(object, onCompleted, onQuickAckReceived, datacenterId, connectionType, requestToken, request));
+	ReturnIfFailed(result, CreateRequest(object, onCompleted, onQuickAckReceived, datacenterId, connectionType, requestToken, RequestFlag::None, request));
 
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
 
@@ -333,7 +359,7 @@ HRESULT ConnectionManager::UpdateNetworkStatus(boolean raiseEvent)
 }
 
 HRESULT ConnectionManager::CreateRequest(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived,
-	UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, ComPtr<Request>& request)
+	UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, RequestFlag flags, ComPtr<Request>& request)
 {
 	HRESULT result;
 	boolean isLayerNeeded;
@@ -345,13 +371,13 @@ HRESULT ConnectionManager::CreateRequest(ITLObject* object, ISendRequestComplete
 		ReturnIfFailed(result, MakeAndInitialize<TLInvokeWithLayer>(&invokeWithLayer, object));
 
 		ComPtr<TLInitConnection> initConnectionObject;
-		ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, nullptr, invokeWithLayer.Get()));
+		ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, m_userConfiguration.Get(), invokeWithLayer.Get()));
 
-		request = Make<Request>(initConnectionObject.Get(), requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived);
+		request = Make<Request>(initConnectionObject.Get(), requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
 	}
 	else
 	{
-		request = Make<Request>(object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived);
+		request = Make<Request>(object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
 	}
 
 	return S_OK;
@@ -443,9 +469,11 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 	ComPtr<TLError> errorObject;
 	ReturnIfFailed(result, MakeAndInitialize<TLError>(&errorObject, 0, L"Ciao bellezza"));
 
-	ComPtr<TLInitConnection> initConnectionObject;
+	/*ComPtr<TLInitConnection> initConnectionObject;
 	ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, userConfiguration, errorObject.Get()));
-	ReturnIfFailed(result, initConnectionObject->get_Query(object));
+	ReturnIfFailed(result, initConnectionObject->get_Query(object));*/
+
+	*object = errorObject.Detach();
 
 	auto datacenter = Make<Datacenter>();
 	ReturnIfFailed(result, datacenter->AddEndpoint(L"192.168.1.1", 80, ConnectionType::Generic, false));

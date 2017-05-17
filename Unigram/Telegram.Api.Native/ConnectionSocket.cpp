@@ -32,7 +32,7 @@ ConnectionSocket::~ConnectionSocket()
 	CloseSocket(NO_ERROR, SOCKET_CLOSE_JOINTHREAD);
 }
 
-HRESULT ConnectionSocket::ConnectSocket(std::wstring address, UINT16 port, boolean ipv6)
+HRESULT ConnectionSocket::ConnectSocket(std::wstring const& address, UINT16 port, boolean ipv6)
 {
 	if (m_socket != INVALID_SOCKET)
 	{

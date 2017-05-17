@@ -23,7 +23,7 @@ namespace ABI
 					MIDL_INTERFACE("8A2AC333-54FD-4AF4-B7F3-9A049A3E73E8") ITLBinaryWriterEx : public ITLBinaryWriter
 					{
 					public:
-						virtual HRESULT STDMETHODCALLTYPE WriteWString(_In_ std::wstring string) = 0;
+						virtual HRESULT STDMETHODCALLTYPE WriteWString(_In_ std::wstring const& string) = 0;
 						virtual HRESULT STDMETHODCALLTYPE WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length) = 0;
 						virtual void STDMETHODCALLTYPE Skip(UINT32 length) = 0;
 						virtual void STDMETHODCALLTYPE Reset() = 0;
@@ -71,7 +71,8 @@ namespace Telegram
 					IFACEMETHODIMP WriteByteArray(UINT32 __valueSize, _In_reads_(__valueSize) BYTE* value);
 					IFACEMETHODIMP WriteDouble(double value);
 					IFACEMETHODIMP WriteFloat(float value);
-					IFACEMETHODIMP WriteWString(_In_ std::wstring string);
+					IFACEMETHODIMP WriteObject(_In_ ITLObject* value);
+					IFACEMETHODIMP WriteWString(_In_ std::wstring const& string);
 					IFACEMETHODIMP WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length);
 					IFACEMETHODIMP_(void) Skip(UINT32 length);
 					IFACEMETHODIMP_(void) Reset();
@@ -109,7 +110,8 @@ namespace Telegram
 					IFACEMETHODIMP WriteByteArray(UINT32 __valueSize, _In_reads_(__valueSize) BYTE* value);
 					IFACEMETHODIMP WriteDouble(double value);
 					IFACEMETHODIMP WriteFloat(float value);
-					IFACEMETHODIMP WriteWString(_In_ std::wstring string);
+					IFACEMETHODIMP WriteObject(_In_ ITLObject* value);
+					IFACEMETHODIMP WriteWString(_In_ std::wstring const& string);
 					IFACEMETHODIMP WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length);
 					IFACEMETHODIMP_(void) Reset();
 					IFACEMETHODIMP_(void) Skip(UINT32 length);

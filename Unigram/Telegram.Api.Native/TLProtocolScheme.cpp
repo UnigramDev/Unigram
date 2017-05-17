@@ -7,6 +7,11 @@ using namespace Telegram::Api::Native::TL;
 
 ActivatableClassWithFactory(TLError, TLErrorFactory);
 
+REGISTER_TLOBJECT_CONSTRUCTOR(TLError);
+REGISTER_TLOBJECT_CONSTRUCTOR(TLFutureSalt);
+REGISTER_TLOBJECT_CONSTRUCTOR(TLInvokeWithLayer);
+
+
 HRESULT TLError::RuntimeClassInitialize(INT32 code, HSTRING text)
 {
 	m_code = code;
@@ -46,14 +51,30 @@ HRESULT TLError::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
+TLFutureSalt::TLFutureSalt() :
+	m_validSince(0),
+	m_validUntil(0),
+	m_salt(0)
+{
+}
+
+TLFutureSalt::~TLFutureSalt()
+{
+}
+
+HRESULT TLFutureSalt::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt32(&m_validSince));
+	ReturnIfFailed(result, reader->ReadInt32(&m_validUntil));
+
+	return reader->ReadInt64(&m_salt);
+}
+
+
 HRESULT TLInvokeWithLayer::RuntimeClassInitialize(ITLObject* query)
 {
 	return TLObjectWithQuery::RuntimeClassInitialize(query);
-}
-
-HRESULT TLInvokeWithLayer::ReadBody(ITLBinaryReaderEx* reader)
-{
-	return E_NOTIMPL;
 }
 
 HRESULT TLInvokeWithLayer::WriteBody(ITLBinaryWriterEx* writer)
@@ -61,7 +82,7 @@ HRESULT TLInvokeWithLayer::WriteBody(ITLBinaryWriterEx* writer)
 	HRESULT result;
 	ReturnIfFailed(result, writer->WriteInt32(TELEGRAM_API_NATIVE_LAYER));
 
-	return TLObjectWithQuery::Write(writer);
+	return TLObjectWithQuery::WriteQuery(writer);
 }
 
 
@@ -74,11 +95,6 @@ HRESULT TLInitConnection::RuntimeClassInitialize(IUserConfiguration* userConfigu
 
 	m_userConfiguration = userConfiguration;
 	return TLObjectWithQuery::RuntimeClassInitialize(query);
-}
-
-HRESULT TLInitConnection::ReadBody(ITLBinaryReaderEx* reader)
-{
-	return E_NOTIMPL;
 }
 
 HRESULT TLInitConnection::WriteBody(ITLBinaryWriterEx* writer)
@@ -102,7 +118,7 @@ HRESULT TLInitConnection::WriteBody(ITLBinaryWriterEx* writer)
 	ReturnIfFailed(result, m_userConfiguration->get_Language(&language));
 	ReturnIfFailed(result, writer->WriteString(language));
 
-	return TLObjectWithQuery::Write(writer);
+	return TLObjectWithQuery::WriteQuery(writer);
 }
 
 

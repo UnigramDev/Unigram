@@ -7,6 +7,7 @@
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 using ABI::Telegram::Api::Native::TL::ITLBinaryReader;
+using ABI::Telegram::Api::Native::TL::ITLObject;
 
 namespace ABI
 {
@@ -71,18 +72,22 @@ namespace Telegram
 					IFACEMETHODIMP ReadByteArray(_Out_ UINT32* __valueSize, _Out_writes_(*__valueSize) BYTE** value);
 					IFACEMETHODIMP ReadDouble(_Out_ double* value);
 					IFACEMETHODIMP ReadFloat(_Out_ float* value);
+					IFACEMETHODIMP ReadObject(_Out_ ITLObject** value);
 					IFACEMETHODIMP ReadBigEndianInt32(_Out_ INT32* value);
 					IFACEMETHODIMP ReadWString(_Out_ std::wstring& string);
 					IFACEMETHODIMP ReadBuffer(_Out_writes_(length) BYTE* buffer, UINT32 length);
 					IFACEMETHODIMP_(void) Skip(UINT32 length);
 					IFACEMETHODIMP_(void) Reset();
 
+					//Internal methods
+					HRESULT AcquireBuffer();
 				private:
 					HRESULT ReadBuffer(_Out_ BYTE const** buffer, _Out_ UINT32* length);
-
+	
 					BYTE const* m_buffer;
 					UINT32 m_position;
 					UINT32 m_length;
+					boolean m_bufferAcquired;
 				};
 
 			}

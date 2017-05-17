@@ -5,6 +5,7 @@
 #include <wrl.h>
 #include <Windows.Networking.Connectivity.h>
 #include "MultiThreadObject.h"
+#include "Request.h"
 #include "Telegram.Api.Native.h"
 
 #define THREAD_COUNT 1
@@ -29,6 +30,7 @@ using ABI::Telegram::Api::Native::ISendRequestCompletedCallback;
 using ABI::Telegram::Api::Native::IRequestQuickAckReceivedCallback;
 using ABI::Telegram::Api::Native::IDatacenter;
 using ABI::Telegram::Api::Native::IConnection;
+using ABI::Telegram::Api::Native::RequestFlag;
 using ABI::Telegram::Api::Native::TL::ITLObject;
 
 namespace Telegram
@@ -39,7 +41,6 @@ namespace Telegram
 		{
 
 			class Datacenter;
-			class Request;
 
 			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager>, public MultiThreadObject
 			{
@@ -57,7 +58,7 @@ namespace Telegram
 				IFACEMETHODIMP remove_CurrentNetworkTypeChanged(EventRegistrationToken token);
 				IFACEMETHODIMP add_ConnectionStateChanged(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
 				IFACEMETHODIMP remove_ConnectionStateChanged(EventRegistrationToken token);
-				IFACEMETHODIMP add_UnparsedMessageReceived(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTL__CTLUnparsedMessage* handler, _Out_ EventRegistrationToken* token);
+				IFACEMETHODIMP add_UnparsedMessageReceived(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage* handler, _Out_ EventRegistrationToken* token);
 				IFACEMETHODIMP remove_UnparsedMessageReceived(EventRegistrationToken token);
 				IFACEMETHODIMP get_ConnectionState(_Out_ ConnectionState* value);
 				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
@@ -65,6 +66,8 @@ namespace Telegram
 				IFACEMETHODIMP get_IsNetworkAvailable(_Out_ boolean* value);
 				IFACEMETHODIMP get_UserConfiguration(_Out_ IUserConfiguration** value);
 				IFACEMETHODIMP put_UserConfiguration(_In_ IUserConfiguration* value);
+				IFACEMETHODIMP get_UserId(_Out_ INT32* value);
+				IFACEMETHODIMP put_UserId(INT32 value);
 				IFACEMETHODIMP SendRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
 					UINT32 datacenterId, ConnectionType connectionType, boolean immediate, INT32 requestToken);
 				IFACEMETHODIMP CancelRequest(INT32 requestToken, boolean notifyServer);
@@ -82,7 +85,7 @@ namespace Telegram
 			private:
 				HRESULT UpdateNetworkStatus(boolean raiseEvent);
 				HRESULT CreateRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
-					UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, _Out_ ComPtr<Request>& request);
+					UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, RequestFlag flags, _Out_ ComPtr<Request>& request);
 				HRESULT OnNetworkStatusChanged(_In_ IInspectable* sender);
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionDataReceived(_In_ Connection* connection);
@@ -118,11 +121,12 @@ namespace Telegram
 				std::queue<ComPtr<Request>> m_requestsQueue;
 				INT32 m_timeDelta;
 				INT64 m_lastOutgoingMessageId;
+				INT32 m_userId;
 				ComPtr<IUserConfiguration> m_userConfiguration;
 
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_currentNetworkTypeChangedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_connectionStateChangedEventSource;
-				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTL__CTLUnparsedMessage> m_unparsedMessageReceivedEventSource;
+				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage> m_unparsedMessageReceivedEventSource;
 
 				static ComPtr<ConnectionManager> s_instance;
 			};

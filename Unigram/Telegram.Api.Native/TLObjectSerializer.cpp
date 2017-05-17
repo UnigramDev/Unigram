@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <memory>
 #include "TLObjectSerializer.h"
+#include "TLObject.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native::TL;
@@ -26,9 +27,8 @@ HRESULT TLObjectSerializerStatics::Serialize(ITLObject* object, UINT32* __valueS
 	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
 
 	auto objectBuffer = reinterpret_cast<BYTE*>(CoTaskMemAlloc(objectSize));
-
-	ComPtr<ITLBinaryWriterEx> binaryWriter = Make<TLBinaryWriter>(objectBuffer, objectSize);
-	if (FAILED(result = object->Write(binaryWriter.Get())))
+	auto binaryWriter = Make<TLBinaryWriter>(objectBuffer, objectSize);
+	if (FAILED(result = binaryWriter->WriteObject(object)))
 	{
 		CoTaskMemFree(objectBuffer);
 		return result;
@@ -39,7 +39,13 @@ HRESULT TLObjectSerializerStatics::Serialize(ITLObject* object, UINT32* __valueS
 	return S_OK;
 }
 
-HRESULT TLObjectSerializerStatics::Deserialize(UINT32 __bufferSize, BYTE* buffer, ITLBinaryReader** value)
+HRESULT TLObjectSerializerStatics::Deserialize(UINT32 __bufferSize, BYTE* buffer, ITLObject** value)
+{
+	auto binaryReader = Make<TLBinaryReader>(buffer, __bufferSize);
+	return binaryReader->ReadObject(value);
+}
+
+HRESULT TLObjectSerializerStatics::Deserialize2(UINT32 __bufferSize, BYTE* buffer, ITLBinaryReader** value)
 {
 	if (buffer == nullptr)
 	{
@@ -52,7 +58,9 @@ HRESULT TLObjectSerializerStatics::Deserialize(UINT32 __bufferSize, BYTE* buffer
 	}
 
 	auto binaryWriter = Make<TLBinaryReader>(buffer, __bufferSize);
-	return binaryWriter.CopyTo(value);
+
+	*value = static_cast<ITLBinaryReaderEx*>(binaryWriter.Detach());
+	return S_OK;
 }
 
 HRESULT TLObjectSerializerStatics::GetObjectSize(ITLObject* object, UINT32* value)
@@ -68,4 +76,14 @@ HRESULT TLObjectSerializerStatics::GetObjectSize(ITLObject* object, UINT32* valu
 	}
 
 	return TLObjectSizeCalculator::GetSize(object, value);
+}
+
+HRESULT TLObjectSerializerStatics::RegisterObjectConstructor(UINT32 constructor, ITLObjectConstructorDelegate* constructorDelegate)
+{
+	if (constructorDelegate == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	return TLObject::RegisterTLObjecConstructor(constructor, constructorDelegate);
 }

@@ -6,7 +6,7 @@ using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
 
 
-TLUnparsedMessage::TLUnparsedMessage(INT64 messageId, ConnectionType connectionType, TLBinaryReader* reader) :
+TLUnparsedMessage::TLUnparsedMessage(INT64 messageId, ConnectionType connectionType, ITLBinaryReader* reader) :
 	m_messageId(messageId),
 	m_connectionType(connectionType),
 	m_reader(reader)

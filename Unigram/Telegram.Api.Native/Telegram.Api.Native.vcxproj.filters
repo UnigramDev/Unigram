@@ -23,9 +23,6 @@
     <ClCompile Include="ConnectionCryptograpy.cpp" />
     <ClCompile Include="Request.cpp" />
     <ClCompile Include="NetworkExtensions.cpp" />
-    <ClCompile Include="TLUnparsedMessage.cpp">
-      <Filter>TLProtocolScheme</Filter>
-    </ClCompile>
     <ClCompile Include="TLBinaryReader.cpp">
       <Filter>TLProtocolScheme</Filter>
     </ClCompile>
@@ -39,7 +36,10 @@
       <Filter>TLProtocolScheme</Filter>
     </ClCompile>
     <ClCompile Include="DefaultUserConfiguration.cpp" />
-    <ClCompile Include="TLObjectSerializer.cpp" />
+    <ClCompile Include="TLObjectSerializer.cpp">
+      <Filter>TLProtocolScheme</Filter>
+    </ClCompile>
+    <ClCompile Include="TLUnparsedMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -63,9 +63,6 @@
     <ClInclude Include="TLBinaryWriter.h">
       <Filter>TLProtocolScheme</Filter>
     </ClInclude>
-    <ClInclude Include="TLUnparsedMessage.h">
-      <Filter>TLProtocolScheme</Filter>
-    </ClInclude>
     <ClInclude Include="TLObject.h">
       <Filter>TLProtocolScheme</Filter>
     </ClInclude>
@@ -73,7 +70,10 @@
       <Filter>TLProtocolScheme</Filter>
     </ClInclude>
     <ClInclude Include="DefaultUserConfiguration.h" />
-    <ClInclude Include="TLObjectSerializer.h" />
+    <ClInclude Include="TLObjectSerializer.h">
+      <Filter>TLProtocolScheme</Filter>
+    </ClInclude>
+    <ClInclude Include="TLUnparsedMessage.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

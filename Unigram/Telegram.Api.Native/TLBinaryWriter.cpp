@@ -162,7 +162,24 @@ HRESULT TLBinaryWriter::WriteFloat(float value)
 	return WriteInt32(*reinterpret_cast<INT32*>(&value));
 }
 
-HRESULT TLBinaryWriter::WriteWString(std::wstring string)
+HRESULT TLBinaryWriter::WriteObject(ITLObject* value)
+{
+	if (value == nullptr)
+	{
+		return WriteUInt32(0x56730BCC);
+	}
+	else
+	{
+		HRESULT result;
+		UINT32 constructor;
+		ReturnIfFailed(result, value->get_Constructor(&constructor));
+		ReturnIfFailed(result, WriteUInt32(constructor));
+
+		return value->Write(static_cast<ITLBinaryWriterEx*>(this));
+	}
+}
+
+HRESULT TLBinaryWriter::WriteWString(std::wstring const& string)
 {
 	return WriteString(string.data(), static_cast<UINT32>(string.size()));
 }
@@ -365,7 +382,21 @@ HRESULT TLObjectSizeCalculator::WriteFloat(float value)
 	return S_OK;
 }
 
-HRESULT TLObjectSizeCalculator::WriteWString(std::wstring string)
+HRESULT TLObjectSizeCalculator::WriteObject(ITLObject* value)
+{
+	if (value == nullptr)
+	{
+		m_position += sizeof(UINT32);
+		return S_OK;
+	}
+	else
+	{
+		m_position += sizeof(UINT32);
+		return value->Write(static_cast<ITLBinaryWriterEx*>(this));
+	}
+}
+
+HRESULT TLObjectSizeCalculator::WriteWString(std::wstring const& string)
 {
 	auto mbLength = WideCharToMultiByte(CP_UTF8, 0, string.data(), static_cast<UINT32>(string.size()), nullptr, 0, nullptr, nullptr);
 	return WriteBuffer(nullptr, mbLength);
@@ -420,7 +451,7 @@ HRESULT TLObjectSizeCalculator::GetSize(ITLObject* object, UINT32* value)
 	}
 
 	HRESULT result;
-	ReturnIfFailed(result, object->Write(s_instance.Get()));
+	ReturnIfFailed(result, s_instance->WriteObject(object));
 
 	*value = max(s_instance->m_position, s_instance->m_length);
 	return S_OK;
