@@ -53,6 +53,7 @@ namespace Unigram.Common
 
         public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
+            System.Diagnostics.Debug.WriteLine("LoadMoreItemsAsync called");
             //var dispatcher = Window.Current.Dispatcher;
 
             //return Task.Run(async () =>
@@ -108,10 +109,14 @@ namespace Unigram.Common
 
         protected virtual void Merge(IList<T> result)
         {
+            System.Diagnostics.Debug.WriteLine("This count: " + this.Count + ", result count: " + result.Count);
+            this.AddRange(result);
+            /*this.AddRange(result.Except(this));
             foreach (T item in result)
-            {
+            {   
                 this.Add(item);
             }
+            System.Diagnostics.Debug.WriteLine("This count: " + this.Count + ", result count: " + result.Count);*/
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;

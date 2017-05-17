@@ -986,8 +986,10 @@ namespace Unigram.Views
 
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
     {
+        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
         public StorageFileQueryResult Query { get; private set; }
         public uint StartIndex { get; private set; }
+        private readonly HashSet<string> FileIds = new HashSet<string>();
 
         public MediaLibraryCollection()
         {
@@ -1001,23 +1003,59 @@ namespace Unigram.Views
             StartIndex = 0;
         }
 
-        private void OnContentsChanged(IStorageQueryResultBase sender, object args)
+        private async void OnContentsChanged(IStorageQueryResultBase sender, object args)
         {
+            var items = new List<StorageMedia>();
+            var count = await sender.GetItemCountAsync();
+            var result = await Query.GetFilesAsync(0, count);
+            //System.Diagnostics.Debug.WriteLine("received " + result.Count + " items");
+            foreach (var file in result)
+            {
+                _lock.EnterReadLock();
+                try
+                {
+                    if (FileIds.Contains(file.FolderRelativeId))
+                        continue;
+                }
+                finally
+                {
+                    if (_lock.IsReadLockHeld)
+                        _lock.ExitReadLock();
+                }
+                StorageMedia cvt;
+                if (Path.GetExtension(file.Name).Equals(".mp4"))
+                    cvt = new StorageVideo(file);
+                else
+                    cvt = new StoragePhoto(file);
+                items.Add(cvt);
+                _lock.EnterWriteLock();
+                try
+                {
+                    FileIds.Add(file.FolderRelativeId);
+                }
+                finally
+                {
+                    if (_lock.IsWriteLockHeld) _lock.ExitWriteLock();
+                }
+            }
+            items.Reverse();
+            //System.Diagnostics.Debug.WriteLine("inserted " + items.Count + " items");
             Execute.BeginOnUIThread(() =>
             {
-                StartIndex = 0;
-                Clear();
+                foreach (var f in items)
+                {
+                    this.Insert(0, f);
+                    StartIndex += (uint)items.Count;
+                }
             });
+
         }
 
         public override async Task<IList<StorageMedia>> LoadDataAsync()
         {
             var items = new List<StorageMedia>();
-            uint resultCount = 0;
             var result = await Query.GetFilesAsync(StartIndex, 10);
             StartIndex += (uint)result.Count;
-
-            resultCount = (uint)result.Count;
 
             foreach (var file in result)
             {
@@ -1028,6 +1066,16 @@ namespace Unigram.Views
                 else
                 {
                     items.Add(new StoragePhoto(file));
+                }
+
+                _lock.EnterWriteLock();
+                try
+                {
+                    FileIds.Add(file.FolderRelativeId);
+                }
+                finally
+                {
+                    if (_lock.IsWriteLockHeld) _lock.ExitWriteLock();
                 }
             }
 
