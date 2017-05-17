@@ -227,7 +227,7 @@
                     <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
 
-                <RichTextBlockOverflow x:Name="OverflowArea" MaxLines="3" TextTrimming="CharacterEllipsis" Grid.ColumnSpan="2" Grid.Row="1"/>
+                <RichTextBlockOverflow x:Name="OverflowArea" MaxLines="3" Grid.ColumnSpan="2" Grid.Row="1"/>
             </Grid>
 
             <Button Click="InstantView_Click" Style="{StaticResource InstantViewButtonStyle}" Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}"/>

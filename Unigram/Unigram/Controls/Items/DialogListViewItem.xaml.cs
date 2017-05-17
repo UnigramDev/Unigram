@@ -472,6 +472,15 @@ namespace Unigram.Controls.Items
                 }
             }
         }
+
+        private void ToolTip_Opened(object sender, RoutedEventArgs e)
+        {
+            var tooltip = sender as ToolTip;
+            if (tooltip != null)
+            {
+                tooltip.Content = BriefInfo.Text;
+            }
+        }
     }
 
     public class HackUserControl : UserControl

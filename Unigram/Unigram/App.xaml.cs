@@ -284,9 +284,9 @@ namespace Unigram
 
             await Toast.RegisterBackgroundTasks();
 
-            BadgeUpdateManager.CreateBadgeUpdaterForApplication().Clear();
-            TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-            ToastNotificationManager.History.Clear();
+            BadgeUpdateManager.CreateBadgeUpdaterForApplication("App").Clear();
+            TileUpdateManager.CreateTileUpdaterForApplication("App").Clear();
+            ToastNotificationManager.History.Clear("App");
 
 #if !DEBUG && !PREVIEW
             Execute.BeginOnThreadPool(async () =>
