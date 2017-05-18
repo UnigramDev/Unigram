@@ -95,6 +95,11 @@ namespace Unigram.ViewModels
                         currentTime = time;
                     }
 
+                    if (currentMessages.Count > 0)
+                    {
+                        groups.Add(new TLCallGroup(currentMessages, currentPeer, currentFailed));
+                    }
+
                     return groups;
                 }
 
