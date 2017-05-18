@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0622 */
 /* at Tue Jan 19 04:14:07 2038
  */
-/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-b5d87299:
+/* Compiler settings for C:\Users\Lorenzo\AppData\Local\Temp\Telegram.Api.Native.idl-955c1e9b:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0622 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -406,6 +406,7 @@ namespace ABI {
 
 /* header files for imported files */
 #include "Windows.Foundation.h"
+#include "Windows.Storage.Streams.h"
 
 #ifdef __cplusplus
 extern "C"{
@@ -459,18 +460,18 @@ interface IInspectable;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0000_v0_0_c_ifspec;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0000_v0_0_s_ifspec;
 
-/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0328 */
+/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4655 */
 
 
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0328 */
+/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4655 */
 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0328_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0328_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4655_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4655_v0_0_s_ifspec;
 
 /* interface __MIDL_itf_Telegram2EApi2ENative_0000_0001 */
 /* [local] */ 
@@ -529,18 +530,18 @@ interface ITLUnparsedMessage;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0001_v0_0_c_ifspec;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0001_v0_0_s_ifspec;
 
-/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0329 */
+/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4656 */
 
 
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0329 */
+/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4656 */
 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0329_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0329_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4656_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4656_v0_0_s_ifspec;
 
 /* interface __MIDL_itf_Telegram2EApi2ENative_0000_0002 */
 /* [local] */ 
@@ -1708,18 +1709,11 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerSt
                         public:
                             virtual HRESULT STDMETHODCALLTYPE Serialize( 
                                 /* [in] */ ABI::Telegram::Api::Native::TL::ITLObject *object,
-                                /* [out] */ UINT32 *__valueSize,
-                                /* [out][retval][size_is][size_is] */ BYTE **value) = 0;
+                                /* [out][retval] */ ABI::Windows::Storage::Streams::IBuffer **value) = 0;
                             
                             virtual HRESULT STDMETHODCALLTYPE Deserialize( 
-                                /* [in] */ UINT32 __bufferSize,
-                                /* [in][size_is] */ BYTE *buffer,
+                                /* [in] */ ABI::Windows::Storage::Streams::IBuffer *buffer,
                                 /* [out][retval] */ ABI::Telegram::Api::Native::TL::ITLObject **value) = 0;
-                            
-                            virtual HRESULT STDMETHODCALLTYPE Deserialize2( 
-                                /* [in] */ UINT32 __bufferSize,
-                                /* [in][size_is] */ BYTE *buffer,
-                                /* [out][retval] */ ABI::Telegram::Api::Native::TL::ITLBinaryReader **value) = 0;
                             
                             virtual HRESULT STDMETHODCALLTYPE GetObjectSize( 
                                 /* [in] */ ABI::Telegram::Api::Native::TL::ITLObject *object,
@@ -1775,20 +1769,12 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerSt
         HRESULT ( STDMETHODCALLTYPE *Serialize )( 
             __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics * This,
             /* [in] */ __x_ABI_CTelegram_CApi_CNative_CTL_CITLObject *object,
-            /* [out] */ UINT32 *__valueSize,
-            /* [out][retval][size_is][size_is] */ BYTE **value);
+            /* [out][retval] */ __x_ABI_CWindows_CStorage_CStreams_CIBuffer **value);
         
         HRESULT ( STDMETHODCALLTYPE *Deserialize )( 
             __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics * This,
-            /* [in] */ UINT32 __bufferSize,
-            /* [in][size_is] */ BYTE *buffer,
+            /* [in] */ __x_ABI_CWindows_CStorage_CStreams_CIBuffer *buffer,
             /* [out][retval] */ __x_ABI_CTelegram_CApi_CNative_CTL_CITLObject **value);
-        
-        HRESULT ( STDMETHODCALLTYPE *Deserialize2 )( 
-            __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics * This,
-            /* [in] */ UINT32 __bufferSize,
-            /* [in][size_is] */ BYTE *buffer,
-            /* [out][retval] */ __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader **value);
         
         HRESULT ( STDMETHODCALLTYPE *GetObjectSize )( 
             __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics * This,
@@ -1833,14 +1819,11 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerSt
     ( (This)->lpVtbl -> GetTrustLevel(This,trustLevel) ) 
 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_Serialize(This,object,__valueSize,value)	\
-    ( (This)->lpVtbl -> Serialize(This,object,__valueSize,value) ) 
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_Serialize(This,object,value)	\
+    ( (This)->lpVtbl -> Serialize(This,object,value) ) 
 
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_Deserialize(This,__bufferSize,buffer,value)	\
-    ( (This)->lpVtbl -> Deserialize(This,__bufferSize,buffer,value) ) 
-
-#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_Deserialize2(This,__bufferSize,buffer,value)	\
-    ( (This)->lpVtbl -> Deserialize2(This,__bufferSize,buffer,value) ) 
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_Deserialize(This,buffer,value)	\
+    ( (This)->lpVtbl -> Deserialize(This,buffer,value) ) 
 
 #define __x_ABI_CTelegram_CApi_CNative_CTL_CITLObjectSerializerStatics_GetObjectSize(This,object,value)	\
     ( (This)->lpVtbl -> GetObjectSize(This,object,value) ) 
@@ -3540,18 +3523,18 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIConnectionManagerStatics
 #endif 	/* ____x_ABI_CTelegram_CApi_CNative_CIConnectionManagerStatics_INTERFACE_DEFINED__ */
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0330 */
+/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4657 */
 
 
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0330 */
+/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4657 */
 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0330_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0330_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4657_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4657_v0_0_s_ifspec;
 
 /* interface __MIDL_itf_Telegram2EApi2ENative_0000_0018 */
 /* [local] */ 
@@ -3671,18 +3654,18 @@ EXTERN_C const IID IID___FITypedEventHandler_2_Telegram__CApi__CNative__CConnect
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0019_v0_0_c_ifspec;
 extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative_0000_0019_v0_0_s_ifspec;
 
-/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0331 */
+/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4658 */
 
 
 
 
-/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0331 */
+/* interface __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4658 */
 
 
 
 
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0331_v0_0_c_ifspec;
-extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_0331_v0_0_s_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4658_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_Telegram2EApi2ENative2Eidl_0000_4658_v0_0_s_ifspec;
 
 /* interface __MIDL_itf_Telegram2EApi2ENative_0000_0020 */
 /* [local] */ 

@@ -74,6 +74,7 @@
       <Filter>TLProtocolScheme</Filter>
     </ClInclude>
     <ClInclude Include="TLUnparsedMessage.h" />
+    <ClInclude Include="NativeBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

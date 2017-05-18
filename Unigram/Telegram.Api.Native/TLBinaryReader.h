@@ -2,12 +2,15 @@
 #include <string>
 #include <vector>
 #include <wrl.h>
+#include <robuffer.h>
+#include <windows.storage.streams.h>
 #include "Telegram.Api.Native.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 using ABI::Telegram::Api::Native::TL::ITLBinaryReader;
 using ABI::Telegram::Api::Native::TL::ITLObject;
+using ABI::Windows::Storage::Streams::IBuffer;
 
 namespace ABI
 {
@@ -53,7 +56,7 @@ namespace Telegram
 					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLBinaryReader, BaseTrust);
 
 				public:
-					TLBinaryReader(_In_ BYTE const* buffer, UINT32 length);
+					TLBinaryReader();
 					~TLBinaryReader();
 
 					//COM exported methods
@@ -80,14 +83,25 @@ namespace Telegram
 					IFACEMETHODIMP_(void) Reset();
 
 					//Internal methods
-					HRESULT AcquireBuffer();
+					STDMETHODIMP RuntimeClassInitialize(_In_ IBuffer* underlyingBuffer);
+
+					inline BYTE* GetBuffer() const
+					{
+						return m_buffer;
+					}
+
+					inline UINT32 GetCapacity() const
+					{
+						return m_capacity;
+					}
+
 				private:
 					HRESULT ReadBuffer(_Out_ BYTE const** buffer, _Out_ UINT32* length);
-	
-					BYTE const* m_buffer;
+
+					BYTE* m_buffer;
 					UINT32 m_position;
-					UINT32 m_length;
-					boolean m_bufferAcquired;
+					UINT32 m_capacity;
+					ComPtr<IBuffer> m_underlyingBuffer;
 				};
 
 			}

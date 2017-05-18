@@ -429,7 +429,11 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 	if (connection->GetType() == ConnectionType::Generic)
 	{
 		auto datacenter = connection->GetDatacenter();
-		if (datacenter->GetHandshakeState() != HandshakeState::None)
+
+		HandshakeState handshakeState;
+		ReturnIfFailed(result, datacenter->get_HandshakeState(&handshakeState));
+
+		if (handshakeState != HandshakeState::None)
 		{
 			ReturnIfFailed(result, datacenter->OnHandshakeConnectionClosed(connection));
 		}

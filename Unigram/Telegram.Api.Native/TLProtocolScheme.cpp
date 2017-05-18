@@ -8,8 +8,9 @@ using namespace Telegram::Api::Native::TL;
 
 ActivatableClassWithFactory(TLError, TLErrorFactory);
 
-REGISTER_TLOBJECT_CONSTRUCTOR(TLError);
-REGISTER_TLOBJECT_CONSTRUCTOR(TLFutureSalt);
+RegisterTLObjectConstructor(TLError);
+RegisterTLObjectConstructor(TLResPQ);
+RegisterTLObjectConstructor(TLFutureSalt);
 
 
 HRESULT TLError::RuntimeClassInitialize(INT32 code, HSTRING text)
@@ -63,6 +64,41 @@ TLReqPQ::~TLReqPQ()
 HRESULT TLReqPQ::WriteBody(ITLBinaryWriterEx* writer)
 {
 	return writer->WriteBuffer(m_nonce, ARRAYSIZE(m_nonce));
+}
+
+
+TLResPQ::TLResPQ()
+{
+	ZeroMemory(m_nonce, ARRAYSIZE(m_nonce));
+	ZeroMemory(m_serverNonce, ARRAYSIZE(m_serverNonce));
+	ZeroMemory(m_pq, ARRAYSIZE(m_pq));
+}
+
+TLResPQ::~TLResPQ()
+{
+}
+
+HRESULT TLResPQ::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadBuffer(m_nonce, ARRAYSIZE(m_nonce)));
+	ReturnIfFailed(result, reader->ReadBuffer(m_serverNonce, ARRAYSIZE(m_serverNonce)));
+	ReturnIfFailed(result, reader->ReadBuffer(m_pq, ARRAYSIZE(m_pq)));
+
+	UINT32 constructor;
+	ReturnIfFailed(result, reader->ReadUInt32(&constructor));
+
+	UINT32 count;
+	ReturnIfFailed(result, reader->ReadUInt32(&count));
+
+	m_serverPublicKeyFingerprints.resize(count);
+
+	for (UINT32 i = 0; i < count; i++)
+	{
+		ReturnIfFailed(result, reader->ReadInt64(&m_serverPublicKeyFingerprints[i]));
+	}
+
+	return S_OK;
 }
 
 

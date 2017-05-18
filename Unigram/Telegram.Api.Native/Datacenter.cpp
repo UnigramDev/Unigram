@@ -3,6 +3,7 @@
 #include <Ws2tcpip.h>
 #include "Datacenter.h"
 #include "TLBinaryReader.h"
+#include "TLBinaryWriter.h"
 #include "Connection.h"
 #include "ConnectionManager.h"
 #include "TLProtocolScheme.h"
@@ -14,7 +15,6 @@ using namespace Telegram::Api::Native::TL;
 
 Datacenter::Datacenter(UINT32 id) :
 	m_id(0),
-	m_handshakeState(HandshakeState::None),
 	m_currentIpv4EndpointIndex(0),
 	m_currentIpv4DownloadEndpointIndex(0),
 	m_currentIpv6EndpointIndex(0),
@@ -51,7 +51,15 @@ HRESULT Datacenter::get_HandshakeState(HandshakeState* value)
 
 	auto lock = LockCriticalSection();
 
-	*value = m_handshakeState;
+	if (m_handshakeContext == nullptr)
+	{
+		*value = HandshakeState::None;
+	}
+	else
+	{
+		*value = m_handshakeContext->State;
+	}
+
 	return S_OK;
 }
 
@@ -275,13 +283,6 @@ void Datacenter::ResetEndpoint()
 	m_currentIpv6DownloadEndpointIndex = 0;
 
 	//StoreCurrentEndpoint();
-}
-
-HandshakeState Datacenter::GetHandshakeState()
-{
-	auto lock = LockCriticalSection();
-
-	return m_handshakeState;
 }
 
 HRESULT Datacenter::AddServerSalt(ServerSalt const& salt)
@@ -525,19 +526,18 @@ HRESULT Datacenter::BeginHandshake(boolean reconnect)
 {
 	auto lock = LockCriticalSection();
 
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Cleanup handshake");
-
-	m_handshakeState = HandshakeState::None;
+	m_handshakeContext = std::make_unique<HandshakeContext>();
 
 	HRESULT result;
 	ComPtr<Connection> genericConnection;
 	ReturnIfFailed(result, GetGenericConnection(true, &genericConnection));
 
-	m_handshakeState = HandshakeState::Started;
+	genericConnection->RecreateSession();
 
-	auto reqPQ = Make<TLReqPQ>();
+	m_handshakeContext->State = HandshakeState::Started;
+	m_handshakeContext->Request = Make<TLReqPQ>();
 
-	return S_OK;
+	return SendRequest(m_handshakeContext->Request.Get(), genericConnection.Get());
 }
 
 HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, ServerEndpoint** endpoint)
@@ -619,6 +619,28 @@ HRESULT Datacenter::GetEndpointsForConnectionType(ConnectionType connectionType,
 	default:
 		return E_INVALIDARG;
 	}
+
+	return S_OK;
+}
+
+HRESULT Datacenter::SendRequest(ITLObject* object, Connection* connection)
+{
+	HRESULT result;
+	ComPtr<ConnectionManager> connectionManager;
+	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
+
+	UINT32 objectSize;
+	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
+
+	auto messageId = connectionManager->GenerateMessageId();
+
+	ComPtr<ITLBinaryWriterEx> writer;
+	// 2 * sizeof(INT64) + sizeof(INT32) + objectSize
+
+	ReturnIfFailed(result, writer->WriteInt64(0));
+	ReturnIfFailed(result, writer->WriteInt64(messageId));
+	ReturnIfFailed(result, writer->WriteUInt32(objectSize));
+	ReturnIfFailed(result, writer->WriteObject(object));
 
 	return S_OK;
 }

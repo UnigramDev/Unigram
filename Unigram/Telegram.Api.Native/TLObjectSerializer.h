@@ -7,6 +7,7 @@ using ABI::Telegram::Api::Native::TL::ITLObject;
 using ABI::Telegram::Api::Native::TL::ITLBinaryReader;
 using ABI::Telegram::Api::Native::TL::ITLObjectSerializerStatics;
 using ABI::Telegram::Api::Native::TL::ITLObjectConstructorDelegate;
+using ABI::Windows::Storage::Streams::IBuffer;
 
 namespace Telegram
 {
@@ -22,9 +23,11 @@ namespace Telegram
 					InspectableClassStatic(RuntimeClass_Telegram_Api_Native_TL_TLObjectSerializer, BaseTrust);
 
 				public:
-					IFACEMETHODIMP Serialize(_In_ ITLObject* object, _Out_ UINT32* __valueSize, _Out_writes_(*__valueSize) BYTE** value);
-					IFACEMETHODIMP Deserialize(UINT32 __bufferSize, _In_ BYTE* buffer, _Out_ ITLObject** value);
-					IFACEMETHODIMP Deserialize2(UINT32 __bufferSize, _In_ BYTE* buffer, _Out_ ITLBinaryReader** value);
+					IFACEMETHODIMP Serialize(_In_ ITLObject* object, _Out_ IBuffer** value);
+					IFACEMETHODIMP Deserialize(_In_ IBuffer* buffer, _Out_ ITLObject** value);
+					//IFACEMETHODIMP Serialize(_In_ ITLObject* object, _Out_ UINT32* __valueSize, _Out_writes_(*__valueSize) BYTE** value);
+					//IFACEMETHODIMP Deserialize(UINT32 __bufferSize, _In_ BYTE* buffer, _Out_ ITLObject** value);
+					//IFACEMETHODIMP Deserialize2(UINT32 __bufferSize, _In_ BYTE* buffer, _Out_ ITLBinaryReader** value);
 					IFACEMETHODIMP GetObjectSize(_In_ ITLObject* object, _Out_ UINT32* value);
 					IFACEMETHODIMP RegisterObjectConstructor(UINT32 constructor, _In_ ITLObjectConstructorDelegate* constructorDelegate);
 				};

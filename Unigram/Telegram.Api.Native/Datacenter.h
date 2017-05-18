@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <memory>
 #include <wrl.h>
 #include <windows.foundation.h>
 #include "Telegram.Api.Native.h"
@@ -15,6 +16,7 @@ using ABI::Telegram::Api::Native::IDatacenter;
 using ABI::Windows::Foundation::IClosable;
 using ABI::Telegram::Api::Native::ConnectionType;
 using ABI::Telegram::Api::Native::HandshakeState;
+using ABI::Telegram::Api::Native::TL::ITLObject;
 
 namespace Telegram
 {
@@ -66,7 +68,6 @@ namespace Telegram
 				void SwitchTo443Port();
 				void RecreateSessions();
 				void GetSessionsIds(_Out_ std::vector<INT64>& sessionIds);
-				HandshakeState GetHandshakeState();
 				HRESULT AddServerSalt(_In_ ServerSalt const& salt);
 				HRESULT MergeServerSalts(_In_ std::vector<ServerSalt> const& salts);
 				boolean ContainsServerSalt(INT64 salt);
@@ -92,16 +93,28 @@ namespace Telegram
 				}
 
 			private:
+				struct HandshakeContext
+				{
+					HandshakeContext() :
+						State(HandshakeState::None)
+					{
+					}
+
+					HandshakeState State;
+					ComPtr<ITLObject> Request;
+				};
+
 				IFACEMETHODIMP Close();
 				HRESULT GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, _Out_ ServerEndpoint** endpoint);
 				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
 				HRESULT OnHandshakeResponseReceived(_In_ Connection* connection, INT64 messageId);
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
+				HRESULT SendRequest(_In_ ITLObject* object, _In_ Connection* connection);
 				boolean ContainsServerSalt(INT64 salt, size_t count);
 
 				UINT32 m_id;
-				HandshakeState m_handshakeState;
+				std::unique_ptr<HandshakeContext> m_handshakeContext;
 				std::vector<ServerEndpoint> m_ipv4Endpoints;
 				std::vector<ServerEndpoint> m_ipv4DownloadEndpoints;
 				std::vector<ServerEndpoint> m_ipv6Endpoints;

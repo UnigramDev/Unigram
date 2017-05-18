@@ -16,6 +16,7 @@ namespace Telegram
 
 				class TLError;
 				class TLReqPQ;
+				class TLResPQ;
 				class TLFutureSalt;
 				class TLInvokeWithLayer;
 				class TLInitConnection;
@@ -24,11 +25,12 @@ namespace Telegram
 				namespace TLObjectTraits
 				{
 
-					MAKE_TLOBJECT_TRAITS(TLError, 0xc4b9f9bb, false);
-					MAKE_TLOBJECT_TRAITS(TLReqPQ, 0x60469778, false);
-					MAKE_TLOBJECT_TRAITS(TLFutureSalt, 0x0949d9dc, false);
-					MAKE_TLOBJECT_TRAITS(TLInvokeWithLayer, 0xda9b0d0d, false);
-					MAKE_TLOBJECT_TRAITS(TLInitConnection, 0x69796de9, false);
+					MakeTLObjectTraits(TLError, 0xc4b9f9bb, false);
+					MakeTLObjectTraits(TLReqPQ, 0x60469778, false);
+					MakeTLObjectTraits(TLResPQ, 0x05162463, false);
+					MakeTLObjectTraits(TLFutureSalt, 0x0949d9dc, false);
+					MakeTLObjectTraits(TLInvokeWithLayer, 0xda9b0d0d, false);
+					MakeTLObjectTraits(TLInitConnection, 0x69796de9, false);
 
 				}
 
@@ -90,6 +92,45 @@ namespace Telegram
 
 				private:
 					BYTE m_nonce[16];
+				};
+
+				class TLResPQ WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLResPQTraits>>
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				public:
+					TLResPQ();
+					~TLResPQ();
+
+					//Internal methods
+					inline BYTE const* GetNonce() const
+					{
+						return m_nonce;
+					}
+
+					inline BYTE const* GetServerNonce() const
+					{
+						return m_serverNonce;
+					}
+
+					inline BYTE const* GetPQ() const
+					{
+						return m_pq;
+					}
+
+					inline std::vector<INT64> const& GetServerPublicKeyFingerprints() const
+					{
+						return m_serverPublicKeyFingerprints;
+					}
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* writer) override;
+
+				private:
+					BYTE m_nonce[16];
+					BYTE m_serverNonce[16];
+					BYTE m_pq[8];
+					std::vector<INT64> m_serverPublicKeyFingerprints;
 				};
 
 				class TLFutureSalt WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLFutureSaltTraits>>

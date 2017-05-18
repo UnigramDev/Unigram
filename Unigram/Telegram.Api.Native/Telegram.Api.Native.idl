@@ -1,4 +1,5 @@
 import "Windows.Foundation.idl";
+import "Windows.Storage.Streams.idl";
 
 #define API_VERSION 1.0
 
@@ -124,9 +125,11 @@ namespace Telegram
 				[version(API_VERSION)]
 				interface ITLObjectSerializerStatics : IInspectable
 				{
-					HRESULT Serialize([in]ITLObject* object,[out] UINT32* __valueSize,[out][retval][size_is(, *__valueSize)] BYTE** value);
-					HRESULT Deserialize([in] UINT32 __bufferSize, [in][size_is(__bufferSize)] BYTE* buffer, [out][retval] ITLObject** value);
-					HRESULT Deserialize2([in] UINT32 __bufferSize,[in][size_is(__bufferSize)] BYTE* buffer,[out][retval] TLBinaryReader** value);
+					//HRESULT Serialize([in]ITLObject* object,[out] UINT32* __valueSize,[out][retval][size_is(, *__valueSize)] BYTE** value);
+					HRESULT Serialize([in]ITLObject* object,[out][retval]Windows.Storage.Streams.IBuffer** value);
+					HRESULT Deserialize([in] Windows.Storage.Streams.IBuffer* buffer,[out][retval] ITLObject** value);
+					//HRESULT Deserialize([in] UINT32 __bufferSize,[in][size_is(__bufferSize)] BYTE* buffer,[out][retval] ITLObject** value);
+					//HRESULT Deserialize2([in] UINT32 __bufferSize,[in][size_is(__bufferSize)] BYTE* buffer,[out][retval] TLBinaryReader** value);
 					HRESULT GetObjectSize([in]ITLObject* object,[out][retval] UINT32* value);
 					HRESULT RegisterObjectConstructor([in] UINT32 constructor,[in] TLObjectConstructorDelegate* constructorDelegate);
 				}

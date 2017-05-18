@@ -2,12 +2,15 @@
 #include <string>
 #include <vector>
 #include <wrl.h>
+#include <robuffer.h>
+#include <windows.storage.streams.h>
 #include "Telegram.Api.Native.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 using ABI::Telegram::Api::Native::TL::ITLBinaryWriter;
 using ABI::Telegram::Api::Native::TL::ITLObject;
+using ABI::Windows::Storage::Streams::IBuffer;
 
 namespace ABI
 {
@@ -52,7 +55,7 @@ namespace Telegram
 					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLBinaryWriter, BaseTrust);
 
 				public:
-					TLBinaryWriter(_In_ BYTE* buffer, UINT32 length);
+					TLBinaryWriter();
 					~TLBinaryWriter();
 
 					//COM exported methods
@@ -77,12 +80,26 @@ namespace Telegram
 					IFACEMETHODIMP_(void) Skip(UINT32 length);
 					IFACEMETHODIMP_(void) Reset();
 
+					//Internal methods
+					STDMETHODIMP RuntimeClassInitialize(_In_ IBuffer* underlyingBuffer);
+
+					inline BYTE* GetBuffer() const
+					{
+						return m_buffer;
+					}
+
+					inline UINT32 GetCapacity() const
+					{
+						return m_capacity;
+					}
+
 				private:
 					HRESULT WriteString(_In_ LPCWCHAR buffer, UINT32 length);
 
 					BYTE* m_buffer;
 					UINT32 m_position;
-					UINT32 m_length;
+					UINT32 m_capacity;
+					ComPtr<IBuffer> m_underlyingBuffer;
 				};
 
 				class TLObjectSizeCalculator : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryWriterEx>>
@@ -116,6 +133,7 @@ namespace Telegram
 					IFACEMETHODIMP_(void) Reset();
 					IFACEMETHODIMP_(void) Skip(UINT32 length);
 
+					//Internal methods
 					static HRESULT GetSize(_In_ ITLObject* object, _Out_ UINT32* value);
 
 				private:

@@ -7,7 +7,7 @@
 #include "TLBinaryWriter.h"
 #include "Helpers\COMHelper.h"
 
-#define MAKE_TLOBJECT_TRAITS(objectTypeName, constructor, isLayerNeeded) \
+#define MakeTLObjectTraits(objectTypeName, constructor, isLayerNeeded) \
 	struct objectTypeName##Traits \
 	{ \
 		typedef typename objectTypeName TLObjectType; \
@@ -22,7 +22,7 @@
 	} \
 
 
-#define REGISTER_TLOBJECT_CONSTRUCTOR(objectTypeName) \
+#define RegisterTLObjectConstructor(objectTypeName) \
 	template<> \
 	Telegram::Api::Native::TL::Details::TLObjectInitializer<##objectTypeName##::Traits> TLObjectT<##objectTypeName##::Traits>::Initializer = Telegram::Api::Native::TL::Details::TLObjectInitializer<##objectTypeName##::Traits>()\
 

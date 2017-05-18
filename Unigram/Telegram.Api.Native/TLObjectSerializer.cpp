@@ -2,52 +2,17 @@
 #include <memory>
 #include "TLObjectSerializer.h"
 #include "TLObject.h"
+#include "NativeBuffer.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native::TL;
 
-
 ActivatableStaticOnlyFactory(TLObjectSerializerStatics);
 
 
-HRESULT TLObjectSerializerStatics::Serialize(ITLObject* object, UINT32* __valueSize, BYTE** value)
+HRESULT TLObjectSerializerStatics::Serialize(ITLObject* object, IBuffer** value)
 {
 	if (object == nullptr)
-	{
-		return E_INVALIDARG;
-	}
-
-	if (__valueSize == nullptr || value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	HRESULT result;
-	UINT32 objectSize;
-	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
-
-	auto objectBuffer = reinterpret_cast<BYTE*>(CoTaskMemAlloc(objectSize));
-	auto binaryWriter = Make<TLBinaryWriter>(objectBuffer, objectSize);
-	if (FAILED(result = binaryWriter->WriteObject(object)))
-	{
-		CoTaskMemFree(objectBuffer);
-		return result;
-	}
-
-	*__valueSize = objectSize;
-	*value = objectBuffer;
-	return S_OK;
-}
-
-HRESULT TLObjectSerializerStatics::Deserialize(UINT32 __bufferSize, BYTE* buffer, ITLObject** value)
-{
-	auto binaryReader = Make<TLBinaryReader>(buffer, __bufferSize);
-	return binaryReader->ReadObject(value);
-}
-
-HRESULT TLObjectSerializerStatics::Deserialize2(UINT32 __bufferSize, BYTE* buffer, ITLBinaryReader** value)
-{
-	if (buffer == nullptr)
 	{
 		return E_INVALIDARG;
 	}
@@ -57,11 +22,82 @@ HRESULT TLObjectSerializerStatics::Deserialize2(UINT32 __bufferSize, BYTE* buffe
 		return E_POINTER;
 	}
 
-	auto binaryWriter = Make<TLBinaryReader>(buffer, __bufferSize);
+	HRESULT result;
+	UINT32 objectSize;
+	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
 
-	*value = static_cast<ITLBinaryReaderEx*>(binaryWriter.Detach());
+	ComPtr<NativeBuffer> nativeBuffer;
+	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&nativeBuffer, objectSize));
+
+	ComPtr<TLBinaryWriter> binaryWriter;
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&binaryWriter, nativeBuffer.Get()));
+	ReturnIfFailed(result, binaryWriter->WriteObject(object));
+
+	*value = nativeBuffer.Detach();
 	return S_OK;
 }
+
+HRESULT TLObjectSerializerStatics::Deserialize(IBuffer* buffer, ITLObject** value)
+{
+	HRESULT result;
+	ComPtr<TLBinaryReader> binaryReader;
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&binaryReader, buffer));
+
+	return binaryReader->ReadObject(value);
+}
+
+//HRESULT TLObjectSerializerStatics::Serialize(ITLObject* object, UINT32* __valueSize, BYTE** value)
+//{
+//	if (object == nullptr)
+//	{
+//		return E_INVALIDARG;
+//	}
+//
+//	if (__valueSize == nullptr || value == nullptr)
+//	{
+//		return E_POINTER;
+//	}
+//
+//	HRESULT result;
+//	UINT32 objectSize;
+//	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
+//
+//	auto objectBuffer = reinterpret_cast<BYTE*>(CoTaskMemAlloc(objectSize));
+//	auto binaryWriter = Make<TLBinaryWriter>(objectBuffer, objectSize);
+//	if (FAILED(result = binaryWriter->WriteObject(object)))
+//	{
+//		CoTaskMemFree(objectBuffer);
+//		return result;
+//	}
+//
+//	*__valueSize = objectSize;
+//	*value = objectBuffer;
+//	return S_OK;
+//}
+
+//HRESULT TLObjectSerializerStatics::Deserialize(UINT32 __bufferSize, BYTE* buffer, ITLObject** value)
+//{
+//	auto binaryReader = Make<TLBinaryReader>(buffer, __bufferSize);
+//	return binaryReader->ReadObject(value);
+//}
+
+//HRESULT TLObjectSerializerStatics::Deserialize2(UINT32 __bufferSize, BYTE* buffer, ITLBinaryReader** value)
+//{
+//	if (buffer == nullptr)
+//	{
+//		return E_INVALIDARG;
+//	}
+//
+//	if (value == nullptr)
+//	{
+//		return E_POINTER;
+//	}
+//
+//	auto binaryWriter = Make<TLBinaryReader>(buffer, __bufferSize);
+//
+//	*value = static_cast<ITLBinaryReaderEx*>(binaryWriter.Detach());
+//	return S_OK;
+//}
 
 HRESULT TLObjectSerializerStatics::GetObjectSize(ITLObject* object, UINT32* value)
 {

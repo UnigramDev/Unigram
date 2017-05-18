@@ -5,13 +5,31 @@
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
+using Windows::Storage::Streams::IBufferByteAccess;
 
 
-TLBinaryWriter::TLBinaryWriter(BYTE* buffer, UINT32 length) :
-	m_buffer(buffer),
+TLBinaryWriter::TLBinaryWriter() :
+	m_buffer(nullptr),
 	m_position(0),
-	m_length(length)
+	m_capacity(0)
 {
+}
+
+HRESULT TLBinaryWriter::RuntimeClassInitialize(IBuffer* underlyingBuffer)
+{
+	if (underlyingBuffer == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	HRESULT result;
+	ComPtr<IBufferByteAccess> bufferByteAccess;
+	ReturnIfFailed(result, underlyingBuffer->QueryInterface(IID_PPV_ARGS(&bufferByteAccess)));
+	ReturnIfFailed(result, bufferByteAccess->Buffer(&m_buffer));
+	ReturnIfFailed(result, underlyingBuffer->get_Capacity(&m_capacity));
+
+	m_underlyingBuffer = underlyingBuffer;
+	return S_OK;
 }
 
 TLBinaryWriter::~TLBinaryWriter()
@@ -31,7 +49,7 @@ HRESULT TLBinaryWriter::get_Position(UINT32* value)
 
 HRESULT TLBinaryWriter::put_Position(UINT32 value)
 {
-	if (value > m_length)
+	if (value > m_capacity)
 	{
 		return E_BOUNDS;
 	}
@@ -52,13 +70,13 @@ HRESULT TLBinaryWriter::get_UnstoredBufferLength(UINT32* value)
 		return E_POINTER;
 	}
 
-	*value = m_length - m_position;
+	*value = m_capacity - m_position;
 	return S_OK;
 }
 
 HRESULT TLBinaryWriter::WriteByte(BYTE value)
 {
-	if (m_position + sizeof(BYTE) > m_length)
+	if (m_position + sizeof(BYTE) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -69,7 +87,7 @@ HRESULT TLBinaryWriter::WriteByte(BYTE value)
 
 HRESULT TLBinaryWriter::WriteInt16(INT16 value)
 {
-	if (m_position + sizeof(INT16) > m_length)
+	if (m_position + sizeof(INT16) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -86,7 +104,7 @@ HRESULT TLBinaryWriter::WriteUInt16(UINT16 value)
 
 HRESULT TLBinaryWriter::WriteInt32(INT32 value)
 {
-	if (m_position + sizeof(INT32) > m_length)
+	if (m_position + sizeof(INT32) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -106,7 +124,7 @@ HRESULT TLBinaryWriter::WriteUInt32(UINT32 value)
 
 HRESULT TLBinaryWriter::WriteInt64(INT64 value)
 {
-	if (m_position + sizeof(INT64) > m_length)
+	if (m_position + sizeof(INT64) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -205,7 +223,7 @@ HRESULT TLBinaryWriter::WriteBuffer(BYTE const* buffer, UINT32 length)
 			padding = 4 - padding;
 		}
 
-		if (m_position + 1 + length + padding > m_length)
+		if (m_position + 1 + length + padding > m_capacity)
 		{
 			return E_NOT_SUFFICIENT_BUFFER;
 		}
@@ -220,7 +238,7 @@ HRESULT TLBinaryWriter::WriteBuffer(BYTE const* buffer, UINT32 length)
 			padding = 4 - padding;
 		}
 
-		if (m_position + 4 + length + padding > m_length)
+		if (m_position + 4 + length + padding > m_capacity)
 		{
 			return E_NOT_SUFFICIENT_BUFFER;
 		}

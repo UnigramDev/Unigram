@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Telegram.Api.Native.TL;
+using Windows.Security.Cryptography;
 
 // Il modello di elemento Pagina vuota è documentato all'indirizzo https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x410
 
@@ -46,7 +47,11 @@ namespace Telegram.Api.Native.Test
 
             var sizeCalculator = TLObjectSerializer.GetObjectSize(xx);
             var buffer = TLObjectSerializer.Serialize(xx);
-            var reader = TLObjectSerializer.Deserialize(buffer);
+            var bufferBase64 = CryptographicBuffer.EncodeToBase64String(buffer);
+
+            @object = TLObjectSerializer.Deserialize(CryptographicBuffer.DecodeFromBase64String(bufferBase64));
+
+            buffer = null;
 
             GC.Collect();
         }

@@ -5,22 +5,35 @@
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
+using Windows::Storage::Streams::IBufferByteAccess;
 
 
-TLBinaryReader::TLBinaryReader(BYTE const* buffer, UINT32 length) :
-	m_buffer(buffer),
+TLBinaryReader::TLBinaryReader() :
+	m_buffer(nullptr),
 	m_position(0),
-	m_length(length),
-	m_bufferAcquired(false)
+	m_capacity(0)
 {
 }
 
 TLBinaryReader::~TLBinaryReader()
 {
-	if (m_bufferAcquired)
+}
+
+HRESULT TLBinaryReader::RuntimeClassInitialize(IBuffer* underlyingBuffer)
+{
+	if (underlyingBuffer == nullptr)
 	{
-		FREE(const_cast<BYTE*>(m_buffer));
+		return E_INVALIDARG;
 	}
+
+	HRESULT result;
+	ComPtr<IBufferByteAccess> bufferByteAccess;
+	ReturnIfFailed(result, underlyingBuffer->QueryInterface(IID_PPV_ARGS(&bufferByteAccess)));
+	ReturnIfFailed(result, bufferByteAccess->Buffer(&m_buffer));
+	ReturnIfFailed(result, underlyingBuffer->get_Capacity(&m_capacity));
+
+	m_underlyingBuffer = underlyingBuffer;
+	return S_OK;
 }
 
 HRESULT TLBinaryReader::get_Position(UINT32* value)
@@ -36,7 +49,7 @@ HRESULT TLBinaryReader::get_Position(UINT32* value)
 
 HRESULT TLBinaryReader::put_Position(UINT32 value)
 {
-	if (value > m_length)
+	if (value > m_capacity)
 	{
 		return E_BOUNDS;
 	}
@@ -52,7 +65,7 @@ HRESULT TLBinaryReader::get_UnconsumedBufferLength(UINT32* value)
 		return E_POINTER;
 	}
 
-	*value = m_length - m_position;
+	*value = m_capacity - m_position;
 	return S_OK;
 }
 
@@ -63,7 +76,7 @@ HRESULT TLBinaryReader::ReadByte(BYTE* value)
 		return E_POINTER;
 	}
 
-	if (m_position + sizeof(BYTE) > m_length)
+	if (m_position + sizeof(BYTE) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -79,7 +92,7 @@ HRESULT TLBinaryReader::ReadInt16(INT16* value)
 		return E_POINTER;
 	}
 
-	if (m_position + sizeof(INT16) > m_length)
+	if (m_position + sizeof(INT16) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -102,7 +115,7 @@ HRESULT TLBinaryReader::ReadInt32(INT32* value)
 		return E_POINTER;
 	}
 
-	if (m_position + sizeof(INT32) > m_length)
+	if (m_position + sizeof(INT32) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -126,7 +139,7 @@ HRESULT TLBinaryReader::ReadInt64(INT64* value)
 		return E_POINTER;
 	}
 
-	if (m_position + sizeof(INT64) > m_length)
+	if (m_position + sizeof(INT64) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -259,7 +272,7 @@ HRESULT TLBinaryReader::ReadBigEndianInt32(INT32* value)
 		return E_POINTER;
 	}
 
-	if (m_position + sizeof(INT32) > m_length)
+	if (m_position + sizeof(INT32) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -306,7 +319,7 @@ void TLBinaryReader::Skip(UINT32 length)
 
 HRESULT TLBinaryReader::ReadBuffer(BYTE const** buffer, UINT32* length)
 {
-	if (m_position + 1 > m_length)
+	if (m_position + 1 > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -316,7 +329,7 @@ HRESULT TLBinaryReader::ReadBuffer(BYTE const** buffer, UINT32* length)
 
 	if (l >= 254)
 	{
-		if (m_position + 3 > m_length)
+		if (m_position + 3 > m_capacity)
 		{
 			return E_NOT_SUFFICIENT_BUFFER;
 		}
@@ -333,7 +346,7 @@ HRESULT TLBinaryReader::ReadBuffer(BYTE const** buffer, UINT32* length)
 		addition = 4 - addition;
 	}
 
-	if (m_position + l + addition > m_length)
+	if (m_position + l + addition > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -342,24 +355,5 @@ HRESULT TLBinaryReader::ReadBuffer(BYTE const** buffer, UINT32* length)
 	*buffer = &m_buffer[m_position];
 
 	m_position += l + addition;
-	return S_OK;
-}
-
-HRESULT TLBinaryReader::AcquireBuffer()
-{
-	if (!m_bufferAcquired)
-	{
-		auto acquiredBuffer = reinterpret_cast<BYTE*>(MALLOC(m_length));
-		if (acquiredBuffer == nullptr)
-		{
-			return E_OUTOFMEMORY;
-		}
-
-		CopyMemory(acquiredBuffer, m_buffer, m_length);
-
-		m_buffer = acquiredBuffer;
-		m_bufferAcquired = true;
-	}
-
 	return S_OK;
 }
