@@ -506,6 +506,7 @@
     <Compile Include="TL\Partial\TLMessageBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUserProfilePhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLUserProfilePhotoBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLWebDocument.Partial.cs" />
     <Compile Include="TL\Partial\TLWebPageBase.Partial.cs" />
     <Compile Include="TL\TLAccountAuthorizations.cs" />
     <Compile Include="TL\TLAccountDaysTTL.cs" />

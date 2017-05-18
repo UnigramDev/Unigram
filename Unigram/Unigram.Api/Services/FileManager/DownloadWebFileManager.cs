@@ -102,7 +102,7 @@ namespace Telegram.Api.Services.FileManager
                 return;
             }
 
-            var partName = part.ParentItem.InputDocumentLocation.GetPartFileName(part.Number);//string.Format("document{0}_{1}_{2}.dat", part.ParentItem.InputDocumentLocation.Id, part.ParentItem.InputDocumentLocation.AccessHash, part.Number);
+            var partName = part.ParentItem.InputWebFileLocation.GetPartFileName(part.Number);//string.Format("document{0}_{1}_{2}.dat", part.ParentItem.InputDocumentLocation.Id, part.ParentItem.InputDocumentLocation.AccessHash, part.Number);
             part.WebFile = GetFile(part.ParentItem.DCId, part.ParentItem.InputWebFileLocation, part.Offset, part.Limit);
 
             while (part.WebFile == null)
@@ -158,8 +158,8 @@ namespace Telegram.Api.Services.FileManager
                     //var accessHash = part.ParentItem.InputDocumentLocation.AccessHash;
                     //var version = part.ParentItem.InputDocumentLocation.Version;
                     var fileExtension = Path.GetExtension(part.ParentItem.FileName.ToString());
-                    var fileName = GetFileName(part.ParentItem.InputDocumentLocation, fileExtension);
-                    Func<DownloadablePart, string> getPartName = x => part.ParentItem.InputDocumentLocation.GetPartFileName(x.Number);
+                    var fileName = GetFileName(part.ParentItem.InputWebFileLocation, fileExtension);
+                    Func<DownloadablePart, string> getPartName = x => part.ParentItem.InputWebFileLocation.GetPartFileName(x.Number);
 
                     if (!part.ParentItem.SuppressMerge)
                     {
@@ -205,20 +205,9 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        public static string GetFileName(TLInputDocumentFileLocation fileLocation, string fileExtension)
+        public static string GetFileName(TLInputWebFileLocation fileLocation, string fileExtension)
         {
-            var fileLocation54 = fileLocation as TLInputDocumentFileLocation;
-
-            var id = fileLocation.Id;
-            var accessHash = fileLocation.AccessHash;
-            var version = fileLocation54.Version;
-
-            if (version > 0)
-            {
-                return string.Format("document{0}_{1}{2}", id, version, fileExtension);
-            }
-
-            return string.Format("document{0}_{1}{2}", id, accessHash, fileExtension);
+            return BitConverter.ToString(Utils.ComputeMD5(fileLocation.Url)).Replace("-", "") + fileExtension;
         }
 
         private TLUploadWebFile GetFile(int dcId, TLInputWebFileLocation location, int offset, int limit)
@@ -268,8 +257,8 @@ namespace Telegram.Api.Services.FileManager
                     //var id = downloadableItem.InputDocumentLocation.Id;
                     //var accessHash = downloadableItem.InputDocumentLocation.AccessHash;
                     var fileExtension = Path.GetExtension(downloadableItem.FileName.ToString());
-                    var fileName = GetFileName(downloadableItem.InputDocumentLocation, fileExtension); //string.Format("document{0}_{1}{2}", id, accessHash, fileExtension);
-                    Func<DownloadablePart, string> getPartName = x => downloadableItem.InputDocumentLocation.GetPartFileName(x.Number); //string.Format("document{0}_{1}_{2}.dat", id, accessHash, x.Number);
+                    var fileName = GetFileName(downloadableItem.InputWebFileLocation, fileExtension); //string.Format("document{0}_{1}{2}", id, accessHash, fileExtension);
+                    Func<DownloadablePart, string> getPartName = x => downloadableItem.InputWebFileLocation.GetPartFileName(x.Number); //string.Format("document{0}_{1}_{2}.dat", id, accessHash, x.Number);
 
                     FileUtils.MergePartsToFile(getPartName, downloadableItem.Parts, fileName);
 
@@ -335,8 +324,8 @@ namespace Telegram.Api.Services.FileManager
                     //var id = downloadableItem.InputDocumentLocation.Id;
                     //var accessHash = downloadableItem.InputDocumentLocation.AccessHash;
                     var fileExtension = Path.GetExtension(downloadableItem.FileName.ToString());
-                    var fileName = GetFileName(downloadableItem.InputDocumentLocation, fileExtension); //string.Format("document{0}_{1}{2}", id, accessHash, fileExtension);
-                    Func<DownloadablePart, string> getPartName = x => downloadableItem.InputDocumentLocation.GetPartFileName(x.Number); //string.Format("document{0}_{1}_{2}.dat", id, accessHash, x.Number);
+                    var fileName = GetFileName(downloadableItem.InputWebFileLocation, fileExtension); //string.Format("document{0}_{1}{2}", id, accessHash, fileExtension);
+                    Func<DownloadablePart, string> getPartName = x => downloadableItem.InputWebFileLocation.GetPartFileName(x.Number); //string.Format("document{0}_{1}_{2}.dat", id, accessHash, x.Number);
 
                     FileUtils.MergePartsToFile(getPartName, downloadableItem.Parts, fileName);
 
@@ -413,7 +402,7 @@ namespace Telegram.Api.Services.FileManager
             for (var i = 0; i < partsCount; i++)
             {
                 var part = new DownloadablePart(item, i * chunkSize, size == 0 ? 0 : chunkSize, i);
-                var partName = item.InputDocumentLocation.GetPartFileName(part.Number); //string.Format("document{0}_{1}_{2}.dat", item.InputDocumentLocation.Id, item.InputDocumentLocation.AccessHash, part.Number);
+                var partName = item.InputWebFileLocation.GetPartFileName(part.Number); //string.Format("document{0}_{1}_{2}.dat", item.InputDocumentLocation.Id, item.InputDocumentLocation.AccessHash, part.Number);
                 var partLength = FileUtils.GetLocalFileLength(partName);
 
                 if (partLength >= 0)

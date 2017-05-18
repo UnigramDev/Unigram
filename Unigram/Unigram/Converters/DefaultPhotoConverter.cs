@@ -484,6 +484,8 @@ namespace Unigram.Converters
             var webDocument = value as TLWebDocument;
             if (webDocument != null)
             {
+                return BitmapContext[webDocument];
+
                 return webDocument.Url;
             }
 

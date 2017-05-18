@@ -68,6 +68,27 @@ namespace Unigram.Common
             }
         }
 
+        public BitmapImage this[TLWebDocument document]
+        {
+            get
+            {
+                if (document == null)
+                {
+                    return null;
+                }
+
+                if (_context.TryGetValue(document.Url, out Tuple<TLBitmapSource, WeakReference<BitmapImage>> reference) &&
+                    reference.Item2.TryGetTarget(out BitmapImage target))
+                {
+                    return target;
+                }
+
+                var bitmap = new TLBitmapSource(document);
+                _context[document.Url] = new Tuple<TLBitmapSource, WeakReference<BitmapImage>>(bitmap, new WeakReference<BitmapImage>(bitmap.Image));
+                return bitmap.Image;
+            }
+        }
+
         public BitmapImage this[TLUser user]
         {
             get

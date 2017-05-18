@@ -24,10 +24,12 @@ namespace Unigram.Common
     public class TLBitmapSource
     {
         private static readonly IDownloadFileManager _downloadFileManager;
+        private static readonly IDownloadWebFileManager _downloadWebFileManager;
 
         static TLBitmapSource()
         {
             _downloadFileManager = UnigramContainer.Current.ResolveType<IDownloadFileManager>();
+            _downloadWebFileManager = UnigramContainer.Current.ResolveType<IDownloadWebFileManager>();
         }
 
         public const int PHASE_PLACEHOLDER = 0;
@@ -116,6 +118,33 @@ namespace Unigram.Common
             _source = document;
 
             SetSource(null, document.Thumb, PHASE_THUMBNAIL);
+        }
+
+        public TLBitmapSource(TLWebDocument document)
+        {
+            _source = document;
+
+            Phase = PHASE_FULL;
+
+            var fileName = BitConverter.ToString(Utils.ComputeMD5(document.Url)).Replace("-", "") + ".jpg";
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            {
+                Image.UriSource = FileUtils.GetTempFileUri(fileName);
+            }
+            else
+            {
+                Execute.BeginOnThreadPool(async () =>
+                {
+                    var result = await _downloadWebFileManager.DownloadFileAsync(fileName, document.DCId, new TLInputWebFileLocation { Url = document.Url, AccessHash = document.AccessHash }, document.Size).AsTask(document.Download());
+                    if (result != null && Phase <= PHASE_FULL)
+                    {
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            Image.UriSource = FileUtils.GetTempFileUri(fileName);
+                        });
+                    }
+                });
+            }
         }
 
         public void Download()
@@ -236,18 +265,6 @@ namespace Unigram.Common
                             });
                         }
                     });
-
-                    //_downloadFileManager.DownloadFile(location, fileSize, result =>
-                    //{
-                    //    if (result != null && Phase <= phase)
-                    //    {
-                    //        Execute.BeginOnUIThread(() =>
-                    //        {
-                    //            //Image.SetSource(FileUtils.GetTempFileUri(fileName));
-                    //            Image.UriSource = FileUtils.GetTempFileUri(fileName);
-                    //        });
-                    //    }
-                    //});
                 }
             }
         }
