@@ -36,6 +36,7 @@ namespace Telegram.Api.Native.Test
 
             ITLObject @object;
             var connection = connectionManager.BoomBaby(new UserConfiguration(), out @object);
+
             var datacenter = connection.Datacenter;
 
             var xx = new TLTestObject();
@@ -46,8 +47,6 @@ namespace Telegram.Api.Native.Test
             var sizeCalculator = TLObjectSerializer.GetObjectSize(xx);
             var buffer = TLObjectSerializer.Serialize(xx);
             var reader = TLObjectSerializer.Deserialize(buffer);
-
-            reader = null;
 
             GC.Collect();
         }

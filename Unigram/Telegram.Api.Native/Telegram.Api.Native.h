@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0622 */
 /* at Tue Jan 19 04:14:07 2038
  */
-/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-74dde995:
+/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-b5d87299:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0622 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -3070,6 +3070,9 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIDatacenter;
                         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_HandshakeState( 
                             /* [out][retval] */ ABI::Telegram::Api::Native::HandshakeState *value) = 0;
                         
+                        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ServerSalt( 
+                            /* [out][retval] */ INT64 *value) = 0;
+                        
                         virtual HRESULT STDMETHODCALLTYPE GetCurrentAddress( 
                             /* [in] */ ABI::Telegram::Api::Native::ConnectionType connectionType,
                             /* [in] */ boolean ipv6,
@@ -3130,6 +3133,10 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIDatacenter;
             __x_ABI_CTelegram_CApi_CNative_CIDatacenter * This,
             /* [out][retval] */ __x_ABI_CTelegram_CApi_CNative_CHandshakeState *value);
         
+        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ServerSalt )( 
+            __x_ABI_CTelegram_CApi_CNative_CIDatacenter * This,
+            /* [out][retval] */ INT64 *value);
+        
         HRESULT ( STDMETHODCALLTYPE *GetCurrentAddress )( 
             __x_ABI_CTelegram_CApi_CNative_CIDatacenter * This,
             /* [in] */ __x_ABI_CTelegram_CApi_CNative_CConnectionType connectionType,
@@ -3180,6 +3187,9 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIDatacenter;
 
 #define __x_ABI_CTelegram_CApi_CNative_CIDatacenter_get_HandshakeState(This,value)	\
     ( (This)->lpVtbl -> get_HandshakeState(This,value) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CIDatacenter_get_ServerSalt(This,value)	\
+    ( (This)->lpVtbl -> get_ServerSalt(This,value) ) 
 
 #define __x_ABI_CTelegram_CApi_CNative_CIDatacenter_GetCurrentAddress(This,connectionType,ipv6,value)	\
     ( (This)->lpVtbl -> GetCurrentAddress(This,connectionType,ipv6,value) ) 

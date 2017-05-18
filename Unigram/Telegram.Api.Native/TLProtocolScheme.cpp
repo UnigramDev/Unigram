@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <openssl/rand.h>
 #include "TLProtocolScheme.h"
 #include "ConnectionManager.h"
 
@@ -9,7 +10,6 @@ ActivatableClassWithFactory(TLError, TLErrorFactory);
 
 REGISTER_TLOBJECT_CONSTRUCTOR(TLError);
 REGISTER_TLOBJECT_CONSTRUCTOR(TLFutureSalt);
-REGISTER_TLOBJECT_CONSTRUCTOR(TLInvokeWithLayer);
 
 
 HRESULT TLError::RuntimeClassInitialize(INT32 code, HSTRING text)
@@ -48,6 +48,21 @@ HRESULT TLError::WriteBody(ITLBinaryWriterEx* writer)
 	ReturnIfFailed(result, writer->WriteInt32(m_code));
 
 	return writer->WriteString(m_text.Get());
+}
+
+
+TLReqPQ::TLReqPQ()
+{
+	RAND_bytes(m_nonce, 16);
+}
+
+TLReqPQ::~TLReqPQ()
+{
+}
+
+HRESULT TLReqPQ::WriteBody(ITLBinaryWriterEx* writer)
+{
+	return writer->WriteBuffer(m_nonce, ARRAYSIZE(m_nonce));
 }
 
 

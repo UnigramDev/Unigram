@@ -55,6 +55,7 @@ namespace Telegram
 				//COM exported methods			
 				IFACEMETHODIMP get_Id(_Out_ UINT32* value);
 				IFACEMETHODIMP get_HandshakeState(_Out_ HandshakeState* value);
+				IFACEMETHODIMP get_ServerSalt(_Out_ INT64* value);
 				IFACEMETHODIMP GetCurrentAddress(ConnectionType connectionType, boolean ipv6, _Out_ HSTRING* value);
 				IFACEMETHODIMP GetCurrentPort(ConnectionType connectionType, boolean ipv6, _Out_ UINT32* value);
 				//IFACEMETHODIMP GetDownloadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
@@ -62,28 +63,23 @@ namespace Telegram
 				//IFACEMETHODIMP GetGenericConnection(boolean create, _Out_ IConnection** value);
 
 				//Internal methods
-				IFACEMETHODIMP RuntimeClassInitialize(_In_ TLBinaryReader* reader);
 				void SwitchTo443Port();
 				void RecreateSessions();
 				void GetSessionsIds(_Out_ std::vector<INT64>& sessionIds);
+				HandshakeState GetHandshakeState();
+				HRESULT AddServerSalt(_In_ ServerSalt const& salt);
+				HRESULT MergeServerSalts(_In_ std::vector<ServerSalt> const& salts);
+				boolean ContainsServerSalt(INT64 salt);
+				void ClearServerSalts();
+				HRESULT AddEndpoint(_In_ ServerEndpoint const& endpoint, ConnectionType connectionType, boolean ipv6);
+				HRESULT ReplaceEndpoints(_In_ std::vector<ServerEndpoint> const& endpoints, ConnectionType connectionType, boolean ipv6);
 				void NextEndpoint(ConnectionType connectionType, boolean ipv6);
 				void ResetEndpoint();
-				HandshakeState GetHandshakeState();
-				HRESULT AddEndpoint(_In_ std::wstring const& address, UINT32 port, ConnectionType connectionType, boolean ipv6);
 				HRESULT GetDownloadConnection(UINT32 index, boolean create, _Out_ Connection** value);
 				HRESULT GetUploadConnection(UINT32 index, boolean create, _Out_ Connection** value);
 				HRESULT GetGenericConnection(boolean create, _Out_ Connection** value);
 				HRESULT SuspendConnections();
-
-				inline HRESULT AddEndpoint(_In_ ServerEndpoint const* endpoint, ConnectionType connectionType, boolean ipv6)
-				{
-					if (endpoint == nullptr)
-					{
-						return E_INVALIDARG;
-					}
-
-					return AddEndpoint(endpoint->Address, endpoint->Port, connectionType, ipv6);
-				}
+				HRESULT BeginHandshake(boolean reconnect);
 
 				inline HRESULT GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, _Out_ ServerEndpoint const** endpoint)
 				{
@@ -101,6 +97,8 @@ namespace Telegram
 				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
 				HRESULT OnHandshakeResponseReceived(_In_ Connection* connection, INT64 messageId);
+				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
+				boolean ContainsServerSalt(INT64 salt, size_t count);
 
 				UINT32 m_id;
 				HandshakeState m_handshakeState;

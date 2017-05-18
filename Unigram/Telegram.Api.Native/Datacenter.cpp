@@ -4,9 +4,12 @@
 #include "Datacenter.h"
 #include "TLBinaryReader.h"
 #include "Connection.h"
+#include "ConnectionManager.h"
+#include "TLProtocolScheme.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
+using namespace Telegram::Api::Native::TL;
 
 
 Datacenter::Datacenter(UINT32 id) :
@@ -28,13 +31,6 @@ Datacenter::~Datacenter()
 {
 }
 
-HRESULT Datacenter::RuntimeClassInitialize(TLBinaryReader* reader)
-{
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement Datacenter initialization from reader");
-
-	return S_OK;
-}
-
 HRESULT Datacenter::get_Id(UINT32* value)
 {
 	if (value == nullptr)
@@ -53,7 +49,55 @@ HRESULT Datacenter::get_HandshakeState(HandshakeState* value)
 		return E_POINTER;
 	}
 
+	auto lock = LockCriticalSection();
+
 	*value = m_handshakeState;
+	return S_OK;
+}
+
+HRESULT Datacenter::get_ServerSalt(INT64* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	HRESULT result;
+	ComPtr<ConnectionManager> connectionManager;
+	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
+
+	auto lock = LockCriticalSection();
+
+	INT32 maxOffset = -1;
+	INT64 salt = 0;
+	std::vector<size_t> saltsToRemove;
+	auto timeStamp = connectionManager->GetCurrentTime();
+
+	for (size_t i = 0; i < m_serverSalts.size(); i++)
+	{
+		auto& serverSalt = m_serverSalts[i];
+
+		if (serverSalt.ValidUntil < timeStamp)
+		{
+			saltsToRemove.push_back(i);
+		}
+		else if (serverSalt.ValidSince <= timeStamp && serverSalt.ValidUntil > timeStamp)
+		{
+			auto currentOffset = std::abs(serverSalt.ValidUntil - timeStamp);
+			if (currentOffset > maxOffset)
+			{
+				maxOffset = currentOffset;
+				salt = serverSalt.Salt;
+			}
+		}
+	}
+
+	for (size_t i = 0; i < saltsToRemove.size(); i++)
+	{
+		m_serverSalts.erase(m_serverSalts.begin() + saltsToRemove[i]);
+	}
+
+	*value = salt;
 	return S_OK;
 }
 
@@ -240,11 +284,94 @@ HandshakeState Datacenter::GetHandshakeState()
 	return m_handshakeState;
 }
 
-HRESULT Datacenter::AddEndpoint(std::wstring const& address, UINT32 port, ConnectionType connectionType, boolean ipv6)
+HRESULT Datacenter::AddServerSalt(ServerSalt const& salt)
+{
+	auto lock = LockCriticalSection();
+
+	if (ContainsServerSalt(salt.Salt, m_serverSalts.size()))
+	{
+		return PLA_E_NO_DUPLICATES;
+	}
+
+	m_serverSalts.push_back(salt);
+
+	std::sort(m_serverSalts.begin(), m_serverSalts.end(), [](ServerSalt const& x, ServerSalt const& y)
+	{
+		return x.ValidSince < y.ValidSince;
+	});
+
+	return S_OK;
+}
+
+HRESULT Datacenter::MergeServerSalts(std::vector<ServerSalt> const& salts)
+{
+	if (salts.empty())
+	{
+		return S_OK;
+	}
+
+	HRESULT result;
+	ComPtr<ConnectionManager> connectionManager;
+	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
+
+	auto lock = LockCriticalSection();
+	auto serverSaltCount = m_serverSalts.size();
+	auto timeStamp = connectionManager->GetCurrentTime();
+
+	for (size_t i = 0; i < salts.size(); i++)
+	{
+		auto& serverSalt = salts[i];
+
+		if (serverSalt.ValidUntil > timeStamp && !ContainsServerSalt(serverSalt.Salt, serverSaltCount))
+		{
+			m_serverSalts.push_back(serverSalt);
+		}
+	}
+
+	if (m_serverSalts.size() > serverSaltCount)
+	{
+		std::sort(m_serverSalts.begin(), m_serverSalts.end(), [](ServerSalt const& x, ServerSalt const& y)
+		{
+			return x.ValidSince < y.ValidSince;
+		});
+	}
+
+	return S_OK;
+}
+
+boolean Datacenter::ContainsServerSalt(INT64 salt, size_t count)
+{
+	for (size_t i = 0; i < count; i++)
+	{
+		if (m_serverSalts[i].Salt == salt)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+boolean Datacenter::ContainsServerSalt(INT64 salt)
+{
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Check if CriticalSection is really required");
+
+	auto lock = LockCriticalSection();
+	return ContainsServerSalt(salt, m_serverSalts.size());
+}
+
+void Datacenter::ClearServerSalts()
+{
+	auto lock = LockCriticalSection();
+
+	m_serverSalts.clear();
+}
+
+HRESULT Datacenter::AddEndpoint(ServerEndpoint const& endpoint, ConnectionType connectionType, boolean ipv6)
 {
 #if _DEBUG
 	ADDRINFOW* addressInfo;
-	if (GetAddrInfo(address.data(), nullptr, nullptr, &addressInfo) != NO_ERROR)
+	if (GetAddrInfo(endpoint.Address.data(), nullptr, nullptr, &addressInfo) != NO_ERROR)
 	{
 		return WS_E_ENDPOINT_NOT_FOUND;
 	}
@@ -252,45 +379,46 @@ HRESULT Datacenter::AddEndpoint(std::wstring const& address, UINT32 port, Connec
 	FreeAddrInfo(addressInfo);
 #endif
 
-	std::vector<ServerEndpoint>* endpoints;
 	auto lock = LockCriticalSection();
 
-	switch (connectionType)
+	HRESULT result;
+	std::vector<ServerEndpoint>* endpoints;
+	ReturnIfFailed(result, GetEndpointsForConnectionType(connectionType, ipv6, &endpoints));
+
+	for (size_t i = 0; i < endpoints->size(); i++)
 	{
-	case ConnectionType::Generic:
-	case ConnectionType::Upload:
-		if (ipv6)
+		if ((*endpoints)[i].Address.compare(endpoint.Address) == 0) // && endpoint.Port == port)
 		{
-			endpoints = &m_ipv6Endpoints;
+			return PLA_E_NO_DUPLICATES;
 		}
-		else
-		{
-			endpoints = &m_ipv4Endpoints;
-		}
-		break;
-	case ConnectionType::Download:
-		if (ipv6)
-		{
-			endpoints = &m_ipv6DownloadEndpoints;
-		}
-		else
-		{
-			endpoints = &m_ipv4DownloadEndpoints;
-		}
-		break;
-	default:
-		return E_INVALIDARG;
 	}
 
-	if (std::find_if(endpoints->begin(), endpoints->end(), [&](ServerEndpoint const& endpoint)
-	{
-		return endpoint.Address.compare(address) == 0; // && endpoint.Port == port;
-	}) != endpoints->end())
-	{
-		return PLA_E_NO_DUPLICATES;
-	}
+	endpoints->push_back(endpoint);
+	return S_OK;
+}
 
-	endpoints->push_back({ address, port });
+HRESULT Datacenter::ReplaceEndpoints(std::vector<ServerEndpoint> const& newEndpoints, ConnectionType connectionType, boolean ipv6)
+{
+#if _DEBUG
+	for (size_t i = 0; i < newEndpoints.size(); i++)
+	{
+		ADDRINFOW* addressInfo;
+		if (GetAddrInfo(newEndpoints[i].Address.data(), nullptr, nullptr, &addressInfo) != NO_ERROR)
+		{
+			return WS_E_ENDPOINT_NOT_FOUND;
+		}
+
+		FreeAddrInfo(addressInfo);
+	}
+#endif
+
+	auto lock = LockCriticalSection();
+
+	HRESULT result;
+	std::vector<ServerEndpoint>* endpoints;
+	ReturnIfFailed(result, GetEndpointsForConnectionType(connectionType, ipv6, &endpoints));
+
+	*endpoints = newEndpoints;
 	return S_OK;
 }
 
@@ -393,6 +521,25 @@ HRESULT Datacenter::SuspendConnections()
 	return S_OK;
 }
 
+HRESULT Datacenter::BeginHandshake(boolean reconnect)
+{
+	auto lock = LockCriticalSection();
+
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Cleanup handshake");
+
+	m_handshakeState = HandshakeState::None;
+
+	HRESULT result;
+	ComPtr<Connection> genericConnection;
+	ReturnIfFailed(result, GetGenericConnection(true, &genericConnection));
+
+	m_handshakeState = HandshakeState::Started;
+
+	auto reqPQ = Make<TLReqPQ>();
+
+	return S_OK;
+}
+
 HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, ServerEndpoint** endpoint)
 {
 	if (endpoint == nullptr)
@@ -441,6 +588,38 @@ HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ip
 	}
 
 	*endpoint = &(*endpoints)[currentEndpointIndex];
+	return S_OK;
+}
+
+HRESULT Datacenter::GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, std::vector<ServerEndpoint>** endpoints)
+{
+	switch (connectionType)
+	{
+	case ConnectionType::Generic:
+	case ConnectionType::Upload:
+		if (ipv6)
+		{
+			*endpoints = &m_ipv6Endpoints;
+		}
+		else
+		{
+			*endpoints = &m_ipv4Endpoints;
+		}
+		break;
+	case ConnectionType::Download:
+		if (ipv6)
+		{
+			*endpoints = &m_ipv6DownloadEndpoints;
+		}
+		else
+		{
+			*endpoints = &m_ipv4DownloadEndpoints;
+		}
+		break;
+	default:
+		return E_INVALIDARG;
+	}
+
 	return S_OK;
 }
 

@@ -273,6 +273,7 @@ namespace Telegram
 			{
 				[propget] HRESULT Id([out][retval] UINT32* value);
 				[propget] HRESULT HandshakeState([out][retval] HandshakeState* value);
+				[propget] HRESULT ServerSalt([out][retval] INT64* value);
 				HRESULT GetCurrentAddress([in] ConnectionType connectionType,[in] boolean ipv6,[out][retval] HSTRING* value);
 				HRESULT GetCurrentPort([in] ConnectionType connectionType,[in] boolean ipv6,[out][retval] UINT32* value);
 				//HRESULT GetDownloadConnection([in] UINT32 index,[in] boolean create, [out][retval] Connection** value);

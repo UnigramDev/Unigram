@@ -211,7 +211,7 @@ HRESULT ConnectionManager::put_UserConfiguration(IUserConfiguration* value)
 			I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle UserConfiguration changes");
 		}
 	}
-	 
+
 	return S_OK;
 }
 
@@ -476,7 +476,7 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 	*object = errorObject.Detach();
 
 	auto datacenter = Make<Datacenter>();
-	ReturnIfFailed(result, datacenter->AddEndpoint(L"192.168.1.1", 80, ConnectionType::Generic, false));
+	ReturnIfFailed(result, datacenter->AddEndpoint({ L"192.168.1.1", 80 }, ConnectionType::Generic, false));
 
 	ComPtr<Connection> connection;
 	ReturnIfFailed(result, datacenter->GetGenericConnection(true, &connection));
@@ -530,6 +530,14 @@ boolean ConnectionManager::IsNetworkAvailable()
 {
 	auto lock = LockCriticalSection();
 	return m_currentNetworkType != ConnectionNeworkType::None;
+}
+
+INT32 ConnectionManager::GetCurrentTime()
+{
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Check if CriticalSection is really required");
+
+	auto lock = LockCriticalSection();
+	return static_cast<INT32>(ConnectionManager::GetCurrentRealTime() / 1000) + m_timeDelta;
 }
 
 HRESULT ConnectionManager::GetInstance(ComPtr<ConnectionManager>& value)

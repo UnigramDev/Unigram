@@ -15,6 +15,7 @@ namespace Telegram
 			{
 
 				class TLError;
+				class TLReqPQ;
 				class TLFutureSalt;
 				class TLInvokeWithLayer;
 				class TLInitConnection;
@@ -24,6 +25,7 @@ namespace Telegram
 				{
 
 					MAKE_TLOBJECT_TRAITS(TLError, 0xc4b9f9bb, false);
+					MAKE_TLOBJECT_TRAITS(TLReqPQ, 0x60469778, false);
 					MAKE_TLOBJECT_TRAITS(TLFutureSalt, 0x0949d9dc, false);
 					MAKE_TLOBJECT_TRAITS(TLInvokeWithLayer, 0xda9b0d0d, false);
 					MAKE_TLOBJECT_TRAITS(TLInitConnection, 0x69796de9, false);
@@ -67,6 +69,27 @@ namespace Telegram
 				private:
 					INT32 m_code;
 					HString m_text;
+				};
+
+				class TLReqPQ WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLReqPQTraits>>
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				public:
+					TLReqPQ();
+					~TLReqPQ();
+
+					//Internal methods
+					inline BYTE const* GetNonce() const
+					{
+						return m_nonce;
+					}
+
+				protected:
+					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
+
+				private:
+					BYTE m_nonce[16];
 				};
 
 				class TLFutureSalt WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLFutureSaltTraits>>
