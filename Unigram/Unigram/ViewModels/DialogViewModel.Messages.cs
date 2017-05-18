@@ -130,7 +130,9 @@ namespace Unigram.ViewModels
                 dialog.PrimaryButtonText = "Yes";
                 dialog.SecondaryButtonText = "No";
 
-                if (message != null && message.IsOut && message.ToId.Id != SettingsHelper.UserId && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
+                var chat = With as TLChat;
+
+                if (message != null && (message.IsOut || (chat != null && (chat.IsCreator || chat.IsAdmin)))  && message.ToId.Id != SettingsHelper.UserId && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
                 {
                     var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
                     var config = CacheService.GetConfig();
@@ -142,12 +144,16 @@ namespace Unigram.ViewModels
                             dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
                         }
 
-                        var chat = With as TLChat;
+                        //var chat = With as TLChat;
                         if (chat != null)
                         {
                             dialog.CheckBoxLabel = "Delete for everyone";
                         }
                     }
+                }
+                else if (Peer is TLInputPeerUser)
+                {
+                    dialog.Message += "\r\n\r\nThis will delete it just for you.";
                 }
                 else if (Peer is TLInputPeerChat)
                 {
