@@ -65,6 +65,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<DownloadAudioFileManager>().As<IDownloadAudioFileManager>().SingleInstance();
             container.ContainerBuilder.RegisterType<DownloadVideoFileManager>().As<IDownloadVideoFileManager>().SingleInstance();
             container.ContainerBuilder.RegisterType<DownloadDocumentFileManager>().As<IDownloadDocumentFileManager>().SingleInstance();
+            container.ContainerBuilder.RegisterType<DownloadWebFileManager>().As<IDownloadWebFileManager>().SingleInstance();
             //container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadFileManager>().SingleInstance();
             //container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadAudioManager>().SingleInstance();
             //container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadDocumentManager>().SingleInstance();

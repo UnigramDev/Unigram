@@ -127,6 +127,7 @@
     <Compile Include="Services\FileManager\DownloadDocumentFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadableItem.cs" />
     <Compile Include="Services\FileManager\DownloadablePart.cs" />
+    <Compile Include="Services\FileManager\DownloadWebFileManager.cs" />
     <Compile Include="Services\FileManager\EventArgs\DownloadingCanceledEventArgs.cs" />
     <Compile Include="Services\FileManager\DownloadEncryptedFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadFileManager.cs" />
