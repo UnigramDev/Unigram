@@ -245,16 +245,21 @@
 
                 <!-- TODO: video timing -->
                 <Grid Background="Black"
-                        MinWidth="{ThemeResource TelegramMediaMinWidth}"
-                        MinHeight="{ThemeResource TelegramMediaMinHeight}"
-                        HorizontalAlignment="Left">
+                      HorizontalAlignment="Left"
+                      MinWidth="{ThemeResource TelegramMediaMinWidth}"
+                      MinHeight="{ThemeResource TelegramMediaMinHeight}">
                     <controls:ImageView Source="{Binding Media.WebPage.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
-                                        Constraint="{Binding Media.WebPage.Photo}"
-                                        MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-                                        MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch"
-                                        Click="SingleMedia_Click"/>
+                                Constraint="{Binding Media.WebPage.Photo}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Click="SingleMedia_Click"/>
+
+                    <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
+                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.WebPage.Photo}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.WebPage.Photo.Progress}" IsHitTestVisible="False"/>
+                    </Grid>
                 </Grid>
             </StackPanel>
 

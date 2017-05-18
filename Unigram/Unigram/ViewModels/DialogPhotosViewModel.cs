@@ -135,7 +135,20 @@ namespace Unigram.ViewModels
             }
         }
 
-        public override ITLDialogWith From => _message.IsPost ? _message.Parent : _message.From;
+        //public override ITLDialogWith From => _message.IsPost ? _message.Parent : _message.From;
+
+        public override ITLDialogWith From
+        {
+            get
+            {
+                if (_message.HasFwdFrom)
+                {
+                    return (ITLDialogWith)_message.FwdFrom.Channel ?? _message.FwdFrom.User;
+                }
+
+                return _message.IsPost ? _message.Parent : _message.From;
+            }
+        }
 
         public override int Date => _message.Date;
 

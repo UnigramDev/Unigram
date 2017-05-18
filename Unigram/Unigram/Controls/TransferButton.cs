@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
+using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Views;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -27,7 +29,7 @@ namespace Unigram.Controls
         {
             if (Transferable is TLPhoto photo)
             {
-
+                var context = DefaultPhotoConverter.BitmapContext[photo, false];
             }
             else if (Transferable is TLDocument document)
             {

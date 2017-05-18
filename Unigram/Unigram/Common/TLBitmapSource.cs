@@ -34,14 +34,17 @@ namespace Unigram.Common
         public const int PHASE_THUMBNAIL = 1;
         public const int PHASE_FULL = 2;
 
+        public BitmapImage Image { get; private set; } = new BitmapImage { DecodePixelType = DecodePixelType.Logical };
         public int Phase { get; private set; }
 
-        public BitmapImage Image { get; private set; } = new BitmapImage { DecodePixelType = DecodePixelType.Logical };
+        private object _source;
 
         public TLBitmapSource() { }
 
         public TLBitmapSource(TLUser user)
         {
+            _source = user;
+
             Image.DecodePixelWidth = 64;
             Image.DecodePixelHeight = 64;
 
@@ -62,6 +65,8 @@ namespace Unigram.Common
 
         public TLBitmapSource(TLChatBase chatBase)
         {
+            _source = chatBase;
+
             Image.DecodePixelWidth = 64;
             Image.DecodePixelHeight = 64;
 
@@ -93,23 +98,35 @@ namespace Unigram.Common
 
         public TLBitmapSource(TLPhotoBase photoBase)
         {
+            _source = photoBase;
+
             var photo = photoBase as TLPhoto;
             if (photo != null)
             {
                 if (TrySetSource(photo.Full, PHASE_FULL) == false)
                 {
                     SetSource(null, photo.Thumb, PHASE_THUMBNAIL);
-                    SetSource(photo, photo.Full, PHASE_FULL);
+                    //SetSource(photo, photo.Full, PHASE_FULL);
                 }
             }
         }
 
         public TLBitmapSource(TLDocument document)
         {
+            _source = document;
+
             SetSource(null, document.Thumb, PHASE_THUMBNAIL);
         }
 
-        public async void SetProfilePlaceholder(object value, string group, int id, string name)
+        public void Download()
+        {
+            if (PHASE_FULL > Phase && _source is TLPhoto photo)
+            {
+                SetSource(photo, photo.Full, PHASE_FULL);
+            }
+        }
+
+        private async void SetProfilePlaceholder(object value, string group, int id, string name)
         {
             if (PHASE_PLACEHOLDER >= Phase)
             {
@@ -137,7 +154,7 @@ namespace Unigram.Common
             }
         }
 
-        public bool TrySetSource(TLPhotoSizeBase photoSizeBase, int phase)
+        private bool TrySetSource(TLPhotoSizeBase photoSizeBase, int phase)
         {
             var photoSize = photoSizeBase as TLPhotoSize;
             if (photoSize != null)
@@ -159,7 +176,7 @@ namespace Unigram.Common
             return false;
         }
 
-        public void SetSource(ITLTransferable transferable, TLPhotoSizeBase photoSizeBase, int phase)
+        private void SetSource(ITLTransferable transferable, TLPhotoSizeBase photoSizeBase, int phase)
         {
             var photoSize = photoSizeBase as TLPhotoSize;
             if (photoSize != null)
@@ -178,7 +195,7 @@ namespace Unigram.Common
             }
         }
 
-        public bool TrySetSource(TLFileLocation location, int phase)
+        private bool TrySetSource(TLFileLocation location, int phase)
         {
             if (phase >= Phase && location != null)
             {
@@ -187,7 +204,6 @@ namespace Unigram.Common
                 {
                     Phase = phase;
 
-                    //Image.SetSource(FileUtils.GetTempFileUri(fileName));
                     Image.UriSource = FileUtils.GetTempFileUri(fileName);
                     return true;
                 }
@@ -196,7 +212,7 @@ namespace Unigram.Common
             return false;
         }
 
-        public void SetSource(ITLTransferable transferable, TLFileLocation location, int fileSize, int phase)
+        private void SetSource(ITLTransferable transferable, TLFileLocation location, int fileSize, int phase)
         {
             if (phase >= Phase && location != null)
             {
@@ -205,7 +221,6 @@ namespace Unigram.Common
                 var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
-                    //Image.SetSource(FileUtils.GetTempFileUri(fileName));
                     Image.UriSource = FileUtils.GetTempFileUri(fileName);
                 }
                 else
