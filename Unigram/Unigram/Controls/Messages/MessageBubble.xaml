@@ -11,6 +11,7 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
+    Margin="{ThemeResource MessageContentMargin}"
     HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
     MaxWidth="432">
 
@@ -19,7 +20,6 @@
 
     <UserControl x:Name="LayoutRoot">
         <Grid x:Name="ContentPanel"
-              Margin="{ThemeResource MessageContentMargin}"
               Padding="{ThemeResource MessageContentPadding}"
               CornerRadius="{ThemeResource MessageCornerRadius}"
               Background="{ThemeResource MessageBackgroundBrush}"

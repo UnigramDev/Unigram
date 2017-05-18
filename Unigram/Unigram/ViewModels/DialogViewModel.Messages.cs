@@ -130,7 +130,9 @@ namespace Unigram.ViewModels
                 dialog.PrimaryButtonText = "Yes";
                 dialog.SecondaryButtonText = "No";
 
-                if (message != null && message.IsOut && message.ToId.Id != SettingsHelper.UserId && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
+                var chat = With as TLChat;
+
+                if (message != null && (message.IsOut || (chat != null && (chat.IsCreator || chat.IsAdmin)))  && message.ToId.Id != SettingsHelper.UserId && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
                 {
                     var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
                     var config = CacheService.GetConfig();
@@ -142,12 +144,16 @@ namespace Unigram.ViewModels
                             dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
                         }
 
-                        var chat = With as TLChat;
+                        //var chat = With as TLChat;
                         if (chat != null)
                         {
                             dialog.CheckBoxLabel = "Delete for everyone";
                         }
                     }
+                }
+                else if (Peer is TLInputPeerUser)
+                {
+                    dialog.Message += "\r\n\r\nThis will delete it just for you.";
                 }
                 else if (Peer is TLInputPeerChat)
                 {
@@ -242,12 +248,12 @@ namespace Unigram.ViewModels
         #region Forward
 
         public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
-        private async void MessageForwardExecute(TLMessageBase message)
+        private void MessageForwardExecute(TLMessageBase message)
         {
             if (message is TLMessage)
             {
-                await ShareView.Current.ShowAsync(new TLStickerSet());
-                return;
+                //await ShareView.Current.ShowAsync(new TLStickerSet());
+                //return;
 
                 App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
                 NavigationService.GoBackAt(0);
@@ -412,6 +418,16 @@ namespace Unigram.ViewModels
         #endregion
 
         #region Edit
+
+        public RelayCommand MessageEditLastCommand => new RelayCommand(MessageEditLastExecute);
+        private void MessageEditLastExecute()
+        {
+            var last = Messages.LastOrDefault(x => x is TLMessage message && message.IsOut);
+            if (last != null)
+            {
+                MessageEditCommand.Execute(last);
+            }
+        }
 
         public RelayCommand<TLMessage> MessageEditCommand => new RelayCommand<TLMessage>(MessageEditExecute);
         private async void MessageEditExecute(TLMessage message)

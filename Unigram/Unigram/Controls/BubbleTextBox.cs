@@ -345,6 +345,10 @@ namespace Unigram.Controls
                     ViewModel.ResolveInlineBot(text);
                 }
             }
+            else if (e.Key == VirtualKey.Up && IsEmpty)
+            {
+                ViewModel.MessageEditLastCommand.Execute();
+            }
 
             base.OnKeyDown(e);
         }

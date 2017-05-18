@@ -56,7 +56,10 @@ namespace Unigram.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            LayoutRoot.Children.Clear();
+            ScrollingHost.Items.Clear();
+            ViewModel.Gallery.Items.Clear();
+            ViewModel.Gallery.TotalItems = 0;
+            ViewModel.Gallery.SelectedItem = null;
             _anchors.Clear();
 
             var parameter = TLSerializationService.Current.Deserialize((string)e.Parameter);
@@ -82,6 +85,7 @@ namespace Unigram.Views
 
                 var processed = 0;
                 TLPageBlockBase previousBlock = null;
+                FrameworkElement previousElement = null;
                 foreach (var block in webpage.CachedPage.Blocks)
                 {
                     var element = ProcessBlock(webpage.CachedPage, block, photos, videos);
@@ -91,10 +95,11 @@ namespace Unigram.Views
                     if (element != null)
                     {
                         element.Margin = new Thickness(padding, spacing, padding, 0);
-                        LayoutRoot.Children.Add(element);
+                        ScrollingHost.Items.Add(element);
                     }
 
                     previousBlock = block;
+                    previousElement = element;
                     processed++;
                 }
 
@@ -125,10 +130,11 @@ namespace Unigram.Views
                                 if (element != null)
                                 {
                                     element.Margin = new Thickness(padding, spacing, padding, 0);
-                                    LayoutRoot.Children.Add(element);
+                                    ScrollingHost.Items.Add(element);
                                 }
 
                                 previousBlock = newpage.CachedPage.Blocks[i];
+                                previousElement = element;
                             }
                         }
                     }
@@ -227,7 +233,7 @@ namespace Unigram.Views
 
         private FrameworkElement ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
-            var textBlock = new TextBlock { Style = Resources["AuthorDateTextBlockStyle"] as Style };
+            var textBlock = new TextBlock { Style = Resources["AuthorDateBlockStyle"] as Style };
             textBlock.FontSize = 15;
 
             if (block.Author.TypeId != TLType.TextEmpty)
@@ -308,7 +314,7 @@ namespace Unigram.Views
                     case TLType.PageBlockTitle:
                         textBlock.FontSize = 28;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                        //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubtitle:
                         textBlock.FontSize = 17;
@@ -318,12 +324,12 @@ namespace Unigram.Views
                     case TLType.PageBlockHeader:
                         textBlock.FontSize = 24;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                        //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubheader:
                         textBlock.FontSize = 19;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                        //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockParagraph:
                         textBlock.FontSize = 17;
@@ -363,7 +369,7 @@ namespace Unigram.Views
                         else
                         {
                             textBlock.FontFamily = new FontFamily("Times New Roman");
-                            textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                            //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                             textBlock.TextAlignment = TextAlignment.Center;
                         }
                         break;
@@ -719,6 +725,7 @@ namespace Unigram.Views
             element.Children.Add(header);
 
             TLPageBlockBase previousBlock = null;
+            FrameworkElement previousElement = null;
             foreach (var subBlock in block.Blocks)
             {
                 var subLayout = ProcessBlock(page, subBlock, photos, videos);
@@ -731,6 +738,7 @@ namespace Unigram.Views
                 }
 
                 previousBlock = block;
+                previousElement = subLayout;
             }
 
             return element;
@@ -821,112 +829,120 @@ namespace Unigram.Views
         {
             if (lower is TLPageBlockCover)
             {
-                return 0.0f;
+                return 0;
+            }
+
+            return 12;
+
+            if (lower is TLPageBlockCover)
+            {
+                return 0;
             }
             else if (lower is TLPageBlockDivider || upper is TLPageBlockDivider)
             {
-                return 25.0f;
+                return 15; // 25;
             }
             else if (lower is TLPageBlockBlockquote || upper is TLPageBlockBlockquote || lower is TLPageBlockPullquote || upper is TLPageBlockPullquote)
             {
-                return 27.0f;
+                return 17; // 27;
             }
             else if (lower is TLPageBlockTitle)
             {
-                return 20.0f;
+                return 12; // 20;
             }
             else if (lower is TLPageBlockAuthorDate)
             {
                 if (upper is TLPageBlockTitle)
                 {
-                    return 26.0f;
+                    return 16; // 26;
                 }
                 else
                 {
-                    return 20.0f;
+                    return 12; // 20;
                 }
             }
             else if (lower is TLPageBlockParagraph)
             {
                 if (upper is TLPageBlockTitle || upper is TLPageBlockAuthorDate)
                 {
-                    return 34.0f;
+                    return 20; // 34;
                 }
                 else if (upper is TLPageBlockHeader || upper is TLPageBlockSubheader)
                 {
-                    return 25.0f;
+                    return 15; // 25;
                 }
                 else if (upper is TLPageBlockParagraph)
                 {
-                    return 25.0f;
+                    return 15; // 25;
                 }
                 else if (upper is TLPageBlockList)
                 {
-                    return 31.0f;
+                    return 19; // 31;
                 }
                 else if (upper is TLPageBlockPreformatted)
                 {
-                    return 19.0f;
+                    return 11; // 19;
                 }
                 else
                 {
-                    return 20.0f;
+                    return 12; // 20;
                 }
             }
             else if (lower is TLPageBlockList)
             {
                 if (upper is TLPageBlockTitle || upper is TLPageBlockAuthorDate)
                 {
-                    return 34.0f;
+                    return 20; // 34;
                 }
                 else if (upper is TLPageBlockHeader || upper is TLPageBlockSubheader)
                 {
-                    return 31.0f;
+                    return 19; // 31;
                 }
                 else if (upper is TLPageBlockParagraph || upper is TLPageBlockList)
                 {
-                    return 31.0f;
+                    return 19; // 31;
                 }
                 else if (upper is TLPageBlockPreformatted)
                 {
-                    return 19.0f;
+                    return 11; // 19;
                 }
                 else
                 {
-                    return 20.0f;
+                    return 12; // 20;
                 }
             }
             else if (lower is TLPageBlockPreformatted)
             {
                 if (upper is TLPageBlockParagraph)
                 {
-                    return 19.0f;
+                    return 11; // 19;
                 }
                 else
                 {
-                    return 20.0f;
+                    return 12; // 20;
                 }
             }
             else if (lower is TLPageBlockHeader)
             {
-                return 32.0f;
+                return 20; // 32;
             }
             else if (lower is TLPageBlockSubheader)
             {
-                return 32.0f;
+                return 20; // 32;
             }
             else if (lower == null)
             {
                 if (upper is TLPageBlockFooter)
                 {
-                    return 24.0f;
+                    return 14; // 24;
                 }
                 else
                 {
-                    return 24.0f;
+                    return 14; // 24;
                 }
             }
-            return 20.0f;
+
+            return 12; // 20;
         }
 
         private double PaddingForBlock(TLPageBlockBase block)
@@ -970,10 +986,10 @@ namespace Unigram.Views
                     var name = urlText.Url.Substring(fragmentStart + 1);
                     if (_anchors.TryGetValue(name, out Border anchor))
                     {
-                        var transform = anchor.TransformToVisual(LayoutRoot);
+                        var transform = anchor.TransformToVisual(ScrollingHost);
                         var position = transform.TransformPoint(new Point());
 
-                        ScrollingHost.ChangeView(null, Math.Max(0, position.Y - 8), null, false);
+                        //ScrollingHost.ChangeView(null, Math.Max(0, position.Y - 8), null, false);
                     }
                 }
             }

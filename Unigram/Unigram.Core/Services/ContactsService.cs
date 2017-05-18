@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;
 
@@ -12,18 +14,50 @@ namespace Unigram.Core.Services
     public interface IContactsService
     {
         Task SyncContactsAsync(TLContactsContactsBase result);
+
+        Task UnsyncContactsAsync();
     }
 
     public class ContactsService : IContactsService
     {
+        private readonly DisposableMutex _syncLock;
+
+        public ContactsService()
+        {
+            _syncLock = new DisposableMutex();
+        }
+
         public async Task SyncContactsAsync(TLContactsContactsBase result)
         {
-            var contactList = await GetContactListAsync();
-            var annotationList = await GetAnnotationListAsync();
-
-            if (contactList != null && annotationList != null)
+            using (await _syncLock.WaitAsync())
             {
-                await ExportContacts(contactList, annotationList, result);
+                Debug.WriteLine("SYNCING CONTACTS");
+
+                var contactList = await GetContactListAsync();
+                var annotationList = await GetAnnotationListAsync();
+
+                if (contactList != null && annotationList != null)
+                {
+                    await ExportContacts(contactList, annotationList, result);
+                }
+
+                Debug.WriteLine("SYNCED CONTACTS");
+            }
+        }
+
+        public async Task UnsyncContactsAsync()
+        {
+            using (await _syncLock.WaitAsync())
+            {
+                Debug.WriteLine("UNSYNCING CONTACTS");
+
+                var contactList = await GetContactListAsync();
+                var annotationList = await GetAnnotationListAsync();
+
+                await contactList.DeleteAsync();
+                await annotationList.DeleteAsync();
+
+                Debug.WriteLine("UNSYNCED CONTACTS");
             }
         }
 

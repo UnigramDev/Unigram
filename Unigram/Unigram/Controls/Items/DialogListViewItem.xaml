@@ -95,11 +95,15 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
+            <TextBlock x:Name="BriefInfo"
+                       Style="{ThemeResource BodyTextBlockStyle}"
                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                        TextTrimming="CharacterEllipsis"
                        TextWrapping="NoWrap"
                        MaxLines="1">
+                <ToolTipService.ToolTip>
+                    <ToolTip Opened="ToolTip_Opened"/>
+                </ToolTipService.ToolTip>
                 <Run x:Name="FromLabel" Foreground="{ThemeResource TelegramDialogLabelFromBrush}"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
             </TextBlock>
             <Border Visibility="{x:Bind UpdateIsPinned(ViewModel.IsPinned, ViewModel.UnreadCount), Mode=OneWay, FallbackValue=Collapsed}"

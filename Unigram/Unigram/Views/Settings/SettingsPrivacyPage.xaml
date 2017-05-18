@@ -52,7 +52,7 @@
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="PAYMENTS" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:HyperButton Tag="Clear patment &amp; shipping info" Click="Sessions_Click" Margin="-12,0,-12,-0" Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton Tag="Clear Payment and Shipping Info" Click="Sessions_Click" Margin="-12,0,-12,-0" Style="{StaticResource HyperDetailButtonStyle}"/>
 
                     <TextBlock Text="You can delete your shipping info and instruct all payment providers to remove your saved credit cards. Note that Telegram never stores your credit card data." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>

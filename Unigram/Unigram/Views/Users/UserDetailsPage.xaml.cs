@@ -34,8 +34,6 @@ namespace Unigram.Views.Users
             InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Required;
             DataContext = UnigramContainer.Current.ResolveType<UserDetailsViewModel>();
-
-            SizeChanged += OnSizeChanged;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)

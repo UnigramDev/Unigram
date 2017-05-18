@@ -163,6 +163,8 @@ namespace Unigram.ViewModels
 
         public virtual bool IsVideo { get; private set; }
 
+        public virtual bool IsLoop { get; private set; }
+
         public virtual bool HasStickers { get; private set; }
 
         public virtual TLInputStickeredMediaBase ToInputStickeredMedia()

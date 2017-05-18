@@ -46,6 +46,8 @@ using Telegram.Api.TL.Methods.Messages;
 using Telegram.Api;
 using Unigram.Views;
 using Telegram.Api.TL.Methods.Phone;
+using Windows.ApplicationModel.Calls;
+using Unigram.Tasks;
 
 namespace Unigram.ViewModels
 {
@@ -174,6 +176,19 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _isReportSpam, value);
+            }
+        }
+
+        private bool _isPhoneCallsAvailable;
+        public bool IsPhoneCallsAvailable
+        {
+            get
+            {
+                return _isPhoneCallsAvailable;
+            }
+            set
+            {
+                Set(ref _isPhoneCallsAvailable, value);
             }
         }
 
@@ -597,10 +612,14 @@ namespace Unigram.ViewModels
             var participant = GetParticipant(parameter as TLPeerBase);
             if (participant is TLUser user)
             {
-                var full = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 });
-
                 With = user;
                 Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
+
+                var full = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 });
+                if (full.IsSucceeded)
+                {
+                    IsPhoneCallsAvailable = full.Result.IsPhoneCallsAvailable;
+                }
             }
             else if (participant is TLChannel channel)
             {
@@ -615,6 +634,8 @@ namespace Unigram.ViewModels
                         return;
                     }
                 }
+
+                IsPhoneCallsAvailable = false;
 
                 With = channel;
                 Peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 };
@@ -665,6 +686,8 @@ namespace Unigram.ViewModels
             }
             else if (participant is TLChat chat)
             {
+                IsPhoneCallsAvailable = false;
+
                 With = chat;
                 Peer = new TLInputPeerChat { ChatId = chat.Id };
 
@@ -2210,37 +2233,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var config = await ProtoService.GetDHConfigAsync(0, 256);
-            if (config.IsSucceeded)
+            var coordinator = VoipCallCoordinator.GetDefault();
+            var result = await coordinator.ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask");
+            if (result == VoipPhoneCallResourceReservationStatus.Success)
             {
-                var dh = config.Result;
-                if (!TLUtils.CheckPrime(dh.P, dh.G))
-                {
-                    return;
-                }
-
-                var salt = new byte[256];
-                var secureRandom = new SecureRandom();
-                secureRandom.NextBytes(salt);
-
-                var g_a = MTProtoService.GetGB(salt, dh.G, dh.P);
-
-                var request = new TLPhoneRequestCall
-                {
-                    UserId = new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 },
-                    RandomId = TLInt.Random(),
-                    GAHash = Utils.ComputeSHA256(g_a),
-                    Protocol = new TLPhoneCallProtocol
-                    {
-                        IsUdpP2p = true,
-                        IsUdpReflector = true,
-                        MinLayer = 65,
-                        MaxLayer = 65,
-                    }
-                };
-
-                var response = await ProtoService.SendRequestAsync<TLPhonePhoneCall>("phone.requestCall", request);
-                Debugger.Break();
+                await VoIPConnection.Current.SendRequestAsync("voip.startCall", user);
             }
         }
 

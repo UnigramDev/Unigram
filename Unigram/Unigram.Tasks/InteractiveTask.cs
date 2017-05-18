@@ -138,7 +138,7 @@ namespace Unigram.Tasks
             }
         }
 
-        public string Model
+        public string DeviceModel
         {
             get
             {

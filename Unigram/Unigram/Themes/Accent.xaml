@@ -42,7 +42,7 @@
 
 
 
-
+            <StaticResource x:Key="TelegramBackgroundTitlebarBrush" ResourceKey="CommandBarBackground"/>
             <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
@@ -90,6 +90,7 @@
 
 
 
+            <StaticResource x:Key="TelegramBackgroundTitlebarBrush" ResourceKey="CommandBarBackground"/>
             <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
             <StaticResource x:Key="ComboBoxPlaceHolderForeground" ResourceKey="TextControlPlaceholderForeground"/>
 
@@ -110,7 +111,6 @@
     <SolidColorBrush x:Key="TelegramBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramForegroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramBackgroundMessageBubbleBrush" Color="{ThemeResource SystemAccentColor}"/>
-    <SolidColorBrush x:Key="TelegramBackgroundTitlebarBrush" Color="{ThemeResource SystemChromeMediumColor}"/>
     <SolidColorBrush x:Key="TelegramDialogLabelFromBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramDialogLabelDraftBrush" Color="#DD4B39"/>
     <SolidColorBrush x:Key="TelegramDialogUnreadBadgeBrush" Color="{ThemeResource SystemAccentColor}"/>

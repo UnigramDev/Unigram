@@ -50,6 +50,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI;
 using Unigram.Views.Channels;
 using Unigram.Themes;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Views
 {
@@ -148,8 +149,8 @@ namespace Unigram.Views
 
                 ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, showShowAnimation);
                 ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
-                ElementCompositionPreview.SetImplicitShowAnimation(btnDialogInfo, hideShowAnimation);
-                ElementCompositionPreview.SetImplicitHideAnimation(btnDialogInfo, showHideAnimation);
+                ElementCompositionPreview.SetImplicitShowAnimation(InfoPanel, hideShowAnimation);
+                ElementCompositionPreview.SetImplicitHideAnimation(InfoPanel, showHideAnimation);
             }
 
             base.OnNavigatedTo(e);
@@ -161,8 +162,8 @@ namespace Unigram.Views
             {
                 ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, null);
                 ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, null);
-                ElementCompositionPreview.SetImplicitShowAnimation(btnDialogInfo, null);
-                ElementCompositionPreview.SetImplicitHideAnimation(btnDialogInfo, null);
+                ElementCompositionPreview.SetImplicitShowAnimation(InfoPanel, null);
+                ElementCompositionPreview.SetImplicitHideAnimation(InfoPanel, null);
             }
 
             base.OnNavigatingFrom(e);
@@ -185,12 +186,12 @@ namespace Unigram.Views
             if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
                 ManagePanel.Visibility = Visibility.Collapsed;
-                btnDialogInfo.Visibility = Visibility.Visible;
+                InfoPanel.Visibility = Visibility.Visible;
             }
             else
             {
                 ManagePanel.Visibility = Visibility.Visible;
-                btnDialogInfo.Visibility = Visibility.Collapsed;
+                InfoPanel.Visibility = Visibility.Collapsed;
             }
 
             ViewModel.MessagesForwardCommand.RaiseCanExecuteChanged();

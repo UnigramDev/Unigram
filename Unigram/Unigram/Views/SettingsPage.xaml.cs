@@ -97,9 +97,9 @@ namespace Unigram.Views
             ViewModel.NavigationService = MasterDetail.NavigationService;
         }
 
-        private void Generic_Click(object sender, RoutedEventArgs e)
+        private void General_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsGenericPage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsGeneralPage));
         }
 
         private void Username_Click(object sender, RoutedEventArgs e)

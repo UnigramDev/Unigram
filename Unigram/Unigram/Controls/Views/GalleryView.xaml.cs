@@ -255,6 +255,7 @@ namespace Unigram.Controls.Views
 
                 _mediaSurface = swapchain;
                 _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
+                _mediaPlayer.MediaPlayer.IsLoopingEnabled = item.IsLoop;
                 _mediaPlayer.MediaPlayer.Play();
             }
         }
