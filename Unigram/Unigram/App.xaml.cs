@@ -278,9 +278,9 @@ namespace Unigram
 
         private async void OnStartSync()
         {
-#if DEBUG
+//#if DEBUG
             await VoIPConnection.Current.ConnectAsync();
-#endif
+//#endif
 
             await Toast.RegisterBackgroundTasks();
 
@@ -314,9 +314,9 @@ namespace Unigram
             var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
             updatesService.LoadStateAndUpdate(() => { });
 
-#if DEBUG
+//#if DEBUG
             await VoIPConnection.Current.ConnectAsync();
-#endif
+//#endif
 
             base.OnResuming(s, e, previousExecutionState);
         }

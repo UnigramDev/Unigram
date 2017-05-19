@@ -45,20 +45,27 @@ namespace Unigram.Common
 
         public async Task<bool> ConnectAsync()
         {
-            if (!IsConnected)
+            try
             {
-                _appConnection = new AppServiceConnection
+                if (!IsConnected)
                 {
-                    AppServiceName = nameof(VoIPServiceTask),
-                    PackageFamilyName = Package.Current.Id.FamilyName
-                };
+                    _appConnection = new AppServiceConnection
+                    {
+                        AppServiceName = nameof(VoIPServiceTask),
+                        PackageFamilyName = Package.Current.Id.FamilyName
+                    };
 
-                _appConnection.ServiceClosed += OnServiceClosed;
-                _appConnection.RequestReceived += OnRequestReceived;
+                    _appConnection.ServiceClosed += OnServiceClosed;
+                    _appConnection.RequestReceived += OnRequestReceived;
 
-                var status = await _appConnection.OpenAsync();
+                    var status = await _appConnection.OpenAsync();
 
-                IsConnected = status == AppServiceConnectionStatus.Success;
+                    IsConnected = status == AppServiceConnectionStatus.Success;
+                }
+            }
+            catch
+            {
+                IsConnected = false;
             }
 
             return IsConnected;
