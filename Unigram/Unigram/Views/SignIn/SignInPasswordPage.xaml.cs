@@ -40,5 +40,14 @@ namespace Unigram.Views.SignIn
             public TLAuthSentCode Result { get; set; }
             public TLAccountPassword Password { get; set; }
         }
+
+        private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                ViewModel.SendCommand.Execute(sender);
+                e.Handled = true;
+            }
+        }
     }
 }
