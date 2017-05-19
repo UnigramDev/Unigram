@@ -22,12 +22,12 @@ namespace Unigram.ViewModels.SignIn
 
             // TODO: put them in a separate file?
             // TODO: localization
-            Items.Add(new WelcomeTour { Title = "Unigram", Text = "Unigram is a Telegram Universal app built by the Windows Community, for the Windows Community" });
-            Items.Add(new WelcomeTour { Title = "Fast", Text = "**Telegram** delivers messages faster\nthan any other application." });
-            Items.Add(new WelcomeTour { Title = "Free", Text = "**Telegram** is free forever. No ads.\nNo subscription fees." });
-            Items.Add(new WelcomeTour { Title = "Powerful", Text = "**Telegram** has no limits on\nthe size of your media and chats." });
-            Items.Add(new WelcomeTour { Title = "Secure", Text = "**Telegram** keeps your messages\nsafe from hacker attacks." });
-            Items.Add(new WelcomeTour { Title = "Cloud-Based", Text = "**Telegram** lets you access your\nmessages from multiple devices." });
+            Items.Add(new WelcomeTour { Title = "Unigram", Bold = "Unigram", Text = "is a Telegram Universal app built by the Windows Community, for the Windows Community" });
+            Items.Add(new WelcomeTour { Title = "Fast", Bold = "Telegram", Text = "delivers messages faster\nthan any other application." });
+            Items.Add(new WelcomeTour { Title = "Free", Bold = "Telegram", Text = "is free forever. No ads.\nNo subscription fees." });
+            Items.Add(new WelcomeTour { Title = "Powerful", Bold = "Telegram", Text = "has no limits on\nthe size of your media and chats." });
+            Items.Add(new WelcomeTour { Title = "Secure", Bold = "Telegram", Text = "keeps your messages\nsafe from hacker attacks." });
+            Items.Add(new WelcomeTour { Title = "Cloud-Based", Bold = "Telegram", Text = "lets you access your\nmessages from multiple devices." });
             SelectedItem = Items[0];
         }
 
@@ -57,6 +57,8 @@ namespace Unigram.ViewModels.SignIn
         public class WelcomeTour
         {
             public string Title { get; set; }
+
+            public string Bold { get; set; }
 
             public string Text { get; set; }
         }
