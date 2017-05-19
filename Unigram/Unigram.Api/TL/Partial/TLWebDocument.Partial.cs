@@ -56,14 +56,32 @@ namespace Telegram.Api.TL
             }
         }
 
+        private bool _isTransferring;
+        public bool IsTransferring
+        {
+            get
+            {
+                return _isTransferring;
+            }
+            set
+            {
+                if (_isTransferring != value)
+                {
+                    _isTransferring = value;
+                    RaisePropertyChanged(() => IsTransferring);
+                }
+            }
+        }
+
         public double LastProgress { get; set; }
 
         public Progress<double> Download()
         {
-            DownloadingProgress = 0.02;
+            IsTransferring = true;
 
             return new Progress<double>((value) =>
             {
+                IsTransferring = value < 1 && value > 0;
                 DownloadingProgress = value;
                 Debug.WriteLine(value);
             });
@@ -71,10 +89,11 @@ namespace Telegram.Api.TL
 
         public Progress<double> Upload()
         {
-            UploadingProgress = 0.02;
+            IsTransferring = true;
 
             return new Progress<double>((value) =>
             {
+                IsTransferring = value < 1 && value > 0;
                 UploadingProgress = value;
                 Debug.WriteLine(value);
             });

@@ -25,11 +25,22 @@ namespace Unigram.Controls
 
         public event EventHandler<TransferCompletedEventArgs> Completed;
 
-        private async void OnClick(object sender, RoutedEventArgs e)
+        private void OnClick(object sender, RoutedEventArgs e)
         {
             if (Transferable is TLPhoto photo)
             {
-                var context = DefaultPhotoConverter.BitmapContext[photo, false];
+                if (photo.Full is TLPhotoSize photoSize)
+                {
+                    var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
+                    if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                    {
+                        Completed?.Invoke(this, new TransferCompletedEventArgs(fileName));
+                    }
+                    else
+                    {
+                        var context = DefaultPhotoConverter.BitmapContext[photo, false];
+                    }
+                }
             }
             else if (Transferable is TLDocument document)
             {
@@ -43,41 +54,17 @@ namespace Unigram.Controls
                     if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
                     {
                         var manager = ChooseDownloadManager(document);
-                        manager.CancelDownloadFile(document);
-
-                        document.DownloadingProgress = 0;
-                        Update();
+                        document.Cancel(manager, null);
                     }
                     else if (document.UploadingProgress > 0 && document.UploadingProgress < 1)
                     {
                         var manager = ChooseUploadManager(document);
-                        manager.CancelUploadFile(document.Id);
-
-                        document.UploadingProgress = 0;
-                        Update();
+                        document.Cancel(null, manager);
                     }
                     else
                     {
-                        //var watch = Stopwatch.StartNew();
-
-                        //var download = await manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Download());
-
                         var manager = ChooseDownloadManager(document);
-                        var operation = manager.DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), document.Size);
-
-                        document.DownloadingProgress = 0.02;
-                        Update();
-
-                        var download = await operation.AsTask(document.Download());
-                        if (download != null)
-                        {
-                            Update();
-
-                            //await new MessageDialog(watch.Elapsed.ToString()).ShowAsync();
-                            //return;
-
-                            Completed?.Invoke(this, new TransferCompletedEventArgs(fileName));
-                        }
+                        document.DownloadAsync(manager);
                     }
                 }
             }
@@ -126,6 +113,24 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region IsTransferring
+
+        public bool IsTransferring
+        {
+            get { return (bool)GetValue(IsTransferringProperty); }
+            set { SetValue(IsTransferringProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsTransferringProperty =
+            DependencyProperty.Register("IsTransferring", typeof(bool), typeof(TransferButton), new PropertyMetadata(false, OnIsTransferringChanged));
+
+        private static void OnIsTransferringChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((TransferButton)d).Update();
+        }
+
+        #endregion
+
         public void Update()
         {
             OnTransferableChanged(Transferable, null);
@@ -155,6 +160,18 @@ namespace Unigram.Controls
                     Visibility = Visibility.Collapsed;
                     return "\uE160";
                 }
+                else if (photo.IsTransferring)
+                {
+                    return "\uE10A";
+                }
+                else if (photo.DownloadingProgress > 0 && photo.DownloadingProgress < 1)
+                {
+                    return "\uE10A";
+                }
+                else if (photo.UploadingProgress > 0 && photo.DownloadingProgress < 1)
+                {
+                    return "\uE10A";
+                }
 
                 Visibility = Visibility.Visible;
                 return "\uE118";
@@ -176,6 +193,10 @@ namespace Unigram.Controls
                 }
 
                 return "\uE160";
+            }
+            else if (document.IsTransferring)
+            {
+                return "\uE10A";
             }
             else if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
             {

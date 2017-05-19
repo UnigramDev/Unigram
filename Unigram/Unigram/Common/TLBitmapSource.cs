@@ -261,6 +261,11 @@ namespace Unigram.Common
                         {
                             Execute.BeginOnUIThread(() =>
                             {
+                                if (transferable != null)
+                                {
+                                    transferable.IsTransferring = false;
+                                }
+
                                 Image.UriSource = FileUtils.GetTempFileUri(fileName);
                             });
                         }

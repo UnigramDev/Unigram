@@ -68,10 +68,8 @@
                             Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
                             Constraint="{x:Bind Source}"
                             Opacity="0"/>
-                        <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                            <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                            <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
-                        </Grid>
+                        <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                        <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
                     </Grid>
                 </DataTemplate>
             </FlipView.ItemTemplate>

@@ -19,7 +19,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
-                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
                 <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
             </Grid>
             <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
@@ -39,7 +39,7 @@
                 <Image Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" Width="72" Height="72" Stretch="UniformToFill"/>
 
                 <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                    <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
+                    <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
                     <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
                 </Grid>
             </Grid>
@@ -62,10 +62,8 @@
                                 VerticalAlignment="Center"
                                 Click="Photo_Click"/>
 
-            <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
-            </Grid>
+            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
         </Grid>
     </DataTemplate>
 
@@ -82,10 +80,8 @@
                 <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
             </Border>
 
-            <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-            </Grid>
+            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
         </Grid>
     </DataTemplate>
 
@@ -256,10 +252,8 @@
                                 VerticalAlignment="Center"
                                 Click="SingleMedia_Click"/>
 
-                    <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.WebPage.Photo}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.WebPage.Photo.Progress}" IsHitTestVisible="False"/>
-                    </Grid>
+                    <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                    <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
                 </Grid>
             </StackPanel>
 
