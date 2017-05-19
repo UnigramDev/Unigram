@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
@@ -15,6 +16,20 @@ namespace Telegram.Api.TL
         public abstract string GetFileName();
 
         public abstract string GetLocationString();
+    }
+
+    public partial class TLInputWebFileLocation
+    {
+        //public bool LocationEquals(TLInputFileLocationBase location);
+
+        public string GetPartFileName(int partNumbert)
+        {
+            return BitConverter.ToString(Utils.ComputeMD5(Url)).Replace("-", "") + "_" + partNumbert + ".dat";
+        }
+
+        //public string GetFileName();
+
+        //public string GetLocationString();
     }
 
     public partial class TLInputFileLocation

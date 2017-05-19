@@ -41,7 +41,7 @@ namespace Unigram.ViewModels.Payments
                     PaymentForm = tuple.Item2;
                     Info = tuple.Item3;
                     Shipping = tuple.Item5;
-                    CredentialsTitle = string.IsNullOrEmpty(tuple.Item7) ? null : tuple.Item7;
+                    CredentialsTitle = string.IsNullOrEmpty(tuple.Item6) ? null : tuple.Item6;
                     Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
 
                     if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard && _credentialsTitle == null)

@@ -222,11 +222,14 @@ namespace Unigram.ViewModels.Payments
             var month = 0;
             var year = 0;
 
-            var args = _date.Split('/');
-            if (args.Length == 2)
+            if (_date != null)
             {
-                month = int.Parse(args[0]);
-                year = int.Parse(args[1]);
+                var args = _date.Split('/');
+                if (args.Length == 2)
+                {
+                    month = int.Parse(args[0]);
+                    year = int.Parse(args[1]);
+                }
             }
 
             var card = new Card(

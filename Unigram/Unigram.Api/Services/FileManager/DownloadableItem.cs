@@ -23,6 +23,8 @@ namespace Telegram.Api.Services.FileManager
 
         public TLFileLocation Location { get; set; }
 
+        public TLInputWebFileLocation InputWebFileLocation { get; set; }
+
         public TLInputDocumentFileLocation InputAudioLocation { get; set; }
 
         public TLInputDocumentFileLocation InputVideoLocation { get; set; }

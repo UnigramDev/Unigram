@@ -18,6 +18,7 @@ using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Foundation.Metadata;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -44,20 +45,27 @@ namespace Unigram.Common
 
         public async Task<bool> ConnectAsync()
         {
-            if (!IsConnected)
+            try
             {
-                _appConnection = new AppServiceConnection
+                if (!IsConnected)
                 {
-                    AppServiceName = nameof(VoIPServiceTask),
-                    PackageFamilyName = Package.Current.Id.FamilyName
-                };
+                    _appConnection = new AppServiceConnection
+                    {
+                        AppServiceName = nameof(VoIPServiceTask),
+                        PackageFamilyName = Package.Current.Id.FamilyName
+                    };
 
-                _appConnection.ServiceClosed += OnServiceClosed;
-                _appConnection.RequestReceived += OnRequestReceived;
+                    _appConnection.ServiceClosed += OnServiceClosed;
+                    _appConnection.RequestReceived += OnRequestReceived;
 
-                var status = await _appConnection.OpenAsync();
+                    var status = await _appConnection.OpenAsync();
 
-                IsConnected = status == AppServiceConnectionStatus.Success;
+                    IsConnected = status == AppServiceConnectionStatus.Success;
+                }
+            }
+            catch
+            {
+                IsConnected = false;
             }
 
             return IsConnected;
@@ -177,8 +185,7 @@ namespace Unigram.Common
 
                                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
                                 {
-                                    var overlay = ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay);
-                                    if (overlay)
+                                    if (ApiInformation.IsMethodPresent("Windows.UI.ViewManagement.ApplicationView", "IsViewModeSupported") && ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay))
                                     {
                                         var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
                                         preferences.CustomSize = new Size(340, 200);

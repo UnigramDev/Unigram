@@ -31,7 +31,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -64,7 +64,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
     <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -97,7 +97,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -128,6 +128,7 @@
     <Compile Include="Services\FileManager\DownloadableItem.cs" />
     <Compile Include="Services\FileManager\DownloadablePart.cs" />
     <Compile Include="Services\FileManager\DownloadOperation.cs" />
+    <Compile Include="Services\FileManager\DownloadWebFileManager.cs" />
     <Compile Include="Services\FileManager\EventArgs\DownloadingCanceledEventArgs.cs" />
     <Compile Include="Services\FileManager\DownloadEncryptedFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadFileManager.cs" />
@@ -511,6 +512,7 @@
     <Compile Include="TL\Partial\TLMessageBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUserProfilePhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLUserProfilePhotoBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLWebDocument.Partial.cs" />
     <Compile Include="TL\Partial\TLWebPageBase.Partial.cs" />
     <Compile Include="TL\TLAccountAuthorizations.cs" />
     <Compile Include="TL\TLAccountDaysTTL.cs" />

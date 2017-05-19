@@ -9,13 +9,8 @@ using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public partial class TLPhotoBase : ITLTransferable, INotifyPropertyChanged
+    public partial class TLWebDocument : ITLTransferable, INotifyPropertyChanged
     {
-        public virtual TLInputPhotoBase ToInputPhoto()
-        {
-            throw new NotImplementedException();
-        }
-
         #region Download/upload
 
         private double _uploadingProgress;
@@ -111,21 +106,5 @@ namespace Telegram.Api.TL
         }
 
         #endregion
-    }
-
-    public partial class TLPhoto
-    {
-        public override TLInputPhotoBase ToInputPhoto()
-        {
-            return new TLInputPhoto { Id = Id, AccessHash = AccessHash };
-        }
-    }
-
-    public partial class TLPhotoEmpty
-    {
-        public override TLInputPhotoBase ToInputPhoto()
-        {
-            return new TLInputPhotoEmpty();
-        }
     }
 }

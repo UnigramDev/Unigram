@@ -4,11 +4,54 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
+using Telegram.Api.Services.FileManager;
 
 namespace Telegram.Api.TL
 {
     public partial class TLDocument
     {
+        public async void DownloadAsync(IDownloadManager manager)
+        {
+            var fileName = this.GetFileName();
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            {
+
+            }
+            else
+            {
+                if (IsTransferring)
+                {
+                    return;
+                }
+
+                IsTransferring = true;
+
+                var operation = manager.DownloadFileAsync(FileName, DCId, ToInputFileLocation(), Size);
+                var download = await operation.AsTask(Download());
+                if (download != null)
+                {
+                    IsTransferring = false;
+                }
+            }
+        }
+
+        public void Cancel(IDownloadManager manager, IUploadManager uploadManager)
+        {
+            if (DownloadingProgress > 0 && DownloadingProgress < 1)
+            {
+                manager.CancelDownloadFile(this);
+                DownloadingProgress = 0;
+                IsTransferring = false;
+            }
+            else if (UploadingProgress > 0 && UploadingProgress < 1)
+            {
+                uploadManager.CancelUploadFile(Id);
+                UploadingProgress = 0;
+                IsTransferring = false;
+            }
+        }
+
         public string FileName
         {
             get

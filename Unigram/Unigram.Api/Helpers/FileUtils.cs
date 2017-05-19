@@ -332,8 +332,18 @@ namespace Telegram.Api.Helpers
 
             using (var file = File.Open(GetTempFileName("parts\\" + partName), FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
-                byte[] data = part.File.Bytes;
-                part.File.Bytes = new byte[0];
+                byte[] data;
+                if (part.File != null)
+                {
+                    data = part.File.Bytes;
+                    part.File.Bytes = new byte[0];
+                }
+                else
+                {
+                    data = part.WebFile.Bytes;
+                    part.WebFile.Bytes = new byte[0];
+                }
+
                 file.Position = file.Length;
                 file.Write(data, 0, data.Length);
                 if (data.Length < part.Limit && part.Number + 1 != part.ParentItem.Parts.Count)
