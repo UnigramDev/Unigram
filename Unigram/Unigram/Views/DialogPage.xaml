@@ -169,7 +169,7 @@
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
-                            VerticalAlignment="Bottom"
+                            VerticalAlignment="Top"
                             HorizontalAlignment="Right"
                             MaxWidth="180"
                             Padding="8,0,8,6"
@@ -231,7 +231,7 @@
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
-                            VerticalAlignment="Bottom"
+                            VerticalAlignment="Top"
                             HorizontalAlignment="Left"
                             MaxWidth="180"
                             Padding="8,0,8,6"
@@ -298,7 +298,7 @@
 
                     <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
                                 Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                VerticalAlignment="Bottom"
+                                VerticalAlignment="Top"
                                 HorizontalAlignment="Left"
                                 MaxWidth="180"
                                 Padding="8,0,8,6"

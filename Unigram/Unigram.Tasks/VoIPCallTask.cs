@@ -367,7 +367,7 @@ namespace Unigram.Tasks
                         }
 
                         _controller = new VoIPControllerWrapper();
-                        _controller.SetConfig(config.CallPacketTimeoutMs / 1000.0, config.CallConnectTimeoutMs / 1000.0, DataSavingMode.Never, false, false, true, logFile, statsDumpFile);
+                        _controller.SetConfig(config.CallPacketTimeoutMs / 1000.0, config.CallConnectTimeoutMs / 1000.0, DataSavingMode.Never, true, true, true, logFile, statsDumpFile);
 
                         _controller.SetStateCallback(this);
                         _controller.SetEncryptionKey(auth_key, _outgoing);

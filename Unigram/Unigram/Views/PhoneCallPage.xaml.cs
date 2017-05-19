@@ -72,21 +72,6 @@ namespace Unigram.Views
 
             #endregion
 
-            #region Routing
-
-            var routing = ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1);
-            if (routing)
-            {
-                Routing.Visibility = Visibility.Visible;
-                AudioRoutingManager.GetDefault().AudioEndpointChanged += AudioEndpointChanged;
-            }
-            else
-            {
-                Routing.Visibility = Visibility.Collapsed;
-            }
-
-            #endregion
-
             #region Composition
 
             _descriptionVisual = ElementCompositionPreview.GetElementVisual(DescriptionLabel);
@@ -125,6 +110,27 @@ namespace Unigram.Views
             titleBar.ButtonInactiveForegroundColor = Colors.White;
 
             Window.Current.SetTitleBar(GrabPanel);
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
+            {
+                Routing.Visibility = Visibility.Visible;
+                AudioRoutingManager.GetDefault().AudioEndpointChanged += AudioEndpointChanged;
+            }
+            else
+            {
+                Routing.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
+            {
+                AudioRoutingManager.GetDefault().AudioEndpointChanged -= AudioEndpointChanged;
+            }
         }
 
         //private void CoreBar_IsVisibleChanged(CoreApplicationViewTitleBar sender, object args)

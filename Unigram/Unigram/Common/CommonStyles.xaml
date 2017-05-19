@@ -282,13 +282,13 @@
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBackgroundPressed}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MessageHeaderForegroundBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBorderBrushPressed}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MessageHeaderForegroundBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundPressed}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#FFFFFF" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
                                     </Storyboard>
