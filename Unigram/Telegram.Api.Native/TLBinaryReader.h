@@ -90,9 +90,19 @@ namespace Telegram
 						return m_buffer;
 					}
 
+					inline UINT32 GetPosition() const
+					{
+						return m_position;
+					}
+
 					inline UINT32 GetCapacity() const
 					{
 						return m_capacity;
+					}
+
+					inline IBuffer* GetUnderlyingBuffer() const
+					{
+						return m_underlyingBuffer.Get();
 					}
 
 				private:

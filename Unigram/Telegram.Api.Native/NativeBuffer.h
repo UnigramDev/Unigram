@@ -21,7 +21,6 @@ namespace Telegram
 			public:
 				NativeBuffer() :
 					m_capacity(0),
-					//m_length(0),
 					m_buffer(nullptr)
 				{
 				}
@@ -31,6 +30,46 @@ namespace Telegram
 					CoTaskMemFree(m_buffer);
 				}
 
+				//COM exported methods
+				IFACEMETHODIMP Buffer(_Out_ BYTE** value)
+				{
+					if (value == nullptr)
+					{
+						return E_POINTER;
+					}
+
+					*value = m_buffer;
+					return S_OK;
+				}
+
+				IFACEMETHODIMP get_Capacity(_Out_ UINT32* value)
+				{
+					if (value == nullptr)
+					{
+						return E_POINTER;
+					}
+
+					*value = m_capacity;
+					return S_OK;
+				}
+
+				IFACEMETHODIMP get_Length(_Out_ UINT32* value)
+				{
+					if (value == nullptr)
+					{
+						return E_POINTER;
+					}
+
+					*value = m_capacity;
+					return S_OK;
+				}
+
+				IFACEMETHODIMP put_Length(UINT32 value)
+				{
+					return E_ILLEGAL_METHOD_CALL;
+				}
+
+				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize(UINT32 capacity)
 				{
 					if ((m_buffer = reinterpret_cast<BYTE*>(CoTaskMemAlloc(capacity))) == nullptr)
@@ -42,54 +81,17 @@ namespace Telegram
 					return S_OK;
 				}
 
-				STDMETHODIMP Buffer(_Out_ BYTE** value)
+				inline BYTE* GetBuffer() const
 				{
-					if (value == nullptr)
-					{
-						return E_POINTER;
-					}
-
-					*value = m_buffer;
-					return S_OK;
+					return m_buffer;
 				}
 
-				STDMETHODIMP get_Capacity(_Out_ UINT32* value)
+				inline UINT32 GetCapacity() const
 				{
-					if (value == nullptr)
-					{
-						return E_POINTER;
-					}
-
-					*value = m_capacity;
-					return S_OK;
-				}
-
-				STDMETHODIMP get_Length(_Out_ UINT32* value)
-				{
-					if (value == nullptr)
-					{
-						return E_POINTER;
-					}
-
-					*value = m_capacity;
-					return S_OK;
-				}
-
-				STDMETHODIMP put_Length(UINT32 value)
-				{
-					/*if (value > m_capacity)
-					{
-						return E_BOUNDS;
-					}
-
-					m_length = value;
-					return S_OK;*/
-
-					return E_ILLEGAL_METHOD_CALL;
+					return m_capacity;
 				}
 
 			private:
-				//UINT32 m_length;
 				UINT32 m_capacity;
 				BYTE* m_buffer;
 			};

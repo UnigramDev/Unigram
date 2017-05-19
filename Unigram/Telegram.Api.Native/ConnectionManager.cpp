@@ -8,15 +8,15 @@
 #include "Request.h"
 #include "TLProtocolScheme.h"
 #include "DefaultUserConfiguration.h"
+#include "Collections.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
+using Windows::Foundation::Collections::VectorView;
 
 ActivatableStaticOnlyFactory(ConnectionManagerStatics);
 
-
-ComPtr<ConnectionManager> ConnectionManager::s_instance = nullptr;
 
 ConnectionManager::ConnectionManager() :
 	m_connectionState(ConnectionState::Connecting),
@@ -61,6 +61,12 @@ HRESULT ConnectionManager::RuntimeClassInitialize(DWORD minimumThreadCount, DWOR
 	HRESULT result;
 	ReturnIfFailed(result, MakeAndInitialize<DefaultUserConfiguration>(&m_userConfiguration));
 
+	m_requestEnqueuedEvent.Attach(CreateEvent(nullptr, FALSE, FALSE, nullptr));
+	if (!m_requestEnqueuedEvent.IsValid())
+	{
+		return GetLastHRESULT();
+	}
+
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
 	{
@@ -90,6 +96,13 @@ HRESULT ConnectionManager::RuntimeClassInitialize(DWORD minimumThreadCount, DWOR
 	SetThreadpoolCallbackPool(&m_threadpoolEnvironment, m_threadpool);
 	SetThreadpoolCallbackCleanupGroup(&m_threadpoolEnvironment, m_threadpoolCleanupGroup, nullptr);
 
+	auto requestEnqueuedWait = CreateThreadpoolWait(ConnectionManager::RequestEnqueuedCallback, this, &m_threadpoolEnvironment);
+	if (requestEnqueuedWait == nullptr)
+	{
+		return GetLastHRESULT();
+	}
+
+	SetThreadpoolWait(requestEnqueuedWait, m_requestEnqueuedEvent.Get(), nullptr);
 
 	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Networking_Connectivity_NetworkInformation).Get(), &m_networkInformation));
 	ReturnIfFailed(result, m_networkInformation->add_NetworkStatusChanged(Callback<INetworkStatusChangedEventHandler>(this, &ConnectionManager::OnNetworkStatusChanged).Get(), &m_networkChangedEventToken));
@@ -222,6 +235,8 @@ HRESULT ConnectionManager::get_UserId(INT32* value)
 		return E_POINTER;
 	}
 
+	auto lock = LockCriticalSection();
+
 	*value = m_userId;
 	return S_OK;
 }
@@ -240,8 +255,32 @@ HRESULT ConnectionManager::put_UserId(INT32 value)
 	return S_OK;
 }
 
+HRESULT ConnectionManager::get_Datacenters(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CDatacenter** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	auto lock = LockCriticalSection();
+	auto vectorView = Make<VectorView<ABI::Telegram::Api::Native::Datacenter*>>();
+
+	std::transform(m_datacenters.begin(), m_datacenters.end(), std::back_inserter(vectorView->GetItems()), [](auto& pair)
+	{
+		return static_cast<IDatacenter*>(pair.second.Get());
+	});
+
+	return vectorView.CopyTo(value);
+}
+
 HRESULT ConnectionManager::SendRequest(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived,
 	UINT32 datacenterId, ConnectionType connectionType, boolean immediate, INT32 requestToken)
+{
+	return SendRequestWithFlags(object, onCompleted, onQuickAckReceived, datacenterId, connectionType, immediate, requestToken, RequestFlag::None);
+}
+
+HRESULT ConnectionManager::SendRequestWithFlags(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
+	UINT32 datacenterId, ConnectionType connectionType, boolean immediate, INT32 requestToken, RequestFlag flags)
 {
 	if (object == nullptr)
 	{
@@ -249,17 +288,22 @@ HRESULT ConnectionManager::SendRequest(ITLObject* object, ISendRequestCompletedC
 	}
 
 	auto lock = LockCriticalSection();
-	/*auto datacenter = GetDatacenterById(datacenterId);
-	if (datacenter == nullptr)
-	{
-		return E_INVALIDARG;
-	}*/
 
 	HRESULT result;
 	ComPtr<Request> request;
-	ReturnIfFailed(result, CreateRequest(object, onCompleted, onQuickAckReceived, datacenterId, connectionType, requestToken, RequestFlag::None, request));
+	ReturnIfFailed(result, CreateRequest(object, onCompleted, onQuickAckReceived, datacenterId, connectionType, requestToken, flags, request));
 
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+	if (immediate)
+	{
+		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement request immediate processing");
+	}
+	else
+	{
+		auto queueLock = m_requestsQueueCriticalSection.Lock();
+
+		m_requestsQueue.push(request);
+		SetEvent(m_requestEnqueuedEvent.Get());
+	}
 
 	return S_OK;
 }
@@ -295,6 +339,58 @@ HRESULT ConnectionManager::GetDatacenterById(UINT32 id, IDatacenter** value)
 
 	*value = datacenter;
 	(*value)->AddRef();
+	return S_OK;
+}
+
+HRESULT ConnectionManager::InitializeDatacenters()
+{
+	HRESULT result;
+
+	if (m_datacenters.find(1) == m_datacenters.end())
+	{
+		auto datacenter = Make<Datacenter>(1);
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.175.50", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:b28:f23d:f001:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
+
+		m_datacenters[1] = datacenter;
+	}
+
+	if (m_datacenters.find(2) == m_datacenters.end())
+	{
+		auto datacenter = Make<Datacenter>(2);
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.167.51", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:67c:4e8:f002:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
+
+		m_datacenters[2] = datacenter;
+	}
+
+	if (m_datacenters.find(3) == m_datacenters.end())
+	{
+		auto datacenter = Make<Datacenter>(3);
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.175.100", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:b28:f23d:f003:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
+
+		m_datacenters[3] = datacenter;
+	}
+
+	if (m_datacenters.find(4) == m_datacenters.end())
+	{
+		auto datacenter = Make<Datacenter>(4);
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.167.91", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:67c:4e8:f004:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
+
+		m_datacenters[4] = datacenter;
+	}
+
+	if (m_datacenters.find(5) == m_datacenters.end())
+	{
+		auto datacenter = Make<Datacenter>(5);
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.171.5", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:b28:f23f:f005:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
+
+		m_datacenters[5] = datacenter;
+	}
+
 	return S_OK;
 }
 
@@ -462,6 +558,15 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 	return S_OK;
 }
 
+HRESULT ConnectionManager::OnRequestEnqueued(PTP_CALLBACK_INSTANCE instance)
+{
+	auto queueLock = m_requestsQueueCriticalSection.Lock();
+
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement request queue processing");
+
+	return S_OK;
+}
+
 HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLObject** object, IConnection** value)
 {
 	if (object == nullptr || value == nullptr)
@@ -470,6 +575,8 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 	}
 
 	HRESULT result;
+	ReturnIfFailed(result, InitializeDatacenters());
+
 	ComPtr<TLError> errorObject;
 	ReturnIfFailed(result, MakeAndInitialize<TLError>(&errorObject, 0, L"Ciao bellezza"));
 
@@ -484,8 +591,6 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 
 	ComPtr<Connection> connection;
 	ReturnIfFailed(result, datacenter->GetGenericConnection(true, &connection));
-	ReturnIfFailed(result, connection->AttachToThreadpool(&m_threadpoolEnvironment));
-	ReturnIfFailed(result, connection->Connect());
 
 	*value = connection.Detach();
 	return S_OK;
@@ -544,16 +649,38 @@ INT32 ConnectionManager::GetCurrentTime()
 	return static_cast<INT32>(ConnectionManager::GetCurrentRealTime() / 1000) + m_timeDelta;
 }
 
-HRESULT ConnectionManager::GetInstance(ComPtr<ConnectionManager>& value)
+HRESULT ConnectionManager::AttachEventObject(EventObject* eventObject)
 {
-	if (s_instance == nullptr)
+	if (eventObject == nullptr)
 	{
-		HRESULT result;
-		ReturnIfFailed(result, MakeAndInitialize<ConnectionManager>(&s_instance));
+		return E_INVALIDARG;
 	}
 
-	value = s_instance;
+	return eventObject->AttachToThreadpool(&m_threadpoolEnvironment);
+}
+
+HRESULT ConnectionManager::GetInstance(ComPtr<ConnectionManager>& value)
+{
+	static ComPtr<ConnectionManager> instance;
+	if (instance == nullptr)
+	{
+		HRESULT result;
+		ReturnIfFailed(result, MakeAndInitialize<ConnectionManager>(&instance));
+	}
+
+	value = instance;
 	return S_OK;
+}
+
+void ConnectionManager::RequestEnqueuedCallback(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP_WAIT wait, TP_WAIT_RESULT waitResult)
+{
+	if (waitResult == WAIT_OBJECT_0)
+	{
+		auto connectionManager = reinterpret_cast<ConnectionManager*>(context);
+		connectionManager->OnRequestEnqueued(instance);
+
+		SetThreadpoolWait(wait, connectionManager->m_requestEnqueuedEvent.Get(), nullptr);
+	}
 }
 
 

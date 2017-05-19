@@ -22,10 +22,16 @@ namespace Telegram
 	{
 		namespace Native
 		{
+			namespace TL
+			{
+
+				class TLBinaryWriter;
+
+			}
 
 			class Datacenter;
 
-			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, CloakedIid<IClosable>>,
+			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection>,
 				public virtual EventObjectT<EventTraits::WaitTraits>, public ConnectionSession, public ConnectionSocket, public ConnectionCryptograpy
 			{
 				friend class ConnectionManager;
@@ -44,10 +50,10 @@ namespace Telegram
 				IFACEMETHODIMP get_SessionId(_Out_ INT64* value);
 
 				//Internal methods
-				IFACEMETHODIMP Close();
 				HRESULT Connect();
 				HRESULT Reconnect();
 				HRESULT Suspend();
+				HRESULT SendData(_In_reads_(length) _Out_writes_(length) BYTE* buffer, UINT32 length, boolean reportAck);
 
 			private:
 				inline Datacenter* GetDatacenter() const
@@ -65,11 +71,9 @@ namespace Telegram
 					return m_currentNetworkType;
 				}
 
-				virtual HRESULT OnSocketCreated() override;
 				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) override;
-				virtual HRESULT OnSocketDisconnected() override;
-				virtual HRESULT OnSocketClosed(int wsaError) override;
+				virtual HRESULT OnSocketDisconnected(int wsaError) override;
 				void OnEventObjectError(_In_ EventObject* eventObject, HRESULT result);
 
 				UINT32 m_token;

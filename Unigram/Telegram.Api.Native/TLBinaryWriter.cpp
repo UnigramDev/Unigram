@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <memory>
 #include "TLBinaryWriter.h"
+#include "NativeBuffer.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
@@ -29,6 +30,18 @@ HRESULT TLBinaryWriter::RuntimeClassInitialize(IBuffer* underlyingBuffer)
 	ReturnIfFailed(result, underlyingBuffer->get_Capacity(&m_capacity));
 
 	m_underlyingBuffer = underlyingBuffer;
+	return S_OK;
+}
+
+HRESULT TLBinaryWriter::RuntimeClassInitialize(UINT32 capacity)
+{
+	HRESULT result;
+	ComPtr<NativeBuffer> nativeBuffer;
+	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&nativeBuffer, capacity));
+
+	m_buffer = nativeBuffer->GetBuffer();
+	m_capacity = nativeBuffer->GetCapacity();
+	m_underlyingBuffer = nativeBuffer;
 	return S_OK;
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <openssl\aes.h>
+#include <wrl.h>
 
 namespace Telegram
 {
@@ -15,12 +16,20 @@ namespace Telegram
 				~ConnectionCryptograpy();
 
 			protected:
-				HRESULT SetEncryptKey(_In_ BYTE const* key, _In_ BYTE const* iv);
-				HRESULT SetDecryptKey(_In_ BYTE const* key, _In_ BYTE const* iv);
-				HRESULT EncryptBuffer(_In_reads_(length) BYTE const* inputBuffer, _Out_writes_(length) BYTE* outputBuffer, _In_ UINT32 length);
-				HRESULT DecryptBuffer(_In_reads_(length) BYTE const* inputBuffer, _Out_writes_(length) BYTE* outputBuffer, _In_ UINT32 length);
+				HRESULT Initialize(_In_ BYTE* buffer);
+				//HRESULT EncryptBuffer(_In_reads_(length) BYTE const* inputBuffer, _Out_writes_(length) BYTE* outputBuffer, _In_ UINT32 length);
+				//HRESULT DecryptBuffer(_In_reads_(length) BYTE const* inputBuffer, _Out_writes_(length) BYTE* outputBuffer, _In_ UINT32 length);
+				void EncryptBuffer(_In_reads_(length) BYTE const* inputBuffer, _Out_writes_(length) BYTE* outputBuffer, _In_ UINT32 length);
+				void DecryptBuffer(_In_reads_(length) BYTE const* inputBuffer, _Out_writes_(length) BYTE* outputBuffer, _In_ UINT32 length);
+				void Reset();
+
+				inline boolean IsInitialized() const
+				{
+					return m_initialized;
+				}
 
 			private:
+				boolean m_initialized;
 				AES_KEY m_encryptKey;
 				UINT8 m_encryptIv[AES_BLOCK_SIZE];
 				UINT32 m_encryptNum;

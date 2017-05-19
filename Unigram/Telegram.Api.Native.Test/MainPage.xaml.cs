@@ -33,25 +33,7 @@ namespace Telegram.Api.Native.Test
             connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
             connectionManager.UnparsedMessageReceived += ConnectionManager_UnparsedMessageReceived;
 
-            //connectionManager.SendRequest(null, null, null, 0, ConnectionType.Download, true, 0);
-
-            ITLObject @object;
-            var connection = connectionManager.BoomBaby(new UserConfiguration(), out @object);
-
-            var datacenter = connection.Datacenter;
-
-            var xx = new TLTestObject();
-            var yy = @object as TLError;
-
-            TLObjectSerializer.RegisterObjectConstructor(0, () => new TLTestObject());
-
-            var sizeCalculator = TLObjectSerializer.GetObjectSize(xx);
-            var buffer = TLObjectSerializer.Serialize(xx);
-            var bufferBase64 = CryptographicBuffer.EncodeToBase64String(buffer);
-
-            @object = TLObjectSerializer.Deserialize(CryptographicBuffer.DecodeFromBase64String(bufferBase64));
-
-            buffer = null;
+            connectionManager.SendRequest(new TLError(0, "Hello world"), null, null, 1, ConnectionType.Generic, false, 0);
 
             GC.Collect();
         }

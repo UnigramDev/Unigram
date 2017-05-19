@@ -42,9 +42,9 @@ namespace Telegram
 
 			class Timer WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ITimer>, public EventObjectT<EventTraits::TimerTraits>
 			{
+			public:
 				typedef std::function<HRESULT()> TimerCallback;
 
-			public:
 				Timer(TimerCallback callback);
 				~Timer();
 

@@ -30,7 +30,7 @@ namespace Telegram
 
 			protected:
 				virtual HRESULT AttachToThreadpool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) = 0;
-				virtual HRESULT DetachFromThreadpool() = 0;
+				virtual HRESULT DetachFromThreadpool(boolean waitCallback) = 0;
 				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance) = 0;
 
 			private:
@@ -156,7 +156,7 @@ namespace Telegram
 
 				~EventObjectT()
 				{
-					DetachFromThreadpool();
+					DetachFromThreadpool(true);
 				}
 
 			protected:
@@ -176,14 +176,18 @@ namespace Telegram
 					return S_OK;
 				}
 
-				inline HRESULT ResetThreadpoolObject()
+				inline HRESULT ResetThreadpoolObject(boolean waitCallback)
 				{
 					if (m_handle == nullptr)
 					{
 						return E_NOT_VALID_STATE;
 					}
 
-					EventTraits::Wait(m_handle, true);
+					if (waitCallback)
+					{
+						EventTraits::Wait(m_handle, TRUE);
+					}
+
 					EventTraits::Reset(m_handle);
 					return S_OK;
 				}
@@ -209,14 +213,18 @@ namespace Telegram
 					return S_OK;
 				}
 
-				virtual HRESULT DetachFromThreadpool() override final
+				virtual HRESULT DetachFromThreadpool(boolean waitCallback) override final
 				{
 					if (m_handle == nullptr)
 					{
 						return E_NOT_VALID_STATE;
 					}
 
-					EventTraits::Wait(m_handle, TRUE);
+					if (waitCallback)
+					{
+						EventTraits::Wait(m_handle, TRUE);
+					}
+
 					EventTraits::Close(m_handle);
 
 					m_handle = nullptr;

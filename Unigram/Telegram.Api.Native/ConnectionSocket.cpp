@@ -1,7 +1,7 @@
 #include "pch.h"
 #include <Ws2tcpip.h>
 #include "ConnectionSocket.h"
-#include "EventObject.h"
+#include "ConnectionManager.h"
 #include "Helpers\COMHelper.h"
 
 #define BreakIfSocketError(result, method) \
@@ -32,12 +32,16 @@ ConnectionSocket::~ConnectionSocket()
 	CloseSocket(NO_ERROR, SOCKET_CLOSE_JOINTHREAD);
 }
 
-HRESULT ConnectionSocket::ConnectSocket(std::wstring const& address, UINT16 port, boolean ipv6)
+HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, std::wstring const& address, UINT16 port)
 {
 	if (m_socket != INVALID_SOCKET)
 	{
 		return E_NOT_VALID_STATE;
 	}
+
+	boolean ipv6;
+	HRESULT result;
+	ReturnIfFailed(result, connectionManager->get_IsIpv6Enabled(&ipv6));
 
 	sockaddr_storage socketAddress = {};
 	if (ipv6)
@@ -80,27 +84,18 @@ HRESULT ConnectionSocket::ConnectSocket(std::wstring const& address, UINT16 port
 	int noDelay = 1;
 	setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&noDelay), sizeof(int));
 
-	HRESULT result;
-	if (FAILED(result = OnSocketCreated()))
+	if (FAILED(result = connectionManager->AttachEventObject(this)))
 	{
-		CloseSocket(WIN32_FROM_HRESULT(result), SOCKET_CLOSE_RAISEEVENT);
+		CloseSocket(WIN32_FROM_HRESULT(result), SOCKET_CLOSE_NONE);
 
 		return result;
 	}
 
-	auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
-	if (threadpoolObjectHandle == nullptr)
-	{
-		CloseSocket(WIN32_FROM_HRESULT(E_NOT_VALID_STATE), SOCKET_CLOSE_RAISEEVENT);
-
-		return E_NOT_VALID_STATE;
-	}
-
-	SetThreadpoolWait(threadpoolObjectHandle, GetSocketEvent(), nullptr);
+	SetThreadpoolWait(GetThreadpoolObjectHandle(), GetSocketEvent(), nullptr);
 
 	if (WSAEventSelect(m_socket, m_socketEvent.Get(), FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE) == SOCKET_ERROR)
 	{
-		return GetLastErrorAndCloseSocket(SOCKET_CLOSE_DEFAULT);
+		return GetLastErrorAndCloseSocket(SOCKET_CLOSE_JOINTHREAD);
 	}
 
 	if (connect(m_socket, reinterpret_cast<sockaddr*>(&socketAddress), ipv6 ? sizeof(sockaddr_in6) : sizeof(sockaddr_in)) == SOCKET_ERROR)
@@ -108,7 +103,7 @@ HRESULT ConnectionSocket::ConnectSocket(std::wstring const& address, UINT16 port
 		auto wsaLastError = WSAGetLastError();
 		if (wsaLastError != WSAEWOULDBLOCK)
 		{
-			CloseSocket(wsaLastError, SOCKET_CLOSE_DEFAULT);
+			CloseSocket(wsaLastError, SOCKET_CLOSE_JOINTHREAD);
 
 			return HRESULT_FROM_WIN32(wsaLastError);
 		}
@@ -181,15 +176,12 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 		return E_NOT_VALID_STATE;
 	}
 
-	if (flags & SOCKET_CLOSE_JOINTHREAD)
-	{
-		ResetThreadpoolObject();
-	}
-
 	if (closesocket(m_socket) == SOCKET_ERROR)
 	{
 		return WSAGetLastHRESULT();
 	}
+
+	DetachFromThreadpool(flags & SOCKET_CLOSE_JOINTHREAD);
 
 	m_socket = INVALID_SOCKET;
 	m_socketEvent.Close();
@@ -198,7 +190,7 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 
 	if (flags & SOCKET_CLOSE_RAISEEVENT)
 	{
-		return OnSocketClosed(wsaError);
+		return OnSocketDisconnected(wsaError);
 	}
 
 	return S_OK;

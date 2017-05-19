@@ -74,7 +74,7 @@ HRESULT Timer::Stop()
 
 	if (m_started)
 	{
-		ResetThreadpoolObject();
+		ResetThreadpoolObject(true);
 	}
 
 	return S_OK;

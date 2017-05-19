@@ -18,22 +18,6 @@ namespace ABI
 			namespace Native
 			{
 
-				enum class RequestFlag
-				{
-					None = 0,
-					EnableUnauthorized = 1,
-					FailOnServerErrors = 2,
-					CanCompress = 4,
-					WithoutLogin = 8,
-					TryDifferentDc = 16,
-					ForceDownload = 32,
-					InvokeAfter = 64,
-					NeedQuickAck = 128
-				};
-
-				DEFINE_ENUM_FLAG_OPERATORS(RequestFlag);
-
-
 				MIDL_INTERFACE("F310910A-64AF-454C-9A39-E2785D0FD4C0") IRequest : public IUnknown
 				{
 				public:

@@ -75,6 +75,7 @@
     </ClInclude>
     <ClInclude Include="TLUnparsedMessage.h" />
     <ClInclude Include="NativeBuffer.h" />
+    <ClInclude Include="Collections.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

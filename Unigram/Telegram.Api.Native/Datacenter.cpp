@@ -14,7 +14,7 @@ using namespace Telegram::Api::Native::TL;
 
 
 Datacenter::Datacenter(UINT32 id) :
-	m_id(0),
+	m_id(id),
 	m_currentIpv4EndpointIndex(0),
 	m_currentIpv4DownloadEndpointIndex(0),
 	m_currentIpv6EndpointIndex(0),
@@ -147,29 +147,18 @@ HRESULT Datacenter::Close()
 		return RO_E_CLOSED;
 	}*/
 
-	if (m_genericConnection != nullptr)
-	{
-		m_genericConnection->Close();
-		m_genericConnection.Reset();
-	}
+	m_genericConnection.Reset();
 
 	for (size_t i = 0; i < UPLOAD_CONNECTIONS_COUNT; i++)
 	{
-		if (m_uploadConnections[i] != nullptr)
-		{
-			m_uploadConnections[i]->Close();
-			m_uploadConnections[i].Reset();
-		}
+		m_uploadConnections[i].Reset();
 	}
 
 	for (size_t i = 0; i < DOWNLOAD_CONNECTIONS_COUNT; i++)
 	{
-		if (m_downloadConnections[i] != nullptr)
-		{
-			m_downloadConnections[i]->Close();
-			m_downloadConnections[i].Reset();
-		}
+		m_downloadConnections[i].Reset();
 	}
+
 	return S_OK;
 }
 
@@ -439,10 +428,12 @@ HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, Connecti
 
 	if (m_downloadConnections[index] == nullptr && create)
 	{
-		m_downloadConnections[index] = Make<Connection>(this, ConnectionType::Download);
+		auto connection = Make<Connection>(this, ConnectionType::Download);
 
-		//HRESULT result;
-		//ReturnIfFailed(result, connection->Connect());
+		HRESULT result;
+		ReturnIfFailed(result, connection->Connect());
+
+		m_downloadConnections[index] = connection;
 	}
 
 	return m_downloadConnections[index].CopyTo(value);
@@ -464,10 +455,12 @@ HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, Connection
 
 	if (m_uploadConnections[index] == nullptr && create)
 	{
-		m_uploadConnections[index] = Make<Connection>(this, ConnectionType::Upload);
+		auto connection = Make<Connection>(this, ConnectionType::Upload);
 
-		//HRESULT result;
-		//ReturnIfFailed(result, connection->Connect());
+		HRESULT result;
+		ReturnIfFailed(result, connection->Connect());
+
+		m_uploadConnections[index] = connection;
 	}
 
 	return m_uploadConnections[index].CopyTo(value);
@@ -484,10 +477,12 @@ HRESULT Datacenter::GetGenericConnection(boolean create, Connection** value)
 
 	if (m_genericConnection == nullptr && create)
 	{
-		m_genericConnection = Make<Connection>(this, ConnectionType::Generic);
+		auto connection = Make<Connection>(this, ConnectionType::Generic);
 
-		//HRESULT result;
-		//ReturnIfFailed(result, connection->Connect());
+		HRESULT result;
+		ReturnIfFailed(result, connection->Connect());
+
+		m_genericConnection = connection;
 	}
 
 	return m_genericConnection.CopyTo(value);
@@ -632,17 +627,14 @@ HRESULT Datacenter::SendRequest(ITLObject* object, Connection* connection)
 	UINT32 objectSize;
 	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
 
-	auto messageId = connectionManager->GenerateMessageId();
-
-	ComPtr<ITLBinaryWriterEx> writer;
-	// 2 * sizeof(INT64) + sizeof(INT32) + objectSize
-
+	ComPtr<TLBinaryWriter> writer;
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&writer, 2 * sizeof(INT64) + sizeof(INT32) + objectSize));
 	ReturnIfFailed(result, writer->WriteInt64(0));
-	ReturnIfFailed(result, writer->WriteInt64(messageId));
+	ReturnIfFailed(result, writer->WriteInt64(connectionManager->GenerateMessageId()));
 	ReturnIfFailed(result, writer->WriteUInt32(objectSize));
 	ReturnIfFailed(result, writer->WriteObject(object));
 
-	return S_OK;
+	return connection->SendData(writer->GetBuffer(), writer->GetPosition(), true);
 }
 
 HRESULT Datacenter::OnHandshakeConnectionClosed(Connection* connection)
