@@ -30,6 +30,14 @@ namespace Telegram.Api.TL
         }
     }
 
+    public partial class TLPhoneCallWaiting
+    {
+        public override TLInputPhoneCall ToInputPhoneCall()
+        {
+            return new TLInputPhoneCall { Id = Id, AccessHash = AccessHash };
+        }
+    }
+
     public partial class TLPhoneCallRequested
     {
         public override TLInputPhoneCall ToInputPhoneCall()

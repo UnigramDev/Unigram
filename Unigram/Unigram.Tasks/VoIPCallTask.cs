@@ -330,7 +330,6 @@ namespace Unigram.Tasks
                     if (response.IsSucceeded)
                     {
                         _systemCall.NotifyCallActive();
-
                         Handle(new TLUpdatePhoneCall { PhoneCall = response.Result.PhoneCall });
                     }
                 }
@@ -487,10 +486,10 @@ namespace Unigram.Tasks
                     var response = await SendRequestAsync<TLPhonePhoneCall>("phone.acceptCall", request);
                     if (response.IsSucceeded)
                     {
+                        _systemCall.NotifyCallActive();
+                        Handle(new TLUpdatePhoneCall { PhoneCall = response.Result.PhoneCall });
                     }
                 }
-
-                _systemCall.NotifyCallActive();
             }
         }
 
@@ -624,7 +623,18 @@ namespace Unigram.Tasks
                         var req = new TLTuple<double>(reader);
                         reader.Dispose();
 
-                        var req2 = new TLPhoneDiscardCall { Peer = _phoneCall.ToInputPhoneCall(), Reason = new TLPhoneCallDiscardReasonHangup(), Duration = (int)req.Item1 };
+                        TLPhoneCallDiscardReasonBase reason;
+                        switch (_phoneCall)
+                        {
+                            case TLPhoneCallWaiting waiting:
+                                reason = new TLPhoneCallDiscardReasonBusy();
+                                break;
+                            default:
+                                reason = new TLPhoneCallDiscardReasonHangup();
+                                break;
+                        }
+
+                        var req2 = new TLPhoneDiscardCall { Peer = _phoneCall.ToInputPhoneCall(), Reason = reason, Duration = (int)req.Item1 };
 
                         const string caption2 = "phone.discardCall";
                         var response = await SendRequestAsync<TLUpdatesBase>(caption2, req2);

@@ -656,22 +656,22 @@ namespace Unigram.Common
                     {
                         if (Constants.TelegramHosts.Contains(uri.Host))
                         {
-                            HandleTelegramUrl(navigation);
+                            HandleTelegramUrl(message, navigation);
                         }
                         else
                         {
-                            if (message?.Media is TLMessageMediaWebPage webpageMedia)
-                            {
-                                if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
-                                {
-                                    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                                    if (service != null)
-                                    {
-                                        service.Navigate(typeof(InstantPage), webpageMedia);
-                                        return;
-                                    }
-                                }
-                            }
+                            //if (message?.Media is TLMessageMediaWebPage webpageMedia)
+                            //{
+                            //    if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
+                            //    {
+                            //        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                            //        if (service != null)
+                            //        {
+                            //            service.Navigate(typeof(InstantPage), webpageMedia);
+                            //            return;
+                            //        }
+                            //    }
+                            //}
 
                             if (type == TLType.MessageEntityTextUrl)
                             {
@@ -780,6 +780,11 @@ namespace Unigram.Common
 
         public static void HandleTelegramUrl(string url)
         {
+            HandleTelegramUrl(null, url);
+        }
+
+        public static async void HandleTelegramUrl(TLMessage message, string url)
+        {
             // TODO: in-app navigation
             if (url.Contains("joinchat"))
             {
@@ -824,7 +829,33 @@ namespace Unigram.Common
                         }
                         if (!string.IsNullOrEmpty(username))
                         {
-                            NavigateToUsername(MTProtoService.Current, username, accessToken, post, null);
+                            if (username.Equals("iv"))
+                            {
+                                if (message?.Media is TLMessageMediaWebPage webpageMedia)
+                                {
+                                    if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(url))
+                                    {
+                                        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                                        if (service != null)
+                                        {
+                                            service.Navigate(typeof(InstantPage), webpageMedia);
+                                            return;
+                                        }
+                                    }
+                                }
+
+                                var navigation = url;
+                                if (navigation.StartsWith("http") == false)
+                                {
+                                    navigation = "http://" + navigation;
+                                }
+
+                                await Launcher.LaunchUriAsync(new Uri(navigation));
+                            }
+                            else
+                            {
+                                NavigateToUsername(MTProtoService.Current, username, accessToken, post, null);
+                            }
                         }
                     }
                 }
