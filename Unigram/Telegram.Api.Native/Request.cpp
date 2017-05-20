@@ -8,7 +8,9 @@ using namespace Telegram::Api::Native;
 Request::Request(ITLObject* object, INT32 token, ConnectionType connectionType, UINT32 datacenterId, ISendRequestCompletedCallback* sendCompletedCallback,
 	IRequestQuickAckReceivedCallback* quickAckReceivedCallback, RequestFlag flags) :
 	m_object(object),
-	m_token(token),
+	m_messageId(0),
+	m_messageSequenceNumber(0),
+	m_messageToken(token),
 	m_connectionType(connectionType),
 	m_datacenterId(datacenterId),
 	m_sendCompletedCallback(sendCompletedCallback),
@@ -47,14 +49,36 @@ HRESULT Request::get_RawObject(_Out_ ITLObject** value)
 	return m_object.CopyTo(value);
 }
 
-HRESULT Request::get_Token(INT32* value)
+HRESULT Request::get_MessageId(INT64* value)
 {
 	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	*value = m_token;
+	*value = m_messageId;
+	return S_OK;
+}
+
+HRESULT Request::get_MessageSequenceNumber(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_messageSequenceNumber;
+	return S_OK;
+}
+
+HRESULT Request::get_MessageToken(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_messageToken;
 	return S_OK;
 }
 

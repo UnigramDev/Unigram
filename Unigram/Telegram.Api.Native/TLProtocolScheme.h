@@ -17,6 +17,7 @@ namespace Telegram
 				class TLError;
 				class TLReqPQ;
 				class TLResPQ;
+				class TLFutureSalts;
 				class TLFutureSalt;
 				class TLInvokeWithLayer;
 				class TLInitConnection;
@@ -28,6 +29,7 @@ namespace Telegram
 					MakeTLObjectTraits(TLError, 0xc4b9f9bb, false);
 					MakeTLObjectTraits(TLReqPQ, 0x60469778, false);
 					MakeTLObjectTraits(TLResPQ, 0x05162463, false);
+					MakeTLObjectTraits(TLFutureSalts, 0xae500895, false);
 					MakeTLObjectTraits(TLFutureSalt, 0x0949d9dc, false);
 					MakeTLObjectTraits(TLInvokeWithLayer, 0xda9b0d0d, false);
 					MakeTLObjectTraits(TLInitConnection, 0x69796de9, false);
@@ -131,6 +133,39 @@ namespace Telegram
 					BYTE m_serverNonce[16];
 					BYTE m_pq[8];
 					std::vector<INT64> m_serverPublicKeyFingerprints;
+				};
+
+				class TLFutureSalts  WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLFutureSaltsTraits>>
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				public:
+					TLFutureSalts();
+					~TLFutureSalts();
+
+					//Internal methods
+					inline INT64 GetReqMessageId() const
+					{
+						return m_reqMessageId;
+					}
+
+					inline INT32 GetNow() const
+					{
+						return m_now;
+					}
+
+					inline std::vector<ComPtr<TLFutureSalt>> const& GetSalts() const
+					{
+						return m_salts;
+					}
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+
+				private:
+					INT64 m_reqMessageId;
+					INT32 m_now;
+					std::vector<ComPtr<TLFutureSalt>> m_salts;
 				};
 
 				class TLFutureSalt WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLFutureSaltTraits>>

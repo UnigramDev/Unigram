@@ -36,6 +36,24 @@ HRESULT TLBinaryReader::RuntimeClassInitialize(IBuffer* underlyingBuffer)
 	return S_OK;
 }
 
+HRESULT TLBinaryReader::RuntimeClassInitialize(TLBinaryReader* reader)
+{
+	if (reader == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (reader->m_position >= reader->m_capacity)
+	{
+		return E_NOT_SUFFICIENT_BUFFER;
+	}
+
+	m_buffer = &reader->m_buffer[reader->m_position];
+	m_capacity = reader->m_capacity - reader->m_position;
+	m_underlyingBuffer = reader->m_underlyingBuffer;
+	return S_OK;
+}
+
 HRESULT TLBinaryReader::get_Position(UINT32* value)
 {
 	if (value == nullptr)
@@ -238,16 +256,21 @@ HRESULT TLBinaryReader::ReadFloat(float* value)
 
 HRESULT TLBinaryReader::ReadObject(ITLObject** value)
 {
-	if (value == nullptr)
+	UINT32 constructor;
+	return ReadObjectAndConstructor(&constructor, value);
+}
+
+HRESULT TLBinaryReader::ReadObjectAndConstructor(_Out_ UINT32* constructor, _Out_ ITLObject** value)
+{
+	if (constructor == nullptr || value == nullptr)
 	{
 		return E_POINTER;
 	}
 
 	HRESULT result;
-	UINT32 constructor;
-	ReturnIfFailed(result, ReadUInt32(&constructor));
+	ReturnIfFailed(result, ReadUInt32(constructor));
 
-	if (constructor == 0x56730BCC)
+	if (*constructor == 0x56730BCC)
 	{
 		*value = nullptr;
 		return S_OK;
@@ -256,7 +279,7 @@ HRESULT TLBinaryReader::ReadObject(ITLObject** value)
 	{
 		ComPtr<ITLObject> object;
 		ComPtr<ITLObjectConstructorDelegate> constructorDelegate;
-		ReturnIfFailed(result, TLObject::GetObjectConstructor(constructor, constructorDelegate));
+		ReturnIfFailed(result, TLObject::GetObjectConstructor(*constructor, constructorDelegate));
 		ReturnIfFailed(result, constructorDelegate->Invoke(&object));
 		ReturnIfFailed(result, object->Read(static_cast<ITLBinaryReaderEx*>(this)));
 
@@ -293,6 +316,24 @@ HRESULT TLBinaryReader::ReadWString(std::wstring& string)
 	string.resize(length);
 
 	MultiByteToWideChar(CP_UTF8, 0, mbString, mbLength, &string[0], length);
+	return S_OK;
+}
+
+HRESULT TLBinaryReader::ReadRawBuffer(UINT32 __valueSize, BYTE* value)
+{
+	if (value == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (m_position + __valueSize > m_capacity)
+	{
+		return E_NOT_SUFFICIENT_BUFFER;
+	}
+
+	CopyMemory(value, &m_buffer[m_position], __valueSize);
+
+	m_position += __valueSize;
 	return S_OK;
 }
 

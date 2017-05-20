@@ -16,6 +16,7 @@ namespace Telegram
 		namespace Native
 		{
 
+			struct ServerEndpoint;
 			class ConnectionManager;
 
 			class ConnectionSocket abstract : virtual EventObjectT<EventTraits::WaitTraits>
@@ -35,7 +36,7 @@ namespace Telegram
 					return m_socketEvent.Get();
 				}
 
-				HRESULT ConnectSocket(_In_ ConnectionManager* connectionManager, _In_ std::wstring const& address, UINT16 port);
+				HRESULT ConnectSocket(_In_ ConnectionManager* connectionManager, _In_ ServerEndpoint const* endpoint, boolean ipv6);
 				HRESULT DisconnectSocket();
 				HRESULT SendData(_In_reads_(length) BYTE const* buffer, UINT32 length);
 				HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
@@ -50,6 +51,7 @@ namespace Telegram
 
 				SOCKET m_socket;
 				WSAEvent m_socketEvent;
+				Event m_socketConnectedEvent;
 				std::vector<BYTE> m_sendBuffer;
 				std::vector<BYTE> m_receiveBuffer;
 			};

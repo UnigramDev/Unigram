@@ -25,9 +25,6 @@ namespace Telegram
 		namespace Native
 		{
 
-			class TLBinaryReader;
-
-
 			struct ServerSalt
 			{
 				INT32 ValidSince;

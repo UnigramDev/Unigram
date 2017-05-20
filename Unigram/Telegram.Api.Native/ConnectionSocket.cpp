@@ -2,6 +2,7 @@
 #include <Ws2tcpip.h>
 #include "ConnectionSocket.h"
 #include "ConnectionManager.h"
+#include "Datacenter.h"
 #include "Helpers\COMHelper.h"
 
 #define BreakIfSocketError(result, method) \
@@ -32,25 +33,21 @@ ConnectionSocket::~ConnectionSocket()
 	CloseSocket(NO_ERROR, SOCKET_CLOSE_JOINTHREAD);
 }
 
-HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, std::wstring const& address, UINT16 port)
+HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, ServerEndpoint const* endpoint, boolean ipv6)
 {
 	if (m_socket != INVALID_SOCKET)
 	{
 		return E_NOT_VALID_STATE;
 	}
 
-	boolean ipv6;
-	HRESULT result;
-	ReturnIfFailed(result, connectionManager->get_IsIpv6Enabled(&ipv6));
-
 	sockaddr_storage socketAddress = {};
 	if (ipv6)
 	{
 		auto socketAddressIpv6 = reinterpret_cast<sockaddr_in6*>(&socketAddress);
 		socketAddressIpv6->sin6_family = AF_INET6;
-		socketAddressIpv6->sin6_port = htons(port);
+		socketAddressIpv6->sin6_port = htons(endpoint->Port);
 
-		if (InetPton(AF_INET6, address.c_str(), &socketAddressIpv6->sin6_addr) != 1)
+		if (InetPton(AF_INET6, endpoint->Address.c_str(), &socketAddressIpv6->sin6_addr) != 1)
 		{
 			return WSAGetLastHRESULT();
 		}
@@ -59,9 +56,9 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, st
 	{
 		auto socketAddressIpv4 = reinterpret_cast<sockaddr_in*>(&socketAddress);
 		socketAddressIpv4->sin_family = AF_INET;
-		socketAddressIpv4->sin_port = htons(port);
+		socketAddressIpv4->sin_port = htons(endpoint->Port);
 
-		if (InetPton(AF_INET, address.c_str(), &socketAddressIpv4->sin_addr) != 1)
+		if (InetPton(AF_INET, endpoint->Address.c_str(), &socketAddressIpv4->sin_addr) != 1)
 		{
 			return WSAGetLastHRESULT();
 		}
@@ -69,6 +66,12 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, st
 
 	m_sendBuffer.resize(SOCKET_SEND_BUFFER_SIZE);
 	m_receiveBuffer.resize(SOCKET_RECEIVE_BUFFER_SIZE);
+
+	m_socketConnectedEvent.Attach(CreateEvent(nullptr, TRUE, FALSE, nullptr));
+	if (!m_socketConnectedEvent.IsValid())
+	{
+		return GetLastHRESULT();
+	}
 
 	m_socketEvent.Attach(WSACreateEvent());
 	if (!m_socketEvent.IsValid())
@@ -84,6 +87,7 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, st
 	int noDelay = 1;
 	setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&noDelay), sizeof(int));
 
+	HRESULT result;
 	if (FAILED(result = connectionManager->AttachEventObject(this)))
 	{
 		CloseSocket(WIN32_FROM_HRESULT(result), SOCKET_CLOSE_NONE);
@@ -138,6 +142,8 @@ HRESULT ConnectionSocket::SendData(BYTE const* buffer, UINT32 length)
 	{
 		return E_NOT_VALID_STATE;
 	}
+
+	WaitForSingleObject(m_socketConnectedEvent.Get(), INFINITE);
 
 	int bytesSent = send(m_socket, reinterpret_cast<const char*>(buffer), length, 0);
 	if (bytesSent == SOCKET_ERROR)
@@ -217,6 +223,8 @@ HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 		if (networkEvents.lNetworkEvents & FD_CONNECT)
 		{
 			BreakIfError(wsaLastError, networkEvents.iErrorCode[FD_CONNECT_BIT]);
+
+			SetEvent(m_socketConnectedEvent.Get());
 
 			HRESULT result;
 			if (FAILED(result = OnSocketConnected()))

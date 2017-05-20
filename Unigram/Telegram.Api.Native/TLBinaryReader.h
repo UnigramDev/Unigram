@@ -26,6 +26,7 @@ namespace ABI
 					MIDL_INTERFACE("AAFAB0A9-17F1-42D0-87DF-E188B2BE5BC7") ITLBinaryReaderEx : public ITLBinaryReader
 					{
 					public:
+						virtual HRESULT STDMETHODCALLTYPE ReadObjectAndConstructor(_Out_ UINT32* constructor, _Out_ ITLObject** value) = 0;
 						virtual HRESULT STDMETHODCALLTYPE ReadBigEndianInt32(_Out_ INT32* value) = 0;
 						virtual HRESULT STDMETHODCALLTYPE ReadWString(_Out_ std::wstring& string) = 0;
 						virtual HRESULT STDMETHODCALLTYPE ReadBuffer(_Out_writes_(length) BYTE* buffer, UINT32 length) = 0;
@@ -76,14 +77,17 @@ namespace Telegram
 					IFACEMETHODIMP ReadDouble(_Out_ double* value);
 					IFACEMETHODIMP ReadFloat(_Out_ float* value);
 					IFACEMETHODIMP ReadObject(_Out_ ITLObject** value);
+					IFACEMETHODIMP ReadObjectAndConstructor(_Out_ UINT32* constructor, _Out_ ITLObject** value);
 					IFACEMETHODIMP ReadBigEndianInt32(_Out_ INT32* value);
 					IFACEMETHODIMP ReadWString(_Out_ std::wstring& string);
+					IFACEMETHODIMP ReadRawBuffer(UINT32 __valueSize, _Out_writes_(__valueSize) BYTE* value);
 					IFACEMETHODIMP ReadBuffer(_Out_writes_(length) BYTE* buffer, UINT32 length);
 					IFACEMETHODIMP_(void) Skip(UINT32 length);
 					IFACEMETHODIMP_(void) Reset();
 
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(_In_ IBuffer* underlyingBuffer);
+					STDMETHODIMP RuntimeClassInitialize(_In_ TLBinaryReader* reader);
 
 					inline BYTE* GetBuffer() const
 					{

@@ -9,6 +9,7 @@
 #include "TLProtocolScheme.h"
 #include "DefaultUserConfiguration.h"
 #include "Collections.h"
+#include "NativeBuffer.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
@@ -586,13 +587,25 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 
 	*object = errorObject.Detach();
 
-	auto datacenter = Make<Datacenter>();
-	ReturnIfFailed(result, datacenter->AddEndpoint({ L"192.168.1.1", 80 }, ConnectionType::Generic, false));
+	auto datacenter = GetDatacenterById(4);
+	ReturnIfFailed(result, datacenter->BeginHandshake(true));
 
-	ComPtr<Connection> connection;
-	ReturnIfFailed(result, datacenter->GetGenericConnection(true, &connection));
+	const WCHAR buffer[] = L"Old Macdougal had a farm in Ohio-i-o,"
+		"And on that farm he had some dogs in Ohio - i - o,"
+		"With a bow - wow here, and a bow - wow there,"
+		"Here a bow, there a wow, everywhere a bow - wow.";
 
-	*value = connection.Detach();
+	ComPtr<NativeBuffer> binaryReaderBuffer;
+	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&binaryReaderBuffer, sizeof(buffer)));
+
+	CopyMemory(binaryReaderBuffer->GetBuffer(), buffer, sizeof(buffer));
+
+	ComPtr<TLBinaryReader> binaryReader;
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&binaryReader, binaryReaderBuffer.Get()));
+
+	auto unparsedMessage = Make<TLUnparsedMessage>(0, ConnectionType::Generic, static_cast<ITLBinaryReaderEx*>(binaryReader.Get()));
+	ReturnIfFailed(result, m_unparsedMessageReceivedEventSource.InvokeAll(this, unparsedMessage.Get()));
+
 	return S_OK;
 }
 

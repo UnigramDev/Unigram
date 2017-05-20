@@ -80,9 +80,9 @@ namespace Telegram
 
 				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize(DWORD minimumThreadCount = THREAD_COUNT, DWORD maximumThreadCount = THREAD_COUNT);
-				INT64 GenerateMessageId();
 				boolean IsNetworkAvailable();
 				INT32 GetCurrentTime();
+				INT64 GenerateMessageId();
 				HRESULT AttachEventObject(_In_ EventObject* eventObject);
 
 				static HRESULT GetInstance(_Out_ ComPtr<ConnectionManager>& value);

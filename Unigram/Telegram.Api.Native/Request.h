@@ -23,7 +23,9 @@ namespace ABI
 				public:
 					virtual HRESULT STDMETHODCALLTYPE get_Object(_Out_ ITLObject** value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_RawObject(_Out_ ITLObject** value) = 0;
-					virtual HRESULT STDMETHODCALLTYPE get_Token(_Out_ INT32* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE get_MessageId(_Out_ INT64* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE get_MessageSequenceNumber(_Out_ INT32* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE get_MessageToken(_Out_ INT32* value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_ConnectionType(_Out_ ConnectionType* value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_DatacenterId(_Out_ UINT32* value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_Flags(_Out_ RequestFlag* value) = 0;
@@ -57,7 +59,9 @@ namespace Telegram
 				//COM exported methods
 				IFACEMETHODIMP get_Object(_Out_ ITLObject** value);
 				IFACEMETHODIMP get_RawObject(_Out_ ITLObject** value);
-				IFACEMETHODIMP get_Token(_Out_ INT32* value);
+				IFACEMETHODIMP get_MessageId(_Out_ INT64* value);
+				IFACEMETHODIMP get_MessageSequenceNumber(_Out_ INT32* value);
+				IFACEMETHODIMP get_MessageToken(_Out_ INT32* value);
 				IFACEMETHODIMP get_ConnectionType(_Out_ ConnectionType* value);
 				IFACEMETHODIMP get_DatacenterId(_Out_ UINT32* value);
 				IFACEMETHODIMP get_Flags(_Out_ RequestFlag* value);
@@ -68,9 +72,19 @@ namespace Telegram
 					return m_object.Get();
 				}
 
-				inline INT32 GetToken() const
+				inline INT64 GetMessageId() const
 				{
-					return m_token;
+					return m_messageId;
+				}
+
+				inline INT32 GetMessageSequenceNumber() const
+				{
+					return m_messageSequenceNumber;
+				}
+
+				inline INT32 GetMessageToken() const
+				{
+					return m_messageToken;
 				}
 
 				inline ConnectionType GetConnectionType() const
@@ -89,7 +103,9 @@ namespace Telegram
 				}
 
 			private:
-				INT32 m_token;
+				INT64 m_messageId;
+				INT32 m_messageSequenceNumber;
+				INT32 m_messageToken;
 				ConnectionType m_connectionType;
 				UINT32 m_datacenterId;
 				ComPtr<ITLObject> m_object;

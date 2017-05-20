@@ -48,7 +48,7 @@ namespace Telegram
 
 			private:
 				INT64 m_id;
-				UINT32 m_nextSequenceNumber;
+				UINT32 m_nextMessageSequenceNumber;
 				INT64 m_minProcessedMessageId;
 				std::vector<INT64> m_processedMessageIds;
 				std::vector<INT64> m_messagesIdsForConfirmation;

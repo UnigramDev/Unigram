@@ -33,7 +33,9 @@ namespace Telegram.Api.Native.Test
             connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
             connectionManager.UnparsedMessageReceived += ConnectionManager_UnparsedMessageReceived;
 
-            connectionManager.SendRequest(new TLError(0, "Hello world"), null, null, 1, ConnectionType.Generic, false, 0);
+            //connectionManager.SendRequest(new TLError(0, "Hello world"), null, null, 1, ConnectionType.Generic, false, 0);
+
+            connectionManager.BoomBaby(null, out ITLObject @object);
 
             GC.Collect();
         }
@@ -44,6 +46,10 @@ namespace Telegram.Api.Native.Test
 
         private void ConnectionManager_UnparsedMessageReceived(ConnectionManager sender, TLUnparsedMessage args)
         {
+            var unconsumedBuffer = new byte[args.Reader.UnconsumedBufferLength];
+            args.Reader.ReadRawBuffer(unconsumedBuffer);
+
+            var text = System.Text.Encoding.Unicode.GetString(unconsumedBuffer);
         }
 
         private void Instance_CurrentNetworkTypeChanged(ConnectionManager sender, object e)

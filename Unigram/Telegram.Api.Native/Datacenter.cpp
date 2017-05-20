@@ -631,10 +631,10 @@ HRESULT Datacenter::SendRequest(ITLObject* object, Connection* connection)
 	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&writer, 2 * sizeof(INT64) + sizeof(INT32) + objectSize));
 	ReturnIfFailed(result, writer->WriteInt64(0));
 	ReturnIfFailed(result, writer->WriteInt64(connectionManager->GenerateMessageId()));
-	ReturnIfFailed(result, writer->WriteUInt32(objectSize));
+	ReturnIfFailed(result, writer->WriteInt32(objectSize));
 	ReturnIfFailed(result, writer->WriteObject(object));
 
-	return connection->SendData(writer->GetBuffer(), writer->GetPosition(), true);
+	return connection->SendData(writer->GetBuffer(), writer->GetPosition(), false);
 }
 
 HRESULT Datacenter::OnHandshakeConnectionClosed(Connection* connection)

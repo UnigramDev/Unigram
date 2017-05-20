@@ -105,22 +105,25 @@ HRESULT Connection::Connect()
 
 	//I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement connection start");
 
-	/*Datacenter::DatacenterEndpoint* endpoint;
-	if (FAILED(result = m_datacenter->GetCurrentEndpoint(m_type, ipv6, &endpoint)) && ipv6)
+	boolean ipv6;
+	ReturnIfFailed(result, connectionManager->get_IsIpv6Enabled(&ipv6));
+
+	ServerEndpoint* endpoint;
+	if (FAILED(result = m_datacenter->GetCurrentEndpoint(m_type, ipv6, &endpoint)))
 	{
-		ipv6 = false;
-		ReturnIfFailed(result, m_datacenter->GetCurrentEndpoint(m_type, false, &endpoint));
-	}
-	else
-	{
-		return result;
+		if (ipv6)
+		{
+			ipv6 = false;
+			ReturnIfFailed(result, m_datacenter->GetCurrentEndpoint(m_type, false, &endpoint));
+		}
+		else
+		{
+			return result;
+		}
 	}
 
 	ReturnIfFailed(result, m_reconnectionTimer->Stop());
-	ReturnIfFailed(result, OpenSocket(endpoint->Address, endpoint->Port, ipv6));*/
-
-	ReturnIfFailed(result, m_reconnectionTimer->Stop());
-	ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), L"172.217.23.68", 80));
+	ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), endpoint, ipv6));
 	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&m_currentNetworkType));
 
 	return S_OK;
@@ -161,7 +164,7 @@ HRESULT Connection::SendData(BYTE* buffer, UINT32 length, boolean reportAck)
 
 	if (packetLength < 0x7f)
 	{
-		packetBufferLength++;
+		packetBufferLength += 1;
 	}
 	else
 	{
@@ -240,9 +243,47 @@ HRESULT Connection::OnSocketConnected()
 
 HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 {
+	auto decryptedBuffer = std::make_unique<BYTE[]>(length);
+	ConnectionCryptograpy::DecryptBuffer(buffer, decryptedBuffer.get(), length);
+
+	CopyMemory(decryptedBuffer.get(), buffer, length);
+
+	auto value = ((decryptedBuffer[0] & 0xff)) | ((decryptedBuffer[1] & 0xff) << 8) |
+		((decryptedBuffer[2] & 0xff) << 16) | ((decryptedBuffer[3] & 0xff) << 24);
+
+	UINT32 packetLength;
+	BYTE firstByte = *decryptedBuffer.get();
+	if ((firstByte & (1 << 7)) != 0)
+	{
+		/*buffer->position(mark);
+		if (buffer->remaining() < 4) {
+			NativeByteBuffer *reuseLater = restOfTheData;
+			restOfTheData = BuffersStorage::getInstance().getFreeBuffer(16384);
+			restOfTheData->writeBytes(buffer);
+			restOfTheData->limit(restOfTheData->position());
+			lastPacketLength = 0;
+			if (reuseLater != nullptr) {
+				reuseLater->reuse();
+			}
+			break;
+		}
+		int32_t ackId = buffer->readBigInt32(nullptr) & (~(1 << 31));
+		ConnectionsManager::getInstance().onConnectionQuickAckReceived(this, ackId);
+		continue;*/
+	}
+
+	if (firstByte != 0x7f)
+	{
+		packetLength = static_cast<UINT32>(firstByte) * 4;
+	}
+	else 
+	{
+
+	}
+
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket data received event handling");
 
-	OutputDebugStringA(reinterpret_cast<const char*>(buffer));
+	OutputDebugStringA(reinterpret_cast<const char*>(decryptedBuffer.get()));
 
 	return S_OK;
 }

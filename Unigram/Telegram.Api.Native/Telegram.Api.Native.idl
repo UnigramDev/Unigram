@@ -101,6 +101,7 @@ namespace Telegram
 					HRESULT ReadBool([out][retval] boolean* value);
 					HRESULT ReadString([out][retval] HSTRING* value);
 					HRESULT ReadByteArray([out] UINT32* __valueSize,[out][retval][size_is(, *__valueSize)] BYTE** value);
+					HRESULT ReadRawBuffer([in] UINT32 __valueSize, [in][size_is(__valueSize)] BYTE* value);
 					HRESULT ReadDouble([out][retval] double* value);
 					HRESULT ReadFloat([out][retval] float* value);
 					HRESULT ReadObject([out][retval] ITLObject** value);
@@ -133,6 +134,7 @@ namespace Telegram
 					HRESULT WriteBool([in] boolean value);
 					HRESULT WriteString([in] HSTRING value);
 					HRESULT WriteByteArray([in] UINT32 __valueSize,[in][size_is(__valueSize)] BYTE* value);
+					HRESULT WriteRawBuffer([in] UINT32 __valueSize, [in][size_is(__valueSize)] BYTE* value);
 					HRESULT WriteDouble([in] double value);
 					HRESULT WriteFloat([in] float value);
 					HRESULT WriteObject([in] ITLObject* value);

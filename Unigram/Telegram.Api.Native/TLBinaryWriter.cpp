@@ -33,6 +33,24 @@ HRESULT TLBinaryWriter::RuntimeClassInitialize(IBuffer* underlyingBuffer)
 	return S_OK;
 }
 
+HRESULT TLBinaryWriter::RuntimeClassInitialize(TLBinaryWriter* writer)
+{
+	if (writer == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (writer->m_position >= writer->m_capacity)
+	{
+		return E_NOT_SUFFICIENT_BUFFER;
+	}
+
+	m_buffer = &writer->m_buffer[writer->m_position];
+	m_capacity = writer->m_capacity - writer->m_position;
+	m_underlyingBuffer = writer->m_underlyingBuffer;
+	return S_OK;
+}
+
 HRESULT TLBinaryWriter::RuntimeClassInitialize(UINT32 capacity)
 {
 	HRESULT result;
@@ -208,6 +226,39 @@ HRESULT TLBinaryWriter::WriteObject(ITLObject* value)
 
 		return value->Write(static_cast<ITLBinaryWriterEx*>(this));
 	}
+}
+
+HRESULT TLBinaryWriter::WriteRawBuffer(UINT32 __valueSize, BYTE* value)
+{
+	if (value == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (m_position + __valueSize > m_capacity)
+	{
+		return E_NOT_SUFFICIENT_BUFFER;
+	}
+
+	CopyMemory(&m_buffer[m_position], value, __valueSize);
+
+	m_position += __valueSize;
+	return S_OK;
+}
+
+HRESULT TLBinaryWriter::WriteBigEndianInt32(INT32 value)
+{
+	if (m_position + sizeof(INT32) > m_capacity)
+	{
+		return E_NOT_SUFFICIENT_BUFFER;
+	}
+
+	m_buffer[m_position++] = (value >> 24) & 0xff;
+	m_buffer[m_position++] = (value >> 16) & 0xff;
+	m_buffer[m_position++] = (value >> 8) & 0xff;
+	m_buffer[m_position++] = value & 0xff;
+
+	return S_OK;
 }
 
 HRESULT TLBinaryWriter::WriteWString(std::wstring const& string)
@@ -427,10 +478,22 @@ HRESULT TLObjectSizeCalculator::WriteObject(ITLObject* value)
 	}
 }
 
+HRESULT TLObjectSizeCalculator::WriteRawBuffer(UINT32 __valueSize, BYTE* value)
+{
+	m_position += __valueSize;
+	return S_OK;
+}
+
 HRESULT TLObjectSizeCalculator::WriteWString(std::wstring const& string)
 {
 	auto mbLength = WideCharToMultiByte(CP_UTF8, 0, string.data(), static_cast<UINT32>(string.size()), nullptr, 0, nullptr, nullptr);
 	return WriteBuffer(nullptr, mbLength);
+}
+
+HRESULT TLObjectSizeCalculator::WriteBigEndianInt32(INT32 value)
+{
+	m_position += sizeof(INT32);
+	return S_OK;
 }
 
 HRESULT TLObjectSizeCalculator::WriteBuffer(BYTE const* buffer, UINT32 length)

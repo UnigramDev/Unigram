@@ -10,6 +10,7 @@ ActivatableClassWithFactory(TLError, TLErrorFactory);
 
 RegisterTLObjectConstructor(TLError);
 RegisterTLObjectConstructor(TLResPQ);
+RegisterTLObjectConstructor(TLFutureSalts);
 RegisterTLObjectConstructor(TLFutureSalt);
 
 
@@ -63,7 +64,7 @@ TLReqPQ::~TLReqPQ()
 
 HRESULT TLReqPQ::WriteBody(ITLBinaryWriterEx* writer)
 {
-	return writer->WriteBuffer(m_nonce, ARRAYSIZE(m_nonce));
+	return writer->WriteRawBuffer(ARRAYSIZE(m_nonce), m_nonce);
 }
 
 
@@ -81,9 +82,9 @@ TLResPQ::~TLResPQ()
 HRESULT TLResPQ::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
-	ReturnIfFailed(result, reader->ReadBuffer(m_nonce, ARRAYSIZE(m_nonce)));
-	ReturnIfFailed(result, reader->ReadBuffer(m_serverNonce, ARRAYSIZE(m_serverNonce)));
-	ReturnIfFailed(result, reader->ReadBuffer(m_pq, ARRAYSIZE(m_pq)));
+	ReturnIfFailed(result, reader->ReadRawBuffer(ARRAYSIZE(m_nonce), m_nonce));
+	ReturnIfFailed(result, reader->ReadRawBuffer(ARRAYSIZE(m_serverNonce), m_serverNonce));
+	ReturnIfFailed(result, reader->ReadRawBuffer(ARRAYSIZE(m_pq), m_pq));
 
 	UINT32 constructor;
 	ReturnIfFailed(result, reader->ReadUInt32(&constructor));
@@ -96,6 +97,45 @@ HRESULT TLResPQ::ReadBody(ITLBinaryReaderEx* reader)
 	for (UINT32 i = 0; i < count; i++)
 	{
 		ReturnIfFailed(result, reader->ReadInt64(&m_serverPublicKeyFingerprints[i]));
+	}
+
+	return S_OK;
+}
+
+
+TLFutureSalts::TLFutureSalts() :
+	m_reqMessageId(0),
+	m_now(0)
+{
+}
+
+TLFutureSalts::~TLFutureSalts()
+{
+}
+
+HRESULT TLFutureSalts::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt64(&m_reqMessageId));
+	ReturnIfFailed(result, reader->ReadInt32(&m_now));
+
+	UINT32 count;
+	ReturnIfFailed(result, reader->ReadUInt32(&count));
+
+	m_salts.resize(count);
+
+	for (UINT32 i = 0; i < count; i++)
+	{
+		UINT32 constructor;
+		ComPtr<ITLObject> salt;
+		ReturnIfFailed(result, reader->ReadObjectAndConstructor(&constructor, &salt));
+
+		if (constructor != TLFutureSalt::Constructor)
+		{
+			return E_NOINTERFACE;
+		}
+
+		m_salts[i] = static_cast<TLFutureSalt*>(salt.Get());
 	}
 
 	return S_OK;

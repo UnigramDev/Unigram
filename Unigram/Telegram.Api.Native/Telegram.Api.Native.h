@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0622 */
 /* at Tue Jan 19 04:14:07 2038
  */
-/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-72bbf256:
+/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-414351dc:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0622 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -1774,6 +1774,10 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader;
                                 /* [out] */ UINT32 *__valueSize,
                                 /* [out][retval][size_is][size_is] */ BYTE **value) = 0;
                             
+                            virtual HRESULT STDMETHODCALLTYPE ReadRawBuffer( 
+                                /* [in] */ UINT32 __valueSize,
+                                /* [in][size_is] */ BYTE *value) = 0;
+                            
                             virtual HRESULT STDMETHODCALLTYPE ReadDouble( 
                                 /* [out][retval] */ double *value) = 0;
                             
@@ -1879,6 +1883,11 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader;
             /* [out] */ UINT32 *__valueSize,
             /* [out][retval][size_is][size_is] */ BYTE **value);
         
+        HRESULT ( STDMETHODCALLTYPE *ReadRawBuffer )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader * This,
+            /* [in] */ UINT32 __valueSize,
+            /* [in][size_is] */ BYTE *value);
+        
         HRESULT ( STDMETHODCALLTYPE *ReadDouble )( 
             __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader * This,
             /* [out][retval] */ double *value);
@@ -1962,6 +1971,9 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader;
 
 #define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader_ReadByteArray(This,__valueSize,value)	\
     ( (This)->lpVtbl -> ReadByteArray(This,__valueSize,value) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader_ReadRawBuffer(This,__valueSize,value)	\
+    ( (This)->lpVtbl -> ReadRawBuffer(This,__valueSize,value) ) 
 
 #define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryReader_ReadDouble(This,value)	\
     ( (This)->lpVtbl -> ReadDouble(This,value) ) 
@@ -2066,6 +2078,10 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter;
                                 /* [in] */ HSTRING value) = 0;
                             
                             virtual HRESULT STDMETHODCALLTYPE WriteByteArray( 
+                                /* [in] */ UINT32 __valueSize,
+                                /* [in][size_is] */ BYTE *value) = 0;
+                            
+                            virtual HRESULT STDMETHODCALLTYPE WriteRawBuffer( 
                                 /* [in] */ UINT32 __valueSize,
                                 /* [in][size_is] */ BYTE *value) = 0;
                             
@@ -2174,6 +2190,11 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter;
             /* [in] */ UINT32 __valueSize,
             /* [in][size_is] */ BYTE *value);
         
+        HRESULT ( STDMETHODCALLTYPE *WriteRawBuffer )( 
+            __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter * This,
+            /* [in] */ UINT32 __valueSize,
+            /* [in][size_is] */ BYTE *value);
+        
         HRESULT ( STDMETHODCALLTYPE *WriteDouble )( 
             __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter * This,
             /* [in] */ double value);
@@ -2257,6 +2278,9 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter;
 
 #define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter_WriteByteArray(This,__valueSize,value)	\
     ( (This)->lpVtbl -> WriteByteArray(This,__valueSize,value) ) 
+
+#define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter_WriteRawBuffer(This,__valueSize,value)	\
+    ( (This)->lpVtbl -> WriteRawBuffer(This,__valueSize,value) ) 
 
 #define __x_ABI_CTelegram_CApi_CNative_CTL_CITLBinaryWriter_WriteDouble(This,value)	\
     ( (This)->lpVtbl -> WriteDouble(This,value) ) 
