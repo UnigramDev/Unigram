@@ -130,6 +130,7 @@ namespace Unigram.Tasks
 
         private VoipPhoneCall _systemCall;
         private TLPhoneCallBase _phoneCall;
+        private TLInputPhoneCall _peer;
         private TLPhoneCallState _state;
         private TLUserBase _user;
         private string[] _emojis;
@@ -239,6 +240,8 @@ namespace Unigram.Tasks
 
                 if (update.PhoneCall is TLPhoneCallRequested requested)
                 {
+                    _peer = requested.ToInputPhoneCall();
+
                     var req = new TLPhoneReceivedCall { Peer = new TLInputPhoneCall { Id = requested.Id, AccessHash = requested.AccessHash } };
 
                     const string caption = "phone.receivedCall";
@@ -271,7 +274,24 @@ namespace Unigram.Tasks
                 }
                 else if (update.PhoneCall is TLPhoneCallDiscarded discarded)
                 {
-                    _phoneCall = discarded;
+                    if (true)
+                    {
+                        discarded.IsNeedRating = true;
+                    }
+
+                    if (discarded.IsNeedRating)
+                    {
+                        await _connection.SendMessageAsync(new ValueSet { { "caption", "voip.setCallRating" }, { "request", TLSerializationService.Current.Serialize(_peer) } });
+                    }
+
+                    if (discarded.IsNeedDebug)
+                    {
+                        var req = new TLPhoneSaveCallDebug();
+                        req.Debug = new TLDataJSON { Data = _controller.GetDebugString() };
+                        req.Peer = _peer;
+
+                        await SendRequestAsync<bool>("phone.saveCallDebug", req);
+                    }
 
                     await UpdateStateAsync(TLPhoneCallState.Ended);
 
@@ -397,6 +417,8 @@ namespace Unigram.Tasks
                 }
                 else if (update.PhoneCall is TLPhoneCallWaiting waiting)
                 {
+                    _peer = waiting.ToInputPhoneCall();
+
                     if (_state == TLPhoneCallState.Waiting && waiting.HasReceiveDate && waiting.ReceiveDate != 0)
                     {
                         await UpdateStateAsync(TLPhoneCallState.Ringing);
@@ -559,7 +581,18 @@ namespace Unigram.Tasks
                 var req = new TLPhoneDiscardCall { Peer = new TLInputPhoneCall { Id = requested.Id, AccessHash = requested.AccessHash }, Reason = new TLPhoneCallDiscardReasonBusy() };
 
                 const string caption = "phone.discardCall";
-                await SendRequestAsync<TLUpdatesBase>(caption, req);
+                var response = await SendRequestAsync<TLUpdatesBase>(caption, req);
+                if (response.IsSucceeded)
+                {
+                    if (response.Result is TLUpdates updates)
+                    {
+                        var update = updates.Updates.FirstOrDefault(x => x is TLUpdatePhoneCall) as TLUpdatePhoneCall;
+                        if (update != null)
+                        {
+                            Handle(update);
+                        }
+                    }
+                }
 
                 _systemCall.NotifyCallEnded();
             }

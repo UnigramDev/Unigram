@@ -71,6 +71,21 @@ namespace Unigram.ViewModels
         public async void Handle(TLUpdatePhoneCall update)
         {
             await VoIPConnection.Current.SendUpdateAsync(update);
+            await Task.Delay(2000);
+
+            //if (update.PhoneCall is TLPhoneCallDiscarded discarded)
+            //{
+            //    if (discarded.IsNeedRating)
+            //    {
+            //        Debugger.Break();
+            //    }
+
+            //    if (discarded.IsNeedDebug)
+            //    {
+            //        Debugger.Break();
+            //    }
+            //}
+
             return;
 
             if (update.PhoneCall is TLPhoneCallRequested callRequested)

@@ -31,5 +31,19 @@ namespace Unigram.Controls.Views
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
         }
+
+        private Visibility ConvertVisibility(int rating)
+        {
+            return rating >= 0 && rating <= 3 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private bool ConvertBoolean(int rating)
+        {
+            return rating >= 0;
+        }
+
+        public int Rating { get; set; }
+
+        public string Comment { get; set; }
     }
 }

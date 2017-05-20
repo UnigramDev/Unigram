@@ -14,7 +14,6 @@ namespace Unigram.Controls
     public class RatingBar : Control
     {
         private readonly Dictionary<int, FontIcon> _unselected = new Dictionary<int, FontIcon>();
-        private bool _pointerPressed;
 
         public RatingBar()
         {
@@ -54,19 +53,16 @@ namespace Unigram.Controls
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            _pointerPressed = true;
             CapturePointer(e.Pointer);
             UpdateVisual(e);
         }
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            _pointerPressed = false;
-
             var position = e.GetCurrentPoint(this);
-            var index = (int)Math.Truncate(position.Position.X / 24);
+            var index = (int)Math.Truncate(position.Position.X / (FontSize + Padding.Left + Padding.Right));
 
-            Value = index + 1;
+            Value = index;
             ReleasePointerCapture(e.Pointer);
             UpdateVisual(e);
         }
@@ -82,8 +78,8 @@ namespace Unigram.Controls
         {
             for (int i = 0; i < 5; i++)
             {
-                var brush = i <= Value - 1 || (i <= index) ? "TextControlBorderBrushFocused" : "TextControlBorderBrush";
-                var glyph = i <= Value - 1 && (index == -1 ? true : i <= index) ? "\uE1CF" : "\uE1CE";
+                var brush = i <= Value || (i <= index) ? "TextControlBorderBrushFocused" : "TextControlBorderBrush";
+                var glyph = i <= Value && (index == -1 ? true : i <= index) ? "\uE1CF" : "\uE1CE";
 
                 _unselected[i].Foreground = App.Current.Resources[brush] as SolidColorBrush;
                 _unselected[i].Glyph = glyph;

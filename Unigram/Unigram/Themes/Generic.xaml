@@ -1011,7 +1011,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
         <Setter Property="UncheckedGlyph" Value="&#xE720;" />
-        <Setter Property="CheckedGlyph" Value="&#xE116;" />
+        <Setter Property="CheckedGlyph" Value="&#xE612;" />
         <Setter Property="Height" Value="48" />
         <Setter Property="Width" Value="48" />
         <Setter Property="FontWeight" Value="Normal" />
@@ -1110,6 +1110,7 @@
 
                         <TextBlock
                             x:Name="CheckedContentPresenter"
+                            FontFamily="{StaticResource TelegramThemeFontFamily}"
                             Margin="{TemplateBinding Padding}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"

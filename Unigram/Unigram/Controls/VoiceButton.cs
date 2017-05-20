@@ -14,6 +14,7 @@ using Windows.Media;
 using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -23,10 +24,12 @@ namespace Unigram.Controls
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
+        private DispatcherTimer _timer;
         private OpusRecorder _recorder;
         private StorageFile _file;
         private bool _cancelOnRelease;
         private bool _pressed;
+        private bool _recording;
         private DateTime _start;
 
         private ManualResetEvent _startReset = new ManualResetEvent(true);
@@ -45,11 +48,27 @@ namespace Unigram.Controls
         public VoiceButton()
         {
             DefaultStyleKey = typeof(VoiceButton);
+
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromMilliseconds(300);
+            _timer.Tick += (s, args) =>
+            {
+                _timer.Stop();
+
+                if (_pressed)
+                {
+                    Start();
+                }
+            };
         }
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            Start();
+            //Start();
+            _timer.Stop();
+            _timer.Start();
+
+            _pressed = true;
             CapturePointer(e.Pointer);
 
             base.OnPointerPressed(e);
@@ -59,11 +78,20 @@ namespace Unigram.Controls
         {
             base.OnPointerReleased(e);
 
+            _timer.Stop();
             _pressed = false;
 
-            Stop();
-
+            //Stop();
             ReleasePointerCapture(e.Pointer);
+
+            if (_recording)
+            {
+                Stop();
+            }
+            else
+            {
+                IsChecked = !IsChecked;
+            }
         }
 
         protected override void OnPointerEntered(PointerRoutedEventArgs e)
@@ -93,6 +121,7 @@ namespace Unigram.Controls
                 _startReset.WaitOne();
                 _startReset.Reset();
 
+                _recording = true;
                 _start = DateTime.Now;
 
                 Execute.BeginOnUIThread(() =>
@@ -148,6 +177,8 @@ namespace Unigram.Controls
             {
                 _stopReset.WaitOne();
                 _stopReset.Reset();
+
+                _recording = false;
 
                 Execute.BeginOnUIThread(() =>
                 {

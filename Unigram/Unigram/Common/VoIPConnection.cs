@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -22,6 +23,7 @@ using Windows.Foundation.Metadata;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Common
 {
@@ -207,6 +209,18 @@ namespace Unigram.Common
                                 });
                             }
                         }
+                    }
+                    else if (caption.Equals("voip.setCallRating") && req is TLInputPhoneCall peer)
+                    {
+                        Execute.BeginOnUIThread(async () =>
+                        {
+                            var dialog = new PhoneCallRateView();
+                            var confirm = await dialog.ShowAsync();
+                            if (confirm == ContentDialogResult.Primary)
+                            {
+                                await MTProtoService.Current.SetCallRatingAsync(peer, dialog.Rating, dialog.Rating >= 0 && dialog.Rating <= 3 ? dialog.Comment : null);
+                            }
+                        });
                     }
                     else
                     {

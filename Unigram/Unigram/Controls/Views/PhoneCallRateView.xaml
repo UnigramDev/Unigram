@@ -10,12 +10,13 @@
     Title="Telegram"
     PrimaryButtonText="OK"
     SecondaryButtonText="Cancel"
+    IsPrimaryButtonEnabled="{x:Bind ConvertBoolean(RatingBar.Value), Mode=OneWay}"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <StackPanel>
         <TextBlock Text="Please rate the quality of your Telegram call"/>
-        <controls:RatingBar FontSize="32" Padding="4,8" Margin="0,12" HorizontalAlignment="Center"/>
-        <TextBox PlaceholderText="Add an optional comment"/>
+        <controls:RatingBar x:Name="RatingBar" Value="{x:Bind Rating, Mode=TwoWay}" FontSize="28" Padding="3,8" Margin="0,12" HorizontalAlignment="Center"/>
+        <TextBox Text="{x:Bind Comment, Mode=TwoWay}" Visibility="{x:Bind ConvertVisibility(RatingBar.Value), Mode=OneWay}" PlaceholderText="Add an optional comment"/>
     </StackPanel>
 </ContentDialog>
