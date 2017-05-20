@@ -1400,7 +1400,7 @@ namespace Unigram.ViewModels
                 CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
                 {
                     var fileId = TLLong.Random();
-                    var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileName, false).AsTask(media.Document.Upload());
+                    var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileName, false).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }));
                     if (upload != null)
                     {
                         var inputMedia = new TLInputMediaUploadedDocument
@@ -1438,6 +1438,20 @@ namespace Unigram.ViewModels
                     }
                 });
             }
+        }
+
+        private Progress<double> Upload(ITLTransferable document, Func<int, TLSendMessageActionBase> action)
+        {
+            document.IsTransferring = true;
+
+            return new Progress<double>((value) =>
+            {
+                document.IsTransferring = value < 1 && value > 0;
+                document.UploadingProgress = value;
+                Debug.WriteLine(value);
+
+                OutputTypingManager.SetTyping(action((int)value * 100));
+            });
         }
 
         private async Task SendThumbnailFileAsync(StorageFile file, TLFileLocation fileLocation, string fileName, BasicProperties basicProps, TLPhotoSize thumbnail, StorageFile fileCache, string caption)
@@ -1483,7 +1497,7 @@ namespace Unigram.ViewModels
             CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
             {
                 var fileId = TLLong.Random();
-                var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Document.Upload());
+                var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }));
                 if (upload != null)
                 {
                     var thumbFileId = TLLong.Random();
@@ -1655,7 +1669,7 @@ namespace Unigram.ViewModels
             CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
             {
                 var fileId = TLLong.Random();
-                var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(media.Photo.Upload());
+                var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(Upload(photo, progress => new TLSendMessageUploadPhotoAction { Progress = progress }));
                 if (upload != null)
                 {
                     var inputMedia = new TLInputMediaUploadedPhoto
@@ -1796,7 +1810,7 @@ namespace Unigram.ViewModels
             CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
             {
                 var fileId = TLLong.Random();
-                var upload = await _uploadAudioManager.UploadFileAsync(fileId, fileName, false).AsTask(media.Document.Upload());
+                var upload = await _uploadAudioManager.UploadFileAsync(fileId, fileName, false).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadAudioAction { Progress = progress }));
                 if (upload != null)
                 {
                     var inputMedia = new TLInputMediaUploadedDocument

@@ -287,7 +287,7 @@ namespace Unigram.Tasks
                     if (discarded.IsNeedDebug)
                     {
                         var req = new TLPhoneSaveCallDebug();
-                        req.Debug = new TLDataJSON { Data = _controller.GetDebugString() };
+                        req.Debug = new TLDataJSON { Data = _controller.GetDebugLog() };
                         req.Peer = _peer;
 
                         await SendRequestAsync<bool>("phone.saveCallDebug", req);
@@ -689,6 +689,16 @@ namespace Unigram.Tasks
                     if (_controller != null)
                     {
                         _controller.SetMicMute(caption.Equals("phone.mute"));
+
+                        var coordinator = VoipCallCoordinator.GetDefault();
+                        if (caption.Equals("phone.mute"))
+                        {
+                            coordinator.NotifyMuted();
+                        }
+                        else
+                        {
+                            coordinator.NotifyUnmuted();
+                        }
                     }
                 }
                 else if (caption.Equals("voip.startCall"))

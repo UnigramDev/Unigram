@@ -721,7 +721,7 @@ namespace Telegram.Api.Services
             }
         }
 
-        public async void SendRequestAsync<T>(string caption, TLObject obj, int dcId, bool cdn, Action<T> callback, Action<TLRPCError> faultCallback = null)
+        public void SendRequestAsync<T>(string caption, TLObject obj, int dcId, bool cdn, Action<T> callback, Action<TLRPCError> faultCallback = null)
         {
             var transport = GetMediaTransportByDCId(dcId);
 

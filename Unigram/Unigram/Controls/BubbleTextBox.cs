@@ -395,6 +395,11 @@ namespace Unigram.Controls
             //{
             //    this.ClearCommandHints();
             //}
+
+            if (!IsEmpty)
+            {
+                ViewModel.OutputTypingManager.SetTyping(new TLSendMessageTypingAction());
+            }
         }
 
         private void UpdateInlineBot(bool fast)

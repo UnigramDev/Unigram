@@ -45,17 +45,25 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return _inputTypingManager = (_inputTypingManager ?? new InputTypingManager((users) =>
+                return _inputTypingManager = _inputTypingManager ?? new InputTypingManager(users =>
                 {
                     TypingSubtitle = GetTypingSubtitle(users);
                     IsTyping = true;
-                    //this.Subtitle = this.GetTypingSubtitle(users);
                 }, 
 				() =>
                 {
+                    TypingSubtitle = null;
                     IsTyping = false;
-                    //this.Subtitle = this.GetSubtitle();
-                }));
+                });
+            }
+        }
+
+        private OutputTypingManager _outputTypingManager;
+        public OutputTypingManager OutputTypingManager
+        {
+            get
+            {
+                return _outputTypingManager = _outputTypingManager ?? new OutputTypingManager(ProtoService, Peer);
             }
         }
 
