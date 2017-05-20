@@ -5,6 +5,7 @@
     xmlns:local="using:Unigram.Views"
     xmlns:vms="using:Unigram.ViewModels"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:common="using:Unigram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     SizeChanged="OnSizeChanged"
@@ -64,10 +65,11 @@
                         <TextBlock Text="{x:Bind ViewModel.Item.Phone, Converter={StaticResource PhoneNumberFormatConverter}}"/>
                     </controls:HyperButton>
 
-                    <controls:HyperButton Content="{Binding Full.BotInfo.Description}"
-                                          Tag="About"
+                    <controls:HyperButton Tag="About"
                                           Visibility="{Binding AboutVisibility}"
-                                          Style="{StaticResource SubtitleButtonStyle}"/>
+                                          Style="{StaticResource SubtitleButtonStyle}">
+                        <RichTextBlock common:MessageHelper.Text="{x:Bind ViewModel.Full.BotInfo, Mode=OneWay}" Style="{StaticResource BodyRichTextBlockStyle}"/>
+                    </controls:HyperButton>
 
                     <controls:HyperButton Tag="Username"
                                           Visibility="{Binding Item.Username, Converter={StaticResource NullToVisibilityConverter}}"

@@ -6,6 +6,7 @@
     xmlns:models="using:Telegram.Api.TL"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:common="using:Unigram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -68,9 +69,10 @@
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
                         <controls:HyperButton Tag="About"
-                                              Content="{x:Bind ViewModel.Full.About, Mode=OneWay}"
                                               Visibility="{x:Bind ViewModel.Full.About, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                                              Style="{StaticResource SubtitleButtonStyle}"/>
+                                              Style="{StaticResource SubtitleButtonStyle}">
+                            <RichTextBlock common:MessageHelper.Text="{x:Bind ViewModel.Full.About, Mode=OneWay}" Style="{StaticResource BodyRichTextBlockStyle}"/>
+                        </controls:HyperButton>
 
                         <controls:HyperButton Tag="Username"
                                               Content="{x:Bind ViewModel.Item.Username, Mode=OneWay, Converter={StaticResource UsernameConverter}}"

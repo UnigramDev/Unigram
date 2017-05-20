@@ -827,7 +827,7 @@ namespace Unigram.Views
 
         private double SpacingBetweenBlocks(TLPageBlockBase upper, TLPageBlockBase lower)
         {
-            if (lower is TLPageBlockCover)
+            if (lower is TLPageBlockCover || lower is TLPageBlockChannel)
             {
                 return 0;
             }
@@ -947,7 +947,9 @@ namespace Unigram.Views
 
         private double PaddingForBlock(TLPageBlockBase block)
         {
-            if (block is TLPageBlockCover || block is TLPageBlockPreformatted)
+            if (block is TLPageBlockCover || block is TLPageBlockPreformatted ||
+                block is TLPageBlockPhoto || block is TLPageBlockVideo ||
+                block is TLPageBlockSlideshow || block is TLPageBlockChannel)
             {
                 return 0.0;
             }
