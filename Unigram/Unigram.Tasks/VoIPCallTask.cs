@@ -82,6 +82,11 @@ namespace Unigram.Tasks
             _mediator = null;
             _current = null;
 
+            if (VoIPServiceTask.Connection != null)
+            {
+                var mediator = Mediator;
+            }
+
             VoIPCallTask.Log("Releasing background task", "Releasing VoIPCallTask");
 
             _deferral.Complete();
@@ -274,7 +279,7 @@ namespace Unigram.Tasks
                 }
                 else if (update.PhoneCall is TLPhoneCallDiscarded discarded)
                 {
-                    if (true)
+                    if (false)
                     {
                         discarded.IsNeedRating = true;
                     }
@@ -299,6 +304,12 @@ namespace Unigram.Tasks
                     {
                         _controller.Dispose();
                         _controller = null;
+                    }
+
+                    if (_connection != null)
+                    {
+                        _connection.RequestReceived -= OnRequestReceived;
+                        _connection = null;
                     }
 
                     if (_systemCall != null)
