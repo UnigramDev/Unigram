@@ -39,6 +39,71 @@ namespace Telegram.Api.Services
             SendNonEncryptedMessageByTransport(transport, "set_client_DH_params", obj, callback, faultCallback);
         }
 
+        private void LoadCdnConfigAsync(int cdnId, TLVector<Int64> fingerprints, Action<string> callback, Action<TLRPCError> faultCallback = null)
+        {
+            TryReadConfig(read =>
+            {
+                if (read && _config != null)
+                {
+                    var cdn = _config.DCOptions.FirstOrDefault(x => x.IsCdn && x.Id == cdnId);
+                    if (cdn != null)
+                    {
+                        if (cdn.PublicKeys == null)
+                        {
+                            var manualEvent = new ManualResetEvent(false);
+                            GetCdnConfigAsync(result =>
+                            {
+                                _config = TLExtensions.Merge(_config, result);
+                                SaveConfig();
+                                manualEvent.Set();
+                            },
+                            fault =>
+                            {
+                                faultCallback?.Invoke(fault);
+                                manualEvent.Set();
+                            });
+                            manualEvent.WaitOne();
+
+                            cdn = _config.DCOptions.FirstOrDefault(x => x.IsCdn && x.Id == cdnId);
+                        }
+
+                        if (cdn.PublicKeys != null)
+                        {
+                            var pairs = cdn.PublicKeys.ToDictionary(x => Utils.GetRSAFingerprint(x));
+                            foreach (var fingerprint in fingerprints)
+                            {
+                                if (pairs.ContainsKey(fingerprint))
+                                {
+                                    callback?.Invoke(pairs[fingerprint]);
+                                    return;
+                                }
+                            }
+
+                            foreach (var dc in _config.DCOptions)
+                            {
+                                dc.PublicKeys = null;
+                            }
+
+                            SaveConfig();
+                            LoadCdnConfigAsync(cdnId, fingerprints, callback, faultCallback);
+                        }
+                        else
+                        {
+                            faultCallback?.Invoke(new TLRPCError());
+                        }
+                    }
+                    else
+                    {
+                        callback?.Invoke(null);
+                    }
+                }
+                else
+                {
+                    faultCallback?.Invoke(new TLRPCError());
+                }
+            });
+        }
+
         private void InitTransportAsync(ITransport transport, Action<Tuple<byte[], long?, long?>> callback, Action<TLRPCError> faultCallback = null)
         {
             var authTime = Stopwatch.StartNew();
@@ -68,167 +133,169 @@ namespace Telegram.Api.Services
 #if LOG_REGISTRATION
                     TLUtils.WriteLog("Stop ReqPQ");
 #endif
-                    TimeSpan calcTime;
-                    Tuple<ulong, ulong> pqPair;
-                    var innerData = GetInnerData(resPQ, newNonce, out calcTime, out pqPair);
-                    var encryptedInnerData = GetEncryptedInnerData(innerData, transport.PublicKeys.FirstOrDefault());
+                    LoadCdnConfigAsync(transport.DCId, resPQ.ServerPublicKeyFingerprints, publicKey =>
+                    {
+                        TimeSpan calcTime;
+                        Tuple<ulong, ulong> pqPair;
+                        var innerData = GetInnerData(resPQ, newNonce, out calcTime, out pqPair);
+                        var encryptedInnerData = GetEncryptedInnerData(innerData, publicKey);
 
 #if LOG_REGISTRATION
                     TLUtils.WriteLog("Start ReqDHParams");
 #endif
-                    ReqDHParamsByTransportAsync(
-                        transport,
-                        resPQ.Nonce,
-                        resPQ.ServerNonce,
-                        innerData.P,
-                        innerData.Q,
-                        resPQ.ServerPublicKeyFingerprints[0],
-                        encryptedInnerData,
-                        serverDHParams =>
-                        {
-                            if (nonce != serverDHParams.Nonce)
+                        ReqDHParamsByTransportAsync(
+                            transport,
+                            resPQ.Nonce,
+                            resPQ.ServerNonce,
+                            innerData.P,
+                            innerData.Q,
+                            resPQ.ServerPublicKeyFingerprints[0],
+                            encryptedInnerData,
+                            serverDHParams =>
                             {
-                                var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
+                                if (nonce != serverDHParams.Nonce)
+                                {
+                                    var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
 #if LOG_REGISTRATION
                                 TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
 
-                                faultCallback?.Invoke(error);
-                                TLUtils.WriteLine(error.ToString());
-                            }
-                            if (serverNonce != serverDHParams.ServerNonce)
-                            {
-                                var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
+                                    faultCallback?.Invoke(error);
+                                    TLUtils.WriteLine(error.ToString());
+                                }
+                                if (serverNonce != serverDHParams.ServerNonce)
+                                {
+                                    var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
 #if LOG_REGISTRATION
                                 TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
 
-                                faultCallback?.Invoke(error);
-                                TLUtils.WriteLine(error.ToString());
-                            }
+                                    faultCallback?.Invoke(error);
+                                    TLUtils.WriteLine(error.ToString());
+                                }
 
 #if LOG_REGISTRATION
                             TLUtils.WriteLog("Stop ReqDHParams");
 #endif
-                            var random = new SecureRandom();
+                                var random = new SecureRandom();
 
-                            var serverDHParamsOk = serverDHParams as TLServerDHParamsOk;
-                            if (serverDHParamsOk == null)
-                            {
-                                var error = new TLRPCError{ ErrorCode = 404, ErrorMessage = "Incorrect serverDHParams"};
-                                faultCallback?.Invoke(error);
-                                TLUtils.WriteLine(error.ToString());
+                                var serverDHParamsOk = serverDHParams as TLServerDHParamsOk;
+                                if (serverDHParamsOk == null)
+                                {
+                                    var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "Incorrect serverDHParams" };
+                                    faultCallback?.Invoke(error);
+                                    TLUtils.WriteLine(error.ToString());
 #if LOG_REGISTRATION
                             
                                 TLUtils.WriteLog("ServerDHParams " + serverDHParams);  
 #endif
-                                return;
-                            }
+                                    return;
+                                }
 
-                            var aesParams = GetAesKeyIV(resPQ.ServerNonce.ToArray(), newNonce.ToArray());
+                                var aesParams = GetAesKeyIV(resPQ.ServerNonce.ToArray(), newNonce.ToArray());
 
-                            var decryptedAnswerWithHash = Utils.AesIge(serverDHParamsOk.EncryptedAnswer, aesParams.Item1, aesParams.Item2, false);     //NOTE: Remove reverse here
+                                var decryptedAnswerWithHash = Utils.AesIge(serverDHParamsOk.EncryptedAnswer, aesParams.Item1, aesParams.Item2, false);     //NOTE: Remove reverse here
 
-                            //var position = 0;
-                            //var serverDHInnerData = (TLServerDHInnerData)new TLServerDHInnerData().FromBytes(decryptedAnswerWithHash.Skip(20).ToArray(), ref position);
-                            var serverDHInnerData = TLFactory.From<TLServerDHInnerData>(decryptedAnswerWithHash.Skip(20).ToArray());
+                                //var position = 0;
+                                //var serverDHInnerData = (TLServerDHInnerData)new TLServerDHInnerData().FromBytes(decryptedAnswerWithHash.Skip(20).ToArray(), ref position);
+                                var serverDHInnerData = TLFactory.From<TLServerDHInnerData>(decryptedAnswerWithHash.Skip(20).ToArray());
 
-                            var sha1 = Utils.ComputeSHA1(serverDHInnerData.ToArray());
-                            if (!TLUtils.ByteArraysEqual(sha1, decryptedAnswerWithHash.Take(20).ToArray()))
-                            {
-                                var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect sha1 TLServerDHInnerData" };
+                                var sha1 = Utils.ComputeSHA1(serverDHInnerData.ToArray());
+                                if (!TLUtils.ByteArraysEqual(sha1, decryptedAnswerWithHash.Take(20).ToArray()))
+                                {
+                                    var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect sha1 TLServerDHInnerData" };
 #if LOG_REGISTRATION
                                 TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
 
-                                faultCallback?.Invoke(error);
-                                TLUtils.WriteLine(error.ToString());
-                            }
+                                    faultCallback?.Invoke(error);
+                                    TLUtils.WriteLine(error.ToString());
+                                }
 
-                            if (!TLUtils.CheckPrime(serverDHInnerData.DHPrime, serverDHInnerData.G))
-                            {
-                                var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect (p, q) pair" };
+                                if (!TLUtils.CheckPrime(serverDHInnerData.DHPrime, serverDHInnerData.G))
+                                {
+                                    var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect (p, q) pair" };
 #if LOG_REGISTRATION
                                 TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
 
-                                faultCallback?.Invoke(error);
-                                TLUtils.WriteLine(error.ToString());
-                            }
+                                    faultCallback?.Invoke(error);
+                                    TLUtils.WriteLine(error.ToString());
+                                }
 
-                            if (!TLUtils.CheckGaAndGb(serverDHInnerData.GA, serverDHInnerData.DHPrime))
-                            {
-                                var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect g_a" };
+                                if (!TLUtils.CheckGaAndGb(serverDHInnerData.GA, serverDHInnerData.DHPrime))
+                                {
+                                    var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect g_a" };
 #if LOG_REGISTRATION
                                 TLUtils.WriteLog("Stop ReqDHParams with error " + error);
 #endif
 
-                                faultCallback?.Invoke(error);
-                                TLUtils.WriteLine(error.ToString());
-                            }
+                                    faultCallback?.Invoke(error);
+                                    TLUtils.WriteLine(error.ToString());
+                                }
 
-                            var bBytes = new byte[256]; //big endian B
-                            random.NextBytes(bBytes);
+                                var bBytes = new byte[256]; //big endian B
+                                random.NextBytes(bBytes);
 
-                            var gbBytes = GetGB(bBytes, serverDHInnerData.G, serverDHInnerData.DHPrime);
+                                var gbBytes = GetGB(bBytes, serverDHInnerData.G, serverDHInnerData.DHPrime);
 
-                            var clientDHInnerData = new TLClientDHInnerData
-                            {
-                                Nonce = resPQ.Nonce,
-                                ServerNonce = resPQ.ServerNonce,
-                                RetryId = 0,
-                                GB = gbBytes
-                            };
+                                var clientDHInnerData = new TLClientDHInnerData
+                                {
+                                    Nonce = resPQ.Nonce,
+                                    ServerNonce = resPQ.ServerNonce,
+                                    RetryId = 0,
+                                    GB = gbBytes
+                                };
 
-                            var encryptedClientDHInnerData = GetEncryptedClientDHInnerData(clientDHInnerData, aesParams);
-#if LOG_REGISTRATION                 
+                                var encryptedClientDHInnerData = GetEncryptedClientDHInnerData(clientDHInnerData, aesParams);
+#if LOG_REGISTRATION
                             TLUtils.WriteLog("Start SetClientDHParams");  
 #endif
-                            SetClientDHParamsByTransportAsync(
-                                transport,
-                                resPQ.Nonce, 
-                                resPQ.ServerNonce, 
-                                encryptedClientDHInnerData,
-                                dhGen =>
-                                {
-                                    if (nonce != dhGen.Nonce)
-                                    {
-                                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
+                                SetClientDHParamsByTransportAsync(
+                                        transport,
+                                        resPQ.Nonce,
+                                        resPQ.ServerNonce,
+                                        encryptedClientDHInnerData,
+                                        dhGen =>
+                                        {
+                                            if (nonce != dhGen.Nonce)
+                                            {
+                                                var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
 #if LOG_REGISTRATION
                                         TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
 #endif
 
-                                        faultCallback?.Invoke(error);
-                                        TLUtils.WriteLine(error.ToString());
-                                    }
-                                    if (serverNonce != dhGen.ServerNonce)
-                                    {
-                                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
+                                            faultCallback?.Invoke(error);
+                                                TLUtils.WriteLine(error.ToString());
+                                            }
+                                            if (serverNonce != dhGen.ServerNonce)
+                                            {
+                                                var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
 #if LOG_REGISTRATION
                                         TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
 #endif
 
-                                        faultCallback?.Invoke(error);
-                                        TLUtils.WriteLine(error.ToString());
-                                    }
+                                            faultCallback?.Invoke(error);
+                                                TLUtils.WriteLine(error.ToString());
+                                            }
 
-                                    var dhGenOk = dhGen as TLDHGenOk;
-                                    if (dhGenOk == null)
-                                    {
-                                        var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "Incorrect dhGen " + dhGen.GetType() };
-                                        faultCallback?.Invoke(error);
-                                        TLUtils.WriteLine(error.ToString());
+                                            var dhGenOk = dhGen as TLDHGenOk;
+                                            if (dhGenOk == null)
+                                            {
+                                                var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "Incorrect dhGen " + dhGen.GetType() };
+                                                faultCallback?.Invoke(error);
+                                                TLUtils.WriteLine(error.ToString());
 #if LOG_REGISTRATION
                                         TLUtils.WriteLog("DHGen result " + serverDHParams);
 #endif
-                                        return;
-                                    }
+                                            return;
+                                            }
 
 #if LOG_REGISTRATION
                                     TLUtils.WriteLog("Stop SetClientDHParams");
 #endif
-                                    var getKeyTimer = Stopwatch.StartNew();
-                                    var authKey = GetAuthKey(bBytes, serverDHInnerData.GA.ToBytes(), serverDHInnerData.DHPrime.ToBytes());
+                                        var getKeyTimer = Stopwatch.StartNew();
+                                            var authKey = GetAuthKey(bBytes, serverDHInnerData.GA.ToBytes(), serverDHInnerData.DHPrime.ToBytes());
 
 #if LOG_REGISTRATION
                                     var logCountersString = new StringBuilder();
@@ -241,32 +308,40 @@ namespace Telegram.Api.Services
 
                                     TLUtils.WriteLog(logCountersString.ToString());
 #endif
-                                    //newNonce - little endian
-                                    //authResponse.ServerNonce - little endian
-                                    var salt = GetSalt(newNonce.ToArray(), resPQ.ServerNonce.ToArray());
-                                    var sessionId = new byte[8];
-                                    random.NextBytes(sessionId);
+                                        //newNonce - little endian
+                                        //authResponse.ServerNonce - little endian
+                                        var salt = GetSalt(newNonce.ToArray(), resPQ.ServerNonce.ToArray());
+                                            var sessionId = new byte[8];
+                                            random.NextBytes(sessionId);
 
-                                    // authKey, salt, sessionId
-                                    callback(new Tuple<byte[], long?, long?>(authKey, new long?(BitConverter.ToInt64(salt, 0)), new long?(BitConverter.ToInt64(sessionId, 0))));
-                                },
-                                error =>
-                                {
+                                        // authKey, salt, sessionId
+                                        callback(new Tuple<byte[], long?, long?>(authKey, new long?(BitConverter.ToInt64(salt, 0)), new long?(BitConverter.ToInt64(sessionId, 0))));
+                                        },
+                                        error =>
+                                        {
 #if LOG_REGISTRATION
                                     TLUtils.WriteLog("Stop SetClientDHParams with error " + error.ToString());
 #endif
-                                    faultCallback?.Invoke(error);
-                                    TLUtils.WriteLine(error.ToString());
-                                });
-                        },
-                        error =>
-                        {
+                                        faultCallback?.Invoke(error);
+                                            TLUtils.WriteLine(error.ToString());
+                                        });
+                            },
+                            error =>
+                            {
 #if LOG_REGISTRATION
                             TLUtils.WriteLog("Stop ReqDHParams with error " + error.ToString());
 #endif
-                            faultCallback?.Invoke(error);
-                            TLUtils.WriteLine(error.ToString());
-                        });
+                                faultCallback?.Invoke(error);
+                                TLUtils.WriteLine(error.ToString());
+                            });
+                    }, error =>
+                    {
+#if LOG_REGISTRATION
+                        TLUtils.WriteLog("Stop ReqPQ with error " + error.ToString());
+#endif
+                        faultCallback?.Invoke(error);
+                        TLUtils.WriteLine(error.ToString());
+                    });
                 },
                 error =>
                 {
@@ -650,32 +725,6 @@ namespace Telegram.Api.Services
         {
             var transport = GetMediaTransportByDCId(dcId);
 
-            if (cdn && transport.PublicKeys == null)
-            {
-                var response = await GetCdnConfigAsync();
-                if (response.IsSucceeded)
-                {
-                    transport.PublicKeys = response.Result.PublicKeys.Where(x => x.DCId == dcId).Select(x => x.PublicKey).ToArray();
-                }
-                else
-                {
-                    faultCallback?.Invoke(response.Error);
-                }
-
-                //var manualReset = new ManualResetEvent(false);
-                //GetCdnConfigAsync(result =>
-                //{
-
-                //},
-                //fault =>
-                //{
-                //    faultCallback?.Invoke(fault);
-                //});
-
-
-                //manualReset.WaitOne();
-            }
-
             lock (_activeTransportRoot)
             {
                 if (_activeTransport.DCId == dcId)
@@ -904,7 +953,6 @@ namespace Telegram.Api.Services
                 {
                     transport.DCId = dcId;
                     transport.AuthKey = dcOption.AuthKey;
-                    transport.PublicKeys = dcOption.PublicKeys;
                     //transport.IsAuthorized = (_activeTransport != null && _activeTransport.DCId == dcOption.Id.Value) || dcOption.IsAuthorized;
                     transport.Salt = dcOption.Salt;
                     transport.SessionId = TLLong.Random();

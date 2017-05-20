@@ -43,6 +43,9 @@ namespace Telegram.Api.Services.FileManager
 
         public int FileSize { get; set; }
 
+        public byte[] CdnIV { get; set; }
+        public byte[] CdnKey { get; set; }
+
         #region Http
 
         public string SourceUri { get; set; }

@@ -79,6 +79,25 @@ namespace Telegram.Api
         //}
         //#endregion
 
+        public static TLConfig Merge(TLConfig oldConfig, TLCdnConfig cdnConfig)
+        {
+            foreach (var dcOption in oldConfig.DCOptions)
+            {
+                if (dcOption.IsCdn)
+                {
+                    var keys = new List<string>();
+                    foreach (var newDCOption in cdnConfig.PublicKeys.Where(x => x.DCId.Equals(dcOption.Id)))
+                    {
+                        keys.Add(newDCOption.PublicKey);
+                    }
+
+                    dcOption.PublicKeys = keys.Count > 0 ? keys.ToArray() : null;
+                }
+            }
+
+            return oldConfig;
+        }
+
         public static TLConfig Merge(TLConfig oldConfig, TLConfig newConfig)
         {
             if (oldConfig == null)

@@ -43,6 +43,63 @@ namespace Telegram.Api.Helpers
         }
 #endif
 
+        public static long GetRSAFingerprint(string key)
+        {
+            using (var text = new StringReader(key))
+            {
+                var reader = new PemReader(text);
+                var parameter = reader.ReadObject() as RsaKeyParameters;
+                if (parameter != null)
+                {
+                    var modulus = parameter.Modulus.ToByteArray();
+                    var exponent = parameter.Exponent.ToByteArray();
+
+                    if (modulus.Length > 256)
+                    {
+                        var corrected = new byte[256];
+                        System.Buffer.BlockCopy(modulus, modulus.Length - 256, corrected, 0, 256);
+
+                        modulus = corrected;
+                    }
+                    else if (modulus.Length < 256)
+                    {
+                        var corrected = new byte[256];
+                        System.Buffer.BlockCopy(modulus, 0, corrected, 256 - modulus.Length, modulus.Length);
+
+                        for (int a = 0; a < 256 - modulus.Length; a++)
+                        {
+                            modulus[a] = 0;
+                        }
+
+                        modulus = corrected;
+                    }
+
+                    using (var stream = new MemoryStream())
+                    {
+                        using (var writer = new TLBinaryWriter(stream))
+                        {
+                            writer.WriteByteArray(modulus);
+                            writer.WriteByteArray(exponent);
+                        }
+
+                        var hash = ComputeSHA1(stream.ToArray());
+                        var fingerprint = (((ulong)hash[19]) << 56) |
+                                          (((ulong)hash[18]) << 48) |
+                                          (((ulong)hash[17]) << 40) |
+                                          (((ulong)hash[16]) << 32) |
+                                          (((ulong)hash[15]) << 24) |
+                                          (((ulong)hash[14]) << 16) |
+                                          (((ulong)hash[13]) << 8) |
+                                          ((ulong)hash[12]);
+
+                        return (long)fingerprint;
+                    }
+                }
+            }
+
+            return -1;
+        }
+
         public static byte[] GetRSABytes(byte[] bytes, string key)
         {
             if (key == null)
