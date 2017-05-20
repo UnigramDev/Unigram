@@ -213,6 +213,8 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
+
+
         private TLUploadFileBase GetFile(TLFileLocation location, int offset, int limit, out TLRPCError er, out bool isCanceled)
         {
             var manualResetEvent = new ManualResetEvent(false);
@@ -410,6 +412,7 @@ namespace Telegram.Api.Services.FileManager
 
             return result;
         }
+
 
 
         public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLFileLocation file, int fileSize)
