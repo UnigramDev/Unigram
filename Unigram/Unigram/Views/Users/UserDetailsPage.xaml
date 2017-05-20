@@ -68,7 +68,7 @@
                     <controls:HyperButton Tag="About"
                                           Visibility="{Binding AboutVisibility}"
                                           Style="{StaticResource SubtitleButtonStyle}">
-                        <RichTextBlock common:MessageHelper.Text="{x:Bind ViewModel.Full.BotInfo, Mode=OneWay}" Style="{StaticResource BodyRichTextBlockStyle}"/>
+                        <RichTextBlock common:MessageHelper.Text="{x:Bind ViewModel.Full.About, Mode=OneWay}" Style="{StaticResource BodyRichTextBlockStyle}"/>
                     </controls:HyperButton>
 
                     <controls:HyperButton Tag="Username"

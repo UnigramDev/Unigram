@@ -383,6 +383,8 @@ namespace Unigram.ViewModels.Users
         {
             get
             {
+                return _full == null || string.IsNullOrEmpty(_full.About) ? Visibility.Collapsed : Visibility.Visible;
+
                 var user = Item as TLUser;
                 if (user != null && user.IsBot && Full != null && !string.IsNullOrWhiteSpace(Full.BotInfo.Description))
                 {
