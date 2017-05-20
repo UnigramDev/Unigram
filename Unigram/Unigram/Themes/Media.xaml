@@ -274,8 +274,8 @@
                                 VerticalAlignment="Center"
                                 Click="SingleMedia_Click"/>
 
-                    <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
-                    <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
+                    <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.WebPage.Photo}" IsTransferring="{Binding Media.WebPage.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                    <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.WebPage.Photo.Progress}" IsHitTestVisible="False"/>
                 </Grid>
             </StackPanel>
 
