@@ -72,6 +72,8 @@ namespace Unigram.ViewModels
             }
         }
 
+        public GalleryItem FirstItem { get; set; }
+
         protected object _poster;
         public object Poster
         {

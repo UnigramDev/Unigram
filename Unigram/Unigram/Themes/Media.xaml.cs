@@ -58,7 +58,7 @@ namespace Unigram.Themes
             {
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
-                var viewModel = new DialogPhotosViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
+                var viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
                 await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                 {
                     var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
@@ -124,7 +124,7 @@ namespace Unigram.Themes
 
                     ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
 
-                    var viewModel = new DialogPhotosViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
+                    var viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
                     await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                     {
                         var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");

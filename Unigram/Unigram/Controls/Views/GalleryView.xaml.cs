@@ -29,6 +29,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+using LinqToVisualTree;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -40,7 +41,6 @@ namespace Unigram.Controls.Views
 
         public BindConvert Convert => BindConvert.Current;
 
-        private FrameworkElement _firstImage;
         private MediaPlayerElement _mediaPlayer;
         private MediaPlayerSurface _mediaSurface;
 
@@ -114,9 +114,16 @@ namespace Unigram.Controls.Views
 
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
-            if (Flip.SelectedIndex == 0 && _firstImage != null && _firstImage.ActualWidth > 0)
+            if (ViewModel.SelectedItem == ViewModel.FirstItem)
             {
-                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _firstImage);
+                var container = Flip.ContainerFromItem(ViewModel.SelectedItem);
+                var image = container.Descendants<ImageView>().FirstOrDefault();
+                if (image == null)
+                {
+                    return;
+                }
+
+                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image as ImageView);
                 if (animation != null)
                 {
                     Prepare();
@@ -149,6 +156,7 @@ namespace Unigram.Controls.Views
 
                     animation.Completed += (s, args) =>
                     {
+                        Flip.Opacity = 0;
                         Hide();
                     };
                 }
@@ -164,15 +172,13 @@ namespace Unigram.Controls.Views
         private void ImageView_ImageOpened(object sender, RoutedEventArgs e)
         {
             var image = sender as FrameworkElement;
-            if (image != null)
-            {
-                image.Opacity = 1;
-            }
+            //if (image != null)
+            //{
+            //    image.Opacity = 1;
+            //}
 
             if (image.DataContext == ViewModel.SelectedItem)
             {
-                _firstImage = image;
-
                 var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
                 if (animation != null)
                 {
@@ -210,11 +216,11 @@ namespace Unigram.Controls.Views
 
         private void ImageView_Unloaded(object sender, RoutedEventArgs e)
         {
-            var image = sender as FrameworkElement;
-            if (image != null)
-            {
-                image.Opacity = 0;
-            }
+            //var image = sender as FrameworkElement;
+            //if (image != null)
+            //{
+            //    image.Opacity = 0;
+            //}
         }
 
         private string ConvertDate(int value)

@@ -51,7 +51,8 @@ namespace Unigram.ViewModels
 
                     Items.ReplaceWith(result.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, user)));
 
-                    SelectedItem = Items[0];
+                    SelectedItem = Items.FirstOrDefault();
+                    FirstItem = Items.FirstOrDefault();
                 }
             }
         }

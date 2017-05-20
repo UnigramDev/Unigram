@@ -66,8 +66,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
-                            Constraint="{x:Bind Source}"
-                            Opacity="0"/>
+                            Constraint="{x:Bind Source}"/>
                         <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                         <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
                     </Grid>

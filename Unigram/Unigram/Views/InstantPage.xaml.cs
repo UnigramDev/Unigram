@@ -966,6 +966,7 @@ namespace Unigram.Views
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
                 ViewModel.Gallery.SelectedItem = item;
+                ViewModel.Gallery.FirstItem = item;
 
                 await GalleryView.Current.ShowAsync(ViewModel.Gallery, (s, args) =>
                 {

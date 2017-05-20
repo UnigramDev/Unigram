@@ -17,20 +17,21 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
-    public class DialogPhotosViewModel : GalleryViewModelBase
+    public class DialogGalleryViewModel : GalleryViewModelBase
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
         private readonly TLInputPeerBase _peer;
 
         private int _lastMaxId;
 
-        public DialogPhotosViewModel(TLInputPeerBase peer, TLMessage selected, IMTProtoService protoService)
+        public DialogGalleryViewModel(TLInputPeerBase peer, TLMessage selected, IMTProtoService protoService)
             : base(protoService, null, null)
         {
             if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo() || selected.IsRoundVideo())
             {
                 Items = new MvxObservableCollection<GalleryItem> { new GalleryMessageItem(selected) };
                 SelectedItem = Items[0];
+                FirstItem = Items[0];
             }
             else
             {
@@ -57,7 +58,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        TotalItems = result.Result.Messages.Count;
+                        TotalItems = result.Result.Messages.Count + Items.Count;
                     }
 
                     //Items.Clear();
@@ -66,11 +67,11 @@ namespace Unigram.ViewModels
                     {
                         if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo() || message.IsRoundVideo()))
                         {
-                            Items.Add(new GalleryMessageItem(message));
+                            Items.Insert(0, new GalleryMessageItem(message));
                         }
                     }
 
-                    SelectedItem = Items[0];
+                    SelectedItem = Items.LastOrDefault();
                 }
             }
         }
