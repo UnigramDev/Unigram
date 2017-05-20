@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
+    xmlns:common="using:Unigram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -131,7 +132,7 @@
                 <DataTemplate>
                     <StackPanel Margin="0,26">
                         <TextBlock Padding="12,0,12,12"
-                                   Text="{Binding Title}"
+                                   common:TextBlockHelper.Markdown="{Binding Title}"
                                    FontWeight="SemiBold"
                                    TextAlignment="Center"
                                    Style="{ThemeResource TitleTextBlockStyle}"/>

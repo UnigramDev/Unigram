@@ -32,7 +32,7 @@ namespace Unigram.ViewModels.SignIn
         }
 
         private RelayCommand _continueCommand;
-        public RelayCommand ContinueCommand => _continueCommand = (_continueCommand ?? new RelayCommand(ContinueExecute, () => SelectedItem == Items.Last()));
+        public RelayCommand ContinueCommand => _continueCommand = (_continueCommand ?? new RelayCommand(ContinueExecute /*, () => SelectedItem == Items.Last()*/));
         private void ContinueExecute()
         {
             NavigationService.Navigate(typeof(SignInPage));
