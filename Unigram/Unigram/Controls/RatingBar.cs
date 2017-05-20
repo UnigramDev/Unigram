@@ -97,7 +97,7 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register("Value", typeof(int), typeof(RatingBar), new PropertyMetadata(0, OnValueChanged));
+            DependencyProperty.Register("Value", typeof(int), typeof(RatingBar), new PropertyMetadata(-1, OnValueChanged));
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

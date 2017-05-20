@@ -104,7 +104,7 @@ namespace Unigram.ViewModels
             return GetTypingString(Peer.ToPeer(), typingUsers, new Func<int?, TLUserBase>(CacheService.GetUser), null);
         }
 
-        public static string GetTypingString(TLPeerBase peer, IList<Tuple<int, TLSendMessageActionBase>> typingUsers, Func<int?, TLUserBase> getUser, Action<TLPeerBase> getFullInfoAction)
+        public string GetTypingString(TLPeerBase peer, IList<Tuple<int, TLSendMessageActionBase>> typingUsers, Func<int?, TLUserBase> getUser, Action<TLPeerBase> getFullInfoAction)
         {
             if (peer is TLPeerUser)
             {
@@ -124,7 +124,7 @@ namespace Unigram.ViewModels
                     {
                         return AppResources.SendingAudio;
                     }
-                    else if (action is TLSendMessageUploadDocumentAction)
+                    else if (action is TLSendMessageUploadDocumentAction actionz)
                     {
                         return AppResources.SendingFile;
                     }
