@@ -171,7 +171,7 @@
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
-                            VerticalAlignment="Bottom"
+                            VerticalAlignment="Top"
                             HorizontalAlignment="Right"
                             MaxWidth="180"
                             Padding="8,0,8,6"
@@ -198,13 +198,11 @@
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         Style="{StaticResource RoundImageViewStyle}"
                         HorizontalAlignment="Right"
-                        MaxWidth="180"
-                        MaxHeight="180"/>
+                        MaxWidth="{StaticResource TelegramStickerMaxWidth}"
+                        MaxHeight="{StaticResource TelegramStickerMaxHeight}"/>
 
-                    <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-                    </Grid>
+                    <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                    <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
 
                     <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
                         <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
@@ -235,13 +233,11 @@
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         Style="{StaticResource RoundImageViewStyle}"
                         HorizontalAlignment="Left"
-                        MaxWidth="180"
-                        MaxHeight="180"/>
+                        MaxWidth="{StaticResource TelegramStickerMaxWidth}"
+                        MaxHeight="{StaticResource TelegramStickerMaxHeight}"/>
 
-                    <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-                    </Grid>
+                    <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                    <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
 
                     <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
                         <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
@@ -253,7 +249,7 @@
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
-                            VerticalAlignment="Bottom"
+                            VerticalAlignment="Top"
                             HorizontalAlignment="Left"
                             MaxWidth="180"
                             Padding="8,0,8,6"
@@ -312,13 +308,11 @@
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                             Style="{StaticResource RoundImageViewStyle}"
                             HorizontalAlignment="Left"
-                            MaxWidth="180"
-                            MaxHeight="180"/>
+                            MaxWidth="{StaticResource TelegramStickerMaxWidth}"
+                            MaxHeight="{StaticResource TelegramStickerMaxHeight}"/>
 
-                        <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-                        </Grid>
+                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
 
                         <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
                             <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
@@ -330,7 +324,7 @@
 
                     <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
                                 Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                VerticalAlignment="Bottom"
+                                VerticalAlignment="Top"
                                 HorizontalAlignment="Left"
                                 MaxWidth="180"
                                 Padding="8,0,8,6"
@@ -397,8 +391,8 @@
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         Click="StickerSet_Click"
                         HorizontalAlignment="Right"
-                        MaxWidth="180"
-                        MaxHeight="180"/>
+                        MaxWidth="{StaticResource TelegramStickerMaxWidth}"
+                        MaxHeight="{StaticResource TelegramStickerMaxHeight}"/>
 
                     <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                 </Grid>
@@ -424,8 +418,8 @@
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         Click="StickerSet_Click"
                         HorizontalAlignment="Left"
-                        MaxWidth="180"
-                        MaxHeight="180"/>
+                        MaxWidth="{StaticResource TelegramStickerMaxWidth}"
+                        MaxHeight="{StaticResource TelegramStickerMaxHeight}"/>
 
                     <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                 </Grid>
@@ -491,8 +485,8 @@
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                             Click="StickerSet_Click"
                             HorizontalAlignment="Left"
-                            MaxWidth="180"
-                            MaxHeight="180"/>
+                            MaxWidth="{StaticResource TelegramStickerMaxWidth}"
+                            MaxHeight="{StaticResource TelegramStickerMaxHeight}"/>
 
                         <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                     </Grid>
