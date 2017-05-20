@@ -452,9 +452,11 @@ namespace Unigram.Views
             var photo = photos.FirstOrDefault(x => x.Id == block.PhotoId);
             if (photo != null)
             {
+                var galleryItem = new GalleryPhotoItem(photo as TLPhoto, block.Caption?.ToString());
+                ViewModel.Gallery.Items.Add(galleryItem);
+
                 var element = new StackPanel { Style = Resources["BlockPhotoStyle"] as Style };
 
-                var galleryItem = new GalleryPhotoItem(photo as TLPhoto, block.Caption?.ToString());
                 var child = new ImageView();
                 child.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
                 child.Constraint = photo;
@@ -462,9 +464,32 @@ namespace Unigram.Views
                 child.Click += Image_Click;
                 child.HorizontalAlignment = HorizontalAlignment.Center;
 
-                ViewModel.Gallery.Items.Add(galleryItem);
+                var transferBinding = new Binding();
+                transferBinding.Path = new PropertyPath("IsTransferring");
+                transferBinding.Source = photo;
 
-                element.Children.Add(child);
+                var transfer = new TransferButton();
+                transfer.Completed += (s, args) => Image_Click(child, null);
+                transfer.Transferable = photo;
+                transfer.Style = Application.Current.Resources["MediaTransferButtonStyle"] as Style;
+                transfer.SetBinding(TransferButton.IsTransferringProperty, transferBinding);
+
+                var progressBinding = new Binding();
+                progressBinding.Path = new PropertyPath("Progress");
+                progressBinding.Source = photo;
+
+                var progress = new ProgressBarRing();
+                progress.Background = new SolidColorBrush(Colors.Transparent);
+                progress.Foreground = new SolidColorBrush(Colors.White);
+                progress.IsHitTestVisible = false;
+                progress.SetBinding(ProgressBarRing.ValueProperty, progressBinding);
+
+                var grid = new Grid();
+                grid.Children.Add(child);
+                grid.Children.Add(transfer);
+                grid.Children.Add(progress);
+
+                element.Children.Add(grid);
 
                 var caption = ProcessText(page, block, photos, videos, true);
                 if (caption != null)
@@ -484,9 +509,11 @@ namespace Unigram.Views
             var video = videos.FirstOrDefault(x => x.Id == block.VideoId);
             if (video != null)
             {
+                var galleryItem = new GalleryDocumentItem(video as TLDocument, block.Caption?.ToString());
+                ViewModel.Gallery.Items.Add(galleryItem);
+
                 var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
-                var galleryItem = new GalleryDocumentItem(video as TLDocument, block.Caption?.ToString());
                 var child = new ImageView();
                 child.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
                 child.Constraint = video;
@@ -494,9 +521,32 @@ namespace Unigram.Views
                 child.Click += Image_Click;
                 child.HorizontalAlignment = HorizontalAlignment.Center;
 
-                ViewModel.Gallery.Items.Add(galleryItem);
+                var transferBinding = new Binding();
+                transferBinding.Path = new PropertyPath("IsTransferring");
+                transferBinding.Source = video;
 
-                element.Children.Add(child);
+                var transfer = new TransferButton();
+                transfer.Completed += (s, args) => Image_Click(child, null);
+                transfer.Transferable = video;
+                transfer.Style = Application.Current.Resources["MediaTransferButtonStyle"] as Style;
+                transfer.SetBinding(TransferButton.IsTransferringProperty, transferBinding);
+
+                var progressBinding = new Binding();
+                progressBinding.Path = new PropertyPath("Progress");
+                progressBinding.Source = video;
+
+                var progress = new ProgressBarRing();
+                progress.Background = new SolidColorBrush(Colors.Transparent);
+                progress.Foreground = new SolidColorBrush(Colors.White);
+                progress.IsHitTestVisible = false;
+                progress.SetBinding(ProgressBarRing.ValueProperty, progressBinding);
+
+                var grid = new Grid();
+                grid.Children.Add(child);
+                grid.Children.Add(transfer);
+                grid.Children.Add(progress);
+
+                element.Children.Add(grid);
 
                 var caption = ProcessText(page, block, photos, videos, true);
                 if (caption != null)
