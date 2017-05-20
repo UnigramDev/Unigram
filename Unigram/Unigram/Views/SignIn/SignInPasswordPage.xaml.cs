@@ -28,17 +28,14 @@ namespace Unigram.Views.SignIn
             DataContext = UnigramContainer.Current.ResolveType<SignInPasswordViewModel>();
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            PrimaryInput.Focus(FocusState.Keyboard);
+        }
+
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             ((PasswordBox)sender).GetBindingExpression(PasswordBox.PasswordProperty)?.UpdateSource();
-        }
-
-        public class NavigationParameters
-        {
-            public string PhoneNumber { get; set; }
-            public string PhoneCode { get; set; }
-            public TLAuthSentCode Result { get; set; }
-            public TLAccountPassword Password { get; set; }
         }
 
         private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -48,6 +45,14 @@ namespace Unigram.Views.SignIn
                 ViewModel.SendCommand.Execute(sender);
                 e.Handled = true;
             }
+        }
+
+        public class NavigationParameters
+        {
+            public string PhoneNumber { get; set; }
+            public string PhoneCode { get; set; }
+            public TLAuthSentCode Result { get; set; }
+            public TLAccountPassword Password { get; set; }
         }
     }
 }

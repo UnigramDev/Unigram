@@ -28,6 +28,11 @@ namespace Unigram.Views.SignIn
             DataContext = UnigramContainer.Current.ResolveType<SignUpViewModel>();
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            PrimaryInput.Focus(FocusState.Keyboard);
+        }
+
         public class NavigationParameters
         {
             public string PhoneNumber { get; set; }

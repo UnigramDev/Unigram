@@ -217,6 +217,8 @@ namespace Unigram.Views
 
             _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
             lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
+
+            txtMessage.Focus(FocusState.Keyboard);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)

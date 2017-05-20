@@ -39,7 +39,8 @@
                        Padding="0,8,0,16"
                        Grid.Row="1"/>
 
-            <controls:UpdateTextBox Text="{Binding FirstName, Mode=TwoWay}"
+            <controls:UpdateTextBox x:Name="PrimaryInput"
+                                    Text="{Binding FirstName, Mode=TwoWay}"
                                     Margin="0,12,0,8"
                                     InputScope="PersonalFullName"
                                     IsTextPredictionEnabled="False"

@@ -8,6 +8,7 @@
     xmlns:models="using:Unigram.Core.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="OnLoaded"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -85,6 +86,7 @@
                                         PlaceholderText="+"
                                         Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
                 <controls:UpdateTextBox x:Uid="Login-PhoneNumber-PhoneNumber"
+                                        x:Name="PrimaryInput"
                                         Text="{Binding PhoneNumber, Mode=TwoWay}"
                                         MinWidth="200"
                                         InputScope="TelephoneNumber"
