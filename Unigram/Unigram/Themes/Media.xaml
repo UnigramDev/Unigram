@@ -86,14 +86,12 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaRoundVideoTemplate">
-        <Grid Background="Black"
-              CornerRadius="90"
-              MinWidth="{ThemeResource TelegramMediaMinWidth}"
-              MinHeight="{ThemeResource TelegramMediaMinHeight}">
+        <Grid>
+            <Ellipse Fill="Black"/>
             <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                                 Constraint="{Binding Media.Document}"
-                                MaxWidth="{ThemeResource TelegramStickerMaxHeight}"
-                                MaxHeight="{ThemeResource TelegramStickerMaxHeight}"
+                                MaxWidth="{ThemeResource TelegramLightMediaMaxWidth}"
+                                MaxHeight="{ThemeResource TelegramLightMediaMaxHeight}"
                                 Style="{StaticResource RoundImageViewStyle}"/>
 
             <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
@@ -110,8 +108,8 @@
     <DataTemplate x:Key="MediaStickerTemplate">
         <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                             Constraint="{Binding Media.Document}"
-                            MaxWidth="{ThemeResource TelegramStickerMaxWidth}"
-                            MaxHeight="{ThemeResource TelegramStickerMaxHeight}"/>
+                            MaxWidth="{ThemeResource TelegramLightMediaMaxWidth}"
+                            MaxHeight="{ThemeResource TelegramLightMediaMaxHeight}"/>
     </DataTemplate>
 
     <DataTemplate x:Key="MediaGifTemplate">

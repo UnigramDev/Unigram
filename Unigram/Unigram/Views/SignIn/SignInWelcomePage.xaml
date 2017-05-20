@@ -132,12 +132,12 @@
                 <DataTemplate>
                     <StackPanel Margin="0,26">
                         <TextBlock Padding="12,0,12,12"
-                                   common:TextBlockHelper.Markdown="{Binding Title}"
+                                   Text="{Binding Title}"
                                    FontWeight="SemiBold"
                                    TextAlignment="Center"
                                    Style="{ThemeResource TitleTextBlockStyle}"/>
                         <TextBlock Padding="12,0"
-                                   Text="{Binding Text}"
+                                   common:TextBlockHelper.Markdown="{Binding Text}"
                                    TextAlignment="Center"
                                    Style="{ThemeResource BodyTextBlockStyle}"
                                    MaxWidth="360"/>

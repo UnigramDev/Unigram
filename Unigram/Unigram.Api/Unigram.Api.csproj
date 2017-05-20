@@ -164,6 +164,7 @@
     <Compile Include="TL\Core\TLInt.cs" />
     <Compile Include="TL\Core\TLMessageActionUnreadMessages.cs" />
     <Compile Include="TL\Core\TLTuple.cs" />
+    <Compile Include="TL\Local\TLMessageActionBotInfo.cs" />
     <Compile Include="TL\Local\TLPhoneCallState.cs" />
     <Compile Include="TL\Local\TLMessageActionDate.cs" />
     <Compile Include="TL\Local\TLMessagesContainer.cs" />

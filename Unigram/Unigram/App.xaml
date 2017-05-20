@@ -26,8 +26,8 @@
             <x:String x:Key="MeUrlPrefix">https://t.me/</x:String>
             <x:String x:Key="MeUrlPrefixShort">t.me/</x:String>
 
-            <x:Double x:Key="TelegramStickerMaxWidth">200</x:Double>
-            <x:Double x:Key="TelegramStickerMaxHeight">200</x:Double>
+            <x:Double x:Key="TelegramLightMediaMaxWidth">200</x:Double>
+            <x:Double x:Key="TelegramLightMediaMaxHeight">200</x:Double>
 
             <x:Double x:Key="TelegramMediaMaxWidth">320</x:Double>
             <x:Double x:Key="TelegramMediaMaxHeight">420</x:Double>
