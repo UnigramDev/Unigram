@@ -196,8 +196,8 @@
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         Click="StickerSet_Click"
                         HorizontalAlignment="Right"
-                        MaxWidth="180"
-                        MaxHeight="180"/>
+                        MaxWidth="{StaticResource TelegramStickerMaxWidth}"
+                        MaxHeight="{StaticResource TelegramStickerMaxHeight}"/>
 
                     <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                 </Grid>
@@ -223,8 +223,8 @@
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         Click="StickerSet_Click"
                         HorizontalAlignment="Left"
-                        MaxWidth="180"
-                        MaxHeight="180"/>
+                        MaxWidth="{StaticResource TelegramStickerMaxWidth}"
+                        MaxHeight="{StaticResource TelegramStickerMaxHeight}"/>
 
                     <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                 </Grid>
@@ -290,8 +290,8 @@
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                             Click="StickerSet_Click"
                             HorizontalAlignment="Left"
-                            MaxWidth="180"
-                            MaxHeight="180"/>
+                            MaxWidth="{StaticResource TelegramStickerMaxWidth}"
+                            MaxHeight="{StaticResource TelegramStickerMaxHeight}"/>
 
                         <messages:MessageStatusControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                     </Grid>
