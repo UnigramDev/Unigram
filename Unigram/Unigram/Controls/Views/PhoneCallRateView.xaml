@@ -15,8 +15,10 @@
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <StackPanel>
-        <TextBlock Text="Please rate the quality of your Telegram call"/>
+        <TextBlock Text="Please rate the quality of your Telegram call" Margin="0,24,0,0"/>
         <controls:RatingBar x:Name="RatingBar" Value="{x:Bind Rating, Mode=TwoWay}" FontSize="28" Padding="3,8" Margin="0,12" HorizontalAlignment="Center"/>
-        <TextBox Text="{x:Bind Comment, Mode=TwoWay}" Visibility="{x:Bind ConvertVisibility(RatingBar.Value), Mode=OneWay}" PlaceholderText="Add an optional comment"/>
+        <Border MinHeight="{ThemeResource TextControlThemeMinHeight}">
+            <TextBox Text="{x:Bind Comment, Mode=TwoWay}" Visibility="{x:Bind ConvertVisibility(RatingBar.Value), Mode=OneWay}" PlaceholderText="Add an optional comment"/>
+        </Border>
     </StackPanel>
 </ContentDialog>

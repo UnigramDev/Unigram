@@ -42,7 +42,7 @@ namespace Unigram.Controls.Views
             return rating >= 0;
         }
 
-        public int Rating { get; set; }
+        public int Rating { get; set; } = -1;
 
         public string Comment { get; set; }
     }

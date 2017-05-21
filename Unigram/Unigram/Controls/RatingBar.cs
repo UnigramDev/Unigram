@@ -22,8 +22,6 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            _unselected.Clear();
-
             for (int i = 0; i < 5; i++)
             {
                 _unselected[i] = GetTemplateChild($"Star{i}") as FontIcon;
@@ -34,6 +32,8 @@ namespace Unigram.Controls
             PointerCaptureLost += OnPointerCaptureLost;
             PointerPressed += OnPointerPressed;
             PointerReleased += OnPointerReleased;
+
+            UpdateVisual();
         }
 
         private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
@@ -76,7 +76,7 @@ namespace Unigram.Controls
 
         private void UpdateVisual(int index = -1)
         {
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < _unselected.Count; i++)
             {
                 var brush = i <= Value || (i <= index) ? "TextControlBorderBrushFocused" : "TextControlBorderBrush";
                 var glyph = i <= Value && (index == -1 ? true : i <= index) ? "\uE1CF" : "\uE1CE";
