@@ -17,9 +17,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class PhoneCallRateView : ContentDialog
+    public sealed partial class PhoneCallRatingView : ContentDialog
     {
-        public PhoneCallRateView()
+        public PhoneCallRatingView()
         {
             this.InitializeComponent();
         }

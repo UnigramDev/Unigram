@@ -17,15 +17,15 @@
             <Setter Property="Foreground" Value="#FFFFFFFF"/>
             <Setter Property="Minimum" Value="0"/>
             <Setter Property="Maximum" Value="1"/>
-            <Setter Property="Width" Value="188"/>
-            <Setter Property="Height" Value="188"/>
+            <Setter Property="Width" Value="208"/>
+            <Setter Property="Height" Value="208"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:ProgressBarRing">
                         <Grid Background="{TemplateBinding Background}" CornerRadius="24">
-                            <controls:ProgressBarRingSlice x:Name="Indicator" CacheMode="BitmapCache" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" InnerRadius="92" Radius="94" StartAngle="0" EndAngle="0">
+                            <controls:ProgressBarRingSlice x:Name="Indicator" CacheMode="BitmapCache" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" InnerRadius="102" Radius="104" StartAngle="0" EndAngle="0">
                                 <Path.RenderTransform>
-                                    <RotateTransform x:Name="Rotation" CenterX="94" CenterY="94" Angle="0"/>
+                                    <RotateTransform x:Name="Rotation" CenterX="104" CenterY="104" Angle="0"/>
                                 </Path.RenderTransform>
                             </controls:ProgressBarRingSlice>
                         </Grid>
@@ -35,10 +35,19 @@
         </Style>
     </Control.Resources>
     
-    <Grid>
+    <Grid SizeChanged="OnSizeChanged">
         <!--<Ellipse x:Name="Capture" Width="180" Height="180" Fill="Gray"/>-->
-        <CaptureElement x:Name="Capture" Stretch="UniformToFill" Width="180" Height="180"/>
-        <Image Width="600" Height="600" HorizontalAlignment="Center" VerticalAlignment="Center" Source="ms-appx:///Assets/Ellipse.png"/>
+        <CaptureElement x:Name="Capture" Stretch="UniformToFill" Width="200" Height="200"/>
+
+        <Path Fill="Red">
+            <Path.Data>
+                <GeometryGroup>
+                    <RectangleGeometry x:Name="OuterClip" Rect="0,0,360,360"/>
+                    <EllipseGeometry x:Name="InnerClip" Center="180,180" RadiusX="100" RadiusY="100"/>
+                </GeometryGroup>
+            </Path.Data>
+        </Path>
+        
         <!--<MediaPlayerElement x:Name="PlayerElement"/>-->
         <controls:ProgressBarRing Value="0.5"/>
     </Grid>

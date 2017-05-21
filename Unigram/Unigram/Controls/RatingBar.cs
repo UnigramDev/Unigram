@@ -27,6 +27,11 @@ namespace Unigram.Controls
                 _unselected[i] = GetTemplateChild($"Star{i}") as FontIcon;
             }
 
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
+
             PointerMoved += OnPointerMoved;
             PointerExited += OnPointerExited;
             PointerCaptureLost += OnPointerCaptureLost;
@@ -106,6 +111,11 @@ namespace Unigram.Controls
 
         private void OnValueChanged(int newValue, int oldValue)
         {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
+
             UpdateVisual();
             ValueChanged?.Invoke(this, new RatingBarValueChangedEventArgs(newValue, oldValue));
         }

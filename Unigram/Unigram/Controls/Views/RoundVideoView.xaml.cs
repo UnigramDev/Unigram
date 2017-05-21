@@ -11,8 +11,10 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media;
 using Windows.Media.Capture;
+using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Media.Playback;
+using Windows.Storage;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -46,6 +48,14 @@ namespace Unigram.Controls.Views
             //ElementCompositionPreview.SetElementChildVisual(Capture, _capture);
 
             Loaded += OnLoaded;
+            Unloaded += RoundVideoView_Unloaded;
+        }
+
+        private async void RoundVideoView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            await _lowLag.StopWithResultAsync();
+            await _media.StopPreviewAsync();
+            _media.Dispose();
         }
 
         private MediaPlayer _player;
@@ -54,6 +64,8 @@ namespace Unigram.Controls.Views
         private MediaCapturePreviewSource _preview;
         private Compositor _compositor;
         private SpriteVisual _capture;
+
+        private LowLagMediaRecording _lowLag;
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -72,6 +84,26 @@ namespace Unigram.Controls.Views
             await _media.InitializeAsync(settings);
             Capture.Source = _media;
             await _media.StartPreviewAsync();
+
+            //_media.SetRecordRotation(VideoRotation.Clockwise90Degrees);
+
+            var effect = new VideoTransformEffectDefinition();
+            effect.CropRectangle = new Rect(40, 0, 240, 240);
+
+            await _media.AddVideoEffectAsync(effect, MediaStreamType.VideoRecord);
+
+            var record = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
+            record.Video.Width = 240;
+            record.Video.Height = 240;
+            //record.Video.Bitrate = 300000;
+            //record.Audio.ChannelCount = 1;
+            //record.Audio.Bitrate = 62000;
+
+            var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("RoundVideo.mp4", CreationCollisionOption.ReplaceExisting);
+            _lowLag = await _media.PrepareLowLagRecordToStorageFileAsync(record, file);
+
+            await _lowLag.StartAsync();
+
             //await _media.StartPreviewToCustomSinkAsync(profile, _preview.MediaSink);
 
             //_player = new MediaPlayer();
@@ -85,6 +117,12 @@ namespace Unigram.Controls.Views
             //brush.Stretch = CompositionStretch.UniformToFill;
 
             //_capture.Brush = brush;
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            OuterClip.Rect = new Rect(0, 0, e.NewSize.Width, e.NewSize.Height);
+            InnerClip.Center = new Point(e.NewSize.Width / 2, e.NewSize.Height / 2);
         }
     }
 }

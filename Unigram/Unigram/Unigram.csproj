@@ -178,8 +178,8 @@
     </Compile>
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
-    <Compile Include="Controls\Views\PhoneCallRateView.xaml.cs">
-      <DependentUpon>PhoneCallRateView.xaml</DependentUpon>
+    <Compile Include="Controls\Views\PhoneCallRatingView.xaml.cs">
+      <DependentUpon>PhoneCallRatingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\RatingBar.cs" />
     <Compile Include="Controls\ScrollViewerBackground.cs" />
@@ -1153,7 +1153,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\PhoneCallRateView.xaml">
+    <Page Include="Controls\Views\PhoneCallRatingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -214,7 +214,7 @@ namespace Unigram.Common
                     {
                         Execute.BeginOnUIThread(async () =>
                         {
-                            var dialog = new PhoneCallRateView();
+                            var dialog = new PhoneCallRatingView();
                             var confirm = await dialog.ShowAsync();
                             if (confirm == ContentDialogResult.Primary)
                             {

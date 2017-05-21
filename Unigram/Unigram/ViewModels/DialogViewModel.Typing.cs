@@ -101,7 +101,7 @@ namespace Unigram.ViewModels
 
         private string GetTypingSubtitle(IList<Tuple<int, TLSendMessageActionBase>> typingUsers)
         {
-            return GetTypingString(Peer.ToPeer(), typingUsers, new Func<int?, TLUserBase>(CacheService.GetUser), null);
+            return GetTypingString(Peer.ToPeer(), typingUsers, CacheService.GetUser, null);
         }
 
         public string GetTypingString(TLPeerBase peer, IList<Tuple<int, TLSendMessageActionBase>> typingUsers, Func<int?, TLUserBase> getUser, Action<TLPeerBase> getFullInfoAction)
