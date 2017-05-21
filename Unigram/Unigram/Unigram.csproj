@@ -362,6 +362,11 @@
     <Compile Include="Views\UsersSelectionPage.xaml.cs">
       <DependentUpon>UsersSelectionPage.xaml</DependentUpon>
     </Compile>
+    <Content Include="Assets\Audio\voip_busy.mp3" />
+    <Content Include="Assets\Audio\voip_connecting.mp3" />
+    <Content Include="Assets\Audio\voip_end.mp3" />
+    <Content Include="Assets\Audio\voip_failed.mp3" />
+    <Content Include="Assets\Audio\voip_ringback.mp3" />
     <Content Include="Assets\Emojis\0030-20e3.png" />
     <Content Include="Assets\Emojis\0031-20e3.png" />
     <Content Include="Assets\Emojis\0032-20e3.png" />
