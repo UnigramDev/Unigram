@@ -278,7 +278,7 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 	}
 	else 
 	{
-
+		//currentPacketLength = ((uint32_t)buffer->readInt32(nullptr) >> 8) * 4;
 	}
 
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket data received event handling");
