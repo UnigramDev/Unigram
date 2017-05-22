@@ -567,7 +567,7 @@
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="MaxHeight" Value="{ThemeResource ContentDialogMaxHeight}" />
-        <Setter Property="MinHeight" Value="{ThemeResource ContentDialogMinHeight}" />
+        <Setter Property="MinHeight" Value="0" />
         <Setter Property="MaxWidth" Value="{ThemeResource ContentDialogMaxWidth}" />
         <Setter Property="MinWidth" Value="{ThemeResource ContentDialogMinWidth}" />
         <Setter Property="Template">

@@ -111,6 +111,20 @@ namespace Unigram.Common
             }
         }
 
+        public async Task<Tuple<string, string>> GetDebugStringAsync()
+        {
+            var response = await SendRequestAsync("voip.debugString");
+            if (response != null && response.Status == AppServiceResponseStatus.Success)
+            {
+                response.Message.TryGetValue("result", out object result);
+                response.Message.TryGetValue("version", out object version);
+
+                return Tuple.Create(result as string, version as string);
+            }
+
+            return Tuple.Create(string.Empty, string.Empty);
+        }
+
         private PhoneCallPage _phoneView;
         private bool _phoneViewExists;
 

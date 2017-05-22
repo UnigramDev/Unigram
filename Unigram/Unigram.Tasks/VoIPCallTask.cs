@@ -720,6 +720,13 @@ namespace Unigram.Tasks
                     _user = req;
                     OutgoingCall(req.Id, req.AccessHash.Value);
                 }
+                else if (caption.Equals("voip.debugString"))
+                {
+                    if (_controller != null)
+                    {
+                        await args.Request.SendResponseAsync(new ValueSet { { "result", _controller.GetDebugString() }, { "version", VoIPControllerWrapper.GetVersion() } });
+                    }
+                }
             }
             else if (message.ContainsKey("voip.callInfo"))
             {

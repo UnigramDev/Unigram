@@ -53,6 +53,10 @@ namespace Unigram.Views
         private string[] _emojis;
         private DateTime _started;
 
+        private int _debugTapped;
+        private ContentDialog _debugDialog;
+
+        private DispatcherTimer _debugTimer;
         private DispatcherTimer _durationTimer;
 
         public PhoneCallPage()
@@ -62,6 +66,10 @@ namespace Unigram.Views
             _durationTimer = new DispatcherTimer();
             _durationTimer.Interval = TimeSpan.FromMilliseconds(500);
             _durationTimer.Tick += DurationTimer_Tick;
+
+            _debugTimer = new DispatcherTimer();
+            _debugTimer.Interval = TimeSpan.FromMilliseconds(500);
+            _debugTimer.Tick += DebugTimer_Tick;
 
             #region Reset
 
@@ -384,6 +392,70 @@ namespace Unigram.Views
                 var routingManager = AudioRoutingManager.GetDefault();
                 Routing.IsChecked = routingManager.GetAudioEndpoint() == AudioRoutingEndpoint.Speakerphone;
             });
+        }
+
+        private void DebugString_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (_debugTapped == 9)
+            {
+                _debugTapped = 0;
+                ShowDebugString();
+            }
+            else
+            {
+                _debugTapped++;
+            }
+        }
+
+        private async void ShowDebugString()
+        {
+            var result = await VoIPConnection.Current.GetDebugStringAsync();
+            if (result != null)
+            {
+                var text = new TextBlock();
+                text.Text = result.Item1;
+                text.Margin = new Thickness(0, 16, 0, 0);
+                text.Style = Application.Current.Resources["BodyTextBlockStyle"] as Style;
+
+                var scroll = new ScrollViewer();
+                scroll.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+                scroll.VerticalScrollMode = ScrollMode.Auto;
+                scroll.Content = text;
+
+                var dialog = new ContentDialog();
+                dialog.Title = $"libtgvoip v{result.Item2}";
+                dialog.Content = scroll;
+                dialog.PrimaryButtonText = "OK";
+                dialog.Style = Application.Current.Resources["FixedContentDialogStyle"] as Style;
+                dialog.Closed += (s, args) =>
+                {
+                    _debugDialog = null;
+                    _debugTimer.Stop();
+                };
+
+                _debugDialog = dialog;
+                _debugTimer.Start();
+
+                await dialog.ShowAsync();
+            }
+        }
+
+        private async void DebugTimer_Tick(object sender, object e)
+        {
+            if (_debugDialog == null)
+            {
+                _debugTimer.Stop();
+                return;
+            }
+
+            var result = await VoIPConnection.Current.GetDebugStringAsync();
+            if (result != null)
+            {
+                if (_debugDialog.Content is ScrollViewer scroll && scroll.Content is TextBlock text)
+                {
+                    text.Text = result.Item1;
+                }
+            }
         }
     }
 }
