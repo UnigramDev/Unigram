@@ -47,8 +47,8 @@ namespace Unigram.Controls.Views
             //ImageLoader.Initialize(_compositor);
             //ElementCompositionPreview.SetElementChildVisual(Capture, _capture);
 
-            Loaded += OnLoaded;
-            Unloaded += RoundVideoView_Unloaded;
+            //Loaded += OnLoaded;
+            //Unloaded += RoundVideoView_Unloaded;
         }
 
         private async void RoundVideoView_Unloaded(object sender, RoutedEventArgs e)
@@ -123,6 +123,15 @@ namespace Unigram.Controls.Views
         {
             OuterClip.Rect = new Rect(0, 0, e.NewSize.Width, e.NewSize.Height);
             InnerClip.Center = new Point(e.NewSize.Width / 2, e.NewSize.Height / 2);
+        }
+
+        public IAsyncAction SetAsync(MediaCapture media)
+        {
+            return Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                Capture.Source = media;
+                await media.StartPreviewAsync();
+            });
         }
     }
 }

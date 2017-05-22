@@ -537,7 +537,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentDialogBase">
-                    <Border x:Name="Container" Background="{TemplateBinding OverlayBrush}">
+                    <Border x:Name="Container" Background="{TemplateBinding OverlayBrush}" Margin="{TemplateBinding Padding}">
                         <Border x:Name="BackgroundElement"
                                 Background="{TemplateBinding Background}"
                                 FlowDirection="{TemplateBinding FlowDirection}"

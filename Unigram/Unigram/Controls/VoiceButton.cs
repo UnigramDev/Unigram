@@ -12,6 +12,7 @@ using Unigram.ViewModels;
 using Windows.Foundation.Collections;
 using Windows.Media;
 using Windows.Media.Capture;
+using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -24,6 +25,7 @@ namespace Unigram.Controls
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
+        private bool _video;
         private DispatcherTimer _timer;
         private OpusRecorder _recorder;
         private StorageFile _file;
@@ -35,13 +37,37 @@ namespace Unigram.Controls
         private ManualResetEvent _startReset = new ManualResetEvent(true);
         private ManualResetEvent _stopReset = new ManualResetEvent(false);
 
-        //private RoundVideoView _roundView = new RoundVideoView();
+        private RoundVideoView _roundView = new RoundVideoView();
 
         public TimeSpan Elapsed
         {
             get
             {
                 return DateTime.Now - _start;
+            }
+        }
+
+        public bool IsVideo
+        {
+            get
+            {
+                return IsChecked.HasValue && IsChecked.Value;
+            }
+            set
+            {
+                IsChecked = value;
+            }
+        }
+
+        public bool IsVoice
+        {
+            get
+            {
+                return IsChecked.HasValue && !IsChecked.Value;
+            }
+            set
+            {
+                IsChecked = !value;
             }
         }
 
@@ -90,7 +116,7 @@ namespace Unigram.Controls
             }
             else
             {
-                IsChecked = !IsChecked;
+                IsVideo = !IsVideo;
             }
         }
 
@@ -116,6 +142,8 @@ namespace Unigram.Controls
 
         private void Start()
         {
+            _video = IsVideo;
+
             Task.Run(async () =>
             {
                 _startReset.WaitOne();
@@ -126,15 +154,19 @@ namespace Unigram.Controls
 
                 Execute.BeginOnUIThread(() =>
                 {
-                    //_roundView.IsOpen = true;
+                    if (_video)
+                    {
+                        _roundView.IsOpen = true;
+                    }
+
                     RecordingStarted?.Invoke(this, EventArgs.Empty);
                 });
 
                 //_stopReset.Set();
                 //return;
 
-                _file = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\recording.ogg", CreationCollisionOption.ReplaceExisting);
-                _recorder = new OpusRecorder(_file);
+                _file = await ApplicationData.Current.LocalFolder.CreateFileAsync(_video ? "temp\\recording.mp4" : "temp\\recording.ogg", CreationCollisionOption.ReplaceExisting);
+                _recorder = new OpusRecorder(_file, _video);
 
                 /* This following was moved from sub thread, because of a exception which comes from that device initializiation
                  * is only allowed from UI thread!
@@ -148,6 +180,12 @@ namespace Unigram.Controls
                 {
                     _recorder.m_mediaCapture = new MediaCapture();
                     await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
+
+                    if (_video)
+                    {
+                        await _roundView.SetAsync(_recorder.m_mediaCapture);
+                    }
+
                     await _recorder.StartAsync();
                 }
                 catch (UnauthorizedAccessException)
@@ -182,7 +220,11 @@ namespace Unigram.Controls
 
                 Execute.BeginOnUIThread(() =>
                 {
-                    //_roundView.IsOpen = false;
+                    if (_video)
+                    {
+                        _roundView.IsOpen = false;
+                    }
+
                     RecordingStopped?.Invoke(this, EventArgs.Empty);
                 });
 
@@ -216,7 +258,41 @@ namespace Unigram.Controls
 
                     Execute.BeginOnUIThread(async () =>
                     {
-                        await ViewModel.SendAudioAsync(_file, (int)elapsed.TotalSeconds, true, null, null, null);
+                        if (_video)
+                        {
+                            var props = await _file.Properties.GetVideoPropertiesAsync();
+                            var width = props.Width;
+                            var height = props.Height;
+                            var x = 0d;
+                            var y = 0d;
+
+                            if (width > height)
+                            {
+                                x = (width - height) / 2;
+                                width = height;
+                            }
+
+                            if (height > width)
+                            {
+                                y = (height - width) / 2;
+                                height = width;
+                            }
+
+                            var transform = new VideoTransformEffectDefinition();
+                            transform.CropRectangle = new Windows.Foundation.Rect(x, y, width, height);
+                            transform.OutputSize = new Windows.Foundation.Size(240, 240);
+
+                            var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
+                            profile.Video.Width = 240;
+                            profile.Video.Height = 240;
+                            profile.Video.Bitrate = 300000;
+
+                            await ViewModel.SendVideoAsync(_file, null, true, transform, profile);
+                        }
+                        else
+                        {
+                            await ViewModel.SendAudioAsync(_file, (int)elapsed.TotalSeconds, true, null, null, null);
+                        }
                     });
                 }
 
@@ -229,9 +305,11 @@ namespace Unigram.Controls
             #region fields
 
             private bool m_isRecording;
+            private bool m_isVideo;
 
             private StorageFile m_file;
             private IMediaExtension m_opusSink;
+            private LowLagMediaRecording m_lowLag;
             public MediaCapture m_mediaCapture;
             public MediaCaptureInitializationSettings settings;
 
@@ -253,10 +331,10 @@ namespace Unigram.Controls
 
             #region constructors
 
-            public OpusRecorder(StorageFile file)
+            public OpusRecorder(StorageFile file, bool video)
             {
                 m_file = file;
-
+                m_isVideo = video;
                 InitializeSettings();
             }
 
@@ -271,25 +349,44 @@ namespace Unigram.Controls
                 settings.AudioProcessing = AudioProcessing.Default;
                 settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
                 settings.SharingMode = MediaCaptureSharingMode.SharedReadOnly;
-                settings.StreamingCaptureMode = StreamingCaptureMode.Audio;
+                settings.StreamingCaptureMode = m_isVideo ? StreamingCaptureMode.AudioAndVideo : StreamingCaptureMode.Audio;
             }
 
             public async Task StartAsync()
             {
                 m_isRecording = true;
-                m_opusSink = await OpusCodec.CreateMediaSinkAsync(m_file);
 
-                var wavEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
-                wavEncodingProfile.Audio.BitsPerSample = 16;
-                wavEncodingProfile.Audio.SampleRate = 48000;
-                wavEncodingProfile.Audio.ChannelCount = 1;
+                if (m_isVideo)
+                {
+                    var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
 
-                await m_mediaCapture.StartRecordToCustomSinkAsync(wavEncodingProfile, m_opusSink);
+                    m_lowLag = await m_mediaCapture.PrepareLowLagRecordToStorageFileAsync(profile, m_file);
+
+                    await m_lowLag.StartAsync();
+                }
+                else
+                {
+                    var wavEncodingProfile = MediaEncodingProfile.CreateWav(AudioEncodingQuality.High);
+                    wavEncodingProfile.Audio.BitsPerSample = 16;
+                    wavEncodingProfile.Audio.SampleRate = 48000;
+                    wavEncodingProfile.Audio.ChannelCount = 1;
+
+                    m_opusSink = await OpusCodec.CreateMediaSinkAsync(m_file);
+
+                    await m_mediaCapture.StartRecordToCustomSinkAsync(wavEncodingProfile, m_opusSink);
+                }
             }
 
             public async Task StopAsync()
             {
-                await m_mediaCapture.StopRecordAsync();
+                if (m_lowLag != null)
+                {
+                    await m_lowLag.StopAsync();
+                }
+                else
+                {
+                    await m_mediaCapture.StopRecordAsync();
+                }
 
                 m_mediaCapture.Dispose();
                 m_mediaCapture = null;

@@ -875,7 +875,7 @@ namespace Unigram.Views
             };
             batch.End();
 
-            ViewModel.OutputTypingManager.SetTyping(new TLSendMessageRecordAudioAction());
+            ViewModel.OutputTypingManager.SetTyping(btnVoiceMessage.IsChecked.Value ? (TLSendMessageActionBase)new TLSendMessageRecordRoundAction() : new TLSendMessageRecordAudioAction());
         }
 
         private void VoiceButton_RecordingStopped(object sender, EventArgs e)

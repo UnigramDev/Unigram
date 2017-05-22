@@ -74,7 +74,7 @@
             </Style>
         </ListView.ItemContainerStyle>
         <ListView.Header>
-            <Grid x:Name="Camera" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" RequestedTheme="Dark" Margin="0,0,12,0">
+            <Grid x:Name="Camera" Visibility="{Binding HardwareService.IsVideoAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" RequestedTheme="Dark" Margin="0,0,12,0">
                 <local:GlyphButton Click="Camera_Click" Glyph="&#xE114;" Width="64" Height="64"/>
                 <Border BorderBrush="#26000000" BorderThickness="1"/>
             </Grid>

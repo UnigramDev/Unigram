@@ -9,7 +9,8 @@
     mc:Ignorable="d"
     VerticalAlignment="Stretch"
     HorizontalAlignment="Stretch"
-    Background="Transparent">
+    Background="Transparent"
+    Padding="0,0,0,48">
 
     <Control.Resources>
         <Style TargetType="controls:ProgressBarRing">
@@ -39,7 +40,7 @@
         <!--<Ellipse x:Name="Capture" Width="180" Height="180" Fill="Gray"/>-->
         <CaptureElement x:Name="Capture" Stretch="UniformToFill" Width="200" Height="200"/>
 
-        <Path Fill="Red">
+        <Path Fill="#54000000">
             <Path.Data>
                 <GeometryGroup>
                     <RectangleGeometry x:Name="OuterClip" Rect="0,0,360,360"/>
