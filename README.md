@@ -49,7 +49,7 @@ At first we’ll aim to build an experience that’s feature wise on par with th
 You can check out our current designs of Unigram here:
 https://www.behance.net/gallery/37507573/Unigram-for-Windows-10-Mobile
 
-Want to contribute? Join the Unigram Insiders-chat on Telegram or join the discussion on Reddit: 
+Want to contribute? Join the Unigram Insiders-chat on Telegram or take a look at the initial discussion on Reddit (archived): 
 
 https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ
 
