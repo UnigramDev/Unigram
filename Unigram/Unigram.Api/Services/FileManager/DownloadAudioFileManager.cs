@@ -99,21 +99,24 @@ namespace Telegram.Api.Services.FileManager
 
             TLRPCError error;
             bool canceled;
-            part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputDocumentLocation, part.Offset, part.Limit, out error, out canceled) as TLUploadFile;
-            if (canceled)
+            do
             {
-                lock (_itemsSyncRoot)
+                TLUploadFileBase result;
+                if (part.ParentItem.CdnRedirect != null)
+                    result = GetCdnFile(part.ParentItem.CdnRedirect, part.ParentItem.DCId, part.ParentItem.InputDocumentLocation, part.Offset, part.Limit, out error, out canceled);
+                else
+                    result = GetFile(part.ParentItem.DCId, part.ParentItem.InputDocumentLocation, part.Offset, part.Limit, out error, out canceled);
+
+                if (result is TLUploadFileCdnRedirect redirect)
                 {
-                    part.ParentItem.IsCancelled = true;
-                    part.Status = PartStatus.Processed;
-                    _items.Remove(part.ParentItem);
+                    part.ParentItem.CdnRedirect = redirect;
+                    continue;
+                }
+                else
+                {
+                    part.File = result as TLUploadFile;
                 }
 
-                return;
-            }
-            while (part.File == null)
-            {
-                part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputDocumentLocation, part.Offset, part.Limit, out error, out canceled) as TLUploadFile;
                 if (canceled)
                 {
                     lock (_itemsSyncRoot)
@@ -125,7 +128,7 @@ namespace Telegram.Api.Services.FileManager
 
                     return;
                 }
-            }
+            } while (part.File == null);
 
             // indicate progress
             // indicate complete
@@ -248,26 +251,12 @@ namespace Telegram.Api.Services.FileManager
             _mtProtoService.GetFileAsync(dcId, location, offset, limit,
                 callback =>
                 {
+                    result = callback;
+                    manualResetEvent.Set();
+
                     if (callback is TLUploadFile file)
                     {
-                        result = callback;
-                        manualResetEvent.Set();
-
                         _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
-                    }
-                    else if (callback is TLUploadFileCdnRedirect redirect)
-                    {
-                        result = GetCdnFile(redirect, dcId, location, offset, limit, out outError, out outIsCanceled);
-                        while (result == null)
-                        {
-                            result = GetCdnFile(redirect, dcId, location, offset, limit, out outError, out outIsCanceled);
-                            if (outIsCanceled)
-                            {
-                                break;
-                            }
-                        }
-
-                        manualResetEvent.Set();
                     }
                 },
                 error =>
@@ -596,7 +585,9 @@ namespace Telegram.Api.Services.FileManager
 
         private List<DownloadablePart> GetItemParts(int size, DownloadableItem item)
         {
-            var chunkSize = Constants.DocumentDownloadChunkSize;
+            //var chunkSize = Constants.DownloadChunkSize;
+
+            var chunkSize = size > 1024 * 1024 ? 1024 * 128 : 1024 * 32;
             var parts = new List<DownloadablePart>();
             var partsCount = size / chunkSize + (size % chunkSize > 0 ? 1 : 0);
 

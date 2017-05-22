@@ -739,6 +739,18 @@ namespace Telegram.Api.Services
                 }
             }
 
+            if (transport == null && cdn)
+            {
+                GetConfigAsync(result =>
+                {
+                    _config = TLExtensions.Merge(_config, result);
+                    SaveConfig();
+                    SendRequestAsync<T>(caption, obj, dcId, cdn, callback, faultCallback);
+                },
+                faultCallback);
+                return;
+            }
+
             if (transport == null)
             {
                 faultCallback?.Invoke(new TLRPCError { ErrorCode = 404, ErrorMessage = "GetFileAsync: Empty transport for dc id " + dcId });

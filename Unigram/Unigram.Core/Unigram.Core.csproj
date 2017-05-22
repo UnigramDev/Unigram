@@ -168,7 +168,6 @@
     <Compile Include="Services\AppUpdateService.cs" />
     <Compile Include="Services\ContactsService.cs" />
     <Compile Include="Services\DialogsService.cs" />
-    <Compile Include="Services\GifsService.cs" />
     <Compile Include="Services\HardwareService.cs" />
     <Compile Include="Services\JumpListService.cs" />
     <Compile Include="Services\KeyboardService.cs" />

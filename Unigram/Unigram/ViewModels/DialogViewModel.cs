@@ -48,6 +48,9 @@ using Unigram.Views;
 using Telegram.Api.TL.Methods.Phone;
 using Windows.ApplicationModel.Calls;
 using Unigram.Tasks;
+using Windows.Media.Effects;
+using Windows.Media.Transcoding;
+using Windows.Media.MediaProperties;
 
 namespace Unigram.ViewModels
 {
@@ -1334,6 +1337,33 @@ namespace Unigram.ViewModels
             {
                 foreach (var storage in storages)
                 {
+                    //var props = await storage.Properties.GetVideoPropertiesAsync();
+                    //var width = props.Width;
+                    //var height = props.Height;
+                    //var x = 0d;
+                    //var y = 0d;
+
+                    //if (width > height) {
+                    //    x = (width - height) / 2;
+                    //    width = height;
+                    //}
+
+                    //if (height > width)
+                    //{
+                    //    y = (height - width) / 2;
+                    //    height = width;
+                    //}
+
+                    //var transform = new VideoTransformEffectDefinition();
+                    //transform.CropRectangle = new Windows.Foundation.Rect(x, y, width, height);
+                    //transform.OutputSize = new Windows.Foundation.Size(240, 240);
+
+                    //var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
+                    //profile.Video.Width = 240;
+                    //profile.Video.Height = 240;
+                    //profile.Video.Bitrate = 300000;
+
+                    //await SendVideoAsync(storage, null, true, transform, profile);
                     await SendFileAsync(storage, null);
                 }
             }
@@ -1440,14 +1470,14 @@ namespace Unigram.ViewModels
             }
         }
 
-        private Progress<double> Upload(ITLTransferable document, Func<int, TLSendMessageActionBase> action)
+        private Progress<double> Upload(ITLTransferable document, Func<int, TLSendMessageActionBase> action, double delta = 0.0, double divider = 1.0)
         {
             document.IsTransferring = true;
 
             return new Progress<double>((value) =>
             {
                 document.IsTransferring = value < 1 && value > 0;
-                document.UploadingProgress = value;
+                document.UploadingProgress = delta + (value / divider);
                 Debug.WriteLine(value);
 
                 OutputTypingManager.SetTyping(action((int)value * 100));
@@ -1517,6 +1547,143 @@ namespace Unigram.ViewModels
                                     FileName = file.Name
                                 }
                             }
+                        };
+
+                        var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                    }
+                    //if (result.IsSucceeded)
+                    //{
+                    //    var update = result.Result as TLUpdates;
+                    //    if (update != null)
+                    //    {
+                    //        var newMessage = update.Updates.OfType<TLUpdateNewMessage>().FirstOrDefault();
+                    //        if (newMessage != null)
+                    //        {
+                    //            var newM = newMessage.Message as TLMessage;
+                    //            if (newM != null)
+                    //            {
+                    //                message.Media = newM.Media;
+                    //                message.RaisePropertyChanged(() => message.Media);
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                }
+            });
+        }
+
+        private async Task SendVideoAsync(StorageFile file, string caption, bool round, VideoTransformEffectDefinition transform = null, MediaEncodingProfile profile = null)
+        {
+            var fileLocation = new TLFileLocation
+            {
+                VolumeId = TLLong.Random(),
+                LocalId = TLInt.Random(),
+                Secret = TLLong.Random(),
+                DCId = 0
+            };
+
+            var fileName = string.Format("{0}_{1}_{2}.mp4", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+            var fileCache = await FileUtils.CreateTempFileAsync(fileName);
+
+            await file.CopyAndReplaceAsync(fileCache);
+
+            var basicProps = await fileCache.GetBasicPropertiesAsync();
+            var videoProps = await fileCache.Properties.GetVideoPropertiesAsync();
+            var thumbnailBase = await FileUtils.GetFileThumbnailAsync(file);
+            var thumbnail = thumbnailBase as TLPhotoSize;
+
+            var desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
+
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var videoWidth = (int)videoProps.Width;
+            var videoHeight = (int)videoProps.Height;
+
+            if (profile != null)
+            {
+                videoWidth = (int)profile.Video.Width;
+                videoHeight = (int)profile.Video.Height;
+            }
+
+            var document = new TLDocument
+            {
+                Id = 0,
+                AccessHash = 0,
+                Date = date,
+                Size = (int)basicProps.Size,
+                MimeType = fileCache.ContentType,
+                Thumb = thumbnail,
+                Attributes = new TLVector<TLDocumentAttributeBase>
+                {
+                    new TLDocumentAttributeFilename
+                    {
+                        FileName = file.Name
+                    },
+                    new TLDocumentAttributeVideo
+                    {
+                        Duration = (int)videoProps.Duration.TotalSeconds,
+                        W = videoWidth,
+                        H = videoHeight,
+                        IsRoundMessage = round
+                    }
+                }
+            };
+
+            var media = new TLMessageMediaDocument
+            {
+                Document = document,
+                Caption = caption
+            };
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                if (transform != null && profile != null)
+                {
+                    await fileCache.RenameAsync(fileName + ".temp.mp4");
+                    var fileResult = await FileUtils.CreateTempFileAsync(fileName);
+
+                    var transcoder = new MediaTranscoder();
+                    transcoder.AddVideoEffect(transform.ActivatableClassId, true, transform.Properties);
+
+                    var prepare = await transcoder.PrepareFileTranscodeAsync(fileCache, fileResult, profile);
+                    await prepare.TranscodeAsync().AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }, 0, 200.0));
+
+                    await fileCache.DeleteAsync();
+                    fileCache = fileResult;
+
+                    thumbnailBase = await FileUtils.GetFileThumbnailAsync(fileCache);
+                    thumbnail = thumbnailBase as TLPhotoSize;
+
+                    desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
+                    document.Thumb = thumbnail;
+                }
+
+                var fileId = TLLong.Random();
+                var upload = await _uploadVideoManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }, 0.5, 2.0));
+                if (upload != null)
+                {
+                    var thumbFileId = TLLong.Random();
+                    var thumbUpload = await _uploadDocumentManager.UploadFileAsync(thumbFileId, desiredName);
+                    if (thumbUpload != null)
+                    {
+                        var inputMedia = new TLInputMediaUploadedThumbDocument
+                        {
+                            File = upload.ToInputFile(),
+                            Thumb = thumbUpload.ToInputFile(),
+                            MimeType = document.MimeType,
+                            Caption = media.Caption,
+                            Attributes = document.Attributes
                         };
 
                         var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);

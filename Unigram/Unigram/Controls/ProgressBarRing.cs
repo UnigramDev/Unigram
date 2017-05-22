@@ -108,15 +108,15 @@ namespace Unigram.Controls
                     Visibility = Windows.UI.Xaml.Visibility.Visible;
                 }
 
-                _angleStoryboard.SkipToFill();
+                //_angleStoryboard.SkipToFill();
 
-                if (value > Indicator.EndAngle)
-                {
-                    var angleAnimation = (DoubleAnimation)_angleStoryboard.Children[0];
-                    angleAnimation.To = value;
-                    _angleStoryboard.Begin();
-                    return;
-                }
+                //if (value > Indicator.EndAngle)
+                //{
+                //    var angleAnimation = (DoubleAnimation)_angleStoryboard.Children[0];
+                //    angleAnimation.To = value;
+                //    _angleStoryboard.Begin();
+                //    return;
+                //}
 
                 Indicator.EndAngle = value;
 

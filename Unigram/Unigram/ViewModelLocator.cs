@@ -80,7 +80,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<PushService>().As<IPushService>().SingleInstance();
             container.ContainerBuilder.RegisterType<JumpListService>().As<IJumpListService>().SingleInstance();
             container.ContainerBuilder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<GifsService>().As<IGifsService>().SingleInstance();
+            //container.ContainerBuilder.RegisterType<GifsService>().As<IGifsService>().SingleInstance();
             container.ContainerBuilder.RegisterType<StickersService>().As<IStickersService>().SingleInstance();
             container.ContainerBuilder.RegisterType<StatsService>().As<IStatsService>().SingleInstance();
             container.ContainerBuilder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();

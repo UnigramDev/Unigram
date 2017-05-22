@@ -25,10 +25,6 @@ namespace Telegram.Api.Services.FileManager
 
         public TLInputWebFileLocation InputWebFileLocation { get; set; }
 
-        public TLInputDocumentFileLocation InputAudioLocation { get; set; }
-
-        public TLInputDocumentFileLocation InputVideoLocation { get; set; }
-
         public TLInputDocumentFileLocation InputDocumentLocation { get; set; }
 
         public TLInputFileLocationBase InputEncryptedFileLocation { get; set; }
@@ -43,8 +39,7 @@ namespace Telegram.Api.Services.FileManager
 
         public int FileSize { get; set; }
 
-        public byte[] CdnIV { get; set; }
-        public byte[] CdnKey { get; set; }
+        public TLUploadFileCdnRedirect CdnRedirect { get; set; }
 
         #region Http
 
