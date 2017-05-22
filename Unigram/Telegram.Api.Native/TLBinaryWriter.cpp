@@ -40,12 +40,12 @@ HRESULT TLBinaryWriter::RuntimeClassInitialize(TLBinaryWriter* writer)
 		return E_INVALIDARG;
 	}
 
-	if (writer->m_position >= writer->m_capacity)
+	if (writer->m_position > writer->m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
 
-	m_buffer = &writer->m_buffer[writer->m_position];
+	m_buffer = writer->m_buffer + writer->m_position;
 	m_capacity = writer->m_capacity - writer->m_position;
 	m_underlyingBuffer = writer->m_underlyingBuffer;
 	return S_OK;
@@ -85,10 +85,10 @@ HRESULT TLBinaryWriter::put_Position(UINT32 value)
 		return E_BOUNDS;
 	}
 
-	if (value > m_position)
+	/*if (value > m_position)
 	{
-		ZeroMemory(&m_buffer[m_position], value - m_position);
-	}
+		ZeroMemory(m_buffer + m_position, value - m_position);
+	}*/
 
 	m_position = value;
 	return S_OK;
@@ -240,7 +240,7 @@ HRESULT TLBinaryWriter::WriteRawBuffer(UINT32 __valueSize, BYTE* value)
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
 
-	CopyMemory(&m_buffer[m_position], value, __valueSize);
+	CopyMemory(m_buffer + m_position, value, __valueSize);
 
 	m_position += __valueSize;
 	return S_OK;
@@ -313,21 +313,21 @@ HRESULT TLBinaryWriter::WriteBuffer(BYTE const* buffer, UINT32 length)
 		m_buffer[m_position++] = (length >> 16) & 0xff;
 	}
 
-	CopyMemory(&m_buffer[m_position], buffer, length);
-	ZeroMemory(&m_buffer[m_position += length], padding);
+	CopyMemory(m_buffer + m_position, buffer, length);
 
-	m_position += padding;
+	m_position += length + padding;
+
+	/*m_position += length;
+
+	ZeroMemory(m_buffer + m_position, padding);
+
+	m_position += padding;*/
 	return S_OK;
 }
 
 void TLBinaryWriter::Reset()
 {
 	m_position = 0;
-}
-
-void TLBinaryWriter::Skip(UINT32 length)
-{
-	m_position += length;
 }
 
 
@@ -526,11 +526,6 @@ void TLObjectSizeCalculator::Reset()
 {
 	m_position = 0;
 	m_length = 0;
-}
-
-void TLObjectSizeCalculator::Skip(UINT32 length)
-{
-	m_position += length;
 }
 
 HRESULT TLObjectSizeCalculator::GetSize(ITLObject* object, UINT32* value)

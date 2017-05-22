@@ -2,10 +2,12 @@
 #include "Connection.h"
 #include "Datacenter.h"
 #include "NativeBuffer.h"
+#include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "ConnectionManager.h"
 
-#define CONNECTION_MAX_ATTEMPTS 5 
+#define CONNECTION_MAX_ATTEMPTS 5
+#define CONNECTION_MAX_PACKET_LENGTH 2 * 1024 * 1024
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
@@ -243,48 +245,77 @@ HRESULT Connection::OnSocketConnected()
 
 HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 {
-	auto decryptedBuffer = std::make_unique<BYTE[]>(length);
-	ConnectionCryptograpy::DecryptBuffer(buffer, decryptedBuffer.get(), length);
+	HRESULT result;
+	ComPtr<ConnectionManager> connectionManager;
+	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 
-	CopyMemory(decryptedBuffer.get(), buffer, length);
-
-	auto value = ((decryptedBuffer[0] & 0xff)) | ((decryptedBuffer[1] & 0xff) << 8) |
-		((decryptedBuffer[2] & 0xff) << 16) | ((decryptedBuffer[3] & 0xff) << 24);
-
-	UINT32 packetLength;
-	BYTE firstByte = *decryptedBuffer.get();
-	if ((firstByte & (1 << 7)) != 0)
+	if (m_partialPacketBuffer == nullptr)
 	{
-		/*buffer->position(mark);
-		if (buffer->remaining() < 4) {
-			NativeByteBuffer *reuseLater = restOfTheData;
-			restOfTheData = BuffersStorage::getInstance().getFreeBuffer(16384);
-			restOfTheData->writeBytes(buffer);
-			restOfTheData->limit(restOfTheData->position());
-			lastPacketLength = 0;
-			if (reuseLater != nullptr) {
-				reuseLater->reuse();
-			}
+		ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&m_partialPacketBuffer, length));
+
+		ConnectionCryptograpy::DecryptBuffer(buffer, m_partialPacketBuffer->GetBuffer(), length);
+	}
+	else
+	{
+		auto partialPacketLength = m_partialPacketBuffer->GetCapacity();
+		ReturnIfFailed(result, m_partialPacketBuffer->Merge(buffer, length));
+
+		ConnectionCryptograpy::DecryptBuffer(buffer, m_partialPacketBuffer->GetBuffer() + partialPacketLength, length);
+	}
+
+	ComPtr<TLBinaryReader> packetReader;
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&packetReader, m_partialPacketBuffer.Get()));
+
+	UINT32 packetPosition;
+	while (packetReader->HasUnconsumedBuffer())
+	{
+		packetPosition = packetReader->GetPosition();
+
+		BYTE firstByte;
+		BreakIfFailed(result, packetReader->ReadByte(&firstByte));
+
+		//I should probably move this in a lower position to avoid multiple acks
+		if ((firstByte & (1 << 7)) != 0)
+		{
+			INT32 ackId;
+			BreakIfFailed(result, packetReader->ReadBigEndianInt32(&ackId));
+			BreakIfFailed(result, connectionManager->OnConnectionQuickAckReceived(this, ackId & ~(1 << 31)));
+		}
+
+		UINT32 packetLength;
+		if (firstByte == 0x7f)
+		{
+			BreakIfFailed(result, packetReader->ReadUInt32(&packetLength));
+
+			packetLength *= 4;
+		}
+		else
+		{
+			packetLength = static_cast<UINT32>(firstByte) * 4;
+		}
+
+		if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH ||
+			FAILED(connectionManager->OnConnectionPacketReceived(this, packetReader.Get(), packetLength)))
+		{
+			return Reconnect();
+		}
+
+		if (FAILED(packetReader->put_Position(packetPosition + (firstByte == 0x7f ? 4 : 1) + packetLength)))
+		{
+			result = E_NOT_SUFFICIENT_BUFFER;
 			break;
 		}
-		int32_t ackId = buffer->readBigInt32(nullptr) & (~(1 << 31));
-		ConnectionsManager::getInstance().onConnectionQuickAckReceived(this, ackId);
-		continue;*/
 	}
 
-	if (firstByte != 0x7f)
+	if (result = E_NOT_SUFFICIENT_BUFFER)
 	{
-		packetLength = static_cast<UINT32>(firstByte) * 4;
+		auto newBufferLength = m_partialPacketBuffer->GetCapacity() - packetPosition;
+		MoveMemory(m_partialPacketBuffer->GetBuffer(), m_partialPacketBuffer->GetBuffer() + packetPosition, newBufferLength);
+
+		return m_partialPacketBuffer->Resize(newBufferLength);
 	}
-	else 
-	{
-		//currentPacketLength = ((uint32_t)buffer->readInt32(nullptr) >> 8) * 4;
-	}
 
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket data received event handling");
-
-	OutputDebugStringA(reinterpret_cast<const char*>(decryptedBuffer.get()));
-
+	m_partialPacketBuffer.Reset();
 	return S_OK;
 }
 

@@ -29,7 +29,6 @@ namespace ABI
 						virtual HRESULT STDMETHODCALLTYPE WriteBigEndianInt32(INT32 value) = 0;
 						virtual HRESULT STDMETHODCALLTYPE WriteWString(_In_ std::wstring const& string) = 0;
 						virtual HRESULT STDMETHODCALLTYPE WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length) = 0;
-						virtual void STDMETHODCALLTYPE Skip(UINT32 length) = 0;
 						virtual void STDMETHODCALLTYPE Reset() = 0;
 					};
 
@@ -80,7 +79,6 @@ namespace Telegram
 					IFACEMETHODIMP WriteBigEndianInt32(INT32 value);
 					IFACEMETHODIMP WriteWString(_In_ std::wstring const& string);
 					IFACEMETHODIMP WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length);
-					IFACEMETHODIMP_(void) Skip(UINT32 length);
 					IFACEMETHODIMP_(void) Reset();
 
 					//Internal methods
@@ -101,6 +99,16 @@ namespace Telegram
 					inline UINT32 GetCapacity() const
 					{
 						return m_capacity;
+					}
+
+					inline UINT32 GetUnstoredBufferLength() const
+					{
+						return m_capacity - m_position;
+					}
+
+					inline boolean HasUnstoredBuffer() const
+					{
+						return m_position < m_capacity;
 					}
 
 					inline IBuffer* GetUnderlyingBuffer() const
@@ -148,7 +156,6 @@ namespace Telegram
 					IFACEMETHODIMP WriteWString(_In_ std::wstring const& string);
 					IFACEMETHODIMP WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length);
 					IFACEMETHODIMP_(void) Reset();
-					IFACEMETHODIMP_(void) Skip(UINT32 length);
 
 					//Internal methods
 					static HRESULT GetSize(_In_ ITLObject* object, _Out_ UINT32* value);

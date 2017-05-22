@@ -65,7 +65,7 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, Se
 	}
 
 	m_sendBuffer.resize(SOCKET_SEND_BUFFER_SIZE);
-	m_receiveBuffer.resize(SOCKET_RECEIVE_BUFFER_SIZE);
+	m_receiveBuffer = std::make_unique<BYTE[]>(SOCKET_RECEIVE_BUFFER_SIZE);
 
 	m_socketConnectedEvent.Attach(CreateEvent(nullptr, TRUE, FALSE, nullptr));
 	if (!m_socketConnectedEvent.IsValid())
@@ -192,7 +192,7 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 	m_socket = INVALID_SOCKET;
 	m_socketEvent.Close();
 	m_sendBuffer = {};
-	m_receiveBuffer = {};
+	m_receiveBuffer.reset();
 
 	if (flags & SOCKET_CLOSE_RAISEEVENT)
 	{
@@ -264,9 +264,9 @@ HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 
 			HRESULT result;
 			int receivedBytes;
-			while ((receivedBytes = recv(m_socket, reinterpret_cast<char*>(m_receiveBuffer.data()), SOCKET_RECEIVE_BUFFER_SIZE, 0)) > 0)
+			while ((receivedBytes = recv(m_socket, reinterpret_cast<char*>(m_receiveBuffer.get()), SOCKET_RECEIVE_BUFFER_SIZE, 0)) > 0)
 			{
-				if (FAILED(result = OnDataReceived(m_receiveBuffer.data(), receivedBytes)))
+				if (FAILED(result = OnDataReceived(m_receiveBuffer.get(), receivedBytes)))
 				{
 					CloseSocket(WIN32_FROM_HRESULT(result), SOCKET_CLOSE_RAISEEVENT);
 

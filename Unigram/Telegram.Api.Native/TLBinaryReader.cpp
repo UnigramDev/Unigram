@@ -48,7 +48,7 @@ HRESULT TLBinaryReader::RuntimeClassInitialize(TLBinaryReader* reader)
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
 
-	m_buffer = &reader->m_buffer[reader->m_position];
+	m_buffer = reader->m_buffer + reader->m_position;
 	m_capacity = reader->m_capacity - reader->m_position;
 	m_underlyingBuffer = reader->m_underlyingBuffer;
 	return S_OK;
@@ -115,7 +115,7 @@ HRESULT TLBinaryReader::ReadInt16(INT16* value)
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
 
-	*value = ((m_buffer[m_position] & 0xff)) | ((m_buffer[m_position + 1] & 0xff) << 8);
+	*value = (m_buffer[m_position] & 0xff) | ((m_buffer[m_position + 1] & 0xff) << 8);
 
 	m_position += sizeof(INT16);
 	return S_OK;
@@ -138,7 +138,7 @@ HRESULT TLBinaryReader::ReadInt32(INT32* value)
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
 
-	*value = ((m_buffer[m_position] & 0xff)) | ((m_buffer[m_position + 1] & 0xff) << 8) |
+	*value = (m_buffer[m_position] & 0xff) | ((m_buffer[m_position + 1] & 0xff) << 8) |
 		((m_buffer[m_position + 2] & 0xff) << 16) | ((m_buffer[m_position + 3] & 0xff) << 24);
 
 	m_position += sizeof(INT32);
@@ -162,7 +162,7 @@ HRESULT TLBinaryReader::ReadInt64(INT64* value)
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
 
-	*value = ((m_buffer[m_position] & 0xffLL)) | ((m_buffer[m_position + 1] & 0xffLL) << 8LL) |
+	*value = (m_buffer[m_position] & 0xffLL) | ((m_buffer[m_position + 1] & 0xffLL) << 8LL) |
 		((m_buffer[m_position + 2] & 0xffLL) << 16LL) | ((m_buffer[m_position + 3] & 0xffLL) << 24LL) |
 		((m_buffer[m_position + 4] & 0xffLL) << 32LL) | ((m_buffer[m_position + 5] & 0xffLL) << 40LL) |
 		((m_buffer[m_position + 6] & 0xffLL) << 48LL) | ((m_buffer[m_position + 7] & 0xffLL) << 56LL);
@@ -301,7 +301,7 @@ HRESULT TLBinaryReader::ReadBigEndianInt32(INT32* value)
 	}
 
 	*value = ((m_buffer[m_position++] & 0xff) << 24) | ((m_buffer[m_position++] & 0xff) << 16) |
-		((m_buffer[m_position++] & 0xff) << 8) | ((m_buffer[m_position++] & 0xff));
+		((m_buffer[m_position++] & 0xff) << 8) | (m_buffer[m_position++] & 0xff);
 	return S_OK;
 }
 
@@ -331,7 +331,7 @@ HRESULT TLBinaryReader::ReadRawBuffer(UINT32 __valueSize, BYTE* value)
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
 
-	CopyMemory(value, &m_buffer[m_position], __valueSize);
+	CopyMemory(value, m_buffer + m_position, __valueSize);
 
 	m_position += __valueSize;
 	return S_OK;
@@ -351,11 +351,6 @@ HRESULT TLBinaryReader::ReadBuffer(BYTE* buffer, UINT32 length)
 void TLBinaryReader::Reset()
 {
 	m_position = 0;
-}
-
-void TLBinaryReader::Skip(UINT32 length)
-{
-	m_position += length;
 }
 
 HRESULT TLBinaryReader::ReadBuffer(BYTE const** buffer, UINT32* length)
@@ -393,7 +388,7 @@ HRESULT TLBinaryReader::ReadBuffer(BYTE const** buffer, UINT32* length)
 	}
 
 	*length = l;
-	*buffer = &m_buffer[m_position];
+	*buffer = m_buffer + m_position;
 
 	m_position += l + addition;
 	return S_OK;

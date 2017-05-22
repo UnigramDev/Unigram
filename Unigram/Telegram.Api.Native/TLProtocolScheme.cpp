@@ -84,10 +84,15 @@ HRESULT TLResPQ::ReadBody(ITLBinaryReaderEx* reader)
 	HRESULT result;
 	ReturnIfFailed(result, reader->ReadRawBuffer(ARRAYSIZE(m_nonce), m_nonce));
 	ReturnIfFailed(result, reader->ReadRawBuffer(ARRAYSIZE(m_serverNonce), m_serverNonce));
-	ReturnIfFailed(result, reader->ReadRawBuffer(ARRAYSIZE(m_pq), m_pq));
+	ReturnIfFailed(result, reader->ReadBuffer(m_pq, ARRAYSIZE(m_pq)));
 
 	UINT32 constructor;
 	ReturnIfFailed(result, reader->ReadUInt32(&constructor));
+
+	if (constructor != 0x1cb5c415)
+	{
+		return E_FAIL;
+	}
 
 	UINT32 count;
 	ReturnIfFailed(result, reader->ReadUInt32(&count));

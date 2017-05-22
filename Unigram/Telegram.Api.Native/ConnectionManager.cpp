@@ -9,6 +9,8 @@
 #include "TLProtocolScheme.h"
 #include "DefaultUserConfiguration.h"
 #include "Collections.h"
+#include "TLBinaryReader.h"
+#include "TLBinaryWriter.h"
 #include "NativeBuffer.h"
 #include "Helpers\COMHelper.h"
 
@@ -497,13 +499,46 @@ HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
 	return S_OK;
 }
 
-HRESULT ConnectionManager::OnConnectionDataReceived(Connection* connection)
+HRESULT ConnectionManager::OnConnectionPacketReceived(Connection* connection, TLBinaryReader* packetReader, UINT32 packetLength)
 {
 	HRESULT result;
 	auto lock = LockCriticalSection();
+
+	if (packetLength == 4)
+	{
+		INT32 errorCode;
+		ReturnIfFailed(result, packetReader->ReadInt32(&errorCode));
+
+		return E_FAIL;
+	}
+
+	INT64 keyId;
+	ReturnIfFailed(result, packetReader->ReadInt64(&keyId));
+
 	auto datacenter = connection->GetDatacenter();
 
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
+	if (keyId == 0)
+	{
+		INT64 messageId;;
+		ReturnIfFailed(result, packetReader->ReadInt64(&messageId));
+
+		if (connection->IsMessageIdProcessed(messageId))
+		{
+			return S_OK;
+		}
+
+		UINT32 objectSize;
+		ReturnIfFailed(result, packetReader->ReadUInt32(&objectSize));
+
+		ComPtr<ITLObject> object;
+		ReturnIfFailed(result, packetReader->ReadObject(&object));
+
+		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement packet handling");
+	}
+	else
+	{
+		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement encrypted packet handling");
+	}
 
 	return S_OK;
 }

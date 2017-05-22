@@ -39,6 +39,12 @@ namespace Telegram
 	{
 		namespace Native
 		{
+			namespace TL
+			{
+
+				class TLBinaryReader;
+
+			}
 
 			class Datacenter;
 
@@ -94,7 +100,7 @@ namespace Telegram
 					UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, RequestFlag flags, _Out_ ComPtr<Request>& request);
 				HRESULT OnNetworkStatusChanged(_In_ IInspectable* sender);
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
-				HRESULT OnConnectionDataReceived(_In_ Connection* connection);
+				HRESULT OnConnectionPacketReceived(_In_ Connection* connection, _In_ TL::TLBinaryReader* packetReader, UINT32 packetLength);
 				HRESULT OnConnectionQuickAckReceived(_In_ Connection* connection, INT32 ack);
 				HRESULT OnConnectionClosed(_In_ Connection* connection);
 				HRESULT OnRequestEnqueued(_In_ PTP_CALLBACK_INSTANCE instance);

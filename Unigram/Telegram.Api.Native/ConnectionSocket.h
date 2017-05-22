@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <memory>
 #include <string>
 #include <Winsock2.h>
 #include <wrl.h>
@@ -53,7 +54,7 @@ namespace Telegram
 				WSAEvent m_socketEvent;
 				Event m_socketConnectedEvent;
 				std::vector<BYTE> m_sendBuffer;
-				std::vector<BYTE> m_receiveBuffer;
+				std::unique_ptr<BYTE[]> m_receiveBuffer;
 			};
 
 		}

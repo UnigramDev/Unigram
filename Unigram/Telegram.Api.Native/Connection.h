@@ -30,6 +30,7 @@ namespace Telegram
 			}
 
 			class Datacenter;
+			class NativeBuffer;
 
 			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection>,
 				public virtual EventObjectT<EventTraits::WaitTraits>, public ConnectionSession, public ConnectionSocket, public ConnectionCryptograpy
@@ -81,6 +82,9 @@ namespace Telegram
 				ConnectionNeworkType m_currentNetworkType;
 				ComPtr<Datacenter> m_datacenter;
 				ComPtr<Timer> m_reconnectionTimer;
+
+
+				ComPtr<NativeBuffer> m_partialPacketBuffer;
 
 				UINT32 m_failedConnectionCount;
 				UINT32 m_connectionAttemptCount;
