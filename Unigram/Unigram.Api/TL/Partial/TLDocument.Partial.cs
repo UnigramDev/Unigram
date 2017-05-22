@@ -107,13 +107,29 @@ namespace Telegram.Api.TL
                 var videoAttribute = Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 if (videoAttribute != null)
                 {
-                    return TimeSpan.FromSeconds(videoAttribute.Duration).ToString("mm\\:ss");
+                    var duration = TimeSpan.FromSeconds(videoAttribute.Duration);
+                    if (duration.TotalHours >= 1)
+                    {
+                        return duration.ToString("h\\:mm\\:ss");
+                    }
+                    else
+                    {
+                        return duration.ToString("mm\\:ss");
+                    }
                 }
 
                 var audioAttribute = Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
                 if (audioAttribute != null)
                 {
-                    return TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
+                    var duration = TimeSpan.FromSeconds(audioAttribute.Duration);
+                    if (duration.TotalHours >= 1)
+                    {
+                        return duration.ToString("h\\:mm\\:ss");
+                    }
+                    else
+                    {
+                        return duration.ToString("mm\\:ss");
+                    }
                 }
 
                 return null;
