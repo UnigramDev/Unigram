@@ -31,16 +31,16 @@
                     <TextBlock Text="MESSAGE NOTIFICATIONS" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                     <CheckBox IsChecked="{x:Bind ViewModel.PrivateAlert, Mode=TwoWay}" Content="Alert"/>
                     <CheckBox IsChecked="{x:Bind ViewModel.PrivatePreview, Mode=TwoWay}" Content="Message Preview" Margin="0,8"/>
-                    <ComboBox Header="Sound" SelectedIndex="0">
-                        <ComboBoxItem Content="None"/>
+                    <ComboBox Header="Sound" SelectedIndex="0" IsEnabled="False">
+                        <ComboBoxItem Content="Default"/>
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="GROUP NOTIFICATIONS" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                     <CheckBox IsChecked="{x:Bind ViewModel.GroupAlert, Mode=TwoWay}" Content="Alert"/>
                     <CheckBox IsChecked="{x:Bind ViewModel.GroupPreview, Mode=TwoWay}" Content="Message Preview" Margin="0,8"/>
-                    <ComboBox Header="Sound" SelectedIndex="0">
-                        <ComboBoxItem Content="None"/>
+                    <ComboBox Header="Sound" SelectedIndex="0" IsEnabled="False">
+                        <ComboBoxItem Content="Default"/>
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
