@@ -116,7 +116,9 @@ namespace Unigram.Controls
             }
             else
             {
+#if DEBUG
                 IsVideo = !IsVideo;
+#endif
             }
         }
 

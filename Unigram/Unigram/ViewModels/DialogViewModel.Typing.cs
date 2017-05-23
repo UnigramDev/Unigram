@@ -112,33 +112,32 @@ namespace Unigram.ViewModels
                 if (tuple != null)
                 {
                     var action = tuple.Item2;
-                    if (action is TLSendMessageUploadPhotoAction)
+                    switch (action)
                     {
-                        return AppResources.SendingPhoto;
-                    }
-                    else if (action is TLSendMessageRecordAudioAction)
-                    {
-                        return AppResources.RecordingVoiceMessage;
-                    }
-                    else if (action is TLSendMessageUploadAudioAction)
-                    {
-                        return AppResources.SendingAudio;
-                    }
-                    else if (action is TLSendMessageUploadDocumentAction actionz)
-                    {
-                        return AppResources.SendingFile;
-                    }
-                    else if (action is TLSendMessageRecordVideoAction)
-                    {
-                        return AppResources.RecordingVideo;
-                    }
-                    else if (action is TLSendMessageUploadVideoAction)
-                    {
-                        return AppResources.SendingVideo;
-                    }
-                    else if (action is TLSendMessageGamePlayAction)
-                    {
-                        return AppResources.PlayingGame;
+                        //case TLSendMessageChooseContactAction chooseContact:
+                        //    return "";
+                        case TLSendMessageGamePlayAction gamePlay:
+                            return AppResources.PlayingGame;
+                        //case TLSendMessageGeoLocationAction geoLocation:
+                        //    return "";
+                        case TLSendMessageRecordAudioAction recordAudio:
+                            return AppResources.RecordingVoiceMessage;
+                        case TLSendMessageRecordRoundAction recordRound:
+                            return AppResources.RecordingVideoMessage;
+                        case TLSendMessageRecordVideoAction recordVideo:
+                            return AppResources.RecordingVideo;
+                        //case TLSendMessageTypingAction typing:
+                        //    return AppResources.Typing;
+                        case TLSendMessageUploadAudioAction uploadAudio:
+                            return AppResources.SendingAudio;
+                        case TLSendMessageUploadDocumentAction uploadDocument:
+                            return AppResources.SendingFile;
+                        case TLSendMessageUploadPhotoAction uploadPhoto:
+                            return AppResources.SendingPhoto;
+                        case TLSendMessageUploadRoundAction uploadRound:
+                            return AppResources.SendingVideoMessage;
+                        case TLSendMessageUploadVideoAction uploadVideo:
+                            return AppResources.SendingVideo;
                     }
                 }
 
@@ -160,33 +159,32 @@ namespace Unigram.ViewModels
                 if (tuple != null)
                 {
                     var action = tuple.Item2;
-                    if (action is TLSendMessageUploadPhotoAction)
+                    switch (action)
                     {
-                        return string.Format(AppResources.IsSendingPhoto, userName);
-                    }
-                    if (action is TLSendMessageUploadAudioAction)
-                    {
-                        return string.Format(AppResources.IsSendingAudio, userName);
-                    }
-                    if (action is TLSendMessageRecordAudioAction)
-                    {
-                        return string.Format(AppResources.IsRecordingAudio, userName);
-                    }
-                    if (action is TLSendMessageUploadDocumentAction)
-                    {
-                        return string.Format(AppResources.IsSendingFile, userName);
-                    }
-                    if (action is TLSendMessageRecordVideoAction)
-                    {
-                        return string.Format(AppResources.IsRecordingVideo, userName);
-                    }
-                    if (action is TLSendMessageUploadVideoAction)
-                    {
-                        return string.Format(AppResources.IsSendingVideo, userName);
-                    }
-                    if (action is TLSendMessageGamePlayAction)
-                    {
-                        return string.Format(AppResources.IsPlayingGame, userName);
+                        //case TLSendMessageChooseContactAction chooseContact:
+                        //    return "";
+                        case TLSendMessageGamePlayAction gamePlay:
+                            return string.Format(AppResources.IsPlayingGame, userName);
+                        //case TLSendMessageGeoLocationAction geoLocation:
+                        //    return "";
+                        case TLSendMessageRecordAudioAction recordAudio:
+                            return string.Format(AppResources.IsRecordingAudio, userName);
+                        case TLSendMessageRecordRoundAction recordRound:
+                            return string.Format(AppResources.IsRecordingVideoMessage, userName);
+                        case TLSendMessageRecordVideoAction recordVideo:
+                            return string.Format(AppResources.IsRecordingVideo, userName);
+                        //case TLSendMessageTypingAction typing:
+                        //    return string.Format(AppResources.IsTyping, userName);
+                        case TLSendMessageUploadAudioAction uploadAudio:
+                            return string.Format(AppResources.IsSendingAudio, userName);
+                        case TLSendMessageUploadDocumentAction uploadDocument:
+                            return string.Format(AppResources.IsSendingFile, userName);
+                        case TLSendMessageUploadPhotoAction uploadPhoto:
+                            return string.Format(AppResources.IsSendingPhoto, userName);
+                        case TLSendMessageUploadRoundAction uploadRound:
+                            return string.Format(AppResources.IsSendingVideoMessage, userName);
+                        case TLSendMessageUploadVideoAction uploadVideo:
+                            return string.Format(AppResources.IsSendingVideo, userName);
                     }
                 }
 

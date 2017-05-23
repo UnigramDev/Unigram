@@ -9,8 +9,8 @@
     mc:Ignorable="d"
     VerticalAlignment="Stretch"
     HorizontalAlignment="Stretch"
-    Background="Transparent"
-    Padding="0,0,0,48">
+    OverlayBrush="{x:Null}"
+    Background="Transparent">
 
     <Control.Resources>
         <Style TargetType="controls:ProgressBarRing">
@@ -35,21 +35,51 @@
             </Setter>
         </Style>
     </Control.Resources>
-    
-    <Grid SizeChanged="OnSizeChanged">
-        <!--<Ellipse x:Name="Capture" Width="180" Height="180" Fill="Gray"/>-->
-        <CaptureElement x:Name="Capture" Stretch="UniformToFill" Width="200" Height="200"/>
 
-        <Path Fill="#54000000">
-            <Path.Data>
-                <GeometryGroup>
-                    <RectangleGeometry x:Name="OuterClip" Rect="0,0,360,360"/>
-                    <EllipseGeometry x:Name="InnerClip" Center="180,180" RadiusX="100" RadiusY="100"/>
-                </GeometryGroup>
-            </Path.Data>
-        </Path>
+    <UserControl x:Name="LayoutRoot">
+        <Grid>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="AdaptiveStates">
+                    <VisualState x:Name="FilledState">
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="820"/>
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Target="MasterColumn.Width" Value="260*" />
+                            <Setter Target="DetailColumn.Width" Value="540*" />
+                            <Setter Target="MasterColumn.MinWidth" Value="260" />
+                            <Setter Target="MasterColumn.MaxWidth" Value="540" />
+                            <Setter Target="DetailPresenter.(Grid.Column)" Value="1" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="NarrowState">
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="0"/>
+                        </VisualState.StateTriggers>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="MasterColumn"/>
+                <ColumnDefinition x:Name="DetailColumn" Width="0"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid x:Name="DetailPresenter" SizeChanged="OnSizeChanged" Margin="0,0,0,48">
+                <Ellipse x:Name="Capture" Width="200" Height="200" Fill="Gray"/>
+                <!--<CaptureElement x:Name="Capture" Stretch="UniformToFill" Width="200" Height="200"/>-->
+
+                <Path Fill="#54000000">
+                    <Path.Data>
+                        <GeometryGroup>
+                            <RectangleGeometry x:Name="OuterClip" Rect="0,0,360,360"/>
+                            <EllipseGeometry x:Name="InnerClip" Center="180,180" RadiusX="100" RadiusY="100"/>
+                        </GeometryGroup>
+                    </Path.Data>
+                </Path>
         
-        <!--<MediaPlayerElement x:Name="PlayerElement"/>-->
-        <controls:ProgressBarRing Value="0.5"/>
-    </Grid>
+                <!--<MediaPlayerElement x:Name="PlayerElement"/>-->
+                <controls:ProgressBarRing Value="0.5"/>
+            </Grid>
+        </Grid>
+    </UserControl>
 </controls:ContentDialogBase>

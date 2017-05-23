@@ -719,4 +719,16 @@
   <data name="MessageActionChatMigrateToGeneric" xml:space="preserve">
     <value>Chat migrated to supergroup</value>
   </data>
+  <data name="RecordingVideoMessage" xml:space="preserve">
+    <value>Recording a video message</value>
+  </data>
+  <data name="SendingVideoMessage" xml:space="preserve">
+    <value>Sending a video message</value>
+  </data>
+  <data name="IsRecordingVideoMessage" xml:space="preserve">
+    <value>{0} is recording a video message</value>
+  </data>
+  <data name="IsSendingVideoMessage" xml:space="preserve">
+    <value>{0} is sending a video message</value>
+  </data>
 </root>

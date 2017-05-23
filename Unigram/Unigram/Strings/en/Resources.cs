@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 04/11/2017 11:07:21
+// 	Generated: 05/23/2017 11:33:17
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -1135,6 +1135,50 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessageActionChatMigrateToGeneric");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recording a video message"
+        /// </summary>
+        public static string RecordingVideoMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("RecordingVideoMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending a video message"
+        /// </summary>
+        public static string SendingVideoMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("SendingVideoMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is recording a video message"
+        /// </summary>
+        public static string IsRecordingVideoMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("IsRecordingVideoMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is sending a video message"
+        /// </summary>
+        public static string IsSendingVideoMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("IsSendingVideoMessage");
             }
         }
     }
