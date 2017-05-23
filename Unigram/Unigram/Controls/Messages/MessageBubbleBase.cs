@@ -227,11 +227,14 @@ namespace Unigram.Controls.Messages
             {
                 var text = sender as RichTextBlock;
                 var hyperlink = text.GetHyperlinkFromPoint(point);
-                if (hyperlink != null)
+                if (hyperlink != null && hyperlink.NavigateUri != null)
                 {
+                    var open = new MenuFlyoutItem { Text = "Open link" };
+                    var copy = new MenuFlyoutItem { Text = "Copy link" };
+
                     var flyout = new MenuFlyout();
-                    flyout.Items.Add(new MenuFlyoutItem { Text = "Open link" });
-                    flyout.Items.Add(new MenuFlyoutItem { Text = "Copy link" });
+                    flyout.Items.Add(open);
+                    flyout.Items.Add(copy);
                     flyout.ShowAt(sender, point);
                     args.Handled = true;
                 }

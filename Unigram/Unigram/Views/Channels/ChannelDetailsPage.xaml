@@ -90,10 +90,10 @@
                                               Style="{StaticResource HyperButtonStyle}"
                                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
 
-                        <controls:HyperCheckButton Content="Enabled"
-                                                   Tag="Notifications and sounds"
-                                                   IsOn="{Binding AreNotificationsEnabled}"
-                                                   Style="{ThemeResource CheckButtonStyle}"/>
+                        <ToggleSwitch Header="Notifications and sounds"
+                                      IsOn="{x:Bind ViewModel.AreNotificationsEnabled, Mode=OneWay}"
+                                      Style="{ThemeResource CheckButtonStyle}"
+                                      IsEnabled="False"/>
 
                         <controls:HyperButton Content="Sound"
                                               Command="{Binding MediaCommand}"

@@ -51,10 +51,12 @@ using Windows.UI;
 using Unigram.Views.Channels;
 using Unigram.Themes;
 using Windows.UI.Xaml.Media.Animation;
+using Template10.Common;
+using Template10.Services.NavigationService;
 
 namespace Unigram.Views
 {
-    public sealed partial class DialogPage : Page
+    public sealed partial class DialogPage : Page, IMasterDetailPage
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -218,7 +220,9 @@ namespace Unigram.Views
             _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
             lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
 
+#if DEBUG
             txtMessage.Focus(FocusState.Keyboard);
+#endif
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -240,6 +244,17 @@ namespace Unigram.Views
         {
             args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(1, GridUnitType.Auto);
+        }
+
+        public bool OnBackRequested()
+        {
+            if (StickersPanel.Visibility == Visibility.Visible)
+            {
+                StickersPanel.Visibility = Visibility.Collapsed;
+                return true;
+            }
+
+            return false;
         }
 
         //private bool _isAlreadyLoading;
@@ -475,15 +490,17 @@ namespace Unigram.Views
 
         private void Stickers_Click(object sender, RoutedEventArgs e)
         {
-            StickersPanel.Visibility = StickersPanel.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-
-            if (StickersPanel.Visibility == Visibility.Visible)
+            if (StickersPanel.Visibility == Visibility.Collapsed)
             {
+                StickersPanel.Visibility = Visibility.Visible;
+
                 ViewModel.OpenStickersCommand.Execute(null);
                 InputPane.GetForCurrentView().TryHide();
             }
             else
             {
+                StickersPanel.Visibility = Visibility.Collapsed;
+
                 InputPane.GetForCurrentView().TryShow();
             }
         }
@@ -500,7 +517,7 @@ namespace Unigram.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.SelectedMessages = new List<TLMessageBase>(lvDialogs.SelectedItems.Cast<TLMessageBase>());
+            ViewModel.SelectedMessages = new List<TLMessageCommonBase>(lvDialogs.SelectedItems.Cast<TLMessageCommonBase>());
         }
 
         #region Context menu

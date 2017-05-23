@@ -25,13 +25,11 @@ using System.Linq;
 using Unigram.Controls.Views;
 using Unigram.Views.Users;
 using Unigram.Converters;
+using System.Runtime.CompilerServices;
 
 namespace Unigram.ViewModels.Users
 {
-    public class UserDetailsViewModel : UnigramViewModelBase,
-        IHandle<TLUpdateUserBlocked>,
-        IHandle<TLUpdateNotifySettings>,
-        IHandle
+    public class UserDetailsViewModel : UnigramViewModelBase, IHandle<TLUpdateUserBlocked>, IHandle<TLUpdateNotifySettings>
     {
         public string LastSeen { get; internal set; }
 
@@ -368,7 +366,7 @@ namespace Unigram.ViewModels.Users
         {
             get
             {
-                var settings = Full?.NotifySettings as TLPeerNotifySettings;
+                var settings = _full?.NotifySettings as TLPeerNotifySettings;
                 if (settings != null)
                 {
                     return settings.MuteUntil == 0;
@@ -525,6 +523,41 @@ namespace Unigram.ViewModels.Users
                 }
 
                 return Visibility.Collapsed;
+            }
+        }
+
+        public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
+        private async void ToggleMuteExecute()
+        {
+            var notifySettings = _full.NotifySettings as TLPeerNotifySettings;
+            if (notifySettings != null)
+            {
+                var muteUntil = notifySettings.MuteUntil == int.MaxValue ? 0 : int.MaxValue;
+                var settings = new TLInputPeerNotifySettings
+                {
+                    MuteUntil = muteUntil,
+                    IsShowPreviews = notifySettings.IsShowPreviews,
+                    IsSilent = notifySettings.IsSilent,
+                    Sound = notifySettings.Sound
+                };
+
+                var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = _item.ToInputPeer() }, settings);
+                if (response.IsSucceeded)
+                {
+                    notifySettings.MuteUntil = muteUntil;
+                    RaisePropertyChanged(() => AreNotificationsEnabled);
+                    Full.RaisePropertyChanged(() => Full.NotifySettings);
+
+                    var dialog = CacheService.GetDialog(_item.ToPeer());
+                    if (dialog != null)
+                    {
+                        dialog.NotifySettings = _full.NotifySettings;
+                        dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                        dialog.RaisePropertyChanged(() => dialog.Self);
+                    }
+
+                    CacheService.Commit();
+                }
             }
         }
     }
