@@ -5,6 +5,7 @@
 #include <wrl.h>
 #include <windows.foundation.h>
 #include "Telegram.Api.Native.h"
+#include "DatacenterServer.h"
 #include "MultiThreadObject.h"
 
 #define DOWNLOAD_CONNECTIONS_COUNT 2
@@ -24,21 +25,14 @@ namespace Telegram
 	{
 		namespace Native
 		{
-
-			struct ServerSalt
+			namespace TL
 			{
-				INT32 ValidSince;
-				INT32 ValidUntil;
-				INT64 Salt;
-			};
 
-			struct ServerEndpoint
-			{
-				std::wstring Address;
-				UINT32 Port;
-			};
+				class TLResPQ;
 
+			}
 
+			
 			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IDatacenter, CloakedIid<IClosable>>, public MultiThreadObject
 			{
 				friend class Connection;
@@ -102,12 +96,15 @@ namespace Telegram
 				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
 				HRESULT OnHandshakeResponseReceived(_In_ Connection* connection, INT64 messageId, _In_ ITLObject* object);
+				HRESULT OnHandshakePQ(_In_ TL::TLResPQ* pqResponse);
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
 				HRESULT SendRequest(_In_ ITLObject* object, _In_ Connection* connection);
+				HRESULT SendAckRequest(INT64 messageId);				
 				boolean ContainsServerSalt(INT64 salt, size_t count);
 
 				UINT32 m_id;
 				HandshakeState m_handshakeState;
+				std::unique_ptr<HandshakeContext> m_handshakeContext;
 				std::vector<ServerEndpoint> m_ipv4Endpoints;
 				std::vector<ServerEndpoint> m_ipv4DownloadEndpoints;
 				std::vector<ServerEndpoint> m_ipv6Endpoints;

@@ -1,7 +1,11 @@
 #pragma once
-#include "TLObject.h"
+#include <wrl.h>
 #include "Telegram.Api.Native.h"
+#include "TLObject.h"
+#include "DatacenterServer.h"
+#include "NativeBuffer.h"
 
+using namespace Microsoft::WRL;
 using ABI::Telegram::Api::Native::TL::ITLError;
 using ABI::Telegram::Api::Native::TL::ITLErrorFactory;
 
@@ -11,10 +15,13 @@ namespace Telegram
 	{
 		namespace Native
 		{
+
 			namespace TL
 			{
 
 				class TLError;
+				class TLMsgsAck;
+				class TLReqDHParams;
 				class TLReqPQ;
 				class TLResPQ;
 				class TLFutureSalts;
@@ -22,13 +29,16 @@ namespace Telegram
 				class TLInvokeWithLayer;
 				class TLInitConnection;
 
-				typedef BYTE TLAuthNonce[16];
-
+				typedef BYTE TLAuthPQ[8];
+				typedef BYTE TLAuthNonce16[16];
+				typedef BYTE TLAuthNonce32[32];
 
 				namespace TLObjectTraits
 				{
 
 					MakeTLObjectTraits(TLError, 0xc4b9f9bb, false);
+					MakeTLObjectTraits(TLMsgsAck, 0x62d6b459, false);
+					MakeTLObjectTraits(TLReqDHParams, 0xd712e4be, false);
 					MakeTLObjectTraits(TLReqPQ, 0x60469778, false);
 					MakeTLObjectTraits(TLResPQ, 0x05162463, false);
 					MakeTLObjectTraits(TLFutureSalts, 0xae500895, false);
@@ -77,6 +87,61 @@ namespace Telegram
 					HString m_text;
 				};
 
+				class TLMsgsAck WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLMsgsAckTraits>>
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				public:
+					//Internal methods
+					inline std::vector<INT64>& GetMsgIds()
+					{
+						return m_msgIds;
+					}
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
+
+				private:
+					std::vector<INT64> m_msgIds;
+				};
+
+				class TLReqDHParams WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLReqDHParamsTraits>>
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				public:
+					//Internal methods
+					STDMETHODIMP RuntimeClassInitialize(_In_ TLAuthNonce16 nonce, _In_ TLResPQ* pqResponse);
+
+					inline TLAuthNonce16 const& GetNonce() const
+					{
+						return m_nonce;
+					}
+
+					inline TLAuthNonce16 const& GetServerNonce() const
+					{
+						return m_serverNonce;
+					}
+
+					inline TLAuthNonce32 const& GetNewNonce() const
+					{
+						return m_newNonce;
+					}
+
+				protected:
+					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
+
+				private:
+					TLAuthNonce16 m_nonce;
+					TLAuthNonce16 m_serverNonce;
+					TLAuthNonce32 m_newNonce;
+					BYTE m_p[4];
+					BYTE m_q[4];
+					INT64 m_publicKeyFingerprint;
+					ComPtr<NativeBuffer> m_innerDataBuffer;
+				};
+
 				class TLReqPQ WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLReqPQTraits>>
 				{
 					InspectableClass(Traits::RuntimeClassName, BaseTrust);
@@ -86,7 +151,7 @@ namespace Telegram
 					~TLReqPQ();
 
 					//Internal methods
-					inline TLAuthNonce const& GetNonce() const
+					inline TLAuthNonce16 const& GetNonce() const
 					{
 						return m_nonce;
 					}
@@ -95,7 +160,7 @@ namespace Telegram
 					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
 
 				private:
-					TLAuthNonce m_nonce;
+					BYTE m_nonce[16];
 				};
 
 				class TLResPQ WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLResPQTraits>>
@@ -107,17 +172,17 @@ namespace Telegram
 					~TLResPQ();
 
 					//Internal methods
-					inline TLAuthNonce const& GetNonce() const
+					inline TLAuthNonce16 const& GetNonce() const
 					{
 						return m_nonce;
 					}
 
-					inline TLAuthNonce const& GetServerNonce() const
+					inline TLAuthNonce16 const& GetServerNonce() const
 					{
 						return m_serverNonce;
 					}
 
-					inline UINT64 GetPQ() const
+					inline TLAuthPQ const& GetPQ() const
 					{
 						return m_pq;
 					}
@@ -131,9 +196,9 @@ namespace Telegram
 					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* writer) override;
 
 				private:
-					TLAuthNonce m_nonce;
-					TLAuthNonce m_serverNonce;
-					UINT64 m_pq;
+					BYTE m_nonce[16];
+					BYTE m_serverNonce[16];
+					BYTE m_pq[8];
 					std::vector<INT64> m_serverPublicKeyFingerprints;
 				};
 
@@ -156,7 +221,7 @@ namespace Telegram
 						return m_now;
 					}
 
-					inline std::vector<ComPtr<TLFutureSalt>> const& GetSalts() const
+					inline std::vector<ServerSalt> const& GetSalts() const
 					{
 						return m_salts;
 					}
@@ -167,7 +232,7 @@ namespace Telegram
 				private:
 					INT64 m_reqMessageId;
 					INT32 m_now;
-					std::vector<ComPtr<TLFutureSalt>> m_salts;
+					std::vector<ServerSalt> m_salts;
 				};
 
 				class TLFutureSalt WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLFutureSaltTraits>>
@@ -179,17 +244,7 @@ namespace Telegram
 					~TLFutureSalt();
 
 					//Internal methods
-					inline INT32 GetValidSince() const
-					{
-						return m_validSince;
-					}
-
-					inline INT32 GetValidUntil() const
-					{
-						return m_validUntil;
-					}
-
-					inline INT64 GetSalt() const
+					inline ServerSalt const& GetSalt() const
 					{
 						return m_salt;
 					}
@@ -198,9 +253,7 @@ namespace Telegram
 					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
 
 				private:
-					INT32 m_validSince;
-					INT32 m_validUntil;
-					INT64 m_salt;
+					ServerSalt m_salt;
 				};
 
 				class TLInvokeWithLayer WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLInvokeWithLayerTraits>, TLObjectWithQuery>

@@ -77,6 +77,7 @@
     <ClInclude Include="Collections.h" />
     <ClInclude Include="DatacenterCryptography.h" />
     <ClInclude Include="ConnectionCryptography.h" />
+    <ClInclude Include="DatacenterServer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

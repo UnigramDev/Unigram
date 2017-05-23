@@ -292,6 +292,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="ConnectionSession.h" />
     <ClInclude Include="Datacenter.h" />
     <ClInclude Include="DatacenterCryptography.h" />
+    <ClInclude Include="DatacenterServer.h" />
     <ClInclude Include="DefaultUserConfiguration.h" />
     <ClInclude Include="EventObject.h" />
     <ClInclude Include="NativeBuffer.h" />

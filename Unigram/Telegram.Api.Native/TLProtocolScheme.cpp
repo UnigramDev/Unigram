@@ -1,7 +1,11 @@
 #include "pch.h"
-#include <openssl/rand.h>
 #include "TLProtocolScheme.h"
+#include "Datacenter.h"
+#include "DatacenterCryptography.h"
 #include "ConnectionManager.h"
+#include "TLBinaryReader.h"
+#include "TLBinaryWriter.h"
+#include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
@@ -9,6 +13,7 @@ using namespace Telegram::Api::Native::TL;
 ActivatableClassWithFactory(TLError, TLErrorFactory);
 
 RegisterTLObjectConstructor(TLError);
+RegisterTLObjectConstructor(TLMsgsAck);
 RegisterTLObjectConstructor(TLResPQ);
 RegisterTLObjectConstructor(TLFutureSalts);
 RegisterTLObjectConstructor(TLFutureSalt);
@@ -53,9 +58,114 @@ HRESULT TLError::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
+HRESULT TLMsgsAck::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	UINT32 constructor;
+	ReturnIfFailed(result, reader->ReadUInt32(&constructor));
+
+	if (constructor != 0x1cb5c415)
+	{
+		return E_FAIL;
+	}
+
+	UINT32 count;
+	ReturnIfFailed(result, reader->ReadUInt32(&count));
+
+	m_msgIds.resize(count);
+
+	for (UINT32 i = 0; i < count; i++)
+	{
+		ReturnIfFailed(result, reader->ReadInt64(&m_msgIds[i]));
+	}
+
+	return S_OK;
+}
+
+HRESULT TLMsgsAck::WriteBody(ITLBinaryWriterEx* writer)
+{
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteInt32(0x1cb5c415));
+	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(m_msgIds.size())));
+
+	for (size_t i = 0; i < m_msgIds.size(); i++)
+	{
+		ReturnIfFailed(result, writer->WriteInt64(m_msgIds[i]));
+	}
+
+	return S_OK;
+}
+
+
+HRESULT TLReqDHParams::RuntimeClassInitialize(TLAuthNonce16 nonce, TLResPQ* pqResponse)
+{
+	if (nonce == nullptr || pqResponse == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (!CheckNonces(nonce, pqResponse->GetNonce()))
+	{
+		return E_INVALIDARG;
+	}
+
+	ServerPublicKey const* serverPublicKey;
+	if (!SelectPublicKey(pqResponse->GetServerPublicKeyFingerprints(), &serverPublicKey))
+	{
+		return E_FAIL;
+	}
+
+	auto pq = pqResponse->GetPQ();
+	UINT64 pq64 = ((pq[0] & 0xffULL) << 56ULL) | ((pq[1] & 0xffULL) << 48ULL) | ((pq[2] & 0xffULL) << 40ULL) | ((pq[3] & 0xffULL) << 32ULL) |
+		((pq[4] & 0xffULL) << 24ULL) | ((pq[5] & 0xffULL) << 16ULL) | ((pq[6] & 0xffULL) << 8ULL) | ((pq[7] & 0xffULL));
+
+	UINT32 p;
+	UINT32 q;
+	if (!FactorizePQ(pq64, p, q))
+	{
+		return E_FAIL;
+	}
+
+	m_p[0] = (p >> 24) & 0xff;
+	m_p[1] = (p >> 16) & 0xff;
+	m_p[2] = (p >> 8) & 0xff;
+	m_p[3] = p & 0xff;
+
+	m_q[0] = (q >> 24) & 0xff;
+	m_q[1] = (q >> 16) & 0xff;
+	m_q[2] = (q >> 8) & 0xff;
+	m_q[3] = q & 0xff;
+
+	CopyMemory(m_nonce, nonce, sizeof(m_nonce));
+	CopyMemory(m_serverNonce, pqResponse->GetNonce(), sizeof(m_serverNonce));
+	RAND_bytes(m_newNonce, sizeof(m_newNonce));
+	m_publicKeyFingerprint = serverPublicKey->Fingerprint;
+
+	HRESULT result;
+	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&m_innerDataBuffer, sizeof(UINT32) + 2 * sizeof(TLAuthNonce16) + sizeof(TLAuthNonce32) + 28 + SHA_DIGEST_LENGTH));
+
+	ComPtr<TLBinaryWriter> innerDataWriter;
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&innerDataWriter, m_innerDataBuffer.Get()));
+	ReturnIfFailed(result, innerDataWriter->WriteUInt32(0x83c95aec));
+	ReturnIfFailed(result, innerDataWriter->WriteBuffer(pq, sizeof(TLAuthPQ)));
+	ReturnIfFailed(result, innerDataWriter->WriteBuffer(m_p, sizeof(m_p)));
+	ReturnIfFailed(result, innerDataWriter->WriteBuffer(m_q, sizeof(m_q)));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_nonce), m_nonce));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_serverNonce), m_serverNonce));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_newNonce), m_newNonce));
+
+	return S_OK;
+}
+
+HRESULT TLReqDHParams::WriteBody(ITLBinaryWriterEx* writer)
+{
+	return S_OK;
+}
+
+
 TLReqPQ::TLReqPQ()
 {
-	RAND_bytes(m_nonce, 16);
+	RAND_bytes(m_nonce, sizeof(m_nonce));
 }
 
 TLReqPQ::~TLReqPQ()
@@ -64,15 +174,15 @@ TLReqPQ::~TLReqPQ()
 
 HRESULT TLReqPQ::WriteBody(ITLBinaryWriterEx* writer)
 {
-	return writer->WriteRawBuffer(ARRAYSIZE(m_nonce), m_nonce);
+	return writer->WriteRawBuffer(sizeof(m_nonce), m_nonce);
 }
 
 
-TLResPQ::TLResPQ() :
-	m_pq(0)
+TLResPQ::TLResPQ()
 {
-	ZeroMemory(m_nonce, ARRAYSIZE(m_nonce));
-	ZeroMemory(m_serverNonce, ARRAYSIZE(m_serverNonce));
+	ZeroMemory(m_nonce, sizeof(m_nonce));
+	ZeroMemory(m_pq, sizeof(m_pq));
+	ZeroMemory(m_serverNonce, sizeof(m_serverNonce));
 }
 
 TLResPQ::~TLResPQ()
@@ -82,14 +192,9 @@ TLResPQ::~TLResPQ()
 HRESULT TLResPQ::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
-	ReturnIfFailed(result, reader->ReadRawBuffer(ARRAYSIZE(m_nonce), m_nonce));
-	ReturnIfFailed(result, reader->ReadRawBuffer(ARRAYSIZE(m_serverNonce), m_serverNonce));
-
-	BYTE pq[8];
-	ReturnIfFailed(result, reader->ReadBuffer(pq, ARRAYSIZE(pq)));
-
-	m_pq = ((pq[0] & 0xffULL) << 56ULL) | ((pq[1] & 0xffULL) << 48ULL) | ((pq[2] & 0xffULL) << 40ULL) | ((pq[3] & 0xffULL) << 32ULL) |
-		((pq[4] & 0xffULL) << 24ULL) | ((pq[5] & 0xffULL) << 16ULL) | ((pq[6] & 0xffULL) << 8ULL) | ((pq[7] & 0xffULL));
+	ReturnIfFailed(result, reader->ReadRawBuffer(sizeof(m_nonce), m_nonce));
+	ReturnIfFailed(result, reader->ReadRawBuffer(sizeof(m_serverNonce), m_serverNonce));
+	ReturnIfFailed(result, reader->ReadBuffer(m_pq, sizeof(m_pq)));
 
 	UINT32 constructor;
 	ReturnIfFailed(result, reader->ReadUInt32(&constructor));
@@ -136,16 +241,9 @@ HRESULT TLFutureSalts::ReadBody(ITLBinaryReaderEx* reader)
 
 	for (UINT32 i = 0; i < count; i++)
 	{
-		UINT32 constructor;
-		ComPtr<ITLObject> salt;
-		ReturnIfFailed(result, reader->ReadObjectAndConstructor(&constructor, &salt));
-
-		if (constructor != TLFutureSalt::Constructor)
-		{
-			return E_NOINTERFACE;
-		}
-
-		m_salts[i] = static_cast<TLFutureSalt*>(salt.Get());
+		ReturnIfFailed(result, reader->ReadInt32(&m_salts[i].ValidSince));
+		ReturnIfFailed(result, reader->ReadInt32(&m_salts[i].ValidUntil));
+		ReturnIfFailed(result, reader->ReadInt64(&m_salts[i].Salt));
 	}
 
 	return S_OK;
@@ -153,9 +251,7 @@ HRESULT TLFutureSalts::ReadBody(ITLBinaryReaderEx* reader)
 
 
 TLFutureSalt::TLFutureSalt() :
-	m_validSince(0),
-	m_validUntil(0),
-	m_salt(0)
+	m_salt({})
 {
 }
 
@@ -166,10 +262,10 @@ TLFutureSalt::~TLFutureSalt()
 HRESULT TLFutureSalt::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
-	ReturnIfFailed(result, reader->ReadInt32(&m_validSince));
-	ReturnIfFailed(result, reader->ReadInt32(&m_validUntil));
+	ReturnIfFailed(result, reader->ReadInt32(&m_salt.ValidSince));
+	ReturnIfFailed(result, reader->ReadInt32(&m_salt.ValidUntil));
 
-	return reader->ReadInt64(&m_salt);
+	return reader->ReadInt64(&m_salt.Salt);
 }
 
 

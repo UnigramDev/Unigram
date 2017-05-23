@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <Ws2tcpip.h>
 #include "Datacenter.h"
-#include "DatacenterCryptography.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "Connection.h"
@@ -522,10 +521,25 @@ HRESULT Datacenter::BeginHandshake(boolean reconnect)
 
 	auto lock = LockCriticalSection();
 
+	m_handshakeContext = std::make_unique<HandshakeContext>();
 	m_handshakeState = HandshakeState::Started;
 
 	auto pqRequest = Make<TLReqPQ>();
+	CopyMemory(m_handshakeContext->Nonce, pqRequest->GetNonce(), sizeof(m_handshakeContext->Nonce));
+
 	return genericConnection->SendUnencryptedMessage(pqRequest.Get(), false);
+}
+
+HRESULT Datacenter::SendAckRequest(INT64 messageId)
+{
+	HRESULT result;
+	ComPtr<Connection> genericConnection;
+	ReturnIfFailed(result, GetGenericConnection(true, &genericConnection));
+
+	auto msgsAck = Make<TLMsgsAck>();
+	msgsAck->GetMsgIds().push_back(messageId);
+
+	return genericConnection->SendUnencryptedMessage(msgsAck.Get(), false);
 }
 
 HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, ServerEndpoint** endpoint)
@@ -637,17 +651,26 @@ HRESULT Datacenter::OnHandshakeResponseReceived(Connection* connection, INT64 me
 	{
 	case TLResPQ::Constructor:
 	{
-		if (m_handshakeState != HandshakeState::Started)
-		{
-			return E_UNEXPECTED;
-		}
-
-		auto pqResponse = static_cast<TLResPQ*>(object);
+		return OnHandshakePQ(static_cast<TLResPQ*>(object));
 	}
 	break;
 	default:
 		break;
 	}
+
+	return S_OK;
+}
+
+HRESULT Datacenter::OnHandshakePQ(TLResPQ* pqResponse)
+{
+	if (m_handshakeState != HandshakeState::Started)
+	{
+		return E_UNEXPECTED;
+	}
+
+	HRESULT result;
+	ComPtr<TLReqDHParams> dhParams;
+	ReturnIfFailed(result, MakeAndInitialize<TLReqDHParams>(&dhParams, m_handshakeContext->Nonce, pqResponse));
 
 	return S_OK;
 }
