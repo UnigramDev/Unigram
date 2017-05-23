@@ -261,7 +261,11 @@ namespace Unigram.Common
             IsConnected = false;
             Debug.WriteLine("VoIPConnection.OnServiceClosed()");
 
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await ConnectAsync());
+            try
+            {
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await ConnectAsync());
+            }
+            catch { }
         }
     }
 }
