@@ -114,6 +114,8 @@ namespace Unigram.Controls.Views
 
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
+            Dispose();
+
             if (ViewModel.SelectedItem == ViewModel.FirstItem)
             {
                 var container = Flip.ContainerFromItem(ViewModel.SelectedItem);
@@ -267,6 +269,11 @@ namespace Unigram.Controls.Views
         }
 
         private void Flip_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Dispose();
+        }
+
+        private void Dispose()
         {
             if (_surface != null)
             {
