@@ -287,10 +287,11 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
   <ItemGroup>
     <ClInclude Include="Collections.h" />
     <ClInclude Include="Connection.h" />
-    <ClInclude Include="ConnectionCryptograpy.h" />
+    <ClInclude Include="ConnectionCryptography.h" />
     <ClInclude Include="ConnectionManager.h" />
     <ClInclude Include="ConnectionSession.h" />
     <ClInclude Include="Datacenter.h" />
+    <ClInclude Include="DatacenterCryptography.h" />
     <ClInclude Include="DefaultUserConfiguration.h" />
     <ClInclude Include="EventObject.h" />
     <ClInclude Include="NativeBuffer.h" />
@@ -310,7 +311,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Connection.cpp" />
-    <ClCompile Include="ConnectionCryptograpy.cpp" />
+    <ClCompile Include="ConnectionCryptography.cpp" />
     <ClCompile Include="ConnectionManager.cpp" />
     <ClCompile Include="ConnectionSession.cpp" />
     <ClCompile Include="Datacenter.cpp" />

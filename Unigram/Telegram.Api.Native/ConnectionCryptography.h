@@ -9,11 +9,11 @@ namespace Telegram
 		namespace Native
 		{
 
-			class ConnectionCryptograpy abstract
+			class ConnectionCryptography abstract
 			{
 			public:
-				ConnectionCryptograpy();
-				~ConnectionCryptograpy();
+				ConnectionCryptography();
+				~ConnectionCryptography();
 
 			protected:
 				HRESULT Initialize(_In_ BYTE* buffer);

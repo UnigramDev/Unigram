@@ -293,7 +293,7 @@ HRESULT ConnectionManager::SendRequestWithFlags(_In_ ITLObject* object, _In_ ISe
 	auto lock = LockCriticalSection();
 
 	HRESULT result;
-	ComPtr<Request> request;
+	ComPtr<GenericRequest> request;
 	ReturnIfFailed(result, CreateRequest(object, onCompleted, onQuickAckReceived, datacenterId, connectionType, requestToken, flags, request));
 
 	if (immediate)
@@ -458,7 +458,7 @@ HRESULT ConnectionManager::UpdateNetworkStatus(boolean raiseEvent)
 }
 
 HRESULT ConnectionManager::CreateRequest(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived,
-	UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, RequestFlag flags, ComPtr<Request>& request)
+	UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, RequestFlag flags, ComPtr<GenericRequest>& request)
 {
 	HRESULT result;
 	boolean isLayerNeeded;
@@ -472,14 +472,12 @@ HRESULT ConnectionManager::CreateRequest(ITLObject* object, ISendRequestComplete
 		ComPtr<TLInitConnection> initConnectionObject;
 		ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, m_userConfiguration.Get(), invokeWithLayer.Get()));
 
-		request = Make<Request>(initConnectionObject.Get(), requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
+		return MakeAndInitialize<GenericRequest>(&request, initConnectionObject.Get(), requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
 	}
 	else
 	{
-		request = Make<Request>(object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
+		return MakeAndInitialize<GenericRequest>(&request, object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
 	}
-
-	return S_OK;
 }
 
 HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
@@ -521,11 +519,6 @@ HRESULT ConnectionManager::OnConnectionPacketReceived(Connection* connection, TL
 	{
 		INT64 messageId;;
 		ReturnIfFailed(result, packetReader->ReadInt64(&messageId));
-
-		if (connection->IsMessageIdProcessed(messageId))
-		{
-			return S_OK;
-		}
 
 		UINT32 objectSize;
 		ReturnIfFailed(result, packetReader->ReadUInt32(&objectSize));

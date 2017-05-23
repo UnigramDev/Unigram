@@ -4,6 +4,7 @@
 #include "NativeBuffer.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
+#include "Request.h"
 #include "ConnectionManager.h"
 
 #define CONNECTION_MAX_ATTEMPTS 5
@@ -151,18 +152,23 @@ HRESULT Connection::Suspend()
 	return S_OK;
 }
 
-HRESULT Connection::SendData(BYTE* buffer, UINT32 length, boolean reportAck)
+HRESULT Connection::SendUnencryptedMessage(ITLObject* object, boolean reportAck)
 {
-	if (buffer == nullptr)
+	if (object == nullptr)
 	{
 		return E_INVALIDARG;
 	}
 
-	LockCriticalSection();
-
 	HRESULT result;
-	UINT32 packetBufferLength = 0;
-	UINT32 packetLength = length / 4;
+	ComPtr<ConnectionManager> connectionManager;
+	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
+
+	UINT32 objectSize;
+	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
+
+	UINT32 messageLength = 2 * sizeof(INT64) + sizeof(INT32) + objectSize;
+	UINT32 packetBufferLength = messageLength;
+	UINT32 packetLength = messageLength / 4;
 
 	if (packetLength < 0x7f)
 	{
@@ -173,20 +179,29 @@ HRESULT Connection::SendData(BYTE* buffer, UINT32 length, boolean reportAck)
 		packetBufferLength += 4;
 	}
 
+	LockCriticalSection();
+
 	BYTE* packetBufferBytes;
-	std::unique_ptr<BYTE[]> packetBuffer;
-	if (ConnectionCryptograpy::IsInitialized())
+	ComPtr<TLBinaryWriter> packetWriter;
+	if (ConnectionCryptography::IsInitialized())
 	{
-		packetBuffer = std::make_unique<BYTE[]>(packetBufferLength);
-		packetBufferBytes = packetBuffer.get();
+		ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&packetWriter, packetBufferLength));
+
+		packetBufferBytes = packetWriter->GetBuffer();
 	}
 	else
 	{
 		packetBufferLength += 64;
-		packetBuffer = std::make_unique<BYTE[]>(packetBufferLength);
-		packetBufferBytes = packetBuffer.get() + 64;
 
-		ReturnIfFailed(result, ConnectionCryptograpy::Initialize(packetBuffer.get()));
+		ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&packetWriter, packetBufferLength));
+
+		packetBufferBytes = packetWriter->GetBuffer();
+
+		ReturnIfFailed(result, ConnectionCryptography::Initialize(packetBufferBytes));
+
+		packetBufferBytes += 64;
+
+		ReturnIfFailed(result, packetWriter->put_Position(64));
 	}
 
 	if (packetLength < 0x7f)
@@ -196,9 +211,9 @@ HRESULT Connection::SendData(BYTE* buffer, UINT32 length, boolean reportAck)
 			packetLength |= (1 << 7);
 		}
 
-		packetBufferBytes[0] = packetLength & 0xff;
+		ReturnIfFailed(result, packetWriter->WriteByte(packetLength & 0xff));
 
-		ConnectionCryptograpy::EncryptBuffer(packetBufferBytes, packetBufferBytes, 1);
+		ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, 1);
 
 		packetBufferBytes += 1;
 	}
@@ -211,20 +226,21 @@ HRESULT Connection::SendData(BYTE* buffer, UINT32 length, boolean reportAck)
 			packetLength |= (1 << 7);
 		}
 
-		packetBufferBytes[0] = packetLength & 0xff;
-		packetBufferBytes[1] = (packetLength >> 8) & 0xff;
-		packetBufferBytes[2] = (packetLength >> 16) & 0xff;
-		packetBufferBytes[3] = (packetLength >> 24) & 0xff;
+		ReturnIfFailed(result, packetWriter->WriteUInt32(packetLength));
 
-		ConnectionCryptograpy::EncryptBuffer(packetBufferBytes, packetBufferBytes, 4);
+		ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, 4);
 
 		packetBufferBytes += 4;
 	}
 
-	ConnectionCryptograpy::EncryptBuffer(buffer, buffer, length);
+	ReturnIfFailed(result, packetWriter->WriteInt64(0));
+	ReturnIfFailed(result, packetWriter->WriteInt64(connectionManager->GenerateMessageId()));
+	ReturnIfFailed(result, packetWriter->WriteInt32(objectSize));
+	ReturnIfFailed(result, packetWriter->WriteObject(object));
 
-	ReturnIfFailed(result, ConnectionSocket::SendData(packetBuffer.get(), packetBufferLength));
-	return ConnectionSocket::SendData(buffer, length);
+	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, messageLength);
+
+	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetPosition());
 }
 
 HRESULT Connection::OnSocketConnected()
@@ -253,14 +269,14 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 	{
 		ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&m_partialPacketBuffer, length));
 
-		ConnectionCryptograpy::DecryptBuffer(buffer, m_partialPacketBuffer->GetBuffer(), length);
+		ConnectionCryptography::DecryptBuffer(buffer, m_partialPacketBuffer->GetBuffer(), length);
 	}
 	else
 	{
 		auto partialPacketLength = m_partialPacketBuffer->GetCapacity();
 		ReturnIfFailed(result, m_partialPacketBuffer->Merge(buffer, length));
 
-		ConnectionCryptograpy::DecryptBuffer(buffer, m_partialPacketBuffer->GetBuffer() + partialPacketLength, length);
+		ConnectionCryptography::DecryptBuffer(buffer, m_partialPacketBuffer->GetBuffer() + partialPacketLength, length);
 	}
 
 	ComPtr<TLBinaryReader> packetReader;
@@ -274,12 +290,13 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 		BYTE firstByte;
 		BreakIfFailed(result, packetReader->ReadByte(&firstByte));
 
-		//I should probably move this in a lower position to avoid multiple acks
 		if ((firstByte & (1 << 7)) != 0)
 		{
 			INT32 ackId;
 			BreakIfFailed(result, packetReader->ReadBigEndianInt32(&ackId));
 			BreakIfFailed(result, connectionManager->OnConnectionQuickAckReceived(this, ackId & ~(1 << 31)));
+
+			continue;
 		}
 
 		UINT32 packetLength;
@@ -294,8 +311,13 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 			packetLength = static_cast<UINT32>(firstByte) * 4;
 		}
 
-		if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH ||
+		/*if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH ||
 			FAILED(connectionManager->OnConnectionPacketReceived(this, packetReader.Get(), packetLength)))
+		{
+			return Reconnect();
+		}*/
+
+		if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH || FAILED(OnMessageReceived(packetReader.Get(), packetLength)))
 		{
 			return Reconnect();
 		}
@@ -334,6 +356,42 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 	ComPtr<ConnectionManager> connectionManager;
 	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 	ReturnIfFailed(result, connectionManager->OnConnectionClosed(this));
+
+	return S_OK;
+}
+
+HRESULT Connection::OnMessageReceived(TLBinaryReader* messageReader, UINT32 messageLength)
+{
+	HRESULT result;
+
+	if (messageLength == 4)
+	{
+		INT32 errorCode;
+		ReturnIfFailed(result, messageReader->ReadInt32(&errorCode));
+
+		return E_FAIL;
+	}
+
+	INT64 keyId;
+	ReturnIfFailed(result, messageReader->ReadInt64(&keyId));
+
+	if (keyId == 0)
+	{
+		INT64 messageId;;
+		ReturnIfFailed(result, messageReader->ReadInt64(&messageId));
+
+		UINT32 objectSize;
+		ReturnIfFailed(result, messageReader->ReadUInt32(&objectSize));
+
+		ComPtr<ITLObject> object;
+		ReturnIfFailed(result, messageReader->ReadObject(&object));
+
+		return m_datacenter->OnHandshakeResponseReceived(this, messageId, object.Get());
+	}
+	else
+	{
+		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement encrypted packet handling");
+	}
 
 	return S_OK;
 }

@@ -1,22 +1,22 @@
 #include "pch.h"
 #include <openssl/rand.h>
-#include "ConnectionCryptograpy.h"
+#include "ConnectionCryptography.h"
 
 #define CONNECTION_MAX_ATTEMPTS 5 
 
 using namespace Telegram::Api::Native;
 
 
-ConnectionCryptograpy::ConnectionCryptograpy() :
+ConnectionCryptography::ConnectionCryptography() :
 	m_initialized(false)
 {
 }
 
-ConnectionCryptograpy::~ConnectionCryptograpy()
+ConnectionCryptography::~ConnectionCryptography()
 {
 }
 
-//HRESULT ConnectionCryptograpy::EncryptBuffer(BYTE const* inputBuffer, BYTE* outputBuffer, UINT32 length)
+//HRESULT ConnectionCryptography::EncryptBuffer(BYTE const* inputBuffer, BYTE* outputBuffer, UINT32 length)
 //{
 //	if (inputBuffer == nullptr || outputBuffer == nullptr)
 //	{
@@ -33,7 +33,7 @@ ConnectionCryptograpy::~ConnectionCryptograpy()
 //	return S_OK;
 //}
 //
-//HRESULT ConnectionCryptograpy::DecryptBuffer(BYTE const* inputBuffer, BYTE* outputBuffer, UINT32 length)
+//HRESULT ConnectionCryptography::DecryptBuffer(BYTE const* inputBuffer, BYTE* outputBuffer, UINT32 length)
 //{
 //	if (inputBuffer == nullptr || outputBuffer == nullptr)
 //	{
@@ -50,17 +50,17 @@ ConnectionCryptograpy::~ConnectionCryptograpy()
 //	return S_OK;
 //}
 
-void ConnectionCryptograpy::EncryptBuffer(BYTE const* inputBuffer, BYTE* outputBuffer, UINT32 length)
+void ConnectionCryptography::EncryptBuffer(BYTE const* inputBuffer, BYTE* outputBuffer, UINT32 length)
 {
 	AES_ctr128_encrypt(inputBuffer, outputBuffer, length, &m_encryptKey, m_encryptIv, m_encryptCount, &m_encryptNum);
 }
 
-void ConnectionCryptograpy::DecryptBuffer(BYTE const* inputBuffer, BYTE* outputBuffer, UINT32 length)
+void ConnectionCryptography::DecryptBuffer(BYTE const* inputBuffer, BYTE* outputBuffer, UINT32 length)
 {
 	AES_ctr128_encrypt(inputBuffer, outputBuffer, length, &m_decryptKey, m_decryptIv, m_decryptCount, &m_decryptNum);
 }
 
-HRESULT ConnectionCryptograpy::Initialize(BYTE* buffer)
+HRESULT ConnectionCryptography::Initialize(BYTE* buffer)
 {
 	while (true)
 	{
@@ -109,7 +109,7 @@ HRESULT ConnectionCryptograpy::Initialize(BYTE* buffer)
 	return S_OK;
 }
 
-void ConnectionCryptograpy::Reset()
+void ConnectionCryptography::Reset()
 {
 	m_initialized = false;
 	//m_encryptNum = 0;

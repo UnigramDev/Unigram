@@ -22,6 +22,8 @@ namespace Telegram
 				class TLInvokeWithLayer;
 				class TLInitConnection;
 
+				typedef BYTE TLAuthNonce[16];
+
 
 				namespace TLObjectTraits
 				{
@@ -84,7 +86,7 @@ namespace Telegram
 					~TLReqPQ();
 
 					//Internal methods
-					inline BYTE const* GetNonce() const
+					inline TLAuthNonce const& GetNonce() const
 					{
 						return m_nonce;
 					}
@@ -93,7 +95,7 @@ namespace Telegram
 					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
 
 				private:
-					BYTE m_nonce[16];
+					TLAuthNonce m_nonce;
 				};
 
 				class TLResPQ WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLResPQTraits>>
@@ -105,17 +107,17 @@ namespace Telegram
 					~TLResPQ();
 
 					//Internal methods
-					inline BYTE const* GetNonce() const
+					inline TLAuthNonce const& GetNonce() const
 					{
 						return m_nonce;
 					}
 
-					inline BYTE const* GetServerNonce() const
+					inline TLAuthNonce const& GetServerNonce() const
 					{
 						return m_serverNonce;
 					}
 
-					inline BYTE const* GetPQ() const
+					inline UINT64 GetPQ() const
 					{
 						return m_pq;
 					}
@@ -129,9 +131,9 @@ namespace Telegram
 					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* writer) override;
 
 				private:
-					BYTE m_nonce[16];
-					BYTE m_serverNonce[16];
-					BYTE m_pq[8];
+					TLAuthNonce m_nonce;
+					TLAuthNonce m_serverNonce;
+					UINT64 m_pq;
 					std::vector<INT64> m_serverPublicKeyFingerprints;
 				};
 

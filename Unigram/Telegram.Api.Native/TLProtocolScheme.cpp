@@ -68,11 +68,11 @@ HRESULT TLReqPQ::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
-TLResPQ::TLResPQ()
+TLResPQ::TLResPQ() :
+	m_pq(0)
 {
 	ZeroMemory(m_nonce, ARRAYSIZE(m_nonce));
 	ZeroMemory(m_serverNonce, ARRAYSIZE(m_serverNonce));
-	ZeroMemory(m_pq, ARRAYSIZE(m_pq));
 }
 
 TLResPQ::~TLResPQ()
@@ -84,7 +84,12 @@ HRESULT TLResPQ::ReadBody(ITLBinaryReaderEx* reader)
 	HRESULT result;
 	ReturnIfFailed(result, reader->ReadRawBuffer(ARRAYSIZE(m_nonce), m_nonce));
 	ReturnIfFailed(result, reader->ReadRawBuffer(ARRAYSIZE(m_serverNonce), m_serverNonce));
-	ReturnIfFailed(result, reader->ReadBuffer(m_pq, ARRAYSIZE(m_pq)));
+
+	BYTE pq[8];
+	ReturnIfFailed(result, reader->ReadBuffer(pq, ARRAYSIZE(pq)));
+
+	m_pq = ((pq[0] & 0xffULL) << 56ULL) | ((pq[1] & 0xffULL) << 48ULL) | ((pq[2] & 0xffULL) << 40ULL) | ((pq[3] & 0xffULL) << 32ULL) |
+		((pq[4] & 0xffULL) << 24ULL) | ((pq[5] & 0xffULL) << 16ULL) | ((pq[6] & 0xffULL) << 8ULL) | ((pq[7] & 0xffULL));
 
 	UINT32 constructor;
 	ReturnIfFailed(result, reader->ReadUInt32(&constructor));

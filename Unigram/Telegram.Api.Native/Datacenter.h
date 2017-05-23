@@ -92,26 +92,22 @@ namespace Telegram
 			private:
 				struct HandshakeContext
 				{
-					HandshakeContext() :
-						State(HandshakeState::None)
-					{
-					}
-
-					HandshakeState State;
-					ComPtr<ITLObject> Request;
+					BYTE Nonce[16];
+					BYTE NewNonce[16];
+					BYTE ServerNonce[16];
 				};
 
 				IFACEMETHODIMP Close();
 				HRESULT GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, _Out_ ServerEndpoint** endpoint);
 				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
-				HRESULT OnHandshakeResponseReceived(_In_ Connection* connection, INT64 messageId);
+				HRESULT OnHandshakeResponseReceived(_In_ Connection* connection, INT64 messageId, _In_ ITLObject* object);
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
 				HRESULT SendRequest(_In_ ITLObject* object, _In_ Connection* connection);
 				boolean ContainsServerSalt(INT64 salt, size_t count);
 
 				UINT32 m_id;
-				std::unique_ptr<HandshakeContext> m_handshakeContext;
+				HandshakeState m_handshakeState;
 				std::vector<ServerEndpoint> m_ipv4Endpoints;
 				std::vector<ServerEndpoint> m_ipv4DownloadEndpoints;
 				std::vector<ServerEndpoint> m_ipv6Endpoints;

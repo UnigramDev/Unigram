@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include <wrl.h>
 #include <windows.foundation.h>
 #include "Telegram.Api.Native.h"
@@ -6,7 +7,7 @@
 #include "Timer.h"
 #include "ConnectionSession.h"
 #include "ConnectionSocket.h"
-#include "ConnectionCryptograpy.h"
+#include "ConnectionCryptography.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -15,6 +16,26 @@ using ABI::Windows::Foundation::IClosable;
 using ABI::Telegram::Api::Native::IDatacenter;
 using ABI::Telegram::Api::Native::ConnectionNeworkType;
 using ABI::Telegram::Api::Native::ConnectionType;
+using ABI::Telegram::Api::Native::TL::ITLObject;
+
+namespace ABI
+{
+	namespace Telegram
+	{
+		namespace Api
+		{
+			namespace Native
+			{
+
+				struct IMessageRequest;
+
+			}
+		}
+	}
+}
+
+
+using ABI::Telegram::Api::Native::IMessageRequest;
 
 namespace Telegram
 {
@@ -25,6 +46,7 @@ namespace Telegram
 			namespace TL
 			{
 
+				class TLBinaryReader;
 				class TLBinaryWriter;
 
 			}
@@ -33,7 +55,7 @@ namespace Telegram
 			class NativeBuffer;
 
 			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection>,
-				public virtual EventObjectT<EventTraits::WaitTraits>, public ConnectionSession, public ConnectionSocket, public ConnectionCryptograpy
+				public virtual EventObjectT<EventTraits::WaitTraits>, public ConnectionSession, public ConnectionSocket, public ConnectionCryptography
 			{
 				friend class ConnectionManager;
 
@@ -54,7 +76,9 @@ namespace Telegram
 				HRESULT Connect();
 				HRESULT Reconnect();
 				HRESULT Suspend();
-				HRESULT SendData(_In_reads_(length) _Out_writes_(length) BYTE* buffer, UINT32 length, boolean reportAck);
+
+				//HRESULT SendEncryptedMessage(_In_ IMessageRequest* request, boolean reportAck);
+				HRESULT SendUnencryptedMessage(_In_ ITLObject* object, boolean reportAck);
 
 			private:
 				inline Datacenter* GetDatacenter() const
@@ -75,6 +99,7 @@ namespace Telegram
 				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) override;
 				virtual HRESULT OnSocketDisconnected(int wsaError) override;
+				HRESULT OnMessageReceived(_In_ TL::TLBinaryReader* messageReader, UINT32 messageLength);
 				void OnEventObjectError(_In_ EventObject* eventObject, HRESULT result);
 
 				UINT32 m_token;
@@ -82,7 +107,6 @@ namespace Telegram
 				ConnectionNeworkType m_currentNetworkType;
 				ComPtr<Datacenter> m_datacenter;
 				ComPtr<Timer> m_reconnectionTimer;
-
 
 				ComPtr<NativeBuffer> m_partialPacketBuffer;
 

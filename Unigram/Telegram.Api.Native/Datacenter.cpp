@@ -2,11 +2,13 @@
 #include <algorithm>
 #include <Ws2tcpip.h>
 #include "Datacenter.h"
+#include "DatacenterCryptography.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "Connection.h"
 #include "ConnectionManager.h"
 #include "TLProtocolScheme.h"
+#include "Request.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
@@ -15,6 +17,7 @@ using namespace Telegram::Api::Native::TL;
 
 Datacenter::Datacenter(UINT32 id) :
 	m_id(id),
+	m_handshakeState(HandshakeState::None),
 	m_currentIpv4EndpointIndex(0),
 	m_currentIpv4DownloadEndpointIndex(0),
 	m_currentIpv6EndpointIndex(0),
@@ -51,15 +54,7 @@ HRESULT Datacenter::get_HandshakeState(HandshakeState* value)
 
 	auto lock = LockCriticalSection();
 
-	if (m_handshakeContext == nullptr)
-	{
-		*value = HandshakeState::None;
-	}
-	else
-	{
-		*value = m_handshakeContext->State;
-	}
-
+	*value = m_handshakeState;
 	return S_OK;
 }
 
@@ -519,20 +514,18 @@ HRESULT Datacenter::SuspendConnections()
 
 HRESULT Datacenter::BeginHandshake(boolean reconnect)
 {
-	auto lock = LockCriticalSection();
-
-	m_handshakeContext = std::make_unique<HandshakeContext>();
-
 	HRESULT result;
 	ComPtr<Connection> genericConnection;
 	ReturnIfFailed(result, GetGenericConnection(true, &genericConnection));
 
 	genericConnection->RecreateSession();
 
-	m_handshakeContext->State = HandshakeState::Started;
-	m_handshakeContext->Request = Make<TLReqPQ>();
+	auto lock = LockCriticalSection();
 
-	return SendRequest(m_handshakeContext->Request.Get(), genericConnection.Get());
+	m_handshakeState = HandshakeState::Started;
+
+	auto pqRequest = Make<TLReqPQ>();
+	return genericConnection->SendUnencryptedMessage(pqRequest.Get(), false);
 }
 
 HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, ServerEndpoint** endpoint)
@@ -618,25 +611,6 @@ HRESULT Datacenter::GetEndpointsForConnectionType(ConnectionType connectionType,
 	return S_OK;
 }
 
-HRESULT Datacenter::SendRequest(ITLObject* object, Connection* connection)
-{
-	HRESULT result;
-	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
-
-	UINT32 objectSize;
-	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
-
-	ComPtr<TLBinaryWriter> writer;
-	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&writer, 2 * sizeof(INT64) + sizeof(INT32) + objectSize));
-	ReturnIfFailed(result, writer->WriteInt64(0));
-	ReturnIfFailed(result, writer->WriteInt64(connectionManager->GenerateMessageId()));
-	ReturnIfFailed(result, writer->WriteInt32(objectSize));
-	ReturnIfFailed(result, writer->WriteObject(object));
-
-	return connection->SendData(writer->GetBuffer(), writer->GetPosition(), false);
-}
-
 HRESULT Datacenter::OnHandshakeConnectionClosed(Connection* connection)
 {
 	auto lock = LockCriticalSection();
@@ -647,6 +621,33 @@ HRESULT Datacenter::OnHandshakeConnectionClosed(Connection* connection)
 HRESULT Datacenter::OnHandshakeConnectionConnected(Connection* connection)
 {
 	auto lock = LockCriticalSection();
+
+	return S_OK;
+}
+
+HRESULT Datacenter::OnHandshakeResponseReceived(Connection* connection, INT64 messageId, ITLObject* object)
+{
+	auto lock = LockCriticalSection();
+
+	HRESULT result;
+	UINT32 constructor;
+	ReturnIfFailed(result, object->get_Constructor(&constructor));
+
+	switch (constructor)
+	{
+	case TLResPQ::Constructor:
+	{
+		if (m_handshakeState != HandshakeState::Started)
+		{
+			return E_UNEXPECTED;
+		}
+
+		auto pqResponse = static_cast<TLResPQ*>(object);
+	}
+	break;
+	default:
+		break;
+	}
 
 	return S_OK;
 }

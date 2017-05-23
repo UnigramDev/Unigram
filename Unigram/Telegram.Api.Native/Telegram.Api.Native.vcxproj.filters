@@ -20,7 +20,6 @@
     <ClCompile Include="ConnectionManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="EventObject.cpp" />
-    <ClCompile Include="ConnectionCryptograpy.cpp" />
     <ClCompile Include="Request.cpp" />
     <ClCompile Include="NetworkExtensions.cpp" />
     <ClCompile Include="TLBinaryReader.cpp">
@@ -40,6 +39,7 @@
       <Filter>TLProtocolScheme</Filter>
     </ClCompile>
     <ClCompile Include="TLUnparsedMessage.cpp" />
+    <ClCompile Include="ConnectionCryptography.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -53,7 +53,6 @@
     <ClInclude Include="WSAEvent.h">
       <Filter>Wrappers</Filter>
     </ClInclude>
-    <ClInclude Include="ConnectionCryptograpy.h" />
     <ClInclude Include="MultiThreadObject.h" />
     <ClInclude Include="Request.h" />
     <ClInclude Include="NetworkExtensions.h" />
@@ -76,6 +75,8 @@
     <ClInclude Include="TLUnparsedMessage.h" />
     <ClInclude Include="NativeBuffer.h" />
     <ClInclude Include="Collections.h" />
+    <ClInclude Include="DatacenterCryptography.h" />
+    <ClInclude Include="ConnectionCryptography.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
