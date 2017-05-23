@@ -153,7 +153,7 @@ namespace Unigram.ViewModels
 
         public override int Date => _message.Date;
 
-        public override bool IsVideo => _message.IsVideo();
+        public override bool IsVideo => _message.IsVideo() || _message.IsGif() || _message.IsRoundVideo();
 
         public override bool IsLoop => _message.IsGif(true);
 

@@ -58,8 +58,8 @@ namespace Unigram.ViewModels
     {
         public MessageCollection Messages { get; private set; } = new MessageCollection();
 
-        private List<TLMessageBase> _selectedMessages = new List<TLMessageBase>();
-        public List<TLMessageBase> SelectedMessages
+        private List<TLMessageCommonBase> _selectedMessages = new List<TLMessageCommonBase>();
+        public List<TLMessageCommonBase> SelectedMessages
         {
             get
             {
@@ -765,6 +765,9 @@ namespace Unigram.ViewModels
                     await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
                 }
 
+                var readPeer = With as ITLReadMaxId;
+                readPeer.ReadInboxMaxId = dialog.TopMessage;
+                dialog.ReadInboxMaxId = dialog.TopMessage;
                 dialog.UnreadCount = dialog.UnreadCount - unread;
                 dialog.RaisePropertyChanged(() => dialog.UnreadCount);
             }

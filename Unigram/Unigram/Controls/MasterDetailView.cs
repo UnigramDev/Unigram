@@ -257,6 +257,13 @@ namespace Unigram.Controls
                 service.FrameFacade.FrameId = key;
                 service.FrameFacade.BackRequested += (s, args) =>
                 {
+                    var page = DetailFrame.Content as IMasterDetailPage;
+                    if (page != null && page.OnBackRequested())
+                    {
+                        args.Handled = true;
+                        return;
+                    }
+
                     // TODO: maybe checking for the actual width is not the perfect way,
                     // but if it is 0 it means that the control is not loaded, and the event shouldn't be handled
                     if (CanGoBack && ActualWidth > 0)
@@ -342,5 +349,10 @@ namespace Unigram.Controls
     {
         Narrow,
         Filled
+    }
+
+    public interface IMasterDetailPage
+    {
+        bool OnBackRequested();
     }
 }

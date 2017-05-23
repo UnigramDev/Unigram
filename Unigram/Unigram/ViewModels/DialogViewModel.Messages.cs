@@ -267,46 +267,131 @@ namespace Unigram.ViewModels
         private RelayCommand _messagesDeleteCommand;
         public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages.Count > 0));
 
-        private void MessagesDeleteExecute()
+        private async void MessagesDeleteExecute()
         {
-            //TLMessageBase lastMessage = null;
-            //var localMessages = new List<TLMessageBase>();
-            //var remoteMessages = new List<TLMessageBase>();
-            //for (int i = 0; i < Messages.Count; i++)
+            //if (messageBase == null) return;
+
+            //var message = messageBase as TLMessage;
+            //if (message != null && !message.IsOut && !message.IsPost && Peer is TLInputPeerChannel)
             //{
-            //    var message = Messages[i];
-            //    if (message.IsSelected)
+            //    var dialog = new DeleteChannelMessageDialog();
+
+            //    var result = await dialog.ShowAsync();
+            //    if (result == ContentDialogResult.Primary)
             //    {
-            //        if (message.Index == 0 && message.RandomIndex != 0L)
+            //        var channel = With as TLChannel;
+
+            //        if (dialog.DeleteAll)
             //        {
-            //            localMessages.Add(message);
-            //            lastMessage = null;
+            //            // TODO
             //        }
-            //        else if (message.Index != 0)
+            //        else
             //        {
-            //            remoteMessages.Add(message);
-            //            lastMessage = null;
+            //            var messages = new List<TLMessageBase>() { messageBase };
+            //            if (messageBase.Id == 0 && messageBase.RandomId != 0L)
+            //            {
+            //                DeleteMessagesInternal(null, messages);
+            //                return;
+            //            }
+
+            //            DeleteMessages(null, null, messages, true, null, DeleteMessagesInternal);
+            //        }
+
+            //        if (dialog.BanUser)
+            //        {
+            //            var response = await ProtoService.KickFromChannelAsync(channel, message.From.ToInputUser(), true);
+            //            if (response.IsSucceeded)
+            //            {
+            //                var updates = response.Result as TLUpdates;
+            //                if (updates != null)
+            //                {
+            //                    var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
+            //                    if (newChannelMessageUpdate != null)
+            //                    {
+            //                        Aggregator.Publish(newChannelMessageUpdate.Message);
+            //                    }
+            //                }
+            //            }
+            //        }
+
+            //        if (dialog.ReportSpam)
+            //        {
+            //            var response = await ProtoService.ReportSpamAsync(channel.ToInputChannel(), message.From.ToInputUser(), new TLVector<int> { message.Id });
             //        }
             //    }
-            //    else if (lastMessage == null)
-            //    {
-            //        lastMessage = message;
-            //    }
             //}
+            //else
+            {
+                var messages = new List<TLMessageCommonBase>(SelectedMessages);
 
-            //if (localMessages.Count > 0 || remoteMessages.Count > 0)
-            //{
-            //    //this.IsSelectionEnabled = false;
-            //}
+                var dialog = new TLMessageDialog();
+                dialog.Title = "Delete";
+                dialog.Message = messages.Count > 1 ? string.Format("Do you want to delete this {0} messages?", messages.Count) : "Do you want to delete this message?";
+                dialog.PrimaryButtonText = "Yes";
+                dialog.SecondaryButtonText = "No";
 
-            //if (With is TLBroadcastChat)
-            //{
-            //    DeleteMessagesInternal(lastMessage, localMessages);
-            //    DeleteMessagesInternal(lastMessage, remoteMessages);
-            //    return;
-            //}
+                var chat = With as TLChat;
 
-            //DeleteMessages(lastMessage, localMessages, remoteMessages, DeleteMessagesInternal, DeleteMessagesInternal);
+                var isOut = messages.All(x => x.IsOut);
+                var toId = messages.FirstOrDefault().ToId;
+                var minDate = messages.OrderBy(x => x.Date).FirstOrDefault().Date;
+                var maxDate = messages.OrderByDescending(x => x.Date).FirstOrDefault().Date;
+
+                if ((isOut || (chat != null && (chat.IsCreator || chat.IsAdmin))) && toId.Id != SettingsHelper.UserId && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
+                {
+                    var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+                    var config = CacheService.GetConfig();
+                    if (config != null && minDate + config.EditTimeLimit > date && maxDate + config.EditTimeLimit > date)
+                    {
+                        var user = With as TLUser;
+                        if (user != null)
+                        {
+                            dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
+                        }
+
+                        //var chat = With as TLChat;
+                        if (chat != null)
+                        {
+                            dialog.CheckBoxLabel = "Delete for everyone";
+                        }
+                    }
+                }
+                else if (Peer is TLInputPeerUser)
+                {
+                    dialog.Message += "\r\n\r\nThis will delete it just for you.";
+                }
+                else if (Peer is TLInputPeerChat)
+                {
+                    dialog.Message += "\r\n\r\nThis will delete it just for you, not for other participants of the chat.";
+                }
+                else if (Peer is TLInputPeerChannel)
+                {
+                    dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
+                }
+
+                var result = await dialog.ShowAsync();
+                if (result == ContentDialogResult.Primary)
+                {
+                    var revoke = dialog.IsChecked == true;
+
+                    var localMessages = new List<TLMessageBase>();
+                    var remoteMessages = new List<TLMessageBase>();
+                    for (int i = 0; i < messages.Count; i++)
+                    {
+                        var message = messages[i];
+                        if (message.Id == 0 && message.RandomId != 0L)
+                        {
+                            localMessages.Add(message);
+                        }
+                        else if (message.Id != 0)
+                        {
+                            remoteMessages.Add(message);
+                        }
+                    }
+
+                    DeleteMessages(null, localMessages, remoteMessages, revoke, DeleteMessagesInternal, DeleteMessagesInternal);
+                }
+            }
         }
 
         #endregion
@@ -339,14 +424,15 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessageBase> MessageSelectCommand => new RelayCommand<TLMessageBase>(MessageSelectExecute);
         private void MessageSelectExecute(TLMessageBase message)
         {
-            if (message == null)
+            var messageCommon = message as TLMessageCommonBase;
+            if (messageCommon == null)
             {
                 return;
             }
 
             SelectionMode = ListViewSelectionMode.Multiple;
 
-            SelectedMessages = new List<TLMessageBase> { message };
+            SelectedMessages = new List<TLMessageCommonBase> { messageCommon };
             RaisePropertyChanged("SelectedItems");
         }
 
