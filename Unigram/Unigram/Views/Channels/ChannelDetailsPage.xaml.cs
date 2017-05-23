@@ -63,5 +63,10 @@ namespace Unigram.Views.Channels
                 ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), participant.User.ToPeer());
             }
         }
+
+        private void Notifications_Toggled(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ToggleMuteCommand.Execute();
+        }
     }
 }

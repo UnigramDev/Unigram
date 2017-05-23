@@ -100,5 +100,10 @@ namespace Unigram.Views.Chats
                 ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), participant.User.ToPeer());
             }
         }
+
+        private void Notifications_Toggled(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ToggleMuteCommand.Execute();
+        }
     }
 }
