@@ -123,13 +123,16 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="BadgePresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid>
                             <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="12,11,12,12" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                            <ContentControl Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Height="44" Padding="12,11,12,12" HorizontalContentAlignment="Right">
+                            <ContentControl x:Name="BadgePresenter" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Height="44" Padding="12,11,12,12" HorizontalContentAlignment="Right">
                                 <ContentControl.ContentTransitions>
                                     <TransitionCollection>
                                         <EntranceThemeTransition/>
