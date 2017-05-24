@@ -3,7 +3,6 @@
 #include "Telegram.Api.Native.h"
 #include "TLObject.h"
 #include "DatacenterServer.h"
-#include "NativeBuffer.h"
 
 using namespace Microsoft::WRL;
 using ABI::Telegram::Api::Native::TL::ITLError;
@@ -22,6 +21,8 @@ namespace Telegram
 				class TLError;
 				class TLMsgsAck;
 				class TLReqDHParams;
+				class TLServerDHParamsFail;
+				class TLServerDHParamsOk;
 				class TLReqPQ;
 				class TLResPQ;
 				class TLFutureSalts;
@@ -29,9 +30,10 @@ namespace Telegram
 				class TLInvokeWithLayer;
 				class TLInitConnection;
 
-				typedef BYTE TLAuthPQ[8];
-				typedef BYTE TLAuthNonce16[16];
-				typedef BYTE TLAuthNonce32[32];
+				typedef BYTE TLInt32[4];
+				typedef BYTE TLInt64[8];
+				typedef BYTE TLInt128[16];
+				typedef BYTE TLInt256[32];
 
 				namespace TLObjectTraits
 				{
@@ -39,6 +41,8 @@ namespace Telegram
 					MakeTLObjectTraits(TLError, 0xc4b9f9bb, false);
 					MakeTLObjectTraits(TLMsgsAck, 0x62d6b459, false);
 					MakeTLObjectTraits(TLReqDHParams, 0xd712e4be, false);
+					MakeTLObjectTraits(TLServerDHParamsFail, 0x79cb045d, false);
+					MakeTLObjectTraits(TLServerDHParamsOk, 0xd0e8075c, false);
 					MakeTLObjectTraits(TLReqPQ, 0x60469778, false);
 					MakeTLObjectTraits(TLResPQ, 0x05162463, false);
 					MakeTLObjectTraits(TLFutureSalts, 0xae500895, false);
@@ -112,34 +116,103 @@ namespace Telegram
 
 				public:
 					//Internal methods
-					STDMETHODIMP RuntimeClassInitialize(_In_ TLAuthNonce16 nonce, _In_ TLResPQ* pqResponse);
+					/*STDMETHODIMP RuntimeClassInitialize(_In_ TLInt128 nonce, _In_ TLResPQ* pqResponse);*/
+					STDMETHODIMP RuntimeClassInitialize(_In_ TLInt128 nonce, _In_ TLInt128 serverNonce, _In_ TLInt256 newNonce, UINT32 p, UINT32 q, INT64 publicKeyFingerprint);
 
-					inline TLAuthNonce16 const& GetNonce() const
+					inline TLInt128 const& GetNonce() const
 					{
 						return m_nonce;
 					}
 
-					inline TLAuthNonce16 const& GetServerNonce() const
+					inline TLInt128 const& GetServerNonce() const
 					{
 						return m_serverNonce;
 					}
 
-					inline TLAuthNonce32 const& GetNewNonce() const
+					inline TLInt256 const& GetNewNonce() const
 					{
 						return m_newNonce;
+					}
+
+					inline TLInt32 const& GetP() const
+					{
+						return m_p;
+					}
+
+					inline TLInt32 const& GetQ() const
+					{
+						return m_q;
+					}
+
+					inline BYTE* GetEncryptedData()
+					{
+						return m_encryptedData;
 					}
 
 				protected:
 					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
 
 				private:
-					TLAuthNonce16 m_nonce;
-					TLAuthNonce16 m_serverNonce;
-					TLAuthNonce32 m_newNonce;
+					BYTE m_nonce[16];
+					BYTE m_serverNonce[16];
+					BYTE m_newNonce[32];
 					BYTE m_p[4];
 					BYTE m_q[4];
 					INT64 m_publicKeyFingerprint;
-					ComPtr<NativeBuffer> m_innerDataBuffer;
+					BYTE m_encryptedData[256];
+				};
+
+				class TLServerDHParams abstract
+				{
+				public:
+					//Internal methods
+					inline TLInt128 const& GetNonce() const
+					{
+						return m_nonce;
+					}
+
+					inline TLInt128 const& GetServerNonce() const
+					{
+						return m_serverNonce;
+					}
+
+				protected:
+					HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader);
+
+				private:
+					BYTE m_nonce[16];
+					BYTE m_serverNonce[16];
+				};
+
+				class TLServerDHParamsFail WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLServerDHParamsFailTraits>>, public TLServerDHParams
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				public:
+					//Internal methods
+					inline TLInt128 const& GetNewNonceHash() const
+					{
+						return m_newNonceHash;
+					}
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+
+				private:
+					BYTE m_newNonceHash[16];
+				};
+
+				class TLServerDHParamsOk WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLServerDHParamsOkTraits>>, public TLServerDHParams
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				public:
+					//Internal methods
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+
+				private:
+					std::vector<BYTE> m_encryptedData;
 				};
 
 				class TLReqPQ WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLReqPQTraits>>
@@ -147,11 +220,10 @@ namespace Telegram
 					InspectableClass(Traits::RuntimeClassName, BaseTrust);
 
 				public:
-					TLReqPQ();
-					~TLReqPQ();
-
 					//Internal methods
-					inline TLAuthNonce16 const& GetNonce() const
+					STDMETHODIMP RuntimeClassInitialize(_In_ TLInt128 nonce);
+
+					inline TLInt128 const& GetNonce() const
 					{
 						return m_nonce;
 					}
@@ -172,17 +244,17 @@ namespace Telegram
 					~TLResPQ();
 
 					//Internal methods
-					inline TLAuthNonce16 const& GetNonce() const
+					inline TLInt128 const& GetNonce() const
 					{
 						return m_nonce;
 					}
 
-					inline TLAuthNonce16 const& GetServerNonce() const
+					inline TLInt128 const& GetServerNonce() const
 					{
 						return m_serverNonce;
 					}
 
-					inline TLAuthPQ const& GetPQ() const
+					inline TLInt64 const& GetPQ() const
 					{
 						return m_pq;
 					}

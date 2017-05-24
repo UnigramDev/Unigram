@@ -28,11 +28,12 @@ namespace Telegram
 			namespace TL
 			{
 
+				class TLServerDHParamsOk;
 				class TLResPQ;
 
 			}
 
-			
+
 			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IDatacenter, CloakedIid<IClosable>>, public MultiThreadObject
 			{
 				friend class Connection;
@@ -96,11 +97,13 @@ namespace Telegram
 				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
 				HRESULT OnHandshakeResponseReceived(_In_ Connection* connection, INT64 messageId, _In_ ITLObject* object);
-				HRESULT OnHandshakePQ(_In_ TL::TLResPQ* pqResponse);
+				HRESULT OnHandshakePQ(_In_ Connection* connection, INT64 messageId, _In_ TL::TLResPQ* pqResponse);
+				HRESULT OnHandshakeServerDH(_In_ Connection* connection, INT64 messageId, _In_ TL::TLServerDHParamsOk* pqResponse);
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
 				HRESULT SendRequest(_In_ ITLObject* object, _In_ Connection* connection);
-				HRESULT SendAckRequest(INT64 messageId);				
 				boolean ContainsServerSalt(INT64 salt, size_t count);
+
+				static HRESULT SendAckRequest(_In_ Connection* connection, INT64 messageId);
 
 				UINT32 m_id;
 				HandshakeState m_handshakeState;

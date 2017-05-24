@@ -22,6 +22,12 @@ namespace Telegram
 				UINT32 Port;
 			};
 
+			struct ServerPublicKey
+			{
+				std::string Key;
+				INT64 Fingerprint;
+			};
+
 		}
 	}
 }

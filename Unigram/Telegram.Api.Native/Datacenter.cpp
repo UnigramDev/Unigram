@@ -2,12 +2,14 @@
 #include <algorithm>
 #include <Ws2tcpip.h>
 #include "Datacenter.h"
+#include "DatacenterCryptography.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "Connection.h"
 #include "ConnectionManager.h"
 #include "TLProtocolScheme.h"
 #include "Request.h"
+#include "Wrappers\OpenSSL.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
@@ -521,25 +523,14 @@ HRESULT Datacenter::BeginHandshake(boolean reconnect)
 
 	auto lock = LockCriticalSection();
 
-	m_handshakeContext = std::make_unique<HandshakeContext>();
 	m_handshakeState = HandshakeState::Started;
+	m_handshakeContext = std::make_unique<HandshakeContext>();
+	RAND_bytes(m_handshakeContext->Nonce, sizeof(m_handshakeContext->Nonce));
 
-	auto pqRequest = Make<TLReqPQ>();
-	CopyMemory(m_handshakeContext->Nonce, pqRequest->GetNonce(), sizeof(m_handshakeContext->Nonce));
+	ComPtr<TLReqPQ> pqRequest;
+	ReturnIfFailed(result, MakeAndInitialize<TLReqPQ>(&pqRequest, m_handshakeContext->Nonce));
 
 	return genericConnection->SendUnencryptedMessage(pqRequest.Get(), false);
-}
-
-HRESULT Datacenter::SendAckRequest(INT64 messageId)
-{
-	HRESULT result;
-	ComPtr<Connection> genericConnection;
-	ReturnIfFailed(result, GetGenericConnection(true, &genericConnection));
-
-	auto msgsAck = Make<TLMsgsAck>();
-	msgsAck->GetMsgIds().push_back(messageId);
-
-	return genericConnection->SendUnencryptedMessage(msgsAck.Get(), false);
 }
 
 HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, ServerEndpoint** endpoint)
@@ -650,27 +641,102 @@ HRESULT Datacenter::OnHandshakeResponseReceived(Connection* connection, INT64 me
 	switch (constructor)
 	{
 	case TLResPQ::Constructor:
-	{
-		return OnHandshakePQ(static_cast<TLResPQ*>(object));
-	}
-	break;
-	default:
-		break;
+		return OnHandshakePQ(connection, messageId, static_cast<TLResPQ*>(object));
+	case TLServerDHParamsOk::Constructor:
+		return OnHandshakeServerDH(connection, messageId, static_cast<TLServerDHParamsOk*>(object));
 	}
 
 	return S_OK;
 }
 
-HRESULT Datacenter::OnHandshakePQ(TLResPQ* pqResponse)
+HRESULT Datacenter::OnHandshakePQ(Connection* connection, INT64 messageId, TLResPQ* pqResponse)
 {
 	if (m_handshakeState != HandshakeState::Started)
 	{
 		return E_UNEXPECTED;
 	}
 
+	m_handshakeState = HandshakeState::PQ;
+
+	if (!DatacenterCryptography::CheckNonces(m_handshakeContext->Nonce, pqResponse->GetNonce()))
+	{
+		return E_INVALIDARG;
+	}
+
+	ServerPublicKey const* serverPublicKey;
+	if (!DatacenterCryptography::SelectPublicKey(pqResponse->GetServerPublicKeyFingerprints(), &serverPublicKey))
+	{
+		return E_FAIL;
+	}
+
+	auto pq = pqResponse->GetPQ();
+	UINT64 pq64 = ((pq[0] & 0xffULL) << 56ULL) | ((pq[1] & 0xffULL) << 48ULL) | ((pq[2] & 0xffULL) << 40ULL) | ((pq[3] & 0xffULL) << 32ULL) |
+		((pq[4] & 0xffULL) << 24ULL) | ((pq[5] & 0xffULL) << 16ULL) | ((pq[6] & 0xffULL) << 8ULL) | ((pq[7] & 0xffULL));
+
+	UINT32 p32;
+	UINT32 q32;
+	if (!DatacenterCryptography::FactorizePQ(pq64, p32, q32))
+	{
+		return E_FAIL;
+	}
+
+	CopyMemory(m_handshakeContext->ServerNonce, pqResponse->GetServerNonce(), sizeof(m_handshakeContext->ServerNonce));
+	RAND_bytes(m_handshakeContext->NewNonce, sizeof(m_handshakeContext->NewNonce));
+
 	HRESULT result;
 	ComPtr<TLReqDHParams> dhParams;
-	ReturnIfFailed(result, MakeAndInitialize<TLReqDHParams>(&dhParams, m_handshakeContext->Nonce, pqResponse));
+	ReturnIfFailed(result, MakeAndInitialize<TLReqDHParams>(&dhParams, m_handshakeContext->Nonce, m_handshakeContext->ServerNonce, m_handshakeContext->NewNonce, p32, q32, serverPublicKey->Fingerprint));
+
+	ComPtr<TLBinaryWriter> innerDataWriter;
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&innerDataWriter, 255));
+	ReturnIfFailed(result, innerDataWriter->put_Position(SHA_DIGEST_LENGTH));
+	ReturnIfFailed(result, innerDataWriter->WriteUInt32(0x83c95aec));
+	ReturnIfFailed(result, innerDataWriter->WriteBuffer(pq, sizeof(TLInt64)));
+	ReturnIfFailed(result, innerDataWriter->WriteBuffer(dhParams->GetP(), sizeof(TLInt32)));
+	ReturnIfFailed(result, innerDataWriter->WriteBuffer(dhParams->GetQ(), sizeof(TLInt32)));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_handshakeContext->Nonce), m_handshakeContext->Nonce));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_handshakeContext->ServerNonce), m_handshakeContext->ServerNonce));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_handshakeContext->NewNonce), m_handshakeContext->NewNonce));
+
+	constexpr UINT32 InnerDataLength = sizeof(UINT32) + 2 * sizeof(TLInt128) + sizeof(TLInt256) + 28;
+	SHA1(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH, InnerDataLength, innerDataWriter->GetBuffer());
+	RAND_bytes(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH + InnerDataLength, 255 - InnerDataLength - SHA_DIGEST_LENGTH);
+
+	Wrappers::BIO keyBio(BIO_new(BIO_s_mem()));
+	BIO_write(keyBio.Get(), serverPublicKey->Key.c_str(), serverPublicKey->Key.size());
+
+	Wrappers::RSA rsaKey(PEM_read_bio_RSAPublicKey(keyBio.Get(), nullptr, nullptr, nullptr));
+	Wrappers::BigNum a(BN_bin2bn(innerDataWriter->GetBuffer(), innerDataWriter->GetCapacity(), nullptr));
+	Wrappers::BigNum r(BN_new());
+
+	auto bnContext = DatacenterCryptography::GetBNContext();
+	BN_mod_exp(r.Get(), a.Get(), rsaKey->e, rsaKey->n, bnContext);
+
+	auto encryptedDataLength = BN_bn2bin(r.Get(), dhParams->GetEncryptedData());
+	if (encryptedDataLength < 256)
+	{
+		ZeroMemory(dhParams->GetEncryptedData() + encryptedDataLength, 256 - encryptedDataLength);
+	}
+
+	return connection->SendUnencryptedMessage(dhParams.Get(), false);
+}
+
+HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, INT64 messageId, TLServerDHParamsOk* pqResponse)
+{
+	if (m_handshakeState != HandshakeState::PQ)
+	{
+		return E_UNEXPECTED;
+	}
+
+	m_handshakeState = HandshakeState::ServerDH;
 
 	return S_OK;
+}
+
+HRESULT Datacenter::SendAckRequest(Connection* connection, INT64 messageId)
+{
+	auto msgsAck = Make<TLMsgsAck>();
+	msgsAck->GetMsgIds().push_back(messageId);
+
+	return connection->SendUnencryptedMessage(msgsAck.Get(), false);
 }

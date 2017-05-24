@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "TLProtocolScheme.h"
 #include "Datacenter.h"
-#include "DatacenterCryptography.h"
 #include "ConnectionManager.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "Helpers\COMHelper.h"
+
+#define TLARRAY_CONSTRUCTOR 0x1cb5c415
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
@@ -14,6 +15,8 @@ ActivatableClassWithFactory(TLError, TLErrorFactory);
 
 RegisterTLObjectConstructor(TLError);
 RegisterTLObjectConstructor(TLMsgsAck);
+RegisterTLObjectConstructor(TLServerDHParamsFail);
+RegisterTLObjectConstructor(TLServerDHParamsOk);
 RegisterTLObjectConstructor(TLResPQ);
 RegisterTLObjectConstructor(TLFutureSalts);
 RegisterTLObjectConstructor(TLFutureSalt);
@@ -64,7 +67,7 @@ HRESULT TLMsgsAck::ReadBody(ITLBinaryReaderEx* reader)
 	UINT32 constructor;
 	ReturnIfFailed(result, reader->ReadUInt32(&constructor));
 
-	if (constructor != 0x1cb5c415)
+	if (constructor != TLARRAY_CONSTRUCTOR)
 	{
 		return E_FAIL;
 	}
@@ -85,7 +88,7 @@ HRESULT TLMsgsAck::ReadBody(ITLBinaryReaderEx* reader)
 HRESULT TLMsgsAck::WriteBody(ITLBinaryWriterEx* writer)
 {
 	HRESULT result;
-	ReturnIfFailed(result, writer->WriteInt32(0x1cb5c415));
+	ReturnIfFailed(result, writer->WriteInt32(TLARRAY_CONSTRUCTOR));
 	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(m_msgIds.size())));
 
 	for (size_t i = 0; i < m_msgIds.size(); i++)
@@ -97,34 +100,12 @@ HRESULT TLMsgsAck::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
-HRESULT TLReqDHParams::RuntimeClassInitialize(TLAuthNonce16 nonce, TLResPQ* pqResponse)
+HRESULT TLReqDHParams::RuntimeClassInitialize(TLInt128 nonce, TLInt128 serverNonce, TLInt256 newNonce, UINT32 p, UINT32 q, INT64 publicKeyFingerprint)
 {
-	if (nonce == nullptr || pqResponse == nullptr)
-	{
-		return E_INVALIDARG;
-	}
-
-	if (!CheckNonces(nonce, pqResponse->GetNonce()))
-	{
-		return E_INVALIDARG;
-	}
-
-	ServerPublicKey const* serverPublicKey;
-	if (!SelectPublicKey(pqResponse->GetServerPublicKeyFingerprints(), &serverPublicKey))
-	{
-		return E_FAIL;
-	}
-
-	auto pq = pqResponse->GetPQ();
-	UINT64 pq64 = ((pq[0] & 0xffULL) << 56ULL) | ((pq[1] & 0xffULL) << 48ULL) | ((pq[2] & 0xffULL) << 40ULL) | ((pq[3] & 0xffULL) << 32ULL) |
-		((pq[4] & 0xffULL) << 24ULL) | ((pq[5] & 0xffULL) << 16ULL) | ((pq[6] & 0xffULL) << 8ULL) | ((pq[7] & 0xffULL));
-
-	UINT32 p;
-	UINT32 q;
-	if (!FactorizePQ(pq64, p, q))
-	{
-		return E_FAIL;
-	}
+	CopyMemory(m_nonce, nonce, sizeof(m_nonce));
+	CopyMemory(m_serverNonce, serverNonce, sizeof(m_serverNonce));
+	CopyMemory(m_newNonce, newNonce, sizeof(m_newNonce));
+	ZeroMemory(m_encryptedData, sizeof(m_encryptedData));
 
 	m_p[0] = (p >> 24) & 0xff;
 	m_p[1] = (p >> 16) & 0xff;
@@ -136,40 +117,55 @@ HRESULT TLReqDHParams::RuntimeClassInitialize(TLAuthNonce16 nonce, TLResPQ* pqRe
 	m_q[2] = (q >> 8) & 0xff;
 	m_q[3] = q & 0xff;
 
-	CopyMemory(m_nonce, nonce, sizeof(m_nonce));
-	CopyMemory(m_serverNonce, pqResponse->GetNonce(), sizeof(m_serverNonce));
-	RAND_bytes(m_newNonce, sizeof(m_newNonce));
-	m_publicKeyFingerprint = serverPublicKey->Fingerprint;
-
-	HRESULT result;
-	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&m_innerDataBuffer, sizeof(UINT32) + 2 * sizeof(TLAuthNonce16) + sizeof(TLAuthNonce32) + 28 + SHA_DIGEST_LENGTH));
-
-	ComPtr<TLBinaryWriter> innerDataWriter;
-	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&innerDataWriter, m_innerDataBuffer.Get()));
-	ReturnIfFailed(result, innerDataWriter->WriteUInt32(0x83c95aec));
-	ReturnIfFailed(result, innerDataWriter->WriteBuffer(pq, sizeof(TLAuthPQ)));
-	ReturnIfFailed(result, innerDataWriter->WriteBuffer(m_p, sizeof(m_p)));
-	ReturnIfFailed(result, innerDataWriter->WriteBuffer(m_q, sizeof(m_q)));
-	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_nonce), m_nonce));
-	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_serverNonce), m_serverNonce));
-	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_newNonce), m_newNonce));
-
+	m_publicKeyFingerprint = publicKeyFingerprint;
 	return S_OK;
 }
 
 HRESULT TLReqDHParams::WriteBody(ITLBinaryWriterEx* writer)
 {
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteRawBuffer(sizeof(m_nonce), m_nonce));
+	ReturnIfFailed(result, writer->WriteRawBuffer(sizeof(m_serverNonce), m_serverNonce));
+	ReturnIfFailed(result, writer->WriteBuffer(m_p, sizeof(m_p)));
+	ReturnIfFailed(result, writer->WriteBuffer(m_q, sizeof(m_q)));
+	ReturnIfFailed(result, writer->WriteInt64(m_publicKeyFingerprint));
+
+	return writer->WriteBuffer(m_encryptedData, sizeof(m_encryptedData));
+}
+
+
+HRESULT TLServerDHParams::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadRawBuffer(sizeof(m_nonce), m_nonce));
+
+	return reader->ReadRawBuffer(sizeof(m_serverNonce), m_serverNonce);
+}
+
+
+HRESULT TLServerDHParamsFail::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, TLServerDHParams::ReadBody(reader));
+
+	return reader->ReadRawBuffer(sizeof(m_newNonceHash), m_newNonceHash);
+}
+
+
+HRESULT TLServerDHParamsOk::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, TLServerDHParams::ReadBody(reader));
+
+	return reader->ReadBuffer(m_encryptedData);
+}
+
+
+HRESULT TLReqPQ::RuntimeClassInitialize(TLInt128 nonce)
+{
+	CopyMemory(m_nonce, nonce, sizeof(m_nonce));
+
 	return S_OK;
-}
-
-
-TLReqPQ::TLReqPQ()
-{
-	RAND_bytes(m_nonce, sizeof(m_nonce));
-}
-
-TLReqPQ::~TLReqPQ()
-{
 }
 
 HRESULT TLReqPQ::WriteBody(ITLBinaryWriterEx* writer)
@@ -199,7 +195,7 @@ HRESULT TLResPQ::ReadBody(ITLBinaryReaderEx* reader)
 	UINT32 constructor;
 	ReturnIfFailed(result, reader->ReadUInt32(&constructor));
 
-	if (constructor != 0x1cb5c415)
+	if (constructor != TLARRAY_CONSTRUCTOR)
 	{
 		return E_FAIL;
 	}

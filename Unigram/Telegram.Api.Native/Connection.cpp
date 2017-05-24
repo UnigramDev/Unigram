@@ -240,7 +240,7 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* object, boolean reportAck)
 
 	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, messageLength);
 
-	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetPosition());
+	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
 }
 
 HRESULT Connection::OnSocketConnected()
@@ -292,6 +292,8 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 
 		if ((firstByte & (1 << 7)) != 0)
 		{
+			packetReader->put_Position(packetPosition);
+
 			INT32 ackId;
 			BreakIfFailed(result, packetReader->ReadBigEndianInt32(&ackId));
 			BreakIfFailed(result, connectionManager->OnConnectionQuickAckReceived(this, ackId & ~(1 << 31)));
@@ -302,20 +304,16 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 		UINT32 packetLength;
 		if (firstByte == 0x7f)
 		{
+			packetReader->put_Position(packetPosition);
+
 			BreakIfFailed(result, packetReader->ReadUInt32(&packetLength));
 
-			packetLength *= 4;
+			packetLength = (packetLength >> 8) * 4;
 		}
 		else
 		{
 			packetLength = static_cast<UINT32>(firstByte) * 4;
 		}
-
-		/*if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH ||
-			FAILED(connectionManager->OnConnectionPacketReceived(this, packetReader.Get(), packetLength)))
-		{
-			return Reconnect();
-		}*/
 
 		if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH || FAILED(OnMessageReceived(packetReader.Get(), packetLength)))
 		{
@@ -329,7 +327,7 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 		}
 	}
 
-	if (result = E_NOT_SUFFICIENT_BUFFER)
+	if (result == E_NOT_SUFFICIENT_BUFFER)
 	{
 		auto newBufferLength = m_partialPacketBuffer->GetCapacity() - packetPosition;
 		MoveMemory(m_partialPacketBuffer->GetBuffer(), m_partialPacketBuffer->GetBuffer() + packetPosition, newBufferLength);

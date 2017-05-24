@@ -296,7 +296,7 @@ HRESULT TLBinaryWriter::WriteBuffer(BYTE const* buffer, UINT32 length)
 	}
 	else
 	{
-		padding = (length + 3) % 4;
+		padding = (length + 4) % 4;
 		if (padding != 0)
 		{
 			padding = 4 - padding;
@@ -510,7 +510,7 @@ HRESULT TLObjectSizeCalculator::WriteBuffer(BYTE const* buffer, UINT32 length)
 	}
 	else
 	{
-		UINT32 padding = (length + 3) % 4;
+		UINT32 padding = (length + 4) % 4;
 		if (padding != 0)
 		{
 			padding = 4 - padding;

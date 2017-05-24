@@ -40,6 +40,7 @@
     </ClCompile>
     <ClCompile Include="TLUnparsedMessage.cpp" />
     <ClCompile Include="ConnectionCryptography.cpp" />
+    <ClCompile Include="DatacenterCryptography.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -50,9 +51,6 @@
     <ClInclude Include="ConnectionSocket.h" />
     <ClInclude Include="ConnectionManager.h" />
     <ClInclude Include="Timer.h" />
-    <ClInclude Include="WSAEvent.h">
-      <Filter>Wrappers</Filter>
-    </ClInclude>
     <ClInclude Include="MultiThreadObject.h" />
     <ClInclude Include="Request.h" />
     <ClInclude Include="NetworkExtensions.h" />
@@ -78,6 +76,12 @@
     <ClInclude Include="DatacenterCryptography.h" />
     <ClInclude Include="ConnectionCryptography.h" />
     <ClInclude Include="DatacenterServer.h" />
+    <ClInclude Include="Wrappers\WSAEvent.h">
+      <Filter>Wrappers</Filter>
+    </ClInclude>
+    <ClInclude Include="Wrappers\OpenSSL.h">
+      <Filter>Wrappers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

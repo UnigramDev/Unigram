@@ -4,7 +4,7 @@
 #include <string>
 #include <Winsock2.h>
 #include <wrl.h>
-#include "WSAEvent.h"
+#include "Wrappers\WSAEvent.h"
 #include "EventObject.h"
 
 using namespace Microsoft::WRL;

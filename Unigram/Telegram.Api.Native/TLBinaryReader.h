@@ -30,6 +30,7 @@ namespace ABI
 						virtual HRESULT STDMETHODCALLTYPE ReadBigEndianInt32(_Out_ INT32* value) = 0;
 						virtual HRESULT STDMETHODCALLTYPE ReadWString(_Out_ std::wstring& string) = 0;
 						virtual HRESULT STDMETHODCALLTYPE ReadBuffer(_Out_writes_(length) BYTE* buffer, UINT32 length) = 0;
+						virtual HRESULT STDMETHODCALLTYPE ReadBuffer(_Out_ std::vector<BYTE>& buffer) = 0;
 						virtual void STDMETHODCALLTYPE Reset() = 0;
 					};
 
@@ -81,6 +82,7 @@ namespace Telegram
 					IFACEMETHODIMP ReadWString(_Out_ std::wstring& string);
 					IFACEMETHODIMP ReadRawBuffer(UINT32 __valueSize, _Out_writes_(__valueSize) BYTE* value);
 					IFACEMETHODIMP ReadBuffer(_Out_writes_(length) BYTE* buffer, UINT32 length);
+					IFACEMETHODIMP ReadBuffer(_Out_ std::vector<BYTE>& buffer);
 					IFACEMETHODIMP_(void) Reset();
 
 					//Internal methods

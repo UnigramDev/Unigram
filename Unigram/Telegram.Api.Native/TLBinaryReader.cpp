@@ -348,6 +348,19 @@ HRESULT TLBinaryReader::ReadBuffer(BYTE* buffer, UINT32 length)
 	return S_OK;
 }
 
+HRESULT TLBinaryReader::ReadBuffer(std::vector<BYTE>& buffer)
+{
+	HRESULT result;
+	UINT32 sourceLength;
+	BYTE const* sourceBuffer;
+	ReturnIfFailed(result, ReadBuffer(&sourceBuffer, &sourceLength));
+
+	buffer.resize(sourceLength);
+
+	CopyMemory(buffer.data(), sourceBuffer, sourceLength);
+	return S_OK;
+}
+
 void TLBinaryReader::Reset()
 {
 	m_position = 0;
@@ -363,7 +376,7 @@ HRESULT TLBinaryReader::ReadBuffer(BYTE const** buffer, UINT32* length)
 	UINT32 sl = 1;
 	UINT32 l = m_buffer[m_position++];
 
-	if (l >= 254)
+	if (l > 253)
 	{
 		if (m_position + 3 > m_capacity)
 		{
@@ -376,13 +389,13 @@ HRESULT TLBinaryReader::ReadBuffer(BYTE const** buffer, UINT32* length)
 		m_position += 3;
 	}
 
-	UINT32 addition = (l + sl) % 4;
-	if (addition != 0)
+	UINT32 padding = (l + sl) % 4;
+	if (padding != 0)
 	{
-		addition = 4 - addition;
+		padding = 4 - padding;
 	}
 
-	if (m_position + l + addition > m_capacity)
+	if (m_position + l + padding > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
@@ -390,6 +403,6 @@ HRESULT TLBinaryReader::ReadBuffer(BYTE const** buffer, UINT32* length)
 	*length = l;
 	*buffer = m_buffer + m_position;
 
-	m_position += l + addition;
+	m_position += l + padding;
 	return S_OK;
 }

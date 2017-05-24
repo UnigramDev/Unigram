@@ -21,7 +21,7 @@ namespace Microsoft
 						return ::WSACloseEvent(h) != FALSE;
 					}
 
-					inline static HANDLE GetInvalidValue() throw()
+					inline static Type GetInvalidValue() throw()
 					{
 						return INVALID_HANDLE_VALUE;
 					}
