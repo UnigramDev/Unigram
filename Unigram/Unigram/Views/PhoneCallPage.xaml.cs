@@ -39,7 +39,7 @@ namespace Unigram.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class PhoneCallPage : Page
+    public sealed partial class PhoneCallPage : Page, IDisposable
     {
         private Visual _descriptionVisual;
         private Visual _largeVisual;
@@ -58,6 +58,8 @@ namespace Unigram.Views
 
         private DispatcherTimer _debugTimer;
         private DispatcherTimer _durationTimer;
+
+        private bool _disposed;
 
         public PhoneCallPage()
         {
@@ -135,6 +137,20 @@ namespace Unigram.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            Debug.WriteLine("Unloaded");
+            
+            if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
+            {
+                AudioRoutingManager.GetDefault().AudioEndpointChanged -= AudioEndpointChanged;
+            }
+        }
+
+        public void Dispose()
+        {
+            _disposed = true;
+            _debugTimer.Stop();
+            _durationTimer.Stop();
+
             if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
             {
                 AudioRoutingManager.GetDefault().AudioEndpointChanged -= AudioEndpointChanged;
@@ -167,6 +183,11 @@ namespace Unigram.Views
 
         public void SetCall(TLTuple<TLPhoneCallState, TLPhoneCallBase, TLUserBase, string> tuple)
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             if (_state != tuple.Item1)
             {
                 Debug.WriteLine("[{0:HH:mm:ss.fff}] State changed in app: " + tuple.Item1, DateTime.Now);
@@ -197,11 +218,16 @@ namespace Unigram.Views
 
             if (tuple.Item3 is TLUser user)
             {
-                //try
-                //{
-                //    Image.Source = DefaultPhotoConverter.Convert(user.Photo, true) as ImageSource;
-                //}
-                //catch { }
+                if (user.HasPhoto && user.Photo is TLUserProfilePhoto)
+                {
+                    Image.Source = DefaultPhotoConverter.Convert(user.Photo, true) as ImageSource;
+                    GrabPanel.Background = new SolidColorBrush(Colors.Transparent);
+                }
+                else
+                {
+                    Image.Source = null;
+                    GrabPanel.Background = BindConvert.Current.Bubble(user.Id);
+                }
 
                 FromLabel.Text = user.FullName;
                 TextBlockHelper.SetMarkdown(DescriptionLabel, string.Format("If these emoji are the same on **{0}**'s screen, this call is 100% secure.", user.FirstName));
@@ -387,6 +413,11 @@ namespace Unigram.Views
 
         private async void AudioEndpointChanged(AudioRoutingManager sender, object args)
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 var routingManager = AudioRoutingManager.GetDefault();

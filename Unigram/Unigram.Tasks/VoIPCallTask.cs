@@ -93,7 +93,7 @@ namespace Unigram.Tasks
         }
 
         [Conditional("DEBUG")]
-        internal static void Log(string caption, string message)
+        public static void Log(string caption, string message)
         {
             var xml = $@"
                 <toast>
@@ -352,8 +352,8 @@ namespace Unigram.Tasks
                         {
                             IsUdpP2p = true,
                             IsUdpReflector = true,
-                            MinLayer = 65,
-                            MaxLayer = 65,
+                            MinLayer = Telegram.Api.Constants.CallsMinLayer,
+                            MaxLayer = Telegram.Api.Constants.CallsMaxLayer,
                         }
                     };
 
@@ -511,8 +511,8 @@ namespace Unigram.Tasks
                         {
                             IsUdpP2p = true,
                             IsUdpReflector = true,
-                            MinLayer = 65,
-                            MaxLayer = 65,
+                            MinLayer = Telegram.Api.Constants.CallsMinLayer,
+                            MaxLayer = Telegram.Api.Constants.CallsMaxLayer,
                         }
                     };
 
@@ -613,6 +613,8 @@ namespace Unigram.Tasks
         {
             if (_protoService != null)
             {
+                VoIPCallTask.Log("Sending request", "Via MTProtoService");
+
                 if (caption.Equals("voip.getUser"))
                 {
                     return new MTProtoResponse<T>(InMemoryCacheService.Current.GetUser(((TLPeerUser)request).UserId));
@@ -622,6 +624,7 @@ namespace Unigram.Tasks
             }
             else
             {
+                VoIPCallTask.Log("Sending request", "Via AppServiceConnection");
 
                 var response = await _connection.SendMessageAsync(new ValueSet { { nameof(caption), caption }, { nameof(request), TLSerializationService.Current.Serialize(request) } });
                 if (response.Status == AppServiceResponseStatus.Success)
@@ -635,6 +638,8 @@ namespace Unigram.Tasks
                         return new MTProtoResponse<T>(TLSerializationService.Current.Deserialize<TLRPCError>(response.Message["error"] as string));
                     }
                 }
+
+                VoIPCallTask.Log("Request failed", "Via AppServiceConnection");
 
                 return new MTProtoResponse<T>(new TLRPCError { ErrorMessage = "UNKNOWN", ErrorCode = (int)response.Status });
             }
@@ -667,16 +672,13 @@ namespace Unigram.Tasks
                         var req = new TLTuple<double>(reader);
                         reader.Dispose();
 
-                        TLPhoneCallDiscardReasonBase reason;
-                        switch (_phoneCall)
-                        {
-                            case TLPhoneCallWaiting waiting:
-                                reason = new TLPhoneCallDiscardReasonBusy();
-                                break;
-                            default:
-                                reason = new TLPhoneCallDiscardReasonHangup();
-                                break;
-                        }
+                        var missed = _state == TLPhoneCallState.Ringing || (_state == TLPhoneCallState.Waiting && _outgoing);
+                        var declined = _state == TLPhoneCallState.WaitingIncoming;
+                        TLPhoneCallDiscardReasonBase reason = missed 
+                            ? new TLPhoneCallDiscardReasonMissed() 
+                            : declined 
+                            ? (TLPhoneCallDiscardReasonBase)new TLPhoneCallDiscardReasonBusy() 
+                            : new TLPhoneCallDiscardReasonHangup();
 
                         var req2 = new TLPhoneDiscardCall { Peer = _phoneCall.ToInputPhoneCall(), Reason = reason, Duration = (int)req.Item1 };
 
@@ -693,6 +695,17 @@ namespace Unigram.Tasks
                                 }
                             }
                         }
+                    }
+                    else if (_systemCall != null)
+                    {
+                        _systemCall.AnswerRequested -= OnAnswerRequested;
+                        _systemCall.RejectRequested -= OnRejectRequested;
+                        _systemCall.NotifyCallEnded();
+                        _systemCall = null;
+                    }
+                    else if (_deferral != null)
+                    {
+                        _deferral.Complete();
                     }
                 }
                 else if (caption.Equals("phone.mute") || caption.Equals("phone.unmute"))

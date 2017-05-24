@@ -165,24 +165,29 @@ namespace Unigram.Common
                             var tupleBase = new TLTuple<int, TLPhoneCallBase, TLUserBase, string>(from);
                             var tuple = new TLTuple<TLPhoneCallState, TLPhoneCallBase, TLUserBase, string>((TLPhoneCallState)tupleBase.Item1, tupleBase.Item2, tupleBase.Item3, tupleBase.Item4);
 
-                            if (tuple.Item2 is TLPhoneCallDiscarded && _phoneView != null)
+                            if (tuple.Item2 is TLPhoneCallDiscarded)
                             {
-
-                                var newView = _phoneView;
-                                _phoneViewExists = false;
-                                _phoneView = null;
-
-                                await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                                if (_phoneView != null)
                                 {
-                                    newView.SetCall(tuple);
-                                    CoreApplication.GetCurrentView().CoreWindow.Close();
-                                });
+                                    var newView = _phoneView;
+                                    _phoneViewExists = false;
+                                    _phoneView = null;
+
+                                    await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                                    {
+                                        newView.SetCall(tuple);
+                                        newView.Dispose();
+                                        CoreApplication.GetCurrentView().CoreWindow.Close();
+                                    });
+                                }
 
                                 return;
                             }
 
                             if (_phoneViewExists == false)
                             {
+                                VoIPCallTask.Log("Creating VoIP UI", "Creating VoIP UI");
+
                                 _phoneViewExists = true;
 
                                 PhoneCallPage newPlayer = null;
@@ -217,6 +222,8 @@ namespace Unigram.Common
                             }
                             else if (_phoneView != null)
                             {
+                                VoIPCallTask.Log("VoIP UI already exists", "VoIP UI already exists");
+
                                 await _phoneView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                                 {
                                     _phoneView.SetCall(tuple);

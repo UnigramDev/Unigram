@@ -884,7 +884,7 @@ namespace Unigram.Views
 
             return 12;
 
-            if (lower is TLPageBlockCover)
+            if (lower is TLPageBlockCover || lower is TLPageBlockChannel)
             {
                 return 0;
             }

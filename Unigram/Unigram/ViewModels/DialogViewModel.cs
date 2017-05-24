@@ -1559,10 +1559,21 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var coordinator = VoipCallCoordinator.GetDefault();
-            var result = await coordinator.ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask");
-            if (result == VoipPhoneCallResourceReservationStatus.Success)
+            await VoIPConnection.Current.SendRequestAsync("phone.discardCall", TLTuple.Create(0d));
+
+            try
             {
+                var coordinator = VoipCallCoordinator.GetDefault();
+                var result = await coordinator.ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask");
+                if (result == VoipPhoneCallResourceReservationStatus.Success)
+                {
+                    await VoIPConnection.Current.SendRequestAsync("voip.startCall", user);
+                }
+            }
+            catch
+            {
+                await TLMessageDialog.ShowAsync("Something went wrong. Please, try to close and relaunch the app.", "Unigram", "OK");
+
                 await VoIPConnection.Current.SendRequestAsync("voip.startCall", user);
             }
         }
