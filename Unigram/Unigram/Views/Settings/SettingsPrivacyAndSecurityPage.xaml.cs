@@ -16,14 +16,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsPrivacyPage : Page
+    public sealed partial class SettingsPrivacyAndSecurityPage : Page
     {
-        public SettingsPrivacyViewModel ViewModel => DataContext as SettingsPrivacyViewModel;
+        public SettingsPrivacyAndSecurityViewModel ViewModel => DataContext as SettingsPrivacyAndSecurityViewModel;
 
-        public SettingsPrivacyPage()
+        public SettingsPrivacyAndSecurityPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<SettingsPrivacyViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsPrivacyAndSecurityViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

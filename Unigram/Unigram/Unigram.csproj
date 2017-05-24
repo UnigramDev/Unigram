@@ -250,7 +250,11 @@
     <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsGeneralViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsPrivacyViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsPrivacyChatInviteViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsPrivacyPhoneCallViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsPrivacyStatusTimestampViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsPrivacyViewModelBase.cs" />
     <Compile Include="ViewModels\Settings\SettingsStatsViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
@@ -933,8 +937,8 @@
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsDataPage.xaml.cs">
-      <DependentUpon>SettingsDataPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsDataAndStoragePage.xaml.cs">
+      <DependentUpon>SettingsDataAndStoragePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsStickersFeaturedPage.xaml.cs">
       <DependentUpon>SettingsStickersFeaturedPage.xaml</DependentUpon>
@@ -942,8 +946,8 @@
     <Compile Include="Views\Settings\SettingsNotificationsPage.xaml.cs">
       <DependentUpon>SettingsNotificationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsPrivacyPage.xaml.cs">
-      <DependentUpon>SettingsPrivacyPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsPrivacyAndSecurityPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyAndSecurityPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsSessionsPage.xaml.cs">
       <DependentUpon>SettingsSessionsPage.xaml</DependentUpon>
@@ -1416,7 +1420,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\SettingsDataPage.xaml">
+    <Page Include="Views\Settings\SettingsDataAndStoragePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1444,7 +1448,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Settings\SettingsPrivacyPage.xaml">
+    <Page Include="Views\Settings\SettingsPrivacyAndSecurityPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
