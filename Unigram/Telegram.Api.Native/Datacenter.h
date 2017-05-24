@@ -29,6 +29,7 @@ namespace Telegram
 			{
 
 				class TLServerDHParamsOk;
+				class TLReqDHParams;
 				class TLResPQ;
 
 			}
@@ -88,12 +89,14 @@ namespace Telegram
 				struct HandshakeContext
 				{
 					BYTE Nonce[16];
-					BYTE NewNonce[16];
+					BYTE NewNonce[32];
 					BYTE ServerNonce[16];
+					BYTE AuthKey[256];
 				};
 
 				IFACEMETHODIMP Close();
 				HRESULT GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, _Out_ ServerEndpoint** endpoint);
+				boolean ContainsServerSalt(INT64 salt, size_t count);
 				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
 				HRESULT OnHandshakeResponseReceived(_In_ Connection* connection, INT64 messageId, _In_ ITLObject* object);
@@ -101,7 +104,6 @@ namespace Telegram
 				HRESULT OnHandshakeServerDH(_In_ Connection* connection, INT64 messageId, _In_ TL::TLServerDHParamsOk* pqResponse);
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
 				HRESULT SendRequest(_In_ ITLObject* object, _In_ Connection* connection);
-				boolean ContainsServerSalt(INT64 salt, size_t count);
 
 				static HRESULT SendAckRequest(_In_ Connection* connection, INT64 messageId);
 

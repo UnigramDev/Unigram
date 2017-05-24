@@ -116,6 +116,30 @@ namespace Telegram
 						return m_underlyingBuffer.Get();
 					}
 
+					inline static UINT32 GetByteArrayLength(UINT32 length)
+					{
+						if (length < 254)
+						{
+							UINT32 padding = (length + 1) % 4;
+							if (padding != 0)
+							{
+								padding = 4 - padding;
+							}
+
+							return 1 + length + padding;
+						}
+						else
+						{
+							UINT32 padding = (length + 4) % 4;
+							if (padding != 0)
+							{
+								padding = 4 - padding;
+							}
+
+							return 4 + length + padding;
+						}
+					}
+
 				private:
 					HRESULT WriteString(_In_ LPCWCHAR buffer, UINT32 length);
 

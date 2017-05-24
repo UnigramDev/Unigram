@@ -3,6 +3,7 @@
 #include <Ws2tcpip.h>
 #include "Datacenter.h"
 #include "DatacenterCryptography.h"
+#include "NativeBuffer.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "Connection.h"
@@ -685,10 +686,10 @@ HRESULT Datacenter::OnHandshakePQ(Connection* connection, INT64 messageId, TLRes
 
 	HRESULT result;
 	ComPtr<TLReqDHParams> dhParams;
-	ReturnIfFailed(result, MakeAndInitialize<TLReqDHParams>(&dhParams, m_handshakeContext->Nonce, m_handshakeContext->ServerNonce, m_handshakeContext->NewNonce, p32, q32, serverPublicKey->Fingerprint));
+	ReturnIfFailed(result, MakeAndInitialize<TLReqDHParams>(&dhParams, m_handshakeContext->Nonce, m_handshakeContext->ServerNonce, m_handshakeContext->NewNonce, p32, q32, serverPublicKey->Fingerprint, 256));
 
 	ComPtr<TLBinaryWriter> innerDataWriter;
-	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&innerDataWriter, 255));
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&innerDataWriter, dhParams->GetEncryptedData()));
 	ReturnIfFailed(result, innerDataWriter->put_Position(SHA_DIGEST_LENGTH));
 	ReturnIfFailed(result, innerDataWriter->WriteUInt32(0x83c95aec));
 	ReturnIfFailed(result, innerDataWriter->WriteBuffer(pq, sizeof(TLInt64)));
@@ -698,24 +699,43 @@ HRESULT Datacenter::OnHandshakePQ(Connection* connection, INT64 messageId, TLRes
 	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_handshakeContext->ServerNonce), m_handshakeContext->ServerNonce));
 	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_handshakeContext->NewNonce), m_handshakeContext->NewNonce));
 
-	constexpr UINT32 InnerDataLength = sizeof(UINT32) + 2 * sizeof(TLInt128) + sizeof(TLInt256) + 28;
-	SHA1(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH, InnerDataLength, innerDataWriter->GetBuffer());
-	RAND_bytes(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH + InnerDataLength, 255 - InnerDataLength - SHA_DIGEST_LENGTH);
+	constexpr UINT32 innerDataLength = sizeof(UINT32) + 28 + sizeof(m_handshakeContext->Nonce) + sizeof(m_handshakeContext->ServerNonce) + sizeof(m_handshakeContext->NewNonce);
+
+	SHA1(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH, innerDataLength, innerDataWriter->GetBuffer());
+	RAND_bytes(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH + innerDataLength, 255 - innerDataLength - SHA_DIGEST_LENGTH);
 
 	Wrappers::BIO keyBio(BIO_new(BIO_s_mem()));
+	if (!keyBio.IsValid())
+	{
+		return E_INVALIDARG;
+	}
+
 	BIO_write(keyBio.Get(), serverPublicKey->Key.c_str(), serverPublicKey->Key.size());
 
 	Wrappers::RSA rsaKey(PEM_read_bio_RSAPublicKey(keyBio.Get(), nullptr, nullptr, nullptr));
-	Wrappers::BigNum a(BN_bin2bn(innerDataWriter->GetBuffer(), innerDataWriter->GetCapacity(), nullptr));
+	if (!rsaKey.IsValid())
+	{
+		return E_INVALIDARG;
+	}
+
+	Wrappers::BigNum a(BN_bin2bn(innerDataWriter->GetBuffer(), 255, nullptr));
+	if (!a.IsValid())
+	{
+		return E_INVALIDARG;
+	}
+
 	Wrappers::BigNum r(BN_new());
+	if (!r.IsValid())
+	{
+		return E_INVALIDARG;
+	}
 
-	auto bnContext = DatacenterCryptography::GetBNContext();
-	BN_mod_exp(r.Get(), a.Get(), rsaKey->e, rsaKey->n, bnContext);
+	BN_mod_exp(r.Get(), a.Get(), rsaKey->e, rsaKey->n, DatacenterCryptography::GetBNContext());
 
-	auto encryptedDataLength = BN_bn2bin(r.Get(), dhParams->GetEncryptedData());
+	auto encryptedDataLength = BN_bn2bin(r.Get(), innerDataWriter->GetBuffer());
 	if (encryptedDataLength < 256)
 	{
-		ZeroMemory(dhParams->GetEncryptedData() + encryptedDataLength, 256 - encryptedDataLength);
+		ZeroMemory(innerDataWriter->GetBuffer() + encryptedDataLength, 256 - encryptedDataLength);
 	}
 
 	return connection->SendUnencryptedMessage(dhParams.Get(), false);
@@ -730,7 +750,169 @@ HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, INT64 messageId,
 
 	m_handshakeState = HandshakeState::ServerDH;
 
-	return S_OK;
+	BYTE ivBuffer[32];
+	BYTE aesKeyAndIvBuffer[104];
+	CopyMemory(aesKeyAndIvBuffer, m_handshakeContext->NewNonce, sizeof(m_handshakeContext->NewNonce));
+	CopyMemory(aesKeyAndIvBuffer + sizeof(m_handshakeContext->NewNonce), m_handshakeContext->ServerNonce, sizeof(m_handshakeContext->ServerNonce));
+	SHA1(aesKeyAndIvBuffer, sizeof(m_handshakeContext->NewNonce) + sizeof(m_handshakeContext->ServerNonce), aesKeyAndIvBuffer);
+
+	CopyMemory(aesKeyAndIvBuffer + SHA_DIGEST_LENGTH, m_handshakeContext->ServerNonce, sizeof(m_handshakeContext->ServerNonce));
+	CopyMemory(aesKeyAndIvBuffer + SHA_DIGEST_LENGTH + sizeof(m_handshakeContext->ServerNonce), m_handshakeContext->NewNonce, sizeof(m_handshakeContext->NewNonce));
+	SHA1(aesKeyAndIvBuffer + SHA_DIGEST_LENGTH, sizeof(m_handshakeContext->ServerNonce) + sizeof(m_handshakeContext->NewNonce), aesKeyAndIvBuffer + SHA_DIGEST_LENGTH);
+
+	CopyMemory(aesKeyAndIvBuffer + 2 * SHA_DIGEST_LENGTH, m_handshakeContext->NewNonce, sizeof(m_handshakeContext->NewNonce));
+	CopyMemory(aesKeyAndIvBuffer + 2 * SHA_DIGEST_LENGTH + sizeof(m_handshakeContext->NewNonce), m_handshakeContext->NewNonce, sizeof(m_handshakeContext->NewNonce));
+	SHA1(aesKeyAndIvBuffer + 2 * SHA_DIGEST_LENGTH, 2 * sizeof(m_handshakeContext->NewNonce), aesKeyAndIvBuffer + 2 * SHA_DIGEST_LENGTH);
+
+	CopyMemory(aesKeyAndIvBuffer + 3 * SHA_DIGEST_LENGTH, m_handshakeContext->NewNonce, 4);
+
+	HRESULT result;
+	ComPtr<TLBinaryReader> innerDataReader;
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&innerDataReader, pqResponse->GetEncryptedData()));
+
+	AES_KEY aesDecryptKey;
+	CopyMemory(ivBuffer, aesKeyAndIvBuffer + 32, sizeof(ivBuffer));
+	AES_set_decrypt_key(aesKeyAndIvBuffer, 32 * 8, &aesDecryptKey);
+	AES_ige_encrypt(innerDataReader->GetBuffer(), innerDataReader->GetBuffer(), innerDataReader->GetCapacity(), &aesDecryptKey, ivBuffer, AES_DECRYPT);
+
+	boolean hashVerified = false;
+	for (size_t i = 0; i < 16; i++)
+	{
+		SHA1(innerDataReader->GetBuffer() + SHA_DIGEST_LENGTH, innerDataReader->GetCapacity() - i - SHA_DIGEST_LENGTH, aesKeyAndIvBuffer + 64);
+
+		if (memcmp(aesKeyAndIvBuffer + 64, innerDataReader->GetBuffer(), SHA_DIGEST_LENGTH) == 0)
+		{
+			hashVerified = true;
+			break;
+		}
+	}
+
+	if (!hashVerified)
+	{
+		return CRYPT_E_HASH_VALUE;
+	}
+
+	innerDataReader->put_Position(SHA_DIGEST_LENGTH);
+
+	UINT32 constructor;
+	ReturnIfFailed(result, innerDataReader->ReadUInt32(&constructor));
+
+	if (constructor != 0xb5890dba)
+	{
+		return E_INVALIDARG;
+	}
+
+	BYTE const* nonce;
+	ReturnIfFailed(result, innerDataReader->ReadRawBuffer2(&nonce, sizeof(m_handshakeContext->Nonce)));
+
+	if (!DatacenterCryptography::CheckNonces(m_handshakeContext->Nonce, nonce))
+	{
+		return E_INVALIDARG;
+	}
+
+	BYTE const* serverNonce;
+	ReturnIfFailed(result, innerDataReader->ReadRawBuffer2(&serverNonce, sizeof(m_handshakeContext->ServerNonce)));
+
+	if (!DatacenterCryptography::CheckNonces(m_handshakeContext->ServerNonce, serverNonce))
+	{
+		return E_INVALIDARG;
+	}
+
+	UINT32 g32;
+	ReturnIfFailed(result, innerDataReader->ReadUInt32(&g32));
+
+	Wrappers::BigNum g(BN_new());
+	BN_set_word(g.Get(), g32);
+
+	BYTE const* dhPrimeBytes;
+	UINT32 dhPrimeLength;
+	ReturnIfFailed(result, innerDataReader->ReadBuffer2(&dhPrimeBytes, &dhPrimeLength));
+
+	Wrappers::BigNum p(BN_bin2bn(dhPrimeBytes, dhPrimeLength, nullptr));
+	if (!p.IsValid()) //&& DatacenterCryptography::IsGoodPrime(p.Get(), g32)))
+	{
+		return E_INVALIDARG;
+	}
+
+	BYTE const* gaBytes;
+	UINT32 gaLength;
+	ReturnIfFailed(result, innerDataReader->ReadBuffer2(&gaBytes, &gaLength));
+
+	Wrappers::BigNum ga(BN_bin2bn(gaBytes, gaLength, nullptr));
+	if (!p.IsValid()) //&& DatacenterCryptography::IsGoodGaAndGb(ga.Get(), p.Get()))
+	{
+		return E_INVALIDARG;
+	}
+
+	BYTE bBytes[256];
+	RAND_bytes(bBytes, sizeof(bBytes));
+
+	Wrappers::BigNum b(BN_bin2bn(bBytes, sizeof(bBytes), nullptr));
+	if (!b.IsValid())
+	{
+		return E_INVALIDARG;
+	}
+
+	Wrappers::BigNum gb(BN_new());
+	if (!gb.IsValid())
+	{
+		return E_INVALIDARG;
+	}
+
+	BN_mod_exp(gb.Get(), g.Get(), b.Get(), p.Get(), DatacenterCryptography::GetBNContext());
+
+	INT32 serverTime;
+	ReturnIfFailed(result, innerDataReader->ReadInt32(&serverTime));
+
+	UINT32 gbLenght = BN_num_bytes(gb.Get());
+	auto gbBytes = std::make_unique<BYTE[]>(gbLenght);
+	BN_bn2bin(gb.Get(), gbBytes.get());
+
+	UINT32 innerDataLength = sizeof(UINT32) + sizeof(m_handshakeContext->Nonce) + sizeof(m_handshakeContext->ServerNonce) + sizeof(INT64) + TLBinaryWriter::GetByteArrayLength(gbLenght);
+	UINT32 encryptedBufferLength = SHA_DIGEST_LENGTH + innerDataLength;
+
+	UINT32 padding = encryptedBufferLength % 16;
+	if (padding != 0)
+	{
+		padding = 16 - padding;
+	}
+
+	ComPtr<TLSetDHParams> setDHParams;
+	ReturnIfFailed(result, MakeAndInitialize<TLSetDHParams>(&setDHParams, m_handshakeContext->Nonce, m_handshakeContext->ServerNonce, encryptedBufferLength + padding));
+
+	ComPtr<TLBinaryWriter> innerDataWriter;
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&innerDataWriter, setDHParams->GetEncryptedData()));
+	ReturnIfFailed(result, innerDataWriter->put_Position(SHA_DIGEST_LENGTH));
+	ReturnIfFailed(result, innerDataWriter->WriteUInt32(0x6643b654));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_handshakeContext->Nonce), m_handshakeContext->Nonce));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_handshakeContext->ServerNonce), m_handshakeContext->ServerNonce));
+	ReturnIfFailed(result, innerDataWriter->WriteInt64(0));
+	ReturnIfFailed(result, innerDataWriter->WriteByteArray(gbLenght, gbBytes.get()));
+
+	SHA1(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH, innerDataLength, innerDataWriter->GetBuffer());
+
+	if (padding != 0)
+	{
+		RAND_bytes(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH + innerDataLength, padding);
+	}
+
+	AES_KEY aesEncryptKey;
+	CopyMemory(ivBuffer, aesKeyAndIvBuffer + 32, sizeof(ivBuffer));
+	AES_set_encrypt_key(aesKeyAndIvBuffer, 32 * 8, &aesEncryptKey);
+	AES_ige_encrypt(innerDataWriter->GetBuffer(), innerDataWriter->GetBuffer(), innerDataWriter->GetCapacity(), &aesEncryptKey, ivBuffer, AES_ENCRYPT);
+
+	Wrappers::BigNum authKeyNum(BN_new());
+	BN_mod_exp(authKeyNum.Get(), ga.Get(), b.Get(), p.Get(), DatacenterCryptography::GetBNContext());
+	BN_bn2bin(authKeyNum.Get(), m_handshakeContext->AuthKey);
+
+	auto authKeyNumLength = BN_num_bytes(authKeyNum.Get());
+	if (authKeyNumLength < 256)
+	{
+		MoveMemory(m_handshakeContext->AuthKey + 256 - authKeyNumLength, m_handshakeContext->AuthKey, authKeyNumLength);
+		ZeroMemory(m_handshakeContext->AuthKey, 256 - authKeyNumLength);
+	}
+
+	return connection->SendUnencryptedMessage(setDHParams.Get(), false);
 }
 
 HRESULT Datacenter::SendAckRequest(Connection* connection, INT64 messageId)

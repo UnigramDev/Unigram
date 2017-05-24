@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "TLBinaryReader.h"
 #include "TLObject.h"
+#include "NativeBuffer.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
@@ -51,6 +52,18 @@ HRESULT TLBinaryReader::RuntimeClassInitialize(TLBinaryReader* reader)
 	m_buffer = reader->m_buffer + reader->m_position;
 	m_capacity = reader->m_capacity - reader->m_position;
 	m_underlyingBuffer = reader->m_underlyingBuffer;
+	return S_OK;
+}
+
+HRESULT TLBinaryReader::RuntimeClassInitialize(UINT32 capacity)
+{
+	HRESULT result;
+	ComPtr<NativeBuffer> nativeBuffer;
+	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&nativeBuffer, capacity));
+
+	m_buffer = nativeBuffer->GetBuffer();
+	m_capacity = nativeBuffer->GetCapacity();
+	m_underlyingBuffer = nativeBuffer;
 	return S_OK;
 }
 
@@ -213,7 +226,7 @@ HRESULT TLBinaryReader::ReadString(HSTRING* value)
 	HRESULT result;
 	UINT32 mbLength;
 	LPCCH mbString;
-	ReturnIfFailed(result, ReadBuffer(reinterpret_cast<BYTE const**>(&mbString), &mbLength));
+	ReturnIfFailed(result, ReadBuffer2(reinterpret_cast<BYTE const**>(&mbString), &mbLength));
 
 	auto length = MultiByteToWideChar(CP_UTF8, 0, mbString, mbLength, nullptr, 0);
 
@@ -236,7 +249,7 @@ HRESULT TLBinaryReader::ReadByteArray(UINT32* __valueSize, BYTE** value)
 	HRESULT result;
 	UINT32 length;
 	BYTE const* buffer;
-	ReturnIfFailed(result, ReadBuffer(&buffer, &length));
+	ReturnIfFailed(result, ReadBuffer2(&buffer, &length));
 
 	*value = reinterpret_cast<BYTE*>(CoTaskMemAlloc(length));
 
@@ -310,7 +323,7 @@ HRESULT TLBinaryReader::ReadWString(std::wstring& string)
 	HRESULT result;
 	UINT32 mbLength;
 	LPCCH mbString;
-	ReturnIfFailed(result, ReadBuffer(reinterpret_cast<BYTE const**>(&mbString), &mbLength));
+	ReturnIfFailed(result, ReadBuffer2(reinterpret_cast<BYTE const**>(&mbString), &mbLength));
 
 	auto length = MultiByteToWideChar(CP_UTF8, 0, mbString, mbLength, nullptr, 0);
 	string.resize(length);
@@ -342,22 +355,9 @@ HRESULT TLBinaryReader::ReadBuffer(BYTE* buffer, UINT32 length)
 	HRESULT result;
 	UINT32 sourceLength;
 	BYTE const* sourceBuffer;
-	ReturnIfFailed(result, ReadBuffer(&sourceBuffer, &sourceLength));
+	ReturnIfFailed(result, ReadBuffer2(&sourceBuffer, &sourceLength));
 
 	CopyMemory(buffer, sourceBuffer, min(length, sourceLength));
-	return S_OK;
-}
-
-HRESULT TLBinaryReader::ReadBuffer(std::vector<BYTE>& buffer)
-{
-	HRESULT result;
-	UINT32 sourceLength;
-	BYTE const* sourceBuffer;
-	ReturnIfFailed(result, ReadBuffer(&sourceBuffer, &sourceLength));
-
-	buffer.resize(sourceLength);
-
-	CopyMemory(buffer.data(), sourceBuffer, sourceLength);
 	return S_OK;
 }
 
@@ -366,7 +366,7 @@ void TLBinaryReader::Reset()
 	m_position = 0;
 }
 
-HRESULT TLBinaryReader::ReadBuffer(BYTE const** buffer, UINT32* length)
+HRESULT TLBinaryReader::ReadBuffer2(BYTE const** buffer, UINT32* length)
 {
 	if (m_position + 1 > m_capacity)
 	{
@@ -404,5 +404,18 @@ HRESULT TLBinaryReader::ReadBuffer(BYTE const** buffer, UINT32* length)
 	*buffer = m_buffer + m_position;
 
 	m_position += l + padding;
+	return S_OK;
+}
+
+HRESULT TLBinaryReader::ReadRawBuffer2(BYTE const** buffer, UINT32 length)
+{
+	if (m_position + length > m_capacity)
+	{
+		return E_NOT_SUFFICIENT_BUFFER;
+	}
+
+	*buffer = m_buffer + m_position;
+
+	m_position += length;
 	return S_OK;
 }

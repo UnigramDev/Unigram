@@ -361,7 +361,6 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 HRESULT Connection::OnMessageReceived(TLBinaryReader* messageReader, UINT32 messageLength)
 {
 	HRESULT result;
-
 	if (messageLength == 4)
 	{
 		INT32 errorCode;

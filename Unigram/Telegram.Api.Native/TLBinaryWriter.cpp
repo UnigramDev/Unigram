@@ -498,27 +498,7 @@ HRESULT TLObjectSizeCalculator::WriteBigEndianInt32(INT32 value)
 
 HRESULT TLObjectSizeCalculator::WriteBuffer(BYTE const* buffer, UINT32 length)
 {
-	if (length < 254)
-	{
-		UINT32 padding = (length + 1) % 4;
-		if (padding != 0)
-		{
-			padding = 4 - padding;
-		}
-
-		m_position += 1 + length + padding;
-	}
-	else
-	{
-		UINT32 padding = (length + 4) % 4;
-		if (padding != 0)
-		{
-			padding = 4 - padding;
-		}
-
-		m_position += 4 + length + padding;
-	}
-
+	m_position += TLBinaryWriter::GetByteArrayLength(length);
 	return S_OK;
 }
 

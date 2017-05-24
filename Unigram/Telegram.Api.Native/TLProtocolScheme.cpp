@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "TLProtocolScheme.h"
 #include "Datacenter.h"
+#include "DatacenterServer.h"
+#include "DatacenterCryptography.h"
 #include "ConnectionManager.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
@@ -100,12 +102,29 @@ HRESULT TLMsgsAck::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
-HRESULT TLReqDHParams::RuntimeClassInitialize(TLInt128 nonce, TLInt128 serverNonce, TLInt256 newNonce, UINT32 p, UINT32 q, INT64 publicKeyFingerprint)
+HRESULT TLSetDHParams::RuntimeClassInitialize(TLInt128 nonce, TLInt128 serverNonce, UINT32 encryptedDataLength)
+{
+	CopyMemory(m_nonce, nonce, sizeof(m_nonce));
+	CopyMemory(m_serverNonce, serverNonce, sizeof(m_serverNonce));
+
+	return MakeAndInitialize<NativeBuffer>(&m_encryptedData, encryptedDataLength);
+}
+
+HRESULT TLSetDHParams::WriteBody(ITLBinaryWriterEx* writer)
+{
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteRawBuffer(sizeof(m_nonce), m_nonce));
+	ReturnIfFailed(result, writer->WriteRawBuffer(sizeof(m_serverNonce), m_serverNonce));
+
+	return writer->WriteBuffer(m_encryptedData->GetBuffer(), m_encryptedData->GetCapacity());
+}
+
+
+HRESULT TLReqDHParams::RuntimeClassInitialize(TLInt128 nonce, TLInt128 serverNonce, TLInt256 newNonce, UINT32 p, UINT32 q, INT64 publicKeyFingerprint, UINT32 encryptedDataLength)
 {
 	CopyMemory(m_nonce, nonce, sizeof(m_nonce));
 	CopyMemory(m_serverNonce, serverNonce, sizeof(m_serverNonce));
 	CopyMemory(m_newNonce, newNonce, sizeof(m_newNonce));
-	ZeroMemory(m_encryptedData, sizeof(m_encryptedData));
 
 	m_p[0] = (p >> 24) & 0xff;
 	m_p[1] = (p >> 16) & 0xff;
@@ -118,7 +137,8 @@ HRESULT TLReqDHParams::RuntimeClassInitialize(TLInt128 nonce, TLInt128 serverNon
 	m_q[3] = q & 0xff;
 
 	m_publicKeyFingerprint = publicKeyFingerprint;
-	return S_OK;
+
+	return MakeAndInitialize<NativeBuffer>(&m_encryptedData, encryptedDataLength);
 }
 
 HRESULT TLReqDHParams::WriteBody(ITLBinaryWriterEx* writer)
@@ -130,7 +150,7 @@ HRESULT TLReqDHParams::WriteBody(ITLBinaryWriterEx* writer)
 	ReturnIfFailed(result, writer->WriteBuffer(m_q, sizeof(m_q)));
 	ReturnIfFailed(result, writer->WriteInt64(m_publicKeyFingerprint));
 
-	return writer->WriteBuffer(m_encryptedData, sizeof(m_encryptedData));
+	return writer->WriteBuffer(m_encryptedData->GetBuffer(), m_encryptedData->GetCapacity());
 }
 
 
@@ -157,7 +177,13 @@ HRESULT TLServerDHParamsOk::ReadBody(ITLBinaryReaderEx* reader)
 	HRESULT result;
 	ReturnIfFailed(result, TLServerDHParams::ReadBody(reader));
 
-	return reader->ReadBuffer(m_encryptedData);
+	BYTE const* buffer;
+	UINT32 bufferLength;
+	ReturnIfFailed(result, reader->ReadBuffer2(&buffer, &bufferLength));
+	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&m_encryptedData, bufferLength));
+
+	CopyMemory(m_encryptedData->GetBuffer(), buffer, bufferLength);
+	return S_OK;
 }
 
 
