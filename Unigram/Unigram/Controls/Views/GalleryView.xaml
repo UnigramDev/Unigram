@@ -58,13 +58,12 @@
                   Grid.RowSpan="3">
             <FlipView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:GalleryItem">
-                    <Grid>
+                    <Grid HorizontalAlignment="Center"
+                          VerticalAlignment="Center">
                         <local:ImageView
                             x:Name="Surface"
                             Loaded="ImageView_ImageOpened"
                             Unloaded="ImageView_Unloaded"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
                             Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
                             Constraint="{x:Bind Source}"/>
                         <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>

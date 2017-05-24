@@ -136,7 +136,7 @@
                                     </TransitionCollection>
                                 </ContentControl.ContentTransitions>
                                 <ContentControl.Clip>
-                                    <RectangleGeometry Rect="0,0,3600,32"/>
+                                    <RectangleGeometry Rect="0,0,3600,44"/>
                                 </ContentControl.Clip>
                             </ContentControl>
                         </Grid>

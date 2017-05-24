@@ -143,6 +143,10 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsBlockedUsersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsBlockUserViewModel>();
             container.ContainerBuilder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsPrivacyAndSecurityViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsPrivacyStatusTimestampViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsPrivacyPhoneCallViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsPrivacyChatInviteViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsAccountsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStickersFeaturedViewModel>().SingleInstance();

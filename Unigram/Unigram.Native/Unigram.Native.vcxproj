@@ -140,15 +140,15 @@
   <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <GenerateManifest>false</GenerateManifest>
-    <MappedPlatform>Release</MappedPlatform>
+    <MappedPlatform>Debug</MappedPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <GenerateManifest>false</GenerateManifest>
-    <MappedPlatform>ARM\Release</MappedPlatform>
+    <MappedPlatform>ARM\Debug</MappedPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <GenerateManifest>false</GenerateManifest>
-    <MappedPlatform>x64\Release</MappedPlatform>
+    <MappedPlatform>x64\Debug</MappedPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <GenerateManifest>false</GenerateManifest>

@@ -15,9 +15,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsDataPage : Page
+    public sealed partial class SettingsDataAndStoragePage : Page
     {
-        public SettingsDataPage()
+        public SettingsDataAndStoragePage()
         {
             this.InitializeComponent();
         }

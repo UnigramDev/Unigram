@@ -176,7 +176,8 @@
     </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RequestedTheme="Dark">
-        <Image x:Name="Image" Source="http://i.imgur.com/kx2hM3N.jpg" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <!--<Image x:Name="Image" Source="http://i.imgur.com/kx2hM3N.jpg" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
+        <Image x:Name="Image" Opacity="0.6" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <Border x:Name="GrabPanel" Background="Transparent"/>
         
         <Grid Padding="12,0">
@@ -185,7 +186,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition MinHeight="72"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" Text="Fela Ameghino" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom"/>
+            <!--<TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" Text="Fela Ameghino" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom"/>-->
+            <TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="DurationLabel" Opacity="0" Text="00:00" TextAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1"/>
 
             <ContentControl x:Name="StateLabel" HorizontalContentAlignment="Center" Grid.Row="1">

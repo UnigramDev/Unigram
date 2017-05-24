@@ -97,13 +97,13 @@
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                            Margin="0,24,0,0">
-                        <controls:HyperButton Content="Notifications and sounds"
+                        <controls:HyperButton Content="Notifications and Sounds"
                                               Click="Notifications_Click"
                                               Style="{StaticResource HyperButtonStyle}"/>
-                        <controls:HyperButton Content="Privacy and security"
+                        <controls:HyperButton Content="Privacy and Security"
                                               Click="Privacy_Click"
                                               Style="{StaticResource HyperButtonStyle}"/>
-                        <controls:HyperButton Content="Data and storage"
+                        <controls:HyperButton Content="Data and Storage"
                                               Click="Data_Click"
                                               Style="{StaticResource HyperButtonStyle}"/>
                         <controls:HyperButton Content="Stickers"

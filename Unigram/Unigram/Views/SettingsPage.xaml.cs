@@ -114,7 +114,7 @@ namespace Unigram.Views
 
         private void Privacy_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyPage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyAndSecurityPage));
         }
 
         private void Stickers_Click(object sender, RoutedEventArgs e)
@@ -124,7 +124,7 @@ namespace Unigram.Views
 
         private void Data_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsDataPage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsDataAndStoragePage));
         }
 
         private void Notifications_Click(object sender, RoutedEventArgs e)

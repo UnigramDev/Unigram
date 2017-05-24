@@ -47,6 +47,15 @@ namespace Unigram.Controls
         {
             UpdateVisualState();
 
+            if (CurrentState == MasterDetailState.Narrow && DetailFrame.CurrentSourcePageType == BlankPageType)
+            {
+                DetailPresenter.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                DetailPresenter.Visibility = Visibility.Visible;
+            }
+
             if (CurrentState != MasterDetailState.Narrow && ViewStateChanged != null)
             {
                 ViewStateChanged(this, EventArgs.Empty);
@@ -146,7 +155,10 @@ namespace Unigram.Controls
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
-            if (AdaptiveStates.CurrentState == null) return;
+            if (AdaptiveStates.CurrentState == null)
+            {
+                return;
+            }
 
             if (CurrentState == MasterDetailState.Narrow && e.SourcePageType == BlankPageType)
             {

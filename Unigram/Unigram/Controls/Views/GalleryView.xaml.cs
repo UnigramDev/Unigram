@@ -44,7 +44,7 @@ namespace Unigram.Controls.Views
         private MediaPlayerElement _mediaPlayer;
         private MediaPlayerSurface _mediaSurface;
 
-        private ImageView _surface;
+        private FrameworkElement _surface;
         private SpriteVisual _surfaceVisual;
 
         private Visual _layerVisual;
@@ -244,28 +244,33 @@ namespace Unigram.Controls.Views
 
         private void Play(GalleryItem item)
         {
-            var container = Flip.ContainerFromItem(item) as ContentControl;
-            if (container != null && container.ContentTemplateRoot is Grid parent)
+            try
             {
-                _surface = parent.FindName("Surface") as ImageView;
+                var container = Flip.ContainerFromItem(item) as ContentControl;
+                if (container != null && container.ContentTemplateRoot is Grid parent)
+                {
+                    //_surface = parent.FindName("Surface") as ImageView;
+                    _surface = parent;
 
-                _mediaPlayer.MediaPlayer.SetSurfaceSize(new Size(_surface.ActualWidth, _surface.ActualHeight));
+                    _mediaPlayer.MediaPlayer.SetSurfaceSize(new Size(_surface.ActualWidth, _surface.ActualHeight));
 
-                var swapchain = _mediaPlayer.MediaPlayer.GetSurface(_layerVisual.Compositor);
-                var brush = _layerVisual.Compositor.CreateSurfaceBrush(swapchain.CompositionSurface);
-                var size = new Vector2((float)_surface.ActualWidth, (float)_surface.ActualHeight);
+                    var swapchain = _mediaPlayer.MediaPlayer.GetSurface(_layerVisual.Compositor);
+                    var brush = _layerVisual.Compositor.CreateSurfaceBrush(swapchain.CompositionSurface);
+                    var size = new Vector2((float)_surface.ActualWidth, (float)_surface.ActualHeight);
 
-                _surfaceVisual = _layerVisual.Compositor.CreateSpriteVisual();
-                _surfaceVisual.Size = size;
-                _surfaceVisual.Brush = brush;
+                    _surfaceVisual = _layerVisual.Compositor.CreateSpriteVisual();
+                    _surfaceVisual.Size = size;
+                    _surfaceVisual.Brush = brush;
 
-                ElementCompositionPreview.SetElementChildVisual(_surface, _surfaceVisual);
+                    ElementCompositionPreview.SetElementChildVisual(_surface, _surfaceVisual);
 
-                _mediaSurface = swapchain;
-                _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
-                _mediaPlayer.MediaPlayer.IsLoopingEnabled = item.IsLoop;
-                _mediaPlayer.MediaPlayer.Play();
+                    _mediaSurface = swapchain;
+                    _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
+                    _mediaPlayer.MediaPlayer.IsLoopingEnabled = item.IsLoop;
+                    _mediaPlayer.MediaPlayer.Play();
+                }
             }
+            catch { }
         }
 
         private void Flip_SelectionChanged(object sender, SelectionChangedEventArgs e)

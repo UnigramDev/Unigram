@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -15,11 +16,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsPrivacyPage : Page
+    public sealed partial class SettingsPrivacyAndSecurityPage : Page
     {
-        public SettingsPrivacyPage()
+        public SettingsPrivacyAndSecurityViewModel ViewModel => DataContext as SettingsPrivacyAndSecurityViewModel;
+
+        public SettingsPrivacyAndSecurityPage()
         {
             InitializeComponent();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsPrivacyAndSecurityViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

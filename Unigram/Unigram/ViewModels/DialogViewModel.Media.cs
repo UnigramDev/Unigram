@@ -605,7 +605,30 @@ namespace Unigram.ViewModels
                         File = upload.ToInputFile()
                     };
 
-                    var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                    var response = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                    //if (response.IsSucceeded && response.Result is TLUpdates updates)
+                    //{
+                    //    TLPhoto newPhoto = null;
+
+                    //    var newMessageUpdate = updates.Updates.FirstOrDefault(x => x is TLUpdateNewMessage) as TLUpdateNewMessage;
+                    //    if (newMessageUpdate != null && newMessageUpdate.Message is TLMessage newMessage && newMessage.Media is TLMessageMediaPhoto newPhotoMedia)
+                    //    {
+                    //        newPhoto = newPhotoMedia.Photo as TLPhoto;
+                    //    }
+
+                    //    var newChannelMessageUpdate = updates.Updates.FirstOrDefault(x => x is TLUpdateNewChannelMessage) as TLUpdateNewChannelMessage;
+                    //    if (newChannelMessageUpdate != null && newMessageUpdate.Message is TLMessage newChannelMessage && newChannelMessage.Media is TLMessageMediaPhoto newChannelPhotoMedia)
+                    //    {
+                    //        newPhoto = newChannelPhotoMedia.Photo as TLPhoto;
+                    //    }
+
+                    //    if (newPhoto != null && newPhoto.Full is TLPhotoSize newFull && newFull.Location is TLFileLocation newLocation)
+                    //    {
+                    //        var newFileName = string.Format("{0}_{1}_{2}.jpg", newLocation.VolumeId, newLocation.LocalId, newLocation.Secret);
+                    //        var newFile = await FileUtils.CreateTempFileAsync(newFileName);
+                    //        await fileCache.CopyAndReplaceAsync(newFile);
+                    //    }
+                    //}
                 }
             });
         }

@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Unigram.Views.Settings.SettingsPrivacyPage"
+    x:Class="Unigram.Views.Settings.SettingsPrivacyAndSecurityPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
@@ -9,6 +9,12 @@
     d:DesignHeight="2000"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Style TargetType="controls:BadgeButton" BasedOn="{StaticResource BadgeButtonStyle}">
+            <Setter Property="Margin" Value="-12,0"/>
+        </Style>
+    </Page.Resources>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -29,9 +35,26 @@
             <StackPanel Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Grid.Row="1">
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="PRIVACY" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:HyperButton Tag="Blocked Users" Click="BlockedUsers_Click" Margin="-12,0" Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton IsEnabled="False" Tag="Last Seen" Click="Sessions_Click" Margin="-12,0" Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton IsEnabled="False" Tag="Groups" Click="Sessions_Click" Margin="-12,0,-12,-12" BorderBrush="Transparent" Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:BadgeButton
+                        Content="Blocked Users"
+                        Click="BlockedUsers_Click"/>
+                    <controls:BadgeButton
+                        IsEnabled="False"
+                        Content="Last Seen"
+                        Badge="{x:Bind ViewModel.StatusTimestampRules.Badge, Mode=OneWay}"
+                        Click="Sessions_Click"/>
+                    <controls:BadgeButton
+                        IsEnabled="False"
+                        Content="Calls"
+                        Badge="{x:Bind ViewModel.PhoneCallRules.Badge, Mode=OneWay}"
+                        Click="Sessions_Click"/>
+                    <controls:BadgeButton
+                        IsEnabled="False"
+                        Content="Groups"
+                        Badge="{x:Bind ViewModel.ChatInviteRules.Badge, Mode=OneWay}"
+                        Click="Sessions_Click"
+                        Margin="-12,0,-12,-12"
+                        BorderBrush="Transparent"/>
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="SECURITY" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
@@ -52,7 +75,7 @@
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="PAYMENTS" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:HyperButton Tag="Clear Payment and Shipping Info" Click="Sessions_Click" Margin="-12,0,-12,-0" Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton Command="{x:Bind ViewModel.ClearPaymentsCommand}" Content="Clear Payment and Shipping Info" Margin="-12,0,-12,-0" Style="{StaticResource HyperButtonStyle}"/>
 
                     <TextBlock Text="You can delete your shipping info and instruct all payment providers to remove your saved credit cards. Note that Telegram never stores your credit card data." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
