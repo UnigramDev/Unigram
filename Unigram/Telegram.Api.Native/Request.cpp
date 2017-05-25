@@ -5,7 +5,9 @@
 
 using namespace Telegram::Api::Native;
 
-HRESULT MessageRequest::RuntimeClassInitialize(ITLObject* object, INT64 messageId)
+
+HRESULT MessageRequest::RuntimeClassInitialize(ITLObject* object, INT32 token, ConnectionType connectionType, UINT32 datacenterId, ISendRequestCompletedCallback* sendCompletedCallback,
+	IRequestQuickAckReceivedCallback* quickAckReceivedCallback, RequestFlag flags)
 {
 	if (object == nullptr)
 	{
@@ -13,7 +15,14 @@ HRESULT MessageRequest::RuntimeClassInitialize(ITLObject* object, INT64 messageI
 	}
 
 	m_object = object;
-	m_messageId = messageId;
+	m_messageId = 0;
+	m_messageSequenceNumber = 0;
+	m_messageToken = token;
+	m_connectionType = connectionType;
+	m_datacenterId = datacenterId;
+	m_sendCompletedCallback = sendCompletedCallback;
+	m_quickAckReceivedCallback = quickAckReceivedCallback;
+	m_flags = flags;
 
 	return S_OK;
 }
@@ -39,39 +48,23 @@ HRESULT MessageRequest::get_MessageId(INT64* value)
 	return S_OK;
 }
 
-
-HRESULT GenericRequest::RuntimeClassInitialize(ITLObject* object, INT32 token, ConnectionType connectionType, UINT32 datacenterId, ISendRequestCompletedCallback* sendCompletedCallback,
-	IRequestQuickAckReceivedCallback* quickAckReceivedCallback, RequestFlag flags)
-{
-	m_messageSequenceNumber = 0;
-	m_messageToken = token;
-	m_connectionType = connectionType;
-	m_datacenterId = datacenterId;
-	m_sendCompletedCallback = sendCompletedCallback;
-	m_quickAckReceivedCallback = quickAckReceivedCallback;
-	m_flags = flags;
-
-	return MessageRequest::RuntimeClassInitialize(object, 0);
-}
-
-HRESULT GenericRequest::get_RawObject(ITLObject** value)
+HRESULT MessageRequest::get_RawObject(ITLObject** value)
 {
 	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	auto object = GetObject();
 	ComPtr<ITLObjectWithQuery> objectWithQuery;
-	if (SUCCEEDED(object.As(&objectWithQuery)))
+	if (SUCCEEDED(m_object.As(&objectWithQuery)))
 	{
 		return objectWithQuery->get_Query(value);
 	}
 
-	return object.CopyTo(value);
+	return m_object.CopyTo(value);
 }
 
-HRESULT GenericRequest::get_MessageSequenceNumber(INT32* value)
+HRESULT MessageRequest::get_MessageSequenceNumber(INT32* value)
 {
 	if (value == nullptr)
 	{
@@ -82,7 +75,7 @@ HRESULT GenericRequest::get_MessageSequenceNumber(INT32* value)
 	return S_OK;
 }
 
-HRESULT GenericRequest::get_MessageToken(INT32* value)
+HRESULT MessageRequest::get_MessageToken(INT32* value)
 {
 	if (value == nullptr)
 	{
@@ -93,7 +86,7 @@ HRESULT GenericRequest::get_MessageToken(INT32* value)
 	return S_OK;
 }
 
-HRESULT GenericRequest::get_ConnectionType(ConnectionType* value)
+HRESULT MessageRequest::get_ConnectionType(ConnectionType* value)
 {
 	if (value == nullptr)
 	{
@@ -104,7 +97,7 @@ HRESULT GenericRequest::get_ConnectionType(ConnectionType* value)
 	return S_OK;
 }
 
-HRESULT GenericRequest::get_DatacenterId(UINT32* value)
+HRESULT MessageRequest::get_DatacenterId(UINT32* value)
 {
 	if (value == nullptr)
 	{
@@ -115,7 +108,7 @@ HRESULT GenericRequest::get_DatacenterId(UINT32* value)
 	return S_OK;
 }
 
-HRESULT GenericRequest::get_Flags(RequestFlag* value)
+HRESULT MessageRequest::get_Flags(RequestFlag* value)
 {
 	if (value == nullptr)
 	{
@@ -124,10 +117,4 @@ HRESULT GenericRequest::get_Flags(RequestFlag* value)
 
 	*value = m_flags;
 	return S_OK;
-}
-
-
-HRESULT UnencryptedMessageRequest::RuntimeClassInitialize(ITLObject* object, INT64 messageId)
-{
-	return MessageRequest::RuntimeClassInitialize(object, messageId);
 }

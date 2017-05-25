@@ -20,16 +20,11 @@ namespace ABI
 
 				struct ITLBinaryWriterEx;
 
-				MIDL_INTERFACE("F310910A-64AF-454C-9A39-E2785D0FD4C0") IMessageRequest : public IUnknown
+				MIDL_INTERFACE("AF4AE7B6-02DD-4242-B0EE-92A1F2A9E7D0") IMessageRequest : public IUnknown
 				{
 				public:
 					virtual HRESULT STDMETHODCALLTYPE get_Object(_Out_ ITLObject** value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_MessageId(_Out_ INT64* value) = 0;
-				};
-
-				MIDL_INTERFACE("AF4AE7B6-02DD-4242-B0EE-92A1F2A9E7D0") IGenericRequest : public IUnknown // : public IRequest
-				{
-				public:
 					virtual HRESULT STDMETHODCALLTYPE get_RawObject(_Out_ ITLObject** value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_MessageSequenceNumber(_Out_ INT32* value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_MessageToken(_Out_ INT32* value) = 0;
@@ -46,7 +41,6 @@ namespace ABI
 
 using ABI::Telegram::Api::Native::RequestFlag;
 using ABI::Telegram::Api::Native::IMessageRequest;
-using ABI::Telegram::Api::Native::IGenericRequest;
 
 namespace Telegram
 {
@@ -57,37 +51,14 @@ namespace Telegram
 
 			class Datacenter;
 
-			class MessageRequest abstract : public Implements<RuntimeClassFlags<ClassicCom>, IMessageRequest>
-			{
-			public:
-				//COM exported methods
-				IFACEMETHODIMP get_Object(_Out_ ITLObject** value);
-				IFACEMETHODIMP get_MessageId(_Out_ INT64* value);
-
-			protected:
-				HRESULT RuntimeClassInitialize(_In_ ITLObject* object, INT64 messageId);
-
-				inline ComPtr<ITLObject> const& GetObject() const
-				{
-					return m_object;
-				}
-
-				inline INT64 GetMessageId() const
-				{
-					return m_messageId;
-				}
-
-			private:
-				INT64 m_messageId;
-				ComPtr<ITLObject> m_object;
-			};
-
-			class GenericRequest WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IGenericRequest, MessageRequest>
+			class MessageRequest WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IMessageRequest>
 			{
 				friend class ConnectionManager;
 
 			public:
 				//COM exported methods
+				IFACEMETHODIMP get_MessageId(_Out_ INT64* value);
+				IFACEMETHODIMP get_Object(_Out_ ITLObject** value);
 				IFACEMETHODIMP get_RawObject(_Out_ ITLObject** value);
 				IFACEMETHODIMP get_MessageSequenceNumber(_Out_ INT32* value);
 				IFACEMETHODIMP get_MessageToken(_Out_ INT32* value);
@@ -98,6 +69,16 @@ namespace Telegram
 				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize(_In_ ITLObject* object, INT32 token, ConnectionType connectionType, UINT32 datacenterId, _In_ ISendRequestCompletedCallback* sendCompletedCallback,
 					_In_ IRequestQuickAckReceivedCallback* quickAckReceivedCallback, RequestFlag flags = RequestFlag::None);
+
+				inline ComPtr<ITLObject> const& GetObject() const
+				{
+					return m_object;
+				}
+
+				inline INT64 GetMessageId() const
+				{
+					return m_messageId;
+				}
 
 				inline INT32 GetMessageSequenceNumber() const
 				{
@@ -125,6 +106,8 @@ namespace Telegram
 				}
 
 			private:
+				INT64 m_messageId;
+				ComPtr<ITLObject> m_object;
 				INT32 m_messageSequenceNumber;
 				INT32 m_messageToken;
 				ConnectionType m_connectionType;
@@ -132,15 +115,6 @@ namespace Telegram
 				ComPtr<ISendRequestCompletedCallback> m_sendCompletedCallback;
 				ComPtr<IRequestQuickAckReceivedCallback> m_quickAckReceivedCallback;
 				RequestFlag m_flags;
-			};
-
-			class UnencryptedMessageRequest WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, MessageRequest>
-			{
-				friend class ConnectionManager;
-
-			public:
-				//Internal methods
-				STDMETHODIMP RuntimeClassInitialize(_In_ ITLObject* object, INT64 messageId);
 			};
 
 		}

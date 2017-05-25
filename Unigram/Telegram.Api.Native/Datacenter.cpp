@@ -19,7 +19,6 @@ using namespace Telegram::Api::Native::TL;
 
 Datacenter::Datacenter(UINT32 id) :
 	m_id(id),
-	m_handshakeState(HandshakeState::None),
 	m_currentIpv4EndpointIndex(0),
 	m_currentIpv4DownloadEndpointIndex(0),
 	m_currentIpv6EndpointIndex(0),
@@ -44,19 +43,6 @@ HRESULT Datacenter::get_Id(UINT32* value)
 	}
 
 	*value = m_id;
-	return S_OK;
-}
-
-HRESULT Datacenter::get_HandshakeState(HandshakeState* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	auto lock = LockCriticalSection();
-
-	*value = m_handshakeState;
 	return S_OK;
 }
 
@@ -524,12 +510,14 @@ HRESULT Datacenter::BeginHandshake(boolean reconnect)
 
 	auto lock = LockCriticalSection();
 
-	m_handshakeState = HandshakeState::Started;
-	m_handshakeContext = std::make_unique<HandshakeContext>();
-	RAND_bytes(m_handshakeContext->Nonce, sizeof(m_handshakeContext->Nonce));
+	auto handshakeContext = std::make_unique<HandshakeContext>();
+	handshakeContext->State = AuthenticationState::HandshakeStarted;
+	RAND_bytes(handshakeContext->Nonce, sizeof(TLInt128));
 
 	ComPtr<TLReqPQ> pqRequest;
-	ReturnIfFailed(result, MakeAndInitialize<TLReqPQ>(&pqRequest, m_handshakeContext->Nonce));
+	ReturnIfFailed(result, MakeAndInitialize<TLReqPQ>(&pqRequest, handshakeContext->Nonce));
+
+	m_authenticationContext = std::move(handshakeContext);
 
 	return genericConnection->SendUnencryptedMessage(pqRequest.Get(), false);
 }
@@ -635,6 +623,11 @@ HRESULT Datacenter::OnHandshakeResponseReceived(Connection* connection, INT64 me
 {
 	auto lock = LockCriticalSection();
 
+	if (m_authenticationContext == nullptr || m_authenticationContext->GetState() > AuthenticationState::HandshakeClientDH)
+	{
+		return E_UNEXPECTED;
+	}
+
 	HRESULT result;
 	UINT32 constructor;
 	ReturnIfFailed(result, object->get_Constructor(&constructor));
@@ -642,26 +635,39 @@ HRESULT Datacenter::OnHandshakeResponseReceived(Connection* connection, INT64 me
 	switch (constructor)
 	{
 	case TLResPQ::Constructor:
-		return OnHandshakePQ(connection, messageId, static_cast<TLResPQ*>(object));
+		result = OnHandshakePQ(connection, static_cast<HandshakeContext*>(m_authenticationContext.get()), messageId, static_cast<TLResPQ*>(object));
+		break;
 	case TLServerDHParamsOk::Constructor:
-		return OnHandshakeServerDH(connection, messageId, static_cast<TLServerDHParamsOk*>(object));
+		result = OnHandshakeServerDH(connection, static_cast<HandshakeContext*>(m_authenticationContext.get()), messageId, static_cast<TLServerDHParamsOk*>(object));
+		break;
 	case TLDHGenOk::Constructor:
-		return OnHandshakeClientDH(connection, messageId, static_cast<TLDHGenOk*>(object));
+		result = OnHandshakeClientDH(connection, static_cast<HandshakeContext*>(m_authenticationContext.get()), messageId, static_cast<TLDHGenOk*>(object));
+		break;
+	default:
+		result = E_FAIL;
+		break;
+	}
+
+	if (FAILED(result))
+	{
+		I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle handshake failure");
+
+		return result;
 	}
 
 	return S_OK;
 }
 
-HRESULT Datacenter::OnHandshakePQ(Connection* connection, INT64 messageId, TLResPQ* response)
+HRESULT Datacenter::OnHandshakePQ(Connection* connection, HandshakeContext* handshakeContext, INT64 messageId, TLResPQ* response)
 {
-	if (m_handshakeState != HandshakeState::Started)
+	if (handshakeContext->State != AuthenticationState::HandshakeStarted)
 	{
 		return E_UNEXPECTED;
 	}
 
-	m_handshakeState = HandshakeState::PQ;
+	handshakeContext->State = AuthenticationState::HandshakePQ;
 
-	if (!DatacenterCryptography::CheckNonces(m_handshakeContext->Nonce, response->GetNonce()))
+	if (!DatacenterCryptography::CheckNonces(handshakeContext->Nonce, response->GetNonce()))
 	{
 		return E_INVALIDARG;
 	}
@@ -683,12 +689,13 @@ HRESULT Datacenter::OnHandshakePQ(Connection* connection, INT64 messageId, TLRes
 		return E_FAIL;
 	}
 
-	CopyMemory(m_handshakeContext->ServerNonce, response->GetServerNonce(), sizeof(m_handshakeContext->ServerNonce));
-	RAND_bytes(m_handshakeContext->NewNonce, sizeof(m_handshakeContext->NewNonce));
+	CopyMemory(handshakeContext->ServerNonce, response->GetServerNonce(), sizeof(TLInt128));
+	RAND_bytes(handshakeContext->NewNonce, sizeof(TLInt128));
 
 	HRESULT result;
 	ComPtr<TLReqDHParams> dhParams;
-	ReturnIfFailed(result, MakeAndInitialize<TLReqDHParams>(&dhParams, m_handshakeContext->Nonce, m_handshakeContext->ServerNonce, m_handshakeContext->NewNonce, p32, q32, serverPublicKey->Fingerprint, 256));
+	ReturnIfFailed(result, MakeAndInitialize<TLReqDHParams>(&dhParams, handshakeContext->Nonce, handshakeContext->ServerNonce,
+		handshakeContext->NewNonce, p32, q32, serverPublicKey->Fingerprint, 256));
 
 	ComPtr<TLBinaryWriter> innerDataWriter;
 	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&innerDataWriter, dhParams->GetEncryptedData()));
@@ -697,11 +704,11 @@ HRESULT Datacenter::OnHandshakePQ(Connection* connection, INT64 messageId, TLRes
 	ReturnIfFailed(result, innerDataWriter->WriteBuffer(pq, sizeof(TLInt64)));
 	ReturnIfFailed(result, innerDataWriter->WriteBuffer(dhParams->GetP(), sizeof(TLInt32)));
 	ReturnIfFailed(result, innerDataWriter->WriteBuffer(dhParams->GetQ(), sizeof(TLInt32)));
-	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_handshakeContext->Nonce), m_handshakeContext->Nonce));
-	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_handshakeContext->ServerNonce), m_handshakeContext->ServerNonce));
-	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(m_handshakeContext->NewNonce), m_handshakeContext->NewNonce));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(TLInt128), handshakeContext->Nonce));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(TLInt128), handshakeContext->ServerNonce));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(TLInitConnection), handshakeContext->NewNonce));
 
-	constexpr UINT32 innerDataLength = sizeof(UINT32) + 28 + sizeof(m_handshakeContext->Nonce) + sizeof(m_handshakeContext->ServerNonce) + sizeof(m_handshakeContext->NewNonce);
+	constexpr UINT32 innerDataLength = sizeof(UINT32) + 28 + 2 * sizeof(TLInt128) + sizeof(TLInt256);
 
 	SHA1(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH, innerDataLength, innerDataWriter->GetBuffer());
 	RAND_bytes(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH + innerDataLength, 255 - innerDataLength - SHA_DIGEST_LENGTH);
@@ -743,30 +750,30 @@ HRESULT Datacenter::OnHandshakePQ(Connection* connection, INT64 messageId, TLRes
 	return connection->SendUnencryptedMessage(dhParams.Get(), false);
 }
 
-HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, INT64 messageId, TLServerDHParamsOk* response)
+HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, HandshakeContext* handshakeContext, INT64 messageId, TLServerDHParamsOk* response)
 {
-	if (m_handshakeState != HandshakeState::PQ)
+	if (handshakeContext->State != AuthenticationState::HandshakePQ)
 	{
 		return E_UNEXPECTED;
 	}
 
-	m_handshakeState = HandshakeState::ServerDH;
+	handshakeContext->State = AuthenticationState::HandshakeServerDH;
 
 	BYTE ivBuffer[32];
 	BYTE aesKeyAndIvBuffer[104];
-	CopyMemory(aesKeyAndIvBuffer, m_handshakeContext->NewNonce, sizeof(TLInt256));
-	CopyMemory(aesKeyAndIvBuffer + sizeof(TLInt256), m_handshakeContext->ServerNonce, sizeof(TLInt128));
+	CopyMemory(aesKeyAndIvBuffer, handshakeContext->NewNonce, sizeof(TLInt256));
+	CopyMemory(aesKeyAndIvBuffer + sizeof(TLInt256), handshakeContext->ServerNonce, sizeof(TLInt128));
 	SHA1(aesKeyAndIvBuffer, sizeof(TLInt256) + sizeof(TLInt128), aesKeyAndIvBuffer);
 
-	CopyMemory(aesKeyAndIvBuffer + SHA_DIGEST_LENGTH, m_handshakeContext->ServerNonce, sizeof(TLInt128));
-	CopyMemory(aesKeyAndIvBuffer + SHA_DIGEST_LENGTH + sizeof(TLInt128), m_handshakeContext->NewNonce, sizeof(TLInt256));
+	CopyMemory(aesKeyAndIvBuffer + SHA_DIGEST_LENGTH, handshakeContext->ServerNonce, sizeof(TLInt128));
+	CopyMemory(aesKeyAndIvBuffer + SHA_DIGEST_LENGTH + sizeof(TLInt128), handshakeContext->NewNonce, sizeof(TLInt256));
 	SHA1(aesKeyAndIvBuffer + SHA_DIGEST_LENGTH, sizeof(TLInt128) + sizeof(TLInt256), aesKeyAndIvBuffer + SHA_DIGEST_LENGTH);
 
-	CopyMemory(aesKeyAndIvBuffer + 2 * SHA_DIGEST_LENGTH, m_handshakeContext->NewNonce, sizeof(TLInt256));
-	CopyMemory(aesKeyAndIvBuffer + 2 * SHA_DIGEST_LENGTH + sizeof(TLInt256), m_handshakeContext->NewNonce, sizeof(TLInt256));
+	CopyMemory(aesKeyAndIvBuffer + 2 * SHA_DIGEST_LENGTH, handshakeContext->NewNonce, sizeof(TLInt256));
+	CopyMemory(aesKeyAndIvBuffer + 2 * SHA_DIGEST_LENGTH + sizeof(TLInt256), handshakeContext->NewNonce, sizeof(TLInt256));
 	SHA1(aesKeyAndIvBuffer + 2 * SHA_DIGEST_LENGTH, 2 * sizeof(TLInt256), aesKeyAndIvBuffer + 2 * SHA_DIGEST_LENGTH);
 
-	CopyMemory(aesKeyAndIvBuffer + 3 * SHA_DIGEST_LENGTH, m_handshakeContext->NewNonce, 4);
+	CopyMemory(aesKeyAndIvBuffer + 3 * SHA_DIGEST_LENGTH, handshakeContext->NewNonce, 4);
 
 	HRESULT result;
 	ComPtr<TLBinaryReader> innerDataReader;
@@ -807,7 +814,7 @@ HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, INT64 messageId,
 	BYTE const* nonce;
 	ReturnIfFailed(result, innerDataReader->ReadRawBuffer2(&nonce, sizeof(TLInt128)));
 
-	if (!DatacenterCryptography::CheckNonces(m_handshakeContext->Nonce, nonce))
+	if (!DatacenterCryptography::CheckNonces(handshakeContext->Nonce, nonce))
 	{
 		return E_INVALIDARG;
 	}
@@ -815,7 +822,7 @@ HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, INT64 messageId,
 	BYTE const* serverNonce;
 	ReturnIfFailed(result, innerDataReader->ReadRawBuffer2(&serverNonce, sizeof(TLInt128)));
 
-	if (!DatacenterCryptography::CheckNonces(m_handshakeContext->ServerNonce, serverNonce))
+	if (!DatacenterCryptography::CheckNonces(handshakeContext->ServerNonce, serverNonce))
 	{
 		return E_INVALIDARG;
 	}
@@ -880,14 +887,15 @@ HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, INT64 messageId,
 	}
 
 	ComPtr<TLSetClientDHParams> setClientDHParams;
-	ReturnIfFailed(result, MakeAndInitialize<TLSetClientDHParams>(&setClientDHParams, m_handshakeContext->Nonce, m_handshakeContext->ServerNonce, encryptedBufferLength + padding));
+	ReturnIfFailed(result, MakeAndInitialize<TLSetClientDHParams>(&setClientDHParams, handshakeContext->Nonce,
+		handshakeContext->ServerNonce, encryptedBufferLength + padding));
 
 	ComPtr<TLBinaryWriter> innerDataWriter;
 	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&innerDataWriter, setClientDHParams->GetEncryptedData()));
 	ReturnIfFailed(result, innerDataWriter->put_Position(SHA_DIGEST_LENGTH));
 	ReturnIfFailed(result, innerDataWriter->WriteUInt32(0x6643b654));
-	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(TLInt128), m_handshakeContext->Nonce));
-	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(TLInt128), m_handshakeContext->ServerNonce));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(TLInt128), handshakeContext->Nonce));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(TLInt128), handshakeContext->ServerNonce));
 	ReturnIfFailed(result, innerDataWriter->WriteInt64(0));
 	ReturnIfFailed(result, innerDataWriter->WriteByteArray(gbLenght, gbBytes.get()));
 
@@ -905,39 +913,39 @@ HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, INT64 messageId,
 
 	Wrappers::BigNum authKeyNum(BN_new());
 	BN_mod_exp(authKeyNum.Get(), ga.Get(), b.Get(), p.Get(), DatacenterCryptography::GetBNContext());
-	BN_bn2bin(authKeyNum.Get(), m_handshakeContext->AuthKey);
+	BN_bn2bin(authKeyNum.Get(), handshakeContext->AuthKey);
 
 	auto authKeyNumLength = BN_num_bytes(authKeyNum.Get());
 	if (authKeyNumLength < 256)
 	{
-		MoveMemory(m_handshakeContext->AuthKey + 256 - authKeyNumLength, m_handshakeContext->AuthKey, authKeyNumLength);
-		ZeroMemory(m_handshakeContext->AuthKey, 256 - authKeyNumLength);
+		MoveMemory(handshakeContext->AuthKey + 256 - authKeyNumLength, handshakeContext->AuthKey, authKeyNumLength);
+		ZeroMemory(handshakeContext->AuthKey, 256 - authKeyNumLength);
 	}
 
-	m_handshakeContext->TimeDifference = serverTime - static_cast<INT32>(ConnectionManager::GetCurrentRealTime() / 1000);
-	m_handshakeContext->Salt.ValidSince = serverTime - 5;
-	m_handshakeContext->Salt.ValidUntil = m_handshakeContext->Salt.ValidSince + 30 * 60;
+	handshakeContext->TimeDifference = serverTime - static_cast<INT32>(ConnectionManager::GetCurrentRealTime() / 1000);
+	handshakeContext->Salt.ValidSince = serverTime - 5;
+	handshakeContext->Salt.ValidUntil = handshakeContext->Salt.ValidSince + 30 * 60;
 
 	for (INT16 i = 7; i >= 0; i--)
 	{
-		m_handshakeContext->Salt.Salt <<= 8;
-		m_handshakeContext->Salt.Salt |= (m_handshakeContext->NewNonce[i] ^ m_handshakeContext->ServerNonce[i]);
+		handshakeContext->Salt.Salt <<= 8;
+		handshakeContext->Salt.Salt |= (handshakeContext->NewNonce[i] ^ handshakeContext->ServerNonce[i]);
 	}
 
 	return connection->SendUnencryptedMessage(setClientDHParams.Get(), false);
 }
 
-HRESULT Datacenter::OnHandshakeClientDH(Connection* connection, INT64 messageId, TLDHGenOk* response)
+HRESULT Datacenter::OnHandshakeClientDH(Connection* connection, HandshakeContext* handshakeContext, INT64 messageId, TLDHGenOk* response)
 {
-	if (m_handshakeState != HandshakeState::ServerDH)
+	if (handshakeContext->State != AuthenticationState::HandshakeServerDH)
 	{
 		return E_UNEXPECTED;
 	}
 
-	m_handshakeState = HandshakeState::ClientDH;
+	handshakeContext->State = AuthenticationState::HandshakeClientDH;
 
-	if (!(DatacenterCryptography::CheckNonces(m_handshakeContext->Nonce, response->GetNonce()) &&
-		DatacenterCryptography::CheckNonces(m_handshakeContext->ServerNonce, response->GetServerNonce())))
+	if (!(DatacenterCryptography::CheckNonces(handshakeContext->Nonce, response->GetNonce()) &&
+		DatacenterCryptography::CheckNonces(handshakeContext->ServerNonce, response->GetServerNonce())))
 	{
 		return E_INVALIDARG;
 	}
@@ -945,11 +953,11 @@ HRESULT Datacenter::OnHandshakeClientDH(Connection* connection, INT64 messageId,
 	constexpr UINT32 authKeyAuxHashLength = sizeof(TLInt256) + 1 + SHA_DIGEST_LENGTH;
 
 	BYTE authKeyAuxHash[authKeyAuxHashLength];
-	CopyMemory(authKeyAuxHash, m_handshakeContext->NewNonce, sizeof(TLInt256));
+	CopyMemory(authKeyAuxHash, handshakeContext->NewNonce, sizeof(TLInt256));
 
 	authKeyAuxHash[sizeof(TLInt256)] = 1;
 
-	SHA1(m_handshakeContext->AuthKey, sizeof(m_handshakeContext->AuthKey), authKeyAuxHash + sizeof(TLInt256) + 1);
+	SHA1(handshakeContext->AuthKey, sizeof(handshakeContext->AuthKey), authKeyAuxHash + sizeof(TLInt256) + 1);
 	SHA1(authKeyAuxHash, authKeyAuxHashLength - SHA_DIGEST_LENGTH + sizeof(TLInt64), authKeyAuxHash);
 
 	if (memcmp(response->GetNewNonceHash(), authKeyAuxHash + SHA_DIGEST_LENGTH - 16, sizeof(TLInt128)) != 0)
@@ -957,7 +965,20 @@ HRESULT Datacenter::OnHandshakeClientDH(Connection* connection, INT64 messageId,
 		return CRYPT_E_HASH_VALUE;
 	}
 
+	auto authKeyContext = std::make_unique<AuthKeyContext>();
+	CopyMemory(authKeyContext->AuthKey, handshakeContext->AuthKey, sizeof(authKeyContext->AuthKey));
 
+	constexpr UINT32 authKeyIdOffset = sizeof(TLInt256) + 1 + 12;
+
+	authKeyContext->AuthKeyId = (authKeyAuxHash[authKeyIdOffset] & 0xffLL) | ((authKeyAuxHash[authKeyIdOffset + 1] & 0xffLL) << 8LL) |
+		((authKeyAuxHash[authKeyIdOffset + 2] & 0xffLL) << 16LL) | ((authKeyAuxHash[authKeyIdOffset + 3] & 0xffLL) << 24LL) |
+		((authKeyAuxHash[authKeyIdOffset + 4] & 0xffLL) << 32LL) | ((authKeyAuxHash[authKeyIdOffset + 5] & 0xffLL) << 40LL) |
+		((authKeyAuxHash[authKeyIdOffset + 6] & 0xffLL) << 48LL) | ((authKeyAuxHash[authKeyIdOffset + 7] & 0xffLL) << 56LL);
+
+	HRESULT result;
+	ReturnIfFailed(result, AddServerSalt(handshakeContext->Salt));
+
+	m_authenticationContext = std::move(authKeyContext);
 	return S_OK;
 }
 

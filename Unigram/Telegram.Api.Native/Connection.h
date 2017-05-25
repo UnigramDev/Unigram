@@ -77,7 +77,7 @@ namespace Telegram
 				HRESULT Reconnect();
 				HRESULT Suspend();
 
-				//HRESULT SendEncryptedMessage(_In_ IMessageRequest* request, boolean reportAck);
+				HRESULT SendEncryptedMessage(_In_ IMessageRequest* request);
 				HRESULT SendUnencryptedMessage(_In_ ITLObject* object, boolean reportAck);
 
 			private:

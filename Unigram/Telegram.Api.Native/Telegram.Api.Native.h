@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0622 */
 /* at Tue Jan 19 04:14:07 2038
  */
-/* Compiler settings for C:\Users\loren\AppData\Local\Temp\Telegram.Api.Native.idl-2c9a46a2:
+/* Compiler settings for C:\Users\Lorenzo\AppData\Local\Temp\Telegram.Api.Native.idl-eb2027f6:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0622 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -781,16 +781,6 @@ typedef enum __x_ABI_CTelegram_CApi_CNative_CConnectionState __x_ABI_CTelegram_C
 #if !defined(__cplusplus)
 #if !defined(__cplusplus)
 
-typedef enum __x_ABI_CTelegram_CApi_CNative_CHandshakeState __x_ABI_CTelegram_CApi_CNative_CHandshakeState;
-
-
-#endif /* end if !defined(__cplusplus) */
-
-
-#endif
-#if !defined(__cplusplus)
-#if !defined(__cplusplus)
-
 typedef enum __x_ABI_CTelegram_CApi_CNative_CRequestFlag __x_ABI_CTelegram_CApi_CNative_CRequestFlag;
 
 
@@ -926,24 +916,6 @@ namespace ABI {
             namespace Native {
                 
                 typedef MIDL_ENUM ConnectionState ConnectionState;
-                
-            } /* end namespace */
-        } /* end namespace */
-    } /* end namespace */
-} /* end namespace */
-
-extern "C" { 
-#endif
-
-#ifdef __cplusplus
-
-} /* end extern "C" */
-namespace ABI {
-    namespace Telegram {
-        namespace Api {
-            namespace Native {
-                
-                typedef MIDL_ENUM HandshakeState HandshakeState;
                 
             } /* end namespace */
         } /* end namespace */
@@ -3053,21 +3025,6 @@ enum __x_ABI_CTelegram_CApi_CNative_CConnectionType
 
 #if !defined(__cplusplus)
 /* [v1_enum] */ 
-enum __x_ABI_CTelegram_CApi_CNative_CHandshakeState
-    {
-        HandshakeState_None	= 0,
-        HandshakeState_Started	= 1,
-        HandshakeState_PQ	= 2,
-        HandshakeState_ServerDH	= 3,
-        HandshakeState_ClientDH	= 4
-    } ;
-#endif /* end if !defined(__cplusplus) */
-
-#endif
-#if !defined(__cplusplus)
-
-#if !defined(__cplusplus)
-/* [v1_enum] */ 
 enum __x_ABI_CTelegram_CApi_CNative_CConnectionNeworkType
     {
         ConnectionNeworkType_None	= 0,
@@ -3158,37 +3115,6 @@ namespace ABI {
                 const MIDL_ENUM ConnectionType ConnectionType_Generic = ConnectionType::Generic;
                 const MIDL_ENUM ConnectionType ConnectionType_Download = ConnectionType::Download;
                 const MIDL_ENUM ConnectionType ConnectionType_Upload = ConnectionType::Upload;
-                
-            } /* end namespace */
-        } /* end namespace */
-    } /* end namespace */
-} /* end namespace */
-
-extern "C" { 
-#endif
-
-#ifdef __cplusplus
-} /* end extern "C" */
-namespace ABI {
-    namespace Telegram {
-        namespace Api {
-            namespace Native {
-                
-                /* [v1_enum] */ 
-                MIDL_ENUM HandshakeState
-                    {
-                        None	= 0,
-                        Started	= 1,
-                        PQ	= 2,
-                        ServerDH	= 3,
-                        ClientDH	= 4
-                    } ;
-
-                const MIDL_ENUM HandshakeState HandshakeState_None = HandshakeState::None;
-                const MIDL_ENUM HandshakeState HandshakeState_Started = HandshakeState::Started;
-                const MIDL_ENUM HandshakeState HandshakeState_PQ = HandshakeState::PQ;
-                const MIDL_ENUM HandshakeState HandshakeState_ServerDH = HandshakeState::ServerDH;
-                const MIDL_ENUM HandshakeState HandshakeState_ClientDH = HandshakeState::ClientDH;
                 
             } /* end namespace */
         } /* end namespace */
@@ -3863,9 +3789,6 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIDatacenter;
                         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_Id( 
                             /* [out][retval] */ UINT32 *value) = 0;
                         
-                        virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_HandshakeState( 
-                            /* [out][retval] */ ABI::Telegram::Api::Native::HandshakeState *value) = 0;
-                        
                         virtual /* [propget] */ HRESULT STDMETHODCALLTYPE get_ServerSalt( 
                             /* [out][retval] */ INT64 *value) = 0;
                         
@@ -3925,10 +3848,6 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIDatacenter;
             __x_ABI_CTelegram_CApi_CNative_CIDatacenter * This,
             /* [out][retval] */ UINT32 *value);
         
-        /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_HandshakeState )( 
-            __x_ABI_CTelegram_CApi_CNative_CIDatacenter * This,
-            /* [out][retval] */ __x_ABI_CTelegram_CApi_CNative_CHandshakeState *value);
-        
         /* [propget] */ HRESULT ( STDMETHODCALLTYPE *get_ServerSalt )( 
             __x_ABI_CTelegram_CApi_CNative_CIDatacenter * This,
             /* [out][retval] */ INT64 *value);
@@ -3980,9 +3899,6 @@ EXTERN_C const IID IID___x_ABI_CTelegram_CApi_CNative_CIDatacenter;
 
 #define __x_ABI_CTelegram_CApi_CNative_CIDatacenter_get_Id(This,value)	\
     ( (This)->lpVtbl -> get_Id(This,value) ) 
-
-#define __x_ABI_CTelegram_CApi_CNative_CIDatacenter_get_HandshakeState(This,value)	\
-    ( (This)->lpVtbl -> get_HandshakeState(This,value) ) 
 
 #define __x_ABI_CTelegram_CApi_CNative_CIDatacenter_get_ServerSalt(This,value)	\
     ( (This)->lpVtbl -> get_ServerSalt(This,value) ) 

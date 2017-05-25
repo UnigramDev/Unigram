@@ -11,7 +11,7 @@
 #define THREAD_COUNT 2
 #define DEFAULT_DATACENTER_ID INT_MAX
 //#define TELEGRAM_API_NATIVE_CONFIGVERSION 2
-#define TELEGRAM_API_NATIVE_PROTOVERSION 1
+#define TELEGRAM_API_NATIVE_PROTOVERSION 2
 #define TELEGRAM_API_NATIVE_VERSION 1
 #define TELEGRAM_API_NATIVE_LAYER 65
 #define TELEGRAM_API_NATIVE_APIID 6
@@ -110,7 +110,7 @@ namespace Telegram
 				HRESULT InitializeDatacenters();
 				HRESULT UpdateNetworkStatus(boolean raiseEvent);
 				HRESULT CreateRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
-					UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, RequestFlag flags, _Out_ ComPtr<GenericRequest>& request);
+					UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, RequestFlag flags, _Out_ ComPtr<MessageRequest>& request);
 				HRESULT OnNetworkStatusChanged(_In_ IInspectable* sender);
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionPacketReceived(_In_ Connection* connection, _In_ TL::TLBinaryReader* packetReader, UINT32 packetLength);
@@ -134,7 +134,7 @@ namespace Telegram
 				std::map<UINT32, ComPtr<Datacenter>> m_datacenters;
 				Event m_requestEnqueuedEvent;
 				CriticalSection m_requestsQueueCriticalSection;
-				std::queue<ComPtr<GenericRequest>> m_requestsQueue;
+				std::queue<ComPtr<MessageRequest>> m_requestsQueue;
 				INT32 m_timeDelta;
 				INT64 m_lastOutgoingMessageId;
 				INT32 m_userId;

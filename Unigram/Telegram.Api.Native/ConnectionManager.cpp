@@ -293,7 +293,7 @@ HRESULT ConnectionManager::SendRequestWithFlags(_In_ ITLObject* object, _In_ ISe
 	auto lock = LockCriticalSection();
 
 	HRESULT result;
-	ComPtr<GenericRequest> request;
+	ComPtr<MessageRequest> request;
 	ReturnIfFailed(result, CreateRequest(object, onCompleted, onQuickAckReceived, datacenterId, connectionType, requestToken, flags, request));
 
 	if (immediate)
@@ -458,7 +458,7 @@ HRESULT ConnectionManager::UpdateNetworkStatus(boolean raiseEvent)
 }
 
 HRESULT ConnectionManager::CreateRequest(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived,
-	UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, RequestFlag flags, ComPtr<GenericRequest>& request)
+	UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, RequestFlag flags, ComPtr<MessageRequest>& request)
 {
 	HRESULT result;
 	boolean isLayerNeeded;
@@ -472,11 +472,11 @@ HRESULT ConnectionManager::CreateRequest(ITLObject* object, ISendRequestComplete
 		ComPtr<TLInitConnection> initConnectionObject;
 		ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, m_userConfiguration.Get(), invokeWithLayer.Get()));
 
-		return MakeAndInitialize<GenericRequest>(&request, initConnectionObject.Get(), requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
+		return MakeAndInitialize<MessageRequest>(&request, initConnectionObject.Get(), requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
 	}
 	else
 	{
-		return MakeAndInitialize<GenericRequest>(&request, object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
+		return MakeAndInitialize<MessageRequest>(&request, object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
 	}
 }
 
@@ -555,13 +555,13 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 	{
 		auto datacenter = connection->GetDatacenter();
 
-		HandshakeState handshakeState;
-		ReturnIfFailed(result, datacenter->get_HandshakeState(&handshakeState));
+		//HandshakeState handshakeState;
+		//ReturnIfFailed(result, datacenter->get_HandshakeState(&handshakeState));
 
-		if (handshakeState != HandshakeState::None)
-		{
-			ReturnIfFailed(result, datacenter->OnHandshakeConnectionClosed(connection));
-		}
+		//if (handshakeState != HandshakeState::None)
+		//{
+		//	ReturnIfFailed(result, datacenter->OnHandshakeConnectionClosed(connection));
+		//}
 
 		if (datacenter->GetId() == m_currentDatacenterId)
 		{
