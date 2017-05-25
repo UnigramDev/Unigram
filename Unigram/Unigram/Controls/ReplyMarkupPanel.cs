@@ -126,27 +126,27 @@ namespace Unigram.Controls
                 receipt = invoiceMedia.HasReceiptMsgId;
             }
 
-            if (receipt)
-            {
-                var panel = new Grid();
-                panel.HorizontalAlignment = HorizontalAlignment.Stretch;
-                panel.VerticalAlignment = VerticalAlignment.Stretch;
-                panel.Margin = new Thickness(-2, 0, -2, 0);
+            //if (receipt)
+            //{
+            //    var panel = new Grid();
+            //    panel.HorizontalAlignment = HorizontalAlignment.Stretch;
+            //    panel.VerticalAlignment = VerticalAlignment.Stretch;
+            //    panel.Margin = new Thickness(-2, 0, -2, 0);
 
-                var button = new GlyphButton();
-                button.DataContext = new TLKeyboardButtonBuy();
-                button.Content = "Receipt";
-                button.Margin = new Thickness(2, 2, 2, 0);
-                button.HorizontalAlignment = HorizontalAlignment.Stretch;
-                button.VerticalAlignment = VerticalAlignment.Stretch;
-                button.Click += Button_Click;
-                button.Style = App.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
+            //    var button = new GlyphButton();
+            //    button.DataContext = new TLKeyboardButtonBuy();
+            //    button.Content = "Receipt";
+            //    button.Margin = new Thickness(2, 2, 2, 0);
+            //    button.HorizontalAlignment = HorizontalAlignment.Stretch;
+            //    button.VerticalAlignment = VerticalAlignment.Stretch;
+            //    button.Click += Button_Click;
+            //    button.Style = App.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
 
-                panel.Children.Add(button);
-                Children.Add(panel);
+            //    panel.Children.Add(button);
+            //    Children.Add(panel);
 
-                return;
-            }
+            //    return;
+            //}
 
             if (rows != null && ((IsInline && newValue is TLReplyInlineMarkup) || (!IsInline && newValue is TLReplyKeyboardMarkup)))
             {

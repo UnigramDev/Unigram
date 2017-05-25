@@ -554,13 +554,13 @@
 
         <DataTemplate x:Key="UserMessageTemplate">
             <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}">
-                <StackPanel.Resources>
+                <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
                             <ResourceDictionary Source="ms-appx:///Themes/AccentSent.xaml"/>
                         </ResourceDictionary.MergedDictionaries>
                     </ResourceDictionary>
-                </StackPanel.Resources>
+                </FrameworkElement.Resources>
             </messages:MessageBubble>
         </DataTemplate>
 
