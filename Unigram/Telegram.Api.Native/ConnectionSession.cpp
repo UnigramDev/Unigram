@@ -82,9 +82,11 @@ INT64 ConnectionSession::GenereateNewSessionId()
 	INT64 newSessionId;
 	RAND_bytes(reinterpret_cast<UINT8*>(&newSessionId), 8);
 
-#if _DEBUG
-	return 0xabcd000000000000L | (newSessionId & 0x0000ffffffffffffL);
-#else
 	return newSessionId;
-#endif
+
+//#if _DEBUG
+//	return 0xabcd000000000000L | (newSessionId & 0x0000ffffffffffffL);
+//#else
+//	return newSessionId;
+//#endif
 }

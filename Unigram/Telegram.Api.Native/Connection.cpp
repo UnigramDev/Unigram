@@ -152,6 +152,60 @@ HRESULT Connection::Suspend()
 	return S_OK;
 }
 
+HRESULT Connection::SendEncryptedMessage(ITLObject* object, INT32* quickAckId)
+{
+	if (object == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	HRESULT result;
+	INT64 salt;
+	ReturnIfFailed(result, m_datacenter->get_ServerSalt(&salt));
+
+	ComPtr<ConnectionManager> connectionManager;
+	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
+
+	UINT32 objectSize;
+	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
+
+	UINT32 messageLength = 3 * sizeof(INT64) + 2 * sizeof(INT32) + objectSize;
+	UINT32 padding = messageLength % 16;
+
+	if (padding != 0)
+	{
+		padding = 16 - padding;
+	}
+
+#if TELEGRAM_API_NATIVE_PROTOVERSION == 2
+
+	if (padding < 12)
+	{
+		padding += 16;
+	}
+
+#endif
+
+	ComPtr<TLBinaryWriter> packetWriter;
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&packetWriter, 24 + messageLength + padding));
+	ReturnIfFailed(result, packetWriter->put_Position(24));
+	ReturnIfFailed(result, packetWriter->WriteInt64(salt));
+	ReturnIfFailed(result, packetWriter->WriteInt64(GetSessionId()));
+	ReturnIfFailed(result, packetWriter->WriteInt64(connectionManager->GenerateMessageId()));
+	ReturnIfFailed(result, packetWriter->WriteInt32(GenerateMessageSequenceNumber(false)));
+	ReturnIfFailed(result, packetWriter->WriteInt32(objectSize));
+	ReturnIfFailed(result, packetWriter->WriteObject(object));
+
+	if (padding != 0)
+	{
+		RAND_bytes(packetWriter->GetBuffer() + 24 + messageLength, padding);
+	}
+
+	ReturnIfFailed(result, m_datacenter->EncryptMessage(packetWriter->GetBuffer(), packetWriter->GetCapacity(), quickAckId));
+
+	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
+}
+
 HRESULT Connection::SendUnencryptedMessage(ITLObject* object, boolean reportAck)
 {
 	if (object == nullptr)

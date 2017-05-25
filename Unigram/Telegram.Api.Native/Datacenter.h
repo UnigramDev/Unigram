@@ -74,14 +74,15 @@ namespace Telegram
 				HRESULT SuspendConnections();
 				HRESULT BeginHandshake(boolean reconnect);
 
-				inline HRESULT GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, _Out_ ServerEndpoint const** endpoint)
-				{
-					return GetCurrentEndpoint(connectionType, ipv6, const_cast<ServerEndpoint**>(endpoint));
-				}
-
 				inline UINT32 GetId() const
 				{
 					return m_id;
+				}
+
+				inline boolean HasAuthKey()
+				{
+					auto  lock = LockCriticalSection();
+					return m_authenticationContext != nullptr && m_authenticationContext->GetState() == AuthenticationState::Completed;
 				}
 
 			private:
@@ -137,8 +138,12 @@ namespace Telegram
 				HRESULT OnHandshakeServerDH(_In_ Connection* connection, _In_ HandshakeContext* handshakeContext, INT64 messageId, _In_ TL::TLServerDHParamsOk* response);
 				HRESULT OnHandshakeClientDH(_In_ Connection* connection, _In_ HandshakeContext* handshakeContext, INT64 messageId, _In_ TL::TLDHGenOk* response);
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
-				HRESULT SendRequest(_In_ ITLObject* object, _In_ Connection* connection);
+				HRESULT EncryptMessage(_Inout_updates_(length) BYTE* buffer, UINT32 length, _Out_opt_ INT32* quickAckId);
+				HRESULT DecryptMessage(_Inout_updates_(length) BYTE* buffer, UINT32 length);
 
+				HRESULT SendPing();
+
+				static void GenerateMessageKey(_In_ BYTE const* authKey, _Inout_ BYTE* messageKey, BYTE* result, boolean incoming);
 				static HRESULT SendAckRequest(_In_ Connection* connection, INT64 messageId);
 
 				UINT32 m_id;

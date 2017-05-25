@@ -28,7 +28,7 @@ ConnectionManager::ConnectionManager() :
 	m_threadpoolCleanupGroup(nullptr),
 	m_isIpv6Enabled(false),
 	m_currentDatacenterId(0),
-	m_timeDelta(0),
+	m_timeDifference(0),
 	m_lastOutgoingMessageId(0),
 	m_userId(0)
 {
@@ -465,14 +465,15 @@ HRESULT ConnectionManager::CreateRequest(ITLObject* object, ISendRequestComplete
 	ReturnIfFailed(result, object->get_IsLayerNeeded(&isLayerNeeded));
 
 	if (isLayerNeeded)
-	{
-		ComPtr<TLInvokeWithLayer> invokeWithLayer;
-		ReturnIfFailed(result, MakeAndInitialize<TLInvokeWithLayer>(&invokeWithLayer, object));
-
+	{		
 		ComPtr<TLInitConnection> initConnectionObject;
-		ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, m_userConfiguration.Get(), invokeWithLayer.Get()));
+		ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, m_userConfiguration.Get(), object));
 
-		return MakeAndInitialize<MessageRequest>(&request, initConnectionObject.Get(), requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
+		ComPtr<TLInvokeWithLayer> invokeWithLayer;
+		ReturnIfFailed(result, MakeAndInitialize<TLInvokeWithLayer>(&invokeWithLayer, invokeWithLayer.Get()));
+
+
+		return MakeAndInitialize<MessageRequest>(&request, invokeWithLayer.Get(), requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
 	}
 	else
 	{
@@ -637,6 +638,14 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 	return S_OK;
 }
 
+HRESULT ConnectionManager::OnDatacenterHandshakeComplete(Datacenter* datacenter, INT32 timeDifference)
+{
+	auto lock = LockCriticalSection();
+
+	m_timeDifference = timeDifference;
+	return S_OK;
+}
+
 void ConnectionManager::OnEventObjectError(EventObject const* eventObject, HRESULT error)
 {
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement EventObject callback error tracing");
@@ -661,7 +670,7 @@ Datacenter* ConnectionManager::GetDatacenterById(UINT32 id)
 INT64 ConnectionManager::GenerateMessageId()
 {
 	auto lock = LockCriticalSection();
-	auto messageId = static_cast<INT64>(((static_cast<double>(GetCurrentRealTime()) + static_cast<double>(m_timeDelta) * 1000) * 4294967296.0) / 1000.0);
+	auto messageId = static_cast<INT64>(((static_cast<double>(GetCurrentRealTime()) + static_cast<double>(m_timeDifference) * 1000) * 4294967296.0) / 1000.0);
 	if (messageId <= m_lastOutgoingMessageId)
 	{
 		messageId = m_lastOutgoingMessageId + 1;
@@ -687,7 +696,7 @@ INT32 ConnectionManager::GetCurrentTime()
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Check if CriticalSection is really required");
 
 	auto lock = LockCriticalSection();
-	return static_cast<INT32>(ConnectionManager::GetCurrentRealTime() / 1000) + m_timeDelta;
+	return static_cast<INT32>(ConnectionManager::GetCurrentRealTime() / 1000) + m_timeDifference;
 }
 
 HRESULT ConnectionManager::AttachEventObject(EventObject* eventObject)

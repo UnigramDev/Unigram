@@ -19,14 +19,12 @@ namespace Telegram
 
 				void RecreateSession();
 
+			protected:
 				inline INT64 GetSessionId()
 				{
-					auto lock = LockCriticalSection();
-
 					return m_id;
 				}
 
-			protected:
 				inline void SetSessionId(INT64 sessionId)
 				{
 					m_id = sessionId;

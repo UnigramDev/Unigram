@@ -13,7 +13,7 @@
 //#define TELEGRAM_API_NATIVE_CONFIGVERSION 2
 #define TELEGRAM_API_NATIVE_PROTOVERSION 2
 #define TELEGRAM_API_NATIVE_VERSION 1
-#define TELEGRAM_API_NATIVE_LAYER 65
+#define TELEGRAM_API_NATIVE_LAYER 66
 #define TELEGRAM_API_NATIVE_APIID 6
 
 using namespace Microsoft::WRL;
@@ -46,10 +46,10 @@ namespace Telegram
 
 			}
 
-			class Datacenter;
 
 			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager>, public MultiThreadObject
 			{
+				friend class Datacenter;
 				friend class Connection;
 				friend class EventObject;
 
@@ -117,6 +117,7 @@ namespace Telegram
 				HRESULT OnConnectionQuickAckReceived(_In_ Connection* connection, INT32 ack);
 				HRESULT OnConnectionClosed(_In_ Connection* connection);
 				HRESULT OnRequestEnqueued(_In_ PTP_CALLBACK_INSTANCE instance);
+				HRESULT OnDatacenterHandshakeComplete(_In_ Datacenter* datacenter, INT32 timeDifference);
 				void OnEventObjectError(_In_ EventObject const* eventObject, HRESULT error);
 				Datacenter* GetDatacenterById(UINT32 id);
 
@@ -135,7 +136,7 @@ namespace Telegram
 				Event m_requestEnqueuedEvent;
 				CriticalSection m_requestsQueueCriticalSection;
 				std::queue<ComPtr<MessageRequest>> m_requestsQueue;
-				INT32 m_timeDelta;
+				INT32 m_timeDifference;
 				INT64 m_lastOutgoingMessageId;
 				INT32 m_userId;
 				ComPtr<IUserConfiguration> m_userConfiguration;

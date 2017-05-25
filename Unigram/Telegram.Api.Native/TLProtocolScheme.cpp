@@ -17,6 +17,8 @@ ActivatableClassWithFactory(TLError, TLErrorFactory);
 
 RegisterTLObjectConstructor(TLError);
 RegisterTLObjectConstructor(TLMsgsAck);
+RegisterTLObjectConstructor(TLMsgContainer);
+RegisterTLObjectConstructor(TLPong);
 RegisterTLObjectConstructor(TLDHGenOk);
 RegisterTLObjectConstructor(TLDHGenFail);
 RegisterTLObjectConstructor(TLDHGenRetry);
@@ -26,6 +28,15 @@ RegisterTLObjectConstructor(TLResPQ);
 RegisterTLObjectConstructor(TLFutureSalts);
 RegisterTLObjectConstructor(TLFutureSalt);
 
+
+TLError::TLError() :
+	m_code(0)
+{
+}
+
+TLError::~TLError()
+{
+}
 
 HRESULT TLError::RuntimeClassInitialize(INT32 code, HSTRING text)
 {
@@ -102,6 +113,67 @@ HRESULT TLMsgsAck::WriteBody(ITLBinaryWriterEx* writer)
 	}
 
 	return S_OK;
+}
+
+
+HRESULT TLMsgContainer::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	UINT32 count;
+	ReturnIfFailed(result, reader->ReadUInt32(&count));
+
+	m_messages.resize(count);
+
+	for (UINT32 i = 0; i < count; i++)
+	{
+		ReturnIfFailed(result, reader->ReadObject(&m_messages[i]));
+	}
+
+	return S_OK;
+}
+
+HRESULT TLMsgContainer::WriteBody(ITLBinaryWriterEx* writer)
+{
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(m_messages.size())));
+
+	for (size_t i = 0; i < m_messages.size(); i++)
+	{
+		ReturnIfFailed(result, writer->WriteObject(m_messages[i].Get()));
+	}
+
+	return S_OK;
+}
+
+
+HRESULT TLPing::RuntimeClassInitialize(INT64 pingId)
+{
+	m_pingId = pingId;
+	return S_OK;
+}
+
+HRESULT TLPing::WriteBody(ITLBinaryWriterEx* writer)
+{
+	return writer->WriteInt64(m_pingId);
+}
+
+
+TLPong::TLPong() :
+	m_msgId(0),
+	m_pingId(0)
+{
+}
+
+TLPong::~TLPong()
+{
+}
+
+HRESULT TLPong::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt64(&m_msgId));
+
+	return reader->ReadInt64(&m_pingId);
 }
 
 
@@ -250,6 +322,18 @@ HRESULT TLResPQ::ReadBody(ITLBinaryReaderEx* reader)
 	}
 
 	return S_OK;
+}
+
+
+HRESULT TLGetFutureSalts::RuntimeClassInitialize(UINT32 count)
+{
+	m_count = count;
+	return S_OK;
+}
+
+HRESULT TLGetFutureSalts::WriteBody(ITLBinaryWriterEx* writer)
+{
+	return writer->WriteUInt32(m_count);
 }
 
 

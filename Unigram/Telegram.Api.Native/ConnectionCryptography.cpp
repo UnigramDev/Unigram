@@ -2,8 +2,6 @@
 #include <openssl/rand.h>
 #include "ConnectionCryptography.h"
 
-#define CONNECTION_MAX_ATTEMPTS 5 
-
 using namespace Telegram::Api::Native;
 
 
@@ -15,40 +13,6 @@ ConnectionCryptography::ConnectionCryptography() :
 ConnectionCryptography::~ConnectionCryptography()
 {
 }
-
-//HRESULT ConnectionCryptography::EncryptBuffer(BYTE const* inputBuffer, BYTE* outputBuffer, UINT32 length)
-//{
-//	if (inputBuffer == nullptr || outputBuffer == nullptr)
-//	{
-//		return E_POINTER;
-//	}
-//
-//	if (!m_initialized)
-//	{
-//		return E_NOT_VALID_STATE;
-//	}
-//
-//	AES_ctr128_encrypt(inputBuffer, outputBuffer, length, &m_encryptKey, m_encryptIv, m_encryptCount, &m_encryptNum);
-//
-//	return S_OK;
-//}
-//
-//HRESULT ConnectionCryptography::DecryptBuffer(BYTE const* inputBuffer, BYTE* outputBuffer, UINT32 length)
-//{
-//	if (inputBuffer == nullptr || outputBuffer == nullptr)
-//	{
-//		return E_POINTER;
-//	}
-//
-//	if (!m_initialized)
-//	{
-//		return E_NOT_VALID_STATE;
-//	}
-//
-//	AES_ctr128_encrypt(inputBuffer, outputBuffer, length, &m_decryptKey, m_decryptIv, m_decryptCount, &m_decryptNum);
-//
-//	return S_OK;
-//}
 
 void ConnectionCryptography::EncryptBuffer(BYTE const* inputBuffer, BYTE* outputBuffer, UINT32 length)
 {
@@ -112,13 +76,4 @@ HRESULT ConnectionCryptography::Initialize(BYTE* buffer)
 void ConnectionCryptography::Reset()
 {
 	m_initialized = false;
-	//m_encryptNum = 0;
-	//m_decryptNum = 0;
-
-	//ZeroMemory(&m_encryptKey, sizeof(m_encryptKey));
-	//ZeroMemory(&m_encryptIv, sizeof(m_encryptIv));
-	//ZeroMemory(&m_encryptCount, sizeof(m_encryptCount));
-	//ZeroMemory(&m_decryptKey, sizeof(m_decryptKey));
-	//ZeroMemory(&m_decryptIv, sizeof(m_decryptIv));
-	//ZeroMemory(&m_decryptCount, sizeof(m_decryptCount));
 }

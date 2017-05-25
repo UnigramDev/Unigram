@@ -1,5 +1,9 @@
 #pragma once
-#include <openssl\aes.h>
+#include <openssl/rand.h>
+#include <openssl/sha.h>
+#include <openssl/pem.h>
+#include <openssl/aes.h>
+#include <openssl/bn.h>
 #include <wrl.h>
 
 namespace Telegram
