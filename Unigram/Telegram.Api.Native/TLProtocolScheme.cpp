@@ -17,6 +17,9 @@ ActivatableClassWithFactory(TLError, TLErrorFactory);
 
 RegisterTLObjectConstructor(TLError);
 RegisterTLObjectConstructor(TLMsgsAck);
+RegisterTLObjectConstructor(TLDHGenOk);
+RegisterTLObjectConstructor(TLDHGenFail);
+RegisterTLObjectConstructor(TLDHGenRetry);
 RegisterTLObjectConstructor(TLServerDHParamsFail);
 RegisterTLObjectConstructor(TLServerDHParamsOk);
 RegisterTLObjectConstructor(TLResPQ);
@@ -102,7 +105,17 @@ HRESULT TLMsgsAck::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
-HRESULT TLSetDHParams::RuntimeClassInitialize(TLInt128 nonce, TLInt128 serverNonce, UINT32 encryptedDataLength)
+HRESULT TLDHGen::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadRawBuffer(sizeof(m_nonce), m_nonce));
+	ReturnIfFailed(result, reader->ReadRawBuffer(sizeof(m_serverNonce), m_serverNonce));
+
+	return reader->ReadRawBuffer(sizeof(m_newNonceHash), m_newNonceHash);
+}
+
+
+HRESULT TLSetClientDHParams::RuntimeClassInitialize(TLInt128 nonce, TLInt128 serverNonce, UINT32 encryptedDataLength)
 {
 	CopyMemory(m_nonce, nonce, sizeof(m_nonce));
 	CopyMemory(m_serverNonce, serverNonce, sizeof(m_serverNonce));
@@ -110,7 +123,7 @@ HRESULT TLSetDHParams::RuntimeClassInitialize(TLInt128 nonce, TLInt128 serverNon
 	return MakeAndInitialize<NativeBuffer>(&m_encryptedData, encryptedDataLength);
 }
 
-HRESULT TLSetDHParams::WriteBody(ITLBinaryWriterEx* writer)
+HRESULT TLSetClientDHParams::WriteBody(ITLBinaryWriterEx* writer)
 {
 	HRESULT result;
 	ReturnIfFailed(result, writer->WriteRawBuffer(sizeof(m_nonce), m_nonce));

@@ -28,6 +28,7 @@ namespace Telegram
 			namespace TL
 			{
 
+				class TLDHGenOk;
 				class TLServerDHParamsOk;
 				class TLReqDHParams;
 				class TLResPQ;
@@ -92,6 +93,14 @@ namespace Telegram
 					BYTE NewNonce[32];
 					BYTE ServerNonce[16];
 					BYTE AuthKey[256];
+					ServerSalt Salt;
+					INT32 TimeDifference;
+				};
+
+				struct AuthKeyContext
+				{
+					BYTE AuthKey[256];
+					INT64 AuthKeyId;
 				};
 
 				IFACEMETHODIMP Close();
@@ -100,8 +109,9 @@ namespace Telegram
 				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
 				HRESULT OnHandshakeResponseReceived(_In_ Connection* connection, INT64 messageId, _In_ ITLObject* object);
-				HRESULT OnHandshakePQ(_In_ Connection* connection, INT64 messageId, _In_ TL::TLResPQ* pqResponse);
-				HRESULT OnHandshakeServerDH(_In_ Connection* connection, INT64 messageId, _In_ TL::TLServerDHParamsOk* pqResponse);
+				HRESULT OnHandshakePQ(_In_ Connection* connection, INT64 messageId, _In_ TL::TLResPQ* response);
+				HRESULT OnHandshakeServerDH(_In_ Connection* connection, INT64 messageId, _In_ TL::TLServerDHParamsOk* response);
+				HRESULT OnHandshakeClientDH(_In_ Connection* connection, INT64 messageId, _In_ TL::TLDHGenOk* response);
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
 				HRESULT SendRequest(_In_ ITLObject* object, _In_ Connection* connection);
 

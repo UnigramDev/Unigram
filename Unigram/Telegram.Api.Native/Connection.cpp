@@ -369,10 +369,10 @@ HRESULT Connection::OnMessageReceived(TLBinaryReader* messageReader, UINT32 mess
 		return E_FAIL;
 	}
 
-	INT64 keyId;
-	ReturnIfFailed(result, messageReader->ReadInt64(&keyId));
+	INT64 authKeyId;
+	ReturnIfFailed(result, messageReader->ReadInt64(&authKeyId));
 
-	if (keyId == 0)
+	if (authKeyId == 0)
 	{
 		INT64 messageId;;
 		ReturnIfFailed(result, messageReader->ReadInt64(&messageId));

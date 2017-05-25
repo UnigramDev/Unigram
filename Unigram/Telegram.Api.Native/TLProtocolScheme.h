@@ -21,7 +21,10 @@ namespace Telegram
 
 				class TLError;
 				class TLMsgsAck;
-				class TLSetDHParams;
+				class TLDHGenOk;
+				class TLDHGenFail;
+				class TLDHGenRetry;
+				class TLSetClientDHParams;
 				class TLReqDHParams;
 				class TLServerDHParamsFail;
 				class TLServerDHParamsOk;
@@ -42,7 +45,10 @@ namespace Telegram
 
 					MakeTLObjectTraits(TLError, 0xc4b9f9bb, false);
 					MakeTLObjectTraits(TLMsgsAck, 0x62d6b459, false);
-					MakeTLObjectTraits(TLSetDHParams, 0xf5045f1f, false);
+					MakeTLObjectTraits(TLDHGenOk, 0x3bcbf734, false);
+					MakeTLObjectTraits(TLDHGenFail, 0xa69dae02, false);
+					MakeTLObjectTraits(TLDHGenRetry, 0x46dc1fb9, false);
+					MakeTLObjectTraits(TLSetClientDHParams, 0xf5045f1f, false);
 					MakeTLObjectTraits(TLReqDHParams, 0xd712e4be, false);
 					MakeTLObjectTraits(TLServerDHParamsFail, 0x79cb045d, false);
 					MakeTLObjectTraits(TLServerDHParamsOk, 0xd0e8075c, false);
@@ -113,7 +119,68 @@ namespace Telegram
 					std::vector<INT64> m_msgIds;
 				};
 
-				class TLSetDHParams WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLSetDHParamsTraits>>
+				class TLDHGen abstract
+				{
+				public:
+					//Internal methods
+					inline TLInt128 const& GetNonce() const
+					{
+						return m_nonce;
+					}
+
+					inline TLInt128 const& GetServerNonce() const
+					{
+						return m_serverNonce;
+					}
+
+					inline TLInt128 const& GetNewNonceHash() const
+					{
+						return m_newNonceHash;
+					}
+
+				protected:
+					HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader);
+
+				private:
+					BYTE m_nonce[16];
+					BYTE m_serverNonce[16];
+					BYTE m_newNonceHash[16];
+				};
+
+				class TLDHGenOk WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLDHGenOkTraits>>, public TLDHGen
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override
+					{
+						return TLDHGen::ReadBody(reader);
+					}
+				};
+
+				class TLDHGenFail WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLDHGenFailTraits>>, public TLDHGen
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override
+					{
+						return TLDHGen::ReadBody(reader);
+					}
+				};
+
+				class TLDHGenRetry WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLDHGenRetryTraits>>, public TLDHGen
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override
+					{
+						return TLDHGen::ReadBody(reader);
+					}
+				};
+
+				class TLSetClientDHParams WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLSetClientDHParamsTraits>>
 				{
 					InspectableClass(Traits::RuntimeClassName, BaseTrust);
 

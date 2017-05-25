@@ -93,6 +93,19 @@ namespace Telegram
 
 				static HRESULT GetInstance(_Out_ ComPtr<ConnectionManager>& value);
 
+				inline static UINT64 GetCurrentRealTime()
+				{
+					FILETIME time;
+					GetSystemTimePreciseAsFileTime(&time);
+
+					return ((static_cast<UINT64>(time.dwHighDateTime) << 32) | static_cast<UINT64>(time.dwLowDateTime)) / 1000000ULL;
+				}
+
+				inline static UINT64 GetCurrentMonotonicTime()
+				{
+					return GetTickCount64();
+				}
+
 			private:
 				HRESULT InitializeDatacenters();
 				HRESULT UpdateNetworkStatus(boolean raiseEvent);
@@ -108,19 +121,6 @@ namespace Telegram
 				Datacenter* GetDatacenterById(UINT32 id);
 
 				static void NTAPI RequestEnqueuedCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ PTP_WAIT wait, _In_ TP_WAIT_RESULT waitResult);
-
-				inline static UINT64 GetCurrentRealTime()
-				{
-					FILETIME time;
-					GetSystemTimePreciseAsFileTime(&time);
-
-					return ((static_cast<UINT64>(time.dwHighDateTime) << 32) | static_cast<UINT64>(time.dwLowDateTime)) / 1000000ULL;
-				}
-
-				inline static UINT64 GetCurrentMonotonicTime()
-				{
-					return GetTickCount64();
-				}
 
 				TP_CALLBACK_ENVIRON m_threadpoolEnvironment;
 				PTP_POOL m_threadpool;
