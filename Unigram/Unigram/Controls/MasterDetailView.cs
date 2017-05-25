@@ -100,6 +100,9 @@ namespace Unigram.Controls
 
         private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
+            // TODO:
+            return;
+
             if ((args.EventType == CoreAcceleratorKeyEventType.SystemKeyDown || args.EventType == CoreAcceleratorKeyEventType.KeyDown) && (args.VirtualKey == VirtualKey.Escape))
             {
                 if (DetailFrame.CanGoBack && CurrentState == MasterDetailState.Narrow)

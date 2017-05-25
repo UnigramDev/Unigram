@@ -92,8 +92,6 @@ namespace Unigram.Controls
                 .Throttle(TimeSpan.FromMilliseconds(200))
                 .Subscribe(e => Execute.BeginOnUIThread(() => UpdateInlineBot(true)));
 
-            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
-
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
         }
@@ -101,11 +99,13 @@ namespace Unigram.Controls
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Subscribe(this);
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Unsubscribe(this);
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         protected override void OnApplyTemplate()
@@ -348,6 +348,15 @@ namespace Unigram.Controls
             else if (e.Key == VirtualKey.Up && IsEmpty)
             {
                 ViewModel.MessageEditLastCommand.Execute();
+                e.Handled = true;
+            }
+            else if (e.Key == VirtualKey.Escape && IsEmpty)
+            {
+                if (ViewModel.Reply is TLMessagesContainter container && container.EditMessage != null)
+                {
+                    ViewModel.ClearReplyCommand.Execute();
+                    e.Handled = true;
+                }
             }
 
             base.OnKeyDown(e);

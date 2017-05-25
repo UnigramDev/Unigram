@@ -30,7 +30,6 @@ using Unigram.Common;
 using Windows.Media;
 using System.IO;
 using Template10.Services.NavigationService;
-using Unigram.Common;
 using Unigram.Views.SignIn;
 using Windows.UI.Core;
 using Unigram.Converters;
@@ -49,7 +48,7 @@ namespace Unigram
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Template10.Common.BootStrapper
+    sealed partial class App : BootStrapper
     {
         public static ShareOperation ShareOperation { get; private set; }
         public static AppServiceConnection Connection { get; private set; }
