@@ -344,22 +344,23 @@ namespace Unigram.Controls
                 {
                     ViewModel.ResolveInlineBot(text);
                 }
+
+                base.OnKeyDown(e);
             }
             else if (e.Key == VirtualKey.Up && IsEmpty)
             {
                 ViewModel.MessageEditLastCommand.Execute();
                 e.Handled = true;
             }
-            else if (e.Key == VirtualKey.Escape && IsEmpty)
+            else if (e.Key == VirtualKey.Escape && ViewModel.Reply is TLMessagesContainter container && container.EditMessage != null)
             {
-                if (ViewModel.Reply is TLMessagesContainter container && container.EditMessage != null)
-                {
-                    ViewModel.ClearReplyCommand.Execute();
-                    e.Handled = true;
-                }
+                ViewModel.ClearReplyCommand.Execute();
+                e.Handled = true;
             }
-
-            base.OnKeyDown(e);
+            else
+            {
+                base.OnKeyDown(e);
+            }
         }
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
