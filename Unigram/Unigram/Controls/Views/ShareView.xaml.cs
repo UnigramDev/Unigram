@@ -23,6 +23,8 @@ using Windows.UI.ViewManagement;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Template10.Utils;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage.Streams;
 
 namespace Unigram.Controls.Views
 {
@@ -34,6 +36,79 @@ namespace Unigram.Controls.Views
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<ShareViewModel>();
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            DataTransferManager.GetForCurrentView().ShareProvidersRequested += OnShareProvidersRequested;
+            DataTransferManager.GetForCurrentView().DataRequested += OnDataRequested;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            DataTransferManager.GetForCurrentView().ShareProvidersRequested -= OnShareProvidersRequested;
+            DataTransferManager.GetForCurrentView().DataRequested -= OnDataRequested;
+
+            List.SelectedItems.Clear();
+        }
+
+        private void OnShareProvidersRequested(DataTransferManager sender, ShareProvidersRequestedEventArgs args)
+        {
+            if (args.Data.Contains(StandardDataFormats.WebLink))
+            {
+                var icon = RandomAccessStreamReference.CreateFromUri(new Uri(@"ms-appx:///Assets/Images/ShareProvider_CopyLink24x24.png"));
+                var provider = new ShareProvider("Copy link", icon, (Color)App.Current.Resources["SystemAccentColor"], OnShareToClipboard);
+                args.Providers.Add(provider);
+            }
+
+            Hide();
+        }
+
+        private async void OnShareToClipboard(ShareProviderOperation operation)
+        {
+            var webLink = await operation.Data.GetWebLinkAsync();
+            var package = new DataPackage();
+            package.SetWebLink(webLink);
+
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                Clipboard.SetContent(package);
+                operation.ReportCompleted();
+            });
+        }
+
+        private void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            var message = ViewModel.Message;
+            var channel = message.Parent as TLChannel;
+            if (channel != null && message != null)
+            {
+                var link = $"{channel.Username}/{message.Id}";
+
+                if (message.IsRoundVideo())
+                {
+                    link = $"https://telesco.pe/{link}";
+                }
+                else
+                {
+                    var config = ViewModel.CacheService.GetConfig();
+                    if (config != null)
+                    {
+                        link = $"{config.MeUrlPrefix}{link}";
+                    }
+                    else
+                    {
+                        link = $"https://t.me/{link}";
+                    }
+                }
+
+                var package = args.Request.Data;
+                package.Properties.Title = message.Parent.DisplayName;
+                package.SetWebLink(new Uri(link));
+            }
         }
 
         private static ShareView _current;
@@ -48,35 +123,10 @@ namespace Unigram.Controls.Views
             }
         }
 
-        public ItemClickEventHandler ItemClick { get; set; }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSet parameter)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessage parameter, bool forward = true)
         {
-            return ShowAsync(parameter, null);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSet parameter, ItemClickEventHandler callback)
-        {
-            return ShowAsync(new TLInputStickerSetID { Id = parameter.Id, AccessHash = parameter.AccessHash }, callback);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSetCoveredBase parameter)
-        {
-            return ShowAsync(parameter, null);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLStickerSetCoveredBase parameter, ItemClickEventHandler callback)
-        {
-            return ShowAsync(new TLInputStickerSetID { Id = parameter.Set.Id, AccessHash = parameter.Set.AccessHash }, callback);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputStickerSetBase parameter)
-        {
-            return ShowAsync(parameter, null);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputStickerSetBase parameter, ItemClickEventHandler callback)
-        {
+            ViewModel.Message = parameter;
+            ViewModel.IsForward = forward;
             //ViewModel.IsLoading = true;
             //ViewModel.StickerSet = new TLStickerSet();
             //ViewModel.Items.Clear();
@@ -90,21 +140,6 @@ namespace Unigram.Controls.Views
             //});
 
             //Loaded += handler;
-            return ShowAsync();
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessagesStickerSet parameter)
-        {
-            return ShowAsync(parameter, null);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessagesStickerSet parameter, ItemClickEventHandler callback)
-        {
-            //ViewModel.IsLoading = false;
-            //ViewModel.StickerSet = parameter.Set;
-            //ViewModel.Items.Clear();
-            //ViewModel.Items.Add(parameter);
-
             return ShowAsync();
         }
 
@@ -300,13 +335,14 @@ namespace Unigram.Controls.Views
             Hide(ContentDialogBaseResult.Cancel);
         }
 
-        private void List_ItemClick(object sender, ItemClickEventArgs e)
+        private void CopyLink_Click(object sender, RoutedEventArgs e)
         {
-            if (ItemClick != null)
-            {
-                ItemClick.Invoke(this, e);
-                Hide(ContentDialogBaseResult.OK);
-            }
+            DataTransferManager.ShowShareUI();
+        }
+
+        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ViewModel.SelectedItems = new List<TLDialog>(List.SelectedItems.Cast<TLDialog>());
         }
     }
 }

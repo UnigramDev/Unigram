@@ -262,6 +262,16 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Share
+
+        public RelayCommand<TLMessage> MessageShareCommand => new RelayCommand<TLMessage>(MessageShareExecute);
+        private async void MessageShareExecute(TLMessage message)
+        {
+            await ShareView.Current.ShowAsync(message);
+        }
+
+        #endregion
+
         #region Multiple Delete
 
         private RelayCommand _messagesDeleteCommand;

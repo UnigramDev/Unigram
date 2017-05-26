@@ -78,8 +78,8 @@ namespace Unigram.Controls
             //            ((MenuFlyoutItem)_flyout.Items[2]).Click += Hyperlink_Click;
             //#endif
 
-            Paste += OnPaste;
-            Clipboard.ContentChanged += Clipboard_ContentChanged;
+            //Paste += OnPaste;
+            //Clipboard.ContentChanged += Clipboard_ContentChanged;
 
             SelectionChanged += OnSelectionChanged;
             TextChanged += OnTextChanged;

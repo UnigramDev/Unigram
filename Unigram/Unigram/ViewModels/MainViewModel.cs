@@ -39,14 +39,14 @@ namespace Unigram.ViewModels
     {
         private readonly IPushService _pushService;
 
-        public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPushService pushService, IContactsService contactsService)
+        public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPushService pushService, IContactsService contactsService, DialogsViewModel dialogs)
             : base(protoService, cacheService, aggregator)
         {
             _pushService = pushService;
 
             //Dialogs = new DialogCollection(protoService, cacheService);
             SearchDialogs = new ObservableCollection<TLDialog>();
-            Dialogs = new DialogsViewModel(protoService, cacheService, aggregator);
+            Dialogs = dialogs;
             Contacts = new ContactsViewModel(protoService, cacheService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, aggregator);
 
