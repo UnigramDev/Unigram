@@ -6,6 +6,9 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Services.SerializationService;
+using Unigram.Controls.Views;
+using Unigram.Core.Services;
+using Unigram.Webview;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -20,6 +23,8 @@ namespace Unigram.Views
 {
     public sealed partial class GamePage : Page
     {
+        private TLMessage _shareMessage;
+
         public GamePage()
         {
             InitializeComponent();
@@ -27,26 +32,37 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var args = SerializationService.Json.Deserialize<NavigationParameters>((string)e.Parameter);
-            if (args != null)
+            var buffer = TLSerializationService.Current.Deserialize((string)e.Parameter) as byte[];
+            if (buffer != null)
             {
-                TitleLabel.Text = args.Title;
-                UsernameLabel.Text = "@" + args.Username;
+                using (var from = new TLBinaryReader(buffer))
+                {
+                    var tuple = new TLTuple<string, string, string, TLMessage>(from);
 
-                TitleLabel.Visibility = string.IsNullOrWhiteSpace(args.Title) ? Visibility.Collapsed : Visibility.Visible;
-                UsernameLabel.Visibility = string.IsNullOrWhiteSpace(args.Username) ? Visibility.Collapsed : Visibility.Visible;
+                    _shareMessage = tuple.Item4;
 
-                View.Navigate(new Uri(args.Url));
+                    TitleLabel.Text = tuple.Item1;
+                    UsernameLabel.Text = "@" + tuple.Item2;
+
+                    TitleLabel.Visibility = string.IsNullOrWhiteSpace(tuple.Item1) ? Visibility.Collapsed : Visibility.Visible;
+                    UsernameLabel.Visibility = string.IsNullOrWhiteSpace(tuple.Item2) ? Visibility.Collapsed : Visibility.Visible;
+
+                    View.Navigate(new Uri(tuple.Item3));
+                }
             }
         }
 
-        public class NavigationParameters
+        private async void Share_Click(object sender, RoutedEventArgs e)
         {
-            public string Url { get; set; }
+            await ShareView.Current.ShowAsync(_shareMessage);
+        }
 
-            public string Title { get; set; }
-
-            public string Username { get; set; }
+        private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
+        {
+            sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramGameProxy(async withMyScore =>
+            {
+                await ShareView.Current.ShowAsync(_shareMessage, true);
+            }));
         }
     }
 }

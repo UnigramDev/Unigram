@@ -318,16 +318,31 @@ namespace Unigram.Controls
                 var key = Window.Current.CoreWindow.GetKeyState(args.VirtualKey);
 
                 // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-
-                var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                if (send && ApplicationSettings.Current.IsSendByEnterEnabled)
+                if (ApplicationSettings.Current.IsSendByEnterEnabled)
                 {
-                    AcceptsReturn = false;
-                    await SendAsync();
+                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    if (send)
+                    {
+                        AcceptsReturn = false;
+                        await SendAsync();
+                    }
+                    else
+                    {
+                        AcceptsReturn = true;
+                    }
                 }
                 else
                 {
-                    AcceptsReturn = true;
+                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    if (send)
+                    {
+                        AcceptsReturn = false;
+                        await SendAsync();
+                    }
+                    else
+                    {
+                        AcceptsReturn = true;
+                    }
                 }
             }
         }
@@ -495,14 +510,14 @@ namespace Unigram.Controls
             bool isDirty = _isDirty;
 
             Document.GetText(TextGetOptions.FormatRtf, out string text);
-            Document.GetText(TextGetOptions.NoHidden, out string planText);
+            Document.GetText(TextGetOptions.NoHidden, out string plainText);
 
             //Document.SetText(TextSetOptions.FormatRtf, string.Empty);
             Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
 
             _updatingText = true;
-            planText = planText.Trim();
-            ViewModel.Text = planText;
+            plainText = plainText.Trim();
+            ViewModel.Text = plainText;
             _updatingText = false;
 
             if (isDirty)
@@ -516,7 +531,19 @@ namespace Unigram.Controls
             }
             else
             {
-                ViewModel.SendCommand.Execute(null);
+                var entities = MessageHelper.GetEntities(ref plainText);
+                if (entities != null)
+                {
+                    _updatingText = true;
+                    ViewModel.Text = plainText;
+                    _updatingText = false;
+
+                    await ViewModel.SendMessageAsync(entities, false);
+                }
+                else
+                {
+                    ViewModel.SendCommand.Execute(null);
+                }
             }
         }
 

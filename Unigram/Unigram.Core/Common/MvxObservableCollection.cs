@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using Telegram.Api.Helpers;
+using System.Collections;
 
 namespace Unigram.Core.Common
 {
@@ -97,6 +98,29 @@ namespace Unigram.Core.Common
             }
 
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items));
+        }
+
+        /// <summary>
+        /// Adds the specified items collection to the current <see cref="MvxObservableCollection{T}"/> instance.
+        /// </summary>
+        /// <param name="items">The collection from which the items are copied.</param>
+        /// <exception cref="ArgumentNullException">The items list is null.</exception>
+        public void InsertRange(int index, IEnumerable<T> items)
+        {
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
+            using (SuppressEvents())
+            {
+                foreach (var item in items)
+                {
+                    Insert(index, item);
+                }
+            }
+
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, changedItems: items.Reverse().ToList(), startingIndex: index));
         }
 
         /// <summary>

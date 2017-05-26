@@ -87,7 +87,7 @@ namespace Unigram.ViewModels.Channels
             return Task.CompletedTask;
         }
 
-        public bool CanEditNameAndPhoto
+        public bool IsEditEnabled
         {
             get
             {

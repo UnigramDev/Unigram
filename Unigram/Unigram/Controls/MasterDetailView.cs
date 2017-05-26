@@ -267,11 +267,13 @@ namespace Unigram.Controls
                 service.FrameFacade.FrameId = key;
                 service.FrameFacade.BackRequested += (s, args) =>
                 {
-                    var page = DetailFrame.Content as IMasterDetailPage;
-                    if (page != null && page.OnBackRequested())
+                    if (DetailFrame.Content is IMasterDetailPage page)
                     {
-                        args.Handled = true;
-                        return;
+                        page.OnBackRequested(args);
+                        if (args.Handled)
+                        {
+                            return;
+                        }
                     }
 
                     // TODO: maybe checking for the actual width is not the perfect way,
@@ -363,6 +365,6 @@ namespace Unigram.Controls
 
     public interface IMasterDetailPage
     {
-        bool OnBackRequested();
+        void OnBackRequested(HandledEventArgs args);
     }
 }

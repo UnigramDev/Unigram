@@ -51,6 +51,8 @@ using Unigram.Tasks;
 using Windows.Media.Effects;
 using Windows.Media.Transcoding;
 using Windows.Media.MediaProperties;
+using Telegram.Api.Services.Cache.EventArgs;
+using Windows.Foundation.Metadata;
 
 namespace Unigram.ViewModels
 {
@@ -113,6 +115,20 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _with, value);
+                RaisePropertyChanged(() => IsSilentVisible);
+            }
+        }
+
+        private object _full;
+        public object Full
+        {
+            get
+            {
+                return _full;
+            }
+            set
+            {
+                Set(ref _full, value);
                 RaisePropertyChanged(() => IsSilentVisible);
             }
         }
@@ -447,8 +463,8 @@ namespace Unigram.ViewModels
             //var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -51 : 0;
 
             var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
-            var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -21 : 0;
-            var limit = 20;
+            var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
+            var limit = 15;
 
             var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
             if (result.IsSucceeded)
@@ -621,7 +637,9 @@ namespace Unigram.ViewModels
                 var full = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 });
                 if (full.IsSucceeded)
                 {
-                    IsPhoneCallsAvailable = full.Result.IsPhoneCallsAvailable;
+                    Full = full.Result;
+
+                    IsPhoneCallsAvailable = full.Result.IsPhoneCallsAvailable && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
                 }
             }
             else if (participant is TLChannel channel)
@@ -647,13 +665,40 @@ namespace Unigram.ViewModels
                 var channelDetails = await ProtoService.GetFullChannelAsync(input);
                 if (channelDetails.IsSucceeded)
                 {
+                    Full = channelDetails.Result.FullChat;
+
                     var channelFull = channelDetails.Result.FullChat as TLChannelFull;
                     if (channelFull.HasPinnedMsgId)
                     {
-                        var y = await ProtoService.GetMessagesAsync(input, new TLVector<int>() { channelFull.PinnedMsgId ?? 0 });
-                        if (y.IsSucceeded)
+                        var update = true;
+
+                        var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
+                        if (appData.Values.TryGetValue("Pinned" + channel.Id, out object pinnedObj))
                         {
-                            PinnedMessage = y.Result.Messages.FirstOrDefault();
+                            var pinnedId = (int)pinnedObj;
+                            if (pinnedId == channelFull.PinnedMsgId)
+                            {
+                                update = false;
+                            }
+                        }
+
+                        var pinned = CacheService.GetMessage(channelFull.PinnedMsgId, channel.Id);
+                        if (pinned == null && update)
+                        {
+                            var y = await ProtoService.GetMessagesAsync(input, new TLVector<int>() { channelFull.PinnedMsgId ?? 0 });
+                            if (y.IsSucceeded)
+                            {
+                                pinned = y.Result.Messages.FirstOrDefault();
+                            }
+                        }
+
+                        if (pinned != null && update)
+                        {
+                            PinnedMessage = pinned;
+                        }
+                        else
+                        {
+                            PinnedMessage = null;
                         }
                     }
                     //online = 0;
@@ -694,9 +739,11 @@ namespace Unigram.ViewModels
                 With = chat;
                 Peer = new TLInputPeerChat { ChatId = chat.Id };
 
-                //var chatDetails = await ProtoService.GetFullChatAsync(chat.Id);
-                //if (chatDetails.IsSucceeded)
-                //{
+                var chatDetails = await ProtoService.GetFullChatAsync(chat.Id);
+                if (chatDetails.IsSucceeded)
+                {
+                    Full = chatDetails.Result.FullChat;
+                }
                 //    participantCount = chatDetails.Result.Users.Count;
                 //    if (participantCount < 200)
                 //    {
@@ -1194,7 +1241,7 @@ namespace Unigram.ViewModels
                     fromPeer = fwdMessage.Parent.ToInputPeer();
                 }
 
-                if (clone.FwdFrom == null)
+                if (clone.FwdFrom == null && !clone.IsGame())
                 {
                     if (fwdMessage.ToId is TLPeerChannel)
                     {
@@ -1382,6 +1429,70 @@ namespace Unigram.ViewModels
             }
             return result;
         }
+
+        #region Join channel
+
+        public RelayCommand JoinChannelCommand => new RelayCommand(JoinChannelExecute);
+        private async void JoinChannelExecute()
+        {
+            var channel = With as TLChannel;
+            if (channel == null)
+            {
+                return;
+            }
+
+            var response = await ProtoService.JoinChannelAsync(channel);
+            if (response.IsSucceeded)
+            {
+                RaisePropertyChanged(() => With);
+
+                if (channel.IsMegaGroup)
+                {
+                    if (response.Result is TLUpdates update)
+                    {
+                        var newChannelMessage = update.Updates.FirstOrDefault(x => x is TLUpdateNewChannelMessage) as TLUpdateNewChannelMessage;
+                        if (newChannelMessage != null)
+                        {
+                            Messages.Add(newChannelMessage.Message);
+
+                            if (_currentDialog == null)
+                            {
+                                _currentDialog = CacheService.GetDialog(channel.ToPeer());
+                            }
+
+                            Aggregator.Publish(new TopMessageUpdatedEventArgs(this._currentDialog, newChannelMessage.Message));
+                        }
+                        else
+                        {
+                            var message = new TLMessageService
+                            {
+                                RandomId = TLLong.Random(),
+                                FromId = SettingsHelper.UserId,
+                                ToId = new TLPeerChannel
+                                {
+                                    Id = channel.Id
+                                },
+                                State = TLMessageState.Confirmed,
+                                IsOut = true,
+                                IsUnread = false,
+                                Date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, System.DateTime.Now),
+                                Action = new TLMessageActionChatAddUser
+                                {
+                                    Users = new TLVector<int> { SettingsHelper.UserId }
+                                }
+                            };
+
+                            CacheService.SyncMessage(message, true, true, cachedMessage =>
+                            {
+                                Messages.Add(cachedMessage);
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        #endregion
 
         #region Toggle mute
 
@@ -1575,6 +1686,49 @@ namespace Unigram.ViewModels
                 await TLMessageDialog.ShowAsync("Something went wrong. Please, try to close and relaunch the app.", "Unigram", "OK");
 
                 await VoIPConnection.Current.SendRequestAsync("voip.startCall", user);
+            }
+        }
+
+        #endregion
+
+        #region Unpin message
+
+        public RelayCommand UnpinMessageCommand => new RelayCommand(UnpinMessageExecute);
+        private async void UnpinMessageExecute()
+        {
+            if (_pinnedMessage == null)
+            {
+                return;
+            }
+
+            var channel = With as TLChannel;
+            if (channel == null)
+            {
+                return;
+            }
+
+            if (channel.IsCreator || channel.IsEditor || channel.IsModerator)
+            {
+                var confirm = await TLMessageDialog.ShowAsync("Would you like to unpin this message?", "Unigram", "Yes", "No");
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var response = await ProtoService.UpdatePinnedMessageAsync(false, channel.ToInputChannel(), 0);
+                    if (response.IsSucceeded)
+                    {
+                        PinnedMessage = null;
+                    }
+                    else
+                    {
+                        // TODO
+                    }
+                }
+            }
+            else
+            {
+                var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
+                appData.Values["Pinned" + channel.Id] = _pinnedMessage.Id;
+
+                PinnedMessage = null;
             }
         }
 

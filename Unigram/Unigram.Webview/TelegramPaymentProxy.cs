@@ -9,12 +9,14 @@ using Windows.Foundation.Metadata;
 
 namespace Unigram.Webview
 {
-    [AllowForWeb]
-    public sealed class TelegramWebviewProxy
-    {
-        private TelegramWebviewProxyDelegate _callback;
+    public delegate void TelegramPaymentProxyDelegate(string title, string credentials);
 
-        public TelegramWebviewProxy(TelegramWebviewProxyDelegate callback)
+    [AllowForWeb]
+    public sealed class TelegramPaymentProxy
+    {
+        private TelegramPaymentProxyDelegate _callback;
+
+        public TelegramPaymentProxy(TelegramPaymentProxyDelegate callback)
         {
             _callback = callback;
         }
@@ -38,6 +40,4 @@ namespace Unigram.Webview
             }
         }
     }
-
-    public delegate void TelegramWebviewProxyDelegate(string title, string credentials);
 }

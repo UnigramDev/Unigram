@@ -82,9 +82,31 @@ namespace Unigram.Controls.Views
 
         private void OnDataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
-            var message = ViewModel.Message;
+            var package = args.Request.Data;
+            package.Properties.Title = ViewModel.ShareTitle;
+            package.SetWebLink(ViewModel.ShareLink);
+        }
+
+        private static ShareView _current;
+        public static ShareView Current
+        {
+            get
+            {
+                if (_current == null)
+                    _current = new ShareView();
+
+                return _current;
+            }
+        }
+
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessage message, bool withMyScore = false, bool forward = true)
+        {
+            ViewModel.Message = message;
+            ViewModel.IsForward = forward;
+            ViewModel.IsWithMyScore = withMyScore;
+
             var channel = message.Parent as TLChannel;
-            if (channel != null && message != null)
+            if (channel != null)
             {
                 var link = $"{channel.Username}/{message.Id}";
 
@@ -105,41 +127,32 @@ namespace Unigram.Controls.Views
                     }
                 }
 
-                var package = args.Request.Data;
-                package.Properties.Title = message.Parent.DisplayName;
-                package.SetWebLink(new Uri(link));
+                string title = null;
+
+                var media = message.Media as ITLMessageMediaCaption;
+                if (media != null && !string.IsNullOrWhiteSpace(media.Caption))
+                {
+                    title = media.Caption;
+                }
+                else if (!string.IsNullOrWhiteSpace(message.Message))
+                {
+                    title = message.Message;
+                }
+
+                ViewModel.ShareLink = new Uri(link);
+                ViewModel.ShareTitle = title ?? channel.DisplayName;
             }
+
+            return ShowAsync();
         }
 
-        private static ShareView _current;
-        public static ShareView Current
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(Uri link, string title)
         {
-            get
-            {
-                if (_current == null)
-                    _current = new ShareView();
+            ViewModel.ShareLink = link;
+            ViewModel.ShareTitle = title;
+            ViewModel.IsForward = false;
+            ViewModel.IsWithMyScore = false;
 
-                return _current;
-            }
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessage parameter, bool forward = true)
-        {
-            ViewModel.Message = parameter;
-            ViewModel.IsForward = forward;
-            //ViewModel.IsLoading = true;
-            //ViewModel.StickerSet = new TLStickerSet();
-            //ViewModel.Items.Clear();
-
-            //RoutedEventHandler handler = null;
-            //handler = new RoutedEventHandler(async (s, args) =>
-            //{
-            //    Loaded -= handler;
-            //    ItemClick = callback;
-            //    await ViewModel.OnNavigatedToAsync(parameter, NavigationMode.New, null);
-            //});
-
-            //Loaded += handler;
             return ShowAsync();
         }
 

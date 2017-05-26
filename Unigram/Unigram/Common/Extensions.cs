@@ -47,6 +47,11 @@ namespace Unigram.Common
             });
         }
 
+        public static string Substr(this string source, int startIndex, int endIndex)
+        {
+            return source.Substring(startIndex, endIndex - startIndex);
+        }
+
         public static string TrimEnd(this string input, string suffixToRemove)
         {
             if (input != null && suffixToRemove != null && input.EndsWith(suffixToRemove))

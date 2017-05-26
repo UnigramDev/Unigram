@@ -19,7 +19,8 @@
         <controls:ButtonPageHeader
             Text="Info"
             Glyph="&#xE104;"
-            Command="{x:Bind ViewModel.EditCommand}"/>
+            Command="{x:Bind ViewModel.EditCommand}"
+            CommandVisibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"/>
 
         <controls:ScrollViewerBackground 
             Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
@@ -60,7 +61,7 @@
                     </Grid>
                     <controls:HyperButton Content="Set group photo"
                                           Click="EditPhoto_Click"
-                                          Visibility="{x:Bind (Visibility)ViewModel.CanEditNameAndPhoto}"
+                                          Visibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"
                                           Style="{StaticResource HyperButtonStyle}"
                                           Grid.Row="1"/>
 

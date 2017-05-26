@@ -73,6 +73,18 @@ namespace Unigram.Views
             var webpage = parameter as TLWebPage;
             if (webpage != null && webpage.HasCachedPage)
             {
+                var url = webpage.Url;
+                if (url.StartsWith("http") == false)
+                {
+                    url = "http://" + url;
+                }
+
+                if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+                {
+                    ViewModel.ShareLink = uri;
+                    ViewModel.ShareTitle = webpage.HasTitle ? webpage.Title : webpage.Url;
+                }
+
                 _webpageId = webpage.Id;
 
                 var photos = new List<TLPhotoBase>(webpage.CachedPage.Photos);
@@ -340,16 +352,20 @@ namespace Unigram.Views
                     case TLType.PageBlockFooter:
                         textBlock.FontSize = 15;
                         textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-                        textBlock.TextAlignment = TextAlignment.Center;
+                        //textBlock.TextAlignment = TextAlignment.Center;
                         break;
                     case TLType.PageBlockPhoto:
                     case TLType.PageBlockVideo:
+                        textBlock.FontSize = 15;
+                        textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+                        textBlock.TextAlignment = TextAlignment.Center;
+                        break;
                     case TLType.PageBlockSlideshow:
                     case TLType.PageBlockEmbed:
                     case TLType.PageBlockEmbedPost:
                         textBlock.FontSize = 15;
                         textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-                        textBlock.TextAlignment = TextAlignment.Center;
+                        //textBlock.TextAlignment = TextAlignment.Center;
                         break;
                     case TLType.PageBlockBlockquote:
                         textBlock.FontSize = caption ? 15 : 17;

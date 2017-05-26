@@ -996,11 +996,11 @@ namespace Unigram.ViewModels
                     {
                         if (CacheService.GetUser(message.ViaBotId) is TLUser user)
                         {
-                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Title = gameMedia.Game.Title, Username = user.Username });
+                            NavigationService.Navigate(typeof(GamePage), new TLTuple<string, string, string, TLMessage>(gameMedia.Game.Title, user.Username, response.Result.Url, message));
                         }
                         else
                         {
-                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Title = gameMedia.Game.Title });
+                            NavigationService.Navigate(typeof(GamePage), new TLTuple<string, string, string, TLMessage>(gameMedia.Game.Title, null, response.Result.Url, message));
                         }
                     }
                 }

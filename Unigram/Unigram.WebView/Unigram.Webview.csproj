@@ -88,7 +88,8 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="TelegramWebviewProxy.cs" />
+    <Compile Include="TelegramGameProxy.cs" />
+    <Compile Include="TelegramPaymentProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
