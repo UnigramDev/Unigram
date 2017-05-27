@@ -223,7 +223,7 @@ HRESULT TLGZipPacked::RuntimeClassInitialize(NativeBuffer* rawData)
 		return E_INVALIDARG;
 	}
 
-	return CompressBuffer(rawData->GetBuffer(), rawData->GetCapacity(), &m_packedData);
+	return GZipCompressBuffer(rawData->GetBuffer(), rawData->GetCapacity(), &m_packedData);
 }
 
 HRESULT TLGZipPacked::ReadBody(ITLBinaryReaderEx* reader)
@@ -233,7 +233,7 @@ HRESULT TLGZipPacked::ReadBody(ITLBinaryReaderEx* reader)
 	UINT32 bufferLength;
 	ReturnIfFailed(result, reader->ReadBuffer2(&buffer, &bufferLength));
 
-	return DecompressBuffer(buffer, bufferLength, &m_packedData);
+	return GZipDecompressBuffer(buffer, bufferLength, &m_packedData);
 }
 
 HRESULT TLGZipPacked::WriteBody(ITLBinaryWriterEx* writer)

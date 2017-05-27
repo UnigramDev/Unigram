@@ -663,10 +663,10 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&binaryReaderBuffer, sizeof(buffer)));
 
 	ComPtr<NativeBuffer> compressedBuffer;
-	ReturnIfFailed(result, CompressBuffer(reinterpret_cast<const BYTE*>(buffer), sizeof(buffer), &compressedBuffer));
+	ReturnIfFailed(result, GZipCompressBuffer(reinterpret_cast<const BYTE*>(buffer), sizeof(buffer), &compressedBuffer));
 
 	ComPtr<NativeBuffer> uncompressedBuffer;
-	ReturnIfFailed(result, DecompressBuffer(compressedBuffer->GetBuffer(), compressedBuffer->GetCapacity(), &uncompressedBuffer));
+	ReturnIfFailed(result, GZipDecompressBuffer(compressedBuffer->GetBuffer(), compressedBuffer->GetCapacity(), &uncompressedBuffer));
 
 	auto xxx = reinterpret_cast<WCHAR*>(uncompressedBuffer->GetBuffer());
 

@@ -9,7 +9,7 @@ namespace Telegram
 		namespace Native
 		{
 
-			inline HRESULT CompressBuffer(_In_reads_(inputBufferLength) const BYTE* inputBuffer, UINT32 inputBufferLength, _Out_ NativeBuffer** outputBuffer)
+			inline HRESULT GZipCompressBuffer(_In_reads_(inputBufferLength) const BYTE* inputBuffer, UINT32 inputBufferLength, _Out_ NativeBuffer** outputBuffer)
 			{
 				/*if (inputBuffer == nullptr)
 				{
@@ -60,7 +60,7 @@ namespace Telegram
 				return result;
 			}
 
-			inline HRESULT DecompressBuffer(_In_reads_(inputBufferLength) const BYTE* inputBuffer, UINT32 inputBufferLength, _Out_ NativeBuffer** outputBuffer)
+			inline HRESULT GZipDecompressBuffer(_In_reads_(inputBufferLength) const BYTE* inputBuffer, UINT32 inputBufferLength, _Out_ NativeBuffer** outputBuffer)
 			{
 				/*if (inputBuffer == nullptr)
 				{
