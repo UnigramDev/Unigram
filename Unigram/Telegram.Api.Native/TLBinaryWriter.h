@@ -83,12 +83,18 @@ namespace Telegram
 
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(_In_ IBuffer* underlyingBuffer);
-					STDMETHODIMP RuntimeClassInitialize(_In_ TLBinaryWriter* writer);
+					STDMETHODIMP RuntimeClassInitialize(_In_ TLBinaryWriter* writer, UINT32 length);
 					STDMETHODIMP RuntimeClassInitialize(UINT32 capacity);
+					HRESULT SeekCurrent(INT32 bytes);
 
 					inline BYTE* GetBuffer() const
 					{
 						return m_buffer;
+					}
+
+					inline BYTE* GetBufferAtPosition() const
+					{
+						return m_buffer + m_position;
 					}
 
 					inline UINT32 GetPosition() const

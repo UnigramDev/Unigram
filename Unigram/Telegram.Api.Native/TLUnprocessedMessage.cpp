@@ -1,23 +1,23 @@
 #include "pch.h"
-#include "TLUnparsedMessage.h"
+#include "TLUnprocessedMessage.h"
 #include "TLBinaryReader.h"
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
 
 
-TLUnparsedMessage::TLUnparsedMessage(INT64 messageId, ConnectionType connectionType, ITLBinaryReader* reader) :
+TLUnprocessedMessage::TLUnprocessedMessage(INT64 messageId, ConnectionType connectionType, ITLObject* object) :
 	m_messageId(messageId),
 	m_connectionType(connectionType),
-	m_reader(reader)
+	m_object(object)
 {
 }
 
-TLUnparsedMessage::~TLUnparsedMessage()
+TLUnprocessedMessage::~TLUnprocessedMessage()
 {
 }
 
-HRESULT TLUnparsedMessage::get_MessageId(INT64* value)
+HRESULT TLUnprocessedMessage::get_MessageId(INT64* value)
 {
 	if (value == nullptr)
 	{
@@ -28,7 +28,7 @@ HRESULT TLUnparsedMessage::get_MessageId(INT64* value)
 	return S_OK;
 }
 
-HRESULT TLUnparsedMessage::get_ConnectionType(ConnectionType* value)
+HRESULT TLUnprocessedMessage::get_ConnectionType(ConnectionType* value)
 {
 	if (value == nullptr)
 	{
@@ -39,12 +39,12 @@ HRESULT TLUnparsedMessage::get_ConnectionType(ConnectionType* value)
 	return S_OK;
 }
 
-HRESULT TLUnparsedMessage::get_Reader(ITLBinaryReader** value)
+HRESULT TLUnprocessedMessage::get_Object(ITLObject** value)
 {
 	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	return m_reader.CopyTo(value);
+	return m_object.CopyTo(value);
 }

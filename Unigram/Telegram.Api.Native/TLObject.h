@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <memory>
+#include <type_traits>
 #include <wrl.h>
 #include "Telegram.Api.Native.h"
 #include "TLBinaryReader.h"
@@ -14,11 +15,6 @@
 		static constexpr UINT32 Constructor = constructor; \
 		static constexpr boolean IsLayerNeeded = isLayerNeeded; \
 		static constexpr WCHAR RuntimeClassName[] = _STRINGIFY_W("Telegram.Api.Native.TL." _STRINGIFY(objectTypeName)); \
-		static HRESULT CreateInstance(_Out_ ITLObject** instance) \
-		{ \
-			auto object = Make<TLObjectType>(); \
-			return object.CopyTo(instance); \
-		} \
 	} \
 
 
@@ -30,6 +26,7 @@
 using namespace Microsoft::WRL;
 using ABI::Telegram::Api::Native::IUserConfiguration;
 using ABI::Telegram::Api::Native::TL::ITLObject;
+using ABI::Telegram::Api::Native::TL::ITLUnparsedObject;
 using ABI::Telegram::Api::Native::TL::ITLBinaryReader;
 using ABI::Telegram::Api::Native::TL::ITLBinaryWriter;
 using ABI::Telegram::Api::Native::TL::ITLBinaryReaderEx;
@@ -78,11 +75,14 @@ namespace Telegram
 					{
 						TLObjectInitializer()
 						{
-							TLObject::RegisterTLObjecConstructor<TLObjectTraits>();
+							TLObject::RegisterObjectConstructor<TLObjectTraits>();
 						}
 					};
 
 				}
+
+
+				class TLBinaryReader;
 
 				class TLObject abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, ITLObject>
 				{
@@ -114,11 +114,18 @@ namespace Telegram
 
 					static HRESULT RegisterTLObjecConstructor(UINT32 constructor, _In_ ITLObjectConstructorDelegate* delegate);
 					static std::unordered_map<UINT32, ComPtr<ITLObjectConstructorDelegate>>& GetObjectConstructors();
-				
+
 					template<typename TLObjectTraits>
-					inline static void RegisterTLObjecConstructor()
+					inline static void RegisterObjectConstructor()
 					{
-						GetObjectConstructors()[TLObjectTraits::Constructor] = Callback<ITLObjectConstructorDelegate>(&TLObjectTraits::CreateInstance);
+						GetObjectConstructors()[TLObjectTraits::Constructor] = Callback<ITLObjectConstructorDelegate>(CreateObjectInstance<TLObjectTraits>);
+					}
+
+					template<typename TLObjectTraits>
+					inline static HRESULT CreateObjectInstance(_Out_ ITLObject** instance)
+					{
+						auto object = Make<typename TLObjectTraits::TLObjectType>();
+						return object.CopyTo(instance);
 					}
 				};
 
@@ -131,14 +138,19 @@ namespace Telegram
 				protected:
 					HRESULT RuntimeClassInitialize(_In_ ITLObject* query);
 
-					inline ITLObject* GetQuery() const
+					inline ComPtr<ITLObject>& GetQuery()
 					{
-						return m_query.Get();
+						return m_query;
 					}
 
 					inline HRESULT WriteQuery(_In_ ITLBinaryWriterEx* writer)
 					{
 						return writer->WriteObject(m_query.Get());
+					}
+
+					inline HRESULT ReadQuery(_In_ ITLBinaryReader* reader)
+					{
+						return reader->ReadObject(&m_query);
 					}
 
 				private:
@@ -178,6 +190,68 @@ namespace Telegram
 				private:
 					static Details::TLObjectInitializer<TLObjectTraits> Initializer;
 				};
+
+				class TLUnparsedObject WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLUnparsedObject, ITLObject>
+				{
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLUnparsedObject, BaseTrust);
+
+				public:
+					//COM exported methods
+					IFACEMETHODIMP get_Reader(_Out_ ITLBinaryReader** value);
+					IFACEMETHODIMP get_Constructor(_Out_ UINT32* value);
+					IFACEMETHODIMP get_IsLayerNeeded(_Out_ boolean* value);
+					IFACEMETHODIMP Read(_In_ ITLBinaryReader* reader);
+					IFACEMETHODIMP Write(_In_ ITLBinaryWriter* writer);
+
+
+					//Internal methods
+					STDMETHODIMP RuntimeClassInitialize(UINT32 constructor, _In_ TLBinaryReader* reader);
+					STDMETHODIMP RuntimeClassInitialize(UINT32 constructor, UINT32 objectSizeWithoutConstructor, _In_ TLBinaryReader* reader);
+
+				private:
+					UINT32 m_constructor;
+					ComPtr<ITLBinaryReader> m_reader;
+				};
+
+
+				template<typename TLObjectType>
+				inline typename std::enable_if<std::is_base_of<ITLObject, TLObjectType>::value, TLObjectType>::type* CastTLObject(_In_ ITLObject* object)
+				{
+					if (object == nullptr)
+					{
+						return nullptr;
+					}
+
+					UINT32 constructor;
+					if (SUCCEEDED(object->get_Constructor(&constructor)) && constructor == TLObjectType::Constructor)
+					{
+						return static_cast<typename TLObjectType*>(object);
+					}
+
+					return nullptr;
+				}
+
+				template<typename TLObjectType>
+				inline HRESULT CastTLObject(_In_ ITLObject* object, _Out_ typename std::enable_if<std::is_base_of<ITLObject, TLObjectType>::value, TLObjectType>::type** value)
+				{
+					if (object == nullptr)
+					{
+						return E_INVALIDARG;
+					}
+
+					if (value == nullptr)
+					{
+						return E_POINTER;
+					}
+
+					UINT32 constructor;
+					if (SUCCEEDED(object->get_Constructor(&constructor)) && constructor == TLObjectType::Constructor)
+					{
+						return static_cast<typename TLObjectType*>(object);
+					}
+
+					return E_NOINTERFACE;
+				}
 
 			}
 		}

@@ -152,75 +152,8 @@ HRESULT Connection::Suspend()
 	return S_OK;
 }
 
-HRESULT Connection::SendEncryptedMessage(ITLObject* object, INT32* quickAckId)
+HRESULT Connection::CreateMessagePacket(UINT32 messageLength, boolean reportAck, TLBinaryWriter** writer, BYTE** messageBuffer)
 {
-	if (object == nullptr)
-	{
-		return E_INVALIDARG;
-	}
-
-	HRESULT result;
-	INT64 salt;
-	ReturnIfFailed(result, m_datacenter->get_ServerSalt(&salt));
-
-	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
-
-	UINT32 objectSize;
-	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
-
-	UINT32 messageLength = 3 * sizeof(INT64) + 2 * sizeof(INT32) + objectSize;
-	UINT32 padding = messageLength % 16;
-
-	if (padding != 0)
-	{
-		padding = 16 - padding;
-	}
-
-#if TELEGRAM_API_NATIVE_PROTOVERSION == 2
-
-	if (padding < 12)
-	{
-		padding += 16;
-	}
-
-#endif
-
-	ComPtr<TLBinaryWriter> packetWriter;
-	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&packetWriter, 24 + messageLength + padding));
-	ReturnIfFailed(result, packetWriter->put_Position(24));
-	ReturnIfFailed(result, packetWriter->WriteInt64(salt));
-	ReturnIfFailed(result, packetWriter->WriteInt64(GetSessionId()));
-	ReturnIfFailed(result, packetWriter->WriteInt64(connectionManager->GenerateMessageId()));
-	ReturnIfFailed(result, packetWriter->WriteInt32(GenerateMessageSequenceNumber(false)));
-	ReturnIfFailed(result, packetWriter->WriteInt32(objectSize));
-	ReturnIfFailed(result, packetWriter->WriteObject(object));
-
-	if (padding != 0)
-	{
-		RAND_bytes(packetWriter->GetBuffer() + 24 + messageLength, padding);
-	}
-
-	ReturnIfFailed(result, m_datacenter->EncryptMessage(packetWriter->GetBuffer(), packetWriter->GetCapacity(), quickAckId));
-
-	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
-}
-
-HRESULT Connection::SendUnencryptedMessage(ITLObject* object, boolean reportAck)
-{
-	if (object == nullptr)
-	{
-		return E_INVALIDARG;
-	}
-
-	HRESULT result;
-	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
-
-	UINT32 objectSize;
-	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
-
-	UINT32 messageLength = 2 * sizeof(INT64) + sizeof(INT32) + objectSize;
 	UINT32 packetBufferLength = messageLength;
 	UINT32 packetLength = messageLength / 4;
 
@@ -233,8 +166,7 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* object, boolean reportAck)
 		packetBufferLength += 4;
 	}
 
-	LockCriticalSection();
-
+	HRESULT result;
 	BYTE* packetBufferBytes;
 	ComPtr<TLBinaryWriter> packetWriter;
 	if (ConnectionCryptography::IsInitialized())
@@ -287,9 +219,96 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* object, boolean reportAck)
 		packetBufferBytes += 4;
 	}
 
+	*writer = packetWriter.Detach();
+	*messageBuffer = packetBufferBytes;
+	return S_OK;
+}
+
+HRESULT Connection::SendEncryptedMessage(ITLObject* object, boolean reportAck, INT32* quickAckId)
+{
+	if (object == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	HRESULT result;
+	ComPtr<ConnectionManager> connectionManager;
+	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
+
+	UINT32 objectSize;
+	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
+
+	UINT32 messageLength = 3 * sizeof(INT64) + 2 * sizeof(UINT32) + objectSize;
+	UINT32 padding = messageLength % 16;
+
+	if (padding != 0)
+	{
+		padding = 16 - padding;
+	}
+
+#if TELEGRAM_API_NATIVE_PROTOVERSION == 2
+
+	if (padding < 12)
+	{
+		padding += 16;
+	}
+
+#endif
+
+	UINT32 encryptedMessageLength = 24 + messageLength + padding;
+
+	LockCriticalSection();
+
+	INT64 salt;
+	ReturnIfFailed(result, m_datacenter->get_ServerSalt(&salt));
+
+	BYTE* packetBufferBytes;
+	ComPtr<TLBinaryWriter> packetWriter;
+	ReturnIfFailed(result, CreateMessagePacket(encryptedMessageLength, reportAck, &packetWriter, &packetBufferBytes));
+	ReturnIfFailed(result, packetWriter->SeekCurrent(24));
+	ReturnIfFailed(result, packetWriter->WriteInt64(salt));
+	ReturnIfFailed(result, packetWriter->WriteInt64(GetSessionId()));
+	ReturnIfFailed(result, packetWriter->WriteInt64(connectionManager->GenerateMessageId()));
+	ReturnIfFailed(result, packetWriter->WriteUInt32(GenerateMessageSequenceNumber(false)));
+	ReturnIfFailed(result, packetWriter->WriteUInt32(objectSize));
+	ReturnIfFailed(result, packetWriter->WriteObject(object));
+
+	if (padding != 0)
+	{
+		RAND_bytes(packetBufferBytes + 24 + messageLength, padding);
+	}
+
+	ReturnIfFailed(result, m_datacenter->EncryptMessage(packetBufferBytes, encryptedMessageLength, padding, quickAckId));
+
+	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, encryptedMessageLength);
+
+	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
+}
+
+HRESULT Connection::SendUnencryptedMessage(ITLObject* object, boolean reportAck)
+{
+	if (object == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	HRESULT result;
+	ComPtr<ConnectionManager> connectionManager;
+	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
+
+	UINT32 objectSize;
+	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
+
+	UINT32 messageLength = 2 * sizeof(INT64) + sizeof(INT32) + objectSize;
+
+	LockCriticalSection();
+
+	BYTE* packetBufferBytes;
+	ComPtr<TLBinaryWriter> packetWriter;
+	ReturnIfFailed(result, CreateMessagePacket(messageLength, reportAck, &packetWriter, &packetBufferBytes));
 	ReturnIfFailed(result, packetWriter->WriteInt64(0));
 	ReturnIfFailed(result, packetWriter->WriteInt64(connectionManager->GenerateMessageId()));
-	ReturnIfFailed(result, packetWriter->WriteInt32(objectSize));
+	ReturnIfFailed(result, packetWriter->WriteUInt32(objectSize));
 	ReturnIfFailed(result, packetWriter->WriteObject(object));
 
 	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, messageLength);
@@ -428,19 +447,55 @@ HRESULT Connection::OnMessageReceived(TLBinaryReader* messageReader, UINT32 mess
 
 	if (authKeyId == 0)
 	{
-		INT64 messageId;;
+		INT64 messageId;
 		ReturnIfFailed(result, messageReader->ReadInt64(&messageId));
 
 		UINT32 objectSize;
 		ReturnIfFailed(result, messageReader->ReadUInt32(&objectSize));
 
+		UINT32 constructor;
 		ComPtr<ITLObject> object;
-		ReturnIfFailed(result, messageReader->ReadObject(&object));
+		ReturnIfFailed(result, messageReader->ReadObjectAndConstructor(objectSize, &constructor, &object));
 
-		return m_datacenter->OnHandshakeResponseReceived(this, messageId, object.Get());
+		return m_datacenter->OnHandshakeResponseReceived(this, constructor, object.Get());
 	}
 	else
 	{
+		if ((messageLength - 24) % 16 != 0)
+		{
+			return E_FAIL;
+		}
+
+		ReturnIfFailed(result, m_datacenter->DecryptMessage(authKeyId, messageReader->GetBufferAtPosition() - sizeof(INT64), messageLength));
+		ReturnIfFailed(result, messageReader->SeekCurrent(16));
+
+		INT64 salt;
+		ReturnIfFailed(result, messageReader->ReadInt64(&salt));
+
+		INT64 sessionId;
+		ReturnIfFailed(result, messageReader->ReadInt64(&sessionId));
+
+		if (sessionId != GetSessionId())
+		{
+			return S_OK;
+		}
+
+		INT64 messageId;
+		ReturnIfFailed(result, messageReader->ReadInt64(&messageId));
+
+		UINT32 sequenceNumber;
+		ReturnIfFailed(result, messageReader->ReadUInt32(&sequenceNumber));
+
+		UINT32 objectSize;
+		ReturnIfFailed(result, messageReader->ReadUInt32(&objectSize));
+
+		UINT32 constructor;
+		ComPtr<ITLObject> object;
+		if (SUCCEEDED(result = messageReader->ReadObjectAndConstructor(objectSize, &constructor, &object)))
+		{
+
+		}
+
 		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement encrypted packet handling");
 	}
 

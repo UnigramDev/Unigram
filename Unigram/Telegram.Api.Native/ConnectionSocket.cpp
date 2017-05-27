@@ -191,6 +191,7 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 
 	m_socket = INVALID_SOCKET;
 	m_socketEvent.Close();
+	m_socketConnectedEvent.Close();
 	m_sendBuffer = {};
 	m_receiveBuffer.reset();
 

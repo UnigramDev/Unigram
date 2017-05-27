@@ -16,6 +16,10 @@ TLBinaryWriter::TLBinaryWriter() :
 {
 }
 
+TLBinaryWriter::~TLBinaryWriter()
+{
+}
+
 HRESULT TLBinaryWriter::RuntimeClassInitialize(IBuffer* underlyingBuffer)
 {
 	if (underlyingBuffer == nullptr)
@@ -33,20 +37,20 @@ HRESULT TLBinaryWriter::RuntimeClassInitialize(IBuffer* underlyingBuffer)
 	return S_OK;
 }
 
-HRESULT TLBinaryWriter::RuntimeClassInitialize(TLBinaryWriter* writer)
+HRESULT TLBinaryWriter::RuntimeClassInitialize(TLBinaryWriter* writer, UINT32 length)
 {
 	if (writer == nullptr)
 	{
 		return E_INVALIDARG;
 	}
 
-	if (writer->m_position > writer->m_capacity)
+	if (writer->m_position + length > writer->m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
 
 	m_buffer = writer->m_buffer + writer->m_position;
-	m_capacity = writer->m_capacity - writer->m_position;
+	m_capacity = length;
 	m_underlyingBuffer = writer->m_underlyingBuffer;
 	return S_OK;
 }
@@ -61,10 +65,6 @@ HRESULT TLBinaryWriter::RuntimeClassInitialize(UINT32 capacity)
 	m_capacity = nativeBuffer->GetCapacity();
 	m_underlyingBuffer = nativeBuffer;
 	return S_OK;
-}
-
-TLBinaryWriter::~TLBinaryWriter()
-{
 }
 
 HRESULT TLBinaryWriter::get_Position(UINT32* value)
@@ -325,6 +325,17 @@ HRESULT TLBinaryWriter::WriteBuffer(BYTE const* buffer, UINT32 length)
 	return S_OK;
 }
 
+HRESULT TLBinaryWriter::SeekCurrent(INT32 bytes)
+{
+	if (m_position + bytes > m_capacity)
+	{
+		return E_BOUNDS;
+	}
+
+	m_position += bytes;
+	return S_OK;
+}
+
 void TLBinaryWriter::Reset()
 {
 	m_position = 0;
@@ -387,7 +398,7 @@ HRESULT TLObjectSizeCalculator::get_UnstoredBufferLength(UINT32* value)
 		return E_POINTER;
 	}
 
-	*value = UINT32_MAX - max(m_position, m_length);;
+	*value = UINT32_MAX - max(m_position, m_length);
 	return S_OK;
 }
 

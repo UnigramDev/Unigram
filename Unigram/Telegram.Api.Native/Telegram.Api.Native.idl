@@ -22,7 +22,7 @@ namespace Telegram
 			runtimeclass Datacenter;
 			runtimeclass Connection;
 			runtimeclass ConnectionManager;
-			runtimeclass TLUnparsedMessage;
+			runtimeclass TLUnprocessedMessage;
 
 			delegate SendRequestCompletedCallback;
 			delegate RequestQuickAckReceivedCallback;
@@ -37,8 +37,9 @@ namespace Telegram
 				runtimeclass TLBinaryReader;
 				runtimeclass TLBinaryWriter;
 				runtimeclass TLObjectSerializer;
+				runtimeclass TLUnparsedObject;
 				runtimeclass TLError;
-
+				
 				delegate TLObjectConstructorDelegate;
 
 			}
@@ -157,11 +158,8 @@ namespace Telegram
 				[version(API_VERSION)]
 				interface ITLObjectSerializerStatics : IInspectable
 				{
-					//HRESULT Serialize([in]ITLObject* object,[out] UINT32* __valueSize,[out][retval][size_is(, *__valueSize)] BYTE** value);
 					HRESULT Serialize([in]ITLObject* object,[out][retval]Windows.Storage.Streams.IBuffer** value);
 					HRESULT Deserialize([in] Windows.Storage.Streams.IBuffer* buffer,[out][retval] ITLObject** value);
-					//HRESULT Deserialize([in] UINT32 __bufferSize,[in][size_is(__bufferSize)] BYTE* buffer,[out][retval] ITLObject** value);
-					//HRESULT Deserialize2([in] UINT32 __bufferSize,[in][size_is(__bufferSize)] BYTE* buffer,[out][retval] TLBinaryReader** value);
 					HRESULT GetObjectSize([in]ITLObject* object,[out][retval] UINT32* value);
 					HRESULT RegisterObjectConstructor([in] UINT32 constructor,[in] TLObjectConstructorDelegate* constructorDelegate);
 				}
@@ -180,6 +178,24 @@ namespace Telegram
 				runtimeclass TLObjectSerializer
 				{
 					[default] interface ITLObjectSerializer;
+				}
+
+
+				[exclusiveto(TLUnparsedObject)]
+				[uuid(0598B677-5169-42AB-92FA-815F645BBD02)]
+				[version(API_VERSION)]
+				interface ITLUnparsedObject : IInspectable
+				{
+					[propget] HRESULT Reader([out][retval] Telegram.Api.Native.TL.TLBinaryReader** value);
+				}
+
+				[marshaling_behavior(agile)]
+				[threading(both)]
+				[version(API_VERSION)]
+				runtimeclass TLUnparsedObject
+				{
+					[default] interface ITLUnparsedObject;
+				interface ITLObject;
 				}
 
 
@@ -216,7 +232,6 @@ namespace Telegram
 			[version(API_VERSION)]
 			struct Version
 			{
-				//UINT32 ConfigurationVersion;
 				UINT32 ProtocolVersion;
 				UINT32 Layer;
 				UINT32 ApiId;
@@ -265,28 +280,28 @@ namespace Telegram
 			cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(ABI::Telegram::Api::Native::RequestFlag);")
 
 
-			[exclusiveto(TLUnparsedMessage)]
+			[exclusiveto(TLUnprocessedMessage)]
 			[uuid(7C4C00BC-3D6A-4623-B6BB-C8CF22F5A839)]
 			[version(API_VERSION)]
-			interface ITLUnparsedMessage : IInspectable
+			interface ITLUnprocessedMessage : IInspectable
 			{
 				[propget] HRESULT MessageId([out][retval] INT64* value);
 				[propget] HRESULT ConnectionType([out][retval] ConnectionType* value);
-				[propget] HRESULT Reader([out][retval] Telegram.Api.Native.TL.TLBinaryReader** value);
+				[propget] HRESULT Object([out][retval] Telegram.Api.Native.TL.ITLObject** value);
 			}
 
 			[marshaling_behavior(agile)]
 			[threading(both)]
 			[version(API_VERSION)]
-			runtimeclass TLUnparsedMessage
+			runtimeclass TLUnprocessedMessage
 			{
-				[default] interface ITLUnparsedMessage;
+				[default] interface ITLUnprocessedMessage;
 			}
 
 
 			[uuid(CA172FA9-416D-4BD9-AB8C-B8696391D38F)]
 			[version(API_VERSION)]
-			delegate HRESULT SendRequestCompletedCallback([in] TLUnparsedMessage* response, HRESULT error);
+			delegate HRESULT SendRequestCompletedCallback([in] TLUnprocessedMessage* response, HRESULT error);
 
 			[uuid(8F88DCA2-FC97-4C94-B564-3DDBF1675477)]
 			[version(API_VERSION)]
@@ -312,7 +327,7 @@ namespace Telegram
 			[version(API_VERSION)]
 			interface IDatacenter : IInspectable
 			{
-				[propget] HRESULT Id([out][retval] UINT32* value);
+				[propget] HRESULT Id([out][retval] INT32* value);
 				[propget] HRESULT ServerSalt([out][retval] INT64* value);
 				HRESULT GetCurrentAddress([in] ConnectionType connectionType,[in] boolean ipv6,[out][retval] HSTRING* value);
 				HRESULT GetCurrentPort([in] ConnectionType connectionType,[in] boolean ipv6,[out][retval] UINT32* value);
@@ -369,8 +384,8 @@ namespace Telegram
 				[eventremove] HRESULT CurrentNetworkTypeChanged([in] EventRegistrationToken token);
 				[eventadd] HRESULT ConnectionStateChanged([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler,[out][retval] EventRegistrationToken* token);
 				[eventremove] HRESULT ConnectionStateChanged([in] EventRegistrationToken token);
-				[eventadd] HRESULT UnparsedMessageReceived([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, TLUnparsedMessage*>* handler,[out][retval] EventRegistrationToken* token);
-				[eventremove] HRESULT UnparsedMessageReceived([in] EventRegistrationToken token);
+				[eventadd] HRESULT UnprocessedMessageReceived([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, TLUnprocessedMessage*>* handler,[out][retval] EventRegistrationToken* token);
+				[eventremove] HRESULT UnprocessedMessageReceived([in] EventRegistrationToken token);
 				[propget] HRESULT ConnectionState([out][retval] ConnectionState* value);
 				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
 				[propget] HRESULT IsIpv6Enabled([out][retval] boolean* value);
@@ -381,11 +396,11 @@ namespace Telegram
 				[propput] HRESULT UserId([in] INT32 value);
 				[propget] HRESULT Datacenters([out][retval] Windows.Foundation.Collections.IVectorView<Datacenter*>** value);
 				[overload("SendRequest")] HRESULT SendRequest([in] Telegram.Api.Native.TL.ITLObject* object,[in] SendRequestCompletedCallback* onCompleted,[in] RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
-					[in] UINT32 datacenterId,[in] ConnectionType connectionType,[in] boolean immediate,[in] INT32 requestToken);
+					[in] INT32 datacenterId,[in] ConnectionType connectionType,[in] boolean immediate,[in] INT32 requestToken);
 				[overload("SendRequest")] HRESULT SendRequestWithFlags([in] Telegram.Api.Native.TL.ITLObject* object,[in] SendRequestCompletedCallback* onCompleted,[in] RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
-					[in] UINT32 datacenterId,[in] ConnectionType connectionType,[in] boolean immediate,[in] INT32 requestToken,[in] RequestFlag flags);
+					[in] INT32 datacenterId,[in] ConnectionType connectionType,[in] boolean immediate,[in] INT32 requestToken,[in] RequestFlag flags);
 				HRESULT CancelRequest([in] INT32 requestToken,[in] boolean notifyServer);
-				HRESULT GetDatacenterById([in] UINT32 id,[out][retval] Datacenter** value);
+				HRESULT GetDatacenterById([in] INT32 id,[out][retval] Datacenter** value);
 
 				HRESULT BoomBaby([in] IUserConfiguration* userConfiguration,[out] Telegram.Api.Native.TL.ITLObject** object,[out][retval] Connection** value);
 			}

@@ -48,7 +48,7 @@ namespace Telegram
 				~Datacenter();
 
 				//COM exported methods			
-				IFACEMETHODIMP get_Id(_Out_ UINT32* value);
+				IFACEMETHODIMP get_Id(_Out_ INT32* value);
 				IFACEMETHODIMP get_ServerSalt(_Out_ INT64* value);
 				IFACEMETHODIMP GetCurrentAddress(ConnectionType connectionType, boolean ipv6, _Out_ HSTRING* value);
 				IFACEMETHODIMP GetCurrentPort(ConnectionType connectionType, boolean ipv6, _Out_ UINT32* value);
@@ -57,6 +57,7 @@ namespace Telegram
 				//IFACEMETHODIMP GetGenericConnection(boolean create, _Out_ IConnection** value);
 
 				//Internal methods
+				void Clear();
 				void SwitchTo443Port();
 				void RecreateSessions();
 				void GetSessionsIds(_Out_ std::vector<INT64>& sessionIds);
@@ -133,20 +134,20 @@ namespace Telegram
 				boolean ContainsServerSalt(INT64 salt, size_t count);
 				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
-				HRESULT OnHandshakeResponseReceived(_In_ Connection* connection, INT64 messageId, _In_ ITLObject* object);
-				HRESULT OnHandshakePQ(_In_ Connection* connection, _In_ HandshakeContext* handshakeContext, INT64 messageId, _In_ TL::TLResPQ* response);
-				HRESULT OnHandshakeServerDH(_In_ Connection* connection, _In_ HandshakeContext* handshakeContext, INT64 messageId, _In_ TL::TLServerDHParamsOk* response);
-				HRESULT OnHandshakeClientDH(_In_ Connection* connection, _In_ HandshakeContext* handshakeContext, INT64 messageId, _In_ TL::TLDHGenOk* response);
+				HRESULT OnHandshakeResponseReceived(_In_ Connection* connection, UINT32 constructor, _In_ ITLObject* object);
+				HRESULT OnHandshakePQ(_In_ Connection* connection, _In_ HandshakeContext* handshakeContext, _In_ TL::TLResPQ* response);
+				HRESULT OnHandshakeServerDH(_In_ Connection* connection, _In_ HandshakeContext* handshakeContext, _In_ TL::TLServerDHParamsOk* response);
+				HRESULT OnHandshakeClientDH(_In_ Connection* connection, _In_ HandshakeContext* handshakeContext, _In_ TL::TLDHGenOk* response);
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
-				HRESULT EncryptMessage(_Inout_updates_(length) BYTE* buffer, UINT32 length, _Out_opt_ INT32* quickAckId);
-				HRESULT DecryptMessage(_Inout_updates_(length) BYTE* buffer, UINT32 length);
+				HRESULT EncryptMessage(_Inout_updates_(length) BYTE* buffer, UINT32 length, UINT32 padding, _Out_opt_ INT32* quickAckId);
+				HRESULT DecryptMessage(INT64 authKeyId, _Inout_updates_(length) BYTE* buffer, UINT32 length);
 
 				HRESULT SendPing();
 
-				static void GenerateMessageKey(_In_ BYTE const* authKey, _Inout_ BYTE* messageKey, BYTE* result, boolean incoming);
+				static void GenerateMessageKey(_In_ BYTE const* authKey, _Inout_ BYTE* messageKey, BYTE* result, UINT32 x);
 				static HRESULT SendAckRequest(_In_ Connection* connection, INT64 messageId);
 
-				UINT32 m_id;
+				INT32 m_id;
 				std::unique_ptr<AuthenticationContext> m_authenticationContext;
 				std::vector<ServerEndpoint> m_ipv4Endpoints;
 				std::vector<ServerEndpoint> m_ipv4DownloadEndpoints;

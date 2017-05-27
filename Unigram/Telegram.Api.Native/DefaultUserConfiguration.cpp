@@ -78,7 +78,7 @@ HRESULT DefaultUserConfiguration::get_AppVersion(HSTRING* value)
 
 HRESULT DefaultUserConfiguration::get_Language(HSTRING* value)
 {
-	return m_language.CopyTo(value);;
+	return m_language.CopyTo(value);
 }
 
 HRESULT DefaultUserConfiguration::FormatVersion(UINT64 major, UINT64 minor, UINT64 build, UINT64 revision, HString& version)

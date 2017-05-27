@@ -6,6 +6,7 @@
 #include "ConnectionManager.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
+#include "GZip.h"
 #include "Helpers\COMHelper.h"
 
 #define TLARRAY_CONSTRUCTOR 0x1cb5c415
@@ -16,8 +17,14 @@ using namespace Telegram::Api::Native::TL;
 ActivatableClassWithFactory(TLError, TLErrorFactory);
 
 RegisterTLObjectConstructor(TLError);
+RegisterTLObjectConstructor(TLRpcResult);
 RegisterTLObjectConstructor(TLMsgsAck);
+RegisterTLObjectConstructor(TLMessage);
 RegisterTLObjectConstructor(TLMsgContainer);
+RegisterTLObjectConstructor(TLAuthExportedAuthorization);
+RegisterTLObjectConstructor(TLNewSessionCreated);
+RegisterTLObjectConstructor(TLBadMessage);
+RegisterTLObjectConstructor(TLBadServerSalt);
 RegisterTLObjectConstructor(TLPong);
 RegisterTLObjectConstructor(TLDHGenOk);
 RegisterTLObjectConstructor(TLDHGenFail);
@@ -77,6 +84,24 @@ HRESULT TLError::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
+TLRpcResult::TLRpcResult() :
+	m_requestMessageId(0)
+{
+}
+
+TLRpcResult::~TLRpcResult()
+{
+}
+
+HRESULT TLRpcResult::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt64(&m_requestMessageId));
+
+	return TLObjectWithQuery::ReadQuery(reader);
+}
+
+
 HRESULT TLMsgsAck::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
@@ -116,6 +141,50 @@ HRESULT TLMsgsAck::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
+TLMessage::TLMessage() :
+	m_messageId(0),
+	m_sequenceNumber(0)
+{
+}
+
+TLMessage::~TLMessage()
+{
+}
+
+HRESULT TLMessage::RuntimeClassInitialize(INT64 messageId, UINT32 sequenceNumber, ITLObject* object)
+{
+	m_messageId = messageId;
+	m_sequenceNumber = sequenceNumber;
+	return TLObjectWithQuery::RuntimeClassInitialize(object);
+}
+
+HRESULT TLMessage::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt64(&m_messageId));
+	ReturnIfFailed(result, reader->ReadUInt32(&m_sequenceNumber));
+
+	UINT32 bodyLength;
+	ReturnIfFailed(result, reader->ReadUInt32(&bodyLength));
+
+	UINT32 constructor;
+	return reader->ReadObjectAndConstructor(bodyLength, &constructor, GetQuery().ReleaseAndGetAddressOf());
+}
+
+HRESULT TLMessage::WriteBody(ITLBinaryWriterEx* writer)
+{
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteInt64(m_messageId));
+	ReturnIfFailed(result, writer->WriteUInt32(m_sequenceNumber));
+
+	UINT32 bodyLength;
+	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(GetQuery().Get(), &bodyLength));
+	ReturnIfFailed(result, writer->WriteUInt32(bodyLength));
+
+	return TLObjectWithQuery::WriteQuery(writer);
+}
+
+
 HRESULT TLMsgContainer::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
@@ -126,7 +195,8 @@ HRESULT TLMsgContainer::ReadBody(ITLBinaryReaderEx* reader)
 
 	for (UINT32 i = 0; i < count; i++)
 	{
-		ReturnIfFailed(result, reader->ReadObject(&m_messages[i]));
+		m_messages[i] = Make<TLMessage>();
+		ReturnIfFailed(result, m_messages[i]->ReadBody(reader));
 	}
 
 	return S_OK;
@@ -139,17 +209,147 @@ HRESULT TLMsgContainer::WriteBody(ITLBinaryWriterEx* writer)
 
 	for (size_t i = 0; i < m_messages.size(); i++)
 	{
-		ReturnIfFailed(result, writer->WriteObject(m_messages[i].Get()));
+		ReturnIfFailed(result, m_messages[i]->WriteBody(writer));
 	}
 
 	return S_OK;
 }
 
 
-HRESULT TLPing::RuntimeClassInitialize(INT64 pingId)
+HRESULT TLGZipPacked::RuntimeClassInitialize(NativeBuffer* rawData)
 {
-	m_pingId = pingId;
+	if (rawData == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	return CompressBuffer(rawData->GetBuffer(), rawData->GetCapacity(), &m_packedData);
+}
+
+HRESULT TLGZipPacked::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	BYTE const* buffer;
+	UINT32 bufferLength;
+	ReturnIfFailed(result, reader->ReadBuffer2(&buffer, &bufferLength));
+
+	return DecompressBuffer(buffer, bufferLength, &m_packedData);
+}
+
+HRESULT TLGZipPacked::WriteBody(ITLBinaryWriterEx* writer)
+{
+	return writer->WriteBuffer(m_packedData->GetBuffer(), m_packedData->GetCapacity());
+}
+
+
+TLAuthExportAuthorization::TLAuthExportAuthorization(UINT32 datacenterId) :
+	m_datacenterId(datacenterId)
+{
+}
+
+TLAuthExportAuthorization::~TLAuthExportAuthorization()
+{
+}
+
+HRESULT TLAuthExportAuthorization::WriteBody(ITLBinaryWriterEx* writer)
+{
+	return writer->WriteInt32(m_datacenterId);
+}
+
+
+TLAuthExportedAuthorization::TLAuthExportedAuthorization() :
+	m_datacenterId(0)
+{
+}
+
+TLAuthExportedAuthorization::~TLAuthExportedAuthorization()
+{
+}
+
+HRESULT TLAuthExportedAuthorization::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt32(&m_datacenterId));
+
+	BYTE const* buffer;
+	UINT32 bufferLength;
+	ReturnIfFailed(result, reader->ReadBuffer2(&buffer, &bufferLength));
+	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&m_bytes, bufferLength));
+
+	CopyMemory(m_bytes->GetBuffer(), buffer, bufferLength);
 	return S_OK;
+}
+
+
+HRESULT TLAuthImportAuthorization::RuntimeClassInitialize(INT32 datacenterId, NativeBuffer* bytes)
+{
+	if (bytes == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	m_datacenterId = datacenterId;
+	m_bytes = bytes;
+	return S_OK;
+}
+
+HRESULT TLAuthImportAuthorization::WriteBody(ITLBinaryWriterEx* writer)
+{
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteInt32(m_datacenterId));
+
+	return writer->WriteBuffer(m_bytes->GetBuffer(), m_bytes->GetCapacity());
+}
+
+
+TLNewSessionCreated::TLNewSessionCreated() :
+	m_firstMesssageId(0),
+	m_uniqueId(0),
+	m_serverSalt(0)
+{
+}
+
+TLNewSessionCreated::~TLNewSessionCreated()
+{
+}
+
+HRESULT TLNewSessionCreated::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt64(&m_firstMesssageId));
+	ReturnIfFailed(result, reader->ReadInt64(&m_uniqueId));
+
+	return reader->ReadInt64(&m_serverSalt);
+}
+
+
+template<typename TLObjectTraits>
+HRESULT TLBadMsgNotificationT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt64(&m_badMessageId));
+	ReturnIfFailed(result, reader->ReadUInt32(&m_badMessageSequenceNumber));
+
+	return reader->ReadInt32(&m_errorCode);
+}
+
+
+HRESULT TLBadServerSalt::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, TLBadMsgNotificationT::ReadBody(reader));
+
+	return reader->ReadInt64(&m_newServerSalt);
+}
+
+
+TLPing::TLPing(INT64 pingId) :
+	m_pingId(pingId)
+{
+}
+
+TLPing::~TLPing()
+{
 }
 
 HRESULT TLPing::WriteBody(ITLBinaryWriterEx* writer)
@@ -159,7 +359,7 @@ HRESULT TLPing::WriteBody(ITLBinaryWriterEx* writer)
 
 
 TLPong::TLPong() :
-	m_msgId(0),
+	m_messageId(0),
 	m_pingId(0)
 {
 }
@@ -171,13 +371,14 @@ TLPong::~TLPong()
 HRESULT TLPong::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
-	ReturnIfFailed(result, reader->ReadInt64(&m_msgId));
+	ReturnIfFailed(result, reader->ReadInt64(&m_messageId));
 
 	return reader->ReadInt64(&m_pingId);
 }
 
 
-HRESULT TLDHGen::ReadBody(ITLBinaryReaderEx* reader)
+template<typename TLObjectTraits>
+HRESULT TLDHGenT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
 	ReturnIfFailed(result, reader->ReadRawBuffer(sizeof(m_nonce), m_nonce));
@@ -325,10 +526,13 @@ HRESULT TLResPQ::ReadBody(ITLBinaryReaderEx* reader)
 }
 
 
-HRESULT TLGetFutureSalts::RuntimeClassInitialize(UINT32 count)
+TLGetFutureSalts::TLGetFutureSalts(UINT32 count) :
+	m_count(count)
 {
-	m_count = count;
-	return S_OK;
+}
+
+TLGetFutureSalts::~TLGetFutureSalts()
+{
 }
 
 HRESULT TLGetFutureSalts::WriteBody(ITLBinaryWriterEx* writer)
@@ -418,21 +622,21 @@ HRESULT TLInitConnection::WriteBody(ITLBinaryWriterEx* writer)
 	HRESULT result;
 	ReturnIfFailed(result, writer->WriteInt32(TELEGRAM_API_NATIVE_APIID));
 
-	HSTRING deviceModel;
-	ReturnIfFailed(result, m_userConfiguration->get_DeviceModel(&deviceModel));
-	ReturnIfFailed(result, writer->WriteString(deviceModel));
+	HString deviceModel;
+	ReturnIfFailed(result, m_userConfiguration->get_DeviceModel(deviceModel.GetAddressOf()));
+	ReturnIfFailed(result, writer->WriteString(deviceModel.Get()));
 
-	HSTRING systemVersion;
-	ReturnIfFailed(result, m_userConfiguration->get_SystemVersion(&systemVersion));
-	ReturnIfFailed(result, writer->WriteString(systemVersion));
+	HString systemVersion;
+	ReturnIfFailed(result, m_userConfiguration->get_SystemVersion(systemVersion.GetAddressOf()));
+	ReturnIfFailed(result, writer->WriteString(systemVersion.Get()));
 
-	HSTRING appVersion;
-	ReturnIfFailed(result, m_userConfiguration->get_AppVersion(&appVersion));
-	ReturnIfFailed(result, writer->WriteString(appVersion));
+	HString appVersion;
+	ReturnIfFailed(result, m_userConfiguration->get_AppVersion(appVersion.GetAddressOf()));
+	ReturnIfFailed(result, writer->WriteString(appVersion.Get()));
 
-	HSTRING language;
-	ReturnIfFailed(result, m_userConfiguration->get_Language(&language));
-	ReturnIfFailed(result, writer->WriteString(language));
+	HString language;
+	ReturnIfFailed(result, m_userConfiguration->get_Language(language.GetAddressOf()));
+	ReturnIfFailed(result, writer->WriteString(language.Get()));
 
 	return TLObjectWithQuery::WriteQuery(writer);
 }

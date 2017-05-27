@@ -4,7 +4,7 @@
 #include "EventObject.h"
 #include "Datacenter.h"
 #include "Connection.h"
-#include "TLUnparsedMessage.h"
+#include "TLUnprocessedMessage.h"
 #include "Request.h"
 #include "TLProtocolScheme.h"
 #include "DefaultUserConfiguration.h"
@@ -13,6 +13,8 @@
 #include "TLBinaryWriter.h"
 #include "NativeBuffer.h"
 #include "Helpers\COMHelper.h"
+
+#include "GZip.h"
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
@@ -133,14 +135,14 @@ HRESULT ConnectionManager::remove_ConnectionStateChanged(EventRegistrationToken 
 	return m_connectionStateChangedEventSource.Remove(token);
 }
 
-HRESULT ConnectionManager::add_UnparsedMessageReceived(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnparsedMessage* handler, EventRegistrationToken* token)
+HRESULT ConnectionManager::add_UnprocessedMessageReceived(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnprocessedMessage* handler, EventRegistrationToken* token)
 {
-	return m_unparsedMessageReceivedEventSource.Add(handler, token);
+	return m_unprocessedMessageReceivedEventSource.Add(handler, token);
 }
 
-HRESULT ConnectionManager::remove_UnparsedMessageReceived(EventRegistrationToken token)
+HRESULT ConnectionManager::remove_UnprocessedMessageReceived(EventRegistrationToken token)
 {
-	return m_unparsedMessageReceivedEventSource.Remove(token);
+	return m_unprocessedMessageReceivedEventSource.Remove(token);
 }
 
 HRESULT ConnectionManager::get_ConnectionState(ConnectionState* value)
@@ -277,13 +279,13 @@ HRESULT ConnectionManager::get_Datacenters(_Out_ __FIVectorView_1_Telegram__CApi
 }
 
 HRESULT ConnectionManager::SendRequest(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived,
-	UINT32 datacenterId, ConnectionType connectionType, boolean immediate, INT32 requestToken)
+	INT32 datacenterId, ConnectionType connectionType, boolean immediate, INT32 requestToken)
 {
 	return SendRequestWithFlags(object, onCompleted, onQuickAckReceived, datacenterId, connectionType, immediate, requestToken, RequestFlag::None);
 }
 
-HRESULT ConnectionManager::SendRequestWithFlags(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
-	UINT32 datacenterId, ConnectionType connectionType, boolean immediate, INT32 requestToken, RequestFlag flags)
+HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived,
+	INT32 datacenterId, ConnectionType connectionType, boolean immediate, INT32 requestToken, RequestFlag flags)
 {
 	if (object == nullptr)
 	{
@@ -320,7 +322,7 @@ HRESULT ConnectionManager::CancelRequest(INT32 requestToken, boolean notifyServe
 	return S_OK;
 }
 
-HRESULT ConnectionManager::GetDatacenterById(UINT32 id, IDatacenter** value)
+HRESULT ConnectionManager::GetDatacenterById(INT32 id, IDatacenter** value)
 {
 	if (value == nullptr)
 	{
@@ -348,6 +350,37 @@ HRESULT ConnectionManager::GetDatacenterById(UINT32 id, IDatacenter** value)
 HRESULT ConnectionManager::InitializeDatacenters()
 {
 	HRESULT result;
+
+#if _DEBUG
+
+	if (m_datacenters.find(1) == m_datacenters.end())
+	{
+		auto datacenter = Make<Datacenter>(1);
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.175.40", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:b28:f23d:f001:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
+
+		m_datacenters[1] = datacenter;
+	}
+
+	if (m_datacenters.find(2) == m_datacenters.end())
+	{
+		auto datacenter = Make<Datacenter>(2);
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.167.40", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:67c:4e8:f002:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
+
+		m_datacenters[2] = datacenter;
+	}
+
+	if (m_datacenters.find(3) == m_datacenters.end())
+	{
+		auto datacenter = Make<Datacenter>(3);
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.175.117", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:b28:f23d:f003:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
+
+		m_datacenters[3] = datacenter;
+	}
+
+#else
 
 	if (m_datacenters.find(1) == m_datacenters.end())
 	{
@@ -393,6 +426,8 @@ HRESULT ConnectionManager::InitializeDatacenters()
 
 		m_datacenters[5] = datacenter;
 	}
+
+#endif
 
 	return S_OK;
 }
@@ -458,14 +493,14 @@ HRESULT ConnectionManager::UpdateNetworkStatus(boolean raiseEvent)
 }
 
 HRESULT ConnectionManager::CreateRequest(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived,
-	UINT32 datacenterId, ConnectionType connectionType, INT32 requestToken, RequestFlag flags, ComPtr<MessageRequest>& request)
+	INT32 datacenterId, ConnectionType connectionType, INT32 requestToken, RequestFlag flags, ComPtr<MessageRequest>& request)
 {
 	HRESULT result;
 	boolean isLayerNeeded;
 	ReturnIfFailed(result, object->get_IsLayerNeeded(&isLayerNeeded));
 
 	if (isLayerNeeded)
-	{		
+	{
 		ComPtr<TLInitConnection> initConnectionObject;
 		ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, m_userConfiguration.Get(), object));
 
@@ -518,7 +553,7 @@ HRESULT ConnectionManager::OnConnectionPacketReceived(Connection* connection, TL
 
 	if (keyId == 0)
 	{
-		INT64 messageId;;
+		INT64 messageId;
 		ReturnIfFailed(result, packetReader->ReadInt64(&messageId));
 
 		UINT32 objectSize;
@@ -616,7 +651,7 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 
 	*object = errorObject.Detach();
 
-	auto datacenter = GetDatacenterById(4);
+	auto datacenter = GetDatacenterById(3);
 	ReturnIfFailed(result, datacenter->BeginHandshake(true));
 
 	const WCHAR buffer[] = L"Old Macdougal had a farm in Ohio-i-o,"
@@ -627,13 +662,24 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 	ComPtr<NativeBuffer> binaryReaderBuffer;
 	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&binaryReaderBuffer, sizeof(buffer)));
 
+	ComPtr<NativeBuffer> compressedBuffer;
+	ReturnIfFailed(result, CompressBuffer(reinterpret_cast<const BYTE*>(buffer), sizeof(buffer), &compressedBuffer));
+
+	ComPtr<NativeBuffer> uncompressedBuffer;
+	ReturnIfFailed(result, DecompressBuffer(compressedBuffer->GetBuffer(), compressedBuffer->GetCapacity(), &uncompressedBuffer));
+
+	auto xxx = reinterpret_cast<WCHAR*>(uncompressedBuffer->GetBuffer());
+
 	CopyMemory(binaryReaderBuffer->GetBuffer(), buffer, sizeof(buffer));
 
 	ComPtr<TLBinaryReader> binaryReader;
 	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&binaryReader, binaryReaderBuffer.Get()));
 
-	auto unparsedMessage = Make<TLUnparsedMessage>(0, ConnectionType::Generic, static_cast<ITLBinaryReaderEx*>(binaryReader.Get()));
-	ReturnIfFailed(result, m_unparsedMessageReceivedEventSource.InvokeAll(this, unparsedMessage.Get()));
+	ComPtr<TLUnparsedObject> unparsedObject;
+	ReturnIfFailed(result, MakeAndInitialize<TLUnparsedObject>(&unparsedObject, 0x0, binaryReader.Get()));
+
+	auto unparsedMessage = Make<TLUnprocessedMessage>(0, ConnectionType::Generic, unparsedObject.Get());
+	ReturnIfFailed(result, m_unprocessedMessageReceivedEventSource.InvokeAll(this, unparsedMessage.Get()));
 
 	return S_OK;
 }
@@ -661,7 +707,7 @@ Datacenter* ConnectionManager::GetDatacenterById(UINT32 id)
 	auto& datacenter = m_datacenters.find(id);
 	if (datacenter == m_datacenters.end())
 	{
-		return nullptr;;
+		return nullptr;
 	}
 
 	return datacenter->second.Get();
@@ -756,7 +802,6 @@ HRESULT ConnectionManagerStatics::get_Version(Version* value)
 		return E_POINTER;
 	}
 
-	//value->ConfigurationVersion = TELEGRAM_API_NATIVE_CONFIGVERSION;
 	value->ProtocolVersion = TELEGRAM_API_NATIVE_PROTOVERSION;
 	value->Layer = TELEGRAM_API_NATIVE_LAYER;
 	value->ApiId = TELEGRAM_API_NATIVE_APIID;

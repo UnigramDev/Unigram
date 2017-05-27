@@ -67,3 +67,75 @@ HRESULT TLObjectWithQuery::get_Query(ITLObject** value)
 {
 	return m_query.CopyTo(value);
 }
+
+
+HRESULT TLUnparsedObject::RuntimeClassInitialize(UINT32 constructor, TLBinaryReader* reader)
+{
+	if (reader == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	m_constructor = constructor;
+	m_reader = reinterpret_cast<ITLBinaryReaderEx*>(reader);
+	return S_OK;
+}
+
+HRESULT TLUnparsedObject::RuntimeClassInitialize(UINT32 constructor, UINT32 objectSizeWithoutConstructor, TLBinaryReader* reader)
+{
+	if (reader == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	HRESULT result;
+	ComPtr<TLBinaryReader> innerReader;
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&innerReader, objectSizeWithoutConstructor));
+
+	CopyMemory(innerReader->GetBuffer(), reader->GetBufferAtPosition(), innerReader->GetCapacity());
+
+	m_constructor = constructor;
+	return innerReader.As(&m_reader);
+}
+
+HRESULT TLUnparsedObject::get_Reader(ITLBinaryReader** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	return m_reader.CopyTo(value);
+}
+
+HRESULT TLUnparsedObject::get_Constructor(UINT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_constructor;
+	return S_OK;
+}
+
+HRESULT TLUnparsedObject::get_IsLayerNeeded(boolean* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = false;
+	return S_OK;
+}
+
+HRESULT TLUnparsedObject::Read(ITLBinaryReader* reader)
+{
+	return E_ILLEGAL_METHOD_CALL;
+}
+
+HRESULT TLUnparsedObject::Write(ITLBinaryWriter* writer)
+{
+	return E_ILLEGAL_METHOD_CALL;
+}

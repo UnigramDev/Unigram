@@ -92,7 +92,8 @@ namespace Telegram
 				HRESULT Connect();
 				HRESULT Reconnect();
 				HRESULT Suspend();
-				HRESULT SendEncryptedMessage(_In_ ITLObject* object, _Outptr_opt_ INT32* quickAckId);
+				HRESULT CreateMessagePacket(UINT32 messageLength, boolean reportAck, _Out_ TL::TLBinaryWriter** writer, _Out_ BYTE** messageBuffer);
+				HRESULT SendEncryptedMessage(_In_ ITLObject* object, boolean reportAck, _Outptr_opt_ INT32* quickAckId);
 				HRESULT SendUnencryptedMessage(_In_ ITLObject* object, boolean reportAck);
 				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) override;

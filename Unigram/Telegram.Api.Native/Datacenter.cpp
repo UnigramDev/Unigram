@@ -13,6 +13,9 @@
 #include "Wrappers\OpenSSL.h"
 #include "Helpers\COMHelper.h"
 
+#define ENCRYPT_KEY_IV_PARAM 0
+#define DECRYPT_KEY_IV_PARAM 8
+
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
 
@@ -35,7 +38,7 @@ Datacenter::~Datacenter()
 {
 }
 
-HRESULT Datacenter::get_Id(UINT32* value)
+HRESULT Datacenter::get_Id(INT32* value)
 {
 	if (value == nullptr)
 	{
@@ -147,6 +150,14 @@ HRESULT Datacenter::Close()
 	}
 
 	return S_OK;
+}
+
+void Datacenter::Clear()
+{
+	auto lock = LockCriticalSection();
+
+	m_authenticationContext.reset();
+	m_serverSalts.clear();
 }
 
 void Datacenter::SwitchTo443Port()
@@ -622,7 +633,7 @@ HRESULT Datacenter::OnHandshakeConnectionConnected(Connection* connection)
 	return S_OK;
 }
 
-HRESULT Datacenter::OnHandshakeResponseReceived(Connection* connection, INT64 messageId, ITLObject* object)
+HRESULT Datacenter::OnHandshakeResponseReceived(Connection* connection, UINT32 constructor, ITLObject* object)
 {
 	auto lock = LockCriticalSection();
 
@@ -632,19 +643,16 @@ HRESULT Datacenter::OnHandshakeResponseReceived(Connection* connection, INT64 me
 	}
 
 	HRESULT result;
-	UINT32 constructor;
-	ReturnIfFailed(result, object->get_Constructor(&constructor));
-
 	switch (constructor)
 	{
 	case TLResPQ::Constructor:
-		result = OnHandshakePQ(connection, static_cast<HandshakeContext*>(m_authenticationContext.get()), messageId, static_cast<TLResPQ*>(object));
+		result = OnHandshakePQ(connection, static_cast<HandshakeContext*>(m_authenticationContext.get()), static_cast<TLResPQ*>(object));
 		break;
 	case TLServerDHParamsOk::Constructor:
-		result = OnHandshakeServerDH(connection, static_cast<HandshakeContext*>(m_authenticationContext.get()), messageId, static_cast<TLServerDHParamsOk*>(object));
+		result = OnHandshakeServerDH(connection, static_cast<HandshakeContext*>(m_authenticationContext.get()), static_cast<TLServerDHParamsOk*>(object));
 		break;
 	case TLDHGenOk::Constructor:
-		result = OnHandshakeClientDH(connection, static_cast<HandshakeContext*>(m_authenticationContext.get()), messageId, static_cast<TLDHGenOk*>(object));
+		result = OnHandshakeClientDH(connection, static_cast<HandshakeContext*>(m_authenticationContext.get()), static_cast<TLDHGenOk*>(object));
 		break;
 	default:
 		result = E_FAIL;
@@ -653,15 +661,13 @@ HRESULT Datacenter::OnHandshakeResponseReceived(Connection* connection, INT64 me
 
 	if (FAILED(result))
 	{
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle handshake failure");
-
-		return result;
+		return BeginHandshake(false);
 	}
 
 	return S_OK;
 }
 
-HRESULT Datacenter::OnHandshakePQ(Connection* connection, HandshakeContext* handshakeContext, INT64 messageId, TLResPQ* response)
+HRESULT Datacenter::OnHandshakePQ(Connection* connection, HandshakeContext* handshakeContext, TLResPQ* response)
 {
 	if (handshakeContext->State != AuthenticationState::HandshakeStarted)
 	{
@@ -712,7 +718,6 @@ HRESULT Datacenter::OnHandshakePQ(Connection* connection, HandshakeContext* hand
 	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(TLInitConnection), handshakeContext->NewNonce));
 
 	constexpr UINT32 innerDataLength = sizeof(UINT32) + 28 + 2 * sizeof(TLInt128) + sizeof(TLInt256);
-
 	SHA1(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH, innerDataLength, innerDataWriter->GetBuffer());
 	RAND_bytes(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH + innerDataLength, 255 - innerDataLength - SHA_DIGEST_LENGTH);
 
@@ -753,7 +758,7 @@ HRESULT Datacenter::OnHandshakePQ(Connection* connection, HandshakeContext* hand
 	return connection->SendUnencryptedMessage(dhParams.Get(), false);
 }
 
-HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, HandshakeContext* handshakeContext, INT64 messageId, TLServerDHParamsOk* response)
+HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, HandshakeContext* handshakeContext, TLServerDHParamsOk* response)
 {
 	if (handshakeContext->State != AuthenticationState::HandshakePQ)
 	{
@@ -938,7 +943,7 @@ HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, HandshakeContext
 	return connection->SendUnencryptedMessage(setClientDHParams.Get(), false);
 }
 
-HRESULT Datacenter::OnHandshakeClientDH(Connection* connection, HandshakeContext* handshakeContext, INT64 messageId, TLDHGenOk* response)
+HRESULT Datacenter::OnHandshakeClientDH(Connection* connection, HandshakeContext* handshakeContext, TLDHGenOk* response)
 {
 	if (handshakeContext->State != AuthenticationState::HandshakeServerDH)
 	{
@@ -954,13 +959,20 @@ HRESULT Datacenter::OnHandshakeClientDH(Connection* connection, HandshakeContext
 	}
 
 	constexpr UINT32 authKeyAuxHashLength = sizeof(TLInt256) + 1 + SHA_DIGEST_LENGTH;
-
 	BYTE authKeyAuxHash[authKeyAuxHashLength];
 	CopyMemory(authKeyAuxHash, handshakeContext->NewNonce, sizeof(TLInt256));
 
 	authKeyAuxHash[sizeof(TLInt256)] = 1;
 
 	SHA1(handshakeContext->AuthKey, sizeof(handshakeContext->AuthKey), authKeyAuxHash + sizeof(TLInt256) + 1);
+
+	constexpr UINT32 authKeyIdOffset = sizeof(TLInt256) + 1 + SHA_DIGEST_LENGTH - 8;
+
+	INT64 authKeyId = (authKeyAuxHash[authKeyIdOffset] & 0xffLL) | ((authKeyAuxHash[authKeyIdOffset + 1] & 0xffLL) << 8LL) |
+		((authKeyAuxHash[authKeyIdOffset + 2] & 0xffLL) << 16LL) | ((authKeyAuxHash[authKeyIdOffset + 3] & 0xffLL) << 24LL) |
+		((authKeyAuxHash[authKeyIdOffset + 4] & 0xffLL) << 32LL) | ((authKeyAuxHash[authKeyIdOffset + 5] & 0xffLL) << 40LL) |
+		((authKeyAuxHash[authKeyIdOffset + 6] & 0xffLL) << 48LL) | ((authKeyAuxHash[authKeyIdOffset + 7] & 0xffLL) << 56LL);
+
 	SHA1(authKeyAuxHash, authKeyAuxHashLength - SHA_DIGEST_LENGTH + sizeof(TLInt64), authKeyAuxHash);
 
 	if (memcmp(response->GetNewNonceHash(), authKeyAuxHash + SHA_DIGEST_LENGTH - 16, sizeof(TLInt128)) != 0)
@@ -971,12 +983,7 @@ HRESULT Datacenter::OnHandshakeClientDH(Connection* connection, HandshakeContext
 	auto authKeyContext = std::make_unique<AuthKeyContext>();
 	CopyMemory(authKeyContext->AuthKey, handshakeContext->AuthKey, sizeof(authKeyContext->AuthKey));
 
-	constexpr UINT32 authKeyIdOffset = sizeof(TLInt256) + 1 + 12;
-
-	authKeyContext->AuthKeyId = (authKeyAuxHash[authKeyIdOffset] & 0xffLL) | ((authKeyAuxHash[authKeyIdOffset + 1] & 0xffLL) << 8LL) |
-		((authKeyAuxHash[authKeyIdOffset + 2] & 0xffLL) << 16LL) | ((authKeyAuxHash[authKeyIdOffset + 3] & 0xffLL) << 24LL) |
-		((authKeyAuxHash[authKeyIdOffset + 4] & 0xffLL) << 32LL) | ((authKeyAuxHash[authKeyIdOffset + 5] & 0xffLL) << 40LL) |
-		((authKeyAuxHash[authKeyIdOffset + 6] & 0xffLL) << 48LL) | ((authKeyAuxHash[authKeyIdOffset + 7] & 0xffLL) << 56LL);
+	authKeyContext->AuthKeyId = authKeyId;
 
 	HRESULT result;
 	ReturnIfFailed(result, AddServerSalt(handshakeContext->Salt));
@@ -990,8 +997,10 @@ HRESULT Datacenter::OnHandshakeClientDH(Connection* connection, HandshakeContext
 	return SendPing();
 }
 
-HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, INT32* quickAckId)
+HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, UINT32 padding, INT32* quickAckId)
 {
+	auto lock = LockCriticalSection();
+
 	if (m_authenticationContext == nullptr || m_authenticationContext->GetState() != AuthenticationState::Completed)
 	{
 		return E_UNEXPECTED;
@@ -1026,7 +1035,7 @@ HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, INT32* quickAckI
 
 #else
 
-	SHA1(buffer + 24, length - 24, messageKey + 4);
+	SHA1(buffer + 24, length - padding - 24, messageKey + 4);
 
 	if (quickAckId != nullptr)
 	{
@@ -1037,7 +1046,7 @@ HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, INT32* quickAckI
 #endif
 
 	CopyMemory(buffer + 8, messageKey + 8, 16);
-	GenerateMessageKey(authKeyContext->AuthKey, messageKey + 8, messageKey + 32, false);
+	GenerateMessageKey(authKeyContext->AuthKey, messageKey + 8, messageKey + 32, ENCRYPT_KEY_IV_PARAM);
 
 	AES_KEY aesEncryptKey;
 	AES_set_encrypt_key(messageKey + 32, 32 * 8, &aesEncryptKey);
@@ -1046,17 +1055,14 @@ HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, INT32* quickAckI
 	return S_OK;
 }
 
-HRESULT Datacenter::DecryptMessage(BYTE* buffer, UINT32 length)
+HRESULT Datacenter::DecryptMessage(INT64 authKeyId, BYTE* buffer, UINT32 length)
 {
+	auto lock = LockCriticalSection();
+
 	if (m_authenticationContext == nullptr || m_authenticationContext->GetState() != AuthenticationState::Completed)
 	{
 		return E_UNEXPECTED;
 	}
-
-	INT64 authKeyId = (buffer[0] & 0xffLL) | ((buffer[1] & 0xffLL) << 8LL) |
-		((buffer[2] & 0xffLL) << 16LL) | ((buffer[3] & 0xffLL) << 24LL) |
-		((buffer[4] & 0xffLL) << 32LL) | ((buffer[5] & 0xffLL) << 40LL) |
-		((buffer[6] & 0xffLL) << 48LL) | ((buffer[7] & 0xffLL) << 56LL);
 
 	auto authKeyContext = static_cast<AuthKeyContext*>(m_authenticationContext.get());
 	if (authKeyId != authKeyContext->AuthKeyId)
@@ -1065,17 +1071,34 @@ HRESULT Datacenter::DecryptMessage(BYTE* buffer, UINT32 length)
 	}
 
 	BYTE messageKey[96];
-	GenerateMessageKey(authKeyContext->AuthKey, buffer + 8, messageKey + 32, true);
+	GenerateMessageKey(authKeyContext->AuthKey, buffer + 8, messageKey + 32, DECRYPT_KEY_IV_PARAM);
 
 	AES_KEY aesDecryptKey;
 	AES_set_decrypt_key(messageKey + 32, 32 * 8, &aesDecryptKey);
 	AES_ige_encrypt(buffer + 24, buffer + 24, length - 24, &aesDecryptKey, messageKey + 64, AES_DECRYPT);
 
+	constexpr UINT32 messageLengthOffset = 24 + 3 * sizeof(INT64) + sizeof(UINT32);
+	UINT32 messageLength = (buffer[messageLengthOffset] & 0xff) | ((buffer[messageLengthOffset + 1] & 0xff) << 8) |
+		((buffer[messageLengthOffset + 2] & 0xff) << 16) | ((buffer[messageLengthOffset + 3] & 0xff) << 24);
+
+	if ((messageLength += 3 * sizeof(INT64) + 2 * sizeof(UINT32)) + 24 > length)
+	{
+		return E_INVALIDARG;
+	}
+
+#if TELEGRAM_API_NATIVE_PROTOVERSION == 2
+
 	SHA256_CTX sha256Context;
 	SHA256_Init(&sha256Context);
-	SHA256_Update(&sha256Context, authKeyContext->AuthKey + 88 + 8, 32);
+	SHA256_Update(&sha256Context, authKeyContext->AuthKey + 88 + DECRYPT_KEY_IV_PARAM, 32);
 	SHA256_Update(&sha256Context, buffer + 24, length - 24);
 	SHA256_Final(messageKey, &sha256Context);
+
+#else
+
+	SHA1(buffer + 24, messageLength, messageKey + 4);
+
+#endif
 
 	if (memcmp(messageKey + 8, buffer + 8, 16) != 0)
 	{
@@ -1085,10 +1108,9 @@ HRESULT Datacenter::DecryptMessage(BYTE* buffer, UINT32 length)
 	return S_OK;
 }
 
-void Datacenter::GenerateMessageKey(BYTE const* authKey, BYTE* messageKey, BYTE* result, boolean incoming)
+void Datacenter::GenerateMessageKey(BYTE const* authKey, BYTE* messageKey, BYTE* result, UINT32 x)
 {
 	BYTE sha[68];
-	UINT32 x = incoming ? 8 : 0;
 
 #if TELEGRAM_API_NATIVE_PROTOVERSION == 2
 
@@ -1113,29 +1135,28 @@ void Datacenter::GenerateMessageKey(BYTE const* authKey, BYTE* messageKey, BYTE*
 
 #else
 
-	CopyMemory(sha + 20, messageKey, 16);
-	CopyMemory(sha + 20 + 16, authKey + x, 32);
-
-	SHA1(sha + 20, 48, sha);
+	CopyMemory(sha + SHA_DIGEST_LENGTH, messageKey, 16);
+	CopyMemory(sha + SHA_DIGEST_LENGTH + 16, authKey + x, 32);
+	SHA1(sha + SHA_DIGEST_LENGTH, 48, sha);
 	CopyMemory(result, sha, 8);
 	CopyMemory(result + 32, sha + 8, 12);
 
-	CopyMemory(sha + 20, authKey + 32 + x, 16);
-	CopyMemory(sha + 20 + 16, messageKey, 16);
-	CopyMemory(sha + 20 + 16 + 16, authKey + 48 + x, 16);
-	SHA1(sha + 20, 48, sha);
+	CopyMemory(sha + SHA_DIGEST_LENGTH, authKey + 32 + x, 16);
+	CopyMemory(sha + SHA_DIGEST_LENGTH + 16, messageKey, 16);
+	CopyMemory(sha + SHA_DIGEST_LENGTH + 16 + 16, authKey + 48 + x, 16);
+	SHA1(sha + SHA_DIGEST_LENGTH, 48, sha);
 	CopyMemory(result + 8, sha + 8, 12);
 	CopyMemory(result + 32 + 12, sha, 8);
 
-	CopyMemory(sha + 20, authKey + 64 + x, 32);
-	CopyMemory(sha + 20 + 32, messageKey, 16);
-	SHA1(sha + 20, 48, sha);
+	CopyMemory(sha + SHA_DIGEST_LENGTH, authKey + 64 + x, 32);
+	CopyMemory(sha + SHA_DIGEST_LENGTH + 32, messageKey, 16);
+	SHA1(sha + SHA_DIGEST_LENGTH, 48, sha);
 	CopyMemory(result + 8 + 12, sha + 4, 12);
 	CopyMemory(result + 32 + 12 + 8, sha + 16, 4);
 
-	CopyMemory(sha + 20, messageKey, 16);
-	CopyMemory(sha + 20 + 16, authKey + 96 + x, 32);
-	SHA1(sha + 20, 48, sha);
+	CopyMemory(sha + SHA_DIGEST_LENGTH, messageKey, 16);
+	CopyMemory(sha + SHA_DIGEST_LENGTH + 16, authKey + 96 + x, 32);
+	SHA1(sha + SHA_DIGEST_LENGTH, 48, sha);
 	CopyMemory(result + 32 + 12 + 8 + 4, sha, 8);
 
 #endif
@@ -1156,23 +1177,20 @@ HRESULT Datacenter::SendPing()
 	ComPtr<Connection> genericConnection;
 	ReturnIfFailed(result, GetGenericConnection(true, &genericConnection));
 
-	auto fake = Make<TLFake>();
-	return genericConnection->SendEncryptedMessage(fake.Get(), nullptr);
-
-	/*ComPtr<TLPing> ping;
-	ReturnIfFailed(result, MakeAndInitialize<TLPing>(&ping, 10));
-
 	ComPtr<ConnectionManager> connectionManager;
 	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 
 	ComPtr<IUserConfiguration> userConfiguration;
 	ReturnIfFailed(result, connectionManager->get_UserConfiguration(&userConfiguration));
 
+	auto ping = Make<TLPing>(1);
+	auto helpGetConfig = Make<TLGetFutureSalts>(5);
+
 	ComPtr<TLInitConnection> initConnectionObject;
-	ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, userConfiguration.Get(), ping.Get()));
+	ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, userConfiguration.Get(), helpGetConfig.Get()));
 
 	ComPtr<TLInvokeWithLayer> invokeWithLayer;
 	ReturnIfFailed(result, MakeAndInitialize<TLInvokeWithLayer>(&invokeWithLayer, initConnectionObject.Get()));
 
-	return genericConnection->SendEncryptedMessage(invokeWithLayer.Get(), nullptr);*/
+	return genericConnection->SendEncryptedMessage(invokeWithLayer.Get(), false, nullptr);
 }

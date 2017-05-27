@@ -37,20 +37,20 @@ HRESULT TLBinaryReader::RuntimeClassInitialize(IBuffer* underlyingBuffer)
 	return S_OK;
 }
 
-HRESULT TLBinaryReader::RuntimeClassInitialize(TLBinaryReader* reader)
+HRESULT TLBinaryReader::RuntimeClassInitialize(TLBinaryReader* reader, UINT32 length)
 {
 	if (reader == nullptr)
 	{
 		return E_INVALIDARG;
 	}
 
-	if (reader->m_position >= reader->m_capacity)
+	if (reader->m_position + length > reader->m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
 
 	m_buffer = reader->m_buffer + reader->m_position;
-	m_capacity = reader->m_capacity - reader->m_position;
+	m_capacity = length;
 	m_underlyingBuffer = reader->m_underlyingBuffer;
 	return S_OK;
 }
@@ -269,19 +269,49 @@ HRESULT TLBinaryReader::ReadFloat(float* value)
 
 HRESULT TLBinaryReader::ReadObject(ITLObject** value)
 {
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	HRESULT result;
 	UINT32 constructor;
-	return ReadObjectAndConstructor(&constructor, value);
+	ReturnIfFailed(result, ReadUInt32(&constructor));
+
+	if (constructor == 0x56730BCC)
+	{
+		*value = nullptr;
+		return S_OK;
+	}
+	else
+	{
+		ComPtr<ITLObject> object;
+		ComPtr<ITLObjectConstructorDelegate> constructorDelegate;
+		ReturnIfFailed(result, TLObject::GetObjectConstructor(constructor, constructorDelegate));
+		ReturnIfFailed(result, constructorDelegate->Invoke(&object));
+		ReturnIfFailed(result, object->Read(static_cast<ITLBinaryReaderEx*>(this)));
+
+		*value = object.Detach();
+		return S_OK;
+	}
 }
 
-HRESULT TLBinaryReader::ReadObjectAndConstructor(_Out_ UINT32* constructor, _Out_ ITLObject** value)
+HRESULT TLBinaryReader::ReadObjectAndConstructor(UINT32 objectSize, UINT32* constructor, ITLObject** value)
 {
 	if (constructor == nullptr || value == nullptr)
 	{
 		return E_POINTER;
 	}
 
+	if (m_position + objectSize > m_capacity)
+	{
+		return E_BOUNDS;
+	}
+
 	HRESULT result;
 	ReturnIfFailed(result, ReadUInt32(constructor));
+
+	objectSize -= sizeof(UINT32);
 
 	if (*constructor == 0x56730BCC)
 	{
@@ -292,9 +322,20 @@ HRESULT TLBinaryReader::ReadObjectAndConstructor(_Out_ UINT32* constructor, _Out
 	{
 		ComPtr<ITLObject> object;
 		ComPtr<ITLObjectConstructorDelegate> constructorDelegate;
-		ReturnIfFailed(result, TLObject::GetObjectConstructor(*constructor, constructorDelegate));
-		ReturnIfFailed(result, constructorDelegate->Invoke(&object));
-		ReturnIfFailed(result, object->Read(static_cast<ITLBinaryReaderEx*>(this)));
+		if (SUCCEEDED(result = TLObject::GetObjectConstructor(*constructor, constructorDelegate)))
+		{
+			ReturnIfFailed(result, constructorDelegate->Invoke(&object));
+
+			ComPtr<TLBinaryReader> reader;
+			ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&reader, this, objectSize));
+			ReturnIfFailed(result, object->Read(static_cast<ITLBinaryReaderEx*>(reader.Get())));
+		}
+		else
+		{
+			ReturnIfFailed(result, MakeAndInitialize<TLUnparsedObject>(&object, *constructor, objectSize, this));
+		}
+
+		m_position += objectSize;
 
 		*value = object.Detach();
 		return S_OK;
@@ -417,5 +458,16 @@ HRESULT TLBinaryReader::ReadRawBuffer2(BYTE const** buffer, UINT32 length)
 	*buffer = m_buffer + m_position;
 
 	m_position += length;
+	return S_OK;
+}
+
+HRESULT TLBinaryReader::SeekCurrent(INT32 bytes)
+{
+	if (m_position + bytes > m_capacity)
+	{
+		return E_BOUNDS;
+	}
+
+	m_position += bytes;
 	return S_OK;
 }
