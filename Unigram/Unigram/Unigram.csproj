@@ -175,6 +175,7 @@
     <Compile Include="Controls\ZoomableGridViewPopup.xaml.cs">
       <DependentUpon>ZoomableGridViewPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\AccountTTLConverter.cs" />
     <Compile Include="Converters\BooleanNegationConverter.cs" />
     <Compile Include="Converters\BooleanToIndexConverter.cs" />
     <Compile Include="Converters\ChannelJoinedToVisibilityConverter.cs" />

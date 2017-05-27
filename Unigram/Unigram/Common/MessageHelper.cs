@@ -207,7 +207,7 @@ namespace Unigram.Common
             var newValue = e.NewValue as string;
             var oldValue = e.OldValue as string;
 
-            sender.IsTextSelectionEnabled = false;
+            //sender.IsTextSelectionEnabled = false;
             sender.Visibility = string.IsNullOrWhiteSpace(newValue) ? Visibility.Collapsed : Visibility.Visible;
 
             if (oldValue == newValue) return;
@@ -902,6 +902,21 @@ namespace Unigram.Common
             {
                 //await UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchAsync((string)data);
                 UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
+            }
+            else if (type == TLType.MessageEntityBotCommand)
+            {
+                // TODO: THIS IS BAD
+                var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                if (service != null)
+                {
+                    var dialogPage = service.Frame.Content as DialogPage;
+                    if (dialogPage != null)
+                    {
+                        dialogPage.ViewModel.Text = (string)data;
+                        dialogPage.ViewModel.SendCommand.Execute(null);
+                        dialogPage.ViewModel.Text = null;
+                    }
+                }
             }
             else
             {

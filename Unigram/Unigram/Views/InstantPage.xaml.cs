@@ -36,6 +36,7 @@ using Windows.UI.Xaml.Shapes;
 using Windows.UI.Xaml.Media.Animation;
 using Unigram.Controls.Views;
 using Telegram.Api.Services.Cache;
+using LinqToVisualTree;
 
 namespace Unigram.Views
 {
@@ -44,6 +45,7 @@ namespace Unigram.Views
         public InstantViewModel ViewModel => DataContext as InstantViewModel;
 
         private readonly string _injectedJs;
+        private ScrollViewer _scrollingHost;
 
         public InstantPage()
         {
@@ -314,10 +316,13 @@ namespace Unigram.Views
 
             if (text != null && text.TypeId != TLType.TextEmpty)
             {
-                var textBlock = new TextBlock();
+                var textBlock = new RichTextBlock();
                 var span = new Span();
-                textBlock.Inlines.Add(span);
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add(span);
+                textBlock.Blocks.Add(paragraph);
                 textBlock.TextWrapping = TextWrapping.Wrap;
+
                 //textBlock.Margin = new Thickness(12, 0, 12, 12);
                 ProcessRichText(text, span);
 
@@ -418,7 +423,6 @@ namespace Unigram.Views
             var textBlock = new RichTextBlock();
             textBlock.FontSize = 17;
             textBlock.TextWrapping = TextWrapping.Wrap;
-            textBlock.IsTextSelectionEnabled = false;
 
             for (int i = 0; i < block.Items.Count; i++)
             {
@@ -510,7 +514,7 @@ namespace Unigram.Views
                 var caption = ProcessText(page, block, photos, videos, true);
                 if (caption != null)
                 {
-                    caption.Margin = new Thickness(0, 12, 0, 0);
+                    caption.Margin = new Thickness(0, 8, 0, 0);
                     element.Children.Add(caption);
                 }
 
@@ -567,7 +571,7 @@ namespace Unigram.Views
                 var caption = ProcessText(page, block, photos, videos, true);
                 if (caption != null)
                 {
-                    caption.Margin = new Thickness(0, _padding, 0, 0);
+                    caption.Margin = new Thickness(0, 8, 0, 0);
                     element.Children.Add(caption);
                 }
 
@@ -594,7 +598,10 @@ namespace Unigram.Views
             if (block.HasHtml)
             {
                 var view = new WebView();
-                view.NavigationCompleted += OnWebViewNavigationCompleted;
+                if (!block.IsAllowScrolling)
+                {
+                    view.NavigationCompleted += OnWebViewNavigationCompleted;
+                }
                 view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
 
                 var ratio = new RatioControl();
@@ -608,7 +615,10 @@ namespace Unigram.Views
             else if (block.HasUrl)
             {
                 var view = new WebView();
-                view.NavigationCompleted += OnWebViewNavigationCompleted;
+                if (!block.IsAllowScrolling)
+                {
+                    view.NavigationCompleted += OnWebViewNavigationCompleted;
+                }
                 view.Navigate(new Uri(block.Url));
 
                 var ratio = new RatioControl();
@@ -882,7 +892,9 @@ namespace Unigram.Views
                     break;
                 case TLTextUrl urlText:
                     var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
+                    //span.Inlines.Add(new Run { Text = " " });
                     span.Inlines.Add(hyperlink);
+                    //span.Inlines.Add(new Run { Text = " " });
                     hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
                     ProcessRichText(urlText.Text, hyperlink);
                     break;
@@ -1055,10 +1067,22 @@ namespace Unigram.Views
                     var name = urlText.Url.Substring(fragmentStart + 1);
                     if (_anchors.TryGetValue(name, out Border anchor))
                     {
-                        var transform = anchor.TransformToVisual(ScrollingHost);
-                        var position = transform.TransformPoint(new Point());
+                        ScrollingHost.ScrollIntoView(anchor);
+                        //anchor.StartBringIntoView();
+                        return;
 
-                        //ScrollingHost.ChangeView(null, Math.Max(0, position.Y - 8), null, false);
+                        if (_scrollingHost == null)
+                        {
+                            _scrollingHost = ScrollingHost.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+                        }
+
+                        if (_scrollingHost != null)
+                        {
+                            var transform = anchor.TransformToVisual(ScrollingHost.ItemsPanelRoot);
+                            var position = transform.TransformPoint(new Point());
+
+                            _scrollingHost.ChangeView(null, Math.Max(0, position.Y - 8), null, false);
+                        }
                     }
                 }
             }
@@ -1102,8 +1126,12 @@ namespace Unigram.Views
 
         private async void OnWebViewNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
-            var jss = _injectedJs;
-            await sender.InvokeScriptAsync("eval", new[] { jss });
+            try
+            {
+                var jss = _injectedJs;
+                await sender.InvokeScriptAsync("eval", new[] { jss });
+            }
+            catch { }
         }
 
         #region Strikethrough

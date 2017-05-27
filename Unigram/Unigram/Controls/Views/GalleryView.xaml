@@ -62,16 +62,25 @@
                           VerticalAlignment="Center">
                         <local:ImageView
                             x:Name="Surface"
-                            Loaded="ImageView_ImageOpened"
-                            Unloaded="ImageView_Unloaded"
                             Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
-                            Constraint="{x:Bind Source}"/>
+                            Constraint="{x:Bind Source}"
+                            IsHitTestVisible="False"/>
                         <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                         <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
                     </Grid>
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </FlipView>
+
+        <local:ImageView
+            x:Name="Surface"
+            Loaded="ImageView_ImageOpened"
+            Source="{x:Bind ViewModel.FirstItem.Source, Converter={StaticResource DefaultPhotoConverter}}"
+            Constraint="{x:Bind ViewModel.FirstItem.Source}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Grid.RowSpan="3"/>
+
 
         <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">
             <Grid.Background>
@@ -120,13 +129,13 @@
                 <MediaTransportControls x:Name="Transport" Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.IsVideo, Mode=OneWay}" IsCompact="True" Grid.ColumnSpan="2"/>
 
                 <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
-                           Visibility="{x:Bind ViewModel.SelectedItem.Caption, Converter={StaticResource NullToVisibilityConverter}}"
+                           Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                            Style="{StaticResource BodyTextBlockStyle}"
                            Margin="12,8"
                            Grid.ColumnSpan="2"
                            Grid.Row="1"/>
 
-                <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0" VerticalAlignment="Center" Grid.Row="2">
+                <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0" VerticalAlignment="Center" Grid.Row="2">
                     <TextBlock Text="{x:Bind ViewModel.SelectedItem.From.DisplayName, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>
                     <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>

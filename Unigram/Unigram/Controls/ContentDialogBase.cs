@@ -215,7 +215,7 @@ namespace Unigram.Controls
 
         protected void Prepare()
         {
-            Margin = new Thickness(Window.Current.Bounds.Width, Window.Current.Bounds.Height, 0, 0);
+            //Margin = new Thickness(Window.Current.Bounds.Width, Window.Current.Bounds.Height, 0, 0);
             Closing?.Invoke(this, EventArgs.Empty);
         }
 

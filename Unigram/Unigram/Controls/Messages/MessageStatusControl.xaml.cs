@@ -71,9 +71,9 @@ namespace Unigram.Controls.Messages
             return hasEditDate && !hasViaBotId && replyMarkup?.TypeId != TLType.ReplyInlineMarkup ? "edited\u00A0\u2009" : string.Empty;
         }
 
-        private string ConvertState(bool isOut, TLMessageState value)
+        private string ConvertState(bool isOut, bool isPost, TLMessageState value)
         {
-            if (!isOut)
+            if (!isOut || isPost)
             {
                 return string.Empty;
             }

@@ -429,7 +429,7 @@ namespace Unigram.Controls
 
         private void UpdateInlineBot(bool fast)
         {
-            var text = Text;
+            var text = Text.Substring(0, Math.Max(Document.Selection.StartPosition, Document.Selection.EndPosition));
             var command = string.Empty;
             var inline = SearchInlineBotResults(text, out command);
             if (inline && fast)
@@ -456,8 +456,88 @@ namespace Unigram.Controls
                 else
                 {
                     ViewModel.StickerPack = null;
+
+                    if (text.Length > 0 && text[0] == '/')
+                    {
+                        var commands = SearchByCommands(text, out string searchText);
+                        if (commands)
+                        {
+                            var result = GetCommands(searchText.ToLower());
+                            if (ViewModel.BotCommands != null && ViewModel.BotCommands.SequenceEqual(result))
+                            {
+
+                            }
+                            else
+                            {
+                                ViewModel.BotCommands = result;
+                            }
+                        }
+                        else
+                        {
+                            ViewModel.BotCommands = null;
+                        }
+                    }
+                    else
+                    {
+                        ViewModel.BotCommands = null;
+                    }
                 }
             }
+        }
+
+        private List<Tuple<TLUser, TLBotCommand>> GetCommands(string command)
+        {
+            var all = ViewModel.UnfilteredBotCommands;
+            if (all != null)
+            {
+                return all.Where(x => x.Item2.Command.ToLower().StartsWith(command)).ToList();
+            }
+
+            return null;
+        }
+
+        private static bool SearchByCommands(string text, out string searchText)
+        {
+            searchText = string.Empty;
+
+            var c = '/';
+            var flag = true;
+            var index = -1;
+            var i = text.Length - 1;
+
+            while (i >= 0)
+            {
+                if (text[i] == c)
+                {
+                    if (i == 0 || text[i - 1] == ' ')
+                    {
+                        index = i;
+                        break;
+                    }
+                    flag = false;
+                    break;
+                }
+                else
+                {
+                    if (!MessageHelper.IsValidCommandSymbol(text[i]))
+                    {
+                        flag = false;
+                        break;
+                    }
+                    i--;
+                }
+            }
+            if (flag)
+            {
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                searchText = text.Substring(index).TrimStart(c);
+            }
+
+            return flag;
         }
 
         private void UpdateText()

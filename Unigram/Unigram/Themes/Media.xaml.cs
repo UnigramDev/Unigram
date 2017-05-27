@@ -32,6 +32,7 @@ using System.Globalization;
 using System.Net;
 using Unigram.Common;
 using Telegram.Api.Services;
+using Unigram.Views.Users;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -194,7 +195,7 @@ namespace Unigram.Themes
             {
                 if (message.Media is TLMessageMediaContact contactMedia && contactMedia.User.HasAccessHash)
                 {
-                    bubble.Context.NavigationService.Navigate(typeof(DialogPage), contactMedia.User.ToPeer());
+                    bubble.Context.NavigationService.Navigate(typeof(UserDetailsPage), contactMedia.User.ToPeer());
                 }
             }
         }

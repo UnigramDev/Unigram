@@ -820,7 +820,7 @@
 
                 <controls:GlyphButton
                     Command="{x:Bind ViewModel.CallCommand}"
-                    Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable,Mode=OneWay}"
+                    Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable, Mode=OneWay}"
                     Glyph="&#xE13A;"
                     Grid.Column="1"/>
 
@@ -1141,6 +1141,32 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <ListView ItemsSource="{x:Bind ViewModel.BotCommands, Mode=OneWay}"
+                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                      AllowFocusOnInteraction="False"
+                      IsItemClickEnabled="True"
+                      ItemClick="BotCommands_ItemClick"
+                      VerticalAlignment="Bottom"
+                      MaxHeight="180">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <controls:ProfilePictureView Source="{Binding Item1.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="1">
+                                <Run Text="/" FontWeight="SemiBold" /><Run Text="{Binding Item2.Command}" FontWeight="SemiBold" />
+                                <Run Text="{Binding Item2.Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                            </TextBlock>
+                        </Grid>
+                    </DataTemplate>
+                    <!--<DataTemplate x:DataType="tl:TLDocument">
+                        <Image x:Phase="3" Margin="2,8" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="60" Height="60"/>
+                    </DataTemplate>-->
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
 
         <ScrollViewer x:Name="ReplyMarkupPanel"
@@ -1150,7 +1176,7 @@
                       HorizontalScrollMode="Disabled"
                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                       Grid.Row="4">
-            <controls:ReplyMarkupPanel IsInline="False" ReplyMarkup="{Binding ReplyMarkup}" ButtonClick="ReplyMarkup_ButtonClick"/>
+            <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" AllowFocusOnInteraction="True" Margin="4,-2,4,0"/>
         </ScrollViewer>
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">

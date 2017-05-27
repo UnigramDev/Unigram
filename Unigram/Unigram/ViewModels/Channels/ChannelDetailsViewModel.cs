@@ -63,10 +63,19 @@ namespace Unigram.ViewModels.Channels
             {
                 Item = channel;
 
-                var response = await ProtoService.GetFullChannelAsync(channel.ToInputChannel());
-                if (response.IsSucceeded)
+                var full = CacheService.GetFullChat(channel.Id) as TLChannelFull;
+                if (full == null)
                 {
-                    Full = response.Result.FullChat as TLChannelFull;
+                    var response = await ProtoService.GetFullChannelAsync(channel.ToInputChannel());
+                    if (response.IsSucceeded)
+                    {
+                        full = response.Result.FullChat as TLChannelFull;
+                    }
+                }
+
+                if (full != null)
+                {
+                    Full = full;
 
                     if (_item.IsMegaGroup)
                     {

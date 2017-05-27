@@ -10,6 +10,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Strings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -34,7 +35,7 @@ namespace Unigram.ViewModels.Settings
         {
             ProtoService.GetAccountTTLAsync(result =>
             {
-
+                Execute.BeginOnUIThread(() => AccountTTL = result.Days);
             });
 
             return base.OnNavigatedToAsync(parameter, mode, state);
@@ -45,6 +46,19 @@ namespace Unigram.ViewModels.Settings
         public SettingsPrivacyStatusTimestampViewModel StatusTimestampRules => _statusTimestampRules;
         public SettingsPrivacyPhoneCallViewModel PhoneCallRules => _phoneCallRules;
         public SettingsPrivacyChatInviteViewModel ChatInviteRules => _chatInviteRules;
+
+        private int _accountTTL;
+        public int AccountTTL
+        {
+            get
+            {
+                return _accountTTL;
+            }
+            set
+            {
+                Set(ref _accountTTL, value);
+            }
+        }
 
         #endregion
 
@@ -84,6 +98,77 @@ namespace Unigram.ViewModels.Settings
                 if (response.IsSucceeded)
                 {
 
+                }
+                else
+                {
+
+                }
+            }
+        }
+
+        public RelayCommand AccountTTLCommand => new RelayCommand(AccountTTLExecute);
+        private async void AccountTTLExecute()
+        {
+            var dialog = new ContentDialog();
+            var stack = new StackPanel();
+            stack.Margin = new Thickness(0, 16, 0, 0);
+            stack.Children.Add(new RadioButton { Tag = 30,  Content = Language.Declension(1, AppResources.MonthNominativeSingular, AppResources.MonthNominativePlural, AppResources.MonthGenitiveSingular, AppResources.MonthGenitivePlural, null, null) });
+            stack.Children.Add(new RadioButton { Tag = 90,  Content = Language.Declension(3, AppResources.MonthNominativeSingular, AppResources.MonthNominativePlural, AppResources.MonthGenitiveSingular, AppResources.MonthGenitivePlural, null, null) });
+            stack.Children.Add(new RadioButton { Tag = 180, Content = Language.Declension(6, AppResources.MonthNominativeSingular, AppResources.MonthNominativePlural, AppResources.MonthGenitiveSingular, AppResources.MonthGenitivePlural, null, null) });
+            stack.Children.Add(new RadioButton { Tag = 365, Content = Language.Declension(1, AppResources.YearNominativeSingular,  AppResources.YearNominativePlural,  AppResources.YearGenitiveSingular,  AppResources.YearGenitivePlural,  null, null) });
+
+            RadioButton GetSelectedPeriod(UIElementCollection periods, RadioButton defaultPeriod)
+            {
+                if (_accountTTL == 0)
+                {
+                    return stack.Children[2] as RadioButton;
+                }
+
+                RadioButton period = null;
+
+                var max = 2147483647;
+                foreach (RadioButton current in stack.Children)
+                {
+                    var days = (int)current.Tag;
+                    int abs = Math.Abs(_accountTTL - days);
+                    if (abs < max)
+                    {
+                        max = abs;
+                        period = current;
+                    }
+                }
+
+                return period ?? stack.Children[2] as RadioButton;
+            };
+
+            var selected = GetSelectedPeriod(stack.Children, stack.Children[2] as RadioButton);
+            if (selected != null)
+            {
+                selected.IsChecked = true;
+            }
+
+            dialog.Title = "Account self-destructs";
+            dialog.Content = stack;
+            dialog.PrimaryButtonText = "OK";
+            dialog.SecondaryButtonText = "Cancel";
+
+            var confirm = await dialog.ShowAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var days = 180;
+                foreach (RadioButton current in stack.Children)
+                {
+                    if (current.IsChecked == true)
+                    {
+                        days = (int)current.Tag;
+                        break;
+                    }
+                }
+
+                var response = await ProtoService.SetAccountTTLAsync(new TLAccountDaysTTL { Days = days });
+                if (response.IsSucceeded)
+                {
+                    AccountTTL = days;
                 }
                 else
                 {

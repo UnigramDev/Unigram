@@ -638,8 +638,12 @@ namespace Unigram.ViewModels
                 if (full.IsSucceeded)
                 {
                     Full = full.Result;
-
                     IsPhoneCallsAvailable = full.Result.IsPhoneCallsAvailable && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
+
+                    if (user.IsBot && full.Result.HasBotInfo)
+                    {
+                        UnfilteredBotCommands = full.Result.BotInfo.Commands.Select(x => Tuple.Create(user, x)).ToList();
+                    }
                 }
             }
             else if (participant is TLChannel channel)
@@ -665,9 +669,23 @@ namespace Unigram.ViewModels
                 var channelDetails = await ProtoService.GetFullChannelAsync(input);
                 if (channelDetails.IsSucceeded)
                 {
-                    Full = channelDetails.Result.FullChat;
+                    var full = channelDetails.Result.FullChat as TLChannelFull;
+                    Full = full;
 
-                    var channelFull = channelDetails.Result.FullChat as TLChannelFull;
+                    var commands = new List<Tuple<TLUser, TLBotCommand>>();
+
+                    foreach (var info in full.BotInfo)
+                    {
+                        var bot = CacheService.GetUser(info.UserId) as TLUser;
+                        if (bot != null)
+                        {
+                            commands.AddRange(info.Commands.Select(x => Tuple.Create(bot, x)));
+                        }
+                    }
+
+                    UnfilteredBotCommands = commands;
+
+                    var channelFull = full as TLChannelFull;
                     if (channelFull.HasPinnedMsgId)
                     {
                         var update = true;
@@ -742,7 +760,21 @@ namespace Unigram.ViewModels
                 var chatDetails = await ProtoService.GetFullChatAsync(chat.Id);
                 if (chatDetails.IsSucceeded)
                 {
-                    Full = chatDetails.Result.FullChat;
+                    var full = chatDetails.Result.FullChat as TLChatFull;
+                    Full = full;
+
+                    var commands = new List<Tuple<TLUser, TLBotCommand>>();
+
+                    foreach (var info in full.BotInfo)
+                    {
+                        var bot = CacheService.GetUser(info.UserId) as TLUser;
+                        if (bot != null)
+                        {
+                            commands.AddRange(info.Commands.Select(x => Tuple.Create(bot, x)));
+                        }
+                    }
+
+                    UnfilteredBotCommands = commands;
                 }
                 //    participantCount = chatDetails.Result.Users.Count;
                 //    if (participantCount < 200)
@@ -876,6 +908,21 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _stickerPack, value);
+            }
+        }
+
+        public List<Tuple<TLUser, TLBotCommand>> UnfilteredBotCommands { get; private set; }
+
+        private List<Tuple<TLUser, TLBotCommand>> _botCommands;
+        public List<Tuple<TLUser, TLBotCommand>> BotCommands
+        {
+            get
+            {
+                return _botCommands;
+            }
+            set
+            {
+                Set(ref _botCommands, value);
             }
         }
 
@@ -1670,8 +1717,6 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            await VoIPConnection.Current.SendRequestAsync("phone.discardCall", TLTuple.Create(0d));
-
             try
             {
                 var coordinator = VoipCallCoordinator.GetDefault();
@@ -1684,8 +1729,6 @@ namespace Unigram.ViewModels
             catch
             {
                 await TLMessageDialog.ShowAsync("Something went wrong. Please, try to close and relaunch the app.", "Unigram", "OK");
-
-                await VoIPConnection.Current.SendRequestAsync("voip.startCall", user);
             }
         }
 

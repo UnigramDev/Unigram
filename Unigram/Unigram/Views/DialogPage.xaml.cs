@@ -1015,6 +1015,24 @@ namespace Unigram.Views
             var visual = ElementCompositionPreview.GetElementVisual(element);
             visual.StopAnimation("Offset.Y");
         }
+
+        private void BotCommands_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var item = e.ClickedItem as Tuple<TLUser, TLBotCommand>;
+            if (item != null)
+            {
+                var command = $"/{item.Item2.Command}";
+                if (ViewModel.With is TLChannel || ViewModel.With is TLChat && item.Item1.HasUsername)
+                {
+                    command += $"@{item.Item1.Username}";
+                }
+
+                ViewModel.Text = command;
+                ViewModel.SendCommand.Execute(null);
+                ViewModel.BotCommands = null;
+                txtMessage.Text = null;
+            }
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading

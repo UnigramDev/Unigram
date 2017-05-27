@@ -125,6 +125,22 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:ContentPageHeader">
+        <Setter Property="Background" Value="{ThemeResource TelegramBackgroundTitlebarBrush}"/>
+        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ContentPageHeader">
+                    <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
+                        <ContentPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                        <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
+                        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:PageHeader">
         <Setter Property="Background" Value="{ThemeResource TelegramBackgroundTitlebarBrush}"/>
         <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
