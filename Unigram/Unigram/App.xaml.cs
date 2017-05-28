@@ -112,6 +112,52 @@ namespace Unigram
 #endif
         }
 
+        private void Window_Activated(object sender, WindowActivatedEventArgs e)
+        {
+            if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+            {
+                Locator.LoadStateAndUpdate();
+
+                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+                protoService.UpdateStatusAsync(false, null);
+            }
+            else
+            {
+                var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
+                cacheService.TryCommit();
+
+                var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
+                updatesService.SaveState();
+                updatesService.CancelUpdating();
+
+                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+                protoService.UpdateStatusAsync(true, null);
+            }
+        }
+
+        private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
+        {
+            if (e.Visible)
+            {
+                Locator.LoadStateAndUpdate();
+
+                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+                protoService.UpdateStatusAsync(false, null);
+            }
+            else
+            {
+                var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
+                cacheService.TryCommit();
+
+                var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
+                updatesService.SaveState();
+                updatesService.CancelUpdating();
+
+                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+                protoService.UpdateStatusAsync(true, null);
+            }
+        }
+
         /////// <summary>
         /////// Initializes the app service on the host process 
         /////// </summary>
@@ -257,14 +303,20 @@ namespace Unigram
                 NavigationService.Navigate(typeof(SignInWelcomePage));
             }
 
-            // Remove borders on Xbox
-            var device = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
-            bool isXbox = (device.ContainsKey("DeviceFamily") && device["DeviceFamily"] == "Xbox");
+            // NO! Many tv models have borders!
+            //// Remove borders on Xbox
+            //var device = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
+            //bool isXbox = (device.ContainsKey("DeviceFamily") && device["DeviceFamily"] == "Xbox");
 
-            if (isXbox == true)
-            {
-                Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
-            }
+            //if (isXbox == true)
+            //{
+            //    Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+            //}
+
+            Window.Current.Activated -= Window_Activated;
+            Window.Current.Activated += Window_Activated;
+            Window.Current.VisibilityChanged -= Window_VisibilityChanged;
+            Window.Current.VisibilityChanged += Window_VisibilityChanged;
 
             ShowStatusBar();
             ColourTitleBar();
@@ -409,10 +461,10 @@ namespace Unigram
             }
         }
 
-        private void Window_Activated(object sender, WindowActivatedEventArgs e)
-        {
-            ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrush"]).Color = e.WindowActivationState != CoreWindowActivationState.Deactivated ? ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushBase"]).Color : ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushDeactivated"]).Color;
-        }
+        //private void Window_Activated(object sender, WindowActivatedEventArgs e)
+        //{
+        //    ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrush"]).Color = e.WindowActivationState != CoreWindowActivationState.Deactivated ? ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushBase"]).Color : ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushDeactivated"]).Color;
+        //}
     }
 
     public class AppInMemoryState
