@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Telegram.Api.Helpers;
 
 namespace Telegram.Api
 {
     public static partial class Constants
     {
-        public static readonly string FirstServerIpAddress;
+        public static readonly string FirstServerIpAddress = SettingsHelper.IsTestMode ? "149.154.167.40" : "149.154.167.50";
 
         public static readonly int ApiId;
         public static readonly string ApiHash;

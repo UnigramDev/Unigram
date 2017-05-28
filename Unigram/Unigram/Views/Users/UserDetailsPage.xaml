@@ -31,14 +31,12 @@
                     Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable, Mode=OneWay}"
                     Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                     Grid.Column="1"/>
-
                 <controls:GlyphButton
                     Glyph="&#xE104;"
                     Command="{x:Bind ViewModel.CallCommand}"
                     Visibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"
                     Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                     Grid.Column="2"/>
-
             </Grid>
         </controls:ContentPageHeader>
 
