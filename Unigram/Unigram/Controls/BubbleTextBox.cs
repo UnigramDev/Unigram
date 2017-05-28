@@ -359,20 +359,37 @@ namespace Unigram.Controls
                 {
                     ViewModel.ResolveInlineBot(text);
                 }
-
-                base.OnKeyDown(e);
             }
-            else if (e.Key == VirtualKey.Up && IsEmpty)
+            else if ((e.Key == VirtualKey.Up || e.Key == VirtualKey.Down || e.Key == VirtualKey.Tab))
             {
-                ViewModel.MessageEditLastCommand.Execute();
-                e.Handled = true;
+                var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+
+                if (e.Key == VirtualKey.Up && !alt && !ctrl && !shift && IsEmpty)
+                {
+                    ViewModel.MessageEditLastCommand.Execute();
+                    e.Handled = true;
+                }
+
+                if ((e.Key == VirtualKey.Up && alt) || (e.Key == VirtualKey.Tab && ctrl && shift))
+                {
+                    ViewModel.Aggregator.Publish("move_up");
+                    e.Handled = true;
+                }
+                else if ((e.Key == VirtualKey.Down && alt) || (e.Key == VirtualKey.Tab && ctrl && !shift))
+                {
+                    ViewModel.Aggregator.Publish("move_down");
+                    e.Handled = true;
+                }
             }
             else if (e.Key == VirtualKey.Escape && ViewModel.Reply is TLMessagesContainter container && container.EditMessage != null)
             {
                 ViewModel.ClearReplyCommand.Execute();
                 e.Handled = true;
             }
-            else
+
+            if (!e.Handled)
             {
                 base.OnKeyDown(e);
             }
