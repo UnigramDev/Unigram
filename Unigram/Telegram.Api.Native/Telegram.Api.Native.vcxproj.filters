@@ -31,9 +31,6 @@
     <ClCompile Include="TLObject.cpp">
       <Filter>TLProtocolScheme</Filter>
     </ClCompile>
-    <ClCompile Include="TLProtocolScheme.cpp">
-      <Filter>TLProtocolScheme</Filter>
-    </ClCompile>
     <ClCompile Include="DefaultUserConfiguration.cpp" />
     <ClCompile Include="TLObjectSerializer.cpp">
       <Filter>TLProtocolScheme</Filter>
@@ -41,6 +38,12 @@
     <ClCompile Include="ConnectionCryptography.cpp" />
     <ClCompile Include="DatacenterCryptography.cpp" />
     <ClCompile Include="TLUnprocessedMessage.cpp" />
+    <ClCompile Include="TLTypes.cpp">
+      <Filter>TLProtocolScheme</Filter>
+    </ClCompile>
+    <ClCompile Include="TLMethods.cpp">
+      <Filter>TLProtocolScheme</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -63,9 +66,6 @@
     <ClInclude Include="TLObject.h">
       <Filter>TLProtocolScheme</Filter>
     </ClInclude>
-    <ClInclude Include="TLProtocolScheme.h">
-      <Filter>TLProtocolScheme</Filter>
-    </ClInclude>
     <ClInclude Include="DefaultUserConfiguration.h" />
     <ClInclude Include="TLObjectSerializer.h">
       <Filter>TLProtocolScheme</Filter>
@@ -83,6 +83,12 @@
     </ClInclude>
     <ClInclude Include="TLUnprocessedMessage.h" />
     <ClInclude Include="GZip.h" />
+    <ClInclude Include="TLTypes.h">
+      <Filter>TLProtocolScheme</Filter>
+    </ClInclude>
+    <ClInclude Include="TLMethods.h">
+      <Filter>TLProtocolScheme</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -28,15 +28,25 @@ namespace Telegram
 			{
 
 				class TLDHGenOk;
+				class TLDHGenFail;
+				class TLDHGenRetry;
+				class TLServerDHParamsFail;
 				class TLServerDHParamsOk;
-				class TLReqDHParams;
 				class TLResPQ;
+				class TLFutureSalts;
 
 			}
 
 
 			class Datacenter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IDatacenter, CloakedIid<IClosable>>, public MultiThreadObject
 			{
+				friend class TL::TLDHGenOk;
+				friend class TL::TLDHGenFail;
+				friend class TL::TLDHGenRetry;
+				friend class TL::TLServerDHParamsFail;
+				friend class TL::TLServerDHParamsOk;
+				friend class TL::TLResPQ;
+				friend class TL::TLFutureSalts;
 				friend class Connection;
 				friend class ConnectionManager;
 
@@ -75,7 +85,7 @@ namespace Telegram
 				HRESULT SuspendConnections();
 				HRESULT BeginHandshake(boolean reconnect);
 
-				inline UINT32 GetId() const
+				inline INT32 GetId() const
 				{
 					return m_id;
 				}
@@ -134,13 +144,37 @@ namespace Telegram
 				boolean ContainsServerSalt(INT64 salt, size_t count);
 				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
-				HRESULT OnHandshakeResponseReceived(_In_ Connection* connection, UINT32 constructor, _In_ ITLObject* object);
-				HRESULT OnHandshakePQ(_In_ Connection* connection, _In_ HandshakeContext* handshakeContext, _In_ TL::TLResPQ* response);
-				HRESULT OnHandshakeServerDH(_In_ Connection* connection, _In_ HandshakeContext* handshakeContext, _In_ TL::TLServerDHParamsOk* response);
-				HRESULT OnHandshakeClientDH(_In_ Connection* connection, _In_ HandshakeContext* handshakeContext, _In_ TL::TLDHGenOk* response);
+
+				HRESULT HandleHandshakePQResponse(_In_ Connection* connection, _In_ TL::TLResPQ* response);
+				HRESULT HandleHandshakeServerDHResponse(_In_ Connection* connection, _In_ TL::TLServerDHParamsOk* response);
+				HRESULT HandleHandshakeClientDHResponse(_In_ ConnectionManager* connectionManager, _In_ Connection* connection, _In_ TL::TLDHGenOk* response);
+				HRESULT HandleFutureSaltsResponse(_In_ TL::TLFutureSalts* response);
+
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
 				HRESULT EncryptMessage(_Inout_updates_(length) BYTE* buffer, UINT32 length, UINT32 padding, _Out_opt_ INT32* quickAckId);
 				HRESULT DecryptMessage(INT64 authKeyId, _Inout_updates_(length) BYTE* buffer, UINT32 length);
+
+				inline HRESULT HandleHandshakeError(HRESULT error)
+				{
+					if (error == E_UNEXPECTED)
+					{
+						return S_OK;
+					}
+
+					return BeginHandshake(false);
+				}
+
+				inline HRESULT GetHandshakeContext(_Out_ HandshakeContext** handshakeContext, AuthenticationState currentState)
+				{
+					if (m_authenticationContext == nullptr || m_authenticationContext->GetState() != currentState)
+					{
+						return E_UNEXPECTED;
+					}
+
+					*handshakeContext = static_cast<HandshakeContext*>(m_authenticationContext.get());
+					return S_OK;
+				}
+
 
 				HRESULT SendPing();
 

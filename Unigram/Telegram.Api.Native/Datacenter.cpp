@@ -8,7 +8,8 @@
 #include "TLBinaryWriter.h"
 #include "Connection.h"
 #include "ConnectionManager.h"
-#include "TLProtocolScheme.h"
+#include "TLTypes.h"
+#include "TLMethods.h"
 #include "Request.h"
 #include "Wrappers\OpenSSL.h"
 #include "Helpers\COMHelper.h"
@@ -529,8 +530,8 @@ HRESULT Datacenter::BeginHandshake(boolean reconnect)
 	handshakeContext->State = AuthenticationState::HandshakeStarted;
 	RAND_bytes(handshakeContext->Nonce, sizeof(TLInt128));
 
-	ComPtr<TLReqPQ> pqRequest;
-	ReturnIfFailed(result, MakeAndInitialize<TLReqPQ>(&pqRequest, handshakeContext->Nonce));
+	ComPtr<Methods::TLReqPQ> pqRequest;
+	ReturnIfFailed(result, MakeAndInitialize<Methods::TLReqPQ>(&pqRequest, handshakeContext->Nonce));
 
 	m_authenticationContext = std::move(handshakeContext);
 
@@ -633,46 +634,13 @@ HRESULT Datacenter::OnHandshakeConnectionConnected(Connection* connection)
 	return S_OK;
 }
 
-HRESULT Datacenter::OnHandshakeResponseReceived(Connection* connection, UINT32 constructor, ITLObject* object)
+HRESULT Datacenter::HandleHandshakePQResponse(Connection* connection, TLResPQ* response)
 {
 	auto lock = LockCriticalSection();
 
-	if (m_authenticationContext == nullptr || m_authenticationContext->GetState() > AuthenticationState::HandshakeClientDH)
-	{
-		return E_UNEXPECTED;
-	}
-
 	HRESULT result;
-	switch (constructor)
-	{
-	case TLResPQ::Constructor:
-		result = OnHandshakePQ(connection, static_cast<HandshakeContext*>(m_authenticationContext.get()), static_cast<TLResPQ*>(object));
-		break;
-	case TLServerDHParamsOk::Constructor:
-		result = OnHandshakeServerDH(connection, static_cast<HandshakeContext*>(m_authenticationContext.get()), static_cast<TLServerDHParamsOk*>(object));
-		break;
-	case TLDHGenOk::Constructor:
-		result = OnHandshakeClientDH(connection, static_cast<HandshakeContext*>(m_authenticationContext.get()), static_cast<TLDHGenOk*>(object));
-		break;
-	default:
-		result = E_FAIL;
-		break;
-	}
-
-	if (FAILED(result))
-	{
-		return BeginHandshake(false);
-	}
-
-	return S_OK;
-}
-
-HRESULT Datacenter::OnHandshakePQ(Connection* connection, HandshakeContext* handshakeContext, TLResPQ* response)
-{
-	if (handshakeContext->State != AuthenticationState::HandshakeStarted)
-	{
-		return E_UNEXPECTED;
-	}
+	HandshakeContext* handshakeContext;
+	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, AuthenticationState::HandshakeStarted));
 
 	handshakeContext->State = AuthenticationState::HandshakePQ;
 
@@ -701,9 +669,8 @@ HRESULT Datacenter::OnHandshakePQ(Connection* connection, HandshakeContext* hand
 	CopyMemory(handshakeContext->ServerNonce, response->GetServerNonce(), sizeof(TLInt128));
 	RAND_bytes(handshakeContext->NewNonce, sizeof(TLInt128));
 
-	HRESULT result;
-	ComPtr<TLReqDHParams> dhParams;
-	ReturnIfFailed(result, MakeAndInitialize<TLReqDHParams>(&dhParams, handshakeContext->Nonce, handshakeContext->ServerNonce,
+	ComPtr<Methods::TLReqDHParams> dhParams;
+	ReturnIfFailed(result, MakeAndInitialize<Methods::TLReqDHParams>(&dhParams, handshakeContext->Nonce, handshakeContext->ServerNonce,
 		handshakeContext->NewNonce, p32, q32, serverPublicKey->Fingerprint, 256));
 
 	ComPtr<TLBinaryWriter> innerDataWriter;
@@ -715,7 +682,7 @@ HRESULT Datacenter::OnHandshakePQ(Connection* connection, HandshakeContext* hand
 	ReturnIfFailed(result, innerDataWriter->WriteBuffer(dhParams->GetQ(), sizeof(TLInt32)));
 	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(TLInt128), handshakeContext->Nonce));
 	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(TLInt128), handshakeContext->ServerNonce));
-	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(TLInitConnection), handshakeContext->NewNonce));
+	ReturnIfFailed(result, innerDataWriter->WriteRawBuffer(sizeof(TLInt256), handshakeContext->NewNonce));
 
 	constexpr UINT32 innerDataLength = sizeof(UINT32) + 28 + 2 * sizeof(TLInt128) + sizeof(TLInt256);
 	SHA1(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH, innerDataLength, innerDataWriter->GetBuffer());
@@ -758,12 +725,13 @@ HRESULT Datacenter::OnHandshakePQ(Connection* connection, HandshakeContext* hand
 	return connection->SendUnencryptedMessage(dhParams.Get(), false);
 }
 
-HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, HandshakeContext* handshakeContext, TLServerDHParamsOk* response)
+HRESULT Datacenter::HandleHandshakeServerDHResponse(Connection* connection, TLServerDHParamsOk* response)
 {
-	if (handshakeContext->State != AuthenticationState::HandshakePQ)
-	{
-		return E_UNEXPECTED;
-	}
+	auto lock = LockCriticalSection();
+
+	HRESULT result;
+	HandshakeContext* handshakeContext;
+	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, AuthenticationState::HandshakePQ));
 
 	handshakeContext->State = AuthenticationState::HandshakeServerDH;
 
@@ -783,7 +751,6 @@ HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, HandshakeContext
 
 	CopyMemory(aesKeyAndIvBuffer + 3 * SHA_DIGEST_LENGTH, handshakeContext->NewNonce, 4);
 
-	HRESULT result;
 	ComPtr<TLBinaryReader> innerDataReader;
 	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&innerDataReader, response->GetEncryptedData()));
 
@@ -856,7 +823,7 @@ HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, HandshakeContext
 	ReturnIfFailed(result, innerDataReader->ReadBuffer2(&gaBytes, &gaLength));
 
 	Wrappers::BigNum ga(BN_bin2bn(gaBytes, gaLength, nullptr));
-	if (!p.IsValid()) //&& DatacenterCryptography::IsGoodGaAndGb(ga.Get(), p.Get()))
+	if (!(p.IsValid() && DatacenterCryptography::IsGoodGaAndGb(ga.Get(), p.Get())))
 	{
 		return E_INVALIDARG;
 	}
@@ -894,8 +861,8 @@ HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, HandshakeContext
 		padding = 16 - padding;
 	}
 
-	ComPtr<TLSetClientDHParams> setClientDHParams;
-	ReturnIfFailed(result, MakeAndInitialize<TLSetClientDHParams>(&setClientDHParams, handshakeContext->Nonce,
+	ComPtr<Methods::TLSetClientDHParams> setClientDHParams;
+	ReturnIfFailed(result, MakeAndInitialize<Methods::TLSetClientDHParams>(&setClientDHParams, handshakeContext->Nonce,
 		handshakeContext->ServerNonce, encryptedBufferLength + padding));
 
 	ComPtr<TLBinaryWriter> innerDataWriter;
@@ -943,12 +910,13 @@ HRESULT Datacenter::OnHandshakeServerDH(Connection* connection, HandshakeContext
 	return connection->SendUnencryptedMessage(setClientDHParams.Get(), false);
 }
 
-HRESULT Datacenter::OnHandshakeClientDH(Connection* connection, HandshakeContext* handshakeContext, TLDHGenOk* response)
+HRESULT Datacenter::HandleHandshakeClientDHResponse(ConnectionManager* connectionManager, Connection* connection, TLDHGenOk* response)
 {
-	if (handshakeContext->State != AuthenticationState::HandshakeServerDH)
-	{
-		return E_UNEXPECTED;
-	}
+	auto lock = LockCriticalSection();
+
+	HRESULT result;
+	HandshakeContext* handshakeContext;
+	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, AuthenticationState::HandshakeServerDH));
 
 	handshakeContext->State = AuthenticationState::HandshakeClientDH;
 
@@ -985,16 +953,19 @@ HRESULT Datacenter::OnHandshakeClientDH(Connection* connection, HandshakeContext
 
 	authKeyContext->AuthKeyId = authKeyId;
 
-	HRESULT result;
 	ReturnIfFailed(result, AddServerSalt(handshakeContext->Salt));
-
-	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 	ReturnIfFailed(result, connectionManager->OnDatacenterHandshakeComplete(this, handshakeContext->TimeDifference));
 
 	m_authenticationContext = std::move(authKeyContext);
 
 	return SendPing();
+}
+
+HRESULT Datacenter::HandleFutureSaltsResponse(TL::TLFutureSalts* response)
+{
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLFutureSalts response handling");
+
+	return S_OK;
 }
 
 HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, UINT32 padding, INT32* quickAckId)
@@ -1165,7 +1136,7 @@ void Datacenter::GenerateMessageKey(BYTE const* authKey, BYTE* messageKey, BYTE*
 HRESULT Datacenter::SendAckRequest(Connection* connection, INT64 messageId)
 {
 	auto msgsAck = Make<TLMsgsAck>();
-	msgsAck->GetMsgIds().push_back(messageId);
+	msgsAck->GetMessagesIds().push_back(messageId);
 
 	return connection->SendUnencryptedMessage(msgsAck.Get(), false);
 }
@@ -1183,14 +1154,14 @@ HRESULT Datacenter::SendPing()
 	ComPtr<IUserConfiguration> userConfiguration;
 	ReturnIfFailed(result, connectionManager->get_UserConfiguration(&userConfiguration));
 
-	auto ping = Make<TLPing>(1);
-	auto helpGetConfig = Make<TLGetFutureSalts>(5);
+	auto ping = Make<Methods::TLPing>(1);
+	auto helpGetConfig = Make<Methods::TLGetFutureSalts>(5);
 
-	ComPtr<TLInitConnection> initConnectionObject;
-	ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, userConfiguration.Get(), helpGetConfig.Get()));
+	ComPtr<Methods::TLInitConnection> initConnectionObject;
+	ReturnIfFailed(result, MakeAndInitialize<Methods::TLInitConnection>(&initConnectionObject, userConfiguration.Get(), helpGetConfig.Get()));
 
-	ComPtr<TLInvokeWithLayer> invokeWithLayer;
-	ReturnIfFailed(result, MakeAndInitialize<TLInvokeWithLayer>(&invokeWithLayer, initConnectionObject.Get()));
+	ComPtr<Methods::TLInvokeWithLayer> invokeWithLayer;
+	ReturnIfFailed(result, MakeAndInitialize<Methods::TLInvokeWithLayer>(&invokeWithLayer, initConnectionObject.Get()));
 
 	return genericConnection->SendEncryptedMessage(invokeWithLayer.Get(), false, nullptr);
 }

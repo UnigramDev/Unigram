@@ -9,6 +9,28 @@ using ABI::Telegram::Api::Native::ISendRequestCompletedCallback;
 using ABI::Telegram::Api::Native::IRequestQuickAckReceivedCallback;
 using ABI::Telegram::Api::Native::TL::ITLObject;
 
+namespace Telegram
+{
+	namespace Api
+	{
+		namespace Native
+		{
+
+			class Connection;
+
+			struct MessageContext
+			{
+				INT64 Id;
+				UINT32 SequenceNumber;
+			};
+
+		}
+	}
+}
+
+
+using Telegram::Api::Native::MessageContext;
+
 namespace ABI
 {
 	namespace Telegram
@@ -24,9 +46,8 @@ namespace ABI
 				{
 				public:
 					virtual HRESULT STDMETHODCALLTYPE get_Object(_Out_ ITLObject** value) = 0;
-					virtual HRESULT STDMETHODCALLTYPE get_MessageId(_Out_ INT64* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE get_MessageContext(_Out_ MessageContext const** value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_RawObject(_Out_ ITLObject** value) = 0;
-					virtual HRESULT STDMETHODCALLTYPE get_MessageSequenceNumber(_Out_ INT32* value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_MessageToken(_Out_ INT32* value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_ConnectionType(_Out_ ConnectionType* value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_DatacenterId(_Out_ UINT32* value) = 0;
@@ -57,10 +78,9 @@ namespace Telegram
 
 			public:
 				//COM exported methods
-				IFACEMETHODIMP get_MessageId(_Out_ INT64* value);
+				IFACEMETHODIMP get_MessageContext(_Out_ MessageContext const** value);
 				IFACEMETHODIMP get_Object(_Out_ ITLObject** value);
 				IFACEMETHODIMP get_RawObject(_Out_ ITLObject** value);
-				IFACEMETHODIMP get_MessageSequenceNumber(_Out_ INT32* value);
 				IFACEMETHODIMP get_MessageToken(_Out_ INT32* value);
 				IFACEMETHODIMP get_ConnectionType(_Out_ ConnectionType* value);
 				IFACEMETHODIMP get_DatacenterId(_Out_ UINT32* value);
@@ -75,14 +95,9 @@ namespace Telegram
 					return m_object;
 				}
 
-				inline INT64 GetMessageId() const
+				inline MessageContext const* GetMessageContext() const
 				{
-					return m_messageId;
-				}
-
-				inline INT32 GetMessageSequenceNumber() const
-				{
-					return m_messageSequenceNumber;
+					return &m_messageContext;
 				}
 
 				inline INT32 GetMessageToken() const
@@ -106,10 +121,9 @@ namespace Telegram
 				}
 
 			private:
-				INT64 m_messageId;
 				ComPtr<ITLObject> m_object;
-				INT32 m_messageSequenceNumber;
 				INT32 m_messageToken;
+				MessageContext m_messageContext;
 				ConnectionType m_connectionType;
 				UINT32 m_datacenterId;
 				ComPtr<ISendRequestCompletedCallback> m_sendCompletedCallback;

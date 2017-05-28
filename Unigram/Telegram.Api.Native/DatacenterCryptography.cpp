@@ -73,6 +73,19 @@ boolean DatacenterCryptography::SelectPublicKey(std::vector<INT64> const& finger
 	return false;
 }
 
+boolean DatacenterCryptography::IsGoodGaAndGb(BIGNUM* ga, BIGNUM* p)
+{
+	if (BN_num_bytes(ga) > 256 || BN_num_bits(ga) < 2048 - 64 || BN_cmp(p, ga) <= 0)
+	{
+		return false;
+	}
+
+	BigNum  dif(BN_new());
+	BN_sub(dif.Get(), p, ga);
+
+	return BN_num_bits(dif.Get()) >= 2048 - 64;
+}
+
 BN_CTX* DatacenterCryptography::GetBNContext()
 {
 	static BigNumContext bnContext(BN_CTX_new());

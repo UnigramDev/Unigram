@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "TLObject.h"
+#include "Connection.h"
+#include "ConnectionManager.h"
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
@@ -66,6 +68,19 @@ HRESULT TLObjectWithQuery::RuntimeClassInitialize(ITLObject* query)
 HRESULT TLObjectWithQuery::get_Query(ITLObject** value)
 {
 	return m_query.CopyTo(value);
+}
+
+HRESULT TLObjectWithQuery::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+{
+	ComPtr<IMessageResponseHandler> responseHandler;
+	if (SUCCEEDED(m_query.As(&responseHandler)))
+	{
+		return responseHandler->HandleResponse(messageContext, connectionManager, connection);
+	}
+	else
+	{
+		return connectionManager->HandleUnprocessedResponse(messageContext, m_query.Get(), connection);
+	}
 }
 
 
@@ -138,4 +153,9 @@ HRESULT TLUnparsedObject::Read(ITLBinaryReader* reader)
 HRESULT TLUnparsedObject::Write(ITLBinaryWriter* writer)
 {
 	return E_ILLEGAL_METHOD_CALL;
+}
+
+HRESULT TLUnparsedObject::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+{
+	return connectionManager->HandleUnprocessedResponse(messageContext, static_cast<ITLObject*>(this), connection);
 }

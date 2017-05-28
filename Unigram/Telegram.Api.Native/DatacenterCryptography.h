@@ -110,6 +110,8 @@ namespace Telegram
 
 				static boolean SelectPublicKey(std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
 
+				static boolean IsGoodGaAndGb(BIGNUM* ga, BIGNUM* p);
+
 				static BN_CTX* GetBNContext();
 
 			private:

@@ -48,8 +48,9 @@ namespace Telegram
 
 				class TLBinaryReader;
 				class TLBinaryWriter;
-
+				class TLNewSessionCreated;
 			}
+
 
 			class Datacenter;
 			class NativeBuffer;
@@ -59,6 +60,7 @@ namespace Telegram
 			{
 				friend class Datacenter;
 				friend class ConnectionManager;
+				friend class TL::TLNewSessionCreated;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_Connection, BaseTrust);
 
@@ -73,7 +75,6 @@ namespace Telegram
 				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
 				IFACEMETHODIMP get_SessionId(_Out_ INT64* value);
 
-			private:
 				inline Datacenter* GetDatacenter() const
 				{
 					return m_datacenter.Get();
@@ -84,6 +85,7 @@ namespace Telegram
 					return m_type;
 				}
 
+			private:
 				inline ConnectionNeworkType GetCurrentNeworkType() const
 				{
 					return m_currentNetworkType;
@@ -95,10 +97,13 @@ namespace Telegram
 				HRESULT CreateMessagePacket(UINT32 messageLength, boolean reportAck, _Out_ TL::TLBinaryWriter** writer, _Out_ BYTE** messageBuffer);
 				HRESULT SendEncryptedMessage(_In_ ITLObject* object, boolean reportAck, _Outptr_opt_ INT32* quickAckId);
 				HRESULT SendUnencryptedMessage(_In_ ITLObject* object, boolean reportAck);
+
+				HRESULT HandleNewSessionCreatedResponse(_In_ TL::TLNewSessionCreated* response);
+
 				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) override;
 				virtual HRESULT OnSocketDisconnected(int wsaError) override;
-				HRESULT OnMessageReceived(_In_ TL::TLBinaryReader* messageReader, UINT32 messageLength);
+				HRESULT OnMessageReceived(_In_ ConnectionManager* connectionManager, _In_ TL::TLBinaryReader* messageReader, UINT32 messageLength);
 				void OnEventObjectError(_In_ EventObject* eventObject, HRESULT result);
 
 				UINT32 m_token;

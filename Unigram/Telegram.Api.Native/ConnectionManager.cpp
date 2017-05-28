@@ -6,7 +6,8 @@
 #include "Connection.h"
 #include "TLUnprocessedMessage.h"
 #include "Request.h"
-#include "TLProtocolScheme.h"
+#include "TLTypes.h"
+#include "TLMethods.h"
 #include "DefaultUserConfiguration.h"
 #include "Collections.h"
 #include "TLBinaryReader.h"
@@ -501,11 +502,11 @@ HRESULT ConnectionManager::CreateRequest(ITLObject* object, ISendRequestComplete
 
 	if (isLayerNeeded)
 	{
-		ComPtr<TLInitConnection> initConnectionObject;
-		ReturnIfFailed(result, MakeAndInitialize<TLInitConnection>(&initConnectionObject, m_userConfiguration.Get(), object));
+		ComPtr<Methods::TLInitConnection> initConnectionObject;
+		ReturnIfFailed(result, MakeAndInitialize<Methods::TLInitConnection>(&initConnectionObject, m_userConfiguration.Get(), object));
 
-		ComPtr<TLInvokeWithLayer> invokeWithLayer;
-		ReturnIfFailed(result, MakeAndInitialize<TLInvokeWithLayer>(&invokeWithLayer, invokeWithLayer.Get()));
+		ComPtr<Methods::TLInvokeWithLayer> invokeWithLayer;
+		ReturnIfFailed(result, MakeAndInitialize<Methods::TLInvokeWithLayer>(&invokeWithLayer, invokeWithLayer.Get()));
 
 
 		return MakeAndInitialize<MessageRequest>(&request, invokeWithLayer.Get(), requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
@@ -514,6 +515,12 @@ HRESULT ConnectionManager::CreateRequest(ITLObject* object, ISendRequestComplete
 	{
 		return MakeAndInitialize<MessageRequest>(&request, object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags);
 	}
+}
+
+HRESULT ConnectionManager::HandleUnprocessedResponse(MessageContext const* messageContext, ITLObject* object, Connection* connection)
+{
+	auto unprocessedMessage = Make<TLUnprocessedMessage>(messageContext->Id, connection->GetType(), object);
+	return m_unprocessedMessageReceivedEventSource.InvokeAll(this, unprocessedMessage.Get());
 }
 
 HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
@@ -529,45 +536,6 @@ HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
 	auto datacenter = connection->GetDatacenter();
 
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("TODO");
-
-	return S_OK;
-}
-
-HRESULT ConnectionManager::OnConnectionPacketReceived(Connection* connection, TLBinaryReader* packetReader, UINT32 packetLength)
-{
-	HRESULT result;
-	auto lock = LockCriticalSection();
-
-	if (packetLength == 4)
-	{
-		INT32 errorCode;
-		ReturnIfFailed(result, packetReader->ReadInt32(&errorCode));
-
-		return E_FAIL;
-	}
-
-	INT64 keyId;
-	ReturnIfFailed(result, packetReader->ReadInt64(&keyId));
-
-	auto datacenter = connection->GetDatacenter();
-
-	if (keyId == 0)
-	{
-		INT64 messageId;
-		ReturnIfFailed(result, packetReader->ReadInt64(&messageId));
-
-		UINT32 objectSize;
-		ReturnIfFailed(result, packetReader->ReadUInt32(&objectSize));
-
-		ComPtr<ITLObject> object;
-		ReturnIfFailed(result, packetReader->ReadObject(&object));
-
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement packet handling");
-	}
-	else
-	{
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement encrypted packet handling");
-	}
 
 	return S_OK;
 }
@@ -661,14 +629,6 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 
 	ComPtr<NativeBuffer> binaryReaderBuffer;
 	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&binaryReaderBuffer, sizeof(buffer)));
-
-	ComPtr<NativeBuffer> compressedBuffer;
-	ReturnIfFailed(result, GZipCompressBuffer(reinterpret_cast<const BYTE*>(buffer), sizeof(buffer), &compressedBuffer));
-
-	ComPtr<NativeBuffer> uncompressedBuffer;
-	ReturnIfFailed(result, GZipDecompressBuffer(compressedBuffer->GetBuffer(), compressedBuffer->GetCapacity(), &uncompressedBuffer));
-
-	auto xxx = reinterpret_cast<WCHAR*>(uncompressedBuffer->GetBuffer());
 
 	CopyMemory(binaryReaderBuffer->GetBuffer(), buffer, sizeof(buffer));
 

@@ -6,21 +6,23 @@
 #include "Telegram.Api.Native.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
+#include "Request.h"
 #include "Helpers\COMHelper.h"
 
-#define MakeTLObjectTraits(objectTypeName, constructor, isLayerNeeded) \
+#define TLARRAY_CONSTRUCTOR 0x1cb5c415
+
+#define MakeTLObjectTraits(objectTypeName, constructor, isLayerNeeded, namespace) \
 	struct objectTypeName##Traits \
 	{ \
 		typedef typename objectTypeName TLObjectType; \
 		static constexpr UINT32 Constructor = constructor; \
 		static constexpr boolean IsLayerNeeded = isLayerNeeded; \
-		static constexpr WCHAR RuntimeClassName[] = _STRINGIFY_W("Telegram.Api.Native.TL." _STRINGIFY(objectTypeName)); \
+		static constexpr WCHAR RuntimeClassName[] = _STRINGIFY_W(namespace "." _STRINGIFY(objectTypeName)); \
 	} \
-
 
 #define RegisterTLObjectConstructor(objectTypeName) \
 	template<> \
-	Telegram::Api::Native::TL::Details::TLObjectInitializer<##objectTypeName##::Traits> TLObjectT<##objectTypeName##::Traits>::Initializer = Telegram::Api::Native::TL::Details::TLObjectInitializer<##objectTypeName##::Traits>()\
+	::Telegram::Api::Native::TL::Details::TLObjectInitializer<##objectTypeName##::Traits> TLObjectT<##objectTypeName##::Traits>::Initializer = ::Telegram::Api::Native::TL::Details::TLObjectInitializer<##objectTypeName##::Traits>()\
 
 
 using namespace Microsoft::WRL;
@@ -31,6 +33,7 @@ using ABI::Telegram::Api::Native::TL::ITLBinaryReader;
 using ABI::Telegram::Api::Native::TL::ITLBinaryWriter;
 using ABI::Telegram::Api::Native::TL::ITLBinaryReaderEx;
 using ABI::Telegram::Api::Native::TL::ITLBinaryWriterEx;
+using ABI::Telegram::Api::Native::TL::ITLObjectConstructorDelegate;
 
 namespace ABI
 {
@@ -50,14 +53,22 @@ namespace ABI
 					};
 
 				}
+
+
+				MIDL_INTERFACE("41D24AD6-4BCA-4775-92D0-30EC69ED55C9") IMessageResponseHandler : public IUnknown
+				{
+				public:
+					virtual HRESULT STDMETHODCALLTYPE HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection) = 0;
+				};
+
 			}
 		}
 	}
 }
 
 
+using ABI::Telegram::Api::Native::IMessageResponseHandler;
 using ABI::Telegram::Api::Native::TL::ITLObjectWithQuery;
-using ABI::Telegram::Api::Native::TL::ITLObjectConstructorDelegate;
 
 namespace Telegram
 {
@@ -82,6 +93,11 @@ namespace Telegram
 				}
 
 
+				typedef BYTE TLInt32[4];
+				typedef BYTE TLInt64[8];
+				typedef BYTE TLInt128[16];
+				typedef BYTE TLInt256[32];
+
 				class TLBinaryReader;
 
 				class TLObject abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, ITLObject>
@@ -101,12 +117,16 @@ namespace Telegram
 				protected:
 					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader)
 					{
-						return E_NOTIMPL;
+						//return E_NOTIMPL;
+
+						return S_OK;
 					}
 
 					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer)
 					{
-						return E_NOTIMPL;
+						//return E_NOTIMPL;
+
+						return S_OK;
 					}
 
 				private:
@@ -129,11 +149,12 @@ namespace Telegram
 					}
 				};
 
-				class TLObjectWithQuery abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLObjectWithQuery>>
+				class TLObjectWithQuery abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLObjectWithQuery>, CloakedIid<IMessageResponseHandler>>
 				{
 				public:
 					//COM exported methods
 					IFACEMETHODIMP get_Query(_Out_ ITLObject** value);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
 
 				protected:
 					HRESULT RuntimeClassInitialize(_In_ ITLObject* query);
@@ -191,7 +212,7 @@ namespace Telegram
 					static Details::TLObjectInitializer<TLObjectTraits> Initializer;
 				};
 
-				class TLUnparsedObject WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLUnparsedObject, ITLObject>
+				class TLUnparsedObject WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLUnparsedObject, ITLObject, CloakedIid<IMessageResponseHandler>>
 				{
 					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLUnparsedObject, BaseTrust);
 
@@ -202,7 +223,7 @@ namespace Telegram
 					IFACEMETHODIMP get_IsLayerNeeded(_Out_ boolean* value);
 					IFACEMETHODIMP Read(_In_ ITLBinaryReader* reader);
 					IFACEMETHODIMP Write(_In_ ITLBinaryWriter* writer);
-
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(UINT32 constructor, _In_ TLBinaryReader* reader);
@@ -247,7 +268,8 @@ namespace Telegram
 					UINT32 constructor;
 					if (SUCCEEDED(object->get_Constructor(&constructor)) && constructor == TLObjectType::Constructor)
 					{
-						return static_cast<typename TLObjectType*>(object);
+						*value = static_cast<typename TLObjectType*>(object);
+						return S_OK;
 					}
 
 					return E_NOINTERFACE;

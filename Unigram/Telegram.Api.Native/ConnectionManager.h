@@ -42,7 +42,9 @@ namespace Telegram
 			{
 
 				class TLBinaryReader;
-
+				class TLObjectWithQuery;
+				class TLUnparsedObject;
+	
 			}
 
 
@@ -51,6 +53,8 @@ namespace Telegram
 				friend class Datacenter;
 				friend class Connection;
 				friend class EventObject;
+				friend class TL::TLObjectWithQuery;
+				friend class TL::TLUnparsedObject;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
 
@@ -110,9 +114,9 @@ namespace Telegram
 				HRESULT UpdateNetworkStatus(boolean raiseEvent);
 				HRESULT CreateRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
 					INT32 datacenterId, ConnectionType connectionType, INT32 requestToken, RequestFlag flags, _Out_ ComPtr<MessageRequest>& request);
+				HRESULT HandleUnprocessedResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* object, _In_ Connection* connection);
 				HRESULT OnNetworkStatusChanged(_In_ IInspectable* sender);
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
-				HRESULT OnConnectionPacketReceived(_In_ Connection* connection, _In_ TL::TLBinaryReader* packetReader, UINT32 packetLength);
 				HRESULT OnConnectionQuickAckReceived(_In_ Connection* connection, INT32 ack);
 				HRESULT OnConnectionClosed(_In_ Connection* connection);
 				HRESULT OnRequestEnqueued(_In_ PTP_CALLBACK_INSTANCE instance);

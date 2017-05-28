@@ -15,14 +15,14 @@ HRESULT MessageRequest::RuntimeClassInitialize(ITLObject* object, INT32 token, C
 	}
 
 	m_object = object;
-	m_messageId = 0;
-	m_messageSequenceNumber = 0;
 	m_messageToken = token;
 	m_connectionType = connectionType;
 	m_datacenterId = datacenterId;
 	m_sendCompletedCallback = sendCompletedCallback;
 	m_quickAckReceivedCallback = quickAckReceivedCallback;
 	m_flags = flags;
+
+	ZeroMemory(&m_messageContext, sizeof(MessageContext));
 
 	return S_OK;
 }
@@ -37,14 +37,14 @@ HRESULT MessageRequest::get_Object(ITLObject** value)
 	return m_object.CopyTo(value);
 }
 
-HRESULT MessageRequest::get_MessageId(INT64* value)
+HRESULT MessageRequest::get_MessageContext(MessageContext const** value)
 {
 	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	*value = m_messageId;
+	*value = &m_messageContext;
 	return S_OK;
 }
 
@@ -62,17 +62,6 @@ HRESULT MessageRequest::get_RawObject(ITLObject** value)
 	}
 
 	return m_object.CopyTo(value);
-}
-
-HRESULT MessageRequest::get_MessageSequenceNumber(INT32* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	*value = m_messageSequenceNumber;
-	return S_OK;
 }
 
 HRESULT MessageRequest::get_MessageToken(INT32* value)

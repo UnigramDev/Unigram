@@ -297,13 +297,14 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="EventObject.h" />
     <ClInclude Include="GZip.h" />
     <ClInclude Include="NativeBuffer.h" />
+    <ClInclude Include="TLMethods.h" />
     <ClInclude Include="Wrappers\OpenSSL.h" />
     <ClInclude Include="TLObject.h" />
     <ClInclude Include="MultiThreadObject.h" />
     <ClInclude Include="NetworkExtensions.h" />
     <ClInclude Include="Request.h" />
     <ClInclude Include="TLObjectSerializer.h" />
-    <ClInclude Include="TLProtocolScheme.h" />
+    <ClInclude Include="TLTypes.h" />
     <ClInclude Include="TLUnprocessedMessage.h" />
     <ClInclude Include="Wrappers\WSAEvent.h" />
     <ClInclude Include="pch.h" />
@@ -337,7 +338,8 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClCompile Include="TLBinaryWriter.cpp" />
     <ClCompile Include="TLObject.cpp" />
     <ClCompile Include="TLObjectSerializer.cpp" />
-    <ClCompile Include="TLProtocolScheme.cpp" />
+    <ClCompile Include="TLTypes.cpp" />
+    <ClCompile Include="TLMethods.cpp" />
     <ClCompile Include="TLUnprocessedMessage.cpp" />
   </ItemGroup>
   <ItemGroup>

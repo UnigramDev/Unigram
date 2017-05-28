@@ -5,6 +5,7 @@
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "Request.h"
+#include "TLObject.h"
 #include "ConnectionManager.h"
 
 #define CONNECTION_MAX_ATTEMPTS 5
@@ -316,6 +317,13 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* object, boolean reportAck)
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
 }
 
+HRESULT Connection::HandleNewSessionCreatedResponse(TL::TLNewSessionCreated* response)
+{
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLNewSessionCreated response handling");
+
+	return S_OK;
+}
+
 HRESULT Connection::OnSocketConnected()
 {
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connected event handling");
@@ -388,7 +396,7 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 			packetLength = static_cast<UINT32>(firstByte) * 4;
 		}
 
-		if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH || FAILED(OnMessageReceived(packetReader.Get(), packetLength)))
+		if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH || FAILED(OnMessageReceived(connectionManager.Get(), packetReader.Get(), packetLength)))
 		{
 			return Reconnect();
 		}
@@ -431,7 +439,7 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 	return S_OK;
 }
 
-HRESULT Connection::OnMessageReceived(TLBinaryReader* messageReader, UINT32 messageLength)
+HRESULT Connection::OnMessageReceived(ConnectionManager* connectionManager, TLBinaryReader* messageReader, UINT32 messageLength)
 {
 	HRESULT result;
 	if (messageLength == 4)
@@ -445,19 +453,17 @@ HRESULT Connection::OnMessageReceived(TLBinaryReader* messageReader, UINT32 mess
 	INT64 authKeyId;
 	ReturnIfFailed(result, messageReader->ReadInt64(&authKeyId));
 
+	UINT32 constructor;
+	ComPtr<ITLObject> messageObject;
+	MessageContext messageContext = {};
+
 	if (authKeyId == 0)
 	{
-		INT64 messageId;
-		ReturnIfFailed(result, messageReader->ReadInt64(&messageId));
+		ReturnIfFailed(result, messageReader->ReadInt64(&messageContext.Id));
 
 		UINT32 objectSize;
 		ReturnIfFailed(result, messageReader->ReadUInt32(&objectSize));
-
-		UINT32 constructor;
-		ComPtr<ITLObject> object;
-		ReturnIfFailed(result, messageReader->ReadObjectAndConstructor(objectSize, &constructor, &object));
-
-		return m_datacenter->OnHandshakeResponseReceived(this, constructor, object.Get());
+		ReturnIfFailed(result, messageReader->ReadObjectAndConstructor(objectSize, &constructor, &messageObject));
 	}
 	else
 	{
@@ -480,23 +486,22 @@ HRESULT Connection::OnMessageReceived(TLBinaryReader* messageReader, UINT32 mess
 			return S_OK;
 		}
 
-		INT64 messageId;
-		ReturnIfFailed(result, messageReader->ReadInt64(&messageId));
-
-		UINT32 sequenceNumber;
-		ReturnIfFailed(result, messageReader->ReadUInt32(&sequenceNumber));
+		ReturnIfFailed(result, messageReader->ReadInt64(&messageContext.Id));
+		ReturnIfFailed(result, messageReader->ReadUInt32(&messageContext.SequenceNumber));
 
 		UINT32 objectSize;
 		ReturnIfFailed(result, messageReader->ReadUInt32(&objectSize));
+		ReturnIfFailed(result, messageReader->ReadObjectAndConstructor(objectSize, &constructor, &messageObject));
+	}
 
-		UINT32 constructor;
-		ComPtr<ITLObject> object;
-		if (SUCCEEDED(result = messageReader->ReadObjectAndConstructor(objectSize, &constructor, &object)))
-		{
-
-		}
-
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement encrypted packet handling");
+	ComPtr<IMessageResponseHandler> responseHandler;
+	if (SUCCEEDED(messageObject.As(&responseHandler)))
+	{
+		return responseHandler->HandleResponse(&messageContext, connectionManager, this);
+	}
+	else
+	{
+		return connectionManager->HandleUnprocessedResponse(&messageContext, messageObject.Get(), this);
 	}
 
 	return S_OK;
