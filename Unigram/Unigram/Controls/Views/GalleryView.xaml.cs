@@ -198,6 +198,15 @@ namespace Unigram.Controls.Views
                         Hide();
                     };
                 }
+                else
+                {
+                    Flip.Opacity = 0;
+                    Layer.Visibility = Visibility.Collapsed;
+                    TopBar.Visibility = Visibility.Collapsed;
+                    BotBar.Visibility = Visibility.Collapsed;
+
+                    Hide();
+                }
             }
             else
             {

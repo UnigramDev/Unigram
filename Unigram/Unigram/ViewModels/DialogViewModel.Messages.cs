@@ -1170,7 +1170,9 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SaveGifAsync(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, false);
                 if (response.IsSucceeded)
                 {
-                    _stickers.SyncGifs();
+                    _stickers.StickersService.AddRecentGif(document, (int)(Utils.CurrentTimestamp / 1000));
+
+                    //_stickers.SyncGifs();
                 }
             }
         }

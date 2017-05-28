@@ -56,6 +56,8 @@ namespace Unigram.ViewModels
             Items = new MvxObservableCollection<TLDialog>();
             Search = new ObservableCollection<KeyedList<string, TLObject>>();
             SearchTokens = new Dictionary<string, CancellationTokenSource>();
+
+            Execute.BeginOnThreadPool(() => LoadFirstSlice());
         }
 
         public int PinnedDialogsIndex { get; set; }
@@ -137,27 +139,27 @@ namespace Unigram.ViewModels
                 var config = CacheService.GetConfig();
                 var pinnedIndex = 0;
 
-                Execute.BeginOnUIThread(() =>
+                var items = new List<TLDialog>(response.Result.Dialogs.Count);
+
+                foreach (var item in response.Result.Dialogs)
                 {
-                    var items = new List<TLDialog>(response.Result.Dialogs.Count);
-
-                    foreach (var item in response.Result.Dialogs)
+                    if (item.IsPinned)
                     {
-                        if (item.IsPinned)
-                        {
-                            item.PinnedIndex = pinnedIndex++;
-                        }
-
-                        if (item.With is TLChat chat && chat.HasMigratedTo)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            items.Add(item);
-                        }
+                        item.PinnedIndex = pinnedIndex++;
                     }
 
+                    if (item.With is TLChat chat && chat.HasMigratedTo)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        items.Add(item);
+                    }
+                }
+
+                Execute.BeginOnUIThread(() =>
+                {
                     Items.ReplaceWith(items);
                     IsFirstPinned = Items.Any(x => x.IsPinned);
                     PinnedDialogsIndex = pinnedIndex;
