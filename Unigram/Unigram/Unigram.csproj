@@ -160,6 +160,9 @@
     <Compile Include="Controls\Views\RoundVideoView.xaml.cs">
       <DependentUpon>RoundVideoView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\SettingsDownloadView.xaml.cs">
+      <DependentUpon>SettingsDownloadView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\ShareView.xaml.cs">
       <DependentUpon>ShareView.xaml</DependentUpon>
     </Compile>
@@ -176,6 +179,7 @@
       <DependentUpon>ZoomableGridViewPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\AccountTTLConverter.cs" />
+    <Compile Include="Converters\AutoDownloadConverter.cs" />
     <Compile Include="Converters\BooleanNegationConverter.cs" />
     <Compile Include="Converters\BooleanToIndexConverter.cs" />
     <Compile Include="Converters\ChannelJoinedToVisibilityConverter.cs" />
@@ -214,6 +218,7 @@
     <Compile Include="ViewModels\Payments\PaymentFormStep5ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsDataAndStorageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsGeneralViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyChatInviteViewModel.cs" />
@@ -1171,6 +1176,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\SendPhotosView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\SettingsDownloadView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

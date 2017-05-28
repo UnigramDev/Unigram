@@ -144,6 +144,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsBlockedUsersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsBlockUserViewModel>();
             container.ContainerBuilder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsDataAndStorageViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsPrivacyAndSecurityViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsPrivacyStatusTimestampViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsPrivacyPhoneCallViewModel>().SingleInstance();
@@ -216,7 +217,7 @@ namespace Unigram
             var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
             var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
             var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-            cacheService.Init();
+            //cacheService.Init();
             updatesService.GetCurrentUserId = () => protoService.CurrentUserId;
             updatesService.GetStateAsync = protoService.GetStateAsync;
             updatesService.GetDHConfigAsync = protoService.GetDHConfigAsync;
@@ -231,22 +232,25 @@ namespace Unigram
             updatesService.GetChannelMessagesAsync = protoService.GetMessagesAsync;
             updatesService.LoadStateAndUpdate(() => { });
 
-            protoService.AuthorizationRequired += (s, e) =>
-            {
-                SettingsHelper.IsAuthorized = false;
-                Debug.WriteLine("!!!UNAUTHORIZED!!!");
+            protoService.AuthorizationRequired -= OnAuthorizationRequired;
+            protoService.AuthorizationRequired += OnAuthorizationRequired;
+        }
 
-                Execute.BeginOnUIThread(() =>
+        private void OnAuthorizationRequired(object sender, AuthorizationRequiredEventArgs e)
+        {
+            SettingsHelper.IsAuthorized = false;
+            Debug.WriteLine("!!!UNAUTHORIZED!!!");
+
+            Execute.BeginOnUIThread(() =>
+            {
+                var type = App.Current.NavigationService.CurrentPageType;
+                if (type.Name.StartsWith("SignIn") || type.Name.StartsWith("SignUp")) { }
+                else
                 {
-                    var type = App.Current.NavigationService.CurrentPageType;
-                    if (type.Name.StartsWith("SignIn") || type.Name.StartsWith("SignUp")) { }
-                    else
-                    {
-                        App.Current.NavigationService.Navigate(typeof(SignInWelcomePage));
-                        App.Current.NavigationService.Frame.BackStack.Clear();
-                    }
-                });
-            };
+                    App.Current.NavigationService.Navigate(typeof(SignInWelcomePage));
+                    App.Current.NavigationService.Frame.BackStack.Clear();
+                }
+            });
         }
     }
 }
