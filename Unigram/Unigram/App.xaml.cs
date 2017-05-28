@@ -42,6 +42,7 @@ using Unigram.Core.Services;
 using Template10.Controls;
 using Windows.Foundation;
 using Windows.ApplicationModel.Contacts;
+using Telegram.Api.Aggregator;
 
 namespace Unigram
 {
@@ -112,8 +113,16 @@ namespace Unigram
 #endif
         }
 
+        public static bool IsActive { get; private set; }
+        public static bool IsVisible { get; private set; }
+
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
         {
+            IsActive = e.WindowActivationState != CoreWindowActivationState.Deactivated;
+
+            var aggregator = UnigramContainer.Current.ResolveType<ITelegramEventAggregator>();
+            aggregator.Publish(IsActive ?  "Window_Activated" : "Window_Deactivated");
+
             if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
             {
                 Locator.LoadStateAndUpdate();
@@ -137,6 +146,11 @@ namespace Unigram
 
         private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
         {
+            IsVisible = e.Visible;
+
+            var aggregator = UnigramContainer.Current.ResolveType<ITelegramEventAggregator>();
+            aggregator.Publish(IsVisible ? "Window_Activated" : "Window_Deactivated");
+
             if (e.Visible)
             {
                 Locator.LoadStateAndUpdate();

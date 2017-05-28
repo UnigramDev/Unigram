@@ -51,24 +51,24 @@ namespace Unigram.Controls
         private void UpdateSize()
         {
             var inline = DataContext is TLMessage;
-            if (ReplyMarkup is TLReplyKeyboardMarkup && !inline)
+            if (ReplyMarkup is TLReplyKeyboardMarkup && !inline && Parent is ScrollViewer scroll)
             {
                 var keyboard = ReplyMarkup as TLReplyKeyboardMarkup;
                 if (keyboard.IsResize && double.IsNaN(Height))
                 {
                     Height = double.NaN;
-                    ((ScrollViewer)Parent).MaxHeight = _keyboardHeight;
+                    scroll.MaxHeight = _keyboardHeight;
                 }
-                else if (keyboard.IsResize == false && double.IsNaN(Height))
+                else if (keyboard.IsResize == false && double.IsNaN(Height) && Parent is ScrollViewer scroll1)
                 {
                     Height = _keyboardHeight;
-                    ((ScrollViewer)Parent).MaxHeight = double.PositiveInfinity;
+                    scroll1.MaxHeight = double.PositiveInfinity;
                 }
             }
-            else if (ReplyMarkup is TLReplyKeyboardHide && !inline)
+            else if (ReplyMarkup is TLReplyKeyboardHide && !inline && Parent is ScrollViewer scroll2)
             {
                 Height = double.NaN;
-                ((ScrollViewer)Parent).MaxHeight = double.PositiveInfinity;
+                scroll2.MaxHeight = double.PositiveInfinity;
             }
         }
 

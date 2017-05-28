@@ -446,7 +446,8 @@ namespace Unigram.Controls
 
         private void UpdateInlineBot(bool fast)
         {
-            var text = Text.Substring(0, Math.Max(Document.Selection.StartPosition, Document.Selection.EndPosition));
+            //var text = Text.Substring(0, Math.Max(Document.Selection.StartPosition, Document.Selection.EndPosition));
+            var text = Text;
             var command = string.Empty;
             var inline = SearchInlineBotResults(text, out command);
             if (inline && fast)

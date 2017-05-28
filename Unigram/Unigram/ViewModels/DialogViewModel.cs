@@ -928,6 +928,8 @@ namespace Unigram.ViewModels
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
+            SaveDraft();
+
             //var file = await KnownFolders.SavedPictures.CreateFileAsync("TEST.TXT", CreationCollisionOption.GenerateUniqueName);
             //await FileIO.WriteTextAsync(file, DateTime.Now.ToString());
             Aggregator.Unsubscribe(this);
@@ -952,6 +954,39 @@ namespace Unigram.ViewModels
             }
 
             return null;
+        }
+
+        public void SaveDraft()
+        {
+            var messageText = Text?.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+            var reply = new int?();
+
+            if (Reply is TLMessagesContainter container)
+            {
+            }
+            else if (Reply != null)
+            {
+                reply = Reply.Id;
+            }
+
+            TLDraftMessageBase draft = null;
+            if (reply.HasValue || !string.IsNullOrWhiteSpace(messageText))
+            {
+                draft = new TLDraftMessage { Message = messageText, Date = date, ReplyToMsgId = reply };
+            }
+            else if (_currentDialog != null && _currentDialog.HasDraft && _currentDialog.Draft is TLDraftMessage)
+            {
+                draft = new TLDraftMessageEmpty();
+            }
+
+            if (draft != null)
+            {
+                ProtoService.SaveDraftAsync(Peer, draft, result =>
+                {
+                    Aggregator.Publish(new TLUpdateDraftMessage { Peer = Peer.ToPeer(), Draft = draft });
+                });
+            }
         }
 
         public async void ProcessDraftReply(TLDraftMessage draft)

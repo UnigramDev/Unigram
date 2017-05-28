@@ -20,8 +20,39 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateEditMessage>,
         IHandle<MessagesRemovedEventArgs>,
         IHandle<TLUpdateUserStatus>,
-        IHandle
+        IHandle<string>
     {
+        public async void Handle(string message)
+        {
+            if (message.Equals("Window_Activated"))
+            {
+                var participant = _with;
+                var dialog = _currentDialog;
+                if (dialog != null && Messages.Count > 0)
+                {
+                    var unread = dialog.UnreadCount;
+                    if (Peer is TLInputPeerChannel && participant is TLChannel channel)
+                    {
+                        await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
+                    }
+                    else
+                    {
+                        await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
+                    }
+
+                    var readPeer = With as ITLReadMaxId;
+                    readPeer.ReadInboxMaxId = dialog.TopMessage;
+                    dialog.ReadInboxMaxId = dialog.TopMessage;
+                    dialog.UnreadCount = dialog.UnreadCount - unread;
+                    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+                }
+            }
+            else if (message.Equals("Window_Deactivated"))
+            {
+                SaveDraft();
+            }
+        }
+
         public void Handle(MessagesRemovedEventArgs args)
         {
             if (With == args.Dialog.With && args.Messages != null)
@@ -410,6 +441,11 @@ namespace Unigram.ViewModels
             //{
             //    return;
             //}
+
+            if (!App.IsActive || !App.IsVisible)
+            {
+                return;
+            }
 
             if (messageCommon != null && !messageCommon.IsOut && messageCommon.IsUnread)
             {
