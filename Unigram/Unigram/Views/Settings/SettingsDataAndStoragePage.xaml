@@ -8,12 +8,80 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Style x:Key="SubtitleButtonStyle" TargetType="controls:BadgeButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,0,0,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:BadgeButton">
+                        <StackPanel x:Name="RootGrid" Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter" TextWrapping="Wrap" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="12,11,12,0" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <ContentControl x:Name="BadgePresenter" Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Padding="12,0,0,12">
+                                <ContentControl.ContentTransitions>
+                                    <TransitionCollection>
+                                        <EntranceThemeTransition/>
+                                    </TransitionCollection>
+                                </ContentControl.ContentTransitions>
+                                <ContentControl.Clip>
+                                    <RectangleGeometry Rect="0,0,3600,28"/>
+                                </ContentControl.Clip>
+                                <ContentControl.ContentTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                                    </DataTemplate>
+                                </ContentControl.ContentTemplate>
+                            </ContentControl>
+                            <Rectangle Fill="{TemplateBinding BorderBrush}" Height="1" Margin="{TemplateBinding Padding}"/>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Data and storage"/>
+        <controls:PageHeader Text="Data and Storage"/>
 
         <controls:ScrollViewerBackground 
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -28,9 +96,43 @@
 
             <StackPanel Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Grid.Row="1">
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="DATA AND NETWORK USAGE" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:HyperButton Tag="Storage usage" Click="Storage_Click" Margin="-12,0" Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton Tag="Data usage" Click="Stats_Click" Margin="-12,0,-12,-12" BorderBrush="Transparent" Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <TextBlock Text="AUTOMATIC MEDIA DOWNLOAD" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:BadgeButton
+                        Badge="{x:Bind ViewModel.AutoDownloads[0].Flags, Mode=OneWay, Converter={StaticResource AutoDownloadConverter}}"
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        CommandParameter="{x:Bind ViewModel.AutoDownloads[0].Type}"
+                        Content="When using mobile data"
+                        Margin="-12,0"
+                        Style="{StaticResource SubtitleButtonStyle}"/>
+                    <controls:BadgeButton
+                        Badge="{x:Bind ViewModel.AutoDownloads[1].Flags, Mode=OneWay, Converter={StaticResource AutoDownloadConverter}}"
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        CommandParameter="{x:Bind ViewModel.AutoDownloads[1].Type}"
+                        Content="When connected on Wi-Fi"
+                        Margin="-12,0"
+                        Style="{StaticResource SubtitleButtonStyle}"/>
+                    <controls:BadgeButton
+                        Badge="{x:Bind ViewModel.AutoDownloads[2].Flags, Mode=OneWay, Converter={StaticResource AutoDownloadConverter}}"
+                        Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                        CommandParameter="{x:Bind ViewModel.AutoDownloads[2].Type}"
+                        Content="When roaming"
+                        Margin="-12,0,-12,-12"
+                        BorderBrush="Transparent"
+                        Style="{StaticResource SubtitleButtonStyle}"/>
+                </StackPanel>
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="DISK AND NETWORK USAGE" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:HyperButton
+                        Tag="Storage usage"
+                        Click="Storage_Click"
+                        Margin="-12,0"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                    <controls:HyperButton
+                        Tag="Network usage"
+                        Click="Stats_Click"
+                        Margin="-12,0,-12,-12"
+                        BorderBrush="Transparent"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="CALLS" Style="{StaticResource SettingsGroupTextBlockStyle}"/>

@@ -9,6 +9,7 @@ using Telegram.Api.Helpers;
 using Unigram.Controls.Views;
 using Unigram.Native;
 using Unigram.ViewModels;
+using Windows.Devices.Enumeration;
 using Windows.Foundation.Collections;
 using Windows.Media;
 using Windows.Media.Capture;
@@ -116,9 +117,7 @@ namespace Unigram.Controls
             }
             else
             {
-#if DEBUG
                 IsVideo = !IsVideo;
-#endif
             }
         }
 
@@ -181,6 +180,8 @@ namespace Unigram.Controls
                 try
                 {
                     _recorder.m_mediaCapture = new MediaCapture();
+
+                    _recorder.settings.VideoDeviceId = await _recorder.GetVideoProfileSupportedDeviceIdAsync(Windows.Devices.Enumeration.Panel.Front);
                     await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
 
                     if (_video)
@@ -352,6 +353,23 @@ namespace Unigram.Controls
                 settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
                 settings.SharingMode = MediaCaptureSharingMode.SharedReadOnly;
                 settings.StreamingCaptureMode = m_isVideo ? StreamingCaptureMode.AudioAndVideo : StreamingCaptureMode.Audio;
+            }
+
+            public async Task<string> GetVideoProfileSupportedDeviceIdAsync(Windows.Devices.Enumeration.Panel panel)
+            {
+                var deviceId = string.Empty;
+                var devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+
+                foreach (var device in devices)
+                {
+                    if (MediaCapture.IsVideoProfileSupported(device.Id) && device.EnclosureLocation.Panel == panel)
+                    {
+                        deviceId = device.Id;
+                        break;
+                    }
+                }
+
+                return deviceId;
             }
 
             public async Task StartAsync()

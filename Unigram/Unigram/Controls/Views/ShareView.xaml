@@ -17,7 +17,7 @@
     mc:Ignorable="d">
 
     <controls:ContentDialogBase.Resources>
-        <CollectionViewSource x:Name="ViewSource" Source="{x:Bind ViewModel.GroupedItems}" ItemsPath="Items" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="ViewSource" Source="{x:Bind ViewModel.GroupedItems}" ItemsPath="Dialogs.Items" IsSourceGrouped="True"/>
 
         <Style TargetType="GridViewItem" x:Key="GridViewItemExpandedStyle">
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -453,6 +453,7 @@
             Padding="12,0"
             Loaded="GridView_Loaded"
             SizeChanged="List_SizeChanged"
+            SelectionChanged="List_SelectionChanged"
             common:FluidGridView.OrientationOnly="True">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="4"/>
@@ -490,7 +491,8 @@
                                 <TextBlock Text="Share to" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
 
                                 <controls:GlyphButton Glyph="&#xE094;"/>
-                                <controls:GlyphButton Glyph="&#xE72D;" Grid.Column="2"/>
+                                <controls:GlyphButton Click="CopyLink_Click" Glyph="&#xE167;" Visibility="{x:Bind (Visibility)IsCopyLinkEnabled, Mode=OneWay}" Grid.Column="2"/>
+                                <!--<controls:GlyphButton Click="CopyLink_Click" Glyph="&#xE72D;" Visibility="{x:Bind (Visibility)IsCopyLinkEnabled, Mode=OneWay}" Grid.Column="2"/>-->
                             </Grid>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
@@ -558,6 +560,8 @@
                  Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                  HorizontalAlignment="Stretch" 
                  Margin="12,8,4,8"/>-->
+
+            <Button Command="{x:Bind ViewModel.ShareCommand}" Content="Share" HorizontalAlignment="Stretch" Margin="12,8,4,8"/>
 
             <Button Click="Close_Click" Content="Close" HorizontalAlignment="Stretch" Margin="4,8,12,8" Padding="24,4,24,4" Grid.Column="1"/>
         </Grid>

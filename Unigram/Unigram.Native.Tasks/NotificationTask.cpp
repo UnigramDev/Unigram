@@ -25,26 +25,26 @@ using namespace Windows::Foundation;
 
 void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 {
-	auto temp = ApplicationData::Current->LocalFolder->Path;
-	std::wstringstream path;
-	path << temp->Data()
-		<< L"\\background_log.txt";
+	//auto temp = ApplicationData::Current->LocalFolder->Path;
+	//std::wstringstream path;
+	//path << temp->Data()
+	//	<< L"\\background_log.txt";
 
-	std::wofstream log(path.str(), std::ios_base::app | std::ios_base::out);
+	//std::wofstream log(path.str(), std::ios_base::app | std::ios_base::out);
 
-	time_t rawtime = time(NULL);
-	struct tm timeinfo;
-	wchar_t buffer[80];
+	//time_t rawtime = time(NULL);
+	//struct tm timeinfo;
+	//wchar_t buffer[80];
 
-	time(&rawtime);
-	localtime_s(&timeinfo, &rawtime);
+	//time(&rawtime);
+	//localtime_s(&timeinfo, &rawtime);
 
-	wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
-	std::wstring str(buffer);
+	//wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+	//std::wstring str(buffer);
 
-	log << L"[";
-	log << str;
-	log << L"] Starting background task\n";
+	//log << L"[";
+	//log << str;
+	//log << L"] Starting background task\n";
 
 	auto deferral = taskInstance->GetDeferral();
 	auto details = safe_cast<RawNotification^>(taskInstance->TriggerDetails);
@@ -53,36 +53,36 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 	{
 		try
 		{
-			UpdateToastAndTiles(details->Content, &log);
+			UpdateToastAndTiles(details->Content /*, &log*/);
 		}
 		catch (Exception^ ex) 
 		{
-			time(&rawtime);
-			localtime_s(&timeinfo, &rawtime);
+			//time(&rawtime);
+			//localtime_s(&timeinfo, &rawtime);
 
-			wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
-			std::wstring str3(buffer);
+			//wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+			//std::wstring str3(buffer);
 
-			log << L"[";
-			log << str3;
-			log << "] Exception while processing notification";
+			//log << L"[";
+			//log << str3;
+			//log << "] Exception while processing notification";
 		}
 	}
 
-	time(&rawtime);
-	localtime_s(&timeinfo, &rawtime);
+	//time(&rawtime);
+	//localtime_s(&timeinfo, &rawtime);
 
-	wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
-	std::wstring str2(buffer);
+	//wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+	//std::wstring str2(buffer);
 
-	log << L"[";
-	log << str2;
-	log << L"] Quitting background task\n\n";
+	//log << L"[";
+	//log << str2;
+	//log << L"] Quitting background task\n\n";
 
 	deferral->Complete();
 }
 
-void NotificationTask::UpdateToastAndTiles(String^ content, std::wofstream* log)
+void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* log*/)
 {
 	auto notification = JsonValue::Parse(content)->GetObject();
 	auto data = notification->GetNamedObject("data");
@@ -93,19 +93,19 @@ void NotificationTask::UpdateToastAndTiles(String^ content, std::wofstream* log)
 
 	if (data->HasKey("loc_key") == false)
 	{
-		time_t rawtime = time(NULL);
-		struct tm timeinfo;
-		wchar_t buffer[80];
+		//time_t rawtime = time(NULL);
+		//struct tm timeinfo;
+		//wchar_t buffer[80];
 
-		time(&rawtime);
-		localtime_s(&timeinfo, &rawtime);
+		//time(&rawtime);
+		//localtime_s(&timeinfo, &rawtime);
 
-		wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
-		std::wstring str(buffer);
+		//wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+		//std::wstring str(buffer);
 
-		*log << L"[";
-		*log << str;
-		*log << L"] Removing a toast notification\n";
+		//*log << L"[";
+		//*log << str;
+		//*log << L"] Removing a toast notification\n";
 
 		auto custom = data->GetNamedObject("custom");
 		auto group = GetGroup(custom);
@@ -126,21 +126,21 @@ void NotificationTask::UpdateToastAndTiles(String^ content, std::wofstream* log)
 		auto loc_args = data->GetNamedArray("loc_args");
 		auto custom = data->GetNamedObject("custom", nullptr);
 
-		time_t rawtime = time(NULL);
-		struct tm timeinfo;
-		wchar_t buffer[80];
+		//time_t rawtime = time(NULL);
+		//struct tm timeinfo;
+		//wchar_t buffer[80];
 
-		time(&rawtime);
-		localtime_s(&timeinfo, &rawtime);
+		//time(&rawtime);
+		//localtime_s(&timeinfo, &rawtime);
 
-		wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
-		std::wstring str(buffer);
+		//wcsftime(buffer, sizeof(buffer), L"%d-%m-%Y %I:%M:%S", &timeinfo);
+		//std::wstring str(buffer);
 
-		*log << L"[";
-		*log << str;
-		*log << L"] Received notification with loc_key ";
-		*log << loc_key->Data();
-		*log << L"\n";
+		//*log << L"[";
+		//*log << str;
+		//*log << L"] Received notification with loc_key ";
+		//*log << loc_key->Data();
+		//*log << L"\n";
 
 		auto caption = GetCaption(loc_args, loc_key);
 		auto message = GetMessage(loc_args, loc_key);

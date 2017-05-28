@@ -65,12 +65,21 @@ namespace Unigram.ViewModels.Chats
                 {
                     Item = channel;
 
-                    var response = await ProtoService.GetFullChannelAsync(channel.ToInputChannel());
-                    if (response.IsSucceeded)
+                    var full = CacheService.GetFullChat(channel.Id) as TLChannelFull;
+                    if (full == null)
                     {
-                        _exportedInvite = response.Result.FullChat.ExportedInvite;
+                        var response = await ProtoService.GetFullChannelAsync(channel.ToInputChannel());
+                        if (response.IsSucceeded)
+                        {
+                            full = response.Result.FullChat as TLChannelFull;
+                        }
+                    }
 
-                        if (response.Result.FullChat.ExportedInvite is TLChatInviteExported invite)
+                    if (full != null)
+                    {
+                        _exportedInvite = full.ExportedInvite;
+
+                        if (full.ExportedInvite is TLChatInviteExported invite)
                         {
                             InviteLink = invite.Link;
                         }
@@ -90,12 +99,21 @@ namespace Unigram.ViewModels.Chats
                 {
                     Item = chat;
 
-                    var response = await ProtoService.GetFullChatAsync(chat.Id);
-                    if (response.IsSucceeded)
+                    var full = CacheService.GetFullChat(chat.Id) as TLChannelFull;
+                    if (full == null)
                     {
-                        _exportedInvite = response.Result.FullChat.ExportedInvite;
+                        var response = await ProtoService.GetFullChatAsync(chat.Id);
+                        if (response.IsSucceeded)
+                        {
+                            full = response.Result.FullChat as TLChannelFull;
+                        }
+                    }
 
-                        if (response.Result.FullChat.ExportedInvite is TLChatInviteExported invite)
+                    if (full != null)
+                    {
+                        _exportedInvite = full.ExportedInvite;
+
+                        if (full.ExportedInvite is TLChatInviteExported invite)
                         {
                             InviteLink = invite.Link;
                         }

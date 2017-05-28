@@ -236,6 +236,15 @@ namespace Telegram.Api.TL
 
     public partial class TLMessage
     {
+        #region Game
+        
+        public bool IsGame()
+        {
+            return Media is TLMessageMediaGame;
+        }
+
+        #endregion
+
         #region Gif
         public bool IsGif(bool real = false)
         {

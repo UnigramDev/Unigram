@@ -8,6 +8,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Controls.Views;
 using Unigram.Views;
 
 namespace Unigram.ViewModels
@@ -19,6 +20,9 @@ namespace Unigram.ViewModels
         {
             _gallery = new InstantGalleryViewModel();
         }
+
+        public Uri ShareLink { get; set; }
+        public string ShareTitle { get; set; }
 
         private InstantGalleryViewModel _gallery;
         public InstantGalleryViewModel Gallery
@@ -52,6 +56,15 @@ namespace Unigram.ViewModels
                 {
                     channel.RaisePropertyChanged(() => channel.IsLeft);
                 }
+            }
+        }
+
+        public RelayCommand ShareCommand => new RelayCommand(ShareExecute);
+        private async void ShareExecute()
+        {
+            if (ShareLink != null)
+            {
+                await ShareView.Current.ShowAsync(ShareLink, ShareTitle);
             }
         }
 

@@ -41,6 +41,8 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:AutoDownloadConverter x:Key="AutoDownloadConverter"/>
+            <converters:AccountTTLConverter x:Key="AccountTTLConverter"/>
             <converters:BooleanNegationConverter x:Key="BooleanNegationConverter"/>
             <converters:ChannelTypeToStringConverter x:Key="ChannelTypeToStringConverter"/>
             <converters:BooleanToIndexConverter x:Key="BooleanToIndexConverter"/>

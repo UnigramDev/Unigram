@@ -24,19 +24,31 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock x:Uid="Settings-Titlebar-Title"
-                           Text="Settings"
-                           Style="{StaticResource BaseTextBlockStyle}"
-                           VerticalAlignment="Center"
-                           Margin="12,0"/>
-                <controls:GlyphButton Click="EditName_Click" Glyph="&#xE104;" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
-                <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-            </Grid>
+            <controls:ContentPageHeader>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Settings" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+
+                    <Button Padding="16,23,16,0" Style="{StaticResource EllipsisButton}" Grid.Column="1">
+                        <FontIcon x:Name="EllipsisIcon"
+                                  VerticalAlignment="Center"
+                                  FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                  FontSize="16"
+                                  Glyph="&#xE10C;"
+                                  Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                        <Button.Flyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Click="EditName_Click" Text="Edit name" MinWidth="120"/>
+                                <MenuFlyoutItem Command="{x:Bind ViewModel.LogoutCommand}" Text="Logout" MinWidth="120"/>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+
+                </Grid>
+            </controls:ContentPageHeader>
 
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto"
@@ -130,8 +142,8 @@
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                            Margin="0,24,0,0">
                         <!--<controls:HyperButton Content="Accounts management"
-                                              Click="Accounts_Click"
-                                              Style="{StaticResource HyperButtonStyle}"/>-->
+                             Click="Accounts_Click"
+                             Style="{StaticResource HyperButtonStyle}"/>-->
                     </local:TableStackPanel>
                 </StackPanel>
             </ScrollViewer>

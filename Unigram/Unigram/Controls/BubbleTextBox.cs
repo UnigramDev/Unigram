@@ -78,8 +78,8 @@ namespace Unigram.Controls
             //            ((MenuFlyoutItem)_flyout.Items[2]).Click += Hyperlink_Click;
             //#endif
 
-            Paste += OnPaste;
-            Clipboard.ContentChanged += Clipboard_ContentChanged;
+            //Paste += OnPaste;
+            //Clipboard.ContentChanged += Clipboard_ContentChanged;
 
             SelectionChanged += OnSelectionChanged;
             TextChanged += OnTextChanged;
@@ -92,8 +92,6 @@ namespace Unigram.Controls
                 .Throttle(TimeSpan.FromMilliseconds(200))
                 .Subscribe(e => Execute.BeginOnUIThread(() => UpdateInlineBot(true)));
 
-            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
-
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
         }
@@ -101,11 +99,13 @@ namespace Unigram.Controls
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Subscribe(this);
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Unsubscribe(this);
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         protected override void OnApplyTemplate()
@@ -318,16 +318,31 @@ namespace Unigram.Controls
                 var key = Window.Current.CoreWindow.GetKeyState(args.VirtualKey);
 
                 // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-
-                var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                if (send && ApplicationSettings.Current.IsSendByEnterEnabled)
+                if (ApplicationSettings.Current.IsSendByEnterEnabled)
                 {
-                    AcceptsReturn = false;
-                    await SendAsync();
+                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    if (send)
+                    {
+                        AcceptsReturn = false;
+                        await SendAsync();
+                    }
+                    else
+                    {
+                        AcceptsReturn = true;
+                    }
                 }
                 else
                 {
-                    AcceptsReturn = true;
+                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    if (send)
+                    {
+                        AcceptsReturn = false;
+                        await SendAsync();
+                    }
+                    else
+                    {
+                        AcceptsReturn = true;
+                    }
                 }
             }
         }
@@ -345,12 +360,39 @@ namespace Unigram.Controls
                     ViewModel.ResolveInlineBot(text);
                 }
             }
-            else if (e.Key == VirtualKey.Up && IsEmpty)
+            else if ((e.Key == VirtualKey.Up || e.Key == VirtualKey.Down || e.Key == VirtualKey.Tab))
             {
-                ViewModel.MessageEditLastCommand.Execute();
+                var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
+                var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
+                var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down);
+
+                if (e.Key == VirtualKey.Up && !alt && !ctrl && !shift && IsEmpty)
+                {
+                    ViewModel.MessageEditLastCommand.Execute();
+                    e.Handled = true;
+                }
+
+                if ((e.Key == VirtualKey.Up && alt) || (e.Key == VirtualKey.Tab && ctrl && shift))
+                {
+                    ViewModel.Aggregator.Publish("move_up");
+                    e.Handled = true;
+                }
+                else if ((e.Key == VirtualKey.Down && alt) || (e.Key == VirtualKey.Tab && ctrl && !shift))
+                {
+                    ViewModel.Aggregator.Publish("move_down");
+                    e.Handled = true;
+                }
+            }
+            else if (e.Key == VirtualKey.Escape && ViewModel.Reply is TLMessagesContainter container && container.EditMessage != null)
+            {
+                ViewModel.ClearReplyCommand.Execute();
+                e.Handled = true;
             }
 
-            base.OnKeyDown(e);
+            if (!e.Handled)
+            {
+                base.OnKeyDown(e);
+            }
         }
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
@@ -404,6 +446,7 @@ namespace Unigram.Controls
 
         private void UpdateInlineBot(bool fast)
         {
+            //var text = Text.Substring(0, Math.Max(Document.Selection.StartPosition, Document.Selection.EndPosition));
             var text = Text;
             var command = string.Empty;
             var inline = SearchInlineBotResults(text, out command);
@@ -431,8 +474,88 @@ namespace Unigram.Controls
                 else
                 {
                     ViewModel.StickerPack = null;
+
+                    if (text.Length > 0 && text[0] == '/')
+                    {
+                        var commands = SearchByCommands(text, out string searchText);
+                        if (commands)
+                        {
+                            var result = GetCommands(searchText.ToLower());
+                            if (ViewModel.BotCommands != null && ViewModel.BotCommands.SequenceEqual(result))
+                            {
+
+                            }
+                            else
+                            {
+                                ViewModel.BotCommands = result;
+                            }
+                        }
+                        else
+                        {
+                            ViewModel.BotCommands = null;
+                        }
+                    }
+                    else
+                    {
+                        ViewModel.BotCommands = null;
+                    }
                 }
             }
+        }
+
+        private List<Tuple<TLUser, TLBotCommand>> GetCommands(string command)
+        {
+            var all = ViewModel.UnfilteredBotCommands;
+            if (all != null)
+            {
+                return all.Where(x => x.Item2.Command.ToLower().StartsWith(command)).ToList();
+            }
+
+            return null;
+        }
+
+        private static bool SearchByCommands(string text, out string searchText)
+        {
+            searchText = string.Empty;
+
+            var c = '/';
+            var flag = true;
+            var index = -1;
+            var i = text.Length - 1;
+
+            while (i >= 0)
+            {
+                if (text[i] == c)
+                {
+                    if (i == 0 || text[i - 1] == ' ')
+                    {
+                        index = i;
+                        break;
+                    }
+                    flag = false;
+                    break;
+                }
+                else
+                {
+                    if (!MessageHelper.IsValidCommandSymbol(text[i]))
+                    {
+                        flag = false;
+                        break;
+                    }
+                    i--;
+                }
+            }
+            if (flag)
+            {
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                searchText = text.Substring(index).TrimStart(c);
+            }
+
+            return flag;
         }
 
         private void UpdateText()
@@ -485,14 +608,14 @@ namespace Unigram.Controls
             bool isDirty = _isDirty;
 
             Document.GetText(TextGetOptions.FormatRtf, out string text);
-            Document.GetText(TextGetOptions.NoHidden, out string planText);
+            Document.GetText(TextGetOptions.NoHidden, out string plainText);
 
             //Document.SetText(TextSetOptions.FormatRtf, string.Empty);
             Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
 
             _updatingText = true;
-            planText = planText.Trim();
-            ViewModel.Text = planText;
+            plainText = plainText.Trim();
+            ViewModel.Text = plainText;
             _updatingText = false;
 
             if (isDirty)
@@ -506,7 +629,19 @@ namespace Unigram.Controls
             }
             else
             {
-                ViewModel.SendCommand.Execute(null);
+                var entities = MessageHelper.GetEntities(ref plainText);
+                if (entities != null)
+                {
+                    _updatingText = true;
+                    ViewModel.Text = plainText;
+                    _updatingText = false;
+
+                    await ViewModel.SendMessageAsync(entities, false);
+                }
+                else
+                {
+                    ViewModel.SendCommand.Execute(null);
+                }
             }
         }
 

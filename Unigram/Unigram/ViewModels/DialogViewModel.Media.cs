@@ -13,6 +13,7 @@ using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Core.Helpers;
 using Unigram.Core.Models;
+using Unigram.Services;
 using Unigram.Views;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
@@ -29,12 +30,14 @@ namespace Unigram.ViewModels
         public void SendStickerExecute(TLDocument document)
         {
             SendDocument(document, null);
+            Stickers.StickersService.AddRecentSticker(StickerType.Image, document, (int)(Utils.CurrentTimestamp / 1000));
         }
 
         public RelayCommand<TLDocument> SendGifCommand => new RelayCommand<TLDocument>(SendGifExecute);
         public void SendGifExecute(TLDocument document)
         {
             SendDocument(document, null);
+            Stickers.StickersService.AddRecentGif(document, (int)(Utils.CurrentTimestamp / 1000));
         }
 
         private void SendDocument(TLDocument document, string caption)

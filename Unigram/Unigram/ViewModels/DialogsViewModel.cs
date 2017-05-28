@@ -17,6 +17,7 @@ using Telegram.Logs;
 using Template10.Utils;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Core.Common;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -52,9 +53,11 @@ namespace Unigram.ViewModels
         public DialogsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            Items = new ObservableCollection<TLDialog>();
+            Items = new MvxObservableCollection<TLDialog>();
             Search = new ObservableCollection<KeyedList<string, TLObject>>();
             SearchTokens = new Dictionary<string, CancellationTokenSource>();
+
+            Execute.BeginOnThreadPool(() => LoadFirstSlice());
         }
 
         public int PinnedDialogsIndex { get; set; }
@@ -136,25 +139,28 @@ namespace Unigram.ViewModels
                 var config = CacheService.GetConfig();
                 var pinnedIndex = 0;
 
-                Execute.BeginOnUIThread(() =>
-                {
-                    foreach (var item in response.Result.Dialogs)
-                    {
-                        if (item.IsPinned)
-                        {
-                            item.PinnedIndex = pinnedIndex++;
-                        }
+                var items = new List<TLDialog>(response.Result.Dialogs.Count);
 
-                        if (item.With is TLChat chat && chat.HasMigratedTo)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            Items.Add(item);
-                        }
+                foreach (var item in response.Result.Dialogs)
+                {
+                    if (item.IsPinned)
+                    {
+                        item.PinnedIndex = pinnedIndex++;
                     }
 
+                    if (item.With is TLChat chat && chat.HasMigratedTo)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        items.Add(item);
+                    }
+                }
+
+                Execute.BeginOnUIThread(() =>
+                {
+                    Items.ReplaceWith(items);
                     IsFirstPinned = Items.Any(x => x.IsPinned);
                     PinnedDialogsIndex = pinnedIndex;
                     PinnedDialogsCountMax = config.PinnedDialogsCountMax;
@@ -237,9 +243,10 @@ namespace Unigram.ViewModels
         {
             var dialogs = CacheService.GetDialogs();
             dialogs = ReorderDrafts(dialogs);
+
             Execute.BeginOnUIThread(() =>
             {
-                Items.Clear();
+                var items = new List<TLDialog>(dialogs.Count);
 
                 foreach (var item in dialogs)
                 {
@@ -249,9 +256,11 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        Items.Add(item);
+                        items.Add(item);
                     }
                 }
+
+                Items.ReplaceWith(items);
             });
         }
 
@@ -780,7 +789,7 @@ namespace Unigram.ViewModels
 
         public bool IsLastSliceLoaded { get; set; }
 
-        public ObservableCollection<TLDialog> Items { get; private set; }
+        public MvxObservableCollection<TLDialog> Items { get; private set; }
 
         #region Search
 

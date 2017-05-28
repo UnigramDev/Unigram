@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 05/23/2017 11:33:17
+// 	Generated: 05/27/2017 16:55:22
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -1179,6 +1179,94 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("IsSendingVideoMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Months"
+        /// </summary>
+        public static string MonthGenitivePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("MonthGenitivePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Month"
+        /// </summary>
+        public static string MonthGenitiveSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("MonthGenitiveSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Months"
+        /// </summary>
+        public static string MonthNominativePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("MonthNominativePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Month"
+        /// </summary>
+        public static string MonthNominativeSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("MonthNominativeSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Years"
+        /// </summary>
+        public static string YearGenitivePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("YearGenitivePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Year"
+        /// </summary>
+        public static string YearGenitiveSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("YearGenitiveSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Years"
+        /// </summary>
+        public static string YearNominativePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("YearNominativePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Year"
+        /// </summary>
+        public static string YearNominativeSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("YearNominativeSingular");
             }
         }
     }

@@ -175,5 +175,13 @@ namespace Unigram.Controls.Messages
         }
 
         #endregion
+
+        private void Share_Click(object sender, RoutedEventArgs e)
+        {
+            if (Context != null)
+            {
+                Context.MessageShareCommand.Execute(ViewModel);
+            }
+        }
     }
 }

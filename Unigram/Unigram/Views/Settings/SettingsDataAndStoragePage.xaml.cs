@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -17,9 +18,12 @@ namespace Unigram.Views.Settings
 {
     public sealed partial class SettingsDataAndStoragePage : Page
     {
+        public SettingsDataAndStorageViewModel ViewModel => DataContext as SettingsDataAndStorageViewModel;
+
         public SettingsDataAndStoragePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsDataAndStorageViewModel>();
         }
 
         private void Storage_Click(object sender, RoutedEventArgs e)

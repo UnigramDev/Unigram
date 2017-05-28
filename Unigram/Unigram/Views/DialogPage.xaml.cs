@@ -246,15 +246,19 @@ namespace Unigram.Views
             KeyboardPlaceholder.Height = new GridLength(1, GridUnitType.Auto);
         }
 
-        public bool OnBackRequested()
+        public void OnBackRequested(HandledEventArgs args)
         {
             if (StickersPanel.Visibility == Visibility.Visible)
             {
                 StickersPanel.Visibility = Visibility.Collapsed;
-                return true;
+                args.Handled = true;
             }
 
-            return false;
+            if (ViewModel.SelectionMode != ListViewSelectionMode.None)
+            {
+                ViewModel.SelectionMode = ListViewSelectionMode.None;
+                args.Handled = true;
+            }
         }
 
         //private bool _isAlreadyLoading;
@@ -758,7 +762,7 @@ namespace Unigram.Views
                 var message = element.DataContext as TLMessage;
                 if (message != null)
                 {
-                    if (message.IsGif())
+                    if (message.IsGif(true))
                     {
                         Visibility = Visibility.Visible;
                         return;
@@ -1010,6 +1014,24 @@ namespace Unigram.Views
         {
             var visual = ElementCompositionPreview.GetElementVisual(element);
             visual.StopAnimation("Offset.Y");
+        }
+
+        private void BotCommands_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var item = e.ClickedItem as Tuple<TLUser, TLBotCommand>;
+            if (item != null)
+            {
+                var command = $"/{item.Item2.Command}";
+                if (ViewModel.With is TLChannel || ViewModel.With is TLChat && item.Item1.HasUsername)
+                {
+                    command += $"@{item.Item1.Username}";
+                }
+
+                ViewModel.Text = command;
+                ViewModel.SendCommand.Execute(null);
+                ViewModel.BotCommands = null;
+                txtMessage.Text = null;
+            }
         }
     }
 

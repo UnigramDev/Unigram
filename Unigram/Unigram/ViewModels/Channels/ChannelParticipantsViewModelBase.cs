@@ -50,12 +50,8 @@ namespace Unigram.ViewModels.Channels
             {
                 Item = channel;
 
-                var response = await ProtoService.GetFullChannelAsync(channel.ToInputChannel());
-                if (response.IsSucceeded)
-                {
-                    Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), _filter);
-                    RaisePropertyChanged(() => Participants);
-                }
+                Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), _filter);
+                RaisePropertyChanged(() => Participants);
             }
         }
 

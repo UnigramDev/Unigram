@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Markup;
 
 namespace Unigram.Controls
 {
@@ -99,6 +100,27 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty CommandVisibilityProperty =
             DependencyProperty.Register("CommandVisibility", typeof(Visibility), typeof(ButtonPageHeader), new PropertyMetadata(Visibility.Visible));
+
+        #endregion
+    }
+
+    public class ContentPageHeader : ContentControl
+    {
+        public ContentPageHeader()
+        {
+            DefaultStyleKey = typeof(ContentPageHeader);
+        }
+
+        #region IsLoading
+
+        public bool IsLoading
+        {
+            get { return (bool)GetValue(IsLoadingProperty); }
+            set { SetValue(IsLoadingProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsLoadingProperty =
+            DependencyProperty.Register("IsLoading", typeof(bool), typeof(ContentPageHeader), new PropertyMetadata(false));
 
         #endregion
     }

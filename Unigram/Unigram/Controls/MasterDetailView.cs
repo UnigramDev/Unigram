@@ -13,6 +13,7 @@ using Unigram.Core.Services;
 using Unigram.Views.Users;
 using System.Diagnostics;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml.Input;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
@@ -33,8 +34,8 @@ namespace Unigram.Controls
         public MasterDetailView()
         {
             DefaultStyleKey = typeof(MasterDetailView);
+
             Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
             SizeChanged += OnSizeChanged;
         }
 
@@ -60,13 +61,6 @@ namespace Unigram.Controls
             {
                 ViewStateChanged(this, EventArgs.Empty);
             }
-
-            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += OnAcceleratorKeyActivated;
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
         }
 
         private void UpdateVisualState()
@@ -98,15 +92,19 @@ namespace Unigram.Controls
             }
         }
 
-        private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
-            if ((args.EventType == CoreAcceleratorKeyEventType.SystemKeyDown || args.EventType == CoreAcceleratorKeyEventType.KeyDown) && (args.VirtualKey == VirtualKey.Escape))
+            if (e.Key == VirtualKey.Escape)
             {
                 if (DetailFrame.CanGoBack && CurrentState == MasterDetailState.Narrow)
                 {
                     DetailFrame.GoBack();
-                    args.Handled = true;
+                    e.Handled = true;
                 }
+            }
+            else
+            {
+                base.OnKeyDown(e);
             }
         }
 
@@ -269,11 +267,13 @@ namespace Unigram.Controls
                 service.FrameFacade.FrameId = key;
                 service.FrameFacade.BackRequested += (s, args) =>
                 {
-                    var page = DetailFrame.Content as IMasterDetailPage;
-                    if (page != null && page.OnBackRequested())
+                    if (DetailFrame.Content is IMasterDetailPage page)
                     {
-                        args.Handled = true;
-                        return;
+                        page.OnBackRequested(args);
+                        if (args.Handled)
+                        {
+                            return;
+                        }
                     }
 
                     // TODO: maybe checking for the actual width is not the perfect way,
@@ -365,6 +365,6 @@ namespace Unigram.Controls
 
     public interface IMasterDetailPage
     {
-        bool OnBackRequested();
+        void OnBackRequested(HandledEventArgs args);
     }
 }

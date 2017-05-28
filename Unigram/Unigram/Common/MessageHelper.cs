@@ -207,7 +207,7 @@ namespace Unigram.Common
             var newValue = e.NewValue as string;
             var oldValue = e.OldValue as string;
 
-            sender.IsTextSelectionEnabled = false;
+            //sender.IsTextSelectionEnabled = false;
             sender.Visibility = string.IsNullOrWhiteSpace(newValue) ? Visibility.Collapsed : Visibility.Visible;
 
             if (oldValue == newValue) return;
@@ -481,6 +481,268 @@ namespace Unigram.Common
             }
         }
 
+        internal static List<TLMessageEntityBase> GetEntities(ref string message)
+        {
+            if (message == null)
+            {
+                return null;
+            }
+            List<TLMessageEntityBase> entities = null;
+            int index;
+            int start = -1;
+            int lastIndex = 0;
+            bool isPre = false;
+            const String mono = "`";
+            const String pre = "```";
+            const String bold = "**";
+            const String italic = "__";
+            while ((index = message.IndexOf(!isPre ? mono : pre, lastIndex)) != -1)
+            {
+                if (start == -1)
+                {
+                    isPre = message.Length - index > 2 && message[index + 1] == '`' && message[index + 2] == '`';
+                    start = index;
+                    lastIndex = index + (isPre ? 3 : 1);
+                }
+                else
+                {
+                    if (entities == null)
+                    {
+                        entities = new List<TLMessageEntityBase>();
+                    }
+                    for (int a = index + (isPre ? 3 : 1); a < message.Length; a++)
+                    {
+                        if (message[a] == '`')
+                        {
+                            index++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    lastIndex = index + (isPre ? 3 : 1);
+                    if (isPre)
+                    {
+                        int firstChar = start > 0 ? message[start - 1] : 0;
+                        bool replacedFirst = firstChar == ' ' || firstChar == '\n';
+                        string startMessage = message.Substr(0, start - (replacedFirst ? 1 : 0));
+                        string content = message.Substr(start + 3, index);
+                        firstChar = index + 3 < message.Length ? message[index + 3] : 0;
+                        string endMessage = message.Substr(index + 3 + (firstChar == ' ' || firstChar == '\n' ? 1 : 0), message.Length);
+                        if (startMessage.Length != 0)
+                        {
+                            startMessage = string.Concat(startMessage, "\n");
+                        }
+                        else
+                        {
+                            replacedFirst = true;
+                        }
+                        if (endMessage.Length != 0)
+                        {
+                            endMessage = string.Concat("\n", endMessage);
+                        }
+                        if (!string.IsNullOrEmpty(content))
+                        {
+                            message = string.Concat(startMessage, content, endMessage);
+                            TLMessageEntityPre entity = new TLMessageEntityPre();
+                            entity.Offset = start + (replacedFirst ? 0 : 1);
+                            entity.Length = index - start - 3 + (replacedFirst ? 0 : 1);
+                            entity.Language = string.Empty;
+                            entities.Add(entity);
+                            lastIndex -= 6;
+                        }
+                    }
+                    else
+                    {
+                        if (start + 1 != index)
+                        {
+                            message = string.Concat(message.Substr(0, start), message.Substr(start + 1, index), message.Substr(index + 1, message.Length));
+                            TLMessageEntityCode entity = new TLMessageEntityCode();
+                            entity.Offset = start;
+                            entity.Length = index - start - 1;
+                            entities.Add(entity);
+                            lastIndex -= 2;
+                        }
+                    }
+                    start = -1;
+                    isPre = false;
+                }
+            }
+            if (start != -1 && isPre)
+            {
+                message = string.Concat(message.Substr(0, start), message.Substr(start + 2, message.Length));
+                if (entities == null)
+                {
+                    entities = new List<TLMessageEntityBase>();
+                }
+                TLMessageEntityCode entity = new TLMessageEntityCode();
+                entity.Offset = start;
+                entity.Length = 1;
+                entities.Add(entity);
+            }
+
+            //            if (message instanceof Spannable) {
+            //                Spannable spannable = (Spannable)message;
+            //                TypefaceSpan spans[] = spannable.getSpans(0, message.length(), TypefaceSpan.class);
+            //            if (spans != null && spans.length > 0) {
+            //                for (int a = 0; a<spans.length; a++) {
+            //                    TypefaceSpan span = spans[a];
+            //        int spanStart = spannable.getSpanStart(span);
+            //        int spanEnd = spannable.getSpanEnd(span);
+            //                    if (checkInclusion(spanStart, entities) || checkInclusion(spanEnd, entities) || checkIntersection(spanStart, spanEnd, entities)) {
+            //                        continue;
+            //                    }
+            //                    if (entities == null) {
+            //                        entities = new ArrayList<>();
+            //                    }
+            //    TLRPC.MessageEntity entity;
+            //                    if (span.isBold()) {
+            //                        entity = new TLRPC.TL_messageEntityBold();
+            //                    } else {
+            //                        entity = new TLRPC.TL_messageEntityItalic();
+            //                    }
+            //                    entity.offset = spanStart;
+            //                    entity.length = spanEnd - spanStart;
+            //                    entities.add(entity);
+            //                }
+            //            }
+
+            //            URLSpanUserMention spansMentions[] = spannable.getSpans(0, message.length(), URLSpanUserMention.class);
+            //            if (spansMentions != null && spansMentions.length > 0) {
+            //                if (entities == null) {
+            //                    entities = new ArrayList<>();
+            //                }
+            //                for (int b = 0; b<spansMentions.length; b++) {
+            //                    TLRPC.TL_inputMessageEntityMentionName entity = new TLRPC.TL_inputMessageEntityMentionName();
+            //entity.user_id = MessagesController.getInputUser(Utilities.parseInt(spansMentions[b].getURL()));
+            //                    if (entity.user_id != null) {
+            //                        entity.offset = spannable.getSpanStart(spansMentions[b]);
+            //                        entity.length = Math.min(spannable.getSpanEnd(spansMentions[b]), message.length()) - entity.offset;
+            //                        if (message.charAt(entity.offset + entity.length - 1) == ' ') {
+            //                            entity.length--;
+            //                        }
+            //                        entities.add(entity);
+            //                    }
+            //                }
+            //            }
+            //        }
+
+            for (int c = 0; c < 2; c++)
+            {
+                lastIndex = 0;
+                start = -1;
+                String checkString = c == 0 ? bold : italic;
+                char checkChar = c == 0 ? '*' : '_';
+                while ((index = message.IndexOf(checkString, lastIndex)) != -1)
+                {
+                    if (start == -1)
+                    {
+                        char prevChar = index == 0 ? ' ' : message[index - 1];
+                        if (!CheckInclusion(index, entities) && (prevChar == ' ' || prevChar == '\n'))
+                        {
+                            start = index;
+                        }
+                        lastIndex = index + 2;
+                    }
+                    else
+                    {
+                        for (int a = index + 2; a < message.Length; a++)
+                        {
+                            if (message[a] == checkChar)
+                            {
+                                index++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        lastIndex = index + 2;
+                        if (CheckInclusion(index, entities) || CheckIntersection(start, index, entities))
+                        {
+                            start = -1;
+                            continue;
+                        }
+                        if (start + 2 != index)
+                        {
+                            if (entities == null)
+                            {
+                                entities = new List<TLMessageEntityBase>();
+                            }
+                            message = string.Concat(message.Substr(0, start), message.Substr(start + 2, index), message.Substr(index + 2, message.Length));
+                            TLMessageEntityBase entity;
+                            if (c == 0)
+                            {
+                                entity = new TLMessageEntityBold();
+                            }
+                            else
+                            {
+                                entity = new TLMessageEntityItalic();
+                            }
+                            entity.Offset = start;
+                            entity.Length = index - start - 2;
+                            RemoveOffsetAfter(entity.Offset + entity.Length, 4, entities);
+                            entities.Add(entity);
+                            lastIndex -= 4;
+                        }
+                        start = -1;
+                    }
+                }
+            }
+
+            return entities;
+        }
+
+        private static bool CheckInclusion(int index, List<TLMessageEntityBase> entities)
+        {
+            if (entities == null || entities.Count == 0)
+            {
+                return false;
+            }
+            int count = entities.Count;
+            for (int a = 0; a < count; a++)
+            {
+                TLMessageEntityBase entity = entities[a];
+                if (entity.Offset <= index && entity.Offset + entity.Length > index)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static bool CheckIntersection(int start, int end, List<TLMessageEntityBase> entities)
+        {
+            if (entities == null || entities.Count == 0)
+            {
+                return false;
+            }
+            int count = entities.Count;
+            for (int a = 0; a < count; a++)
+            {
+                TLMessageEntityBase entity = entities[a];
+                if (entity.Offset > start && entity.Offset + entity.Length <= end)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static void RemoveOffsetAfter(int start, int countToRemove, List<TLMessageEntityBase> entities)
+        {
+            int count = entities.Count;
+            for (int a = 0; a < count; a++)
+            {
+                TLMessageEntityBase entity = entities[a];
+                if (entity.Offset > start)
+                {
+                    entity.Offset -= countToRemove;
+                }
+            }
+        }
+
         //private static bool IsEmoji(string text)
         //{
         //    return char.IsSurrogate(text, 0) || char.IsSurrogate(text, text.Length - 1) || EmojiData.BasicEmojis.Contains(text);
@@ -640,6 +902,21 @@ namespace Unigram.Common
             {
                 //await UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchAsync((string)data);
                 UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
+            }
+            else if (type == TLType.MessageEntityBotCommand)
+            {
+                // TODO: THIS IS BAD
+                var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                if (service != null)
+                {
+                    var dialogPage = service.Frame.Content as DialogPage;
+                    if (dialogPage != null)
+                    {
+                        dialogPage.ViewModel.Text = (string)data;
+                        dialogPage.ViewModel.SendCommand.Execute(null);
+                        dialogPage.ViewModel.Text = null;
+                    }
+                }
             }
             else
             {

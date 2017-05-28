@@ -111,16 +111,13 @@
                 <!-- Logo placeholder -->
                 <Grid Background="White">
                     <Ellipse Height="148"
-                                 Width="148"
-                                 Fill="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                 HorizontalAlignment="Center"/>
-                    <Ellipse Height="148"
-                                 Width="148"
-                                 Margin="0,12,0,0">
-                        <Ellipse.Fill>
-                            <ImageBrush ImageSource="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png" />
-                        </Ellipse.Fill>
-                    </Ellipse>
+                             Width="148"
+                             Fill="{ThemeResource SystemControlBackgroundAccentBrush}"
+                             HorizontalAlignment="Center"/>
+                    <Image Source="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png"
+                           Height="148"
+                           Width="148"
+                           Margin="0,12,0,0"/>
                 </Grid>
             </Border>
         </Border>
@@ -158,27 +155,27 @@
                   Grid.Row="4"/>
 
         <!--<VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="DisplayModeStates">
-                <VisualState x:Name="Wide">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="600" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="rpMain.HorizontalAlignment" Value="Stretch" />
-                        <Setter Target="rpScrollContent.HorizontalAlignment" Value="Center"/>
-                        <Setter Target="rpScrollContent.Width" Value="400"/>
-                        <Setter Target="rpScrollContent.VerticalAlignment" Value="Center"/>
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="Compact">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="rpMain.HorizontalAlignment" Value="Stretch" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>-->
+             <VisualStateGroup x:Name="DisplayModeStates">
+             <VisualState x:Name="Wide">
+             <VisualState.StateTriggers>
+             <AdaptiveTrigger MinWindowWidth="600" />
+             </VisualState.StateTriggers>
+             <VisualState.Setters>
+             <Setter Target="rpMain.HorizontalAlignment" Value="Stretch" />
+             <Setter Target="rpScrollContent.HorizontalAlignment" Value="Center"/>
+             <Setter Target="rpScrollContent.Width" Value="400"/>
+             <Setter Target="rpScrollContent.VerticalAlignment" Value="Center"/>
+             </VisualState.Setters>
+             </VisualState>
+             <VisualState x:Name="Compact">
+             <VisualState.StateTriggers>
+             <AdaptiveTrigger MinWindowWidth="0" />
+             </VisualState.StateTriggers>
+             <VisualState.Setters>
+             <Setter Target="rpMain.HorizontalAlignment" Value="Stretch" />
+             </VisualState.Setters>
+             </VisualState>
+             </VisualStateGroup>
+             </VisualStateManager.VisualStateGroups>-->
     </Grid>
 </Page>

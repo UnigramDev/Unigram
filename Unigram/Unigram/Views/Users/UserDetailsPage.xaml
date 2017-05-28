@@ -16,7 +16,29 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Info"/>
+        <controls:ContentPageHeader>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Info" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+
+                <controls:GlyphButton
+                    Glyph="&#xE13A;"
+                    Command="{x:Bind ViewModel.CallCommand}"
+                    Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable, Mode=OneWay}"
+                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                    Grid.Column="1"/>
+                <controls:GlyphButton
+                    Glyph="&#xE104;"
+                    Command="{x:Bind ViewModel.CallCommand}"
+                    Visibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"
+                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                    Grid.Column="2"/>
+            </Grid>
+        </controls:ContentPageHeader>
 
         <controls:ScrollViewerBackground 
             Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
@@ -58,7 +80,7 @@
                                        BorderThickness="0,0,0,1"
                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
-                    <controls:HyperButton Tag="Call"
+                    <controls:HyperButton Tag="Phone"
                                           Command="{Binding CallCommand}"
                                           Visibility="{Binding PhoneVisibility}"
                                           Style="{StaticResource SubtitleButtonStyle}">
@@ -121,10 +143,10 @@
                                           Style="{StaticResource HyperButtonStyle}"
                                           Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
 
-                    <ToggleSwitch Header="Notifications and sounds"
+                    <ToggleSwitch Header="Notifications and Sounds"
                                   IsOn="{x:Bind ViewModel.AreNotificationsEnabled, Mode=OneWay}"
                                   Style="{ThemeResource CheckButtonStyle}"
-                                  IsEnabled="False"/>
+                                  Toggled="Notifications_Toggled"/>
 
                     <!--<controls:HyperButton Content="Groups in common"
                          Command="{Binding MediaCommand}"

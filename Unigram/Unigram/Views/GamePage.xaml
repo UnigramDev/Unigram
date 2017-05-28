@@ -22,10 +22,10 @@
                 <TextBlock x:Name="TitleLabel" Style="{StaticResource BaseTextBlockStyle}"/>
                 <TextBlock x:Name="UsernameLabel" Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}" Style="{StaticResource CaptionTextBlockStyle}" />
             </StackPanel>
-            <controls:GlyphButton Glyph="&#xE72D;" Grid.Column="1"/>
+            <controls:GlyphButton Click="Share_Click" Glyph="&#xE72D;" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
 
-        <WebView x:Name="View" Grid.Row="1"/>
+        <WebView x:Name="View" NavigationStarting="View_NavigationStarting" Grid.Row="1"/>
     </Grid>
 </Page>

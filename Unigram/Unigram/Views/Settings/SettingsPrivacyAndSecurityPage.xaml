@@ -20,7 +20,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Privacy and security"/>
+        <controls:PageHeader Text="Privacy and Security"/>
 
         <controls:ScrollViewerBackground 
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -64,18 +64,16 @@
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="DELETE MY ACCOUNT" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <ComboBox Header="If Away For" SelectedIndex="0">
-                        <ComboBoxItem Content="1 month"/>
-                        <ComboBoxItem Content="3 months"/>
-                        <ComboBoxItem Content="6 months"/>
-                        <ComboBoxItem Content="1 year"/>
-                    </ComboBox>
+                    <controls:BadgeButton
+                        Content="If Away For"
+                        Badge="{x:Bind ViewModel.AccountTTL, Mode=OneWay, Converter={StaticResource AccountTTLConverter}}"
+                        Command="{x:Bind ViewModel.AccountTTLCommand}"/>
 
                     <TextBlock Text="If you do not come online at least once within this period, your account will be deleted along with all groups, messages and contacts." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="PAYMENTS" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:HyperButton Command="{x:Bind ViewModel.ClearPaymentsCommand}" Content="Clear Payment and Shipping Info" Margin="-12,0,-12,-0" Style="{StaticResource HyperButtonStyle}"/>
+                    <controls:HyperButton Command="{x:Bind ViewModel.ClearPaymentsCommand}" Tag="Clear Payment and Shipping Info" Margin="-12,0,-12,-0" Style="{StaticResource HyperDetailButtonStyle}"/>
 
                     <TextBlock Text="You can delete your shipping info and instruct all payment providers to remove your saved credit cards. Note that Telegram never stores your credit card data." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>

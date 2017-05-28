@@ -18,16 +18,19 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
+using Telegram.Api.Services;
 
 namespace Unigram.Common
 {
     public class TLBitmapSource
     {
+        private static readonly IMTProtoService _protoService;
         private static readonly IDownloadFileManager _downloadFileManager;
         private static readonly IDownloadWebFileManager _downloadWebFileManager;
 
         static TLBitmapSource()
         {
+            _protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
             _downloadFileManager = UnigramContainer.Current.ResolveType<IDownloadFileManager>();
             _downloadWebFileManager = UnigramContainer.Current.ResolveType<IDownloadWebFileManager>();
         }
@@ -109,6 +112,11 @@ namespace Unigram.Common
                 {
                     SetSource(null, photo.Thumb, PHASE_THUMBNAIL);
                     //SetSource(photo, photo.Full, PHASE_FULL);
+
+                    if (ApplicationSettings.Current.AutoDownload[_protoService.NetworkType].HasFlag(AutoDownloadType.Photo))
+                    {
+                        SetSource(photo, photo.Full, PHASE_FULL);
+                    }
                 }
             }
         }

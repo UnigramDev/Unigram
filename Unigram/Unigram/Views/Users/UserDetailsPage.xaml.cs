@@ -62,7 +62,11 @@ namespace Unigram.Views.Users
 
         private void Notifications_Toggled(object sender, RoutedEventArgs e)
         {
-            ViewModel.ToggleMuteCommand.Execute();
+            var toggle = sender as ToggleSwitch;
+            if (toggle.FocusState != FocusState.Unfocused)
+            {
+                ViewModel.ToggleMuteCommand.Execute();
+            }
         }
     }
 }

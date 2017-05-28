@@ -731,4 +731,28 @@
   <data name="IsSendingVideoMessage" xml:space="preserve">
     <value>{0} is sending a video message</value>
   </data>
+  <data name="MonthGenitivePlural" xml:space="preserve">
+    <value>Months</value>
+  </data>
+  <data name="MonthGenitiveSingular" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="MonthNominativePlural" xml:space="preserve">
+    <value>Months</value>
+  </data>
+  <data name="MonthNominativeSingular" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="YearGenitivePlural" xml:space="preserve">
+    <value>Years</value>
+  </data>
+  <data name="YearGenitiveSingular" xml:space="preserve">
+    <value>Year</value>
+  </data>
+  <data name="YearNominativePlural" xml:space="preserve">
+    <value>Years</value>
+  </data>
+  <data name="YearNominativeSingular" xml:space="preserve">
+    <value>Year</value>
+  </data>
 </root>

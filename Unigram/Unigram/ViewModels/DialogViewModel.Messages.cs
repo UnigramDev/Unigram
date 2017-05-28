@@ -262,6 +262,16 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Share
+
+        public RelayCommand<TLMessage> MessageShareCommand => new RelayCommand<TLMessage>(MessageShareExecute);
+        private async void MessageShareExecute(TLMessage message)
+        {
+            await ShareView.Current.ShowAsync(message);
+        }
+
+        #endregion
+
         #region Multiple Delete
 
         private RelayCommand _messagesDeleteCommand;
@@ -986,11 +996,11 @@ namespace Unigram.ViewModels
                     {
                         if (CacheService.GetUser(message.ViaBotId) is TLUser user)
                         {
-                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Title = gameMedia.Game.Title, Username = user.Username });
+                            NavigationService.Navigate(typeof(GamePage), new TLTuple<string, string, string, TLMessage>(gameMedia.Game.Title, user.Username, response.Result.Url, message));
                         }
                         else
                         {
-                            NavigationService.Navigate(typeof(GamePage), new GamePage.NavigationParameters { Url = response.Result.Url, Title = gameMedia.Game.Title });
+                            NavigationService.Navigate(typeof(GamePage), new TLTuple<string, string, string, TLMessage>(gameMedia.Game.Title, null, response.Result.Url, message));
                         }
                     }
                 }
@@ -1160,7 +1170,9 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SaveGifAsync(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, false);
                 if (response.IsSucceeded)
                 {
-                    _stickers.SyncGifs();
+                    _stickers.StickersService.AddRecentGif(document, (int)(Utils.CurrentTimestamp / 1000));
+
+                    //_stickers.SyncGifs();
                 }
             }
         }

@@ -18,6 +18,6 @@
         <ToolTipService.ToolTip>
             <ToolTip Opened="ToolTip_Opened"/>
         </ToolTipService.ToolTip>
-        <Run x:Name="ViewsGlyph" FontSize="10" FontFamily="{ThemeResource TelegramThemeFontFamily}"/><Run Text="{x:Bind ConvertViews(ViewModel, ViewModel.Views), Mode=OneWay}"/><Run Text="{x:Bind ConvertEdit(ViewModel.HasEditDate, ViewModel.HasViaBotId, ViewModel.ReplyMarkup), Mode=OneWay}" FontStyle="Italic"/><Run Text="{x:Bind Convert.Date(ViewModel.Date)}"/><Run Text="{x:Bind ConvertState(ViewModel.IsOut, ViewModel.State), Mode=OneWay}" FontSize="10" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
+        <Run x:Name="ViewsGlyph" FontSize="10" FontFamily="{ThemeResource TelegramThemeFontFamily}"/><Run Text="{x:Bind ConvertViews(ViewModel, ViewModel.Views), Mode=OneWay}"/><Run Text="{x:Bind ConvertEdit(ViewModel.HasEditDate, ViewModel.HasViaBotId, ViewModel.ReplyMarkup), Mode=OneWay}" FontStyle="Italic"/><Run Text="{x:Bind Convert.Date(ViewModel.Date)}"/><Run Text="{x:Bind ConvertState(ViewModel.IsOut, ViewModel.IsPost, ViewModel.State), Mode=OneWay}" FontSize="10" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
     </TextBlock>
 </local:HackedContentPresenter>

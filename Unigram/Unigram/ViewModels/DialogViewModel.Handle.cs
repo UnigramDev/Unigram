@@ -20,8 +20,39 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateEditMessage>,
         IHandle<MessagesRemovedEventArgs>,
         IHandle<TLUpdateUserStatus>,
-        IHandle
+        IHandle<string>
     {
+        public async void Handle(string message)
+        {
+            if (message.Equals("Window_Activated"))
+            {
+                var participant = _with;
+                var dialog = _currentDialog;
+                if (dialog != null && Messages.Count > 0)
+                {
+                    var unread = dialog.UnreadCount;
+                    if (Peer is TLInputPeerChannel && participant is TLChannel channel)
+                    {
+                        await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
+                    }
+                    else
+                    {
+                        await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
+                    }
+
+                    var readPeer = With as ITLReadMaxId;
+                    readPeer.ReadInboxMaxId = dialog.TopMessage;
+                    dialog.ReadInboxMaxId = dialog.TopMessage;
+                    dialog.UnreadCount = dialog.UnreadCount - unread;
+                    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+                }
+            }
+            else if (message.Equals("Window_Deactivated"))
+            {
+                SaveDraft();
+            }
+        }
+
         public void Handle(MessagesRemovedEventArgs args)
         {
             if (With == args.Dialog.With && args.Messages != null)
@@ -72,49 +103,100 @@ namespace Unigram.ViewModels
             {
                 return LastSeenConverter.GetLabel(user, true);
             }
-
-            if (With is TLChannel channel && channel.HasAccessHash && channel.AccessHash.HasValue)
+            else if (With is TLChannel channel && channel.HasAccessHash && channel.AccessHash.HasValue)
             {
-                var response = await ProtoService.GetFullChannelAsync(new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value });
-                if (response.IsSucceeded)
+                var full = Full as TLChannelFull;
+                if (full == null)
                 {
-                    var channelFull = response.Result.FullChat as TLChannelFull;
-                    if (channelFull != null)
+                    full = CacheService.GetFullChat(channel.Id) as TLChannelFull;
+                }
+
+                if (full == null)
+                {
+                    var response = await ProtoService.GetFullChannelAsync(new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value });
+                    if (response.IsSucceeded)
                     {
-                        if (channel.IsBroadcast && channelFull.HasParticipantsCount)
-                        {
-                            return string.Format("{0} members", channelFull.ParticipantsCount.Value);
-                        }
-                        else if (channelFull.HasParticipantsCount)
-                        {
-                            var config = CacheService.GetConfig();
-                            if (config != null && channelFull.ParticipantsCount <= config.ChatSizeMax)
-                            {
-                                var participants = await ProtoService.GetParticipantsAsync(new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value }, null, 0, config.ChatSizeMax);
-                                if (participants.IsSucceeded)
-                                {
-                                    var count = 0;
-                                    foreach (var item in participants.Result.Users.OfType<TLUser>())
-                                    {
-                                        if (item.HasStatus && item.Status is TLUserStatusOnline)
-                                        {
-                                            count++;
-                                        }
-                                    }
-
-                                    if (count > 1)
-                                    {
-                                        return string.Format("{0} members, {1} online", channelFull.ParticipantsCount.Value, count);
-                                    }
-                                }
-                            }
-
-                            return string.Format("{0} members", channelFull.ParticipantsCount.Value);
-                        }
+                        full = response.Result.FullChat as TLChannelFull;
                     }
                 }
 
+                if (full == null)
+                {
+                    return string.Empty;
+                }
 
+                if (channel.IsBroadcast && full.HasParticipantsCount)
+                {
+                    return string.Format("{0} members", full.ParticipantsCount ?? 0);
+                }
+                else if (full.HasParticipantsCount)
+                {
+                    var config = CacheService.GetConfig();
+                    if (config != null && full.ParticipantsCount <= config.ChatSizeMax)
+                    {
+                        var participants = await ProtoService.GetParticipantsAsync(new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value }, null, 0, config.ChatSizeMax);
+                        if (participants.IsSucceeded)
+                        {
+                            var count = 0;
+                            foreach (var item in participants.Result.Users.OfType<TLUser>())
+                            {
+                                if (item.HasStatus && item.Status is TLUserStatusOnline)
+                                {
+                                    count++;
+                                }
+                            }
+
+                            if (count > 1)
+                            {
+                                return string.Format("{0} members, {1} online", full.ParticipantsCount ?? 0, count);
+                            }
+                        }
+                    }
+
+                    return string.Format("{0} members", full.ParticipantsCount ?? 0);
+                }
+            }
+            else if (With is TLChat chat)
+            {
+                var full = Full as TLChatFull;
+                if (full == null)
+                {
+                    full = CacheService.GetFullChat(chat.Id) as TLChatFull;
+                }
+
+                if (full == null)
+                {
+                    var response = await ProtoService.GetFullChatAsync(chat.Id);
+                    if (response.IsSucceeded)
+                    {
+                        full = response.Result.FullChat as TLChatFull;
+                    }
+                }
+
+                if (full == null)
+                {
+                    return string.Empty;
+                }
+
+                var participants = full.Participants as TLChatParticipants;
+                if (participants != null)
+                {
+                    var count = 0;
+                    foreach (var item in participants.Participants)
+                    {
+                        if (item.User != null && item.User.HasStatus && item.User.Status is TLUserStatusOnline)
+                        {
+                            count++;
+                        }
+                    }
+
+                    if (count > 1)
+                    {
+                        return string.Format("{0} members, {1} online", participants.Participants.Count, count);
+                    }
+
+                    return string.Format("{0} members", participants.Participants.Count);
+                }
             }
 
             return string.Empty;
@@ -344,10 +426,10 @@ namespace Unigram.ViewModels
                     {
                         MarkAsRead(messageCommon);
 
-                        //if (messageCommon is TLMessage)
-                        //{
-                        //    this.InputTypingManager.RemoveTypingUser(messageCommon.FromId.Value);
-                        //}
+                        if (messageCommon is TLMessage)
+                        {
+                            InputTypingManager.RemoveTypingUser(messageCommon.FromId ?? 0);
+                        }
                     });
                 }
             });
@@ -359,6 +441,11 @@ namespace Unigram.ViewModels
             //{
             //    return;
             //}
+
+            if (!App.IsActive || !App.IsVisible)
+            {
+                return;
+            }
 
             if (messageCommon != null && !messageCommon.IsOut && messageCommon.IsUnread)
             {

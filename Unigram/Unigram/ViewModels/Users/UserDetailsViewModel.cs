@@ -79,6 +79,7 @@ namespace Unigram.ViewModels.Users
             if (user != null)
             {
                 Item = user;
+                RaisePropertyChanged(() => IsEditEnabled);
                 RaisePropertyChanged(() => AreNotificationsEnabled);
                 RaisePropertyChanged(() => PhoneVisibility);
                 RaisePropertyChanged(() => AddToGroupVisibility);
@@ -86,10 +87,20 @@ namespace Unigram.ViewModels.Users
                 RaisePropertyChanged(() => ReportVisibility);
                 RaisePropertyChanged(() => AddContactVisibility);
 
-                var result = await ProtoService.GetFullUserAsync(user.ToInputUser());
-                if (result.IsSucceeded)
+                var full = CacheService.GetFullUser(user.Id);
+                if (full == null)
                 {
-                    Full = result.Result;
+                    var response = await ProtoService.GetFullUserAsync(user.ToInputUser());
+                    if (response.IsSucceeded)
+                    {
+                        full = response.Result;
+                    }
+                }
+
+                if (full != null)
+                {
+                    Full = full;
+                    RaisePropertyChanged(() => IsPhoneCallsAvailable);
                     RaisePropertyChanged(() => AboutVisibility);
                     RaisePropertyChanged(() => BlockVisibility);
                     RaisePropertyChanged(() => UnblockVisibility);
@@ -102,7 +113,7 @@ namespace Unigram.ViewModels.Users
 
                 Aggregator.Subscribe(this);
             }
-        }        
+        }
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
             Aggregator.Unsubscribe(this);
@@ -152,7 +163,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand SendMessageCommand =>new RelayCommand(SendMessageExecute);
+        public RelayCommand SendMessageCommand => new RelayCommand(SendMessageExecute);
         private void SendMessageExecute()
         {
             if (Item is TLUser user)
@@ -179,8 +190,8 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand CallCommand => new RelayCommand(CallExecute);
-        private void CallExecute()
+        public RelayCommand SystemCallCommand => new RelayCommand(SystemCallExecute);
+        private void SystemCallExecute()
         {
             var user = Item as TLUser;
             if (user != null)
@@ -207,7 +218,7 @@ namespace Unigram.ViewModels.Users
             {
                 // Create the contact-card
                 Contact userContact = new Contact();
-                
+
                 // Check if the user has a normal name
                 if (user.FullName != "" || user.FullName != null)
                 {
@@ -373,6 +384,22 @@ namespace Unigram.ViewModels.Users
                 }
 
                 return false;
+            }
+        }
+
+        public bool IsPhoneCallsAvailable
+        {
+            get
+            {
+                return _full != null && _full.IsPhoneCallsAvailable && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
+            }
+        }
+
+        public bool IsEditEnabled
+        {
+            get
+            {
+                return _item != null && (_item.IsContact || _item.IsMutualContact);
             }
         }
 
@@ -560,5 +587,33 @@ namespace Unigram.ViewModels.Users
                 }
             }
         }
+
+        #region Call
+
+        public RelayCommand CallCommand => new RelayCommand(CallExecute);
+        private async void CallExecute()
+        {
+            var user = _item;
+            if (user == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var coordinator = VoipCallCoordinator.GetDefault();
+                var result = await coordinator.ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask");
+                if (result == VoipPhoneCallResourceReservationStatus.Success)
+                {
+                    await VoIPConnection.Current.SendRequestAsync("voip.startCall", user);
+                }
+            }
+            catch
+            {
+                await TLMessageDialog.ShowAsync("Something went wrong. Please, try to close and relaunch the app.", "Unigram", "OK");
+            }
+        }
+
+        #endregion
     }
 }
