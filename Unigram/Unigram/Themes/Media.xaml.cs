@@ -51,6 +51,9 @@ namespace Unigram.Themes
 
         public static async void Photo_Click(object sender)
         {
+            Download(sender, null);
+            return;
+
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;
 
@@ -118,13 +121,22 @@ namespace Unigram.Themes
 
             if (message != null)
             {
-                if (message.IsVideo() || message.IsRoundVideo())
+                if (message.IsVideo() || message.IsRoundVideo() || message.IsGif() || message.IsPhoto())
                 {
                     var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
 
                     ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
 
-                    var viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
+                    GalleryViewModelBase viewModel;
+                    if (message.Parent != null)
+                    {
+                        viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
+                    }
+                    else
+                    {
+                        viewModel = new SingleGalleryViewModel(new GalleryMessageItem(message));
+                    }
+
                     await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                     {
                         var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
@@ -134,7 +146,7 @@ namespace Unigram.Themes
                         }
                     });
                 }
-                else
+                else if (e != null)
                 {
                     var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(e.FileName));
                     await Launcher.LaunchFileAsync(file);

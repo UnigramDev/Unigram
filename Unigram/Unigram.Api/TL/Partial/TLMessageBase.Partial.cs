@@ -124,7 +124,7 @@ namespace Telegram.Api.TL
                 {
                     if (this is TLMessageCommonBase messageCommon)
                     {
-                        var peer = messageCommon.IsOut || messageCommon.ToId is TLPeerChannel || messageCommon.ToId is TLPeerChat ? messageCommon.ToId : new TLPeerUser { UserId = messageCommon.FromId.Value };
+                        var peer = messageCommon.IsOut || messageCommon.ToId is TLPeerChannel || messageCommon.ToId is TLPeerChat ? messageCommon.ToId : new TLPeerUser { UserId = messageCommon.FromId ?? 0 };
                         if (peer is TLPeerUser)
                             _parent = InMemoryCacheService.Current.GetUser(peer.Id);
                         if (peer is TLPeerChat || ToId is TLPeerChannel)
@@ -241,6 +241,15 @@ namespace Telegram.Api.TL
         public bool IsGame()
         {
             return Media is TLMessageMediaGame;
+        }
+
+        #endregion
+
+        #region IsPhoto
+
+        public bool IsPhoto()
+        {
+            return Media is TLMessageMediaPhoto;
         }
 
         #endregion

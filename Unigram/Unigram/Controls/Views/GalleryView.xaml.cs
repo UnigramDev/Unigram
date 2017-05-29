@@ -177,14 +177,10 @@ namespace Unigram.Controls.Views
 
             if (ViewModel.SelectedItem == ViewModel.FirstItem)
             {
-                var container = Flip.ContainerFromItem(ViewModel.SelectedItem);
-                var image = container.Descendants<ImageView>().FirstOrDefault();
-                if (image == null)
-                {
-                    return;
-                }
+                Flip.Opacity = 0;
+                Surface.Visibility = Visibility.Visible;
 
-                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image as ImageView);
+                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
                 if (animation != null)
                 {
                     Prepare();
@@ -221,62 +217,22 @@ namespace Unigram.Controls.Views
             e.Handled = true;
         }
 
-        private async void ImageView_ImageOpened(object sender, RoutedEventArgs e)
+        private void ImageView_ImageOpened(object sender, RoutedEventArgs e)
         {
-            var image = sender as FrameworkElement;
-            //var container = image.Ancestors<FlipViewItem>().FirstOrDefault();
-            //var item = Flip.ItemFromContainer(container);
-
-            //if (image != null)
-            //{
-            //    image.Opacity = 1;
-            //}
-
-            //if (item == ViewModel.SelectedItem)
+            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+            if (animation != null)
             {
-                //await Task.Delay(1000);
+                Layer.Visibility = Visibility.Visible;
+                TopBar.Visibility = Visibility.Visible;
+                BotBar.Visibility = Visibility.Visible;
 
-                var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                if (animation != null)
+                //Flip.Opacity = 1;
+                animation.TryStart(Surface);
+                animation.Completed += (s, args) =>
                 {
-                    //if (_layerVisual != null && _topBarVisual != null && _botBarVisual != null)
-                    //{
-                    //    var batch = _layerVisual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-
-                    //    var easing = ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction;
-                    //    var duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
-
-                    //    var animOpacity = _layerVisual.Compositor.CreateScalarKeyFrameAnimation();
-                    //    animOpacity.InsertKeyFrame(0, 0, easing);
-                    //    animOpacity.InsertKeyFrame(1, 1, easing);
-                    //    animOpacity.Duration = duration;
-                    //    _layerVisual.StartAnimation("Opacity", animOpacity);
-
-                    //    var animTop = _layerVisual.Compositor.CreateVector3KeyFrameAnimation();
-                    //    animTop.InsertKeyFrame(1, new Vector3(0, 0, 0), easing);
-                    //    animTop.Duration = duration;
-                    //    _topBarVisual.StartAnimation("Offset", animTop);
-
-                    //    var animBot = _layerVisual.Compositor.CreateVector3KeyFrameAnimation();
-                    //    animBot.InsertKeyFrame(1, new Vector3(0, 0, 0), easing);
-                    //    animBot.Duration = duration;
-                    //    _botBarVisual.StartAnimation("Offset", animBot);
-
-                    //    batch.End();
-                    //}
-
-                    Layer.Visibility = Visibility.Visible;
-                    TopBar.Visibility = Visibility.Visible;
-                    BotBar.Visibility = Visibility.Visible;
-
-                    //Flip.Opacity = 1;
-                    animation.TryStart(image);
-                    animation.Completed += (s, args) =>
-                    {
-                        Flip.Opacity = 1;
-                        Surface.Visibility = Visibility.Collapsed;
-                    };
-                }
+                    Flip.Opacity = 1;
+                    Surface.Visibility = Visibility.Collapsed;
+                };
             }
         }
 
