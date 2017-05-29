@@ -44,7 +44,8 @@ namespace Telegram
 				class TLBinaryReader;
 				class TLObjectWithQuery;
 				class TLUnparsedObject;
-	
+				class TLGZipPacked;
+
 			}
 
 
@@ -55,6 +56,7 @@ namespace Telegram
 				friend class EventObject;
 				friend class TL::TLObjectWithQuery;
 				friend class TL::TLUnparsedObject;
+				friend class TL::TLGZipPacked;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
 

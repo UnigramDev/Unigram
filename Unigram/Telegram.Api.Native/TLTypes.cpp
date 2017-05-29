@@ -16,9 +16,15 @@ using namespace Telegram::Api::Native::TL;
 ActivatableClassWithFactory(TLError, TLErrorFactory);
 
 RegisterTLObjectConstructor(TLError);
+RegisterTLObjectConstructor(TLDcOption);
+RegisterTLObjectConstructor(TLDisabledFeature);
+RegisterTLObjectConstructor(TLConfig);
 RegisterTLObjectConstructor(TLRpcError);
 RegisterTLObjectConstructor(TLRpcReqError);
 RegisterTLObjectConstructor(TLRpcResult);
+RegisterTLObjectConstructor(TLRpcAnswerDropped);
+RegisterTLObjectConstructor(TLRpcAnswerDroppedRunning);
+RegisterTLObjectConstructor(TLRpcAnswerUnknown);
 RegisterTLObjectConstructor(TLMsgsAck);
 RegisterTLObjectConstructor(TLMessage);
 RegisterTLObjectConstructor(TLMsgContainer);
@@ -27,6 +33,7 @@ RegisterTLObjectConstructor(TLMsgsStateReq);
 RegisterTLObjectConstructor(TLMsgResendStateReq);
 RegisterTLObjectConstructor(TLMsgDetailedInfo);
 RegisterTLObjectConstructor(TLMsgNewDetailedInfo);
+RegisterTLObjectConstructor(TLMsgsAllInfo);
 RegisterTLObjectConstructor(TLGZipPacked);
 RegisterTLObjectConstructor(TLAuthExportedAuthorization);
 RegisterTLObjectConstructor(TLNewSessionCreated);
@@ -91,6 +98,216 @@ HRESULT TLError::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
+TLDcOption::TLDcOption() :
+	m_flags(0),
+	m_id(0),
+	m_port(0)
+{
+}
+
+TLDcOption::~TLDcOption()
+{
+}
+
+HRESULT TLDcOption::get_Flags(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_flags;
+	return S_OK;
+}
+
+HRESULT TLDcOption::get_Id(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_id;
+	return S_OK;
+}
+
+HRESULT TLDcOption::get_IpAddress(HSTRING* value)
+{
+	return m_ipAddress.CopyTo(value);
+}
+
+HRESULT TLDcOption::get_Port(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_port;
+	return S_OK;
+}
+
+HRESULT TLDcOption::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt32(&m_flags));
+	ReturnIfFailed(result, reader->ReadInt32(&m_id));
+	ReturnIfFailed(result, reader->ReadString(m_ipAddress.GetAddressOf()));
+
+	return reader->ReadInt32(&m_port);
+}
+
+HRESULT TLDcOption::WriteBody(ITLBinaryWriterEx* writer)
+{
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteInt32(m_flags));
+	ReturnIfFailed(result, writer->WriteInt32(m_id));
+	ReturnIfFailed(result, writer->WriteString(m_ipAddress.Get()));
+
+	return writer->WriteInt32(m_port);
+}
+
+
+HRESULT TLDisabledFeature::get_Feature(HSTRING* value)
+{
+	return m_feature.CopyTo(value);
+}
+
+HRESULT TLDisabledFeature::get_Description(HSTRING* value)
+{
+	return m_description.CopyTo(value);
+}
+
+HRESULT TLDisabledFeature::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadString(m_feature.GetAddressOf()));
+
+	return reader->ReadString(m_description.GetAddressOf());
+}
+
+HRESULT TLDisabledFeature::WriteBody(ITLBinaryWriterEx* writer)
+{
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteString(m_feature.Get()));
+
+	return writer->WriteString(m_description.Get());
+}
+
+
+TLConfig::TLConfig() :
+	m_flags(0),
+	m_date(0),
+	m_expires(0),
+	m_testMode(false),
+	m_thisDc(0),
+	m_chatSizeMax(0),
+	m_megagroupSizeMax(0),
+	m_forwardedCountMax(0),
+	m_onlineUpdatePeriodMs(0),
+	m_offlineBlurTimeoutMs(0),
+	m_offlineIdleTimeoutMs(0),
+	m_onlineCloudTimeoutMs(0),
+	m_notifyCloudDelayMs(0),
+	m_notifyDefaultDelayMs(0),
+	m_chatBigSize(0),
+	m_pushChatPeriodMs(0),
+	m_pushChatLimit(0),
+	m_savedGifsLimit(0),
+	m_editTimeLimit(0),
+	m_ratingEDecay(0),
+	m_stickersRecentLimit(0),
+	m_tmpSessions(0),
+	m_pinnedDalogsCountMax(0),
+	m_callReceiveTimeoutMs(0),
+	m_callRing_timeoutMs(0),
+	m_callConnectTimeoutMs(0),
+	m_callPacketTimeoutMs(0)
+{
+}
+
+TLConfig::~TLConfig()
+{
+}
+
+HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt32(&m_flags));
+	ReturnIfFailed(result, reader->ReadInt32(&m_date));
+	ReturnIfFailed(result, reader->ReadInt32(&m_expires));
+	ReturnIfFailed(result, reader->ReadBool(&m_testMode));
+	ReturnIfFailed(result, reader->ReadInt32(&m_thisDc));
+	ReturnIfFailed(result, ReadTLObjectVector<TLDcOption>(reader, m_dcOptions));
+	ReturnIfFailed(result, reader->ReadInt32(&m_chatSizeMax));
+	ReturnIfFailed(result, reader->ReadInt32(&m_megagroupSizeMax));
+	ReturnIfFailed(result, reader->ReadInt32(&m_forwardedCountMax));
+	ReturnIfFailed(result, reader->ReadInt32(&m_onlineUpdatePeriodMs));
+	ReturnIfFailed(result, reader->ReadInt32(&m_offlineBlurTimeoutMs));
+	ReturnIfFailed(result, reader->ReadInt32(&m_offlineIdleTimeoutMs));
+	ReturnIfFailed(result, reader->ReadInt32(&m_onlineCloudTimeoutMs));
+	ReturnIfFailed(result, reader->ReadInt32(&m_notifyCloudDelayMs));
+	ReturnIfFailed(result, reader->ReadInt32(&m_notifyDefaultDelayMs));
+	ReturnIfFailed(result, reader->ReadInt32(&m_chatBigSize));
+	ReturnIfFailed(result, reader->ReadInt32(&m_pushChatPeriodMs));
+	ReturnIfFailed(result, reader->ReadInt32(&m_pushChatLimit));
+	ReturnIfFailed(result, reader->ReadInt32(&m_savedGifsLimit));
+	ReturnIfFailed(result, reader->ReadInt32(&m_editTimeLimit));
+	ReturnIfFailed(result, reader->ReadInt32(&m_ratingEDecay));
+	ReturnIfFailed(result, reader->ReadInt32(&m_stickersRecentLimit));
+
+	if ((m_flags & 1) != 0)
+	{
+		ReturnIfFailed(result, reader->ReadInt32(&m_tmpSessions));
+	}
+
+	ReturnIfFailed(result, reader->ReadInt32(&m_pinnedDalogsCountMax));
+	ReturnIfFailed(result, reader->ReadInt32(&m_callReceiveTimeoutMs));
+	ReturnIfFailed(result, reader->ReadInt32(&m_callRing_timeoutMs));
+	ReturnIfFailed(result, reader->ReadInt32(&m_callConnectTimeoutMs));
+	ReturnIfFailed(result, reader->ReadInt32(&m_callPacketTimeoutMs));
+	ReturnIfFailed(result, reader->ReadString(m_meUrlPrefix.GetAddressOf()));
+
+	return ReadTLObjectVector<TLDisabledFeature>(reader, m_disabledFeatures);
+}
+
+HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
+{
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteInt32(m_flags));
+	ReturnIfFailed(result, writer->WriteInt32(m_date));
+	ReturnIfFailed(result, writer->WriteInt32(m_expires));
+	ReturnIfFailed(result, writer->WriteBool(m_testMode));
+	ReturnIfFailed(result, writer->WriteInt32(m_thisDc));
+	ReturnIfFailed(result, WriteTLObjectVector<TLDcOption>(writer, m_dcOptions));
+	ReturnIfFailed(result, writer->WriteInt32(m_chatSizeMax));
+	ReturnIfFailed(result, writer->WriteInt32(m_megagroupSizeMax));
+	ReturnIfFailed(result, writer->WriteInt32(m_forwardedCountMax));
+	ReturnIfFailed(result, writer->WriteInt32(m_onlineUpdatePeriodMs));
+	ReturnIfFailed(result, writer->WriteInt32(m_offlineBlurTimeoutMs));
+	ReturnIfFailed(result, writer->WriteInt32(m_offlineIdleTimeoutMs));
+	ReturnIfFailed(result, writer->WriteInt32(m_onlineCloudTimeoutMs));
+	ReturnIfFailed(result, writer->WriteInt32(m_notifyCloudDelayMs));
+	ReturnIfFailed(result, writer->WriteInt32(m_notifyDefaultDelayMs));
+	ReturnIfFailed(result, writer->WriteInt32(m_chatBigSize));
+	ReturnIfFailed(result, writer->WriteInt32(m_pushChatPeriodMs));
+	ReturnIfFailed(result, writer->WriteInt32(m_pushChatLimit));
+	ReturnIfFailed(result, writer->WriteInt32(m_savedGifsLimit));
+	ReturnIfFailed(result, writer->WriteInt32(m_editTimeLimit));
+	ReturnIfFailed(result, writer->WriteInt32(m_ratingEDecay));
+	ReturnIfFailed(result, writer->WriteInt32(m_stickersRecentLimit));
+	ReturnIfFailed(result, writer->WriteInt32(m_tmpSessions));
+	ReturnIfFailed(result, writer->WriteInt32(m_pinnedDalogsCountMax));
+	ReturnIfFailed(result, writer->WriteInt32(m_callReceiveTimeoutMs));
+	ReturnIfFailed(result, writer->WriteInt32(m_callRing_timeoutMs));
+	ReturnIfFailed(result, writer->WriteInt32(m_callConnectTimeoutMs));
+	ReturnIfFailed(result, writer->WriteInt32(m_callPacketTimeoutMs));
+	ReturnIfFailed(result, writer->WriteString(m_meUrlPrefix.Get()));
+
+	return WriteTLObjectVector<TLDisabledFeature>(writer, m_disabledFeatures);
+}
+
+
 template<typename TLObjectTraits>
 HRESULT TLRpcErrorT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
 {
@@ -143,6 +360,26 @@ HRESULT TLRpcResult::ReadBody(ITLBinaryReaderEx* reader)
 }
 
 
+TLRpcAnswerDropped::TLRpcAnswerDropped() :
+	m_bytes(0)
+{
+	ZeroMemory(&m_messageContext, sizeof(MessageContext));
+}
+
+TLRpcAnswerDropped::~TLRpcAnswerDropped()
+{
+}
+
+HRESULT TLRpcAnswerDropped::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt64(&m_messageContext.Id));
+	ReturnIfFailed(result, reader->ReadUInt32(&m_messageContext.SequenceNumber));
+
+	return reader->ReadInt32(&m_bytes);
+}
+
+
 HRESULT TLMsgsAck::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLMsgsAck response handling");
@@ -152,40 +389,12 @@ HRESULT TLMsgsAck::HandleResponse(MessageContext const* messageContext, Connecti
 
 HRESULT TLMsgsAck::ReadBody(ITLBinaryReaderEx* reader)
 {
-	HRESULT result;
-	UINT32 constructor;
-	ReturnIfFailed(result, reader->ReadUInt32(&constructor));
-
-	if (constructor != TLARRAY_CONSTRUCTOR)
-	{
-		return E_FAIL;
-	}
-
-	UINT32 count;
-	ReturnIfFailed(result, reader->ReadUInt32(&count));
-
-	m_messagesIds.resize(count);
-
-	for (UINT32 i = 0; i < count; i++)
-	{
-		ReturnIfFailed(result, reader->ReadInt64(&m_messagesIds[i]));
-	}
-
-	return S_OK;
+	return ReadTLVector(reader, m_messagesIds);
 }
 
 HRESULT TLMsgsAck::WriteBody(ITLBinaryWriterEx* writer)
 {
-	HRESULT result;
-	ReturnIfFailed(result, writer->WriteInt32(TLARRAY_CONSTRUCTOR));
-	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(m_messagesIds.size())));
-
-	for (size_t i = 0; i < m_messagesIds.size(); i++)
-	{
-		ReturnIfFailed(result, writer->WriteInt64(m_messagesIds[i]));
-	}
-
-	return S_OK;
+	return WriteTLVector(writer, m_messagesIds);
 }
 
 
@@ -305,79 +514,23 @@ HRESULT TLMsgCopy::WriteBody(ITLBinaryWriterEx* writer)
 
 HRESULT TLMsgsStateReq::ReadBody(ITLBinaryReaderEx* reader)
 {
-	HRESULT result;
-	UINT32 constructor;
-	ReturnIfFailed(result, reader->ReadUInt32(&constructor));
-
-	if (constructor != TLARRAY_CONSTRUCTOR)
-	{
-		return E_FAIL;
-	}
-
-	UINT32 count;
-	ReturnIfFailed(result, reader->ReadUInt32(&count));
-
-	m_messagesIds.resize(count);
-
-	for (UINT32 i = 0; i < count; i++)
-	{
-		ReturnIfFailed(result, reader->ReadInt64(&m_messagesIds[i]));
-	}
-
-	return S_OK;
+	return ReadTLVector<INT64>(reader, m_messagesIds);
 }
 
 HRESULT TLMsgsStateReq::WriteBody(ITLBinaryWriterEx* writer)
 {
-	HRESULT result;
-	ReturnIfFailed(result, writer->WriteInt32(TLARRAY_CONSTRUCTOR));
-	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(m_messagesIds.size())));
-
-	for (size_t i = 0; i < m_messagesIds.size(); i++)
-	{
-		ReturnIfFailed(result, writer->WriteInt64(m_messagesIds[i]));
-	}
-
-	return S_OK;
+	return WriteTLVector<INT64>(writer, m_messagesIds);
 }
 
 
 HRESULT TLMsgResendStateReq::ReadBody(ITLBinaryReaderEx* reader)
 {
-	HRESULT result;
-	UINT32 constructor;
-	ReturnIfFailed(result, reader->ReadUInt32(&constructor));
-
-	if (constructor != TLARRAY_CONSTRUCTOR)
-	{
-		return E_FAIL;
-	}
-
-	UINT32 count;
-	ReturnIfFailed(result, reader->ReadUInt32(&count));
-
-	m_messagesIds.resize(count);
-
-	for (UINT32 i = 0; i < count; i++)
-	{
-		ReturnIfFailed(result, reader->ReadInt64(&m_messagesIds[i]));
-	}
-
-	return S_OK;
+	return ReadTLVector<INT64>(reader, m_messagesIds);
 }
 
 HRESULT TLMsgResendStateReq::WriteBody(ITLBinaryWriterEx* writer)
 {
-	HRESULT result;
-	ReturnIfFailed(result, writer->WriteInt32(TLARRAY_CONSTRUCTOR));
-	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(m_messagesIds.size())));
-
-	for (size_t i = 0; i < m_messagesIds.size(); i++)
-	{
-		ReturnIfFailed(result, writer->WriteInt64(m_messagesIds[i]));
-	}
-
-	return S_OK;
+	return WriteTLVector<INT64>(writer, m_messagesIds);
 }
 
 
@@ -386,7 +539,7 @@ HRESULT TLMsgDetailedInfoT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
 	ReturnIfFailed(result, reader->ReadInt64(&m_answerMessageId));
-	ReturnIfFailed(result, reader->ReadInt32(&m_datacenterId));
+	ReturnIfFailed(result, reader->ReadInt32(&m_bytes));
 
 	return reader->ReadInt32(&m_status);
 }
@@ -409,6 +562,36 @@ HRESULT TLMsgDetailedInfo::ReadBody(ITLBinaryReaderEx* reader)
 	return TLMsgDetailedInfoT::ReadBody(reader);
 }
 
+
+HRESULT TLMsgsAllInfo::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, ReadTLVector<INT64>(reader, m_messagesIds));
+
+	return reader->ReadString(m_info.GetAddressOf());
+}
+
+
+HRESULT TLGZipPacked::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+{
+	HRESULT result;
+	ComPtr<TLBinaryReader> reader;
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&reader, m_packedData.Get()));
+
+	UINT32 constructor;
+	ComPtr<ITLObject> query;
+	ReturnIfFailed(result, reader->ReadObjectAndConstructor(m_packedData->GetCapacity(), &constructor, &query));
+
+	ComPtr<IMessageResponseHandler> responseHandler;
+	if (SUCCEEDED(query.As(&responseHandler)))
+	{
+		return responseHandler->HandleResponse(messageContext, connectionManager, connection);
+	}
+	else
+	{
+		return connectionManager->HandleUnprocessedResponse(messageContext, query.Get(), connection);
+	}
+}
 
 HRESULT TLGZipPacked::RuntimeClassInitialize(NativeBuffer* rawData)
 {
@@ -657,25 +840,7 @@ HRESULT TLResPQ::ReadBody(ITLBinaryReaderEx* reader)
 	ReturnIfFailed(result, reader->ReadRawBuffer(sizeof(m_serverNonce), m_serverNonce));
 	ReturnIfFailed(result, reader->ReadBuffer(m_pq, sizeof(m_pq)));
 
-	UINT32 constructor;
-	ReturnIfFailed(result, reader->ReadUInt32(&constructor));
-
-	if (constructor != TLARRAY_CONSTRUCTOR)
-	{
-		return E_FAIL;
-	}
-
-	UINT32 count;
-	ReturnIfFailed(result, reader->ReadUInt32(&count));
-
-	m_serverPublicKeyFingerprints.resize(count);
-
-	for (UINT32 i = 0; i < count; i++)
-	{
-		ReturnIfFailed(result, reader->ReadInt64(&m_serverPublicKeyFingerprints[i]));
-	}
-
-	return S_OK;
+	return ReadTLVector<INT64>(reader, m_serverPublicKeyFingerprints);
 }
 
 

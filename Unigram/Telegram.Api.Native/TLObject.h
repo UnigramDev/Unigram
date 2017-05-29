@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <memory>
+#include <vector>
 #include <type_traits>
 #include <wrl.h>
 #include "Telegram.Api.Native.h"
@@ -9,7 +10,7 @@
 #include "Request.h"
 #include "Helpers\COMHelper.h"
 
-#define TLARRAY_CONSTRUCTOR 0x1cb5c415
+#define TLVECTOR_CONSTRUCTOR 0x1cb5c415
 
 #define MakeTLObjectTraits(objectTypeName, constructor, isLayerNeeded, namespace) \
 	struct objectTypeName##Traits \
@@ -273,6 +274,101 @@ namespace Telegram
 					}
 
 					return E_NOINTERFACE;
+				}
+
+				template<typename TItem>
+				inline HRESULT ReadTLVector(_In_ ITLBinaryReader* reader, std::vector<TItem>& array)
+				{
+					static_assert(false, "This method must be specialized");
+				}
+
+				template<typename TItem>
+				inline HRESULT WriteTLVector(_In_ ITLBinaryWriter* writer, std::vector<TItem> const& array)
+				{
+					static_assert(false, "This method must be specialized");
+				}
+
+				template<>
+				inline HRESULT ReadTLVector<INT64>(_In_ ITLBinaryReader* reader, std::vector<INT64>& array)
+				{
+					HRESULT result;
+					UINT32 constructor;
+					ReturnIfFailed(result, reader->ReadUInt32(&constructor));
+
+					if (constructor != TLVECTOR_CONSTRUCTOR)
+					{
+						return E_FAIL;
+					}
+
+					UINT32 count;
+					ReturnIfFailed(result, reader->ReadUInt32(&count));
+
+					array.resize(count);
+
+					for (UINT32 i = 0; i < count; i++)
+					{
+						ReturnIfFailed(result, reader->ReadInt64(&array[i]));
+					}
+
+					return S_OK;
+				}
+
+				template<>
+				inline HRESULT WriteTLVector<INT64>(_In_ ITLBinaryWriter* writer, std::vector<INT64> const& array)
+				{
+					HRESULT result;
+					ReturnIfFailed(result, writer->WriteUInt32(TLVECTOR_CONSTRUCTOR));
+					ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(array.size())));
+
+					for (size_t i = 0; i < array.size(); i++)
+					{
+						ReturnIfFailed(result, writer->WriteInt64(array[i]));
+					}
+
+					return S_OK;
+				}
+
+				template<typename TLObjectType>
+				inline HRESULT ReadTLObjectVector(_In_ ITLBinaryReader* reader, std::vector<ComPtr<TLObjectType>>& array)
+				{
+					HRESULT result;
+					UINT32 constructor;
+					ReturnIfFailed(result, reader->ReadUInt32(&constructor));
+
+					if (constructor != TLVECTOR_CONSTRUCTOR)
+					{
+						return E_FAIL;
+					}
+
+					UINT32 count;
+					ReturnIfFailed(result, reader->ReadUInt32(&count));
+
+					array.resize(count);
+
+					ComPtr<ITLObject> object;
+					for (UINT32 i = 0; i < count; i++)
+					{
+						ReturnIfFailed(result, reader->ReadObject(&object));
+
+						array[i] = static_cast<typename TLObjectType*>(object.Get());
+					}
+
+					return S_OK;
+				}
+
+				template<typename TLObjectType>
+				inline HRESULT WriteTLObjectVector(_In_ ITLBinaryWriter* writer, std::vector<ComPtr<TLObjectType>> const& array)
+				{
+					HRESULT result;
+					ReturnIfFailed(result, writer->WriteUInt32(TLVECTOR_CONSTRUCTOR));
+					ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(array.size())));
+
+					for (size_t i = 0; i < array.size(); i++)
+					{
+						ReturnIfFailed(result, writer->WriteObject(array[i].Get()));
+					}
+
+					return S_OK;
 				}
 
 			}

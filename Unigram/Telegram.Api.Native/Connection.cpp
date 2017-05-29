@@ -270,7 +270,7 @@ HRESULT Connection::SendEncryptedMessage(ITLObject* object, boolean reportAck, I
 	ReturnIfFailed(result, packetWriter->WriteInt64(salt));
 	ReturnIfFailed(result, packetWriter->WriteInt64(GetSessionId()));
 	ReturnIfFailed(result, packetWriter->WriteInt64(connectionManager->GenerateMessageId()));
-	ReturnIfFailed(result, packetWriter->WriteUInt32(GenerateMessageSequenceNumber(false)));
+	ReturnIfFailed(result, packetWriter->WriteUInt32(GenerateMessageSequenceNumber(true))); //false
 	ReturnIfFailed(result, packetWriter->WriteUInt32(objectSize));
 	ReturnIfFailed(result, packetWriter->WriteObject(object));
 

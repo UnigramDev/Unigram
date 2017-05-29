@@ -39,6 +39,9 @@ namespace Telegram
 				runtimeclass TLObjectSerializer;
 				runtimeclass TLUnparsedObject;
 				runtimeclass TLError;
+				runtimeclass TLDcOption;
+				runtimeclass TLDisabledFeature;
+				runtimeclass TLConfig;
 				
 				delegate TLObjectConstructorDelegate;
 
@@ -58,6 +61,26 @@ namespace Telegram
 
 				interface Windows.Foundation.Collections.IVectorView<Datacenter*>;
 
+			}
+		}
+	}
+}
+
+namespace Telegram
+{
+	namespace Api
+	{
+		namespace Native
+		{
+			namespace TL
+			{
+				declare
+				{
+
+					interface Windows.Foundation.Collections.IVectorView<TLDcOption*>;
+					interface Windows.Foundation.Collections.IVectorView<TLDisabledFeature*>;
+
+				}
 			}
 		}
 	}
@@ -195,7 +218,7 @@ namespace Telegram
 				runtimeclass TLUnparsedObject
 				{
 					[default] interface ITLUnparsedObject;
-				interface ITLObject;
+					interface ITLObject;
 				}
 
 
@@ -223,6 +246,93 @@ namespace Telegram
 				runtimeclass TLError
 				{
 					[default] interface ITLError;
+					interface ITLObject;
+				}
+
+
+				[exclusiveto(TLDcOption)]
+				[uuid(BFE5D247-DDAE-4EDD-AC25-894FD115E937)]
+				[version(API_VERSION)]
+				interface ITLDcOption : IInspectable
+				{
+					[propget] HRESULT Flags([out][retval] INT32* value);
+					[propget] HRESULT Id([out][retval] INT32* value);
+					[propget] HRESULT IpAddress([out][retval] HSTRING* value);
+					[propget] HRESULT Port([out][retval] INT32* value);
+				}
+
+				[marshaling_behavior(agile)]
+				[threading(both)]
+				[version(API_VERSION)]
+				runtimeclass TLDcOption
+				{
+					[default] interface ITLDcOption;
+					interface ITLObject;
+				}
+
+
+				[exclusiveto(TLDisabledFeature)]
+				[uuid(8F00ADB9-FC7C-4459-9FB7-5B6AED6E7910)]
+				[version(API_VERSION)]
+				interface ITLDisabledFeature : IInspectable
+				{
+					[propget] HRESULT Feature([out][retval] HSTRING* value);
+					[propget] HRESULT Description([out][retval] HSTRING* value);
+				}
+
+				[marshaling_behavior(agile)]
+				[threading(both)]
+				[version(API_VERSION)]
+				runtimeclass TLDisabledFeature
+				{
+					[default] interface ITLDisabledFeature;
+					interface ITLObject;
+				}
+
+
+				[exclusiveto(TLConfig)]
+				[uuid(3368AE99-FD5C-44C9-A780-3935276EC61F)]
+				[version(API_VERSION)]
+				interface ITLConfig : IInspectable
+				{
+					[propget] HRESULT Flags([out][retval] INT32* value);
+					[propget] HRESULT Date([out][retval] INT32* value);
+					[propget] HRESULT Expires([out][retval] INT32* value);
+					[propget] HRESULT TestMode([out][retval] boolean* value);
+					[propget] HRESULT ThisDc([out][retval] INT32* value);
+					[propget] HRESULT DcOptions([out][retval] Windows.Foundation.Collections.IVectorView<TLDcOption*>** value);
+					[propget] HRESULT ChatSizeMax([out][retval] INT32* value);
+					[propget] HRESULT MegagroupSizeMax([out][retval] INT32* value);
+					[propget] HRESULT ForwardedCountMax([out][retval] INT32* value);
+					[propget] HRESULT OnlineUpdatePeriodMs([out][retval] INT32* value);
+					[propget] HRESULT OfflineBlurTimeoutMs([out][retval] INT32* value);
+					[propget] HRESULT OfflineIdleTimeoutMs([out][retval] INT32* value);
+					[propget] HRESULT OnlineCloudTimeoutMs([out][retval] INT32* value);
+					[propget] HRESULT NotifyCloudDelayMs([out][retval] INT32* value);
+					[propget] HRESULT NotifyDefaultDelayMs([out][retval] INT32* value);
+					[propget] HRESULT ChatBigSize([out][retval] INT32* value);
+					[propget] HRESULT PushChatPeriodMs([out][retval] INT32* value);
+					[propget] HRESULT PushChatLimit([out][retval] INT32* value);
+					[propget] HRESULT SavedGifsLimit([out][retval] INT32* value);
+					[propget] HRESULT EditTimeLimit([out][retval] INT32* value);
+					[propget] HRESULT RatingEDecay([out][retval] INT32* value);
+					[propget] HRESULT StickersRecentLimit([out][retval] INT32* value);
+					[propget] HRESULT TmpSessions([out][retval] Windows.Foundation.IReference<INT32>** value);
+					[propget] HRESULT PinnedDalogsCountMax([out][retval] INT32* value);
+					[propget] HRESULT CallReceiveTimeoutMs([out][retval] INT32* value);
+					[propget] HRESULT CallRing_timeoutMs([out][retval] INT32* value);
+					[propget] HRESULT CallConnectTimeoutMs([out][retval] INT32* value);
+					[propget] HRESULT CallPacketTimeoutMs([out][retval] INT32* value);
+					[propget] HRESULT MeUrlPrefix([out][retval] HSTRING* value);
+					[propget] HRESULT DisabledFeatures([out][retval] Windows.Foundation.Collections.IVectorView<TLDisabledFeature*>** value);
+				}
+
+				[marshaling_behavior(agile)]
+				[threading(both)]
+				[version(API_VERSION)]
+				runtimeclass TLConfig
+				{
+					[default] interface ITLConfig;
 					interface ITLObject;
 				}
 

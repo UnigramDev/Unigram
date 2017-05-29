@@ -1154,8 +1154,9 @@ HRESULT Datacenter::SendPing()
 	ComPtr<IUserConfiguration> userConfiguration;
 	ReturnIfFailed(result, connectionManager->get_UserConfiguration(&userConfiguration));
 
-	auto ping = Make<Methods::TLPing>(1);
-	auto helpGetConfig = Make<Methods::TLGetFutureSalts>(5);
+	//auto ping = Make<Methods::TLPing>(1);
+	//auto getFutureSalts = Make<Methods::TLGetFutureSalts>(5);
+	auto helpGetConfig = Make<Methods::TLHelpGetConfig>();
 
 	ComPtr<Methods::TLInitConnection> initConnectionObject;
 	ReturnIfFailed(result, MakeAndInitialize<Methods::TLInitConnection>(&initConnectionObject, userConfiguration.Get(), helpGetConfig.Get()));

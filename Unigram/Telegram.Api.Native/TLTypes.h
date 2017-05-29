@@ -9,6 +9,9 @@
 
 using namespace Microsoft::WRL;
 using ABI::Telegram::Api::Native::TL::ITLError;
+using ABI::Telegram::Api::Native::TL::ITLDcOption;
+using ABI::Telegram::Api::Native::TL::ITLDisabledFeature;
+using ABI::Telegram::Api::Native::TL::ITLConfig;
 using ABI::Telegram::Api::Native::TL::ITLErrorFactory;
 
 namespace Telegram
@@ -22,9 +25,15 @@ namespace Telegram
 			{
 
 				class TLError;
+				class TLDcOption;
+				class TLDisabledFeature;
+				class TLConfig;
 				class TLRpcError;
 				class TLRpcReqError;
 				class TLRpcResult;
+				class TLRpcAnswerDropped;
+				class TLRpcAnswerDroppedRunning;
+				class TLRpcAnswerUnknown;
 				class TLMsgsAck;
 				class TLMessage;
 				class TLMsgContainer;
@@ -33,9 +42,12 @@ namespace Telegram
 				class TLMsgResendStateReq;
 				class TLMsgDetailedInfo;
 				class TLMsgNewDetailedInfo;
+				class TLMsgsAllInfo;
 				class TLGZipPacked;
 				class TLAuthExportedAuthorization;
 				class TLNewSessionCreated;
+				class TLDestroySessionOk;
+				class TLDestroySessionNone;
 				class TLBadMessage;
 				class TLBadServerSalt;
 				class TLPong;
@@ -53,9 +65,15 @@ namespace Telegram
 				{
 
 					MakeTLTypeTraits(TLError, 0xc4b9f9bb, false);
+					MakeTLTypeTraits(TLDcOption, 0x5d8c6cc, false);
+					MakeTLTypeTraits(TLDisabledFeature, 0xae636f24, false);
+					MakeTLTypeTraits(TLConfig, 0xcb601684, false);
 					MakeTLTypeTraits(TLRpcError, 0x2144ca19, false);
 					MakeTLTypeTraits(TLRpcReqError, 0x7ae432f5, false);
 					MakeTLTypeTraits(TLRpcResult, 0xf35c6d01, false);
+					MakeTLTypeTraits(TLRpcAnswerDropped, 0xa43ad8b7, false);
+					MakeTLTypeTraits(TLRpcAnswerDroppedRunning, 0xcd78e586, false);
+					MakeTLTypeTraits(TLRpcAnswerUnknown, 0x5e2ad36e, false);
 					MakeTLTypeTraits(TLMsgsAck, 0x62d6b459, false);
 					MakeTLTypeTraits(TLMessage, 0x5bb8e511, false);
 					MakeTLTypeTraits(TLMsgContainer, 0x73f1f8dc, false);
@@ -64,9 +82,12 @@ namespace Telegram
 					MakeTLTypeTraits(TLMsgResendStateReq, 0x7d861a08, false);
 					MakeTLTypeTraits(TLMsgDetailedInfo, 0x276d3ec6, false);
 					MakeTLTypeTraits(TLMsgNewDetailedInfo, 0x809db6df, false);
+					MakeTLTypeTraits(TLMsgsAllInfo, 0x8cc0d131, false);
 					MakeTLTypeTraits(TLGZipPacked, 0x3072cfa1, false);
 					MakeTLTypeTraits(TLAuthExportedAuthorization, 0xdf969c2d, false);
 					MakeTLTypeTraits(TLNewSessionCreated, 0x9ec20908, false);
+					MakeTLTypeTraits(TLDestroySessionOk, 0xe22045fc, false);
+					MakeTLTypeTraits(TLDestroySessionNone, 0x62d350c9, false);
 					MakeTLTypeTraits(TLBadMessage, 0xa7eff811, false);
 					MakeTLTypeTraits(TLBadServerSalt, 0xedab447b, false);
 					MakeTLTypeTraits(TLPong, 0x347773c5, false);
@@ -121,6 +142,126 @@ namespace Telegram
 				private:
 					INT32 m_code;
 					HString m_text;
+				};
+
+				class TLDcOption WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLDcOption, TLObjectT<TLObjectTraits::TLDcOptionTraits>>
+				{
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLDcOption, BaseTrust);
+
+				public:
+					TLDcOption();
+					~TLDcOption();
+
+					//COM exported methods
+					STDMETHODIMP get_Flags(_Out_ INT32* value);
+					STDMETHODIMP get_Id(_Out_ INT32* value);
+					STDMETHODIMP get_IpAddress(_Out_ HSTRING* value);
+					STDMETHODIMP get_Port(_Out_ INT32* value);
+
+					//Internal methods
+					inline INT32 GetFlags() const
+					{
+						return m_flags;
+					}
+
+					inline INT32 GetId() const
+					{
+						return m_id;
+					}
+
+					inline HString const& GetIpAddress() const
+					{
+						return m_ipAddress;
+					}
+
+					inline INT32 GetPort() const
+					{
+						return m_port;
+					}
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
+
+				private:
+					INT32 m_flags;
+					INT32 m_id;
+					HString m_ipAddress;
+					INT32 m_port;
+				};
+
+				class TLDisabledFeature WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLDisabledFeature, TLObjectT<TLObjectTraits::TLDisabledFeatureTraits>>
+				{
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLDisabledFeature, BaseTrust);
+
+				public:
+					//COM exported methods
+					STDMETHODIMP get_Feature(_Out_ HSTRING* value);
+					STDMETHODIMP get_Description(_Out_ HSTRING* value);
+
+					//Internal methods
+					inline HString const& GetFeature() const
+					{
+						return m_feature;
+					}
+
+					inline HString const& GetDescription() const
+					{
+						return m_description;
+					}
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
+
+				private:
+					HString m_feature;
+					HString m_description;
+				};
+
+				class TLConfig WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLConfigTraits>> //ITLConfig,
+				{
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLConfig, BaseTrust);
+
+				public:
+					TLConfig();
+					~TLConfig();
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
+
+				private:
+					INT32 m_flags;
+					INT32 m_date;
+					INT32 m_expires;
+					boolean m_testMode;
+					INT32 m_thisDc;
+					std::vector<ComPtr<TLDcOption>> m_dcOptions;
+					INT32 m_chatSizeMax;
+					INT32 m_megagroupSizeMax;
+					INT32 m_forwardedCountMax;
+					INT32 m_onlineUpdatePeriodMs;
+					INT32 m_offlineBlurTimeoutMs;
+					INT32 m_offlineIdleTimeoutMs;
+					INT32 m_onlineCloudTimeoutMs;
+					INT32 m_notifyCloudDelayMs;
+					INT32 m_notifyDefaultDelayMs;
+					INT32 m_chatBigSize;
+					INT32 m_pushChatPeriodMs;
+					INT32 m_pushChatLimit;
+					INT32 m_savedGifsLimit;
+					INT32 m_editTimeLimit;
+					INT32 m_ratingEDecay;
+					INT32 m_stickersRecentLimit;
+					INT32 m_tmpSessions;
+					INT32 m_pinnedDalogsCountMax;
+					INT32 m_callReceiveTimeoutMs;
+					INT32 m_callRing_timeoutMs;
+					INT32 m_callConnectTimeoutMs;
+					INT32 m_callPacketTimeoutMs;
+					HString m_meUrlPrefix;
+					std::vector<ComPtr<TLDisabledFeature>> m_disabledFeatures;
 				};
 
 				template<typename TLObjectTraits>
@@ -202,6 +343,45 @@ namespace Telegram
 
 				private:
 					INT64 m_requestMessageId;
+				};
+
+				template<typename TLObjectTraits>
+				class TLRpcDropAnswerT abstract : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits>>
+				{
+					InspectableClass(TLObjectTraits::RuntimeClassName, BaseTrust);
+				};
+
+				class TLRpcAnswerDropped WrlSealed : public TLRpcDropAnswerT<TLObjectTraits::TLRpcAnswerDroppedTraits>
+				{
+				public:
+					TLRpcAnswerDropped();
+					~TLRpcAnswerDropped();
+
+					//Internal methods
+					inline MessageContext const* GetMessageContext() const
+					{
+						return &m_messageContext;
+					}
+
+					inline INT32 GetBytes() const
+					{
+						return m_bytes;
+					}
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+
+				private:
+					MessageContext m_messageContext;
+					INT32 m_bytes;
+				};
+
+				class TLRpcAnswerDroppedRunning WrlSealed : public TLRpcDropAnswerT<TLObjectTraits::TLRpcAnswerDroppedRunningTraits>
+				{
+				};
+
+				class TLRpcAnswerUnknown WrlSealed : public TLRpcDropAnswerT<TLObjectTraits::TLRpcAnswerUnknownTraits>
+				{
 				};
 
 				class TLMsgsAck WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLMsgsAckTraits>, CloakedIid<IMessageResponseHandler>>
@@ -338,7 +518,7 @@ namespace Telegram
 				};
 
 				template<typename TLObjectTraits>
-				class TLMsgDetailedInfoT abstract : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits>, CloakedIid<IMessageResponseHandler>>
+				class TLMsgDetailedInfoT abstract : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits>>
 				{
 					InspectableClass(TLObjectTraits::RuntimeClassName, BaseTrust);
 
@@ -379,7 +559,7 @@ namespace Telegram
 					INT32 m_status;
 				};
 
-				class TLMsgDetailedInfo : public TLMsgDetailedInfoT<TLObjectTraits::TLMsgDetailedInfoTraits>
+				class TLMsgDetailedInfo WrlSealed : public TLMsgDetailedInfoT<TLObjectTraits::TLMsgDetailedInfoTraits>
 				{
 				public:
 					TLMsgDetailedInfo();
@@ -398,15 +578,42 @@ namespace Telegram
 					INT64 m_messageId;
 				};
 
-				class TLMsgNewDetailedInfo : public TLMsgDetailedInfoT<TLObjectTraits::TLMsgNewDetailedInfoTraits>
+				class TLMsgNewDetailedInfo WrlSealed : public TLMsgDetailedInfoT<TLObjectTraits::TLMsgNewDetailedInfoTraits>
 				{
 				};
 
-				class TLGZipPacked WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLGZipPackedTraits>>
+				class TLMsgsAllInfo WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLMsgsAllInfoTraits>>
 				{
 					InspectableClass(Traits::RuntimeClassName, BaseTrust);
 
 				public:
+					//Internal methods
+					inline std::vector<INT64> const& GetMessages() const
+					{
+						return m_messagesIds;
+					}
+
+					inline HString const& GetInfo() const
+					{
+						return m_info;
+					}
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+
+				private:
+					std::vector<INT64> m_messagesIds;
+					HString m_info;
+				};
+
+				class TLGZipPacked WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLGZipPackedTraits>, CloakedIid<IMessageResponseHandler>>
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				public:
+					//COM exported methods
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(_In_ NativeBuffer* rawData);
 
@@ -484,6 +691,20 @@ namespace Telegram
 					INT64 m_firstMesssageId;
 					INT64 m_uniqueId;
 					INT64 m_serverSalt;
+				};
+
+				template<typename TLObjectTraits>
+				class TLDestroySessionT abstract : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits>>
+				{
+					InspectableClass(TLObjectTraits::RuntimeClassName, BaseTrust);
+				};
+
+				class TLDestroySessionOk WrlSealed : public TLDestroySessionT<TLObjectTraits::TLDestroySessionOkTraits>
+				{
+				};
+
+				class TLDestroySessionNone WrlSealed : public TLDestroySessionT<TLObjectTraits::TLDestroySessionNoneTraits>
+				{
 				};
 
 				template<typename TLObjectTraits>
