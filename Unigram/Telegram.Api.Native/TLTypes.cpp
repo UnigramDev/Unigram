@@ -8,10 +8,14 @@
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "GZip.h"
+#include "Collections.h"
+#include "Reference.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
+using Windows::Foundation::Collections::VectorView;
+
 
 ActivatableClassWithFactory(TLError, TLErrorFactory);
 
@@ -220,7 +224,7 @@ TLConfig::TLConfig() :
 	m_tmpSessions(0),
 	m_pinnedDalogsCountMax(0),
 	m_callReceiveTimeoutMs(0),
-	m_callRing_timeoutMs(0),
+	m_callRingTimeoutMs(0),
 	m_callConnectTimeoutMs(0),
 	m_callPacketTimeoutMs(0)
 {
@@ -229,6 +233,353 @@ TLConfig::TLConfig() :
 TLConfig::~TLConfig()
 {
 }
+
+HRESULT TLConfig::get_Flags(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_flags;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_Date(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_date;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_Expires(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_expires;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_TestMode(boolean* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_testMode;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_ThisDc(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_thisDc;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_DcOptions(__FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDcOption** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	auto vectorView = Make<VectorView<ABI::Telegram::Api::Native::TL::TLDcOption*>>();
+
+	std::transform(m_dcOptions.begin(), m_dcOptions.end(), std::back_inserter(vectorView->GetItems()), [](auto& ptr)
+	{
+		return static_cast<ITLDcOption*>(ptr.Get());
+	});
+
+	*value = vectorView.Detach();
+	return S_OK;
+}
+
+HRESULT TLConfig::get_ChatSizeMax(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_chatSizeMax;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_MegagroupSizeMax(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_megagroupSizeMax;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_ForwardedCountMax(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_forwardedCountMax;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_OnlineUpdatePeriodMs(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_onlineUpdatePeriodMs;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_OfflineBlurTimeoutMs(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_offlineBlurTimeoutMs;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_OfflineIdleTimeoutMs(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_offlineIdleTimeoutMs;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_OnlineCloudTimeoutMs(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_onlineCloudTimeoutMs;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_NotifyCloudDelayMs(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_notifyCloudDelayMs;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_NotifyDefaultDelayMs(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_notifyDefaultDelayMs;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_ChatBigSize(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_chatBigSize;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_PushChatPeriodMs(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_pushChatPeriodMs;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_PushChatLimit(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_pushChatLimit;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_SavedGifsLimit(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_savedGifsLimit;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_EditTimeLimit(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_editTimeLimit;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_RatingEDecay(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_ratingEDecay;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_StickersRecentLimit(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_stickersRecentLimit;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_TmpSessions(__FIReference_1_int** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	if (m_flags & 1)
+	{
+		*value = Make<Windows::Foundation::Reference<INT32>>(m_tmpSessions).Detach();
+	}
+	else
+	{
+		*value = nullptr;
+	}
+
+	return S_OK;
+}
+
+HRESULT TLConfig::get_PinnedDalogsCountMax(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_pinnedDalogsCountMax;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_CallReceiveTimeoutMs(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_callReceiveTimeoutMs;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_CallRingTimeoutMs(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_callRingTimeoutMs;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_CallConnectTimeoutMs(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_callConnectTimeoutMs;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_CallPacketTimeoutMs(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_callPacketTimeoutMs;
+	return S_OK;
+}
+
+HRESULT TLConfig::get_MeUrlPrefix(HSTRING* value)
+{
+	return m_meUrlPrefix.CopyTo(value);
+}
+
+HRESULT TLConfig::get_DisabledFeatures(__FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDisabledFeature** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	auto vectorView = Make<VectorView<ABI::Telegram::Api::Native::TL::TLDisabledFeature*>>();
+
+	std::transform(m_disabledFeatures.begin(), m_disabledFeatures.end(), std::back_inserter(vectorView->GetItems()), [](auto& ptr)
+	{
+		return static_cast<ITLDisabledFeature*>(ptr.Get());
+	});
+
+	*value = vectorView.Detach();
+	return S_OK;
+}
+
 
 HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 {
@@ -256,14 +607,14 @@ HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 	ReturnIfFailed(result, reader->ReadInt32(&m_ratingEDecay));
 	ReturnIfFailed(result, reader->ReadInt32(&m_stickersRecentLimit));
 
-	if ((m_flags & 1) != 0)
+	if (m_flags & 1)
 	{
 		ReturnIfFailed(result, reader->ReadInt32(&m_tmpSessions));
 	}
 
 	ReturnIfFailed(result, reader->ReadInt32(&m_pinnedDalogsCountMax));
 	ReturnIfFailed(result, reader->ReadInt32(&m_callReceiveTimeoutMs));
-	ReturnIfFailed(result, reader->ReadInt32(&m_callRing_timeoutMs));
+	ReturnIfFailed(result, reader->ReadInt32(&m_callRingTimeoutMs));
 	ReturnIfFailed(result, reader->ReadInt32(&m_callConnectTimeoutMs));
 	ReturnIfFailed(result, reader->ReadInt32(&m_callPacketTimeoutMs));
 	ReturnIfFailed(result, reader->ReadString(m_meUrlPrefix.GetAddressOf()));
@@ -296,10 +647,15 @@ HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
 	ReturnIfFailed(result, writer->WriteInt32(m_editTimeLimit));
 	ReturnIfFailed(result, writer->WriteInt32(m_ratingEDecay));
 	ReturnIfFailed(result, writer->WriteInt32(m_stickersRecentLimit));
-	ReturnIfFailed(result, writer->WriteInt32(m_tmpSessions));
+
+	if (m_flags & 1)
+	{
+		ReturnIfFailed(result, writer->WriteInt32(m_tmpSessions));
+	}
+
 	ReturnIfFailed(result, writer->WriteInt32(m_pinnedDalogsCountMax));
 	ReturnIfFailed(result, writer->WriteInt32(m_callReceiveTimeoutMs));
-	ReturnIfFailed(result, writer->WriteInt32(m_callRing_timeoutMs));
+	ReturnIfFailed(result, writer->WriteInt32(m_callRingTimeoutMs));
 	ReturnIfFailed(result, writer->WriteInt32(m_callConnectTimeoutMs));
 	ReturnIfFailed(result, writer->WriteInt32(m_callPacketTimeoutMs));
 	ReturnIfFailed(result, writer->WriteString(m_meUrlPrefix.Get()));
@@ -572,6 +928,34 @@ HRESULT TLMsgsAllInfo::ReadBody(ITLBinaryReaderEx* reader)
 }
 
 
+HRESULT TLGZipPacked::RuntimeClassInitialize(ITLObject* object)
+{
+	if (object == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	HRESULT result;
+	UINT32 objectSize;
+	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
+
+	ComPtr<TLBinaryWriter> writer;
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&writer, objectSize));
+	ReturnIfFailed(result, writer->WriteObject(object));
+
+	return GZipCompressBuffer(writer->GetBuffer(), objectSize, &m_packedData);
+}
+
+HRESULT TLGZipPacked::RuntimeClassInitialize(NativeBuffer* rawData)
+{
+	if (rawData == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	return GZipCompressBuffer(rawData->GetBuffer(), rawData->GetCapacity(), &m_packedData);
+}
+
 HRESULT TLGZipPacked::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
 	HRESULT result;
@@ -591,16 +975,6 @@ HRESULT TLGZipPacked::HandleResponse(MessageContext const* messageContext, Conne
 	{
 		return connectionManager->HandleUnprocessedResponse(messageContext, query.Get(), connection);
 	}
-}
-
-HRESULT TLGZipPacked::RuntimeClassInitialize(NativeBuffer* rawData)
-{
-	if (rawData == nullptr)
-	{
-		return E_INVALIDARG;
-	}
-
-	return GZipCompressBuffer(rawData->GetBuffer(), rawData->GetCapacity(), &m_packedData);
 }
 
 HRESULT TLGZipPacked::ReadBody(ITLBinaryReaderEx* reader)

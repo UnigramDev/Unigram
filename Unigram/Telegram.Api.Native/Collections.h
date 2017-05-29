@@ -234,7 +234,7 @@ namespace Windows
 				ComPtr<TVector> m_vector;
 				size_t m_index;
 			};
-		}
 
+		}
 	}
 }

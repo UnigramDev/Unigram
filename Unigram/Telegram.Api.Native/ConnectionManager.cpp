@@ -276,7 +276,8 @@ HRESULT ConnectionManager::get_Datacenters(_Out_ __FIVectorView_1_Telegram__CApi
 		return static_cast<IDatacenter*>(pair.second.Get());
 	});
 
-	return vectorView.CopyTo(value);
+	*value = vectorView.Detach();
+	return S_OK;
 }
 
 HRESULT ConnectionManager::SendRequest(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived,

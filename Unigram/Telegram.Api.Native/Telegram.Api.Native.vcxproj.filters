@@ -89,6 +89,7 @@
     <ClInclude Include="TLMethods.h">
       <Filter>TLProtocolScheme</Filter>
     </ClInclude>
+    <ClInclude Include="Reference.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

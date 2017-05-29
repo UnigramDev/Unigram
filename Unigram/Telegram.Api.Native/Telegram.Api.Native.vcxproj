@@ -297,6 +297,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="EventObject.h" />
     <ClInclude Include="GZip.h" />
     <ClInclude Include="NativeBuffer.h" />
+    <ClInclude Include="Reference.h" />
     <ClInclude Include="TLMethods.h" />
     <ClInclude Include="Wrappers\OpenSSL.h" />
     <ClInclude Include="TLObject.h" />

@@ -112,8 +112,8 @@ namespace Telegram
 					~TLError();
 
 					//COM exported methods
-					STDMETHODIMP get_Code(_Out_ UINT32* value);
-					STDMETHODIMP get_Text(_Out_ HSTRING* value);
+					IFACEMETHODIMP get_Code(_Out_ UINT32* value);
+					IFACEMETHODIMP get_Text(_Out_ HSTRING* value);
 
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(INT32 code, _In_ HSTRING text);
@@ -219,13 +219,195 @@ namespace Telegram
 					HString m_description;
 				};
 
-				class TLConfig WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLConfigTraits>> //ITLConfig,
+				class TLConfig WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLConfig, TLObjectT<TLObjectTraits::TLConfigTraits>>
 				{
 					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLConfig, BaseTrust);
 
 				public:
 					TLConfig();
 					~TLConfig();
+
+					//COM exported methods
+					IFACEMETHODIMP get_Flags(_Out_ INT32* value);
+					IFACEMETHODIMP get_Date(_Out_ INT32* value);
+					IFACEMETHODIMP get_Expires(_Out_ INT32* value);
+					IFACEMETHODIMP get_TestMode(_Out_ boolean* value);
+					IFACEMETHODIMP get_ThisDc(_Out_ INT32* value);
+					IFACEMETHODIMP get_DcOptions(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDcOption** value);
+					IFACEMETHODIMP get_ChatSizeMax(_Out_ INT32* value);
+					IFACEMETHODIMP get_MegagroupSizeMax(_Out_ INT32* value);
+					IFACEMETHODIMP get_ForwardedCountMax(_Out_ INT32* value);
+					IFACEMETHODIMP get_OnlineUpdatePeriodMs(_Out_ INT32* value);
+					IFACEMETHODIMP get_OfflineBlurTimeoutMs(_Out_ INT32* value);
+					IFACEMETHODIMP get_OfflineIdleTimeoutMs(_Out_ INT32* value);
+					IFACEMETHODIMP get_OnlineCloudTimeoutMs(_Out_ INT32* value);
+					IFACEMETHODIMP get_NotifyCloudDelayMs(_Out_ INT32* value);
+					IFACEMETHODIMP get_NotifyDefaultDelayMs(_Out_ INT32* value);
+					IFACEMETHODIMP get_ChatBigSize(_Out_ INT32* value);
+					IFACEMETHODIMP get_PushChatPeriodMs(_Out_ INT32* value);
+					IFACEMETHODIMP get_PushChatLimit(_Out_ INT32* value);
+					IFACEMETHODIMP get_SavedGifsLimit(_Out_ INT32* value);
+					IFACEMETHODIMP get_EditTimeLimit(_Out_ INT32* value);
+					IFACEMETHODIMP get_RatingEDecay(_Out_ INT32* value);
+					IFACEMETHODIMP get_StickersRecentLimit(_Out_ INT32* value);
+					IFACEMETHODIMP get_TmpSessions(_Out_ __FIReference_1_int** value);
+					IFACEMETHODIMP get_PinnedDalogsCountMax(_Out_ INT32* value);
+					IFACEMETHODIMP get_CallReceiveTimeoutMs(_Out_ INT32* value);
+					IFACEMETHODIMP get_CallRingTimeoutMs(_Out_ INT32* value);
+					IFACEMETHODIMP get_CallConnectTimeoutMs(_Out_ INT32* value);
+					IFACEMETHODIMP get_CallPacketTimeoutMs(_Out_ INT32* value);
+					IFACEMETHODIMP get_MeUrlPrefix(_Out_ HSTRING* value);
+					IFACEMETHODIMP get_DisabledFeatures(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDisabledFeature** value);
+
+					inline INT32 GetFlags() const
+					{
+						return m_flags;
+					}
+
+					inline INT32 GetDate() const
+					{
+						return m_date;
+					}
+
+					inline INT32 GetExpires() const
+					{
+						return m_expires;
+					}
+
+					inline boolean GetTestMode() const
+					{
+						return m_testMode;
+					}
+
+					inline INT32 GetThisDc() const
+					{
+						return m_thisDc;
+					}
+
+					inline std::vector<ComPtr<TLDcOption>> const& GetDcOptions() const
+					{
+						return m_dcOptions;
+					}
+
+					inline INT32 GetChatSizeMax() const
+					{
+						return m_chatSizeMax;
+					}
+
+					inline INT32 GetMegagroupSizeMax() const
+					{
+						return m_megagroupSizeMax;
+					}
+
+					inline INT32 GetForwardedCountMax() const
+					{
+						return m_forwardedCountMax;
+					}
+
+					inline INT32 GetOnlineUpdatePeriodMs() const
+					{
+						return m_onlineUpdatePeriodMs;
+					}
+
+					inline INT32 GetOfflineBlurTimeoutMs() const
+					{
+						return m_offlineBlurTimeoutMs;
+					}
+
+					inline INT32 GetOfflineIdleTimeoutMs() const
+					{
+						return m_offlineIdleTimeoutMs;
+					}
+
+					inline INT32 GetOnlineCloudTimeoutMs() const
+					{
+						return m_onlineCloudTimeoutMs;
+					}
+
+					inline INT32 GetNotifyCloudDelayMs() const
+					{
+						return m_notifyCloudDelayMs;
+					}
+
+					inline INT32 GetNotifyDefaultDelayMs() const
+					{
+						return m_notifyDefaultDelayMs;
+					}
+
+					inline INT32 GetChatBigSize() const
+					{
+						return m_chatBigSize;
+					}
+
+					inline INT32 GetPushChatPeriodMs() const
+					{
+						return m_pushChatPeriodMs;
+					}
+
+					inline INT32 GetPushChatLimit() const
+					{
+						return m_pushChatLimit;
+					}
+
+					inline INT32 GetSavedGifsLimit() const
+					{
+						return m_savedGifsLimit;
+					}
+
+					inline INT32 GetEditTimeLimit() const
+					{
+						return m_editTimeLimit;
+					}
+
+					inline INT32 GetRatingEDecay() const
+					{
+						return m_ratingEDecay;
+					}
+
+					inline INT32 GetStickersRecentLimit() const
+					{
+						return m_stickersRecentLimit;
+					}
+
+					inline INT32 GetTmpSessions() const
+					{
+						return m_tmpSessions;
+					}
+
+					inline INT32 GetPinnedDalogsCountMax() const
+					{
+						return m_pinnedDalogsCountMax;
+					}
+
+					inline INT32 GetCallReceiveTimeoutMs() const
+					{
+						return m_callReceiveTimeoutMs;
+					}
+
+					inline INT32 GetCallRingTimeoutMs() const
+					{
+						return m_callRingTimeoutMs;
+					}
+
+					inline INT32 GetCallConnectTimeoutMs() const
+					{
+						return m_callConnectTimeoutMs;
+					}
+
+					inline INT32 GetCallPacketTimeoutMs() const
+					{
+						return m_callPacketTimeoutMs;
+					}
+
+					inline HString const& GetMeUrlPrefix() const
+					{
+						return m_meUrlPrefix;
+					}
+
+					inline std::vector<ComPtr<TLDisabledFeature>> const& GetDisabledFeatures() const
+					{
+						return m_disabledFeatures;
+					}
 
 				protected:
 					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
@@ -257,7 +439,7 @@ namespace Telegram
 					INT32 m_tmpSessions;
 					INT32 m_pinnedDalogsCountMax;
 					INT32 m_callReceiveTimeoutMs;
-					INT32 m_callRing_timeoutMs;
+					INT32 m_callRingTimeoutMs;
 					INT32 m_callConnectTimeoutMs;
 					INT32 m_callPacketTimeoutMs;
 					HString m_meUrlPrefix;
@@ -615,6 +797,7 @@ namespace Telegram
 					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
+					STDMETHODIMP RuntimeClassInitialize(_In_ ITLObject* object);
 					STDMETHODIMP RuntimeClassInitialize(_In_ NativeBuffer* rawData);
 
 					inline NativeBuffer* GetPackedData() const

@@ -46,10 +46,20 @@ namespace Telegram.Api.Native.Test
 
         private void ConnectionManager_UnprocessedMessageReceived(ConnectionManager sender, TLUnprocessedMessage args)
         {
+            var tlConfig = args.Object as TLConfig;
+            if (tlConfig != null)
+            {
+                var tmpSession = tlConfig.TmpSessions;
+                var dcOptions = tlConfig.DcOptions.ToArray();
+                var disabledFeatures = tlConfig.DisabledFeatures.ToArray();
+            }
+
             //var unconsumedBuffer = new byte[args.Reader.UnconsumedBufferLength];
             //args.Reader.ReadRawBuffer(unconsumedBuffer);
 
             //var text = System.Text.Encoding.Unicode.GetString(unconsumedBuffer);
+
+            GC.Collect();
         }
 
         private void Instance_CurrentNetworkTypeChanged(ConnectionManager sender, object e)

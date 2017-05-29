@@ -320,7 +320,7 @@ namespace Telegram
 					[propget] HRESULT TmpSessions([out][retval] Windows.Foundation.IReference<INT32>** value);
 					[propget] HRESULT PinnedDalogsCountMax([out][retval] INT32* value);
 					[propget] HRESULT CallReceiveTimeoutMs([out][retval] INT32* value);
-					[propget] HRESULT CallRing_timeoutMs([out][retval] INT32* value);
+					[propget] HRESULT CallRingTimeoutMs([out][retval] INT32* value);
 					[propget] HRESULT CallConnectTimeoutMs([out][retval] INT32* value);
 					[propget] HRESULT CallPacketTimeoutMs([out][retval] INT32* value);
 					[propget] HRESULT MeUrlPrefix([out][retval] HSTRING* value);
