@@ -18,8 +18,9 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateChannelPinnedMessage>,
         IHandle<TLUpdateEditChannelMessage>,
         IHandle<TLUpdateEditMessage>,
-        IHandle<MessagesRemovedEventArgs>,
         IHandle<TLUpdateUserStatus>,
+        IHandle<TLUpdateDraftMessage>,
+        IHandle<MessagesRemovedEventArgs>,
         IHandle<string>
     {
         public async void Handle(string message)
@@ -50,6 +51,41 @@ namespace Unigram.ViewModels
             else if (message.Equals("Window_Deactivated"))
             {
                 SaveDraft();
+            }
+        }
+
+        public void Handle(TLUpdateDraftMessage args)
+        {
+            var flag = false;
+
+            var userBase = With as TLUserBase;
+            var chatBase = With as TLChatBase;
+            if (userBase != null && args.Peer is TLPeerUser && userBase.Id == args.Peer.Id)
+            {
+                flag = true;
+            }
+            else if (chatBase != null && args.Peer is TLPeerChat && chatBase.Id == args.Peer.Id)
+            {
+                flag = true;
+            }
+            else if (chatBase != null && args.Peer is TLPeerChannel && chatBase.Id == args.Peer.Id)
+            {
+                flag = true;
+            }
+
+            if (flag)
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    if (args.Draft is TLDraftMessage draft)
+                    {
+                        SetText(draft.Message, draft.Entities);
+                    }
+                    else if (args.Draft is TLDraftMessageEmpty emptyDraft)
+                    {
+                        SetText(null);
+                    }
+                });
             }
         }
 

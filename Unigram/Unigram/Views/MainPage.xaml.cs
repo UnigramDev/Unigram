@@ -68,25 +68,28 @@ namespace Unigram.Views
 
         public void Handle(string message)
         {
-            var index = DialogsListView.SelectedIndex;
-            if (index == -1)
+            if (message.Equals("move_up") || message.Equals("move_down"))
             {
-                return;
-            }
+                var index = DialogsListView.SelectedIndex;
+                if (index == -1)
+                {
+                    return;
+                }
 
-            if (message.Equals("move_up"))
-            {
-                index--;
-            }
-            else if (message.Equals("move_down"))
-            {
-                index++;
-            }
+                if (message.Equals("move_up"))
+                {
+                    index--;
+                }
+                else if (message.Equals("move_down"))
+                {
+                    index++;
+                }
 
-            if (index >= 0 && index < ViewModel.Dialogs.Items.Count)
-            {
-                DialogsListView.SelectedIndex = index;
-                Navigate(DialogsListView.SelectedItem);
+                if (index >= 0 && index < ViewModel.Dialogs.Items.Count)
+                {
+                    DialogsListView.SelectedIndex = index;
+                    Navigate(DialogsListView.SelectedItem);
+                }
             }
         }
 

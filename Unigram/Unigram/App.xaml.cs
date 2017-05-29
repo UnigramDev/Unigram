@@ -119,39 +119,21 @@ namespace Unigram
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
         {
             IsActive = e.WindowActivationState != CoreWindowActivationState.Deactivated;
-
-            var aggregator = UnigramContainer.Current.ResolveType<ITelegramEventAggregator>();
-            aggregator.Publish(IsActive ?  "Window_Activated" : "Window_Deactivated");
-
-            if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
-            {
-                Locator.LoadStateAndUpdate();
-
-                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-                protoService.UpdateStatusAsync(false, null);
-            }
-            else
-            {
-                var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-                cacheService.TryCommit();
-
-                var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-                updatesService.SaveState();
-                updatesService.CancelUpdating();
-
-                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-                protoService.UpdateStatusAsync(true, null);
-            }
+            HandleActivated(e.WindowActivationState != CoreWindowActivationState.Deactivated);
         }
 
         private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
         {
             IsVisible = e.Visible;
+            HandleActivated(e.Visible);
+        }
 
+        private void HandleActivated(bool active)
+        {
             var aggregator = UnigramContainer.Current.ResolveType<ITelegramEventAggregator>();
-            aggregator.Publish(IsVisible ? "Window_Activated" : "Window_Deactivated");
+            aggregator.Publish(active ? "Window_Activated" : "Window_Deactivated");
 
-            if (e.Visible)
+            if (active)
             {
                 Locator.LoadStateAndUpdate();
 
@@ -221,6 +203,7 @@ namespace Unigram
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
             //NavigationService.Navigate(typeof(PlaygroundPage2));
+            //return;
             //return Task.CompletedTask;
 
             //PhoneCallPage newPlayer = null;

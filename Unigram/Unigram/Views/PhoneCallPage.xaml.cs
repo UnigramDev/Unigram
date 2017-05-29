@@ -105,6 +105,7 @@ namespace Unigram.Views
             _blurVisual = _compositor.CreateSpriteVisual();
             _blurVisual.Brush = _blurBrush;
 
+            // Why does this crashes due to an access violation exception on certain devices?
             ElementCompositionPreview.SetElementChildVisual(BlurPanel, _blurVisual);
 
             #endregion

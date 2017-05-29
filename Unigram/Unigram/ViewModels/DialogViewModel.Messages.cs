@@ -528,12 +528,12 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessage> MessageEditCommand => new RelayCommand<TLMessage>(MessageEditExecute);
         private async void MessageEditExecute(TLMessage message)
         {
-            var result = await ProtoService.GetMessageEditDataAsync(Peer, message.Id);
-            if (result.IsSucceeded)
+            var response = await ProtoService.GetMessageEditDataAsync(Peer, message.Id);
+            if (response.IsSucceeded)
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    var messageEditText = GetMessageEditText(result.Result, message);
+                    var messageEditText = GetMessageEditText(response.Result, message);
                     StartEditMessage(messageEditText, message);
                 });
             }
@@ -547,7 +547,7 @@ namespace Unigram.ViewModels
                     //    MessageBox.Show(AppResources.EditMessageError, AppResources.Error, 0);
                     //    return;
                     //}
-                    Execute.ShowDebugMessage("messages.getMessageEditData error " + result.Error);
+                    Execute.ShowDebugMessage("messages.getMessageEditData error " + response.Error);
                 });
             }
         }
@@ -585,7 +585,7 @@ namespace Unigram.ViewModels
                 }
             };
 
-            Aggregator.Publish(new EditMessageEventArgs(_editedMessage, text));
+            SetText(text, message.Entities, true);
 
             //if (this._editMessageTimer == null)
             //{
@@ -889,7 +889,7 @@ namespace Unigram.ViewModels
                 {
                     if (switchInlineButton.IsSamePeer)
                     {
-                        Text = string.Format("@{0} {1}", bot.Username, switchInlineButton.Query);
+                        SetText(string.Format("@{0} {1}", bot.Username, switchInlineButton.Query), focus: true);
                         ResolveInlineBot(bot.Username, switchInlineButton.Query);
 
                         if (With is TLChatBase)
@@ -1030,8 +1030,7 @@ namespace Unigram.ViewModels
             }
             else if (button is TLKeyboardButton keyboardButton)
             {
-                _text = keyboardButton.Text;
-                await SendMessageAsync(null, true);
+                await SendMessageAsync(keyboardButton.Text, null, true);
             }
         }
 

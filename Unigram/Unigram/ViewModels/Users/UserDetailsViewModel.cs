@@ -615,5 +615,40 @@ namespace Unigram.ViewModels.Users
         }
 
         #endregion
+
+        public RelayCommand EditNameCommand => new RelayCommand(EditNameExecute);
+        private async void EditNameExecute()
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            var confirm = await EditUserNameView.Current.ShowAsync(_item.FirstName, _item.LastName);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var contact = new TLInputPhoneContact
+                {
+                    FirstName = EditUserNameView.Current.FirstName,
+                    LastName = EditUserNameView.Current.LastName,
+                    Phone = _item.Phone
+                };
+
+                var response = await ProtoService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact }, false);
+                if (response.IsSucceeded)
+                {
+                    _item.RaisePropertyChanged(() => _item.FullName);
+                    _item.RaisePropertyChanged(() => _item.FirstName);
+                    _item.RaisePropertyChanged(() => _item.LastName);
+                    _item.RaisePropertyChanged(() => _item.DisplayName);
+
+                    var dialog = CacheService.GetDialog(_item.ToPeer());
+                    if (dialog != null)
+                    {
+                        dialog.RaisePropertyChanged(() => dialog.With);
+                    }
+                }
+            }
+        }
     }
 }

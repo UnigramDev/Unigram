@@ -362,7 +362,7 @@
             <Run Text="This message is not supported on your version of Unigram. Update the app to view:"/>
             <LineBreak/>
             <Hyperlink Click="Unsupported_Click">
-                <Run Text="@unigramchannel"/>
+                <Run Text="@unigram"/>
             </Hyperlink>
         </TextBlock>
     </DataTemplate>

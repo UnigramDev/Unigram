@@ -22,7 +22,6 @@ using Telegram.Api.Services.FileManager;
 using Windows.Storage;
 using Windows.System;
 using Unigram.Views;
-using Unigram.Views;
 using Telegram.Api.Helpers;
 using Unigram.Controls;
 using System.Diagnostics;
@@ -183,7 +182,7 @@ namespace Unigram.Themes
 
         private void Unsupported_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
-            MessageHelper.HandleTelegramUrl("t.me/unigramchannel");
+            MessageHelper.HandleTelegramUrl("t.me/unigram");
         }
 
         private void Contact_Click(object sender, RoutedEventArgs e)

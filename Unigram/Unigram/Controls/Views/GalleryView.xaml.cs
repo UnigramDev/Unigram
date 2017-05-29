@@ -51,8 +51,8 @@ namespace Unigram.Controls.Views
         private SpriteVisual _surfaceVisual;
 
         private Visual _layerVisual;
-        private Visual _topBarVisual;
-        private Visual _botBarVisual;
+        //private Visual _topBarVisual;
+        //private Visual _botBarVisual;
 
         private GalleryView()
         {
@@ -68,12 +68,12 @@ namespace Unigram.Controls.Views
             _mediaPlayer.SetMediaPlayer(new MediaPlayer());
 
             _layerVisual = ElementCompositionPreview.GetElementVisual(Layer);
-            _topBarVisual = ElementCompositionPreview.GetElementVisual(TopBar);
-            _botBarVisual = ElementCompositionPreview.GetElementVisual(BotBar);
+            //_topBarVisual = ElementCompositionPreview.GetElementVisual(TopBar);
+            //_botBarVisual = ElementCompositionPreview.GetElementVisual(BotBar);
 
-            _layerVisual.Opacity = 0;
-            _topBarVisual.Offset = new Vector3(0, -48, 0);
-            _botBarVisual.Offset = new Vector3(0, 48, 0);
+            //_layerVisual.Opacity = 0;
+            //_topBarVisual.Offset = new Vector3(0, -48, 0);
+            //_botBarVisual.Offset = new Vector3(0, 48, 0);
 
             if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
             {

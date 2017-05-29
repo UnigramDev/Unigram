@@ -41,6 +41,7 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:StickerToEmojiConverter x:Key="StickerToEmojiConverter"/>
             <converters:AutoDownloadConverter x:Key="AutoDownloadConverter"/>
             <converters:AccountTTLConverter x:Key="AccountTTLConverter"/>
             <converters:BooleanNegationConverter x:Key="BooleanNegationConverter"/>

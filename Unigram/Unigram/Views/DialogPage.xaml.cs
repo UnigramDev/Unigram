@@ -75,6 +75,8 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>();
 
+            ViewModel.TextBox = txtMessage;
+
             CheckMessageBoxEmpty();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
@@ -167,6 +169,8 @@ namespace Unigram.Views
                 ElementCompositionPreview.SetImplicitShowAnimation(InfoPanel, null);
                 ElementCompositionPreview.SetImplicitHideAnimation(InfoPanel, null);
             }
+
+            Bindings.StopTracking();
 
             base.OnNavigatingFrom(e);
         }
@@ -1027,8 +1031,7 @@ namespace Unigram.Views
                     command += $"@{item.Item1.Username}";
                 }
 
-                ViewModel.Text = command;
-                ViewModel.SendCommand.Execute(null);
+                ViewModel.SendCommand.Execute(command);
                 ViewModel.BotCommands = null;
                 txtMessage.Text = null;
             }

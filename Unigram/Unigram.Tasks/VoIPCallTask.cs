@@ -57,15 +57,12 @@ namespace Unigram.Tasks
             }
         }
 
-        [DllImport("kernel32.dll")]
-        static extern uint GetCurrentProcessId();
-
         public void Run(IBackgroundTaskInstance taskInstance)
         {
             _deferral = taskInstance.GetDeferral();
             _current = this;
 
-            VoIPCallTask.Log("VoIPCallTask started", GetCurrentProcessId().ToString());
+            VoIPCallTask.Log("VoIPCallTask started", "VoIPCallTask started");
 
             Mediator.Initialize(_deferral);
             taskInstance.Canceled += OnCanceled;

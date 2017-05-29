@@ -152,7 +152,7 @@ namespace Unigram.ViewModels
                 Reply = null;
             }
 
-            Text = string.Empty;
+            SetText(string.Empty);
 
             //this.Text = string.Empty;
             var previousMessage = InsertSendingMessage(message, false);

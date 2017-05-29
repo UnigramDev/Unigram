@@ -912,9 +912,7 @@ namespace Unigram.Common
                     var dialogPage = service.Frame.Content as DialogPage;
                     if (dialogPage != null)
                     {
-                        dialogPage.ViewModel.Text = (string)data;
-                        dialogPage.ViewModel.SendCommand.Execute(null);
-                        dialogPage.ViewModel.Text = null;
+                        dialogPage.ViewModel.SendCommand.Execute((string)data);
                     }
                 }
             }

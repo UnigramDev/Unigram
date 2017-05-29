@@ -53,6 +53,7 @@ using Windows.Media.Transcoding;
 using Windows.Media.MediaProperties;
 using Telegram.Api.Services.Cache.EventArgs;
 using Windows.Foundation.Metadata;
+using Windows.UI.Text;
 
 namespace Unigram.ViewModels
 {
@@ -129,6 +130,7 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _full, value);
+                RaisePropertyChanged(() => With);
                 RaisePropertyChanged(() => IsSilentVisible);
             }
         }
@@ -143,19 +145,6 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _lastSeen, value);
-            }
-        }
-
-        private string _text;
-        public string Text
-        {
-            get
-            {
-                return _text;
-            }
-            set
-            {
-                Set(ref _text, value);
             }
         }
 
@@ -235,6 +224,31 @@ namespace Unigram.ViewModels
             {
                 Set(ref _selectionMode, value);
             }
+        }
+
+        public BubbleTextBox TextBox { get; set; }
+
+        public void SetText(string text, TLVector<TLMessageEntityBase> entities = null, bool focus = false)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                TextBox.Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
+            }
+            else
+            {
+                TextBox.SetText(text, entities);
+            }
+
+            if (focus)
+            {
+                TextBox.Focus(FocusState.Keyboard);
+            }
+        }
+
+        public string GetText()
+        {
+            TextBox.Document.GetText(TextGetOptions.NoHidden, out string text);
+            return text;
         }
 
         public bool IsFirstSliceLoaded { get; set; }
@@ -629,20 +643,45 @@ namespace Unigram.ViewModels
             }
 
             var participant = GetParticipant(parameter as TLPeerBase);
+            if (participant == null)
+            {
+                return;
+            }
+
+            Peer = participant.ToInputPeer();
+            With = participant;
+
+            Aggregator.Subscribe(this);
+
+            if (tuple != null)
+            {
+                await LoadMessageSliceAsync(null, tuple.Item2);
+            }
+            else
+            {
+                await LoadFirstSliceAsync();
+            }
+
             if (participant is TLUser user)
             {
-                With = user;
-                Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 };
-
-                var full = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 });
-                if (full.IsSucceeded)
+                var full = CacheService.GetFullUser(user.Id);
+                if (full == null)
                 {
-                    Full = full.Result;
-                    IsPhoneCallsAvailable = full.Result.IsPhoneCallsAvailable && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
-
-                    if (user.IsBot && full.Result.HasBotInfo)
+                    var response = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 });
+                    if (response.IsSucceeded)
                     {
-                        UnfilteredBotCommands = full.Result.BotInfo.Commands.Select(x => Tuple.Create(user, x)).ToList();
+                        full = response.Result;
+                    }
+                }
+
+                if (full != null)
+                {
+                    Full = full;
+                    IsPhoneCallsAvailable = full.IsPhoneCallsAvailable && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
+
+                    if (user.IsBot && full.HasBotInfo)
+                    {
+                        UnfilteredBotCommands = full.BotInfo.Commands.Select(x => Tuple.Create(user, x)).ToList();
                     }
                 }
             }
@@ -662,14 +701,18 @@ namespace Unigram.ViewModels
 
                 IsPhoneCallsAvailable = false;
 
-                With = channel;
-                Peer = new TLInputPeerChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 };
-
-                var input = new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash ?? 0 };
-                var channelDetails = await ProtoService.GetFullChannelAsync(input);
-                if (channelDetails.IsSucceeded)
+                var full = CacheService.GetFullChat(channel.Id) as TLChannelFull;
+                if (full == null)
                 {
-                    var full = channelDetails.Result.FullChat as TLChannelFull;
+                    var response = await ProtoService.GetFullChannelAsync(channel.ToInputChannel());
+                    if (response.IsSucceeded)
+                    {
+                        full = response.Result.FullChat as TLChannelFull;
+                    }
+                }
+
+                if (full != null)
+                {
                     Full = full;
 
                     var commands = new List<Tuple<TLUser, TLBotCommand>>();
@@ -703,7 +746,7 @@ namespace Unigram.ViewModels
                         var pinned = CacheService.GetMessage(channelFull.PinnedMsgId, channel.Id);
                         if (pinned == null && update)
                         {
-                            var y = await ProtoService.GetMessagesAsync(input, new TLVector<int>() { channelFull.PinnedMsgId ?? 0 });
+                            var y = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int>() { channelFull.PinnedMsgId ?? 0 });
                             if (y.IsSucceeded)
                             {
                                 pinned = y.Result.Messages.FirstOrDefault();
@@ -719,34 +762,6 @@ namespace Unigram.ViewModels
                             PinnedMessage = null;
                         }
                     }
-                    //online = 0;
-                    //participantCount = channelFull.ParticipantsCount ?? default(int);
-                    //if (participantCount < 200)
-                    //{
-                    //    try
-                    //    {
-                    //        var temp = await ProtoService.GetParticipantsAsync(input, null, 0, 5000);
-                    //        if (temp.IsSucceeded)
-                    //        {
-                    //            foreach (TLUserBase now in temp.Result.Users)
-                    //            {
-                    //                TLUser tempUser = now as TLUser;
-
-                    //                if (LastSeenHelper.GetLastSeen(tempUser).Item1.Equals("online") && !tempUser.IsSelf) online++;
-                    //            }
-                    //        }
-                    //    }
-                    //    catch (Exception e)
-                    //    {
-                    //        Debug.WriteLine(e.ToString());
-                    //        online = -2;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    online = -2;
-                    //}
-                    //LastSeen = participantCount + " members" + ((online > 0) ? (", " + online + " online") : "");
                 }
 
             }
@@ -754,13 +769,18 @@ namespace Unigram.ViewModels
             {
                 IsPhoneCallsAvailable = false;
 
-                With = chat;
-                Peer = new TLInputPeerChat { ChatId = chat.Id };
-
-                var chatDetails = await ProtoService.GetFullChatAsync(chat.Id);
-                if (chatDetails.IsSucceeded)
+                var full = CacheService.GetFullChat(chat.Id) as TLChatFull;
+                if (full == null)
                 {
-                    var full = chatDetails.Result.FullChat as TLChatFull;
+                    var response = await ProtoService.GetFullChatAsync(chat.Id);
+                    if (response.IsSucceeded)
+                    {
+                        full = response.Result.FullChat as TLChatFull;
+                    }
+                }
+
+                if (full != null)
+                {
                     Full = full;
 
                     var commands = new List<Tuple<TLUser, TLBotCommand>>();
@@ -820,17 +840,6 @@ namespace Unigram.ViewModels
 
             //#if !DEBUG
             //#endif
-
-            Aggregator.Subscribe(this);
-
-            if (tuple != null)
-            {
-                await LoadMessageSliceAsync(null, tuple.Item2);
-            }
-            else
-            {
-                await LoadFirstSliceAsync();
-            }
 
             if (dialog != null && Messages.Count > 0)
             {
@@ -936,7 +945,7 @@ namespace Unigram.ViewModels
             return Task.CompletedTask;
         }
 
-        private TLObject GetParticipant(TLPeerBase peer)
+        private ITLDialogWith GetParticipant(TLPeerBase peer)
         {
             if (peer is TLPeerUser user)
             {
@@ -958,7 +967,7 @@ namespace Unigram.ViewModels
 
         public void SaveDraft()
         {
-            var messageText = Text?.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
+            var messageText = GetText().Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             var reply = new int?();
 
@@ -984,6 +993,12 @@ namespace Unigram.ViewModels
             {
                 ProtoService.SaveDraftAsync(Peer, draft, result =>
                 {
+                    if (_currentDialog != null)
+                    {
+                        _currentDialog.Draft = draft;
+                        _currentDialog.HasDraft = draft != null;
+                    }
+
                     Aggregator.Publish(new TLUpdateDraftMessage { Peer = Peer.ToPeer(), Draft = draft });
                 });
             }
@@ -1131,7 +1146,8 @@ namespace Unigram.ViewModels
         {
             if (Reply is TLMessagesContainter container && container.EditMessage != null)
             {
-                Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
+                SetText(null);
+                //Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
             }
 
             Reply = null;
@@ -1151,10 +1167,10 @@ namespace Unigram.ViewModels
         public RelayCommand<string> SendCommand => new RelayCommand<string>(SendMessage);
         private async void SendMessage(string args)
         {
-            await SendMessageAsync(null, args != null);
+            await SendMessageAsync(args, null, args != null);
         }
 
-        public async Task SendMessageAsync(List<TLMessageEntityBase> entities, bool useReplyMarkup = false)
+        public async Task SendMessageAsync(string text, List<TLMessageEntityBase> entities, bool useReplyMarkup = false)
         {
             if (Peer == null)
             {
@@ -1162,7 +1178,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var messageText = Text?.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
+            var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), null);
 
@@ -1807,6 +1823,35 @@ namespace Unigram.ViewModels
                 appData.Values["Pinned" + channel.Id] = _pinnedMessage.Id;
 
                 PinnedMessage = null;
+            }
+        }
+
+        #endregion
+
+        #region Unblock
+
+        public RelayCommand UnblockCommand => new RelayCommand(UnblockExecute);
+        private async void UnblockExecute()
+        {
+            var user = _with as TLUser;
+            if (user == null)
+            {
+                return;
+            }
+
+            var result = await ProtoService.UnblockAsync(user.ToInputUser());
+            if (result.IsSucceeded)
+            {
+                if (Full is TLUserFull full)
+                {
+                    full.IsBlocked = false;
+                }
+
+                RaisePropertyChanged(() => With);
+                RaisePropertyChanged(() => Full);
+
+                CacheService.Commit();
+                Aggregator.Publish(new TLUpdateUserBlocked { UserId = user.Id, Blocked = false });
             }
         }
 

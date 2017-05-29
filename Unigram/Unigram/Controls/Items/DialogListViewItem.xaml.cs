@@ -190,7 +190,7 @@ namespace Unigram.Controls.Items
 
         private string UpdateFromLabel(TLDialog dialog)
         {
-            if (dialog.Draft is TLDraftMessage draft)
+            if (dialog.Draft is TLDraftMessage draft && !string.IsNullOrWhiteSpace(draft.Message))
             {
                 FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelDraftBrush"] as SolidColorBrush;
                 return "Draft: ";

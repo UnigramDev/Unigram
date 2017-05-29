@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Unigram.Controls.Inline.InlineBotResultsView"
+    x:Class="Unigram.Controls.Views.InlineBotResultsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Inline"
@@ -173,11 +173,11 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Button Content="{Binding InlineBotResults.SwitchPm.Text}"
-                    Visibility="{Binding InlineBotResults.SwitchPm, Converter={StaticResource NullToVisibilityConverter}}"
+            <Button Content="{x:Bind ViewModel.InlineBotResults.SwitchPm.Text, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPm, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                     HorizontalAlignment="Stretch"/>
-            <controls:OrientableListView ItemsSource="{Binding InlineBotResults.Results}"
-                                         IsHorizontal="{Binding InlineBotResults.IsGallery}"
+            <controls:OrientableListView ItemsSource="{x:Bind ViewModel.InlineBotResults.Results, Mode=OneWay}"
+                                         IsHorizontal="{x:Bind ViewModel.InlineBotResults.IsGallery, Mode=OneWay}"
                                          ItemTemplateSelector="{StaticResource InlineBotResultTemplateSelector}"
                                          ItemClick="ListView_ItemClick"
                                          IsItemClickEnabled="True"

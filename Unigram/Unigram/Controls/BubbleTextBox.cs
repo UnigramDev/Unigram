@@ -35,7 +35,7 @@ using Unigram.Core;
 
 namespace Unigram.Controls
 {
-    public class BubbleTextBox : RichEditBox, IHandle<TLUpdateDraftMessage>, IHandle<EditMessageEventArgs>, IHandle
+    public class BubbleTextBox : RichEditBox
     {
         private ContentControl InlinePlaceholderTextContentPresenter;
 
@@ -98,13 +98,11 @@ namespace Unigram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Subscribe(this);
             Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Unsubscribe(this);
             Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
@@ -607,40 +605,33 @@ namespace Unigram.Controls
 
             bool isDirty = _isDirty;
 
-            Document.GetText(TextGetOptions.FormatRtf, out string text);
-            Document.GetText(TextGetOptions.NoHidden, out string plainText);
+            Document.GetText(TextGetOptions.FormatRtf, out string rtf);
+            Document.GetText(TextGetOptions.NoHidden, out string text);
 
             //Document.SetText(TextSetOptions.FormatRtf, string.Empty);
             Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
 
-            _updatingText = true;
-            plainText = plainText.Trim();
-            ViewModel.Text = plainText;
-            _updatingText = false;
+            text = text.Trim();
 
             if (isDirty)
             {
                 var parser = new RtfToTLParser();
                 var reader = new RtfReader(parser);
-                reader.LoadRtfText(text);
+                reader.LoadRtfText(rtf);
                 reader.Parse();
 
-                await ViewModel.SendMessageAsync(parser.Entities, false);
+                await ViewModel.SendMessageAsync(text, parser.Entities, false);
             }
             else
             {
-                var entities = MessageHelper.GetEntities(ref plainText);
+                var entities = MessageHelper.GetEntities(ref text);
                 if (entities != null)
                 {
-                    _updatingText = true;
-                    ViewModel.Text = plainText;
-                    _updatingText = false;
-
-                    await ViewModel.SendMessageAsync(entities, false);
+                    await ViewModel.SendMessageAsync(text, entities, false);
                 }
                 else
                 {
-                    ViewModel.SendCommand.Execute(null);
+                    ViewModel.SendCommand.Execute(text);
                 }
             }
         }
@@ -888,7 +879,7 @@ namespace Unigram.Controls
 
         #endregion
 
-        private void OnMessageChanged(string text, TLVector<TLMessageEntityBase> entities)
+        public void SetText(string text, TLVector<TLMessageEntityBase> entities)
         {
             if (entities != null && entities.Count > 0)
             {
@@ -990,90 +981,6 @@ namespace Unigram.Controls
                     Document.Selection.SetRange(text.Length, text.Length);
                 }
             }
-        }
-
-        public void Handle(EditMessageEventArgs args)
-        {
-            Execute.BeginOnUIThread(() =>
-            {
-                var message = args.Message;
-                var flag = false;
-
-                var userBase = ViewModel.With as TLUserBase;
-                var chatBase = ViewModel.With as TLChatBase;
-                if (userBase != null && message.ToId is TLPeerUser && !message.IsOut && userBase.Id == message.FromId.Value)
-                {
-                    flag = true;
-                }
-                else if (userBase != null && message.ToId is TLPeerUser && message.IsOut && userBase.Id == message.ToId.Id)
-                {
-                    flag = true;
-                }
-                else if (chatBase != null && message.ToId is TLPeerChat && chatBase.Id == message.ToId.Id)
-                {
-                    flag = true;
-                }
-                else if (chatBase != null && message.ToId is TLPeerChannel && chatBase.Id == message.ToId.Id)
-                {
-                    flag = true;
-                }
-
-                if (flag)
-                {
-                    OnMessageChanged(args.Text, message.Entities);
-                }
-            });
-        }
-
-        public void Handle(TLUpdateDraftMessage args)
-        {
-            Execute.BeginOnUIThread(() =>
-            {
-                var flag = false;
-
-                var userBase = ViewModel.With as TLUserBase;
-                var chatBase = ViewModel.With as TLChatBase;
-                if (userBase != null && args.Peer is TLPeerUser && userBase.Id == args.Peer.Id)
-                {
-                    flag = true;
-                }
-                else if (chatBase != null && args.Peer is TLPeerChat && chatBase.Id == args.Peer.Id)
-                {
-                    flag = true;
-                }
-                else if (chatBase != null && args.Peer is TLPeerChannel && chatBase.Id == args.Peer.Id)
-                {
-                    flag = true;
-                }
-
-                if (flag)
-                {
-                    var draft = args.Draft as TLDraftMessage;
-                    if (draft != null)
-                    {
-                        OnMessageChanged(draft.Message, draft.Entities);
-                    }
-
-                    var emptyDraft = args.Draft as TLDraftMessageEmpty;
-                    if (emptyDraft != null)
-                    {
-                        Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
-                    }
-                }
-            });
-        }
-    }
-
-    public class EditMessageEventArgs : EventArgs
-    {
-        public TLMessage Message { get; private set; }
-
-        public string Text { get; private set; }
-
-        public EditMessageEventArgs(TLMessage message, string text)
-        {
-            Message = message;
-            Text = text;
         }
     }
 

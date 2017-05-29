@@ -46,7 +46,6 @@
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>
-
                 </Grid>
             </controls:ContentPageHeader>
 

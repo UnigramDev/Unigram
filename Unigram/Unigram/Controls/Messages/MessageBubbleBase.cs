@@ -267,7 +267,8 @@ namespace Unigram.Controls.Messages
 
         private void ViaBot_Click(TLMessage message)
         {
-            Context.Text = $"@{message.ViaBot.Username} ";
+            Context.SetText($"@{message.ViaBot.Username} ", focus: true);
+            Context.ResolveInlineBot(message.ViaBot.Username);
         }
 
         protected void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)

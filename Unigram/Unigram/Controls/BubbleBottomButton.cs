@@ -15,11 +15,11 @@ namespace Unigram.Controls
     /// <summary>
     /// This button is intended to be placed over the BubbleTextBox
     /// </summary>
-    public class BubbleActionButton : Button
+    public class BubbleBottomButton : Button
     {
-        public BubbleActionButton()
+        public BubbleBottomButton()
         {
-            DefaultStyleKey = typeof(BubbleActionButton);
+            DefaultStyleKey = typeof(BubbleBottomButton);
 
             Click += OnClick;
         }
@@ -59,18 +59,11 @@ namespace Unigram.Controls
 
             if (With is TLUser user)
             {
-                // TODO: check if blocked
-                // WARNING: this is absolutely the wrong way
-                //var response = await MTProtoService.Current.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 });
-                //if (response.IsSucceeded)
-                //{
-                //    var blocked = response.Result.IsBlocked;
-                //    if (blocked)
-                //    {
-                //        Content = "Unblock";
-                //        return Visibility.Visible;
-                //    }
-                //}
+                var full = InMemoryCacheService.Current.GetFullUser(user.Id);
+                if (full != null && full.IsBlocked)
+                {
+                    UnblockCommand?.Execute(null);
+                }
             }
         }
 
@@ -83,7 +76,7 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty MyPropertyProperty =
-            DependencyProperty.Register("MyProperty", typeof(ICommand), typeof(BubbleActionButton), new PropertyMetadata(null));
+            DependencyProperty.Register("MyProperty", typeof(ICommand), typeof(BubbleBottomButton), new PropertyMetadata(null));
 
         #endregion
 
@@ -96,7 +89,7 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty JoinCommandProperty =
-            DependencyProperty.Register("JoinCommand", typeof(ICommand), typeof(BubbleActionButton), new PropertyMetadata(null));
+            DependencyProperty.Register("JoinCommand", typeof(ICommand), typeof(BubbleBottomButton), new PropertyMetadata(null));
 
         #endregion
 
@@ -109,7 +102,20 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty DeleteAndExitCommandProperty =
-            DependencyProperty.Register("DeleteAndExitCommand", typeof(ICommand), typeof(BubbleActionButton), new PropertyMetadata(null));
+            DependencyProperty.Register("DeleteAndExitCommand", typeof(ICommand), typeof(BubbleBottomButton), new PropertyMetadata(null));
+
+        #endregion
+
+        #region UnblockCommand
+
+        public ICommand UnblockCommand
+        {
+            get { return (ICommand)GetValue(UnblockCommandProperty); }
+            set { SetValue(UnblockCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty UnblockCommandProperty =
+            DependencyProperty.Register("UnblockCommand", typeof(ICommand), typeof(BubbleBottomButton), new PropertyMetadata(null));
 
         #endregion
 
@@ -134,33 +140,52 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty WithProperty =
-            DependencyProperty.Register("With", typeof(object), typeof(BubbleActionButton), new PropertyMetadata(null, OnWithChanged));
+            DependencyProperty.Register("With", typeof(object), typeof(BubbleBottomButton), new PropertyMetadata(null, OnWithChanged));
 
         private static void OnWithChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((BubbleActionButton)d).OnWithChanged(e.NewValue, e.OldValue);
+            ((BubbleBottomButton)d).OnWithChanged(e.NewValue, e.OldValue);
         }
+
+        #endregion
+
+        #region TextArea
+
+        public ContentControl TextArea
+        {
+            get { return (ContentControl)GetValue(TextAreaProperty); }
+            set { SetValue(TextAreaProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextAreaProperty =
+            DependencyProperty.Register("TextArea", typeof(ContentControl), typeof(BubbleBottomButton), new PropertyMetadata(null));
 
         #endregion
 
         private void OnWithChanged(object newValue, object oldValue)
         {
-            Visibility = UpdateVisibility(newValue);
+            var enabled = UpdateView(newValue);
+            if (TextArea != null)
+            {
+                TextArea.IsEnabled = enabled;
+            }
+
+            Visibility = enabled ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        private Visibility UpdateVisibility(object with)
+        private bool UpdateView(object with)
         {
             if (with is TLChannel channel)
             {
                 if (channel.IsLeft)
                 {
                     Content = channel.IsBroadcast ? "Join channel" : "Join";
-                    return Visibility.Visible;
+                    return false;
                 }
                 else if (channel.IsKicked)
                 {
                     Content = "Delete and exit";
-                    return Visibility.Visible;
+                    return false;
                 }
                 else
                 {
@@ -168,7 +193,7 @@ namespace Unigram.Controls
                     {
                         if (channel.IsCreator || channel.IsEditor)
                         {
-                            return Visibility.Collapsed;
+                            return true;
                         }
                         else
                         {
@@ -186,7 +211,7 @@ namespace Unigram.Controls
                                 }
                             }
 
-                            return Visibility.Visible;
+                            return false;
                         }
                     }
                 }
@@ -200,11 +225,18 @@ namespace Unigram.Controls
             if (with is TLChatForbidden forbiddenChat)
             {
                 Content = "Delete and exit";
-                return Visibility.Visible;
+                return false;
             }
 
             if (with is TLUser user)
             {
+                var full = InMemoryCacheService.Current.GetFullUser(user.Id);
+                if (full != null && full.IsBlocked)
+                {
+                    Content = "Unblock";
+                    return false;
+                }
+
                 // TODO: check if blocked
                 // WARNING: this is absolutely the wrong way
                 //var response = await MTProtoService.Current.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 });
@@ -219,7 +251,7 @@ namespace Unigram.Controls
                 //}
             }
 
-            return Visibility.Collapsed;
+            return true;
         }
     }
 }

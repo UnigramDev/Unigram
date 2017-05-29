@@ -43,13 +43,23 @@ namespace Unigram.Controls.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            DataTransferManager.GetForCurrentView().ShareProvidersRequested += OnShareProvidersRequested;
+            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested"))
+            {
+                DataTransferManager.GetForCurrentView().ShareProvidersRequested -= OnShareProvidersRequested;
+                DataTransferManager.GetForCurrentView().ShareProvidersRequested += OnShareProvidersRequested;
+            }
+
+            DataTransferManager.GetForCurrentView().DataRequested -= OnDataRequested;
             DataTransferManager.GetForCurrentView().DataRequested += OnDataRequested;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            DataTransferManager.GetForCurrentView().ShareProvidersRequested -= OnShareProvidersRequested;
+            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested"))
+            {
+                DataTransferManager.GetForCurrentView().ShareProvidersRequested -= OnShareProvidersRequested;
+            }
+
             DataTransferManager.GetForCurrentView().DataRequested -= OnDataRequested;
 
             List.SelectedItems.Clear();

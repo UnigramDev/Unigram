@@ -31,12 +31,30 @@
                     Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable, Mode=OneWay}"
                     Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                     Grid.Column="1"/>
-                <controls:GlyphButton
-                    Glyph="&#xE104;"
-                    Command="{x:Bind ViewModel.CallCommand}"
-                    Visibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"
-                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                    Grid.Column="2"/>
+                <!--<controls:GlyphButton
+                     Glyph="&#xE104;"
+                     Command="{x:Bind ViewModel.CallCommand}"
+                     Visibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"
+                     Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                     Grid.Column="2"/>-->
+
+                <Button Padding="16,23,16,0" Style="{StaticResource EllipsisButton}" Grid.Column="2">
+                    <FontIcon x:Name="EllipsisIcon"
+                              VerticalAlignment="Center"
+                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                              FontSize="16"
+                              Glyph="&#xE10C;"
+                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                    <Button.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem
+                                Text="Edit name"
+                                Command="{x:Bind ViewModel.EditNameCommand}"
+                                Visibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"
+                                MinWidth="120"/>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
             </Grid>
         </controls:ContentPageHeader>
 

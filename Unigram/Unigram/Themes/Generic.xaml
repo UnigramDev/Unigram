@@ -281,11 +281,11 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:BubbleActionButton">
+    <Style TargetType="local:BubbleBottomButton">
         <Setter Property="Foreground" Value="{ThemeResource TelegramForegroundAccentBrush}"/>
         <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
-        <Setter Property="BorderBrush" Value="Transparent"/>
-        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+        <Setter Property="BorderThickness" Value="0,1,0,0"/>
         <Setter Property="Padding" Value="0"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
@@ -293,9 +293,10 @@
         <Setter Property="UseSystemFocusVisuals" Value="True"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="MinHeight" Value="{ThemeResource AppBarThemeCompactHeight}"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:BubbleActionButton">
+                <ControlTemplate TargetType="local:BubbleBottomButton">
                     <Grid Background="{TemplateBinding Background}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">

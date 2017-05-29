@@ -19,16 +19,13 @@ namespace Unigram.Tasks
         internal static VoIPServiceTask _current;
         internal static AppServiceConnection _connection;
 
-        [DllImport("kernel32.dll")]
-        static extern uint GetCurrentProcessId();
-
         public void Run(IBackgroundTaskInstance taskInstance)
         {
             try
             {
                 _deferral = taskInstance.GetDeferral();
 
-                VoIPCallTask.Log("VoIPServiceTask started", GetCurrentProcessId().ToString());
+                VoIPCallTask.Log("VoIPServiceTask started", "VoIPServiceTask started");
 
                 var details = taskInstance.TriggerDetails as AppServiceTriggerDetails;
 
