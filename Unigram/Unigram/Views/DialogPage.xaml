@@ -1219,7 +1219,7 @@
 
                 <Grid Grid.ColumnSpan="2" Grid.Row="1">
                     <controls:BubbleTextBox
-                        x:Name="txtMessage"
+                        x:Name="TextField"
                         x:Uid="Chat-Input-Message"
                         Background="Transparent"
                         Reply="{Binding Reply}"
@@ -1234,7 +1234,7 @@
                         VerticalContentAlignment="Bottom"
                         MinHeight="48"
                         MaxHeight="96"
-                        TextChanging="txtMessage_TextChanging"/>
+                        TextChanging="TextField_TextChanging"/>
 
                     <controls:GlyphButton x:Name="ButtonAttach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">
                         <FlyoutBase.AttachedFlyout>

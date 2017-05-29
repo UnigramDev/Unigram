@@ -75,7 +75,7 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>();
 
-            ViewModel.TextBox = txtMessage;
+            ViewModel.TextField = TextField;
 
             CheckMessageBoxEmpty();
 
@@ -83,7 +83,7 @@ namespace Unigram.Views
 
             lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
-            _messageVisual = ElementCompositionPreview.GetElementVisual(txtMessage);
+            _messageVisual = ElementCompositionPreview.GetElementVisual(TextField);
             _ellipseVisual = ElementCompositionPreview.GetElementVisual(Ellipse);
             _elapsedVisual = ElementCompositionPreview.GetElementVisual(ElapsedPanel);
             _slideVisual = ElementCompositionPreview.GetElementVisual(SlidePanel);
@@ -224,9 +224,10 @@ namespace Unigram.Views
             _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
             lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
 
-#if DEBUG
-            txtMessage.Focus(FocusState.Keyboard);
-#endif
+            if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+            {
+                TextField.Focus(FocusState.Keyboard);
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -276,7 +277,7 @@ namespace Unigram.Views
                 forwarding = container.FwdMessages != null && container.FwdMessages.Count > 0;
             }
 
-            if (ViewModel != null && txtMessage.IsEmpty && !forwarding)
+            if (ViewModel != null && TextField.IsEmpty && !forwarding)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
                 btnStickers.Visibility = Visibility.Visible;
@@ -290,14 +291,14 @@ namespace Unigram.Views
             }
         }
 
-        private void txtMessage_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
+        private void TextField_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
         {
             CheckMessageBoxEmpty();
         }
 
         private async void btnSendMessage_Click(object sender, RoutedEventArgs e)
         {
-            await txtMessage.SendAsync();
+            await TextField.SendAsync();
         }
 
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
@@ -335,7 +336,7 @@ namespace Unigram.Views
             }
         }
 
-        private void SendShrug() => txtMessage.InsertText("¯\\_(ツ)_/¯");
+        private void SendShrug() => TextField.InsertText("¯\\_(ツ)_/¯");
 
         private void AttachPickerFlyout_ItemClick(object sender, MediaSelectedEventArgs e)
         {
@@ -427,13 +428,13 @@ namespace Unigram.Views
             //{
             //    // TODO: Invoke getting a preview of the weblink above the Textbox
             //    var link = await e.DataView.GetWebLinkAsync();
-            //    if (txtMessage.Text == "")
+            //    if (TextField.Text == "")
             //    {
-            //        txtMessage.Text = link.AbsolutePath;
+            //        TextField.Text = link.AbsolutePath;
             //    }
             //    else
             //    {
-            //        txtMessage.Text = (txtMessage.Text + " " + link.AbsolutePath);
+            //        TextField.Text = (TextField.Text + " " + link.AbsolutePath);
             //    }
             //
             //    gridLoading.Visibility = Visibility.Collapsed;
@@ -443,13 +444,13 @@ namespace Unigram.Views
             {
                 var text = await e.DataView.GetTextAsync();
 
-                if (txtMessage.Text == "")
+                if (TextField.Text == "")
                 {
-                    txtMessage.Text = text;
+                    TextField.Text = text;
                 }
                 else
                 {
-                    txtMessage.Text = (txtMessage.Text + " " + text);
+                    TextField.Text = (TextField.Text + " " + text);
                 }
 
                 //gridLoading.Visibility = Visibility.Collapsed;
@@ -807,7 +808,7 @@ namespace Unigram.Views
         {
             ViewModel.SendStickerCommand.Execute(e.ClickedItem);
             ViewModel.StickerPack = null;
-            txtMessage.Text = null;
+            TextField.Text = null;
         }
 
         private async void StickerSet_Click(object sender, RoutedEventArgs e)
@@ -1033,7 +1034,7 @@ namespace Unigram.Views
 
                 ViewModel.SendCommand.Execute(command);
                 ViewModel.BotCommands = null;
-                txtMessage.Text = null;
+                TextField.Text = null;
             }
         }
     }

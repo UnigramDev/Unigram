@@ -38,7 +38,20 @@ namespace Unigram.Controls
                     }
                     else
                     {
-                        var context = DefaultPhotoConverter.BitmapContext[photo, false];
+                        if (photo.DownloadingProgress > 0 && photo.DownloadingProgress < 1)
+                        {
+                            var manager = UnigramContainer.Current.ResolveType<IDownloadFileManager>();
+                            photo.Cancel(manager, null);
+                        }
+                        else if (photo.UploadingProgress > 0 && photo.UploadingProgress < 1)
+                        {
+                            var manager = UnigramContainer.Current.ResolveType<IUploadFileManager>();
+                            photo.Cancel(null, manager);
+                        }
+                        else
+                        {
+                            var context = DefaultPhotoConverter.BitmapContext[photo, false];
+                        }
                     }
                 }
             }
@@ -187,7 +200,7 @@ namespace Unigram.Controls
             var fileName = document.GetFileName();
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
-                if (TLMessage.IsVideo(document) || TLMessage.IsRoundVideo(document))
+                if (TLMessage.IsVideo(document) || TLMessage.IsRoundVideo(document) || TLMessage.IsGif(document) || TLMessage.IsMusic(document))
                 {
                     return "\uE102";
                 }

@@ -517,30 +517,7 @@ namespace Unigram.Controls.Messages
                 var document = documentMedia.Document as TLDocument;
                 if (document != null)
                 {
-                    var audioAttribute = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
-                    if (audioAttribute != null)
-                    {
-                        if (audioAttribute.HasPerformer && audioAttribute.HasTitle)
-                        {
-                            ServiceLabel.Text = $"{audioAttribute.Performer} - {audioAttribute.Title}";
-                        }
-                        else if (audioAttribute.HasPerformer && !audioAttribute.HasTitle)
-                        {
-                            ServiceLabel.Text = $"{audioAttribute.Performer} - Unknown Track";
-                        }
-                        else if (audioAttribute.HasTitle && !audioAttribute.HasPerformer)
-                        {
-                            ServiceLabel.Text = $"{audioAttribute.Title}";
-                        }
-                        else
-                        {
-                            ServiceLabel.Text = document.FileName;
-                        }
-                    }
-                    else
-                    {
-                        ServiceLabel.Text = document.FileName;
-                    }
+                    ServiceLabel.Text = document.Title;
                 }
 
                 if (!string.IsNullOrWhiteSpace(documentMedia.Caption))

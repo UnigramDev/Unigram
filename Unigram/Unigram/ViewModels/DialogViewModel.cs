@@ -226,28 +226,28 @@ namespace Unigram.ViewModels
             }
         }
 
-        public BubbleTextBox TextBox { get; set; }
+        public BubbleTextBox TextField { get; set; }
 
         public void SetText(string text, TLVector<TLMessageEntityBase> entities = null, bool focus = false)
         {
             if (string.IsNullOrEmpty(text))
             {
-                TextBox.Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
+                TextField.Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
             }
             else
             {
-                TextBox.SetText(text, entities);
+                TextField.SetText(text, entities);
             }
 
             if (focus)
             {
-                TextBox.Focus(FocusState.Keyboard);
+                TextField.Focus(FocusState.Keyboard);
             }
         }
 
         public string GetText()
         {
-            TextBox.Document.GetText(TextGetOptions.NoHidden, out string text);
+            TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
             return text;
         }
 
