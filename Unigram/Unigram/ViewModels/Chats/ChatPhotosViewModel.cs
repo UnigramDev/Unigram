@@ -48,7 +48,7 @@ namespace Unigram.ViewModels.Chats
                         }
                         else
                         {
-                            TotalItems = response.Result.Messages.Count + Items.Count;
+                            TotalItems = response.Result.Messages.Count;
                         }
 
                         //Items.Clear();
