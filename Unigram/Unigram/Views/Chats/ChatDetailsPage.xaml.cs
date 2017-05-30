@@ -41,9 +41,10 @@ namespace Unigram.Views.Chats
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Picture);
 
             var chat = ViewModel.Item as TLChat;
-            if (chat.Photo is TLChatPhoto photo)
+            var chatFull = ViewModel.Full as TLChatFull;
+            if (chat.Photo is TLChatPhoto photo && chatFull != null && chatFull.ChatPhoto is TLPhoto)
             {
-                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, chat.ToInputPeer());
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, chatFull, chat);
                 await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
                 {
                     var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");

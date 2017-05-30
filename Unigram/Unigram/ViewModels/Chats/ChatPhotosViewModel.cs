@@ -20,13 +20,15 @@ namespace Unigram.ViewModels.Chats
 
         private int _lastMaxId;
 
-        public ChatPhotosViewModel(IMTProtoService protoService, TLInputPeerBase peer)
+        public ChatPhotosViewModel(IMTProtoService protoService, TLChatFullBase chatFull, TLChatBase chat)
             : base(protoService, null, null)
         {
-            _peer = peer;
+            _peer = chat.ToInputPeer();
             _lastMaxId = int.MaxValue;
 
-            Items = new MvxObservableCollection<GalleryItem>();
+            Items = new MvxObservableCollection<GalleryItem> { new GalleryPhotoItem(chatFull.ChatPhoto as TLPhoto, chat) };
+            SelectedItem = Items[0];
+            FirstItem = Items[0];
             Initialize();
         }
 
@@ -37,36 +39,43 @@ namespace Unigram.ViewModels.Chats
                 var response = await ProtoService.SearchAsync(_peer, string.Empty, new TLInputMessagesFilterChatPhotos(), 0, 0, 0, _lastMaxId, 15);
                 if (response.IsSucceeded)
                 {
-                    if (response.Result is TLMessagesMessagesSlice)
+                    if (response.Result.Messages.Count > 0)
                     {
-                        var slice = response.Result as TLMessagesMessagesSlice;
-                        TotalItems = slice.Count;
-                    }
-                    else
-                    {
-                        TotalItems = response.Result.Messages.Count + Items.Count;
-                    }
-
-                    //Items.Clear();
-
-                    var items = new List<GalleryItem>(response.Result.Messages.Count);
-
-                    foreach (var photo in response.Result.Messages)
-                    {
-                        if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
+                        if (response.Result is TLMessagesMessagesSlice)
                         {
-                            items.Insert(0, new GalleryMessageServiceItem(message));
-                            _lastMaxId = message.Id;
+                            var slice = response.Result as TLMessagesMessagesSlice;
+                            TotalItems = slice.Count;
                         }
                         else
                         {
-                            TotalItems--;
+                            TotalItems = response.Result.Messages.Count + Items.Count;
                         }
-                    }
 
-                    Items.ReplaceWith(items);
-                    SelectedItem = Items.LastOrDefault();
-                    FirstItem = Items.LastOrDefault();
+                        //Items.Clear();
+
+                        var items = new List<GalleryItem>(response.Result.Messages.Count);
+
+                        foreach (var photo in response.Result.Messages)
+                        {
+                            if (photo is TLMessageService message && message.Action is TLMessageActionChatEditPhoto)
+                            {
+                                items.Insert(0, new GalleryMessageServiceItem(message));
+                                _lastMaxId = message.Id;
+                            }
+                            else
+                            {
+                                TotalItems--;
+                            }
+                        }
+
+                        Items.ReplaceWith(items);
+                        SelectedItem = Items.LastOrDefault();
+                        FirstItem = Items.LastOrDefault();
+                    }
+                    else
+                    {
+                        TotalItems = 1;
+                    }
                 }
             }
         }
@@ -92,13 +101,41 @@ namespace Unigram.ViewModels.Chats
                             }
                         }
 
-                        SelectedItem = Items.LastOrDefault();
-                        FirstItem = Items.LastOrDefault();
+                        //SelectedItem = Items.LastOrDefault();
+                        //FirstItem = Items.LastOrDefault();
                     }
                 }
             }
         }
     }
+
+    //public class GalleryChatPhotoItem : GalleryItem
+    //{
+    //    private readonly TLChatPhoto _photo;
+    //    private readonly ITLDialogWith _from;
+    //    private readonly string _caption;
+
+    //    public GalleryChatPhotoItem(TLChatPhoto photo, ITLDialogWith from)
+    //    {
+    //        _photo = photo;
+    //        _from = from;
+    //    }
+
+    //    public override object Source => _photo;
+
+    //    public override string Caption => _caption;
+
+    //    public override ITLDialogWith From => _from;
+
+    //    public override int Date => _photo.Date;
+
+    //    public override bool HasStickers => _photo.IsHasStickers;
+
+    //    public override TLInputStickeredMediaBase ToInputStickeredMedia()
+    //    {
+    //        return new TLInputStickeredMediaPhoto { Id = _photo.ToInputPhoto() };
+    //    }
+    //}
 
     public class GalleryMessageServiceItem : GalleryItem
     {
