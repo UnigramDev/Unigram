@@ -213,12 +213,17 @@
                                      AllowDrop="True"-->
                                 <ListView.Header>
                                     <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
-                                        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8">
+                                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                                             <controls:SearchTextBox x:Name="SearchDialogs"
+                                                                    Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                                                                     Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
                                                                     PlaceholderText="Search chats and messages"
                                                                     TextChanged="txtSearch_TextChanged"
-                                                                    Margin="0"/>
+                                                                    Style="{StaticResource SearchTextBoxStyle}"
+                                                                    BorderThickness="2"
+                                                                    Margin="0"
+                                                                    Padding="12"
+                                                                    Height="48"/>
                                         </Border>
                                     </Grid>
                                 </ListView.Header>
