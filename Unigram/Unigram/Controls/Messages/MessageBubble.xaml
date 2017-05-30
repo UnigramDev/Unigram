@@ -106,7 +106,7 @@
             Margin="8,0,0,2"
             Grid.Column="1"
             Grid.Row="1">
-        <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+        <controls:GlyphButton Click="Share_Click" Glyph="&#xE72D;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
     </Border>
 
     <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Row="2"/>
