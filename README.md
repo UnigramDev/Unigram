@@ -50,10 +50,10 @@ The app uses the following NuGet packages to work:
 The project also relies on `libogg`, `libopus`, `libopusfile` and `libwebp` that are included in the repository.
 
 ## Bugs and feature requests
-Have a bug or a feature request? Please first read the [issue guidelines](https://github.com/mateiradu/Unigram/blob/develop/CONTRIBUTING.md#using-the-issue-tracker) and search for existing and closed issues. If your problem or idea is not addressed yet, please [open a new issue](https://github.com/UnigramDev/Unigram/issues/new).
+Have a bug or a feature request? Please first read the [issue guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md#using-the-issue-tracker) and search for existing and closed issues. If your problem or idea is not addressed yet, please [open a new issue](https://github.com/UnigramDev/Unigram/issues/new).
 
 ## Contributing
-Please read through our [contributing guidelines](https://github.com/mateiradu/Unigram/blob/develop/CONTRIBUTING.md). Included are directions for opening issues, bug and feature requests, and notes on pull requests.
+Please read through our [contributing guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md). Included are directions for opening issues, bug and feature requests, and notes on pull requests.
 
 ## Community
 Get updates on Unigram's development and chat with the project maintainers and community members.
