@@ -105,6 +105,17 @@ namespace Unigram.ViewModels
 
 
         private TLDialog _currentDialog;
+        public TLDialog Dialog
+        {
+            get
+            {
+                return _currentDialog;
+            }
+            set
+            {
+                Set(ref _currentDialog, value);
+            }
+        }
 
         private ITLDialogWith _with;
         public ITLDialogWith With
@@ -480,15 +491,24 @@ namespace Unigram.ViewModels
             var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
             var limit = 15;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
-            if (result.IsSucceeded)
+            Retry:
+
+            var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
+            if (response.IsSucceeded)
             {
-                ProcessReplies(result.Result.Messages);
+                if (response.Result.Messages.Count == 0 && offset < 0)
+                {
+                    maxId = int.MaxValue;
+                    offset = 0;
+                    goto Retry;
+                }
+
+                ProcessReplies(response.Result.Messages);
 
                 //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
-                for (int i = result.Result.Messages.Count - 1; i >= 0; i--)
+                for (int i = response.Result.Messages.Count - 1; i >= 0; i--)
                 {
-                    var item = result.Result.Messages[i];
+                    var item = response.Result.Messages[i];
                     var message = item as TLMessageCommonBase;
 
                     if (item.Id > maxId && lastRead && message != null && !message.IsOut)
@@ -512,7 +532,7 @@ namespace Unigram.ViewModels
                     Messages.Add(item);
                 }
 
-                foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
+                foreach (var item in response.Result.Messages.OrderBy(x => x.Date))
                 {
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
@@ -525,7 +545,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                IsFirstSliceLoaded = result.Result.Messages.Count < limit;
+                IsFirstSliceLoaded = response.Result.Messages.Count < limit;
             }
 
             _isLoadingNextSlice = false;
@@ -650,6 +670,7 @@ namespace Unigram.ViewModels
 
             Peer = participant.ToInputPeer();
             With = participant;
+            Dialog = CacheService.GetDialog(Peer.ToPeer());
 
             Aggregator.Subscribe(this);
 
@@ -817,8 +838,6 @@ namespace Unigram.ViewModels
                 With = forbiddenChat;
                 Peer = new TLInputPeerChat { ChatId = forbiddenChat.Id };
             }
-
-            _currentDialog = _currentDialog ?? CacheService.GetDialog(Peer.ToPeer());
 
             var dialog = _currentDialog;
             if (dialog != null && dialog.HasDraft)
@@ -1146,6 +1165,7 @@ namespace Unigram.ViewModels
         {
             if (Reply is TLMessagesContainter container && container.EditMessage != null)
             {
+                _editedMessage = null;
                 SetText(null);
                 //Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
             }
@@ -1167,7 +1187,7 @@ namespace Unigram.ViewModels
         public RelayCommand<string> SendCommand => new RelayCommand<string>(SendMessage);
         private async void SendMessage(string args)
         {
-            await SendMessageAsync(args, null, args != null);
+            await SendMessageAsync(args, null, false);
         }
 
         public async Task SendMessageAsync(string text, List<TLMessageEntityBase> entities, bool useReplyMarkup = false)

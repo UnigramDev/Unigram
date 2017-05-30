@@ -22,6 +22,7 @@ using Windows.Storage.Pickers;
 using Unigram.Controls.Views;
 using Unigram.Controls;
 using Unigram.Common;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Views.Chats
 {
@@ -35,9 +36,23 @@ namespace Unigram.Views.Chats
             DataContext = UnigramContainer.Current.ResolveType<ChatDetailsViewModel>();
         }
 
-        private void Photo_Click(object sender, RoutedEventArgs e)
+        private async void Photo_Click(object sender, RoutedEventArgs e)
         {
+            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Picture);
 
+            var chat = ViewModel.Item as TLChat;
+            if (chat.Photo is TLChatPhoto photo)
+            {
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, chat.ToInputPeer());
+                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
+                {
+                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                    if (animation != null)
+                    {
+                        animation.TryStart(Picture);
+                    }
+                });
+            }
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)

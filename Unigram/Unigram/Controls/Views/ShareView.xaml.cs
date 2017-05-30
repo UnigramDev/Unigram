@@ -109,10 +109,12 @@ namespace Unigram.Controls.Views
             }
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessage message, bool withMyScore = false, bool forward = true)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessage message, bool withMyScore = false)
         {
+            ViewModel.ShareLink = null;
+            ViewModel.ShareTitle = null;
             ViewModel.Message = message;
-            ViewModel.IsForward = forward;
+            ViewModel.InputMedia = null;
             ViewModel.IsWithMyScore = withMyScore;
 
             var channel = message.Parent as TLChannel;
@@ -160,7 +162,19 @@ namespace Unigram.Controls.Views
         {
             ViewModel.ShareLink = link;
             ViewModel.ShareTitle = title;
-            ViewModel.IsForward = false;
+            ViewModel.Message = null;
+            ViewModel.InputMedia = null;
+            ViewModel.IsWithMyScore = false;
+
+            return ShowAsync();
+        }
+
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputMediaBase inputMedia)
+        {
+            ViewModel.ShareLink = null;
+            ViewModel.ShareTitle = null;
+            ViewModel.Message = null;
+            ViewModel.InputMedia = inputMedia;
             ViewModel.IsWithMyScore = false;
 
             return ShowAsync();

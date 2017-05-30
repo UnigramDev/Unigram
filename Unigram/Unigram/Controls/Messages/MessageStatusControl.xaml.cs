@@ -68,7 +68,14 @@ namespace Unigram.Controls.Messages
 
         private string ConvertEdit(bool hasEditDate, bool hasViaBotId, TLReplyMarkupBase replyMarkup)
         {
-            return hasEditDate && !hasViaBotId && replyMarkup?.TypeId != TLType.ReplyInlineMarkup ? "edited\u00A0\u2009" : string.Empty;
+            var message = ViewModel;
+            var bot = false;
+            if (message.From != null)
+            {
+                bot = message.From.IsBot;
+            }
+
+            return hasEditDate && !hasViaBotId && !bot && replyMarkup?.TypeId != TLType.ReplyInlineMarkup ? "edited\u00A0\u2009" : string.Empty;
         }
 
         private string ConvertState(bool isOut, bool isPost, TLMessageState value)
@@ -100,7 +107,13 @@ namespace Unigram.Controls.Messages
                 var date = Convert.DateTime(message.Date);
                 var text = $"{Convert.LongDate.Format(date)} {Convert.LongTime.Format(date)}";
 
-                if (message.HasEditDate && !message.HasViaBotId && message.ReplyMarkup?.TypeId != TLType.ReplyInlineMarkup)
+                var bot = false;
+                if (message.From != null)
+                {
+                    bot = message.From.IsBot;
+                }
+
+                if (message.HasEditDate && !message.HasViaBotId && !bot && message.ReplyMarkup?.TypeId != TLType.ReplyInlineMarkup)
                 {
                     var edit = Convert.DateTime(ViewModel.EditDate.Value);
                     text += $"\r\nEdited: {Convert.LongDate.Format(edit)} {Convert.LongTime.Format(edit)}";

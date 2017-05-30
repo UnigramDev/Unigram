@@ -16,6 +16,12 @@ namespace Unigram.Common
     {
         public static Dictionary<string, string> ParseQueryString(this string query)
         {
+            var first = query.Split('?');
+            if (first.Length > 1)
+            {
+                query = first.Last();
+            }
+
             var queryDict = new Dictionary<string, string>();
             foreach (var token in query.TrimStart(new char[] { '?' }).Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries))
             {
@@ -26,6 +32,12 @@ namespace Unigram.Common
                     queryDict[parts[0].Trim()] = "";
             }
             return queryDict;
+        }
+
+        public static string GetParameter(this Dictionary<string, string> query, string key)
+        {
+            query.TryGetValue(key, out string value);
+            return value;
         }
 
         public static bool Contains(this string source, string toCheck, StringComparison comp)

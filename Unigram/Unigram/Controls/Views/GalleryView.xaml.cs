@@ -130,7 +130,7 @@ namespace Unigram.Controls.Views
         {
             get
             {
-                return new GalleryView();
+                //return new GalleryView();
 
                 if (_current == null)
                     _current = new GalleryView();

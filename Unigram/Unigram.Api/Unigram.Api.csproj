@@ -366,6 +366,7 @@
     <Compile Include="TL\Partial\TLChannelParticipantBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChatParticipantBase.Partial.cs" />
     <Compile Include="TL\Partial\TLDraftMessageBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLGeoPointBase.Partial.cs" />
     <Compile Include="TL\Partial\TLInputFileLocationBase.Partial.cs" />
     <Compile Include="TL\Partial\TLInputPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaBase.Partial.cs" />

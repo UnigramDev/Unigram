@@ -238,16 +238,12 @@ namespace Unigram
 
             if (SettingsHelper.IsAuthorized)
             {
-                var share = args as ShareTargetActivatedEventArgs;
-                var voice = args as VoiceCommandActivatedEventArgs;
-                var contact = args as ContactPanelActivatedEventArgs;
-
-                if (share != null)
+                if (args is ShareTargetActivatedEventArgs share)
                 {
                     ShareOperation = share.ShareOperation;
                     NavigationService.Navigate(typeof(ShareTargetPage));
                 }
-                else if (voice != null)
+                else if (args is VoiceCommandActivatedEventArgs voice)
                 {
                     SpeechRecognitionResult speechResult = voice.Result;
                     string command = speechResult.RulePath[0];
@@ -266,7 +262,7 @@ namespace Unigram
                         NavigationService.Navigate(typeof(MainPage));
                     }
                 }
-                else if (contact != null)
+                else if (args is ContactPanelActivatedEventArgs contact)
                 {
                     var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
                     contact.ContactPanel.HeaderColor = backgroundBrush.Color;
@@ -286,6 +282,10 @@ namespace Unigram
 
                     //NavigationService.Navigate(typeof(MainPage), $"from_id={remote.Substring(1)}");
                     NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = int.Parse(remote.Substring(1)) });
+                }
+                else if (args is ProtocolActivatedEventArgs protocol)
+                {
+                    NavigationService.Navigate(typeof(MainPage), protocol.Uri.ToString());
                 }
                 else
                 {
@@ -326,9 +326,9 @@ namespace Unigram
 
         private async void OnStartSync()
         {
-//#if DEBUG
+            //#if DEBUG
             await VoIPConnection.Current.ConnectAsync();
-//#endif
+            //#endif
 
             await Toast.RegisterBackgroundTasks();
 
@@ -362,9 +362,9 @@ namespace Unigram
             var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
             updatesService.LoadStateAndUpdate(() => { });
 
-//#if DEBUG
+            //#if DEBUG
             await VoIPConnection.Current.ConnectAsync();
-//#endif
+            //#endif
 
             base.OnResuming(s, e, previousExecutionState);
         }

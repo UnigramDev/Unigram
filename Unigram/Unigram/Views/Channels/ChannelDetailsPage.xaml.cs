@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -8,6 +9,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Chats;
 using Unigram.Views.Users;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -18,6 +20,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Channels
@@ -32,9 +35,23 @@ namespace Unigram.Views.Channels
             DataContext = UnigramContainer.Current.ResolveType<ChannelDetailsViewModel>();
         }
 
-        private void Photo_Click(object sender, RoutedEventArgs e)
+        private async void Photo_Click(object sender, RoutedEventArgs e)
         {
+            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Picture);
 
+            var channel = ViewModel.Item as TLChannel;
+            if (channel.Photo is TLChatPhoto photo)
+            {
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, channel.ToInputPeer());
+                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
+                {
+                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+                    if (animation != null)
+                    {
+                        animation.TryStart(Picture);
+                    }
+                });
+            }
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)

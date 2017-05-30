@@ -18,6 +18,7 @@ using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Media.Animation;
 using Telegram.Api.TL;
+using Unigram.ViewModels.Users;
 
 namespace Unigram.Views
 {

@@ -204,6 +204,11 @@ namespace Unigram.ViewModels
             {
                 for (int j = 0; j < messages.Count; j++)
                 {
+                    if (_editedMessage != null && _editedMessage.Id == messages[j].Id)
+                    {
+                        ClearReplyCommand.Execute();
+                    }
+
                     Messages.Remove(messages[j]);
                 }
 
@@ -1000,7 +1005,7 @@ namespace Unigram.ViewModels
                         }
                         else
                         {
-                            NavigationService.Navigate(typeof(GamePage), new TLTuple<string, string, string, TLMessage>(gameMedia.Game.Title, null, response.Result.Url, message));
+                            NavigationService.Navigate(typeof(GamePage), new TLTuple<string, string, string, TLMessage>(gameMedia.Game.Title, string.Empty, response.Result.Url, message));
                         }
                     }
                 }

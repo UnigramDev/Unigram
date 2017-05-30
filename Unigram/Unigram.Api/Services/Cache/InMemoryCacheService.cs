@@ -463,6 +463,11 @@ namespace Telegram.Api.Services.Cache
 
         public TLUserBase GetUser(TLUserProfilePhoto photo)
         {
+            if (_database == null)
+            {
+                Init();
+            }
+
             var usersShapshort = new List<TLUserBase>(UsersContext.Values);
 
             return usersShapshort.OfType<TLUser>().FirstOrDefault(x => x.Photo == photo);
@@ -470,6 +475,11 @@ namespace Telegram.Api.Services.Cache
 
         public TLUserBase GetUser(string username)
         {
+            if (_database == null)
+            {
+                Init();
+            }
+
             var usersShapshort = new List<TLUserBase>(UsersContext.Values);
 
             // TODO: before TLUser was ITLUserName, but I think we don't need it anymore
@@ -594,11 +604,21 @@ namespace Telegram.Api.Services.Cache
 
         public TLChat GetChat(TLChatPhoto chatPhoto)
         {
+            if (_database == null)
+            {
+                Init();
+            }
+
             return _database.ChatsContext.Values.FirstOrDefault(x => x is TLChat && ((TLChat)x).Photo == chatPhoto) as TLChat;
         }
 
         public TLChannel GetChannel(string username)
         {
+            if (_database == null)
+            {
+                Init();
+            }
+
             var chatsSnapshort = new List<TLChatBase>(_database.ChatsContext.Values);
 
             return chatsSnapshort.FirstOrDefault(x => x is TLChannel && ((TLChannel)x).Username != null && string.Equals(((TLChannel)x).Username, username, StringComparison.OrdinalIgnoreCase)) as TLChannel;
@@ -606,6 +626,11 @@ namespace Telegram.Api.Services.Cache
 
         public TLChannel GetChannel(TLChatPhoto chatPhoto)
         {
+            if (_database == null)
+            {
+                Init();
+            }
+
             var chatsSnapshort = new List<TLChatBase>(_database.ChatsContext.Values);
 
             return chatsSnapshort.FirstOrDefault(x => x is TLChannel && ((TLChannel)x).Photo == chatPhoto) as TLChannel;

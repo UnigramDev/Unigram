@@ -123,7 +123,7 @@ namespace Unigram.Controls.Messages
                 }
             }
             //else if (messageObject.messageOwner.from_id < 0 || messageObject.messageOwner.post)
-            else if (message.IsPost || !message.HasFromId)
+            else if (message.IsPost)
             {
                 //if (messageObject.messageOwner.to_id.channel_id != 0 && (messageObject.messageOwner.via_bot_id == 0 && messageObject.messageOwner.reply_to_msg_id == 0 || messageObject.type != 13))
                 //{

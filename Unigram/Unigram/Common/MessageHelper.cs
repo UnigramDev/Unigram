@@ -29,6 +29,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Unigram.Views.SignIn;
 
 namespace Unigram.Common
 {
@@ -146,7 +147,7 @@ namespace Unigram.Common
 
                 if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || empty || message?.Media == null)
                 {
-                    if (IsAnyCharacterRightToLeft(message.Message))
+                    if (IsAnyCharacterRightToLeft(message.Message ?? string.Empty))
                     {
                         paragraph.Inlines.Add(new LineBreak());
                     }
@@ -154,10 +155,18 @@ namespace Unigram.Common
                     {
                         var date = BindConvert.Current.Date(message.Date);
                         var placeholder = message.IsOut ? $"  {date}  " : $"  {date}";
-                        if (message.HasEditDate)
+
+                        var bot = false;
+                        if (message.From != null)
+                        {
+                            bot = message.From.IsBot;
+                        }
+
+                        if (message.HasEditDate && !message.HasViaBotId && !bot && message.ReplyMarkup?.TypeId != TLType.ReplyInlineMarkup)
                         {
                             placeholder = "edited" + placeholder;
                         }
+
                         if (message.HasViews)
                         {
                             placeholder = "VIEWS" + (message.Views ?? 0) + placeholder;
@@ -1090,7 +1099,8 @@ namespace Unigram.Common
                 var query = url.ParseQueryString();
 
                 var accessToken = GetAccessToken(query, out PageKind pageKind);
-                var post = GetPost(query);
+                var post = query.GetParameter("post");
+                var game = query.GetParameter("game");
                 var result = url.StartsWith("http") ? url : ("https://" + url);
 
                 if (Uri.TryCreate(result, UriKind.Absolute, out Uri uri))
@@ -1104,7 +1114,15 @@ namespace Unigram.Common
                         }
                         if (!string.IsNullOrEmpty(username))
                         {
-                            if (username.Equals("iv"))
+                            if (username.Equals("confirmphone", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var phone = query.GetParameter("phone");
+                                var hash = query.GetParameter("hash");
+
+                                NavigateToConfirmPhone(MTProtoService.Current, phone, hash);
+                                return;
+                            }
+                            else if (username.Equals("iv", StringComparison.OrdinalIgnoreCase))
                             {
                                 if (message?.Media is TLMessageMediaWebPage webpageMedia)
                                 {
@@ -1129,7 +1147,7 @@ namespace Unigram.Common
                             }
                             else
                             {
-                                NavigateToUsername(MTProtoService.Current, username, accessToken, post, null);
+                                NavigateToUsername(MTProtoService.Current, username, accessToken, post, string.IsNullOrEmpty(game) ? null : game);
                             }
                         }
                     }
@@ -1137,15 +1155,47 @@ namespace Unigram.Common
             }
         }
 
-        private static async void NavigateToStickerSet(string text)
+        public static async void NavigateToConfirmPhone(IMTProtoService protoService, string phone, string hash)
+        {
+            var response = await protoService.SendConfirmPhoneCodeAsync(hash, false);
+            if (response.IsSucceeded)
+            {
+                var state = new SignInSentCodePage.NavigationParameters
+                {
+                    PhoneNumber = phone,
+                    Result = response.Result,
+                };
+
+                App.Current.NavigationService.Navigate(typeof(SignInSentCodePage), state);
+
+                //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                //{
+                //    if (frame != null)
+                //    {
+                //        frame.CloseBlockingProgress();
+                //    }
+                //    TelegramViewBase.NavigateToConfirmPhone(result);
+                //});
+            }
+            else
+            {
+                //if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.USERNAME_NOT_OCCUPIED))
+                //{
+                //    return;
+                //}
+                //Telegram.Api.Helpers.Execute.ShowDebugMessage(string.Format("account.sendConfirmPhoneCode error {0}", error));
+            };
+        }
+
+        public static async void NavigateToStickerSet(string text)
         {
             await StickerSetView.Current.ShowAsync(new TLInputStickerSetShortName { ShortName = text });
         }
 
-        private static async void NavigateToUsername(IMTProtoService mtProtoService, string username, string accessToken, string post, string game)
+        public static async void NavigateToUsername(IMTProtoService protoService, string username, string accessToken, string post, string game)
         {
             var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-            if (service != null && mtProtoService != null)
+            if (service != null && protoService != null)
             {
                 var user = InMemoryCacheService.Current.GetUser(username) as TLUser;
                 if (user != null && user.HasAccessHash)
@@ -1157,7 +1207,15 @@ namespace Unigram.Common
                     //}
                     //TelegramViewBase.NavigateToUser(user, accessToken, pageKind);
 
-                    service.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                    if (game != null)
+                    {
+                        var inputGame = new TLInputGameShortName { ShortName = game, BotId = user.ToInputUser() };
+                        await ShareView.Current.ShowAsync(new TLInputMediaGame { Id = inputGame });
+                    }
+                    else
+                    {
+                        service.Navigate(typeof(DialogPage), user.ToPeer());
+                    }
 
                     //if (user.IsBot)
                     //{
@@ -1177,22 +1235,31 @@ namespace Unigram.Common
                     {
                         if (int.TryParse(post, out int postId))
                         {
-                            service.Navigate(typeof(DialogPage), Tuple.Create((TLPeerBase)new TLPeerChannel { ChannelId = channel.Id }, postId));
+                            service.Navigate(typeof(DialogPage), Tuple.Create(channel.ToPeer(), postId));
                         }
                         else
                         {
-                            service.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
+                            service.Navigate(typeof(DialogPage), channel.ToPeer());
                         }
                         return;
                     }
 
-                    var response = await mtProtoService.ResolveUsernameAsync(username);
+                    var response = await protoService.ResolveUsernameAsync(username);
                     if (response.IsSucceeded)
                     {
-                        var peerUser = response.Result.Peer as TLPeerUser;
-                        if (peerUser != null)
+                        if (response.Result.Peer is TLPeerUser peerUser)
                         {
-                            service.Navigate(typeof(DialogPage), peerUser);
+                            user = InMemoryCacheService.Current.GetUser(peerUser.Id) as TLUser;
+                            if (game != null)
+                            {
+                                var inputGame = new TLInputGameShortName { ShortName = game, BotId = user.ToInputUser() };
+                                await ShareView.Current.ShowAsync(new TLInputMediaGame { Id = inputGame });
+                            }
+                            else
+                            {
+                                service.Navigate(typeof(DialogPage), peerUser);
+                            }
+
 
                             //if (user.IsBot)
                             //{
@@ -1204,10 +1271,9 @@ namespace Unigram.Common
                             //}
                             return;
                         }
-
-                        var peerChannel = response.Result.Peer as TLPeerChannel;
-                        if (peerChannel != null)
+                        else if (response.Result.Peer is TLPeerChannel peerChannel)
                         {
+                            channel = InMemoryCacheService.Current.GetChat(peerChannel.Id) as TLChannel;
                             if (int.TryParse(post, out int postId))
                             {
                                 service.Navigate(typeof(DialogPage), Tuple.Create((TLPeerBase)peerChannel, postId));
@@ -1216,6 +1282,7 @@ namespace Unigram.Common
                             {
                                 service.Navigate(typeof(DialogPage), peerChannel);
                             }
+
                             return;
                         }
 
@@ -1283,7 +1350,7 @@ namespace Unigram.Common
             }
         }
 
-        private static async void NavigateToInviteLink(string link)
+        public static async void NavigateToInviteLink(string link)
         {
             var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
             var response = await protoService.CheckChatInviteAsync(link);
@@ -1408,17 +1475,6 @@ namespace Unigram.Common
             {
                 pageKind = PageKind.Search;
                 result = uriParams["startgroup"];
-            }
-
-            return result;
-        }
-
-        public static string GetPost(Dictionary<string, string> uriParams)
-        {
-            var result = string.Empty;
-            if (uriParams.ContainsKey("post"))
-            {
-                result = uriParams["post"];
             }
 
             return result;

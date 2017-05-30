@@ -171,6 +171,10 @@ namespace Unigram.Controls.Items
 
                         return result + photoMedia.Caption.Replace("\r\n", "\n").Replace("\n", " ");
                     }
+                    else if (message.Media is TLMessageMediaGame)
+                    {
+                        return string.Empty;
+                    }
                 }
 
                 if (message.Message != null)

@@ -173,6 +173,7 @@ namespace Telegram.Api.Aggregator
         /// <remarks>
         ///   Does not marshall the the publication to any special thread by default.
         /// </remarks>
+        [DebuggerStepThrough]
         public virtual void Publish(object message)
         {
             if (message == null)

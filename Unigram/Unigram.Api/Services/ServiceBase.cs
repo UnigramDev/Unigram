@@ -47,7 +47,8 @@ namespace Telegram.Api.Services
         {
             if (!IsNotifying)
                 return;
-            Execute.OnUIThread(() => OnPropertyChanged(new PropertyChangedEventArgs(propertyName)));
+            Execute.BeginOnUIThread(() => OnPropertyChanged(new PropertyChangedEventArgs(propertyName)));
+            //Execute.OnUIThread(() => OnPropertyChanged(new PropertyChangedEventArgs(propertyName)));
         }
 
         /// <summary>

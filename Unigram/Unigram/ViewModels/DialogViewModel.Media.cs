@@ -199,13 +199,7 @@ namespace Unigram.ViewModels
                             File = upload.ToInputFile(),
                             MimeType = document.MimeType,
                             Caption = media.Caption,
-                            Attributes = new TLVector<TLDocumentAttributeBase>
-                            {
-                                new TLDocumentAttributeFilename
-                                {
-                                    FileName = file.Name
-                                }
-                            }
+                            Attributes = document.Attributes
                         };
 
                         var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
@@ -303,13 +297,7 @@ namespace Unigram.ViewModels
                             Thumb = thumbUpload.ToInputFile(),
                             MimeType = document.MimeType,
                             Caption = media.Caption,
-                            Attributes = new TLVector<TLDocumentAttributeBase>
-                            {
-                                new TLDocumentAttributeFilename
-                                {
-                                    FileName = file.Name
-                                }
-                            }
+                            Attributes = document.Attributes
                         };
 
                         var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
@@ -653,13 +641,40 @@ namespace Unigram.ViewModels
 
             var basicProps = await fileCache.GetBasicPropertiesAsync();
             var imageProps = await fileCache.Properties.GetImagePropertiesAsync();
+            var thumbnailBase = await FileUtils.GetFileThumbnailAsync(file);
+            var thumbnail = thumbnailBase as TLPhotoSize;
+
+            var desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
 
+            var document = new TLDocument
+            {
+                Id = 0,
+                AccessHash = 0,
+                Date = date,
+                Size = (int)basicProps.Size,
+                MimeType = fileCache.ContentType,
+                Thumb = thumbnail,
+                Attributes = new TLVector<TLDocumentAttributeBase>
+                {
+                    new TLDocumentAttributeAnimated(),
+                    new TLDocumentAttributeFilename
+                    {
+                        FileName = file.Name
+                    },
+                    new TLDocumentAttributeImageSize
+                    {
+                        W = (int)imageProps.Width,
+                        H = (int)imageProps.Height
+                    },
+                }
+            };
+
             var media = new TLMessageMediaDocument
             {
-                // TODO: Document = ...
-                Caption = caption
+                Caption = caption,
+                Document = document
             };
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
@@ -679,23 +694,21 @@ namespace Unigram.ViewModels
                 var upload = await _uploadDocumentManager.UploadFileAsync(fileId, fileName, false).AsTask(media.Document.Upload());
                 if (upload != null)
                 {
-                    var inputMedia = new TLInputMediaUploadedDocument
+                    var thumbFileId = TLLong.Random();
+                    var thumbUpload = await _uploadDocumentManager.UploadFileAsync(thumbFileId, desiredName);
+                    if (thumbUpload != null)
                     {
-                        File = upload.ToInputFile(),
-                        MimeType = "image/gif",
-                        Caption = media.Caption,
-                        Attributes = new TLVector<TLDocumentAttributeBase>
+                        var inputMedia = new TLInputMediaUploadedThumbDocument
                         {
-                            new TLDocumentAttributeAnimated(),
-                            new TLDocumentAttributeImageSize
-                            {
-                                W = (int)imageProps.Width,
-                                H = (int)imageProps.Height,
-                            }
-                        }
-                    };
+                            File = upload.ToInputFile(),
+                            Thumb = thumbUpload.ToInputFile(),
+                            MimeType = document.MimeType,
+                            Caption = media.Caption,
+                            Attributes = document.Attributes
+                        };
 
-                    var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                        var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                    }
                 }
             });
         }

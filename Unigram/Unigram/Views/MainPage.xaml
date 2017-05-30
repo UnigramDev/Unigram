@@ -215,14 +215,15 @@
                                     <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                                         <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                                             <controls:SearchTextBox x:Name="SearchDialogs"
+                                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                                                     Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                                                                     Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
                                                                     PlaceholderText="Search chats and messages"
                                                                     TextChanged="txtSearch_TextChanged"
                                                                     Style="{StaticResource SearchTextBoxStyle}"
-                                                                    BorderThickness="0,0,0,2"
+                                                                    BorderThickness="0,0,0,1"
                                                                     Margin="0"
-                                                                    Padding="12"
+                                                                    Padding="12,13"
                                                                     Height="48"/>
                                         </Border>
                                     </Grid>

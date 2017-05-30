@@ -37,6 +37,7 @@ using Windows.UI.Xaml.Media.Animation;
 using Unigram.Controls.Views;
 using Telegram.Api.Services.Cache;
 using LinqToVisualTree;
+using Unigram.ViewModels.Users;
 
 namespace Unigram.Views
 {

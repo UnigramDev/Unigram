@@ -18,7 +18,7 @@ using Unigram.Core.Common;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Unigram.ViewModels.Users
 {
     public class UserPhotosViewModel : GalleryViewModelBase
     {
@@ -37,19 +37,19 @@ namespace Unigram.ViewModels
 
             using (await _loadMoreLock.WaitAsync())
             {
-                var result = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), 0, 0, 0);
-                if (result.IsSucceeded)
+                var response = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), 0, 0, 0);
+                if (response.IsSucceeded)
                 {
-                    if (result.Result is TLPhotosPhotosSlice slice)
+                    if (response.Result is TLPhotosPhotosSlice slice)
                     {
                         TotalItems = slice.Count;
                     }
                     else
                     {
-                        TotalItems = result.Result.Photos.Count;
+                        TotalItems = response.Result.Photos.Count;
                     }
 
-                    Items.ReplaceWith(result.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, user)));
+                    Items.ReplaceWith(response.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, user)));
 
                     SelectedItem = Items.FirstOrDefault();
                     FirstItem = Items.FirstOrDefault();
@@ -63,10 +63,10 @@ namespace Unigram.ViewModels
             {
                 using (await _loadMoreLock.WaitAsync())
                 {
-                    var result = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), Items.Count, 0, 0);
-                    if (result.IsSucceeded)
+                    var response = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), Items.Count, 0, 0);
+                    if (response.IsSucceeded)
                     {
-                        Items.AddRange(result.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, _user)));
+                        Items.AddRange(response.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, _user)));
                     }
                 }
             }

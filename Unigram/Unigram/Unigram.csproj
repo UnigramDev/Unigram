@@ -210,6 +210,7 @@
     <Compile Include="ViewModels\Channels\ChannelKickedViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
     <Compile Include="ViewModels\DialogStickersViewModel.cs" />
@@ -856,7 +857,7 @@
     <Compile Include="ViewModels\Settings\SettingsUsernameViewModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\Users\UserDetailsViewModel.cs" />
-    <Compile Include="ViewModels\UserPhotosViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserPhotosViewModel.cs" />
     <Compile Include="Views\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>

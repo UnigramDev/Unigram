@@ -641,6 +641,12 @@ namespace Telegram.Api.Services
 
                             if (messageCommon is TLMessage messageMessage)
                             {
+                                if (message.Media != null && messageMessage.Media != null && message.Media.TypeId != messageMessage.Media.TypeId)
+                                {
+                                    message.Media = messageMessage.Media;
+                                    message.RaisePropertyChanged(() => message.Media);
+                                }
+
                                 if (message.Message != messageMessage.Message)
                                 {
                                     message.HasEntities = messageMessage.HasEntities;
