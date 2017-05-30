@@ -1,12 +1,13 @@
 # Unigram
-Unigram – An Universal take on Telegram. Made by the community, for the community
+The Telegram client for the Windows 10 platform, built by the community for the community.
 
-Windows 10 (Mobile) introduced with the Universal Windows Platform a whole list of features to make your (chatting) life easier. However, the current official Telegram-app has no signs of releasing an UWP-version with these capabilities soon. That’s why we decided to build our own.
+**[Explore Unigram »](http://unigram.me)**
 
-Build instructions:
--
-* Go to https://my.telegram.org/apps and register a new app.
-* Create a new file inside `Unigram/Unigram/Unigram.Api` and name it `Constants.Secret.cs`:
+## Build instructions
+1. First, check that you have the [necessary tools](#requirements) installed.
+2. Go to <https://my.telegram.org/apps> and register a new app.
+3. Clone the repo `git clone https://github.com/UnigramDev/Unigram.git`.
+4. Create a new file inside `Unigram/Unigram/Unigram.Api` and name it `Constants.Secret.cs`: 
 ```csharp
 namespace Telegram.Api
 {
@@ -22,9 +23,18 @@ namespace Telegram.Api
     }
 }
 ```
+5. Replace `your_server_ip` and `your_api_hash` with the data obtained from step 2.
 
-Dependencies:
--
+## Requirements
+The following tools and SDKs are mandatory for the project development:
+* Visual Studio 2017, with
+    * .NET Native
+    * .NET Framework 4.7 SDK
+    * NuGet package manager
+    * Universal Windows Platform tools
+    * Windows 10 SDK 15063
+
+## Dependencies
 The app uses the following NuGet packages to work:
 * [Autofac](https://www.nuget.org/packages/Autofac/)
 * [HockeySDK.UWP](https://www.nuget.org/packages/HockeySDK.UWP/)
@@ -39,74 +49,25 @@ The app uses the following NuGet packages to work:
 
 The project also relies on `libogg`, `libopus`, `libopusfile` and `libwebp` that are included in the repository.
 
-Our main goal:
--
-Make chatting via Telegram fun and engaging. How? By building an app that’s fast, functional and easy to use.
+## Bugs and feature requests
+Have a bug or a feature request? Please first read the [issue guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md#using-the-issue-tracker) and search for existing and closed issues. If your problem or idea is not addressed yet, please [open a new issue](https://github.com/UnigramDev/Unigram/issues/new).
 
+## Contributing
+Please read through our [contributing guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md). Included are directions for opening issues, bug and feature requests, and notes on pull requests.
 
-At first we’ll aim to build an experience that’s feature wise on par with the current WP-app. After that we’ll have more time to implement extra functions to make the app even better to use!
+## Community
+Get updates on Unigram's development and chat with the project maintainers and community members.
 
-You can check out our current designs of Unigram here:
-https://www.behance.net/gallery/37507573/Unigram-for-Windows-10-Mobile
+* Follow [@UnigramApp on Twitter](https://twitter.com/UnigramApp).
+* Like and follow [Unigram on Facebook](https://www.facebook.com/UnigramApp/).
+* Join the official group [Unigram Insiders](https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ).
+* Join the official channel [Unigram News](https://t.me/unigram).
 
-Want to contribute? Join the Unigram Insiders-chat on Telegram or take a look at the initial discussion on Reddit (archived): 
+## License
+Copyright © 2016-2017 [Unigram Authors](https://github.com/UnigramDev/Unigram/graphs/contributors).
 
-https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ
+Unigram is free software: you can redistribute it and / or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-https://www.reddit.com/r/windowsphone/comments/4kkcjc/no_uwp_version_of_telegram_lets_make_one/
+Unigram is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-We look forward to your ideas and or contributions! Together we can make this a great Telegram client for all of us!
-
-=================================================================
-
-Milestones:
--
-(These are subject to change!)
-
-Completed:
--	Design UI and build XAML-mockups
--	Build code to communicate with Telegram-servers
--	Implement Quick Notifications
--	Make the mockups functional
--	Build Live-Tiles
--	Allow for muting chats
-
-Currently:
--   Send medias
--   Stickers panel
-
-Future:
--	Build background handlers
--	Set user settings
--	Allow for sharing pictures
--	Future updates…
-
-=================================================================
-
-Features:
--	Basic chat functionality
--	Use of emoticons
--	Stickers
--	Group chats
--	Show profile pictures
--	Share pictures
--	Search through notes
--	Mute chats
--	See if the message has been sent
--	See if the message has been checked
--	Start new chats
--	See if an user has been online
--	Set a profile picture
--	Use your phone number
--	Show notifications
--	And more…
-
-UWP-specific:
--	Quick reply from notifications
--	Support for Continuum
--	Adaptive design
--	Share contracts
--	Integrate with the People Hub
--	And more…
-
-[SQLite]:https://marketplace.visualstudio.com/items?itemName=SQLiteDevelopmentTeam.SQLiteforUniversalWindowsPlatform
+You should have received a copy of the GNU General Public License along with Unigram. If not, see http://www.gnu.org/licenses/.
