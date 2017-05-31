@@ -34,6 +34,8 @@ The following tools and SDKs are mandatory for the project development:
     * Universal Windows Platform tools
     * Windows 10 SDK 15063
 
+[Can I use Visual Studio 2015?](https://github.com/UnigramDev/Unigram/wiki/FAQ:-Development#why-do-i-have-to-use-visual-studio-2017-cant-i-use-vs2015)
+
 ## Dependencies
 The app uses the following NuGet packages to work:
 * [Autofac](https://www.nuget.org/packages/Autofac/)
@@ -48,6 +50,11 @@ The app uses the following NuGet packages to work:
 * [Win2D.uwp](https://www.nuget.org/packages/Win2D.uwp/)
 
 The project also relies on `libogg`, `libopus`, `libopusfile` and `libwebp` that are included in the repository.
+
+## Current and planned features
+Check out the [Features list](https://github.com/UnigramDev/Unigram/wiki/Features) and see what Unigram has to offer and what is yet to come.
+
+[Is there a release schedule?](https://github.com/UnigramDev/Unigram/wiki/FAQ:-General#when-will-i-have-a-new-build-release)
 
 ## Bugs and feature requests
 Have a bug or a feature request? Please first read the [issue guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md#using-the-issue-tracker) and search for existing and closed issues. If your problem or idea is not addressed yet, please [open a new issue](https://github.com/UnigramDev/Unigram/issues/new).
