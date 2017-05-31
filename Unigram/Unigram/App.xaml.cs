@@ -469,5 +469,7 @@ namespace Unigram
         public IEnumerable<TLMessage> ForwardMessages { get; set; }
 
         public TLMessage SwitchInline { get; set; }
+
+        public int? NavigateToMessage { get; set; }
     }
 }

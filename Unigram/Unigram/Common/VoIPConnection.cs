@@ -177,7 +177,7 @@ namespace Unigram.Common
                                     {
                                         newView.SetCall(tuple);
                                         newView.Dispose();
-                                        CoreApplication.GetCurrentView().CoreWindow.Close();
+                                        Window.Current.Close();
                                     });
                                 }
 

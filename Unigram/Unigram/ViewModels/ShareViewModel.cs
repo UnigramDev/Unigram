@@ -11,6 +11,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace Unigram.ViewModels
 {
@@ -69,7 +70,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return _shareLink != null;
+                return _shareLink != null && DataTransferManager.IsSupported();
             }
         }
 

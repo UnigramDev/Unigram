@@ -184,5 +184,32 @@ namespace Telegram.Api.TL
         {
             return new TLPeerUser { UserId = Id };
         }
+
+        public string ExtractRestrictionReason()
+        {
+            if (HasRestrictionReason)
+            {
+                var fullTypeEnd = RestrictionReason.IndexOf(':');
+                if (fullTypeEnd <= 0)
+                {
+                    return null;
+                }
+
+                // {fulltype} is in "{type}-{tag}-{tag}-{tag}" format
+                // if we find "all" tag we return the restriction string
+                var typeTags = RestrictionReason.Substring(0, fullTypeEnd).Split('-')[1];
+#if STORE_RESTRICTIVE
+                var restrictionApplies = typeTags.Contains("all") || typeTags.Contains("ios");
+#else
+                var restrictionApplies = typeTags.Contains("all");
+#endif
+                if (restrictionApplies)
+                {
+                    return RestrictionReason.Substring(fullTypeEnd + 1).Trim();
+                }
+            }
+
+            return null;
+        }
     }
 }

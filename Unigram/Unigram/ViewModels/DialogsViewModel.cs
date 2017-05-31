@@ -813,11 +813,9 @@ namespace Unigram.ViewModels
 
         public async void SearchSync(string query)
         {
-            query = query.TrimStart('@');
+            var local = await SearchLocalAsync(query.TrimStart('@'));
 
-            var local = await SearchLocalAsync(query);
-
-            if (query.Equals(_searchQuery.TrimStart('@')))
+            if (query.Equals(_searchQuery))
             {
                 Search.Clear();
                 if (local != null) Search.Insert(0, local);
@@ -826,12 +824,10 @@ namespace Unigram.ViewModels
 
         public async Task SearchAsync(string query)
         {
-            query = query.TrimStart('@');
-
             var global = await SearchGlobalAsync(query);
             var messages = await SearchMessagesAsync(query);
 
-            if (query.Equals(_searchQuery.TrimStart('@')))
+            if (query.Equals(_searchQuery))
             {
                 if (Search.Count > 2) Search.RemoveAt(2);
                 if (Search.Count > 1) Search.RemoveAt(1);

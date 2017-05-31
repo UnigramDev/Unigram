@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
@@ -10,6 +11,7 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
+using Windows.System.Profile;
 
 namespace Unigram.ViewModels
 {
@@ -471,6 +473,16 @@ namespace Unigram.ViewModels
             });
         }
 
+#if DEBUG
+        [DllImport("user32.dll")]
+        public static extern Boolean GetLastInputInfo(ref LASTINPUTINFO plii);
+        public struct LASTINPUTINFO
+        {
+            public uint cbSize;
+            public Int32 dwTime;
+        }
+#endif
+
         private void MarkAsRead(TLMessageCommonBase messageCommon)
         {
             //if (!this._isActive)
@@ -482,6 +494,24 @@ namespace Unigram.ViewModels
             {
                 return;
             }
+
+#if DEBUG
+            if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Desktop"))
+            {
+                LASTINPUTINFO lastInput = new LASTINPUTINFO();
+                lastInput.cbSize = (uint)Marshal.SizeOf(lastInput);
+                lastInput.dwTime = 0;
+
+                if (GetLastInputInfo(ref lastInput))
+                {
+                    var idleTime = Environment.TickCount - lastInput.dwTime;
+                    if (idleTime >= 60 * 1000)
+                    {
+                        return;
+                    }
+                }
+            }
+#endif
 
             if (messageCommon != null && !messageCommon.IsOut && messageCommon.IsUnread)
             {

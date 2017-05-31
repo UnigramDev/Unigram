@@ -251,12 +251,11 @@ namespace Unigram.Controls.Messages
             {
                 if (message.FwdFrom.HasChannelPost)
                 {
-                    // TODO
-                    Context.NavigationService.Navigate(typeof(DialogPage), Tuple.Create((TLPeerBase)new TLPeerChannel { ChannelId = message.FwdFromChannel.Id }, message.FwdFrom.ChannelPost ?? int.MaxValue));
+                    Context.NavigationService.NavigateToDialog(message.FwdFromChannel, message.FwdFrom.ChannelPost);
                 }
                 else
                 {
-                    Context.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = message.FwdFromChannel.Id });
+                    Context.NavigationService.NavigateToDialog(message.FwdFromChannel);
                 }
             }
             else if (message.FwdFromUser != null)

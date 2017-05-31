@@ -118,7 +118,7 @@ namespace Unigram.Controls.Views
             ViewModel.IsWithMyScore = withMyScore;
 
             var channel = message.Parent as TLChannel;
-            if (channel != null)
+            if (channel != null && channel.IsBroadcast && channel.HasUsername)
             {
                 var link = $"{channel.Username}/{message.Id}";
 

@@ -210,7 +210,7 @@ namespace Unigram.Controls
                 {
 
                     // When the new page is a settings or about page.
-                    if (e.SourcePageType == typeof(AboutPage) || e.SourcePageType == typeof(SettingsPage))
+                    if (/*e.SourcePageType == typeof(AboutPage) ||*/ e.SourcePageType == typeof(SettingsPage))
                     {
                         // The user opened first a chat, then the userinfo. Remove them from backstack.
                         if (DetailFrame.BackStackDepth == 3)

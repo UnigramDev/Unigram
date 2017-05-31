@@ -394,7 +394,10 @@ namespace Unigram.ViewModels
             else
             {
                 Messages.Clear();
-                await LoadFirstSliceAsync();
+
+                var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
+                var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
+                await LoadFirstSliceAsync(maxId, offset);
             }
         }
 
@@ -469,7 +472,7 @@ namespace Unigram.ViewModels
         }
 
 
-        public async Task LoadFirstSliceAsync()
+        public async Task LoadFirstSliceAsync(int maxId, int offset)
         {
             if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
             _isLoadingNextSlice = true;
@@ -487,8 +490,8 @@ namespace Unigram.ViewModels
             //var maxId = readMaxId.ReadInboxMaxId > 0 ? readMaxId.ReadInboxMaxId : int.MaxValue;
             //var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -51 : 0;
 
-            var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
-            var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
+            //var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
+            //var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
             var limit = 15;
 
             Retry:
@@ -656,10 +659,11 @@ namespace Unigram.ViewModels
         {
             Messages.Clear();
 
-            var tuple = parameter as Tuple<TLPeerBase, int>;
-            if (tuple != null)
+            var messageId = new int?();
+            if (App.InMemoryState.NavigateToMessage.HasValue)
             {
-                parameter = tuple.Item1;
+                messageId = App.InMemoryState.NavigateToMessage;
+                App.InMemoryState.NavigateToMessage = null;
             }
 
             var participant = GetParticipant(parameter as TLPeerBase);
@@ -674,17 +678,22 @@ namespace Unigram.ViewModels
 
             Aggregator.Subscribe(this);
 
-            if (tuple != null)
+            if (messageId.HasValue)
             {
-                await LoadMessageSliceAsync(null, tuple.Item2);
+                LoadMessageSliceAsync(null, messageId.Value);
             }
             else
             {
-                await LoadFirstSliceAsync();
+                var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
+                var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
+
+                LoadFirstSliceAsync(maxId, offset);
             }
 
             if (participant is TLUser user)
             {
+                IsPhoneCallsAvailable = false;
+
                 var full = CacheService.GetFullUser(user.Id);
                 if (full == null)
                 {
@@ -708,18 +717,6 @@ namespace Unigram.ViewModels
             }
             else if (participant is TLChannel channel)
             {
-                if (channel.IsRestricted)
-                {
-                    var reason = channel.ExtractRestrictionReason();
-                    if (reason != null)
-                    {
-                        NavigationService.GoBack();
-
-                        await TLMessageDialog.ShowAsync(reason, "Sorry", "OK");
-                        return;
-                    }
-                }
-
                 IsPhoneCallsAvailable = false;
 
                 var full = CacheService.GetFullChat(channel.Id) as TLChannelFull;

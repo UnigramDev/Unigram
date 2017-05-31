@@ -123,7 +123,7 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.GetSupportAsync();
                 if (response.IsSucceeded)
                 {
-                    NavigationService.Navigate(typeof(DialogPage), response.Result.User.ToPeer());
+                    NavigationService.NavigateToDialog(response.Result.User);
                 }
             }
         }

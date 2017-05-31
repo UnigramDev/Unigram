@@ -877,7 +877,7 @@ namespace Unigram.Common
                     var channel = InMemoryCacheService.Current.GetChannel((string)data);
                     if (channel != null && channel.HasAccessHash)
                     {
-                        service.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
+                        service.NavigateToDialog(channel);
                         return;
                     }
 
@@ -894,8 +894,12 @@ namespace Unigram.Common
                         var peerChannel = response.Result.Peer as TLPeerChannel;
                         if (peerChannel != null)
                         {
-                            service.Navigate(typeof(DialogPage), peerChannel);
-                            return;
+                            channel = InMemoryCacheService.Current.GetChannel((string)data);
+                            if (channel != null && channel.HasAccessHash)
+                            {
+                                service.NavigateToDialog(channel);
+                                return;
+                            }
                         }
 
                         await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
@@ -1214,7 +1218,7 @@ namespace Unigram.Common
                     }
                     else
                     {
-                        service.Navigate(typeof(DialogPage), user.ToPeer());
+                        service.NavigateToDialog(user);
                     }
 
                     //if (user.IsBot)
@@ -1235,11 +1239,11 @@ namespace Unigram.Common
                     {
                         if (int.TryParse(post, out int postId))
                         {
-                            service.Navigate(typeof(DialogPage), Tuple.Create(channel.ToPeer(), postId));
+                            service.NavigateToDialog(channel, postId);
                         }
                         else
                         {
-                            service.Navigate(typeof(DialogPage), channel.ToPeer());
+                            service.NavigateToDialog(channel);
                         }
                         return;
                     }
@@ -1257,7 +1261,7 @@ namespace Unigram.Common
                             }
                             else
                             {
-                                service.Navigate(typeof(DialogPage), peerUser);
+                                service.NavigateToDialog(user);
                             }
 
 
@@ -1276,11 +1280,11 @@ namespace Unigram.Common
                             channel = InMemoryCacheService.Current.GetChat(peerChannel.Id) as TLChannel;
                             if (int.TryParse(post, out int postId))
                             {
-                                service.Navigate(typeof(DialogPage), Tuple.Create((TLPeerBase)peerChannel, postId));
+                                service.NavigateToDialog(channel, postId);
                             }
                             else
                             {
-                                service.Navigate(typeof(DialogPage), peerChannel);
+                                service.NavigateToDialog(channel);
                             }
 
                             return;
@@ -1362,14 +1366,7 @@ namespace Unigram.Common
                     var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                     if (service != null)
                     {
-                        if (inviteAlready.Chat is TLChat)
-                        {
-                            service.Navigate(typeof(DialogPage), new TLPeerChat { ChatId = inviteAlready.Chat.Id });
-                        }
-                        else if (inviteAlready.Chat is TLChannel)
-                        {
-                            service.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = inviteAlready.Chat.Id });
-                        }
+                        service.NavigateToDialog(inviteAlready.Chat);
                     }
                 }
 
@@ -1389,25 +1386,18 @@ namespace Unigram.Common
                                 var chatBase = updates.Chats.FirstOrDefault();
                                 if (chatBase != null)
                                 {
-                                    var channel = chatBase as TLChannel;
-                                    if (channel != null)
+                                    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                                    if (service != null)
                                     {
-                                        // TODO: sync history
+                                        service.NavigateToDialog(chatBase);
+                                    }
 
-                                        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                                        if (service != null)
-                                        {
-                                            service.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
-                                        }
-                                    }
-                                    else
-                                    {
-                                        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                                        if (service != null)
-                                        {
-                                            service.Navigate(typeof(DialogPage), new TLPeerChat { ChatId = chatBase.Id });
-                                        }
-                                    }
+                                    //var channel = chatBase as TLChannel;
+                                    //if (channel != null)
+                                    //{
+                                    //    // TODO: sync history
+
+                                    //}
                                 }
                             }
                         }

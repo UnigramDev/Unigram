@@ -168,7 +168,7 @@ namespace Unigram.ViewModels.Users
         {
             if (Item is TLUser user)
             {
-                NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                NavigationService.NavigateToDialog(user);
             }
         }
 

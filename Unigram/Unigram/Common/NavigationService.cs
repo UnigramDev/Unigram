@@ -11,6 +11,7 @@ using Template10.Services.LoggingService;
 using Template10.Services.NavigationService;
 using Template10.Services.SerializationService;
 using Template10.Services.ViewService;
+using Unigram.Controls;
 using Unigram.Core.Services;
 using Unigram.Views;
 using Unigram.Views;
@@ -102,8 +103,58 @@ namespace Unigram.Common
         }
 
 
+        public static async void NavigateToDialog(this INavigationService service, ITLDialogWith with, int? message = null)
+        {
+            if (with is TLUser user && user.IsRestricted)
+            {
+                var reason = user.ExtractRestrictionReason();
+                if (reason != null)
+                {
+                    await TLMessageDialog.ShowAsync(reason, "Sorry", "OK");
+                    return;
+                }
+            }
 
+            if (with is TLChannel channel && channel.IsRestricted)
+            {
+                var reason = channel.ExtractRestrictionReason();
+                if (reason != null)
+                {
+                    await TLMessageDialog.ShowAsync(reason, "Sorry", "OK");
+                    return;
+                }
+            }
 
+            var peer = with.ToPeer();
+            if (message.HasValue && service.CurrentPageType == typeof(DialogPage) && peer.Equals(service.CurrentPageParam))
+            {
+                if (service.Frame.Content is DialogPage page && page.ViewModel != null)
+                {
+                    await page.ViewModel.LoadMessageSliceAsync(null, message.Value);
+                }
+                else
+                {
+                    service.Refresh(TLSerializationService.Current.Serialize(peer));
+                }
+            }
+            else
+            {
+                App.InMemoryState.NavigateToMessage = message;
+                service.Navigate(typeof(DialogPage), peer);
+            }
+
+            //App.InMemoryState.NavigateToMessage = message;
+
+            //var peer = with.ToPeer();
+            //if (App.InMemoryState.NavigateToMessage.HasValue && service.CurrentPageType == typeof(DialogPage) && peer.Equals(service.CurrentPageParam))
+            //{
+            //    service.Refresh(TLSerializationService.Current.Serialize(peer));
+            //}
+            //else
+            //{
+            //    service.Navigate(typeof(DialogPage), peer);
+            //}
+        }
 
         #region Payments
 
