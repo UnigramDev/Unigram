@@ -32,8 +32,10 @@
                 <StackPanel Padding="12"
                             ScrollViewer.VerticalScrollMode="Auto">
                     <!-- App logo and info-->
-                    <StackPanel Orientation="Horizontal"
-                                Margin="0,0,0,12">
+                    <StackPanel Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                                Orientation="Horizontal"
+                                Margin="-12,-12,-12,12"
+                                Padding="12,4">
                         <!-- Logo -->
                         <Grid Height="80"
                           Width="64">
@@ -74,7 +76,7 @@
                                            Style="{StaticResource BodyTextBlockStyle}"/>
                                 <TextBlock x:Name="tblAppVersion"
                                            Padding="4,0,16,0"
-                                           Text="Prototype"
+                                           Text="{x:Bind ViewModel.Version, Mode=OneWay}"
                                            Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
                                            Style="{StaticResource BodyTextBlockStyle}"/>
                             </StackPanel>
@@ -91,15 +93,15 @@
                     <Button Content="Privacy Policy"
                             Padding="0,6"
                             Style="{ThemeResource TextBlockButtonStyle}"
-                            Click="btnPrivacy_Click"/>
+                            Command="{x:Bind ViewModel.UsefulPrivacyCommand}"/>
                     <Button Content="Frequently Asked Questions"
                             Padding="0,6"
                             Style="{ThemeResource TextBlockButtonStyle}"
-                            Click="btnFAQ_Click"/>
+                            Command="{x:Bind ViewModel.UsefulFaqCommand}"/>
                     <Button Content="Unigram Website"
                             Padding="0,6,0,12"
                             Style="{ThemeResource TextBlockButtonStyle}"
-                            Click="btnWebsite_Click"/>
+                            Command="{x:Bind ViewModel.UsefulWebsiteCommand}"/>
 
                     <!-- Support -->
                     <TextBlock Margin="0,12,0,6"
@@ -119,13 +121,13 @@
                                 Grid.Column="0"
                                 Padding="0,6,8,6"
                                 Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnSupportEmail_Click"/>
+                                Command="{x:Bind ViewModel.SupportEmailCommand}"/>
                         <Button Content="Github"
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Padding="16,6,8,6"
                                 Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnSupportGitHub_Click"/>
+                                Command="{x:Bind ViewModel.SupportGitHubCommand}"/>
                     </Grid>
 
 
@@ -137,11 +139,11 @@
                     <Button Content="Follow @UnigramApp on Twitter"
                             Padding="0,6"
                             Style="{ThemeResource TextBlockButtonStyle}"
-                            Click="btnSocialTwitter_Click"/>
+                            Command="{x:Bind ViewModel.SocialTwitterCommand}"/>
                     <Button Content="Like us on Facebook"
                             Padding="0,6,0,12"
                             Style="{ThemeResource TextBlockButtonStyle}"
-                            Click="btnSocialFacebook_Click"/>
+                            Command="{x:Bind ViewModel.SocialFacebookCommand}"/>
 
                     <!-- Special thanks -->
                     <TextBlock Margin="0,12,0,6"
@@ -155,11 +157,11 @@
                     <Button Content="Telegram Desktop"
                             Padding="0,6"
                             Style="{ThemeResource TextBlockButtonStyle}"
-                            Click="btnThanksTelegramDesktop_Click"/>
+                            Command="{x:Bind ViewModel.ThanksTelegramCommand}"/>
                     <Button Content="Gregory Klyushnikov"
                             Padding="0,6,0,12"
                             Style="{ThemeResource TextBlockButtonStyle}"
-                            Click="btnThanksGregory_Click"/>
+                            Command="{x:Bind ViewModel.ThanksGregoryCommand}"/>
                 </StackPanel>
             </ScrollViewer>
         </Grid>
