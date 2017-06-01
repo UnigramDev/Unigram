@@ -852,40 +852,31 @@ namespace Unigram.ViewModels
                 IsReportSpam = settings.Result.IsReportSpam;
             }
 
-            LastSeen = await GetSubtitle();
+            //if (dialog != null && Messages.Count > 0)
+            //{
+            //    var unread = dialog.UnreadCount;
+            //    if (Peer is TLInputPeerChannel && participant is TLChannel channel)
+            //    {
+            //        await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
+            //    }
+            //    else
+            //    {
+            //        await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
+            //    }
 
-            //#if !DEBUG
-            //#endif
-
-            if (dialog != null && Messages.Count > 0)
-            {
-                var unread = dialog.UnreadCount;
-                if (Peer is TLInputPeerChannel && participant is TLChannel channel)
-                {
-                    await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
-                }
-                else
-                {
-                    await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
-                }
-
-                var readPeer = With as ITLReadMaxId;
-                readPeer.ReadInboxMaxId = dialog.TopMessage;
-                dialog.ReadInboxMaxId = dialog.TopMessage;
-                dialog.UnreadCount = dialog.UnreadCount - unread;
-                dialog.RaisePropertyChanged(() => dialog.UnreadCount);
-            }
-
-            //StickersRecent();
-            //GifsSaved();
-
-            //var file = await KnownFolders.SavedPictures.CreateFileAsync("TEST.TXT", CreationCollisionOption.GenerateUniqueName);
-            //await FileIO.WriteTextAsync(file, DateTime.Now.ToString());
+            //    var readPeer = With as ITLReadMaxId;
+            //    readPeer.ReadInboxMaxId = dialog.TopMessage;
+            //    dialog.ReadInboxMaxId = dialog.TopMessage;
+            //    dialog.UnreadCount = dialog.UnreadCount - unread;
+            //    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+            //}
 
             if (App.InMemoryState.ForwardMessages != null)
             {
                 Reply = new TLMessagesContainter { FwdMessages = new TLVector<TLMessage>(App.InMemoryState.ForwardMessages) };
             }
+
+            LastSeen = await GetSubtitle();
         }
 
         private async void ShowPinnedMessage(TLChannel channel)

@@ -485,11 +485,6 @@ namespace Unigram.ViewModels
 
         private void MarkAsRead(TLMessageCommonBase messageCommon)
         {
-            //if (!this._isActive)
-            //{
-            //    return;
-            //}
-
             if (!App.IsActive || !App.IsVisible)
             {
                 return;

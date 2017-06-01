@@ -49,7 +49,7 @@ namespace Unigram.Views
         {
             if (lvDialogs.ScrollingHost.ScrollableHeight - lvDialogs.ScrollingHost.VerticalOffset < 120)
             {
-                ViewModel.UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+                //ViewModel.UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
                 Arrow.Visibility = Visibility.Collapsed;
             }
             else

@@ -936,11 +936,11 @@
 
         <Grid x:Name="Messages" Grid.Row="2">
             <controls:BubbleListView x:Name="lvDialogs"
-                                     UpdatingScrollMode="{Binding UpdatingScrollMode, Mode=TwoWay}"
-                                     ItemsSource="{Binding Messages}"
+                                     ItemsSource="{x:Bind ViewModel.Messages}"
                                      ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
                                      ItemContainerTransitions="{x:Null}"
                                      ShowsScrollingPlaceholders="False"
+                                     UpdatingScrollMode="{x:Bind ViewModel.UpdatingScrollMode, Mode=TwoWay}"
                                      SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                                      SelectionChanged="List_SelectionChanged"
                                      Grid.ColumnSpan="2">
