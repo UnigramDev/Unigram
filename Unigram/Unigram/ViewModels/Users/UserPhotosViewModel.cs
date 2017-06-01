@@ -132,7 +132,7 @@ namespace Unigram.ViewModels.Users
 
         public TLPhoto Photo => _photo;
 
-        public override object Source => _photo;
+        public override ITLTransferable Source => _photo;
 
         public override string Caption => _caption;
 
@@ -168,7 +168,7 @@ namespace Unigram.ViewModels.Users
 
         public TLDocument Document => _document;
 
-        public override object Source => _document;
+        public override ITLTransferable Source => _document;
 
         public override string Caption => _caption;
 

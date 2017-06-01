@@ -28,7 +28,7 @@ namespace Unigram.ViewModels
         public DialogGalleryViewModel(TLInputPeerBase peer, TLMessage selected, IMTProtoService protoService)
             : base(protoService, null, null)
         {
-            if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo() || selected.IsRoundVideo())
+            if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo() || selected.IsRoundVideo() || selected.IsGif())
             {
                 Items = new MvxObservableCollection<GalleryItem> { new GalleryMessageItem(selected) };
                 SelectedItem = Items[0];
@@ -66,7 +66,7 @@ namespace Unigram.ViewModels
 
                     foreach (var photo in result.Result.Messages)
                     {
-                        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo() || message.IsRoundVideo()))
+                        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo() || message.IsRoundVideo() || message.IsGif()))
                         {
                             Items.Insert(0, new GalleryMessageItem(message));
                             _lastMaxId = message.Id;
@@ -113,7 +113,7 @@ namespace Unigram.ViewModels
 
         public TLMessage Message => _message;
 
-        public override object Source
+        public override ITLTransferable Source
         {
             get
             {

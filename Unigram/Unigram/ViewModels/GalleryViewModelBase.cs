@@ -157,7 +157,7 @@ namespace Unigram.ViewModels
 
         }
 
-        public GalleryItem(object source, string caption, ITLDialogWith from, int date, bool stickers)
+        public GalleryItem(ITLTransferable source, string caption, ITLDialogWith from, int date, bool stickers)
         {
             Source = source;
             Caption = caption;
@@ -166,7 +166,7 @@ namespace Unigram.ViewModels
             HasStickers = stickers;
         }
 
-        public virtual object Source { get; private set; }
+        public virtual ITLTransferable Source { get; private set; }
 
         public virtual string Caption { get; private set; }
 

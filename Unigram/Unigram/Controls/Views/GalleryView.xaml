@@ -50,6 +50,7 @@
         <Border x:Name="Layer" Background="Black" Grid.RowSpan="3"/>
 
         <FlipView x:Name="Flip"
+                  x:DeferLoadStrategy="Lazy"
                   Opacity="0"
                   ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
                   SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
@@ -72,14 +73,16 @@
             </FlipView.ItemTemplate>
         </FlipView>
 
-        <local:ImageView
-            x:Name="Surface"
-            Loaded="ImageView_ImageOpened"
-            Source="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-            Constraint="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Grid.RowSpan="3"/>
+        <Grid x:Name="Surface" DataContext="{Binding FirstItem}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.RowSpan="3">
+            <local:ImageView
+                Loaded="ImageView_ImageOpened"
+                Source="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                Constraint="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}"
+                Grid.RowSpan="3"/>
+
+            <local:TransferButton Completed="Download_Click" Transferable="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+            <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{x:Bind ViewModel.FirstItem.Source.Progress, Mode=OneWay}" IsHitTestVisible="False"/>
+        </Grid>
 
 
         <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">

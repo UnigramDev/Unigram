@@ -148,7 +148,7 @@ namespace Unigram.ViewModels.Chats
 
         public TLMessageService Message => _message;
 
-        public override object Source
+        public override ITLTransferable Source
         {
             get
             {

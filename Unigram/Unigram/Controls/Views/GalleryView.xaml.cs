@@ -177,7 +177,7 @@ namespace Unigram.Controls.Views
 
             if (ViewModel.SelectedItem == ViewModel.FirstItem)
             {
-                Flip.Opacity = 0;
+                //Flip.Opacity = 0;
                 Surface.Visibility = Visibility.Visible;
 
                 var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
@@ -196,7 +196,7 @@ namespace Unigram.Controls.Views
                 }
                 else
                 {
-                    Flip.Opacity = 0;
+                    //Flip.Opacity = 0;
                     Layer.Visibility = Visibility.Collapsed;
                     TopBar.Visibility = Visibility.Collapsed;
                     BotBar.Visibility = Visibility.Collapsed;
@@ -206,7 +206,7 @@ namespace Unigram.Controls.Views
             }
             else
             {
-                Flip.Opacity = 0;
+                //Flip.Opacity = 0;
                 Layer.Visibility = Visibility.Collapsed;
                 TopBar.Visibility = Visibility.Collapsed;
                 BotBar.Visibility = Visibility.Collapsed;
@@ -223,15 +223,15 @@ namespace Unigram.Controls.Views
             if (animation != null)
             {
                 Layer.Visibility = Visibility.Visible;
-                TopBar.Visibility = Visibility.Visible;
-                BotBar.Visibility = Visibility.Visible;
-
                 //Flip.Opacity = 1;
                 animation.TryStart(Surface);
                 animation.Completed += (s, args) =>
                 {
-                    Flip.Opacity = 1;
-                    Surface.Visibility = Visibility.Collapsed;
+                    TopBar.Visibility = Visibility.Visible;
+                    BotBar.Visibility = Visibility.Visible;
+
+                    //Flip.Opacity = 1;
+                    //Surface.Visibility = Visibility.Collapsed;
                 };
             }
         }
@@ -257,8 +257,10 @@ namespace Unigram.Controls.Views
         {
             try
             {
-                var container = Flip.ContainerFromItem(item) as ContentControl;
-                if (container != null && container.ContentTemplateRoot is Grid parent)
+                var parent = Surface;
+
+                //var container = Flip.ContainerFromItem(item) as ContentControl;
+                //if (container != null && container.ContentTemplateRoot is Grid parent)
                 {
                     //_surface = parent.FindName("Surface") as ImageView;
                     _surface = parent;

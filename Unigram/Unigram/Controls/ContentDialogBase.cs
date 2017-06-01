@@ -51,7 +51,7 @@ namespace Unigram.Controls
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
-            if (BackgroundElement != null && sender.VisibleBounds != Window.Current.Bounds)
+            if (/*BackgroundElement != null &&*/ sender.VisibleBounds != Window.Current.Bounds)
             {
                 Margin = new Thickness(sender.VisibleBounds.X, sender.VisibleBounds.Y, Window.Current.Bounds.Width - sender.VisibleBounds.Right, Window.Current.Bounds.Height - sender.VisibleBounds.Bottom);
                 UpdateViewBase();
