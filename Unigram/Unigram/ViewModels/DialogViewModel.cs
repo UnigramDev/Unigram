@@ -270,9 +270,12 @@ namespace Unigram.ViewModels
 
         public async Task LoadNextSliceAsync()
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
-            _isLoadingNextSlice = true;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
+            {
+                return;
+            }
 
+            _isLoadingNextSlice = true;
             UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
@@ -329,9 +332,12 @@ namespace Unigram.ViewModels
 
         public async Task LoadPreviousSliceAsync()
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
-            _isLoadingPreviousSlice = true;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
+            {
+                return;
+            }
 
+            _isLoadingPreviousSlice = true;
             UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
 
             Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
@@ -382,6 +388,7 @@ namespace Unigram.ViewModels
             }
 
             _isLoadingPreviousSlice = false;
+            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
         }
 
         public RelayCommand PreviousSliceCommand => new RelayCommand(PreviousSliceExecute);
@@ -852,24 +859,24 @@ namespace Unigram.ViewModels
                 IsReportSpam = settings.Result.IsReportSpam;
             }
 
-            //if (dialog != null && Messages.Count > 0)
-            //{
-            //    var unread = dialog.UnreadCount;
-            //    if (Peer is TLInputPeerChannel && participant is TLChannel channel)
-            //    {
-            //        await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
-            //    }
-            //    else
-            //    {
-            //        await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
-            //    }
+            if (dialog != null && Messages.Count > 0)
+            {
+                var unread = dialog.UnreadCount;
+                if (Peer is TLInputPeerChannel && participant is TLChannel channel)
+                {
+                    await ProtoService.ReadHistoryAsync(channel, dialog.TopMessage);
+                }
+                else
+                {
+                    await ProtoService.ReadHistoryAsync(Peer, dialog.TopMessage, 0);
+                }
 
-            //    var readPeer = With as ITLReadMaxId;
-            //    readPeer.ReadInboxMaxId = dialog.TopMessage;
-            //    dialog.ReadInboxMaxId = dialog.TopMessage;
-            //    dialog.UnreadCount = dialog.UnreadCount - unread;
-            //    dialog.RaisePropertyChanged(() => dialog.UnreadCount);
-            //}
+                var readPeer = With as ITLReadMaxId;
+                readPeer.ReadInboxMaxId = dialog.TopMessage;
+                dialog.ReadInboxMaxId = dialog.TopMessage;
+                dialog.UnreadCount = dialog.UnreadCount - unread;
+                dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+            }
 
             if (App.InMemoryState.ForwardMessages != null)
             {
