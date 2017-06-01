@@ -55,81 +55,80 @@
                            FontSize="14"
                            Margin="0,0,0,16"/>
 
-                    <!-- Useful links -->
-                    <Button Content="Privacy Policy"
+                <!-- Useful links -->
+                <Button Content="Privacy Policy"
                             Padding="0,6"
                             Style="{ThemeResource TextBlockButtonStyle}"
                             Command="{x:Bind ViewModel.UsefulPrivacyCommand}"/>
-                    <Button Content="Frequently Asked Questions"
+                <Button Content="Frequently Asked Questions"
                             Padding="0,6"
                             Style="{ThemeResource TextBlockButtonStyle}"
                             Command="{x:Bind ViewModel.UsefulFaqCommand}"/>
-                    <Button Content="Unigram Website"
+                <Button Content="Unigram Website"
                             Padding="0,6,0,12"
                             Style="{ThemeResource TextBlockButtonStyle}"
                             Command="{x:Bind ViewModel.UsefulWebsiteCommand}"/>
 
-                    <!-- Support -->
-                    <TextBlock Margin="0,12,0,6"
+                <!-- Support -->
+                <TextBlock Margin="0,12,0,6"
                                Text="Support"
                                FontSize="20"
                                Style="{StaticResource SubtitleTextBlockStyle}" />
-                    <Grid Margin="0,0,0,12">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Button Content="Email"
+                <Grid Margin="0,0,0,12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Button Content="Email"
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Padding="0,6,8,6"
                                 Style="{ThemeResource TextBlockButtonStyle}"
                                 Command="{x:Bind ViewModel.SupportEmailCommand}"/>
-                        <Button Content="Github"
+                    <Button Content="Github"
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Padding="16,6,8,6"
                                 Style="{ThemeResource TextBlockButtonStyle}"
                                 Command="{x:Bind ViewModel.SupportGitHubCommand}"/>
-                    </Grid>
+                </Grid>
 
 
-                    <!-- Social -->
-                    <TextBlock Margin="0,12,0,6"
+                <!-- Social -->
+                <TextBlock Margin="0,12,0,6"
                                Text="Social Media"
                                FontSize="20"
                                Style="{StaticResource SubtitleTextBlockStyle}" />
-                    <Button Content="Follow @UnigramApp on Twitter"
+                <Button Content="Follow @UnigramApp on Twitter"
                             Padding="0,6"
                             Style="{ThemeResource TextBlockButtonStyle}"
                             Command="{x:Bind ViewModel.SocialTwitterCommand}"/>
-                    <Button Content="Like us on Facebook"
+                <Button Content="Like us on Facebook"
                             Padding="0,6,0,12"
                             Style="{ThemeResource TextBlockButtonStyle}"
                             Command="{x:Bind ViewModel.SocialFacebookCommand}"/>
 
-                    <!-- Special thanks -->
-                    <TextBlock Margin="0,12,0,6"
+                <!-- Special thanks -->
+                <TextBlock Margin="0,12,0,6"
                                Text="Special thanks"
                                FontSize="20"
                                Style="{StaticResource SubtitleTextBlockStyle}" />
-                    <TextBlock Text="We want to especially thank these people for their help and knowledge while building Unigram:"
+                <TextBlock Text="We want to especially thank these people for their help and knowledge while building Unigram:"
                                FontSize="14"
                                TextWrapping="Wrap"
                                Margin="0,0,0,6"/>
-                    <Button Content="Telegram Desktop"
+                <Button Content="Telegram Desktop"
                             Padding="0,6"
                             Style="{ThemeResource TextBlockButtonStyle}"
                             Command="{x:Bind ViewModel.ThanksTelegramCommand}"/>
-                    <Button Content="Gregory Klyushnikov"
+                <Button Content="Gregory Klyushnikov"
                             Padding="0,6,0,12"
                             Style="{ThemeResource TextBlockButtonStyle}"
                             Command="{x:Bind ViewModel.ThanksGregoryCommand}"/>
-                </StackPanel>
-            </ScrollViewer>
-        </Grid>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>
