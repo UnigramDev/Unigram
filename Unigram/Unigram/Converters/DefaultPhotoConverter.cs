@@ -371,10 +371,10 @@ namespace Unigram.Converters
 
                     return ReturnOrEnqueueSticker(tLDocument3, null);
                 }
-                else if (TLMessage.IsGif(tLDocument3))
-                {
-                    return ReturnOrEnqueueGif(tLDocument3, thumbnail);
-                }
+                //else if (TLMessage.IsGif(tLDocument3))
+                //{
+                //    return ReturnOrEnqueueGif(tLDocument3, thumbnail);
+                //}
                 else
                 {
                     var photoSize = tLDocument3.Thumb as TLPhotoSize;

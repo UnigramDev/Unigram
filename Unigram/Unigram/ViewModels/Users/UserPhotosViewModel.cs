@@ -178,7 +178,7 @@ namespace Unigram.ViewModels.Users
 
         public override bool IsVideo => TLMessage.IsVideo(_document) || TLMessage.IsGif(_document) || TLMessage.IsRoundVideo(_document);
 
-        public override bool IsLoop => TLMessage.IsGif(_document, true);
+        public override bool IsLoop => TLMessage.IsGif(_document);
 
         public override bool HasStickers => _document.Attributes.Any(x => x is TLDocumentAttributeHasStickers);
 

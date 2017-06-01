@@ -162,7 +162,7 @@ namespace Unigram.ViewModels
 
         public override bool IsVideo => _message.IsVideo() || _message.IsGif() || _message.IsRoundVideo();
 
-        public override bool IsLoop => _message.IsGif(true);
+        public override bool IsLoop => _message.IsGif();
 
         public override bool IsShareEnabled => _message.Parent != null;
 

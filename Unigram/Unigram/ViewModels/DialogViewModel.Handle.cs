@@ -354,7 +354,7 @@ namespace Unigram.ViewModels
             {
                 if (message.IsOut && !message.HasFwdFrom && message.Media is TLMessageMediaDocument documentMedia)
                 {
-                    if (message.IsGif(true))
+                    if (message.IsGif())
                     {
                         _stickersService.AddRecentGif(documentMedia.Document as TLDocument, message.Date);
                     }

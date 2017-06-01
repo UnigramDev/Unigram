@@ -129,6 +129,17 @@
                             MaxHeight="{ThemeResource TelegramLightMediaMaxHeight}"/>
     </DataTemplate>
 
+    <!--<DataTemplate x:Key="MediaGifTemplate">
+        <Grid Background="Black"
+              MinWidth="{ThemeResource TelegramMediaMinWidth}"
+              MinHeight="{ThemeResource TelegramMediaMinHeight}">
+            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                Constraint="{Binding Media.Document}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+        </Grid>
+    </DataTemplate>-->
+
     <DataTemplate x:Key="MediaGifTemplate">
         <Grid Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
@@ -138,9 +149,11 @@
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-            <!--<Image Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="320" MaxHeight="320"/>-->
+            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
         </Grid>
     </DataTemplate>
+
 
     <DataTemplate x:Key="MediaContactTemplate">
         <Grid MinWidth="260">

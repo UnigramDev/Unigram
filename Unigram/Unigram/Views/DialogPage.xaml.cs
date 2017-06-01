@@ -767,7 +767,7 @@ namespace Unigram.Views
                 var message = element.DataContext as TLMessage;
                 if (message != null)
                 {
-                    if (message.IsGif(true))
+                    if (message.IsGif())
                     {
                         Visibility = Visibility.Visible;
                         return;
