@@ -85,7 +85,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Glyph="&#xE72D;" Command="{x:Bind ViewModel.ShareCommand}"/>
+        <controls:ButtonPageHeader Command="{x:Bind ViewModel.ShareCommand}" Glyph="&#xE72D;"/>
 
         <ListView x:Name="ScrollingHost"
                   Background="{ThemeResource TelegramBackgroundTitlebarBrush}"

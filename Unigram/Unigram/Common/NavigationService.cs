@@ -77,11 +77,11 @@ namespace Unigram.Common
             service.Navigate(page, parameter, infoOverride);
         }
 
-        public static void SelectUsers<T>(this INavigationService service, object parameter = null, NavigationTransitionInfo infoOverride = null)
-        {
-            ViewModels.Enqueue(typeof(T));
-            service.Navigate(typeof(UsersSelectionPage), parameter, infoOverride);
-        }
+        //public static void SelectUsers<T>(this INavigationService service, object parameter = null, NavigationTransitionInfo infoOverride = null)
+        //{
+        //    ViewModels.Enqueue(typeof(T));
+        //    service.Navigate(typeof(UsersSelectionPage), parameter, infoOverride);
+        //}
 
         public static Queue<Type> ViewModels { get; } = new Queue<Type>();
 
