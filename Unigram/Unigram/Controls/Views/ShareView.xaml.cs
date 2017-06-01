@@ -154,6 +154,29 @@ namespace Unigram.Controls.Views
                 ViewModel.ShareLink = new Uri(link);
                 ViewModel.ShareTitle = title ?? channel.DisplayName;
             }
+            else if (message.Media is TLMessageMediaGame gameMedia)
+            {
+                var config = ViewModel.CacheService.GetConfig();
+                if (config != null && message.ViaBot != null && message.ViaBot.Username != null)
+                {
+                    var linkPrefix = config.MeUrlPrefix;
+                    if (linkPrefix.EndsWith("/"))
+                    {
+                        linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
+                    }
+                    if (linkPrefix.StartsWith("https://"))
+                    {
+                        linkPrefix = linkPrefix.Substring(8);
+                    }
+                    else if (linkPrefix.StartsWith("http://"))
+                    {
+                        linkPrefix = linkPrefix.Substring(7);
+                    }
+
+                    ViewModel.ShareLink = new Uri($"https://{linkPrefix}/{message.From.Username}?game={gameMedia.Game.ShortName}");
+                    ViewModel.ShareTitle = gameMedia.Game.Title;
+                }
+            }
 
             return ShowAsync();
         }
@@ -176,6 +199,11 @@ namespace Unigram.Controls.Views
             ViewModel.Message = null;
             ViewModel.InputMedia = inputMedia;
             ViewModel.IsWithMyScore = false;
+
+            if (inputMedia is TLInputMediaGame gameMedia && gameMedia.Id is TLInputGameShortName shortName)
+            {
+                // TODO: maybe?
+            }
 
             return ShowAsync();
         }
