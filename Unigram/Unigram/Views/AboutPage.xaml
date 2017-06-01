@@ -22,15 +22,9 @@
             </Grid.RowDefinitions>
 
             <!-- Titlebar -->
-            <controls:ContentPageHeader Grid.Row="0">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="About" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-                </Grid>
-            </controls:ContentPageHeader>
-            
+            <controls:PageHeader Grid.Row="0"
+                                 Text="About"/>
+
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto"
                           Grid.Row="1">

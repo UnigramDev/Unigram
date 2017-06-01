@@ -70,6 +70,17 @@ Get updates on Unigram's development and chat with the project maintainers and c
 * Join the official group [Unigram Insiders](https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ).
 * Join the official channel [Unigram News](https://t.me/unigram).
 
+## Special thanks
+We want to especially thank these people for their help and knowledge while building Unigram
+
+**Telegram Desktop**
+
+- <https://twitter.com/telegramdesktop>
+
+**Gregory Klyushnikov**
+
+- <https://github.com/grishka>
+
 ## License
 Copyright © 2016-2017 [Unigram Authors](https://github.com/UnigramDev/Unigram/graphs/contributors).
 
