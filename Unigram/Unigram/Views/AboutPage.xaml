@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
+    xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -13,224 +14,160 @@
     </Page.Transitions>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ScrollViewer>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
 
-                <!-- Titlebar -->
-                <StackPanel Orientation="Horizontal"
-                            Grid.Row="0"
-                            Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
-                    <Grid Height="96"
-                          Width="96">
-                        <!-- Logo background -->
-                        <Ellipse Height="64"
-                                 Width="64"
-                                 Fill="White"
-                                 VerticalAlignment="Center"
-                                 HorizontalAlignment="Center"/>
-                        <Ellipse Height="60"
-                                 Width="60"
-                                 Fill="{ThemeResource TelegramBackgroundAccentBrush}"
-                                 VerticalAlignment="Center"
-                                 HorizontalAlignment="Center"/>
-                        <!-- Logo -->
-                        <Ellipse Height="60"
-                                 Width="60"
-                                 Margin="0,0,0,-6"
-                                 VerticalAlignment="Center"
-                                 HorizontalAlignment="Center">
-                            <Ellipse.Fill>
-                                <ImageBrush ImageSource="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png" />
-                            </Ellipse.Fill>
-                        </Ellipse>
-                    </Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-                    <!-- App info -->
-                    <StackPanel Orientation="Vertical"
-                                Margin="0,0"
-                                VerticalAlignment="Center">
-                        <TextBlock x:Uid="About-App-Title"
-                                   Text="Unigram"
-                                   Style="{StaticResource SubtitleTextBlockStyle}"/>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock x:Uid="About-App-Version"
-                                       Text="Version"
-                                       Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
-                                       Style="{StaticResource BodyTextBlockStyle}"/>
-                            <TextBlock x:Name="tblAppVersion"
-                                       Padding="4,0,16,0"
-                                       Text="Prototype"
-                                       Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
-                                       Style="{StaticResource BodyTextBlockStyle}"/>
-                        </StackPanel>
-
-                    </StackPanel>
-                </StackPanel>
-
+            <!-- Titlebar -->
+            <controls:ContentPageHeader Grid.Row="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="About" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                </Grid>
+            </controls:ContentPageHeader>
+            
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          VerticalScrollMode="Auto"
+                          Grid.Row="1">
                 <!-- Main content -->
-                <StackPanel Grid.Row="1"
-                            Padding="12"
+                <StackPanel Padding="12"
                             ScrollViewer.VerticalScrollMode="Auto">
+                    <!-- App logo and info-->
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0,0,0,12">
+                        <!-- Logo -->
+                        <Grid Height="80"
+                          Width="64">
+                            <!-- Background -->
+                            <Ellipse Height="64"
+                                     Width="64"
+                                     Fill="White"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Center"/>
+                            <Ellipse Height="60"
+                                     Width="60"
+                                     Fill="{ThemeResource TelegramBackgroundAccentBrush}"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Center"/>
+                            <!-- Logo -->
+                            <Ellipse Height="60"
+                                     Width="60"
+                                     Margin="0,0,0,-6"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Center">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png" />
+                                </Ellipse.Fill>
+                            </Ellipse>
+                        </Grid>
+                        <!-- Info -->
+                        <StackPanel Orientation="Vertical"
+                                    Margin="16,0,0,0"
+                                    VerticalAlignment="Center">
+
+                            <TextBlock x:Uid="About-App-Title"
+                                       Text="Unigram"
+                                       Style="{StaticResource SubtitleTextBlockStyle}"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Uid="About-App-Version"
+                                           Text="Version"
+                                           Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
+                                           Style="{StaticResource BodyTextBlockStyle}"/>
+                                <TextBlock x:Name="tblAppVersion"
+                                           Padding="4,0,16,0"
+                                           Text="Prototype"
+                                           Foreground="{StaticResource SystemControlForegroundBaseMediumBrush}"
+                                           Style="{StaticResource BodyTextBlockStyle}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
                     <TextBlock x:Uid="About-Thanks-Intro"
                                Text="Thank you for using Unigram! We woudn't have been able to get this far without all help of the community."
                                TextWrapping="Wrap"
                                FontSize="14"
-                               Margin="0,0,0,6"/>
+                               Margin="0,0,0,16"/>
 
-                    <!-- Core-team -->
+                    <!-- Useful links -->
+                    <Button Content="Privacy Policy"
+                            Padding="0,6"
+                            Style="{ThemeResource TextBlockButtonStyle}"
+                            Click="btnPrivacy_Click"/>
+                    <Button Content="Frequently Asked Questions"
+                            Padding="0,6"
+                            Style="{ThemeResource TextBlockButtonStyle}"
+                            Click="btnFAQ_Click"/>
+                    <Button Content="Unigram Website"
+                            Padding="0,6,0,12"
+                            Style="{ThemeResource TextBlockButtonStyle}"
+                            Click="btnWebsite_Click"/>
+
+                    <!-- Support -->
                     <TextBlock Margin="0,12,0,6"
-                               Text="Unigram Core-team:"
-                               FontSize="18"
-                               Style="{StaticResource BaseTextBlockStyle}" />
-                    <Grid>
+                               Text="Support"
+                               FontSize="20"
+                               Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <Grid Margin="0,0,0,12">
                         <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
                             <RowDefinition />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-
-                        <!-- Row 1 -->
-                        <Button Grid.Row="0"
+                        <Button Content="Email"
+                                Grid.Row="0"
                                 Grid.Column="0"
-                                Content="Rick Drijvers"
-                                Padding="0,4"
+                                Padding="0,6,8,6"
                                 Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnCoreRickWebsite_Click"/>
-                        <Button Grid.Row="0"
+                                Click="btnSupportEmail_Click"/>
+                        <Button Content="Github"
+                                Grid.Row="0"
                                 Grid.Column="1"
-                                Content="@IkaragoDev"
-                                Padding="12,4"
+                                Padding="16,6,8,6"
                                 Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnCoreRickTwitter_Click"/>
-
-                        <!-- Row 2 -->
-                        <Button Grid.Row="1"
-                                Grid.Column="0"
-                                Content="Saurav Srivastava"
-                                Padding="0,4"
-                                Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnCoreSauravWebsite_Click"/>
-                        <Button Grid.Row="1"
-                                Grid.Column="1"
-                                Content="@gx_saurav"
-                                Padding="12,4"
-                                Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnCoreSauravTwitter_Click"/>
-
-                        <!-- Row 3 -->
-                        <Button Grid.Row="2"
-                                Grid.Column="0"
-                                Content="Fela Ameghino"
-                                IsEnabled="False"
-                                Padding="0,4"
-                                Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnCoreFelaWebsite_Click"/>
-                        <Button Grid.Row="2"
-                                Grid.Column="1"
-                                Content="@FrayxRulez"
-                                Padding="12,4"
-                                Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnCoreFelaTwitter_Click"/>
-
-                        <!-- Row 4 -->
-                        <Button Grid.Row="3"
-                                Grid.Column="0"
-                                Content="Matei Radu"
-                                IsEnabled="False"
-                                Padding="0,4"
-                                Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnCoreMateiWebsite_Click"/>
-                        <Button Grid.Row="3"
-                                Grid.Column="1"
-                                Content="@matei_dev"
-                                Padding="12,4"
-                                Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnCoreMateiTwitter_Click"/>
-
-                        <!-- Row 5 -->
-                        <Button Grid.Row="4"
-                                Grid.Column="0"
-                                Content="Kesava Prasad Arul"
-                                Padding="0,4"
-                                Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnCoreKesavaWebsite_Click"/>
-                        <Button Grid.Row="4"
-                                Grid.Column="1"
-                                Content="@kesavarul"
-                                Padding="12,4"
-                                Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnCoreKesavaTwitter_Click"/>
-
-                        <!-- Row 6 -->
-                        <Button Grid.Row="5"
-                                Grid.Column="0"
-                                Content="Abdel Daoudi"
-                                Padding="0,4"
-                                Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnCoreAbdelWebsite_Click"/>
-                        <Button Grid.Row="5"
-                                Grid.Column="1"
-                                Content="@ADeltaXForce"
-                                Padding="12,4"
-                                Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnCoreAbdelTwitter_Click"/>
-
-                        <!-- Row 6 -->
-                        <Button Grid.Row="6"
-                                Grid.Column="0"
-                                Content="Lorenzo Rossoni"
-                                Padding="0,4"
-                                Style="{ThemeResource TextBlockButtonStyle}"
-                                IsEnabled="False"/>
-                        <Button Grid.Row="6"
-                                Grid.Column="1"
-                                Content="@LorenzRox"
-                                Padding="12,4"
-                                Style="{ThemeResource TextBlockButtonStyle}"
-                                Click="btnCoreLorenzoTwitter_Click"/>
+                                Click="btnSupportGitHub_Click"/>
                     </Grid>
 
-                    <!-- Insiders -->
-                    <TextBlock Text="... and all the Unigram Insiders!"
-                               Margin="0,6,0,0"/>
+
+                    <!-- Social -->
+                    <TextBlock Margin="0,12,0,6"
+                               Text="Social Media"
+                               FontSize="20"
+                               Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <Button Content="Follow @UnigramApp on Twitter"
+                            Padding="0,6"
+                            Style="{ThemeResource TextBlockButtonStyle}"
+                            Click="btnSocialTwitter_Click"/>
+                    <Button Content="Like us on Facebook"
+                            Padding="0,6,0,12"
+                            Style="{ThemeResource TextBlockButtonStyle}"
+                            Click="btnSocialFacebook_Click"/>
 
                     <!-- Special thanks -->
                     <TextBlock Margin="0,12,0,6"
-                               Text="Special thanks:"
-                               FontSize="18"
-                               Style="{StaticResource BaseTextBlockStyle}" />
-                    <TextBlock Text="We want to especially thank these people for their help and knowledge while building the app:"
+                               Text="Special thanks"
+                               FontSize="20"
+                               Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <TextBlock Text="We want to especially thank these people for their help and knowledge while building Unigram:"
                                FontSize="14"
                                TextWrapping="Wrap"
                                Margin="0,0,0,6"/>
-                    <Button Content="@telegramdesktop"
-                            Padding="0,4"
+                    <Button Content="Telegram Desktop"
+                            Padding="0,6"
                             Style="{ThemeResource TextBlockButtonStyle}"
-                            Click="btnThanksTelegramDesktopTwitter_Click"/>
-                    
-                    <!-- Twitter -->
-                    <TextBlock Margin="0,12,0,6"
-                               Text="Follow Unigram on Twitter:"
-                               FontSize="18"
-                               Style="{StaticResource BaseTextBlockStyle}" />
-                    <Button Content="@UnigramApp"
-                            Padding="0,4"
+                            Click="btnThanksTelegramDesktop_Click"/>
+                    <Button Content="Gregory Klyushnikov"
+                            Padding="0,6,0,12"
                             Style="{ThemeResource TextBlockButtonStyle}"
-                            Click="btnUnigramTwitter_Click"/>
+                            Click="btnThanksGregory_Click"/>
                 </StackPanel>
-            </Grid>
-        </ScrollViewer>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Page>

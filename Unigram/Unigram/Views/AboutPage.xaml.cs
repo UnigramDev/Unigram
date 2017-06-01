@@ -17,94 +17,63 @@ namespace Unigram.Views
             tblAppVersion.Text = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
         }
 
-        // Twitter
-        private async void btnCoreRickTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+
+        // Useful links
+        private async void btnPrivacy_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            var uriTwitter = new Uri(@"https://twitter.com/ikaragodev");
+            var uriPrivacy = new Uri(@"http://unigram.me/privacy.html");
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriPrivacy);
+        }
+
+        private async void btnFAQ_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var uriFAQ = new Uri(@"http://unigram.me/faq.html");
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriFAQ);
+        }
+
+        private async void btnWebsite_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var uriWebsite = new Uri(@"http://unigram.me");
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriWebsite);
+        }
+
+        // Support
+        private async void btnSupportEmail_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var uriEmail = new Uri(@"mailto:team@unigram.me");
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriEmail);
+        }
+
+        private async void btnSupportGitHub_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var uriGitHub = new Uri(@"https://www.github.com/UnigramDev/Unigram/issues");
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriGitHub);
+        }
+
+        // Social media
+        private async void btnSocialTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var uriTwitter = new Uri(@"https://twitter.com/UnigramApp");
             var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
         }
 
-        private async void btnCoreSauravTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void btnSocialFacebook_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            var uriTwitter = new Uri(@"https://twitter.com/gx_saurav");
-            var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
+            var uriFacebook = new Uri(@"https://www.facebook.com/UnigramApp");
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriFacebook);
         }
 
-        private async void btnCoreFelaTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            var uriTwitter = new Uri(@"https://twitter.com/FrayxRulez");
-            var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
-        }
-
-        private async void btnCoreMateiTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            var uriTwitter = new Uri(@"https://twitter.com/matei_dev");
-            var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
-        }
-
-        private async void btnCoreKesavaTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            var uriTwitter = new Uri(@"https://twitter.com/kesavarul");
-            var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
-        }
-
-        private async void btnCoreAbdelTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            var uriTwitter = new Uri(@"https://twitter.com/ADeltaXForce");
-            var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
-        }
-
-        private async void btnCoreLorenzoTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            var uriTwitter = new Uri(@"https://twitter.com/LorenzRox");
-            var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
-        }
-
-        private async void btnThanksTelegramDesktopTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        // Special thanks
+        private async void btnThanksTelegramDesktop_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             var uriTwitter = new Uri(@"https://twitter.com/telegramdesktop");
             var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
         }
 
-        // Websites
-        private async void btnCoreRickWebsite_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void btnThanksGregory_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            var url = new Uri(@"http://www.ikarago.com");
-            var success = await Windows.System.Launcher.LaunchUriAsync(url);
-        }
-
-        private async void btnCoreSauravWebsite_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            var url = new Uri(@"http://about.me/gxsaurav");
-            var success = await Windows.System.Launcher.LaunchUriAsync(url);
-        }
-
-        private void btnCoreFelaWebsite_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            // No website... yet? :)
-        }
-
-        private void btnCoreMateiWebsite_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            // No website... yet? :)
-        }
-
-        private async void btnCoreKesavaWebsite_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            var url = new Uri(@"http://fb.com/kesavaprasadarul");
-            var success = await Windows.System.Launcher.LaunchUriAsync(url);
-        }
-
-        private async void btnCoreAbdelWebsite_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            var url = new Uri(@"https://adeltax.com/");
-            var success = await Windows.System.Launcher.LaunchUriAsync(url);
-        }
-
-        private async void btnUnigramTwitter_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            var uriTwitter = new Uri(@"https://twitter.com/UnigramApp");
-            var success = await Windows.System.Launcher.LaunchUriAsync(uriTwitter);
+            var uriGitHub = new Uri(@"https://github.com/grishka");
+            var success = await Windows.System.Launcher.LaunchUriAsync(uriGitHub);
         }
     }
 }
