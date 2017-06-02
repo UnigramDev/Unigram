@@ -332,11 +332,11 @@
         <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Margin="0,8,0,6" Padding="8,0,0,0">
             <StackPanel Margin="0,0,0,8">
                 <TextBlock Text="{Binding Media.Game.Title}" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
-                <RichTextBlock common:MessageHelper.Message="{x:Bind Self, Mode=OneWay}" Style="{ThemeResource BodyRichTextBlockStyle}" Foreground="{ThemeResource MessageForegroundBrush}" Tag="Game">
-                    <RichTextBlock.Resources>
+                <TextBlock common:MessageHelper.Message="{x:Bind Self, Mode=OneWay}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource MessageForegroundBrush}" Tag="Game">
+                    <TextBlock.Resources>
                         <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
-                    </RichTextBlock.Resources>
-                </RichTextBlock>
+                    </TextBlock.Resources>
+                </TextBlock>
             </StackPanel>
 
             <Grid Background="Black"
