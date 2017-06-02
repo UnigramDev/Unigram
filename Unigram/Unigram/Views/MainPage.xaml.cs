@@ -56,8 +56,9 @@ namespace Unigram.Views
         public MainPage()
         {
             InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Required;
             DataContext = UnigramContainer.Current.ResolveType<MainViewModel>();
+
+            NavigationCacheMode = NavigationCacheMode.Required;
 
             ViewModel.Aggregator.Subscribe(this);
 
@@ -127,6 +128,7 @@ namespace Unigram.Views
             ViewModel.Dialogs.NavigationService = MasterDetail.NavigationService;
             ViewModel.Contacts.NavigationService = MasterDetail.NavigationService;
             ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
+            SettingsView.ViewModel.NavigationService = MasterDetail.NavigationService;
 
             if (e.Parameter is string)
             {
@@ -337,11 +339,6 @@ namespace Unigram.Views
 
         private void OnStateChanged(object sender, EventArgs e)
         {
-            if (DialogsListView.SelectionMode == ListViewSelectionMode.Multiple)
-            {
-                ChangeListState();
-            }
-
             if (MasterDetail.CurrentState == MasterDetailState.Narrow)
             {
                 //DialogsListView.IsItemClickEnabled = true;
@@ -372,11 +369,7 @@ namespace Unigram.Views
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var listView = sender as ListView;
-            if (listView.SelectionMode != ListViewSelectionMode.Multiple)
-            {
-                Navigate(e.ClickedItem);
-            }
+            Navigate(e.ClickedItem);
         }
 
         private void Navigate(object item)
@@ -440,19 +433,6 @@ namespace Unigram.Views
             }
         }
 
-        private void cbtnMasterSelect_Click(object sender, RoutedEventArgs e)
-        {
-            DialogsListView.SelectionMode = ListViewSelectionMode.Multiple;
-            cbtnMasterDeleteSelected.Visibility = Visibility.Visible;
-            cbtnMasterMuteSelected.Visibility = Visibility.Visible;
-            cbtnCancelSelection.Visibility = Visibility.Visible;
-            cbtnMasterSelect.Visibility = Visibility.Collapsed;
-            cbtnMasterNewChat.Visibility = Visibility.Collapsed;
-
-            //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            SystemNavigationManager.GetForCurrentView().BackRequested += Select_BackRequested;
-        }
-
         private void cbtnMasterAbout_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(AboutPage));
@@ -462,34 +442,6 @@ namespace Unigram.Views
         {
             //PLEASE REMOVE THE BELOW LINE ONCE THE CHATPAGE HAS BEEN IMPLEMENTED
             MasterDetail.NavigationService.Navigate(typeof(DialogSharedMediaPage));
-        }
-
-        private void Select_BackRequested(object sender, BackRequestedEventArgs e)
-        {
-            // Mark event as handled so we don't get bounced out of the app.
-            e.Handled = true;
-            ChangeListState();
-        }
-
-        private void ChangeListState()
-        {
-            cbtnMasterDeleteSelected.Visibility = Visibility.Collapsed;
-            cbtnMasterMuteSelected.Visibility = Visibility.Collapsed;
-            cbtnCancelSelection.Visibility = Visibility.Collapsed;
-            cbtnMasterSelect.Visibility = Visibility.Visible;
-            cbtnMasterNewChat.Visibility = Visibility.Visible;
-            DialogsListView.SelectionMode = ListViewSelectionMode.Single;
-            SystemNavigationManager.GetForCurrentView().BackRequested -= Select_BackRequested;
-
-            //if (!ViewModel.NavigationService.CanGoBack)
-            //{
-            //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            //}
-        }
-
-        private void cbtnCancelSelection_Click(object sender, RoutedEventArgs e)
-        {
-            ChangeListState();
         }
 
         private void searchInit()
