@@ -15,15 +15,13 @@ namespace Telegram.Api
     {
         static Constants()
         {
-            FirstServerIpAddress = "your_server_ip";
-
             ApiId = your_api_id;
             ApiHash = "your_api_hash";
         }
     }
 }
 ```
-5. Replace `your_server_ip` and `your_api_hash` with the data obtained from step 2.
+5. Replace `your_api_id` and `your_api_hash` with the data obtained from step 2.
 
 ## Requirements
 The following tools and SDKs are mandatory for the project development:
