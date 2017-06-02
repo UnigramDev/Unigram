@@ -1045,7 +1045,24 @@
                     </selectors:MessageStyleSelector>
                 </ListView.ItemContainerStyleSelector>
                 <ListView.Header>
-                    <Border Height="4"/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Visibility="{x:Bind ConvertBotInfo(ViewModel.FullUser.HasBotInfo, ViewModel.IsLastSliceLoaded), Mode=OneWay, FallbackValue=Collapsed}"
+                                    Padding="{ThemeResource MessageContentPadding}"
+                                    Background="{ThemeResource MessageBackgroundBrush}"
+                                    BorderBrush="{ThemeResource MessageBorderBrush}"
+                                    BorderThickness="0,0,0,2"
+                                    VerticalAlignment="Center"
+                                    MaxWidth="360"
+                                    Margin="12,12,12,8">
+                            <TextBlock Text="What can this bot do?" Margin="0,0,0,4" Style="{StaticResource BaseTextBlockStyle}"/>
+                            <TextBlock common:MessageHelper.Text="{x:Bind ViewModel.FullUser.BotInfo.Description, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}"/>
+                        </StackPanel>
+                        <Border Height="4" Grid.Row="1"/>
+                    </Grid>
                 </ListView.Header>
                 <ListView.Footer>
                     <Border Height="8"/>
@@ -1431,12 +1448,12 @@
         </ContentControl>
 
         <controls:BubbleBottomButton
-                TextArea="{x:Bind TextArea, Mode=OneWay}"
-                With="{x:Bind ViewModel.With, Mode=OneWay}"
-                ToggleMuteCommand="{x:Bind ViewModel.ToggleMuteCommand}"
-                DeleteAndExitCommand="{x:Bind ViewModel.DialogDeleteCommand}"
-                JoinCommand="{x:Bind ViewModel.JoinChannelCommand}"
-                UnblockCommand="{x:Bind ViewModel.UnblockCommand}"
-                Grid.Row="3"/>
+            TextArea="{x:Bind TextArea, Mode=OneWay}"
+            With="{x:Bind ViewModel.With, Mode=OneWay}"
+            ToggleMuteCommand="{x:Bind ViewModel.ToggleMuteCommand}"
+            DeleteAndExitCommand="{x:Bind ViewModel.DialogDeleteCommand}"
+            JoinCommand="{x:Bind ViewModel.JoinChannelCommand}"
+            UnblockCommand="{x:Bind ViewModel.UnblockCommand}"
+            Grid.Row="3"/>
     </Grid>
 </Page>

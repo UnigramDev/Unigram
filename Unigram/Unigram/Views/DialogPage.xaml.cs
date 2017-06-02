@@ -1055,6 +1055,15 @@ namespace Unigram.Views
                 ViewModel.UsernameHints = null;
             }
         }
+
+        #region Binding
+
+        public Visibility ConvertBotInfo(bool hasInfo, bool last)
+        {
+            return hasInfo && last ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        #endregion
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
