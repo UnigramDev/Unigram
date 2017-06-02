@@ -934,6 +934,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private List<TLUser> _usernameHints;
+        public List<TLUser> UsernameHints
+        {
+            get
+            {
+                return _usernameHints;
+            }
+            set
+            {
+                Set(ref _usernameHints, value);
+            }
+        }
+
         public List<Tuple<TLUser, TLBotCommand>> UnfilteredBotCommands { get; private set; }
 
         private List<Tuple<TLUser, TLBotCommand>> _botCommands;

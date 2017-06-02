@@ -7,6 +7,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SuppressNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Grid>
         <Border BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" BorderThickness="1,1,0,0" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="48" Margin="-1,0,0,0"/>
 

@@ -1037,6 +1037,24 @@ namespace Unigram.Views
                 TextField.Text = null;
             }
         }
+
+        private void UsernameHints_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var text = ViewModel.GetText();
+
+            var user = e.ClickedItem as TLUser;
+            if (user != null && BubbleTextBox.SearchByUsernames(text, out string query))
+            {
+                var insert = string.Empty;
+                if (user.HasUsername)
+                {
+                    insert = user.Username.Substring(query.Length);
+                }
+
+                TextField.InsertText(insert, false);
+                ViewModel.UsernameHints = null;
+            }
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading

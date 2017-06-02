@@ -100,24 +100,24 @@
             </Grid.RowDefinitions>
             <Border x:Name="Theme" IsHitTestVisible="False" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="0" Height="0"/>
             <controls:PageHeader/>
-            <Pivot x:Name="rpMasterTitlebar" Grid.RowSpan="2">
+            <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Grid.RowSpan="2">
                 <Pivot.HeaderTemplate>
                     <DataTemplate x:DataType="x:String">
                         <TextBlock Text="{x:Bind}" Style="{StaticResource BaseTextBlockStyle}"/>
                     </DataTemplate>
                 </Pivot.HeaderTemplate>
-                <Pivot.LeftHeader>
-                    <Grid Width="32">
-                        <Path Width="20"
-                              Height="20"
-                              Stretch="UniformToFill"
-                              Data="F1M66.638,48.407C70.789,44.254 70.793,37.518 66.638,33.363 62.488,29.212 55.747,29.212 51.592,33.363 47.442,37.518 47.442,44.257 51.592,48.407 55.751,52.563 62.484,52.555 66.638,48.407 M56.583,88.165C52.721,91.776 48.724,95.216 44.815,98.746 42.843,100.56 42.487,100.478 41.666,97.996 40.425,94.271 39.192,90.583 37.992,86.867 38.539,85.492 38.938,84.018 39.136,82.436 39.701,77.803 38.765,73.562 36.423,69.971L35.395,68.545C34.949,67.989,34.466,67.45,33.951,66.933L33.501,66.503 33.509,66.494 33.061,66.041C32.55,65.537,32.007,65.054,31.428,64.606L30.02,63.585C26.434,61.214 22.178,60.283 17.567,60.86 15.97,61.054 14.53,61.469 13.151,62.011 9.406,60.826 5.727,59.58 1.979,58.331 -0.486,57.529 -0.55,57.149 1.246,55.158 4.794,51.288 8.222,47.286 11.836,43.416 12.606,42.582 13.759,41.877 14.851,41.556 19.394,40.343 24.004,39.447 28.516,38.134 29.732,37.815 31.042,37.013 31.88,36.054 43.655,22.29 57.578,11.375 74.449,4.492 81.874,1.484 89.623,-0.309 97.654,0.044 98.58,0.076 99.222,0.139 99.765,0.234 99.86,0.764 99.916,1.443 99.959,2.328 100.295,10.395 98.529,18.136 95.502,25.54 88.611,42.423 77.698,56.361 63.932,68.14 62.962,68.964 62.191,70.248 61.841,71.476 60.57,75.993 59.657,80.635 58.432,85.143 58.126,86.242 57.423,87.393 56.583,88.165 M26.003,91.983C17.911,94.315,9.77,96.314,1.568,98.427L1.535,98.461C1.537,98.453 1.537,98.448 1.542,98.435 1.529,98.435 1.525,98.435 1.514,98.439L1.548,98.409C3.658,90.208 5.66,82.061 7.992,73.968 9.382,69.071 13.009,65.989 18.112,65.356 23.038,64.757 27.159,66.317 30.275,69.678 30.279,69.683 30.283,69.683 30.287,69.687 30.29,69.691 30.294,69.691 30.296,69.7 33.654,72.812 35.218,76.937 34.621,81.863 33.986,86.967 30.9,90.591 26.003,91.983"
-                              Fill="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                              StrokeThickness="0"
-                              HorizontalAlignment="Right"/>
-
-                    </Grid>
-                </Pivot.LeftHeader>
+                <!--<Pivot.LeftHeader>
+                     <Grid Width="32">
+                     <Path Width="20"
+                     Height="20"
+                     Stretch="UniformToFill"
+                     Data="F1M66.638,48.407C70.789,44.254 70.793,37.518 66.638,33.363 62.488,29.212 55.747,29.212 51.592,33.363 47.442,37.518 47.442,44.257 51.592,48.407 55.751,52.563 62.484,52.555 66.638,48.407 M56.583,88.165C52.721,91.776 48.724,95.216 44.815,98.746 42.843,100.56 42.487,100.478 41.666,97.996 40.425,94.271 39.192,90.583 37.992,86.867 38.539,85.492 38.938,84.018 39.136,82.436 39.701,77.803 38.765,73.562 36.423,69.971L35.395,68.545C34.949,67.989,34.466,67.45,33.951,66.933L33.501,66.503 33.509,66.494 33.061,66.041C32.55,65.537,32.007,65.054,31.428,64.606L30.02,63.585C26.434,61.214 22.178,60.283 17.567,60.86 15.97,61.054 14.53,61.469 13.151,62.011 9.406,60.826 5.727,59.58 1.979,58.331 -0.486,57.529 -0.55,57.149 1.246,55.158 4.794,51.288 8.222,47.286 11.836,43.416 12.606,42.582 13.759,41.877 14.851,41.556 19.394,40.343 24.004,39.447 28.516,38.134 29.732,37.815 31.042,37.013 31.88,36.054 43.655,22.29 57.578,11.375 74.449,4.492 81.874,1.484 89.623,-0.309 97.654,0.044 98.58,0.076 99.222,0.139 99.765,0.234 99.86,0.764 99.916,1.443 99.959,2.328 100.295,10.395 98.529,18.136 95.502,25.54 88.611,42.423 77.698,56.361 63.932,68.14 62.962,68.964 62.191,70.248 61.841,71.476 60.57,75.993 59.657,80.635 58.432,85.143 58.126,86.242 57.423,87.393 56.583,88.165 M26.003,91.983C17.911,94.315,9.77,96.314,1.568,98.427L1.535,98.461C1.537,98.453 1.537,98.448 1.542,98.435 1.529,98.435 1.525,98.435 1.514,98.439L1.548,98.409C3.658,90.208 5.66,82.061 7.992,73.968 9.382,69.071 13.009,65.989 18.112,65.356 23.038,64.757 27.159,66.317 30.275,69.678 30.279,69.683 30.283,69.683 30.287,69.687 30.29,69.691 30.294,69.691 30.296,69.7 33.654,72.812 35.218,76.937 34.621,81.863 33.986,86.967 30.9,90.591 26.003,91.983"
+                     Fill="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                     StrokeThickness="0"
+                     HorizontalAlignment="Right"/>
+                     
+                     </Grid>
+                     </Pivot.LeftHeader>-->
                 <Pivot.RightHeader>
                     <Grid>
                         <Button x:Name="btnOptions"
@@ -131,26 +131,34 @@
                                       Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
                             <Button.Flyout>
                                 <MenuFlyout>
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                    Tag="&#xE133;"
-                                                    Text="Manage"/>
+                                    <MenuFlyoutItem x:Name="NewChatItem"
+                                                    Click="NewChat_Click"
+                                                    Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                    Text="New Group"
+                                                    Tag="&#xE125;" />
+                                    <MenuFlyoutItem x:Name="NewChannelItem"
+                                                    Click="NewChannel_Click"
+                                                    Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                    Text="New Channel"
+                                                    Tag="&#xE789;" />
+
+                                    <MenuFlyoutItem x:Name="EditNameItem"
+                                                    Click="{x:Bind SettingsView.EditName_Click}"
+                                                    Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                    Text="Edit name"
+                                                    Tag="&#xE104;"/>
+                                    <MenuFlyoutItem x:Name="LogoutItem"
+                                                    Command="{x:Bind SettingsView.ViewModel.LogoutCommand}"
+                                                    Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                    Text="Logout"
+                                                    Tag="&#xE106;"/>
+
                                     <MenuFlyoutSeparator/>
                                     <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                    Click="NewChat_Click"
-                                                    Tag="&#xE125;"
-                                                    Text="New Group" />
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                    Click="NewChannel_Click"
-                                                    Tag="&#xE789;"
-                                                    Text="New Channel" />
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                    Click="cbtnMasterSettings_Click"
-                                                    Tag="&#xE115;"
-                                                    Text="Settings"/>
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                     Click="cbtnMasterAbout_Click"
+                                                    Text="About"
                                                     Tag="&#xE11B;"
-                                                    Text="About"/>
+                                                    MinWidth="120"/>
                                 </MenuFlyout>
                             </Button.Flyout>
                         </Button>
@@ -161,11 +169,23 @@
                          <controls:TabHeaderStyle Glyph="&#xE15F;"/>
                          </PivotItem.Header>-->
                     <Grid>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <controls:SearchTextBox x:Name="SearchDialogs"
+                                                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                                Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                                                Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
+                                                VerticalContentAlignment="Center"
+                                                PlaceholderText="Search chats and messages"
+                                                TextChanged="txtSearch_TextChanged"
+                                                Style="{StaticResource SearchTextBoxStyle}"
+                                                BorderThickness="0,0,0,1"
+                                                Canvas.ZIndex="1"
+                                                Margin="0"
+                                                Height="48"/>
+                        <Grid Canvas.ZIndex="-1" Grid.Row="1">
                             <!--<Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                                  <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8">
                                  <controls:SearchTextBox x:Name="SearchDialogs"
@@ -175,32 +195,19 @@
                                  </Border>
                                  </Grid>-->
 
+                            <controls:ScrollViewerBackground
+                                Visibility="{x:Bind (Visibility)ViewModel.Dialogs.IsFirstPinned, Mode=OneWay}"
+                                Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                                ScrollingHost="{x:Bind DialogsListView}"
+                                VerticalAlignment="Top"/>
                             <controls:DialogsListView x:Name="DialogsListView"
                                                       ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
                                                       IsItemClickEnabled="True"
                                                       SelectionMode="None"
                                                       ItemClick="ListView_ItemClick"
-                                                      SelectionChanged="ListView_SelectionChanged"
-                                                      Grid.Row="1">
+                                                      SelectionChanged="ListView_SelectionChanged">
                                 <!--CanDragItems="True" 
                                      AllowDrop="True"-->
-                                <ListView.Header>
-                                    <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
-                                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
-                                            <controls:SearchTextBox x:Name="SearchDialogs"
-                                                                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                                                    Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                                                                    Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
-                                                                    VerticalContentAlignment="Center"
-                                                                    PlaceholderText="Search chats and messages"
-                                                                    TextChanged="txtSearch_TextChanged"
-                                                                    Style="{StaticResource SearchTextBoxStyle}"
-                                                                    BorderThickness="0,0,0,1"
-                                                                    Margin="0"
-                                                                    Height="48"/>
-                                        </Border>
-                                    </Grid>
-                                </ListView.Header>
                                 <ListView.ItemContainerStyleSelector>
                                     <selectors:DialogStyleSelector>
                                         <selectors:DialogStyleSelector.DialogStyle>
@@ -229,14 +236,14 @@
                             </controls:DialogsListView>
                         </Grid>
                         <ListView x:Name="DialogsSearchListView"
-                                  Margin="0,48,0,0"
                                   Visibility="Collapsed"
                                   Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                   ItemsSource="{Binding Source={StaticResource SearchResults}}"
                                   IsItemClickEnabled="True"
                                   SelectionMode="None"
                                   ItemClick="ListView_ItemClick"
-                                  SelectionChanged="ListView_SelectionChanged">
+                                  SelectionChanged="ListView_SelectionChanged"
+                                  Grid.Row="1">
                             <ListView.ItemTemplateSelector>
                                 <selectors:SearchTemplateSelector>
                                     <selectors:SearchTemplateSelector.UserTemplate>
@@ -504,7 +511,26 @@
                         </ListView.ItemContainerStyle>
                     </ListView>
                 </PivotItem>
+                <PivotItem Header="Settings">
+                    <local:SettingsPage x:Name="SettingsView" MasterDetail="{x:Bind MasterDetail}"/>
+                </PivotItem>
             </Pivot>
+
+            <!--<Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}">
+                 <controls:SearchTextBox x:Name="SearchDialogs"
+                 BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                 Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
+                 Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
+                 VerticalContentAlignment="Center"
+                 PlaceholderText="Search chats and messages"
+                 TextChanged="txtSearch_TextChanged"
+                 Style="{StaticResource SearchTextBoxStyle}"
+                 BorderThickness="0,0,0,1"
+                 Padding="60,5,6,5"
+                 Margin="0"
+                 Height="48" />
+                 <controls:GlyphButton/>
+                 </Grid>-->
 
             <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.Row="1" Grid.RowSpan="2"/>
 

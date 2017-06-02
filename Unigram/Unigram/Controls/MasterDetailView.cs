@@ -14,6 +14,10 @@ using Unigram.Views.Users;
 using System.Diagnostics;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Input;
+using Windows.Foundation.Metadata;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Composition;
+using System.Numerics;
 
 // The Templated Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234235
 
@@ -173,33 +177,33 @@ namespace Unigram.Controls
                 {
                     IsMasterHidden = true;
 
-                    // Now that there is a backstack, show the back button in titlebar
-                    //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    //AppViewBackButtonVisibility.Visible;
+                    //// Now that there is a backstack, show the back button in titlebar
+                    ////SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                    ////AppViewBackButtonVisibility.Visible;
 
-                    var anim = new DrillInThemeAnimation();
-                    anim.EntranceTarget = new Border();
-                    anim.ExitTarget = MasterPresenter;
+                    //var anim = new DrillInThemeAnimation();
+                    //anim.EntranceTarget = new Border();
+                    //anim.ExitTarget = MasterPresenter;
 
-                    var board = new Storyboard();
-                    board.Children.Add(anim);
-                    board.Begin();
+                    //var board = new Storyboard();
+                    //board.Children.Add(anim);
+                    //board.Begin();
                 }
                 else if (e.NavigationMode == NavigationMode.Back && DetailFrame.BackStackDepth == 0)
                 {
                     IsMasterHidden = false;
 
-                    // No navigation backstack, hide back button in titlebar
-                    //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                    //AppViewBackButtonVisibility.Collapsed;
+                    //// No navigation backstack, hide back button in titlebar
+                    ////SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                    ////AppViewBackButtonVisibility.Collapsed;
 
-                    var anim = new DrillOutThemeAnimation();
-                    anim.EntranceTarget = MasterPresenter;
-                    anim.ExitTarget = new Border();
+                    //var anim = new DrillOutThemeAnimation();
+                    //anim.EntranceTarget = MasterPresenter;
+                    //anim.ExitTarget = new Border();
 
-                    var board = new Storyboard();
-                    board.Children.Add(anim);
-                    board.Begin();
+                    //var board = new Storyboard();
+                    //board.Children.Add(anim);
+                    //board.Begin();
                 }
             }
             else
@@ -267,9 +271,9 @@ namespace Unigram.Controls
                 service.FrameFacade.FrameId = key;
                 service.FrameFacade.BackRequested += (s, args) =>
                 {
-                    if (DetailFrame.Content is IMasterDetailPage page)
+                    if (DetailFrame.Content is IMasterDetailPage detailPage)
                     {
-                        page.OnBackRequested(args);
+                        detailPage.OnBackRequested(args);
                         if (args.Handled)
                         {
                             return;
@@ -282,6 +286,14 @@ namespace Unigram.Controls
                     {
                         DetailFrame.GoBack();
                         args.Handled = true;
+                    }
+                    else if (ParentFrame.Content is IMasterDetailPage masterPage)
+                    {
+                        masterPage.OnBackRequested(args);
+                        if (args.Handled)
+                        {
+                            return;
+                        }
                     }
                     else if (ParentFrame.CanGoBack && ActualWidth > 0)
                     {
@@ -303,13 +315,13 @@ namespace Unigram.Controls
 
             if (CurrentState == MasterDetailState.Filled && IsMasterHidden)
             {
-                var anim = new DrillOutThemeAnimation();
-                anim.EntranceTarget = MasterPresenter;
-                anim.ExitTarget = new Border();
+                //var anim = new DrillOutThemeAnimation();
+                //anim.EntranceTarget = MasterPresenter;
+                //anim.ExitTarget = new Border();
 
-                var board = new Storyboard();
-                board.Children.Add(anim);
-                board.Begin();
+                //var board = new Storyboard();
+                //board.Children.Add(anim);
+                //board.Begin();
             }
 
             if (CurrentState == MasterDetailState.Narrow && BlankPageType == DetailFrame?.CurrentSourcePageType)

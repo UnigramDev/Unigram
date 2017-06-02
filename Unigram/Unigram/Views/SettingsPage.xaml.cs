@@ -33,9 +33,6 @@ namespace Unigram.Views
 
             NavigationCacheMode = NavigationCacheMode.Required;
 
-
-            Loaded += OnLoaded;
-
 #if DEBUG
             // THIS CODE WILL RUN ONLY IF FIRST CONFIGURED SERVER IP IS TEST SERVER
             if (Telegram.Api.Constants.FirstServerIpAddress.Equals("149.154.167.40"))
@@ -59,44 +56,8 @@ namespace Unigram.Views
 #endif
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
+        public MasterDetailView MasterDetail { get; set; }
 
-            OnStateChanged(null, null);
-        }
-
-        private void OnStateChanged(object p1, object p2)
-        {
-            if (MasterDetail.CurrentState == MasterDetailState.Narrow)
-            {
-                Separator.BorderThickness = new Thickness(0);
-            }
-            else
-            {
-                Separator.BorderThickness = new Thickness(0, 0, 1, 0);
-            }
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            //if (Frame.CanGoBack)
-            //{
-            //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-            //        AppViewBackButtonVisibility.Visible;
-            //}
-            //else
-            //{
-            //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-            //        AppViewBackButtonVisibility.Collapsed;
-            //}
-
-            if (MasterDetail.NavigationService == null)
-            {
-                MasterDetail.Initialize("Settings", Frame);
-            }
-
-            ViewModel.NavigationService = MasterDetail.NavigationService;
-        }
 
         private void General_Click(object sender, RoutedEventArgs e)
         {
@@ -108,7 +69,7 @@ namespace Unigram.Views
             MasterDetail.NavigationService.Navigate(typeof(SettingsUsernamePage));
         }
 
-        private async void EditName_Click(object sender, RoutedEventArgs e)
+        public async void EditName_Click(object sender, RoutedEventArgs e)
         {
             await MasterDetail.NavigationService.NavigateModalAsync(typeof(EditYourNameView));
         }

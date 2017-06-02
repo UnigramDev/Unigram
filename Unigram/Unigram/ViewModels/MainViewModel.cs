@@ -53,6 +53,8 @@ namespace Unigram.ViewModels
             aggregator.Subscribe(this);
         }
 
+        public TLVector<TLTopPeerCategoryPeers> TopPeers { get; private set; }
+
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             Task.Run(() => _pushService.RegisterAsync());
@@ -61,6 +63,15 @@ namespace Unigram.ViewModels
             //Execute.BeginOnUIThread(() => Dialogs.LoadFirstSlice());
             //Execute.BeginOnUIThread(() => Contacts.getTLContacts());
             //Execute.BeginOnUIThread(() => Contacts.GetSelfAsync());
+
+            ProtoService.GetTopPeersAsync(TLContactsGetTopPeers.Flag.BotsInline, 0, 0, 0, result =>
+            {
+                var topPeers = result as TLContactsTopPeers;
+                if (topPeers != null)
+                {
+                    TopPeers = topPeers.Categories;
+                }
+            });
 
             return Task.CompletedTask;
         }

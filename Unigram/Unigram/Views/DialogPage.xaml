@@ -522,13 +522,13 @@
 
         <!-- Region Service -->
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,8,0,0">
+            <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,8,0,2">
                 <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
-            <StackPanel Margin="0,8,0,0">
+            <StackPanel Margin="0,8,0,2">
                 <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6">
                     <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
                 </Border>
@@ -545,7 +545,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageLocalTemplate">
-            <Border Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,8,0,0">
+            <Border Background="#7F89A0B4" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,8,0,2">
                 <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
             </Border>
         </DataTemplate>
@@ -1119,6 +1119,7 @@
 
             <views:InlineBotResultsView ItemClick="InlineBotResults_ItemClick" VerticalAlignment="Bottom"/>
             <ListView ItemsSource="{x:Bind ViewModel.StickerPack, Mode=OneWay}"
+                      Visibility="{x:Bind ViewModel.StickerPack, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                       AllowFocusOnInteraction="False"
                       IsItemClickEnabled="True"
                       ItemClick="Stickers_ItemClick"
@@ -1129,7 +1130,9 @@
                       ScrollViewer.HorizontalScrollMode="Auto"
                       ScrollViewer.IsHorizontalRailEnabled="True"
                       VerticalAlignment="Bottom"
-                      Background="White">
+                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                      BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                      BorderThickness="0,1,0,0">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel Orientation="Horizontal"/>
@@ -1142,7 +1145,10 @@
                 </ListView.ItemTemplate>
             </ListView>
             <ListView ItemsSource="{x:Bind ViewModel.BotCommands, Mode=OneWay}"
+                      Visibility="{x:Bind ViewModel.BotCommands, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                      BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                      BorderThickness="0,1,0,0"
                       AllowFocusOnInteraction="False"
                       IsItemClickEnabled="True"
                       ItemClick="BotCommands_ItemClick"
@@ -1162,9 +1168,32 @@
                             </TextBlock>
                         </Grid>
                     </DataTemplate>
-                    <!--<DataTemplate x:DataType="tl:TLDocument">
-                        <Image x:Phase="3" Margin="2,8" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="60" Height="60"/>
-                    </DataTemplate>-->
+                </ListView.ItemTemplate>
+            </ListView>
+            <ListView ItemsSource="{x:Bind ViewModel.UsernameHints, Mode=OneWay}"
+                      Visibility="{x:Bind ViewModel.UsernameHints, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                      BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                      BorderThickness="0,1,0,0"
+                      AllowFocusOnInteraction="False"
+                      IsItemClickEnabled="True"
+                      ItemClick="UsernameHints_ItemClick"
+                      VerticalAlignment="Bottom"
+                      MaxHeight="180">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:TLUser">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="1">
+                                <Run Text="{x:Bind FullName, Mode=OneWay}" FontWeight="SemiBold" />
+                                <Run Text="@" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" /><Run Text="{x:Bind Username, Mode=OneWay}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                            </TextBlock>
+                        </Grid>
+                    </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>

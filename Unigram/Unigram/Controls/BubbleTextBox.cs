@@ -171,18 +171,18 @@ namespace Unigram.Controls
             OnSelectionChanged();
         }
 
-        public void InsertText(string text)
+        public void InsertText(string text, bool allowPreceding = true, bool allowTrailing = true)
         {
             var start = Document.Selection.StartPosition;
             var end = Document.Selection.EndPosition;
 
             var preceding = start > 0 && !char.IsWhiteSpace(Document.GetRange(start - 1, start).Character);
-            var trailing = !char.IsWhiteSpace(Document.GetRange(end, end + 1).Character);
+            var trailing = !char.IsWhiteSpace(Document.GetRange(end, end + 1).Character) || Document.GetRange(end, end + 1).Character == '\r';
 
             var block = string.Format("{0}{1}{2}",
-                preceding ? " " : "",
+                preceding && allowPreceding ? " " : "",
                 text,
-                trailing ? " " : "");
+                trailing && allowTrailing ? " " : "");
 
             Document.Selection.SetText(TextSetOptions.None, block);
             Document.Selection.StartPosition = Document.Selection.EndPosition;
@@ -474,6 +474,16 @@ namespace Unigram.Controls
                 {
                     ViewModel.StickerPack = null;
 
+                    var usernames = SearchByUsernames(text, out string usernamesText); 
+                    if (usernames)
+                    {
+                        ViewModel.UsernameHints = GetUsernames(usernamesText.ToLower(), text.StartsWith('@' + usernamesText));
+                    }
+                    else
+                    {
+                        ViewModel.UsernameHints = null;
+                    }
+
                     if (text.Length > 0 && text[0] == '/')
                     {
                         var commands = SearchByCommands(text, out string searchText);
@@ -508,6 +518,49 @@ namespace Unigram.Controls
             if (all != null)
             {
                 return all.Where(x => x.Item2.Command.ToLower().StartsWith(command)).ToList();
+            }
+
+            return null;
+        }
+
+        private List<TLUser> GetUsernames(string username, bool inline)
+        {
+            var results = new List<TLUser>();
+
+            if (inline)
+            {
+                var peers = UnigramContainer.Current.ResolveType<MainViewModel>().TopPeers;
+                if (peers != null)
+                {
+                    var inlinePeers = peers.FirstOrDefault(x => x.Category is TLTopPeerCategoryBotsInline);
+                    if (inlinePeers != null)
+                    {
+                        foreach (var peer in inlinePeers.Peers)
+                        {
+                            var user = InMemoryCacheService.Current.GetUser(peer.Peer.Id) as TLUser;
+                            if (user != null && user.HasUsername && user.Username.StartsWith(username))
+                            {
+                                results.Add(user);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (ViewModel.Full is TLChatFull chatFull && chatFull.Participants is TLChatParticipants participants)
+            {
+                foreach (var participant in participants.Participants)
+                {
+                    if (participant.User != null && participant.User.HasUsername && participant.User.Username.StartsWith(username))
+                    {
+                        results.Add(participant.User);
+                    }
+                }
+            }
+
+            if (results.Count > 0)
+            {
+                return results;
             }
 
             return null;
@@ -658,7 +711,7 @@ namespace Unigram.Controls
 
         #region Username
 
-        private static bool SearchByUsernames(string text, out string searchText)
+        public static bool SearchByUsernames(string text, out string searchText)
         {
             searchText = string.Empty;
 

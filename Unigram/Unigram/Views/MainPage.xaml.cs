@@ -40,6 +40,10 @@ using Windows.System.Profile;
 using Windows.ApplicationModel.Core;
 using Unigram.Core.Services;
 using Telegram.Api.Aggregator;
+using Template10.Common;
+using Windows.Foundation.Metadata;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Composition;
 
 namespace Unigram.Views
 {
@@ -109,7 +113,7 @@ namespace Unigram.Views
             OnStateChanged(null, null);
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             Frame.BackStack.Clear();
 
@@ -257,6 +261,8 @@ namespace Unigram.Views
             //        rpMasterTitlebar.Items.RemoveAt(2);
             //    }
             //}
+
+            await SettingsView.ViewModel.OnNavigatedToAsync(null, e.NavigationMode, null);
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e)
@@ -528,7 +534,7 @@ namespace Unigram.Views
             }
         }
 
-        private void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)
+        private async void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsPage));
         }
@@ -677,6 +683,12 @@ namespace Unigram.Views
         private void NewChannel_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(CreateChannelStep1Page));
+        }
+
+        private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            NewChatItem.Visibility = NewChannelItem.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+            EditNameItem.Visibility = LogoutItem.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

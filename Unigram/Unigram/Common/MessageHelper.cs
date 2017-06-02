@@ -50,7 +50,7 @@ namespace Unigram.Common
 
             if (oldValue == value)
             {
-                OnMessageChanged(obj as RichTextBlock, value);
+                OnMessageChanged(obj as TextBlock, value);
             }
         }
 
@@ -59,15 +59,15 @@ namespace Unigram.Common
 
         private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as RichTextBlock;
+            var sender = d as TextBlock;
             var newValue = e.NewValue as TLMessage;
 
             OnMessageChanged(sender, newValue);
         }
 
-        private static void OnMessageChanged(RichTextBlock sender, TLMessage newValue)
+        private static void OnMessageChanged(TextBlock sender, TLMessage newValue)
         {
-            sender.IsTextSelectionEnabled = false;
+            //sender.IsTextSelectionEnabled = false;
 
             var message = newValue as TLMessage;
             if (message != null /*&& sender.Visibility == Visibility.Visible*/)
@@ -93,13 +93,13 @@ namespace Unigram.Common
                 sender.Visibility = (message.Media == null || message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage || game || caption ? Visibility.Visible : Visibility.Collapsed);
                 if (sender.Visibility == Visibility.Collapsed)
                 {
-                    sender.Blocks.Clear();
+                    sender.Inlines.Clear();
                     return;
                 }
 
                 var foreground = sender.Resources["MessageHyperlinkForegroundBrush"] as SolidColorBrush;
 
-                var paragraph = new Paragraph();
+                var paragraph = new Span();
 
                 if (message.HasEntities && message.Entities != null)
                 {
@@ -185,12 +185,12 @@ namespace Unigram.Common
                     paragraph.Inlines.Add(new Run { Text = " " });
                 }
 
-                sender.Blocks.Clear();
-                sender.Blocks.Add(paragraph);
+                sender.Inlines.Clear();
+                sender.Inlines.Add(paragraph);
             }
             else
             {
-                sender.Blocks.Clear();
+                sender.Inlines.Clear();
             }
         }
 
@@ -212,7 +212,7 @@ namespace Unigram.Common
 
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as RichTextBlock;
+            var sender = d as TextBlock;
             var newValue = e.NewValue as string;
             var oldValue = e.OldValue as string;
 
@@ -222,11 +222,11 @@ namespace Unigram.Common
             if (oldValue == newValue) return;
 
             var foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x0f, 0x7d, 0xc7));
-            var paragraph = new Paragraph();
+            var paragraph = new Span();
             ReplaceAll(null, newValue, paragraph, foreground, true);
 
-            sender.Blocks.Clear();
-            sender.Blocks.Add(paragraph);
+            sender.Inlines.Clear();
+            sender.Inlines.Add(paragraph);
         }
         #endregion
 
@@ -349,7 +349,7 @@ namespace Unigram.Common
             EmojiRegex = new Regex(emoji, RegexOptions.Compiled);
         }
 
-        public static void ReplaceEntities(TLMessage message, Paragraph paragraph, Brush foreground)
+        public static void ReplaceEntities(TLMessage message, Span paragraph, Brush foreground)
         {
             var text = message.Message;
             var previous = 0;
@@ -433,7 +433,7 @@ namespace Unigram.Common
             }
         }
 
-        public static void ReplaceAll(TLMessageBase message, string text, Paragraph paragraph, Brush foreground, bool matchLinks)
+        public static void ReplaceAll(TLMessageBase message, string text, Span paragraph, Brush foreground, bool matchLinks)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
 

@@ -132,8 +132,7 @@ namespace Unigram.Controls.Items
 
         private string GetBriefLabel(TLMessageBase value, bool showContent)
         {
-            var draft = ViewModel.Draft as TLDraftMessage;
-            if (draft != null)
+            if (ViewModel.Draft is TLDraftMessage draft && !string.IsNullOrWhiteSpace(draft.Message))
             {
                 return draft.Message;
             }

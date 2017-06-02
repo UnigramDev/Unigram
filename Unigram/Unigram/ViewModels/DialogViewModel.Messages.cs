@@ -213,6 +213,7 @@ namespace Unigram.ViewModels
                 }
 
                 RaisePropertyChanged(() => With);
+                SelectionMode = ListViewSelectionMode.None;
 
                 //this.IsEmptyDialog = (this.Items.get_Count() == 0 && this.LazyItems.get_Count() == 0);
                 //this.NotifyOfPropertyChange<TLObject>(() => this.With);
@@ -280,7 +281,24 @@ namespace Unigram.ViewModels
         #region Multiple Delete
 
         private RelayCommand _messagesDeleteCommand;
-        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages.Count > 0));
+        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(messageCommon =>
+        {
+            var channel = _with as TLChannel;
+            if (channel != null)
+            {
+                if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
+                {
+                    return false;
+                }
+
+                if (!messageCommon.IsOut && !channel.IsCreator && !channel.IsEditor)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        })));
 
         private async void MessagesDeleteExecute()
         {
@@ -421,6 +439,8 @@ namespace Unigram.ViewModels
             var messages = SelectedMessages.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
             {
+                SelectionMode = ListViewSelectionMode.None;
+
                 App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
                 NavigationService.GoBackAt(0);
             }
