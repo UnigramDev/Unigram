@@ -89,7 +89,7 @@
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
                 Grid.Row="3"/>
 
-            <local:MessageStatusControl
+            <local:MessageStateControl
                 x:Name="StatusControl"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"

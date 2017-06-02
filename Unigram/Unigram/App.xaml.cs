@@ -471,5 +471,6 @@ namespace Unigram
         public TLMessage SwitchInline { get; set; }
 
         public int? NavigateToMessage { get; set; }
+        public string NavigateToAccessToken { get; set; }
     }
 }

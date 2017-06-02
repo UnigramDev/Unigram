@@ -44,7 +44,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return _inlineBotResults != null && ((_inlineBotResults.HasSwitchPm && _inlineBotResults.SwitchPm != null) || (_inlineBotResults.Results != null && _inlineBotResults.Results.Count > 0)) ? Visibility.Visible : Visibility.Collapsed;
+                return _inlineBotResults != null && ((_inlineBotResults.HasSwitchPM && _inlineBotResults.SwitchPM != null) || (_inlineBotResults.Results != null && _inlineBotResults.Results.Count > 0)) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 

@@ -15,20 +15,20 @@ namespace Telegram.Api.TL.Methods.Messages
 			Gallery = (1 << 0),
 			Private = (1 << 1),
 			NextOffset = (1 << 2),
-			SwitchPm = (1 << 3),
+			SwitchPM = (1 << 3),
 		}
 
 		public bool IsGallery { get { return Flags.HasFlag(Flag.Gallery); } set { Flags = value ? (Flags | Flag.Gallery) : (Flags & ~Flag.Gallery); } }
 		public bool IsPrivate { get { return Flags.HasFlag(Flag.Private); } set { Flags = value ? (Flags | Flag.Private) : (Flags & ~Flag.Private); } }
 		public bool HasNextOffset { get { return Flags.HasFlag(Flag.NextOffset); } set { Flags = value ? (Flags | Flag.NextOffset) : (Flags & ~Flag.NextOffset); } }
-		public bool HasSwitchPm { get { return Flags.HasFlag(Flag.SwitchPm); } set { Flags = value ? (Flags | Flag.SwitchPm) : (Flags & ~Flag.SwitchPm); } }
+		public bool HasSwitchPM { get { return Flags.HasFlag(Flag.SwitchPM); } set { Flags = value ? (Flags | Flag.SwitchPM) : (Flags & ~Flag.SwitchPM); } }
 
 		public Flag Flags { get; set; }
 		public Int64 QueryId { get; set; }
 		public TLVector<TLInputBotInlineResultBase> Results { get; set; }
 		public Int32 CacheTime { get; set; }
 		public String NextOffset { get; set; }
-		public TLInlineBotSwitchPM SwitchPm { get; set; }
+		public TLInlineBotSwitchPM SwitchPM { get; set; }
 
 		public TLMessagesSetInlineBotResults() { }
 		public TLMessagesSetInlineBotResults(TLBinaryReader from)
@@ -45,7 +45,7 @@ namespace Telegram.Api.TL.Methods.Messages
 			Results = TLFactory.Read<TLVector<TLInputBotInlineResultBase>>(from);
 			CacheTime = from.ReadInt32();
 			if (HasNextOffset) NextOffset = from.ReadString();
-			if (HasSwitchPm) SwitchPm = TLFactory.Read<TLInlineBotSwitchPM>(from);
+			if (HasSwitchPM) SwitchPM = TLFactory.Read<TLInlineBotSwitchPM>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
@@ -58,13 +58,13 @@ namespace Telegram.Api.TL.Methods.Messages
 			to.WriteObject(Results);
 			to.Write(CacheTime);
 			if (HasNextOffset) to.Write(NextOffset);
-			if (HasSwitchPm) to.WriteObject(SwitchPm);
+			if (HasSwitchPM) to.WriteObject(SwitchPM);
 		}
 
 		private void UpdateFlags()
 		{
 			HasNextOffset = NextOffset != null;
-			HasSwitchPm = SwitchPm != null;
+			HasSwitchPM = SwitchPM != null;
 		}
 	}
 }

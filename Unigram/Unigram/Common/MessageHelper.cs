@@ -1178,7 +1178,7 @@ namespace Unigram.Common
                     }
                     else
                     {
-                        service.NavigateToDialog(user);
+                        service.NavigateToDialog(user, accessToken: accessToken);
                     }
 
                     //if (user.IsBot)
@@ -1221,7 +1221,7 @@ namespace Unigram.Common
                             }
                             else
                             {
-                                service.NavigateToDialog(user);
+                                service.NavigateToDialog(user, accessToken: accessToken);
                             }
 
 

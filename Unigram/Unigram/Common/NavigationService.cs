@@ -103,7 +103,7 @@ namespace Unigram.Common
         }
 
 
-        public static async void NavigateToDialog(this INavigationService service, ITLDialogWith with, int? message = null)
+        public static async void NavigateToDialog(this INavigationService service, ITLDialogWith with, int? message = null, string accessToken = null)
         {
             if (with is TLUser user && user.IsRestricted)
             {
@@ -126,11 +126,19 @@ namespace Unigram.Common
             }
 
             var peer = with.ToPeer();
-            if (message.HasValue && service.CurrentPageType == typeof(DialogPage) && peer.Equals(service.CurrentPageParam))
+            if (service.CurrentPageType == typeof(DialogPage) && peer.Equals(service.CurrentPageParam))
             {
                 if (service.Frame.Content is DialogPage page && page.ViewModel != null)
                 {
-                    await page.ViewModel.LoadMessageSliceAsync(null, message.Value);
+                    if (message.HasValue)
+                    {
+                        await page.ViewModel.LoadMessageSliceAsync(null, message.Value);
+                    }
+                    
+                    if (accessToken != null)
+                    {
+                        page.ViewModel.AccessToken = accessToken;
+                    }
                 }
                 else
                 {
@@ -140,6 +148,7 @@ namespace Unigram.Common
             else
             {
                 App.InMemoryState.NavigateToMessage = message;
+                App.InMemoryState.NavigateToAccessToken = accessToken;
                 service.Navigate(typeof(DialogPage), peer);
             }
 

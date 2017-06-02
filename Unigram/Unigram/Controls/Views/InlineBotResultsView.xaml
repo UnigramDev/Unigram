@@ -102,6 +102,23 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="ContactResultTemplate" x:DataType="tl:TLBotInlineResult">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <controls:ProfilePictureView Source="{Binding Media.User, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                <TextBlock Text="{Binding Media.FullName}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
+                <TextBlock Text="{Binding Media.PhoneNumber, Converter={StaticResource PhoneNumberFormatConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
+            </Grid>
+        </DataTemplate>
+
         <selectors:InlineBotResultTemplateSelector
             x:Key="InlineBotResultTemplateSelector"
             ResultTemplate="{StaticResource ResultTemplate}"
@@ -173,8 +190,10 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Button Content="{x:Bind ViewModel.InlineBotResults.SwitchPm.Text, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPm, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+            <Button Command="{x:Bind ViewModel.SwitchCommand}"
+                    CommandParameter="{x:Bind ViewModel.InlineBotResults.SwitchPM, Mode=OneWay}"
+                    Content="{x:Bind ViewModel.InlineBotResults.SwitchPM.Text, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPM, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                     HorizontalAlignment="Stretch"/>
             <controls:OrientableListView ItemsSource="{x:Bind ViewModel.InlineBotResults.Results, Mode=OneWay}"
                                          IsHorizontal="{x:Bind ViewModel.InlineBotResults.IsGallery, Mode=OneWay}"

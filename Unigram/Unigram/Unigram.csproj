@@ -131,8 +131,8 @@
     <Compile Include="Controls\Messages\HistoryCallMessageControl.xaml.cs">
       <DependentUpon>HistoryCallMessageControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\MessageStatusControl.xaml.cs">
-      <DependentUpon>MessageStatusControl.xaml</DependentUpon>
+    <Compile Include="Controls\Messages\MessageStateControl.xaml.cs">
+      <DependentUpon>MessageStateControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\PhoneCallMessageBubble.xaml.cs">
       <DependentUpon>PhoneCallMessageBubble.xaml</DependentUpon>
@@ -1115,7 +1115,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Messages\MessageStatusControl.xaml">
+    <Page Include="Controls\Messages\MessageStateControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

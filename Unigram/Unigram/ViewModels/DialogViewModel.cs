@@ -769,6 +769,9 @@ namespace Unigram.ViewModels
                 App.InMemoryState.NavigateToMessage = null;
             }
 
+            AccessToken = App.InMemoryState.NavigateToAccessToken;
+            App.InMemoryState.NavigateToAccessToken = null;
+
             var participant = GetParticipant(parameter as TLPeerBase);
             if (participant == null)
             {
@@ -1985,6 +1988,22 @@ namespace Unigram.ViewModels
         }
 
         #endregion
+
+        #region Switch
+
+        public RelayCommand<TLInlineBotSwitchPM> SwitchCommand => new RelayCommand<TLInlineBotSwitchPM>(SwitchExecute);
+        private void SwitchExecute(TLInlineBotSwitchPM switchPM)
+        {
+            if (_currentInlineBot == null)
+            {
+                return;
+            }
+
+            NavigationService.NavigateToDialog(_currentInlineBot, accessToken: switchPM.StartParam);
+        }
+
+        #endregion
+
 
         #region Start
 
