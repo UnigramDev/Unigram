@@ -64,6 +64,11 @@ namespace Unigram.Controls
                 {
                     UnblockCommand?.Execute(null);
                 }
+
+                if (user.IsBot && HasAccessToken)
+                {
+                    StartCommand?.Execute(null);
+                }
             }
         }
 
@@ -119,6 +124,19 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region StartCommand
+
+        public ICommand StartCommand
+        {
+            get { return (ICommand)GetValue(StartCommandProperty); }
+            set { SetValue(StartCommandProperty, value); }
+        }
+
+        public static readonly DependencyProperty StartCommandProperty =
+            DependencyProperty.Register("StartCommand", typeof(ICommand), typeof(BubbleBottomButton), new PropertyMetadata(null));
+
+        #endregion
+
         #region With
 
         public object With
@@ -145,6 +163,24 @@ namespace Unigram.Controls
         private static void OnWithChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((BubbleBottomButton)d).OnWithChanged(e.NewValue, e.OldValue);
+        }
+
+        #endregion
+
+        #region HasAccessToken
+
+        public bool HasAccessToken
+        {
+            get { return (bool)GetValue(HasAccessTokenProperty); }
+            set { SetValue(HasAccessTokenProperty, value); }
+        }
+
+        public static readonly DependencyProperty HasAccessTokenProperty =
+            DependencyProperty.Register("HasAccessToken", typeof(bool), typeof(BubbleBottomButton), new PropertyMetadata(true, OnHasAccessTokenChanged));
+
+        private static void OnHasAccessTokenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((BubbleBottomButton)d).OnWithChanged(((BubbleBottomButton)d).With, null);
         }
 
         #endregion
@@ -233,7 +269,13 @@ namespace Unigram.Controls
                 var full = InMemoryCacheService.Current.GetFullUser(user.Id);
                 if (full != null && full.IsBlocked)
                 {
-                    Content = "Unblock";
+                    Content = user.IsBot ? "Restart" : "Unblock";
+                    return false;
+                }
+
+                if (user.IsBot && HasAccessToken)
+                {
+                    Content = "Start";
                     return false;
                 }
 

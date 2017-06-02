@@ -1450,10 +1450,12 @@
         <controls:BubbleBottomButton
             TextArea="{x:Bind TextArea, Mode=OneWay}"
             With="{x:Bind ViewModel.With, Mode=OneWay}"
+            HasAccessToken="{x:Bind ViewModel.HasAccessToken, Mode=OneWay}"
             ToggleMuteCommand="{x:Bind ViewModel.ToggleMuteCommand}"
             DeleteAndExitCommand="{x:Bind ViewModel.DialogDeleteCommand}"
             JoinCommand="{x:Bind ViewModel.JoinChannelCommand}"
             UnblockCommand="{x:Bind ViewModel.UnblockCommand}"
+            StartCommand="{x:Bind ViewModel.StartCommand}"
             Grid.Row="3"/>
     </Grid>
 </Page>

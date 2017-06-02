@@ -864,52 +864,7 @@ namespace Unigram.Common
             }
             else if (type == TLType.MessageEntityMention)
             {
-                var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                if (service != null)
-                {
-                    var user = InMemoryCacheService.Current.GetUser((string)data) as TLUser;
-                    if (user != null && user.HasAccessHash)
-                    {
-                        service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
-                        return;
-                    }
-
-                    var channel = InMemoryCacheService.Current.GetChannel((string)data);
-                    if (channel != null && channel.HasAccessHash)
-                    {
-                        service.NavigateToDialog(channel);
-                        return;
-                    }
-
-                    var response = await MTProtoService.Current.ResolveUsernameAsync(((string)data).TrimStart('@'));
-                    if (response.IsSucceeded)
-                    {
-                        var peerUser = response.Result.Peer as TLPeerUser;
-                        if (peerUser != null)
-                        {
-                            service.Navigate(typeof(UserDetailsPage), peerUser);
-                            return;
-                        }
-
-                        var peerChannel = response.Result.Peer as TLPeerChannel;
-                        if (peerChannel != null)
-                        {
-                            channel = InMemoryCacheService.Current.GetChannel((string)data);
-                            if (channel != null && channel.HasAccessHash)
-                            {
-                                service.NavigateToDialog(channel);
-                                return;
-                            }
-                        }
-
-                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
-                    }
-                    else
-                    {
-                        // TODO
-                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
-                    }
-                }
+                NavigateToUsername(MTProtoService.Current, (string)data, null, null, null);
             }
             else if (type == TLType.MessageEntityHashtag)
             {
@@ -1198,6 +1153,11 @@ namespace Unigram.Common
 
         public static async void NavigateToUsername(IMTProtoService protoService, string username, string accessToken, string post, string game)
         {
+            if (username.StartsWith("@"))
+            {
+                username = username.Substring(1);
+            }
+
             var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
             if (service != null && protoService != null)
             {

@@ -223,16 +223,23 @@ namespace Unigram.Controls.Views
             if (animation != null)
             {
                 Layer.Visibility = Visibility.Visible;
-                //Flip.Opacity = 1;
-                animation.TryStart(Surface);
-                animation.Completed += (s, args) =>
-                {
-                    TopBar.Visibility = Visibility.Visible;
-                    BotBar.Visibility = Visibility.Visible;
+                TopBar.Visibility = Visibility.Visible;
+                BotBar.Visibility = Visibility.Visible;
 
+                //Flip.Opacity = 1;
+                if (animation.TryStart(Surface))
+                {
+                    animation.Completed += (s, args) =>
+                    {
+                        //Flip.Opacity = 1;
+                        //Surface.Visibility = Visibility.Collapsed;
+                    };
+                }
+                else
+                {
                     //Flip.Opacity = 1;
                     //Surface.Visibility = Visibility.Collapsed;
-                };
+                }
             }
         }
 
