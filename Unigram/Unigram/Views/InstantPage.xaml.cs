@@ -1047,14 +1047,7 @@ namespace Unigram.Views
                 ViewModel.Gallery.SelectedItem = item;
                 ViewModel.Gallery.FirstItem = item;
 
-                await GalleryView.Current.ShowAsync(ViewModel.Gallery, (s, args) =>
-                {
-                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                    if (animation != null)
-                    {
-                        animation.TryStart(image);
-                    }
-                });
+                await GalleryView.Current.ShowAsync(ViewModel.Gallery, () => image);
             }
         }
 

@@ -30,6 +30,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Views.SignIn;
+using Telegram.Api.Aggregator;
 
 namespace Unigram.Common
 {
@@ -870,6 +871,7 @@ namespace Unigram.Common
             {
                 //await UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchAsync((string)data);
                 UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
+                UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Publish("Search");
             }
             else if (type == TLType.MessageEntityBotCommand)
             {

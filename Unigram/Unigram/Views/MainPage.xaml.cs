@@ -96,6 +96,13 @@ namespace Unigram.Views
                     Navigate(DialogsListView.SelectedItem);
                 }
             }
+            else if (message.Equals("Search"))
+            {
+                if (MasterDetail.CurrentState == MasterDetailState.Narrow && MasterDetail.NavigationService.CanGoBack)
+                {
+                    MasterDetail.NavigationService.GoBack();
+                }
+            }
         }
 
         //private async void OnThemeChanged(DependencyObject sender, DependencyProperty dp)
@@ -269,6 +276,15 @@ namespace Unigram.Views
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
+            if (e.SourcePageType == typeof(BlankPage))
+            {
+                Grid.SetRow(Separator, 0);
+            }
+            else
+            {
+                Grid.SetRow(Separator, 1);
+            }
+
             if (e.SourcePageType == typeof(DialogPage))
             {
                 var parameter = MasterDetail.NavigationService.SerializationService.Deserialize((string)e.Parameter);

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache.EventArgs;
+using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Converters;
@@ -23,6 +24,9 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateUserStatus>,
         IHandle<TLUpdateDraftMessage>,
         IHandle<MessagesRemovedEventArgs>,
+        IHandle<DialogRemovedEventArgs>,
+        IHandle<UpdateCompletedEventArgs>,
+        IHandle<ChannelUpdateCompletedEventArgs>,
         IHandle<string>
     {
         public async void Handle(string message)
@@ -87,6 +91,39 @@ namespace Unigram.ViewModels
                     {
                         SetText(null);
                     }
+                });
+            }
+        }
+
+        public void Handle(ChannelUpdateCompletedEventArgs args)
+        {
+            if (With is TLChannel channel && channel.Id == args.ChannelId)
+            {
+                Handle(new UpdateCompletedEventArgs());
+            }
+        }
+
+        public void Handle(UpdateCompletedEventArgs args)
+        {
+            Execute.BeginOnUIThread(async () =>
+            {
+                Messages.Clear();
+
+                var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
+                var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
+                await LoadFirstSliceAsync(maxId, offset);
+            });
+        }
+
+        public void Handle(DialogRemovedEventArgs args)
+        {
+            if (With == args.Dialog.With)
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    Messages.Clear();
+                    SelectedMessages.Clear();
+                    SelectionMode = Windows.UI.Xaml.Controls.ListViewSelectionMode.None;
                 });
             }
         }

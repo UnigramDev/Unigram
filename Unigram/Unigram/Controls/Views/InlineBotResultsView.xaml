@@ -163,9 +163,27 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="AudioTemplate" x:DataType="tl:TLBotInlineMediaResult">
+            <Grid Margin="8,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
+                    <controls:TransferButton Transferable="{x:Bind Document}" IsTransferring="{x:Bind Document.IsTransferring, Mode=OneWay}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+                    <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{x:Bind Document.Progress, Mode=OneWay}" IsHitTestVisible="False"/>
+                </Grid>
+                <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
+                    <TextBlock Text="{x:Bind Title}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind Description}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
 
         <selectors:InlineBotResultTemplateSelector
             x:Key="InlineBotResultTemplateSelector"
+            AudioTemplate="{StaticResource AudioTemplate}"
+            AudioMediaTemplate="{StaticResource AudioTemplate}"
             ResultTemplate="{StaticResource ResultTemplate}"
             GameMediaTemplate="{StaticResource GameMediaTemplate}"
             PhotoTemplate="{StaticResource PhotoTemplate}"

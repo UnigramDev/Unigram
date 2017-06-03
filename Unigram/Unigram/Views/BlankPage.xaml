@@ -16,11 +16,10 @@
     </Page.Transitions>
 
     <Grid>
-        <Border BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" BorderThickness="1,1,0,0" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="48" Margin="-1,0,0,0"/>
-
         <Border Background="#7f89a0b4" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,5,12,6" Margin="12" RenderTransformOrigin="0.5,0.5">
             <TextBlock x:Name="EmptyLabel" Text="Please select a chat to start messaging" Foreground="White" Style="{ThemeResource BodyTextBlockStyle}"/>
         </Border>
+        
+        <Border BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" BorderThickness="1,1,0,0" IsHitTestVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="48" Margin="-1,0,0,0"/>
     </Grid>
-
 </Page>

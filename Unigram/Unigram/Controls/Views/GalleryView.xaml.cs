@@ -33,6 +33,7 @@ using LinqToVisualTree;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Microsoft.Graphics.Canvas.Effects;
+using Windows.UI.ViewManagement;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -43,6 +44,8 @@ namespace Unigram.Controls.Views
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
         public BindConvert Convert => BindConvert.Current;
+
+        private Func<FrameworkElement> _closing;
 
         private MediaPlayerElement _mediaPlayer;
         private MediaPlayerSurface _mediaSurface;
@@ -139,19 +142,21 @@ namespace Unigram.Controls.Views
             }
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter, EventHandler closing)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing)
         {
-            EventHandler handler = null;
-            handler = new EventHandler((s, args) =>
-            {
-                DataContext = null;
-                Bindings.StopTracking();
+            _closing = closing;
 
-                Closing -= handler;
-                closing?.Invoke(this, args);
-            });
+            //EventHandler handler = null;
+            //handler = new EventHandler((s, args) =>
+            //{
+            //    DataContext = null;
+            //    Bindings.StopTracking();
 
-            Closing += handler;
+            //    Closing -= handler;
+            //    closing?.Invoke(this, args);
+            //});
+
+            //Closing += handler;
             return ShowAsync(parameter);
         }
 
@@ -171,6 +176,22 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
+        protected override void MaskTitleAndStatusBar()
+        {
+            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
+            titlebar.BackgroundColor = Colors.Black;
+            titlebar.ForegroundColor = Colors.White;
+            titlebar.ButtonBackgroundColor = Colors.Black;
+            titlebar.ButtonForegroundColor = Colors.White;
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                var statusBar = StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = Colors.Black;
+                statusBar.ForegroundColor = Colors.White;
+            }
+        }
+
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             Dispose();
@@ -181,7 +202,7 @@ namespace Unigram.Controls.Views
                 Surface.Visibility = Visibility.Visible;
 
                 var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
-                if (animation != null)
+                if (animation != null && _closing != null)
                 {
                     Prepare();
 
@@ -189,10 +210,27 @@ namespace Unigram.Controls.Views
                     TopBar.Visibility = Visibility.Collapsed;
                     BotBar.Visibility = Visibility.Collapsed;
 
-                    animation.Completed += (s, args) =>
+                    if (animation.TryStart(_closing()))
                     {
+                        animation.Completed += (s, args) =>
+                        {
+                            Hide();
+
+                            DataContext = null;
+                            Bindings.StopTracking();
+                        };
+                    }
+                    else
+                    {
+                        Layer.Visibility = Visibility.Collapsed;
+                        TopBar.Visibility = Visibility.Collapsed;
+                        BotBar.Visibility = Visibility.Collapsed;
+
                         Hide();
-                    };
+
+                        DataContext = null;
+                        Bindings.StopTracking();
+                    }
                 }
                 else
                 {
@@ -202,6 +240,9 @@ namespace Unigram.Controls.Views
                     BotBar.Visibility = Visibility.Collapsed;
 
                     Hide();
+
+                    DataContext = null;
+                    Bindings.StopTracking();
                 }
             }
             else
@@ -212,6 +253,9 @@ namespace Unigram.Controls.Views
                 BotBar.Visibility = Visibility.Collapsed;
 
                 Hide();
+
+                DataContext = null;
+                Bindings.StopTracking();
             }
 
             e.Handled = true;

@@ -74,6 +74,9 @@
                                 <ColumnDefinition x:Name="MasterColumn"/>
                                 <ColumnDefinition x:Name="DetailColumn" Width="0"/>
                             </Grid.ColumnDefinitions>
+                            <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}">
+                                <controls:DialogBackground/>
+                            </Grid>
                             <ContentPresenter x:Name="MasterFrame"
                                               Content="{TemplateBinding Content}"
                                               ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -81,9 +84,6 @@
                                               ContentTransitions="{TemplateBinding ContentTransitions}"
                                               HorizontalContentAlignment="Stretch"
                                               VerticalContentAlignment="Stretch"/>
-                            <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}" d:IsHidden="True">
-                                <controls:DialogBackground/>
-                            </Grid>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -489,7 +489,7 @@
                 </PivotItem>
             </Pivot>
 
-            <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.Row="1"/>
+            <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="2" Grid.Row="1"/>
         </Grid>
     </controls:MasterDetailView>
 </Page>

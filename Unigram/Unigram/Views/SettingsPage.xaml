@@ -19,7 +19,7 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel>
+            <StackPanel Padding="0,0,0,24">
                 <Grid Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

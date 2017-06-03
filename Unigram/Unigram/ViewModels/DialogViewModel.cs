@@ -101,11 +101,48 @@ namespace Unigram.ViewModels
 
             Messages = new MessageCollection();
             Messages.CollectionChanged += (s, args) => IsEmpty = Messages.Count == 0;
+
+            Aggregator.Subscribe(this);
+        }
+
+        ~DialogViewModel()
+        {
+            Debug.WriteLine("Finalizing DialogViewModel");
+            Aggregator.Unsubscribe(this);
+
+            //if (Messages != null)
+            //{
+            //    Messages.Clear();
+            //    Messages = null;
+            //}
+            //if (BotCommands != null)
+            //{
+            //    BotCommands.Clear();
+            //    BotCommands = null;
+            //}
+            //if (UnfilteredBotCommands != null)
+            //{
+            //    UnfilteredBotCommands.Clear();
+            //    UnfilteredBotCommands = null;
+            //}
+            //if (UsernameHints != null)
+            //{
+            //    UsernameHints.Clear();
+            //    UsernameHints = null;
+            //}
+            //if (StickerPack != null)
+            //{
+            //    StickerPack.Clear();
+            //    StickerPack = null;
+            //}
+            //if (SelectedMessages != null)
+            //{
+            //    SelectedMessages.Clear();
+            //    SelectedMessages = null;
+            //}
         }
 
         public DialogStickersViewModel Stickers { get { return _stickers; } }
-
-
 
         private TLDialog _currentDialog;
         public TLDialog Dialog
@@ -466,11 +503,11 @@ namespace Unigram.ViewModels
                 if (response.Result.Messages.Count < limit)
                 {
                     IsFirstSliceLoaded = true;
+                    UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
                 }
             }
 
             _isLoadingPreviousSlice = false;
-            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
         }
 
         public RelayCommand PreviousSliceCommand => new RelayCommand(PreviousSliceExecute);
@@ -510,15 +547,15 @@ namespace Unigram.ViewModels
             var offset = -50;
             var limit = 50;
 
-            var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
-            if (result.IsSucceeded)
+            var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
+            if (response.IsSucceeded)
             {
-                ProcessReplies(result.Result.Messages);
+                ProcessReplies(response.Result.Messages);
 
                 //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
-                for (int i = result.Result.Messages.Count - 1; i >= 0; i--)
+                for (int i = response.Result.Messages.Count - 1; i >= 0; i--)
                 {
-                    var item = result.Result.Messages[i];
+                    var item = response.Result.Messages[i];
                     if (item is TLMessageService serviceMessage && serviceMessage.Action is TLMessageActionHistoryClear)
                     {
                         continue;
@@ -537,7 +574,11 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                IsFirstSliceLoaded = result.Result.Messages.Count < limit;
+                if (response.Result.Messages.Count < limit)
+                {
+                    IsFirstSliceLoaded = true;
+                    UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+                }
             }
 
             _isLoadingNextSlice = false;
@@ -782,7 +823,7 @@ namespace Unigram.ViewModels
             With = participant;
             Dialog = CacheService.GetDialog(Peer.ToPeer());
 
-            Aggregator.Subscribe(this);
+            //Aggregator.Subscribe(this);
 
             if (messageId.HasValue)
             {
@@ -794,6 +835,16 @@ namespace Unigram.ViewModels
                 var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
 
                 LoadFirstSliceAsync(maxId, offset);
+            }
+
+            var dialog = _currentDialog;
+            if (dialog != null && dialog.HasDraft)
+            {
+                if (dialog.Draft is TLDraftMessage draft)
+                {
+                    SetText(draft.Message, draft.Entities);
+                    ProcessDraftReply(draft);
+                }
             }
 
             if (participant is TLUser user)
@@ -942,16 +993,6 @@ namespace Unigram.ViewModels
                 Peer = new TLInputPeerChat { ChatId = forbiddenChat.Id };
             }
 
-            var dialog = _currentDialog;
-            if (dialog != null && dialog.HasDraft)
-            {
-                if (dialog.Draft is TLDraftMessage draft)
-                {
-                    SetText(draft.Message, draft.Entities);
-                    ProcessDraftReply(draft);
-                }
-            }
-
             var settings = await ProtoService.GetPeerSettingsAsync(Peer);
             if (settings.IsSucceeded)
             {
@@ -1063,11 +1104,12 @@ namespace Unigram.ViewModels
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
-            SaveDraft();
+            if (_editedMessage == null)
+            {
+                SaveDraft();
+            }
 
-            //var file = await KnownFolders.SavedPictures.CreateFileAsync("TEST.TXT", CreationCollisionOption.GenerateUniqueName);
-            //await FileIO.WriteTextAsync(file, DateTime.Now.ToString());
-            Aggregator.Unsubscribe(this);
+            //Aggregator.Unsubscribe(this);
             return Task.CompletedTask;
         }
 
@@ -1999,6 +2041,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            // TODO: edit to send it automatically
             NavigationService.NavigateToDialog(_currentInlineBot, accessToken: switchPM.StartParam);
         }
 

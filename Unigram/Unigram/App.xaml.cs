@@ -135,19 +135,19 @@ namespace Unigram
 
             if (active)
             {
-                Locator.LoadStateAndUpdate();
+                //Locator.LoadStateAndUpdate();
 
                 var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
                 protoService.UpdateStatusAsync(false, null);
             }
             else
             {
-                var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-                cacheService.TryCommit();
+                //var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
+                //cacheService.TryCommit();
 
-                var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-                updatesService.SaveState();
-                updatesService.CancelUpdating();
+                //var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
+                //updatesService.SaveState();
+                //updatesService.CancelUpdating();
 
                 var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
                 protoService.UpdateStatusAsync(true, null);

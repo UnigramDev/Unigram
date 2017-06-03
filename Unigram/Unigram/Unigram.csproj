@@ -188,7 +188,9 @@
     <Compile Include="Converters\ChannelJoinedToVisibilityConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
     <Compile Include="Converters\ChannelTypeToStringConverter.cs" />
+    <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
+    <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
     <Compile Include="Selectors\GalleryTemplateSelector.cs" />
@@ -308,6 +310,15 @@
     <Compile Include="Views\Settings\SettingsGeneralPage.xaml.cs">
       <DependentUpon>SettingsGeneralPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsPrivacyChatInvitePage.xaml.cs">
+      <DependentUpon>SettingsPrivacyChatInvitePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsPrivacyPhoneCallPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyPhoneCallPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsPrivacyStatusTimestampPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyStatusTimestampPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
       <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
     </Compile>
@@ -322,9 +333,6 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsBlockUserPage.xaml.cs">
       <DependentUpon>SettingsBlockUserPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\SettingsLastSeenPage.xaml.cs">
-      <DependentUpon>SettingsLastSeenPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsMasksArchivedPage.xaml.cs">
       <DependentUpon>SettingsMasksArchivedPage.xaml</DependentUpon>
@@ -1355,6 +1363,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\SettingsPrivacyChatInvitePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsPrivacyPhoneCallPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsPrivacyStatusTimestampPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\SettingsStatsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1416,10 +1436,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsStickersFeaturedPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\SettingsLastSeenPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

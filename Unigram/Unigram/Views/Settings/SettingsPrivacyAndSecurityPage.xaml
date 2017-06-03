@@ -39,20 +39,17 @@
                         Content="Blocked Users"
                         Click="BlockedUsers_Click"/>
                     <controls:BadgeButton
-                        IsEnabled="False"
                         Content="Last Seen"
                         Badge="{x:Bind ViewModel.StatusTimestampRules.Badge, Mode=OneWay}"
-                        Click="Sessions_Click"/>
+                        Click="StatusTimestamp_Click"/>
                     <controls:BadgeButton
-                        IsEnabled="False"
                         Content="Calls"
                         Badge="{x:Bind ViewModel.PhoneCallRules.Badge, Mode=OneWay}"
-                        Click="Sessions_Click"/>
+                        Click="PhoneCall_Click"/>
                     <controls:BadgeButton
-                        IsEnabled="False"
                         Content="Groups"
                         Badge="{x:Bind ViewModel.ChatInviteRules.Badge, Mode=OneWay}"
-                        Click="Sessions_Click"
+                        Click="ChatInvite_Click"
                         Margin="-12,0,-12,-12"
                         BorderBrush="Transparent"/>
                 </StackPanel>

@@ -54,11 +54,15 @@ namespace Unigram.Controls
 
             if (CurrentState == MasterDetailState.Narrow && DetailFrame.CurrentSourcePageType == BlankPageType)
             {
-                DetailPresenter.Visibility = Visibility.Collapsed;
+                MasterPresenter.Visibility = Visibility.Visible;
+            }
+            else if (CurrentState == MasterDetailState.Filled)
+            {
+                MasterPresenter.Visibility = Visibility.Visible;
             }
             else
             {
-                DetailPresenter.Visibility = Visibility.Visible;
+                MasterPresenter.Visibility = Visibility.Collapsed;
             }
 
             if (CurrentState != MasterDetailState.Narrow && ViewStateChanged != null)
@@ -164,11 +168,15 @@ namespace Unigram.Controls
 
             if (CurrentState == MasterDetailState.Narrow && e.SourcePageType == BlankPageType)
             {
-                DetailPresenter.Visibility = Visibility.Collapsed;
+                MasterPresenter.Visibility = Visibility.Visible;
+            }
+            else if (CurrentState == MasterDetailState.Filled)
+            {
+                MasterPresenter.Visibility = Visibility.Visible;
             }
             else
             {
-                DetailPresenter.Visibility = Visibility.Visible;
+                MasterPresenter.Visibility = Visibility.Collapsed;
             }
 
             if (CurrentState == MasterDetailState.Narrow)
@@ -326,11 +334,15 @@ namespace Unigram.Controls
 
             if (CurrentState == MasterDetailState.Narrow && BlankPageType == DetailFrame?.CurrentSourcePageType)
             {
-                DetailPresenter.Visibility = Visibility.Collapsed;
+                MasterPresenter.Visibility = Visibility.Visible;
+            }
+            else if (CurrentState == MasterDetailState.Filled)
+            {
+                MasterPresenter.Visibility = Visibility.Visible;
             }
             else
             {
-                DetailPresenter.Visibility = Visibility.Visible;
+                MasterPresenter.Visibility = Visibility.Collapsed;
             }
         }
 

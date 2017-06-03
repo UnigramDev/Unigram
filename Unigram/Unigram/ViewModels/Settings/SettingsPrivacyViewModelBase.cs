@@ -8,6 +8,8 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Common;
+using Unigram.Strings;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -41,10 +43,10 @@ namespace Unigram.ViewModels.Settings
 
         private void UpdatePrivacy(TLAccountPrivacyRules rules)
         {
-            TLPrivacyRuleBase primary = null;
             var badge = string.Empty;
-            var disallowed = 0;
-            var allowed = 0;
+            TLPrivacyRuleBase primary = null;
+            TLPrivacyValueDisallowUsers disallowed = null;
+            TLPrivacyValueAllowUsers allowed = null;
             foreach (TLPrivacyRuleBase current in rules.Rules)
             {
                 if (current is TLPrivacyValueAllowAll)
@@ -64,11 +66,11 @@ namespace Unigram.ViewModels.Settings
                 }
                 else if (current is TLPrivacyValueDisallowUsers disallowUsers)
                 {
-                    disallowed += disallowUsers.Users.Count;
+                    disallowed = disallowUsers;
                 }
                 else if (current is TLPrivacyValueAllowUsers allowUsers)
                 {
-                    allowed += allowUsers.Users.Count;
+                    allowed = allowUsers;
                 }
             }
 
@@ -79,23 +81,27 @@ namespace Unigram.ViewModels.Settings
             }
 
             var list = new List<string>();
-            if (disallowed > 0)
+            if (disallowed != null)
             {
-                list.Add("-" + disallowed);
+                list.Add("-" + disallowed.Users.Count);
             }
-            if (allowed > 0)
+            if (allowed != null)
             {
-                list.Add("+" + allowed);
+                list.Add("+" + allowed.Users.Count);
             }
 
             if (list.Count > 0)
             {
-                badge += string.Format(" ({0})", string.Join(", ", list));
+                badge = string.Format("{0} ({1})", badge, string.Join(", ", list));
             }
 
             Execute.BeginOnUIThread(() =>
             {
                 Badge = badge;
+
+                SelectedItem = primary.TypeId;
+                Allowed = allowed ?? new TLPrivacyValueAllowUsers { Users = new TLVector<int>() };
+                Disallowed = disallowed ?? new TLPrivacyValueDisallowUsers { Users = new TLVector<int>() };
             });
 
         }
@@ -110,6 +116,45 @@ namespace Unigram.ViewModels.Settings
             set
             {
                 Set(ref _badge, value);
+            }
+        }
+
+        private TLType _selectedItem;
+        public TLType SelectedItem
+        {
+            get
+            {
+                return _selectedItem;
+            }
+            set
+            {
+                Set(ref _selectedItem, value);
+            }
+        }
+
+        private TLPrivacyValueAllowUsers _allowed;
+        public TLPrivacyValueAllowUsers Allowed
+        {
+            get
+            {
+                return _allowed;
+            }
+            set
+            {
+                Set(ref _allowed, value);
+            }
+        }
+
+        private TLPrivacyValueDisallowUsers _disallowed;
+        public TLPrivacyValueDisallowUsers Disallowed
+        {
+            get
+            {
+                return _disallowed;
+            }
+            set
+            {
+                Set(ref _disallowed, value);
             }
         }
     }

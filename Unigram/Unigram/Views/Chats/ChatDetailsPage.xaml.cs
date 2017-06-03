@@ -45,14 +45,7 @@ namespace Unigram.Views.Chats
             if (chat.Photo is TLChatPhoto photo && chatFull != null && chatFull.ChatPhoto is TLPhoto)
             {
                 var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, chatFull, chat);
-                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
-                {
-                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                    if (animation != null)
-                    {
-                        animation.TryStart(Picture);
-                    }
-                });
+                await GalleryView.Current.ShowAsync(viewModel, () => Picture);
             }
         }
 
