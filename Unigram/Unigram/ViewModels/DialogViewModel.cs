@@ -579,7 +579,6 @@ namespace Unigram.ViewModels
                 if (response.Result.Messages.Count < limit)
                 {
                     IsFirstSliceLoaded = true;
-                    UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
                 }
             }
 

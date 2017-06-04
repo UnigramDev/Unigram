@@ -140,7 +140,7 @@ namespace Unigram.ViewModels
                         {
                             ClearReplyCommand.Execute();
                         }
-                        else if (ReplyInfo.ReplyToMsgId == message.Id)
+                        else if (ReplyInfo != null && ReplyInfo.ReplyToMsgId == message.Id)
                         {
                             ClearReplyCommand.Execute();
                         }

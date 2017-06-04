@@ -1025,7 +1025,7 @@
                     </selectors:MessageStyleSelector>
                 </ListView.ItemContainerStyleSelector>
                 <ListView.Header>
-                    <Grid>
+                    <Grid Padding="0,48,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition/>
                             <RowDefinition Height="Auto"/>

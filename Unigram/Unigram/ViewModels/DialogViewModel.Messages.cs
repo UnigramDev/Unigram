@@ -208,7 +208,7 @@ namespace Unigram.ViewModels
                     {
                         ClearReplyCommand.Execute();
                     }
-                    else if (ReplyInfo.ReplyToMsgId == messages[j].Id)
+                    else if (ReplyInfo != null && ReplyInfo.ReplyToMsgId == messages[j].Id)
                     {
                         ClearReplyCommand.Execute();
                     }
