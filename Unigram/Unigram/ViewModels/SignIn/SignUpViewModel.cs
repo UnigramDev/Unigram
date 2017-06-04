@@ -105,7 +105,7 @@ namespace Unigram.ViewModels.SignIn
                 }
                 else
                 {
-                    await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
                 }
             }
         }

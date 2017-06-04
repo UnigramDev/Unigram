@@ -170,7 +170,7 @@ namespace Unigram.Common
 
                         if (message.HasViews)
                         {
-                            placeholder = "VIEWS" + (message.Views ?? 0) + placeholder;
+                            placeholder = "WS" + (message.Views ?? 0) + placeholder;
 
                             if (message.HasFromId && message.From != null)
                             {
@@ -1252,12 +1252,12 @@ namespace Unigram.Common
                             return;
                         }
 
-                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
+                        await new TLMessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
                     else
                     {
                         // TODO
-                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
+                        await new TLMessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
 
                     //mtProtoService.ResolveUsernameAsync(new TLString(username), delegate (TLResolvedPeer result)

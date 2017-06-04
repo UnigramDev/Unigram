@@ -43,6 +43,7 @@ using Template10.Controls;
 using Windows.Foundation;
 using Windows.ApplicationModel.Contacts;
 using Telegram.Api.Aggregator;
+using Unigram.Controls;
 
 namespace Unigram
 {
@@ -94,7 +95,7 @@ namespace Unigram
 
                 try
                 {
-                    await new MessageDialog(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
+                    await new TLMessageDialog(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
                 }
                 catch { }
             };

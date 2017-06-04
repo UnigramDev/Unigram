@@ -159,7 +159,7 @@ namespace Unigram.ViewModels.SignIn
                 else if (response.Error != null)
                 {
                     IsLoading = false;
-                    await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
                 }
             }
             else
@@ -194,7 +194,7 @@ namespace Unigram.ViewModels.SignIn
                 else if (response.Error != null)
                 {
                     IsLoading = false;
-                    await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
                 }
             }
         }

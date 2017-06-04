@@ -944,14 +944,12 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var dialog = new MessageDialog(urlButton.Url, "Open this link?");
-                        dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
-                        dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
-                        dialog.DefaultCommandIndex = 0;
-                        dialog.CancelCommandIndex = 1;
+                        var dialog = new TLMessageDialog(urlButton.Url, "Open this link?");
+                        dialog.PrimaryButtonText = "OK";
+                        dialog.SecondaryButtonText = "Cancel";
 
                         var result = await dialog.ShowQueuedAsync();
-                        if (result == null || (int)result?.Id == 1)
+                        if (result != ContentDialogResult.Primary)
                         {
                             return;
                         }
@@ -969,12 +967,12 @@ namespace Unigram.ViewModels
                     {
                         if (response.Result.IsAlert)
                         {
-                            await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                            await new TLMessageDialog(response.Result.Message).ShowQueuedAsync();
                         }
                         else
                         {
                             // TODO:
-                            await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                            await new TLMessageDialog(response.Result.Message).ShowQueuedAsync();
                         }
                     }
                     else if (response.Result.HasUrl && response.Result.IsHasUrl /* ??? */)
@@ -993,14 +991,12 @@ namespace Unigram.ViewModels
                             }
                             else
                             {
-                                var dialog = new MessageDialog(response.Result.Url, "Open this link?");
-                                dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
-                                dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
-                                dialog.DefaultCommandIndex = 0;
-                                dialog.CancelCommandIndex = 1;
+                                var dialog = new TLMessageDialog(response.Result.Url, "Open this link?");
+                                dialog.PrimaryButtonText = "OK";
+                                dialog.SecondaryButtonText = "Cancel";
 
                                 var result = await dialog.ShowQueuedAsync();
-                                if (result == null || (int)result?.Id == 1)
+                                if (result != ContentDialogResult.Primary)
                                 {
                                     return;
                                 }

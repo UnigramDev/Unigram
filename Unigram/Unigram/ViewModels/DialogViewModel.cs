@@ -1366,7 +1366,7 @@ namespace Unigram.ViewModels
         {
             if (Peer == null)
             {
-                await new MessageDialog("Something went wrong. Close the chat and open it again.").ShowQueuedAsync();
+                await new TLMessageDialog("Something went wrong. Close the chat and open it again.").ShowQueuedAsync();
                 return;
             }
 
