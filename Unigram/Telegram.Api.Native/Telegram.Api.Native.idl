@@ -490,6 +490,8 @@ namespace Telegram
 			[version(API_VERSION)]
 			interface IConnectionManager : IInspectable
 			{
+				[eventadd] HRESULT SessionCreated([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler, [out][retval] EventRegistrationToken* token);
+				[eventremove] HRESULT SessionCreated([in] EventRegistrationToken token);
 				[eventadd] HRESULT CurrentNetworkTypeChanged([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler,[out][retval] EventRegistrationToken* token);
 				[eventremove] HRESULT CurrentNetworkTypeChanged([in] EventRegistrationToken token);
 				[eventadd] HRESULT ConnectionStateChanged([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler,[out][retval] EventRegistrationToken* token);
@@ -498,6 +500,7 @@ namespace Telegram
 				[eventremove] HRESULT UnprocessedMessageReceived([in] EventRegistrationToken token);
 				[propget] HRESULT ConnectionState([out][retval] ConnectionState* value);
 				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
+				[propget] HRESULT CurrentDatacenter([out][retval] Datacenter** value);
 				[propget] HRESULT IsIpv6Enabled([out][retval] boolean* value);
 				[propget] HRESULT IsNetworkAvailable([out][retval] boolean* value);
 				[propget] HRESULT UserConfiguration([out][retval] IUserConfiguration** value);

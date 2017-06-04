@@ -10,6 +10,7 @@
 
 #define DOWNLOAD_CONNECTIONS_COUNT 2
 #define UPLOAD_CONNECTIONS_COUNT 2
+#define DATACENTER_UPDATE_TIME 60 * 60
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -17,6 +18,29 @@ using ABI::Telegram::Api::Native::IDatacenter;
 using ABI::Windows::Foundation::IClosable;
 using ABI::Telegram::Api::Native::ConnectionType;
 using ABI::Telegram::Api::Native::TL::ITLObject;
+
+namespace Telegram
+{
+	namespace Api
+	{
+		namespace Native
+		{
+
+			enum class DatacenterFlag
+			{
+				None = 0,
+				ConnectionInitialized = 1,
+				Authorized = 2,
+				ExportingAuthorization = 4,
+				RequestingSalt = 8
+			};
+
+		}
+	}
+}
+
+DEFINE_ENUM_FLAG_OPERATORS(Telegram::Api::Native::DatacenterFlag);
+
 
 namespace Telegram
 {
@@ -96,6 +120,26 @@ namespace Telegram
 					return m_authenticationContext != nullptr && m_authenticationContext->GetState() == AuthenticationState::Completed;
 				}
 
+				inline boolean IsConnectionInitialized()
+				{
+					return (m_flags & DatacenterFlag::ConnectionInitialized) == DatacenterFlag::ConnectionInitialized;
+				}
+
+				inline boolean IsAuthorized()
+				{
+					return (m_flags & DatacenterFlag::Authorized) == DatacenterFlag::Authorized;
+				}
+
+				inline boolean IsExportingAuthorization()
+				{
+					return (m_flags & DatacenterFlag::ExportingAuthorization) == DatacenterFlag::ExportingAuthorization;
+				}
+
+				inline boolean IsRequestingSalt()
+				{
+					return (m_flags & DatacenterFlag::RequestingSalt) == DatacenterFlag::RequestingSalt;
+				}
+
 			private:
 				enum class AuthenticationState
 				{
@@ -142,6 +186,7 @@ namespace Telegram
 				IFACEMETHODIMP Close();
 				HRESULT GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, _Out_ ServerEndpoint** endpoint);
 				boolean ContainsServerSalt(INT64 salt, size_t count);
+				HRESULT ExportAuthorization();
 				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
 
@@ -182,6 +227,7 @@ namespace Telegram
 				static HRESULT SendAckRequest(_In_ Connection* connection, INT64 messageId);
 
 				INT32 m_id;
+				DatacenterFlag m_flags;
 				std::unique_ptr<AuthenticationContext> m_authenticationContext;
 				std::vector<ServerEndpoint> m_ipv4Endpoints;
 				std::vector<ServerEndpoint> m_ipv4DownloadEndpoints;

@@ -48,18 +48,21 @@ namespace Telegram
 
 				class TLBinaryReader;
 				class TLBinaryWriter;
+				class TLObject;
 				class TLNewSessionCreated;
 			}
 
 
 			class Datacenter;
 			class NativeBuffer;
+			struct MessageContext;
 
 			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection>,
 				public virtual EventObjectT<EventTraits::WaitTraits>, public ConnectionSession, public ConnectionSocket, public ConnectionCryptography
 			{
 				friend class Datacenter;
 				friend class ConnectionManager;
+				friend class TL::TLObject;
 				friend class TL::TLNewSessionCreated;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_Connection, BaseTrust);
@@ -97,9 +100,8 @@ namespace Telegram
 				HRESULT CreateMessagePacket(UINT32 messageLength, boolean reportAck, _Out_ TL::TLBinaryWriter** writer, _Out_ BYTE** messageBuffer);
 				HRESULT SendEncryptedMessage(_In_ ITLObject* object, boolean reportAck, _Outptr_opt_ INT32* quickAckId);
 				HRESULT SendUnencryptedMessage(_In_ ITLObject* object, boolean reportAck);
-
-				HRESULT HandleNewSessionCreatedResponse(_In_ TL::TLNewSessionCreated* response);
-
+				HRESULT HandleMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* response, _In_::Telegram::Api::Native::ConnectionManager* connectionManager);
+				HRESULT HandleNewSessionCreatedResponse(_In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_ TL::TLNewSessionCreated* response);
 				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) override;
 				virtual HRESULT OnSocketDisconnected(int wsaError) override;
@@ -112,6 +114,7 @@ namespace Telegram
 				ComPtr<Datacenter> m_datacenter;
 				ComPtr<Timer> m_reconnectionTimer;
 				ComPtr<NativeBuffer> m_partialPacketBuffer;
+
 				UINT32 m_failedConnectionCount;
 				UINT32 m_connectionAttemptCount;
 			};

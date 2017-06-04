@@ -25,7 +25,7 @@ HRESULT TLRpcDropAnswer::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
-TLAuthExportAuthorization::TLAuthExportAuthorization(UINT32 datacenterId) :
+TLAuthExportAuthorization::TLAuthExportAuthorization(INT32 datacenterId) :
 	m_datacenterId(datacenterId)
 {
 }

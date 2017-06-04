@@ -23,6 +23,7 @@ using namespace Telegram::Api::Native::TL;
 
 Datacenter::Datacenter(UINT32 id) :
 	m_id(id),
+	m_flags(DatacenterFlag::None),
 	m_currentIpv4EndpointIndex(0),
 	m_currentIpv4DownloadEndpointIndex(0),
 	m_currentIpv6EndpointIndex(0),
@@ -65,31 +66,36 @@ HRESULT Datacenter::get_ServerSalt(INT64* value)
 
 	INT32 maxOffset = -1;
 	INT64 salt = 0;
-	std::vector<size_t> saltsToRemove;
 	auto timeStamp = connectionManager->GetCurrentTime();
 
-	for (size_t i = 0; i < m_serverSalts.size(); i++)
+	std::vector<ServerSalt>::iterator serverSaltIterator = m_serverSalts.begin();
+	while (serverSaltIterator != m_serverSalts.end())
 	{
-		auto& serverSalt = m_serverSalts[i];
+		auto& serverSalt = *serverSaltIterator;
 
 		if (serverSalt.ValidUntil < timeStamp)
 		{
-			saltsToRemove.push_back(i);
+			serverSaltIterator = m_serverSalts.erase(serverSaltIterator);
 		}
-		else if (serverSalt.ValidSince <= timeStamp && serverSalt.ValidUntil > timeStamp)
+		else
 		{
-			auto currentOffset = std::abs(serverSalt.ValidUntil - timeStamp);
-			if (currentOffset > maxOffset)
+			if (serverSalt.ValidSince <= timeStamp && serverSalt.ValidUntil > timeStamp)
 			{
-				maxOffset = currentOffset;
-				salt = serverSalt.Salt;
+				auto currentOffset = std::abs(serverSalt.ValidUntil - timeStamp);
+				if (currentOffset > maxOffset)
+				{
+					maxOffset = currentOffset;
+					salt = serverSalt.Salt;
+				}
 			}
+
+			serverSaltIterator++;
 		}
 	}
 
-	for (size_t i = 0; i < saltsToRemove.size(); i++)
+	if (salt == 0)
 	{
-		m_serverSalts.erase(m_serverSalts.begin() + saltsToRemove[i]);
+		return S_FALSE;
 	}
 
 	*value = salt;
@@ -307,10 +313,8 @@ HRESULT Datacenter::MergeServerSalts(std::vector<ServerSalt> const& salts)
 	auto serverSaltCount = m_serverSalts.size();
 	auto timeStamp = connectionManager->GetCurrentTime();
 
-	for (size_t i = 0; i < salts.size(); i++)
+	for (auto& serverSalt : salts)
 	{
-		auto& serverSalt = salts[i];
-
 		if (serverSalt.ValidUntil > timeStamp && !ContainsServerSalt(serverSalt.Salt, serverSaltCount))
 		{
 			m_serverSalts.push_back(serverSalt);
@@ -616,6 +620,22 @@ HRESULT Datacenter::GetEndpointsForConnectionType(ConnectionType connectionType,
 	default:
 		return E_INVALIDARG;
 	}
+
+	return S_OK;
+}
+
+HRESULT Datacenter::ExportAuthorization()
+{
+	auto lock = LockCriticalSection();
+
+	if ((m_flags & DatacenterFlag::ExportingAuthorization) == DatacenterFlag::ExportingAuthorization)
+	{
+		return S_OK;
+	}
+
+	auto exportAuthorization = Make<Methods::TLAuthExportAuthorization>(m_id);
+
+	m_flags |= DatacenterFlag::ExportingAuthorization;
 
 	return S_OK;
 }

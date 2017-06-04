@@ -85,7 +85,7 @@ namespace Telegram
 						InspectableClass(Traits::RuntimeClassName, BaseTrust);
 
 					public:
-						TLAuthExportAuthorization(UINT32 datacenterId);
+						TLAuthExportAuthorization(INT32 datacenterId);
 						~TLAuthExportAuthorization();
 
 						//Internal methods

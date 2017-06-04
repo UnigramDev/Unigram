@@ -8,6 +8,7 @@
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "Request.h"
+#include "Connection.h"
 #include "Helpers\COMHelper.h"
 
 #define TLVECTOR_CONSTRUCTOR 0x1cb5c415
@@ -106,6 +107,8 @@ namespace Telegram
 					template<typename TLObjectTraits>
 					friend struct Details::TLObjectInitializer;
 					friend class TLObjectSerializerStatics;
+					friend class TLObjectWithQuery;
+					friend class TLUnparsedObject;
 
 				public:
 					//COM exported methods
@@ -118,16 +121,18 @@ namespace Telegram
 				protected:
 					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader)
 					{
-						//return E_NOTIMPL;
-
 						return S_OK;
 					}
 
 					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer)
 					{
-						//return E_NOTIMPL;
-
 						return S_OK;
+					}
+
+					inline static HRESULT HandleResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageObject,
+						_In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection)
+					{
+						return connection->HandleMessageResponse(messageContext, messageObject, connectionManager);
 					}
 
 				private:

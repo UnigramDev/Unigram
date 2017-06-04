@@ -6,6 +6,7 @@
 #include "TLBinaryWriter.h"
 #include "Request.h"
 #include "TLObject.h"
+#include "TLTypes.h"
 #include "ConnectionManager.h"
 
 #define CONNECTION_MAX_ATTEMPTS 5
@@ -317,15 +318,58 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* object, boolean reportAck)
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
 }
 
-HRESULT Connection::HandleNewSessionCreatedResponse(TL::TLNewSessionCreated* response)
+HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, ITLObject* messageObject, ConnectionManager* connectionManager)
 {
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLNewSessionCreated response handling");
+	if (messageContext->SequenceNumber % 2)
+	{
+		AddMessageToConfirm(messageContext->Id);
+	}
 
+	if (IsMessageIdProcessed(messageContext->Id))
+	{
+		return S_OK;
+	}
+
+	HRESULT result;
+	ComPtr<IMessageResponseHandler> responseHandler;
+	if (SUCCEEDED(messageObject->QueryInterface(IID_PPV_ARGS(&responseHandler))))
+	{
+		ReturnIfFailed(result, responseHandler->HandleResponse(messageContext, connectionManager, this));
+	}
+	else
+	{
+		ReturnIfFailed(result, connectionManager->HandleMessageResponse(messageContext, messageObject, this));
+	}
+
+	AddProcessedMessageId(messageContext->Id);
 	return S_OK;
+}
+
+HRESULT Connection::HandleNewSessionCreatedResponse(ConnectionManager* connectionManager, TLNewSessionCreated* response)
+{
+	if (IsSessionProcessed(response->GetUniqueId()))
+	{
+		return S_OK;
+	}
+
+	ServerSalt salt = {};
+	salt.ValidSince = connectionManager->GetCurrentTime();
+	salt.ValidUntil = salt.ValidSince + 30 * 60;
+	salt.Salt = response->GetServerSalt();
+
+	m_datacenter->AddServerSalt(salt);
+
+	AddProcessedSession(response->GetUniqueId());
+
+	return connectionManager->OnConnectionSessionCreated(this);
 }
 
 HRESULT Connection::OnSocketConnected()
 {
+	static UINT32 lastConnectionToken = 0;
+
+	m_token = InterlockedIncrement(&lastConnectionToken);
+
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connected event handling");
 
 	//HRESULT result;
@@ -494,15 +538,5 @@ HRESULT Connection::OnMessageReceived(ConnectionManager* connectionManager, TLBi
 		ReturnIfFailed(result, messageReader->ReadObjectAndConstructor(objectSize, &constructor, &messageObject));
 	}
 
-	ComPtr<IMessageResponseHandler> responseHandler;
-	if (SUCCEEDED(messageObject.As(&responseHandler)))
-	{
-		return responseHandler->HandleResponse(&messageContext, connectionManager, this);
-	}
-	else
-	{
-		return connectionManager->HandleUnprocessedResponse(&messageContext, messageObject.Get(), this);
-	}
-
-	return S_OK;
+	return HandleMessageResponse(&messageContext, messageObject.Get(), connectionManager);
 }

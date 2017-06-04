@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "TLObject.h"
-#include "Connection.h"
 #include "ConnectionManager.h"
 
 using namespace Telegram::Api::Native;
@@ -26,7 +25,7 @@ std::unordered_map<UINT32, ComPtr<ITLObjectConstructorDelegate>>& TLObject::GetO
 HRESULT TLObject::GetObjectConstructor(UINT32 constructor, ComPtr<ITLObjectConstructorDelegate>& delegate)
 {
 	auto& objectConstructors = GetObjectConstructors();
-	auto& objectConstructor = objectConstructors.find(constructor);
+	auto objectConstructor = objectConstructors.find(constructor);
 	if (objectConstructor == objectConstructors.end())
 	{
 		return E_INVALIDARG;
@@ -72,15 +71,7 @@ HRESULT TLObjectWithQuery::get_Query(ITLObject** value)
 
 HRESULT TLObjectWithQuery::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	ComPtr<IMessageResponseHandler> responseHandler;
-	if (SUCCEEDED(m_query.As(&responseHandler)))
-	{
-		return responseHandler->HandleResponse(messageContext, connectionManager, connection);
-	}
-	else
-	{
-		return connectionManager->HandleUnprocessedResponse(messageContext, m_query.Get(), connection);
-	}
+	return TLObject::HandleResponse(messageContext, m_query.Get(), connectionManager, connection);
 }
 
 
@@ -157,5 +148,5 @@ HRESULT TLUnparsedObject::Write(ITLBinaryWriter* writer)
 
 HRESULT TLUnparsedObject::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	return connectionManager->HandleUnprocessedResponse(messageContext, static_cast<ITLObject*>(this), connection);
+	return TLObject::HandleResponse(messageContext, this, connectionManager, connection);
 }

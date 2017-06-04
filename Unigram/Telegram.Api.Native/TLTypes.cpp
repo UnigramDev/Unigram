@@ -69,6 +69,26 @@ HRESULT TLError::RuntimeClassInitialize(INT32 code, HSTRING text)
 	return m_text.Set(text);
 }
 
+HRESULT TLError::RuntimeClassInitialize(HRESULT result)
+{
+	m_code = result;
+
+	WCHAR* text;
+	UINT32 length;
+	if ((length = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
+		result, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), reinterpret_cast<LPWSTR>(&text), 0, nullptr)) == 0)
+	{
+		m_text.Set(L"Unknown error");
+	}
+	else
+	{
+		m_text.Set(text, length);
+		LocalFree(text);
+	}
+
+	return S_OK;
+}
+
 HRESULT TLError::get_Code(UINT32* value)
 {
 	if (value == nullptr)
@@ -707,6 +727,13 @@ TLRpcResult::~TLRpcResult()
 {
 }
 
+HRESULT TLRpcResult::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+{
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLRpcResult response handling");
+
+	return S_OK;
+}
+
 HRESULT TLRpcResult::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
@@ -966,15 +993,7 @@ HRESULT TLGZipPacked::HandleResponse(MessageContext const* messageContext, Conne
 	ComPtr<ITLObject> query;
 	ReturnIfFailed(result, reader->ReadObjectAndConstructor(m_packedData->GetCapacity(), &constructor, &query));
 
-	ComPtr<IMessageResponseHandler> responseHandler;
-	if (SUCCEEDED(query.As(&responseHandler)))
-	{
-		return responseHandler->HandleResponse(messageContext, connectionManager, connection);
-	}
-	else
-	{
-		return connectionManager->HandleUnprocessedResponse(messageContext, query.Get(), connection);
-	}
+	return TLObject::HandleResponse(messageContext, query.Get(), connectionManager, connection);
 }
 
 HRESULT TLGZipPacked::ReadBody(ITLBinaryReaderEx* reader)
@@ -1000,6 +1019,11 @@ TLAuthExportedAuthorization::TLAuthExportedAuthorization() :
 
 TLAuthExportedAuthorization::~TLAuthExportedAuthorization()
 {
+}
+
+HRESULT TLAuthExportedAuthorization::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+{
+	return S_OK;
 }
 
 HRESULT TLAuthExportedAuthorization::ReadBody(ITLBinaryReaderEx* reader)
@@ -1030,7 +1054,7 @@ TLNewSessionCreated::~TLNewSessionCreated()
 
 HRESULT TLNewSessionCreated::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	return connection->HandleNewSessionCreatedResponse(this);
+	return connection->HandleNewSessionCreatedResponse(connectionManager, this);
 }
 
 HRESULT TLNewSessionCreated::ReadBody(ITLBinaryReaderEx* reader)
@@ -1219,7 +1243,7 @@ HRESULT TLResPQ::ReadBody(ITLBinaryReaderEx* reader)
 
 
 TLFutureSalts::TLFutureSalts() :
-	m_reqMessageId(0),
+	m_requestMessageId(0),
 	m_now(0)
 {
 }
@@ -1230,13 +1254,15 @@ TLFutureSalts::~TLFutureSalts()
 
 HRESULT TLFutureSalts::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	return connection->GetDatacenter()->HandleFutureSaltsResponse(this);
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLFutureSalts response handling");
+
+	return S_OK;
 }
 
 HRESULT TLFutureSalts::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
-	ReturnIfFailed(result, reader->ReadInt64(&m_reqMessageId));
+	ReturnIfFailed(result, reader->ReadInt64(&m_requestMessageId));
 	ReturnIfFailed(result, reader->ReadInt32(&m_now));
 
 	UINT32 count;

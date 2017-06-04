@@ -2,7 +2,10 @@
 #include <vector>
 #include <rpc.h>
 #include <rpcndr.h>
+#include "Telegram.Api.Native.h"
 #include "MultiThreadObject.h"
+
+using ABI::Telegram::Api::Native::TL::ITLObject;
 
 namespace Telegram
 {
@@ -17,9 +20,16 @@ namespace Telegram
 				ConnectionSession();
 				~ConnectionSession();
 
-				void RecreateSession();
-
 			protected:
+				HRESULT CreateConfirmationRequest(_Out_ ITLObject** request);
+				void RecreateSession();
+				UINT32 GenerateMessageSequenceNumber(boolean increment);
+				bool IsMessageIdProcessed(INT64 messageId);
+				void AddProcessedMessageId(INT64 messageId);
+				void AddMessageToConfirm(INT64 messageId);
+				bool IsSessionProcessed(INT64 sessionId);
+				void AddProcessedSession(INT64 sessionId);
+
 				inline INT64 GetSessionId()
 				{
 					return m_id;
@@ -32,15 +42,8 @@ namespace Telegram
 
 				inline boolean GetHasMessagesToConfirm() const
 				{
-					return !m_messagesIdsForConfirmation.empty();
+					return !m_messagesIdsToConfirm.empty();
 				}
-
-				UINT32 GenerateMessageSequenceNumber(boolean increment);
-				bool IsMessageIdProcessed(INT64 messageId);
-				void AddProcessedMessageId(INT64 messageId);
-				void AddMessageToConfirm(INT64 messageId);
-				bool IsSessionProcessed(INT64 sessionId);
-				void AddProcessedSession(INT64 sessionId);
 
 				static INT64 GenereateNewSessionId();
 
@@ -49,7 +52,7 @@ namespace Telegram
 				UINT32 m_nextMessageSequenceNumber;
 				INT64 m_minProcessedMessageId;
 				std::vector<INT64> m_processedMessageIds;
-				std::vector<INT64> m_messagesIdsForConfirmation;
+				std::vector<INT64> m_messagesIdsToConfirm;
 				std::vector<INT64> m_processedSessionChanges;
 			};
 

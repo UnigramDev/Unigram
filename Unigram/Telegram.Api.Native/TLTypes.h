@@ -117,6 +117,7 @@ namespace Telegram
 
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(INT32 code, _In_ HSTRING text);
+					STDMETHODIMP RuntimeClassInitialize(HRESULT result);
 
 					template<size_t sizeDest>
 					STDMETHODIMP RuntimeClassInitialize(INT32 code, _In_ const WCHAR(&text)[sizeDest])
@@ -514,6 +515,9 @@ namespace Telegram
 					TLRpcResult();
 					~TLRpcResult();
 
+					//COM exported methods
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+
 					//Internal methods
 					inline INT64 GetRequestMessageId() const
 					{
@@ -813,13 +817,16 @@ namespace Telegram
 					ComPtr<NativeBuffer> m_packedData;
 				};
 
-				class TLAuthExportedAuthorization WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLAuthExportedAuthorizationTraits>>
+				class TLAuthExportedAuthorization WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLAuthExportedAuthorizationTraits>, CloakedIid<IMessageResponseHandler>>
 				{
 					InspectableClass(Traits::RuntimeClassName, BaseTrust);
 
 				public:
 					TLAuthExportedAuthorization();
 					~TLAuthExportedAuthorization();
+
+					//COM exported methods
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					inline INT32 GetDatacenterId() const
@@ -1157,7 +1164,7 @@ namespace Telegram
 					std::vector<INT64> m_serverPublicKeyFingerprints;
 				};
 
-				class TLFutureSalts  WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLFutureSaltsTraits>, CloakedIid<IMessageResponseHandler>>
+				class TLFutureSalts WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLFutureSaltsTraits>, CloakedIid<IMessageResponseHandler>>
 				{
 					InspectableClass(Traits::RuntimeClassName, BaseTrust);
 
@@ -1169,9 +1176,9 @@ namespace Telegram
 					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
-					inline INT64 GetReqMessageId() const
+					inline INT64 GetRequestMessageId() const
 					{
-						return m_reqMessageId;
+						return m_requestMessageId;
 					}
 
 					inline INT32 GetNow() const
@@ -1188,7 +1195,7 @@ namespace Telegram
 					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
 
 				private:
-					INT64 m_reqMessageId;
+					INT64 m_requestMessageId;
 					INT32 m_now;
 					std::vector<ServerSalt> m_salts;
 				};

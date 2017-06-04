@@ -2,9 +2,11 @@
 #include <algorithm>
 #include <openssl/rand.h>
 #include "ConnectionSession.h"
+#include "TLTypes.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
+using namespace Telegram::Api::Native::TL;
 
 
 ConnectionSession::ConnectionSession() :
@@ -23,11 +25,28 @@ void ConnectionSession::RecreateSession()
 	auto lock = LockCriticalSection();
 
 	m_processedMessageIds.clear();
-	m_messagesIdsForConfirmation.clear();
+	m_messagesIdsToConfirm.clear();
 	m_processedSessionChanges.clear();
 	m_nextMessageSequenceNumber = 0;
 
 	m_id = GenereateNewSessionId();
+}
+
+HRESULT ConnectionSession::CreateConfirmationRequest(ITLObject** request)
+{
+	if (m_messagesIdsToConfirm.empty())
+	{
+		return S_FALSE;
+	}
+
+	auto msgAck = Make<TLMsgsAck>();
+	auto& messagesIds = msgAck->GetMessagesIds();
+
+	messagesIds.insert(messagesIds.begin(), m_messagesIdsToConfirm.begin(), m_messagesIdsToConfirm.end());
+	m_messagesIdsToConfirm.clear();
+
+	*request = msgAck.Detach();
+	return S_OK;
 }
 
 UINT32 ConnectionSession::GenerateMessageSequenceNumber(boolean increment)
@@ -43,7 +62,7 @@ UINT32 ConnectionSession::GenerateMessageSequenceNumber(boolean increment)
 
 bool ConnectionSession::IsMessageIdProcessed(INT64 messageId)
 {
-	return !(messageId & 1) || m_minProcessedMessageId != 0 && messageId < m_minProcessedMessageId ||
+	return !(messageId & 1) || (m_minProcessedMessageId != 0 && messageId < m_minProcessedMessageId) ||
 		std::find(m_processedMessageIds.begin(), m_processedMessageIds.end(), messageId) != m_processedMessageIds.end();
 }
 
@@ -63,7 +82,7 @@ void ConnectionSession::AddMessageToConfirm(INT64 messageId)
 {
 	if (std::find(m_processedMessageIds.begin(), m_processedMessageIds.end(), messageId) == m_processedMessageIds.end())
 	{
-		m_messagesIdsForConfirmation.push_back(messageId);
+		m_messagesIdsToConfirm.push_back(messageId);
 	}
 }
 
@@ -82,11 +101,9 @@ INT64 ConnectionSession::GenereateNewSessionId()
 	INT64 newSessionId;
 	RAND_bytes(reinterpret_cast<UINT8*>(&newSessionId), 8);
 
-	return newSessionId;
-
-//#if _DEBUG
-//	return 0xabcd000000000000L | (newSessionId & 0x0000ffffffffffffL);
-//#else
-//	return newSessionId;
-//#endif
+	#if _DEBUG
+		return 0xabcd000000000000L | (newSessionId & 0x0000ffffffffffffL);
+	#else
+		return newSessionId;
+	#endif
 }

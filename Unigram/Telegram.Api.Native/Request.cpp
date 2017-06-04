@@ -21,8 +21,7 @@ HRESULT MessageRequest::RuntimeClassInitialize(ITLObject* object, INT32 token, C
 	m_sendCompletedCallback = sendCompletedCallback;
 	m_quickAckReceivedCallback = quickAckReceivedCallback;
 	m_flags = flags;
-
-	ZeroMemory(&m_messageContext, sizeof(MessageContext));
+	m_startTime = 0;
 
 	return S_OK;
 }
@@ -44,7 +43,7 @@ HRESULT MessageRequest::get_MessageContext(MessageContext const** value)
 		return E_POINTER;
 	}
 
-	*value = &m_messageContext;
+	*value = m_messageContext.get();
 	return S_OK;
 }
 
@@ -106,4 +105,20 @@ HRESULT MessageRequest::get_Flags(RequestFlag* value)
 
 	*value = m_flags;
 	return S_OK;
+}
+
+HRESULT MessageRequest::OnQuickAckReceived()
+{
+	if (m_quickAckReceivedCallback == nullptr)
+	{
+		return S_OK;
+	}
+
+	return m_quickAckReceivedCallback->Invoke();
+}
+
+void MessageRequest::Reset()
+{
+	m_startTime = 0;
+	m_messageContext.reset();
 }

@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+#include <memory>
 #include <wrl.h>
 #include "Telegram.Api.Native.h"
 
@@ -89,6 +91,8 @@ namespace Telegram
 				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize(_In_ ITLObject* object, INT32 token, ConnectionType connectionType, UINT32 datacenterId, _In_ ISendRequestCompletedCallback* sendCompletedCallback,
 					_In_ IRequestQuickAckReceivedCallback* quickAckReceivedCallback, RequestFlag flags = RequestFlag::None);
+				HRESULT OnQuickAckReceived();
+				void Reset();
 
 				inline ComPtr<ITLObject> const& GetObject() const
 				{
@@ -97,7 +101,7 @@ namespace Telegram
 
 				inline MessageContext const* GetMessageContext() const
 				{
-					return &m_messageContext;
+					return m_messageContext.get();
 				}
 
 				inline INT32 GetMessageToken() const
@@ -115,20 +119,63 @@ namespace Telegram
 					return m_datacenterId;
 				}
 
-				inline RequestFlag Flags() const
+				inline INT64 GetStartTime() const
+				{
+					return m_startTime;
+				}
+
+				/*inline RequestFlag GetFlags() const
 				{
 					return m_flags;
+				}*/
+
+				inline void AddMessageId(INT64 messageId)
+				{
+					m_messagesIds.push_back(messageId);
+				}
+
+				inline boolean HasMessageId(INT64 messageId)
+				{
+					return std::find(m_messagesIds.begin(), m_messagesIds.end(), messageId) != m_messagesIds.end();
+				}
+
+				inline boolean EnableUnauthorized() const
+				{
+					return (m_flags & RequestFlag::EnableUnauthorized) != RequestFlag::EnableUnauthorized;
+				}
+
+				inline boolean TryDifferentDc() const
+				{
+					return (m_flags & RequestFlag::TryDifferentDc) != RequestFlag::TryDifferentDc;
+				}
+
+				inline boolean CanCompress() const
+				{
+					return (m_flags & RequestFlag::CanCompress) != RequestFlag::CanCompress;
 				}
 
 			private:
+				inline void SetMessageContext(MessageContext const& mesageContext)
+				{
+					m_messageContext = std::make_unique<MessageContext>(mesageContext);
+				}
+
+				inline void SetStartTime(INT64 startTime)
+				{
+					m_startTime = startTime;
+				}
+
 				ComPtr<ITLObject> m_object;
-				INT32 m_messageToken;
-				MessageContext m_messageContext;
+				INT32 m_messageToken;			
 				ConnectionType m_connectionType;
 				UINT32 m_datacenterId;
+				INT64 m_startTime;
+				std::unique_ptr<MessageContext> m_messageContext;
 				ComPtr<ISendRequestCompletedCallback> m_sendCompletedCallback;
 				ComPtr<IRequestQuickAckReceivedCallback> m_quickAckReceivedCallback;
 				RequestFlag m_flags;
+
+				std::vector<INT64> m_messagesIds;
 			};
 
 		}

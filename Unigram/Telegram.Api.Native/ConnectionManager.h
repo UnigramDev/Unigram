@@ -2,6 +2,8 @@
 #include <vector>
 #include <map>
 #include <queue>
+#include <functional>
+#include <list>
 #include <wrl.h>
 #include <Windows.Networking.Connectivity.h>
 #include "MultiThreadObject.h"
@@ -42,9 +44,6 @@ namespace Telegram
 			{
 
 				class TLBinaryReader;
-				class TLObjectWithQuery;
-				class TLUnparsedObject;
-				class TLGZipPacked;
 
 			}
 
@@ -54,9 +53,6 @@ namespace Telegram
 				friend class Datacenter;
 				friend class Connection;
 				friend class EventObject;
-				friend class TL::TLObjectWithQuery;
-				friend class TL::TLUnparsedObject;
-				friend class TL::TLGZipPacked;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
 
@@ -64,13 +60,16 @@ namespace Telegram
 				ConnectionManager();
 				~ConnectionManager();
 
-				//COM exported methods		
+				//COM exported methods
+				IFACEMETHODIMP add_SessionCreated(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
+				IFACEMETHODIMP remove_SessionCreated(EventRegistrationToken token);
 				IFACEMETHODIMP add_CurrentNetworkTypeChanged(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
 				IFACEMETHODIMP remove_CurrentNetworkTypeChanged(EventRegistrationToken token);
 				IFACEMETHODIMP add_ConnectionStateChanged(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
 				IFACEMETHODIMP remove_ConnectionStateChanged(EventRegistrationToken token);
 				IFACEMETHODIMP add_UnprocessedMessageReceived(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnprocessedMessage* handler, _Out_ EventRegistrationToken* token);
 				IFACEMETHODIMP remove_UnprocessedMessageReceived(EventRegistrationToken token);
+				IFACEMETHODIMP get_CurrentDatacenter(_Out_ IDatacenter** value);
 				IFACEMETHODIMP get_ConnectionState(_Out_ ConnectionState* value);
 				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
 				IFACEMETHODIMP get_IsIpv6Enabled(_Out_ boolean* value);
@@ -116,15 +115,20 @@ namespace Telegram
 				HRESULT UpdateNetworkStatus(boolean raiseEvent);
 				HRESULT CreateRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
 					INT32 datacenterId, ConnectionType connectionType, INT32 requestToken, RequestFlag flags, _Out_ ComPtr<MessageRequest>& request);
-				HRESULT HandleUnprocessedResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* object, _In_ Connection* connection);
+				HRESULT MoveToDatacenter(INT32 datacenterId);
+				HRESULT ProcessRequest(_In_ MessageRequest* request);
+				void ResetRequests(std::function<boolean(ComPtr<MessageRequest> const&)>& selector);
+				HRESULT HandleMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageObject, _In_ Connection* connection);
 				HRESULT OnNetworkStatusChanged(_In_ IInspectable* sender);
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionQuickAckReceived(_In_ Connection* connection, INT32 ack);
 				HRESULT OnConnectionClosed(_In_ Connection* connection);
 				HRESULT OnRequestEnqueued(_In_ PTP_CALLBACK_INSTANCE instance);
 				HRESULT OnDatacenterHandshakeComplete(_In_ Datacenter* datacenter, INT32 timeDifference);
+				HRESULT OnConnectionSessionCreated(_In_ Connection* connection);
 				void OnEventObjectError(_In_ EventObject const* eventObject, HRESULT error);
-				Datacenter* GetDatacenterById(UINT32 id);
+				boolean GetDatacenterById(UINT32 id, _Out_ ComPtr<Datacenter>& datacenter);
+				boolean GetRequestByMessageId(INT64 messageId, _Out_ ComPtr<MessageRequest>& request);
 
 				static void NTAPI RequestEnqueuedCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ PTP_WAIT wait, _In_ TP_WAIT_RESULT waitResult);
 
@@ -137,15 +141,18 @@ namespace Telegram
 				ConnectionNeworkType m_currentNetworkType;
 				boolean m_isIpv6Enabled;
 				UINT32 m_currentDatacenterId;
+				UINT32 m_movingToDatacenterId;
 				std::map<INT32, ComPtr<Datacenter>> m_datacenters;
 				Event m_requestEnqueuedEvent;
-				CriticalSection m_requestsQueueCriticalSection;
+				CriticalSection m_requestsCriticalSection;
 				std::queue<ComPtr<MessageRequest>> m_requestsQueue;
+				std::list<ComPtr<MessageRequest>> m_runningRequests;
 				INT32 m_timeDifference;
 				INT64 m_lastOutgoingMessageId;
 				INT32 m_userId;
 				ComPtr<IUserConfiguration> m_userConfiguration;
 
+				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_sessionCreatedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_currentNetworkTypeChangedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_connectionStateChangedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnprocessedMessage> m_unprocessedMessageReceivedEventSource;

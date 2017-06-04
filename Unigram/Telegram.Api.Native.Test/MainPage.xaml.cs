@@ -37,6 +37,9 @@ namespace Telegram.Api.Native.Test
 
             connectionManager.BoomBaby(null, out ITLObject @object);
 
+            var datacenter = connectionManager.CurrentDatacenter;
+            var salt = datacenter.ServerSalt;
+
             GC.Collect();
         }
 
@@ -46,12 +49,13 @@ namespace Telegram.Api.Native.Test
 
         private void ConnectionManager_UnprocessedMessageReceived(ConnectionManager sender, TLUnprocessedMessage args)
         {
-            var tlConfig = args.Object as TLConfig;
-            if (tlConfig != null)
+            switch (args.Object)
             {
-                var tmpSession = tlConfig.TmpSessions;
-                var dcOptions = tlConfig.DcOptions.ToArray();
-                var disabledFeatures = tlConfig.DisabledFeatures.ToArray();
+                case TLConfig tlConfig:
+                    var tmpSession = tlConfig.TmpSessions;
+                    var dcOptions = tlConfig.DcOptions.ToArray();
+                    var disabledFeatures = tlConfig.DisabledFeatures.ToArray();
+                    break;
             }
 
             //var unconsumedBuffer = new byte[args.Reader.UnconsumedBufferLength];
