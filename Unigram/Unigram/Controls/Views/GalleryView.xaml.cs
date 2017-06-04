@@ -239,35 +239,19 @@ namespace Unigram.Controls.Views
                 var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
                 if (animation != null && _closing != null)
                 {
-                    if (animation.TryStart(_closing()))
-                    {
-                        Hide();
-
-                        DataContext = null;
-                        Bindings.StopTracking();
-
-                        //animation.Completed += (s, args) =>
-                        //{
-                        //    Hide();
-
-                        //    DataContext = null;
-                        //    Bindings.StopTracking();
-                        //};
-                    }
-                    else
-                    {
-                        Hide();
-
-                        DataContext = null;
-                        Bindings.StopTracking();
-                    }
-                }
-                else
-                {
-                    Hide();
+                    animation.TryStart(_closing());
 
                     DataContext = null;
                     Bindings.StopTracking();
+
+                    Hide();
+                }
+                else
+                {
+                    DataContext = null;
+                    Bindings.StopTracking();
+
+                    Hide();
                 }
             }
             else
@@ -277,10 +261,10 @@ namespace Unigram.Controls.Views
                 TopBar.Visibility = Visibility.Collapsed;
                 BotBar.Visibility = Visibility.Collapsed;
 
-                Hide();
-
                 DataContext = null;
                 Bindings.StopTracking();
+
+                Hide();
             }
 
             e.Handled = true;
@@ -404,6 +388,12 @@ namespace Unigram.Controls.Views
         {
             TopBar.Visibility = TopBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
             BotBar.Visibility = BotBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            DataContext = null;
+            Bindings.StopTracking();
         }
     }
 }

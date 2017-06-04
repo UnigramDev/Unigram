@@ -73,10 +73,12 @@ namespace Unigram.Common
             var message = newValue as TLMessage;
             if (message != null /*&& sender.Visibility == Visibility.Visible*/)
             {
+                var text = !string.IsNullOrWhiteSpace(message.Message);
+
                 var caption = false;
-                if (message.Media is ITLMessageMediaCaption)
+                if (message.Media is ITLMessageMediaCaption captionMedia)
                 {
-                    caption = !string.IsNullOrWhiteSpace(((ITLMessageMediaCaption)message.Media).Caption);
+                    caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                 }
 
                 var game = false;
@@ -85,13 +87,13 @@ namespace Unigram.Common
                     game = sender.Tag != null;
                 }
 
-                var empty = false;
-                if (message.Media is TLMessageMediaWebPage)
+                var emptyWebPage = false;
+                if (message.Media is TLMessageMediaWebPage webpageMedia)
                 {
-                    empty = ((TLMessageMediaWebPage)message.Media).WebPage is TLWebPageEmpty;
+                    emptyWebPage = webpageMedia.WebPage is TLWebPageEmpty;
                 }
 
-                sender.Visibility = (message.Media == null || message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage || game || caption ? Visibility.Visible : Visibility.Collapsed);
+                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || text ? Visibility.Visible : Visibility.Collapsed);
                 if (sender.Visibility == Visibility.Collapsed)
                 {
                     sender.Inlines.Clear();
@@ -128,11 +130,11 @@ namespace Unigram.Common
                     }
                     else if (caption)
                     {
-                        var captionMedia = message.Media as ITLMessageMediaCaption;
-                        if (captionMedia != null && !string.IsNullOrWhiteSpace(captionMedia.Caption))
+                        var captionMedia2 = message.Media as ITLMessageMediaCaption;
+                        if (captionMedia2 != null && !string.IsNullOrWhiteSpace(captionMedia2.Caption))
                         {
                             Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a ITLMediaCaption");
-                            ReplaceAll(message, captionMedia.Caption, paragraph, sender.Foreground, true);
+                            ReplaceAll(message, captionMedia2.Caption, paragraph, sender.Foreground, true);
                         }
                     }
 
@@ -146,7 +148,7 @@ namespace Unigram.Common
                     //ReplaceAll(message, text, paragraph, sender.Foreground, true);
                 }
 
-                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || empty || message?.Media == null)
+                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || emptyWebPage || message?.Media == null)
                 {
                     if (IsAnyCharacterRightToLeft(message.Message ?? string.Empty))
                     {

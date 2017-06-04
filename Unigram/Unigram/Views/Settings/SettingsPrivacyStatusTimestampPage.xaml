@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
     xmlns:controls="using:Unigram.Controls"
-    xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -13,8 +12,6 @@
         <Style TargetType="controls:BadgeButton" BasedOn="{StaticResource BadgeButtonStyle}">
             <Setter Property="Margin" Value="-12,0"/>
         </Style>
-
-        <tl:TLType x:Key="DisallowAll">PrivacyValueDisallowAll</tl:TLType>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -37,17 +34,9 @@
             <StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="Who can see my timestamp?" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <RadioButton Content="Everybody" IsChecked="{Binding SelectedItem, Mode=TwoWay, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={StaticResource DisallowAll}}">
-                        <!--<RadioButton.IsChecked>
-                            <x:Bind>
-                                <x:Bind.ConverterParameter>
-                                    <tl:TLType>PrivacyValueDisallowAll</tl:TLType>
-                                </x:Bind.ConverterParameter>
-                            </x:Bind>
-                        </RadioButton.IsChecked>-->
-                    </RadioButton>
-                    <RadioButton Content="My Contacts"/>
-                    <RadioButton Content="Nobody"/>
+                    <controls:PrivacyRadioButton Content="Everybody" Type="AllowAll" Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"/>
+                    <controls:PrivacyRadioButton Content="My Contacts" Type="AllowContacts" Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"/>
+                    <controls:PrivacyRadioButton Content="Nobody" Type="DisallowAll" Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"/>
                     <TextBlock Text="Important: you won't be able to see Last Seen times for people with whom you don't share your Last Seen time. Approximate last seen will be shown instead (recently, within a week, within a month)." Margin="0,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">

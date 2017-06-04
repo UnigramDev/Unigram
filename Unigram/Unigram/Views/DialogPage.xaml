@@ -1169,7 +1169,7 @@
                       IsItemClickEnabled="True"
                       ItemClick="BotCommands_ItemClick"
                       VerticalAlignment="Bottom"
-                      MaxHeight="180">
+                      MaxHeight="154">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -1195,7 +1195,7 @@
                       IsItemClickEnabled="True"
                       ItemClick="UsernameHints_ItemClick"
                       VerticalAlignment="Bottom"
-                      MaxHeight="180">
+                      MaxHeight="154">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:TLUser">
                         <Grid>

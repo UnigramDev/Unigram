@@ -851,28 +851,28 @@ namespace Unigram.ViewModels
                     var user = dialog.With as TLUser;
                     if (user != null)
                     {
-                        return (user.FullName.Like(query, StringComparison.OrdinalIgnoreCase)) ||
+                        return (user.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
                                (user.HasUsername && user.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     var channel = dialog.With as TLChannel;
                     if (channel != null)
                     {
-                        return (channel.Title.Like(query, StringComparison.OrdinalIgnoreCase)) ||
+                        return (channel.Title.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
                                (channel.HasUsername && channel.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     var chat = dialog.With as TLChat;
                     if (chat != null)
                     {
-                        return (chat.Title.Like(query, StringComparison.OrdinalIgnoreCase));
+                        return (chat.Title.IsLike(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     return false;
                 }).ToList();
 
                 var contactsResults = contacts.OfType<TLUser>().Where(x =>
-                    (x.FullName.Like(query, StringComparison.OrdinalIgnoreCase)) ||
+                    (x.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
                     (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase)));
 
                 foreach (var result in contactsResults)

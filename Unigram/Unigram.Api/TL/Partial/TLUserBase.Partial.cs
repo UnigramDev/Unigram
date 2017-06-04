@@ -108,11 +108,6 @@ namespace Telegram.Api.TL
                     //    return Phone != null ? "+" + Phone : string.Empty;
                     //}
 
-                    if (string.Equals(firstName, lastName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return firstName;
-                    }
-
                     if (string.IsNullOrEmpty(firstName))
                     {
                         return lastName;

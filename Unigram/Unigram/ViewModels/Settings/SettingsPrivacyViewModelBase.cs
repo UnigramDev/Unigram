@@ -44,24 +44,24 @@ namespace Unigram.ViewModels.Settings
         private void UpdatePrivacy(TLAccountPrivacyRules rules)
         {
             var badge = string.Empty;
-            TLPrivacyRuleBase primary = null;
+            PrivacyValue? primary = null;
             TLPrivacyValueDisallowUsers disallowed = null;
             TLPrivacyValueAllowUsers allowed = null;
             foreach (TLPrivacyRuleBase current in rules.Rules)
             {
                 if (current is TLPrivacyValueAllowAll)
                 {
-                    primary = current;
+                    primary = PrivacyValue.AllowAll;
                     badge = "Everybody";
                 }
                 else if (current is TLPrivacyValueAllowContacts)
                 {
-                    primary = current;
+                    primary = PrivacyValue.AllowContacts;
                     badge = "My Contacts";
                 }
                 else if (current is TLPrivacyValueDisallowAll)
                 {
-                    primary = current;
+                    primary = PrivacyValue.DisallowAll;
                     badge = "Nobody";
                 }
                 else if (current is TLPrivacyValueDisallowUsers disallowUsers)
@@ -76,7 +76,7 @@ namespace Unigram.ViewModels.Settings
 
             if (primary == null)
             {
-                primary = new TLPrivacyValueDisallowAll();
+                primary = PrivacyValue.DisallowAll;
                 badge = "Nobody";
             }
 
@@ -99,7 +99,7 @@ namespace Unigram.ViewModels.Settings
             {
                 Badge = badge;
 
-                SelectedItem = primary.TypeId;
+                SelectedItem = primary ?? PrivacyValue.DisallowAll;
                 Allowed = allowed ?? new TLPrivacyValueAllowUsers { Users = new TLVector<int>() };
                 Disallowed = disallowed ?? new TLPrivacyValueDisallowUsers { Users = new TLVector<int>() };
             });
@@ -119,8 +119,8 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        private TLType _selectedItem;
-        public TLType SelectedItem
+        private PrivacyValue _selectedItem;
+        public PrivacyValue SelectedItem
         {
             get
             {
@@ -157,5 +157,12 @@ namespace Unigram.ViewModels.Settings
                 Set(ref _disallowed, value);
             }
         }
+    }
+
+    public enum PrivacyValue
+    {
+        AllowAll,
+        AllowContacts,
+        DisallowAll
     }
 }

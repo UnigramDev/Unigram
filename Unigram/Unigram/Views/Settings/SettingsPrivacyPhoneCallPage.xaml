@@ -34,9 +34,9 @@
             <StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="Who can call me?" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <RadioButton Content="Everybody" IsChecked="True"/>
-                    <RadioButton Content="My Contacts"/>
-                    <RadioButton Content="Nobody"/>
+                    <controls:PrivacyRadioButton Content="Everybody" Type="AllowAll" Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"/>
+                    <controls:PrivacyRadioButton Content="My Contacts" Type="AllowContacts" Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"/>
+                    <controls:PrivacyRadioButton Content="Nobody" Type="DisallowAll" Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"/>
                     <TextBlock Text="You can restrict who can call you." Margin="0,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">

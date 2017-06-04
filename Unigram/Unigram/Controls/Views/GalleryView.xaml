@@ -14,7 +14,8 @@
     Background="{x:Null}"
     OverlayBrush="{x:Null}"
     HorizontalAlignment="Stretch"
-    VerticalAlignment="Stretch">
+    VerticalAlignment="Stretch"
+    Unloaded="OnUnloaded">
 
     <Control.Resources>
         <Style x:Name="yolo" TargetType="MediaPlayerElement">

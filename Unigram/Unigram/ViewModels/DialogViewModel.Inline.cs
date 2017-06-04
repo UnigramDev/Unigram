@@ -136,7 +136,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProcessBotInlineResult(message, result, currentInlineBot.Id);
+            ProcessBotInlineResult(ref message, result, currentInlineBot.Id);
 
             //if (this.Reply != null && DialogDetailsViewModel.IsWebPagePreview(this.Reply))
             //{
@@ -207,7 +207,7 @@ namespace Unigram.ViewModels
             //});
         }
 
-        private void ProcessBotInlineResult(TLMessage message, TLBotInlineResultBase resultBase, int botId)
+        private void ProcessBotInlineResult(ref TLMessage message, TLBotInlineResultBase resultBase, int botId)
         {
             message.InlineBotResultId = resultBase.Id;
             message.InlineBotResultQueryId = resultBase.QueryId;
@@ -301,6 +301,12 @@ namespace Unigram.ViewModels
                         Caption = string.Empty
                     };
                 }
+            }
+
+            var result = resultBase as TLBotInlineResult;
+            if (result != null)
+            {
+
             }
 
             //var result = resultBase as TLBotInlineResult;
@@ -527,7 +533,7 @@ namespace Unigram.ViewModels
             {
                 message.Message = sendText.Message;
                 message.Entities = sendText.Entities;
-                message.HasEntities = true;
+                message.HasEntities = sendText.HasEntities;
                 //bool arg_878_0 = sendText.NoWebpage;
             }
 
@@ -544,6 +550,7 @@ namespace Unigram.ViewModels
             if (resultBase.SendMessage != null && resultBase.SendMessage.ReplyMarkup != null)
             {
                 message.ReplyMarkup = resultBase.SendMessage.ReplyMarkup;
+                message.HasReplyMarkup = true;
             }
         }
     }

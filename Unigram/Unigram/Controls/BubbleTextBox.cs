@@ -525,6 +525,13 @@ namespace Unigram.Controls
 
         private List<TLUser> GetUsernames(string username, bool inline)
         {
+            bool IsMatch(TLUser user)
+            {
+                return (user.FullName.IsLike(username, StringComparison.OrdinalIgnoreCase)) ||
+                       (user.HasUsername && user.Username.StartsWith(username, StringComparison.OrdinalIgnoreCase));
+            }
+
+
             var results = new List<TLUser>();
 
             if (inline)
@@ -538,7 +545,7 @@ namespace Unigram.Controls
                         foreach (var peer in inlinePeers.Peers)
                         {
                             var user = InMemoryCacheService.Current.GetUser(peer.Peer.Id) as TLUser;
-                            if (user != null && user.HasUsername && user.Username.StartsWith(username, StringComparison.OrdinalIgnoreCase))
+                            if (user != null && IsMatch(user))
                             {
                                 results.Add(user);
                             }
@@ -551,7 +558,7 @@ namespace Unigram.Controls
             {
                 foreach (var participant in chatParticipants.Participants)
                 {
-                    if (participant.User != null && participant.User.HasUsername && participant.User.Username.StartsWith(username, StringComparison.OrdinalIgnoreCase))
+                    if (participant.User != null && IsMatch(participant.User))
                     {
                         results.Add(participant.User);
                     }
@@ -561,7 +568,7 @@ namespace Unigram.Controls
             {
                 foreach (var participant in channelParticipants.Participants)
                 {
-                    if (participant.User != null && participant.User.HasUsername && participant.User.Username.StartsWith(username, StringComparison.OrdinalIgnoreCase))
+                    if (participant.User != null && IsMatch(participant.User))
                     {
                         results.Add(participant.User);
                     }
