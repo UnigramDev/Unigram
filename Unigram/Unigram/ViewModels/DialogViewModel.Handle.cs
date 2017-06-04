@@ -207,10 +207,17 @@ namespace Unigram.ViewModels
                 else if (full.HasParticipantsCount)
                 {
                     var config = CacheService.GetConfig();
-                    if (config != null && full.ParticipantsCount <= config.ChatSizeMax)
+                    if (config == null)
                     {
-                        var participants = await ProtoService.GetParticipantsAsync(new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value }, null, 0, config.ChatSizeMax);
-                        if (participants.IsSucceeded)
+                        return string.Format("{0} members", full.ParticipantsCount ?? 0);
+                    }
+
+                    var participants = await ProtoService.GetParticipantsAsync(channel.ToInputChannel(), new TLChannelParticipantsRecent(), 0, config.ChatSizeMax);
+                    if (participants.IsSucceeded)
+                    {
+                        full.Participants = participants.Result;
+
+                        if (full.ParticipantsCount <= config.ChatSizeMax)
                         {
                             var count = 0;
                             foreach (var item in participants.Result.Users.OfType<TLUser>())
@@ -522,7 +529,7 @@ namespace Unigram.ViewModels
 
         private void MarkAsRead(TLMessageCommonBase messageCommon)
         {
-            if (!App.IsActive || !App.IsVisible)
+            if (!IsActive || !App.IsActive || !App.IsVisible)
             {
                 return;
             }

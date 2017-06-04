@@ -15,8 +15,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Loaded="OnLoaded"
-    Unloaded="OnUnloaded">
+    Loaded="OnLoaded">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -787,7 +786,7 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <controls:ProfilePictureView Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0"/>
+                            <controls:ProfilePictureView Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
 
                             <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
                                 <TextBlock x:Name="tblDialogName"
@@ -914,25 +913,6 @@
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
         </Grid>
         <!-- END OF Titlebar -->
-
-        <Grid x:Name="PinnedMessage"
-              Visibility="{x:Bind ViewModel.PinnedMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-              Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-              MinHeight="{ThemeResource AppBarThemeCompactHeight}"
-              Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition Width="48"/>
-            </Grid.ColumnDefinitions>
-
-            <Button x:Name="btnPinnedMessage" Command="{Binding PinnedCommand}" Padding="0,0,48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                <messages:MessageReference Click="Reply_Click" Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Stretch" Margin="0" Padding="12,6"/>
-            </Button>
-
-            <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE106;" FontSize="12" Grid.Column="1"/>
-
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-        </Grid>
 
         <Grid x:Name="Messages" Grid.Row="2">
             <controls:BubbleListView x:Name="lvDialogs"
@@ -1095,6 +1075,25 @@
             </controls:BubbleListView>
 
             <StackPanel>
+                <Grid x:Name="PinnedMessage"
+                      Visibility="{x:Bind ViewModel.PinnedMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      MinHeight="{ThemeResource AppBarThemeCompactHeight}"
+                      Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="btnPinnedMessage" Command="{Binding PinnedCommand}" Padding="0,0,48,0" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
+                        <messages:MessageReference Click="Reply_Click" Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage, Mode=OneWay}" VerticalAlignment="Stretch" Margin="0" Padding="12,6"/>
+                    </Button>
+
+                    <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE106;" FontSize="12" Grid.Column="1"/>
+
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                </Grid>
+
                 <Grid Visibility="{x:Bind (Visibility)ViewModel.IsReportSpam, Mode=OneWay}"
                       Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                     <Grid.ColumnDefinitions>
@@ -1380,6 +1379,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <controls:GlyphToggleButton x:Name="ButtonSilent"
                                                 UncheckedGlyph="&#xE609;"
@@ -1389,15 +1389,26 @@
                                                 Command="{x:Bind ViewModel.ToggleSilentCommand}"
                                                 Visibility="{x:Bind (Visibility)ViewModel.IsSilentVisible, Mode=OneWay}"/>
 
+                    <Border x:Name="btnCommands" Grid.Column="1">
+                        <controls:GlyphButton x:Name="ButtonCommands"
+                                              Click="Commands_Click"
+                                              AllowFocusOnInteraction="False"
+                                              Glyph="&#xE613;"
+                                              Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                              VerticalAlignment="Bottom"
+                                              Grid.Column="1"/>
+                    </Border>
+
                     <controls:GlyphButton x:Name="btnStickers"
                                           Click="Stickers_Click"
                                           AllowFocusOnInteraction="False"
                                           Glyph="&#xE606;"
                                           FontFamily="{ThemeResource TelegramThemeFontFamily}"
                                           VerticalAlignment="Bottom"
-                                          Grid.Column="1"/>
+                                          Grid.Column="2"/>
 
-                    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="2" Canvas.ZIndex="1000">
+                    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="3" Canvas.ZIndex="1000">
                         <Ellipse x:Name="Ellipse" Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="96" Height="96" Margin="-24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         <controls:VoiceButton x:Name="btnVoiceMessage"
                                               AllowFocusOnInteraction="False"
@@ -1415,7 +1426,7 @@
                                           FontSize="24"
                                           Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                           Padding="4,2,0,0"
-                                          Grid.Column="2"
+                                          Grid.Column="3"
                                           Canvas.ZIndex="1001"/>
                 </Grid>
 

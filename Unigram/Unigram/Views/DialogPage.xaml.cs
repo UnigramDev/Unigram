@@ -122,6 +122,9 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            InputPane.GetForCurrentView().Showing += InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
+
             if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
             {
                 var visual = ElementCompositionPreview.GetElementVisual(Header);
@@ -157,7 +160,22 @@ namespace Unigram.Views
                 ElementCompositionPreview.SetImplicitHideAnimation(InfoPanel, showHideAnimation);
             }
 
+            ViewModel.IsActive = true;
+
             base.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+
+            base.OnNavigatedFrom(e);
+
+            if (e.SourcePageType != typeof(DialogPage))
+            {
+                ViewModel.IsActive = false;
+            }
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -218,9 +236,6 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            InputPane.GetForCurrentView().Showing += InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
-
             _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
             lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
 
@@ -228,12 +243,6 @@ namespace Unigram.Views
             {
                 TextField.Focus(FocusState.Keyboard);
             }
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
         }
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -280,14 +289,16 @@ namespace Unigram.Views
             if (ViewModel != null && TextField.IsEmpty && !forwarding)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
+                btnCommands.Visibility = Visibility.Visible;
                 btnStickers.Visibility = Visibility.Visible;
                 btnVoiceMessage.Visibility = Visibility.Visible;
             }
             else
             {
+                btnSendMessage.Visibility = Visibility.Visible;
+                btnCommands.Visibility = Visibility.Collapsed;
                 btnStickers.Visibility = Visibility.Collapsed;
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
-                btnSendMessage.Visibility = Visibility.Visible;
             }
         }
 
@@ -512,6 +523,12 @@ namespace Unigram.Views
 
                 InputPane.GetForCurrentView().TryShow();
             }
+        }
+
+        private void Commands_Click(object sender, RoutedEventArgs e)
+        {
+            TextField.SetText("/", null);
+            TextField.Focus(FocusState.Keyboard);
         }
 
         private void ProfileBubble_Click(object sender, RoutedEventArgs e)
@@ -990,6 +1007,7 @@ namespace Unigram.Views
         {
             AttachTextAreaExpression(ButtonAttach);
             AttachTextAreaExpression(ButtonSilent);
+            AttachTextAreaExpression(btnCommands);
             AttachTextAreaExpression(btnStickers);
             AttachTextAreaExpression(btnEditMessage);
             AttachTextAreaExpression(btnSendMessage);
@@ -1010,6 +1028,7 @@ namespace Unigram.Views
         {
             DetachTextAreaExpression(ButtonAttach);
             DetachTextAreaExpression(ButtonSilent);
+            DetachTextAreaExpression(btnCommands);
             DetachTextAreaExpression(btnStickers);
             DetachTextAreaExpression(btnEditMessage);
             DetachTextAreaExpression(btnSendMessage);

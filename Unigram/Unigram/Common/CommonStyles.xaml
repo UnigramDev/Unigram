@@ -3643,7 +3643,6 @@
                         <Border x:Name="BackgroundElement"
                                 Grid.Row="1"
                                 Background="{TemplateBinding Background}"
-                                Margin="{TemplateBinding BorderThickness}"
                                 Opacity="1"
                                 Grid.ColumnSpan="3"
                                 Grid.RowSpan="1"/>

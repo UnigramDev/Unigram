@@ -78,6 +78,7 @@
                 Loaded="ImageView_ImageOpened"
                 Source="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                 Constraint="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}"
+                IsHitTestVisible="False"
                 Grid.RowSpan="3"/>
 
             <local:TransferButton Completed="Download_Click" Transferable="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>

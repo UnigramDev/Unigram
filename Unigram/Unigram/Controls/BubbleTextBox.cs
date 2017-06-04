@@ -359,7 +359,7 @@ namespace Unigram.Controls
                     ViewModel.ResolveInlineBot(text);
                 }
             }
-            else if ((e.Key == VirtualKey.Up || e.Key == VirtualKey.Down || e.Key == VirtualKey.Tab))
+            else if ((e.Key == VirtualKey.Up || e.Key == VirtualKey.Down || e.Key == VirtualKey.PageUp || e.Key == VirtualKey.PageDown || e.Key == VirtualKey.Tab))
             {
                 var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
@@ -371,12 +371,12 @@ namespace Unigram.Controls
                     e.Handled = true;
                 }
 
-                if ((e.Key == VirtualKey.Up && alt) || (e.Key == VirtualKey.Tab && ctrl && shift))
+                if ((e.Key == VirtualKey.Up && alt) || (e.Key == VirtualKey.PageUp && ctrl) || (e.Key == VirtualKey.Tab && ctrl && shift))
                 {
                     ViewModel.Aggregator.Publish("move_up");
                     e.Handled = true;
                 }
-                else if ((e.Key == VirtualKey.Down && alt) || (e.Key == VirtualKey.Tab && ctrl && !shift))
+                else if ((e.Key == VirtualKey.Down && alt) || (e.Key == VirtualKey.PageDown && ctrl) || (e.Key == VirtualKey.Tab && ctrl && !shift))
                 {
                     ViewModel.Aggregator.Publish("move_down");
                     e.Handled = true;
@@ -538,7 +538,7 @@ namespace Unigram.Controls
                         foreach (var peer in inlinePeers.Peers)
                         {
                             var user = InMemoryCacheService.Current.GetUser(peer.Peer.Id) as TLUser;
-                            if (user != null && user.HasUsername && user.Username.StartsWith(username))
+                            if (user != null && user.HasUsername && user.Username.StartsWith(username, StringComparison.OrdinalIgnoreCase))
                             {
                                 results.Add(user);
                             }
@@ -547,11 +547,21 @@ namespace Unigram.Controls
                 }
             }
 
-            if (ViewModel.Full is TLChatFull chatFull && chatFull.Participants is TLChatParticipants participants)
+            if (ViewModel.Full is TLChatFull chatFull && chatFull.Participants is TLChatParticipants chatParticipants)
             {
-                foreach (var participant in participants.Participants)
+                foreach (var participant in chatParticipants.Participants)
                 {
-                    if (participant.User != null && participant.User.HasUsername && participant.User.Username.StartsWith(username))
+                    if (participant.User != null && participant.User.HasUsername && participant.User.Username.StartsWith(username, StringComparison.OrdinalIgnoreCase))
+                    {
+                        results.Add(participant.User);
+                    }
+                }
+            }
+            else if (ViewModel.Full is TLChannelFull channelFull && channelFull.Participants is TLChannelsChannelParticipants channelParticipants)
+            {
+                foreach (var participant in channelParticipants.Participants)
+                {
+                    if (participant.User != null && participant.User.HasUsername && participant.User.Username.StartsWith(username, StringComparison.OrdinalIgnoreCase))
                     {
                         results.Add(participant.User);
                     }

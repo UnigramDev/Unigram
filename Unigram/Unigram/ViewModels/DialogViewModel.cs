@@ -59,6 +59,8 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : UnigramViewModelBase
     {
+        public bool IsActive { get; set; }
+
         public MessageCollection Messages { get; private set; }
 
         private List<TLMessageCommonBase> _selectedMessages = new List<TLMessageCommonBase>();
@@ -869,6 +871,12 @@ namespace Unigram.ViewModels
                     if (user.IsBot && full.HasBotInfo)
                     {
                         UnfilteredBotCommands = full.BotInfo.Commands.Select(x => Tuple.Create(user, x)).ToList();
+                        HasBotCommands = UnfilteredBotCommands.Count > 0;
+                    }
+                    else
+                    {
+                        UnfilteredBotCommands = null;
+                        HasBotCommands = false;
                     }
                 }
             }
@@ -902,6 +910,7 @@ namespace Unigram.ViewModels
                     }
 
                     UnfilteredBotCommands = commands;
+                    HasBotCommands = UnfilteredBotCommands.Count > 0;
 
                     var channelFull = full as TLChannelFull;
                     if (channelFull.HasPinnedMsgId)
@@ -970,6 +979,7 @@ namespace Unigram.ViewModels
                     }
 
                     UnfilteredBotCommands = commands;
+                    HasBotCommands = UnfilteredBotCommands.Count > 0;
                 }
                 //    participantCount = chatDetails.Result.Users.Count;
                 //    if (participantCount < 200)
@@ -1088,6 +1098,19 @@ namespace Unigram.ViewModels
         }
 
         public List<Tuple<TLUser, TLBotCommand>> UnfilteredBotCommands { get; private set; }
+
+        private bool _hasBotCommands;
+        public bool HasBotCommands
+        {
+            get
+            {
+                return _hasBotCommands;
+            }
+            set
+            {
+                Set(ref _hasBotCommands, value);
+            }
+        }
 
         private List<Tuple<TLUser, TLBotCommand>> _botCommands;
         public List<Tuple<TLUser, TLBotCommand>> BotCommands

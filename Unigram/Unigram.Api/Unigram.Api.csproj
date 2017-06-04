@@ -31,7 +31,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -53,7 +53,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
     <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -75,7 +75,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -363,6 +363,7 @@
     <Compile Include="TL\Methods\Users\TLUsersGetUsers.cs" />
     <Compile Include="TL\Partial\TLAuthorization.Partial.cs" />
     <Compile Include="TL\Partial\TLBotInlineResultBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLChannelFull.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelParticipantBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChatParticipantBase.Partial.cs" />
     <Compile Include="TL\Partial\TLDraftMessageBase.Partial.cs" />
