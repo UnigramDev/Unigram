@@ -136,6 +136,15 @@ namespace Unigram.ViewModels
                 {
                     foreach (var message in args.Messages)
                     {
+                        if (_editedMessage != null && _editedMessage.Id == message.Id)
+                        {
+                            ClearReplyCommand.Execute();
+                        }
+                        else if (ReplyInfo.ReplyToMsgId == message.Id)
+                        {
+                            ClearReplyCommand.Execute();
+                        }
+
                         var removed = Messages.Remove(message);
                         if (removed == false)
                         {

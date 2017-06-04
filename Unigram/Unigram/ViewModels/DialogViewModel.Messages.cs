@@ -208,6 +208,10 @@ namespace Unigram.ViewModels
                     {
                         ClearReplyCommand.Execute();
                     }
+                    else if (ReplyInfo.ReplyToMsgId == messages[j].Id)
+                    {
+                        ClearReplyCommand.Execute();
+                    }
 
                     Messages.Remove(messages[j]);
                 }
