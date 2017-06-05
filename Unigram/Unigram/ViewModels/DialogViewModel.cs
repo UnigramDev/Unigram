@@ -170,8 +170,19 @@ namespace Unigram.ViewModels
             {
                 Set(ref _with, value);
                 RaisePropertyChanged(() => IsSilentVisible);
+
+                if (value is TLUser)
+                    RaisePropertyChanged(() => WithUser);
+                else if (value is TLChat)
+                    RaisePropertyChanged(() => WithChat);
+                else if (value is TLChannel)
+                    RaisePropertyChanged(() => WithChannel);
             }
         }
+
+        public TLUser WithUser => _with as TLUser;
+        public TLChat WithChat => _with as TLChat;
+        public TLChannel WithChannel => _with as TLChannel;
 
         private object _full;
         public object Full
@@ -243,7 +254,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return _accessToken != null || _isEmpty;
+                return (_accessToken != null || _isEmpty) && !_isLoadingNextSlice && !_isLoadingPreviousSlice;
             }
         }
 
@@ -357,7 +368,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return _isEmpty;
+                return _isEmpty && !_isLoadingNextSlice && !_isLoadingPreviousSlice;
             }
             set
             {
@@ -366,8 +377,23 @@ namespace Unigram.ViewModels
             }
         }
 
+        public override bool IsLoading
+        {
+            get
+            {
+                return _isLoadingNextSlice || _isLoadingPreviousSlice;
+            }
+            set
+            {
+                base.IsLoading = value;
+                RaisePropertyChanged(() => IsEmpty);
+                RaisePropertyChanged(() => HasAccessToken);
+            }
+        }
+
         private bool _isLoadingNextSlice;
         private bool _isLoadingPreviousSlice;
+
         private Stack<int> _goBackStack = new Stack<int>();
 
         public async Task LoadNextSliceAsync()
@@ -378,6 +404,7 @@ namespace Unigram.ViewModels
             }
 
             _isLoadingNextSlice = true;
+            IsLoading = true;
             UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
@@ -441,6 +468,7 @@ namespace Unigram.ViewModels
             }
 
             _isLoadingNextSlice = false;
+            IsLoading = false;
         }
 
         public async Task LoadPreviousSliceAsync()
@@ -451,6 +479,7 @@ namespace Unigram.ViewModels
             }
 
             _isLoadingPreviousSlice = true;
+            IsLoading = true;
             UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
 
             Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
@@ -510,6 +539,7 @@ namespace Unigram.ViewModels
             }
 
             _isLoadingPreviousSlice = false;
+            IsLoading = false;
         }
 
         public RelayCommand PreviousSliceCommand => new RelayCommand(PreviousSliceExecute);
@@ -531,10 +561,14 @@ namespace Unigram.ViewModels
 
         public async Task LoadMessageSliceAsync(int? previousId, int maxId)
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
+            {
+                return;
+            }
+
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
-
+            IsLoading = true;
             UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
 
             Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
@@ -584,6 +618,10 @@ namespace Unigram.ViewModels
 
             _isLoadingNextSlice = false;
             _isLoadingPreviousSlice = false;
+            IsLoading = false;
+
+            await Task.Delay(200);
+            await LoadNextSliceAsync();
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)
@@ -610,10 +648,14 @@ namespace Unigram.ViewModels
 
         public async Task LoadFirstSliceAsync(int maxId, int offset)
         {
-            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null) return;
+            if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
+            {
+                return;
+            }
+
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
-
+            IsLoading = true;
             UpdatingScrollMode = _currentDialog?.UnreadCount > 0 ? ItemsUpdatingScrollMode.KeepItemsInView : ItemsUpdatingScrollMode.KeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadFirstSliceAsync");
@@ -698,6 +740,7 @@ namespace Unigram.ViewModels
 
             _isLoadingNextSlice = false;
             _isLoadingPreviousSlice = false;
+            IsLoading = false;
         }
 
         public async void ProcessReplies(IList<TLMessageBase> messages)
@@ -802,7 +845,14 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            Messages.Clear();
+            //if (mode != NavigationMode.New)
+            //{
+            //    return;
+            //}
+
+            //Messages.Clear();
+            //With = null;
+            //Full = null;
 
             var messageId = new int?();
             if (App.InMemoryState.NavigateToMessage.HasValue)
@@ -825,6 +875,12 @@ namespace Unigram.ViewModels
             Dialog = CacheService.GetDialog(Peer.ToPeer());
 
             //Aggregator.Subscribe(this);
+
+            //var storage = ApplicationSettings.Current.GetValueOrDefault(TLSerializationService.Current.Serialize(parameter), -1);
+            //if (storage != -1 && messageId == null && _currentDialog?.UnreadCount == 0)
+            //{
+            //    messageId = storage;
+            //}
 
             if (messageId.HasValue)
             {
@@ -1126,12 +1182,7 @@ namespace Unigram.ViewModels
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
-            if (_editedMessage == null)
-            {
-                SaveDraft();
-            }
-
-            //Aggregator.Unsubscribe(this);
+            SaveDraft();
             return Task.CompletedTask;
         }
 
@@ -1157,6 +1208,11 @@ namespace Unigram.ViewModels
 
         public void SaveDraft()
         {
+            if (_editedMessage != null)
+            {
+                return;
+            }
+
             var messageText = GetText().Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             var reply = new int?();

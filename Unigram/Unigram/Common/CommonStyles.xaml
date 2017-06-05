@@ -3609,10 +3609,10 @@
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
-                            <VisualStateGroup x:Name="ButtonStates">
-                                <VisualState x:Name="ButtonVisible">
+                            <VisualStateGroup x:Name="ButtonStates1">
+                                <VisualState x:Name="ButtonVisible1">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton" Storyboard.TargetProperty="Visibility">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CleanButton" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0">
                                                 <DiscreteObjectKeyFrame.Value>
                                                     <Visibility>Visible</Visibility>
@@ -3628,7 +3628,7 @@
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="ButtonCollapsed" />
+                                <VisualState x:Name="ButtonCollapsed1" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
@@ -3681,7 +3681,7 @@
                                         Grid.ColumnSpan="3"
                                         Content="{TemplateBinding PlaceholderText}"
                                         IsHitTestVisible="False"/>
-                        <Button x:Name="DeleteButton"
+                        <Button x:Name="CleanButton"
                                 Grid.Row="1"
                                 Style="{StaticResource DeleteButtonStyle}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
@@ -3690,6 +3690,7 @@
                                 Visibility="Collapsed"
                                 FontSize="{TemplateBinding FontSize}"
                                 MinWidth="34"
+                                Width="48"
                                 VerticalAlignment="Stretch"/>
                         <Button x:Name="SearchButton"
                                 Grid.Row="1"

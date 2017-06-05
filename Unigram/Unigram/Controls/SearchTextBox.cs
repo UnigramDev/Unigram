@@ -23,6 +23,23 @@ namespace Unigram.Controls
             TextChanged += OnTextChanged;
         }
 
+        protected override void OnApplyTemplate()
+        {
+            var button = GetTemplateChild("CleanButton") as Button;
+            if (button != null)
+            {
+                button.Click += Clean_Click;
+            }
+
+            base.OnApplyTemplate();
+        }
+
+        private void Clean_Click(object sender, RoutedEventArgs e)
+        {
+            Text = string.Empty;
+            Focus(FocusState.Keyboard);
+        }
+
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             if (ViewModel != null && ViewModel.NavigationService != null)
@@ -36,7 +53,9 @@ namespace Unigram.Controls
             if (string.IsNullOrWhiteSpace(Text) == false)
             {
                 e.Handled = true;
+
                 Text = string.Empty;
+                Focus(FocusState.Keyboard);
             }
         }
 
@@ -46,7 +65,12 @@ namespace Unigram.Controls
 
             if (string.IsNullOrWhiteSpace(Text))
             {
+                VisualStateManager.GoToState(this, "ButtonCollapsed1", false);
                 SearchCommand?.Execute(null);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, "ButtonVisible1", false);
             }
         }
 

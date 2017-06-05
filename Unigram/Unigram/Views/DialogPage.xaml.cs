@@ -75,6 +75,8 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>();
 
+            //NavigationCacheMode = NavigationCacheMode.Required;
+
             ViewModel.TextField = TextField;
 
             CheckMessageBoxEmpty();
@@ -165,6 +167,25 @@ namespace Unigram.Views
             base.OnNavigatedTo(e);
         }
 
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            //if (_panel != null && ViewModel.With != null)
+            //{
+            //    var container = lvDialogs.ContainerFromIndex(_panel.FirstVisibleIndex);
+            //    if (container != null)
+            //    {
+            //        var peer = ViewModel.With.ToPeer();
+            //        var item = lvDialogs.ItemFromContainer(container) as TLMessageBase;
+
+            //        ApplicationSettings.Current.AddOrUpdateValue(TLSerializationService.Current.Serialize(peer), item?.Id ?? -1);
+            //    }
+            //}
+
+            Bindings.StopTracking();
+
+            base.OnNavigatingFrom(e);
+        }
+
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
@@ -176,13 +197,6 @@ namespace Unigram.Views
             }
 
             base.OnNavigatedFrom(e);
-        }
-
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            Bindings.StopTracking();
-
-            base.OnNavigatingFrom(e);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -1072,6 +1086,21 @@ namespace Unigram.Views
         public Visibility ConvertBotInfo(bool hasInfo, bool last)
         {
             return hasInfo && last ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public Visibility ConvertIsEmpty(bool empty, bool self, bool should)
+        {
+            if (should)
+            {
+                return empty && self ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            return empty && !self ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public string ConvertEmptyText(int userId)
+        {
+            return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? "Got a question about Telegram?" : "No messages here yet...";
         }
 
         #endregion
