@@ -37,7 +37,9 @@ namespace Unigram.Controls
             if (panel != null)
             {
                 ItemsStack = panel;
-                ItemsStack.ItemsUpdatingScrollMode = UpdatingScrollMode;
+                ItemsStack.ItemsUpdatingScrollMode = UpdatingScrollMode == UpdatingScrollMode.KeepItemsInView || UpdatingScrollMode == UpdatingScrollMode.ForceKeepItemsInView
+                    ? ItemsUpdatingScrollMode.KeepItemsInView
+                    : ItemsUpdatingScrollMode.KeepLastItemInView;
                 ItemsStack.SizeChanged += Panel_SizeChanged;
             }
         }
@@ -67,41 +69,49 @@ namespace Unigram.Controls
         {
             if (ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
             {
-                await ViewModel.LoadNextSliceAsync();
+                await ViewModel.LoadNextSliceAsync(true);
             }
             else if (ScrollingHost.ScrollableHeight - ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
             {
                 if (ViewModel.IsFirstSliceLoaded == false)
                 {
-                    await ViewModel.LoadPreviousSliceAsync();
+                    await ViewModel.LoadPreviousSliceAsync(true);
                 }
             }
         }
 
         #region UpdatingScrollMode
 
-        public ItemsUpdatingScrollMode UpdatingScrollMode
+        public UpdatingScrollMode UpdatingScrollMode
         {
-            get { return (ItemsUpdatingScrollMode)GetValue(UpdatingScrollModeProperty); }
+            get { return (UpdatingScrollMode)GetValue(UpdatingScrollModeProperty); }
             set { SetValue(UpdatingScrollModeProperty, value); }
         }
 
         public static readonly DependencyProperty UpdatingScrollModeProperty =
-            DependencyProperty.Register("UpdatingScrollMode", typeof(ItemsUpdatingScrollMode), typeof(BubbleListView), new PropertyMetadata(ItemsUpdatingScrollMode.KeepItemsInView, OnUpdatingScrollModeChanged));
+            DependencyProperty.Register("UpdatingScrollMode", typeof(UpdatingScrollMode), typeof(BubbleListView), new PropertyMetadata(UpdatingScrollMode.KeepItemsInView, OnUpdatingScrollModeChanged));
 
         private static void OnUpdatingScrollModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as BubbleListView;
             if (sender.ItemsStack != null)
             {
-                var mode = (ItemsUpdatingScrollMode)e.NewValue;
-                if ((mode == ItemsUpdatingScrollMode.KeepItemsInView && sender.ScrollingHost.VerticalOffset < 120))
+                var mode = (UpdatingScrollMode)e.NewValue;
+                if (mode == UpdatingScrollMode.ForceKeepItemsInView)
                 {
-                    sender.ItemsStack.ItemsUpdatingScrollMode = (ItemsUpdatingScrollMode)e.NewValue;
+                    sender.ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
                 }
-                else if ((mode == ItemsUpdatingScrollMode.KeepLastItemInView))
+                else if (mode == UpdatingScrollMode.ForceKeepLastItemInView)
                 {
-                    sender.ItemsStack.ItemsUpdatingScrollMode = (ItemsUpdatingScrollMode)e.NewValue;
+                    sender.ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+                }
+                else if (mode == UpdatingScrollMode.KeepItemsInView && sender.ScrollingHost.VerticalOffset < 120)
+                {
+                    sender.ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+                }
+                else if (mode == UpdatingScrollMode.KeepLastItemInView && sender.ScrollingHost.ScrollableHeight - sender.ScrollingHost.VerticalOffset < 120)
+                {
+                    sender.ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
                 }
             }
         }
@@ -200,5 +210,13 @@ namespace Unigram.Controls
 
             base.PrepareContainerForItemOverride(element, item);
         }
+    }
+
+    public enum UpdatingScrollMode
+    {
+        KeepItemsInView,
+        ForceKeepItemsInView,
+        KeepLastItemInView,
+        ForceKeepLastItemInView
     }
 }

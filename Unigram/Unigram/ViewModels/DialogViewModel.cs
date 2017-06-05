@@ -297,8 +297,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private ItemsUpdatingScrollMode _updatingScrollMode;
-        public ItemsUpdatingScrollMode UpdatingScrollMode
+        private UpdatingScrollMode _updatingScrollMode;
+        public UpdatingScrollMode UpdatingScrollMode
         {
             get
             {
@@ -396,7 +396,7 @@ namespace Unigram.ViewModels
 
         private Stack<int> _goBackStack = new Stack<int>();
 
-        public async Task LoadNextSliceAsync()
+        public async Task LoadNextSliceAsync(bool force = false)
         {
             if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
             {
@@ -405,7 +405,7 @@ namespace Unigram.ViewModels
 
             _isLoadingNextSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+            UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepLastItemInView : UpdatingScrollMode.KeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
@@ -471,7 +471,7 @@ namespace Unigram.ViewModels
             IsLoading = false;
         }
 
-        public async Task LoadPreviousSliceAsync()
+        public async Task LoadPreviousSliceAsync(bool force = false)
         {
             if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
             {
@@ -480,7 +480,7 @@ namespace Unigram.ViewModels
 
             _isLoadingPreviousSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+            UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
 
             Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
@@ -568,7 +568,7 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+            UpdatingScrollMode = UpdatingScrollMode.ForceKeepItemsInView;
 
             Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
 
@@ -620,7 +620,7 @@ namespace Unigram.ViewModels
             IsLoading = false;
 
             await Task.Delay(200);
-            await LoadNextSliceAsync();
+            await LoadNextSliceAsync(true);
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)
@@ -655,7 +655,7 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = _currentDialog?.UnreadCount > 0 ? ItemsUpdatingScrollMode.KeepItemsInView : ItemsUpdatingScrollMode.KeepLastItemInView;
+            UpdatingScrollMode = _currentDialog?.UnreadCount > 0 ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.ForceKeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadFirstSliceAsync");
 
