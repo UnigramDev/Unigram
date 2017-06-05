@@ -813,6 +813,8 @@ namespace Unigram.Common
                 return;
             }
 
+            StickerSetView.Current.Hide();
+
             if (navstr.StartsWith("@"))
             {
                 Hyperlink_Navigate(TLType.MessageEntityMention, navstr, message);

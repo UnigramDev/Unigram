@@ -534,7 +534,6 @@ namespace Unigram.ViewModels
                 if (response.Result.Messages.Count < limit)
                 {
                     IsFirstSliceLoaded = true;
-                    UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
                 }
             }
 
@@ -894,6 +893,11 @@ namespace Unigram.ViewModels
                 LoadFirstSliceAsync(maxId, offset);
             }
 
+            if (App.InMemoryState.ForwardMessages != null)
+            {
+                Reply = new TLMessagesContainter { FwdMessages = new TLVector<TLMessage>(App.InMemoryState.ForwardMessages) };
+            }
+
             var dialog = _currentDialog;
             if (dialog != null && dialog.HasDraft)
             {
@@ -1081,11 +1085,6 @@ namespace Unigram.ViewModels
                 dialog.ReadInboxMaxId = dialog.TopMessage;
                 dialog.UnreadCount = dialog.UnreadCount - unread;
                 dialog.RaisePropertyChanged(() => dialog.UnreadCount);
-            }
-
-            if (App.InMemoryState.ForwardMessages != null)
-            {
-                Reply = new TLMessagesContainter { FwdMessages = new TLVector<TLMessage>(App.InMemoryState.ForwardMessages) };
             }
 
             LastSeen = await GetSubtitle();

@@ -94,7 +94,15 @@ namespace Unigram.Controls
             var sender = d as BubbleListView;
             if (sender.ItemsStack != null)
             {
-                sender.ItemsStack.ItemsUpdatingScrollMode = (ItemsUpdatingScrollMode)e.NewValue;
+                var mode = (ItemsUpdatingScrollMode)e.NewValue;
+                if ((mode == ItemsUpdatingScrollMode.KeepItemsInView && sender.ScrollingHost.VerticalOffset < 120))
+                {
+                    sender.ItemsStack.ItemsUpdatingScrollMode = (ItemsUpdatingScrollMode)e.NewValue;
+                }
+                else if ((mode == ItemsUpdatingScrollMode.KeepLastItemInView))
+                {
+                    sender.ItemsStack.ItemsUpdatingScrollMode = (ItemsUpdatingScrollMode)e.NewValue;
+                }
             }
         }
 
