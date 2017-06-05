@@ -74,16 +74,16 @@ namespace Unigram.Controls
             }
         }
 
-        protected override void OnKeyDown(KeyRoutedEventArgs e)
-        {
-            if (e.Key == Windows.System.VirtualKey.Enter)
-            {
-                GetBindingExpression(TextProperty)?.UpdateSource();
-                SearchCommand?.Execute(null);
-            }
+        //protected override void OnKeyDown(KeyRoutedEventArgs e)
+        //{
+        //    if (e.Key == Windows.System.VirtualKey.Enter)
+        //    {
+        //        GetBindingExpression(TextProperty)?.UpdateSource();
+        //        SearchCommand?.Execute(null);
+        //    }
 
-            base.OnKeyDown(e);
-        }
+        //    base.OnKeyDown(e);
+        //}
 
         #region SearchCommand
         public ICommand SearchCommand
