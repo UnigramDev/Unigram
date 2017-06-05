@@ -311,10 +311,20 @@ namespace Unigram.Tasks
 
                     if (_systemCall != null)
                     {
-                        _systemCall.AnswerRequested -= OnAnswerRequested;
-                        _systemCall.RejectRequested -= OnRejectRequested;
-                        _systemCall.NotifyCallEnded();
-                        _systemCall = null;
+                        try
+                        {
+                            _systemCall.AnswerRequested -= OnAnswerRequested;
+                            _systemCall.RejectRequested -= OnRejectRequested;
+                            _systemCall.NotifyCallEnded();
+                            _systemCall = null;
+                        }
+                        catch
+                        {
+                            if (_deferral != null)
+                                _deferral.Complete();
+                        }
+
+                        Debug.WriteLine("VoIP call disposed");
                     }
                     else if (_deferral != null)
                     {
@@ -622,6 +632,12 @@ namespace Unigram.Tasks
             else
             {
                 VoIPCallTask.Log("Sending request", "Via AppServiceConnection");
+
+                if (_connection == null)
+                {
+                    _connection = VoIPServiceTask.Connection;
+                    _connection.RequestReceived += OnRequestReceived;
+                }
 
                 var response = await _connection.SendMessageAsync(new ValueSet { { nameof(caption), caption }, { nameof(request), TLSerializationService.Current.Serialize(request) } });
                 if (response.Status == AppServiceResponseStatus.Success)

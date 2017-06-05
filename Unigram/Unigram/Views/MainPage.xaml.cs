@@ -40,6 +40,10 @@ using Windows.System.Profile;
 using Windows.ApplicationModel.Core;
 using Unigram.Core.Services;
 using Telegram.Api.Aggregator;
+using Template10.Common;
+using Windows.Foundation.Metadata;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Composition;
 
 namespace Unigram.Views
 {
@@ -52,8 +56,9 @@ namespace Unigram.Views
         public MainPage()
         {
             InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Required;
             DataContext = UnigramContainer.Current.ResolveType<MainViewModel>();
+
+            NavigationCacheMode = NavigationCacheMode.Required;
 
             ViewModel.Aggregator.Subscribe(this);
 
@@ -91,6 +96,13 @@ namespace Unigram.Views
                     Navigate(DialogsListView.SelectedItem);
                 }
             }
+            else if (message.Equals("Search"))
+            {
+                if (MasterDetail.CurrentState == MasterDetailState.Narrow && MasterDetail.NavigationService.CanGoBack)
+                {
+                    MasterDetail.NavigationService.GoBack();
+                }
+            }
         }
 
         //private async void OnThemeChanged(DependencyObject sender, DependencyProperty dp)
@@ -109,7 +121,7 @@ namespace Unigram.Views
             OnStateChanged(null, null);
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             Frame.BackStack.Clear();
 
@@ -123,11 +135,98 @@ namespace Unigram.Views
             ViewModel.Dialogs.NavigationService = MasterDetail.NavigationService;
             ViewModel.Contacts.NavigationService = MasterDetail.NavigationService;
             ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
+            SettingsView.ViewModel.NavigationService = MasterDetail.NavigationService;
 
             if (e.Parameter is string)
             {
                 if (SerializationService.Json.Deserialize((string)e.Parameter) is string parameter)
                 {
+                    if (Uri.TryCreate(parameter, UriKind.Absolute, out Uri scheme))
+                    {
+                        string username = null;
+                        string group = null;
+                        string sticker = null;
+                        string botUser = null;
+                        string botChat = null;
+                        string message = null;
+                        string phone = null;
+                        string game = null;
+                        string phoneHash = null;
+                        string post = null;
+                        bool hasUrl = false;
+
+                        var query = scheme.Query.ParseQueryString();
+                        if (scheme.AbsoluteUri.StartsWith("tg:resolve") || scheme.AbsoluteUri.StartsWith("tg://resolve"))
+                        {
+                            username = query.GetParameter("domain");
+                            botUser = query.GetParameter("start");
+                            botChat = query.GetParameter("startgroup");
+                            game = query.GetParameter("game");
+                            post = query.GetParameter("post");
+                        }
+                        else if (scheme.AbsoluteUri.StartsWith("tg:join") || scheme.AbsoluteUri.StartsWith("tg://join"))
+                        {
+                            group = query.GetParameter("invite");
+                        }
+                        else if (scheme.AbsoluteUri.StartsWith("tg:addstickers") || scheme.AbsoluteUri.StartsWith("tg://addstickers"))
+                        {
+                            sticker = query.GetParameter("set");
+                        }
+                        else if (scheme.AbsoluteUri.StartsWith("tg:msg") || scheme.AbsoluteUri.StartsWith("tg://msg") || scheme.AbsoluteUri.StartsWith("tg://share") || scheme.AbsoluteUri.StartsWith("tg:share"))
+                        {
+                            message = query.GetParameter("url");
+                            if (message == null)
+                            {
+                                message = "";
+                            }
+                            if (query.GetParameter("text") != null)
+                            {
+                                if (message.Length > 0)
+                                {
+                                    hasUrl = true;
+                                    message += "\n";
+                                }
+                                message += query.GetParameter("text");
+                            }
+                            if (message.Length > 4096 * 4)
+                            {
+                                message = message.Substring(0, 4096 * 4);
+                            }
+                            while (message.EndsWith("\n"))
+                            {
+                                message = message.Substring(0, message.Length - 1);
+                            }
+                        }
+                        else if (scheme.AbsoluteUri.StartsWith("tg:confirmphone") || scheme.AbsoluteUri.StartsWith("tg://confirmphone"))
+                        {
+                            phone = query.GetParameter("phone");
+                            phoneHash = query.GetParameter("hash");
+                        }
+
+                        if (message != null && message.StartsWith("@"))
+                        {
+                            message = " " + message;
+                        }
+                        if (phone != null || phoneHash != null)
+                        {
+                            MessageHelper.NavigateToConfirmPhone(ViewModel.ProtoService, phone, phoneHash);
+                        }
+                        else if (group != null)
+                        {
+                            MessageHelper.NavigateToInviteLink(group);
+                        }
+                        else if (sticker != null)
+                        {
+                            MessageHelper.NavigateToStickerSet(sticker);
+                        }
+                        else if (username != null)
+                        {
+                            MessageHelper.NavigateToUsername(ViewModel.ProtoService, username, botUser ?? botChat, post, game);
+                        }
+
+                        return;
+                    }
+
                     var data = Toast.SplitArguments(parameter);
                     if (data.ContainsKey("from_id"))
                     {
@@ -135,7 +234,7 @@ namespace Unigram.Views
                         if (user != null)
                         {
                             ClearNavigation();
-                            MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                            MasterDetail.NavigationService.NavigateToDialog(user);
                         }
                     }
                     else if (data.ContainsKey("chat_id"))
@@ -144,7 +243,7 @@ namespace Unigram.Views
                         if (chat != null)
                         {
                             ClearNavigation();
-                            MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChat { ChatId = chat.Id });
+                            MasterDetail.NavigationService.NavigateToDialog(chat);
                         }
                     }
                     else if (data.ContainsKey("channel_id"))
@@ -153,13 +252,13 @@ namespace Unigram.Views
                         if (chat != null)
                         {
                             ClearNavigation();
-                            MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = chat.Id });
+                            MasterDetail.NavigationService.NavigateToDialog(chat);
                         }
                     }
                 }
             }
 
-            var config = ViewModel.CacheService.GetConfig();
+            //var config = ViewModel.CacheService.GetConfig();
             //if (config != null)
             //{
             //    if (config.IsPhoneCallsEnabled)
@@ -171,10 +270,21 @@ namespace Unigram.Views
             //        rpMasterTitlebar.Items.RemoveAt(2);
             //    }
             //}
+
+            await SettingsView.ViewModel.OnNavigatedToAsync(null, e.NavigationMode, null);
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
+            if (e.SourcePageType == typeof(BlankPage))
+            {
+                Grid.SetRow(Separator, 0);
+            }
+            else
+            {
+                Grid.SetRow(Separator, 1);
+            }
+
             if (e.SourcePageType == typeof(DialogPage))
             {
                 var parameter = MasterDetail.NavigationService.SerializationService.Deserialize((string)e.Parameter);
@@ -245,11 +355,6 @@ namespace Unigram.Views
 
         private void OnStateChanged(object sender, EventArgs e)
         {
-            if (DialogsListView.SelectionMode == ListViewSelectionMode.Multiple)
-            {
-                ChangeListState();
-            }
-
             if (MasterDetail.CurrentState == MasterDetailState.Narrow)
             {
                 //DialogsListView.IsItemClickEnabled = true;
@@ -280,11 +385,7 @@ namespace Unigram.Views
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var listView = sender as ListView;
-            if (listView.SelectionMode != ListViewSelectionMode.Multiple)
-            {
-                Navigate(e.ClickedItem);
-            }
+            Navigate(e.ClickedItem);
         }
 
         private void Navigate(object item)
@@ -295,28 +396,41 @@ namespace Unigram.Views
             {
                 if (dialog.IsSearchResult)
                 {
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(dialog.Peer, dialog.TopMessage));
+                    MasterDetail.NavigationService.NavigateToDialog(dialog.With, dialog.TopMessage);
                 }
                 else
                 {
-                    MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
+                    MasterDetail.NavigationService.NavigateToDialog(dialog.With);
                 }
             }
 
             if (item is TLMessageCommonBase message)
             {
+                var with = default(ITLDialogWith);
                 var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
-                MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(peer, message.Id));
+                if (peer is TLPeerUser)
+                {
+                    with = ViewModel.CacheService.GetUser(peer.Id);
+                }
+                else
+                {
+                    with = ViewModel.CacheService.GetChat(peer.Id);
+                }
+
+                if (with != null)
+                {
+                    MasterDetail.NavigationService.NavigateToDialog(with, message.Id);
+                }
             }
 
             if (item is TLUser user)
             {
-                MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                MasterDetail.NavigationService.NavigateToDialog(user);
             }
 
             if (item is TLChannel channel)
             {
-                MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
+                MasterDetail.NavigationService.NavigateToDialog(channel);
             }
         }
 
@@ -333,91 +447,17 @@ namespace Unigram.Views
                 await Task.Delay(500);
                 UpdateListViewsSelectedItem(MasterDetail.NavigationService.GetPeerFromBackStack());
             }
-
-            //if (listView.SelectedItem != null && _lastSelected != listView.SelectedItem)
-            //{
-            //    _lastSelected = listView.SelectedItem;
-
-            //    if (listView.SelectedItem is TLDialog dialog)
-            //    {
-            //        if (dialog.IsSearchResult)
-            //        {
-            //            MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(dialog.Peer, dialog.TopMessage));
-            //        }
-            //        else
-            //        {
-            //            MasterDetail.NavigationService.Navigate(typeof(DialogPage), dialog.Peer);
-            //        }
-            //    }
-
-            //    if (listView.SelectedItem is TLMessageCommonBase message)
-            //    {
-            //        var peer = message.IsOut || message.ToId is TLPeerChannel || message.ToId is TLPeerChat ? message.ToId : new TLPeerUser { UserId = message.FromId.Value };
-            //        MasterDetail.NavigationService.Navigate(typeof(DialogPage), Tuple.Create(peer, message.Id));
-            //    }
-
-            //    if (listView.SelectedItem is TLUser user)
-            //    {
-            //        MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
-            //    }
-
-            //    if (listView.SelectedItem is TLChannel channel)
-            //    {
-            //        MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = channel.Id });
-            //    }
-            //}
-        }
-
-        private void cbtnMasterSelect_Click(object sender, RoutedEventArgs e)
-        {
-            DialogsListView.SelectionMode = ListViewSelectionMode.Multiple;
-            cbtnMasterDeleteSelected.Visibility = Visibility.Visible;
-            cbtnMasterMuteSelected.Visibility = Visibility.Visible;
-            cbtnCancelSelection.Visibility = Visibility.Visible;
-            cbtnMasterSelect.Visibility = Visibility.Collapsed;
-            cbtnMasterNewChat.Visibility = Visibility.Collapsed;
-
-            //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            SystemNavigationManager.GetForCurrentView().BackRequested += Select_BackRequested;
         }
 
         private void cbtnMasterAbout_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigationService.Navigate(typeof(AboutPage));
+            MasterDetail.NavigationService.Navigate(typeof(AboutPage));
         }
 
         private void cbtnMasterSearch_Click(object sender, RoutedEventArgs e)
         {
             //PLEASE REMOVE THE BELOW LINE ONCE THE CHATPAGE HAS BEEN IMPLEMENTED
-            ViewModel.NavigationService.Navigate(typeof(DialogSharedMediaPage));
-        }
-
-        private void Select_BackRequested(object sender, BackRequestedEventArgs e)
-        {
-            // Mark event as handled so we don't get bounced out of the app.
-            e.Handled = true;
-            ChangeListState();
-        }
-
-        private void ChangeListState()
-        {
-            cbtnMasterDeleteSelected.Visibility = Visibility.Collapsed;
-            cbtnMasterMuteSelected.Visibility = Visibility.Collapsed;
-            cbtnCancelSelection.Visibility = Visibility.Collapsed;
-            cbtnMasterSelect.Visibility = Visibility.Visible;
-            cbtnMasterNewChat.Visibility = Visibility.Visible;
-            DialogsListView.SelectionMode = ListViewSelectionMode.Single;
-            SystemNavigationManager.GetForCurrentView().BackRequested -= Select_BackRequested;
-
-            //if (!ViewModel.NavigationService.CanGoBack)
-            //{
-            //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            //}
-        }
-
-        private void cbtnCancelSelection_Click(object sender, RoutedEventArgs e)
-        {
-            ChangeListState();
+            MasterDetail.NavigationService.Navigate(typeof(DialogSharedMediaPage));
         }
 
         private void searchInit()
@@ -458,11 +498,11 @@ namespace Unigram.Views
         {
             if (ViewModel.Contacts.Self != null)
             {
-                MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = ViewModel.Contacts.Self.Id });
+                MasterDetail.NavigationService.NavigateToDialog(ViewModel.Contacts.Self);
             }
         }
 
-        private void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)
+        private async void cbtnMasterSettings_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(SettingsPage));
         }
@@ -611,6 +651,12 @@ namespace Unigram.Views
         private void NewChannel_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(CreateChannelStep1Page));
+        }
+
+        private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            NewChatItem.Visibility = NewChannelItem.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+            EditNameItem.Visibility = LogoutItem.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

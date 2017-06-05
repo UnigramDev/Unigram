@@ -642,7 +642,7 @@ namespace Unigram.ViewModels
                         var already = Items.FirstOrDefault(x => x.Id == e.Dialog.Id);
                         if (already != null)
                         {
-                            Execute.BeginOnUIThread(async () => await new MessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
+                            Execute.BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
 
                             e.Dialog = already;
                             currentPosition = Items.IndexOf(already);
@@ -813,11 +813,9 @@ namespace Unigram.ViewModels
 
         public async void SearchSync(string query)
         {
-            query = query.TrimStart('@');
+            var local = await SearchLocalAsync(query.TrimStart('@'));
 
-            var local = await SearchLocalAsync(query);
-
-            if (query.Equals(_searchQuery.TrimStart('@')))
+            if (query.Equals(_searchQuery))
             {
                 Search.Clear();
                 if (local != null) Search.Insert(0, local);
@@ -826,12 +824,10 @@ namespace Unigram.ViewModels
 
         public async Task SearchAsync(string query)
         {
-            query = query.TrimStart('@');
-
             var global = await SearchGlobalAsync(query);
             var messages = await SearchMessagesAsync(query);
 
-            if (query.Equals(_searchQuery.TrimStart('@')))
+            if (query.Equals(_searchQuery))
             {
                 if (Search.Count > 2) Search.RemoveAt(2);
                 if (Search.Count > 1) Search.RemoveAt(1);
@@ -855,28 +851,28 @@ namespace Unigram.ViewModels
                     var user = dialog.With as TLUser;
                     if (user != null)
                     {
-                        return (user.FullName.Like(query, StringComparison.OrdinalIgnoreCase)) ||
+                        return (user.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
                                (user.HasUsername && user.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     var channel = dialog.With as TLChannel;
                     if (channel != null)
                     {
-                        return (channel.Title.Like(query, StringComparison.OrdinalIgnoreCase)) ||
+                        return (channel.Title.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
                                (channel.HasUsername && channel.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     var chat = dialog.With as TLChat;
                     if (chat != null)
                     {
-                        return (chat.Title.Like(query, StringComparison.OrdinalIgnoreCase));
+                        return (chat.Title.IsLike(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     return false;
                 }).ToList();
 
                 var contactsResults = contacts.OfType<TLUser>().Where(x =>
-                    (x.FullName.Like(query, StringComparison.OrdinalIgnoreCase)) ||
+                    (x.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
                     (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase)));
 
                 foreach (var result in contactsResults)

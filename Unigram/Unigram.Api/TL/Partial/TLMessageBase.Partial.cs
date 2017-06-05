@@ -124,7 +124,7 @@ namespace Telegram.Api.TL
                 {
                     if (this is TLMessageCommonBase messageCommon)
                     {
-                        var peer = messageCommon.IsOut || messageCommon.ToId is TLPeerChannel || messageCommon.ToId is TLPeerChat ? messageCommon.ToId : new TLPeerUser { UserId = messageCommon.FromId.Value };
+                        var peer = messageCommon.IsOut || messageCommon.ToId is TLPeerChannel || messageCommon.ToId is TLPeerChat ? messageCommon.ToId : new TLPeerUser { UserId = messageCommon.FromId ?? 0 };
                         if (peer is TLPeerUser)
                             _parent = InMemoryCacheService.Current.GetUser(peer.Id);
                         if (peer is TLPeerChat || ToId is TLPeerChannel)
@@ -245,26 +245,30 @@ namespace Telegram.Api.TL
 
         #endregion
 
+        #region IsPhoto
+
+        public bool IsPhoto()
+        {
+            return Media is TLMessageMediaPhoto;
+        }
+
+        #endregion
+
         #region Gif
-        public bool IsGif(bool real = false)
+        public bool IsGif()
         {
             var documentMedia = Media as TLMessageMediaDocument;
-            return documentMedia != null && IsGif(documentMedia.Document as TLDocument, real);
+            return documentMedia != null && IsGif(documentMedia.Document as TLDocument);
         }
 
-        public static bool IsGif(TLDocumentBase documentBase, bool real = false)
+        public static bool IsGif(TLDocumentBase documentBase)
         {
             var document = documentBase as TLDocument;
-            return document != null && IsGif(document, real);
+            return document != null && IsGif(document);
         }
 
-        public static bool IsGif(TLDocument document, bool real = false)
+        public static bool IsGif(TLDocument document)
         {
-            if (real == false)
-            {
-                return false;
-            }
-
             if (document != null && document.MimeType.Equals("video/mp4", StringComparison.OrdinalIgnoreCase))
             {
                 return IsGif(document.Attributes, document.Size);
@@ -287,6 +291,7 @@ namespace Telegram.Api.TL
                     return true;
                 }
             }
+
             return false;
         }
         #endregion
@@ -338,7 +343,7 @@ namespace Telegram.Api.TL
             {
                 var videoAttribute = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 var animatedAttribute = document.Attributes.OfType<TLDocumentAttributeAnimated>().FirstOrDefault();
-                if (videoAttribute != null /*&& animatedAttribute == null*/)
+                if (videoAttribute != null && animatedAttribute == null)
                 {
                     return !videoAttribute.IsRoundMessage;
                 }

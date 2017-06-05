@@ -69,17 +69,16 @@
                 Click="Reply_Click"
                 Grid.Row="1"/>
 
-            <RichTextBlock
+            <TextBlock
                 x:Name="MessageControl"
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
-                Style="{ThemeResource BodyRichTextBlockStyle}"
+                Style="{ThemeResource BodyTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
-                ContextRequested="MessageControl_ContextRequested"
                 Grid.Row="2">
-                <RichTextBlock.Resources>
+                <TextBlock.Resources>
                     <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
-                </RichTextBlock.Resources>
-            </RichTextBlock>
+                </TextBlock.Resources>
+            </TextBlock>
 
             <controls:MediaControl
                 x:Name="MediaControl"
@@ -90,7 +89,7 @@
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
                 Grid.Row="3"/>
 
-            <local:MessageStatusControl
+            <local:MessageStateControl
                 x:Name="StatusControl"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"

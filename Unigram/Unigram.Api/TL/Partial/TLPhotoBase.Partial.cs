@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services.FileManager;
 
 namespace Telegram.Api.TL
 {
@@ -115,6 +116,22 @@ namespace Telegram.Api.TL
 
     public partial class TLPhoto
     {
+        public void Cancel(IDownloadFileManager manager, IUploadManager uploadManager)
+        {
+            if (DownloadingProgress > 0 && DownloadingProgress < 1)
+            {
+                manager.CancelDownloadFile(this);
+                DownloadingProgress = 0;
+                IsTransferring = false;
+            }
+            else if (UploadingProgress > 0 && UploadingProgress < 1)
+            {
+                uploadManager.CancelUploadFile(Id);
+                UploadingProgress = 0;
+                IsTransferring = false;
+            }
+        }
+
         public override TLInputPhotoBase ToInputPhoto()
         {
             return new TLInputPhoto { Id = Id, AccessHash = AccessHash };

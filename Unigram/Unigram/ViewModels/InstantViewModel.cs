@@ -42,7 +42,7 @@ namespace Unigram.ViewModels
         {
             if (channel != null)
             {
-                NavigationService.Navigate(typeof(DialogPage), channel.ToPeer());
+                NavigationService.NavigateToDialog(channel);
             }
         }
 
@@ -83,7 +83,7 @@ namespace Unigram.ViewModels
 
             if (user != null)
             {
-                NavigationService.Navigate(typeof(DialogPage), user.ToPeer());
+                NavigationService.NavigateToDialog(user);
             }
         }
     }

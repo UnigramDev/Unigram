@@ -12,6 +12,23 @@
     xmlns:messages="using:Unigram.Controls.Messages"
     mc:Ignorable="d">
 
+    <DataTemplate x:Key="MediaMusicTemplate">
+        <Grid MinWidth="260">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
+                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+                <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
+            </Grid>
+            <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
+                <TextBlock Text="{Binding Media.Document.Title}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
+                <TextBlock Text="{Binding Media.Document.Duration}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate x:Key="MediaDocumentTemplate">
         <Grid MinWidth="260">
             <Grid.ColumnDefinitions>
@@ -112,6 +129,17 @@
                             MaxHeight="{ThemeResource TelegramLightMediaMaxHeight}"/>
     </DataTemplate>
 
+    <!--<DataTemplate x:Key="MediaGifTemplate">
+        <Grid Background="Black"
+              MinWidth="{ThemeResource TelegramMediaMinWidth}"
+              MinHeight="{ThemeResource TelegramMediaMinHeight}">
+            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                Constraint="{Binding Media.Document}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+        </Grid>
+    </DataTemplate>-->
+
     <DataTemplate x:Key="MediaGifTemplate">
         <Grid Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
@@ -121,9 +149,11 @@
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-            <!--<Image Source="{Binding Document, Converter={StaticResource DefaultPhotoConverter}}" MaxWidth="320" MaxHeight="320"/>-->
+            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
         </Grid>
     </DataTemplate>
+
 
     <DataTemplate x:Key="MediaContactTemplate">
         <Grid MinWidth="260">
@@ -135,16 +165,6 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <!--<Grid Background="{Binding Media.UserId, Converter={StaticResource BubblePlaceholderConverter}}" Width="48" Height="48" CornerRadius="24" Margin="0,0,12,0" Grid.RowSpan="2">
-                 <TextBlock Foreground="White" Text="{Binding Media.User, Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
-                 <Ellipse>
-                 <Ellipse.Fill>
-                 <ImageBrush ImageSource="{Binding Media.User.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                 </Ellipse.Fill>
-                 </Ellipse>
-                 <Border BorderBrush="#26000000" BorderThickness="1" CornerRadius="24" Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2" Grid.Column="1"/>
-                 </Grid>-->
-
             <controls:ProfilePictureView Click="Contact_Click" Source="{Binding Media.User, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" Margin="0,0,12,0" Grid.RowSpan="2"/>
 
             <TextBlock Text="{Binding Media.FullName}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
@@ -302,11 +322,11 @@
         <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Margin="0,8,0,6" Padding="8,0,0,0">
             <StackPanel Margin="0,0,0,8">
                 <TextBlock Text="{Binding Media.Game.Title}" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
-                <RichTextBlock common:MessageHelper.Message="{x:Bind Self, Mode=OneWay}" Style="{ThemeResource BodyRichTextBlockStyle}" Foreground="{ThemeResource MessageForegroundBrush}" Tag="Game">
-                    <RichTextBlock.Resources>
+                <TextBlock common:MessageHelper.Message="{x:Bind Self, Mode=OneWay}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource MessageForegroundBrush}" Tag="Game">
+                    <TextBlock.Resources>
                         <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
-                    </RichTextBlock.Resources>
-                </RichTextBlock>
+                    </TextBlock.Resources>
+                </TextBlock>
             </StackPanel>
 
             <Grid Background="Black"
@@ -379,6 +399,7 @@
                                      GameTemplate="{StaticResource MediaGameTemplate}"
                                      GeoPointTemplate="{StaticResource MediaGeoPointTemplate}"
                                      GifTemplate="{StaticResource MediaGifTemplate}"
+                                     MusicTemplate="{StaticResource MediaMusicTemplate}"
                                      RoundVideoTemplate="{StaticResource MediaRoundVideoTemplate}"
                                      PhotoTemplate="{StaticResource MediaPhotoTemplate}"
                                      VideoTemplate="{StaticResource MediaVideoTemplate}"

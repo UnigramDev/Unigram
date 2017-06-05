@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <StackPanel>
-        <TextBlock x:Name="MessageLabel" Margin="0,24,0,0" Style="{StaticResource BodyTextBlockStyle}"/>
+        <TextBlock x:Name="MessageLabel" Margin="0,16,0,0" Style="{StaticResource BodyTextBlockStyle}"/>
         <CheckBox x:Name="CheckBox" Margin="0,24,0,0" Visibility="Collapsed"/>
     </StackPanel>
 </ContentDialog>

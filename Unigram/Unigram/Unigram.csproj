@@ -20,7 +20,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86</AppxBundlePlatforms>
     <PackageCertificateThumbprint>065F0B2E6BD36F1FD48AEA0B5546196B98A1546C</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -131,14 +131,15 @@
     <Compile Include="Controls\Messages\HistoryCallMessageControl.xaml.cs">
       <DependentUpon>HistoryCallMessageControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\MessageStatusControl.xaml.cs">
-      <DependentUpon>MessageStatusControl.xaml</DependentUpon>
+    <Compile Include="Controls\Messages\MessageStateControl.xaml.cs">
+      <DependentUpon>MessageStateControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\PhoneCallMessageBubble.xaml.cs">
       <DependentUpon>PhoneCallMessageBubble.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
+    <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\Views\EditUserNameView.xaml.cs">
       <DependentUpon>EditUserNameView.xaml</DependentUpon>
     </Compile>
@@ -188,7 +189,9 @@
     <Compile Include="Converters\ChannelJoinedToVisibilityConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
     <Compile Include="Converters\ChannelTypeToStringConverter.cs" />
+    <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
+    <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
     <Compile Include="Selectors\GalleryTemplateSelector.cs" />
@@ -196,6 +199,7 @@
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
+    <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelAdminsViewModel.cs" />
@@ -210,6 +214,7 @@
     <Compile Include="ViewModels\Channels\ChannelKickedViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
     <Compile Include="ViewModels\DialogStickersViewModel.cs" />
@@ -306,6 +311,15 @@
     <Compile Include="Views\Settings\SettingsGeneralPage.xaml.cs">
       <DependentUpon>SettingsGeneralPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsPrivacyChatInvitePage.xaml.cs">
+      <DependentUpon>SettingsPrivacyChatInvitePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsPrivacyPhoneCallPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyPhoneCallPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsPrivacyStatusTimestampPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyStatusTimestampPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
       <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
     </Compile>
@@ -321,9 +335,6 @@
     <Compile Include="Views\Settings\SettingsBlockUserPage.xaml.cs">
       <DependentUpon>SettingsBlockUserPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsLastSeenPage.xaml.cs">
-      <DependentUpon>SettingsLastSeenPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Settings\SettingsMasksArchivedPage.xaml.cs">
       <DependentUpon>SettingsMasksArchivedPage.xaml</DependentUpon>
     </Compile>
@@ -332,12 +343,6 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsStickersArchivedPage.xaml.cs">
       <DependentUpon>SettingsStickersArchivedPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SwitchAccountPage.xaml.cs">
-      <DependentUpon>SwitchAccountPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\UsersSelectionPage.xaml.cs">
-      <DependentUpon>UsersSelectionPage.xaml</DependentUpon>
     </Compile>
     <Content Include="Assets\Audio\voip_busy.mp3" />
     <Content Include="Assets\Audio\voip_connecting.mp3" />
@@ -856,7 +861,7 @@
     <Compile Include="ViewModels\Settings\SettingsUsernameViewModel.cs" />
     <Compile Include="ViewModels\UnigramViewModelBase.cs" />
     <Compile Include="ViewModels\Users\UserDetailsViewModel.cs" />
-    <Compile Include="ViewModels\UserPhotosViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserPhotosViewModel.cs" />
     <Compile Include="Views\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
@@ -1119,7 +1124,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Messages\MessageStatusControl.xaml">
+    <Page Include="Controls\Messages\MessageStateControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1359,6 +1364,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\SettingsPrivacyChatInvitePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsPrivacyPhoneCallPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsPrivacyStatusTimestampPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\SettingsStatsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1423,10 +1440,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\SettingsLastSeenPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Settings\SettingsMasksPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1463,19 +1476,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SwitchAccountPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Users\UserCommonChatsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Users\UserDetailsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\UsersSelectionPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1488,7 +1493,7 @@
       <Version>4.1.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.3.2</Version>
+      <Version>5.3.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.0</Version>

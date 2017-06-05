@@ -72,7 +72,18 @@ namespace Unigram.ViewModels
             }
         }
 
-        public GalleryItem FirstItem { get; set; }
+        protected GalleryItem _firstItem;
+        public GalleryItem FirstItem
+        {
+            get
+            {
+                return _firstItem;
+            }
+            set
+            {
+                Set(ref _firstItem, value);
+            }
+        }
 
         protected object _poster;
         public object Poster
@@ -146,7 +157,7 @@ namespace Unigram.ViewModels
 
         }
 
-        public GalleryItem(object source, string caption, ITLDialogWith from, int date, bool stickers)
+        public GalleryItem(ITLTransferable source, string caption, ITLDialogWith from, int date, bool stickers)
         {
             Source = source;
             Caption = caption;
@@ -155,7 +166,7 @@ namespace Unigram.ViewModels
             HasStickers = stickers;
         }
 
-        public virtual object Source { get; private set; }
+        public virtual ITLTransferable Source { get; private set; }
 
         public virtual string Caption { get; private set; }
 
@@ -167,6 +178,8 @@ namespace Unigram.ViewModels
 
         public virtual bool IsLoop { get; private set; }
 
+        public virtual bool IsShareEnabled { get; private set; }
+
         public virtual bool HasStickers { get; private set; }
 
         public virtual TLInputStickeredMediaBase ToInputStickeredMedia()
@@ -175,6 +188,11 @@ namespace Unigram.ViewModels
         }
 
         public virtual Uri GetVideoSource()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void Share()
         {
             throw new NotImplementedException();
         }

@@ -37,6 +37,7 @@ using Windows.UI.Xaml.Media.Animation;
 using Unigram.Controls.Views;
 using Telegram.Api.Services.Cache;
 using LinqToVisualTree;
+using Unigram.ViewModels.Users;
 
 namespace Unigram.Views
 {
@@ -1046,14 +1047,7 @@ namespace Unigram.Views
                 ViewModel.Gallery.SelectedItem = item;
                 ViewModel.Gallery.FirstItem = item;
 
-                await GalleryView.Current.ShowAsync(ViewModel.Gallery, (s, args) =>
-                {
-                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                    if (animation != null)
-                    {
-                        animation.TryStart(image);
-                    }
-                });
+                await GalleryView.Current.ShowAsync(ViewModel.Gallery, () => image);
             }
         }
 

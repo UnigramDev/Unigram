@@ -14,9 +14,10 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Text="Members"
-                                   Glyph="&#xE109;"
-                                   CommandVisibility="{x:Bind (Visibility)ViewModel.Item.IsCreator, Mode=OneWay}"/>
+        <controls:ButtonPageHeader
+            Text="Members"
+            Glyph="&#xE109;"
+            CommandVisibility="{x:Bind (Visibility)ViewModel.Item.IsCreator, Mode=OneWay}"/>
 
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Participants}"

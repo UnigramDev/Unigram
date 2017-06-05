@@ -12,6 +12,7 @@ using Telegram.Api.Services.FileManager;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Controls.Views;
 using Unigram.Core.Common;
 using Windows.UI.Xaml.Navigation;
 
@@ -27,7 +28,7 @@ namespace Unigram.ViewModels
         public DialogGalleryViewModel(TLInputPeerBase peer, TLMessage selected, IMTProtoService protoService)
             : base(protoService, null, null)
         {
-            if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo() || selected.IsRoundVideo())
+            if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo() || selected.IsRoundVideo() || selected.IsGif())
             {
                 Items = new MvxObservableCollection<GalleryItem> { new GalleryMessageItem(selected) };
                 SelectedItem = Items[0];
@@ -48,7 +49,7 @@ namespace Unigram.ViewModels
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var result = await ProtoService.SearchAsync(_peer, string.Empty, new TLInputMessagesFilterPhotoVideo(), 0, 0, -5, _lastMaxId, 15);
+                var result = await ProtoService.SearchAsync(_peer, string.Empty, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
                 if (result.IsSucceeded)
                 {
                     if (result.Result is TLMessagesMessagesSlice)
@@ -65,12 +66,18 @@ namespace Unigram.ViewModels
 
                     foreach (var photo in result.Result.Messages)
                     {
-                        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo() || message.IsRoundVideo()))
+                        if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo() || message.IsRoundVideo() || message.IsGif()))
                         {
                             Items.Insert(0, new GalleryMessageItem(message));
+                            _lastMaxId = message.Id;
+                        }
+                        else
+                        {
+                            TotalItems--;
                         }
                     }
 
+                    //Items.ReplaceWith(items);
                     SelectedItem = Items.LastOrDefault();
                 }
             }
@@ -106,7 +113,7 @@ namespace Unigram.ViewModels
 
         public TLMessage Message => _message;
 
-        public override object Source
+        public override ITLTransferable Source
         {
             get
             {
@@ -155,7 +162,9 @@ namespace Unigram.ViewModels
 
         public override bool IsVideo => _message.IsVideo() || _message.IsGif() || _message.IsRoundVideo();
 
-        public override bool IsLoop => _message.IsGif(true);
+        public override bool IsLoop => _message.IsGif();
+
+        public override bool IsShareEnabled => _message.Parent != null;
 
         public override bool HasStickers
         {
@@ -196,6 +205,75 @@ namespace Unigram.ViewModels
             }
 
             return null;
+        }
+
+        public override async void Share()
+        {
+            if (ShouldShare(_message, true))
+            {
+                await ShareView.Current.ShowAsync(_message);
+            }
+            else
+            {
+                await ShareView.Current.ShowAsync(_message.Media.ToInputMedia());
+            }
+        }
+
+        private bool ShouldShare(TLMessage message, bool allowOut)
+        {
+            if (message.IsSticker())
+            {
+                return false;
+            }
+            else if (message.HasFwdFrom && message.FwdFrom.HasChannelId && (!message.IsOut || allowOut))
+            {
+                return true;
+            }
+            else if (message.HasFromId && !message.IsPost)
+            {
+                if (message.Media is TLMessageMediaEmpty || message.Media == null || message.Media is TLMessageMediaWebPage webpageMedia && !(webpageMedia.WebPage is TLWebPage))
+                {
+                    return false;
+                }
+
+                var user = message.From;
+                if (user != null && user.IsBot)
+                {
+                    return true;
+                }
+
+                if (!message.IsOut || allowOut)
+                {
+                    if (message.Media is TLMessageMediaGame || message.Media is TLMessageMediaInvoice)
+                    {
+                        return true;
+                    }
+
+                    var parent = message.Parent as TLChannel;
+                    if (parent != null && parent.IsMegaGroup)
+                    {
+                        //TLRPC.Chat chat = MessagesController.getInstance().getChat(messageObject.messageOwner.to_id.channel_id);
+                        //return chat != null && chat.username != null && chat.username.length() > 0 && !(messageObject.messageOwner.media instanceof TLRPC.TL_messageMediaContact) && !(messageObject.messageOwner.media instanceof TLRPC.TL_messageMediaGeo);
+
+                        return parent.HasUsername && !(message.Media is TLMessageMediaContact) && !(message.Media is TLMessageMediaGeo);
+                    }
+                }
+            }
+            //else if (messageObject.messageOwner.from_id < 0 || messageObject.messageOwner.post)
+            else if (message.IsPost)
+            {
+                //if (messageObject.messageOwner.to_id.channel_id != 0 && (messageObject.messageOwner.via_bot_id == 0 && messageObject.messageOwner.reply_to_msg_id == 0 || messageObject.type != 13))
+                //{
+                //    return Visibility.Visible;
+                //}
+
+                if (message.ToId is TLPeerChannel && (!message.HasViaBotId && !message.HasReplyToMsgId))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace Unigram.ViewModels
 {
@@ -49,14 +51,26 @@ namespace Unigram.ViewModels
             }
         }
 
-        public bool IsForward { get; set; }
+        private TLInputMediaBase _inputMedia;
+        public TLInputMediaBase InputMedia
+        {
+            get
+            {
+                return _inputMedia;
+            }
+            set
+            {
+                Set(ref _inputMedia, value);
+            }
+        }
+
         public bool IsWithMyScore { get; set; }
 
         public bool IsCopyLinkEnabled
         {
             get
             {
-                return _shareLink != null;
+                return _shareLink != null && DataTransferManager.IsSupported();
             }
         }
 
@@ -106,7 +120,7 @@ namespace Unigram.ViewModels
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
 
-            if (IsForward)
+            if (_message != null)
             {
                 foreach (var dialog in dialogs)
                 {
@@ -220,9 +234,40 @@ namespace Unigram.ViewModels
                     msgs.Add(clone);
                     msgIds.Add(fwdMessage.Id);
 
-                    CacheService.SyncSendingMessages(msgs, null, async (_) =>
+                    CacheService.SyncSendingMessage(clone, null, async (m) =>
                     {
                         var response = await ProtoService.ForwardMessagesAsync(toPeer, fromPeer, msgIds, msgs, IsWithMyScore);
+                        if (response.IsSucceeded)
+                        {
+                            Aggregator.Publish(m);
+                        }
+                    });
+                }
+
+                NavigationService.GoBack();
+            }
+            else if (_inputMedia != null)
+            {
+                if (_inputMedia is TLInputMediaDocument document)
+                {
+                    document.Caption = null;
+                }
+                else if (_inputMedia is TLInputMediaPhoto photo)
+                {
+                    photo.Caption = null;
+                }
+
+                foreach (var dialog in dialogs)
+                {
+                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.Peer, TLMessageState.Sending, true, true, date, null, new TLMessageMediaEmpty(), TLLong.Random(), null);
+
+                    CacheService.SyncSendingMessage(message, null, async (m) =>
+                    {
+                        var response = await ProtoService.SendMediaAsync(dialog.ToInputPeer(), _inputMedia, message);
+                        if (response.IsSucceeded)
+                        {
+                            Aggregator.Publish(m);
+                        }
                     });
                 }
 
@@ -238,6 +283,10 @@ namespace Unigram.ViewModels
                     CacheService.SyncSendingMessage(message, null, async (m) =>
                     {
                         var response = await ProtoService.SendMessageAsync(message, () => { message.State = TLMessageState.Confirmed; });
+                        if (response.IsSucceeded)
+                        {
+                            Aggregator.Publish(m);
+                        }
                     });
                 }
 

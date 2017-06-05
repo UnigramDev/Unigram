@@ -72,6 +72,31 @@ namespace Telegram.Api.TL
             }
         }
 
+        public string Title
+        {
+            get
+            {
+                var audioAttribute = Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
+                if (audioAttribute != null)
+                {
+                    if (audioAttribute.HasPerformer && audioAttribute.HasTitle)
+                    {
+                        return $"{audioAttribute.Performer} - {audioAttribute.Title}";
+                    }
+                    else if (audioAttribute.HasPerformer && !audioAttribute.HasTitle)
+                    {
+                        return $"{audioAttribute.Performer} - Unknown Track";
+                    }
+                    else if (audioAttribute.HasTitle && !audioAttribute.HasPerformer)
+                    {
+                        return $"{audioAttribute.Title}";
+                    }
+                }
+
+                return FileName;
+            }
+        }
+
         public string Emoticon
         {
             get

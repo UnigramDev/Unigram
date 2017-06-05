@@ -31,6 +31,8 @@ using Unigram.ViewModels.Users;
 using Unigram.ViewModels.Payments;
 using Windows.Foundation.Metadata;
 using Unigram.Common;
+using Windows.UI.Xaml;
+using Windows.UI.ViewManagement;
 
 namespace Unigram
 {
@@ -157,6 +159,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<AttachedStickersViewModel>();
             container.ContainerBuilder.RegisterType<StickerSetViewModel>();
+            container.ContainerBuilder.RegisterType<AboutViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<PaymentFormStep1ViewModel>();
             container.ContainerBuilder.RegisterType<PaymentFormStep2ViewModel>();
             container.ContainerBuilder.RegisterType<PaymentFormStep3ViewModel>();
@@ -215,8 +218,9 @@ namespace Unigram
         public void LoadStateAndUpdate()
         {
             var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>() as MTProtoService;
             var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
+            var transportService = UnigramContainer.Current.ResolveType<ITransportService>();
             //cacheService.Init();
             updatesService.GetCurrentUserId = () => protoService.CurrentUserId;
             updatesService.GetStateAsync = protoService.GetStateAsync;
@@ -234,6 +238,60 @@ namespace Unigram
 
             protoService.AuthorizationRequired -= OnAuthorizationRequired;
             protoService.AuthorizationRequired += OnAuthorizationRequired;
+            protoService.PropertyChanged -= OnPropertyChanged;
+            protoService.PropertyChanged += OnPropertyChanged;
+
+            transportService.TransportConnecting -= OnTransportConnecting;
+            transportService.TransportConnecting += OnTransportConnecting;
+            transportService.TransportConnected -= OnTransportConnected;
+            transportService.TransportConnected += OnTransportConnected;
+        }
+
+        private async void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("Message"))
+            {
+                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+                if (protoService != null)
+                {
+                    if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+                    {
+                        var statusBar = StatusBar.GetForCurrentView();
+                        if (string.IsNullOrEmpty(protoService.Message))
+                        {
+                            statusBar.ProgressIndicator.Text = string.Empty;
+                            await statusBar.ProgressIndicator.HideAsync();
+                        }
+                        else
+                        {
+                            statusBar.ProgressIndicator.Text = protoService.Message;
+                            await statusBar.ProgressIndicator.ShowAsync();
+                        }
+                    }
+                    else
+                    {
+                        ApplicationView.GetForCurrentView().Title = protoService.Message ?? string.Empty;
+                    }
+                }
+            }
+        }
+
+        private void OnTransportConnecting(object sender, TransportEventArgs e)
+        {
+            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+            if (protoService != null)
+            {
+                protoService.SetMessageOnTime(25, "Connecting...");
+            }
+        }
+
+        private void OnTransportConnected(object sender, TransportEventArgs e)
+        {
+            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+            if (protoService != null)
+            {
+                protoService.SetMessageOnTime(0, null);
+            }
         }
 
         private void OnAuthorizationRequired(object sender, AuthorizationRequiredEventArgs e)

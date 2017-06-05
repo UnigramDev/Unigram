@@ -132,8 +132,7 @@ namespace Unigram.Controls.Items
 
         private string GetBriefLabel(TLMessageBase value, bool showContent)
         {
-            var draft = ViewModel.Draft as TLDraftMessage;
-            if (draft != null)
+            if (ViewModel.Draft is TLDraftMessage draft && !string.IsNullOrWhiteSpace(draft.Message))
             {
                 return draft.Message;
             }
@@ -170,6 +169,10 @@ namespace Unigram.Controls.Items
                         }
 
                         return result + photoMedia.Caption.Replace("\r\n", "\n").Replace("\n", " ");
+                    }
+                    else if (message.Media is TLMessageMediaGame)
+                    {
+                        return string.Empty;
                     }
                 }
 

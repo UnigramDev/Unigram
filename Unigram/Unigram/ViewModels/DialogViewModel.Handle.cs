@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache.EventArgs;
+using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
+using Windows.System.Profile;
 
 namespace Unigram.ViewModels
 {
@@ -21,6 +24,9 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateUserStatus>,
         IHandle<TLUpdateDraftMessage>,
         IHandle<MessagesRemovedEventArgs>,
+        IHandle<DialogRemovedEventArgs>,
+        IHandle<UpdateCompletedEventArgs>,
+        IHandle<ChannelUpdateCompletedEventArgs>,
         IHandle<string>
     {
         public async void Handle(string message)
@@ -89,6 +95,39 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void Handle(ChannelUpdateCompletedEventArgs args)
+        {
+            if (With is TLChannel channel && channel.Id == args.ChannelId)
+            {
+                Handle(new UpdateCompletedEventArgs());
+            }
+        }
+
+        public void Handle(UpdateCompletedEventArgs args)
+        {
+            Execute.BeginOnUIThread(async () =>
+            {
+                Messages.Clear();
+
+                var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
+                var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
+                await LoadFirstSliceAsync(maxId, offset);
+            });
+        }
+
+        public void Handle(DialogRemovedEventArgs args)
+        {
+            if (With == args.Dialog.With)
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    Messages.Clear();
+                    SelectedMessages.Clear();
+                    SelectionMode = Windows.UI.Xaml.Controls.ListViewSelectionMode.None;
+                });
+            }
+        }
+
         public void Handle(MessagesRemovedEventArgs args)
         {
             if (With == args.Dialog.With && args.Messages != null)
@@ -97,6 +136,15 @@ namespace Unigram.ViewModels
                 {
                     foreach (var message in args.Messages)
                     {
+                        if (_editedMessage != null && _editedMessage.Id == message.Id)
+                        {
+                            ClearReplyCommand.Execute();
+                        }
+                        else if (ReplyInfo != null && ReplyInfo.ReplyToMsgId == message.Id)
+                        {
+                            ClearReplyCommand.Execute();
+                        }
+
                         var removed = Messages.Remove(message);
                         if (removed == false)
                         {
@@ -168,10 +216,17 @@ namespace Unigram.ViewModels
                 else if (full.HasParticipantsCount)
                 {
                     var config = CacheService.GetConfig();
-                    if (config != null && full.ParticipantsCount <= config.ChatSizeMax)
+                    if (config == null)
                     {
-                        var participants = await ProtoService.GetParticipantsAsync(new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value }, null, 0, config.ChatSizeMax);
-                        if (participants.IsSucceeded)
+                        return string.Format("{0} members", full.ParticipantsCount ?? 0);
+                    }
+
+                    var participants = await ProtoService.GetParticipantsAsync(channel.ToInputChannel(), new TLChannelParticipantsRecent(), 0, config.ChatSizeMax);
+                    if (participants.IsSucceeded)
+                    {
+                        full.Participants = participants.Result;
+
+                        if (full.ParticipantsCount <= config.ChatSizeMax)
                         {
                             var count = 0;
                             foreach (var item in participants.Result.Users.OfType<TLUser>())
@@ -352,7 +407,7 @@ namespace Unigram.ViewModels
             {
                 if (message.IsOut && !message.HasFwdFrom && message.Media is TLMessageMediaDocument documentMedia)
                 {
-                    if (message.IsGif(true))
+                    if (message.IsGif())
                     {
                         _stickersService.AddRecentGif(documentMedia.Document as TLDocument, message.Date);
                     }
@@ -471,17 +526,40 @@ namespace Unigram.ViewModels
             });
         }
 
+#if DEBUG
+        [DllImport("user32.dll")]
+        public static extern Boolean GetLastInputInfo(ref LASTINPUTINFO plii);
+        public struct LASTINPUTINFO
+        {
+            public uint cbSize;
+            public Int32 dwTime;
+        }
+#endif
+
         private void MarkAsRead(TLMessageCommonBase messageCommon)
         {
-            //if (!this._isActive)
-            //{
-            //    return;
-            //}
-
-            if (!App.IsActive || !App.IsVisible)
+            if (!IsActive || !App.IsActive || !App.IsVisible)
             {
                 return;
             }
+
+#if DEBUG
+            if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Desktop"))
+            {
+                LASTINPUTINFO lastInput = new LASTINPUTINFO();
+                lastInput.cbSize = (uint)Marshal.SizeOf(lastInput);
+                lastInput.dwTime = 0;
+
+                if (GetLastInputInfo(ref lastInput))
+                {
+                    var idleTime = Environment.TickCount - lastInput.dwTime;
+                    if (idleTime >= 60 * 1000)
+                    {
+                        return;
+                    }
+                }
+            }
+#endif
 
             if (messageCommon != null && !messageCommon.IsOut && messageCommon.IsUnread)
             {

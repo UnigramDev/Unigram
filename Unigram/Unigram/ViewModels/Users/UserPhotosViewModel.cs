@@ -18,7 +18,7 @@ using Unigram.Core.Common;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.ViewModels
+namespace Unigram.ViewModels.Users
 {
     public class UserPhotosViewModel : GalleryViewModelBase
     {
@@ -35,21 +35,39 @@ namespace Unigram.ViewModels
         {
             User = user;
 
+            var full = InMemoryCacheService.Current.GetFullUser(user.Id);
+            if (full == null)
+            {
+                var response = await ProtoService.GetFullUserAsync(user.ToInputUser());
+                if (response.IsSucceeded)
+                {
+                    full = response.Result;
+                }
+            }
+
+            if (full != null)
+            {
+                SelectedItem = new GalleryPhotoItem(full.ProfilePhoto as TLPhoto, user);
+                FirstItem = SelectedItem;
+
+                return;
+            }
+
             using (await _loadMoreLock.WaitAsync())
             {
-                var result = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), 0, 0, 0);
-                if (result.IsSucceeded)
+                var response = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), 0, 0, 0);
+                if (response.IsSucceeded)
                 {
-                    if (result.Result is TLPhotosPhotosSlice slice)
+                    if (response.Result is TLPhotosPhotosSlice slice)
                     {
                         TotalItems = slice.Count;
                     }
                     else
                     {
-                        TotalItems = result.Result.Photos.Count;
+                        TotalItems = response.Result.Photos.Count;
                     }
 
-                    Items.ReplaceWith(result.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, user)));
+                    Items.ReplaceWith(response.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, user)));
 
                     SelectedItem = Items.FirstOrDefault();
                     FirstItem = Items.FirstOrDefault();
@@ -63,10 +81,10 @@ namespace Unigram.ViewModels
             {
                 using (await _loadMoreLock.WaitAsync())
                 {
-                    var result = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), Items.Count, 0, 0);
-                    if (result.IsSucceeded)
+                    var response = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), Items.Count, 0, 0);
+                    if (response.IsSucceeded)
                     {
-                        Items.AddRange(result.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, _user)));
+                        Items.AddRange(response.Result.Photos.OfType<TLPhoto>().Select(x => new GalleryPhotoItem(x, _user)));
                     }
                 }
             }
@@ -132,7 +150,7 @@ namespace Unigram.ViewModels
 
         public TLPhoto Photo => _photo;
 
-        public override object Source => _photo;
+        public override ITLTransferable Source => _photo;
 
         public override string Caption => _caption;
 
@@ -168,7 +186,7 @@ namespace Unigram.ViewModels
 
         public TLDocument Document => _document;
 
-        public override object Source => _document;
+        public override ITLTransferable Source => _document;
 
         public override string Caption => _caption;
 
@@ -178,7 +196,7 @@ namespace Unigram.ViewModels
 
         public override bool IsVideo => TLMessage.IsVideo(_document) || TLMessage.IsGif(_document) || TLMessage.IsRoundVideo(_document);
 
-        public override bool IsLoop => TLMessage.IsGif(_document, true);
+        public override bool IsLoop => TLMessage.IsGif(_document);
 
         public override bool HasStickers => _document.Attributes.Any(x => x is TLDocumentAttributeHasStickers);
 

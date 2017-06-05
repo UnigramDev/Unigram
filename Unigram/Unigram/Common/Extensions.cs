@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Unigram.Core.Unidecode;
 using Windows.Foundation;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
@@ -16,6 +17,12 @@ namespace Unigram.Common
     {
         public static Dictionary<string, string> ParseQueryString(this string query)
         {
+            var first = query.Split('?');
+            if (first.Length > 1)
+            {
+                query = first.Last();
+            }
+
             var queryDict = new Dictionary<string, string>();
             foreach (var token in query.TrimStart(new char[] { '?' }).Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries))
             {
@@ -28,13 +35,20 @@ namespace Unigram.Common
             return queryDict;
         }
 
+        public static string GetParameter(this Dictionary<string, string> query, string key)
+        {
+            query.TryGetValue(key, out string value);
+            return value;
+        }
+
         public static bool Contains(this string source, string toCheck, StringComparison comp)
         {
             return source.IndexOf(toCheck, comp) >= 0;
         }
 
-        public static bool Like(this string source, string query, StringComparison comp)
+        public static bool IsLike(this string source, string query, StringComparison comp)
         {
+            source = Unidecoder.Unidecode(source);
             return query.Split(' ').All(x =>
             {
                 var index = source.IndexOf(x, comp);

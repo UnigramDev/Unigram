@@ -33,7 +33,7 @@
                     <Image Source="{Binding ThumbUrl}" Stretch="UniformToFill"/>
                 </Grid>
                 <TextBlock Text="{Binding Title}" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
-                <TextBlock Text="{Binding Description}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
+                <TextBlock Text="{Binding Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
             </Grid>
         </DataTemplate>
 
@@ -51,7 +51,7 @@
                     <Image Source="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
                 </Grid>
                 <TextBlock Text="{x:Bind Title}" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
-                <TextBlock Text="{x:Bind Description}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
+                <TextBlock Text="{x:Bind Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
             </Grid>
         </DataTemplate>
 
@@ -102,15 +102,97 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="ContactResultTemplate" x:DataType="tl:TLBotInlineResult">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <controls:ProfilePictureView Source="{Binding Media.User, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                <TextBlock Text="{Binding Media.FullName}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Bottom" Grid.Column="1"/>
+                <TextBlock Text="{Binding Media.PhoneNumber, Converter={StaticResource PhoneNumberFormatConverter}}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GeoResultTemplate">
+            <Grid Margin="8,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                      Width="48" Height="48"
+                      VerticalAlignment="Top"
+                      Margin="0,0,12,0"
+                      Grid.RowSpan="2">
+                    <Image Source="{Binding SendMessage.Geo, Converter={StaticResource VenueToStaticImageConverter}, ConverterParameter='96,96'}" Stretch="UniformToFill"/>
+                </Grid>
+                <TextBlock Text="{Binding Title}" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+                <TextBlock Text="{Binding Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="VenueResultTemplate">
+            <Grid Margin="8,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                      Width="48" Height="48"
+                      VerticalAlignment="Top"
+                      Margin="0,0,12,0"
+                      Grid.RowSpan="2">
+                    <Image Source="{Binding SendMessage.Geo, Converter={StaticResource VenueToStaticImageConverter}, ConverterParameter='96,96'}" Stretch="UniformToFill"/>
+                </Grid>
+                <TextBlock Text="{Binding Title}" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+                <TextBlock Text="{Binding Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="1" Grid.Row="1"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="AudioTemplate" x:DataType="tl:TLBotInlineMediaResult">
+            <Grid Margin="8,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
+                    <controls:TransferButton Transferable="{x:Bind Document}" IsTransferring="{x:Bind Document.IsTransferring, Mode=OneWay}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
+                    <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{x:Bind Document.Progress, Mode=OneWay}" IsHitTestVisible="False"/>
+                </Grid>
+                <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
+                    <TextBlock Text="{x:Bind Title}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
+                    <TextBlock Text="{x:Bind Description}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
         <selectors:InlineBotResultTemplateSelector
             x:Key="InlineBotResultTemplateSelector"
+            AudioTemplate="{StaticResource AudioTemplate}"
+            AudioMediaTemplate="{StaticResource AudioTemplate}"
             ResultTemplate="{StaticResource ResultTemplate}"
             GameMediaTemplate="{StaticResource GameMediaTemplate}"
             PhotoTemplate="{StaticResource PhotoTemplate}"
             PhotoMediaTemplate="{StaticResource PhotoMediaTemplate}"
+            GeoResultTemplate="{StaticResource GeoResultTemplate}"
             GifTemplate="{StaticResource GifTemplate}"
             GifMediaTemplate="{StaticResource GifMediaTemplate}"
-            StickerMediaTemplate="{StaticResource StickerResultTemplate}"/>
+            StickerMediaTemplate="{StaticResource StickerResultTemplate}"
+            VenueResultTemplate="{StaticResource VenueResultTemplate}"/>
 
         <!--<selectors:InlineBotResultTemplateSelector
                 x:Key="InlineBotResultTemplateSelector"
@@ -173,8 +255,10 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Button Content="{x:Bind ViewModel.InlineBotResults.SwitchPm.Text, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPm, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+            <Button Command="{x:Bind ViewModel.SwitchCommand}"
+                    CommandParameter="{x:Bind ViewModel.InlineBotResults.SwitchPM, Mode=OneWay}"
+                    Content="{x:Bind ViewModel.InlineBotResults.SwitchPM.Text, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPM, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                     HorizontalAlignment="Stretch"/>
             <controls:OrientableListView ItemsSource="{x:Bind ViewModel.InlineBotResults.Results, Mode=OneWay}"
                                          IsHorizontal="{x:Bind ViewModel.InlineBotResults.IsGallery, Mode=OneWay}"

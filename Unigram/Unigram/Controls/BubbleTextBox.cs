@@ -78,7 +78,7 @@ namespace Unigram.Controls
             //            ((MenuFlyoutItem)_flyout.Items[2]).Click += Hyperlink_Click;
             //#endif
 
-            //Paste += OnPaste;
+            Paste += OnPaste;
             //Clipboard.ContentChanged += Clipboard_ContentChanged;
 
             SelectionChanged += OnSelectionChanged;
@@ -171,18 +171,18 @@ namespace Unigram.Controls
             OnSelectionChanged();
         }
 
-        public void InsertText(string text)
+        public void InsertText(string text, bool allowPreceding = true, bool allowTrailing = true)
         {
             var start = Document.Selection.StartPosition;
             var end = Document.Selection.EndPosition;
 
             var preceding = start > 0 && !char.IsWhiteSpace(Document.GetRange(start - 1, start).Character);
-            var trailing = !char.IsWhiteSpace(Document.GetRange(end, end + 1).Character);
+            var trailing = !char.IsWhiteSpace(Document.GetRange(end, end + 1).Character) || Document.GetRange(end, end + 1).Character == '\r';
 
             var block = string.Format("{0}{1}{2}",
-                preceding ? " " : "",
+                preceding && allowPreceding ? " " : "",
                 text,
-                trailing ? " " : "");
+                trailing && allowTrailing ? " " : "");
 
             Document.Selection.SetText(TextSetOptions.None, block);
             Document.Selection.StartPosition = Document.Selection.EndPosition;
@@ -193,7 +193,7 @@ namespace Unigram.Controls
             // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
             // we have to handle the pasting operation manually to allow plaintext only.
             var package = Clipboard.GetContent();
-            if (package.Contains(StandardDataFormats.Text) && package.Contains("Rich Text Format"))
+            /*if (package.Contains(StandardDataFormats.Text) && package.Contains("Rich Text Format"))
             {
                 e.Handled = true;
 
@@ -218,7 +218,8 @@ namespace Unigram.Controls
             {
                 e.Handled = true;
             }
-            else if (package.Contains(StandardDataFormats.Bitmap))
+            else*/
+            if (package.Contains(StandardDataFormats.Bitmap))
             {
                 e.Handled = true;
 
@@ -358,7 +359,7 @@ namespace Unigram.Controls
                     ViewModel.ResolveInlineBot(text);
                 }
             }
-            else if ((e.Key == VirtualKey.Up || e.Key == VirtualKey.Down || e.Key == VirtualKey.Tab))
+            else if ((e.Key == VirtualKey.Up || e.Key == VirtualKey.Down || e.Key == VirtualKey.PageUp || e.Key == VirtualKey.PageDown || e.Key == VirtualKey.Tab))
             {
                 var alt = Window.Current.CoreWindow.GetKeyState(VirtualKey.Menu).HasFlag(CoreVirtualKeyStates.Down);
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down);
@@ -370,12 +371,12 @@ namespace Unigram.Controls
                     e.Handled = true;
                 }
 
-                if ((e.Key == VirtualKey.Up && alt) || (e.Key == VirtualKey.Tab && ctrl && shift))
+                if ((e.Key == VirtualKey.Up && alt) || (e.Key == VirtualKey.PageUp && ctrl) || (e.Key == VirtualKey.Tab && ctrl && shift))
                 {
                     ViewModel.Aggregator.Publish("move_up");
                     e.Handled = true;
                 }
-                else if ((e.Key == VirtualKey.Down && alt) || (e.Key == VirtualKey.Tab && ctrl && !shift))
+                else if ((e.Key == VirtualKey.Down && alt) || (e.Key == VirtualKey.PageDown && ctrl) || (e.Key == VirtualKey.Tab && ctrl && !shift))
                 {
                     ViewModel.Aggregator.Publish("move_down");
                     e.Handled = true;
@@ -473,6 +474,16 @@ namespace Unigram.Controls
                 {
                     ViewModel.StickerPack = null;
 
+                    var usernames = SearchByUsernames(text, out string usernamesText); 
+                    if (usernames)
+                    {
+                        ViewModel.UsernameHints = GetUsernames(usernamesText.ToLower(), text.StartsWith('@' + usernamesText));
+                    }
+                    else
+                    {
+                        ViewModel.UsernameHints = null;
+                    }
+
                     if (text.Length > 0 && text[0] == '/')
                     {
                         var commands = SearchByCommands(text, out string searchText);
@@ -507,6 +518,66 @@ namespace Unigram.Controls
             if (all != null)
             {
                 return all.Where(x => x.Item2.Command.ToLower().StartsWith(command)).ToList();
+            }
+
+            return null;
+        }
+
+        private List<TLUser> GetUsernames(string username, bool inline)
+        {
+            bool IsMatch(TLUser user)
+            {
+                return (user.FullName.IsLike(username, StringComparison.OrdinalIgnoreCase)) ||
+                       (user.HasUsername && user.Username.StartsWith(username, StringComparison.OrdinalIgnoreCase));
+            }
+
+
+            var results = new List<TLUser>();
+
+            if (inline)
+            {
+                var peers = UnigramContainer.Current.ResolveType<MainViewModel>().TopPeers;
+                if (peers != null)
+                {
+                    var inlinePeers = peers.FirstOrDefault(x => x.Category is TLTopPeerCategoryBotsInline);
+                    if (inlinePeers != null)
+                    {
+                        foreach (var peer in inlinePeers.Peers)
+                        {
+                            var user = InMemoryCacheService.Current.GetUser(peer.Peer.Id) as TLUser;
+                            if (user != null && IsMatch(user))
+                            {
+                                results.Add(user);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (ViewModel.Full is TLChatFull chatFull && chatFull.Participants is TLChatParticipants chatParticipants)
+            {
+                foreach (var participant in chatParticipants.Participants)
+                {
+                    if (participant.User != null && IsMatch(participant.User))
+                    {
+                        results.Add(participant.User);
+                    }
+                }
+            }
+            else if (ViewModel.Full is TLChannelFull channelFull && channelFull.Participants is TLChannelsChannelParticipants channelParticipants)
+            {
+                foreach (var participant in channelParticipants.Participants)
+                {
+                    if (participant.User != null && IsMatch(participant.User))
+                    {
+                        results.Add(participant.User);
+                    }
+                }
+            }
+
+            if (results.Count > 0)
+            {
+                return results;
             }
 
             return null;
@@ -657,7 +728,7 @@ namespace Unigram.Controls
 
         #region Username
 
-        private static bool SearchByUsernames(string text, out string searchText)
+        public static bool SearchByUsernames(string text, out string searchText)
         {
             searchText = string.Empty;
 

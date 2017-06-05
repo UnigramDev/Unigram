@@ -755,4 +755,10 @@
   <data name="YearNominativeSingular" xml:space="preserve">
     <value>Year</value>
   </data>
+  <data name="UserGenitivePlural" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="UserGenitiveSingular" xml:space="preserve">
+    <value>User</value>
+  </data>
 </root>

@@ -134,7 +134,7 @@ namespace Unigram.ViewModels.SignIn
         {
             if(PhoneCode == null || PhoneNumber == null)
             {
-                await new MessageDialog("Please enter your phone number.").ShowQueuedAsync();
+                await new TLMessageDialog("Please enter your phone number.").ShowQueuedAsync();
                 return;
             }
 
@@ -161,7 +161,7 @@ namespace Unigram.ViewModels.SignIn
                 }
                 else
                 {
-                    await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
                 }
             }
         }
