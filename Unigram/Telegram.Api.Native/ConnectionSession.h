@@ -1,10 +1,11 @@
 #pragma once
 #include <vector>
-#include <rpc.h>
+#include <wrl.h>
 #include <rpcndr.h>
 #include "Telegram.Api.Native.h"
 #include "MultiThreadObject.h"
 
+using namespace Microsoft::WRL;
 using ABI::Telegram::Api::Native::TL::ITLObject;
 
 namespace Telegram
@@ -13,6 +14,15 @@ namespace Telegram
 	{
 		namespace Native
 		{
+			namespace TL
+			{
+
+				class TLMessage;
+
+			}
+
+
+			class ConnectionManager;
 
 			class ConnectionSession abstract : public virtual MultiThreadObject
 			{
@@ -21,7 +31,7 @@ namespace Telegram
 				~ConnectionSession();
 
 			protected:
-				HRESULT CreateConfirmationRequest(_Out_ ITLObject** request);
+				HRESULT AddConfirmationMessage(_In_ ConnectionManager* connectionManager, _In_ std::vector<ComPtr<TL::TLMessage>>& messages);
 				void RecreateSession();
 				UINT32 GenerateMessageSequenceNumber(boolean increment);
 				bool IsMessageIdProcessed(INT64 messageId);

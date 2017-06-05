@@ -57,17 +57,15 @@ namespace Telegram.Api.Native.Test
                     var disabledFeatures = tlConfig.DisabledFeatures.ToArray();
                     break;
             }
-
-            //var unconsumedBuffer = new byte[args.Reader.UnconsumedBufferLength];
-            //args.Reader.ReadRawBuffer(unconsumedBuffer);
-
-            //var text = System.Text.Encoding.Unicode.GetString(unconsumedBuffer);
-
-            GC.Collect();
         }
 
         private void Instance_CurrentNetworkTypeChanged(ConnectionManager sender, object e)
         {
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            GC.Collect();
         }
     }
 }

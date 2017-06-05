@@ -10,7 +10,8 @@
 #include "ConnectionManager.h"
 #include "TLTypes.h"
 #include "TLMethods.h"
-#include "Request.h"
+#include "TLUnprocessedMessage.h"
+#include "MessageRequest.h"
 #include "Wrappers\OpenSSL.h"
 #include "Helpers\COMHelper.h"
 
@@ -1020,7 +1021,7 @@ HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, UINT32 padding, 
 
 	if (quickAckId != nullptr)
 	{
-		*quickAckId = (((messageKey[0] & 0xff)) | ((messageKey[1] & 0xff) << 8) |
+		*quickAckId = ((messageKey[0] & 0xff) | ((messageKey[1] & 0xff) << 8) |
 			((messageKey[2] & 0xff) << 16) | ((messageKey[3] & 0xff) << 24)) & 0x7fffffff;
 	}
 
@@ -1030,7 +1031,7 @@ HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, UINT32 padding, 
 
 	if (quickAckId != nullptr)
 	{
-		*quickAckId = (((messageKey[4] & 0xff)) | ((messageKey[5] & 0xff) << 8) |
+		*quickAckId = ((messageKey[4] & 0xff) | ((messageKey[5] & 0xff) << 8) |
 			((messageKey[6] & 0xff) << 16) | ((messageKey[7] & 0xff) << 24)) & 0x7fffffff;
 	}
 
@@ -1184,5 +1185,11 @@ HRESULT Datacenter::SendPing()
 	ComPtr<Methods::TLInvokeWithLayer> invokeWithLayer;
 	ReturnIfFailed(result, MakeAndInitialize<Methods::TLInvokeWithLayer>(&invokeWithLayer, initConnectionObject.Get()));
 
-	return genericConnection->SendEncryptedMessage(invokeWithLayer.Get(), false, nullptr);
+	INT32 requestToken;
+	return connectionManager->SendRequestWithFlags(invokeWithLayer.Get(), Callback<ISendRequestCompletedCallback>([connectionManager](ITLUnprocessedMessage* response, HRESULT error) -> HRESULT
+	{
+		return connectionManager->m_unprocessedMessageReceivedEventSource.InvokeAll(connectionManager.Get(), response);
+	}).Get(), nullptr, m_id, ConnectionType::Generic, false, RequestFlag::None, &requestToken);
+
+	//return genericConnection->SendEncryptedMessage(invokeWithLayer.Get(), false, nullptr);
 }

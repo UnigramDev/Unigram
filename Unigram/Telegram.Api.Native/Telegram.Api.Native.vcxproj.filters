@@ -20,7 +20,6 @@
     <ClCompile Include="ConnectionManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="EventObject.cpp" />
-    <ClCompile Include="Request.cpp" />
     <ClCompile Include="NetworkExtensions.cpp" />
     <ClCompile Include="TLBinaryReader.cpp">
       <Filter>TLProtocolScheme</Filter>
@@ -44,6 +43,7 @@
     <ClCompile Include="TLMethods.cpp">
       <Filter>TLProtocolScheme</Filter>
     </ClCompile>
+    <ClCompile Include="MessageRequest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -55,7 +55,6 @@
     <ClInclude Include="ConnectionManager.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="MultiThreadObject.h" />
-    <ClInclude Include="Request.h" />
     <ClInclude Include="NetworkExtensions.h" />
     <ClInclude Include="TLBinaryReader.h">
       <Filter>TLProtocolScheme</Filter>
@@ -90,6 +89,7 @@
       <Filter>TLProtocolScheme</Filter>
     </ClInclude>
     <ClInclude Include="Reference.h" />
+    <ClInclude Include="MessageRequest.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

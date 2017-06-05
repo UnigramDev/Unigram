@@ -52,6 +52,24 @@ HRESULT TLObject::RegisterTLObjecConstructor(UINT32 constructor, ITLObjectConstr
 	return S_OK;
 }
 
+HRESULT TLObject::HandleResponse(MessageContext const* messageContext, ITLObject* messageBody, ConnectionManager* connectionManager, Connection* connection)
+{
+	ComPtr<IMessageResponseHandler> responseHandler;
+	if (SUCCEEDED(messageBody->QueryInterface(IID_PPV_ARGS(&responseHandler))))
+	{
+		return responseHandler->HandleResponse(messageContext, connectionManager, connection);
+	}
+	else
+	{
+		return connectionManager->HandleUnprocessedMessageResponse(messageContext, messageBody, connection);
+	}
+}
+
+HRESULT TLObject::CompleteRequest(INT64 requestMessageId, MessageContext const* messageContext, ITLObject* messageBody, ConnectionManager* connectionManager, Connection* connection)
+{
+	return connectionManager->CompleteMessageRequest(requestMessageId, messageContext, messageBody, connection);
+}
+
 
 HRESULT TLObjectWithQuery::RuntimeClassInitialize(ITLObject* query)
 {
@@ -144,9 +162,4 @@ HRESULT TLUnparsedObject::Read(ITLBinaryReader* reader)
 HRESULT TLUnparsedObject::Write(ITLBinaryWriter* writer)
 {
 	return E_ILLEGAL_METHOD_CALL;
-}
-
-HRESULT TLUnparsedObject::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
-{
-	return TLObject::HandleResponse(messageContext, this, connectionManager, connection);
 }

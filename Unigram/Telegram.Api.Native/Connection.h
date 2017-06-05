@@ -49,6 +49,7 @@ namespace Telegram
 				class TLBinaryReader;
 				class TLBinaryWriter;
 				class TLObject;
+				class TLMessage;
 				class TLNewSessionCreated;
 			}
 
@@ -63,6 +64,7 @@ namespace Telegram
 				friend class Datacenter;
 				friend class ConnectionManager;
 				friend class TL::TLObject;
+				friend class TL::TLMessage;
 				friend class TL::TLNewSessionCreated;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_Connection, BaseTrust);
@@ -98,9 +100,9 @@ namespace Telegram
 				HRESULT Reconnect();
 				HRESULT Suspend();
 				HRESULT CreateMessagePacket(UINT32 messageLength, boolean reportAck, _Out_ TL::TLBinaryWriter** writer, _Out_ BYTE** messageBuffer);
-				HRESULT SendEncryptedMessage(_In_ ITLObject* object, boolean reportAck, _Outptr_opt_ INT32* quickAckId);
-				HRESULT SendUnencryptedMessage(_In_ ITLObject* object, boolean reportAck);
-				HRESULT HandleMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* response, _In_::Telegram::Api::Native::ConnectionManager* connectionManager);
+				HRESULT SendEncryptedMessage(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _Outptr_opt_ INT32* quickAckId);
+				HRESULT SendUnencryptedMessage(_In_ ITLObject* messageBody, boolean reportAck);
+				HRESULT HandleMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_::Telegram::Api::Native::ConnectionManager* connectionManager);
 				HRESULT HandleNewSessionCreatedResponse(_In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_ TL::TLNewSessionCreated* response);
 				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) override;

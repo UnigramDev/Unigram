@@ -729,9 +729,21 @@ TLRpcResult::~TLRpcResult()
 
 HRESULT TLRpcResult::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLRpcResult response handling");
+	HRESULT result;
+	ComPtr<ITLObject> query = GetQuery();
+	ComPtr<ITLObjectWithQuery> objectWithQuery;
+	if (SUCCEEDED(query.As(&objectWithQuery)))
+	{
+		ReturnIfFailed(result, objectWithQuery->get_Query(&query));
+	}
 
-	return S_OK;
+	ComPtr<IMessageResponseHandler> responseHandler;
+	if (SUCCEEDED(query.As(&responseHandler)))
+	{
+		ReturnIfFailed(result, responseHandler->HandleResponse(messageContext, connectionManager, connection));
+	}
+
+	return TLObject::CompleteRequest(m_requestMessageId, messageContext, query.Get(), connectionManager, connection);
 }
 
 HRESULT TLRpcResult::ReadBody(ITLBinaryReaderEx* reader)
@@ -790,6 +802,17 @@ TLMessage::~TLMessage()
 {
 }
 
+HRESULT TLMessage::RuntimeClassInitialize(MessageContext const* messageContext, ITLObject* object)
+{
+	if (messageContext == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	CopyMemory(&m_messageContext, messageContext, sizeof(MessageContext));
+	return TLObjectWithQuery::RuntimeClassInitialize(object);
+}
+
 HRESULT TLMessage::RuntimeClassInitialize(INT64 messageId, UINT32 sequenceNumber, ITLObject* object)
 {
 	m_messageContext.Id = messageId;
@@ -799,7 +822,7 @@ HRESULT TLMessage::RuntimeClassInitialize(INT64 messageId, UINT32 sequenceNumber
 
 HRESULT TLMessage::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	return TLObjectWithQuery::HandleResponse(&m_messageContext, connectionManager, connection);
+	return connection->HandleMessageResponse(&m_messageContext, GetQuery().Get(), connectionManager);
 }
 
 HRESULT TLMessage::ReadBody(ITLBinaryReaderEx* reader)
@@ -983,18 +1006,24 @@ HRESULT TLGZipPacked::RuntimeClassInitialize(NativeBuffer* rawData)
 	return GZipCompressBuffer(rawData->GetBuffer(), rawData->GetCapacity(), &m_packedData);
 }
 
-HRESULT TLGZipPacked::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLGZipPacked::get_Query(ITLObject** value)
 {
 	HRESULT result;
 	ComPtr<TLBinaryReader> reader;
 	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&reader, m_packedData.Get()));
 
 	UINT32 constructor;
-	ComPtr<ITLObject> query;
-	ReturnIfFailed(result, reader->ReadObjectAndConstructor(m_packedData->GetCapacity(), &constructor, &query));
-
-	return TLObject::HandleResponse(messageContext, query.Get(), connectionManager, connection);
+	return reader->ReadObjectAndConstructor(m_packedData->GetCapacity(), &constructor, value);
 }
+
+//HRESULT TLGZipPacked::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+//{
+//	HRESULT result;
+//	ComPtr<ITLObject> query;
+//	ReturnIfFailed(result, get_Query(&query));
+//
+//	return TLObject::HandleResponse(messageContext, query.Get(), connectionManager, connection);
+//}
 
 HRESULT TLGZipPacked::ReadBody(ITLBinaryReaderEx* reader)
 {
@@ -1023,6 +1052,8 @@ TLAuthExportedAuthorization::~TLAuthExportedAuthorization()
 
 HRESULT TLAuthExportedAuthorization::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLAuthExportedAuthorization response handling");
+
 	return S_OK;
 }
 

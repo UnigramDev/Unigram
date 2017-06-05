@@ -4,7 +4,7 @@
 #include "NativeBuffer.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
-#include "Request.h"
+#include "MessageRequest.h"
 #include "TLObject.h"
 #include "TLTypes.h"
 #include "ConnectionManager.h"
@@ -226,9 +226,9 @@ HRESULT Connection::CreateMessagePacket(UINT32 messageLength, boolean reportAck,
 	return S_OK;
 }
 
-HRESULT Connection::SendEncryptedMessage(ITLObject* object, boolean reportAck, INT32* quickAckId)
+HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, ITLObject* messageBody, INT32* quickAckId)
 {
-	if (object == nullptr)
+	if (messageContext == nullptr || messageBody == nullptr)
 	{
 		return E_INVALIDARG;
 	}
@@ -237,10 +237,10 @@ HRESULT Connection::SendEncryptedMessage(ITLObject* object, boolean reportAck, I
 	ComPtr<ConnectionManager> connectionManager;
 	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 
-	UINT32 objectSize;
-	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
+	UINT32 messageBodySize;
+	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(messageBody, &messageBodySize));
 
-	UINT32 messageLength = 3 * sizeof(INT64) + 2 * sizeof(UINT32) + objectSize;
+	UINT32 messageLength = 3 * sizeof(INT64) + 2 * sizeof(UINT32) + messageBodySize;
 	UINT32 padding = messageLength % 16;
 
 	if (padding != 0)
@@ -266,14 +266,16 @@ HRESULT Connection::SendEncryptedMessage(ITLObject* object, boolean reportAck, I
 
 	BYTE* packetBufferBytes;
 	ComPtr<TLBinaryWriter> packetWriter;
-	ReturnIfFailed(result, CreateMessagePacket(encryptedMessageLength, reportAck, &packetWriter, &packetBufferBytes));
+	ReturnIfFailed(result, CreateMessagePacket(encryptedMessageLength, quickAckId != nullptr, &packetWriter, &packetBufferBytes));
 	ReturnIfFailed(result, packetWriter->SeekCurrent(24));
 	ReturnIfFailed(result, packetWriter->WriteInt64(salt));
 	ReturnIfFailed(result, packetWriter->WriteInt64(GetSessionId()));
-	ReturnIfFailed(result, packetWriter->WriteInt64(connectionManager->GenerateMessageId()));
-	ReturnIfFailed(result, packetWriter->WriteUInt32(GenerateMessageSequenceNumber(true))); //false
-	ReturnIfFailed(result, packetWriter->WriteUInt32(objectSize));
-	ReturnIfFailed(result, packetWriter->WriteObject(object));
+
+	ReturnIfFailed(result, packetWriter->WriteInt64(messageContext->Id));
+	ReturnIfFailed(result, packetWriter->WriteUInt32(messageContext->SequenceNumber));
+
+	ReturnIfFailed(result, packetWriter->WriteUInt32(messageBodySize));
+	ReturnIfFailed(result, packetWriter->WriteObject(messageBody));
 
 	if (padding != 0)
 	{
@@ -287,9 +289,9 @@ HRESULT Connection::SendEncryptedMessage(ITLObject* object, boolean reportAck, I
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
 }
 
-HRESULT Connection::SendUnencryptedMessage(ITLObject* object, boolean reportAck)
+HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, boolean reportAck)
 {
-	if (object == nullptr)
+	if (messageBody == nullptr)
 	{
 		return E_INVALIDARG;
 	}
@@ -298,10 +300,10 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* object, boolean reportAck)
 	ComPtr<ConnectionManager> connectionManager;
 	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 
-	UINT32 objectSize;
-	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
+	UINT32 messageBodySize;
+	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(messageBody, &messageBodySize));
 
-	UINT32 messageLength = 2 * sizeof(INT64) + sizeof(INT32) + objectSize;
+	UINT32 messageLength = 2 * sizeof(INT64) + sizeof(INT32) + messageBodySize;
 
 	LockCriticalSection();
 
@@ -310,15 +312,15 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* object, boolean reportAck)
 	ReturnIfFailed(result, CreateMessagePacket(messageLength, reportAck, &packetWriter, &packetBufferBytes));
 	ReturnIfFailed(result, packetWriter->WriteInt64(0));
 	ReturnIfFailed(result, packetWriter->WriteInt64(connectionManager->GenerateMessageId()));
-	ReturnIfFailed(result, packetWriter->WriteUInt32(objectSize));
-	ReturnIfFailed(result, packetWriter->WriteObject(object));
+	ReturnIfFailed(result, packetWriter->WriteUInt32(messageBodySize));
+	ReturnIfFailed(result, packetWriter->WriteObject(messageBody));
 
 	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, messageLength);
 
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
 }
 
-HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, ITLObject* messageObject, ConnectionManager* connectionManager)
+HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, ITLObject* messageBody, ConnectionManager* connectionManager)
 {
 	if (messageContext->SequenceNumber % 2)
 	{
@@ -332,13 +334,13 @@ HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, 
 
 	HRESULT result;
 	ComPtr<IMessageResponseHandler> responseHandler;
-	if (SUCCEEDED(messageObject->QueryInterface(IID_PPV_ARGS(&responseHandler))))
+	if (SUCCEEDED(messageBody->QueryInterface(IID_PPV_ARGS(&responseHandler))))
 	{
 		ReturnIfFailed(result, responseHandler->HandleResponse(messageContext, connectionManager, this));
 	}
 	else
 	{
-		ReturnIfFailed(result, connectionManager->HandleMessageResponse(messageContext, messageObject, this));
+		ReturnIfFailed(result, connectionManager->HandleUnprocessedMessageResponse(messageContext, messageBody, this));
 	}
 
 	AddProcessedMessageId(messageContext->Id);

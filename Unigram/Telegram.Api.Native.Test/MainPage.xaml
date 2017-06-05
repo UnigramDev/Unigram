@@ -8,6 +8,6 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+        <Button Content="GC.Collect()" Click="Button_Click" HorizontalAlignment="Center" VerticalAlignment="Center" />
     </Grid>
 </Page>

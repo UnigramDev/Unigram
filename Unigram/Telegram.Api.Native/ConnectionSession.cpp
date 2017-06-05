@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <openssl/rand.h>
 #include "ConnectionSession.h"
+#include "ConnectionManager.h"
 #include "TLTypes.h"
 #include "Helpers\COMHelper.h"
 
@@ -32,20 +33,24 @@ void ConnectionSession::RecreateSession()
 	m_id = GenereateNewSessionId();
 }
 
-HRESULT ConnectionSession::CreateConfirmationRequest(ITLObject** request)
+HRESULT ConnectionSession::AddConfirmationMessage(ConnectionManager* connectionManager, std::vector<ComPtr<TLMessage>>& messages)
 {
 	if (m_messagesIdsToConfirm.empty())
 	{
-		return S_FALSE;
+		return S_OK;
 	}
 
 	auto msgAck = Make<TLMsgsAck>();
-	auto& messagesIds = msgAck->GetMessagesIds();
 
+	HRESULT result;
+	ComPtr<TLMessage> message;
+	ReturnIfFailed(result, MakeAndInitialize<TLMessage>(&message, connectionManager->GenerateMessageId(), GenerateMessageSequenceNumber(false), msgAck.Get()));
+
+	auto& messagesIds = msgAck->GetMessagesIds();
 	messagesIds.insert(messagesIds.begin(), m_messagesIdsToConfirm.begin(), m_messagesIdsToConfirm.end());
 	m_messagesIdsToConfirm.clear();
 
-	*request = msgAck.Detach();
+	messages.push_back(message);
 	return S_OK;
 }
 
@@ -101,9 +106,9 @@ INT64 ConnectionSession::GenereateNewSessionId()
 	INT64 newSessionId;
 	RAND_bytes(reinterpret_cast<UINT8*>(&newSessionId), 8);
 
-	#if _DEBUG
-		return 0xabcd000000000000L | (newSessionId & 0x0000ffffffffffffL);
-	#else
-		return newSessionId;
-	#endif
+#if _DEBUG
+	return 0xabcd000000000000L | (newSessionId & 0x0000ffffffffffffL);
+#else
+	return newSessionId;
+#endif
 }

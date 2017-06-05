@@ -1,9 +1,12 @@
 #include "pch.h"
-#include "Request.h"
+#include "MessageRequest.h"
 #include "TLObject.h"
+#include "TLTypes.h"
 #include "Datacenter.h"
+#include "TLUnprocessedMessage.h"
 
 using namespace Telegram::Api::Native;
+using namespace Telegram::Api::Native::TL;
 
 
 HRESULT MessageRequest::RuntimeClassInitialize(ITLObject* object, INT32 token, ConnectionType connectionType, UINT32 datacenterId, ISendRequestCompletedCallback* sendCompletedCallback,
@@ -15,7 +18,7 @@ HRESULT MessageRequest::RuntimeClassInitialize(ITLObject* object, INT32 token, C
 	}
 
 	m_object = object;
-	m_messageToken = token;
+	m_token = token;
 	m_connectionType = connectionType;
 	m_datacenterId = datacenterId;
 	m_sendCompletedCallback = sendCompletedCallback;
@@ -47,30 +50,14 @@ HRESULT MessageRequest::get_MessageContext(MessageContext const** value)
 	return S_OK;
 }
 
-HRESULT MessageRequest::get_RawObject(ITLObject** value)
+HRESULT MessageRequest::get_Token(INT32* value)
 {
 	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	ComPtr<ITLObjectWithQuery> objectWithQuery;
-	if (SUCCEEDED(m_object.As(&objectWithQuery)))
-	{
-		return objectWithQuery->get_Query(value);
-	}
-
-	return m_object.CopyTo(value);
-}
-
-HRESULT MessageRequest::get_MessageToken(INT32* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	*value = m_messageToken;
+	*value = m_token;
 	return S_OK;
 }
 
@@ -107,6 +94,22 @@ HRESULT MessageRequest::get_Flags(RequestFlag* value)
 	return S_OK;
 }
 
+HRESULT MessageRequest::CreateTransportMessage(TLMessage** message)
+{
+	ComPtr<ITLObject> object;
+	if ((m_flags & RequestFlag::CanCompress) == RequestFlag::CanCompress)
+	{
+		HRESULT result;
+		ReturnIfFailed(result, MakeAndInitialize<TLGZipPacked>(&object, m_object.Get()));
+	}
+	else
+	{
+		object = m_object;
+	}
+
+	return MakeAndInitialize<TLMessage>(message, m_messageContext.get(), object.Get());
+}
+
 HRESULT MessageRequest::OnQuickAckReceived()
 {
 	if (m_quickAckReceivedCallback == nullptr)
@@ -115,6 +118,17 @@ HRESULT MessageRequest::OnQuickAckReceived()
 	}
 
 	return m_quickAckReceivedCallback->Invoke();
+}
+
+HRESULT MessageRequest::OnSendCompleted(MessageContext const* messageContext, ITLObject* messageBody)
+{
+	if (m_sendCompletedCallback == nullptr)
+	{
+		return S_OK;
+	}
+
+	auto unprocessedMessage = Make<TLUnprocessedMessage>(messageContext->Id, m_connectionType, messageBody);
+	return m_sendCompletedCallback->Invoke(unprocessedMessage.Get(), S_OK);
 }
 
 void MessageRequest::Reset()
