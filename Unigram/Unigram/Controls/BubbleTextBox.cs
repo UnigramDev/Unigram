@@ -346,6 +346,10 @@ namespace Unigram.Controls
             }
         }
 
+        public ListView UsernameHints { get; set; }
+
+        public ListView BotCommands { get; set; }
+
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Space)
@@ -380,6 +384,37 @@ namespace Unigram.Controls
                 {
                     ViewModel.Aggregator.Publish("move_down");
                     e.Handled = true;
+                }
+                else if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
+                {
+                    if (UsernameHints != null && ViewModel.UsernameHints != null)
+                    {
+                        UsernameHints.SelectionMode = ListViewSelectionMode.Single;
+
+                        var index = e.Key == VirtualKey.Up ? -1 : 1;
+                        var next = UsernameHints.SelectedIndex + index;
+                        if (next >= 0 && next < ViewModel.UsernameHints.Count)
+                        {
+                            UsernameHints.SelectedIndex = next;
+                            UsernameHints.ScrollIntoView(UsernameHints.SelectedItem);
+                        }
+
+                        e.Handled = true;
+                    }
+                    else if (BotCommands != null && ViewModel.BotCommands != null)
+                    {
+                        BotCommands.SelectionMode = ListViewSelectionMode.Single;
+
+                        var index = e.Key == VirtualKey.Up ? -1 : 1;
+                        var next = BotCommands.SelectedIndex + index;
+                        if (next >= 0 && next < ViewModel.BotCommands.Count)
+                        {
+                            BotCommands.SelectedIndex = next;
+                            BotCommands.ScrollIntoView(BotCommands.SelectedItem);
+                        }
+
+                        e.Handled = true;
+                    }
                 }
             }
             else if (e.Key == VirtualKey.Escape && ViewModel.Reply is TLMessagesContainter container && container.EditMessage != null)

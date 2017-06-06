@@ -1382,7 +1382,8 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <ListView ItemsSource="{x:Bind ViewModel.BotCommands, Mode=OneWay}"
+            <ListView x:Name="ListBotCommands"
+                      ItemsSource="{x:Bind ViewModel.BotCommands, Mode=OneWay}"
                       Visibility="{x:Bind ViewModel.BotCommands, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
@@ -1408,7 +1409,8 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <ListView ItemsSource="{x:Bind ViewModel.UsernameHints, Mode=OneWay}"
+            <ListView x:Name="ListUsernameHints"
+                      ItemsSource="{x:Bind ViewModel.UsernameHints, Mode=OneWay}"
                       Visibility="{x:Bind ViewModel.UsernameHints, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
@@ -1490,6 +1492,8 @@
                         x:Uid="Chat-Input-Message"
                         Background="Transparent"
                         Reply="{Binding Reply}"
+                        UsernameHints="{x:Bind ListUsernameHints}"
+                        BotCommands="{x:Bind ListBotCommands}"
                         AcceptsReturn="False"
                         PlaceholderText="Type your message..."
                         BorderThickness="0"

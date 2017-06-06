@@ -188,11 +188,11 @@ namespace Unigram.Views
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
-
-            if (e.NavigationMode != NavigationMode.Forward)
+            if (e.NavigationMode != NavigationMode.Forward || e.SourcePageType != typeof(DialogPage))
             {
+                InputPane.GetForCurrentView().Showing -= InputPane_Showing;
+                InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+
                 ViewModel.IsActive = false;
             }
 
