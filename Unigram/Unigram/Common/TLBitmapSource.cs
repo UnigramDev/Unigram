@@ -143,7 +143,7 @@ namespace Unigram.Common
             }
             else
             {
-                SetSource(null, document.Thumb, PHASE_THUMBNAIL);
+                SetSource(null, document.Thumb, PHASE_FULL);
             }
         }
 
