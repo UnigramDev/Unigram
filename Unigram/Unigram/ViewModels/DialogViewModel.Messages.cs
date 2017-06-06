@@ -506,7 +506,7 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        #region CopyLink
+        #region Copy link
 
         public RelayCommand<TLMessage> MessageCopyLinkCommand => new RelayCommand<TLMessage>(MessageCopyLinkExecute);
         private void MessageCopyLinkExecute(TLMessage message)
@@ -535,7 +535,7 @@ namespace Unigram.ViewModels
                 }
 
                 var dataPackage = new DataPackage();
-                dataPackage.SetWebLink(new Uri(link));
+                dataPackage.SetText(link);
                 Clipboard.SetContent(dataPackage);
             }
         }

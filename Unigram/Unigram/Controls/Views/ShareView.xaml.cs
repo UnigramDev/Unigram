@@ -81,7 +81,7 @@ namespace Unigram.Controls.Views
         {
             var webLink = await operation.Data.GetWebLinkAsync();
             var package = new DataPackage();
-            package.SetWebLink(webLink);
+            package.SetText(webLink.ToString());
 
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
