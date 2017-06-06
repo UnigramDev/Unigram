@@ -19,6 +19,11 @@ namespace Telegram
 					return m_criticalSection.Lock();
 				}
 
+				inline CriticalSection::SyncLock TryLockCriticalSection()
+				{
+					return m_criticalSection.TryLock();
+				}
+
 			private:
 				CriticalSection m_criticalSection;
 			};

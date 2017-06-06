@@ -3,6 +3,7 @@
 #include <memory>
 #include <wrl.h>
 #include "Telegram.Api.Native.h"
+#include "Datacenter.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -18,6 +19,28 @@ namespace Telegram
 		namespace Native
 		{
 
+			class MessageRequest;
+
+			enum class DatacenterRequestContextFlag
+			{
+				None = 0,
+				RequiresHandshake = 1,
+				RequiresAuthorization = 2
+			};
+
+			struct DatacenterRequestContext
+			{
+				DatacenterRequestContext(Datacenter* datacenter) :
+					Datacenter(datacenter),
+					Flags(DatacenterRequestContextFlag::None)
+				{
+				}
+
+				const ComPtr<Datacenter> Datacenter;
+				DatacenterRequestContextFlag Flags;
+				std::vector<ComPtr<MessageRequest>> GenericRequests;
+			};
+
 			struct MessageContext
 			{
 				INT64 Id;
@@ -27,6 +50,8 @@ namespace Telegram
 		}
 	}
 }
+
+DEFINE_ENUM_FLAG_OPERATORS(Telegram::Api::Native::DatacenterRequestContextFlag);
 
 
 using Telegram::Api::Native::MessageContext;
@@ -49,7 +74,7 @@ namespace ABI
 					virtual HRESULT STDMETHODCALLTYPE get_MessageContext(_Out_ MessageContext const** value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_Token(_Out_ INT32* value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_ConnectionType(_Out_ ConnectionType* value) = 0;
-					virtual HRESULT STDMETHODCALLTYPE get_DatacenterId(_Out_ UINT32* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE get_DatacenterId(_Out_ INT32* value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE get_Flags(_Out_ RequestFlag* value) = 0;
 				};
 
@@ -76,8 +101,6 @@ namespace Telegram
 			}
 
 
-			class Datacenter;
-
 			class MessageRequest WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IMessageRequest>
 			{
 				friend class ConnectionManager;
@@ -88,11 +111,11 @@ namespace Telegram
 				IFACEMETHODIMP get_Object(_Out_ ITLObject** value);
 				IFACEMETHODIMP get_Token(_Out_ INT32* value);
 				IFACEMETHODIMP get_ConnectionType(_Out_ ConnectionType* value);
-				IFACEMETHODIMP get_DatacenterId(_Out_ UINT32* value);
+				IFACEMETHODIMP get_DatacenterId(_Out_ INT32* value);
 				IFACEMETHODIMP get_Flags(_Out_ RequestFlag* value);
 
 				//Internal methods
-				STDMETHODIMP RuntimeClassInitialize(_In_ ITLObject* object, INT32 token, ConnectionType connectionType, UINT32 datacenterId, _In_ ISendRequestCompletedCallback* sendCompletedCallback,
+				STDMETHODIMP RuntimeClassInitialize(_In_ ITLObject* object, INT32 token, ConnectionType connectionType, INT32 datacenterId, _In_ ISendRequestCompletedCallback* sendCompletedCallback,
 					_In_ IRequestQuickAckReceivedCallback* quickAckReceivedCallback, RequestFlag flags);
 
 				inline ComPtr<ITLObject> const& GetObject() const
@@ -115,7 +138,7 @@ namespace Telegram
 					return m_connectionType;
 				}
 
-				inline UINT32 GetDatacenterId() const
+				inline INT32 GetDatacenterId() const
 				{
 					return m_datacenterId;
 				}
@@ -132,7 +155,12 @@ namespace Telegram
 
 				inline boolean HasMessageId(INT64 messageId)
 				{
-					return  (m_messageContext != nullptr && m_messageContext->Id == messageId) || std::find(m_messagesIds.begin(), m_messagesIds.end(), messageId) != m_messagesIds.end();
+					return (m_messageContext != nullptr && m_messageContext->Id == messageId) || std::find(m_messagesIds.begin(), m_messagesIds.end(), messageId) != m_messagesIds.end();
+				}
+
+				inline boolean MatchesDatacenter(INT32 datacenterId, ConnectionType connectionType)
+				{
+					return m_datacenterId == datacenterId && (m_connectionType & connectionType) == m_connectionType;
 				}
 
 				inline boolean EnableUnauthorized() const
@@ -169,7 +197,7 @@ namespace Telegram
 				ComPtr<ITLObject> m_object;
 				INT32 m_token;
 				ConnectionType m_connectionType;
-				UINT32 m_datacenterId;
+				INT32 m_datacenterId;
 				INT64 m_startTime;
 				std::unique_ptr<MessageContext> m_messageContext;
 				ComPtr<ISendRequestCompletedCallback> m_sendCompletedCallback;

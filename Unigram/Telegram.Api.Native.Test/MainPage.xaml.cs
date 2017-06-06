@@ -38,7 +38,6 @@ namespace Telegram.Api.Native.Test
             connectionManager.BoomBaby(null, out ITLObject @object);
 
             var datacenter = connectionManager.CurrentDatacenter;
-            var salt = datacenter.ServerSalt;
 
             GC.Collect();
         }

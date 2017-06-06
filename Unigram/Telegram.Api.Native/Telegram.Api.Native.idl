@@ -384,10 +384,12 @@ namespace Telegram
 				TryDifferentDc = 16,
 				ForceDownload = 32,
 				InvokeAfter = 64,
-				RequiresQuickAck = 128
+				RequiresQuickAck = 128,
+				Immediate = 256
 			};
 
 			cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(ABI::Telegram::Api::Native::RequestFlag);")
+			cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(ABI::Telegram::Api::Native::ConnectionType);")
 
 
 			[exclusiveto(TLUnprocessedMessage)]
@@ -438,7 +440,6 @@ namespace Telegram
 			interface IDatacenter : IInspectable
 			{
 				[propget] HRESULT Id([out][retval] INT32* value);
-				[propget] HRESULT ServerSalt([out][retval] INT64* value);
 				HRESULT GetCurrentAddress([in] ConnectionType connectionType,[in] boolean ipv6,[out][retval] HSTRING* value);
 				HRESULT GetCurrentPort([in] ConnectionType connectionType,[in] boolean ipv6,[out][retval] UINT32* value);
 				//HRESULT GetDownloadConnection([in] UINT32 index,[in] boolean create, [out][retval] Connection** value);
@@ -460,7 +461,6 @@ namespace Telegram
 			[version(API_VERSION)]
 			interface IConnection : IInspectable
 			{
-				[propget] HRESULT Token([out][retval] UINT32* value);
 				[propget] HRESULT Datacenter([out][retval] Datacenter** value);
 				[propget] HRESULT Type([out][retval] ConnectionType* value);
 				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
@@ -509,9 +509,9 @@ namespace Telegram
 				[propput] HRESULT UserId([in] INT32 value);
 				[propget] HRESULT Datacenters([out][retval] Windows.Foundation.Collections.IVectorView<Datacenter*>** value);
 				[overload("SendRequest")] HRESULT SendRequest([in] Telegram.Api.Native.TL.ITLObject* object,[in] SendRequestCompletedCallback* onCompleted,[in] RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
-					[in] INT32 datacenterId,[in] ConnectionType connectionType,[in] boolean immediate, [out][retval] INT32* value);
+					[in] INT32 datacenterId,[in] ConnectionType connectionType,[out][retval] INT32* value);
 				[overload("SendRequest")] HRESULT SendRequestWithFlags([in] Telegram.Api.Native.TL.ITLObject* object,[in] SendRequestCompletedCallback* onCompleted,[in] RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
-					[in] INT32 datacenterId,[in] ConnectionType connectionType,[in] boolean immediate,[in] RequestFlag flags,[out][retval] INT32* value);
+					[in] INT32 datacenterId,[in] ConnectionType connectionType,[in] RequestFlag flags,[out][retval] INT32* value);
 				HRESULT CancelRequest([in] INT32 requestToken,[in] boolean notifyServer,[out][retval] boolean* value);
 				HRESULT GetDatacenterById([in] INT32 id,[out][retval] Datacenter** value);
 

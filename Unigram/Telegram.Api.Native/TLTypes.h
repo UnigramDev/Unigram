@@ -905,9 +905,9 @@ namespace Telegram
 					InspectableClass(TLObjectTraits::RuntimeClassName, BaseTrust);
 
 				public:
-					TLBadMsgNotificationT()
+					TLBadMsgNotificationT() :
+						m_badMessageContext({})
 					{
-						ZeroMemory(&m_badMessageContext, sizeof(MessageContext));
 					}
 
 					~TLBadMsgNotificationT()

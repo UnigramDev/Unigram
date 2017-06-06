@@ -52,57 +52,6 @@ HRESULT Datacenter::get_Id(INT32* value)
 	return S_OK;
 }
 
-HRESULT Datacenter::get_ServerSalt(INT64* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	HRESULT result;
-	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
-
-	auto lock = LockCriticalSection();
-
-	INT32 maxOffset = -1;
-	INT64 salt = 0;
-	auto timeStamp = connectionManager->GetCurrentTime();
-
-	std::vector<ServerSalt>::iterator serverSaltIterator = m_serverSalts.begin();
-	while (serverSaltIterator != m_serverSalts.end())
-	{
-		auto& serverSalt = *serverSaltIterator;
-
-		if (serverSalt.ValidUntil < timeStamp)
-		{
-			serverSaltIterator = m_serverSalts.erase(serverSaltIterator);
-		}
-		else
-		{
-			if (serverSalt.ValidSince <= timeStamp && serverSalt.ValidUntil > timeStamp)
-			{
-				auto currentOffset = std::abs(serverSalt.ValidUntil - timeStamp);
-				if (currentOffset > maxOffset)
-				{
-					maxOffset = currentOffset;
-					salt = serverSalt.Salt;
-				}
-			}
-
-			serverSaltIterator++;
-		}
-	}
-
-	if (salt == 0)
-	{
-		return S_FALSE;
-	}
-
-	*value = salt;
-	return S_OK;
-}
-
 HRESULT Datacenter::GetCurrentAddress(ConnectionType connectionType, boolean ipv6, HSTRING* value)
 {
 	if (value == nullptr)
@@ -138,23 +87,48 @@ HRESULT Datacenter::GetCurrentPort(ConnectionType connectionType, boolean ipv6, 
 
 HRESULT Datacenter::Close()
 {
-	auto lock = LockCriticalSection();
+	std::vector<ComPtr<Connection>> connectionsToClose;
 
-	/*if (m_closed)
 	{
-		return RO_E_CLOSED;
-	}*/
+		auto lock = LockCriticalSection();
 
-	m_genericConnection.Reset();
+		if ((m_flags & DatacenterFlag::Closed) == DatacenterFlag::Closed)
+		{
+			return RO_E_CLOSED;
+		}
 
-	for (size_t i = 0; i < UPLOAD_CONNECTIONS_COUNT; i++)
-	{
-		m_uploadConnections[i].Reset();
+		m_flags = DatacenterFlag::Closed;
+		m_authenticationContext.reset();
+
+		if (m_genericConnection != nullptr)
+		{
+			connectionsToClose.push_back(m_genericConnection);
+			m_genericConnection.Reset();
+		}
+
+		for (size_t i = 0; i < DOWNLOAD_CONNECTIONS_COUNT; i++)
+		{
+			if (m_downloadConnections[i] != nullptr)
+			{
+				connectionsToClose.push_back(m_downloadConnections[i]);
+				m_downloadConnections[i].Reset();
+			}
+		}
+
+		for (size_t i = 0; i < UPLOAD_CONNECTIONS_COUNT; i++)
+		{
+			if (m_uploadConnections[i] != nullptr)
+			{
+				connectionsToClose.push_back(m_uploadConnections[i]);
+				m_uploadConnections[i].Reset();
+			}
+		}
+
 	}
 
-	for (size_t i = 0; i < DOWNLOAD_CONNECTIONS_COUNT; i++)
+	for (auto& connection : connectionsToClose)
 	{
-		m_downloadConnections[i].Reset();
+		connection->Close();
 	}
 
 	return S_OK;
@@ -280,23 +254,19 @@ void Datacenter::ResetEndpoint()
 	//StoreCurrentEndpoint();
 }
 
-HRESULT Datacenter::AddServerSalt(ServerSalt const& salt)
+void Datacenter::AddServerSalt(ServerSalt const& salt)
 {
 	auto lock = LockCriticalSection();
 
-	if (ContainsServerSalt(salt.Salt, m_serverSalts.size()))
+	if (!ContainsServerSalt(salt.Salt, m_serverSalts.size()))
 	{
-		return PLA_E_NO_DUPLICATES;
+		m_serverSalts.push_back(salt);
+
+		std::sort(m_serverSalts.begin(), m_serverSalts.end(), [](ServerSalt const& x, ServerSalt const& y)
+		{
+			return x.ValidSince < y.ValidSince;
+		});
 	}
-
-	m_serverSalts.push_back(salt);
-
-	std::sort(m_serverSalts.begin(), m_serverSalts.end(), [](ServerSalt const& x, ServerSalt const& y)
-	{
-		return x.ValidSince < y.ValidSince;
-	});
-
-	return S_OK;
 }
 
 HRESULT Datacenter::MergeServerSalts(std::vector<ServerSalt> const& salts)
@@ -344,6 +314,42 @@ boolean Datacenter::ContainsServerSalt(INT64 salt, size_t count)
 	}
 
 	return false;
+}
+
+INT64 Datacenter::GetServerSalt(ConnectionManager* connectionManager)
+{
+	auto lock = LockCriticalSection();
+
+	INT32 maxOffset = -1;
+	INT64 salt = 0;
+	auto timeStamp = connectionManager->GetCurrentTime();
+
+	auto serverSaltIterator = m_serverSalts.begin();
+	while (serverSaltIterator != m_serverSalts.end())
+	{
+		auto& serverSalt = *serverSaltIterator;
+
+		if (serverSalt.ValidUntil < timeStamp)
+		{
+			serverSaltIterator = m_serverSalts.erase(serverSaltIterator);
+		}
+		else
+		{
+			if (serverSalt.ValidSince <= timeStamp && serverSalt.ValidUntil > timeStamp)
+			{
+				auto currentOffset = std::abs(serverSalt.ValidUntil - timeStamp);
+				if (currentOffset > maxOffset)
+				{
+					maxOffset = currentOffset;
+					salt = serverSalt.Salt;
+				}
+			}
+
+			serverSaltIterator++;
+		}
+	}
+
+	return salt;
 }
 
 boolean Datacenter::ContainsServerSalt(INT64 salt)
@@ -416,19 +422,42 @@ HRESULT Datacenter::ReplaceEndpoints(std::vector<ServerEndpoint> const& newEndpo
 	return S_OK;
 }
 
-HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, Connection** value)
+HRESULT Datacenter::GetGenericConnection(boolean create, ComPtr<Connection>& value)
 {
-	if (value == nullptr)
+	auto lock = LockCriticalSection();
+
+	if ((m_flags & DatacenterFlag::Closed) == DatacenterFlag::Closed)
 	{
-		return E_POINTER;
+		return RO_E_CLOSED;
 	}
 
+	if (m_genericConnection == nullptr && create)
+	{
+		auto connection = Make<Connection>(this, ConnectionType::Generic);
+
+		HRESULT result;
+		ReturnIfFailed(result, connection->Connect());
+
+		m_genericConnection.Swap(connection);
+	}
+
+	value = m_genericConnection;
+	return S_OK;
+}
+
+HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, ComPtr<Connection>& value)
+{
 	if (index >= DOWNLOAD_CONNECTIONS_COUNT)
 	{
 		return E_BOUNDS;
 	}
 
 	auto lock = LockCriticalSection();
+
+	if ((m_flags & DatacenterFlag::Closed) == DatacenterFlag::Closed)
+	{
+		return RO_E_CLOSED;
+	}
 
 	if (m_downloadConnections[index] == nullptr && create)
 	{
@@ -437,25 +466,26 @@ HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, Connecti
 		HRESULT result;
 		ReturnIfFailed(result, connection->Connect());
 
-		m_downloadConnections[index] = connection;
+		m_downloadConnections[index].Swap(connection);
 	}
 
-	return m_downloadConnections[index].CopyTo(value);
+	value = m_downloadConnections[index];
+	return S_OK;
 }
 
-HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, Connection** value)
+HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, ComPtr<Connection>& value)
 {
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
 	if (index >= UPLOAD_CONNECTIONS_COUNT)
 	{
 		return E_BOUNDS;
 	}
 
 	auto lock = LockCriticalSection();
+
+	if ((m_flags & DatacenterFlag::Closed) == DatacenterFlag::Closed)
+	{
+		return RO_E_CLOSED;
+	}
 
 	if (m_uploadConnections[index] == nullptr && create)
 	{
@@ -467,80 +497,60 @@ HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, Connection
 		m_uploadConnections[index] = connection;
 	}
 
-	return m_uploadConnections[index].CopyTo(value);
-}
-
-HRESULT Datacenter::GetGenericConnection(boolean create, Connection** value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	auto lock = LockCriticalSection();
-
-	if (m_genericConnection == nullptr && create)
-	{
-		auto connection = Make<Connection>(this, ConnectionType::Generic);
-
-		HRESULT result;
-		ReturnIfFailed(result, connection->Connect());
-
-		m_genericConnection = connection;
-	}
-
-	return m_genericConnection.CopyTo(value);
-}
-
-HRESULT Datacenter::SuspendConnections()
-{
-	HRESULT result;
-	auto lock = LockCriticalSection();
-
-	if (m_genericConnection != nullptr)
-	{
-		ReturnIfFailed(result, m_genericConnection->Suspend());
-	}
-
-	for (size_t i = 0; i < UPLOAD_CONNECTIONS_COUNT; i++)
-	{
-		if (m_uploadConnections[i] != nullptr)
-		{
-			ReturnIfFailed(result, m_uploadConnections[i]->Suspend());
-		}
-	}
-
-	for (size_t i = 0; i < DOWNLOAD_CONNECTIONS_COUNT; i++)
-	{
-		if (m_downloadConnections[i] != nullptr)
-		{
-			ReturnIfFailed(result, m_downloadConnections[i]->Suspend());
-		}
-	}
-
+	value = m_uploadConnections[index];
 	return S_OK;
 }
 
-HRESULT Datacenter::BeginHandshake(boolean reconnect)
+HRESULT Datacenter::BeginHandshake(boolean reconnect, boolean reset)
 {
+	auto lock = LockCriticalSection();
+
+	if (reset)
+	{
+		m_authenticationContext.reset();
+		m_flags &= ~DatacenterFlag::Authenticated;
+	}
+	else if (static_cast<INT32>(m_flags) & 0xf)
+	{
+		return S_OK;
+	}
+
 	HRESULT result;
 	ComPtr<Connection> genericConnection;
-	ReturnIfFailed(result, GetGenericConnection(true, &genericConnection));
+	ReturnIfFailed(result, GetGenericConnection(true, genericConnection));
 
 	genericConnection->RecreateSession();
 
-	auto lock = LockCriticalSection();
+	if (reconnect)
+	{
+		ReturnIfFailed(result, genericConnection->Disconnect());
+		ReturnIfFailed(result, genericConnection->Connect());
+	}
 
 	auto handshakeContext = std::make_unique<HandshakeContext>();
-	handshakeContext->State = AuthenticationState::HandshakeStarted;
 	RAND_bytes(handshakeContext->Nonce, sizeof(TLInt128));
 
 	ComPtr<Methods::TLReqPQ> pqRequest;
 	ReturnIfFailed(result, MakeAndInitialize<Methods::TLReqPQ>(&pqRequest, handshakeContext->Nonce));
 
 	m_authenticationContext = std::move(handshakeContext);
+	m_flags |= static_cast<DatacenterFlag>(AuthenticationState::HandshakeStarted);
 
 	return genericConnection->SendUnencryptedMessage(pqRequest.Get(), false);
+}
+
+HRESULT Datacenter::ImportAuthorization()
+{
+	auto lock = LockCriticalSection();
+
+	if ((m_flags & DatacenterFlag::ImportingAuthorization) == DatacenterFlag::ImportingAuthorization)
+	{
+		return S_OK;
+	}
+
+	auto authExportAuthorization = Make<Methods::TLAuthExportAuthorization>(m_id);
+
+	return S_OK;
 }
 
 HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, ServerEndpoint** endpoint)
@@ -625,34 +635,24 @@ HRESULT Datacenter::GetEndpointsForConnectionType(ConnectionType connectionType,
 	return S_OK;
 }
 
-HRESULT Datacenter::ExportAuthorization()
+HRESULT Datacenter::OnConnectionOpened(ConnectionManager* connectionManager, Connection* connection)
 {
-	auto lock = LockCriticalSection();
+	return connectionManager->OnConnectionOpened(connection);
+}
 
-	if ((m_flags & DatacenterFlag::ExportingAuthorization) == DatacenterFlag::ExportingAuthorization)
+HRESULT Datacenter::OnConnectionClosed(ConnectionManager* connectionManager, Connection* connection)
+{
 	{
-		return S_OK;
+		auto lock = LockCriticalSection();
+
+		if ((m_flags & DatacenterFlag::Authenticated) != DatacenterFlag::Authenticated)
+		{
+			m_authenticationContext.reset();
+			m_flags &= ~DatacenterFlag::Authenticated;
+		}
 	}
 
-	auto exportAuthorization = Make<Methods::TLAuthExportAuthorization>(m_id);
-
-	m_flags |= DatacenterFlag::ExportingAuthorization;
-
-	return S_OK;
-}
-
-HRESULT Datacenter::OnHandshakeConnectionClosed(Connection* connection)
-{
-	auto lock = LockCriticalSection();
-
-	return S_OK;
-}
-
-HRESULT Datacenter::OnHandshakeConnectionConnected(Connection* connection)
-{
-	auto lock = LockCriticalSection();
-
-	return S_OK;
+	return connectionManager->OnConnectionClosed(connection);
 }
 
 HRESULT Datacenter::HandleHandshakePQResponse(Connection* connection, TLResPQ* response)
@@ -663,7 +663,7 @@ HRESULT Datacenter::HandleHandshakePQResponse(Connection* connection, TLResPQ* r
 	HandshakeContext* handshakeContext;
 	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, AuthenticationState::HandshakeStarted));
 
-	handshakeContext->State = AuthenticationState::HandshakePQ;
+	m_flags |= static_cast<DatacenterFlag>(AuthenticationState::HandshakePQ);
 
 	if (!DatacenterCryptography::CheckNonces(handshakeContext->Nonce, response->GetNonce()))
 	{
@@ -754,7 +754,7 @@ HRESULT Datacenter::HandleHandshakeServerDHResponse(Connection* connection, TLSe
 	HandshakeContext* handshakeContext;
 	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, AuthenticationState::HandshakePQ));
 
-	handshakeContext->State = AuthenticationState::HandshakeServerDH;
+	m_flags |= static_cast<DatacenterFlag>(AuthenticationState::HandshakeServerDH);
 
 	BYTE ivBuffer[32];
 	BYTE aesKeyAndIvBuffer[104];
@@ -939,7 +939,7 @@ HRESULT Datacenter::HandleHandshakeClientDHResponse(ConnectionManager* connectio
 	HandshakeContext* handshakeContext;
 	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, AuthenticationState::HandshakeServerDH));
 
-	handshakeContext->State = AuthenticationState::HandshakeClientDH;
+	m_flags |= static_cast<DatacenterFlag>(AuthenticationState::HandshakeClientDH);
 
 	if (!(DatacenterCryptography::CheckNonces(handshakeContext->Nonce, response->GetNonce()) &&
 		DatacenterCryptography::CheckNonces(handshakeContext->ServerNonce, response->GetServerNonce())))
@@ -973,13 +973,13 @@ HRESULT Datacenter::HandleHandshakeClientDHResponse(ConnectionManager* connectio
 	CopyMemory(authKeyContext->AuthKey, handshakeContext->AuthKey, sizeof(authKeyContext->AuthKey));
 
 	authKeyContext->AuthKeyId = authKeyId;
+	AddServerSalt(handshakeContext->Salt);
 
-	ReturnIfFailed(result, AddServerSalt(handshakeContext->Salt));
-	ReturnIfFailed(result, connectionManager->OnDatacenterHandshakeComplete(this, handshakeContext->TimeDifference));
-
+	auto timeDifference = handshakeContext->TimeDifference;
 	m_authenticationContext = std::move(authKeyContext);
+	m_flags |= DatacenterFlag::Authenticated;
 
-	return SendPing();
+	return connectionManager->OnDatacenterHandshakeComplete(this, timeDifference);
 }
 
 HRESULT Datacenter::HandleFutureSaltsResponse(TL::TLFutureSalts* response)
@@ -993,7 +993,7 @@ HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, UINT32 padding, 
 {
 	auto lock = LockCriticalSection();
 
-	if (m_authenticationContext == nullptr || m_authenticationContext->GetState() != AuthenticationState::Completed)
+	if ((m_flags & DatacenterFlag::Authenticated) != DatacenterFlag::Authenticated)
 	{
 		return E_UNEXPECTED;
 	}
@@ -1051,7 +1051,7 @@ HRESULT Datacenter::DecryptMessage(INT64 authKeyId, BYTE* buffer, UINT32 length)
 {
 	auto lock = LockCriticalSection();
 
-	if (m_authenticationContext == nullptr || m_authenticationContext->GetState() != AuthenticationState::Completed)
+	if ((m_flags & DatacenterFlag::Authenticated) != DatacenterFlag::Authenticated)
 	{
 		return E_UNEXPECTED;
 	}
@@ -1167,7 +1167,7 @@ HRESULT Datacenter::SendPing()
 {
 	HRESULT result;
 	ComPtr<Connection> genericConnection;
-	ReturnIfFailed(result, GetGenericConnection(true, &genericConnection));
+	ReturnIfFailed(result, GetGenericConnection(true, genericConnection));
 
 	ComPtr<ConnectionManager> connectionManager;
 	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
@@ -1189,7 +1189,7 @@ HRESULT Datacenter::SendPing()
 	return connectionManager->SendRequestWithFlags(invokeWithLayer.Get(), Callback<ISendRequestCompletedCallback>([connectionManager](ITLUnprocessedMessage* response, HRESULT error) -> HRESULT
 	{
 		return connectionManager->m_unprocessedMessageReceivedEventSource.InvokeAll(connectionManager.Get(), response);
-	}).Get(), nullptr, m_id, ConnectionType::Generic, false, RequestFlag::None, &requestToken);
+	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::WithoutLogin, &requestToken);
 
 	//return genericConnection->SendEncryptedMessage(invokeWithLayer.Get(), false, nullptr);
 }

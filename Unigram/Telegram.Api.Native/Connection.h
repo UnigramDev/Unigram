@@ -3,7 +3,7 @@
 #include <wrl.h>
 #include <windows.foundation.h>
 #include "Telegram.Api.Native.h"
-#include "EventObject.h"
+#include "ThreadpoolObject.h"
 #include "Timer.h"
 #include "ConnectionSession.h"
 #include "ConnectionSocket.h"
@@ -58,7 +58,7 @@ namespace Telegram
 			class NativeBuffer;
 			struct MessageContext;
 
-			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection>,
+			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, CloakedIid<IClosable>>,
 				public virtual EventObjectT<EventTraits::WaitTraits>, public ConnectionSession, public ConnectionSocket, public ConnectionCryptography
 			{
 				friend class Datacenter;
@@ -74,7 +74,6 @@ namespace Telegram
 				~Connection();
 
 				//COM exported methods
-				IFACEMETHODIMP get_Token(_Out_ UINT32* value);
 				IFACEMETHODIMP get_Datacenter(_Out_ IDatacenter** value);
 				IFACEMETHODIMP get_Type(_Out_ ConnectionType* value);
 				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
@@ -96,10 +95,10 @@ namespace Telegram
 					return m_currentNetworkType;
 				}
 
+				IFACEMETHODIMP Close();
 				HRESULT Connect();
-				HRESULT Reconnect();
-				HRESULT Suspend();
-				HRESULT CreateMessagePacket(UINT32 messageLength, boolean reportAck, _Out_ TL::TLBinaryWriter** writer, _Out_ BYTE** messageBuffer);
+				HRESULT Disconnect();
+				HRESULT CreateMessagePacket(UINT32 messageLength, boolean reportAck, _Out_ ComPtr<TL::TLBinaryWriter>& writer, _Out_ BYTE** messageBuffer);
 				HRESULT SendEncryptedMessage(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _Outptr_opt_ INT32* quickAckId);
 				HRESULT SendUnencryptedMessage(_In_ ITLObject* messageBody, boolean reportAck);
 				HRESULT HandleMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_::Telegram::Api::Native::ConnectionManager* connectionManager);
@@ -107,10 +106,8 @@ namespace Telegram
 				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) override;
 				virtual HRESULT OnSocketDisconnected(int wsaError) override;
-				HRESULT OnMessageReceived(_In_ ConnectionManager* connectionManager, _In_ TL::TLBinaryReader* messageReader, UINT32 messageLength);
-				void OnEventObjectError(_In_ EventObject* eventObject, HRESULT result);
-
-				UINT32 m_token;
+				HRESULT OnMessageReceived(_In_ ComPtr<ConnectionManager> const& connectionManager, _In_ TL::TLBinaryReader* messageReader, UINT32 messageLength);
+	
 				ConnectionType m_type;
 				ConnectionNeworkType m_currentNetworkType;
 				ComPtr<Datacenter> m_datacenter;

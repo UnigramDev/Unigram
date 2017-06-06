@@ -29,10 +29,12 @@ namespace Telegram
 			enum class DatacenterFlag
 			{
 				None = 0,
-				ConnectionInitialized = 1,
-				Authorized = 2,
-				ExportingAuthorization = 4,
-				RequestingSalt = 8
+				Authenticated = 0x1F,
+				ConnectionInitialized = 0x20,
+				Authorized = 0x40,
+				ImportingAuthorization = 0x80,
+				RequestingSalt = 0x100,
+				Closed = 0x200
 			};
 
 		}
@@ -83,7 +85,6 @@ namespace Telegram
 
 				//COM exported methods			
 				IFACEMETHODIMP get_Id(_Out_ INT32* value);
-				IFACEMETHODIMP get_ServerSalt(_Out_ INT64* value);
 				IFACEMETHODIMP GetCurrentAddress(ConnectionType connectionType, boolean ipv6, _Out_ HSTRING* value);
 				IFACEMETHODIMP GetCurrentPort(ConnectionType connectionType, boolean ipv6, _Out_ UINT32* value);
 				//IFACEMETHODIMP GetDownloadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
@@ -91,81 +92,71 @@ namespace Telegram
 				//IFACEMETHODIMP GetGenericConnection(boolean create, _Out_ IConnection** value);
 
 				//Internal methods
-				void Clear();
-				void SwitchTo443Port();
-				void RecreateSessions();
-				void GetSessionsIds(_Out_ std::vector<INT64>& sessionIds);
-				HRESULT AddServerSalt(_In_ ServerSalt const& salt);
-				HRESULT MergeServerSalts(_In_ std::vector<ServerSalt> const& salts);
-				boolean ContainsServerSalt(INT64 salt);
-				void ClearServerSalts();
 				HRESULT AddEndpoint(_In_ ServerEndpoint const& endpoint, ConnectionType connectionType, boolean ipv6);
 				HRESULT ReplaceEndpoints(_In_ std::vector<ServerEndpoint> const& endpoints, ConnectionType connectionType, boolean ipv6);
 				void NextEndpoint(ConnectionType connectionType, boolean ipv6);
 				void ResetEndpoint();
-				HRESULT GetDownloadConnection(UINT32 index, boolean create, _Out_ Connection** value);
-				HRESULT GetUploadConnection(UINT32 index, boolean create, _Out_ Connection** value);
-				HRESULT GetGenericConnection(boolean create, _Out_ Connection** value);
-				HRESULT SuspendConnections();
-				HRESULT BeginHandshake(boolean reconnect);
-
+				HRESULT GetGenericConnection(boolean create, _Out_  ComPtr<Connection>& value);
+				HRESULT GetDownloadConnection(UINT32 index, boolean create, _Out_ ComPtr<Connection>& value);
+				HRESULT GetUploadConnection(UINT32 index, boolean create, _Out_  ComPtr<Connection>& value);
+				
 				inline INT32 GetId() const
 				{
 					return m_id;
 				}
 
-				inline boolean HasAuthKey()
+				inline boolean IsHandshaking()
+				{
+					auto lock = LockCriticalSection();
+					return (static_cast<INT32>(m_flags) & 0x11) == 0x1;
+				}
+
+				inline boolean IsAuthenticated()
 				{
 					auto  lock = LockCriticalSection();
-					return m_authenticationContext != nullptr && m_authenticationContext->GetState() == AuthenticationState::Completed;
+					return (m_flags & DatacenterFlag::Authenticated) == DatacenterFlag::Authenticated;
 				}
 
 				inline boolean IsConnectionInitialized()
 				{
+					auto  lock = LockCriticalSection();
 					return (m_flags & DatacenterFlag::ConnectionInitialized) == DatacenterFlag::ConnectionInitialized;
 				}
 
 				inline boolean IsAuthorized()
 				{
+					auto  lock = LockCriticalSection();
 					return (m_flags & DatacenterFlag::Authorized) == DatacenterFlag::Authorized;
 				}
 
-				inline boolean IsExportingAuthorization()
+				inline boolean IsImportingAuthorization()
 				{
-					return (m_flags & DatacenterFlag::ExportingAuthorization) == DatacenterFlag::ExportingAuthorization;
+					auto  lock = LockCriticalSection();
+					return (m_flags & DatacenterFlag::ImportingAuthorization) == DatacenterFlag::ImportingAuthorization;
 				}
 
 				inline boolean IsRequestingSalt()
 				{
+					auto  lock = LockCriticalSection();
 					return (m_flags & DatacenterFlag::RequestingSalt) == DatacenterFlag::RequestingSalt;
 				}
 
 			private:
 				enum class AuthenticationState
 				{
-					None = 0,
 					HandshakeStarted = 1,
-					HandshakePQ = 2,
-					HandshakeServerDH = 3,
-					HandshakeClientDH = 4,
-					Completed = 5
+					HandshakePQ = 3,
+					HandshakeServerDH = 7,
+					HandshakeClientDH = 15
 				};
 
 				struct AuthenticationContext abstract
 				{
-					virtual AuthenticationState GetState() const = 0;
-
 					BYTE AuthKey[256];
 				};
 
 				struct HandshakeContext : AuthenticationContext
 				{
-					virtual AuthenticationState GetState() const override
-					{
-						return State;
-					}
-
-					AuthenticationState State;
 					BYTE Nonce[16];
 					BYTE NewNonce[32];
 					BYTE ServerNonce[16];
@@ -175,26 +166,29 @@ namespace Telegram
 
 				struct AuthKeyContext : AuthenticationContext
 				{
-					virtual AuthenticationState GetState() const override
-					{
-						return AuthenticationState::Completed;
-					}
-
 					INT64 AuthKeyId;
 				};
 
+				void Clear();
+				void SwitchTo443Port();
+				void RecreateSessions();
+				void GetSessionsIds(_Out_ std::vector<INT64>& sessionIds);
+				void AddServerSalt(_In_ ServerSalt const& salt);
+				HRESULT MergeServerSalts(_In_ std::vector<ServerSalt> const& salts);
+				boolean ContainsServerSalt(INT64 salt);
+				void ClearServerSalts();
 				IFACEMETHODIMP Close();
+				HRESULT BeginHandshake(boolean reconnect, boolean reset);
+				HRESULT ImportAuthorization();
 				HRESULT GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, _Out_ ServerEndpoint** endpoint);
+				INT64 GetServerSalt(_In_ ConnectionManager* connectionManager);
 				boolean ContainsServerSalt(INT64 salt, size_t count);
-				HRESULT ExportAuthorization();
-				HRESULT OnHandshakeConnectionClosed(_In_ Connection* connection);
-				HRESULT OnHandshakeConnectionConnected(_In_ Connection* connection);
-
+				HRESULT OnConnectionOpened(_In_ ConnectionManager* connectionManager, _In_ Connection* connection);
+				HRESULT OnConnectionClosed(_In_ ConnectionManager* connectionManager, _In_ Connection* connection);
 				HRESULT HandleHandshakePQResponse(_In_ Connection* connection, _In_ TL::TLResPQ* response);
 				HRESULT HandleHandshakeServerDHResponse(_In_ Connection* connection, _In_ TL::TLServerDHParamsOk* response);
 				HRESULT HandleHandshakeClientDHResponse(_In_ ConnectionManager* connectionManager, _In_ Connection* connection, _In_ TL::TLDHGenOk* response);
 				HRESULT HandleFutureSaltsResponse(_In_ TL::TLFutureSalts* response);
-
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
 				HRESULT EncryptMessage(_Inout_updates_(length) BYTE* buffer, UINT32 length, UINT32 padding, _Out_opt_ INT32* quickAckId);
 				HRESULT DecryptMessage(INT64 authKeyId, _Inout_updates_(length) BYTE* buffer, UINT32 length);
@@ -206,12 +200,12 @@ namespace Telegram
 						return S_OK;
 					}
 
-					return BeginHandshake(false);
+					return BeginHandshake(false, true);
 				}
 
 				inline HRESULT GetHandshakeContext(_Out_ HandshakeContext** handshakeContext, AuthenticationState currentState)
 				{
-					if (m_authenticationContext == nullptr || m_authenticationContext->GetState() != currentState)
+					if (static_cast<INT32>(m_flags & DatacenterFlag::Authenticated) != static_cast<INT32>(currentState))
 					{
 						return E_UNEXPECTED;
 					}

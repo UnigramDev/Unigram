@@ -1,6 +1,5 @@
 #pragma once
-#include <wrl.h>
-#include "MultiThreadObject.h"
+#include "ThreadpoolManager.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Microsoft::WRL;
@@ -23,18 +22,17 @@ namespace Telegram
 
 			class EventObject abstract : public virtual MultiThreadObject
 			{
-				friend class ConnectionManager;
+				friend class ThreadpoolManager;
+				template<typename EventTraits>
+				friend class EventObjectT;
 				friend struct EventTraits::TimerTraits;
 				friend struct EventTraits::WaitTraits;
 				friend struct EventTraits::WorkerTraits;
 
 			protected:
-				virtual HRESULT AttachToThreadpool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) = 0;
+				virtual HRESULT AttachToThreadpool(_In_ ThreadpoolManager* threadpoolManager) = 0;
 				virtual HRESULT DetachFromThreadpool(boolean waitCallback) = 0;
-				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance) = 0;
-
-			private:
-				void OnThreadpoolCallback(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
+				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _In_ ULONG_PTR param) = 0;
 			};
 
 
@@ -48,7 +46,7 @@ namespace Telegram
 
 					inline static Handle Create(_In_ EventObject* eventObject, _In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) throw()
 					{
-						return ::CreateThreadpoolTimer(TimerTraits::Callback, eventObject, threadpoolEnvironment);
+						return ::CreateThreadpoolTimer(TimerTraits::EventCallback, eventObject, threadpoolEnvironment);
 					}
 
 					inline static void Wait(_In_ Handle timer, BOOL cancelPendingCallbacks) throw()
@@ -67,9 +65,9 @@ namespace Telegram
 					}
 
 				private:
-					static void NTAPI Callback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ Handle work)
+					static void NTAPI EventCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ Handle work)
 					{
-						reinterpret_cast<EventObject*>(context)->OnThreadpoolCallback(instance);
+						reinterpret_cast<EventObject*>(context)->OnEvent(instance, NULL);
 					}
 				};
 
@@ -80,7 +78,7 @@ namespace Telegram
 
 					inline static Handle Create(_In_ EventObject* eventObject, _In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) throw()
 					{
-						return ::CreateThreadpoolWait(WaitTraits::Callback, eventObject, threadpoolEnvironment);
+						return ::CreateThreadpoolWait(WaitTraits::EventCallback, eventObject, threadpoolEnvironment);
 					}
 
 					inline static void Wait(_In_ Handle wait, BOOL cancelPendingCallbacks) throw()
@@ -99,12 +97,9 @@ namespace Telegram
 					}
 
 				private:
-					static void NTAPI Callback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ Handle wait, _In_ TP_WAIT_RESULT waitResult)
+					static void NTAPI EventCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ Handle wait, _In_ TP_WAIT_RESULT waitResult)
 					{
-						if (waitResult == WAIT_OBJECT_0)
-						{
-							reinterpret_cast<EventObject*>(context)->OnThreadpoolCallback(instance);
-						}
+						reinterpret_cast<EventObject*>(context)->OnEvent(instance, waitResult);
 					}
 				};
 
@@ -115,7 +110,7 @@ namespace Telegram
 
 					inline static Handle Create(_In_ EventObject* eventObject, _In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) throw()
 					{
-						return ::CreateThreadpoolWork(WorkerTraits::Callback, eventObject, threadpoolEnvironment);
+						return ::CreateThreadpoolWork(WorkerTraits::EventCallback, eventObject, threadpoolEnvironment);
 					}
 
 					inline static void Wait(_In_ Handle work, BOOL cancelPendingCallbacks) throw()
@@ -134,9 +129,9 @@ namespace Telegram
 					}
 
 				private:
-					static void NTAPI Callback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ Handle work)
+					static void NTAPI EventCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ Handle work)
 					{
-						reinterpret_cast<EventObject*>(context)->OnThreadpoolCallback(instance);
+						reinterpret_cast<EventObject*>(context)->OnEvent(instance, NULL);
 					}
 				};
 
@@ -146,7 +141,7 @@ namespace Telegram
 			template<typename EventTraits>
 			class EventObjectT abstract : public EventObject
 			{
-				friend class ConnectionManager;
+				friend class ThreadpoolManager;
 
 			public:
 				EventObjectT() :
@@ -160,7 +155,7 @@ namespace Telegram
 				}
 
 			protected:
-				inline typename EventTraits::Handle GetThreadpoolObjectHandle() const
+				inline typename EventTraits::Handle GetHandle() const
 				{
 					return m_handle;
 				}
@@ -192,11 +187,11 @@ namespace Telegram
 					return S_OK;
 				}
 
-				virtual HRESULT AttachToThreadpool(_In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) override final
+				virtual HRESULT AttachToThreadpool(_In_ ThreadpoolManager* threadpoolManager) override final
 				{
-					if (threadpoolEnvironment == nullptr)
+					if (threadpoolManager == nullptr)
 					{
-						return E_POINTER;
+						return E_INVALIDARG;
 					}
 
 					if (m_handle != nullptr)
@@ -204,7 +199,7 @@ namespace Telegram
 						return E_NOT_VALID_STATE;
 					}
 
-					m_handle = EventTraits::Create(this, threadpoolEnvironment);
+					m_handle = EventTraits::Create(this, threadpoolManager->GetEnvironment());
 					if (m_handle == nullptr)
 					{
 						return GetLastHRESULT();

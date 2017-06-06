@@ -10,6 +10,9 @@
     <Filter Include="MIDL">
       <UniqueIdentifier>{36575a01-6c0e-49e0-8bc8-0faa4d2c20b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Threading">
+      <UniqueIdentifier>{255b15bd-8927-419e-86b3-5ee095a518aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -19,7 +22,6 @@
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="ConnectionManager.cpp" />
     <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="EventObject.cpp" />
     <ClCompile Include="NetworkExtensions.cpp" />
     <ClCompile Include="TLBinaryReader.cpp">
       <Filter>TLProtocolScheme</Filter>
@@ -44,17 +46,18 @@
       <Filter>TLProtocolScheme</Filter>
     </ClCompile>
     <ClCompile Include="MessageRequest.cpp" />
+    <ClCompile Include="ThreadpoolManager.cpp">
+      <Filter>Threading</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="EventObject.h" />
     <ClInclude Include="Datacenter.h" />
     <ClInclude Include="Connection.h" />
     <ClInclude Include="ConnectionSession.h" />
     <ClInclude Include="ConnectionSocket.h" />
     <ClInclude Include="ConnectionManager.h" />
     <ClInclude Include="Timer.h" />
-    <ClInclude Include="MultiThreadObject.h" />
     <ClInclude Include="NetworkExtensions.h" />
     <ClInclude Include="TLBinaryReader.h">
       <Filter>TLProtocolScheme</Filter>
@@ -90,6 +93,15 @@
     </ClInclude>
     <ClInclude Include="Reference.h" />
     <ClInclude Include="MessageRequest.h" />
+    <ClInclude Include="ThreadpoolManager.h">
+      <Filter>Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiThreadObject.h">
+      <Filter>Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadpoolObject.h">
+      <Filter>Threading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

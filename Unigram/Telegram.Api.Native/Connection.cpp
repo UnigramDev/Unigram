@@ -17,7 +17,6 @@ using namespace Telegram::Api::Native::TL;
 
 
 Connection::Connection(Datacenter* datacenter, ConnectionType type) :
-	m_token(0),
 	m_type(type),
 	m_datacenter(datacenter),
 	m_currentNetworkType(ConnectionNeworkType::WiFi),
@@ -32,19 +31,6 @@ Connection::Connection(Datacenter* datacenter, ConnectionType type) :
 
 Connection::~Connection()
 {
-}
-
-HRESULT Connection::get_Token(UINT32* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	auto lock = LockCriticalSection();
-
-	*value = m_token;
-	return S_OK;
 }
 
 HRESULT Connection::get_Datacenter(IDatacenter** value)
@@ -93,6 +79,19 @@ HRESULT Connection::get_SessionId(INT64* value)
 	return S_OK;
 }
 
+HRESULT Connection::Close()
+{
+	auto lock = LockCriticalSection();
+
+	ConnectionSocket::Close();
+	ConnectionCryptography::Reset();
+
+	m_datacenter.Reset();
+	m_reconnectionTimer.Reset();
+
+	return S_OK;
+}
+
 HRESULT Connection::Connect()
 {
 	HRESULT result;
@@ -107,8 +106,6 @@ HRESULT Connection::Connect()
 
 		return HRESULT_FROM_WIN32(ERROR_NO_NETWORK);
 	}
-
-	//I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement connection start");
 
 	boolean ipv6;
 	ReturnIfFailed(result, connectionManager->get_IsIpv6Enabled(&ipv6));
@@ -128,33 +125,34 @@ HRESULT Connection::Connect()
 	}
 
 	ReturnIfFailed(result, m_reconnectionTimer->Stop());
-	ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), endpoint, ipv6));
+
+	UINT32 timeout;
+	if (m_type == ConnectionType::Upload)
+	{
+		timeout = 25000;
+	}
+	else
+	{
+		timeout = 15000;
+	}
+
+	ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), endpoint, ipv6, timeout));
 	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&m_currentNetworkType));
 
 	return S_OK;
 }
 
-HRESULT Connection::Reconnect()
-{
-	HRESULT result;
-	ReturnIfFailed(result, Suspend());
-
-	return Connect();
-}
-
-HRESULT Connection::Suspend()
+HRESULT Connection::Disconnect()
 {
 	HRESULT result;
 	auto lock = LockCriticalSection();
 
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement connection suspension");
-
 	ReturnIfFailed(result, m_reconnectionTimer->Stop());
 
-	return S_OK;
+	return DisconnectSocket(true);
 }
 
-HRESULT Connection::CreateMessagePacket(UINT32 messageLength, boolean reportAck, TLBinaryWriter** writer, BYTE** messageBuffer)
+HRESULT Connection::CreateMessagePacket(UINT32 messageLength, boolean reportAck, ComPtr<TLBinaryWriter>& writer, BYTE** messageBuffer)
 {
 	UINT32 packetBufferLength = messageLength;
 	UINT32 packetLength = messageLength / 4;
@@ -221,7 +219,7 @@ HRESULT Connection::CreateMessagePacket(UINT32 messageLength, boolean reportAck,
 		packetBufferBytes += 4;
 	}
 
-	*writer = packetWriter.Detach();
+	writer.Swap(packetWriter);
 	*messageBuffer = packetBufferBytes;
 	return S_OK;
 }
@@ -259,32 +257,32 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 
 	UINT32 encryptedMessageLength = 24 + messageLength + padding;
 
-	LockCriticalSection();
-
-	INT64 salt;
-	ReturnIfFailed(result, m_datacenter->get_ServerSalt(&salt));
-
 	BYTE* packetBufferBytes;
 	ComPtr<TLBinaryWriter> packetWriter;
-	ReturnIfFailed(result, CreateMessagePacket(encryptedMessageLength, quickAckId != nullptr, &packetWriter, &packetBufferBytes));
-	ReturnIfFailed(result, packetWriter->SeekCurrent(24));
-	ReturnIfFailed(result, packetWriter->WriteInt64(salt));
-	ReturnIfFailed(result, packetWriter->WriteInt64(GetSessionId()));
 
-	ReturnIfFailed(result, packetWriter->WriteInt64(messageContext->Id));
-	ReturnIfFailed(result, packetWriter->WriteUInt32(messageContext->SequenceNumber));
-
-	ReturnIfFailed(result, packetWriter->WriteUInt32(messageBodySize));
-	ReturnIfFailed(result, packetWriter->WriteObject(messageBody));
-
-	if (padding != 0)
 	{
-		RAND_bytes(packetBufferBytes + 24 + messageLength, padding);
+		auto lock = LockCriticalSection();
+
+		ReturnIfFailed(result, CreateMessagePacket(encryptedMessageLength, quickAckId != nullptr, packetWriter, &packetBufferBytes));
+		ReturnIfFailed(result, packetWriter->SeekCurrent(24));
+		ReturnIfFailed(result, packetWriter->WriteInt64(m_datacenter->GetServerSalt(connectionManager.Get())));
+		ReturnIfFailed(result, packetWriter->WriteInt64(GetSessionId()));
+
+		ReturnIfFailed(result, packetWriter->WriteInt64(messageContext->Id));
+		ReturnIfFailed(result, packetWriter->WriteUInt32(messageContext->SequenceNumber));
+
+		ReturnIfFailed(result, packetWriter->WriteUInt32(messageBodySize));
+		ReturnIfFailed(result, packetWriter->WriteObject(messageBody));
+
+		if (padding != 0)
+		{
+			RAND_bytes(packetBufferBytes + 24 + messageLength, padding);
+		}
+
+		ReturnIfFailed(result, m_datacenter->EncryptMessage(packetBufferBytes, encryptedMessageLength, padding, quickAckId));
+
+		ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, encryptedMessageLength);
 	}
-
-	ReturnIfFailed(result, m_datacenter->EncryptMessage(packetBufferBytes, encryptedMessageLength, padding, quickAckId));
-
-	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, encryptedMessageLength);
 
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
 }
@@ -305,17 +303,20 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, boolean repor
 
 	UINT32 messageLength = 2 * sizeof(INT64) + sizeof(INT32) + messageBodySize;
 
-	LockCriticalSection();
-
 	BYTE* packetBufferBytes;
 	ComPtr<TLBinaryWriter> packetWriter;
-	ReturnIfFailed(result, CreateMessagePacket(messageLength, reportAck, &packetWriter, &packetBufferBytes));
-	ReturnIfFailed(result, packetWriter->WriteInt64(0));
-	ReturnIfFailed(result, packetWriter->WriteInt64(connectionManager->GenerateMessageId()));
-	ReturnIfFailed(result, packetWriter->WriteUInt32(messageBodySize));
-	ReturnIfFailed(result, packetWriter->WriteObject(messageBody));
 
-	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, messageLength);
+	{
+		auto lock = LockCriticalSection();
+
+		ReturnIfFailed(result, CreateMessagePacket(messageLength, reportAck, packetWriter, &packetBufferBytes));
+		ReturnIfFailed(result, packetWriter->WriteInt64(0));
+		ReturnIfFailed(result, packetWriter->WriteInt64(connectionManager->GenerateMessageId()));
+		ReturnIfFailed(result, packetWriter->WriteUInt32(messageBodySize));
+		ReturnIfFailed(result, packetWriter->WriteObject(messageBody));
+
+		ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, messageLength);
+	}
 
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
 }
@@ -363,27 +364,25 @@ HRESULT Connection::HandleNewSessionCreatedResponse(ConnectionManager* connectio
 
 	AddProcessedSession(response->GetUniqueId());
 
-	return connectionManager->OnConnectionSessionCreated(this);
+	return connectionManager->OnConnectionSessionCreated(this, response->GetFirstMesssageId());
 }
 
 HRESULT Connection::OnSocketConnected()
 {
-	static UINT32 lastConnectionToken = 0;
+	HRESULT result;
+	ComPtr<ConnectionManager> connectionManager;
+	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 
-	m_token = InterlockedIncrement(&lastConnectionToken);
+	ComPtr<Connection> connection = this;
+	return connectionManager->SubmitWork([connection, connectionManager]()-> void
+	{
+		auto lock = connection->LockCriticalSection();
 
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket connected event handling");
-
-	//HRESULT result;
-	//ComPtr<ConnectionManager> connectionManager;
-	//ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
-	//ReturnIfFailed(result, connectionManager->OnConnectionOpened(this));
-
-	//std::string requestBuffer("GET /?gfe_rd=cr&ei=GnEKWfHFIczw8Aeh7LDABQ&gws_rd=cr HTTP/1.1\n"
-	//	"User-Agent: Mozilla / 4.0 (compatible; MSIE5.01; Windows NT)\nHost: www.google.com\nAccept-Language: en-us\nConnection: Keep-Alive\n\nSTOCAZZO h@çk3r");
-
-	//ReturnIfFailed(result, ConnectionSocket::SendData(reinterpret_cast<const BYTE*>(requestBuffer.data()), static_cast<UINT32>(requestBuffer.size())));
-	return S_OK;
+		if (connection->m_datacenter != nullptr)
+		{
+			connection->m_datacenter->OnConnectionOpened(connectionManager.Get(), connection.Get());
+		}
+	});
 }
 
 HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
@@ -423,8 +422,12 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 
 			INT32 ackId;
 			BreakIfFailed(result, packetReader->ReadBigEndianInt32(&ackId));
-			BreakIfFailed(result, connectionManager->OnConnectionQuickAckReceived(this, ackId & ~(1 << 31)));
 
+			ComPtr<Connection> connection = this;
+			BreakIfFailed(result, connectionManager->SubmitWork([connection, connectionManager, ackId]()-> void
+			{
+				connectionManager->OnConnectionQuickAckReceived(connection.Get(), ackId & ~(1 << 31));
+			}));
 			continue;
 		}
 
@@ -442,9 +445,14 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 			packetLength = static_cast<UINT32>(firstByte) * 4;
 		}
 
-		if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH || FAILED(OnMessageReceived(connectionManager.Get(), packetReader.Get(), packetLength)))
+		if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH || FAILED(OnMessageReceived(connectionManager, packetReader.Get(), packetLength)))
 		{
-			return Reconnect();
+			ComPtr<Connection> connection = this;
+			return connectionManager->SubmitWork([connection]()-> void
+			{
+				connection->Disconnect();
+				connection->Connect();
+			});
 		}
 
 		if (FAILED(packetReader->put_Position(packetPosition + (firstByte == 0x7f ? 4 : 1) + packetLength)))
@@ -468,24 +476,27 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 
 HRESULT Connection::OnSocketDisconnected(int wsaError)
 {
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement socket disconnected event handling");
-
-	WCHAR* errorMessage;
-	FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, wsaError, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), reinterpret_cast<LPWSTR>(&errorMessage), 0, NULL);
-	OutputDebugString(errorMessage);
-	LocalFree(errorMessage);
-
 	HRESULT result;
-	ReturnIfFailed(result, m_reconnectionTimer->Stop());
-
 	ComPtr<ConnectionManager> connectionManager;
 	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
-	ReturnIfFailed(result, connectionManager->OnConnectionClosed(this));
+	ReturnIfFailed(result, m_reconnectionTimer->Stop());
 
-	return S_OK;
+	m_partialPacketBuffer.Reset();
+	ConnectionCryptography::Reset();
+
+	ComPtr<Connection> connection = this;
+	return connectionManager->SubmitWork([connection, connectionManager]()-> void
+	{
+		auto lock = connection->LockCriticalSection();
+
+		if (connection->m_datacenter != nullptr)
+		{
+			connection->m_datacenter->OnConnectionClosed(connectionManager.Get(), connection.Get());
+		}
+	});
 }
 
-HRESULT Connection::OnMessageReceived(ConnectionManager* connectionManager, TLBinaryReader* messageReader, UINT32 messageLength)
+HRESULT Connection::OnMessageReceived(ComPtr<ConnectionManager> const& connectionManager, TLBinaryReader* messageReader, UINT32 messageLength)
 {
 	HRESULT result;
 	if (messageLength == 4)
@@ -540,5 +551,10 @@ HRESULT Connection::OnMessageReceived(ConnectionManager* connectionManager, TLBi
 		ReturnIfFailed(result, messageReader->ReadObjectAndConstructor(objectSize, &constructor, &messageObject));
 	}
 
-	return HandleMessageResponse(&messageContext, messageObject.Get(), connectionManager);
+	ComPtr<Connection> connection = this;
+	return connectionManager->SubmitWork([messageContext, messageObject, connection, connectionManager]()-> void
+	{
+		auto lock = connection->LockCriticalSection();
+		connection->HandleMessageResponse(&messageContext, messageObject.Get(), connectionManager.Get());
+	});
 }

@@ -80,7 +80,7 @@ HRESULT Timer::Stop()
 	return S_OK;
 }
 
-HRESULT Timer::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
+HRESULT Timer::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG_PTR param)
 {
 	auto lock = LockCriticalSection();
 
@@ -92,7 +92,7 @@ HRESULT Timer::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 
 HRESULT Timer::SetTimerTimeout()
 {
-	auto threadpoolObjectHandle = GetThreadpoolObjectHandle();
+	auto threadpoolObjectHandle = EventObjectT::GetHandle();
 	if (threadpoolObjectHandle == nullptr)
 	{
 		return E_NOT_VALID_STATE;

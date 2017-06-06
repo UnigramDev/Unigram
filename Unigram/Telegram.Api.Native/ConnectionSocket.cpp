@@ -24,21 +24,31 @@ using namespace Telegram::Api::Native;
 
 
 ConnectionSocket::ConnectionSocket() :
-	m_socket(INVALID_SOCKET)
+	m_socket(INVALID_SOCKET),
+	m_timeout({})
 {
 }
 
 ConnectionSocket::~ConnectionSocket()
 {
-	CloseSocket(NO_ERROR, SOCKET_CLOSE_JOINTHREAD);
 }
 
-HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, ServerEndpoint const* endpoint, boolean ipv6)
+HRESULT ConnectionSocket::Close()
+{
+	return CloseSocket(NO_ERROR, SOCKET_CLOSE_JOINTHREAD);
+}
+
+HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, ServerEndpoint const* endpoint, boolean ipv6, UINT32 timeoutMs)
 {
 	if (m_socket != INVALID_SOCKET)
 	{
 		return E_NOT_VALID_STATE;
 	}
+
+	ULARGE_INTEGER timeout;
+	timeout.QuadPart = timeoutMs * -10000LL;
+	m_timeout.dwHighDateTime = timeout.HighPart;
+	m_timeout.dwLowDateTime = timeout.LowPart;
 
 	sockaddr_storage socketAddress = {};
 	if (ipv6)
@@ -88,14 +98,14 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, Se
 	setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char*>(&noDelay), sizeof(int));
 
 	HRESULT result;
-	if (FAILED(result = connectionManager->AttachEventObject(this)))
+	if (FAILED(result = AttachToThreadpool(connectionManager)))
 	{
 		CloseSocket(WIN32_FROM_HRESULT(result), SOCKET_CLOSE_NONE);
 
 		return result;
 	}
 
-	SetThreadpoolWait(GetThreadpoolObjectHandle(), GetSocketEvent(), nullptr);
+	SetThreadpoolWait(EventObjectT::GetHandle(), GetSocketEvent(), &m_timeout);
 
 	if (WSAEventSelect(m_socket, m_socketEvent.Get(), FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE) == SOCKET_ERROR)
 	{
@@ -116,14 +126,19 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, Se
 	return S_OK;
 }
 
-HRESULT ConnectionSocket::DisconnectSocket()
+HRESULT ConnectionSocket::DisconnectSocket(boolean immediate)
 {
+	if (immediate)
+	{
+		return CloseSocket(NO_ERROR, SOCKET_CLOSE_RAISEEVENT);
+	}
+
 	if (m_socket == INVALID_SOCKET)
 	{
 		return E_NOT_VALID_STATE;
 	}
 
-	if (shutdown(m_socket, SD_SEND) == SOCKET_ERROR)
+	if (shutdown(m_socket, SD_BOTH) == SOCKET_ERROR)
 	{
 		return WSAGetLastHRESULT();
 	}
@@ -187,9 +202,10 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 		return WSAGetLastHRESULT();
 	}
 
+	m_socket = INVALID_SOCKET;
+
 	DetachFromThreadpool(flags & SOCKET_CLOSE_JOINTHREAD);
 
-	m_socket = INVALID_SOCKET;
 	m_socketEvent.Close();
 	m_socketConnectedEvent.Close();
 	m_sendBuffer = {};
@@ -203,12 +219,21 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 	return S_OK;
 }
 
-HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
+HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG_PTR waitResult)
 {
-	int wsaLastError;
-	WSANETWORKEVENTS networkEvents;
 	auto lock = LockCriticalSection();
 
+	if (waitResult != WAIT_OBJECT_0)
+	{
+		return CloseSocket(ERROR_TIMEOUT, SOCKET_CLOSE_RAISEEVENT);
+	}
+
+	if (m_socket == INVALID_SOCKET)
+	{
+		return S_FALSE;
+	}
+
+	WSANETWORKEVENTS networkEvents;
 	if (WSAEnumNetworkEvents(m_socket, m_socketEvent.Get(), &networkEvents) == SOCKET_ERROR)
 	{
 		return GetLastErrorAndCloseSocket(SOCKET_CLOSE_RAISEEVENT);
@@ -218,6 +243,8 @@ HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 	{
 		return CloseSocket(networkEvents.iErrorCode[FD_CLOSE_BIT], SOCKET_CLOSE_RAISEEVENT);
 	}
+
+	int wsaLastError;
 
 	do
 	{
@@ -281,7 +308,7 @@ HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance)
 			}
 		}
 
-		SetThreadpoolWait(GetThreadpoolObjectHandle(), m_socketEvent.Get(), nullptr);
+		SetThreadpoolWait(EventObjectT::GetHandle(), m_socketEvent.Get(), &m_timeout);
 		return S_OK;
 	} while (false);
 

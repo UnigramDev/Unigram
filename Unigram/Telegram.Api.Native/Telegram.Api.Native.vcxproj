@@ -294,10 +294,11 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="DatacenterCryptography.h" />
     <ClInclude Include="DatacenterServer.h" />
     <ClInclude Include="DefaultUserConfiguration.h" />
-    <ClInclude Include="EventObject.h" />
+    <ClInclude Include="ThreadpoolObject.h" />
     <ClInclude Include="GZip.h" />
     <ClInclude Include="NativeBuffer.h" />
     <ClInclude Include="Reference.h" />
+    <ClInclude Include="ThreadpoolManager.h" />
     <ClInclude Include="TLMethods.h" />
     <ClInclude Include="Wrappers\OpenSSL.h" />
     <ClInclude Include="TLObject.h" />
@@ -322,7 +323,6 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClCompile Include="Datacenter.cpp" />
     <ClCompile Include="DatacenterCryptography.cpp" />
     <ClCompile Include="DefaultUserConfiguration.cpp" />
-    <ClCompile Include="EventObject.cpp" />
     <ClCompile Include="NetworkExtensions.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -334,6 +334,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     </ClCompile>
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="MessageRequest.cpp" />
+    <ClCompile Include="ThreadpoolManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TLBinaryReader.cpp" />
     <ClCompile Include="TLBinaryWriter.cpp" />

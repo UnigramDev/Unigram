@@ -2,7 +2,7 @@
 #include <vector>
 #include <functional>
 #include <wrl.h>
-#include "EventObject.h"
+#include "ThreadpoolObject.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -55,7 +55,7 @@ namespace Telegram
 				IFACEMETHODIMP Stop();
 
 			private:
-				HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance);
+				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _In_ ULONG_PTR param) override;
 				HRESULT SetTimerTimeout();
 
 				boolean m_started;

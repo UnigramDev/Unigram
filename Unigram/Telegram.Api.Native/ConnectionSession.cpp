@@ -35,6 +35,8 @@ void ConnectionSession::RecreateSession()
 
 HRESULT ConnectionSession::AddConfirmationMessage(ConnectionManager* connectionManager, std::vector<ComPtr<TLMessage>>& messages)
 {
+	auto lock = LockCriticalSection();
+
 	if (m_messagesIdsToConfirm.empty())
 	{
 		return S_OK;
@@ -56,6 +58,8 @@ HRESULT ConnectionSession::AddConfirmationMessage(ConnectionManager* connectionM
 
 UINT32 ConnectionSession::GenerateMessageSequenceNumber(boolean increment)
 {
+	auto lock = LockCriticalSection();
+
 	auto value = m_nextMessageSequenceNumber;
 	if (increment)
 	{

@@ -756,9 +756,9 @@ HRESULT TLRpcResult::ReadBody(ITLBinaryReaderEx* reader)
 
 
 TLRpcAnswerDropped::TLRpcAnswerDropped() :
-	m_bytes(0)
+	m_bytes(0),
+	m_messageContext({})
 {
-	ZeroMemory(&m_messageContext, sizeof(MessageContext));
 }
 
 TLRpcAnswerDropped::~TLRpcAnswerDropped()
@@ -793,9 +793,9 @@ HRESULT TLMsgsAck::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
-TLMessage::TLMessage()
+TLMessage::TLMessage() :
+	m_messageContext({})
 {
-	ZeroMemory(&m_messageContext, sizeof(MessageContext));
 }
 
 TLMessage::~TLMessage()

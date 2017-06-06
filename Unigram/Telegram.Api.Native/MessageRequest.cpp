@@ -9,7 +9,7 @@ using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
 
 
-HRESULT MessageRequest::RuntimeClassInitialize(ITLObject* object, INT32 token, ConnectionType connectionType, UINT32 datacenterId, ISendRequestCompletedCallback* sendCompletedCallback,
+HRESULT MessageRequest::RuntimeClassInitialize(ITLObject* object, INT32 token, ConnectionType connectionType, INT32 datacenterId, ISendRequestCompletedCallback* sendCompletedCallback,
 	IRequestQuickAckReceivedCallback* quickAckReceivedCallback, RequestFlag flags)
 {
 	if (object == nullptr)
@@ -72,7 +72,7 @@ HRESULT MessageRequest::get_ConnectionType(ConnectionType* value)
 	return S_OK;
 }
 
-HRESULT MessageRequest::get_DatacenterId(UINT32* value)
+HRESULT MessageRequest::get_DatacenterId(INT32* value)
 {
 	if (value == nullptr)
 	{
