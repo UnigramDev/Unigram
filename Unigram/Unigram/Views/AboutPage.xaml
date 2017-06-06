@@ -18,7 +18,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
-        </Grid.RowDefinitions>
+l        </Grid.RowDefinitions>
 
         <!-- Titlebar -->
         <controls:PageHeader Grid.Row="0"
