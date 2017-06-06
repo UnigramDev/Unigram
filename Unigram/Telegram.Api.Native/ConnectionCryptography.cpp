@@ -5,15 +5,6 @@
 using namespace Telegram::Api::Native;
 
 
-ConnectionCryptography::ConnectionCryptography() :
-	m_initialized(false)
-{
-}
-
-ConnectionCryptography::~ConnectionCryptography()
-{
-}
-
 void ConnectionCryptography::EncryptBuffer(BYTE const* inputBuffer, BYTE* outputBuffer, UINT32 length)
 {
 	AES_ctr128_encrypt(inputBuffer, outputBuffer, length, &m_encryptKey, m_encryptIv, m_encryptCount, &m_encryptNum);
@@ -68,12 +59,5 @@ HRESULT ConnectionCryptography::Initialize(BYTE* buffer)
 	AES_ctr128_encrypt(buffer, temporaryBuffer, 64, &m_encryptKey, m_encryptIv, m_encryptCount, &m_encryptNum);
 
 	CopyMemory(buffer + 56, temporaryBuffer + 56, 8);
-
-	m_initialized = true;
 	return S_OK;
-}
-
-void ConnectionCryptography::Reset()
-{
-	m_initialized = false;
 }

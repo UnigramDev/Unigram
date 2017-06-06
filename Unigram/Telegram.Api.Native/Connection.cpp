@@ -20,10 +20,19 @@ Connection::Connection(Datacenter* datacenter, ConnectionType type) :
 	m_type(type),
 	m_datacenter(datacenter),
 	m_currentNetworkType(ConnectionNeworkType::WiFi),
-	m_failedConnectionCount(0),
-	m_connectionAttemptCount(CONNECTION_MAX_ATTEMPTS)
+	m_state(ConnectionState::Disconnected),
+	m_failedConnectionCount(0)
 {
-	m_reconnectionTimer = Make<Timer>([&]
+	if (m_type == ConnectionType::Upload)
+	{
+		ConnectionSocket::SetTimeout(25000);
+	}
+	else
+	{
+		ConnectionSocket::SetTimeout(15000);
+	}
+
+	m_reconnectionTimer = Make<Timer>([this]
 	{
 		return Connect();
 	});
@@ -84,8 +93,7 @@ HRESULT Connection::Close()
 	auto lock = LockCriticalSection();
 
 	ConnectionSocket::Close();
-	ConnectionCryptography::Reset();
-
+	m_state = ConnectionState::Disconnected;
 	m_datacenter.Reset();
 	m_reconnectionTimer.Reset();
 
@@ -94,9 +102,14 @@ HRESULT Connection::Close()
 
 HRESULT Connection::Connect()
 {
-	HRESULT result;
 	auto lock = LockCriticalSection();
 
+	if (m_state > ConnectionState::Disconnected)
+	{
+		return E_NOT_VALID_STATE;
+	}
+
+	HRESULT result;
 	ComPtr<ConnectionManager> connectionManager;
 	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 
@@ -124,21 +137,13 @@ HRESULT Connection::Connect()
 		}
 	}
 
-	ReturnIfFailed(result, m_reconnectionTimer->Stop());
+	//ReturnIfFailed(result, m_reconnectionTimer->Stop());
+	//ReturnIfFailed(result, connectionManager->AttachEventObject(m_reconnectionTimer.Get()));
 
-	UINT32 timeout;
-	if (m_type == ConnectionType::Upload)
-	{
-		timeout = 25000;
-	}
-	else
-	{
-		timeout = 15000;
-	}
-
-	ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), endpoint, ipv6, timeout));
+	ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), endpoint, ipv6));
 	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&m_currentNetworkType));
 
+	m_state = ConnectionState::Connecting;
 	return S_OK;
 }
 
@@ -169,7 +174,7 @@ HRESULT Connection::CreateMessagePacket(UINT32 messageLength, boolean reportAck,
 	HRESULT result;
 	BYTE* packetBufferBytes;
 	ComPtr<TLBinaryWriter> packetWriter;
-	if (ConnectionCryptography::IsInitialized())
+	if (m_state >= ConnectionState::CryprographyInitialized)
 	{
 		ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&packetWriter, packetBufferLength));
 
@@ -188,6 +193,8 @@ HRESULT Connection::CreateMessagePacket(UINT32 messageLength, boolean reportAck,
 		packetBufferBytes += 64;
 
 		ReturnIfFailed(result, packetWriter->put_Position(64));
+
+		m_state = ConnectionState::CryprographyInitialized;
 	}
 
 	if (packetLength < 0x7f)
@@ -369,6 +376,9 @@ HRESULT Connection::HandleNewSessionCreatedResponse(ConnectionManager* connectio
 
 HRESULT Connection::OnSocketConnected()
 {
+	m_state = ConnectionState::Connected;
+	m_failedConnectionCount = 0;
+
 	HRESULT result;
 	ComPtr<ConnectionManager> connectionManager;
 	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
@@ -387,6 +397,12 @@ HRESULT Connection::OnSocketConnected()
 
 HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 {
+	if (m_state < ConnectionState::DataReceived)
+	{
+		ConnectionSocket::SetTimeout(25000);
+		m_state = ConnectionState::DataReceived;
+	}
+
 	HRESULT result;
 	ComPtr<ConnectionManager> connectionManager;
 	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
@@ -477,15 +493,17 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 HRESULT Connection::OnSocketDisconnected(int wsaError)
 {
 	HRESULT result;
-	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 	ReturnIfFailed(result, m_reconnectionTimer->Stop());
 
+	auto oldState = m_state;
 	m_partialPacketBuffer.Reset();
-	ConnectionCryptography::Reset();
+	m_state = ConnectionState::Disconnected;
+
+	ComPtr<ConnectionManager> connectionManager;
+	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 
 	ComPtr<Connection> connection = this;
-	return connectionManager->SubmitWork([connection, connectionManager]()-> void
+	ReturnIfFailed(result, connectionManager->SubmitWork([connection, connectionManager]()-> void
 	{
 		auto lock = connection->LockCriticalSection();
 
@@ -493,7 +511,31 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 		{
 			connection->m_datacenter->OnConnectionClosed(connectionManager.Get(), connection.Get());
 		}
-	});
+	}));
+
+	if (m_datacenter->IsHandshaking() || connectionManager->IsCurrentDatacenter(m_datacenter->GetId()))
+	{
+		m_failedConnectionCount++;
+
+		if (connectionManager->IsNetworkAvailable())
+		{
+			auto maximumConnectionRetries = oldState == ConnectionState::DataReceived ? CONNECTION_MAX_ATTEMPTS : 1;
+			auto switchToNextPort = m_failedConnectionCount > maximumConnectionRetries || (oldState != ConnectionState::DataReceived && wsaError == ERROR_TIMEOUT);
+			if (switchToNextPort)
+			{
+				boolean ipv6;
+				ReturnIfFailed(result, connectionManager->get_IsIpv6Enabled(&ipv6));
+
+				m_datacenter->NextEndpoint(m_type, ipv6);
+				m_failedConnectionCount = 0;
+			}
+
+			I_WANT_TO_DIE_IS_THE_NEW_TODO("Start reconnection timer");
+			return S_OK;
+		}
+	}
+
+	return S_OK;
 }
 
 HRESULT Connection::OnMessageReceived(ComPtr<ConnectionManager> const& connectionManager, TLBinaryReader* messageReader, UINT32 messageLength)

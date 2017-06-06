@@ -89,11 +89,20 @@ namespace Telegram
 					return m_type;
 				}
 
-			private:
 				inline ConnectionNeworkType GetCurrentNeworkType() const
 				{
 					return m_currentNetworkType;
 				}
+
+			private:
+				enum class ConnectionState
+				{
+					Disconnected,
+					Connecting,
+					Connected,
+					CryprographyInitialized,
+					DataReceived
+				};
 
 				IFACEMETHODIMP Close();
 				HRESULT Connect();
@@ -107,15 +116,14 @@ namespace Telegram
 				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) override;
 				virtual HRESULT OnSocketDisconnected(int wsaError) override;
 				HRESULT OnMessageReceived(_In_ ComPtr<ConnectionManager> const& connectionManager, _In_ TL::TLBinaryReader* messageReader, UINT32 messageLength);
-	
+
 				ConnectionType m_type;
 				ConnectionNeworkType m_currentNetworkType;
+				ConnectionState m_state;
 				ComPtr<Datacenter> m_datacenter;
 				ComPtr<Timer> m_reconnectionTimer;
 				ComPtr<NativeBuffer> m_partialPacketBuffer;
-
 				UINT32 m_failedConnectionCount;
-				UINT32 m_connectionAttemptCount;
 			};
 
 		}

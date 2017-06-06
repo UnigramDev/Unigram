@@ -103,18 +103,47 @@ namespace Telegram
 					}
 				}
 
-				inline static boolean CheckNonces(BYTE const* a, BYTE const* b)
+				inline static boolean CheckNonces(_In_reads_(16) BYTE const* a, _In_reads_(16) BYTE const* b)
 				{
 					return memcmp(a, b, 16) == 0;
 				}
 
-				static boolean SelectPublicKey(std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
+				inline static boolean CheckPrime(_In_ BIGNUM* p, _In_ BN_CTX* bnContext)
+				{
+					int result = 0;
+					if (!BN_primality_test(&result, p, BN_prime_checks, bnContext, 0, NULL))
+					{
+						return false;
+					}
 
-				static boolean IsGoodGaAndGb(BIGNUM* ga, BIGNUM* p);
+					return result != 0;
+				}
+
+				static boolean SelectPublicKey(_In_ std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
+
+				static boolean IsGoodGaAndGb(_In_ BIGNUM* ga, _In_ BIGNUM* p);
+
+				static boolean IsGoodPrime(_In_ BIGNUM* p, UINT32 g);
 
 				static BN_CTX* GetBNContext();
 
 			private:
+				inline static int BN_primality_test(int *is_probably_prime, const BIGNUM *candidate, int checks, BN_CTX* ctx, int do_trial_division, BN_GENCB* cb) 
+				{
+					switch (BN_is_prime_fasttest_ex(candidate, checks, ctx, do_trial_division, cb))
+					{
+					case 1:
+						*is_probably_prime = 1;
+						return 1;
+					case 0:
+						*is_probably_prime = 0;
+						return 1;
+					default:
+						*is_probably_prime = 0;
+						return 0;
+					}
+				}
+
 				inline static UINT64 GCD(UINT64 a, UINT64 b)
 				{
 					while (a != 0 && b != 0)

@@ -115,7 +115,7 @@ namespace Telegram
 					return GetTickCount64();
 				}
 
-			private:				
+			private:
 				HRESULT InitializeDatacenters();
 				HRESULT UpdateNetworkStatus(boolean raiseEvent);
 				HRESULT CreateRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
@@ -138,6 +138,12 @@ namespace Telegram
 				boolean GetDatacenterById(UINT32 id, _Out_ ComPtr<Datacenter>& datacenter);
 				boolean GetRequestByMessageId(INT64 messageId, _Out_ ComPtr<MessageRequest>& request);
 
+				inline boolean IsCurrentDatacenter(INT32 datacenterId)
+				{
+					auto lock = LockCriticalSection();
+					return datacenterId == m_currentDatacenterId || datacenterId == m_movingToDatacenterId;
+				}
+
 				static void NTAPI RequestEnqueuedCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ PTP_WAIT wait, _In_ TP_WAIT_RESULT waitResult);
 
 				ComPtr<INetworkInformationStatics> m_networkInformation;
@@ -145,8 +151,8 @@ namespace Telegram
 				ConnectionState m_connectionState;
 				ConnectionNeworkType m_currentNetworkType;
 				boolean m_isIpv6Enabled;
-				UINT32 m_currentDatacenterId;
-				UINT32 m_movingToDatacenterId;
+				INT32 m_currentDatacenterId;
+				INT32 m_movingToDatacenterId;
 				std::map<INT32, ComPtr<Datacenter>> m_datacenters;
 				Event m_requestEnqueuedEvent;
 				CriticalSection m_requestsCriticalSection;

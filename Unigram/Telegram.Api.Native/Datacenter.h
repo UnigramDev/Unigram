@@ -87,15 +87,8 @@ namespace Telegram
 				IFACEMETHODIMP get_Id(_Out_ INT32* value);
 				IFACEMETHODIMP GetCurrentAddress(ConnectionType connectionType, boolean ipv6, _Out_ HSTRING* value);
 				IFACEMETHODIMP GetCurrentPort(ConnectionType connectionType, boolean ipv6, _Out_ UINT32* value);
-				//IFACEMETHODIMP GetDownloadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
-				//IFACEMETHODIMP GetUploadConnection(UINT32 index, boolean create, _Out_ IConnection** value);
-				//IFACEMETHODIMP GetGenericConnection(boolean create, _Out_ IConnection** value);
 
 				//Internal methods
-				HRESULT AddEndpoint(_In_ ServerEndpoint const& endpoint, ConnectionType connectionType, boolean ipv6);
-				HRESULT ReplaceEndpoints(_In_ std::vector<ServerEndpoint> const& endpoints, ConnectionType connectionType, boolean ipv6);
-				void NextEndpoint(ConnectionType connectionType, boolean ipv6);
-				void ResetEndpoint();
 				HRESULT GetGenericConnection(boolean create, _Out_  ComPtr<Connection>& value);
 				HRESULT GetDownloadConnection(UINT32 index, boolean create, _Out_ ComPtr<Connection>& value);
 				HRESULT GetUploadConnection(UINT32 index, boolean create, _Out_  ComPtr<Connection>& value);
@@ -169,14 +162,16 @@ namespace Telegram
 					INT64 AuthKeyId;
 				};
 
-				void Clear();
-				void SwitchTo443Port();
 				void RecreateSessions();
 				void GetSessionsIds(_Out_ std::vector<INT64>& sessionIds);
 				void AddServerSalt(_In_ ServerSalt const& salt);
 				HRESULT MergeServerSalts(_In_ std::vector<ServerSalt> const& salts);
 				boolean ContainsServerSalt(INT64 salt);
 				void ClearServerSalts();
+				HRESULT AddEndpoint(_In_ ServerEndpoint const& endpoint, ConnectionType connectionType, boolean ipv6);
+				HRESULT ReplaceEndpoints(_In_ std::vector<ServerEndpoint> const& endpoints, ConnectionType connectionType, boolean ipv6);
+				void NextEndpoint(ConnectionType connectionType, boolean ipv6);
+				void ResetEndpoint();
 				IFACEMETHODIMP Close();
 				HRESULT BeginHandshake(boolean reconnect, boolean reset);
 				HRESULT ImportAuthorization();
@@ -232,7 +227,6 @@ namespace Telegram
 				size_t m_currentIpv6EndpointIndex;
 				size_t m_currentIpv6DownloadEndpointIndex;
 				std::vector<ServerSalt> m_serverSalts;
-
 				ComPtr<Connection> m_genericConnection;
 				ComPtr<Connection> m_downloadConnections[DOWNLOAD_CONNECTIONS_COUNT];
 				ComPtr<Connection> m_uploadConnections[UPLOAD_CONNECTIONS_COUNT];

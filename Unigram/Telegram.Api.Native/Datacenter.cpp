@@ -134,55 +134,6 @@ HRESULT Datacenter::Close()
 	return S_OK;
 }
 
-void Datacenter::Clear()
-{
-	auto lock = LockCriticalSection();
-
-	m_authenticationContext.reset();
-	m_serverSalts.clear();
-}
-
-void Datacenter::SwitchTo443Port()
-{
-	auto lock = LockCriticalSection();
-
-	for (size_t i = 0; i < m_ipv4Endpoints.size(); i++)
-	{
-		if (m_ipv4Endpoints[i].Port == 443)
-		{
-			m_currentIpv4EndpointIndex = i;
-			break;
-		}
-	}
-
-	for (size_t i = 0; i < m_ipv4DownloadEndpoints.size(); i++)
-	{
-		if (m_ipv4DownloadEndpoints[i].Port == 443)
-		{
-			m_currentIpv4DownloadEndpointIndex = i;
-			break;
-		}
-	}
-
-	for (size_t i = 0; i < m_ipv6Endpoints.size(); i++)
-	{
-		if (m_ipv6Endpoints[i].Port == 443)
-		{
-			m_currentIpv6EndpointIndex = i;
-			break;
-		}
-	}
-
-	for (size_t i = 0; i < m_ipv6DownloadEndpoints.size(); i++)
-	{
-		if (m_ipv6DownloadEndpoints[i].Port == 443)
-		{
-			m_currentIpv6DownloadEndpointIndex = i;
-			break;
-		}
-	}
-}
-
 void Datacenter::RecreateSessions()
 {
 	auto lock = LockCriticalSection();
@@ -239,7 +190,30 @@ void Datacenter::NextEndpoint(ConnectionType connectionType, boolean ipv6)
 {
 	auto lock = LockCriticalSection();
 
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement Datacenter next endpoint switching");
+	switch (connectionType)
+	{
+	case ConnectionType::Generic:
+	case ConnectionType::Upload:
+		if (ipv6)
+		{
+			m_currentIpv6EndpointIndex = (m_currentIpv6EndpointIndex + 1) % m_ipv6Endpoints.size();
+		}
+		else
+		{
+			m_currentIpv4EndpointIndex = (m_currentIpv4EndpointIndex + 1) % m_ipv4Endpoints.size();
+		}
+		break;
+	case ConnectionType::Download:
+		if (ipv6)
+		{
+			m_currentIpv6DownloadEndpointIndex = (m_currentIpv6DownloadEndpointIndex + 1) % m_ipv6DownloadEndpoints.size();
+		}
+		else
+		{
+			m_currentIpv4DownloadEndpointIndex = (m_currentIpv4DownloadEndpointIndex + 1) % m_ipv4DownloadEndpoints.size();
+		}
+		break;
+	}
 }
 
 void Datacenter::ResetEndpoint()
@@ -250,8 +224,6 @@ void Datacenter::ResetEndpoint()
 	m_currentIpv4DownloadEndpointIndex = 0;
 	m_currentIpv6EndpointIndex = 0;
 	m_currentIpv6DownloadEndpointIndex = 0;
-
-	//StoreCurrentEndpoint();
 }
 
 void Datacenter::AddServerSalt(ServerSalt const& salt)
@@ -555,11 +527,6 @@ HRESULT Datacenter::ImportAuthorization()
 
 HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, ServerEndpoint** endpoint)
 {
-	/*if (endpoint == nullptr)
-	{
-		return E_POINTER;
-	}*/
-
 	size_t currentEndpointIndex;
 	std::vector<ServerEndpoint>* endpoints;
 
@@ -834,7 +801,7 @@ HRESULT Datacenter::HandleHandshakeServerDHResponse(Connection* connection, TLSe
 	ReturnIfFailed(result, innerDataReader->ReadBuffer2(&dhPrimeBytes, &dhPrimeLength));
 
 	Wrappers::BigNum p(BN_bin2bn(dhPrimeBytes, dhPrimeLength, nullptr));
-	if (!p.IsValid()) //&& DatacenterCryptography::IsGoodPrime(p.Get(), g32)))
+	if (!p.IsValid() && DatacenterCryptography::IsGoodPrime(p.Get(), g32)) 
 	{
 		return E_INVALIDARG;
 	}

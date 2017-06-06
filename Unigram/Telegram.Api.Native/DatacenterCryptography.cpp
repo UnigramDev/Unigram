@@ -86,6 +86,105 @@ boolean DatacenterCryptography::IsGoodGaAndGb(BIGNUM* ga, BIGNUM* p)
 	return BN_num_bits(dif.Get()) >= 2048 - 64;
 }
 
+boolean DatacenterCryptography::IsGoodPrime(BIGNUM* p, UINT32 g)
+{
+	if (g < 2 || g > 7 || BN_num_bits(p) != 2048)
+	{
+		return false;
+	}
+
+	BigNum t(BN_new());
+	BigNum dh_g(BN_new());
+
+	if (!BN_set_word(dh_g.Get(), 4 * g))
+	{
+		return false;
+	}
+
+	auto bnContext = GetBNContext();
+	if (!BN_mod(t.Get(), p, dh_g.Get(), bnContext))
+	{
+		return false;
+	}
+
+	UINT64 x = BN_get_word(t.Get());
+	if (x >= 4 * g)
+	{
+		return false;
+	}
+
+	boolean result = true;
+	switch (g)
+	{
+	case 2:
+		if (x != 7)
+		{
+			result = false;
+		}
+		break;
+	case 3:
+		if (x % 3 != 2)
+		{
+			result = false;
+		}
+		break;
+	case 5:
+		if (x % 5 != 1 && x % 5 != 4)
+		{
+			result = false;
+		}
+		break;
+	case 6:
+		if (x != 19 && x != 23)
+		{
+			result = false;
+		}
+		break;
+	case 7:
+		if (x % 7 != 3 && x % 7 != 5 && x % 7 != 6)
+		{
+			result = false;
+		}
+		break;
+	default:
+		break;
+	}
+
+	auto prime = std::unique_ptr<char[]>(BN_bn2hex(p));
+	static const char* goodPrime = "c71caeb9c6b1c9048e6c522f70f13f73980d40238e3e21c14934d037563d930f48198a0aa7c14058229493d22530f4dbfa336f6e0ac925139543"
+		"aed44cce7c3720fd51f69458705ac68cd4fe6b6b13abdc9746512969328454f18faf8c595f642477fe96bb2a941d5bcd1d4ac8cc49880708fa9b378e3c4f3a9060bee67cf9a4a4a"
+		"695811051907e162753b56b0f6b410dba74d8a84b2a14b3144e0ef1284754fd17ed950d5965b4b9dd46582db1178d169c6bc465b0d6ff9ca3928fef5b9ae4e418fc15e83ebea0f87"
+		"fa9ff5eed70050ded2849f47bf959d956850ce929851f0d8115f635b105ee2e4e15d04b2454bf6f4fadf034b10403119cd8e3b92fcc5b";
+
+	if (!_stricmp(prime.get(), goodPrime))
+	{
+		return true;
+	}
+
+	if (!result || !CheckPrime(p, bnContext))
+	{
+		return false;
+	}
+
+	BigNum b(BN_new());
+	if (!BN_set_word(b.Get(), 2))
+	{
+		return false;
+	}
+
+	if (!BN_div(t.Get(), 0, p, b.Get(), bnContext))
+	{
+		return false;
+	}
+
+	if (!CheckPrime(t.Get(), bnContext))
+	{
+		return false;
+	}
+
+	return result;
+}
+
 BN_CTX* DatacenterCryptography::GetBNContext()
 {
 	static BigNumContext bnContext(BN_CTX_new());

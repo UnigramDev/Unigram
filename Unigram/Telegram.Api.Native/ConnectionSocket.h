@@ -27,18 +27,9 @@ namespace Telegram
 				~ConnectionSocket();
 
 			protected:
-				inline SOCKET GetSocket() const
-				{
-					return m_socket;
-				}
-
-				inline HANDLE GetSocketEvent() const
-				{
-					return m_socketEvent.Get();
-				}
-
-				HRESULT Close();
-				HRESULT ConnectSocket(_In_ ConnectionManager* connectionManager, _In_ ServerEndpoint const* endpoint, boolean ipv6, UINT32 timeout);
+				void SetTimeout(UINT32 timeout);
+				HRESULT Close();		
+				HRESULT ConnectSocket(_In_ ConnectionManager* connectionManager, _In_ ServerEndpoint const* endpoint, boolean ipv6);
 				HRESULT DisconnectSocket(boolean immediate);
 				HRESULT SendData(_In_reads_(length) BYTE const* buffer, UINT32 length);
 

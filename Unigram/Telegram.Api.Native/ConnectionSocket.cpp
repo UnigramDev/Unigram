@@ -24,8 +24,7 @@ using namespace Telegram::Api::Native;
 
 
 ConnectionSocket::ConnectionSocket() :
-	m_socket(INVALID_SOCKET),
-	m_timeout({})
+	m_socket(INVALID_SOCKET)
 {
 }
 
@@ -33,22 +32,25 @@ ConnectionSocket::~ConnectionSocket()
 {
 }
 
+void ConnectionSocket::SetTimeout(UINT32 timeoutMs)
+{
+	ULARGE_INTEGER timeout;
+	timeout.QuadPart = timeoutMs * -10000LL;
+	m_timeout.dwHighDateTime = timeout.HighPart;
+	m_timeout.dwLowDateTime = timeout.LowPart;
+}
+
 HRESULT ConnectionSocket::Close()
 {
 	return CloseSocket(NO_ERROR, SOCKET_CLOSE_JOINTHREAD);
 }
 
-HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, ServerEndpoint const* endpoint, boolean ipv6, UINT32 timeoutMs)
+HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, ServerEndpoint const* endpoint, boolean ipv6)
 {
 	if (m_socket != INVALID_SOCKET)
 	{
 		return E_NOT_VALID_STATE;
 	}
-
-	ULARGE_INTEGER timeout;
-	timeout.QuadPart = timeoutMs * -10000LL;
-	m_timeout.dwHighDateTime = timeout.HighPart;
-	m_timeout.dwLowDateTime = timeout.LowPart;
 
 	sockaddr_storage socketAddress = {};
 	if (ipv6)
@@ -105,7 +107,7 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, Se
 		return result;
 	}
 
-	SetThreadpoolWait(EventObjectT::GetHandle(), GetSocketEvent(), &m_timeout);
+	SetThreadpoolWait(EventObjectT::GetHandle(), m_socketEvent.Get(), &m_timeout);
 
 	if (WSAEventSelect(m_socket, m_socketEvent.Get(), FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE) == SOCKET_ERROR)
 	{
