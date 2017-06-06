@@ -180,7 +180,7 @@ namespace Unigram.Common
             {
                 SetSource(photo, photo.Full, PHASE_FULL);
             }
-            else if (PHASE_FULL > Phase && _source is TLDocument document)
+            else if (PHASE_FULL > Phase && _source is TLDocument document && TLMessage.IsSticker(document))
             {
                 SetWebPSource(document, document, document.Size, PHASE_FULL);
             }
