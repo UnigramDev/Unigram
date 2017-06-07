@@ -460,15 +460,7 @@ namespace Unigram.Views
             else if (e.DataView.Contains(StandardDataFormats.Text))
             {
                 var text = await e.DataView.GetTextAsync();
-
-                if (TextField.Text == "")
-                {
-                    TextField.Text = text;
-                }
-                else
-                {
-                    TextField.Text = (TextField.Text + " " + text);
-                }
+                TextField.Document.GetRange(TextField.Document.Selection.EndPosition, TextField.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
 
                 //gridLoading.Visibility = Visibility.Collapsed;
             }
@@ -831,7 +823,7 @@ namespace Unigram.Views
         {
             ViewModel.SendStickerCommand.Execute(e.ClickedItem);
             ViewModel.StickerPack = null;
-            TextField.Text = null;
+            TextField.SetText(null, null);
         }
 
         private async void StickerSet_Click(object sender, RoutedEventArgs e)
@@ -1057,9 +1049,9 @@ namespace Unigram.Views
                     command += $"@{item.Item1.Username}";
                 }
 
+                TextField.SetText(null, null);
                 ViewModel.SendCommand.Execute(command);
                 ViewModel.BotCommands = null;
-                TextField.Text = null;
             }
         }
 
@@ -1068,15 +1060,37 @@ namespace Unigram.Views
             var text = ViewModel.GetText();
 
             var user = e.ClickedItem as TLUser;
-            if (user != null && BubbleTextBox.SearchByUsernames(text, out string query))
+            if (user != null && BubbleTextBox.SearchByUsernames(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string query))
             {
                 var insert = string.Empty;
-                if (user.HasUsername)
+                var adjust = 0;
+
+                //if (user.HasUsername)
+                //{
+                //    insert = user.Username;
+                //}
+                //else
                 {
-                    insert = user.Username.Substring(query.Length);
+                    insert = user.HasFirstName ? user.FirstName : user.LastName;
+                    adjust = 1;
                 }
 
-                TextField.InsertText(insert, false);
+                var format = TextField.Document.GetDefaultCharacterFormat();
+                var start = TextField.Document.Selection.StartPosition - query.Length - adjust + insert.Length;
+                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - query.Length - adjust, TextField.Document.Selection.StartPosition);
+                range.SetText(TextSetOptions.None, insert);
+
+                //if (user.HasUsername == false)
+                {
+                    //range.CharacterFormat.Underline = UnderlineType.Dash;
+                    range.CharacterFormat.ForegroundColor = Colors.Red;
+                    range.Link = $"\"{user.Id}\"";
+                }
+
+                TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, "asdasd ");
+                TextField.Document.Selection.StartPosition = start;
+                TextField.Document.SetDefaultCharacterFormat(format);
+
                 ViewModel.UsernameHints = null;
             }
         }

@@ -706,7 +706,7 @@ namespace Unigram.Common
             return entities;
         }
 
-        private static bool CheckInclusion(int index, List<TLMessageEntityBase> entities)
+        public static bool CheckInclusion(int index, List<TLMessageEntityBase> entities)
         {
             if (entities == null || entities.Count == 0)
             {
@@ -724,7 +724,7 @@ namespace Unigram.Common
             return false;
         }
 
-        private static bool CheckIntersection(int start, int end, List<TLMessageEntityBase> entities)
+        public static bool CheckIntersection(int start, int end, List<TLMessageEntityBase> entities)
         {
             if (entities == null || entities.Count == 0)
             {
