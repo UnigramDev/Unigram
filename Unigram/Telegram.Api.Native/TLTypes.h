@@ -5,7 +5,7 @@
 #include "NativeBuffer.h"
 #include "DatacenterServer.h"
 
-#define MakeTLTypeTraits(objectTypeName, constructor, isLayerNeeded) MakeTLObjectTraits(objectTypeName, constructor, isLayerNeeded, "Telegram.Api.Native.TL")
+#define MakeTLTypeTraits(objectTypeName, constructor, isLayerRequired) MakeTLObjectTraits(objectTypeName, constructor, isLayerRequired, "Telegram.Api.Native.TL")
 
 using namespace Microsoft::WRL;
 using ABI::Telegram::Api::Native::TL::ITLError;

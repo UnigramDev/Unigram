@@ -43,16 +43,23 @@ namespace Telegram
 			class Timer WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, ITimer>, public EventObjectT<EventTraits::TimerTraits>
 			{
 			public:
-				typedef std::function<HRESULT()> TimerCallback;
+				typedef std::function<void()> TimerCallback;
 
 				Timer(TimerCallback callback);
 				~Timer();
 
 				//COM exported methods		
 				IFACEMETHODIMP get_IsStarted(_Out_ boolean* value);
-				IFACEMETHODIMP SetTimeout(UINT32 msTimeout, boolean repeat);
+				IFACEMETHODIMP SetTimeout(UINT32 timeoutMs, boolean repeat);
 				IFACEMETHODIMP Start();
 				IFACEMETHODIMP Stop();
+
+				boolean IsStarted()
+				{
+					auto lock = LockCriticalSection();
+
+					return m_started;
+				}
 
 			private:
 				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _In_ ULONG_PTR param) override;

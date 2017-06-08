@@ -13,12 +13,12 @@
 
 #define TLVECTOR_CONSTRUCTOR 0x1cb5c415
 
-#define MakeTLObjectTraits(objectTypeName, constructor, isLayerNeeded, namespace) \
+#define MakeTLObjectTraits(objectTypeName, constructor, isLayerRequired, namespace) \
 	struct objectTypeName##Traits \
 	{ \
 		typedef typename objectTypeName TLObjectType; \
 		static constexpr UINT32 Constructor = constructor; \
-		static constexpr boolean IsLayerNeeded = isLayerNeeded; \
+		static constexpr boolean IsLayerRequired = isLayerRequired; \
 		static constexpr WCHAR RuntimeClassName[] = _STRINGIFY_W(namespace "." _STRINGIFY(objectTypeName)); \
 	} \
 
@@ -203,14 +203,14 @@ namespace Telegram
 						return S_OK;
 					}
 
-					IFACEMETHODIMP get_IsLayerNeeded(_Out_ boolean* value)
+					IFACEMETHODIMP get_IsLayerRequired(_Out_ boolean* value)
 					{
 						if (value == nullptr)
 						{
 							return E_POINTER;
 						}
 
-						*value = TLObjectTraits::IsLayerNeeded;
+						*value = TLObjectTraits::IsLayerRequired;
 						return S_OK;
 					}
 
@@ -226,7 +226,7 @@ namespace Telegram
 					//COM exported methods
 					IFACEMETHODIMP get_Reader(_Out_ ITLBinaryReader** value);
 					IFACEMETHODIMP get_Constructor(_Out_ UINT32* value);
-					IFACEMETHODIMP get_IsLayerNeeded(_Out_ boolean* value);
+					IFACEMETHODIMP get_IsLayerRequired(_Out_ boolean* value);
 					IFACEMETHODIMP Read(_In_ ITLBinaryReader* reader);
 					IFACEMETHODIMP Write(_In_ ITLBinaryWriter* writer);
 
@@ -236,7 +236,7 @@ namespace Telegram
 
 				private:
 					UINT32 m_constructor;
-					ComPtr<ITLBinaryReader> m_reader;
+					ComPtr<TLBinaryReader> m_reader;
 				};
 
 

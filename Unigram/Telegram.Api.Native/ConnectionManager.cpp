@@ -304,7 +304,8 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 
 	HRESULT result;
 	ComPtr<MessageRequest> request;
-	ReturnIfFailed(result, CreateRequest(object, onCompleted, onQuickAckReceived, datacenterId, connectionType, flags, requestToken, request));
+	//ReturnIfFailed(result, CreateRequest(object, onCompleted, onQuickAckReceived, datacenterId, connectionType, flags, requestToken, request));
+	ReturnIfFailed(result, MakeAndInitialize<MessageRequest>(&request, object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags));
 
 	if ((flags & RequestFlag::Immediate) == RequestFlag::Immediate)
 	{
@@ -523,10 +524,10 @@ HRESULT ConnectionManager::CreateRequest(ITLObject* object, ISendRequestComplete
 	INT32 datacenterId, ConnectionType connectionType, RequestFlag flags, INT32 requestToken, ComPtr<MessageRequest>& request)
 {
 	HRESULT result;
-	boolean isLayerNeeded;
-	ReturnIfFailed(result, object->get_IsLayerNeeded(&isLayerNeeded));
+	boolean isLayerRequired;
+	ReturnIfFailed(result, object->get_IsLayerRequired(&isLayerRequired));
 
-	if (isLayerNeeded)
+	if (isLayerRequired)
 	{
 		ComPtr<Datacenter> datacenter;
 		if (!(GetDatacenterById(datacenterId, datacenter) && datacenter->IsConnectionInitialized()))
@@ -638,10 +639,7 @@ HRESULT ConnectionManager::ProcessRequests(std::map<UINT32, DatacenterRequestCon
 		}
 		else
 		{
-			if (!datacenterContext.second.GenericRequests.empty())
-			{
-				ReturnIfFailed(result, ProcessDatacenterRequests(datacenterContext.second));
-			}
+			ReturnIfFailed(result, ProcessDatacenterRequests(datacenterContext.second));
 
 			if ((datacenterContext.second.Flags & DatacenterRequestContextFlag::RequiresAuthorization) == DatacenterRequestContextFlag::RequiresAuthorization)
 			{
@@ -660,6 +658,7 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 	ReturnIfFailed(result, datacenterContext.Datacenter->GetGenericConnection(true, genericConnection));
 
 	boolean requiresQuickAck = false;
+	boolean requiresLayer = datacenterContext.Datacenter->IsConnectionInitialized();
 	auto requestCount = datacenterContext.GenericRequests.size();
 	std::vector<ComPtr<TLMessage>> transportMessages(requestCount);
 
@@ -672,6 +671,11 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 	}
 
 	ReturnIfFailed(result, genericConnection->AddConfirmationMessage(this, transportMessages));
+
+	if (transportMessages.empty())
+	{
+		return S_OK;
+	}
 
 	MessageContext messageContext;
 	ComPtr<ITLObject> messageBody;
@@ -707,7 +711,11 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 		ReturnIfFailed(result, genericConnection->SendEncryptedMessage(&messageContext, messageBody.Get(), nullptr));
 	}
 
-	m_runningRequests.insert(m_runningRequests.end(), datacenterContext.GenericRequests.begin(), datacenterContext.GenericRequests.end());
+	if (!datacenterContext.GenericRequests.empty())
+	{
+		m_runningRequests.insert(m_runningRequests.end(), datacenterContext.GenericRequests.begin(), datacenterContext.GenericRequests.end());
+	}
+
 	return S_OK;
 }
 
@@ -718,6 +726,7 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(Datacenter* datacenter, Con
 	auto currentTime = static_cast<INT32>(GetCurrentMonotonicTime() / 1000);
 
 	{
+		auto lock = LockCriticalSection();
 		auto requestsLock = m_requestsCriticalSection.Lock();
 		auto requestIterator = m_requestsQueue.begin();
 
@@ -735,6 +744,18 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(Datacenter* datacenter, Con
 			}
 
 			requestIterator++;
+		}
+	}
+
+	auto datacenterContextIterator = datacentersContexts.find(datacenter->GetId());
+	if (datacenterContextIterator == datacentersContexts.end())
+	{
+		ComPtr<Connection> genericConnection;
+		ReturnIfFailed(result, datacenter->GetGenericConnection(false, genericConnection));
+
+		if (genericConnection != nullptr && genericConnection->HasMessagesToConfirm())
+		{
+			datacentersContexts.insert(datacenterContextIterator, std::pair<UINT32, DatacenterRequestContext>(datacenter->GetId(), DatacenterRequestContext(datacenter)));
 		}
 	}
 
@@ -765,7 +786,7 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 	auto& request = *requestIterator;
 	if (request->GetConnectionType() == connection->GetType())
 	{
-		result = request->OnSendCompleted(messageContext, messageBody);
+		result = request->OnSendCompleted(messageContext, messageBody, connection);
 	}
 
 	m_runningRequests.erase(requestIterator);
@@ -922,20 +943,39 @@ HRESULT ConnectionManager::OnRequestEnqueued(PTP_CALLBACK_INSTANCE instance)
 	auto currentTime = static_cast<INT32>(GetCurrentMonotonicTime() / 1000);
 
 	{
-		auto requestsLock = m_requestsCriticalSection.Lock();
-		auto requestIterator = m_requestsQueue.begin();
+		auto lock = LockCriticalSection();
 
-		while (requestIterator != m_requestsQueue.end())
 		{
-			ReturnIfFailed(result, ProcessRequest(requestIterator->Get(), currentTime, datacentersContexts));
+			auto requestsLock = m_requestsCriticalSection.Lock();
+			auto requestIterator = m_requestsQueue.begin();
 
-			if (result == S_OK)
+			while (requestIterator != m_requestsQueue.end())
 			{
-				requestIterator = m_requestsQueue.erase(requestIterator);
+				ReturnIfFailed(result, ProcessRequest(requestIterator->Get(), currentTime, datacentersContexts));
+
+				if (result == S_OK)
+				{
+					requestIterator = m_requestsQueue.erase(requestIterator);
+				}
+				else
+				{
+					requestIterator++;
+				}
 			}
-			else
+		}
+
+		for (auto& datacenter : m_datacenters)
+		{
+			auto datacenterContextIterator = datacentersContexts.find(datacenter.first);
+			if (datacenterContextIterator == datacentersContexts.end())
 			{
-				requestIterator++;
+				ComPtr<Connection> genericConnection;
+				ReturnIfFailed(result, datacenter.second->GetGenericConnection(false, genericConnection));
+
+				if (genericConnection != nullptr && genericConnection->HasMessagesToConfirm())
+				{
+					datacentersContexts.insert(datacenterContextIterator, std::pair<UINT32, DatacenterRequestContext>(datacenter.first, DatacenterRequestContext(datacenter.second.Get())));
+				}
 			}
 		}
 	}

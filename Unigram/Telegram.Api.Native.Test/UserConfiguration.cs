@@ -71,7 +71,7 @@ namespace Telegram.Api.Native.Test
             writer.WriteString(TestString);
         }
 
-        public bool IsLayerNeeded => false;
+        public bool IsLayerRequired => false;
 
         public uint Constructor => 0;
     }

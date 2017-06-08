@@ -26,6 +26,7 @@ using namespace Telegram::Api::Native;
 ConnectionSocket::ConnectionSocket() :
 	m_socket(INVALID_SOCKET)
 {
+	TimeoutToFileTime(15000, m_timeout);
 }
 
 ConnectionSocket::~ConnectionSocket()
@@ -34,10 +35,7 @@ ConnectionSocket::~ConnectionSocket()
 
 void ConnectionSocket::SetTimeout(UINT32 timeoutMs)
 {
-	ULARGE_INTEGER timeout;
-	timeout.QuadPart = timeoutMs * -10000LL;
-	m_timeout.dwHighDateTime = timeout.HighPart;
-	m_timeout.dwLowDateTime = timeout.LowPart;
+	TimeoutToFileTime(timeoutMs, m_timeout);
 }
 
 HRESULT ConnectionSocket::Close()
@@ -160,7 +158,10 @@ HRESULT ConnectionSocket::SendData(BYTE const* buffer, UINT32 length)
 		return E_NOT_VALID_STATE;
 	}
 
-	WaitForSingleObject(m_socketConnectedEvent.Get(), INFINITE);
+	if (WaitForSingleObject(m_socketConnectedEvent.Get(), INFINITE) != WAIT_OBJECT_0)
+	{
+		return E_FAIL;
+	}
 
 	int bytesSent = send(m_socket, reinterpret_cast<const char*>(buffer), length, 0);
 	if (bytesSent == SOCKET_ERROR)

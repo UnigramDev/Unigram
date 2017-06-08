@@ -480,7 +480,7 @@ HRESULT Datacenter::BeginHandshake(boolean reconnect, boolean reset)
 	if (reset)
 	{
 		m_authenticationContext.reset();
-		m_flags &= ~DatacenterFlag::Authenticated;
+		m_flags &= ~DatacenterFlag::HandshakeState;
 	}
 	else if (static_cast<INT32>(m_flags) & 0xf)
 	{
@@ -506,7 +506,7 @@ HRESULT Datacenter::BeginHandshake(boolean reconnect, boolean reset)
 	ReturnIfFailed(result, MakeAndInitialize<Methods::TLReqPQ>(&pqRequest, handshakeContext->Nonce));
 
 	m_authenticationContext = std::move(handshakeContext);
-	m_flags |= static_cast<DatacenterFlag>(AuthenticationState::HandshakeStarted);
+	m_flags |= static_cast<DatacenterFlag>(HandshakeState::Started);
 
 	return genericConnection->SendUnencryptedMessage(pqRequest.Get(), false);
 }
@@ -612,10 +612,10 @@ HRESULT Datacenter::OnConnectionClosed(ConnectionManager* connectionManager, Con
 	{
 		auto lock = LockCriticalSection();
 
-		if ((m_flags & DatacenterFlag::Authenticated) != DatacenterFlag::Authenticated)
+		if (static_cast<HandshakeState> (m_flags & DatacenterFlag::HandshakeState) != HandshakeState::Authenticated)
 		{
 			m_authenticationContext.reset();
-			m_flags &= ~DatacenterFlag::Authenticated;
+			m_flags &= ~DatacenterFlag::HandshakeState;
 		}
 	}
 
@@ -628,9 +628,9 @@ HRESULT Datacenter::HandleHandshakePQResponse(Connection* connection, TLResPQ* r
 
 	HRESULT result;
 	HandshakeContext* handshakeContext;
-	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, AuthenticationState::HandshakeStarted));
+	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, HandshakeState::Started));
 
-	m_flags |= static_cast<DatacenterFlag>(AuthenticationState::HandshakePQ);
+	m_flags |= static_cast<DatacenterFlag>(HandshakeState::PQ);
 
 	if (!DatacenterCryptography::CheckNonces(handshakeContext->Nonce, response->GetNonce()))
 	{
@@ -719,9 +719,9 @@ HRESULT Datacenter::HandleHandshakeServerDHResponse(Connection* connection, TLSe
 
 	HRESULT result;
 	HandshakeContext* handshakeContext;
-	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, AuthenticationState::HandshakePQ));
+	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, HandshakeState::PQ));
 
-	m_flags |= static_cast<DatacenterFlag>(AuthenticationState::HandshakeServerDH);
+	m_flags |= static_cast<DatacenterFlag>(HandshakeState::ServerDH);
 
 	BYTE ivBuffer[32];
 	BYTE aesKeyAndIvBuffer[104];
@@ -801,7 +801,7 @@ HRESULT Datacenter::HandleHandshakeServerDHResponse(Connection* connection, TLSe
 	ReturnIfFailed(result, innerDataReader->ReadBuffer2(&dhPrimeBytes, &dhPrimeLength));
 
 	Wrappers::BigNum p(BN_bin2bn(dhPrimeBytes, dhPrimeLength, nullptr));
-	if (!p.IsValid() && DatacenterCryptography::IsGoodPrime(p.Get(), g32)) 
+	if (!p.IsValid() && DatacenterCryptography::IsGoodPrime(p.Get(), g32))
 	{
 		return E_INVALIDARG;
 	}
@@ -904,9 +904,9 @@ HRESULT Datacenter::HandleHandshakeClientDHResponse(ConnectionManager* connectio
 
 	HRESULT result;
 	HandshakeContext* handshakeContext;
-	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, AuthenticationState::HandshakeServerDH));
+	ReturnIfFailed(result, GetHandshakeContext(&handshakeContext, HandshakeState::ServerDH));
 
-	m_flags |= static_cast<DatacenterFlag>(AuthenticationState::HandshakeClientDH);
+	m_flags |= static_cast<DatacenterFlag>(HandshakeState::ClientDH);
 
 	if (!(DatacenterCryptography::CheckNonces(handshakeContext->Nonce, response->GetNonce()) &&
 		DatacenterCryptography::CheckNonces(handshakeContext->ServerNonce, response->GetServerNonce())))
@@ -944,7 +944,7 @@ HRESULT Datacenter::HandleHandshakeClientDHResponse(ConnectionManager* connectio
 
 	auto timeDifference = handshakeContext->TimeDifference;
 	m_authenticationContext = std::move(authKeyContext);
-	m_flags |= DatacenterFlag::Authenticated;
+	m_flags |= static_cast<DatacenterFlag>(HandshakeState::Authenticated);
 
 	return connectionManager->OnDatacenterHandshakeComplete(this, timeDifference);
 }
@@ -960,7 +960,7 @@ HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, UINT32 padding, 
 {
 	auto lock = LockCriticalSection();
 
-	if ((m_flags & DatacenterFlag::Authenticated) != DatacenterFlag::Authenticated)
+	if (static_cast<HandshakeState>(m_flags & DatacenterFlag::HandshakeState) != HandshakeState::Authenticated)
 	{
 		return E_UNEXPECTED;
 	}
@@ -1018,7 +1018,7 @@ HRESULT Datacenter::DecryptMessage(INT64 authKeyId, BYTE* buffer, UINT32 length)
 {
 	auto lock = LockCriticalSection();
 
-	if ((m_flags & DatacenterFlag::Authenticated) != DatacenterFlag::Authenticated)
+	if (static_cast<HandshakeState>(m_flags & DatacenterFlag::HandshakeState) != HandshakeState::Authenticated)
 	{
 		return E_UNEXPECTED;
 	}

@@ -39,7 +39,7 @@ HRESULT ConnectionSession::AddConfirmationMessage(ConnectionManager* connectionM
 
 	if (m_messagesIdsToConfirm.empty())
 	{
-		return S_OK;
+		return S_FALSE;
 	}
 
 	auto msgAck = Make<TLMsgsAck>();

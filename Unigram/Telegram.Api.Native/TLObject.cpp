@@ -101,7 +101,7 @@ HRESULT TLUnparsedObject::RuntimeClassInitialize(UINT32 constructor, TLBinaryRea
 	}
 
 	m_constructor = constructor;
-	m_reader = reinterpret_cast<ITLBinaryReaderEx*>(reader);
+	m_reader = reader;
 	return S_OK;
 }
 
@@ -113,13 +113,12 @@ HRESULT TLUnparsedObject::RuntimeClassInitialize(UINT32 constructor, UINT32 obje
 	}
 
 	HRESULT result;
-	ComPtr<TLBinaryReader> innerReader;
-	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&innerReader, objectSizeWithoutConstructor));
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&m_reader, objectSizeWithoutConstructor));
 
-	CopyMemory(innerReader->GetBuffer(), reader->GetBufferAtPosition(), innerReader->GetCapacity());
+	CopyMemory(m_reader->GetBuffer(), reader->GetBufferAtPosition(), m_reader->GetCapacity());
 
 	m_constructor = constructor;
-	return innerReader.As(&m_reader);
+	return S_OK;
 }
 
 HRESULT TLUnparsedObject::get_Reader(ITLBinaryReader** value)
@@ -129,7 +128,9 @@ HRESULT TLUnparsedObject::get_Reader(ITLBinaryReader** value)
 		return E_POINTER;
 	}
 
-	return m_reader.CopyTo(value);
+	*value = static_cast<ITLBinaryReaderEx*>(m_reader.Get());
+	(*value)->AddRef();
+	return S_OK;
 }
 
 HRESULT TLUnparsedObject::get_Constructor(UINT32* value)
@@ -143,7 +144,7 @@ HRESULT TLUnparsedObject::get_Constructor(UINT32* value)
 	return S_OK;
 }
 
-HRESULT TLUnparsedObject::get_IsLayerNeeded(boolean* value)
+HRESULT TLUnparsedObject::get_IsLayerRequired(boolean* value)
 {
 	if (value == nullptr)
 	{
@@ -156,10 +157,10 @@ HRESULT TLUnparsedObject::get_IsLayerNeeded(boolean* value)
 
 HRESULT TLUnparsedObject::Read(ITLBinaryReader* reader)
 {
-	return E_ILLEGAL_METHOD_CALL;
+	return reader->ReadRawBuffer(m_reader->GetCapacity(), m_reader->GetBuffer());
 }
 
 HRESULT TLUnparsedObject::Write(ITLBinaryWriter* writer)
 {
-	return E_ILLEGAL_METHOD_CALL;
+	return writer->WriteRawBuffer(m_reader->GetCapacity(), m_reader->GetBuffer());
 }

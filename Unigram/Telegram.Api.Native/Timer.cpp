@@ -38,13 +38,13 @@ HRESULT Timer::get_IsStarted(boolean* value)
 	return S_OK;
 }
 
-HRESULT Timer::SetTimeout(UINT32 msTimeout, boolean repeat)
+HRESULT Timer::SetTimeout(UINT32 timeoutMs, boolean repeat)
 {
 	auto lock = LockCriticalSection();
 
-	if (msTimeout != m_timeout || repeat != m_repeatable)
+	if (timeoutMs != m_timeout || repeat != m_repeatable)
 	{
-		m_timeout = msTimeout;
+		m_timeout = timeoutMs;
 		m_repeatable = repeat;
 
 		if (m_started)
@@ -65,29 +65,43 @@ HRESULT Timer::Start()
 		return E_NOT_VALID_STATE;
 	}
 
+	m_started = true;
 	return SetTimerTimeout();
 }
 
 HRESULT Timer::Stop()
 {
-	auto lock = LockCriticalSection();
+	boolean started;
 
-	if (m_started)
 	{
-		ResetThreadpoolObject(true);
+		auto lock = LockCriticalSection();
+
+		started = m_started;
+		m_started = false;
 	}
 
-	return S_OK;
+	if (started)
+	{
+		return ResetThreadpoolObject(false);
+	}
+	else
+	{
+		return S_FALSE;
+	}
 }
 
 HRESULT Timer::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG_PTR param)
 {
 	auto lock = LockCriticalSection();
 
-	HRESULT result = m_callback();
+	if (m_started)
+	{
+		m_started = m_repeatable;
 
-	m_started = m_repeatable;
-	return result;
+		m_callback();
+	}
+
+	return S_OK;
 }
 
 HRESULT Timer::SetTimerTimeout()
@@ -98,8 +112,9 @@ HRESULT Timer::SetTimerTimeout()
 		return E_NOT_VALID_STATE;
 	}
 
-	INT64 timeout = -10000LL * m_timeout;
-	SetThreadpoolTimer(threadpoolObjectHandle, reinterpret_cast<PFILETIME>(&timeout), m_repeatable ? m_timeout : 0, 0);
+	FILETIME timeout;
+	TimeoutToFileTime(m_timeout, timeout);
 
+	SetThreadpoolTimer(threadpoolObjectHandle, &timeout, m_repeatable ? m_timeout : 0, 0);
 	return S_OK;
 }

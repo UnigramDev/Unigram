@@ -181,7 +181,7 @@ namespace Telegram
 			private:
 				HRESULT CreateTransportMessage(_Out_ TL::TLMessage** message);
 				HRESULT OnQuickAckReceived();
-				HRESULT OnSendCompleted(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody);
+				HRESULT OnSendCompleted(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
 				void Reset();
 
 				inline void SetMessageContext(MessageContext const& mesageContext)

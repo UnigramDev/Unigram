@@ -100,7 +100,7 @@ namespace Telegram
 				interface ITLObject : IInspectable
 				{
 					[propget] HRESULT Constructor([out][retval] UINT32* value);
-					[propget] HRESULT IsLayerNeeded([out][retval] boolean* value);
+					[propget] HRESULT IsLayerRequired([out][retval] boolean* value);
 					HRESULT Read([in] TLBinaryReader* reader);
 					HRESULT Write([in] TLBinaryWriter* writer);
 				}

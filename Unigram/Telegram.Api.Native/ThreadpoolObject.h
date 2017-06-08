@@ -230,6 +230,16 @@ namespace Telegram
 				typename EventTraits::Handle m_handle;
 			};
 
+
+			inline void TimeoutToFileTime(UINT32 timeoutMs, _Out_ FILETIME& filetime)
+			{
+				ULARGE_INTEGER timeout;
+				timeout.QuadPart = timeoutMs * -10000LL;
+
+				filetime.dwHighDateTime = timeout.HighPart;
+				filetime.dwLowDateTime = timeout.LowPart;
+			}
+
 		}
 	}
 }

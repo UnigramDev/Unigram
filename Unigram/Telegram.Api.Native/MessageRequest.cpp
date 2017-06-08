@@ -120,7 +120,7 @@ HRESULT MessageRequest::OnQuickAckReceived()
 	return m_quickAckReceivedCallback->Invoke();
 }
 
-HRESULT MessageRequest::OnSendCompleted(MessageContext const* messageContext, ITLObject* messageBody)
+HRESULT MessageRequest::OnSendCompleted(MessageContext const* messageContext, ITLObject* messageBody, Connection* connection)
 {
 	if (m_sendCompletedCallback == nullptr)
 	{

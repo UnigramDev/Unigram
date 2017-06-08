@@ -29,7 +29,7 @@ namespace Telegram
 			enum class DatacenterFlag
 			{
 				None = 0,
-				Authenticated = 0x1F,
+				HandshakeState = 0x1F,
 				ConnectionInitialized = 0x20,
 				Authorized = 0x40,
 				ImportingAuthorization = 0x80,
@@ -92,7 +92,7 @@ namespace Telegram
 				HRESULT GetGenericConnection(boolean create, _Out_  ComPtr<Connection>& value);
 				HRESULT GetDownloadConnection(UINT32 index, boolean create, _Out_ ComPtr<Connection>& value);
 				HRESULT GetUploadConnection(UINT32 index, boolean create, _Out_  ComPtr<Connection>& value);
-				
+
 				inline INT32 GetId() const
 				{
 					return m_id;
@@ -107,7 +107,7 @@ namespace Telegram
 				inline boolean IsAuthenticated()
 				{
 					auto  lock = LockCriticalSection();
-					return (m_flags & DatacenterFlag::Authenticated) == DatacenterFlag::Authenticated;
+					return static_cast<HandshakeState>(m_flags & DatacenterFlag::HandshakeState) == HandshakeState::Authenticated;
 				}
 
 				inline boolean IsConnectionInitialized()
@@ -135,12 +135,13 @@ namespace Telegram
 				}
 
 			private:
-				enum class AuthenticationState
+				enum class HandshakeState
 				{
-					HandshakeStarted = 1,
-					HandshakePQ = 3,
-					HandshakeServerDH = 7,
-					HandshakeClientDH = 15
+					Started = 0x1,
+					PQ = 0x3,
+					ServerDH = 0x7,
+					ClientDH = 0xF,
+					Authenticated = 0x1F
 				};
 
 				struct AuthenticationContext abstract
@@ -198,9 +199,9 @@ namespace Telegram
 					return BeginHandshake(false, true);
 				}
 
-				inline HRESULT GetHandshakeContext(_Out_ HandshakeContext** handshakeContext, AuthenticationState currentState)
+				inline HRESULT GetHandshakeContext(_Out_ HandshakeContext** handshakeContext, HandshakeState currentState)
 				{
-					if (static_cast<INT32>(m_flags & DatacenterFlag::Authenticated) != static_cast<INT32>(currentState))
+					if (static_cast<HandshakeState>(m_flags & DatacenterFlag::HandshakeState) != currentState)
 					{
 						return E_UNEXPECTED;
 					}

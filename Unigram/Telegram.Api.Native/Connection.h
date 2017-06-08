@@ -43,6 +43,30 @@ namespace Telegram
 	{
 		namespace Native
 		{
+
+			enum class ConnectionFlag
+			{
+				None = 0,
+				ConnectionState = 0x7,
+				Ipv6 = 0x8,
+				CryptographyInitialized = 0x10,
+				TryingNextEndpoint = 0x20,
+				Closed = 0x40
+			};
+
+		}
+	}
+}
+
+DEFINE_ENUM_FLAG_OPERATORS(Telegram::Api::Native::ConnectionFlag);
+
+
+namespace Telegram
+{
+	namespace Api
+	{
+		namespace Native
+		{
 			namespace TL
 			{
 
@@ -97,21 +121,21 @@ namespace Telegram
 			private:
 				enum class ConnectionState
 				{
-					Disconnected,
-					Connecting,
-					Connected,
-					CryprographyInitialized,
-					DataReceived
+					Disconnected = 0x0,
+					Connecting = 0x1,
+					Connected = 0x3,
+					DataReceived = 0x7
 				};
 
 				IFACEMETHODIMP Close();
 				HRESULT Connect();
+				HRESULT Connect(_In_ ComPtr<ConnectionManager> const& connectionManager);
 				HRESULT Disconnect();
 				HRESULT CreateMessagePacket(UINT32 messageLength, boolean reportAck, _Out_ ComPtr<TL::TLBinaryWriter>& writer, _Out_ BYTE** messageBuffer);
 				HRESULT SendEncryptedMessage(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _Outptr_opt_ INT32* quickAckId);
 				HRESULT SendUnencryptedMessage(_In_ ITLObject* messageBody, boolean reportAck);
-				HRESULT HandleMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_::Telegram::Api::Native::ConnectionManager* connectionManager);
-				HRESULT HandleNewSessionCreatedResponse(_In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_ TL::TLNewSessionCreated* response);
+				HRESULT HandleMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ ConnectionManager* connectionManager);
+				HRESULT HandleNewSessionCreatedResponse(_In_ ConnectionManager* connectionManager, _In_ TL::TLNewSessionCreated* response);
 				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) override;
 				virtual HRESULT OnSocketDisconnected(int wsaError) override;
@@ -119,7 +143,7 @@ namespace Telegram
 
 				ConnectionType m_type;
 				ConnectionNeworkType m_currentNetworkType;
-				ConnectionState m_state;
+				ConnectionFlag m_flags;
 				ComPtr<Datacenter> m_datacenter;
 				ComPtr<Timer> m_reconnectionTimer;
 				ComPtr<NativeBuffer> m_partialPacketBuffer;

@@ -50,8 +50,9 @@ namespace Telegram
 					m_id = sessionId;
 				}
 
-				inline boolean GetHasMessagesToConfirm() const
+				inline boolean HasMessagesToConfirm()
 				{
+					auto lock = LockCriticalSection();
 					return !m_messagesIdsToConfirm.empty();
 				}
 
