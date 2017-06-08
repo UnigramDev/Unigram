@@ -5,7 +5,8 @@
 #include "Telegram.Api.Native.h"
 #include "Datacenter.h"
 
-#define REQUEST_FLAG_INIT_CONNECTION 0x8000
+#define REQUEST_FLAG_NO_LAYER static_cast<RequestFlag>(0x4000)
+#define REQUEST_FLAG_INIT_CONNECTION static_cast<RequestFlag>(0x8000)
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -192,7 +193,12 @@ namespace Telegram
 
 				inline boolean IsInitConnection() const
 				{
-					return (static_cast<INT32>(m_flags) & REQUEST_FLAG_INIT_CONNECTION) == REQUEST_FLAG_INIT_CONNECTION;
+					return (m_flags & REQUEST_FLAG_INIT_CONNECTION) == REQUEST_FLAG_INIT_CONNECTION;
+				}
+
+				inline boolean IsLayerRequired() const
+				{
+					return (m_flags & REQUEST_FLAG_NO_LAYER) == RequestFlag::None;
 				}
 
 			private:
@@ -212,7 +218,7 @@ namespace Telegram
 
 				inline void SetInitConnection()
 				{
-					m_flags |= static_cast<RequestFlag>(REQUEST_FLAG_INIT_CONNECTION);
+					m_flags |= REQUEST_FLAG_INIT_CONNECTION;
 				}
 
 				ComPtr<ITLObject> m_object;

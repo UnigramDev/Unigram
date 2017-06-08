@@ -497,7 +497,7 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 			packetLength = static_cast<UINT32>(firstByte) * 4;
 		}
 
-		if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH || FAILED(OnMessageReceived(connectionManager, packetReader.Get(), packetLength)))
+		if (packetLength % 4 != 0 || FAILED(OnMessageReceived(connectionManager, packetReader.Get(), packetLength))) //packetLength > CONNECTION_MAX_PACKET_LENGTH || 
 		{
 			ComPtr<Connection> connection = this;
 			return connectionManager->SubmitWork([connectionManager, connection]()-> void

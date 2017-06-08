@@ -20,7 +20,7 @@ using Windows::Foundation::Collections::VectorView;
 ActivatableClassWithFactory(TLError, TLErrorFactory);
 
 RegisterTLObjectConstructor(TLError);
-RegisterTLObjectConstructor(TLDcOption);
+RegisterTLObjectConstructor(TLDCOption);
 RegisterTLObjectConstructor(TLDisabledFeature);
 RegisterTLObjectConstructor(TLConfig);
 RegisterTLObjectConstructor(TLRpcError);
@@ -122,18 +122,18 @@ HRESULT TLError::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
-TLDcOption::TLDcOption() :
+TLDCOption::TLDCOption() :
 	m_flags(0),
 	m_id(0),
 	m_port(0)
 {
 }
 
-TLDcOption::~TLDcOption()
+TLDCOption::~TLDCOption()
 {
 }
 
-HRESULT TLDcOption::get_Flags(INT32* value)
+HRESULT TLDCOption::get_Flags(INT32* value)
 {
 	if (value == nullptr)
 	{
@@ -144,7 +144,7 @@ HRESULT TLDcOption::get_Flags(INT32* value)
 	return S_OK;
 }
 
-HRESULT TLDcOption::get_Id(INT32* value)
+HRESULT TLDCOption::get_Id(INT32* value)
 {
 	if (value == nullptr)
 	{
@@ -155,12 +155,12 @@ HRESULT TLDcOption::get_Id(INT32* value)
 	return S_OK;
 }
 
-HRESULT TLDcOption::get_IpAddress(HSTRING* value)
+HRESULT TLDCOption::get_IpAddress(HSTRING* value)
 {
 	return m_ipAddress.CopyTo(value);
 }
 
-HRESULT TLDcOption::get_Port(INT32* value)
+HRESULT TLDCOption::get_Port(INT32* value)
 {
 	if (value == nullptr)
 	{
@@ -171,7 +171,7 @@ HRESULT TLDcOption::get_Port(INT32* value)
 	return S_OK;
 }
 
-HRESULT TLDcOption::ReadBody(ITLBinaryReaderEx* reader)
+HRESULT TLDCOption::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
 	ReturnIfFailed(result, reader->ReadInt32(&m_flags));
@@ -181,7 +181,7 @@ HRESULT TLDcOption::ReadBody(ITLBinaryReaderEx* reader)
 	return reader->ReadInt32(&m_port);
 }
 
-HRESULT TLDcOption::WriteBody(ITLBinaryWriterEx* writer)
+HRESULT TLDCOption::WriteBody(ITLBinaryWriterEx* writer)
 {
 	HRESULT result;
 	ReturnIfFailed(result, writer->WriteInt32(m_flags));
@@ -309,18 +309,18 @@ HRESULT TLConfig::get_ThisDc(INT32* value)
 	return S_OK;
 }
 
-HRESULT TLConfig::get_DcOptions(__FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDcOption** value)
+HRESULT TLConfig::get_DCOptions(__FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDCOption** value)
 {
 	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	auto vectorView = Make<VectorView<ABI::Telegram::Api::Native::TL::TLDcOption*>>();
+	auto vectorView = Make<VectorView<ABI::Telegram::Api::Native::TL::TLDCOption*>>();
 
 	std::transform(m_dcOptions.begin(), m_dcOptions.end(), std::back_inserter(vectorView->GetItems()), [](auto& ptr)
 	{
-		return static_cast<ITLDcOption*>(ptr.Get());
+		return static_cast<ITLDCOption*>(ptr.Get());
 	});
 
 	*value = vectorView.Detach();
@@ -614,7 +614,7 @@ HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 	ReturnIfFailed(result, reader->ReadInt32(&m_expires));
 	ReturnIfFailed(result, reader->ReadBoolean(&m_testMode));
 	ReturnIfFailed(result, reader->ReadInt32(&m_thisDc));
-	ReturnIfFailed(result, ReadTLObjectVector<TLDcOption>(reader, m_dcOptions));
+	ReturnIfFailed(result, ReadTLObjectVector<TLDCOption>(reader, m_dcOptions));
 	ReturnIfFailed(result, reader->ReadInt32(&m_chatSizeMax));
 	ReturnIfFailed(result, reader->ReadInt32(&m_megagroupSizeMax));
 	ReturnIfFailed(result, reader->ReadInt32(&m_forwardedCountMax));
@@ -655,7 +655,7 @@ HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
 	ReturnIfFailed(result, writer->WriteInt32(m_expires));
 	ReturnIfFailed(result, writer->WriteBoolean(m_testMode));
 	ReturnIfFailed(result, writer->WriteInt32(m_thisDc));
-	ReturnIfFailed(result, WriteTLObjectVector<TLDcOption>(writer, m_dcOptions));
+	ReturnIfFailed(result, WriteTLObjectVector<TLDCOption>(writer, m_dcOptions));
 	ReturnIfFailed(result, writer->WriteInt32(m_chatSizeMax));
 	ReturnIfFailed(result, writer->WriteInt32(m_megagroupSizeMax));
 	ReturnIfFailed(result, writer->WriteInt32(m_forwardedCountMax));
@@ -811,7 +811,8 @@ HRESULT TLMsgsAck::WriteBody(ITLBinaryWriterEx* writer)
 
 
 TLMessage::TLMessage() :
-	m_messageContext({})
+	m_messageContext({}),
+	m_bodyLength(0)
 {
 }
 
@@ -826,14 +827,22 @@ HRESULT TLMessage::RuntimeClassInitialize(MessageContext const* messageContext, 
 		return E_INVALIDARG;
 	}
 
+	HRESULT result;
+	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &m_bodyLength));
+
 	CopyMemory(&m_messageContext, messageContext, sizeof(MessageContext));
+
 	return TLObjectWithQuery::RuntimeClassInitialize(object);
 }
 
 HRESULT TLMessage::RuntimeClassInitialize(INT64 messageId, UINT32 sequenceNumber, ITLObject* object)
 {
+	HRESULT result;
+	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &m_bodyLength));
+
 	m_messageContext.Id = messageId;
 	m_messageContext.SequenceNumber = sequenceNumber;
+
 	return TLObjectWithQuery::RuntimeClassInitialize(object);
 }
 
@@ -847,12 +856,10 @@ HRESULT TLMessage::ReadBody(ITLBinaryReaderEx* reader)
 	HRESULT result;
 	ReturnIfFailed(result, reader->ReadInt64(&m_messageContext.Id));
 	ReturnIfFailed(result, reader->ReadUInt32(&m_messageContext.SequenceNumber));
-
-	UINT32 bodyLength;
-	ReturnIfFailed(result, reader->ReadUInt32(&bodyLength));
+	ReturnIfFailed(result, reader->ReadUInt32(&m_bodyLength));
 
 	UINT32 constructor;
-	return reader->ReadObjectAndConstructor(bodyLength, &constructor, GetQuery().ReleaseAndGetAddressOf());
+	return reader->ReadObjectAndConstructor(m_bodyLength, &constructor, GetQuery().ReleaseAndGetAddressOf());
 }
 
 HRESULT TLMessage::WriteBody(ITLBinaryWriterEx* writer)
@@ -860,13 +867,9 @@ HRESULT TLMessage::WriteBody(ITLBinaryWriterEx* writer)
 	HRESULT result;
 	ReturnIfFailed(result, writer->WriteInt64(m_messageContext.Id));
 	ReturnIfFailed(result, writer->WriteUInt32(m_messageContext.SequenceNumber));
+	ReturnIfFailed(result, writer->WriteUInt32(m_bodyLength));
 
-	UINT32 bodyLength;
-	auto& query = GetQuery();
-	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(query.Get(), &bodyLength));
-	ReturnIfFailed(result, writer->WriteUInt32(bodyLength));
-
-	return writer->WriteObject(query.Get());
+	return writer->WriteObject(GetQuery().Get());
 }
 
 
@@ -1033,15 +1036,6 @@ HRESULT TLGZipPacked::get_Query(ITLObject** value)
 	UINT32 constructor;
 	return reader->ReadObjectAndConstructor(m_packedData->GetCapacity(), &constructor, value);
 }
-
-//HRESULT TLGZipPacked::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
-//{
-//	HRESULT result;
-//	ComPtr<ITLObject> query;
-//	ReturnIfFailed(result, get_Query(&query));
-//
-//	return TLObject::HandleResponse(messageContext, query.Get(), connectionManager, connection);
-//}
 
 HRESULT TLGZipPacked::ReadBody(ITLBinaryReaderEx* reader)
 {

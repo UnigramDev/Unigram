@@ -91,7 +91,7 @@ HRESULT MessageRequest::get_Flags(RequestFlag* value)
 		return E_POINTER;
 	}
 
-	*value = static_cast<RequestFlag>(static_cast<INT32>(m_flags) & ~REQUEST_FLAG_INIT_CONNECTION);
+	*value = m_flags & ~REQUEST_FLAG_INIT_CONNECTION;
 	return S_OK;
 }
 

@@ -13,12 +13,11 @@
 
 #define TLVECTOR_CONSTRUCTOR 0x1cb5c415
 
-#define MakeTLObjectTraits(objectTypeName, constructor, isLayerRequired, namespace) \
+#define MakeTLObjectTraits(objectTypeName, constructor, namespace) \
 	struct objectTypeName##Traits \
 	{ \
 		typedef typename objectTypeName TLObjectType; \
 		static constexpr UINT32 Constructor = constructor; \
-		static constexpr boolean IsLayerRequired = isLayerRequired; \
 		static constexpr WCHAR RuntimeClassName[] = _STRINGIFY_W(namespace "." _STRINGIFY(objectTypeName)); \
 	} \
 
@@ -200,17 +199,6 @@ namespace Telegram
 						}
 
 						*value = TLObjectTraits::Constructor;
-						return S_OK;
-					}
-
-					IFACEMETHODIMP get_IsLayerRequired(_Out_ boolean* value)
-					{
-						if (value == nullptr)
-						{
-							return E_POINTER;
-						}
-
-						*value = TLObjectTraits::IsLayerRequired;
 						return S_OK;
 					}
 

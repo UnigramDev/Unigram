@@ -56,7 +56,7 @@ namespace Telegram.Api.Native.Test
             {
                 case TLConfig tlConfig:
                     var tmpSession = tlConfig.TmpSessions;
-                    var dcOptions = tlConfig.DcOptions.ToArray();
+                    var dcOptions = tlConfig.DCOptions.ToArray();
                     var disabledFeatures = tlConfig.DisabledFeatures.ToArray();
                     break;
                 case TLError tlError:
@@ -78,6 +78,7 @@ namespace Telegram.Api.Native.Test
 
         private void Instance_CurrentNetworkTypeChanged(ConnectionManager sender, object e)
         {
+            var xxx = new TLObject();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -104,7 +105,5 @@ namespace Telegram.Api.TL
         }
 
         public uint Constructor => (uint)TypeId;
-
-        public bool IsLayerRequired => true;
     }
 }
