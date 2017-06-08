@@ -135,7 +135,7 @@ namespace Telegram
 				HRESULT SendEncryptedMessage(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _Outptr_opt_ INT32* quickAckId);
 				HRESULT SendUnencryptedMessage(_In_ ITLObject* messageBody, boolean reportAck);
 				HRESULT HandleMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ ConnectionManager* connectionManager);
-				HRESULT HandleNewSessionCreatedResponse(_In_ ConnectionManager* connectionManager, _In_ TL::TLNewSessionCreated* response);
+				HRESULT OnNewSessionCreatedResponse(_In_ ConnectionManager* connectionManager, _In_ TL::TLNewSessionCreated* response);
 				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) override;
 				virtual HRESULT OnSocketDisconnected(int wsaError) override;

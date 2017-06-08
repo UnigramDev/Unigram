@@ -69,7 +69,7 @@ namespace Telegram
 					IFACEMETHODIMP WriteUInt32(UINT32 value);
 					IFACEMETHODIMP WriteInt64(INT64 value);
 					IFACEMETHODIMP WriteUInt64(UINT64 value);
-					IFACEMETHODIMP WriteBool(boolean value);
+					IFACEMETHODIMP WriteBoolean(boolean value);
 					IFACEMETHODIMP WriteString(HSTRING value);
 					IFACEMETHODIMP WriteByteArray(UINT32 __valueSize, _In_reads_(__valueSize) BYTE* value);
 					IFACEMETHODIMP WriteDouble(double value);
@@ -175,7 +175,7 @@ namespace Telegram
 					IFACEMETHODIMP WriteUInt32(UINT32 value);
 					IFACEMETHODIMP WriteInt64(INT64 value);
 					IFACEMETHODIMP WriteUInt64(UINT64 value);
-					IFACEMETHODIMP WriteBool(boolean value);
+					IFACEMETHODIMP WriteBoolean(boolean value);
 					IFACEMETHODIMP WriteString(HSTRING value);
 					IFACEMETHODIMP WriteByteArray(UINT32 __valueSize, _In_reads_(__valueSize) BYTE* value);
 					IFACEMETHODIMP WriteDouble(double value);

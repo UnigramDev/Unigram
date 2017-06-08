@@ -177,7 +177,7 @@ HRESULT TLBinaryWriter::WriteUInt64(UINT64 value)
 	return WriteInt64(*reinterpret_cast<INT64*>(&value));
 }
 
-HRESULT TLBinaryWriter::WriteBool(boolean value)
+HRESULT TLBinaryWriter::WriteBoolean(boolean value)
 {
 	if (value)
 	{
@@ -444,7 +444,7 @@ HRESULT TLObjectSizeCalculator::WriteUInt64(UINT64 value)
 	return S_OK;
 }
 
-HRESULT TLObjectSizeCalculator::WriteBool(boolean value)
+HRESULT TLObjectSizeCalculator::WriteBoolean(boolean value)
 {
 	m_position += sizeof(UINT32);
 	return S_OK;
@@ -521,18 +521,28 @@ void TLObjectSizeCalculator::Reset()
 
 HRESULT TLObjectSizeCalculator::GetSize(ITLObject* object, UINT32* value)
 {
+	UINT32 position;
+	UINT32 length;
 	if (s_instance == nullptr)
 	{
+		position = 0;
+		length = 0;
 		s_instance = Make<TLObjectSizeCalculator>();
 	}
 	else
 	{
+		position = s_instance->m_position;
+		length = s_instance->m_length;
 		s_instance->Reset();
 	}
 
 	HRESULT result;
-	ReturnIfFailed(result, s_instance->WriteObject(object));
+	if (SUCCEEDED(result = s_instance->WriteObject(object)))
+	{
+		*value = max(s_instance->m_position, s_instance->m_length);
+	}
 
-	*value = max(s_instance->m_position, s_instance->m_length);
-	return S_OK;
+	s_instance->m_position = position;
+	s_instance->m_length = length;
+	return result;
 }

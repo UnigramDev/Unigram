@@ -189,7 +189,7 @@ HRESULT TLBinaryReader::ReadUInt64(UINT64* value)
 	return ReadInt64(reinterpret_cast<INT64*>(value));
 }
 
-HRESULT TLBinaryReader::ReadBool(boolean* value)
+HRESULT TLBinaryReader::ReadBoolean(boolean* value)
 {
 	if (value == nullptr)
 	{

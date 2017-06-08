@@ -61,7 +61,7 @@ HRESULT TLObject::HandleResponse(MessageContext const* messageContext, ITLObject
 	}
 	else
 	{
-		return connectionManager->HandleUnprocessedMessageResponse(messageContext, messageBody, connection);
+		return connectionManager->OnUnprocessedMessageResponse(messageContext, messageBody, connection);
 	}
 }
 

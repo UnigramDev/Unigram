@@ -53,8 +53,7 @@ namespace Telegram
 						MakeTLMethodTraits(TLInvokeAfterMsg, 0xcb9f372d, false);
 						MakeTLMethodTraits(TLInvokeWithLayer, 0xda9b0d0d, false);
 						MakeTLMethodTraits(TLInitConnection, 0x69796de9, false);
-
-						MakeTLMethodTraits(TLHelpGetConfig, 0xc4f9186b, false);
+						MakeTLMethodTraits(TLHelpGetConfig, 0xc4f9186b, true);
 
 					}
 
@@ -107,11 +106,11 @@ namespace Telegram
 
 					public:
 						//Internal methods
-						STDMETHODIMP RuntimeClassInitialize(INT32 datacenterId, _In_ NativeBuffer* bytes);
+						STDMETHODIMP RuntimeClassInitialize(INT32 id, _In_ NativeBuffer* bytes);
 
-						inline INT32 GetDatacenterId() const
+						inline INT32 GetId() const
 						{
-							return m_datacenterId;
+							return m_id;
 						}
 
 						inline NativeBuffer* GetBytes() const
@@ -123,7 +122,7 @@ namespace Telegram
 						virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
 
 					private:
-						INT32 m_datacenterId;
+						INT32 m_id;
 						ComPtr<NativeBuffer> m_bytes;
 					};
 

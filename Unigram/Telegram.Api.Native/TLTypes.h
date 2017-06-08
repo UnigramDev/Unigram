@@ -220,7 +220,7 @@ namespace Telegram
 					HString m_description;
 				};
 
-				class TLConfig WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLConfig, TLObjectT<TLObjectTraits::TLConfigTraits>>
+				class TLConfig WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLConfig, TLObjectT<TLObjectTraits::TLConfigTraits>, CloakedIid<IMessageResponseHandler>>
 				{
 					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLConfig, BaseTrust);
 
@@ -259,6 +259,7 @@ namespace Telegram
 					IFACEMETHODIMP get_CallPacketTimeoutMs(_Out_ INT32* value);
 					IFACEMETHODIMP get_MeUrlPrefix(_Out_ HSTRING* value);
 					IFACEMETHODIMP get_DisabledFeatures(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDisabledFeature** value);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
 
 					inline INT32 GetFlags() const
 					{
@@ -448,9 +449,10 @@ namespace Telegram
 				};
 
 				template<typename TLObjectTraits>
-				class TLRpcErrorT abstract : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits>, CloakedIid<IMessageResponseHandler>>
+				class TLRpcErrorT abstract : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLError, TLObjectT<TLObjectTraits>, CloakedIid<IMessageResponseHandler>>
 				{
-					InspectableClass(TLObjectTraits::RuntimeClassName, BaseTrust);
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLError, BaseTrust);
+					//InspectableClass(TLObjectTraits::RuntimeClassName, BaseTrust);
 
 				public:
 					TLRpcErrorT() :
@@ -461,6 +463,10 @@ namespace Telegram
 					~TLRpcErrorT()
 					{
 					}
+
+					//COM exported methods
+					IFACEMETHODIMP get_Code(_Out_ UINT32* value);
+					IFACEMETHODIMP get_Text(_Out_ HSTRING* value);
 
 					//Internal methods
 					inline INT32 GetCode() const
@@ -831,9 +837,9 @@ namespace Telegram
 					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
-					inline INT32 GetDatacenterId() const
+					inline INT32 GetId() const
 					{
-						return m_datacenterId;
+						return m_id;
 					}
 
 					inline NativeBuffer* GetBytes() const
@@ -845,7 +851,7 @@ namespace Telegram
 					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
 
 				private:
-					INT32 m_datacenterId;
+					INT32 m_id;
 					ComPtr<NativeBuffer> m_bytes;
 				};
 

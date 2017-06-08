@@ -5,6 +5,8 @@
 #include "Telegram.Api.Native.h"
 #include "Datacenter.h"
 
+#define REQUEST_FLAG_INIT_CONNECTION 0x8000
+
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 using ABI::Telegram::Api::Native::ConnectionType;
@@ -148,24 +150,34 @@ namespace Telegram
 					return m_startTime;
 				}
 
-				inline void AddMessageId(INT64 messageId)
+				inline UINT32 GetRetriesCount() const
 				{
-					m_messagesIds.push_back(messageId);
+					return m_retriesCount;
 				}
 
-				inline boolean HasMessageId(INT64 messageId)
+				inline boolean MatchesMessage(INT64 messageId)
 				{
-					return (m_messageContext != nullptr && m_messageContext->Id == messageId) || std::find(m_messagesIds.begin(), m_messagesIds.end(), messageId) != m_messagesIds.end();
+					return m_messageContext->Id == messageId;
 				}
 
-				inline boolean MatchesDatacenter(INT32 datacenterId, ConnectionType connectionType)
+				inline boolean MatchesConnection(ConnectionType connectionType)
 				{
-					return m_datacenterId == datacenterId && (m_connectionType & connectionType) == m_connectionType;
+					return (m_connectionType & connectionType) == m_connectionType;
 				}
 
 				inline boolean EnableUnauthorized() const
 				{
 					return (m_flags & RequestFlag::EnableUnauthorized) == RequestFlag::EnableUnauthorized;
+				}
+
+				inline boolean CanCompress() const
+				{
+					return (m_flags & RequestFlag::CanCompress) == RequestFlag::CanCompress;
+				}
+
+				inline boolean InvokeAfter() const
+				{
+					return (m_flags & RequestFlag::InvokeAfter) == RequestFlag::InvokeAfter;
 				}
 
 				inline boolean TryDifferentDc() const
@@ -178,10 +190,14 @@ namespace Telegram
 					return (m_flags & RequestFlag::RequiresQuickAck) == RequestFlag::RequiresQuickAck;
 				}
 
+				inline boolean IsInitConnection() const
+				{
+					return (static_cast<INT32>(m_flags) & REQUEST_FLAG_INIT_CONNECTION) == REQUEST_FLAG_INIT_CONNECTION;
+				}
+
 			private:
-				HRESULT CreateTransportMessage(_Out_ TL::TLMessage** message);
 				HRESULT OnQuickAckReceived();
-				HRESULT OnSendCompleted(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
+				HRESULT OnSendCompleted(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody);
 				void Reset();
 
 				inline void SetMessageContext(MessageContext const& mesageContext)
@@ -194,17 +210,21 @@ namespace Telegram
 					m_startTime = startTime;
 				}
 
+				inline void SetInitConnection()
+				{
+					m_flags |= static_cast<RequestFlag>(REQUEST_FLAG_INIT_CONNECTION);
+				}
+
 				ComPtr<ITLObject> m_object;
 				INT32 m_token;
 				ConnectionType m_connectionType;
 				INT32 m_datacenterId;
 				INT64 m_startTime;
+				UINT32 m_retriesCount;
 				std::unique_ptr<MessageContext> m_messageContext;
 				ComPtr<ISendRequestCompletedCallback> m_sendCompletedCallback;
 				ComPtr<IRequestQuickAckReceivedCallback> m_quickAckReceivedCallback;
 				RequestFlag m_flags;
-
-				std::vector<INT64> m_messagesIds;
 			};
 
 		}

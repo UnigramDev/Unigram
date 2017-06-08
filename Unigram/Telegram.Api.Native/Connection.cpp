@@ -384,14 +384,14 @@ HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, 
 	}
 	else
 	{
-		ReturnIfFailed(result, connectionManager->HandleUnprocessedMessageResponse(messageContext, messageBody, this));
+		ReturnIfFailed(result, connectionManager->OnUnprocessedMessageResponse(messageContext, messageBody, this));
 	}
 
 	AddProcessedMessageId(messageContext->Id);
 	return S_OK;
 }
 
-HRESULT Connection::HandleNewSessionCreatedResponse(ConnectionManager* connectionManager, TLNewSessionCreated* response)
+HRESULT Connection::OnNewSessionCreatedResponse(ConnectionManager* connectionManager, TLNewSessionCreated* response)
 {
 	if (IsSessionProcessed(response->GetUniqueId()))
 	{

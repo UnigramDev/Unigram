@@ -25,6 +25,7 @@ HRESULT MessageRequest::RuntimeClassInitialize(ITLObject* object, INT32 token, C
 	m_quickAckReceivedCallback = quickAckReceivedCallback;
 	m_flags = flags;
 	m_startTime = 0;
+	m_retriesCount = 0;
 
 	return S_OK;
 }
@@ -90,24 +91,8 @@ HRESULT MessageRequest::get_Flags(RequestFlag* value)
 		return E_POINTER;
 	}
 
-	*value = m_flags;
+	*value = static_cast<RequestFlag>(static_cast<INT32>(m_flags) & ~REQUEST_FLAG_INIT_CONNECTION);
 	return S_OK;
-}
-
-HRESULT MessageRequest::CreateTransportMessage(TLMessage** message)
-{
-	ComPtr<ITLObject> object;
-	if ((m_flags & RequestFlag::CanCompress) == RequestFlag::CanCompress)
-	{
-		HRESULT result;
-		ReturnIfFailed(result, MakeAndInitialize<TLGZipPacked>(&object, m_object.Get()));
-	}
-	else
-	{
-		object = m_object;
-	}
-
-	return MakeAndInitialize<TLMessage>(message, m_messageContext.get(), object.Get());
 }
 
 HRESULT MessageRequest::OnQuickAckReceived()
@@ -120,7 +105,7 @@ HRESULT MessageRequest::OnQuickAckReceived()
 	return m_quickAckReceivedCallback->Invoke();
 }
 
-HRESULT MessageRequest::OnSendCompleted(MessageContext const* messageContext, ITLObject* messageBody, Connection* connection)
+HRESULT MessageRequest::OnSendCompleted(MessageContext const* messageContext, ITLObject* messageBody)
 {
 	if (m_sendCompletedCallback == nullptr)
 	{

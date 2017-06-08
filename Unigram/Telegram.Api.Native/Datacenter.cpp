@@ -622,7 +622,7 @@ HRESULT Datacenter::OnConnectionClosed(ConnectionManager* connectionManager, Con
 	return connectionManager->OnConnectionClosed(connection);
 }
 
-HRESULT Datacenter::HandleHandshakePQResponse(Connection* connection, TLResPQ* response)
+HRESULT Datacenter::OnHandshakePQResponse(Connection* connection, TLResPQ* response)
 {
 	auto lock = LockCriticalSection();
 
@@ -713,7 +713,7 @@ HRESULT Datacenter::HandleHandshakePQResponse(Connection* connection, TLResPQ* r
 	return connection->SendUnencryptedMessage(dhParams.Get(), false);
 }
 
-HRESULT Datacenter::HandleHandshakeServerDHResponse(Connection* connection, TLServerDHParamsOk* response)
+HRESULT Datacenter::OnHandshakeServerDHResponse(Connection* connection, TLServerDHParamsOk* response)
 {
 	auto lock = LockCriticalSection();
 
@@ -898,7 +898,7 @@ HRESULT Datacenter::HandleHandshakeServerDHResponse(Connection* connection, TLSe
 	return connection->SendUnencryptedMessage(setClientDHParams.Get(), false);
 }
 
-HRESULT Datacenter::HandleHandshakeClientDHResponse(ConnectionManager* connectionManager, Connection* connection, TLDHGenOk* response)
+HRESULT Datacenter::OnHandshakeClientDHResponse(ConnectionManager* connectionManager, Connection* connection, TLDHGenOk* response)
 {
 	auto lock = LockCriticalSection();
 
@@ -949,7 +949,7 @@ HRESULT Datacenter::HandleHandshakeClientDHResponse(ConnectionManager* connectio
 	return connectionManager->OnDatacenterHandshakeComplete(this, timeDifference);
 }
 
-HRESULT Datacenter::HandleFutureSaltsResponse(TL::TLFutureSalts* response)
+HRESULT Datacenter::OnFutureSaltsResponse(TL::TLFutureSalts* response)
 {
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLFutureSalts response handling");
 
@@ -1139,24 +1139,16 @@ HRESULT Datacenter::SendPing()
 	ComPtr<ConnectionManager> connectionManager;
 	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 
-	ComPtr<IUserConfiguration> userConfiguration;
-	ReturnIfFailed(result, connectionManager->get_UserConfiguration(&userConfiguration));
-
 	//auto ping = Make<Methods::TLPing>(1);
 	//auto getFutureSalts = Make<Methods::TLGetFutureSalts>(5);
+
 	auto helpGetConfig = Make<Methods::TLHelpGetConfig>();
 
-	ComPtr<Methods::TLInitConnection> initConnectionObject;
-	ReturnIfFailed(result, MakeAndInitialize<Methods::TLInitConnection>(&initConnectionObject, userConfiguration.Get(), helpGetConfig.Get()));
-
-	ComPtr<Methods::TLInvokeWithLayer> invokeWithLayer;
-	ReturnIfFailed(result, MakeAndInitialize<Methods::TLInvokeWithLayer>(&invokeWithLayer, initConnectionObject.Get()));
-
 	INT32 requestToken;
-	return connectionManager->SendRequestWithFlags(invokeWithLayer.Get(), Callback<ISendRequestCompletedCallback>([connectionManager](ITLUnprocessedMessage* response, HRESULT error) -> HRESULT
+	return connectionManager->SendRequestWithFlags(helpGetConfig.Get(), Callback<ISendRequestCompletedCallback>([connectionManager](ITLUnprocessedMessage* response, HRESULT error) -> HRESULT
 	{
 		return connectionManager->m_unprocessedMessageReceivedEventSource.InvokeAll(connectionManager.Get(), response);
-	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::WithoutLogin, &requestToken);
+	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::WithoutLogin | RequestFlag::CanCompress, &requestToken);
 
 	//return genericConnection->SendEncryptedMessage(invokeWithLayer.Get(), false, nullptr);
 }

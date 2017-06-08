@@ -8,6 +8,7 @@
 #include "DatacenterServer.h"
 #include "MultiThreadObject.h"
 
+#define DEFAULT_DATACENTER_ID INT_MAX
 #define DOWNLOAD_CONNECTIONS_COUNT 2
 #define UPLOAD_CONNECTIONS_COUNT 2
 #define DATACENTER_UPDATE_TIME 60 * 60
@@ -112,7 +113,7 @@ namespace Telegram
 
 				inline boolean IsConnectionInitialized()
 				{
-					auto  lock = LockCriticalSection();
+					auto lock = LockCriticalSection();
 					return (m_flags & DatacenterFlag::ConnectionInitialized) == DatacenterFlag::ConnectionInitialized;
 				}
 
@@ -181,15 +182,21 @@ namespace Telegram
 				boolean ContainsServerSalt(INT64 salt, size_t count);
 				HRESULT OnConnectionOpened(_In_ ConnectionManager* connectionManager, _In_ Connection* connection);
 				HRESULT OnConnectionClosed(_In_ ConnectionManager* connectionManager, _In_ Connection* connection);
-				HRESULT HandleHandshakePQResponse(_In_ Connection* connection, _In_ TL::TLResPQ* response);
-				HRESULT HandleHandshakeServerDHResponse(_In_ Connection* connection, _In_ TL::TLServerDHParamsOk* response);
-				HRESULT HandleHandshakeClientDHResponse(_In_ ConnectionManager* connectionManager, _In_ Connection* connection, _In_ TL::TLDHGenOk* response);
-				HRESULT HandleFutureSaltsResponse(_In_ TL::TLFutureSalts* response);
+				HRESULT OnHandshakePQResponse(_In_ Connection* connection, _In_ TL::TLResPQ* response);
+				HRESULT OnHandshakeServerDHResponse(_In_ Connection* connection, _In_ TL::TLServerDHParamsOk* response);
+				HRESULT OnHandshakeClientDHResponse(_In_ ConnectionManager* connectionManager, _In_ Connection* connection, _In_ TL::TLDHGenOk* response);
+				HRESULT OnFutureSaltsResponse(_In_ TL::TLFutureSalts* response);
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
 				HRESULT EncryptMessage(_Inout_updates_(length) BYTE* buffer, UINT32 length, UINT32 padding, _Out_opt_ INT32* quickAckId);
 				HRESULT DecryptMessage(INT64 authKeyId, _Inout_updates_(length) BYTE* buffer, UINT32 length);
 
-				inline HRESULT HandleHandshakeError(HRESULT error)
+				inline void SetConnectionInitialized()
+				{
+					auto lock = LockCriticalSection();
+					m_flags |= DatacenterFlag::ConnectionInitialized;
+				}
+
+				inline HRESULT OnHandshakeError(HRESULT error)
 				{
 					if (error == E_UNEXPECTED)
 					{

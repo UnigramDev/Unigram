@@ -121,7 +121,7 @@ namespace Telegram
 					HRESULT ReadUInt32([out][retval] UINT32* value);
 					HRESULT ReadInt64([out][retval] INT64* value);
 					HRESULT ReadUInt64([out][retval] UINT64* value);
-					HRESULT ReadBool([out][retval] boolean* value);
+					HRESULT ReadBoolean([out][retval] boolean* value);
 					HRESULT ReadString([out][retval] HSTRING* value);
 					HRESULT ReadByteArray([out] UINT32* __valueSize,[out][retval][size_is(, *__valueSize)] BYTE** value);
 					HRESULT ReadRawBuffer([in] UINT32 __valueSize, [in][size_is(__valueSize)] BYTE* value);
@@ -154,7 +154,7 @@ namespace Telegram
 					HRESULT WriteUInt32([in] UINT32 value);
 					HRESULT WriteInt64([in] INT64 value);
 					HRESULT WriteUInt64([in] UINT64 value);
-					HRESULT WriteBool([in] boolean value);
+					HRESULT WriteBoolean([in] boolean value);
 					HRESULT WriteString([in] HSTRING value);
 					HRESULT WriteByteArray([in] UINT32 __valueSize,[in][size_is(__valueSize)] BYTE* value);
 					HRESULT WriteRawBuffer([in] UINT32 __valueSize, [in][size_is(__valueSize)] BYTE* value);
@@ -483,6 +483,7 @@ namespace Telegram
 			{
 				[propget] HRESULT Instance([out][retval] ConnectionManager** value);
 				[propget] HRESULT Version([out][retval] Version* value);
+				[propget] HRESULT DefaultDatacenterId([out][retval] INT32* value);
 			}
 
 			[exclusiveto(ConnectionManager)]
@@ -509,7 +510,9 @@ namespace Telegram
 				[propput] HRESULT UserId([in] INT32 value);
 				[propget] HRESULT Datacenters([out][retval] Windows.Foundation.Collections.IVectorView<Datacenter*>** value);
 				[overload("SendRequest")] HRESULT SendRequest([in] Telegram.Api.Native.TL.ITLObject* object,[in] SendRequestCompletedCallback* onCompleted,[in] RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
-					[in] INT32 datacenterId,[in] ConnectionType connectionType,[out][retval] INT32* value);
+					[in] ConnectionType connectionType,[out][retval] INT32* value);
+				[overload("SendRequest")] HRESULT SendRequestWithDatacenter([in] Telegram.Api.Native.TL.ITLObject* object, [in] SendRequestCompletedCallback* onCompleted, [in] RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
+					[in] INT32 datacenterId, [in] ConnectionType connectionType, [out][retval] INT32* value);
 				[overload("SendRequest")] HRESULT SendRequestWithFlags([in] Telegram.Api.Native.TL.ITLObject* object,[in] SendRequestCompletedCallback* onCompleted,[in] RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
 					[in] INT32 datacenterId,[in] ConnectionType connectionType,[in] RequestFlag flags,[out][retval] INT32* value);
 				HRESULT CancelRequest([in] INT32 requestToken,[in] boolean notifyServer,[out][retval] boolean* value);

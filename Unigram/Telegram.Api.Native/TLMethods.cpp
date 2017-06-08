@@ -40,14 +40,14 @@ HRESULT TLAuthExportAuthorization::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
-HRESULT TLAuthImportAuthorization::RuntimeClassInitialize(INT32 datacenterId, NativeBuffer* bytes)
+HRESULT TLAuthImportAuthorization::RuntimeClassInitialize(INT32 id, NativeBuffer* bytes)
 {
 	if (bytes == nullptr)
 	{
 		return E_INVALIDARG;
 	}
 
-	m_datacenterId = datacenterId;
+	m_id = id;
 	m_bytes = bytes;
 	return S_OK;
 }
@@ -55,7 +55,7 @@ HRESULT TLAuthImportAuthorization::RuntimeClassInitialize(INT32 datacenterId, Na
 HRESULT TLAuthImportAuthorization::WriteBody(ITLBinaryWriterEx* writer)
 {
 	HRESULT result;
-	ReturnIfFailed(result, writer->WriteInt32(m_datacenterId));
+	ReturnIfFailed(result, writer->WriteInt32(m_id));
 
 	return writer->WriteBuffer(m_bytes->GetBuffer(), m_bytes->GetCapacity());
 }

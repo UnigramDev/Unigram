@@ -600,6 +600,11 @@ HRESULT TLConfig::get_DisabledFeatures(__FIVectorView_1_Telegram__CApi__CNative_
 	return S_OK;
 }
 
+HRESULT TLConfig::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+{
+	return connectionManager->OnConfigResponse(this);
+}
+
 
 HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 {
@@ -607,7 +612,7 @@ HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 	ReturnIfFailed(result, reader->ReadInt32(&m_flags));
 	ReturnIfFailed(result, reader->ReadInt32(&m_date));
 	ReturnIfFailed(result, reader->ReadInt32(&m_expires));
-	ReturnIfFailed(result, reader->ReadBool(&m_testMode));
+	ReturnIfFailed(result, reader->ReadBoolean(&m_testMode));
 	ReturnIfFailed(result, reader->ReadInt32(&m_thisDc));
 	ReturnIfFailed(result, ReadTLObjectVector<TLDcOption>(reader, m_dcOptions));
 	ReturnIfFailed(result, reader->ReadInt32(&m_chatSizeMax));
@@ -648,7 +653,7 @@ HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
 	ReturnIfFailed(result, writer->WriteInt32(m_flags));
 	ReturnIfFailed(result, writer->WriteInt32(m_date));
 	ReturnIfFailed(result, writer->WriteInt32(m_expires));
-	ReturnIfFailed(result, writer->WriteBool(m_testMode));
+	ReturnIfFailed(result, writer->WriteBoolean(m_testMode));
 	ReturnIfFailed(result, writer->WriteInt32(m_thisDc));
 	ReturnIfFailed(result, WriteTLObjectVector<TLDcOption>(writer, m_dcOptions));
 	ReturnIfFailed(result, writer->WriteInt32(m_chatSizeMax));
@@ -693,6 +698,24 @@ HRESULT TLRpcErrorT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
 	return reader->ReadString(m_text.GetAddressOf());
 }
 
+template<typename TLObjectTraits>
+HRESULT TLRpcErrorT<TLObjectTraits>::get_Code(UINT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_code;
+	return S_OK;
+}
+
+template<typename TLObjectTraits>
+HRESULT TLRpcErrorT<TLObjectTraits>::get_Text(HSTRING* value)
+{
+	return m_text.CopyTo(value);
+}
+
 
 HRESULT TLRpcError::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
@@ -735,12 +758,6 @@ HRESULT TLRpcResult::HandleResponse(MessageContext const* messageContext, Connec
 	if (SUCCEEDED(query.As(&objectWithQuery)))
 	{
 		ReturnIfFailed(result, objectWithQuery->get_Query(&query));
-	}
-
-	ComPtr<IMessageResponseHandler> responseHandler;
-	if (SUCCEEDED(query.As(&responseHandler)))
-	{
-		ReturnIfFailed(result, responseHandler->HandleResponse(messageContext, connectionManager, connection));
 	}
 
 	return TLObject::CompleteRequest(m_requestMessageId, messageContext, query.Get(), connectionManager, connection);
@@ -845,10 +862,11 @@ HRESULT TLMessage::WriteBody(ITLBinaryWriterEx* writer)
 	ReturnIfFailed(result, writer->WriteUInt32(m_messageContext.SequenceNumber));
 
 	UINT32 bodyLength;
-	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(GetQuery().Get(), &bodyLength));
+	auto& query = GetQuery();
+	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(query.Get(), &bodyLength));
 	ReturnIfFailed(result, writer->WriteUInt32(bodyLength));
 
-	return TLObjectWithQuery::WriteQuery(writer);
+	return writer->WriteObject(query.Get());
 }
 
 
@@ -1042,7 +1060,7 @@ HRESULT TLGZipPacked::WriteBody(ITLBinaryWriterEx* writer)
 
 
 TLAuthExportedAuthorization::TLAuthExportedAuthorization() :
-	m_datacenterId(0)
+	m_id(0)
 {
 }
 
@@ -1052,15 +1070,13 @@ TLAuthExportedAuthorization::~TLAuthExportedAuthorization()
 
 HRESULT TLAuthExportedAuthorization::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLAuthExportedAuthorization response handling");
-
-	return S_OK;
+	return connectionManager->OnExportedAuthorizationResponse(this);
 }
 
 HRESULT TLAuthExportedAuthorization::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
-	ReturnIfFailed(result, reader->ReadInt32(&m_datacenterId));
+	ReturnIfFailed(result, reader->ReadInt32(&m_id));
 
 	BYTE const* buffer;
 	UINT32 bufferLength;
@@ -1085,7 +1101,7 @@ TLNewSessionCreated::~TLNewSessionCreated()
 
 HRESULT TLNewSessionCreated::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	return connection->HandleNewSessionCreatedResponse(connectionManager, this);
+	return connection->OnNewSessionCreatedResponse(connectionManager, this);
 }
 
 HRESULT TLNewSessionCreated::ReadBody(ITLBinaryReaderEx* reader)
@@ -1167,9 +1183,9 @@ HRESULT TLDHGenOk::HandleResponse(MessageContext const* messageContext, Connecti
 {
 	HRESULT result;
 	auto datacenter = connection->GetDatacenter();
-	if (FAILED(result = datacenter->HandleHandshakeClientDHResponse(connectionManager, connection, this)))
+	if (FAILED(result = datacenter->OnHandshakeClientDHResponse(connectionManager, connection, this)))
 	{
-		return datacenter->HandleHandshakeError(result);
+		return datacenter->OnHandshakeError(result);
 	}
 
 	return S_OK;
@@ -1178,13 +1194,13 @@ HRESULT TLDHGenOk::HandleResponse(MessageContext const* messageContext, Connecti
 
 HRESULT TLDHGenFail::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	return connection->GetDatacenter()->HandleHandshakeError(E_FAIL);
+	return connection->GetDatacenter()->OnHandshakeError(E_FAIL);
 }
 
 
 HRESULT TLDHGenRetry::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	return connection->GetDatacenter()->HandleHandshakeError(E_FAIL);
+	return connection->GetDatacenter()->OnHandshakeError(E_FAIL);
 }
 
 
@@ -1200,7 +1216,7 @@ HRESULT TLServerDHParamsT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
 
 HRESULT TLServerDHParamsFail::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	return connection->GetDatacenter()->HandleHandshakeError(E_FAIL);
+	return connection->GetDatacenter()->OnHandshakeError(E_FAIL);
 }
 
 HRESULT TLServerDHParamsFail::ReadBody(ITLBinaryReaderEx* reader)
@@ -1216,9 +1232,9 @@ HRESULT TLServerDHParamsOk::HandleResponse(MessageContext const* messageContext,
 {
 	HRESULT result;
 	auto datacenter = connection->GetDatacenter();
-	if (FAILED(result = datacenter->HandleHandshakeServerDHResponse(connection, this)))
+	if (FAILED(result = datacenter->OnHandshakeServerDHResponse(connection, this)))
 	{
-		return datacenter->HandleHandshakeError(result);
+		return datacenter->OnHandshakeError(result);
 	}
 
 	return S_OK;
@@ -1254,9 +1270,9 @@ HRESULT TLResPQ::HandleResponse(MessageContext const* messageContext, Connection
 {
 	HRESULT result;
 	auto datacenter = connection->GetDatacenter();
-	if (FAILED(result = datacenter->HandleHandshakePQResponse(connection, this)))
+	if (FAILED(result = datacenter->OnHandshakePQResponse(connection, this)))
 	{
-		return datacenter->HandleHandshakeError(result);
+		return datacenter->OnHandshakeError(result);
 	}
 
 	return S_OK;

@@ -55,7 +55,19 @@ namespace Telegram.Api.Native.Test
                     var dcOptions = tlConfig.DcOptions.ToArray();
                     var disabledFeatures = tlConfig.DisabledFeatures.ToArray();
                     break;
+                case TLError tlError:
+                    break;
             }
+
+            var messageToken = sender.SendRequest(new TLAuthSendCode()
+            {
+                ApiHash = Constants.ApiHash,
+                ApiId = Constants.ApiId,
+                PhoneNumber = Constants.PhoneNumber
+            }, (message, ex) =>
+            {
+                System.Diagnostics.Debugger.Break();
+            }, null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin);
         }
 
         private void Instance_CurrentNetworkTypeChanged(ConnectionManager sender, object e)
