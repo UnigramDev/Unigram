@@ -151,7 +151,15 @@
             <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
             <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
         </MenuFlyout>
-        
+
+        <Style x:Key="MessageBubbleProfilePictureStyle" TargetType="controls:ProfilePictureView">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="Margin" Value="12,0,0,2"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Width" Value="32"/>
+        </Style>
+            
         <!-- Round video -->
 
         <DataTemplate x:Key="UserRoundVideoTemplate" x:DataType="models:TLMessage">
@@ -292,14 +300,10 @@
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePictureView x:Phase="3"
                                              x:Name="PhotoBubble"
+                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                             Click="ProfileBubble_Click"
-                                             HorizontalAlignment="Left"
-                                             VerticalAlignment="Bottom"
-                                             Margin="12,0,0,2"
-                                             Width="32"
-                                             Height="32"/>
+                                             Click="ProfileBubble_Click"/>
 
                 <Grid Margin="0,2" Grid.Column="1">
                     <Grid.ColumnDefinitions>
@@ -481,14 +485,10 @@
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePictureView x:Phase="3"
                                              x:Name="PhotoBubble"
+                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                             Click="ProfileBubble_Click"
-                                             HorizontalAlignment="Left"
-                                             VerticalAlignment="Bottom"
-                                             Margin="12,0,0,2"
-                                             Width="32"
-                                             Height="32"/>
+                                             Click="ProfileBubble_Click"/>
 
                 <Grid Margin="0,2" Grid.Column="1">
                     <Grid.ColumnDefinitions>
@@ -612,14 +612,10 @@
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePictureView x:Phase="3"
                                              x:Name="PhotoBubble"
+                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                             Click="ProfileBubble_Click"
-                                             HorizontalAlignment="Left"
-                                             VerticalAlignment="Bottom"
-                                             Margin="12,0,0,2"
-                                             Width="32"
-                                             Height="32"/>
+                                             Click="ProfileBubble_Click"/>
                 <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
 
                 <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"

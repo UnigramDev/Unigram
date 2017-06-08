@@ -13,7 +13,7 @@
     d:DesignWidth="400"
     Margin="{ThemeResource MessageContentMargin}"
     HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
-    MaxWidth="432">
+    MaxWidth="{ThemeResource MessageMaxWidth}">
 
     <!-- TODO: not the right way -->
     <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
