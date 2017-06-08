@@ -270,6 +270,17 @@
                         </messages:MessageReference.Resources>
                     </messages:MessageReference>
                 </StackPanel>
+
+                <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
+                        Background="{ThemeResource MessageServiceBackgroundBrush}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        CornerRadius="14"
+                        Margin="8,0,0,4"
+                        Grid.Column="1"
+                        Grid.Row="1">
+                    <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+                </Border>
             </Grid>
         </DataTemplate>
 
@@ -346,6 +357,17 @@
                             </messages:MessageReference.Resources>
                         </messages:MessageReference>
                     </StackPanel>
+
+                    <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
+                            Background="{ThemeResource MessageServiceBackgroundBrush}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            CornerRadius="14"
+                            Margin="8,0,0,4"
+                            Grid.Column="1"
+                            Grid.Row="1">
+                        <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+                    </Border>
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -562,15 +584,31 @@
             </messages:MessageBubble>
         </DataTemplate>
 
-        <DataTemplate x:Key="FriendMessageTemplate">
-            <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+        <DataTemplate x:Key="FriendMessageTemplate" x:DataType="models:TLMessage">
+            <Grid HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+
+                <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
+                        Background="{ThemeResource MessageServiceBackgroundBrush}"
+                        VerticalAlignment="Bottom"
+                        CornerRadius="14"
+                        Margin="8,0,0,4"
+                        Grid.Column="1">
+                    <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+                </Border>
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="ChatFriendMessageTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="-52,0,0,0">
+            <Grid Margin="-52,0,0,0" HorizontalAlignment="Left">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="52"/>
                     <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:ProfilePictureView x:Phase="3"
                                              x:Name="PhotoBubble"
@@ -583,6 +621,15 @@
                                              Width="32"
                                              Height="32"/>
                 <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
+
+                <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
+                        Background="{ThemeResource MessageServiceBackgroundBrush}"
+                        VerticalAlignment="Bottom"
+                        CornerRadius="14"
+                        Margin="8,0,0,4"
+                        Grid.Column="2">
+                    <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+                </Border>
             </Grid>
         </DataTemplate>
 
@@ -681,7 +728,7 @@
             <Setter Property="Foreground" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
             <Setter Property="IsHitTestVisible" Value="False" />
             <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
             <Setter Property="Height" Value="Auto" />
             <Setter Property="Width" Value="Auto" />
             <Setter Property="MinHeight" Value="0"/>
@@ -744,13 +791,13 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ProgressRing">
                         <Grid x:Name="Ring"
-                    Padding="{TemplateBinding Padding}"
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    FlowDirection="LeftToRight"
-                    RenderTransformOrigin="0.5,0.5"
-                    Visibility="Collapsed">
+                              Padding="{TemplateBinding Padding}"
+                              Background="{TemplateBinding Background}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              FlowDirection="LeftToRight"
+                              RenderTransformOrigin="0.5,0.5"
+                              Visibility="Collapsed">
                             <Grid.MaxWidth>
                                 <Binding Path="TemplateSettings.MaxSideLength">
                                     <Binding.RelativeSource>
@@ -997,16 +1044,16 @@
                                            MaxLines="1"/>
                                 <Grid>
                                     <TextBlock x:Name="tblDialogStatus"
-                                               Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                               Visibility="{x:Bind ViewModel.With.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                                Style="{StaticResource CaptionTextBlockStyle}"
                                                Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}" />
-                                    <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}">
+                                    <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.With.IsTyping, Mode=OneWay}">
                                         <!--<ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0,0,4,2" Style="{StaticResource UploadProgressRingStyle}"/>-->
-                                        <TextBlock Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
+                                        <TextBlock Text="{x:Bind ViewModel.With.TypingSubtitle, Mode=OneWay}"
                                                    Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
                                                    Style="{StaticResource CaptionTextBlockStyle}"/>
-                                        <ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
+                                        <ProgressRing IsActive="{x:Bind ViewModel.With.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>
@@ -1293,8 +1340,8 @@
             </StackPanel>
 
             <!--<Border Visibility="{x:Bind (Visibility)ViewModel.IsEmpty, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="18">
-                <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Style="{StaticResource SkypeProgressRingStyle}"/>
-            </Border>-->
+                 <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Style="{StaticResource SkypeProgressRingStyle}"/>
+                 </Border>-->
 
             <StackPanel>
                 <Grid x:Name="PinnedMessage"
@@ -1449,7 +1496,7 @@
         </ScrollViewer>
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">
-            <views:StickersView x:Name="StickersPanel" Visibility="Collapsed" MaxHeight="360" MinHeight="260"/>
+            <views:StickersView x:Name="StickersPanel" AllowFocusOnInteraction="False" Visibility="Collapsed" MaxHeight="360" MinHeight="260"/>
         </Grid>
 
         <!-- Input pane -->

@@ -83,6 +83,8 @@ namespace Unigram.Views
 
             ViewModel.PropertyChanged += OnPropertyChanged;
 
+            TextField.LostFocus += TextField_LostFocus;
+
             lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
             _messageVisual = ElementCompositionPreview.GetElementVisual(TextField);
@@ -140,6 +142,14 @@ namespace Unigram.Views
             //}
         }
 
+        private void TextField_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (StickersPanel.Visibility == Visibility.Visible)
+            {
+                StickersPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
         //protected override async void OnNavigatedTo(NavigationEventArgs e)
         //{
         //    if (MainPage.TryGetPeerFromParameter(e.Parameter, out TLPeerBase peer))
@@ -188,7 +198,7 @@ namespace Unigram.Views
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            if (e.NavigationMode != NavigationMode.Forward || e.SourcePageType != typeof(DialogPage))
+            if (e.NavigationMode != NavigationMode.Forward || e.SourcePageType != typeof(DialogPage) || e.Parameter != Frame.BackStack.Last()?.Parameter)
             {
                 InputPane.GetForCurrentView().Showing -= InputPane_Showing;
                 InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
@@ -511,14 +521,15 @@ namespace Unigram.Views
             if (StickersPanel.Visibility == Visibility.Collapsed)
             {
                 StickersPanel.Visibility = Visibility.Visible;
+                TextField.PreventKeyboardDisplayOnProgrammaticFocus = true;
+                TextField.Focus(FocusState.Programmatic);
+                InputPane.GetForCurrentView().TryHide();
 
                 ViewModel.OpenStickersCommand.Execute(null);
-                InputPane.GetForCurrentView().TryHide();
             }
             else
             {
                 StickersPanel.Visibility = Visibility.Collapsed;
-
                 InputPane.GetForCurrentView().TryShow();
             }
         }
@@ -1057,7 +1068,8 @@ namespace Unigram.Views
 
         private void UsernameHints_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var text = ViewModel.GetText();
+            TextField.Document.GetText(TextGetOptions.None, out string hidden);
+            TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
 
             var user = e.ClickedItem as TLUser;
             if (user != null && BubbleTextBox.SearchByUsernames(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string query))
@@ -1065,11 +1077,11 @@ namespace Unigram.Views
                 var insert = string.Empty;
                 var adjust = 0;
 
-                //if (user.HasUsername)
-                //{
-                //    insert = user.Username;
-                //}
-                //else
+                if (user.HasUsername)
+                {
+                    insert = user.Username;
+                }
+                else
                 {
                     insert = user.HasFirstName ? user.FirstName : user.LastName;
                     adjust = 1;
@@ -1080,15 +1092,16 @@ namespace Unigram.Views
                 var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - query.Length - adjust, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
-                //if (user.HasUsername == false)
+                if (user.HasUsername == false)
                 {
                     //range.CharacterFormat.Underline = UnderlineType.Dash;
                     range.CharacterFormat.ForegroundColor = Colors.Red;
                     range.Link = $"\"{user.Id}\"";
+                    start += range.Link.Length + "HYPERLINK ".Length;
                 }
 
-                TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, "asdasd ");
-                TextField.Document.Selection.StartPosition = start;
+                TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
+                TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.SetDefaultCharacterFormat(format);
 
                 ViewModel.UsernameHints = null;
@@ -1118,6 +1131,15 @@ namespace Unigram.Views
         }
 
         #endregion
+
+        private void Share_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as FrameworkElement;
+            if (button.DataContext is TLMessage message)
+            {
+                ViewModel.MessageShareCommand.Execute(message);
+            }
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading

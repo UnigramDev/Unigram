@@ -47,6 +47,7 @@ namespace Unigram.Controls.Views
         public SendPhotosView()
         {
             InitializeComponent();
+            DataContext = this;
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;

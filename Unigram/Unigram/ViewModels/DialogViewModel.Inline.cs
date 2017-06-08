@@ -77,6 +77,12 @@ namespace Unigram.ViewModels
 
         public async void GetInlineBotResults(string text)
         {
+            if (CurrentInlineBot == null)
+            {
+                InlineBotResults = null;
+                return;
+            }
+
             Debug.WriteLine($"@{CurrentInlineBot.Username}: {CurrentInlineBot.BotInlinePlaceholder}, {text}");
 
             // TODO: cache
