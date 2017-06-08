@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Telegram.Api.Native.TL;
 using Windows.Security.Cryptography;
+using Telegram.Api.TL.Methods.Auth;
+using Telegram.Api.TL;
 
 // Il modello di elemento Pagina vuota è documentato all'indirizzo https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x410
 
@@ -34,6 +36,8 @@ namespace Telegram.Api.Native.Test
             connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;
 
             //connectionManager.SendRequest(new TLError(0, "Hello world"), null, null, 1, ConnectionType.Generic, false, 0);
+
+            TLObjectSerializer.RegisterObjectConstructor(0x5E002502, () => new TLAuthSentCode());
 
             connectionManager.BoomBaby(null, out ITLObject @object);
 
@@ -64,10 +68,12 @@ namespace Telegram.Api.Native.Test
                 ApiHash = Constants.ApiHash,
                 ApiId = Constants.ApiId,
                 PhoneNumber = Constants.PhoneNumber
-            }, (message, ex) =>
+            },
+            (message, ex) =>
             {
                 System.Diagnostics.Debugger.Break();
-            }, null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin);
+            },
+            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin);
         }
 
         private void Instance_CurrentNetworkTypeChanged(ConnectionManager sender, object e)
@@ -78,5 +84,27 @@ namespace Telegram.Api.Native.Test
         {
             GC.Collect();
         }
+    }
+}
+
+namespace Telegram.Api.TL
+{
+    public class TLObject : ITLObject
+    {
+        public virtual TLType TypeId => TLType.None;
+
+        public virtual void Read(TLBinaryReader reader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void Write(TLBinaryWriter writer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint Constructor => (uint)TypeId;
+
+        public bool IsLayerRequired => true;
     }
 }

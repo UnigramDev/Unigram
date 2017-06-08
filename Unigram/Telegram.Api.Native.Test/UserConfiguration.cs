@@ -76,72 +76,72 @@ namespace Telegram.Api.Native.Test
         public uint Constructor => 0;
     }
 
-    public class TLAuthSendCode : ITLObject
-    {
-        [Flags]
-        public enum Flag : Int32
-        {
-            AllowFlashcall = (1 << 0),
-            CurrentNumber = (1 << 0),
-        }
+    //public class TLAuthSendCode : ITLObject
+    //{
+    //    [Flags]
+    //    public enum Flag : Int32
+    //    {
+    //        AllowFlashcall = (1 << 0),
+    //        CurrentNumber = (1 << 0),
+    //    }
 
-        public Flag Flags
-        {
-            get;
-            set;
+    //    public Flag Flags
+    //    {
+    //        get;
+    //        set;
 
-        }
+    //    }
 
-        public String PhoneNumber
-        {
-            get;
-            set;
-        }
+    //    public String PhoneNumber
+    //    {
+    //        get;
+    //        set;
+    //    }
 
-        public Boolean? CurrentNumber
-        {
-            get;
-            set;
-        }
-        public Int32 ApiId
-        {
-            get;
-            set;
-        }
+    //    public Boolean? CurrentNumber
+    //    {
+    //        get;
+    //        set;
+    //    }
+    //    public Int32 ApiId
+    //    {
+    //        get;
+    //        set;
+    //    }
 
-        public String ApiHash
-        {
-            get;
-            set;
-        }
+    //    public String ApiHash
+    //    {
+    //        get;
+    //        set;
+    //    }
 
-        public void Read(TLBinaryReader reader)
-        {
-            Flags = (Flag)reader.ReadInt32();
-            PhoneNumber = reader.ReadString();
+    //    public void Read(TLBinaryReader reader)
+    //    {
+    //        Flags = (Flag)reader.ReadInt32();
+    //        PhoneNumber = reader.ReadString();
 
-            if ((Flags & Flag.CurrentNumber) == Flag.CurrentNumber)
-                CurrentNumber = reader.ReadBoolean();
+    //        if ((Flags & Flag.CurrentNumber) == Flag.CurrentNumber)
+    //            CurrentNumber = reader.ReadBoolean();
 
-            ApiId = reader.ReadInt32();
-            ApiHash = reader.ReadString();
-        }
+    //        ApiId = reader.ReadInt32();
+    //        ApiHash = reader.ReadString();
+    //    }
 
-        public void Write(TLBinaryWriter writer)
-        {
-            writer.WriteInt32((Int32)Flags);
-            writer.WriteString(PhoneNumber);
+    //    public void Write(TLBinaryWriter writer)
+    //    {
+    //        writer.WriteInt32((Int32)Flags);
+    //        writer.WriteString(PhoneNumber);
 
-            if ((Flags & Flag.CurrentNumber) == Flag.CurrentNumber)
-                writer.WriteBoolean(CurrentNumber.Value);
+    //        if ((Flags & Flag.CurrentNumber) == Flag.CurrentNumber)
+    //            writer.WriteBoolean(CurrentNumber.Value);
 
-            writer.WriteInt32(ApiId);
-            writer.WriteString(ApiHash);
-        }
+    //        writer.WriteInt32(ApiId);
+    //        writer.WriteString(ApiHash);
+    //    }
 
-        public bool IsLayerRequired => true;
+    //    public bool IsLayerRequired => true;
 
-        public uint Constructor => 0x86AEF0EC;
-    }
+    //    public uint Constructor => 0x86AEF0EC;
+    //}
 
 }
