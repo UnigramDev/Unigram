@@ -13,6 +13,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Chat background"/>
+        <controls:PageHeader Text="Chat Background"/>
+
+        <GridView Grid.Row="1">
+            
+        </GridView>
     </Grid>
 </Page>
