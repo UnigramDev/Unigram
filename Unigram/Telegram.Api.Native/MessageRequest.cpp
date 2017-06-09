@@ -3,7 +3,7 @@
 #include "TLObject.h"
 #include "TLTypes.h"
 #include "Datacenter.h"
-#include "TLUnprocessedMessage.h"
+#include "MessageResponse.h"
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
@@ -112,7 +112,7 @@ HRESULT MessageRequest::OnSendCompleted(MessageContext const* messageContext, IT
 		return S_OK;
 	}
 
-	auto unprocessedMessage = Make<TLUnprocessedMessage>(messageContext->Id, m_connectionType, messageBody);
+	auto unprocessedMessage = Make<MessageResponse>(messageContext->Id, m_connectionType, messageBody);
 	return m_sendCompletedCallback->Invoke(unprocessedMessage.Get(), S_OK);
 }
 

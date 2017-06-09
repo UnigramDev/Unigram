@@ -43,8 +43,10 @@ namespace Telegram
 
 				class TLBinaryReader;
 				class TLObject;
-				class TLUnparsedObject;
 				class TLMessage;
+				class TLUnparsedObject;	
+				template<typename TLObjectTraits>
+				class TLRpcErrorT;
 				class TLConfig;
 				class TLAuthExportedAuthorization;
 
@@ -61,8 +63,9 @@ namespace Telegram
 				friend class Connection;
 				friend class TL::TLObject;
 				friend class TL::TLUnparsedObject;
+				template<typename TLObjectTraits>
+				friend class TL::TLRpcErrorT;
 				friend class TL::TLConfig;
-				friend class TL::TLAuthExportedAuthorization;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
 
@@ -77,7 +80,7 @@ namespace Telegram
 				IFACEMETHODIMP remove_CurrentNetworkTypeChanged(EventRegistrationToken token);
 				IFACEMETHODIMP add_ConnectionStateChanged(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
 				IFACEMETHODIMP remove_ConnectionStateChanged(EventRegistrationToken token);
-				IFACEMETHODIMP add_UnprocessedMessageReceived(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnprocessedMessage* handler, _Out_ EventRegistrationToken* token);
+				IFACEMETHODIMP add_UnprocessedMessageReceived(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CMessageResponse* handler, _Out_ EventRegistrationToken* token);
 				IFACEMETHODIMP remove_UnprocessedMessageReceived(EventRegistrationToken token);
 				IFACEMETHODIMP get_CurrentDatacenter(_Out_ IDatacenter** value);
 				IFACEMETHODIMP get_ConnectionState(_Out_ ConnectionState* value);
@@ -132,8 +135,10 @@ namespace Telegram
 				void ResetRequests(std::function<boolean(INT32, ComPtr<MessageRequest> const&)> selector);
 				HRESULT CompleteMessageRequest(INT64 requestMessageId, _In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
 				HRESULT OnUnprocessedMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
+				HRESULT OnErrorResponse(INT32 code, _In_ HSTRING text);
 				HRESULT OnConfigResponse(_In_ TL::TLConfig* response);
 				HRESULT OnExportedAuthorizationResponse(_In_ TL::TLAuthExportedAuthorization* response);
+				HRESULT OnAuthorizationResponse(_In_ ITLObject* response);
 				HRESULT OnNetworkStatusChanged(_In_ IInspectable* sender);
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionQuickAckReceived(_In_ Connection* connection, INT32 ack);
@@ -174,7 +179,7 @@ namespace Telegram
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_sessionCreatedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_currentNetworkTypeChangedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_connectionStateChangedEventSource;
-				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnprocessedMessage> m_unprocessedMessageReceivedEventSource;
+				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CMessageResponse> m_unprocessedMessageReceivedEventSource;
 			};
 
 

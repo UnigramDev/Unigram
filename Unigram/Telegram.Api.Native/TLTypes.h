@@ -8,11 +8,11 @@
 #define MakeTLTypeTraits(objectTypeName, constructor) MakeTLObjectTraits(objectTypeName, constructor, "Telegram.Api.Native.TL")
 
 using namespace Microsoft::WRL;
-using ABI::Telegram::Api::Native::TL::ITLError;
+using ABI::Windows::Foundation::IReference;
+using ABI::Telegram::Api::Native::TL::ITLRpcError;
 using ABI::Telegram::Api::Native::TL::ITLDCOption;
 using ABI::Telegram::Api::Native::TL::ITLDisabledFeature;
 using ABI::Telegram::Api::Native::TL::ITLConfig;
-using ABI::Telegram::Api::Native::TL::ITLErrorFactory;
 
 namespace Telegram
 {
@@ -24,7 +24,6 @@ namespace Telegram
 			namespace TL
 			{
 
-				class TLError;
 				class TLDCOption;
 				class TLDisabledFeature;
 				class TLConfig;
@@ -64,7 +63,6 @@ namespace Telegram
 				namespace TLObjectTraits
 				{
 
-					MakeTLTypeTraits(TLError, 0xc4b9f9bb);
 					MakeTLTypeTraits(TLDCOption, 0x5d8c6cc);
 					MakeTLTypeTraits(TLDisabledFeature, 0xae636f24);
 					MakeTLTypeTraits(TLConfig, 0xcb601684);
@@ -102,48 +100,6 @@ namespace Telegram
 
 				}
 
-
-				class TLError WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLError, TLObjectT<TLObjectTraits::TLErrorTraits>>
-				{
-					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLError, BaseTrust);
-
-				public:
-					TLError();
-					~TLError();
-
-					//COM exported methods
-					IFACEMETHODIMP get_Code(_Out_ UINT32* value);
-					IFACEMETHODIMP get_Text(_Out_ HSTRING* value);
-
-					//Internal methods
-					STDMETHODIMP RuntimeClassInitialize(INT32 code, _In_ HSTRING text);
-					STDMETHODIMP RuntimeClassInitialize(HRESULT result);
-
-					template<size_t sizeDest>
-					STDMETHODIMP RuntimeClassInitialize(INT32 code, _In_ const WCHAR(&text)[sizeDest])
-					{
-						m_code = code;
-						return m_text.Set(text);
-					}
-
-					inline INT32 GetCode() const
-					{
-						return m_code;
-					}
-
-					inline HString const& GetText() const
-					{
-						return m_text;
-					}
-
-				protected:
-					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
-					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
-
-				private:
-					INT32 m_code;
-					HString m_text;
-				};
 
 				class TLDCOption WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLDCOption, TLObjectT<TLObjectTraits::TLDCOptionTraits>>
 				{
@@ -449,10 +405,9 @@ namespace Telegram
 				};
 
 				template<typename TLObjectTraits>
-				class TLRpcErrorT abstract : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLError, TLObjectT<TLObjectTraits>, CloakedIid<IMessageResponseHandler>>
+				class TLRpcErrorT abstract : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLRpcError, TLObjectT<TLObjectTraits>, CloakedIid<IMessageResponseHandler>>
 				{
-					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLError, BaseTrust);
-					//InspectableClass(TLObjectTraits::RuntimeClassName, BaseTrust);
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLRpcError, BaseTrust);
 
 				public:
 					TLRpcErrorT() :
@@ -465,6 +420,7 @@ namespace Telegram
 					}
 
 					//COM exported methods
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
 					IFACEMETHODIMP get_Code(_Out_ UINT32* value);
 					IFACEMETHODIMP get_Text(_Out_ HSTRING* value);
 
@@ -480,6 +436,8 @@ namespace Telegram
 					}
 
 				protected:
+					HRESULT RuntimeClassInitialize(INT32 code, _In_ HString& text);
+
 					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
 
 				private:
@@ -490,16 +448,25 @@ namespace Telegram
 				class TLRpcError WrlSealed : public TLRpcErrorT<TLObjectTraits::TLRpcErrorTraits>
 				{
 				public:
-					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					//Internal methods
+					STDMETHODIMP RuntimeClassInitialize(INT32 code, _In_ HSTRING text);
+					STDMETHODIMP RuntimeClassInitialize(HRESULT error);
+
+					template<size_t sizeDest>
+					STDMETHODIMP RuntimeClassInitialize(INT32 code, _In_ const WCHAR(&text)[sizeDest])
+					{
+						HRESULT result;
+						HString errorText;
+						ReturnIfFailed(result, errorText.Set<sizeDest>(text));
+
+						return TLRpcErrorT::RuntimeClassInitialize(code, errorText);
+					}
+
 				};
 
 				class TLRpcReqError WrlSealed : public TLRpcErrorT<TLObjectTraits::TLRpcReqErrorTraits>
 				{
 				public:
-					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
-
 					//Internal methods
 					inline INT64 GetQueryId() const
 					{
@@ -812,15 +779,14 @@ namespace Telegram
 				public:
 					//COM exported methods
 					IFACEMETHODIMP get_Query(_Out_ ITLObject** value);
-					//IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(_In_ ITLObject* object);
 					STDMETHODIMP RuntimeClassInitialize(_In_ NativeBuffer* rawData);
 
-					inline NativeBuffer* GetPackedData() const
+					inline ComPtr<NativeBuffer> const& GetPackedData() const
 					{
-						return m_packedData.Get();
+						return m_packedData;
 					}
 
 				protected:
@@ -831,7 +797,7 @@ namespace Telegram
 					ComPtr<NativeBuffer> m_packedData;
 				};
 
-				class TLAuthExportedAuthorization WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLAuthExportedAuthorizationTraits>, CloakedIid<IMessageResponseHandler>>
+				class TLAuthExportedAuthorization WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLAuthExportedAuthorizationTraits>>
 				{
 					InspectableClass(Traits::RuntimeClassName, BaseTrust);
 
@@ -839,18 +805,15 @@ namespace Telegram
 					TLAuthExportedAuthorization();
 					~TLAuthExportedAuthorization();
 
-					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
-
 					//Internal methods
 					inline INT32 GetId() const
 					{
 						return m_id;
 					}
 
-					inline NativeBuffer* GetBytes() const
+					inline ComPtr<NativeBuffer> const& GetBytes() const
 					{
-						return m_bytes.Get();
+						return m_bytes;
 					}
 
 				protected:
@@ -1233,16 +1196,6 @@ namespace Telegram
 
 				private:
 					ServerSalt m_salt;
-				};
-
-
-				class TLErrorFactory WrlSealed : public AgileActivationFactory<ITLErrorFactory>
-				{
-					InspectableClassStatic(RuntimeClass_Telegram_Api_Native_TL_TLError, BaseTrust);
-
-				public:
-					//COM exported methods
-					IFACEMETHODIMP CreateTLError(UINT32 code, _In_  HSTRING text, _Out_ ITLError** instance);
 				};
 
 			}

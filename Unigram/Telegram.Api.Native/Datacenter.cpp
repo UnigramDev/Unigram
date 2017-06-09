@@ -10,7 +10,7 @@
 #include "ConnectionManager.h"
 #include "TLTypes.h"
 #include "TLMethods.h"
-#include "TLUnprocessedMessage.h"
+#include "MessageResponse.h"
 #include "MessageRequest.h"
 #include "Wrappers\OpenSSL.h"
 #include "Helpers\COMHelper.h"
@@ -1145,7 +1145,7 @@ HRESULT Datacenter::SendPing()
 	auto helpGetConfig = Make<Methods::TLHelpGetConfig>();
 
 	INT32 requestToken;
-	return connectionManager->SendRequestWithFlags(helpGetConfig.Get(), Callback<ISendRequestCompletedCallback>([connectionManager](ITLUnprocessedMessage* response, HRESULT error) -> HRESULT
+	return connectionManager->SendRequestWithFlags(helpGetConfig.Get(), Callback<ISendRequestCompletedCallback>([connectionManager](IMessageResponse* response, HRESULT error) -> HRESULT
 	{
 		return connectionManager->m_unprocessedMessageReceivedEventSource.InvokeAll(connectionManager.Get(), response);
 	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::WithoutLogin | RequestFlag::CanCompress, &requestToken);

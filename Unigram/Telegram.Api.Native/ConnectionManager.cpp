@@ -3,7 +3,7 @@
 #include "ConnectionManager.h"
 #include "Datacenter.h"
 #include "Connection.h"
-#include "TLUnprocessedMessage.h"
+#include "MessageResponse.h"
 #include "MessageRequest.h"
 #include "TLTypes.h"
 #include "TLMethods.h"
@@ -112,7 +112,7 @@ HRESULT ConnectionManager::remove_ConnectionStateChanged(EventRegistrationToken 
 	return m_connectionStateChangedEventSource.Remove(token);
 }
 
-HRESULT ConnectionManager::add_UnprocessedMessageReceived(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CTLUnprocessedMessage* handler, EventRegistrationToken* token)
+HRESULT ConnectionManager::add_UnprocessedMessageReceived(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CMessageResponse* handler, EventRegistrationToken* token)
 {
 	return m_unprocessedMessageReceivedEventSource.Add(handler, token);
 }
@@ -336,20 +336,43 @@ HRESULT ConnectionManager::CancelRequest(INT32 requestToken, boolean notifyServe
 	}
 
 	auto requestsLock = m_requestsCriticalSection.Lock();
-	auto requestIterator = std::find_if(m_runningRequests.begin(), m_runningRequests.end(), [&requestToken](auto const& request)
+	auto requestIterator = std::find_if(m_requestsQueue.begin(), m_requestsQueue.end(), [&requestToken](auto const& request)
+	{
+		return request->GetToken() == requestToken;
+	});
+
+	if (requestIterator != m_requestsQueue.end())
+	{
+		m_requestsQueue.erase(requestIterator);
+
+		*value = true;
+		return S_OK;
+	}
+
+	auto runningRequestIterator = std::find_if(m_runningRequests.begin(), m_runningRequests.end(), [&requestToken](auto const& request)
 	{
 		return request.second->GetToken() == requestToken;
 	});
 
-	if (requestIterator == m_runningRequests.end())
+	if (runningRequestIterator != m_runningRequests.end())
 	{
-		*value = false;
+		if (notifyServer)
+		{
+			auto rpcDropAnswer = Make<Methods::TLRpcDropAnswer>(runningRequestIterator->second->GetMessageContext()->Id);
+
+			HRESULT result;
+			INT32 requestToken;
+			ReturnIfFailed(result, SendRequestWithFlags(rpcDropAnswer.Get(), nullptr, nullptr, runningRequestIterator->first, runningRequestIterator->second->GetConnectionType(),
+				RequestFlag::EnableUnauthorized | RequestFlag::WithoutLogin | RequestFlag::FailOnServerErrors | RequestFlag::Immediate | REQUEST_FLAG_NO_LAYER, &requestToken));
+		}
+
+		m_runningRequests.erase(runningRequestIterator);
+
+		*value = true;
 		return S_OK;
 	}
 
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement request cancellation");
-
-	*value = true;
+	*value = false;
 	return S_OK;
 }
 
@@ -533,24 +556,37 @@ HRESULT ConnectionManager::MoveToDatacenter(INT32 datacenterId)
 
 	ResetRequests([this](auto datacenterId, auto const& request) -> boolean
 	{
-		return datacenterId == m_currentDatacenterId && request->MatchesConnection(ConnectionType::Generic | ConnectionType::Download | ConnectionType::Upload);
+		return datacenterId == m_currentDatacenterId;
 	});
 
-	HRESULT result;
+	m_movingToDatacenterId = datacenterId;
+
 	if (m_userId == 0)
 	{
-
+		return OnExportedAuthorizationResponse(nullptr);
 	}
 	else
 	{
 		auto authExportAuthorization = Make<Methods::TLAuthExportAuthorization>(datacenterId);
 
 		INT32 requestToken;
-		ReturnIfFailed(result, SendRequestWithFlags(authExportAuthorization.Get(), nullptr, nullptr, m_currentDatacenterId, ConnectionType::Generic, RequestFlag::WithoutLogin, &requestToken));
-	}
+		return SendRequestWithFlags(authExportAuthorization.Get(), Callback<ISendRequestCompletedCallback>([this](IMessageResponse* response, HRESULT error) -> HRESULT
+		{
+			auto lock = LockCriticalSection();
 
-	m_movingToDatacenterId = datacenterId;
-	return S_OK;
+			if (SUCCEEDED(error))
+			{
+				return OnExportedAuthorizationResponse(static_cast<TLAuthExportedAuthorization*>(static_cast<MessageResponse*>(response)->GetObject().Get()));
+			}
+			else
+			{
+				auto movingToDatacenterId = m_movingToDatacenterId;
+				m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
+
+				return MoveToDatacenter(movingToDatacenterId);
+			}
+		}).Get(), nullptr, m_currentDatacenterId, ConnectionType::Generic, RequestFlag::WithoutLogin | RequestFlag::Immediate, &requestToken);
+	}
 }
 
 HRESULT ConnectionManager::CreateTransportMessage(MessageRequest* request, INT64& lastRpcMessageId, boolean& requiresLayer, TLMessage** message)
@@ -889,8 +925,20 @@ void ConnectionManager::ResetRequests(std::function<boolean(INT32, ComPtr<Messag
 
 HRESULT ConnectionManager::OnUnprocessedMessageResponse(MessageContext const* messageContext, ITLObject* messageBody, Connection* connection)
 {
-	auto unprocessedMessage = Make<TLUnprocessedMessage>(messageContext->Id, connection->GetType(), messageBody);
+	auto unprocessedMessage = Make<MessageResponse>(messageContext->Id, connection->GetType(), messageBody);
 	return m_unprocessedMessageReceivedEventSource.InvokeAll(this, unprocessedMessage.Get());
+}
+
+HRESULT ConnectionManager::OnErrorResponse(INT32 code, HSTRING text)
+{
+	/*switch (code)
+	{
+	case 303:
+
+		break;
+	}*/
+
+	return S_OK;
 }
 
 HRESULT ConnectionManager::OnConfigResponse(TLConfig* response)
@@ -902,8 +950,6 @@ HRESULT ConnectionManager::OnConfigResponse(TLConfig* response)
 
 HRESULT ConnectionManager::OnExportedAuthorizationResponse(TLAuthExportedAuthorization* response)
 {
-	auto lock = LockCriticalSection();
-
 	auto datacenterIterator = m_datacenters.find(m_movingToDatacenterId);
 	if (datacenterIterator == m_datacenters.end())
 	{
@@ -911,12 +957,58 @@ HRESULT ConnectionManager::OnExportedAuthorizationResponse(TLAuthExportedAuthori
 		return E_INVALIDARG;
 	}
 
-	HRESULT result;
-	ComPtr<Methods::TLAuthImportAuthorization> authImportAuthorization;
-	ReturnIfFailed(result, MakeAndInitialize<Methods::TLAuthImportAuthorization>(&authImportAuthorization, response->GetId(), response->GetBytes()));
+	datacenterIterator->second->RecreateSessions();
 
-	INT32 requestToken;
-	return SendRequestWithFlags(authImportAuthorization.Get(), nullptr, nullptr, m_movingToDatacenterId, ConnectionType::Generic, RequestFlag::WithoutLogin, &requestToken);
+	ResetRequests([this](auto datacenterId, auto const& request) -> boolean
+	{
+		return datacenterId == m_movingToDatacenterId;
+	});
+
+	if (!datacenterIterator->second->IsAuthenticated())
+	{
+		datacenterIterator->second->ClearServerSalts();
+
+		HRESULT result;
+		ReturnIfFailed(result, datacenterIterator->second->BeginHandshake(true, false));
+	}
+
+	if (response == nullptr)
+	{
+		return OnAuthorizationResponse(nullptr);
+	}
+	else
+	{
+		HRESULT result;
+		ComPtr<Methods::TLAuthImportAuthorization> authImportAuthorization;
+		ReturnIfFailed(result, MakeAndInitialize<Methods::TLAuthImportAuthorization>(&authImportAuthorization, response->GetId(), response->GetBytes().Get()));
+
+		INT32 requestToken;
+		return SendRequestWithFlags(authImportAuthorization.Get(), Callback<ISendRequestCompletedCallback>([this](IMessageResponse* response, HRESULT error) -> HRESULT
+		{
+			auto lock = LockCriticalSection();
+
+			if (SUCCEEDED(error))
+			{
+				return OnAuthorizationResponse(static_cast<MessageResponse*>(response)->GetObject().Get());
+			}
+			else
+			{
+				auto movingToDatacenterId = m_movingToDatacenterId;
+				m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
+
+				return MoveToDatacenter(movingToDatacenterId);
+			}
+		}).Get(), nullptr, m_movingToDatacenterId, ConnectionType::Generic, RequestFlag::WithoutLogin | RequestFlag::Immediate, &requestToken);
+	}
+}
+
+HRESULT ConnectionManager::OnAuthorizationResponse(ITLObject* response)
+{
+	m_currentDatacenterId = m_movingToDatacenterId;
+	m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
+
+	I_WANT_TO_DIE_IS_THE_NEW_TODO("Save configuration?");
+	return S_OK;
 }
 
 HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
@@ -1091,10 +1183,7 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 	HRESULT result;
 	ReturnIfFailed(result, InitializeDatacenters());
 
-	ComPtr<TLError> errorObject;
-	ReturnIfFailed(result, MakeAndInitialize<TLError>(&errorObject, E_POINTER));
-
-	*object = errorObject.Detach();
+	*object = Make<TLRpcError>().Detach();
 
 	ComPtr<Datacenter> datacenter;
 	GetDatacenterById(m_currentDatacenterId, datacenter);

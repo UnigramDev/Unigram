@@ -1,23 +1,23 @@
 #include "pch.h"
-#include "TLUnprocessedMessage.h"
+#include "MessageResponse.h"
 #include "TLBinaryReader.h"
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
 
 
-TLUnprocessedMessage::TLUnprocessedMessage(INT64 messageId, ConnectionType connectionType, ITLObject* object) :
+MessageResponse::MessageResponse(INT64 messageId, ConnectionType connectionType, ITLObject* object) :
 	m_messageId(messageId),
 	m_connectionType(connectionType),
 	m_object(object)
 {
 }
 
-TLUnprocessedMessage::~TLUnprocessedMessage()
+MessageResponse::~MessageResponse()
 {
 }
 
-HRESULT TLUnprocessedMessage::get_MessageId(INT64* value)
+HRESULT MessageResponse::get_MessageId(INT64* value)
 {
 	if (value == nullptr)
 	{
@@ -28,7 +28,7 @@ HRESULT TLUnprocessedMessage::get_MessageId(INT64* value)
 	return S_OK;
 }
 
-HRESULT TLUnprocessedMessage::get_ConnectionType(ConnectionType* value)
+HRESULT MessageResponse::get_ConnectionType(ConnectionType* value)
 {
 	if (value == nullptr)
 	{
@@ -39,7 +39,7 @@ HRESULT TLUnprocessedMessage::get_ConnectionType(ConnectionType* value)
 	return S_OK;
 }
 
-HRESULT TLUnprocessedMessage::get_Object(ITLObject** value)
+HRESULT MessageResponse::get_Object(ITLObject** value)
 {
 	if (value == nullptr)
 	{
