@@ -16,6 +16,11 @@ using Telegram.Api.Native.TL;
 using Windows.Security.Cryptography;
 using Telegram.Api.TL.Methods.Auth;
 using Telegram.Api.TL;
+using System.Diagnostics;
+using Telegram.Api.TL.Methods.Contacts;
+using System.ComponentModel;
+using Telegram.Api.TL.Methods.Upload;
+using Telegram.Api.TL.Methods.Messages;
 
 // Il modello di elemento Pagina vuota è documentato all'indirizzo https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x410
 
@@ -37,7 +42,7 @@ namespace Telegram.Api.Native.Test
 
             //connectionManager.SendRequest(new TLError(0, "Hello world"), null, null, 1, ConnectionType.Generic, false, 0);
 
-            TLObjectSerializer.RegisterObjectConstructor(0x5E002502, () => new TLAuthSentCode());
+            TLTestObject.Register();
 
             connectionManager.BoomBaby(null, out ITLObject @object);
 
@@ -63,15 +68,68 @@ namespace Telegram.Api.Native.Test
                     break;
             }
 
-            var messageToken = sender.SendRequest(new TLAuthSendCode()
+            var config = args.Object as TLConfig;
+            if (config == null)
             {
-                ApiHash = Constants.ApiHash,
-                ApiId = Constants.ApiId,
-                PhoneNumber = Constants.PhoneNumber
-            },
-            (message, ex) =>
+                Debugger.Break();
+                return;
+            }
+
+            var authSendCode = new TLAuthSendCode { ApiHash = Constants.ApiHash, ApiId = Constants.ApiId, PhoneNumber = Constants.PhoneNumber };
+            var messageToken = sender.SendRequest(authSendCode, (message, ex) =>
             {
-                System.Diagnostics.Debugger.Break();
+                var sentCode = message.Object as TLAuthSentCode;
+                if (sentCode == null)
+                {
+                    Debugger.Break();
+                    return;
+                }
+
+                var authSignIn = new TLAuthSignIn { PhoneNumber = Constants.PhoneNumber, PhoneCode = Constants.PhoneCode, PhoneCodeHash = sentCode.PhoneCodeHash };
+                sender.SendRequest(authSignIn, (message2, ex2) =>
+                {
+                    var authorization = message2.Object as TLAuthAuthorization;
+                    if (authorization == null)
+                    {
+                        Debugger.Break();
+                        return;
+                    }
+
+                    sender.UserId = authorization.User.Id;
+
+                    var resolve = new TLContactsResolveUsername { Username = Constants.Resolve };
+                    sender.SendRequest(resolve, (message3, ex3) =>
+                    {
+                        var resolvedPeer = message3.Object as TLContactsResolvedPeer;
+                        if (resolvedPeer == null)
+                        {
+                            Debugger.Break();
+                            return;
+                        }
+
+                        var user = resolvedPeer.Users.FirstOrDefault() as TLUser;
+                        if (user == null)
+                        {
+                            Debugger.Break();
+                            return;
+                        }
+
+                        var photo = user.Photo as TLUserProfilePhoto;
+                        var big = photo.PhotoBig as TLFileLocation;
+
+                        var getFile = new TLUploadGetFile { Offset = 0, Limit = 32 * 1024, Location = new TLInputFileLocation { VolumeId = big.VolumeId, LocalId = big.LocalId, Secret = big.Secret } };
+                        sender.SendRequest(getFile, (message5, ex5) =>
+                        {
+                            Debugger.Break();
+                        },
+                        // Shouldn't require login
+                        // Should run on Download conneti
+                        null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.TryDifferentDc);
+                    },
+                    // Shouldn't require login
+                    null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin);
+                },
+                null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin);
             },
             null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin);
         }
@@ -91,6 +149,7 @@ namespace Telegram.Api.TL
 {
     public class TLObject : ITLObject
     {
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public virtual TLType TypeId => TLType.None;
 
         public virtual void Read(TLBinaryReader reader)
@@ -103,8 +162,10 @@ namespace Telegram.Api.TL
             throw new NotImplementedException();
         }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public uint Constructor => (uint)TypeId;
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool IsLayerRequired => true;
     }
 }
