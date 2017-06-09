@@ -38,7 +38,6 @@
     </ClCompile>
     <ClCompile Include="ConnectionCryptography.cpp" />
     <ClCompile Include="DatacenterCryptography.cpp" />
-    <ClCompile Include="TLUnprocessedMessage.cpp" />
     <ClCompile Include="TLTypes.cpp">
       <Filter>TLProtocolScheme</Filter>
     </ClCompile>
@@ -49,6 +48,7 @@
     <ClCompile Include="ThreadpoolManager.cpp">
       <Filter>Threading</Filter>
     </ClCompile>
+    <ClCompile Include="MessageResponse.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -83,7 +83,6 @@
     <ClInclude Include="Wrappers\OpenSSL.h">
       <Filter>Wrappers</Filter>
     </ClInclude>
-    <ClInclude Include="TLUnprocessedMessage.h" />
     <ClInclude Include="GZip.h" />
     <ClInclude Include="TLTypes.h">
       <Filter>TLProtocolScheme</Filter>
@@ -102,6 +101,7 @@
     <ClInclude Include="ThreadpoolObject.h">
       <Filter>Threading</Filter>
     </ClInclude>
+    <ClInclude Include="MessageResponse.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

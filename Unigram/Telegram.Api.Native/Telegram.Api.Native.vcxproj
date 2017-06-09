@@ -307,7 +307,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="MessageRequest.h" />
     <ClInclude Include="TLObjectSerializer.h" />
     <ClInclude Include="TLTypes.h" />
-    <ClInclude Include="TLUnprocessedMessage.h" />
+    <ClInclude Include="MessageResponse.h" />
     <ClInclude Include="Wrappers\WSAEvent.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ConnectionSocket.h" />
@@ -342,7 +342,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClCompile Include="TLObjectSerializer.cpp" />
     <ClCompile Include="TLTypes.cpp" />
     <ClCompile Include="TLMethods.cpp" />
-    <ClCompile Include="TLUnprocessedMessage.cpp" />
+    <ClCompile Include="MessageResponse.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

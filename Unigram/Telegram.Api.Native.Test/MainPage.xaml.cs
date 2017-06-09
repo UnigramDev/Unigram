@@ -50,7 +50,7 @@ namespace Telegram.Api.Native.Test
         {
         }
 
-        private void ConnectionManager_UnprocessedMessageReceived(ConnectionManager sender, TLUnprocessedMessage args)
+        private void ConnectionManager_UnprocessedMessageReceived(ConnectionManager sender, MessageResponse args)
         {
             switch (args.Object)
             {
@@ -59,7 +59,7 @@ namespace Telegram.Api.Native.Test
                     var dcOptions = tlConfig.DCOptions.ToArray();
                     var disabledFeatures = tlConfig.DisabledFeatures.ToArray();
                     break;
-                case TLError tlError:
+                case TLRpcError tlRpcError:
                     break;
             }
 
@@ -78,7 +78,6 @@ namespace Telegram.Api.Native.Test
 
         private void Instance_CurrentNetworkTypeChanged(ConnectionManager sender, object e)
         {
-            var xxx = new TLObject();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

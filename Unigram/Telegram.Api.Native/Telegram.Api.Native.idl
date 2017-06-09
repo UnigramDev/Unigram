@@ -22,7 +22,7 @@ namespace Telegram
 			runtimeclass Datacenter;
 			runtimeclass Connection;
 			runtimeclass ConnectionManager;
-			runtimeclass TLUnprocessedMessage;
+			runtimeclass MessageResponse;
 
 			delegate SendRequestCompletedCallback;
 			delegate RequestQuickAckReceivedCallback;
@@ -38,7 +38,7 @@ namespace Telegram
 				runtimeclass TLBinaryWriter;
 				runtimeclass TLObjectSerializer;
 				runtimeclass TLUnparsedObject;
-				runtimeclass TLError;
+				runtimeclass TLRpcError;
 				runtimeclass TLDCOption;
 				runtimeclass TLDisabledFeature;
 				runtimeclass TLConfig;
@@ -221,30 +221,21 @@ namespace Telegram
 				}
 
 
-				[exclusiveto(TLError)]
+				[exclusiveto(TLRpcError)]
 				[uuid(7E992965-E9B1-4804-9C1C-E578B5C397AF)]
 				[version(API_VERSION)]
-				interface ITLError : IInspectable
+				interface ITLRpcError : IInspectable
 				{
 					[propget] HRESULT Code([out][retval] UINT32* value);
 					[propget] HRESULT Text([out][retval] HSTRING* value);
 				}
 
-				[exclusiveto(TLError)]
-				[uuid(80E1E4F5-C91C-4785-A6B0-25CE6A6C7825)]
-				[version(API_VERSION)]
-				interface ITLErrorFactory : IInspectable
-				{
-					HRESULT CreateTLError([in] UINT32 code,[in] HSTRING text,[out][retval] TLError** instance);
-				}
-
-				[activatable(ITLErrorFactory, API_VERSION)]
 				[marshaling_behavior(agile)]
 				[threading(both)]
 				[version(API_VERSION)]
-				runtimeclass TLError
+				runtimeclass TLRpcError
 				{
-					[default] interface ITLError;
+					[default] interface ITLRpcError;
 					interface ITLObject;
 				}
 
@@ -391,10 +382,10 @@ namespace Telegram
 			cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(ABI::Telegram::Api::Native::ConnectionType);")
 
 
-			[exclusiveto(TLUnprocessedMessage)]
+			[exclusiveto(MessageResponse)]
 			[uuid(7C4C00BC-3D6A-4623-B6BB-C8CF22F5A839)]
 			[version(API_VERSION)]
-			interface ITLUnprocessedMessage : IInspectable
+			interface IMessageResponse : IInspectable
 			{
 				[propget] HRESULT MessageId([out][retval] INT64* value);
 				[propget] HRESULT ConnectionType([out][retval] ConnectionType* value);
@@ -404,15 +395,15 @@ namespace Telegram
 			[marshaling_behavior(agile)]
 			[threading(both)]
 			[version(API_VERSION)]
-			runtimeclass TLUnprocessedMessage
+			runtimeclass MessageResponse
 			{
-				[default] interface ITLUnprocessedMessage;
+				[default] interface IMessageResponse;
 			}
 
 
 			[uuid(CA172FA9-416D-4BD9-AB8C-B8696391D38F)]
 			[version(API_VERSION)]
-			delegate HRESULT SendRequestCompletedCallback([in] TLUnprocessedMessage* response, HRESULT error);
+			delegate HRESULT SendRequestCompletedCallback([in] MessageResponse* response, HRESULT error);
 
 			[uuid(8F88DCA2-FC97-4C94-B564-3DDBF1675477)]
 			[version(API_VERSION)]
@@ -496,7 +487,7 @@ namespace Telegram
 				[eventremove] HRESULT CurrentNetworkTypeChanged([in] EventRegistrationToken token);
 				[eventadd] HRESULT ConnectionStateChanged([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler,[out][retval] EventRegistrationToken* token);
 				[eventremove] HRESULT ConnectionStateChanged([in] EventRegistrationToken token);
-				[eventadd] HRESULT UnprocessedMessageReceived([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, TLUnprocessedMessage*>* handler,[out][retval] EventRegistrationToken* token);
+				[eventadd] HRESULT UnprocessedMessageReceived([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, MessageResponse*>* handler,[out][retval] EventRegistrationToken* token);
 				[eventremove] HRESULT UnprocessedMessageReceived([in] EventRegistrationToken token);
 				[propget] HRESULT ConnectionState([out][retval] ConnectionState* value);
 				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);

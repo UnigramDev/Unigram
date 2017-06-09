@@ -17,9 +17,6 @@ using namespace Telegram::Api::Native::TL;
 using Windows::Foundation::Collections::VectorView;
 
 
-ActivatableClassWithFactory(TLError, TLErrorFactory);
-
-RegisterTLObjectConstructor(TLError);
 RegisterTLObjectConstructor(TLDCOption);
 RegisterTLObjectConstructor(TLDisabledFeature);
 RegisterTLObjectConstructor(TLConfig);
@@ -52,74 +49,6 @@ RegisterTLObjectConstructor(TLServerDHParamsOk);
 RegisterTLObjectConstructor(TLResPQ);
 RegisterTLObjectConstructor(TLFutureSalts);
 RegisterTLObjectConstructor(TLFutureSalt);
-
-
-TLError::TLError() :
-	m_code(0)
-{
-}
-
-TLError::~TLError()
-{
-}
-
-HRESULT TLError::RuntimeClassInitialize(INT32 code, HSTRING text)
-{
-	m_code = code;
-	return m_text.Set(text);
-}
-
-HRESULT TLError::RuntimeClassInitialize(HRESULT result)
-{
-	m_code = result;
-
-	WCHAR* text;
-	UINT32 length;
-	if ((length = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
-		result, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), reinterpret_cast<LPWSTR>(&text), 0, nullptr)) == 0)
-	{
-		m_text.Set(L"Unknown error");
-	}
-	else
-	{
-		m_text.Set(text, length);
-		LocalFree(text);
-	}
-
-	return S_OK;
-}
-
-HRESULT TLError::get_Code(UINT32* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	*value = m_code;
-	return S_OK;
-}
-
-HRESULT TLError::get_Text(HSTRING* value)
-{
-	return m_text.CopyTo(value);
-}
-
-HRESULT TLError::ReadBody(ITLBinaryReaderEx* reader)
-{
-	HRESULT result;
-	ReturnIfFailed(result, reader->ReadInt32(&m_code));
-
-	return reader->ReadString(m_text.GetAddressOf());
-}
-
-HRESULT TLError::WriteBody(ITLBinaryWriterEx* writer)
-{
-	HRESULT result;
-	ReturnIfFailed(result, writer->WriteInt32(m_code));
-
-	return writer->WriteString(m_text.Get());
-}
 
 
 TLDCOption::TLDCOption() :
@@ -716,21 +645,51 @@ HRESULT TLRpcErrorT<TLObjectTraits>::get_Text(HSTRING* value)
 	return m_text.CopyTo(value);
 }
 
-
-HRESULT TLRpcError::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+template<typename TLObjectTraits>
+HRESULT TLRpcErrorT<TLObjectTraits>::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLRpcError response handling");
+	return connectionManager->OnErrorResponse(m_code, m_text.Get());
+}
+
+template<typename TLObjectTraits>
+HRESULT TLRpcErrorT<TLObjectTraits>::RuntimeClassInitialize(INT32 code, HString& text)
+{
+	m_code = code;
+	m_text = std::move(text);
 
 	return S_OK;
 }
 
 
-HRESULT TLRpcReqError::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLRpcError::RuntimeClassInitialize(INT32 code, HSTRING text)
 {
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLRpcReqError response handling");
+	HRESULT result;
+	HString errorText;
+	ReturnIfFailed(result, errorText.Set(text));
 
-	return S_OK;
+	return TLRpcErrorT::RuntimeClassInitialize(code, std::move(errorText));
 }
+
+HRESULT TLRpcError::RuntimeClassInitialize(HRESULT error)
+{
+	WCHAR* text;
+	UINT32 length;
+	HRESULT result;
+	HString errorText;
+	if ((length = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
+		error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), reinterpret_cast<LPWSTR>(&text), 0, nullptr)) == 0)
+	{
+		ReturnIfFailed(result, errorText.Set(L"Unknown error"));
+	}
+	else
+	{
+		ReturnIfFailed(result, errorText.Set(text, length));
+		LocalFree(text);
+	}
+
+	return TLRpcErrorT::RuntimeClassInitialize(error, errorText);
+}
+
 
 HRESULT TLRpcReqError::ReadBody(ITLBinaryReaderEx* reader)
 {
@@ -1062,11 +1021,6 @@ TLAuthExportedAuthorization::~TLAuthExportedAuthorization()
 {
 }
 
-HRESULT TLAuthExportedAuthorization::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
-{
-	return connectionManager->OnExportedAuthorizationResponse(this);
-}
-
 HRESULT TLAuthExportedAuthorization::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
@@ -1338,10 +1292,4 @@ HRESULT TLFutureSalt::ReadBody(ITLBinaryReaderEx* reader)
 	ReturnIfFailed(result, reader->ReadInt32(&m_salt.ValidUntil));
 
 	return reader->ReadInt64(&m_salt.Salt);
-}
-
-
-HRESULT TLErrorFactory::CreateTLError(UINT32 code, HSTRING text, ITLError** instance)
-{
-	return MakeAndInitialize<TLError>(instance, code, text);
 }
