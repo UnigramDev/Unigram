@@ -10,17 +10,17 @@ namespace Telegram.Api.TL
 		{
 			Gallery = (1 << 0),
 			NextOffset = (1 << 1),
-			SwitchPm = (1 << 2),
+			SwitchPM = (1 << 2),
 		}
 
 		public bool IsGallery { get { return Flags.HasFlag(Flag.Gallery); } set { Flags = value ? (Flags | Flag.Gallery) : (Flags & ~Flag.Gallery); } }
 		public bool HasNextOffset { get { return Flags.HasFlag(Flag.NextOffset); } set { Flags = value ? (Flags | Flag.NextOffset) : (Flags & ~Flag.NextOffset); } }
-		public bool HasSwitchPm { get { return Flags.HasFlag(Flag.SwitchPm); } set { Flags = value ? (Flags | Flag.SwitchPm) : (Flags & ~Flag.SwitchPm); } }
+		public bool HasSwitchPM { get { return Flags.HasFlag(Flag.SwitchPM); } set { Flags = value ? (Flags | Flag.SwitchPM) : (Flags & ~Flag.SwitchPM); } }
 
 		public Flag Flags { get; set; }
 		public Int64 QueryId { get; set; }
 		public String NextOffset { get; set; }
-		public TLInlineBotSwitchPM SwitchPm { get; set; }
+		public TLInlineBotSwitchPM SwitchPM { get; set; }
 		public TLVector<TLBotInlineResultBase> Results { get; set; }
 		public Int32 CacheTime { get; set; }
 
@@ -37,7 +37,7 @@ namespace Telegram.Api.TL
 			Flags = (Flag)from.ReadInt32();
 			QueryId = from.ReadInt64();
 			if (HasNextOffset) NextOffset = from.ReadString();
-			if (HasSwitchPm) SwitchPm = TLFactory.Read<TLInlineBotSwitchPM>(from);
+			if (HasSwitchPM) SwitchPM = TLFactory.Read<TLInlineBotSwitchPM>(from);
 			Results = TLFactory.Read<TLVector<TLBotInlineResultBase>>(from);
 			CacheTime = from.ReadInt32();
 		}
@@ -50,7 +50,7 @@ namespace Telegram.Api.TL
 			to.Write((Int32)Flags);
 			to.Write(QueryId);
 			if (HasNextOffset) to.Write(NextOffset);
-			if (HasSwitchPm) to.WriteObject(SwitchPm);
+			if (HasSwitchPM) to.WriteObject(SwitchPM);
 			to.WriteObject(Results);
 			to.Write(CacheTime);
 		}
@@ -58,7 +58,7 @@ namespace Telegram.Api.TL
 		private void UpdateFlags()
 		{
 			HasNextOffset = NextOffset != null;
-			HasSwitchPm = SwitchPm != null;
+			HasSwitchPM = SwitchPM != null;
 		}
 	}
 }

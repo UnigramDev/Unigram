@@ -43,6 +43,8 @@ namespace Unigram.Core.Services
                                 notes = notes.Replace("\n\n<p>How to install Unigram: http://telegra.ph/How-to-install-Unigram-03-10-2</p>", string.Empty);
                                 notes = notes.Replace("<ul>", string.Empty);
                                 notes = notes.Replace("</ul>", string.Empty);
+                                notes = notes.Replace("<p>", string.Empty);
+                                notes = notes.Replace("</p>", string.Empty);
                                 notes = notes.RegexReplace("<li>(.*?)</li>", "- $1");
                                 notes = notes.Trim('\n');
 

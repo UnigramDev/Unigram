@@ -203,20 +203,20 @@ namespace Telegram.Api.Helpers
             }
         }
 
-        public static int GifsHash
+        public static bool IsTestMode
         {
             get
             {
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("GifsHash"))
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("IsTestMode"))
                 {
-                    return (int)ApplicationData.Current.LocalSettings.Values["GifsHash"];
+                    return (bool)ApplicationData.Current.LocalSettings.Values["IsTestMode"];
                 }
 
-                return 0;
+                return false;
             }
             set
             {
-                ApplicationData.Current.LocalSettings.Values["GifsHash"] = value;
+                ApplicationData.Current.LocalSettings.Values["IsTestMode"] = value;
             }
         }
     }

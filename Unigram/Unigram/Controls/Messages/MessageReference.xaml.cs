@@ -178,6 +178,10 @@ namespace Unigram.Controls.Messages
                                     {
                                         return SetVideoTemplate(forwardMessage, "forward");
                                     }
+                                    else if (forwardMessage.IsRoundVideo())
+                                    {
+                                        return SetRoundVideoTemplate(forwardMessage, "forward");
+                                    }
                                     else if (forwardMessage.IsAudio())
                                     {
                                         return SetAudioTemplate(forwardMessage, "forward");
@@ -237,6 +241,10 @@ namespace Unigram.Controls.Messages
                                 else if (editMessage.IsVideo())
                                 {
                                     return SetVideoTemplate(editMessage, "Edit message");
+                                }
+                                else if (editMessage.IsRoundVideo())
+                                {
+                                    return SetRoundVideoTemplate(editMessage, "Edit message");
                                 }
                                 else if (editMessage.IsAudio())
                                 {
@@ -307,6 +315,10 @@ namespace Unigram.Controls.Messages
                             else if (message.IsVideo())
                             {
                                 return SetVideoTemplate(message, Title);
+                            }
+                            else if (message.IsRoundVideo())
+                            {
+                                return SetRoundVideoTemplate(message, Title);
                             }
                             else if (message.IsAudio())
                             {
@@ -505,30 +517,7 @@ namespace Unigram.Controls.Messages
                 var document = documentMedia.Document as TLDocument;
                 if (document != null)
                 {
-                    var audioAttribute = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
-                    if (audioAttribute != null)
-                    {
-                        if (audioAttribute.HasPerformer && audioAttribute.HasTitle)
-                        {
-                            ServiceLabel.Text = $"{audioAttribute.Performer} - {audioAttribute.Title}";
-                        }
-                        else if (audioAttribute.HasPerformer && !audioAttribute.HasTitle)
-                        {
-                            ServiceLabel.Text = $"{audioAttribute.Performer} - Unknown Track";
-                        }
-                        else if (audioAttribute.HasTitle && !audioAttribute.HasPerformer)
-                        {
-                            ServiceLabel.Text = $"{audioAttribute.Title}";
-                        }
-                        else
-                        {
-                            ServiceLabel.Text = document.FileName;
-                        }
-                    }
-                    else
-                    {
-                        ServiceLabel.Text = document.FileName;
-                    }
+                    ServiceLabel.Text = document.Title;
                 }
 
                 if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
@@ -617,6 +606,34 @@ namespace Unigram.Controls.Messages
                 }
 
                 ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = default(CornerRadius);
+                ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, true);
+            }
+
+            return true;
+        }
+
+        private bool SetRoundVideoTemplate(TLMessage message, string title)
+        {
+            Visibility = Visibility.Visible;
+
+            FindName(nameof(ThumbRoot));
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Visible;
+
+            TitleLabel.Text = GetFromLabel(message, title);
+            ServiceLabel.Text = "Video message";
+            MessageLabel.Text = string.Empty;
+
+            var documentMedia = message.Media as TLMessageMediaDocument;
+            if (documentMedia != null)
+            {
+                if (!string.IsNullOrWhiteSpace(documentMedia.Caption))
+                {
+                    ServiceLabel.Text += ", ";
+                    MessageLabel.Text += documentMedia.Caption.Replace("\r\n", "\n").Replace('\n', ' ');
+                }
+
+                ThumbRoot.CornerRadius = ThumbEllipse.CornerRadius = new CornerRadius(18);
                 ThumbImage.ImageSource = (ImageSource)DefaultPhotoConverter.Convert(documentMedia.Document, true);
             }
 

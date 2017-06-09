@@ -11,15 +11,15 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
+    Margin="{ThemeResource MessageContentMargin}"
     HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
-    MaxWidth="432">
+    MaxWidth="{ThemeResource MessageMaxWidth}">
 
     <!-- TODO: not the right way -->
     <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
     <UserControl x:Name="LayoutRoot">
         <Grid x:Name="ContentPanel"
-              Margin="{ThemeResource MessageContentMargin}"
               Padding="{ThemeResource MessageContentPadding}"
               CornerRadius="{ThemeResource MessageCornerRadius}"
               Background="{ThemeResource MessageBackgroundBrush}"
@@ -60,17 +60,16 @@
                 Click="Reply_Click"
                 Grid.Row="1"/>
 
-            <RichTextBlock
+            <TextBlock
                 x:Name="MessageControl"
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
-                Style="{ThemeResource BodyRichTextBlockStyle}"
+                Style="{ThemeResource BodyTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
-                ContextRequested="MessageControl_ContextRequested"
                 Grid.Row="2">
-                <RichTextBlock.Resources>
+                <TextBlock.Resources>
                     <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
-                </RichTextBlock.Resources>
-            </RichTextBlock>
+                </TextBlock.Resources>
+            </TextBlock>
 
             <controls:MediaControl
                 x:Name="MediaControl"
@@ -81,7 +80,7 @@
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
                 Grid.Row="3"/>
 
-            <local:MessageStatusControl
+            <local:MessageStateControl
                 x:Name="StatusControl"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
@@ -90,6 +89,6 @@
         </Grid>
     </UserControl>
 
-    <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick"/>
+    <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2"/>
 
 </local:MessageBubbleBase>

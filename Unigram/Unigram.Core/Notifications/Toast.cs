@@ -18,14 +18,20 @@ namespace Unigram.Core.Notifications
 
         public static async Task RegisterBackgroundTasks()
         {
-            BackgroundExecutionManager.RemoveAccess();
+            //BackgroundExecutionManager.RemoveAccess();
 
-            foreach (var t in BackgroundTaskRegistration.AllTasks)
+            //foreach (var t in BackgroundTaskRegistration.AllTasks)
+            //{
+            //    if (t.Value.Name == "NotificationTask")
+            //    {
+            //        t.Value.Unregister(false);
+            //    }
+            //}
+
+            var access = await BackgroundExecutionManager.RequestAccessAsync();
+            if (access == BackgroundAccessStatus.DeniedByUser || access == BackgroundAccessStatus.DeniedBySystemPolicy)
             {
-                if (t.Value.Name == "NotificationTask")
-                {
-                    t.Value.Unregister(false);
-                }
+                return;
             }
 
             // TODO: remove the "new" when releasing to the store
@@ -82,7 +88,7 @@ namespace Unigram.Core.Notifications
         public static Dictionary<string, string> SplitArguments(string arguments)
         {
             var dictionary = new Dictionary<string, string>();
-            if (arguments == null || arguments == string.Empty || !arguments.Contains("&"))
+            if (arguments == null || arguments == string.Empty || !arguments.Contains("="))
             {
                 return dictionary;
             }

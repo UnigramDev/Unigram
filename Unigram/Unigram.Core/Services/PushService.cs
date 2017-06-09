@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Unigram.Common;
+using Windows.ApplicationModel;
 using Windows.Networking.PushNotifications;
 
 namespace Unigram.Core.Services
@@ -13,6 +15,7 @@ namespace Unigram.Core.Services
     public interface IPushService
     {
         Task RegisterAsync();
+        Task UnregisterAsync();
     }
 
     public class PushService : IPushService
@@ -50,8 +53,22 @@ namespace Unigram.Core.Services
                         await _protoService.UnregisterDeviceAsync(8, oldUri);
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Debugger.Break();
+                }
             }
+        }
+
+        public async Task UnregisterAsync()
+        {
+            var channel = SettingsHelper.ChannelUri;
+            var response = await _protoService.UnregisterDeviceAsync(8, channel);
+            if (response.IsSucceeded)
+            {
+            }
+
+            SettingsHelper.ChannelUri = null;
         }
     }
 }

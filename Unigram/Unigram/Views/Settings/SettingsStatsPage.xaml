@@ -22,120 +22,112 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid Background="{ThemeResource TelegramBackgroundTitlebarBrush}" Height="{ThemeResource AppBarThemeCompactHeight}">
-            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-        </Grid>
+        <controls:PageHeader Text="Data usage"/>
 
-        <Pivot ItemsSource="{x:Bind ViewModel.Items}"
-               SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-               Grid.RowSpan="2">
-            <Pivot.HeaderTemplate>
-                <DataTemplate x:DataType="viewModels:SettingsStatsNetwork">
-                    <TextBlock Text="{x:Bind Title}" Style="{StaticResource BaseTextBlockStyle}"/>
-                </DataTemplate>
-            </Pivot.HeaderTemplate>
-            <Pivot.ItemTemplate>
-                <DataTemplate x:DataType="viewModels:SettingsStatsNetwork">
-                    <Grid>
-                        <controls:ScrollViewerBackground 
-                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                            ScrollingHost="{Binding ElementName=ScrollingHost}"
-                            VerticalAlignment="Top"
-                            Grid.Row="1"/>
-                        <ScrollViewer x:Name="ScrollingHost"
-                                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                                      VerticalScrollBarVisibility="Auto"
-                                      VerticalScrollMode="Auto"
-                                      Grid.Row="1">
-                            <StackPanel>
-                                <ItemsControl ItemsSource="{x:Bind Items}">
-                                    <ItemsControl.ItemTemplateSelector>
-                                        <selectors:StatsDataTemplateSelector>
-                                            <selectors:StatsDataTemplateSelector.BaseTemplate>
-                                                <DataTemplate x:DataType="viewModels:SettingsStatsDataBase">
-                                                    <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                                                        <TextBlock Text="{x:Bind Title}" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                                                        <Grid>
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition/>
-                                                                <RowDefinition/>
-                                                            </Grid.RowDefinitions>
-                                                            <TextBlock Text="Bytes sent" Margin="0,4"/>
-                                                            <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="1"/>
+        <controls:ScrollViewerBackground 
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"
+            VerticalAlignment="Top"
+            Grid.Row="1"/>
+        <ScrollViewer x:Name="ScrollingHost"
+                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel>
+                <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                        Padding="12,12,12,4">
+                    <ComboBox Header="Show usage from:"
+                              ItemsSource="{x:Bind ViewModel.Items}"
+                              SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                              DisplayMemberPath="Title"
+                              HorizontalAlignment="Stretch"/>
+                </Border>
 
-                                                            <TextBlock Text="{x:Bind SentBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                                                            <TextBlock Text="{x:Bind ReceivedBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
-                                                        </Grid>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </selectors:StatsDataTemplateSelector.BaseTemplate>
-                                            <selectors:StatsDataTemplateSelector.ItemTemplate>
-                                                <DataTemplate x:DataType="viewModels:SettingsStatsData">
-                                                    <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                                                        <TextBlock Text="{x:Bind Title}" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                                                        <Grid>
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition/>
-                                                                <RowDefinition/>
-                                                                <RowDefinition/>
-                                                                <RowDefinition/>
-                                                            </Grid.RowDefinitions>
-                                                            <TextBlock Text="Sent" Margin="0,0,0,4"/>
-                                                            <TextBlock Text="Received" Margin="0,4" Grid.Row="1"/>
-                                                            <TextBlock Text="Bytes sent" Margin="0,4" Grid.Row="2"/>
-                                                            <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="3"/>
+                <ItemsControl ItemsSource="{x:Bind ViewModel.SelectedItem.Items, Mode=OneWay}">
+                    <ItemsControl.ItemTemplateSelector>
+                        <selectors:StatsDataTemplateSelector>
+                            <selectors:StatsDataTemplateSelector.BaseTemplate>
+                                <DataTemplate x:DataType="viewModels:SettingsStatsDataBase">
+                                    <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                                        <TextBlock Text="{x:Bind Title}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Text="Bytes sent" Margin="0,4"/>
+                                            <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="1"/>
 
-                                                            <TextBlock Text="{x:Bind SentItems, Mode=OneWay}" Margin="0,0,0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                                                            <TextBlock Text="{x:Bind ReceivedItems, Mode=OneWay}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
-                                                            <TextBlock Text="{x:Bind SentBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="2"/>
-                                                            <TextBlock Text="{x:Bind ReceivedBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="3"/>
-                                                        </Grid>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </selectors:StatsDataTemplateSelector.ItemTemplate>
-                                            <selectors:StatsDataTemplateSelector.CallTemplate>
-                                                <DataTemplate x:DataType="viewModels:SettingsStatsCallData">
-                                                    <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                                                        <TextBlock Text="{x:Bind Title}" Margin="0,8" FontWeight="SemiBold" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                                                        <Grid>
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition/>
-                                                                <RowDefinition/>
-                                                                <RowDefinition/>
-                                                                <RowDefinition/>
-                                                                <RowDefinition/>
-                                                            </Grid.RowDefinitions>
-                                                            <TextBlock Text="Outgoing calls" Margin="0,0,0,4"/>
-                                                            <TextBlock Text="Incoming calls" Margin="0,4" Grid.Row="1"/>
-                                                            <TextBlock Text="Bytes sent" Margin="0,4" Grid.Row="2"/>
-                                                            <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="3"/>
-                                                            <TextBlock Text="Total time" Margin="0,4" Grid.Row="5"/>
+                                            <TextBlock Text="{x:Bind SentBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                            <TextBlock Text="{x:Bind ReceivedBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </selectors:StatsDataTemplateSelector.BaseTemplate>
+                            <selectors:StatsDataTemplateSelector.ItemTemplate>
+                                <DataTemplate x:DataType="viewModels:SettingsStatsData">
+                                    <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                                        <TextBlock Text="{x:Bind Title}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Text="Sent" Margin="0,0,0,4"/>
+                                            <TextBlock Text="Received" Margin="0,4" Grid.Row="1"/>
+                                            <TextBlock Text="Bytes sent" Margin="0,4" Grid.Row="2"/>
+                                            <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="3"/>
 
-                                                            <TextBlock Text="{x:Bind SentItems, Mode=OneWay}" Margin="0,0,0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
-                                                            <TextBlock Text="{x:Bind ReceivedItems, Mode=OneWay}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
-                                                            <TextBlock Text="{x:Bind SentBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="2"/>
-                                                            <TextBlock Text="{x:Bind ReceivedBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="3"/>
-                                                            <TextBlock Text="{x:Bind Duration, Mode=OneWay}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="4"/>
-                                                        </Grid>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </selectors:StatsDataTemplateSelector.CallTemplate>
-                                        </selectors:StatsDataTemplateSelector>
-                                    </ItemsControl.ItemTemplateSelector>
-                                </ItemsControl>
-                                <StackPanel Padding="12,8,12,24">
-                                    <HyperlinkButton Command="{x:Bind ResetCommand}" Content="Reset Statistics" Foreground="Red"/>
-                                    <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
-                                        <Run Text="Network usage since"/>
-                                        <Run Text="{x:Bind ResetDate, Mode=OneWay, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter=shortdate}"/><Run Text=","/>
-                                        <Run Text="{x:Bind ResetDate, Mode=OneWay, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter=shorttime}"/>
-                                    </TextBlock>
-                                </StackPanel>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </Grid>
-                </DataTemplate>
-            </Pivot.ItemTemplate>
-        </Pivot>
+                                            <TextBlock Text="{x:Bind SentItems, Mode=OneWay}" Margin="0,0,0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                            <TextBlock Text="{x:Bind ReceivedItems, Mode=OneWay}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
+                                            <TextBlock Text="{x:Bind SentBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="2"/>
+                                            <TextBlock Text="{x:Bind ReceivedBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="3"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </selectors:StatsDataTemplateSelector.ItemTemplate>
+                            <selectors:StatsDataTemplateSelector.CallTemplate>
+                                <DataTemplate x:DataType="viewModels:SettingsStatsCallData">
+                                    <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                                        <TextBlock Text="{x:Bind Title}" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Text="Outgoing calls" Margin="0,0,0,4"/>
+                                            <TextBlock Text="Incoming calls" Margin="0,4" Grid.Row="1"/>
+                                            <TextBlock Text="Bytes sent" Margin="0,4" Grid.Row="2"/>
+                                            <TextBlock Text="Bytes received" Margin="0,4" Grid.Row="3"/>
+                                            <TextBlock Text="Total time" Margin="0,4" Grid.Row="5"/>
+
+                                            <TextBlock Text="{x:Bind SentItems, Mode=OneWay}" Margin="0,0,0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}"/>
+                                            <TextBlock Text="{x:Bind ReceivedItems, Mode=OneWay}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="1"/>
+                                            <TextBlock Text="{x:Bind SentBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="2"/>
+                                            <TextBlock Text="{x:Bind ReceivedBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="3"/>
+                                            <TextBlock Text="{x:Bind Duration, Mode=OneWay}" Margin="0,4" HorizontalAlignment="Right" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Row="4"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </selectors:StatsDataTemplateSelector.CallTemplate>
+                        </selectors:StatsDataTemplateSelector>
+                    </ItemsControl.ItemTemplateSelector>
+                </ItemsControl>
+                <StackPanel Padding="12,8,12,24">
+                    <HyperlinkButton Command="{x:Bind ViewModel.SelectedItem.ResetCommand, Mode=OneWay}" Content="Reset Statistics" Foreground="Red"/>
+                    <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
+                        <Run Text="Network usage since"/>
+                        <Run Text="{x:Bind ViewModel.SelectedItem.ResetDate, Mode=OneWay, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter=shortdate}"/><Run Text=","/>
+                        <Run Text="{x:Bind ViewModel.SelectedItem.ResetDate, Mode=OneWay, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter=shorttime}"/>
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

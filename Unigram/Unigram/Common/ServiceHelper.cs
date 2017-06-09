@@ -171,12 +171,12 @@ namespace Unigram.Common
                     var type = loader.GetString(missed ? (outgoing ? "CallCanceled" : "CallMissed") : (outgoing ? "CallOutgoing" : "CallIncoming"));
                     var duration = string.Empty;
 
-                    if (!missed)
+                    if (!missed && (phoneCallAction.Duration ?? 0) > 0)
                     {
                         duration = BindConvert.Current.CallDuration(phoneCallAction.Duration ?? 0);
                     }
 
-                    return ReplaceLinks(missed ? type : string.Format(AppResources.CallTimeFormat, type, duration));
+                    return ReplaceLinks(missed || (phoneCallAction.Duration ?? 0) < 1 ? type : string.Format(AppResources.CallTimeFormat, type, duration));
                 }
 
                 return null;

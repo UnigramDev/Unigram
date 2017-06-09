@@ -1,0 +1,55 @@
+﻿<Page
+    x:Class="Unigram.Views.Settings.SettingsPrivacyPhoneCallPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <Style TargetType="controls:BadgeButton" BasedOn="{StaticResource BadgeButtonStyle}">
+            <Setter Property="Margin" Value="-12,0"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:ButtonPageHeader Text="Calls" Glyph="&#xE10B;"/>
+
+        <controls:ScrollViewerBackground 
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            ScrollingHost="{x:Bind ScrollingHost}"
+            VerticalAlignment="Top"
+            Grid.Row="1"/>
+        <ScrollViewer x:Name="ScrollingHost"
+                      Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel>
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="Who can call me?" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:PrivacyRadioButton Content="Everybody" Type="AllowAll" Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"/>
+                    <controls:PrivacyRadioButton Content="My Contacts" Type="AllowContacts" Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"/>
+                    <controls:PrivacyRadioButton Content="Nobody" Type="DisallowAll" Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"/>
+                    <TextBlock Text="You can restrict who can call you." Margin="0,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+                </StackPanel>
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="Add exceptions" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:BadgeButton
+                        Content="Always Share With"
+                        Badge="{x:Bind ViewModel.Allowed.Users.Count, Mode=OneWay, Converter={StaticResource PrivacyRuleToUsersConverter}}"/>
+                    <controls:BadgeButton
+                        Content="Never Share With"
+                        Badge="{x:Bind ViewModel.Disallowed.Users.Count, Mode=OneWay, Converter={StaticResource PrivacyRuleToUsersConverter}}"/>
+                    <TextBlock Text="These user will or will not be able to call you regardless of the settings above." Margin="0,8" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

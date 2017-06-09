@@ -39,7 +39,7 @@ namespace Unigram.ViewModels.Settings
 
             foreach (var item in Items)
             {
-                item.ReloadData();
+                item.Refresh();
             }
 
             return Task.CompletedTask;
@@ -83,20 +83,20 @@ namespace Unigram.ViewModels.Settings
                 new SettingsStatsDataBase(statsService, "TOTAL", type, DataType.Total)
             };
 
-            ReloadData();
+            Refresh();
         }
 
         public string Title { get; private set; }
 
         public NetworkType Type { get; private set; }
 
-        public void ReloadData()
+        public void Refresh()
         {
             ResetDate = Utils.UnixTimestampToDateTime(_statsService.GetResetStatsDate(Type) / 1000);
 
             foreach (var item in Items)
             {
-                item.ReloadData();
+                item.Refresh();
             }
         }
 
@@ -122,7 +122,7 @@ namespace Unigram.ViewModels.Settings
             if (confirm == ContentDialogResult.Primary)
             {
                 _statsService.ResetStats(Type);
-                ReloadData();
+                Refresh();
             }
         }
     }
@@ -134,10 +134,10 @@ namespace Unigram.ViewModels.Settings
         {
         }
 
-        public override void ReloadData()
+        public override void Refresh()
         {
             Duration = TimeSpan.FromSeconds(_statsService.GetCallsTotalTime(_networkType));
-            base.ReloadData();
+            base.Refresh();
         }
 
         private TimeSpan _duration;
@@ -161,11 +161,11 @@ namespace Unigram.ViewModels.Settings
         {
         }
 
-        public override void ReloadData()
+        public override void Refresh()
         {
             SentItems = _statsService.GetSentItemsCount(_networkType, Type);
             ReceivedItems = _statsService.GetReceivedItemsCount(_networkType, Type);
-            base.ReloadData();
+            base.Refresh();
         }
 
         private int _sentItems;
@@ -213,7 +213,7 @@ namespace Unigram.ViewModels.Settings
 
         public DataType Type { get; private set; }
 
-        public virtual void ReloadData()
+        public virtual void Refresh()
         {
             SentBytes = _statsService.GetSentBytesCount(_networkType, Type);
             ReceivedBytes = _statsService.GetReceivedBytesCount(_networkType, Type);

@@ -342,9 +342,30 @@ namespace Telegram.Api.Services.FileManager
 
         private List<UploadablePart> GetItemParts(UploadableItem item, long isoFileLength)
         {
-            const int partSize = 32 * 1024; // 32 Kb: êðàòíî 1 Kb è íàöåëî äåëèò 1024 Kb
+            //const int partSize = 32 * 1024; // 32 Kb: êðàòíî 1 Kb è íàöåëî äåëèò 1024 Kb
+            //var parts = new List<UploadablePart>();
+            //var partsCount = item.FileLength / partSize + (item.FileLength % partSize > 0 ? 1 : 0);
+
+
+
+
+
+
+            var partSize = (int)Math.Max(128, (isoFileLength + 1024 * 3000 - 1) / (1024 * 3000));
+            if (1024 % partSize != 0)
+            {
+                int chunkSize = 64;
+                while (partSize > chunkSize)
+                {
+                    chunkSize *= 2;
+                }
+                partSize = chunkSize;
+            }
+
+            partSize *= 1024;
+
             var parts = new List<UploadablePart>();
-            var partsCount = item.FileLength / partSize + (item.FileLength % partSize > 0 ? 1 : 0);
+            var partsCount = (int)(isoFileLength + partSize - 1) / partSize;
 
             for (var i = 0; i < partsCount; i++)
             {

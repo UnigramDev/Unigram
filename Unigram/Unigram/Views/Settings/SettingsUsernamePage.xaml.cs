@@ -39,15 +39,9 @@ namespace Unigram.Views.Settings
             });
         }
 
-        private async void Copy_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+        private void Copy_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
-            var package = new DataPackage();
-            package.SetText($"https://t.me/{ViewModel.Username}");
-            package.SetWebLink(new Uri($"https://t.me/{ViewModel.Username}"));
-
-            Clipboard.SetContent(package);
-
-            await new TLMessageDialog("Link copied to clipboard").ShowAsync();
+            ViewModel.CopyCommand.Execute();
         }
     }
 }

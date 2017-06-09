@@ -17,6 +17,7 @@ using Telegram.Logs;
 using Template10.Utils;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Core.Common;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -52,9 +53,11 @@ namespace Unigram.ViewModels
         public DialogsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            Items = new ObservableCollection<TLDialog>();
+            Items = new MvxObservableCollection<TLDialog>();
             Search = new ObservableCollection<KeyedList<string, TLObject>>();
             SearchTokens = new Dictionary<string, CancellationTokenSource>();
+
+            Execute.BeginOnThreadPool(() => LoadFirstSlice());
         }
 
         public int PinnedDialogsIndex { get; set; }
@@ -136,25 +139,28 @@ namespace Unigram.ViewModels
                 var config = CacheService.GetConfig();
                 var pinnedIndex = 0;
 
-                Execute.BeginOnUIThread(() =>
-                {
-                    foreach (var item in response.Result.Dialogs)
-                    {
-                        if (item.IsPinned)
-                        {
-                            item.PinnedIndex = pinnedIndex++;
-                        }
+                var items = new List<TLDialog>(response.Result.Dialogs.Count);
 
-                        if (item.With is TLChat chat && chat.HasMigratedTo)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            Items.Add(item);
-                        }
+                foreach (var item in response.Result.Dialogs)
+                {
+                    if (item.IsPinned)
+                    {
+                        item.PinnedIndex = pinnedIndex++;
                     }
 
+                    if (item.With is TLChat chat && chat.HasMigratedTo)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        items.Add(item);
+                    }
+                }
+
+                Execute.BeginOnUIThread(() =>
+                {
+                    Items.ReplaceWith(items);
                     IsFirstPinned = Items.Any(x => x.IsPinned);
                     PinnedDialogsIndex = pinnedIndex;
                     PinnedDialogsCountMax = config.PinnedDialogsCountMax;
@@ -237,9 +243,10 @@ namespace Unigram.ViewModels
         {
             var dialogs = CacheService.GetDialogs();
             dialogs = ReorderDrafts(dialogs);
+
             Execute.BeginOnUIThread(() =>
             {
-                Items.Clear();
+                var items = new List<TLDialog>(dialogs.Count);
 
                 foreach (var item in dialogs)
                 {
@@ -249,9 +256,11 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        Items.Add(item);
+                        items.Add(item);
                     }
                 }
+
+                Items.ReplaceWith(items);
             });
         }
 
@@ -633,7 +642,7 @@ namespace Unigram.ViewModels
                         var already = Items.FirstOrDefault(x => x.Id == e.Dialog.Id);
                         if (already != null)
                         {
-                            Execute.BeginOnUIThread(async () => await new MessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
+                            Execute.BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
 
                             e.Dialog = already;
                             currentPosition = Items.IndexOf(already);
@@ -780,7 +789,7 @@ namespace Unigram.ViewModels
 
         public bool IsLastSliceLoaded { get; set; }
 
-        public ObservableCollection<TLDialog> Items { get; private set; }
+        public MvxObservableCollection<TLDialog> Items { get; private set; }
 
         #region Search
 
@@ -804,11 +813,9 @@ namespace Unigram.ViewModels
 
         public async void SearchSync(string query)
         {
-            query = query.TrimStart('@');
+            var local = await SearchLocalAsync(query.TrimStart('@'));
 
-            var local = await SearchLocalAsync(query);
-
-            if (query.Equals(_searchQuery.TrimStart('@')))
+            if (query.Equals(_searchQuery))
             {
                 Search.Clear();
                 if (local != null) Search.Insert(0, local);
@@ -817,12 +824,10 @@ namespace Unigram.ViewModels
 
         public async Task SearchAsync(string query)
         {
-            query = query.TrimStart('@');
-
             var global = await SearchGlobalAsync(query);
             var messages = await SearchMessagesAsync(query);
 
-            if (query.Equals(_searchQuery.TrimStart('@')))
+            if (query.Equals(_searchQuery))
             {
                 if (Search.Count > 2) Search.RemoveAt(2);
                 if (Search.Count > 1) Search.RemoveAt(1);
@@ -846,28 +851,28 @@ namespace Unigram.ViewModels
                     var user = dialog.With as TLUser;
                     if (user != null)
                     {
-                        return (user.FullName.Like(query, StringComparison.OrdinalIgnoreCase)) ||
+                        return (user.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
                                (user.HasUsername && user.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     var channel = dialog.With as TLChannel;
                     if (channel != null)
                     {
-                        return (channel.Title.Like(query, StringComparison.OrdinalIgnoreCase)) ||
+                        return (channel.Title.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
                                (channel.HasUsername && channel.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     var chat = dialog.With as TLChat;
                     if (chat != null)
                     {
-                        return (chat.Title.Like(query, StringComparison.OrdinalIgnoreCase));
+                        return (chat.Title.IsLike(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     return false;
                 }).ToList();
 
                 var contactsResults = contacts.OfType<TLUser>().Where(x =>
-                    (x.FullName.Like(query, StringComparison.OrdinalIgnoreCase)) ||
+                    (x.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
                     (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase)));
 
                 foreach (var result in contactsResults)

@@ -132,7 +132,8 @@
 
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,4,0,0" RequestedTheme="Light" Grid.Row="1">
                 <TextBlock x:Name="DurationLabel" Text="00:01" Foreground="{ThemeResource SliderTrackFill}" Style="{ThemeResource CaptionTextBlockStyle}"/>
-                <TextBlock Visibility="{x:Bind (Visibility)ViewModel.IsMediaUnread, Mode=OneWay}" Text=" ●" Foreground="{ThemeResource SliderTrackFill}" Style="{ThemeResource CaptionTextBlockStyle}" Margin="0,-1,0,0"/>
+                <!--<TextBlock Visibility="{x:Bind (Visibility)ViewModel.IsMediaUnread, Mode=OneWay}" Text=" ●" Foreground="{ThemeResource SliderTrackFill}" Style="{ThemeResource CaptionTextBlockStyle}" Margin="0,-1,0,0"/>-->
+                <Ellipse Visibility="{x:Bind (Visibility)ViewModel.IsMediaUnread, Mode=OneWay}" Width="6" Height="6" Fill="{ThemeResource SliderTrackFill}" Margin="6,2,0,0"/>
             </StackPanel>
         </Grid>
     </Grid>

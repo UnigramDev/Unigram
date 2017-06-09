@@ -55,11 +55,9 @@ namespace Unigram.ViewModels.Channels
             var response = await ProtoService.CreateChannelAsync(TLChannelsCreateChannel.Flag.Broadcast, _title, _about);
             if (response.IsSucceeded)
             {
-                var updates = response.Result as TLUpdates;
-                if (updates != null)
+                if (response.Result is TLUpdates updates)
                 {
-                    var channel = updates.Chats.FirstOrDefault() as TLChannel;
-                    if (channel != null)
+                    if (updates.Chats.FirstOrDefault() is TLChannel channel)
                     {
                         //if (this._photo != null)
                         //{

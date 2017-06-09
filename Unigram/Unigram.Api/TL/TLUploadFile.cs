@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLUploadFile : TLObject 
+	public partial class TLUploadFile : TLUploadFileBase 
 	{
 		public TLStorageFileTypeBase Type { get; set; }
 		public Int32 Mtime { get; set; }

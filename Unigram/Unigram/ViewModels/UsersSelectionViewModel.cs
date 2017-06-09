@@ -13,7 +13,6 @@ using Template10.Services.NavigationService;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Views;
-using Unigram.Views;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -36,45 +35,16 @@ namespace Unigram.ViewModels
 
         #region Overrides
 
-        public virtual string Title
-        {
-            get
-            {
-                return "Title";
-            }
-        }
+        public virtual string Title => "Title";
 
-        public virtual int Maximum
-        {
-            get
-            {
-                return 5000;
-            }
-        }
+        public virtual int Maximum => 5000;
+        public virtual int Minimum => 0;
 
-        public virtual int Minimum
-        {
-            get
-            {
-                return 0;
-            }
-        }
+        public ListViewSelectionMode SelectionMode => Maximum > 1 ? ListViewSelectionMode.Extended : ListViewSelectionMode.None;
 
-        public virtual ListViewSelectionMode SelectionMode
-        {
-            get
-            {
-                return ListViewSelectionMode.Multiple;
-            }
-        }
+        public virtual bool AllowGlobalSearch => true;
 
-        public virtual bool AllowGlobalSearch
-        {
-            get
-            {
-                return true;
-            }
-        }
+        protected virtual Func<TLUser, bool> Filter => null;
 
         #endregion
 
@@ -89,7 +59,17 @@ namespace Unigram.ViewModels
                     continue;
                 }
 
-                Items.Add(user);
+                if (Filter != null)
+                {
+                    if (Filter(user))
+                    {
+                        Items.Add(user);
+                    }
+                }
+                else
+                {
+                    Items.Add(user);
+                }
             }
 
             var input = string.Join(",", contacts.Select(x => x.Id).Union(new[] { SettingsHelper.UserId }).OrderBy(x => x));
@@ -112,7 +92,17 @@ namespace Unigram.ViewModels
                             continue;
                         }
 
-                        Items.Add(user);
+                        if (Filter != null)
+                        {
+                            if (Filter(user))
+                            {
+                                Items.Add(user);
+                            }
+                        }
+                        else
+                        {
+                            Items.Add(user);
+                        }
                     }
                 }
             }
@@ -128,20 +118,5 @@ namespace Unigram.ViewModels
         {
 
         }
-    }
-
-    public interface IUsersSelection : INavigable
-    {
-        string Title { get; }
-        
-        int Maximum { get; } 
-
-        int Minimum { get; }
-
-        bool IsMultipleSelectionEnabled { get; }
-
-        bool AllowGlobalSearch { get; }
-
-        void SendExecute();
     }
 }

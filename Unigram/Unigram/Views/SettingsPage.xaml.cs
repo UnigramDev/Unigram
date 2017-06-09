@@ -18,6 +18,7 @@ using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Media.Animation;
 using Telegram.Api.TL;
+using Unigram.ViewModels.Users;
 
 namespace Unigram.Views
 {
@@ -28,19 +29,16 @@ namespace Unigram.Views
         public SettingsPage()
         {
             InitializeComponent();
-
-            NavigationCacheMode = NavigationCacheMode.Required;
-
             DataContext = UnigramContainer.Current.ResolveType<SettingsViewModel>();
 
-            Loaded += OnLoaded;
+            NavigationCacheMode = NavigationCacheMode.Required;
 
 #if DEBUG
             // THIS CODE WILL RUN ONLY IF FIRST CONFIGURED SERVER IP IS TEST SERVER
             if (Telegram.Api.Constants.FirstServerIpAddress.Equals("149.154.167.40"))
             {
                 var optionDelete = new HyperButton();
-                optionDelete.Style = Resources["HyperButtonStyle"] as Style;
+                optionDelete.Style = App.Current.Resources["HyperButtonStyle"] as Style;
                 optionDelete.Command = ViewModel.DeleteAccountCommand;
                 optionDelete.Content = "!!! DELETE ACCOUNT !!!";
 
@@ -49,7 +47,7 @@ namespace Unigram.Views
             }
 
             var optionAccounts = new HyperButton();
-            optionAccounts.Style = Resources["HyperButtonStyle"] as Style;
+            optionAccounts.Style = App.Current.Resources["HyperButtonStyle"] as Style;
             optionAccounts.Click += Accounts_Click;
             optionAccounts.Content = "Accounts management";
 
@@ -58,48 +56,12 @@ namespace Unigram.Views
 #endif
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        public MasterDetailView MasterDetail { get; set; }
+
+
+        private void General_Click(object sender, RoutedEventArgs e)
         {
-
-            OnStateChanged(null, null);
-        }
-
-        private void OnStateChanged(object p1, object p2)
-        {
-            if (MasterDetail.CurrentState == MasterDetailState.Narrow)
-            {
-                Separator.BorderThickness = new Thickness(0);
-            }
-            else
-            {
-                Separator.BorderThickness = new Thickness(0, 0, 1, 0);
-            }
-        }
-
-        RelayCommand NotifcationPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage)));
-        RelayCommand PrivacyPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyPage)));
-        RelayCommand StickersPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsStickersPage)));
-        RelayCommand WallpaperPageCommand => new RelayCommand(() => MasterDetail.NavigationService.Navigate(typeof(SettingsWallpaperPage)));
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            //if (Frame.CanGoBack)
-            //{
-            //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-            //        AppViewBackButtonVisibility.Visible;
-            //}
-            //else
-            //{
-            //    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-            //        AppViewBackButtonVisibility.Collapsed;
-            //}
-
-            if (MasterDetail.NavigationService == null)
-            {
-                MasterDetail.Initialize("Settings", Frame);
-            }
-
-            ViewModel.NavigationService = MasterDetail.NavigationService;
+            MasterDetail.NavigationService.Navigate(typeof(SettingsGeneralPage));
         }
 
         private void Username_Click(object sender, RoutedEventArgs e)
@@ -107,14 +69,14 @@ namespace Unigram.Views
             MasterDetail.NavigationService.Navigate(typeof(SettingsUsernamePage));
         }
 
-        private async void EditName_Click(object sender, RoutedEventArgs e)
+        public async void EditName_Click(object sender, RoutedEventArgs e)
         {
             await MasterDetail.NavigationService.NavigateModalAsync(typeof(EditYourNameView));
         }
 
         private void Privacy_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyPage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyAndSecurityPage));
         }
 
         private void Stickers_Click(object sender, RoutedEventArgs e)
@@ -124,7 +86,7 @@ namespace Unigram.Views
 
         private void Data_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsDataPage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsDataAndStoragePage));
         }
 
         private void Notifications_Click(object sender, RoutedEventArgs e)
@@ -145,14 +107,7 @@ namespace Unigram.Views
             if (user.HasPhoto && user.Photo is TLUserProfilePhoto photo)
             {
                 var viewModel = new UserPhotosViewModel(user, ViewModel.ProtoService);
-                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
-                {
-                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                    if (animation != null)
-                    {
-                        animation.TryStart(Photo);
-                    }
-                });
+                await GalleryView.Current.ShowAsync(viewModel, () => Photo);
             }
         }
 
@@ -173,6 +128,11 @@ namespace Unigram.Views
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
             }
+        }
+
+        private async void Questions_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
         }
     }
 

@@ -14,7 +14,8 @@
     Background="{x:Null}"
     OverlayBrush="{x:Null}"
     HorizontalAlignment="Stretch"
-    VerticalAlignment="Stretch">
+    VerticalAlignment="Stretch"
+    Unloaded="OnUnloaded">
 
     <Control.Resources>
         <Style x:Name="yolo" TargetType="MediaPlayerElement">
@@ -50,6 +51,7 @@
         <Border x:Name="Layer" Background="Black" Grid.RowSpan="3"/>
 
         <FlipView x:Name="Flip"
+                  x:DeferLoadStrategy="Lazy"
                   Opacity="0"
                   ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
                   SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
@@ -58,24 +60,32 @@
                   Grid.RowSpan="3">
             <FlipView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:GalleryItem">
-                    <Grid>
+                    <Grid HorizontalAlignment="Center"
+                          VerticalAlignment="Center">
                         <local:ImageView
                             x:Name="Surface"
-                            Loaded="ImageView_ImageOpened"
-                            Unloaded="ImageView_Unloaded"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
                             Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
                             Constraint="{x:Bind Source}"
-                            Opacity="0"/>
-                        <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                            <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                            <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
-                        </Grid>
+                            IsHitTestVisible="False"/>
+                        <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                        <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
                     </Grid>
                 </DataTemplate>
             </FlipView.ItemTemplate>
         </FlipView>
+
+        <Grid x:Name="Surface" DataContext="{Binding FirstItem}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.RowSpan="3">
+            <local:ImageView
+                Loaded="ImageView_ImageOpened"
+                Source="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                Constraint="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}"
+                IsHitTestVisible="False"
+                Grid.RowSpan="3"/>
+
+            <local:TransferButton Completed="Download_Click" Transferable="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+            <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{x:Bind ViewModel.FirstItem.Source.Progress, Mode=OneWay}" IsHitTestVisible="False"/>
+        </Grid>
+
 
         <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">
             <Grid.Background>
@@ -119,27 +129,35 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <MediaTransportControls x:Name="Transport" IsCompact="True" Grid.ColumnSpan="2"/>
+                <MediaTransportControls x:Name="Transport" Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.IsVideo, Mode=OneWay}" IsCompact="True" Grid.ColumnSpan="3"/>
 
                 <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
-                           Visibility="{x:Bind ViewModel.SelectedItem.Caption, Converter={StaticResource NullToVisibilityConverter}}"
+                           Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                            Style="{StaticResource BodyTextBlockStyle}"
                            Margin="12,8"
-                           Grid.ColumnSpan="2"
+                           Grid.ColumnSpan="3"
                            Grid.Row="1"/>
 
-                <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0" VerticalAlignment="Center" Grid.Row="2">
-                    <TextBlock Text="{x:Bind ViewModel.SelectedItem.From.DisplayName, Mode=OneWay}" Style="{StaticResource BaseTextBlockStyle}"/>
+                <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0,0,0" VerticalAlignment="Center" Grid.Row="2">
+                    <TextBlock Text="{x:Bind ViewModel.SelectedItem.From.DisplayName, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
                     <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
-                
+
+                <local:GlyphButton
+                    Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.IsShareEnabled, Mode=OneWay}"
+                    Click="{x:Bind ViewModel.SelectedItem.Share, Mode=OneWay}"
+                    Glyph="&#xEE35;"
+                    Grid.Column="1"
+                    Grid.Row="2"/>
+
                 <Button Padding="16,23,16,0"
                         HorizontalAlignment="Right"
                         Height="48"
                         Style="{StaticResource EllipsisButton}"
-                        Grid.Column="1"
+                        Grid.Column="2"
                         Grid.Row="2">
                     <FontIcon x:Name="EllipsisIcon"
                               VerticalAlignment="Center"

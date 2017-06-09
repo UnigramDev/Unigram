@@ -18,6 +18,7 @@ namespace Unigram.ViewModels
         {
             Items = new MvxObservableCollection<GalleryItem> { item };
             SelectedItem = item;
+            FirstItem = item;
         }
     }
 }

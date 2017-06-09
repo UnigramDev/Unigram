@@ -104,10 +104,10 @@ namespace Telegram.Api.Services.FileManager
 
             if (!partExists || !isCorrectPartLength)
             {
-                part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputEncryptedFileLocation, part.Offset, part.Limit);
+                part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputEncryptedFileLocation, part.Offset, part.Limit) as TLUploadFile;
                 while (part.File == null)
                 {
-                    part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputEncryptedFileLocation, part.Offset, part.Limit);
+                    part.File = GetFile(part.ParentItem.DCId, part.ParentItem.InputEncryptedFileLocation, part.Offset, part.Limit) as TLUploadFile;
                 }
             }
 
@@ -173,10 +173,10 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private TLUploadFile GetFile(int dcId, TLInputFileLocationBase location, int offset, int limit)
+        private TLUploadFileBase GetFile(int dcId, TLInputFileLocationBase location, int offset, int limit)
         {
             var manualResetEvent = new ManualResetEvent(false);
-            TLUploadFile result = null;
+            TLUploadFileBase result = null;
 
             _mtProtoService.GetFileAsync(dcId, location, offset, limit,
                 file =>
@@ -184,7 +184,10 @@ namespace Telegram.Api.Services.FileManager
                     result = file;
                     manualResetEvent.Set();
 
-                    _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
+                    if (file is TLUploadFile full)
+                    {
+                        _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, 4 + 4 + full.Bytes.Length + 4);
+                    }
                 },
                 error =>
                 {
@@ -292,7 +295,7 @@ namespace Telegram.Api.Services.FileManager
             var partsCount = size / chunkSize + (size % chunkSize > 0 ? 1 : 0);
             for (var i = 0; i < partsCount; i++)
             {
-                var part = new DownloadablePart(item, i * chunkSize, size == 0 ? 0 : chunkSize, i);
+                var part = new DownloadablePart(item, i * chunkSize, chunkSize, i);
                 parts.Add(part);
             }
 

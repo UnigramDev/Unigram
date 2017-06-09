@@ -132,8 +132,7 @@ namespace Unigram.Controls.Items
 
         private string GetBriefLabel(TLMessageBase value, bool showContent)
         {
-            var draft = ViewModel.Draft as TLDraftMessage;
-            if (draft != null)
+            if (ViewModel.Draft is TLDraftMessage draft && !string.IsNullOrWhiteSpace(draft.Message))
             {
                 return draft.Message;
             }
@@ -171,6 +170,10 @@ namespace Unigram.Controls.Items
 
                         return result + photoMedia.Caption.Replace("\r\n", "\n").Replace("\n", " ");
                     }
+                    else if (message.Media is TLMessageMediaGame)
+                    {
+                        return string.Empty;
+                    }
                 }
 
                 if (message.Message != null)
@@ -190,7 +193,7 @@ namespace Unigram.Controls.Items
 
         private string UpdateFromLabel(TLDialog dialog)
         {
-            if (dialog.Draft is TLDraftMessage draft)
+            if (dialog.Draft is TLDraftMessage draft && !string.IsNullOrWhiteSpace(draft.Message))
             {
                 FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelDraftBrush"] as SolidColorBrush;
                 return "Draft: ";
@@ -266,6 +269,10 @@ namespace Unigram.Controls.Items
                         else if (message.IsVideo())
                         {
                             return result + "Video" + caption;
+                        }
+                        else if (message.IsRoundVideo())
+                        {
+                            return result + "Video message" + caption;
                         }
                         else if (message.IsGif())
                         {
@@ -444,7 +451,7 @@ namespace Unigram.Controls.Items
             var settings = settingsBase as TLPeerNotifySettings;
             if (settings != null)
             {
-                return settings.MuteUntil == 0 && !settings.IsSilent ? Visibility.Visible : Visibility.Collapsed;
+                return settings.MuteUntil == 0 ? Visibility.Visible : Visibility.Collapsed;
             }
 
             return Visibility.Visible;
@@ -455,7 +462,7 @@ namespace Unigram.Controls.Items
             var settings = settingsBase as TLPeerNotifySettings;
             if (settings != null)
             {
-                return settings.MuteUntil == 0 && !settings.IsSilent ? Visibility.Collapsed : Visibility.Visible;
+                return settings.MuteUntil == 0 ? Visibility.Collapsed : Visibility.Visible;
             }
 
             return Visibility.Collapsed;
@@ -463,13 +470,26 @@ namespace Unigram.Controls.Items
 
         private void UpdateChannelType()
         {
-            if (ViewModel != null)
+            if (ViewModel.With is TLChannel channel)
             {
-                var channel = ViewModel.With as TLChannel;
-                if (channel != null)
-                {
-                    fiType.Glyph = channel.IsBroadcast ? "\uE789" : "\uE125";
-                }
+                fiType.Text = channel.IsBroadcast ? "\uE789" : "\uE125";
+            }
+            else if (ViewModel.With is TLChannelForbidden channelForbidden)
+            {
+                fiType.Text = channelForbidden.IsBroadcast ? "\uE789" : "\uE125";
+            }
+            else if (ViewModel.With is TLChat || ViewModel.With is TLChatForbidden)
+            {
+                fiType.Text = "\uE125";
+            }
+        }
+
+        private void ToolTip_Opened(object sender, RoutedEventArgs e)
+        {
+            var tooltip = sender as ToolTip;
+            if (tooltip != null)
+            {
+                tooltip.Content = BriefInfo.Text;
             }
         }
     }

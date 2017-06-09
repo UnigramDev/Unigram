@@ -10,6 +10,8 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Controls;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -268,6 +270,20 @@ namespace Unigram.ViewModels.Settings
                     //this.Error = string.Empty;
                     //Telegram.Api.Helpers.Execute.ShowDebugMessage("account.updateUsername error " + error);
                 }
+            }
+        }
+
+        public RelayCommand CopyCommand => new RelayCommand(CopyExecute);
+        private async void CopyExecute()
+        {
+            var config = CacheService.GetConfig();
+            if (config != null)
+            {
+                var package = new DataPackage();
+                package.SetText($"{config.MeUrlPrefix}{_username}");
+                Clipboard.SetContent(package);
+
+                await new TLMessageDialog("Link copied to clipboard").ShowAsync();
             }
         }
     }

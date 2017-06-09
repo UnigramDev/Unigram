@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Markup;
 
 namespace Unigram.Controls
 {
@@ -16,16 +17,16 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(PageHeader);
         }
 
-        #region Title
+        #region Text
 
-        public string Title
+        public string Text
         {
-            get { return (string)GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value); }
+            get { return (string)GetValue(TextProperty); }
+            set { SetValue(TextProperty, value); }
         }
 
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register("Title", typeof(string), typeof(PageHeader), new PropertyMetadata(string.Empty));
+        public static readonly DependencyProperty TextProperty =
+            DependencyProperty.Register("Text", typeof(string), typeof(PageHeader), new PropertyMetadata(string.Empty));
 
         #endregion
 
@@ -99,6 +100,27 @@ namespace Unigram.Controls
 
         public static readonly DependencyProperty CommandVisibilityProperty =
             DependencyProperty.Register("CommandVisibility", typeof(Visibility), typeof(ButtonPageHeader), new PropertyMetadata(Visibility.Visible));
+
+        #endregion
+    }
+
+    public class ContentPageHeader : ContentControl
+    {
+        public ContentPageHeader()
+        {
+            DefaultStyleKey = typeof(ContentPageHeader);
+        }
+
+        #region IsLoading
+
+        public bool IsLoading
+        {
+            get { return (bool)GetValue(IsLoadingProperty); }
+            set { SetValue(IsLoadingProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsLoadingProperty =
+            DependencyProperty.Register("IsLoading", typeof(bool), typeof(ContentPageHeader), new PropertyMetadata(false));
 
         #endregion
     }

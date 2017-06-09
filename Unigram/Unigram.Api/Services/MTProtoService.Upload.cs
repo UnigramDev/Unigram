@@ -24,11 +24,27 @@ namespace Telegram.Api.Services
             SendInformativeMessage("upload.saveBigFilePart " + filePart + " " + fileTotalParts, obj, callback, faultCallback);
         }
 
-        public void GetFileAsync(TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFile> callback, Action<TLRPCError> faultCallback = null)
+        public void GetFileAsync(TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFileBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUploadGetFile { Location = location, Offset = offset, Limit = limit };
 
             SendInformativeMessage("upload.getFile", obj, callback, faultCallback);
         }
-	}
+
+        public void GetCdnFileAsync(byte[] fileToken, int offset, int limit, Action<TLUploadCdnFileBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLUploadGetCdnFile { FileToken = fileToken, Offset = offset, Limit = limit };
+
+            const string caption = "upload.getCdnFile";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void ReuploadCdnFileAsync(byte[] fileToken, byte[] requestToken, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLUploadReuploadCdnFile { FileToken = fileToken, RequestToken = requestToken };
+
+            const string caption = "upload.reuploadCdnFile";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+    }
 }

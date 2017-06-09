@@ -34,7 +34,6 @@ namespace Unigram.Controls
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             UpdateView(Window.Current.Bounds.Width);
-
             Window.Current.SizeChanged += OnSizeChanged;
         }
 
@@ -48,20 +47,10 @@ namespace Unigram.Controls
             UpdateView(e.Size.Width);
         }
 
-        private async void UpdateView(double width)
+        private void UpdateView(double width)
         {
             Library.MaxWidth = width < 500 ? width - 16 : 360;
             Library.MinWidth = Library.MaxWidth;
-
-            var devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
-            if (devices.Count > 0)
-            {
-                Camera.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Camera.Visibility = Visibility.Collapsed;
-            }
         }
 
         private void Library_ItemClick(object sender, ItemClickEventArgs e)
@@ -78,7 +67,7 @@ namespace Unigram.Controls
             capture.VideoSettings.Format = CameraCaptureUIVideoFormat.Mp4;
             capture.VideoSettings.MaxResolution = CameraCaptureUIMaxVideoResolution.StandardDefinition;
 
-            var result = await capture.CaptureFileAsync(CameraCaptureUIMode.PhotoOrVideo);
+            var result = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo /*OrVideo*/);
             if (result != null)
             {
                 await result.CopyAsync(KnownFolders.CameraRoll, DateTime.Now.ToString("WIN_yyyyMMdd_HH_mm_ss") + ".jpg", NameCollisionOption.GenerateUniqueName);

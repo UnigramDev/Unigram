@@ -16,6 +16,7 @@ namespace Unigram.Core.Services
     public class HardwareService : BindableBase, IHardwareService
     {
         private DeviceWatcher _microphoneWatcher;
+        private DeviceWatcher _videoWatcher;
 
         public HardwareService()
         {
@@ -23,6 +24,11 @@ namespace Unigram.Core.Services
             _microphoneWatcher.Added += OnMicrophoneAdded;
             _microphoneWatcher.Removed += OnMicrophoneRemoved;
             _microphoneWatcher.Start();
+
+            _videoWatcher = DeviceInformation.CreateWatcher(DeviceClass.VideoCapture);
+            _videoWatcher.Added += OnVideoAdded;
+            _videoWatcher.Removed += OnVideoRemoved;
+            _videoWatcher.Start();
         }
 
         private void OnMicrophoneAdded(DeviceWatcher sender, DeviceInformation args)
@@ -36,6 +42,17 @@ namespace Unigram.Core.Services
             IsMicrophoneAvailable = devices.Count > 0;
         }
 
+        private void OnVideoAdded(DeviceWatcher sender, DeviceInformation args)
+        {
+            IsVideoAvailable = true;
+        }
+
+        private async void OnVideoRemoved(DeviceWatcher sender, DeviceInformationUpdate args)
+        {
+            var devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+            IsVideoAvailable = devices.Count > 0;
+        }
+
         private bool _isMicrophoneAvailable;
         public bool IsMicrophoneAvailable
         {
@@ -46,6 +63,19 @@ namespace Unigram.Core.Services
             private set
             {
                 Set(ref _isMicrophoneAvailable, value);
+            }
+        }
+
+        private bool _isVideoAvailable;
+        public bool IsVideoAvailable
+        {
+            get
+            {
+                return _isVideoAvailable;
+            }
+            private set
+            {
+                Set(ref _isVideoAvailable, value);
             }
         }
     }

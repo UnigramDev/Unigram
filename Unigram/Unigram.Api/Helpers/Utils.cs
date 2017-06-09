@@ -13,115 +13,18 @@ using Telegram.Api.Services;
 using Windows.Security.Cryptography;
 using Windows.Storage.Streams;
 using System.Diagnostics;
+using Org.BouncyCastle.OpenSsl;
 
 namespace Telegram.Api.Helpers
 {
-    public class PollardRhoLong
-    {
-        public static long Gcd(long ths, long val)
-        {
-            if (val == 0)
-                return Math.Abs(ths);
-            if (ths == 0)
-                return Math.Abs(val);
-
-            long r;
-            long u = ths;
-            long v = val;
-
-            while (v != 0)
-            {
-                r = u % v;
-                u = v;
-                v = r;
-            }
-
-            return u;
-        }
-
-        public static long Rho(long N)
-        {
-            var random = new Random();
-
-            long divisor;
-            var bytes = new byte[8];
-            random.NextBytes(bytes);
-            var c = BitConverter.ToInt64(bytes, 0);
-            random.NextBytes(bytes);
-            var x = BitConverter.ToInt64(bytes, 0);
-            var xx = x;
-
-            // check divisibility by 2
-            if (N % 2 == 0) return 2;
-
-            do
-            {
-                x = (x * x % N + c) % N;
-                xx = (xx * xx % N + c) % N;
-                xx = (xx * xx % N + c) % N;
-                divisor = Gcd(x - xx, N);
-            } while (divisor == 1);
-
-            return divisor;
-        }
-    }
-
-    public class PollardRho
-    {
-        private static readonly BigInteger ZERO = new BigInteger("0");
-        private static readonly BigInteger ONE = new BigInteger("1");
-        private static readonly BigInteger TWO = new BigInteger("2");
-        private static readonly SecureRandom random = new SecureRandom();
-
-        public static BigInteger Rho(BigInteger N)
-        {
-            BigInteger divisor;
-            var c = new BigInteger(N.BitLength, random);
-            var x = new BigInteger(N.BitLength, random);
-            var xx = x;
-
-            // check divisibility by 2
-            if (N.Mod(TWO).CompareTo(ZERO) == 0) return TWO;
-
-            do
-            {
-                x = x.Multiply(x).Mod(N).Add(c).Mod(N);
-                xx = xx.Multiply(xx).Mod(N).Add(c).Mod(N);
-                xx = xx.Multiply(xx).Mod(N).Add(c).Mod(N);
-                divisor = x.Subtract(xx).Gcd(N);
-            } while ((divisor.CompareTo(ONE)) == 0);
-
-            return divisor;
-        }
-
-        public static Tuple<BigInteger, BigInteger> Factor(BigInteger N)
-        {
-            //if (N.CompareTo(ONE) == 0)
-            //{
-            //    return new Tuple<BigInteger, BigInteger>(ONE, N);
-            //}
-            //if (N.IsProbablePrime(20))
-            //{
-            //    return new Tuple<BigInteger, BigInteger>(ONE, N);
-            //}
-            var divisor = Rho(N);
-
-            var divisor2 = N.Divide(divisor);
-
-            return divisor.CompareTo(divisor2) > 0
-                ? new Tuple<BigInteger, BigInteger>(divisor2, divisor)
-                : new Tuple<BigInteger, BigInteger>(divisor, divisor2);
-        }
-
-
-        //public static void main(String[] args) {
-        //    BigInteger N = new BigInteger(args[0]);
-        //    factor(N);
-        //}
-    }
-
     public static class Utils
     {
+        public static long BytesToLong(byte[] bytes)
+        {
+            return ((long)bytes[7] << 56) + (((long)bytes[6] & 0xFF) << 48) + (((long)bytes[5] & 0xFF) << 40) + (((long)bytes[4] & 0xFF) << 32)
+                    + (((long)bytes[3] & 0xFF) << 24) + (((long)bytes[2] & 0xFF) << 16) + (((long)bytes[1] & 0xFF) << 8) + ((long)bytes[0] & 0xFF);
+        }
+
         public static string GetShortTimePattern(ref CultureInfo ci)
         {
             if (ci.DateTimeFormat.ShortTimePattern.Contains("H"))
@@ -140,53 +43,122 @@ namespace Telegram.Api.Helpers
         }
 #endif
 
-        public static byte[] GetRSABytes(byte[] bytes)
+        public static long GetRSAFingerprint(string key)
         {
-            // big-endian exponent and modulus
-            const string exponentString = "010001";
-            const string modulusString = "C150023E2F70DB7985DED064759CFECF" +
-                                     "0AF328E69A41DAF4D6F01B538135A6F91F8F8B2A0EC9BA9720CE352EFCF6C5680FFC424BD6348649" +
-                                     "02DE0B4BD6D49F4E580230E3AE97D95C8B19442B3C0A10D8F5633FECEDD6926A7F6DAB0DDB7D457F" +
-                                     "9EA81B8465FCD6FFFEED114011DF91C059CAEDAF97625F6C96ECC74725556934EF781D866B34F011" +
-                                     "FCE4D835A090196E9A5F0E4449AF7EB697DDB9076494CA5F81104A305B6DD27665722C46B60E5DF6" +
-                                     "80FB16B210607EF217652E60236C255F6A28315F4083A96791D7214BF64C1DF4FD0DB1944FB26A2A" +
-                                     "57031B32EEE64AD15A8BA68885CDE74A5BFC920F6ABF59BA5C75506373E7130F9042DA922179251F";
-            var modulusBytes = StringToByteArray(modulusString);
-            var exponentBytes = StringToByteArray(exponentString);
-            var modulus = new System.Numerics.BigInteger(modulusBytes.Reverse().Concat(new byte[] { 0x00 }).ToArray());
-            var exponent = new System.Numerics.BigInteger(exponentBytes.Reverse().Concat(new byte[] { 0x00 }).ToArray());
-            var num = new System.Numerics.BigInteger(bytes.Reverse().Concat(new byte[] { 0x00 }).ToArray());
+            using (var text = new StringReader(key))
+            {
+                var reader = new PemReader(text);
+                var parameter = reader.ReadObject() as RsaKeyParameters;
+                if (parameter != null)
+                {
+                    var modulus = parameter.Modulus.ToByteArray();
+                    var exponent = parameter.Exponent.ToByteArray();
 
-            var rsa = System.Numerics.BigInteger.ModPow(num, exponent, modulus).ToByteArray().Reverse().ToArray();
+                    if (modulus.Length > 256)
+                    {
+                        var corrected = new byte[256];
+                        System.Buffer.BlockCopy(modulus, modulus.Length - 256, corrected, 0, 256);
+
+                        modulus = corrected;
+                    }
+                    else if (modulus.Length < 256)
+                    {
+                        var corrected = new byte[256];
+                        System.Buffer.BlockCopy(modulus, 0, corrected, 256 - modulus.Length, modulus.Length);
+
+                        for (int a = 0; a < 256 - modulus.Length; a++)
+                        {
+                            modulus[a] = 0;
+                        }
+
+                        modulus = corrected;
+                    }
+
+                    using (var stream = new MemoryStream())
+                    {
+                        using (var writer = new TLBinaryWriter(stream))
+                        {
+                            writer.WriteByteArray(modulus);
+                            writer.WriteByteArray(exponent);
+                        }
+
+                        var hash = ComputeSHA1(stream.ToArray());
+                        var fingerprint = (((ulong)hash[19]) << 56) |
+                                          (((ulong)hash[18]) << 48) |
+                                          (((ulong)hash[17]) << 40) |
+                                          (((ulong)hash[16]) << 32) |
+                                          (((ulong)hash[15]) << 24) |
+                                          (((ulong)hash[14]) << 16) |
+                                          (((ulong)hash[13]) << 8) |
+                                          ((ulong)hash[12]);
+
+                        return (long)fingerprint;
+                    }
+                }
+            }
+
+            return -1;
+        }
+
+        public static byte[] GetRSABytes(byte[] bytes, string key)
+        {
+            if (key == null)
+            {
+                key =
+    "-----BEGIN RSA PUBLIC KEY-----\n" +
+    "MIIBCgKCAQEAwVACPi9w23mF3tBkdZz+zwrzKOaaQdr01vAbU4E1pvkfj4sqDsm6\n" +
+    "lyDONS789sVoD/xCS9Y0hkkC3gtL1tSfTlgCMOOul9lcixlEKzwKENj1Yz/s7daS\n" +
+    "an9tqw3bfUV/nqgbhGX81v/+7RFAEd+RwFnK7a+XYl9sluzHRyVVaTTveB2GazTw\n" +
+    "Efzk2DWgkBluml8OREmvfraX3bkHZJTKX4EQSjBbbdJ2ZXIsRrYOXfaA+xayEGB+\n" +
+    "8hdlLmAjbCVfaigxX0CDqWeR1yFL9kwd9P0NsZRPsmoqVwMbMu7mStFai6aIhc3n\n" +
+    "Slv8kg9qv1m6XHVQY3PnEw+QQtqSIXklHwIDAQAB\n" +
+    "-----END RSA PUBLIC KEY-----";
+            }
+
+            using (var text = new StringReader(key))
+            {
+                var reader = new PemReader(text);
+                var parameter = reader.ReadObject() as RsaKeyParameters;
+                if (parameter != null)
+                {
+                    var modulus = parameter.Modulus;
+                    var exponent = parameter.Exponent;
+
+                    var num = new BigInteger(new byte[] { 0x00 }.Concat(bytes).ToArray());
+                    var rsa = num.ModPow(exponent, modulus).ToByteArray();
 
 #if LOG_REGISTRATION
             TLUtils.WriteLog("RSA bytes length " + rsa.Length);
 #endif
-            if (rsa.Length == 257)
-            {
-                if (rsa[0] != 0x00) throw new Exception("rsa last byte is " + rsa[0]);
+                    if (rsa.Length == 257)
+                    {
+                        if (rsa[0] != 0x00) throw new Exception("rsa last byte is " + rsa[0]);
 
 #if LOG_REGISTRATION
                 TLUtils.WriteLog("First RSA byte removes: byte value is " + rsa[0]);
 #endif
-                TLUtils.WriteLine("First RSA byte removes: byte value is " + rsa[0]);
-                rsa = rsa.SubArray(1, 256);
-            }
-            else if (rsa.Length < 256)
-            {
-                var correctedRsa = new byte[256];
-                Array.Copy(rsa, 0, correctedRsa, 256 - rsa.Length, rsa.Length);
-                for (var i = 0; i < 256 - rsa.Length; i++)
-                {
-                    correctedRsa[i] = 0;
+                        TLUtils.WriteLine("First RSA byte removes: byte value is " + rsa[0]);
+                        rsa = rsa.SubArray(1, 256);
+                    }
+                    else if (rsa.Length < 256)
+                    {
+                        var correctedRsa = new byte[256];
+                        Array.Copy(rsa, 0, correctedRsa, 256 - rsa.Length, rsa.Length);
+                        for (var i = 0; i < 256 - rsa.Length; i++)
+                        {
+                            correctedRsa[i] = 0;
 #if LOG_REGISTRATION
                     TLUtils.WriteLog("First RSA bytes added i=" + i + " " + correctedRsa[i]);
-#endif           
+#endif
+                        }
+                        rsa = correctedRsa;
+                    }
+
+                    return rsa;
                 }
-                rsa = correctedRsa;
             }
 
-            return rsa;
+            return null;
         }
 
         // Note: ivec - big-endian, but BigInterger.ctor and BigInteger.ToByteArray return little-endian
@@ -658,6 +630,16 @@ namespace Telegram.Api.Helpers
             return digest;
         }
 
+        public static string MD5(string data)
+        {
+            var input = CryptographicBuffer.ConvertStringToBinary(data, BinaryStringEncoding.Utf8);
+            var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
+            var hashed = hasher.HashData(input);
+            var digest = CryptographicBuffer.EncodeToBase64String(hashed);
+
+            return digest;
+        }
+
         public static string CurrentUICulture()
         {
             return Windows.Globalization.Language.CurrentInputMethodLanguageTag;
@@ -699,5 +681,109 @@ namespace Telegram.Api.Helpers
 
             return id % 8;
         }
+    }
+
+    internal class PollardRhoLong
+    {
+        public static long Gcd(long ths, long val)
+        {
+            if (val == 0)
+                return Math.Abs(ths);
+            if (ths == 0)
+                return Math.Abs(val);
+
+            long r;
+            long u = ths;
+            long v = val;
+
+            while (v != 0)
+            {
+                r = u % v;
+                u = v;
+                v = r;
+            }
+
+            return u;
+        }
+
+        public static long Rho(long N)
+        {
+            var random = new Random();
+
+            long divisor;
+            var bytes = new byte[8];
+            random.NextBytes(bytes);
+            var c = BitConverter.ToInt64(bytes, 0);
+            random.NextBytes(bytes);
+            var x = BitConverter.ToInt64(bytes, 0);
+            var xx = x;
+
+            // check divisibility by 2
+            if (N % 2 == 0) return 2;
+
+            do
+            {
+                x = (x * x % N + c) % N;
+                xx = (xx * xx % N + c) % N;
+                xx = (xx * xx % N + c) % N;
+                divisor = Gcd(x - xx, N);
+            } while (divisor == 1);
+
+            return divisor;
+        }
+    }
+
+    internal class PollardRho
+    {
+        private static readonly BigInteger ZERO = new BigInteger("0");
+        private static readonly BigInteger ONE = new BigInteger("1");
+        private static readonly BigInteger TWO = new BigInteger("2");
+        private static readonly SecureRandom random = new SecureRandom();
+
+        public static BigInteger Rho(BigInteger N)
+        {
+            BigInteger divisor;
+            var c = new BigInteger(N.BitLength, random);
+            var x = new BigInteger(N.BitLength, random);
+            var xx = x;
+
+            // check divisibility by 2
+            if (N.Mod(TWO).CompareTo(ZERO) == 0) return TWO;
+
+            do
+            {
+                x = x.Multiply(x).Mod(N).Add(c).Mod(N);
+                xx = xx.Multiply(xx).Mod(N).Add(c).Mod(N);
+                xx = xx.Multiply(xx).Mod(N).Add(c).Mod(N);
+                divisor = x.Subtract(xx).Gcd(N);
+            } while ((divisor.CompareTo(ONE)) == 0);
+
+            return divisor;
+        }
+
+        public static Tuple<BigInteger, BigInteger> Factor(BigInteger N)
+        {
+            //if (N.CompareTo(ONE) == 0)
+            //{
+            //    return new Tuple<BigInteger, BigInteger>(ONE, N);
+            //}
+            //if (N.IsProbablePrime(20))
+            //{
+            //    return new Tuple<BigInteger, BigInteger>(ONE, N);
+            //}
+            var divisor = Rho(N);
+
+            var divisor2 = N.Divide(divisor);
+
+            return divisor.CompareTo(divisor2) > 0
+                ? new Tuple<BigInteger, BigInteger>(divisor2, divisor)
+                : new Tuple<BigInteger, BigInteger>(divisor, divisor2);
+        }
+
+
+        //public static void main(String[] args) {
+        //    BigInteger N = new BigInteger(args[0]);
+        //    factor(N);
+        //}
     }
 }

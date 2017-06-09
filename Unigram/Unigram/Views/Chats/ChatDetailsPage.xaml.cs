@@ -22,6 +22,7 @@ using Windows.Storage.Pickers;
 using Unigram.Controls.Views;
 using Unigram.Controls;
 using Unigram.Common;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace Unigram.Views.Chats
 {
@@ -35,9 +36,17 @@ namespace Unigram.Views.Chats
             DataContext = UnigramContainer.Current.ResolveType<ChatDetailsViewModel>();
         }
 
-        private void Photo_Click(object sender, RoutedEventArgs e)
+        private async void Photo_Click(object sender, RoutedEventArgs e)
         {
+            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Picture);
 
+            var chat = ViewModel.Item as TLChat;
+            var chatFull = ViewModel.Full as TLChatFull;
+            if (chat.Photo is TLChatPhoto photo && chatFull != null && chatFull.ChatPhoto is TLPhoto)
+            {
+                var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, chatFull, chat);
+                await GalleryView.Current.ShowAsync(viewModel, () => Picture);
+            }
         }
 
         private async void EditPhoto_Click(object sender, RoutedEventArgs e)
@@ -98,6 +107,15 @@ namespace Unigram.Views.Chats
             if (e.ClickedItem is TLChatParticipantBase participant && participant.User != null)
             {
                 ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), participant.User.ToPeer());
+            }
+        }
+
+        private void Notifications_Toggled(object sender, RoutedEventArgs e)
+        {
+            var toggle = sender as ToggleSwitch;
+            if (toggle.FocusState != FocusState.Unfocused)
+            {
+                ViewModel.ToggleMuteCommand.Execute();
             }
         }
     }

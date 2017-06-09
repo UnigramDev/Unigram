@@ -25,7 +25,6 @@ namespace Unigram.Views.SignIn
         public SignInSentCodePage()
         {
             InitializeComponent();
-
             DataContext = UnigramContainer.Current.ResolveType<SignInSentCodeViewModel>();
 
             // Used to hide the app gray bar on desktop.
@@ -35,6 +34,11 @@ namespace Unigram.Views.SignIn
             //{
             //    rpMasterTitlebar.Visibility = Visibility.Collapsed;
             //}
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            PrimaryInput.Focus(FocusState.Keyboard);
         }
 
         public class NavigationParameters

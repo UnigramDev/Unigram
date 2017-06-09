@@ -15,18 +15,19 @@ namespace Telegram.Api.TL
 
         public long? ClientId { get; set; }
 
-        #region UserFull information
+        //#region UserFull information
 
-        public TLContactsLink Link { get; set; }
+        //public TLContactsLink Link { get; set; }
 
-        public TLPhotoBase ProfilePhoto { get; set; }
+        //public TLPhotoBase ProfilePhoto { get; set; }
 
-        public TLPeerNotifySettingsBase NotifySettings { get; set; }
+        //public TLPeerNotifySettingsBase NotifySettings { get; set; }
 
-        public virtual bool IsBlocked { get; set; }
+        //public virtual bool IsBlocked { get; set; }
 
-        public TLBotInfo BotInfo { get; set; }
-        #endregion
+        //public TLBotInfo BotInfo { get; set; }
+
+        //#endregion
 
         public virtual void Update(TLUserBase user)
         {
@@ -37,20 +38,20 @@ namespace Telegram.Api.TL
                     Contact = user.Contact;
                 }
 
-                if (user.Link != null)
-                {
-                    Link = user.Link;
-                }
+                //if (user.Link != null)
+                //{
+                //    Link = user.Link;
+                //}
 
-                if (user.ProfilePhoto != null)
-                {
-                    ProfilePhoto = user.ProfilePhoto;
-                }
+                //if (user.ProfilePhoto != null)
+                //{
+                //    ProfilePhoto = user.ProfilePhoto;
+                //}
 
-                if (user.NotifySettings != null)
-                {
-                    NotifySettings = user.NotifySettings;
-                }
+                //if (user.NotifySettings != null)
+                //{
+                //    NotifySettings = user.NotifySettings;
+                //}
                 if (user.ReadInboxMaxId != 0 && (ReadInboxMaxId == 0 || ReadInboxMaxId < user.ReadInboxMaxId))
                 {
                     ReadInboxMaxId = user.ReadInboxMaxId;
@@ -65,10 +66,10 @@ namespace Telegram.Api.TL
                 //    ExtendedInfo = user.ExtendedInfo;
                 //}
 
-                if (user.IsBlocked != null)
-                {
-                    IsBlocked = user.IsBlocked;
-                }
+                //if (user.IsBlocked != null)
+                //{
+                //    IsBlocked = user.IsBlocked;
+                //}
             }
             catch (Exception e)
             {
@@ -106,11 +107,6 @@ namespace Telegram.Api.TL
                     //{
                     //    return Phone != null ? "+" + Phone : string.Empty;
                     //}
-
-                    if (string.Equals(firstName, lastName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return firstName;
-                    }
 
                     if (string.IsNullOrEmpty(firstName))
                     {
@@ -211,6 +207,42 @@ namespace Telegram.Api.TL
                 //}
 
                 return ToString();
+            }
+        }
+
+
+
+        private bool _isTyping;
+        public bool IsTyping
+        {
+            get
+            {
+                return _isTyping;
+            }
+            set
+            {
+                if (_isTyping != value)
+                {
+                    _isTyping = value;
+                    RaisePropertyChanged(() => IsTyping);
+                }
+            }
+        }
+
+        private string _typingSubtitle;
+        public string TypingSubtitle
+        {
+            get
+            {
+                return _typingSubtitle;
+            }
+            set
+            {
+                if (_typingSubtitle != value)
+                {
+                    _typingSubtitle = value;
+                    RaisePropertyChanged(() => TypingSubtitle);
+                }
             }
         }
 

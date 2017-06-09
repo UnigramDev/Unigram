@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
+using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Controls.Views;
 using Unigram.Views;
 
 namespace Unigram.ViewModels
@@ -19,6 +21,9 @@ namespace Unigram.ViewModels
             _gallery = new InstantGalleryViewModel();
         }
 
+        public Uri ShareLink { get; set; }
+        public string ShareTitle { get; set; }
+
         private InstantGalleryViewModel _gallery;
         public InstantGalleryViewModel Gallery
         {
@@ -29,6 +34,37 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _gallery, value);
+            }
+        }
+
+        public RelayCommand<TLChannel> ChannelOpenCommand => new RelayCommand<TLChannel>(ChannelOpenExecute);
+        private void ChannelOpenExecute(TLChannel channel)
+        {
+            if (channel != null)
+            {
+                NavigationService.NavigateToDialog(channel);
+            }
+        }
+
+        public RelayCommand<TLChannel> ChannelJoinCommand => new RelayCommand<TLChannel>(ChannelJoinExecute);
+        private async void ChannelJoinExecute(TLChannel channel)
+        {
+            if (channel != null && channel.IsLeft)
+            {
+                var response = await ProtoService.JoinChannelAsync(channel);
+                if (response.IsSucceeded)
+                {
+                    channel.RaisePropertyChanged(() => channel.IsLeft);
+                }
+            }
+        }
+
+        public RelayCommand ShareCommand => new RelayCommand(ShareExecute);
+        private async void ShareExecute()
+        {
+            if (ShareLink != null)
+            {
+                await ShareView.Current.ShowAsync(ShareLink, ShareTitle);
             }
         }
 
@@ -47,7 +83,7 @@ namespace Unigram.ViewModels
 
             if (user != null)
             {
-                NavigationService.Navigate(typeof(DialogPage), user.ToPeer());
+                NavigationService.NavigateToDialog(user);
             }
         }
     }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
+using Telegram.Api.TL;
 using Windows.UI.Xaml;
 
 namespace Telegram.Api.TL
@@ -123,7 +124,7 @@ namespace Telegram.Api.TL
                 {
                     if (this is TLMessageCommonBase messageCommon)
                     {
-                        var peer = messageCommon.IsOut || messageCommon.ToId is TLPeerChannel || messageCommon.ToId is TLPeerChat ? messageCommon.ToId : new TLPeerUser { UserId = messageCommon.FromId.Value };
+                        var peer = messageCommon.IsOut || messageCommon.ToId is TLPeerChannel || messageCommon.ToId is TLPeerChat ? messageCommon.ToId : new TLPeerUser { UserId = messageCommon.FromId ?? 0 };
                         if (peer is TLPeerUser)
                             _parent = InMemoryCacheService.Current.GetUser(peer.Id);
                         if (peer is TLPeerChat || ToId is TLPeerChannel)
@@ -235,26 +236,39 @@ namespace Telegram.Api.TL
 
     public partial class TLMessage
     {
+        #region Game
+        
+        public bool IsGame()
+        {
+            return Media is TLMessageMediaGame;
+        }
+
+        #endregion
+
+        #region IsPhoto
+
+        public bool IsPhoto()
+        {
+            return Media is TLMessageMediaPhoto;
+        }
+
+        #endregion
+
         #region Gif
-        public bool IsGif(bool real = false)
+        public bool IsGif()
         {
             var documentMedia = Media as TLMessageMediaDocument;
-            return documentMedia != null && IsGif(documentMedia.Document as TLDocument, real);
+            return documentMedia != null && IsGif(documentMedia.Document as TLDocument);
         }
 
-        public static bool IsGif(TLDocumentBase documentBase, bool real = false)
+        public static bool IsGif(TLDocumentBase documentBase)
         {
             var document = documentBase as TLDocument;
-            return document != null && IsGif(document, real);
+            return document != null && IsGif(document);
         }
 
-        public static bool IsGif(TLDocument document, bool real = false)
+        public static bool IsGif(TLDocument document)
         {
-            if (real == false)
-            {
-                return false;
-            }
-
             if (document != null && document.MimeType.Equals("video/mp4", StringComparison.OrdinalIgnoreCase))
             {
                 return IsGif(document.Attributes, document.Size);
@@ -277,6 +291,7 @@ namespace Telegram.Api.TL
                     return true;
                 }
             }
+
             return false;
         }
         #endregion
@@ -309,6 +324,7 @@ namespace Telegram.Api.TL
         #endregion
 
         #region Video
+
         public bool IsVideo()
         {
             var documentMedia = Media as TLMessageMediaDocument;
@@ -327,13 +343,44 @@ namespace Telegram.Api.TL
             {
                 var videoAttribute = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 var animatedAttribute = document.Attributes.OfType<TLDocumentAttributeAnimated>().FirstOrDefault();
-                if (videoAttribute != null /*&& animatedAttribute == null*/)
+                if (videoAttribute != null && animatedAttribute == null)
                 {
-                    return true;
+                    return !videoAttribute.IsRoundMessage;
                 }
             }
             return false;
         }
+
+        #endregion
+
+        #region RoundVideo
+
+        public bool IsRoundVideo()
+        {
+            var documentMedia = Media as TLMessageMediaDocument;
+            return documentMedia != null && IsRoundVideo(documentMedia.Document);
+        }
+
+        public static bool IsRoundVideo(TLDocumentBase documentBase)
+        {
+            var document = documentBase as TLDocument;
+            return document != null && IsRoundVideo(document, document.Size);
+        }
+
+        public static bool IsRoundVideo(TLDocument document, int size)
+        {
+            if (size > 0)
+            {
+                var videoAttribute = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
+                var animatedAttribute = document.Attributes.OfType<TLDocumentAttributeAnimated>().FirstOrDefault();
+                if (videoAttribute != null /*&& animatedAttribute == null*/)
+                {
+                    return videoAttribute.IsRoundMessage;
+                }
+            }
+            return false;
+        }
+
         #endregion
 
         #region Audio
@@ -397,6 +444,119 @@ namespace Telegram.Api.TL
                 {
                     return true;
                 }
+            }
+            return false;
+        }
+        #endregion
+
+        #region Helpers
+        public static bool isStickerDocument(TLDocument document)
+        {
+            if (document != null)
+            {
+                for (int a = 0; a < document.Attributes.Count; a++)
+                {
+                    TLDocumentAttributeBase attribute = document.Attributes[a];
+                    if (attribute is TLDocumentAttributeSticker)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool isMaskDocument(TLDocument document)
+        {
+            if (document != null)
+            {
+                for (int a = 0; a < document.Attributes.Count; a++)
+                {
+                    TLDocumentAttributeBase attribute = document.Attributes[a];
+                    if (attribute is TLDocumentAttributeSticker stickerAttribute && stickerAttribute.IsMask)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool isVoiceDocument(TLDocument document)
+        {
+            if (document != null)
+            {
+                for (int a = 0; a < document.Attributes.Count; a++)
+                {
+                    TLDocumentAttributeBase attribute = document.Attributes[a];
+                    if (attribute is TLDocumentAttributeAudio audioAttribute)
+                    {
+                        return audioAttribute.IsVoice;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool isVoiceWebDocument(TLWebDocument webDocument)
+        {
+            return webDocument != null && webDocument.MimeType.Equals("audio/ogg");
+        }
+
+        public static bool isImageWebDocument(TLWebDocument webDocument)
+        {
+            return webDocument != null && webDocument.MimeType.StartsWith("image/");
+        }
+
+        public static bool isVideoWebDocument(TLWebDocument webDocument)
+        {
+            return webDocument != null && webDocument.MimeType.StartsWith("video/");
+        }
+
+        public static bool isMusicDocument(TLDocument document)
+        {
+            if (document != null)
+            {
+                for (int a = 0; a < document.Attributes.Count; a++)
+                {
+                    TLDocumentAttributeBase attribute = document.Attributes[a];
+                    if (attribute is TLDocumentAttributeAudio audioAttribute)
+                    {
+                        return !audioAttribute.IsVoice;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public static bool isVideoDocument(TLDocument document)
+        {
+            if (document != null)
+            {
+                bool isAnimated = false;
+                bool isVideo = false;
+                int width = 0;
+                int height = 0;
+
+                for (int a = 0; a < document.Attributes.Count; a++)
+                {
+                    TLDocumentAttributeBase attribute = document.Attributes[a];
+                    if (attribute is TLDocumentAttributeVideo videoAttribute)
+                    {
+                        isVideo = true;
+                        width = videoAttribute.W;
+                        height = videoAttribute.H;
+                    }
+                    else if (attribute is TLDocumentAttributeAnimated)
+                    {
+                        isAnimated = true;
+                    }
+                }
+                if (isAnimated && (width > 1280 || height > 1280))
+                {
+                    isAnimated = false;
+                }
+                return isVideo && !isAnimated;
             }
             return false;
         }

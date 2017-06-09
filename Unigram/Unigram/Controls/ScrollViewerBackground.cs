@@ -61,6 +61,7 @@ namespace Unigram.Controls
                 _animation = _compositor.CreateExpressionAnimation("Max(Scroll.Translation.Y, 0)");
                 _animation.SetReferenceParameter("Scroll", props);
 
+                _visual.StopAnimation("Size.Y");
                 _visual.StartAnimation("Size.Y", _animation);
             }
         }
@@ -84,19 +85,6 @@ namespace Unigram.Controls
             }
         }
 
-        //public FrameworkElement ScrollingHost { get; set; }
-
-        #region ScrollingHost
-
-        public FrameworkElement ScrollingHost
-        {
-            get { return (FrameworkElement)GetValue(ScrollingHostProperty); }
-            set { SetValue(ScrollingHostProperty, value); }
-        }
-
-        public static readonly DependencyProperty ScrollingHostProperty =
-            DependencyProperty.Register("ScrollingHost", typeof(FrameworkElement), typeof(ScrollViewerBackground), new PropertyMetadata(null));
-
-        #endregion
+        public FrameworkElement ScrollingHost { get; set; }
     }
 }

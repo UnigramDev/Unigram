@@ -34,16 +34,26 @@ namespace Unigram.Controls.Views
         private void Gifs_ItemClick(object sender, ItemClickEventArgs e)
         {
             ViewModel.SendGifCommand.Execute(e.ClickedItem);
-        }
 
-        private async void Featured_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            await StickerSetView.Current.ShowAsync(((TLDocument)e.ClickedItem).StickerSet);
+            if (Window.Current.Bounds.Width >= 500)
+            {
+                Focus(FocusState.Programmatic);
+            }
         }
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
             ViewModel.SendStickerCommand.Execute(e.ClickedItem);
+
+            if (Window.Current.Bounds.Width >= 500)
+            {
+                Focus(FocusState.Programmatic);
+            }
+        }
+
+        private async void Featured_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            await StickerSetView.Current.ShowAsync(((TLDocument)e.ClickedItem).StickerSet);
         }
 
         private void Stickers_Loaded(object sender, RoutedEventArgs e)

@@ -22,7 +22,6 @@ using Telegram.Api.Services.FileManager;
 using Windows.Storage;
 using Windows.System;
 using Unigram.Views;
-using Unigram.Views;
 using Telegram.Api.Helpers;
 using Unigram.Controls;
 using System.Diagnostics;
@@ -32,6 +31,8 @@ using System.Globalization;
 using System.Net;
 using Unigram.Common;
 using Telegram.Api.Services;
+using Unigram.Views.Users;
+using Unigram.ViewModels.Users;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -44,8 +45,16 @@ namespace Unigram.Themes
             this.InitializeComponent();
         }
 
-        private async void Photo_Click(object sender, RoutedEventArgs e)
+        private void Photo_Click(object sender, RoutedEventArgs e)
         {
+            Photo_Click(sender);
+        }
+
+        public static async void Photo_Click(object sender)
+        {
+            Download(sender, null);
+            return;
+
             var image = sender as FrameworkElement;
             var message = image.DataContext as TLMessage;
 
@@ -53,15 +62,8 @@ namespace Unigram.Themes
             {
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
-                var viewModel = new DialogPhotosViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
-                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
-                {
-                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                    if (animation != null)
-                    {
-                        animation.TryStart(image);
-                    }
-                });
+                var viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
+                await GalleryView.Current.ShowAsync(viewModel, () => image);
             }
         }
 
@@ -90,41 +92,41 @@ namespace Unigram.Themes
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
                 var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(item, null as string));
-                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
-                {
-                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                    if (animation != null)
-                    {
-                        animation.TryStart(image);
-                    }
-                });
+                await GalleryView.Current.ShowAsync(viewModel, () => image);
             }
         }
 
-        private async void Download_Click(object sender, TransferCompletedEventArgs e)
+        private void Download_Click(object sender, TransferCompletedEventArgs e)
+        {
+            Download(sender, e);
+        }
+
+        public static async void Download(object sender, TransferCompletedEventArgs e)
         {
             var element = sender as FrameworkElement;
             var message = element.DataContext as TLMessage;
-            var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
-            if (bubble != null)
+
+            if (message != null)
             {
-                if (bubble.Context != null && message.IsVideo())
+                if (message.IsVideo() || message.IsRoundVideo() || message.IsGif() || message.IsPhoto())
                 {
-                    var media = bubble.FindName("MediaControl") as UIElement;
+                    var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
 
                     ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
 
-                    var viewModel = new DialogPhotosViewModel(bubble.Context.Peer, message, bubble.Context.ProtoService);
-                    await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
+                    GalleryViewModelBase viewModel;
+                    if (message.Parent != null)
                     {
-                        var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                        if (animation != null)
-                        {
-                            animation.TryStart(media);
-                        }
-                    });
+                        viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
+                    }
+                    else
+                    {
+                        viewModel = new SingleGalleryViewModel(new GalleryMessageItem(message));
+                    }
+
+                    await GalleryView.Current.ShowAsync(viewModel, () => media);
                 }
-                else
+                else if (e != null)
                 {
                     var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(e.FileName));
                     await Launcher.LaunchFileAsync(file);
@@ -172,7 +174,21 @@ namespace Unigram.Themes
 
         private void Unsupported_Click(Windows.UI.Xaml.Documents.Hyperlink sender, Windows.UI.Xaml.Documents.HyperlinkClickEventArgs args)
         {
-            MessageHelper.HandleTelegramUrl("t.me/unigramchannel");
+            MessageHelper.HandleTelegramUrl("t.me/unigram");
+        }
+
+        private void Contact_Click(object sender, RoutedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+            var bubble = element.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
+            if (bubble != null && bubble.Context != null)
+            {
+                if (message.Media is TLMessageMediaContact contactMedia && contactMedia.User.HasAccessHash)
+                {
+                    bubble.Context.NavigationService.Navigate(typeof(UserDetailsPage), contactMedia.User.ToPeer());
+                }
+            }
         }
     }
 }

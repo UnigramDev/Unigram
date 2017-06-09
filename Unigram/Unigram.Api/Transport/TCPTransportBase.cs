@@ -13,7 +13,7 @@ using TransportType = Telegram.Api.Services.TransportType;
 
 namespace Telegram.Api.Transport
 {
-    public abstract class TcpTransportBase : ITransport
+    internal abstract class TcpTransportBase : ITransport
     {
         public long MinMessageId { get; set; }
         public Dictionary<long, long> MessageIdDict { get; set; } 
@@ -48,6 +48,7 @@ namespace Telegram.Api.Transport
         public int Id { get; protected set; }
         public int DCId { get; set; }
         public byte[] AuthKey { get; set; }
+        public string[] PublicKeys { get; set; }
         public long? SessionId { get; set; }
         public long? Salt { get; set; }
         public int SequenceNumber { get; set; }

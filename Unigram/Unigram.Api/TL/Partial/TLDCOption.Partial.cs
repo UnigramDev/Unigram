@@ -19,6 +19,9 @@ namespace Telegram.Api.TL
         public byte[] AuthKey { get; set; }
 
         [DataMember]
+        public string[] PublicKeys { get; set; }
+
+        [DataMember]
         public long? Salt { get; set; }
 
         [DataMember]

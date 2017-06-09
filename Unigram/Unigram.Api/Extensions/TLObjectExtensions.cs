@@ -1,10 +1,21 @@
 ﻿using System.IO;
 using Telegram.Api.TL;
 
-namespace Telegram.Api.Extensions
+namespace Telegram.Api
 {
-    //public static class TLObjectExtensions
-    //{
+    public static class TLObjectExtensions
+    {
+        public static string TrimStart(this string target, string trimString)
+        {
+            string result = target;
+            while (result.StartsWith(trimString))
+            {
+                result = result.Substring(trimString.Length);
+            }
+
+            return result;
+        }
+    }
     //    public static void NullableToStream(this TLObject obj, Stream output)
     //    {
     //        if (obj == null)
@@ -20,7 +31,7 @@ namespace Telegram.Api.Extensions
     //    public static T NullableFromStream<T>(Stream input)
     //    {
     //        var obj = TLObjectGenerator.GetNullableObject<T>(input);
-            
+
     //        if (obj == null) return default(T);
 
     //        return (T)(object)obj.FromStream<T>(input);

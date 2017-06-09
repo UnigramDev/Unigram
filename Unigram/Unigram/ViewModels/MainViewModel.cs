@@ -32,26 +32,104 @@ using Unigram.Controls;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Math;
 using Unigram.Core;
+using Unigram.Common.Dialogs;
 
 namespace Unigram.ViewModels
 {
-    public class MainViewModel : UnigramViewModelBase, IHandle<TLUpdatePhoneCall>, IHandle
+    public class MainViewModel : UnigramViewModelBase, IHandle<TLUpdatePhoneCall>, IHandle<TLUpdateUserTyping>, IHandle<TLUpdateChatUserTyping>
     {
         private readonly IPushService _pushService;
 
-        public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPushService pushService, IContactsService contactsService)
+        private readonly Dictionary<int, InputTypingManager> _typingManagers;
+        private readonly Dictionary<int, InputTypingManager> _chatTypingManagers;
+
+        public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPushService pushService, IContactsService contactsService, DialogsViewModel dialogs)
             : base(protoService, cacheService, aggregator)
         {
             _pushService = pushService;
+            _typingManagers = new Dictionary<int, InputTypingManager>();
+            _chatTypingManagers = new Dictionary<int, InputTypingManager>();
 
             //Dialogs = new DialogCollection(protoService, cacheService);
             SearchDialogs = new ObservableCollection<TLDialog>();
-            Dialogs = new DialogsViewModel(protoService, cacheService, aggregator);
+            Dialogs = dialogs;
             Contacts = new ContactsViewModel(protoService, cacheService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, aggregator);
 
-            //aggregator.Subscribe(this);
+            aggregator.Subscribe(this);
         }
+
+        #region Typing
+
+        public void Handle(TLUpdateUserTyping update)
+        {
+            var user = CacheService.GetUser(update.UserId) as TLUser;
+            if (user != null && !user.IsSelf)
+            {
+                _typingManagers.TryGetValue(update.UserId, out InputTypingManager typingManager);
+                if (typingManager == null)
+                {
+                    typingManager = new InputTypingManager(users =>
+                    {
+                        user.TypingSubtitle = DialogViewModel.GetTypingString(user.ToPeer(), users, CacheService.GetUser, null);
+                        user.IsTyping = true;
+                    },
+                    () =>
+                    {
+                        user.TypingSubtitle = null;
+                        user.IsTyping = false;
+                    });
+
+                    _typingManagers[update.UserId] = typingManager;
+                }
+
+                var action = update.Action;
+                if (action is TLSendMessageCancelAction)
+                {
+                    typingManager.RemoveTypingUser(update.UserId);
+                    return;
+                }
+
+                typingManager.AddTypingUser(update.UserId, action);
+            }
+        }
+
+        public void Handle(TLUpdateChatUserTyping update)
+        {
+            var chatBase = CacheService.GetChat(update.ChatId) as TLChatBase;
+            if (chatBase != null)
+            {
+                _typingManagers.TryGetValue(update.ChatId, out InputTypingManager typingManager);
+                if (typingManager == null)
+                {
+                    typingManager = new InputTypingManager(users =>
+                    {
+                        chatBase.TypingSubtitle = DialogViewModel.GetTypingString(chatBase.ToPeer(), users, CacheService.GetUser, null);
+                        chatBase.IsTyping = true;
+                    },
+                    () =>
+                    {
+                        chatBase.TypingSubtitle = null;
+                        chatBase.IsTyping = false;
+                    });
+
+                    _typingManagers[update.ChatId] = typingManager;
+                }
+
+                var action = update.Action;
+                if (action is TLSendMessageCancelAction)
+                {
+                    typingManager.RemoveTypingUser(update.UserId);
+                    return;
+                }
+
+                typingManager.AddTypingUser(update.UserId, action);
+            }
+        }
+
+        #endregion
+
+        public TLVector<TLTopPeerCategoryPeers> TopPeers { get; private set; }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
@@ -62,15 +140,42 @@ namespace Unigram.ViewModels
             //Execute.BeginOnUIThread(() => Contacts.getTLContacts());
             //Execute.BeginOnUIThread(() => Contacts.GetSelfAsync());
 
+            //ProtoService.GetTopPeersAsync(TLContactsGetTopPeers.Flag.BotsInline, 0, 0, 0, result =>
+            //{
+            //    var topPeers = result as TLContactsTopPeers;
+            //    if (topPeers != null)
+            //    {
+            //        TopPeers = topPeers.Categories;
+            //    }
+            //});
+
             return Task.CompletedTask;
         }
 
         private byte[] secretP;
         private byte[] a_or_b;
 
-        public void Handle(TLUpdatePhoneCall message)
+        public async void Handle(TLUpdatePhoneCall update)
         {
-            if (message.PhoneCall is TLPhoneCallRequested callRequested)
+            await VoIPConnection.Current.SendUpdateAsync(update);
+            await Task.Delay(2000);
+
+            //if (update.PhoneCall is TLPhoneCallDiscarded discarded)
+            //{
+            //    if (discarded.IsNeedRating)
+            //    {
+            //        Debugger.Break();
+            //    }
+
+            //    if (discarded.IsNeedDebug)
+            //    {
+            //        Debugger.Break();
+            //    }
+            //}
+
+            return;
+
+            if (update.PhoneCall is TLPhoneCallRequested callRequested)
             {
                 var reqReceived = new TLPhoneReceivedCall();
                 reqReceived.Peer = new TLInputPhoneCall();
@@ -140,7 +245,7 @@ namespace Unigram.ViewModels
                     }
                 });
             }
-            else if (message.PhoneCall is TLPhoneCall call)
+            else if (update.PhoneCall is TLPhoneCall call)
             {
                 var auth_key = computeAuthKey(call);
                 var g_a = call.GAOrB;

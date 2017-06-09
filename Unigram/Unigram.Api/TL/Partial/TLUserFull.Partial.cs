@@ -8,15 +8,20 @@ namespace Telegram.Api.TL
 {
     public partial class TLUserFull
     {
-        public TLUserBase ToUser()
+        public void Update(TLUserFull userFull)
         {
-            User.Link = Link;
-            User.ProfilePhoto = ProfilePhoto;
-            User.NotifySettings = NotifySettings;
-            User.IsBlocked = IsBlocked;
-            User.BotInfo = BotInfo;
-
-            return User;
+            // TODO: update
         }
+
+        //public TLUserBase ToUser()
+        //{
+        //    User.Link = Link;
+        //    User.ProfilePhoto = ProfilePhoto;
+        //    User.NotifySettings = NotifySettings;
+        //    User.IsBlocked = IsBlocked;
+        //    User.BotInfo = BotInfo;
+
+        //    return User;
+        //}
     }
 }

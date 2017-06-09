@@ -205,7 +205,7 @@
                             </Grid>
                         </Grid>
 
-                        <TextBox x:Name="txtMessage"
+                        <TextBox x:Name="TextField"
                                  PlaceholderText="Write a message..."
                                  TextWrapping="Wrap"
                                  AcceptsReturn="True"

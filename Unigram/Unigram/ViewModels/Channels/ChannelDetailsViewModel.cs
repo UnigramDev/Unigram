@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
@@ -15,12 +16,13 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Views;
 using Unigram.Views.Channels;
+using Unigram.Views.Chats;
 using Windows.Storage;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
 {
-    public class ChannelDetailsViewModel : ChannelParticipantsViewModelBase
+    public class ChannelDetailsViewModel : ChannelParticipantsViewModelBase, IHandle<TLUpdateNotifySettings>
     {
         private readonly IUploadFileManager _uploadFileManager;
 
@@ -30,7 +32,7 @@ namespace Unigram.ViewModels.Channels
             _uploadFileManager = uploadFileManager;
         }
 
-        private TLChannelFull _full;
+        protected TLChannelFull _full;
         public TLChannelFull Full
         {
             get
@@ -61,22 +63,58 @@ namespace Unigram.ViewModels.Channels
             {
                 Item = channel;
 
-                var response = await ProtoService.GetFullChannelAsync(channel.ToInputChannel());
-                if (response.IsSucceeded)
+                var full = CacheService.GetFullChat(channel.Id) as TLChannelFull;
+                if (full == null)
                 {
-                    Full = response.Result.FullChat as TLChannelFull;
-                    Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), null);
+                    var response = await ProtoService.GetFullChannelAsync(channel.ToInputChannel());
+                    if (response.IsSucceeded)
+                    {
+                        full = response.Result.FullChat as TLChannelFull;
+                    }
+                }
 
+                if (full != null)
+                {
+                    Full = full;
+
+                    if (_item.IsMegaGroup)
+                    {
+                        Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), null);
+                    }
+
+                    RaisePropertyChanged(() => AreNotificationsEnabled);
                     RaisePropertyChanged(() => Participants);
+
+                    Aggregator.Subscribe(this);
                 }
             }
         }
 
-        public bool CanEditNameAndPhoto
+        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        {
+            Aggregator.Unsubscribe(this);
+            return Task.CompletedTask;
+        }
+
+        public bool IsEditEnabled
         {
             get
             {
                 return _item != null && (_item.IsCreator || _item.IsEditor || _item.IsModerator);
+            }
+        }
+
+        public bool AreNotificationsEnabled
+        {
+            get
+            {
+                var settings = _full?.NotifySettings as TLPeerNotifySettings;
+                if (settings != null)
+                {
+                    return settings.MuteUntil == 0;
+                }
+
+                return false;
             }
         }
 
@@ -112,6 +150,44 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
+        public void Handle(TLUpdateNotifySettings message)
+        {
+            var notifyPeer = message.Peer as TLNotifyPeer;
+            if (notifyPeer != null)
+            {
+                var peer = notifyPeer.Peer;
+                if (peer is TLPeerChannel && peer.Id == Item.Id)
+                {
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        Full.NotifySettings = message.NotifySettings;
+                        Full.RaisePropertyChanged(() => Full.NotifySettings);
+                        RaisePropertyChanged(() => AreNotificationsEnabled);
+
+                        //var notifySettings = updateNotifySettings.NotifySettings as TLPeerNotifySettings;
+                        //if (notifySettings != null)
+                        //{
+                        //    _suppressUpdating = true;
+                        //    MuteUntil = notifySettings.MuteUntil.Value;
+                        //    _suppressUpdating = false;
+                        //}
+                    });
+                }
+            }
+        }
+
+        public RelayCommand EditCommand => new RelayCommand(EditExecute);
+        private void EditExecute()
+        {
+            NavigationService.Navigate(typeof(ChannelEditPage), _item.ToPeer());
+        }
+
+        public RelayCommand InviteCommand => new RelayCommand(InviteExecute);
+        private void InviteExecute()
+        {
+            NavigationService.Navigate(typeof(ChatInvitePage), _item.ToPeer());
+        }
+
         public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
         private void MediaExecute()
         {
@@ -134,6 +210,41 @@ namespace Unigram.ViewModels.Channels
         private void ParticipantsExecute()
         {
             NavigationService.Navigate(typeof(ChannelParticipantsPage), _item.ToPeer());
+        }
+
+        public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
+        private async void ToggleMuteExecute()
+        {
+            var notifySettings = _full.NotifySettings as TLPeerNotifySettings;
+            if (notifySettings != null)
+            {
+                var muteUntil = notifySettings.MuteUntil == int.MaxValue ? 0 : int.MaxValue;
+                var settings = new TLInputPeerNotifySettings
+                {
+                    MuteUntil = muteUntil,
+                    IsShowPreviews = notifySettings.IsShowPreviews,
+                    IsSilent = notifySettings.IsSilent,
+                    Sound = notifySettings.Sound
+                };
+
+                var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = _item.ToInputPeer() }, settings);
+                if (response.IsSucceeded)
+                {
+                    notifySettings.MuteUntil = muteUntil;
+                    RaisePropertyChanged(() => AreNotificationsEnabled);
+                    Full.RaisePropertyChanged(() => Full.NotifySettings);
+
+                    var dialog = CacheService.GetDialog(_item.ToPeer());
+                    if (dialog != null)
+                    {
+                        dialog.NotifySettings = _full.NotifySettings;
+                        dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                        dialog.RaisePropertyChanged(() => dialog.Self);
+                    }
+
+                    CacheService.Commit();
+                }
+            }
         }
     }
 

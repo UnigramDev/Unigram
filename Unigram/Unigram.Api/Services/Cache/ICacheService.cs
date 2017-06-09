@@ -21,6 +21,8 @@ namespace Telegram.Api.Services.Cache
         TLUserBase GetUser(int? id);
         TLUserBase GetUser(string username);
         TLUserBase GetUser(TLUserProfilePhoto photo);
+        TLUserFull GetFullUser(int? id);
+
         TLMessageBase GetMessage(int? id, int? channelId = null); 
         TLMessageBase GetMessage(long? randomId);
         TLMessageBase GetMessage(TLWebPageBase webPage);
@@ -33,6 +35,7 @@ namespace Telegram.Api.Services.Cache
         TLChannel GetChannel(string username);
         TLChannel GetChannel(TLChatPhoto channelPhoto);
         TLChatBase GetChat(int? id);
+        TLChatFullBase GetFullChat(int? id);
 
         IList<TLMessageBase> GetMessages();
         IList<TLMessageBase> GetSendingMessages();

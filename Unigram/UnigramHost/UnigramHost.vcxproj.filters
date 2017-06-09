@@ -6,4 +6,8 @@
   <ItemGroup>
     <AppxManifest Include="..\Unigram\Package.appxmanifest" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Unigram_StoreKey.pfx" />
+    <None Include="Unigram_TemporaryKey.pfx" />
+  </ItemGroup>
 </Project>

@@ -23,6 +23,8 @@ namespace Telegram.Api.Services.FileManager
 
         public TLUploadFile File { get; set; }
 
+        public TLUploadWebFile WebFile { get; set; }
+
         public DownloadablePart(DownloadableItem item, int offset, int limit, int number = 0)
         {
             ParentItem = item;

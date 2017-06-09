@@ -10,6 +10,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Common;
 using Template10.Services.NavigationService;
+using Unigram.Common;
 using Unigram.Views;
 using Windows.UI.Xaml.Navigation;
 
@@ -68,7 +69,7 @@ namespace Unigram.ViewModels.Chats
                         var chat = updates.Chats.FirstOrDefault() as TLChat;
                         if (chat != null)
                         {
-                            NavigationService.Navigate(typeof(DialogPage), new TLPeerChat { ChatId = chat.Id });
+                            NavigationService.NavigateToDialog(chat);
                         }
                     }
                 }

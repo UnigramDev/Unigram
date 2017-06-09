@@ -31,6 +31,8 @@ using Unigram.ViewModels.Users;
 using Unigram.ViewModels.Payments;
 using Windows.Foundation.Metadata;
 using Unigram.Common;
+using Windows.UI.Xaml;
+using Windows.UI.ViewManagement;
 
 namespace Unigram
 {
@@ -65,6 +67,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<DownloadAudioFileManager>().As<IDownloadAudioFileManager>().SingleInstance();
             container.ContainerBuilder.RegisterType<DownloadVideoFileManager>().As<IDownloadVideoFileManager>().SingleInstance();
             container.ContainerBuilder.RegisterType<DownloadDocumentFileManager>().As<IDownloadDocumentFileManager>().SingleInstance();
+            container.ContainerBuilder.RegisterType<DownloadWebFileManager>().As<IDownloadWebFileManager>().SingleInstance();
             //container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadFileManager>().SingleInstance();
             //container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadAudioManager>().SingleInstance();
             //container.ContainerBuilder.RegisterType<UploadManager>().As<IUploadDocumentManager>().SingleInstance();
@@ -79,7 +82,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<PushService>().As<IPushService>().SingleInstance();
             container.ContainerBuilder.RegisterType<JumpListService>().As<IJumpListService>().SingleInstance();
             container.ContainerBuilder.RegisterType<HardwareService>().As<IHardwareService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<GifsService>().As<IGifsService>().SingleInstance();
+            //container.ContainerBuilder.RegisterType<GifsService>().As<IGifsService>().SingleInstance();
             container.ContainerBuilder.RegisterType<StickersService>().As<IStickersService>().SingleInstance();
             container.ContainerBuilder.RegisterType<StatsService>().As<IStatsService>().SingleInstance();
             container.ContainerBuilder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();
@@ -109,13 +112,19 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SignInSentCodeViewModel>();
             container.ContainerBuilder.RegisterType<SignInPasswordViewModel>();
             container.ContainerBuilder.RegisterType<MainViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<ShareViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSendLocationViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<DialogsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogViewModel>();
             container.ContainerBuilder.RegisterType<DialogStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<UserDetailsViewModel>();
             container.ContainerBuilder.RegisterType<UserCommonChatsViewModel>();
             container.ContainerBuilder.RegisterType<ChatDetailsViewModel>();// .SingleInstance();
+            container.ContainerBuilder.RegisterType<ChatInviteViewModel>();// .SingleInstance();
+            container.ContainerBuilder.RegisterType<ChatInviteLinkViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelDetailsViewModel>();// .SingleInstance();
+            container.ContainerBuilder.RegisterType<ChannelEditViewModel>();// .SingleInstance();
+            container.ContainerBuilder.RegisterType<ChannelEditTypeViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelAdminsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelKickedViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelParticipantsViewModel>();// .SingleInstance();
@@ -127,6 +136,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<CreateChatStep2ViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<InstantViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsGeneralViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStorageViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStatsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<FeaturedStickersViewModel>().SingleInstance();
@@ -136,6 +146,11 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsBlockedUsersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsBlockUserViewModel>();
             container.ContainerBuilder.RegisterType<SettingsNotificationsViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsDataAndStorageViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsPrivacyAndSecurityViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsPrivacyStatusTimestampViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsPrivacyPhoneCallViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<SettingsPrivacyChatInviteViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsAccountsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<SettingsStickersFeaturedViewModel>().SingleInstance();
@@ -144,6 +159,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SettingsMasksArchivedViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<AttachedStickersViewModel>();
             container.ContainerBuilder.RegisterType<StickerSetViewModel>();
+            container.ContainerBuilder.RegisterType<AboutViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<PaymentFormStep1ViewModel>();
             container.ContainerBuilder.RegisterType<PaymentFormStep2ViewModel>();
             container.ContainerBuilder.RegisterType<PaymentFormStep3ViewModel>();
@@ -166,13 +182,13 @@ namespace Unigram
                 }
             }
 
-            //if (SettingsHelper.SupportedLayer < 65)
-            //{
-            //    SettingsHelper.SupportedLayer = 65;
-            //    deleteIfExists("database.sqlite");
-            //    ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
-            //    ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
-            //}
+            if (SettingsHelper.SupportedLayer < 66)
+            {
+                deleteIfExists("database.sqlite");
+                SettingsHelper.SupportedLayer = 66;
+                ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
+                ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
+            }
 
             //if (SettingsHelper.SupportedLayer != Constants.SupportedLayer ||
             //    SettingsHelper.DatabaseVersion != Constants.DatabaseVersion)
@@ -202,9 +218,10 @@ namespace Unigram
         public void LoadStateAndUpdate()
         {
             var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>() as MTProtoService;
             var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-            cacheService.Init();
+            var transportService = UnigramContainer.Current.ResolveType<ITransportService>();
+            //cacheService.Init();
             updatesService.GetCurrentUserId = () => protoService.CurrentUserId;
             updatesService.GetStateAsync = protoService.GetStateAsync;
             updatesService.GetDHConfigAsync = protoService.GetDHConfigAsync;
@@ -219,22 +236,79 @@ namespace Unigram
             updatesService.GetChannelMessagesAsync = protoService.GetMessagesAsync;
             updatesService.LoadStateAndUpdate(() => { });
 
-            protoService.AuthorizationRequired += (s, e) =>
-            {
-                SettingsHelper.IsAuthorized = false;
-                Debug.WriteLine("!!!UNAUTHORIZED!!!");
+            protoService.AuthorizationRequired -= OnAuthorizationRequired;
+            protoService.AuthorizationRequired += OnAuthorizationRequired;
+            protoService.PropertyChanged -= OnPropertyChanged;
+            protoService.PropertyChanged += OnPropertyChanged;
 
-                Execute.BeginOnUIThread(() =>
+            transportService.TransportConnecting -= OnTransportConnecting;
+            transportService.TransportConnecting += OnTransportConnecting;
+            transportService.TransportConnected -= OnTransportConnected;
+            transportService.TransportConnected += OnTransportConnected;
+        }
+
+        private async void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("Message"))
+            {
+                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+                if (protoService != null)
                 {
-                    var type = App.Current.NavigationService.CurrentPageType;
-                    if (type.Name.StartsWith("SignIn") || type.Name.StartsWith("SignUp")) { }
+                    if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+                    {
+                        var statusBar = StatusBar.GetForCurrentView();
+                        if (string.IsNullOrEmpty(protoService.Message))
+                        {
+                            statusBar.ProgressIndicator.Text = string.Empty;
+                            await statusBar.ProgressIndicator.HideAsync();
+                        }
+                        else
+                        {
+                            statusBar.ProgressIndicator.Text = protoService.Message;
+                            await statusBar.ProgressIndicator.ShowAsync();
+                        }
+                    }
                     else
                     {
-                        App.Current.NavigationService.Navigate(typeof(SignInWelcomePage));
-                        App.Current.NavigationService.Frame.BackStack.Clear();
+                        ApplicationView.GetForCurrentView().Title = protoService.Message ?? string.Empty;
                     }
-                });
-            };
+                }
+            }
+        }
+
+        private void OnTransportConnecting(object sender, TransportEventArgs e)
+        {
+            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+            if (protoService != null)
+            {
+                protoService.SetMessageOnTime(25, "Connecting...");
+            }
+        }
+
+        private void OnTransportConnected(object sender, TransportEventArgs e)
+        {
+            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+            if (protoService != null)
+            {
+                protoService.SetMessageOnTime(0, null);
+            }
+        }
+
+        private void OnAuthorizationRequired(object sender, AuthorizationRequiredEventArgs e)
+        {
+            SettingsHelper.IsAuthorized = false;
+            Debug.WriteLine("!!!UNAUTHORIZED!!!");
+
+            Execute.BeginOnUIThread(() =>
+            {
+                var type = App.Current.NavigationService.CurrentPageType;
+                if (type.Name.StartsWith("SignIn") || type.Name.StartsWith("SignUp")) { }
+                else
+                {
+                    App.Current.NavigationService.Navigate(typeof(SignInWelcomePage));
+                    App.Current.NavigationService.Frame.BackStack.Clear();
+                }
+            });
         }
     }
 }

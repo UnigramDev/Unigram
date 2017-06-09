@@ -83,7 +83,6 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-
         public void GetParticipantAsync(TLInputChannelBase inputChannel, TLInputUserBase userId, Action<TLChannelsChannelParticipant> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsGetParticipant { Channel = inputChannel, UserId = userId };
@@ -341,14 +340,6 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        // TODO: Layer 56 
-        //public void GetImportantHistoryCallback(TLInputChannelBase channel, TLPeerBase peer, bool sync, int? offsetId, int? addOffset, int? limit, int? maxId, int? minId, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
-        //{
-        //    var obj = new TLGetImportantHistory { Channel = channel, OffsetId = offsetId, OffsetDate = 0, AddOffset = addOffset, Limit = limit, MaxId = maxId, MinId = minId };
-
-        //    SendInformativeMessage("channels.getImportantHistory", obj, callback, faultCallback);
-        //}
-
         public void ReadHistoryAsync(TLChannel channel, int maxId, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsReadHistory { Channel = channel.ToInputChannel(), MaxId = maxId };
@@ -532,7 +523,6 @@ namespace Telegram.Api.Services
 
             SendInformativeMessage("messages.getMessageEditData", obj, callback, faultCallback);
         }
-
 
         public void EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {

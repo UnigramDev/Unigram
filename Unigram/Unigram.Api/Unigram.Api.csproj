@@ -31,18 +31,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40;PREVIEW</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Preview|x86'">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>bin\x86\Preview\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -64,18 +53,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
     <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40;PREVIEW</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>ARM</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Preview|ARM'">
-    <PlatformTarget>ARM</PlatformTarget>
-    <OutputPath>bin\ARM\Preview\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -97,18 +75,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40;PREVIEW</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Preview|x64'">
-    <PlatformTarget>x64</PlatformTarget>
-    <OutputPath>bin\x64\Preview\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40;PREVIEW</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;LAYER_40</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -127,12 +94,16 @@
     <Compile Include="Services\FileManager\DownloadDocumentFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadableItem.cs" />
     <Compile Include="Services\FileManager\DownloadablePart.cs" />
+    <Compile Include="Services\FileManager\DownloadOperation.cs" />
+    <Compile Include="Services\FileManager\DownloadWebFileManager.cs" />
     <Compile Include="Services\FileManager\EventArgs\DownloadingCanceledEventArgs.cs" />
     <Compile Include="Services\FileManager\DownloadEncryptedFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadFileManager.cs" />
     <Compile Include="Services\FileManager\EventArgs\UploadingCanceledEventArgs.cs" />
     <Compile Include="Services\FileManager\EventArgs\UploadProgressChangedEventArgs.cs" />
     <Compile Include="Services\FileManager\EventArgs\DownloadProgressChangedEventArgs.cs" />
+    <Compile Include="Services\FileManager\FileLoader.cs" />
+    <Compile Include="Services\FileManager\FileLoadOperation.cs" />
     <Compile Include="Services\FileManager\UploadableItem.cs" />
     <Compile Include="Services\FileManager\UploadablePart.cs" />
     <Compile Include="Services\FileManager\UploadManager.cs" />
@@ -141,9 +112,9 @@
     <Compile Include="Services\IMTProtoService.Async.cs" />
     <Compile Include="Services\MTProtoService.Async.cs" />
     <Compile Include="Services\MTProtoService.Payments.cs" />
+    <Compile Include="Services\MTProtoService.Phone.cs" />
     <Compile Include="Services\Stats\StatsService.cs" />
     <Compile Include="TLExtensions.cs" />
-    <Compile Include="Hash\CRC32.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Services\MTProtoResponse.cs" />
     <Compile Include="Services\MTProtoService.Channel.cs" />
@@ -160,6 +131,8 @@
     <Compile Include="TL\Core\TLInt.cs" />
     <Compile Include="TL\Core\TLMessageActionUnreadMessages.cs" />
     <Compile Include="TL\Core\TLTuple.cs" />
+    <Compile Include="TL\Local\TLMessageActionBotInfo.cs" />
+    <Compile Include="TL\Local\TLPhoneCallState.cs" />
     <Compile Include="TL\Local\TLMessageActionDate.cs" />
     <Compile Include="TL\Local\TLMessagesContainer.cs" />
     <Compile Include="TL\Methods\Account\TLAccountChangePhone.cs" />
@@ -252,6 +225,7 @@
     <Compile Include="TL\Methods\Contest\TLContestSaveDeveloperInfo.cs" />
     <Compile Include="TL\Methods\Help\TLHelpGetAppChangelog.cs" />
     <Compile Include="TL\Methods\Help\TLHelpGetAppUpdate.cs" />
+    <Compile Include="TL\Methods\Help\TLHelpGetCdnConfig.cs" />
     <Compile Include="TL\Methods\Help\TLHelpGetConfig.cs" />
     <Compile Include="TL\Methods\Help\TLHelpGetInviteText.cs" />
     <Compile Include="TL\Methods\Help\TLHelpGetNearestDC.cs" />
@@ -379,17 +353,21 @@
     <Compile Include="TL\Methods\Updates\TLUpdatesGetChannelDifference.cs" />
     <Compile Include="TL\Methods\Updates\TLUpdatesGetDifference.cs" />
     <Compile Include="TL\Methods\Updates\TLUpdatesGetState.cs" />
+    <Compile Include="TL\Methods\Upload\TLUploadGetCdnFile.cs" />
     <Compile Include="TL\Methods\Upload\TLUploadGetFile.cs" />
     <Compile Include="TL\Methods\Upload\TLUploadGetWebFile.cs" />
+    <Compile Include="TL\Methods\Upload\TLUploadReuploadCdnFile.cs" />
     <Compile Include="TL\Methods\Upload\TLUploadSaveBigFilePart.cs" />
     <Compile Include="TL\Methods\Upload\TLUploadSaveFilePart.cs" />
     <Compile Include="TL\Methods\Users\TLUsersGetFullUser.cs" />
     <Compile Include="TL\Methods\Users\TLUsersGetUsers.cs" />
     <Compile Include="TL\Partial\TLAuthorization.Partial.cs" />
     <Compile Include="TL\Partial\TLBotInlineResultBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLChannelFull.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelParticipantBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChatParticipantBase.Partial.cs" />
     <Compile Include="TL\Partial\TLDraftMessageBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLGeoPointBase.Partial.cs" />
     <Compile Include="TL\Partial\TLInputFileLocationBase.Partial.cs" />
     <Compile Include="TL\Partial\TLInputPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaBase.Partial.cs" />
@@ -418,6 +396,8 @@
     <Compile Include="TL\Partial\TLFileLocationBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesDialogsBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesMessagesBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLPhoneCallBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLPhoneConnection.Partial.cs" />
     <Compile Include="TL\Partial\TLPhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLPhotoBase.Partial.cs" />
     <Compile Include="TL\Partial\TLRPCError.Partial.cs" />
@@ -448,13 +428,10 @@
     <Compile Include="Services\Cache\InMemoryCacheService.cs" />
     <Compile Include="Services\Cache\InMemoryDatabase.cs" />
     <Compile Include="Services\Connection\ConnectionService.cs" />
-    <Compile Include="Services\DCOptionItem.cs" />
     <Compile Include="Services\DelayedItem.cs" />
     <Compile Include="Services\DeviceInfo\IDeviceInfoService.cs" />
     <Compile Include="Services\HistoryItem.cs" />
     <Compile Include="Services\IMTProtoService.cs" />
-    <Compile Include="Services\Messages\ISenderService.cs" />
-    <Compile Include="Services\Messages\SenderService.cs" />
     <Compile Include="Services\MTProtoService.Account.cs" />
     <Compile Include="Services\MTProtoService.Auth.cs" />
     <Compile Include="Services\MTProtoService.ByTransport.cs" />
@@ -505,6 +482,7 @@
     <Compile Include="TL\Partial\TLMessageBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUserProfilePhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLUserProfilePhotoBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLWebDocument.Partial.cs" />
     <Compile Include="TL\Partial\TLWebPageBase.Partial.cs" />
     <Compile Include="TL\TLAccountAuthorizations.cs" />
     <Compile Include="TL\TLAccountDaysTTL.cs" />
@@ -544,6 +522,8 @@
     <Compile Include="TL\TLBotInlineMessageText.cs" />
     <Compile Include="TL\TLBotInlineResult.cs" />
     <Compile Include="TL\TLBotInlineResultBase.cs" />
+    <Compile Include="TL\TLCdnConfig.cs" />
+    <Compile Include="TL\TLCdnPublicKey.cs" />
     <Compile Include="TL\TLChannel.cs" />
     <Compile Include="TL\TLChannelForbidden.cs" />
     <Compile Include="TL\TLChannelFull.cs" />
@@ -747,6 +727,8 @@
     <Compile Include="TL\TLInputMessagesFilterPhotos.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhotoVideo.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhotoVideoDocuments.cs" />
+    <Compile Include="TL\TLInputMessagesFilterRoundVideo.cs" />
+    <Compile Include="TL\TLInputMessagesFilterRoundVoice.cs" />
     <Compile Include="TL\TLInputMessagesFilterUrl.cs" />
     <Compile Include="TL\TLInputMessagesFilterVideo.cs" />
     <Compile Include="TL\TLInputMessagesFilterVoice.cs" />
@@ -930,6 +912,7 @@
     <Compile Include="TL\TLPageBlockAuthorDate.cs" />
     <Compile Include="TL\TLPageBlockBase.cs" />
     <Compile Include="TL\TLPageBlockBlockquote.cs" />
+    <Compile Include="TL\TLPageBlockChannel.cs" />
     <Compile Include="TL\TLPageBlockCollage.cs" />
     <Compile Include="TL\TLPageBlockCover.cs" />
     <Compile Include="TL\TLPageBlockDivider.cs" />
@@ -1032,11 +1015,13 @@
     <Compile Include="TL\TLSendMessageGamePlayAction.cs" />
     <Compile Include="TL\TLSendMessageGeoLocationAction.cs" />
     <Compile Include="TL\TLSendMessageRecordAudioAction.cs" />
+    <Compile Include="TL\TLSendMessageRecordRoundAction.cs" />
     <Compile Include="TL\TLSendMessageRecordVideoAction.cs" />
     <Compile Include="TL\TLSendMessageTypingAction.cs" />
     <Compile Include="TL\TLSendMessageUploadAudioAction.cs" />
     <Compile Include="TL\TLSendMessageUploadDocumentAction.cs" />
     <Compile Include="TL\TLSendMessageUploadPhotoAction.cs" />
+    <Compile Include="TL\TLSendMessageUploadRoundAction.cs" />
     <Compile Include="TL\TLSendMessageUploadVideoAction.cs" />
     <Compile Include="TL\TLServerDHInnerData.cs" />
     <Compile Include="TL\TLServerDHParamsBase.cs" />
@@ -1158,7 +1143,12 @@
     <Compile Include="TL\TLUpdateUserStatus.cs" />
     <Compile Include="TL\TLUpdateUserTyping.cs" />
     <Compile Include="TL\TLUpdateWebPage.cs" />
+    <Compile Include="TL\TLUploadCdnFile.cs" />
+    <Compile Include="TL\TLUploadCdnFileBase.cs" />
+    <Compile Include="TL\TLUploadCdnFileReuploadNeeded.cs" />
     <Compile Include="TL\TLUploadFile.cs" />
+    <Compile Include="TL\TLUploadFileBase.cs" />
+    <Compile Include="TL\TLUploadFileCdnRedirect.cs" />
     <Compile Include="TL\TLUploadWebFile.cs" />
     <Compile Include="TL\TLUser.cs" />
     <Compile Include="TL\TLUserBase.cs" />
@@ -1215,6 +1205,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TL\Partial\TLRichTextBase.Partial.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Libraries\libtgvoip\libtgvoip.UWP.vcxproj">
+      <Project>{88803693-7606-484b-9d2f-4bb789d57c29}</Project>
+      <Name>libtgvoip</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

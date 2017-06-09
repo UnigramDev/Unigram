@@ -195,6 +195,8 @@ namespace Telegram.Api.TL
 				case TLType.UploadGetFile: return (T)(Object)new TLUploadGetFile(from);
 				case TLType.UploadSaveBigFilePart: return (T)(Object)new TLUploadSaveBigFilePart(from);
 				case TLType.UploadGetWebFile: return (T)(Object)new TLUploadGetWebFile(from);
+				case TLType.UploadGetCdnFile: return (T)(Object)new TLUploadGetCdnFile(from);
+				case TLType.UploadReuploadCdnFile: return (T)(Object)new TLUploadReuploadCdnFile(from);
 				case TLType.HelpGetConfig: return (T)(Object)new TLHelpGetConfig(from);
 				case TLType.HelpGetNearestDC: return (T)(Object)new TLHelpGetNearestDC(from);
 				case TLType.HelpGetAppUpdate: return (T)(Object)new TLHelpGetAppUpdate(from);
@@ -204,6 +206,7 @@ namespace Telegram.Api.TL
 				case TLType.HelpGetAppChangelog: return (T)(Object)new TLHelpGetAppChangelog(from);
 				case TLType.HelpGetTermsOfService: return (T)(Object)new TLHelpGetTermsOfService(from);
 				case TLType.HelpSetBotUpdatesStatus: return (T)(Object)new TLHelpSetBotUpdatesStatus(from);
+				case TLType.HelpGetCdnConfig: return (T)(Object)new TLHelpGetCdnConfig(from);
 				case TLType.ChannelsReadHistory: return (T)(Object)new TLChannelsReadHistory(from);
 				case TLType.ChannelsDeleteMessages: return (T)(Object)new TLChannelsDeleteMessages(from);
 				case TLType.ChannelsDeleteUserHistory: return (T)(Object)new TLChannelsDeleteUserHistory(from);
@@ -445,6 +448,8 @@ namespace Telegram.Api.TL
 				case TLType.InputMessagesFilterMusic: return (T)(Object)new TLInputMessagesFilterMusic(from);
 				case TLType.InputMessagesFilterChatPhotos: return (T)(Object)new TLInputMessagesFilterChatPhotos(from);
 				case TLType.InputMessagesFilterPhoneCalls: return (T)(Object)new TLInputMessagesFilterPhoneCalls(from);
+				case TLType.InputMessagesFilterRoundVoice: return (T)(Object)new TLInputMessagesFilterRoundVoice(from);
+				case TLType.InputMessagesFilterRoundVideo: return (T)(Object)new TLInputMessagesFilterRoundVideo(from);
 				case TLType.UpdateNewMessage: return (T)(Object)new TLUpdateNewMessage(from);
 				case TLType.UpdateMessageID: return (T)(Object)new TLUpdateMessageID(from);
 				case TLType.UpdateDeleteMessages: return (T)(Object)new TLUpdateDeleteMessages(from);
@@ -521,6 +526,7 @@ namespace Telegram.Api.TL
 				case TLType.PhotosPhotosSlice: return (T)(Object)new TLPhotosPhotosSlice(from);
 				case TLType.PhotosPhoto: return (T)(Object)new TLPhotosPhoto(from);
 				case TLType.UploadFile: return (T)(Object)new TLUploadFile(from);
+				case TLType.UploadFileCdnRedirect: return (T)(Object)new TLUploadFileCdnRedirect(from);
 				case TLType.DCOption: return (T)(Object)new TLDCOption(from);
 				case TLType.Config: return (T)(Object)new TLConfig(from);
 				case TLType.NearestDC: return (T)(Object)new TLNearestDC(from);
@@ -565,6 +571,8 @@ namespace Telegram.Api.TL
 				case TLType.SendMessageGeoLocationAction: return (T)(Object)new TLSendMessageGeoLocationAction(from);
 				case TLType.SendMessageChooseContactAction: return (T)(Object)new TLSendMessageChooseContactAction(from);
 				case TLType.SendMessageGamePlayAction: return (T)(Object)new TLSendMessageGamePlayAction(from);
+				case TLType.SendMessageRecordRoundAction: return (T)(Object)new TLSendMessageRecordRoundAction(from);
+				case TLType.SendMessageUploadRoundAction: return (T)(Object)new TLSendMessageUploadRoundAction(from);
 				case TLType.ContactsFound: return (T)(Object)new TLContactsFound(from);
 				case TLType.InputPrivacyKeyStatusTimestamp: return (T)(Object)new TLInputPrivacyKeyStatusTimestamp(from);
 				case TLType.InputPrivacyKeyChatInvite: return (T)(Object)new TLInputPrivacyKeyChatInvite(from);
@@ -774,6 +782,7 @@ namespace Telegram.Api.TL
 				case TLType.PageBlockEmbedPost: return (T)(Object)new TLPageBlockEmbedPost(from);
 				case TLType.PageBlockCollage: return (T)(Object)new TLPageBlockCollage(from);
 				case TLType.PageBlockSlideshow: return (T)(Object)new TLPageBlockSlideshow(from);
+				case TLType.PageBlockChannel: return (T)(Object)new TLPageBlockChannel(from);
 				case TLType.PagePart: return (T)(Object)new TLPagePart(from);
 				case TLType.PageFull: return (T)(Object)new TLPageFull(from);
 				case TLType.PhoneCallDiscardReasonMissed: return (T)(Object)new TLPhoneCallDiscardReasonMissed(from);
@@ -811,6 +820,10 @@ namespace Telegram.Api.TL
 				case TLType.PhoneConnection: return (T)(Object)new TLPhoneConnection(from);
 				case TLType.PhoneCallProtocol: return (T)(Object)new TLPhoneCallProtocol(from);
 				case TLType.PhonePhoneCall: return (T)(Object)new TLPhonePhoneCall(from);
+				case TLType.UploadCdnFileReuploadNeeded: return (T)(Object)new TLUploadCdnFileReuploadNeeded(from);
+				case TLType.UploadCdnFile: return (T)(Object)new TLUploadCdnFile(from);
+				case TLType.CdnPublicKey: return (T)(Object)new TLCdnPublicKey(from);
+				case TLType.CdnConfig: return (T)(Object)new TLCdnConfig(from);
 				case TLType.Message: return (T)(Object)new TLMessage(from);
 				case TLType.MessageService: return (T)(Object)new TLMessageService(from);
 				case TLType.RPCResult: return (T)(Object)new TLRPCResult(from);

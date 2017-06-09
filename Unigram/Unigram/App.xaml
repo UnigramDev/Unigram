@@ -23,8 +23,11 @@
             <local:ViewModelLocator x:Key="Locator"/>
             <views:MediaLibraryCollection x:Key="MediaLibrary"/>
 
-            <x:Double x:Key="TelegramStickerMaxWidth">180</x:Double>
-            <x:Double x:Key="TelegramStickerMaxHeight">180</x:Double>
+            <x:String x:Key="MeUrlPrefix">https://t.me/</x:String>
+            <x:String x:Key="MeUrlPrefixShort">t.me/</x:String>
+
+            <x:Double x:Key="TelegramLightMediaMaxWidth">200</x:Double>
+            <x:Double x:Key="TelegramLightMediaMaxHeight">200</x:Double>
 
             <x:Double x:Key="TelegramMediaMaxWidth">320</x:Double>
             <x:Double x:Key="TelegramMediaMaxHeight">420</x:Double>
@@ -38,6 +41,17 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:MessageToShareConverter x:Key="MessageToShareConverter"/>
+            <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
+            <converters:PrivacyRuleToUsersConverter x:Key="PrivacyRuleToUsersConverter"/>
+            <converters:StickerToEmojiConverter x:Key="StickerToEmojiConverter"/>
+            <converters:AutoDownloadConverter x:Key="AutoDownloadConverter"/>
+            <converters:AccountTTLConverter x:Key="AccountTTLConverter"/>
+            <converters:BooleanNegationConverter x:Key="BooleanNegationConverter"/>
+            <converters:ChannelTypeToStringConverter x:Key="ChannelTypeToStringConverter"/>
+            <converters:BooleanToIndexConverter x:Key="BooleanToIndexConverter"/>
+            <converters:UsernameConverter x:Key="UsernameConverter"/>
+            <converters:ChannelJoinedToVisibilityConverter x:Key="ChannelJoinedToVisibilityConverter"/>
             <converters:ChannelParticipantToTypeConverter x:Key="ChannelParticipantToTypeConverter"/>
             <converters:InvoiceToAmountConverter x:Key="InvoiceToAmountConverter"/>
             <converters:PhoneNumberFormatConverter x:Key="PhoneNumberFormatConverter"/>

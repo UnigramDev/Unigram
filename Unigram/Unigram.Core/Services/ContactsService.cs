@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Unigram.Common;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;
 
 namespace Unigram.Core.Services
@@ -11,18 +14,50 @@ namespace Unigram.Core.Services
     public interface IContactsService
     {
         Task SyncContactsAsync(TLContactsContactsBase result);
+
+        Task UnsyncContactsAsync();
     }
 
     public class ContactsService : IContactsService
     {
+        private readonly DisposableMutex _syncLock;
+
+        public ContactsService()
+        {
+            _syncLock = new DisposableMutex();
+        }
+
         public async Task SyncContactsAsync(TLContactsContactsBase result)
         {
-            var contactList = await GetContactListAsync();
-            var annotationList = await GetAnnotationListAsync();
-
-            if (contactList != null && annotationList != null)
+            using (await _syncLock.WaitAsync())
             {
-                await ExportContacts(contactList, annotationList, result);
+                Debug.WriteLine("SYNCING CONTACTS");
+
+                var contactList = await GetContactListAsync();
+                var annotationList = await GetAnnotationListAsync();
+
+                if (contactList != null && annotationList != null)
+                {
+                    await ExportContacts(contactList, annotationList, result);
+                }
+
+                Debug.WriteLine("SYNCED CONTACTS");
+            }
+        }
+
+        public async Task UnsyncContactsAsync()
+        {
+            using (await _syncLock.WaitAsync())
+            {
+                Debug.WriteLine("UNSYNCING CONTACTS");
+
+                var contactList = await GetContactListAsync();
+                var annotationList = await GetAnnotationListAsync();
+
+                await contactList.DeleteAsync();
+                await annotationList.DeleteAsync();
+
+                Debug.WriteLine("UNSYNCED CONTACTS");
             }
         }
 
@@ -33,7 +68,7 @@ namespace Unigram.Core.Services
             {
                 foreach (var item in contacts.Users.OfType<TLUser>())
                 {
-                    var contact = await contactList.GetContactFromRemoteIdAsync(item.Id.ToString());
+                    var contact = await contactList.GetContactFromRemoteIdAsync("u" + item.Id);
                     if (contact == null)
                     {
                         contact = new Contact();
@@ -41,7 +76,7 @@ namespace Unigram.Core.Services
 
                     contact.FirstName = item.FirstName ?? string.Empty;
                     contact.LastName = item.LastName ?? string.Empty;
-                    contact.RemoteId = item.Id.ToString();
+                    contact.RemoteId = "u" + item.Id;
                     //contact.Id = item.Id.ToString();
 
                     var phone = contact.Phones.FirstOrDefault();
@@ -74,6 +109,12 @@ namespace Unigram.Core.Services
                     annotation.ContactId = contact.Id;
                     annotation.RemoteId = contact.RemoteId;
                     annotation.SupportedOperations = ContactAnnotationOperations.ContactProfile | ContactAnnotationOperations.Message | ContactAnnotationOperations.AudioCall;
+
+                    if (annotation.ProviderProperties.Count == 0)
+                    {
+                        annotation.ProviderProperties.Add("ContactPanelAppID", Package.Current.Id.FamilyName + "!App");
+                        annotation.ProviderProperties.Add("ContactShareAppID", Package.Current.Id.FamilyName + "!App");
+                    }
 
                     await annotationList.TrySaveAnnotationAsync(annotation);
                 }

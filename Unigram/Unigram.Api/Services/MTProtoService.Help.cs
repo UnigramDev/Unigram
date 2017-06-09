@@ -38,6 +38,14 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
+        public void GetCdnConfigAsync(Action<TLCdnConfig> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLHelpGetCdnConfig();
+
+            const string caption = "help.getCdnConfig";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
         private Timer _getConfigTimer;
 
 	    private volatile bool _isGettingConfig;
@@ -129,7 +137,13 @@ namespace Telegram.Api.Services
         {
             var obj = new TLHelpGetSupport();
 
-            SendInformativeMessage("help.getSupport", obj, callback, faultCallback);
+            SendInformativeMessage<TLHelpSupport>("help.getSupport", obj, 
+                result =>
+                {
+                    _cacheService.SyncUser(result.User, _ => { });
+                    callback(result);
+                }, 
+                faultCallback);
         }
 
         public void GetAppChangelogAsync(string prevAppVersion, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)

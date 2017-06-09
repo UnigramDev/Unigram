@@ -28,9 +28,23 @@ namespace Unigram.Views.SignIn
             DataContext = UnigramContainer.Current.ResolveType<SignInPasswordViewModel>();
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            PrimaryInput.Focus(FocusState.Keyboard);
+        }
+
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             ((PasswordBox)sender).GetBindingExpression(PasswordBox.PasswordProperty)?.UpdateSource();
+        }
+
+        private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                ViewModel.SendCommand.Execute(sender);
+                e.Handled = true;
+            }
         }
 
         public class NavigationParameters

@@ -26,31 +26,13 @@ namespace Unigram.Views.SignIn
         public SignInPage()
         {
             InitializeComponent();
-
             DataContext = UnigramContainer.Current.ResolveType<SignInViewModel>();
-
-            // Used to hide the app gray bar on desktop.
-            // Currently this is always hidden on both family devices.
-            //
-            //if (!Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            //{
-            //    //txtMasterTitle.Visibility = Visibility.Visible;
-            //    rpMasterTitlebar.Visibility = Visibility.Collapsed;
-            //}
-
-
-
-
-
-            // IDEA MATEI
-            //this.Loaded += LoginPhoneNumberPage_Loaded;
         }
 
-        // IDEA MATEI
-        //private void LoginPhoneNumberPage_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    ViewModel.LocalizeCommand.Execute(sender);
-        //}
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            PrimaryInput.Focus(FocusState.Keyboard);
+        }
 
         private void PhoneNumber_KeyDown(object sender, KeyRoutedEventArgs e)
         {

@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Common;
 
 namespace Unigram.Views.Users
 {
@@ -32,7 +33,7 @@ namespace Unigram.Views.Users
         {
             if (e.ClickedItem is ITLDialogWith with)
             {
-                ViewModel.NavigationService.Navigate(typeof(DialogPage), with.ToPeer());
+                ViewModel.NavigationService.NavigateToDialog(with);
             }
         }
     }
