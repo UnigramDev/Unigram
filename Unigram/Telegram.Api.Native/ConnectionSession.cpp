@@ -43,13 +43,13 @@ HRESULT ConnectionSession::AddConfirmationMessage(ConnectionManager* connectionM
 	}
 
 	auto msgAck = Make<TLMsgsAck>();
+	auto& messagesIds = msgAck->GetMessagesIds();
+	messagesIds.insert(messagesIds.begin(), m_messagesIdsToConfirm.begin(), m_messagesIdsToConfirm.end());
 
 	HRESULT result;
 	ComPtr<TLMessage> message;
 	ReturnIfFailed(result, MakeAndInitialize<TLMessage>(&message, connectionManager->GenerateMessageId(), GenerateMessageSequenceNumber(false), msgAck.Get()));
 
-	auto& messagesIds = msgAck->GetMessagesIds();
-	messagesIds.insert(messagesIds.begin(), m_messagesIdsToConfirm.begin(), m_messagesIdsToConfirm.end());
 	m_messagesIdsToConfirm.clear();
 
 	messages.push_back(message);

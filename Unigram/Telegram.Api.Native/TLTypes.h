@@ -5,11 +5,11 @@
 #include "NativeBuffer.h"
 #include "DatacenterServer.h"
 
-#define MakeTLTypeTraits(objectTypeName, constructor, isLayerRequired) MakeTLObjectTraits(objectTypeName, constructor, isLayerRequired, "Telegram.Api.Native.TL")
+#define MakeTLTypeTraits(objectTypeName, constructor) MakeTLObjectTraits(objectTypeName, constructor, "Telegram.Api.Native.TL")
 
 using namespace Microsoft::WRL;
 using ABI::Telegram::Api::Native::TL::ITLError;
-using ABI::Telegram::Api::Native::TL::ITLDcOption;
+using ABI::Telegram::Api::Native::TL::ITLDCOption;
 using ABI::Telegram::Api::Native::TL::ITLDisabledFeature;
 using ABI::Telegram::Api::Native::TL::ITLConfig;
 using ABI::Telegram::Api::Native::TL::ITLErrorFactory;
@@ -25,7 +25,7 @@ namespace Telegram
 			{
 
 				class TLError;
-				class TLDcOption;
+				class TLDCOption;
 				class TLDisabledFeature;
 				class TLConfig;
 				class TLRpcError;
@@ -64,41 +64,41 @@ namespace Telegram
 				namespace TLObjectTraits
 				{
 
-					MakeTLTypeTraits(TLError, 0xc4b9f9bb, false);
-					MakeTLTypeTraits(TLDcOption, 0x5d8c6cc, false);
-					MakeTLTypeTraits(TLDisabledFeature, 0xae636f24, false);
-					MakeTLTypeTraits(TLConfig, 0xcb601684, false);
-					MakeTLTypeTraits(TLRpcError, 0x2144ca19, false);
-					MakeTLTypeTraits(TLRpcReqError, 0x7ae432f5, false);
-					MakeTLTypeTraits(TLRpcResult, 0xf35c6d01, false);
-					MakeTLTypeTraits(TLRpcAnswerDropped, 0xa43ad8b7, false);
-					MakeTLTypeTraits(TLRpcAnswerDroppedRunning, 0xcd78e586, false);
-					MakeTLTypeTraits(TLRpcAnswerUnknown, 0x5e2ad36e, false);
-					MakeTLTypeTraits(TLMsgsAck, 0x62d6b459, false);
-					MakeTLTypeTraits(TLMessage, 0x5bb8e511, false);
-					MakeTLTypeTraits(TLMsgContainer, 0x73f1f8dc, false);
-					MakeTLTypeTraits(TLMsgCopy, 0xe06046b2, false);
-					MakeTLTypeTraits(TLMsgsStateReq, 0xda69fb52, false);
-					MakeTLTypeTraits(TLMsgResendStateReq, 0x7d861a08, false);
-					MakeTLTypeTraits(TLMsgDetailedInfo, 0x276d3ec6, false);
-					MakeTLTypeTraits(TLMsgNewDetailedInfo, 0x809db6df, false);
-					MakeTLTypeTraits(TLMsgsAllInfo, 0x8cc0d131, false);
-					MakeTLTypeTraits(TLGZipPacked, 0x3072cfa1, false);
-					MakeTLTypeTraits(TLAuthExportedAuthorization, 0xdf969c2d, false);
-					MakeTLTypeTraits(TLNewSessionCreated, 0x9ec20908, false);
-					MakeTLTypeTraits(TLDestroySessionOk, 0xe22045fc, false);
-					MakeTLTypeTraits(TLDestroySessionNone, 0x62d350c9, false);
-					MakeTLTypeTraits(TLBadMessage, 0xa7eff811, false);
-					MakeTLTypeTraits(TLBadServerSalt, 0xedab447b, false);
-					MakeTLTypeTraits(TLPong, 0x347773c5, false);
-					MakeTLTypeTraits(TLDHGenOk, 0x3bcbf734, false);
-					MakeTLTypeTraits(TLDHGenFail, 0xa69dae02, false);
-					MakeTLTypeTraits(TLDHGenRetry, 0x46dc1fb9, false);
-					MakeTLTypeTraits(TLServerDHParamsFail, 0x79cb045d, false);
-					MakeTLTypeTraits(TLServerDHParamsOk, 0xd0e8075c, false);
-					MakeTLTypeTraits(TLResPQ, 0x05162463, false);
-					MakeTLTypeTraits(TLFutureSalts, 0xae500895, false);
-					MakeTLTypeTraits(TLFutureSalt, 0x0949d9dc, false);
+					MakeTLTypeTraits(TLError, 0xc4b9f9bb);
+					MakeTLTypeTraits(TLDCOption, 0x5d8c6cc);
+					MakeTLTypeTraits(TLDisabledFeature, 0xae636f24);
+					MakeTLTypeTraits(TLConfig, 0xcb601684);
+					MakeTLTypeTraits(TLRpcError, 0x2144ca19);
+					MakeTLTypeTraits(TLRpcReqError, 0x7ae432f5);
+					MakeTLTypeTraits(TLRpcResult, 0xf35c6d01);
+					MakeTLTypeTraits(TLRpcAnswerDropped, 0xa43ad8b7);
+					MakeTLTypeTraits(TLRpcAnswerDroppedRunning, 0xcd78e586);
+					MakeTLTypeTraits(TLRpcAnswerUnknown, 0x5e2ad36e);
+					MakeTLTypeTraits(TLMsgsAck, 0x62d6b459);
+					MakeTLTypeTraits(TLMessage, 0x5bb8e511);
+					MakeTLTypeTraits(TLMsgContainer, 0x73f1f8dc);
+					MakeTLTypeTraits(TLMsgCopy, 0xe06046b2);
+					MakeTLTypeTraits(TLMsgsStateReq, 0xda69fb52);
+					MakeTLTypeTraits(TLMsgResendStateReq, 0x7d861a08);
+					MakeTLTypeTraits(TLMsgDetailedInfo, 0x276d3ec6);
+					MakeTLTypeTraits(TLMsgNewDetailedInfo, 0x809db6df);
+					MakeTLTypeTraits(TLMsgsAllInfo, 0x8cc0d131);
+					MakeTLTypeTraits(TLGZipPacked, 0x3072cfa1);
+					MakeTLTypeTraits(TLAuthExportedAuthorization, 0xdf969c2d);
+					MakeTLTypeTraits(TLNewSessionCreated, 0x9ec20908);
+					MakeTLTypeTraits(TLDestroySessionOk, 0xe22045fc);
+					MakeTLTypeTraits(TLDestroySessionNone, 0x62d350c9);
+					MakeTLTypeTraits(TLBadMessage, 0xa7eff811);
+					MakeTLTypeTraits(TLBadServerSalt, 0xedab447b);
+					MakeTLTypeTraits(TLPong, 0x347773c5);
+					MakeTLTypeTraits(TLDHGenOk, 0x3bcbf734);
+					MakeTLTypeTraits(TLDHGenFail, 0xa69dae02);
+					MakeTLTypeTraits(TLDHGenRetry, 0x46dc1fb9);
+					MakeTLTypeTraits(TLServerDHParamsFail, 0x79cb045d);
+					MakeTLTypeTraits(TLServerDHParamsOk, 0xd0e8075c);
+					MakeTLTypeTraits(TLResPQ, 0x05162463);
+					MakeTLTypeTraits(TLFutureSalts, 0xae500895);
+					MakeTLTypeTraits(TLFutureSalt, 0x0949d9dc);
 
 				}
 
@@ -145,13 +145,13 @@ namespace Telegram
 					HString m_text;
 				};
 
-				class TLDcOption WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLDcOption, TLObjectT<TLObjectTraits::TLDcOptionTraits>>
+				class TLDCOption WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLDCOption, TLObjectT<TLObjectTraits::TLDCOptionTraits>>
 				{
-					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLDcOption, BaseTrust);
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLDCOption, BaseTrust);
 
 				public:
-					TLDcOption();
-					~TLDcOption();
+					TLDCOption();
+					~TLDCOption();
 
 					//COM exported methods
 					STDMETHODIMP get_Flags(_Out_ INT32* value);
@@ -234,7 +234,7 @@ namespace Telegram
 					IFACEMETHODIMP get_Expires(_Out_ INT32* value);
 					IFACEMETHODIMP get_TestMode(_Out_ boolean* value);
 					IFACEMETHODIMP get_ThisDc(_Out_ INT32* value);
-					IFACEMETHODIMP get_DcOptions(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDcOption** value);
+					IFACEMETHODIMP get_DCOptions(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDCOption** value);
 					IFACEMETHODIMP get_ChatSizeMax(_Out_ INT32* value);
 					IFACEMETHODIMP get_MegagroupSizeMax(_Out_ INT32* value);
 					IFACEMETHODIMP get_ForwardedCountMax(_Out_ INT32* value);
@@ -286,7 +286,7 @@ namespace Telegram
 						return m_thisDc;
 					}
 
-					inline std::vector<ComPtr<TLDcOption>> const& GetDcOptions() const
+					inline std::vector<ComPtr<TLDCOption>> const& GetDcOptions() const
 					{
 						return m_dcOptions;
 					}
@@ -421,7 +421,7 @@ namespace Telegram
 					INT32 m_expires;
 					boolean m_testMode;
 					INT32 m_thisDc;
-					std::vector<ComPtr<TLDcOption>> m_dcOptions;
+					std::vector<ComPtr<TLDCOption>> m_dcOptions;
 					INT32 m_chatSizeMax;
 					INT32 m_megagroupSizeMax;
 					INT32 m_forwardedCountMax;
@@ -616,6 +616,11 @@ namespace Telegram
 					STDMETHODIMP RuntimeClassInitialize(_In_ MessageContext const* messageContext, _In_ ITLObject* object);
 					STDMETHODIMP RuntimeClassInitialize(INT64 messageId, UINT32 sequenceNumber, _In_ ITLObject* query);
 
+					inline UINT32 GetBodyLength() const
+					{
+						return m_bodyLength;
+					}
+
 					inline MessageContext const* GetMessageContext() const
 					{
 						return &m_messageContext;
@@ -626,6 +631,7 @@ namespace Telegram
 					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
 
 				private:
+					UINT32 m_bodyLength;
 					MessageContext m_messageContext;
 				};
 

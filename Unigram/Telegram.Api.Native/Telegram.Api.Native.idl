@@ -39,7 +39,7 @@ namespace Telegram
 				runtimeclass TLObjectSerializer;
 				runtimeclass TLUnparsedObject;
 				runtimeclass TLError;
-				runtimeclass TLDcOption;
+				runtimeclass TLDCOption;
 				runtimeclass TLDisabledFeature;
 				runtimeclass TLConfig;
 				
@@ -77,7 +77,7 @@ namespace Telegram
 				declare
 				{
 
-					interface Windows.Foundation.Collections.IVectorView<TLDcOption*>;
+					interface Windows.Foundation.Collections.IVectorView<TLDCOption*>;
 					interface Windows.Foundation.Collections.IVectorView<TLDisabledFeature*>;
 
 				}
@@ -100,7 +100,6 @@ namespace Telegram
 				interface ITLObject : IInspectable
 				{
 					[propget] HRESULT Constructor([out][retval] UINT32* value);
-					[propget] HRESULT IsLayerRequired([out][retval] boolean* value);
 					HRESULT Read([in] TLBinaryReader* reader);
 					HRESULT Write([in] TLBinaryWriter* writer);
 				}
@@ -250,10 +249,10 @@ namespace Telegram
 				}
 
 
-				[exclusiveto(TLDcOption)]
+				[exclusiveto(TLDCOption)]
 				[uuid(BFE5D247-DDAE-4EDD-AC25-894FD115E937)]
 				[version(API_VERSION)]
-				interface ITLDcOption : IInspectable
+				interface ITLDCOption : IInspectable
 				{
 					[propget] HRESULT Flags([out][retval] INT32* value);
 					[propget] HRESULT Id([out][retval] INT32* value);
@@ -264,9 +263,9 @@ namespace Telegram
 				[marshaling_behavior(agile)]
 				[threading(both)]
 				[version(API_VERSION)]
-				runtimeclass TLDcOption
+				runtimeclass TLDCOption
 				{
-					[default] interface ITLDcOption;
+					[default] interface ITLDCOption;
 					interface ITLObject;
 				}
 
@@ -300,7 +299,7 @@ namespace Telegram
 					[propget] HRESULT Expires([out][retval] INT32* value);
 					[propget] HRESULT TestMode([out][retval] boolean* value);
 					[propget] HRESULT ThisDc([out][retval] INT32* value);
-					[propget] HRESULT DcOptions([out][retval] Windows.Foundation.Collections.IVectorView<TLDcOption*>** value);
+					[propget] HRESULT DCOptions([out][retval] Windows.Foundation.Collections.IVectorView<TLDCOption*>** value);
 					[propget] HRESULT ChatSizeMax([out][retval] INT32* value);
 					[propget] HRESULT MegagroupSizeMax([out][retval] INT32* value);
 					[propget] HRESULT ForwardedCountMax([out][retval] INT32* value);

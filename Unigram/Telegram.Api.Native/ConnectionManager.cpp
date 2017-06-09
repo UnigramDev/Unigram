@@ -559,12 +559,9 @@ HRESULT ConnectionManager::CreateTransportMessage(MessageRequest* request, INT64
 
 	if (requiresLayer)
 	{
-		HRESULT result;
-		boolean isLayerRequired;
-		ReturnIfFailed(result, object->get_IsLayerRequired(&isLayerRequired));
-
-		if (isLayerRequired)
+		if (request->IsLayerRequired())
 		{
+			HRESULT result;
 			ComPtr<Methods::TLInitConnection> initConnectionObject;
 			ReturnIfFailed(result, MakeAndInitialize<Methods::TLInitConnection>(&initConnectionObject, m_userConfiguration.Get(), object.Get()));
 			ReturnIfFailed(result, MakeAndInitialize<Methods::TLInvokeWithLayer>(&object, initConnectionObject.Get()));
@@ -771,8 +768,6 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 		{
 			m_runningRequests.push_back(std::pair<INT32, ComPtr<MessageRequest>>(datacenterId, request));
 		}
-
-		//m_runningRequests.insert(m_runningRequests.end(), datacenterContext.GenericRequests.begin(), datacenterContext.GenericRequests.end());
 	}
 
 	return S_OK;

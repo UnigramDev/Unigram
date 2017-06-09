@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 {
 	public partial class TLUpdateDCOptions : TLUpdateBase 
 	{
-		public TLVector<TLDcOption> DCOptions { get; set; }
+		public TLVector<TLDCOption> DCOptions { get; set; }
 
 		public TLUpdateDCOptions() { }
 		public TLUpdateDCOptions(TLBinaryReader from)
@@ -18,7 +18,7 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from)
 		{
-			DCOptions = TLFactory.Read<TLVector<TLDcOption>>(from);
+			DCOptions = TLFactory.Read<TLVector<TLDCOption>>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)

@@ -5,7 +5,7 @@
 #include "NativeBuffer.h"
 #include "DatacenterServer.h"
 
-#define MakeTLMethodTraits(objectTypeName, constructor, isLayerRequired) MakeTLObjectTraits(objectTypeName, constructor, isLayerRequired, "Telegram.Api.Native.TL.Methods")
+#define MakeTLMethodTraits(objectTypeName, constructor) MakeTLObjectTraits(objectTypeName, constructor, "Telegram.Api.Native.TL.Methods")
 
 using namespace Microsoft::WRL;
 
@@ -40,20 +40,20 @@ namespace Telegram
 					namespace TLObjectTraits
 					{
 
-						MakeTLMethodTraits(TLRpcDropAnswer, 0x58e4a740, false);
-						MakeTLMethodTraits(TLAuthExportAuthorization, 0xe5bfffcd, true);
-						MakeTLMethodTraits(TLAuthImportAuthorization, 0xe3ef9613, true);
-						MakeTLMethodTraits(TLDestroySession, 0xe7512126, false);
-						MakeTLMethodTraits(TLPing, 0x7abe77ec, false);
-						MakeTLMethodTraits(TLPingDelayDisconnect, 0xf3427b8c, false);
-						MakeTLMethodTraits(TLSetClientDHParams, 0xf5045f1f, false);
-						MakeTLMethodTraits(TLReqDHParams, 0xd712e4be, false);
-						MakeTLMethodTraits(TLReqPQ, 0x60469778, false);
-						MakeTLMethodTraits(TLGetFutureSalts, 0xb921bd04, false);
-						MakeTLMethodTraits(TLInvokeAfterMsg, 0xcb9f372d, false);
-						MakeTLMethodTraits(TLInvokeWithLayer, 0xda9b0d0d, false);
-						MakeTLMethodTraits(TLInitConnection, 0x69796de9, false);
-						MakeTLMethodTraits(TLHelpGetConfig, 0xc4f9186b, true);
+						MakeTLMethodTraits(TLRpcDropAnswer, 0x58e4a740); // false
+						MakeTLMethodTraits(TLAuthExportAuthorization, 0xe5bfffcd);
+						MakeTLMethodTraits(TLAuthImportAuthorization, 0xe3ef9613);
+						MakeTLMethodTraits(TLDestroySession, 0xe7512126); // false
+						MakeTLMethodTraits(TLPing, 0x7abe77ec); // false
+						MakeTLMethodTraits(TLPingDelayDisconnect, 0xf3427b8c);  // false
+						MakeTLMethodTraits(TLSetClientDHParams, 0xf5045f1f);
+						MakeTLMethodTraits(TLReqDHParams, 0xd712e4be);
+						MakeTLMethodTraits(TLReqPQ, 0x60469778);
+						MakeTLMethodTraits(TLGetFutureSalts, 0xb921bd04); // false
+						MakeTLMethodTraits(TLInvokeAfterMsg, 0xcb9f372d);
+						MakeTLMethodTraits(TLInvokeWithLayer, 0xda9b0d0d);
+						MakeTLMethodTraits(TLInitConnection, 0x69796de9);
+						MakeTLMethodTraits(TLHelpGetConfig, 0xc4f9186b);
 
 					}
 
