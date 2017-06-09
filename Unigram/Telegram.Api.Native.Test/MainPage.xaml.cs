@@ -123,8 +123,8 @@ namespace Telegram.Api.Native.Test
                             Debugger.Break();
                         },
                         // Shouldn't require login
-                        // Should run on Download conneti
-                        null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.TryDifferentDc);
+                        // Should run on Download connectio
+                        null, big.DCId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.TryDifferentDc);
                     },
                     // Shouldn't require login
                     null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin);
