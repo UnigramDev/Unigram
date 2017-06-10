@@ -1469,7 +1469,7 @@ namespace Unigram.Common
 
         public static bool IsValidUsername(string username)
         {
-            if (username.Length <= 3)
+            if (username.Length <= 2)
             {
                 return false;
             }
