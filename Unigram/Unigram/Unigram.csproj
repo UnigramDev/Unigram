@@ -200,6 +200,7 @@
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
+    <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
@@ -236,6 +237,7 @@
     <Compile Include="ViewModels\Settings\SettingsPrivacyStatusTimestampViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyViewModelBase.cs" />
     <Compile Include="ViewModels\Settings\SettingsStatsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsWallPaperViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
@@ -941,8 +943,8 @@
     <Compile Include="Views\Settings\SettingsUsernamePage.xaml.cs">
       <DependentUpon>SettingsUsernamePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsWallpaperPage.xaml.cs">
-      <DependentUpon>SettingsWallpaperPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsWallPaperPage.xaml.cs">
+      <DependentUpon>SettingsWallPaperPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ShareTargetPage.xaml.cs">
       <DependentUpon>ShareTargetPage.xaml</DependentUpon>
@@ -1469,7 +1471,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\SettingsWallpaperPage.xaml">
+    <Page Include="Views\Settings\SettingsWallPaperPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

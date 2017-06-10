@@ -88,8 +88,8 @@
                                           Click="Stickers_Click"
                                           Style="{StaticResource HyperButtonStyle}"/>
                     <!-- Manually hidden -->
-                    <controls:HyperButton Content="Chat wallpaper"
-                                          Visibility="Collapsed"
+                    <controls:HyperButton Content="Chat Background"
+                                          Click="Wallpaper_Click"
                                           Style="{StaticResource HyperButtonStyle}"/>
                 </local:TableStackPanel>
                 <local:TableStackPanel x:Name="OptionsGroup4"
