@@ -109,13 +109,13 @@ namespace Unigram.ViewModels.SignIn
             var hashed = hasher.HashData(input);
             CryptographicBuffer.CopyToByteArray(hashed, out byte[] data);
 
-            var result = await ProtoService.CheckPasswordAsync(data);
-            if (result?.IsSucceeded == true)
+            var response = await ProtoService.CheckPasswordAsync(data);
+            if (response.IsSucceeded)
             {
                 ProtoService.SetInitState();
-                ProtoService.CurrentUserId = result.Result.User.Id;
+                ProtoService.CurrentUserId = response.Result.User.Id;
                 SettingsHelper.IsAuthorized = true;
-                SettingsHelper.UserId = result.Result.User.Id;
+                SettingsHelper.UserId = response.Result.User.Id;
 
                 // TODO: maybe ask about notifications?
 
@@ -123,18 +123,18 @@ namespace Unigram.ViewModels.SignIn
             }
             else
             {
-                TLUtils.WriteLog("auth.checkPassword error " + result.Error);
+                TLUtils.WriteLog("auth.checkPassword error " + response.Error);
 
-                if (result.Error.TypeEquals(TLErrorType.PASSWORD_HASH_INVALID))
+                if (response.Error.TypeEquals(TLErrorType.PASSWORD_HASH_INVALID))
                 {
                     //await new MessageDialog(Resources.PasswordInvalidString, Resources.Error).ShowAsync();
                 }
-                else if (result.Error.CodeEquals(TLErrorCode.FLOOD))
+                else if (response.Error.CodeEquals(TLErrorCode.FLOOD))
                 {
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
                 }
 
-                Execute.ShowDebugMessage("account.checkPassword error " + result.Error);
+                Execute.ShowDebugMessage("account.checkPassword error " + response.Error);
             }
         }
 

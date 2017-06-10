@@ -104,13 +104,13 @@ namespace Unigram.ViewModels.SignIn
 
             IsLoading = true;
 
-            var result = await ProtoService.SignInAsync(phoneNumber, phoneCodeHash, _phoneCode);
-            if (result.IsSucceeded)
+            var response = await ProtoService.SignInAsync(phoneNumber, phoneCodeHash, _phoneCode);
+            if (response.IsSucceeded)
             {
                 ProtoService.SetInitState();
-                ProtoService.CurrentUserId = result.Result.User.Id;
+                ProtoService.CurrentUserId = response.Result.User.Id;
                 SettingsHelper.IsAuthorized = true;
-                SettingsHelper.UserId = result.Result.User.Id;
+                SettingsHelper.UserId = response.Result.User.Id;
 
                 // TODO: maybe ask about notifications?
 
@@ -120,7 +120,7 @@ namespace Unigram.ViewModels.SignIn
             {
                 IsLoading = false;
 
-                if (result.Error.TypeEquals(TLErrorType.PHONE_NUMBER_UNOCCUPIED))
+                if (response.Error.TypeEquals(TLErrorType.PHONE_NUMBER_UNOCCUPIED))
                 {
                     //var signup = await ProtoService.SignUpAsync(phoneNumber, phoneCodeHash, PhoneCode, "Paolo", "Veneziani");
                     //if (signup.IsSucceeded)
@@ -143,19 +143,19 @@ namespace Unigram.ViewModels.SignIn
 
                     NavigationService.Navigate(typeof(SignUpPage), state);
                 }
-                else if (result.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
+                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_INVALID))
                 {
                     //await new MessageDialog(Resources.PhoneCodeInvalidString, Resources.Error).ShowAsync();
                 }
-                else if (result.Error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY))
+                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EMPTY))
                 {
                     //await new MessageDialog(Resources.PhoneCodeEmpty, Resources.Error).ShowAsync();
                 }
-                else if (result.Error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
+                else if (response.Error.TypeEquals(TLErrorType.PHONE_CODE_EXPIRED))
                 {
                     //await new MessageDialog(Resources.PhoneCodeExpiredString, Resources.Error).ShowAsync();
                 }
-                else if (result.Error.TypeEquals(TLErrorType.SESSION_PASSWORD_NEEDED))
+                else if (response.Error.TypeEquals(TLErrorType.SESSION_PASSWORD_NEEDED))
                 {
                     //this.IsWorking = true;
                     var password = await ProtoService.GetPasswordAsync();
@@ -176,12 +176,12 @@ namespace Unigram.ViewModels.SignIn
                         Execute.ShowDebugMessage("account.getPassword error " + password.Error);
                     }
                 }
-                else if (result.Error.CodeEquals(TLErrorCode.FLOOD))
+                else if (response.Error.CodeEquals(TLErrorCode.FLOOD))
                 {
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({error.Message})", Resources.Error).ShowAsync();
                 }
 
-                Execute.ShowDebugMessage("account.signIn error " + result.Error);
+                Execute.ShowDebugMessage("account.signIn error " + response.Error);
             }
         }
 
