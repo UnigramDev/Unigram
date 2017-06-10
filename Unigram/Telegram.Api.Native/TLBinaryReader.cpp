@@ -247,13 +247,12 @@ HRESULT TLBinaryReader::ReadByteArray(UINT32* __valueSize, BYTE** value)
 	}
 
 	HRESULT result;
-	UINT32 length;
 	BYTE const* buffer;
-	ReturnIfFailed(result, ReadBuffer2(&buffer, &length));
+	ReturnIfFailed(result, ReadBuffer2(&buffer, __valueSize));
 
-	*value = reinterpret_cast<BYTE*>(CoTaskMemAlloc(length));
+	*value = reinterpret_cast<BYTE*>(CoTaskMemAlloc(*__valueSize));
 
-	CopyMemory(*value, buffer, length);
+	CopyMemory(*value, buffer, *__valueSize);
 	return S_OK;
 }
 

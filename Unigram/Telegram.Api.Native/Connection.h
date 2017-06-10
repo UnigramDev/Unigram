@@ -118,6 +118,12 @@ namespace Telegram
 					return m_currentNetworkType;
 				}
 
+				inline boolean IsConnected()
+				{
+					auto lock = LockCriticalSection();
+					return static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) > ConnectionState::Disconnected;
+				}
+
 			private:
 				enum class ConnectionState
 				{

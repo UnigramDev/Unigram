@@ -9,11 +9,21 @@
 #include "TLTypes.h"
 #include "ConnectionManager.h"
 
-#define CONNECTION_RECONNECTION_TIMEOUT 1000
+#include "MethodDebugInfo.h"
+
+#if _DEBUG
+#define NEXT_ENDPOINT_CONNECTION_TIMEOUT INFINITE
+#define ACTIVE_CONNECTION_TIMEOUT INFINITE
+#define GENERIC_CONNECTION_TIMEOUT INFINITE
+#define UPLOAD_CONNECTION_TIMEOUT INFINITE
+#else
 #define NEXT_ENDPOINT_CONNECTION_TIMEOUT 8000
 #define ACTIVE_CONNECTION_TIMEOUT 25000
 #define GENERIC_CONNECTION_TIMEOUT 15000
 #define UPLOAD_CONNECTION_TIMEOUT 25000
+#endif
+
+#define CONNECTION_RECONNECTION_TIMEOUT 1000
 #define CONNECTION_MAX_ATTEMPTS 5
 #define CONNECTION_MAX_PACKET_LENGTH 2 * 1024 * 1024
 
@@ -112,6 +122,8 @@ HRESULT Connection::Connect()
 
 HRESULT Connection::Connect(ComPtr<ConnectionManager> const& connectionManager)
 {
+	METHOD_DEBUG_INFO();
+
 	auto lock = LockCriticalSection();
 
 	if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) > ConnectionState::Disconnected)
@@ -178,6 +190,8 @@ HRESULT Connection::Connect(ComPtr<ConnectionManager> const& connectionManager)
 
 HRESULT Connection::Disconnect()
 {
+	METHOD_DEBUG_INFO();
+
 	auto lock = LockCriticalSection();
 
 	return DisconnectSocket(true);
@@ -259,6 +273,8 @@ HRESULT Connection::CreateMessagePacket(UINT32 messageLength, boolean reportAck,
 
 HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, ITLObject* messageBody, INT32* quickAckId)
 {
+	METHOD_DEBUG_INFO();
+
 	if (messageContext == nullptr || messageBody == nullptr)
 	{
 		return E_INVALIDARG;
@@ -290,36 +306,33 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 
 	UINT32 encryptedMessageLength = 24 + messageLength + padding;
 
+	auto lock = LockCriticalSection();
+
 	BYTE* packetBufferBytes;
 	ComPtr<TLBinaryWriter> packetWriter;
+	ReturnIfFailed(result, CreateMessagePacket(encryptedMessageLength, quickAckId != nullptr, packetWriter, &packetBufferBytes));
+	ReturnIfFailed(result, packetWriter->SeekCurrent(24));
+	ReturnIfFailed(result, packetWriter->WriteInt64(m_datacenter->GetServerSalt(connectionManager.Get())));
+	ReturnIfFailed(result, packetWriter->WriteInt64(GetSessionId()));
 
+	ReturnIfFailed(result, packetWriter->WriteInt64(messageContext->Id));
+	ReturnIfFailed(result, packetWriter->WriteUInt32(messageContext->SequenceNumber));
+
+	ReturnIfFailed(result, packetWriter->WriteUInt32(messageBodySize));
+	ReturnIfFailed(result, packetWriter->WriteObject(messageBody));
+
+	if (padding != 0)
 	{
-		auto lock = LockCriticalSection();
+		RAND_bytes(packetBufferBytes + 24 + messageLength, padding);
+	}
 
-		ReturnIfFailed(result, CreateMessagePacket(encryptedMessageLength, quickAckId != nullptr, packetWriter, &packetBufferBytes));
-		ReturnIfFailed(result, packetWriter->SeekCurrent(24));
-		ReturnIfFailed(result, packetWriter->WriteInt64(m_datacenter->GetServerSalt(connectionManager.Get())));
-		ReturnIfFailed(result, packetWriter->WriteInt64(GetSessionId()));
+	ReturnIfFailed(result, m_datacenter->EncryptMessage(packetBufferBytes, encryptedMessageLength, padding, quickAckId));
 
-		ReturnIfFailed(result, packetWriter->WriteInt64(messageContext->Id));
-		ReturnIfFailed(result, packetWriter->WriteUInt32(messageContext->SequenceNumber));
+	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, encryptedMessageLength);
 
-		ReturnIfFailed(result, packetWriter->WriteUInt32(messageBodySize));
-		ReturnIfFailed(result, packetWriter->WriteObject(messageBody));
-
-		if (padding != 0)
-		{
-			RAND_bytes(packetBufferBytes + 24 + messageLength, padding);
-		}
-
-		ReturnIfFailed(result, m_datacenter->EncryptMessage(packetBufferBytes, encryptedMessageLength, padding, quickAckId));
-
-		ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, encryptedMessageLength);
-
-		if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) < ConnectionState::Connecting)
-		{
-			Connect(connectionManager);
-		}
+	if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) < ConnectionState::Connecting)
+	{
+		Connect(connectionManager);
 	}
 
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
@@ -327,6 +340,8 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 
 HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, boolean reportAck)
 {
+	METHOD_DEBUG_INFO();
+
 	if (messageBody == nullptr)
 	{
 		return E_INVALIDARG;
@@ -341,24 +356,21 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, boolean repor
 
 	UINT32 messageLength = 2 * sizeof(INT64) + sizeof(INT32) + messageBodySize;
 
+	auto lock = LockCriticalSection();
+
 	BYTE* packetBufferBytes;
 	ComPtr<TLBinaryWriter> packetWriter;
+	ReturnIfFailed(result, CreateMessagePacket(messageLength, reportAck, packetWriter, &packetBufferBytes));
+	ReturnIfFailed(result, packetWriter->WriteInt64(0));
+	ReturnIfFailed(result, packetWriter->WriteInt64(connectionManager->GenerateMessageId()));
+	ReturnIfFailed(result, packetWriter->WriteUInt32(messageBodySize));
+	ReturnIfFailed(result, packetWriter->WriteObject(messageBody));
 
+	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, messageLength);
+
+	if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) < ConnectionState::Connecting)
 	{
-		auto lock = LockCriticalSection();
-
-		ReturnIfFailed(result, CreateMessagePacket(messageLength, reportAck, packetWriter, &packetBufferBytes));
-		ReturnIfFailed(result, packetWriter->WriteInt64(0));
-		ReturnIfFailed(result, packetWriter->WriteInt64(connectionManager->GenerateMessageId()));
-		ReturnIfFailed(result, packetWriter->WriteUInt32(messageBodySize));
-		ReturnIfFailed(result, packetWriter->WriteObject(messageBody));
-
-		ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, messageLength);
-
-		if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) < ConnectionState::Connecting)
-		{
-			Connect(connectionManager);
-		}
+		Connect(connectionManager);
 	}
 
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
@@ -497,7 +509,13 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 			packetLength = static_cast<UINT32>(firstByte) * 4;
 		}
 
-		if (packetLength % 4 != 0 || FAILED(OnMessageReceived(connectionManager, packetReader.Get(), packetLength))) //packetLength > CONNECTION_MAX_PACKET_LENGTH || 
+		if (packetLength > packetReader->GetUnconsumedBufferLength())
+		{
+			result = E_NOT_SUFFICIENT_BUFFER;
+			break;
+		}
+
+		if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH || FAILED(OnMessageReceived(connectionManager, packetReader.Get(), packetLength)))
 		{
 			ComPtr<Connection> connection = this;
 			return connectionManager->SubmitWork([connectionManager, connection]()-> void
@@ -516,6 +534,11 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 
 	if (result == E_NOT_SUFFICIENT_BUFFER)
 	{
+		if (packetPosition == 0)
+		{
+			return S_OK;
+		}
+
 		auto newBufferLength = m_partialPacketBuffer->GetCapacity() - packetPosition;
 		MoveMemory(m_partialPacketBuffer->GetBuffer(), m_partialPacketBuffer->GetBuffer() + packetPosition, newBufferLength);
 
@@ -581,6 +604,8 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 
 HRESULT Connection::OnMessageReceived(ComPtr<ConnectionManager> const& connectionManager, TLBinaryReader* messageReader, UINT32 messageLength)
 {
+	METHOD_DEBUG_INFO();
+
 	HRESULT result;
 	if (messageLength == 4)
 	{

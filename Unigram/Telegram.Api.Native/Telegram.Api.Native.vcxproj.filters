@@ -49,6 +49,7 @@
       <Filter>Threading</Filter>
     </ClCompile>
     <ClCompile Include="MessageResponse.cpp" />
+    <ClCompile Include="MethodDebugInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -102,6 +103,7 @@
       <Filter>Threading</Filter>
     </ClInclude>
     <ClInclude Include="MessageResponse.h" />
+    <ClInclude Include="MethodDebugInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

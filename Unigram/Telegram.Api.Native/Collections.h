@@ -131,7 +131,7 @@ namespace Windows
 						return E_POINTER;
 					}
 
-					*size = m_items.size();
+					*size = static_cast<unsigned>(m_items.size());
 					return S_OK;
 				}
 
@@ -146,7 +146,7 @@ namespace Windows
 					{
 						if (ItemTraits::Equals(m_items[i], value))
 						{
-							*index = i;
+							*index = static_cast<unsigned>(i);
 							*found = true;
 							break;
 						}
@@ -232,7 +232,7 @@ namespace Windows
 
 			private:
 				ComPtr<TVector> m_vector;
-				size_t m_index;
+				unsigned m_index;
 			};
 
 		}

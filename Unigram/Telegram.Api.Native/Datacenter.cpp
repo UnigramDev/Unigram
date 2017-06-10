@@ -15,6 +15,8 @@
 #include "Wrappers\OpenSSL.h"
 #include "Helpers\COMHelper.h"
 
+#include "MethodDebugInfo.h"
+
 #define ENCRYPT_KEY_IV_PARAM 0
 #define DECRYPT_KEY_IV_PARAM 8
 
@@ -396,6 +398,8 @@ HRESULT Datacenter::ReplaceEndpoints(std::vector<ServerEndpoint> const& newEndpo
 
 HRESULT Datacenter::GetGenericConnection(boolean create, ComPtr<Connection>& value)
 {
+	METHOD_DEBUG_INFO();
+
 	auto lock = LockCriticalSection();
 
 	if ((m_flags & DatacenterFlag::Closed) == DatacenterFlag::Closed)
@@ -407,8 +411,8 @@ HRESULT Datacenter::GetGenericConnection(boolean create, ComPtr<Connection>& val
 	{
 		auto connection = Make<Connection>(this, ConnectionType::Generic);
 
-		HRESULT result;
-		ReturnIfFailed(result, connection->Connect());
+		/*HRESULT result;
+		ReturnIfFailed(result, connection->Connect());*/
 
 		m_genericConnection.Swap(connection);
 	}
@@ -435,8 +439,8 @@ HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, ComPtr<C
 	{
 		auto connection = Make<Connection>(this, ConnectionType::Download);
 
-		HRESULT result;
-		ReturnIfFailed(result, connection->Connect());
+		/*HRESULT result;
+		ReturnIfFailed(result, connection->Connect());*/
 
 		m_downloadConnections[index].Swap(connection);
 	}
@@ -463,8 +467,8 @@ HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, ComPtr<Con
 	{
 		auto connection = Make<Connection>(this, ConnectionType::Upload);
 
-		HRESULT result;
-		ReturnIfFailed(result, connection->Connect());
+		/*HRESULT result;
+		ReturnIfFailed(result, connection->Connect());*/
 
 		m_uploadConnections[index] = connection;
 	}
@@ -475,6 +479,8 @@ HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, ComPtr<Con
 
 HRESULT Datacenter::BeginHandshake(boolean reconnect, boolean reset)
 {
+	METHOD_DEBUG_INFO();
+
 	auto lock = LockCriticalSection();
 
 	if (reset)
@@ -493,7 +499,7 @@ HRESULT Datacenter::BeginHandshake(boolean reconnect, boolean reset)
 
 	genericConnection->RecreateSession();
 
-	if (reconnect)
+	if (reconnect && genericConnection->IsConnected())
 	{
 		ReturnIfFailed(result, genericConnection->Disconnect());
 		ReturnIfFailed(result, genericConnection->Connect());
@@ -513,6 +519,8 @@ HRESULT Datacenter::BeginHandshake(boolean reconnect, boolean reset)
 
 HRESULT Datacenter::ImportAuthorization()
 {
+	METHOD_DEBUG_INFO();
+
 	auto lock = LockCriticalSection();
 
 	if ((m_flags & DatacenterFlag::ImportingAuthorization) == DatacenterFlag::ImportingAuthorization)
@@ -520,7 +528,55 @@ HRESULT Datacenter::ImportAuthorization()
 		return S_OK;
 	}
 
+	HRESULT result;
+	ComPtr<ConnectionManager> connectionManager;
+	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
+
 	auto authExportAuthorization = Make<Methods::TLAuthExportAuthorization>(m_id);
+
+	m_flags |= DatacenterFlag::ImportingAuthorization;
+
+	INT32 requestToken;
+	ComPtr<Datacenter> datacenter = this;
+	if (FAILED(result = connectionManager->SendRequestWithFlags(authExportAuthorization.Get(), Callback<ISendRequestCompletedCallback>([datacenter, connectionManager](IMessageResponse* response, HRESULT error) -> HRESULT
+	{
+		auto lock = datacenter->LockCriticalSection();
+
+		if (SUCCEEDED(error))
+		{
+			HRESULT result;
+			ComPtr<Methods::TLAuthImportAuthorization> authImportAuthorization;
+			auto authExportedAuthorization = static_cast<TLAuthExportedAuthorization*>(static_cast<MessageResponse*>(response)->GetObject().Get());
+			ReturnIfFailed(result, MakeAndInitialize<Methods::TLAuthImportAuthorization>(&authImportAuthorization, authExportedAuthorization->GetId(), authExportedAuthorization->GetBytes().Get()));
+
+			INT32 requestToken;
+			return connectionManager->SendRequestWithFlags(authImportAuthorization.Get(), Callback<ISendRequestCompletedCallback>([datacenter, connectionManager](IMessageResponse* response, HRESULT error) -> HRESULT
+			{
+				auto lock = datacenter->LockCriticalSection();
+
+				datacenter->m_flags &= ~DatacenterFlag::ImportingAuthorization;
+
+				if (SUCCEEDED(error))
+				{
+					datacenter->m_flags |= DatacenterFlag::Authorized;
+					return connectionManager->OnDatacenterImportAuthorizationComplete(datacenter.Get());
+				}
+				else
+				{
+					return S_OK;
+				}
+			}).Get(), nullptr, datacenter->m_id, ConnectionType::Generic, RequestFlag::EnableUnauthorized | RequestFlag::Immediate, &requestToken);
+		}
+		else
+		{
+			datacenter->m_flags &= ~DatacenterFlag::ImportingAuthorization;
+			return S_OK;
+		}
+	}).Get(), nullptr, DEFAULT_DATACENTER_ID, ConnectionType::Generic, RequestFlag::Immediate, &requestToken)))
+	{
+		m_flags &= ~DatacenterFlag::ImportingAuthorization;
+		return result;
+	}
 
 	return S_OK;
 }
@@ -682,7 +738,7 @@ HRESULT Datacenter::OnHandshakePQResponse(Connection* connection, TLResPQ* respo
 		return E_INVALIDARG;
 	}
 
-	BIO_write(keyBio.Get(), serverPublicKey->Key.c_str(), serverPublicKey->Key.size());
+	BIO_write(keyBio.Get(), serverPublicKey->Key.c_str(), static_cast<int>(serverPublicKey->Key.size()));
 
 	Wrappers::RSA rsaKey(PEM_read_bio_RSAPublicKey(keyBio.Get(), nullptr, nullptr, nullptr));
 	if (!rsaKey.IsValid())
@@ -1145,10 +1201,12 @@ HRESULT Datacenter::SendPing()
 	auto helpGetConfig = Make<Methods::TLHelpGetConfig>();
 
 	INT32 requestToken;
-	return connectionManager->SendRequestWithFlags(helpGetConfig.Get(), Callback<ISendRequestCompletedCallback>([connectionManager](IMessageResponse* response, HRESULT error) -> HRESULT
+	ReturnIfFailed(result, connectionManager->SendRequestWithFlags(helpGetConfig.Get(), Callback<ISendRequestCompletedCallback>([connectionManager](IMessageResponse* response, HRESULT error) -> HRESULT
 	{
 		return connectionManager->m_unprocessedMessageReceivedEventSource.InvokeAll(connectionManager.Get(), response);
-	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::WithoutLogin | RequestFlag::CanCompress, &requestToken);
+	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::WithoutLogin | RequestFlag::CanCompress, &requestToken));
+
+	return connectionManager->ProcessDatacenterRequests(this, ConnectionType::Generic);
 
 	//return genericConnection->SendEncryptedMessage(invokeWithLayer.Get(), false, nullptr);
 }

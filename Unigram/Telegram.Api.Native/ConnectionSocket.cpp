@@ -77,11 +77,11 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, Se
 	m_sendBuffer.resize(SOCKET_SEND_BUFFER_SIZE);
 	m_receiveBuffer = std::make_unique<BYTE[]>(SOCKET_RECEIVE_BUFFER_SIZE);
 
-	m_socketConnectedEvent.Attach(CreateEvent(nullptr, TRUE, FALSE, nullptr));
+	/*m_socketConnectedEvent.Attach(CreateEvent(nullptr, TRUE, FALSE, nullptr));
 	if (!m_socketConnectedEvent.IsValid())
 	{
 		return GetLastHRESULT();
-	}
+	}*/
 
 	m_socketEvent.Attach(WSACreateEvent());
 	if (!m_socketEvent.IsValid())
@@ -158,21 +158,26 @@ HRESULT ConnectionSocket::SendData(BYTE const* buffer, UINT32 length)
 		return E_NOT_VALID_STATE;
 	}
 
-	if (WaitForSingleObject(m_socketConnectedEvent.Get(), INFINITE) != WAIT_OBJECT_0)
+	/*if (WaitForSingleObject(m_socketConnectedEvent.Get(), INFINITE) != WAIT_OBJECT_0)
 	{
 		return E_FAIL;
-	}
+	}*/
 
 	int bytesSent = send(m_socket, reinterpret_cast<const char*>(buffer), length, 0);
 	if (bytesSent == SOCKET_ERROR)
 	{
 		auto wsaLastError = WSAGetLastError();
-		if (wsaLastError != WSAEWOULDBLOCK)
+		if (wsaLastError == WSAENOTCONN)
+		{
+			bytesSent = 0;
+		}
+		else if (wsaLastError != WSAEWOULDBLOCK)
 		{
 			return HRESULT_FROM_WIN32(wsaLastError);
 		}
 	}
-	else if (static_cast<UINT32>(bytesSent) < length)
+
+	if (static_cast<UINT32>(bytesSent) < length)
 	{
 		auto remainingSize = length - bytesSent;
 		auto availableSize = m_sendBuffer.size();
@@ -207,10 +212,11 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 
 	m_socket = INVALID_SOCKET;
 
+	//SetEvent(m_socketConnectedEvent.Get());
 	DetachFromThreadpool(flags & SOCKET_CLOSE_JOINTHREAD);
 
 	m_socketEvent.Close();
-	m_socketConnectedEvent.Close();
+	//m_socketConnectedEvent.Close();
 	m_sendBuffer = {};
 	m_receiveBuffer.reset();
 
@@ -255,7 +261,7 @@ HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG_
 		{
 			BreakIfError(wsaLastError, networkEvents.iErrorCode[FD_CONNECT_BIT]);
 
-			SetEvent(m_socketConnectedEvent.Get());
+			//SetEvent(m_socketConnectedEvent.Get());
 
 			HRESULT result;
 			if (FAILED(result = OnSocketConnected()))

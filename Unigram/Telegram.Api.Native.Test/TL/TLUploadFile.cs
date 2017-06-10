@@ -19,8 +19,8 @@ namespace Telegram.Api.TL
 		public override TLType TypeId { get { return TLType.UploadFile; } }
 
 		public override void Read(TLBinaryReader from)
-		{
-			Type = TLFactory.Read<TLStorageFileTypeBase>(from);
+        {
+            Type = TLFactory.Read<TLStorageFileTypeBase>(from);
 			Mtime = from.ReadInt32();
 			Bytes = from.ReadByteArray();
 		}

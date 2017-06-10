@@ -9,7 +9,7 @@
 
 using namespace Microsoft::WRL;
 using ABI::Windows::Foundation::IReference;
-using ABI::Telegram::Api::Native::TL::ITLRpcError;
+using ABI::Telegram::Api::Native::TL::ITLRPCError;
 using ABI::Telegram::Api::Native::TL::ITLDCOption;
 using ABI::Telegram::Api::Native::TL::ITLDisabledFeature;
 using ABI::Telegram::Api::Native::TL::ITLConfig;
@@ -27,7 +27,7 @@ namespace Telegram
 				class TLDCOption;
 				class TLDisabledFeature;
 				class TLConfig;
-				class TLRpcError;
+				class TLRPCError;
 				class TLRpcReqError;
 				class TLRpcResult;
 				class TLRpcAnswerDropped;
@@ -66,7 +66,7 @@ namespace Telegram
 					MakeTLTypeTraits(TLDCOption, 0x5d8c6cc);
 					MakeTLTypeTraits(TLDisabledFeature, 0xae636f24);
 					MakeTLTypeTraits(TLConfig, 0xcb601684);
-					MakeTLTypeTraits(TLRpcError, 0x2144ca19);
+					MakeTLTypeTraits(TLRPCError, 0x2144ca19);
 					MakeTLTypeTraits(TLRpcReqError, 0x7ae432f5);
 					MakeTLTypeTraits(TLRpcResult, 0xf35c6d01);
 					MakeTLTypeTraits(TLRpcAnswerDropped, 0xa43ad8b7);
@@ -405,17 +405,17 @@ namespace Telegram
 				};
 
 				template<typename TLObjectTraits>
-				class TLRpcErrorT abstract : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLRpcError, TLObjectT<TLObjectTraits>, CloakedIid<IMessageResponseHandler>>
+				class TLRPCErrorT abstract : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLRPCError, TLObjectT<TLObjectTraits>, CloakedIid<IMessageResponseHandler>>
 				{
-					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLRpcError, BaseTrust);
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLRPCError, BaseTrust);
 
 				public:
-					TLRpcErrorT() :
+					TLRPCErrorT() :
 						m_code(0)
 					{
 					}
 
-					~TLRpcErrorT()
+					~TLRPCErrorT()
 					{
 					}
 
@@ -445,7 +445,7 @@ namespace Telegram
 					HString m_text;
 				};
 
-				class TLRpcError WrlSealed : public TLRpcErrorT<TLObjectTraits::TLRpcErrorTraits>
+				class TLRPCError WrlSealed : public TLRPCErrorT<TLObjectTraits::TLRPCErrorTraits>
 				{
 				public:
 					//Internal methods
@@ -459,12 +459,12 @@ namespace Telegram
 						HString errorText;
 						ReturnIfFailed(result, errorText.Set<sizeDest>(text));
 
-						return TLRpcErrorT::RuntimeClassInitialize(code, errorText);
+						return TLRPCErrorT::RuntimeClassInitialize(code, errorText);
 					}
 
 				};
 
-				class TLRpcReqError WrlSealed : public TLRpcErrorT<TLObjectTraits::TLRpcReqErrorTraits>
+				class TLRpcReqError WrlSealed : public TLRPCErrorT<TLObjectTraits::TLRpcReqErrorTraits>
 				{
 				public:
 					//Internal methods

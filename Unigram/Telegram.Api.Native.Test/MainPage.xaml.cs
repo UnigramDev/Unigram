@@ -40,15 +40,7 @@ namespace Telegram.Api.Native.Test
             connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
             connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;
 
-            //connectionManager.SendRequest(new TLError(0, "Hello world"), null, null, 1, ConnectionType.Generic, false, 0);
-
             TLTestObject.Register();
-
-            connectionManager.BoomBaby(null, out ITLObject @object);
-
-            var datacenter = connectionManager.CurrentDatacenter;
-
-            GC.Collect();
         }
 
         private void ConnectionManager_ConnectionStateChanged(ConnectionManager sender, object args)
@@ -64,19 +56,25 @@ namespace Telegram.Api.Native.Test
                     var dcOptions = tlConfig.DCOptions.ToArray();
                     var disabledFeatures = tlConfig.DisabledFeatures.ToArray();
                     break;
-                case TLRpcError tlRpcError:
+                case TLRPCError tlRPCError:
                     break;
             }
+        }
 
-            var config = args.Object as TLConfig;
-            if (config == null)
-            {
-                Debugger.Break();
-                return;
-            }
+        private void Instance_CurrentNetworkTypeChanged(ConnectionManager sender, object e)
+        {
+        }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            GC.Collect();
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            var connectionManager = ConnectionManager.Instance;
             var authSendCode = new TLAuthSendCode { ApiHash = Constants.ApiHash, ApiId = Constants.ApiId, PhoneNumber = Constants.PhoneNumber };
-            var messageToken = sender.SendRequest(authSendCode, (message, ex) =>
+            var messageToken = connectionManager.SendRequest(authSendCode, (message, ex) =>
             {
                 var sentCode = message.Object as TLAuthSentCode;
                 if (sentCode == null)
@@ -86,7 +84,7 @@ namespace Telegram.Api.Native.Test
                 }
 
                 var authSignIn = new TLAuthSignIn { PhoneNumber = Constants.PhoneNumber, PhoneCode = Constants.PhoneCode, PhoneCodeHash = sentCode.PhoneCodeHash };
-                sender.SendRequest(authSignIn, (message2, ex2) =>
+                connectionManager.SendRequest(authSignIn, (message2, ex2) =>
                 {
                     var authorization = message2.Object as TLAuthAuthorization;
                     if (authorization == null)
@@ -95,10 +93,10 @@ namespace Telegram.Api.Native.Test
                         return;
                     }
 
-                    sender.UserId = authorization.User.Id;
+                    connectionManager.UserId = authorization.User.Id;
 
                     var resolve = new TLContactsResolveUsername { Username = Constants.Resolve };
-                    sender.SendRequest(resolve, (message3, ex3) =>
+                    connectionManager.SendRequest(resolve, (message3, ex3) =>
                     {
                         var resolvedPeer = message3.Object as TLContactsResolvedPeer;
                         if (resolvedPeer == null)
@@ -118,7 +116,7 @@ namespace Telegram.Api.Native.Test
                         var big = photo.PhotoBig as TLFileLocation;
 
                         var getFile = new TLUploadGetFile { Offset = 0, Limit = 32 * 1024, Location = new TLInputFileLocation { VolumeId = big.VolumeId, LocalId = big.LocalId, Secret = big.Secret } };
-                        sender.SendRequest(getFile, (message5, ex5) =>
+                        connectionManager.SendRequest(getFile, (message5, ex5) =>
                         {
                             Debugger.Break();
                         },
@@ -132,15 +130,6 @@ namespace Telegram.Api.Native.Test
                 null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin);
             },
             null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin);
-        }
-
-        private void Instance_CurrentNetworkTypeChanged(ConnectionManager sender, object e)
-        {
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            GC.Collect();
         }
     }
 }

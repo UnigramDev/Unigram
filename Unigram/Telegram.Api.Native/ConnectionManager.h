@@ -9,7 +9,8 @@
 #include "ThreadpoolObject.h"
 #include "Telegram.Api.Native.h"
 
-#define THREAD_COUNT 1
+#define MIN_THREAD_COUNT 1
+#define MAX_THREAD_COUNT 1
 #define TELEGRAM_API_NATIVE_PROTOVERSION 2
 #define TELEGRAM_API_NATIVE_VERSION 1
 #define TELEGRAM_API_NATIVE_LAYER 66
@@ -46,9 +47,8 @@ namespace Telegram
 				class TLMessage;
 				class TLUnparsedObject;	
 				template<typename TLObjectTraits>
-				class TLRpcErrorT;
+				class TLRPCErrorT;
 				class TLConfig;
-				class TLAuthExportedAuthorization;
 
 			}
 
@@ -64,7 +64,7 @@ namespace Telegram
 				friend class TL::TLObject;
 				friend class TL::TLUnparsedObject;
 				template<typename TLObjectTraits>
-				friend class TL::TLRpcErrorT;
+				friend class TL::TLRPCErrorT;
 				friend class TL::TLConfig;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
@@ -103,7 +103,7 @@ namespace Telegram
 				IFACEMETHODIMP BoomBaby(_In_ IUserConfiguration* userConfiguration, _Out_ ITLObject** object, _Out_ IConnection** value);
 
 				//Internal methods
-				STDMETHODIMP RuntimeClassInitialize(DWORD minimumThreadCount = THREAD_COUNT, DWORD maximumThreadCount = THREAD_COUNT);
+				STDMETHODIMP RuntimeClassInitialize(DWORD minimumThreadCount = MIN_THREAD_COUNT, DWORD maximumThreadCount = MAX_THREAD_COUNT);
 				boolean IsNetworkAvailable();
 				INT32 GetCurrentTime();
 				INT64 GenerateMessageId();
@@ -135,15 +135,14 @@ namespace Telegram
 				void ResetRequests(std::function<boolean(INT32, ComPtr<MessageRequest> const&)> selector);
 				HRESULT CompleteMessageRequest(INT64 requestMessageId, _In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
 				HRESULT OnUnprocessedMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
-				HRESULT OnErrorResponse(INT32 code, _In_ HSTRING text);
+				HRESULT OnErrorResponse(INT32 code, _In_ HString const& text);
 				HRESULT OnConfigResponse(_In_ TL::TLConfig* response);
-				HRESULT OnExportedAuthorizationResponse(_In_ TL::TLAuthExportedAuthorization* response);
-				HRESULT OnAuthorizationResponse(_In_ ITLObject* response);
 				HRESULT OnNetworkStatusChanged(_In_ IInspectable* sender);
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionQuickAckReceived(_In_ Connection* connection, INT32 ack);
 				HRESULT OnConnectionClosed(_In_ Connection* connection);
 				HRESULT OnDatacenterHandshakeComplete(_In_ Datacenter* datacenter, INT32 timeDifference);
+				HRESULT OnDatacenterImportAuthorizationComplete(_In_ Datacenter* datacenter);
 				HRESULT OnConnectionSessionCreated(_In_ Connection* connection, INT64 firstMessageId);
 				HRESULT OnRequestEnqueued(_In_ PTP_CALLBACK_INSTANCE instance);
 				boolean GetDatacenterById(UINT32 id, _Out_ ComPtr<Datacenter>& datacenter);

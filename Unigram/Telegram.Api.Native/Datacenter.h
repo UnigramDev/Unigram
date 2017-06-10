@@ -196,6 +196,20 @@ namespace Telegram
 					m_flags |= DatacenterFlag::ConnectionInitialized;
 				}
 
+				inline void SetImportingAuthorization(boolean value)
+				{
+					auto lock = LockCriticalSection();
+
+					if (value)
+					{
+						m_flags |= DatacenterFlag::ImportingAuthorization;
+					}
+					else
+					{
+						m_flags &= ~DatacenterFlag::ImportingAuthorization;
+					}
+				}
+
 				inline HRESULT OnHandshakeError(HRESULT error)
 				{
 					if (error == E_UNEXPECTED)

@@ -38,7 +38,7 @@ namespace Telegram
 				runtimeclass TLBinaryWriter;
 				runtimeclass TLObjectSerializer;
 				runtimeclass TLUnparsedObject;
-				runtimeclass TLRpcError;
+				runtimeclass TLRPCError;
 				runtimeclass TLDCOption;
 				runtimeclass TLDisabledFeature;
 				runtimeclass TLConfig;
@@ -221,10 +221,10 @@ namespace Telegram
 				}
 
 
-				[exclusiveto(TLRpcError)]
+				[exclusiveto(TLRPCError)]
 				[uuid(7E992965-E9B1-4804-9C1C-E578B5C397AF)]
 				[version(API_VERSION)]
-				interface ITLRpcError : IInspectable
+				interface ITLRPCError : IInspectable
 				{
 					[propget] HRESULT Code([out][retval] UINT32* value);
 					[propget] HRESULT Text([out][retval] HSTRING* value);
@@ -233,9 +233,9 @@ namespace Telegram
 				[marshaling_behavior(agile)]
 				[threading(both)]
 				[version(API_VERSION)]
-				runtimeclass TLRpcError
+				runtimeclass TLRPCError
 				{
-					[default] interface ITLRpcError;
+					[default] interface ITLRPCError;
 					interface ITLObject;
 				}
 

@@ -20,7 +20,7 @@ using Windows::Foundation::Collections::VectorView;
 RegisterTLObjectConstructor(TLDCOption);
 RegisterTLObjectConstructor(TLDisabledFeature);
 RegisterTLObjectConstructor(TLConfig);
-RegisterTLObjectConstructor(TLRpcError);
+RegisterTLObjectConstructor(TLRPCError);
 RegisterTLObjectConstructor(TLRpcReqError);
 RegisterTLObjectConstructor(TLRpcResult);
 RegisterTLObjectConstructor(TLRpcAnswerDropped);
@@ -619,7 +619,7 @@ HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
 
 
 template<typename TLObjectTraits>
-HRESULT TLRpcErrorT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
+HRESULT TLRPCErrorT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
 	ReturnIfFailed(result, reader->ReadInt32(&m_code));
@@ -628,7 +628,7 @@ HRESULT TLRpcErrorT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
 }
 
 template<typename TLObjectTraits>
-HRESULT TLRpcErrorT<TLObjectTraits>::get_Code(UINT32* value)
+HRESULT TLRPCErrorT<TLObjectTraits>::get_Code(UINT32* value)
 {
 	if (value == nullptr)
 	{
@@ -640,19 +640,19 @@ HRESULT TLRpcErrorT<TLObjectTraits>::get_Code(UINT32* value)
 }
 
 template<typename TLObjectTraits>
-HRESULT TLRpcErrorT<TLObjectTraits>::get_Text(HSTRING* value)
+HRESULT TLRPCErrorT<TLObjectTraits>::get_Text(HSTRING* value)
 {
 	return m_text.CopyTo(value);
 }
 
 template<typename TLObjectTraits>
-HRESULT TLRpcErrorT<TLObjectTraits>::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLRPCErrorT<TLObjectTraits>::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	return connectionManager->OnErrorResponse(m_code, m_text.Get());
+	return connectionManager->OnErrorResponse(m_code, m_text);
 }
 
 template<typename TLObjectTraits>
-HRESULT TLRpcErrorT<TLObjectTraits>::RuntimeClassInitialize(INT32 code, HString& text)
+HRESULT TLRPCErrorT<TLObjectTraits>::RuntimeClassInitialize(INT32 code, HString& text)
 {
 	m_code = code;
 	m_text = std::move(text);
@@ -661,16 +661,16 @@ HRESULT TLRpcErrorT<TLObjectTraits>::RuntimeClassInitialize(INT32 code, HString&
 }
 
 
-HRESULT TLRpcError::RuntimeClassInitialize(INT32 code, HSTRING text)
+HRESULT TLRPCError::RuntimeClassInitialize(INT32 code, HSTRING text)
 {
 	HRESULT result;
 	HString errorText;
 	ReturnIfFailed(result, errorText.Set(text));
 
-	return TLRpcErrorT::RuntimeClassInitialize(code, std::move(errorText));
+	return TLRPCErrorT::RuntimeClassInitialize(code, std::move(errorText));
 }
 
-HRESULT TLRpcError::RuntimeClassInitialize(HRESULT error)
+HRESULT TLRPCError::RuntimeClassInitialize(HRESULT error)
 {
 	WCHAR* text;
 	UINT32 length;
@@ -687,14 +687,14 @@ HRESULT TLRpcError::RuntimeClassInitialize(HRESULT error)
 		LocalFree(text);
 	}
 
-	return TLRpcErrorT::RuntimeClassInitialize(error, errorText);
+	return TLRPCErrorT::RuntimeClassInitialize(error, errorText);
 }
 
 
 HRESULT TLRpcReqError::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
-	ReturnIfFailed(result, TLRpcErrorT::ReadBody(reader));
+	ReturnIfFailed(result, TLRPCErrorT::ReadBody(reader));
 
 	return reader->ReadInt64(&m_queryId);
 }
