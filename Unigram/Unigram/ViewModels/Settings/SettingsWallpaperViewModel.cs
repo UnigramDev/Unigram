@@ -164,6 +164,10 @@ namespace Unigram.ViewModels.Settings
                         var result = await FileUtils.CreateTempFileAsync("wallpaper.jpg");
                         await file.CopyAndReplaceAsync(result);
                     }
+                    else
+                    {
+                        return;
+                    }
                 }
 
                 ApplicationSettings.Current.SelectedBackground = wallpaper.Id;
@@ -181,6 +185,10 @@ namespace Unigram.ViewModels.Settings
                 {
                     var result = await FileUtils.CreateTempFileAsync("wallpaper.jpg");
                     await file.MoveAndReplaceAsync(result);
+                }
+                else
+                {
+                    return;
                 }
 
                 ApplicationSettings.Current.SelectedBackground = -1;
