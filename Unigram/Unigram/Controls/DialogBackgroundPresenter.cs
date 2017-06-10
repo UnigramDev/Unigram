@@ -18,7 +18,7 @@ namespace Unigram.Controls
     public class DialogBackgroundPresenter : ContentControl, IHandle<string>
     {
         private DialogBackground _defaultBackground;
-        private Image _imageBackground;
+        private Rectangle _imageBackground;
         private Rectangle _colorBackground;
 
         public DialogBackgroundPresenter()
@@ -48,13 +48,13 @@ namespace Unigram.Controls
                     if (item is StorageFile file)
                     {
                         if (_imageBackground == null)
-                            _imageBackground = new Image { Stretch = Stretch.UniformToFill };
+                            _imageBackground = new Rectangle();
 
                         using (var stream = await file.OpenReadAsync())
                         {
                             var bitmap = new BitmapImage();
                             await bitmap.SetSourceAsync(stream);
-                            _imageBackground.Source = bitmap;
+                            _imageBackground.Fill = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, Stretch = Stretch.UniformToFill };
                         }
 
                         Content = _imageBackground;

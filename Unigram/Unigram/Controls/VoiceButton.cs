@@ -181,7 +181,9 @@ namespace Unigram.Controls
                 {
                     _recorder.m_mediaCapture = new MediaCapture();
 
-                    _recorder.settings.VideoDeviceId = await _recorder.GetVideoProfileSupportedDeviceIdAsync(Windows.Devices.Enumeration.Panel.Front);
+                    var cameraDevice = await _recorder.FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel.Front);
+
+                    _recorder.settings.VideoDeviceId = cameraDevice.Id;
                     await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
 
                     if (_video)
@@ -355,21 +357,16 @@ namespace Unigram.Controls
                 settings.StreamingCaptureMode = m_isVideo ? StreamingCaptureMode.AudioAndVideo : StreamingCaptureMode.Audio;
             }
 
-            public async Task<string> GetVideoProfileSupportedDeviceIdAsync(Windows.Devices.Enumeration.Panel panel)
+            public async Task<DeviceInformation> FindCameraDeviceByPanelAsync(Windows.Devices.Enumeration.Panel desiredPanel)
             {
-                var deviceId = string.Empty;
-                var devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
+                // Get available devices for capturing pictures
+                var allVideoDevices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
 
-                foreach (var device in devices)
-                {
-                    if (MediaCapture.IsVideoProfileSupported(device.Id) && device.EnclosureLocation.Panel == panel)
-                    {
-                        deviceId = device.Id;
-                        break;
-                    }
-                }
+                // Get the desired camera by panel
+                DeviceInformation desiredDevice = allVideoDevices.FirstOrDefault(x => x.EnclosureLocation != null && x.EnclosureLocation.Panel == desiredPanel);
 
-                return deviceId;
+                // If there is no device mounted on the desired panel, return the first device found
+                return desiredDevice ?? allVideoDevices.FirstOrDefault();
             }
 
             public async Task StartAsync()

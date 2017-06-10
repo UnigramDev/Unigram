@@ -13,6 +13,7 @@ using Unigram.Common;
 using Unigram.Core.Common;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -43,7 +44,7 @@ namespace Unigram.ViewModels.Settings
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        private void UpdateView()
+        private async void UpdateView()
         {
             if (Items == null)
             {
@@ -55,6 +56,17 @@ namespace Unigram.ViewModels.Settings
             {
                 IsLocal = true;
                 SelectedItem = null;
+
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath("wallpaper.jpg"));
+                if (item is StorageFile file)
+                {
+                    using (var stream = await file.OpenReadAsync())
+                    {
+                        var bitmap = new BitmapImage();
+                        await bitmap.SetSourceAsync(stream);
+                        Local = bitmap;
+                    }
+                }
             }
             else
             {
@@ -75,6 +87,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        private BitmapImage _local;
+        public BitmapImage Local
+        {
+            get
+            {
+                return _local;
+            }
+            set
+            {
+                Set(ref _local, value);
+            }
+        }
+
         private TLWallPaperBase _selectedItem;
         public TLWallPaperBase SelectedItem
         {
@@ -88,6 +113,7 @@ namespace Unigram.ViewModels.Settings
                 
                 if (value != null)
                 {
+                    Local = null;
                     IsLocal = false;
                 }
             }
@@ -111,6 +137,13 @@ namespace Unigram.ViewModels.Settings
 
                 IsLocal = true;
                 SelectedItem = null;
+
+                using (var stream = await result.OpenReadAsync())
+                {
+                    var bitmap = new BitmapImage();
+                    await bitmap.SetSourceAsync(stream);
+                    Local = bitmap;
+                }
             }
         }
 

@@ -30,6 +30,12 @@
             Command="{x:Bind ViewModel.DoneCommand}"
             Canvas.ZIndex="1"/>
 
+        <Rectangle Canvas.ZIndex="-2" Grid.RowSpan="2">
+            <Rectangle.Fill>
+                <ImageBrush ImageSource="{x:Bind ViewModel.Local, Mode=OneWay}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+            </Rectangle.Fill>
+        </Rectangle>
+
         <ContentControl Content="{x:Bind ViewModel.SelectedItem, Mode=OneWay}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Canvas.ZIndex="-1" Grid.RowSpan="2">
             <ContentControl.ContentTemplateSelector>
                 <selectors:WallPaperTemplateSelector>
