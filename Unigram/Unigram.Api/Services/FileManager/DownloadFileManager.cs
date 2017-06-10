@@ -156,6 +156,13 @@ namespace Telegram.Api.Services.FileManager
                         part.ParentItem.Parts.Insert(currentItemIndex + 1, missingPart);
                     }
                 }
+                else if (data.Length == part.Limit && (part.Number + 1) == part.ParentItem.Parts.Count)
+                {
+                    var currentItemIndex = part.ParentItem.Parts.IndexOf(part);
+                    var missingPart = new DownloadablePart(part.ParentItem, part.Offset + part.Limit, part.Limit, currentItemIndex + 1);
+
+                    part.ParentItem.Parts.Insert(currentItemIndex + 1, missingPart);
+                }
 
                 isCanceled = part.ParentItem.IsCancelled;
 

@@ -1394,10 +1394,10 @@
                     BorderThickness="1"
                     CornerRadius="24"
                     Margin="12"
-                    Height="36"
-                    Width="36"
+                    Height="38"
+                    Width="38"
                     Grid.ColumnSpan="2">
-                <controls:GlyphButton Command="{Binding PreviousSliceCommand}" FontSize="16" Glyph="&#xE74B;" CornerRadius="24"/>
+                <controls:GlyphButton Command="{Binding PreviousSliceCommand}" FontSize="16" Width="36" Height="36" Glyph="&#xE74B;" CornerRadius="24"/>
             </Border>
 
             <views:InlineBotResultsView ItemClick="InlineBotResults_ItemClick" VerticalAlignment="Bottom"/>
@@ -1474,8 +1474,8 @@
                             </Grid.ColumnDefinitions>
                             <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
                             <TextBlock VerticalAlignment="Center" Grid.Column="1">
-                                <Run Text="{x:Bind FullName, Mode=OneWay}" FontWeight="SemiBold" />
-                                <Run Text="@" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" /><Run Text="{x:Bind Username, Mode=OneWay}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                <Run Text="{x:Bind FullName}" FontWeight="SemiBold" />
+                                <Run Text="{x:Bind Username, Converter={StaticResource UsernameConverter}, ConverterParameter=none}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
                             </TextBlock>
                         </Grid>
                     </DataTemplate>
@@ -1550,7 +1550,7 @@
                         VerticalContentAlignment="Bottom"
                         MinHeight="48"
                         MaxHeight="96"
-                        TextChanging="TextField_TextChanging"/>
+                        TextChanged="TextField_TextChanged"/>
 
                     <controls:GlyphButton x:Name="ButtonAttach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">
                         <FlyoutBase.AttachedFlyout>

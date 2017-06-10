@@ -20,18 +20,6 @@ namespace Telegram.Api.TL
             }
         }
 
-        private TLPhotoSizeBase _medium;
-        public TLPhotoSizeBase Medium
-        {
-            get
-            {
-                if (_medium == null)
-                    InitializeSizes();
-
-                return _medium;
-            }
-        }
-
         private TLPhotoSizeBase _full;
         public TLPhotoSizeBase Full
         {

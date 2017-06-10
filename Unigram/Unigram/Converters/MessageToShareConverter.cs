@@ -19,32 +19,42 @@ namespace Unigram.Converters
                 return Visibility.Collapsed;
             }
 
+            return Convert(message) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool Convert(TLMessage message)
+        {
             if (message.IsSticker())
             {
-                return Visibility.Collapsed;
+                return false;
             }
             else if (message.HasFwdFrom && message.FwdFrom.HasChannelId && !message.IsOut)
             {
-                return Visibility.Visible;
+                return true;
             }
             else if (message.HasFromId && !message.IsPost)
             {
                 if (message.Media is TLMessageMediaEmpty || message.Media == null || message.Media is TLMessageMediaWebPage webpageMedia && !(webpageMedia.WebPage is TLWebPage))
                 {
-                    return Visibility.Collapsed;
+                    return false;
                 }
 
                 var user = message.From;
                 if (user != null && user.IsBot)
                 {
-                    return Visibility.Visible;
+                    return true;
                 }
 
                 if (!message.IsOut)
                 {
                     if (message.Media is TLMessageMediaGame || message.Media is TLMessageMediaInvoice)
                     {
-                        return Visibility.Visible;
+                        return true;
                     }
 
                     var parent = message.Parent as TLChannel;
@@ -53,7 +63,7 @@ namespace Unigram.Converters
                         //TLRPC.Chat chat = MessagesController.getInstance().getChat(messageObject.messageOwner.to_id.channel_id);
                         //return chat != null && chat.username != null && chat.username.length() > 0 && !(messageObject.messageOwner.media instanceof TLRPC.TL_messageMediaContact) && !(messageObject.messageOwner.media instanceof TLRPC.TL_messageMediaGeo);
 
-                        return parent.HasUsername && !(message.Media is TLMessageMediaContact) && !(message.Media is TLMessageMediaGeo) ? Visibility.Visible : Visibility.Collapsed;
+                        return parent.HasUsername && !(message.Media is TLMessageMediaContact) && !(message.Media is TLMessageMediaGeo);
                     }
                 }
             }
@@ -67,16 +77,11 @@ namespace Unigram.Converters
 
                 if (message.ToId is TLPeerChannel && (!message.HasViaBotId && !message.HasReplyToMsgId))
                 {
-                    return Visibility.Visible;
+                    return true;
                 }
             }
 
-            return Visibility.Collapsed;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
+            return false;
         }
     }
 }

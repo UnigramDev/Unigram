@@ -4,34 +4,98 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:common="using:Unigram.Common"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Style TargetType="ListViewItem">
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="MinWidth" Value="4"/>
+            <Setter Property="MinHeight" Value="4"/>
+        </Style>
+    </Page.Resources>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Chat Background"/>
+        <controls:ButtonPageHeader
+            Text="Chat Background"
+            Glyph="&#xE10B;"
+            Command="{x:Bind ViewModel.DoneCommand}"
+            Canvas.ZIndex="1"/>
 
-        <GridView ItemsSource="{x:Bind ViewModel.Items}"
-                  SelectionMode="Multiple"
-                  Grid.Row="1">
-            <GridView.ItemTemplateSelector>
+        <ContentControl Content="{x:Bind ViewModel.SelectedItem, Mode=OneWay}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Canvas.ZIndex="-1" Grid.RowSpan="2">
+            <ContentControl.ContentTemplateSelector>
                 <selectors:WallPaperTemplateSelector>
+                    <selectors:WallPaperTemplateSelector.DefaultTemplate>
+                        <DataTemplate>
+                            <controls:DialogBackground/>
+                        </DataTemplate>
+                    </selectors:WallPaperTemplateSelector.DefaultTemplate>
                     <selectors:WallPaperTemplateSelector.ItemTemplate>
                         <DataTemplate x:DataType="tl:TLWallPaper">
-                            <controls:ImageView Source="{x:Bind Full, Converter={StaticResource DefaultPhotoConverter}}"
-                                                Constraint="{x:Bind Full}"
-                                                MaxWidth="200"
-                                                IsHitTestVisible="False"/>
+                            <Image Source="{x:Bind Full, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
                         </DataTemplate>
                     </selectors:WallPaperTemplateSelector.ItemTemplate>
+                    <selectors:WallPaperTemplateSelector.SolidTemplate>
+                        <DataTemplate x:DataType="tl:TLWallPaperSolid">
+                            <Rectangle>
+                                <Rectangle.Fill>
+                                    <SolidColorBrush Color="{x:Bind BackgroundColor}"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </DataTemplate>
+                    </selectors:WallPaperTemplateSelector.SolidTemplate>
                 </selectors:WallPaperTemplateSelector>
-            </GridView.ItemTemplateSelector>
-        </GridView>
+            </ContentControl.ContentTemplateSelector>
+        </ContentControl>
+
+        <ListView x:Name="List"
+                  ItemsSource="{x:Bind ViewModel.Items}"
+                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                  SelectionMode="Single"
+                  Style="{StaticResource HorizontalListViewStyle}"
+                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                  VerticalAlignment="Bottom"
+                  Padding="8,4,8,8"
+                  Grid.Row="1">
+            <ListView.Header>
+                <Grid>
+                    <Border Background="{ThemeResource ListViewItemBackgroundSelected}" Visibility="{x:Bind (Visibility)ViewModel.IsLocal, Mode=OneWay}"/>
+                    <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="4" RequestedTheme="Dark">
+                        <controls:GlyphButton Command="{x:Bind ViewModel.LocalCommand}" Glyph="&#xEB9F;" Width="64" Height="64"/>
+                    </Border>
+                </Grid>
+            </ListView.Header>
+            <ListView.ItemTemplateSelector>
+                <selectors:WallPaperTemplateSelector>
+                    <selectors:WallPaperTemplateSelector.DefaultTemplate>
+                        <DataTemplate>
+                            <Image Source="{ThemeResource DefaultBackgroundBrush}" Width="64" Height="64" Stretch="UniformToFill"/>
+                        </DataTemplate>
+                    </selectors:WallPaperTemplateSelector.DefaultTemplate>
+                    <selectors:WallPaperTemplateSelector.ItemTemplate>
+                        <DataTemplate x:DataType="tl:TLWallPaper">
+                            <Image Source="{x:Bind Thumb, Converter={StaticResource DefaultPhotoConverter}}" Width="64" Height="64" Stretch="UniformToFill"/>
+                        </DataTemplate>
+                    </selectors:WallPaperTemplateSelector.ItemTemplate>
+                    <selectors:WallPaperTemplateSelector.SolidTemplate>
+                        <DataTemplate x:DataType="tl:TLWallPaperSolid">
+                            <Rectangle Width="64" Height="64">
+                                <Rectangle.Fill>
+                                    <SolidColorBrush Color="{x:Bind BackgroundColor}"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </DataTemplate>
+                    </selectors:WallPaperTemplateSelector.SolidTemplate>
+                </selectors:WallPaperTemplateSelector>
+            </ListView.ItemTemplateSelector>
+        </ListView>
     </Grid>
 </Page>

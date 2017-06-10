@@ -31,6 +31,11 @@ namespace Telegram.Api.Helpers
             return Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp", fileName);
         }
 
+        public static string GetTempFilePath(string fileName)
+        {
+            return Path.Combine(SettingsHelper.SessionGuid, "temp", fileName);
+        }
+
         public static Uri GetTempFileUri(string fileName)
         {
             return new Uri($"ms-appdata:///local/{SettingsHelper.SessionGuid}/temp/{fileName}");

@@ -323,6 +323,11 @@ namespace Unigram.Views
             CheckMessageBoxEmpty();
         }
 
+        private void TextField_TextChanged(object sender, RoutedEventArgs e)
+        {
+            CheckMessageBoxEmpty();
+        }
+
         private async void btnSendMessage_Click(object sender, RoutedEventArgs e)
         {
             await TextField.SendAsync();

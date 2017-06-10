@@ -483,6 +483,7 @@
     <Compile Include="TL\Partial\TLUserProfilePhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLUserProfilePhotoBase.Partial.cs" />
     <Compile Include="TL\Partial\TLWallPaper.Partial.cs" />
+    <Compile Include="TL\Partial\TLWallPaperSolid.cs" />
     <Compile Include="TL\Partial\TLWebDocument.Partial.cs" />
     <Compile Include="TL\Partial\TLWebPageBase.Partial.cs" />
     <Compile Include="TL\TLAccountAuthorizations.cs" />

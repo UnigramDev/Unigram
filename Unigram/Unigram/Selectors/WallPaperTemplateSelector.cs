@@ -11,6 +11,8 @@ namespace Unigram.Selectors
 {
     public class WallPaperTemplateSelector : DataTemplateSelector
     {
+        public DataTemplate DefaultTemplate { get; set; }
+
         public DataTemplate ItemTemplate { get; set; }
         public DataTemplate SolidTemplate { get; set; }
 
@@ -19,6 +21,10 @@ namespace Unigram.Selectors
             if (item is TLWallPaperSolid)
             {
                 return SolidTemplate;
+            }
+            else if (item is TLWallPaper wallpaper && wallpaper.Id.Equals(1000001))
+            {
+                return DefaultTemplate;
             }
 
             return ItemTemplate;

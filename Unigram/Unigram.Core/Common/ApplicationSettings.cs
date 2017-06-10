@@ -129,6 +129,40 @@ namespace Unigram.Common
             }
         }
 
+        private int? _selectedBackground;
+        public int SelectedBackground
+        {
+            get
+            {
+                if (_selectedBackground == null)
+                    _selectedBackground = GetValueOrDefault("SelectedBackground", 1000001);
+
+                return _selectedBackground ?? 1000001;
+            }
+            set
+            {
+                _selectedBackground = value;
+                AddOrUpdateValue("SelectedBackground", value);
+            }
+        }
+
+        private int? _selectedColor;
+        public int SelectedColor
+        {
+            get
+            {
+                if (_selectedColor == null)
+                    _selectedColor = GetValueOrDefault("SelectedColor", 0);
+
+                return _selectedColor ?? 0;
+            }
+            set
+            {
+                _selectedColor = value;
+                AddOrUpdateValue("SelectedColor", value);
+            }
+        }
+
         private TLAccountTmpPassword _tmpPassword;
         public TLAccountTmpPassword TmpPassword
         {
