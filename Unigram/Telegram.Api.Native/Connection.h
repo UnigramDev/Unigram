@@ -143,7 +143,7 @@ namespace Telegram
 				HRESULT HandleMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ ConnectionManager* connectionManager);
 				HRESULT OnNewSessionCreatedResponse(_In_ ConnectionManager* connectionManager, _In_ TL::TLNewSessionCreated* response);
 				virtual HRESULT OnSocketConnected() override;
-				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) override;
+				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE* buffer, UINT32 length) override;
 				virtual HRESULT OnSocketDisconnected(int wsaError) override;
 				HRESULT OnMessageReceived(_In_ ComPtr<ConnectionManager> const& connectionManager, _In_ TL::TLBinaryReader* messageReader, UINT32 messageLength);
 

@@ -34,7 +34,7 @@ namespace Telegram
 				HRESULT SendData(_In_reads_(length) BYTE const* buffer, UINT32 length);
 
 				virtual HRESULT OnSocketConnected() = 0;
-				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE const* buffer, UINT32 length) = 0;
+				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE* buffer, UINT32 length) = 0;
 				virtual HRESULT OnSocketDisconnected(int wsaError) = 0;
 
 			private:

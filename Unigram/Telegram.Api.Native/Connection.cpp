@@ -443,7 +443,7 @@ HRESULT Connection::OnSocketConnected()
 	});
 }
 
-HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
+HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 {
 	if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) != ConnectionState::DataReceived)
 	{
@@ -455,11 +455,12 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 	ComPtr<ConnectionManager> connectionManager;
 	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 
+	ComPtr<IBuffer> packetBuffer;
 	if (m_partialPacketBuffer == nullptr)
 	{
-		ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&m_partialPacketBuffer, length));
+		ReturnIfFailed(result, MakeAndInitialize<NativeBufferWrapper>(&packetBuffer, buffer, length));
 
-		ConnectionCryptography::DecryptBuffer(buffer, m_partialPacketBuffer->GetBuffer(), length);
+		ConnectionCryptography::DecryptBuffer(buffer, buffer, length);
 	}
 	else
 	{
@@ -467,10 +468,12 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 		ReturnIfFailed(result, m_partialPacketBuffer->Merge(buffer, length));
 
 		ConnectionCryptography::DecryptBuffer(buffer, m_partialPacketBuffer->GetBuffer() + partialPacketLength, length);
+
+		packetBuffer = m_partialPacketBuffer;
 	}
 
 	ComPtr<TLBinaryReader> packetReader;
-	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&packetReader, m_partialPacketBuffer.Get()));
+	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&packetReader, packetBuffer.Get()));
 
 	UINT32 packetPosition;
 	while (packetReader->HasUnconsumedBuffer())
@@ -534,15 +537,26 @@ HRESULT Connection::OnDataReceived(BYTE const* buffer, UINT32 length)
 
 	if (result == E_NOT_SUFFICIENT_BUFFER)
 	{
-		if (packetPosition == 0)
+		if (m_partialPacketBuffer == nullptr)
 		{
+			auto newBufferLength = packetReader->GetCapacity() - packetPosition;
+			ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&m_partialPacketBuffer, newBufferLength));
+
+			CopyMemory(m_partialPacketBuffer->GetBuffer(), packetReader->GetBuffer() + packetPosition, newBufferLength);
 			return S_OK;
 		}
+		else
+		{
+			if (packetPosition == 0)
+			{
+				return S_OK;
+			}
 
-		auto newBufferLength = m_partialPacketBuffer->GetCapacity() - packetPosition;
-		MoveMemory(m_partialPacketBuffer->GetBuffer(), m_partialPacketBuffer->GetBuffer() + packetPosition, newBufferLength);
+			auto newBufferLength = m_partialPacketBuffer->GetCapacity() - packetPosition;
+			MoveMemory(m_partialPacketBuffer->GetBuffer(), m_partialPacketBuffer->GetBuffer() + packetPosition, newBufferLength);
 
-		return m_partialPacketBuffer->Resize(newBufferLength);
+			return m_partialPacketBuffer->Resize(newBufferLength);
+		}
 	}
 
 	m_partialPacketBuffer.Reset();

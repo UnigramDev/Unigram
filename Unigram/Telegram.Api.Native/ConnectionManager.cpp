@@ -321,6 +321,8 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 			std::map<UINT32, DatacenterRequestContext> datacentersContexts;
 			auto currentTime = static_cast<INT32>(GetCurrentMonotonicTime() / 1000);
 
+			auto requestsLock = m_requestsCriticalSection.Lock();
+
 			{
 				auto lock = LockCriticalSection();
 
@@ -329,11 +331,8 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 
 				if (result == S_FALSE)
 				{
-					__debugbreak();
-
-					//auto requestsLock = m_requestsCriticalSection.Lock();
 					//m_requestsQueue.push_back(request);
-					return S_OK;
+					//return S_OK;
 				}
 			}
 
@@ -908,9 +907,10 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(Datacenter* datacenter, Con
 	std::map<UINT32, DatacenterRequestContext> datacentersContexts;
 	auto currentTime = static_cast<INT32>(GetCurrentMonotonicTime() / 1000);
 
+	auto requestsLock = m_requestsCriticalSection.Lock();
+
 	{
 		auto lock = LockCriticalSection();
-		auto requestsLock = m_requestsCriticalSection.Lock();
 		auto requestIterator = m_requestsQueue.begin();
 
 		while (requestIterator != m_requestsQueue.end())
@@ -1206,25 +1206,24 @@ HRESULT ConnectionManager::OnRequestEnqueued(PTP_CALLBACK_INSTANCE instance)
 	std::map<UINT32, DatacenterRequestContext> datacentersContexts;
 	auto currentTime = static_cast<INT32>(GetCurrentMonotonicTime() / 1000);
 
+	auto requestsLock = m_requestsCriticalSection.Lock();
+
 	{
 		auto lock = LockCriticalSection();
 
+		auto requestIterator = m_requestsQueue.begin();
+
+		while (requestIterator != m_requestsQueue.end())
 		{
-			auto requestsLock = m_requestsCriticalSection.Lock();
-			auto requestIterator = m_requestsQueue.begin();
+			ReturnIfFailed(result, ProcessRequest(requestIterator->Get(), currentTime, datacentersContexts));
 
-			while (requestIterator != m_requestsQueue.end())
+			if (result == S_OK)
 			{
-				ReturnIfFailed(result, ProcessRequest(requestIterator->Get(), currentTime, datacentersContexts));
-
-				if (result == S_OK)
-				{
-					requestIterator = m_requestsQueue.erase(requestIterator);
-				}
-				else
-				{
-					requestIterator++;
-				}
+				requestIterator = m_requestsQueue.erase(requestIterator);
+			}
+			else
+			{
+				requestIterator++;
 			}
 		}
 
