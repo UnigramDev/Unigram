@@ -12,6 +12,9 @@ namespace Telegram.Api.TL
         object PhotoSelf { get; }
         string DisplayName { get; }
 
+        bool IsTyping { get; set; }
+        string TypingSubtitle { get; set; }
+
         TLInputPeerBase ToInputPeer();
         TLPeerBase ToPeer();
     }

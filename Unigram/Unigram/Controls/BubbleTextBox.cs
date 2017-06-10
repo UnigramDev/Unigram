@@ -32,6 +32,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Unigram.Core;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 
 namespace Unigram.Controls
 {
@@ -43,8 +45,6 @@ namespace Unigram.Controls
 
         private MenuFlyout _flyout;
         private MenuFlyoutPresenter _presenter;
-
-        private bool _updatingText;
 
         private readonly IDisposable _textChangedSubscription;
 
@@ -316,6 +316,50 @@ namespace Unigram.Controls
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
                 var key = Window.Current.CoreWindow.GetKeyState(args.VirtualKey);
 
+                if (UsernameHints != null && ViewModel.UsernameHints != null)
+                {
+                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    if (send)
+                    {
+                        AcceptsReturn = false;
+                        var container = UsernameHints.ContainerFromIndex(Math.Max(0, UsernameHints.SelectedIndex)) as ListViewItem;
+                        if (container != null)
+                        {
+                            var peer = new ListViewItemAutomationPeer(container);
+                            var invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+                            invokeProv.Invoke();
+                        }
+                    }
+                    else
+                    {
+                        AcceptsReturn = true;
+                    }
+
+                    return;
+                }
+
+                if (BotCommands != null && ViewModel.BotCommands != null)
+                {
+                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    if (send)
+                    {
+                        AcceptsReturn = false;
+                        var container = BotCommands.ContainerFromIndex(Math.Max(0, BotCommands.SelectedIndex)) as ListViewItem;
+                        if (container != null)
+                        {
+                            var peer = new ListViewItemAutomationPeer(container);
+                            var invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+                            invokeProv.Invoke();
+                        }
+                    }
+                    else
+                    {
+                        AcceptsReturn = true;
+                    }
+
+                    return;
+                }
+
                 // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
                 if (ApplicationSettings.Current.IsSendByEnterEnabled)
                 {
@@ -345,6 +389,10 @@ namespace Unigram.Controls
                 }
             }
         }
+
+        public ListView UsernameHints { get; set; }
+
+        public ListView BotCommands { get; set; }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
@@ -380,6 +428,37 @@ namespace Unigram.Controls
                 {
                     ViewModel.Aggregator.Publish("move_down");
                     e.Handled = true;
+                }
+                else if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
+                {
+                    if (UsernameHints != null && ViewModel.UsernameHints != null)
+                    {
+                        UsernameHints.SelectionMode = ListViewSelectionMode.Single;
+
+                        var index = e.Key == VirtualKey.Up ? -1 : 1;
+                        var next = UsernameHints.SelectedIndex + index;
+                        if (next >= 0 && next < ViewModel.UsernameHints.Count)
+                        {
+                            UsernameHints.SelectedIndex = next;
+                            UsernameHints.ScrollIntoView(UsernameHints.SelectedItem);
+                        }
+
+                        e.Handled = true;
+                    }
+                    else if (BotCommands != null && ViewModel.BotCommands != null)
+                    {
+                        BotCommands.SelectionMode = ListViewSelectionMode.Single;
+
+                        var index = e.Key == VirtualKey.Up ? -1 : 1;
+                        var next = BotCommands.SelectedIndex + index;
+                        if (next >= 0 && next < ViewModel.BotCommands.Count)
+                        {
+                            BotCommands.SelectedIndex = next;
+                            BotCommands.ScrollIntoView(BotCommands.SelectedItem);
+                        }
+
+                        e.Handled = true;
+                    }
                 }
             }
             else if (e.Key == VirtualKey.Escape && ViewModel.Reply is TLMessagesContainter container && container.EditMessage != null)
@@ -437,7 +516,7 @@ namespace Unigram.Controls
             //    this.ClearCommandHints();
             //}
 
-            if (!IsEmpty)
+            if (IsEmpty == false)
             {
                 ViewModel.OutputTypingManager.SetTyping(new TLSendMessageTypingAction());
             }
@@ -474,7 +553,7 @@ namespace Unigram.Controls
                 {
                     ViewModel.StickerPack = null;
 
-                    var usernames = SearchByUsernames(text, out string usernamesText); 
+                    var usernames = SearchByUsernames(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string usernamesText); 
                     if (usernames)
                     {
                         ViewModel.UsernameHints = GetUsernames(usernamesText.ToLower(), text.StartsWith('@' + usernamesText));
@@ -527,6 +606,11 @@ namespace Unigram.Controls
         {
             bool IsMatch(TLUser user)
             {
+                //if (user.IsSelf)
+                //{
+                //    return false;
+                //}
+
                 return (user.FullName.IsLike(username, StringComparison.OrdinalIgnoreCase)) ||
                        (user.HasUsername && user.Username.StartsWith(username, StringComparison.OrdinalIgnoreCase));
             }
@@ -630,10 +714,7 @@ namespace Unigram.Controls
         private void UpdateText()
         {
             Document.GetText(TextGetOptions.NoHidden, out string text);
-
-            _updatingText = true;
             Text = text;
-            _updatingText = false;
         }
 
         private void FormatText()
@@ -684,38 +765,46 @@ namespace Unigram.Controls
 
             text = text.Trim();
 
-            if (isDirty)
+            //if (isDirty)
             {
                 var parser = new RtfToTLParser();
                 var reader = new RtfReader(parser);
                 reader.LoadRtfText(rtf);
                 reader.Parse();
 
-                await ViewModel.SendMessageAsync(text, parser.Entities, false);
-            }
-            else
-            {
                 var entities = MessageHelper.GetEntities(ref text);
-                if (entities != null)
+                if (entities == null)
                 {
-                    await ViewModel.SendMessageAsync(text, entities, false);
+                    entities = new List<TLMessageEntityBase>();
                 }
-                else
+
+                foreach (var entity in parser.Entities)
                 {
-                    ViewModel.SendCommand.Execute(text);
+                    // Check intersections
+                    entities.Add(entity);
                 }
+
+                await ViewModel.SendMessageAsync(text, entities, false);
             }
+            //else
+            //{
+            //    var entities = MessageHelper.GetEntities(ref text);
+            //    if (entities != null)
+            //    {
+            //        await ViewModel.SendMessageAsync(text, entities, false);
+            //    }
+            //    else
+            //    {
+            //        ViewModel.SendCommand.Execute(text);
+            //    }
+            //}
         }
 
         public bool IsEmpty
         {
             get
             {
-                // TODO: a better implementation?
-
-                Document.GetText(TextGetOptions.None, out string text);
-
-                var isEmpty = string.IsNullOrWhiteSpace(text);
+                var isEmpty = string.IsNullOrWhiteSpace(Text);
                 if (isEmpty)
                 {
                     // If the text area is empty it cannot contains markup
@@ -868,6 +957,8 @@ namespace Unigram.Controls
 
         #endregion
 
+        public string Text { get; private set; }
+
         #region InlinePlaceholderText
 
         public string InlinePlaceholderText
@@ -882,42 +973,6 @@ namespace Unigram.Controls
         private static void OnInlinePlaceholderTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((BubbleTextBox)d).UpdateInlinePlaceholder();
-        }
-
-        #endregion
-
-        #region Text
-
-        public string Text
-        {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
-        }
-
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register("Text", typeof(string), typeof(BubbleTextBox), new PropertyMetadata(string.Empty, OnTextChanged));
-
-        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((BubbleTextBox)d).OnTextChanged((string)e.NewValue, (string)e.OldValue);
-        }
-
-        private void OnTextChanged(string newValue, string oldValue)
-        {
-            if (_updatingText)
-            {
-                _updatingText = false;
-                return;
-            }
-
-            if (string.IsNullOrEmpty(newValue))
-            {
-                Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
-            }
-            else
-            {
-                Document.SetText(TextSetOptions.None, newValue);
-            }
         }
 
         #endregion

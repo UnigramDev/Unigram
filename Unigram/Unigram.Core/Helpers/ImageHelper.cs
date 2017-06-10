@@ -29,7 +29,7 @@ namespace Unigram.Core.Helpers
                 var decoder = await BitmapDecoder.CreateAsync(imageStream);
                 if (decoder.FrameCount > 1)
                 {
-                    return null;
+                    throw new InvalidCastException();
                 }
 
                 var originalPixelWidth = decoder.PixelWidth;

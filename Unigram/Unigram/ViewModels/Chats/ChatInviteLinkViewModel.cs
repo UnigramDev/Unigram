@@ -149,7 +149,7 @@ namespace Unigram.ViewModels.Chats
         private async void CopyExecute()
         {
             var package = new DataPackage();
-            package.SetWebLink(new Uri(_inviteLink));
+            package.SetText(_inviteLink);
             Clipboard.SetContent(package);
 
             await new TLMessageDialog("Link copied to clipboard").ShowAsync();

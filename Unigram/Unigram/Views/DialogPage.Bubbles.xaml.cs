@@ -38,6 +38,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+using Unigram.Controls;
 
 namespace Unigram.Views
 {
@@ -51,7 +52,7 @@ namespace Unigram.Views
             {
                 if (ViewModel.IsFirstSliceLoaded)
                 {
-                    ViewModel.UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+                    ViewModel.UpdatingScrollMode = UpdatingScrollMode.KeepLastItemInView;
                 }
 
                 Arrow.Visibility = Visibility.Collapsed;

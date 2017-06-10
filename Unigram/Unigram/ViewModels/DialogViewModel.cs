@@ -297,8 +297,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private ItemsUpdatingScrollMode _updatingScrollMode;
-        public ItemsUpdatingScrollMode UpdatingScrollMode
+        private UpdatingScrollMode _updatingScrollMode;
+        public UpdatingScrollMode UpdatingScrollMode
         {
             get
             {
@@ -327,6 +327,14 @@ namespace Unigram.ViewModels
 
         public void SetText(string text, TLVector<TLMessageEntityBase> entities = null, bool focus = false)
         {
+            if (With is TLChannel channel)
+            {
+                if (channel.IsBroadcast && (!channel.IsCreator || !channel.IsEditor || !channel.IsModerator))
+                {
+                    return;
+                }
+            }
+
             if (string.IsNullOrEmpty(text))
             {
                 TextField.Document.SetText(TextSetOptions.FormatRtf, @"{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang1040{\fonttbl{\f0\fnil Segoe UI;}}{\*\generator Riched20 10.0.14393}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs23\lang1033}");
@@ -396,7 +404,7 @@ namespace Unigram.ViewModels
 
         private Stack<int> _goBackStack = new Stack<int>();
 
-        public async Task LoadNextSliceAsync()
+        public async Task LoadNextSliceAsync(bool force = false)
         {
             if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
             {
@@ -405,7 +413,7 @@ namespace Unigram.ViewModels
 
             _isLoadingNextSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+            UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepLastItemInView : UpdatingScrollMode.KeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
@@ -471,7 +479,7 @@ namespace Unigram.ViewModels
             IsLoading = false;
         }
 
-        public async Task LoadPreviousSliceAsync()
+        public async Task LoadPreviousSliceAsync(bool force = false)
         {
             if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
             {
@@ -480,7 +488,7 @@ namespace Unigram.ViewModels
 
             _isLoadingPreviousSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+            UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
 
             Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
@@ -568,7 +576,7 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+            UpdatingScrollMode = UpdatingScrollMode.ForceKeepItemsInView;
 
             Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
 
@@ -620,7 +628,7 @@ namespace Unigram.ViewModels
             IsLoading = false;
 
             await Task.Delay(200);
-            await LoadNextSliceAsync();
+            await LoadNextSliceAsync(true);
         }
 
         public async Task LoadDateSliceAsync(int dateOffset)
@@ -655,7 +663,7 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = _currentDialog?.UnreadCount > 0 ? ItemsUpdatingScrollMode.KeepItemsInView : ItemsUpdatingScrollMode.KeepLastItemInView;
+            UpdatingScrollMode = _currentDialog?.UnreadCount > 0 ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.ForceKeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadFirstSliceAsync");
 
@@ -1210,6 +1218,19 @@ namespace Unigram.ViewModels
             if (_editedMessage != null)
             {
                 return;
+            }
+
+            if (With == null)
+            {
+                return;
+            }
+
+            if (With is TLChannel channel)
+            {
+                if (channel.IsBroadcast && (!channel.IsCreator || !channel.IsEditor || !channel.IsModerator))
+                {
+                    return;
+                }
             }
 
             var messageText = GetText().Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');

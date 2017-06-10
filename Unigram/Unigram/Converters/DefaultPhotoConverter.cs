@@ -89,21 +89,17 @@ namespace Unigram.Converters
                 return BitmapContext[channel];
             }
 
-            var userProfilePhoto = value as TLUserProfilePhoto;
-            if (userProfilePhoto != null)
+            if (value is TLUserProfilePhoto userProfilePhoto)
             {
-                var fileLocation = userProfilePhoto.PhotoSmall as TLFileLocation;
-                if (fileLocation != null)
+                if (userProfilePhoto.PhotoSmall is TLFileLocation fileLocation)
                 {
                     return ReturnOrEnqueueProfileImage(fileLocation, userProfilePhoto, 0);
                 }
             }
 
-            var chatPhoto = value as TLChatPhoto;
-            if (chatPhoto != null)
+            if (value is TLChatPhoto chatPhoto)
             {
-                var fileLocation = chatPhoto.PhotoSmall as TLFileLocation;
-                if (fileLocation != null)
+                if (chatPhoto.PhotoSmall is TLFileLocation fileLocation)
                 {
                     return ReturnOrEnqueueProfileImage(fileLocation, chatPhoto, 0);
                 }
@@ -272,8 +268,7 @@ namespace Unigram.Converters
                 }
             }
 
-            var botInlineMediaResult = value as TLBotInlineMediaResult;
-            if (botInlineMediaResult != null && botInlineMediaResult.Type.Equals("sticker", StringComparison.OrdinalIgnoreCase))
+            if (value is TLBotInlineMediaResult botInlineMediaResult && botInlineMediaResult.Type.Equals("sticker", StringComparison.OrdinalIgnoreCase))
             {
                 var document = botInlineMediaResult.Document as TLDocument;
                 if (document == null)
@@ -354,9 +349,10 @@ namespace Unigram.Converters
             //    }
             //}
 
-            var tLDocument3 = value as TLDocument;
-            if (tLDocument3 != null)
+            if (value is TLDocument tLDocument3)
             {
+                return BitmapContext[tLDocument3, thumbnail];
+
                 if (TLMessage.IsSticker(tLDocument3))
                 {
                     //if (parameter != null && string.Equals(parameter.ToString(), "ignoreStickers", StringComparison.OrdinalIgnoreCase))
@@ -424,8 +420,7 @@ namespace Unigram.Converters
             //    }
             //}
 
-            var webpageMedia = value as TLMessageMediaWebPage;
-            if (webpageMedia != null)
+            if (value is TLMessageMediaWebPage webpageMedia)
             {
                 value = webpageMedia.WebPage;
             }
@@ -436,12 +431,12 @@ namespace Unigram.Converters
             //    value = decryptedWebpageMedia.WebPage;
             //}
 
-            var webpage = value as TLWebPage;
-            if (webpage != null)
+            if (value is TLWebPage webpage)
             {
-                var tLPhoto2 = webpage.Photo as TLPhoto;
-                if (tLPhoto2 != null)
+                if (webpage.Photo is TLPhoto webpagePhoto)
                 {
+                    return BitmapContext[webpagePhoto];
+
                     //double num3 = 400;
                     //if (double.TryParse((string)parameter, out double num4))
                     //{
@@ -457,10 +452,10 @@ namespace Unigram.Converters
                     //    }
                     //}
 
-                    var photoSizeBase = tLPhoto2.Full;
+                    var photoSizeBase = webpagePhoto.Full;
                     if (thumbnail)
                     {
-                        photoSizeBase = tLPhoto2.Thumb;
+                        photoSizeBase = webpagePhoto.Thumb;
                     }
 
                     var photoSize = photoSizeBase as TLPhotoSize;
@@ -475,18 +470,14 @@ namespace Unigram.Converters
                 }
             }
 
-            var invoiceMedia = value as TLMessageMediaInvoice;
-            if (invoiceMedia != null)
+            if (value is TLMessageMediaInvoice invoiceMedia)
             {
                 value = invoiceMedia.Photo;
             }
 
-            var webDocument = value as TLWebDocument;
-            if (webDocument != null)
+            if (value is TLWebDocument webDocument)
             {
                 return BitmapContext[webDocument];
-
-                return webDocument.Url;
             }
 
             return null;

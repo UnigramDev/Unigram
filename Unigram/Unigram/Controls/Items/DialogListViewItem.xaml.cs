@@ -451,7 +451,7 @@ namespace Unigram.Controls.Items
             var settings = settingsBase as TLPeerNotifySettings;
             if (settings != null)
             {
-                return settings.MuteUntil == 0 && !settings.IsSilent ? Visibility.Visible : Visibility.Collapsed;
+                return settings.MuteUntil == 0 ? Visibility.Visible : Visibility.Collapsed;
             }
 
             return Visibility.Visible;
@@ -462,7 +462,7 @@ namespace Unigram.Controls.Items
             var settings = settingsBase as TLPeerNotifySettings;
             if (settings != null)
             {
-                return settings.MuteUntil == 0 && !settings.IsSilent ? Visibility.Collapsed : Visibility.Visible;
+                return settings.MuteUntil == 0 ? Visibility.Collapsed : Visibility.Visible;
             }
 
             return Visibility.Collapsed;
@@ -470,13 +470,17 @@ namespace Unigram.Controls.Items
 
         private void UpdateChannelType()
         {
-            if (ViewModel != null)
+            if (ViewModel.With is TLChannel channel)
             {
-                var channel = ViewModel.With as TLChannel;
-                if (channel != null)
-                {
-                    fiType.Glyph = channel.IsBroadcast ? "\uE789" : "\uE125";
-                }
+                fiType.Text = channel.IsBroadcast ? "\uE789" : "\uE125";
+            }
+            else if (ViewModel.With is TLChannelForbidden channelForbidden)
+            {
+                fiType.Text = channelForbidden.IsBroadcast ? "\uE789" : "\uE125";
+            }
+            else if (ViewModel.With is TLChat || ViewModel.With is TLChatForbidden)
+            {
+                fiType.Text = "\uE125";
             }
         }
 

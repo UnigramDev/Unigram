@@ -70,42 +70,42 @@ namespace Unigram.Controls.Views
         {
             return Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
-                var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
-                profile.Audio = null;
-                profile.Container = null;
+                //var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
+                //profile.Audio = null;
+                //profile.Container = null;
 
-                _preview = MediaCapturePreviewSource.CreateFromVideoEncodingProperties(profile.Video);
-                await media.StartPreviewToCustomSinkAsync(profile, _preview.MediaSink);
+                //_preview = MediaCapturePreviewSource.CreateFromVideoEncodingProperties(profile.Video);
+                //await media.StartPreviewToCustomSinkAsync(profile, _preview.MediaSink);
 
-                _player = new MediaPlayer();
-                _player.RealTimePlayback = true;
-                _player.AutoPlay = true;
-                _player.Source = _preview.MediaSource as IMediaPlaybackSource;
+                //_player = new MediaPlayer();
+                //_player.RealTimePlayback = true;
+                //_player.AutoPlay = true;
+                //_player.Source = _preview.MediaSource as IMediaPlaybackSource;
 
-                _surface = _player.GetSurface(_compositor);
+                //_surface = _player.GetSurface(_compositor);
 
-                var brush = _compositor.CreateSurfaceBrush(_surface.CompositionSurface);
-                brush.Stretch = CompositionStretch.UniformToFill;
+                //var brush = _compositor.CreateSurfaceBrush(_surface.CompositionSurface);
+                //brush.Stretch = CompositionStretch.UniformToFill;
 
-                var mask = ImageLoader.Instance.LoadCircle(200, Colors.White).Brush;
-                var graphicsEffect = new AlphaMaskEffect
-                {
-                    Source = new CompositionEffectSourceParameter("image"),
-                    AlphaMask = new CompositionEffectSourceParameter("mask")
-                };
+                //var mask = ImageLoader.Instance.LoadCircle(200, Colors.White).Brush;
+                //var graphicsEffect = new AlphaMaskEffect
+                //{
+                //    Source = new CompositionEffectSourceParameter("image"),
+                //    AlphaMask = new CompositionEffectSourceParameter("mask")
+                //};
 
-                var effectFactory = _compositor.CreateEffectFactory(graphicsEffect);
-                var effectBrush = effectFactory.CreateBrush();
-                effectBrush.SetSourceParameter("image", brush);
-                effectBrush.SetSourceParameter("mask", mask);
+                //var effectFactory = _compositor.CreateEffectFactory(graphicsEffect);
+                //var effectBrush = effectFactory.CreateBrush();
+                //effectBrush.SetSourceParameter("image", brush);
+                //effectBrush.SetSourceParameter("mask", mask);
 
-                _capture.Brush = effectBrush;
-
-
+                //_capture.Brush = effectBrush;
 
 
-                //Capture.Source = media;
-                //await media.StartPreviewAsync();
+
+
+                Capture.Source = media;
+                await media.StartPreviewAsync();
             });
         }
     }

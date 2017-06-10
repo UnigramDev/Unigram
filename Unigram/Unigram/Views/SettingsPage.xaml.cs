@@ -99,6 +99,11 @@ namespace Unigram.Views
             MasterDetail.NavigationService.Navigate(typeof(SettingsAccountsPage));
         }
 
+        private void Wallpaper_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsWallPaperPage));
+        }
+
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Photo);

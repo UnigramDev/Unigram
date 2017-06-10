@@ -27,7 +27,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls.Messages
 {
-    public class MessageBubbleBase : Grid
+    public class MessageBubbleBase : StackPanel
     {
         public TLMessage ViewModel => DataContext as TLMessage;
 
@@ -278,6 +278,14 @@ namespace Unigram.Controls.Messages
         protected void Reply_Click(object sender, RoutedEventArgs e)
         {
             Context.MessageOpenReplyCommand.Execute(ViewModel);
+        }
+
+        protected void Share_Click(object sender, RoutedEventArgs e)
+        {
+            if (Context != null)
+            {
+                Context.MessageShareCommand.Execute(ViewModel);
+            }
         }
 
         protected void MessageControl_ContextRequested(UIElement sender, ContextRequestedEventArgs args)

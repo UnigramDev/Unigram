@@ -246,6 +246,11 @@ namespace Unigram.Controls
 
         public void Hide(ContentDialogBaseResult result)
         {
+            if (_popupHost == null || !_popupHost.IsOpen)
+            {
+                return;
+            }
+
             _lastHide = Environment.TickCount;
             _result = result;
             _popupHost.IsOpen = false;

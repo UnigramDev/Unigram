@@ -97,6 +97,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Behaviors\AspectRatioBehavior.cs" />
+    <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\Dialogs\OutputTypingManager.cs" />
     <Compile Include="Common\ImageLoader\ContentDrawer.cs" />
     <Compile Include="Common\ImageLoader\ImageLoader.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="Common\TLBitmapContext.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\VoIPConnection.cs" />
+    <Compile Include="Controls\DialogBackgroundPresenter.cs" />
     <Compile Include="Controls\GroupedGridView.cs" />
     <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
@@ -191,6 +193,7 @@
     <Compile Include="Converters\ChannelTypeToStringConverter.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
+    <Compile Include="Converters\MessageToShareConverter.cs" />
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
@@ -199,6 +202,7 @@
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
+    <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
@@ -235,6 +239,7 @@
     <Compile Include="ViewModels\Settings\SettingsPrivacyStatusTimestampViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyViewModelBase.cs" />
     <Compile Include="ViewModels\Settings\SettingsStatsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsWallPaperViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
@@ -940,8 +945,8 @@
     <Compile Include="Views\Settings\SettingsUsernamePage.xaml.cs">
       <DependentUpon>SettingsUsernamePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsWallpaperPage.xaml.cs">
-      <DependentUpon>SettingsWallpaperPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsWallPaperPage.xaml.cs">
+      <DependentUpon>SettingsWallPaperPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ShareTargetPage.xaml.cs">
       <DependentUpon>ShareTargetPage.xaml</DependentUpon>
@@ -1468,7 +1473,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\SettingsWallpaperPage.xaml">
+    <Page Include="Views\Settings\SettingsWallPaperPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

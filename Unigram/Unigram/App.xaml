@@ -41,6 +41,7 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:MessageToShareConverter x:Key="MessageToShareConverter"/>
             <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
             <converters:PrivacyRuleToUsersConverter x:Key="PrivacyRuleToUsersConverter"/>
             <converters:StickerToEmojiConverter x:Key="StickerToEmojiConverter"/>
