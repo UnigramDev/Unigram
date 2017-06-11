@@ -67,6 +67,13 @@ namespace Telegram.Api.Native.Test
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            ConnectionManager.Instance.SendRequest(new TLHelpInviteText(), (message5, ex5) =>
+            {
+                Debugger.Break();
+            },
+            // Should run on Download connection
+            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.EnableUnauthorized);
+
             GC.Collect();
         }
 
@@ -94,40 +101,60 @@ namespace Telegram.Api.Native.Test
                     }
 
                     connectionManager.UserId = authorization.User.Id;
-
-                    var resolve = new TLContactsResolveUsername { Username = Constants.Resolve };
-                    connectionManager.SendRequest(resolve, (message3, ex3) =>
-                    {
-                        var resolvedPeer = message3.Object as TLContactsResolvedPeer;
-                        if (resolvedPeer == null)
-                        {
-                            Debugger.Break();
-                            return;
-                        }
-
-                        var user = resolvedPeer.Users.FirstOrDefault() as TLUser;
-                        if (user == null)
-                        {
-                            Debugger.Break();
-                            return;
-                        }
-
-                        var photo = user.Photo as TLUserProfilePhoto;
-                        var big = photo.PhotoBig as TLFileLocation;
-
-                        var getFile = new TLUploadGetFile { Offset = 0, Limit = 32 * 1024, Location = new TLInputFileLocation { VolumeId = big.VolumeId, LocalId = big.LocalId, Secret = big.Secret } };
-                        connectionManager.SendRequest(getFile, (message5, ex5) =>
-                        {
-                            Debugger.Break();
-                        },
-                        // Should run on Download connection
-                        null, big.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc);
-                    },
-                    null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
+                    Debugger.Break();
                 },
                 null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin);
             },
             null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin);
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            ConnectionManager.Instance.SendRequest(new TLHelpGetConfig(), (message5, ex5) =>
+            {
+                Debugger.Break();
+            },
+          // Should run on Download connection
+          null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.EnableUnauthorized);
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            ConnectionManager.Instance.BoomBaby(null, out ITLObject xxx);
+        }
+
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            var connectionManager = ConnectionManager.Instance;
+            var resolve = new TLContactsResolveUsername { Username = Constants.Resolve };
+            connectionManager.SendRequest(resolve, (message3, ex3) =>
+            {
+                var resolvedPeer = message3.Object as TLContactsResolvedPeer;
+                if (resolvedPeer == null)
+                {
+                    Debugger.Break();
+                    return;
+                }
+
+                var user = resolvedPeer.Users.FirstOrDefault() as TLUser;
+                if (user == null)
+                {
+                    Debugger.Break();
+                    return;
+                }
+
+                var photo = user.Photo as TLUserProfilePhoto;
+                var big = photo.PhotoBig as TLFileLocation;
+
+                var getFile = new TLUploadGetFile { Offset = 0, Limit = 32 * 1024, Location = new TLInputFileLocation { VolumeId = big.VolumeId, LocalId = big.LocalId, Secret = big.Secret } };
+                connectionManager.SendRequest(getFile, (message5, ex5) =>
+                {
+                    Debugger.Break();
+                },
+                // Should run on Download connection
+                null, big.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc);
+            },
+            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
         }
     }
 }

@@ -9,8 +9,8 @@
 #include "ThreadpoolObject.h"
 #include "Telegram.Api.Native.h"
 
-#define MIN_THREAD_COUNT 1
-#define MAX_THREAD_COUNT 1
+#define MIN_THREAD_COUNT UINT32_MAX
+#define MAX_THREAD_COUNT UINT32_MAX
 #define TELEGRAM_API_NATIVE_PROTOVERSION 2
 #define TELEGRAM_API_NATIVE_VERSION 1
 #define TELEGRAM_API_NATIVE_LAYER 66
@@ -45,9 +45,7 @@ namespace Telegram
 				class TLBinaryReader;
 				class TLObject;
 				class TLMessage;
-				class TLUnparsedObject;	
-				template<typename TLObjectTraits>
-				class TLRPCErrorT;
+				class TLUnparsedObject;
 				class TLConfig;
 
 			}
@@ -63,8 +61,6 @@ namespace Telegram
 				friend class Connection;
 				friend class TL::TLObject;
 				friend class TL::TLUnparsedObject;
-				template<typename TLObjectTraits>
-				friend class TL::TLRPCErrorT;
 				friend class TL::TLConfig;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
@@ -99,11 +95,12 @@ namespace Telegram
 					INT32 datacenterId, ConnectionType connectionType, RequestFlag flags, _Out_ INT32* value);
 				IFACEMETHODIMP CancelRequest(INT32 requestToken, boolean notifyServer, _Out_ boolean* value);
 				IFACEMETHODIMP GetDatacenterById(INT32 id, _Out_ IDatacenter** value);
+				IFACEMETHODIMP UpdateDatacenters();
 
 				IFACEMETHODIMP BoomBaby(_In_ IUserConfiguration* userConfiguration, _Out_ ITLObject** object, _Out_ IConnection** value);
 
 				//Internal methods
-				STDMETHODIMP RuntimeClassInitialize(DWORD minimumThreadCount = MIN_THREAD_COUNT, DWORD maximumThreadCount = MAX_THREAD_COUNT);
+				STDMETHODIMP RuntimeClassInitialize(UINT32 minimumThreadCount = MIN_THREAD_COUNT, UINT32 maximumThreadCount = MAX_THREAD_COUNT);
 				boolean IsNetworkAvailable();
 				INT32 GetCurrentTime();
 				INT64 GenerateMessageId();
@@ -134,8 +131,8 @@ namespace Telegram
 				HRESULT ProcessDatacenterRequests(_In_ DatacenterRequestContext const& datacenterContext);
 				void ResetRequests(std::function<boolean(INT32, ComPtr<MessageRequest> const&)> selector);
 				HRESULT CompleteMessageRequest(INT64 requestMessageId, _In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
+				HRESULT HandleRequestError(_In_ Datacenter* datacenter, _In_ MessageRequest* request, INT32 code, _In_ HString const& text);
 				HRESULT OnUnprocessedMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
-				HRESULT OnErrorResponse(INT32 code, _In_ HString const& text);
 				HRESULT OnConfigResponse(_In_ TL::TLConfig* response);
 				HRESULT OnNetworkStatusChanged(_In_ IInspectable* sender);
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
@@ -143,6 +140,7 @@ namespace Telegram
 				HRESULT OnConnectionClosed(_In_ Connection* connection);
 				HRESULT OnDatacenterHandshakeComplete(_In_ Datacenter* datacenter, INT32 timeDifference);
 				HRESULT OnDatacenterImportAuthorizationComplete(_In_ Datacenter* datacenter);
+				HRESULT OnDatacenterBadServerSalt(_In_ Datacenter* datacenter, INT64 requestMessageId, INT64 responseMessageId);
 				HRESULT OnConnectionSessionCreated(_In_ Connection* connection, INT64 firstMessageId);
 				HRESULT OnRequestEnqueued(_In_ PTP_CALLBACK_INSTANCE instance);
 				boolean GetDatacenterById(UINT32 id, _Out_ ComPtr<Datacenter>& datacenter);
@@ -169,6 +167,7 @@ namespace Telegram
 				std::list<ComPtr<MessageRequest>> m_requestsQueue;
 				std::list<std::pair<INT32, ComPtr<MessageRequest>>> m_runningRequests;
 				std::map<INT32, std::vector<ComPtr<MessageRequest>>> m_quickAckRequests;
+				UINT32 m_lastProcessedRequestTime;
 				INT32 m_lastRequestToken;
 				INT64 m_lastOutgoingMessageId;
 				INT32 m_timeDifference;

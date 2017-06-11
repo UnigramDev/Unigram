@@ -32,6 +32,7 @@ namespace Telegram
 
 			protected:
 				HRESULT AddConfirmationMessage(_In_ ConnectionManager* connectionManager, _In_ std::vector<ComPtr<TL::TLMessage>>& messages);
+				HRESULT CreateConfirmationMessage(_In_ ConnectionManager* connectionManager, _Out_ TL::TLMessage** messages);
 				void RecreateSession();
 				UINT32 GenerateMessageSequenceNumber(boolean increment);
 				bool IsMessageIdProcessed(INT64 messageId);

@@ -72,7 +72,7 @@ namespace Telegram
 					return E_POINTER;
 				}*/
 
-				UINT32 bufferLengthIncrement = inputBufferLength * 3;
+				UINT32 bufferLengthIncrement = inputBufferLength;
 
 				HRESULT result;
 				ComPtr<NativeBuffer> uncompressedBuffer;

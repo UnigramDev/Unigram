@@ -29,11 +29,20 @@ ThreadpoolManager::~ThreadpoolManager()
 	}
 }
 
-HRESULT ThreadpoolManager::RuntimeClassInitialize(DWORD minimumThreadCount, DWORD maximumThreadCount)
+HRESULT ThreadpoolManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount)
 {
 	if (minimumThreadCount == 0 || minimumThreadCount > maximumThreadCount)
 	{
 		return E_INVALIDARG;
+	}
+
+	if (minimumThreadCount == UINT32_MAX && maximumThreadCount == UINT32_MAX)
+	{
+		SYSTEM_INFO systemInfo;
+		GetNativeSystemInfo(&systemInfo);
+
+		minimumThreadCount = 1;
+		maximumThreadCount = systemInfo.dwNumberOfProcessors + 1;
 	}
 
 	InitializeThreadpoolEnvironment(&m_threadpoolEnvironment);

@@ -293,6 +293,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="Datacenter.h" />
     <ClInclude Include="DatacenterCryptography.h" />
     <ClInclude Include="DatacenterServer.h" />
+    <ClInclude Include="MessageError.h" />
     <ClInclude Include="MethodDebugInfo.h" />
     <ClInclude Include="DefaultUserConfiguration.h" />
     <ClInclude Include="ThreadpoolObject.h" />
@@ -324,6 +325,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClCompile Include="Datacenter.cpp" />
     <ClCompile Include="DatacenterCryptography.cpp" />
     <ClCompile Include="DefaultUserConfiguration.cpp" />
+    <ClCompile Include="MessageError.cpp" />
     <ClCompile Include="MethodDebugInfo.cpp" />
     <ClCompile Include="NetworkExtensions.cpp" />
     <ClCompile Include="pch.cpp">

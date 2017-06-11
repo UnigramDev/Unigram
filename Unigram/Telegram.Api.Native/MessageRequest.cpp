@@ -91,29 +91,8 @@ HRESULT MessageRequest::get_Flags(RequestFlag* value)
 		return E_POINTER;
 	}
 
-	*value = m_flags & ~REQUEST_FLAG_INIT_CONNECTION;
+	*value = m_flags & ~(REQUEST_FLAG_INIT_CONNECTION | REQUEST_FLAG_NO_LAYER);
 	return S_OK;
-}
-
-HRESULT MessageRequest::OnQuickAckReceived()
-{
-	if (m_quickAckReceivedCallback == nullptr)
-	{
-		return S_OK;
-	}
-
-	return m_quickAckReceivedCallback->Invoke();
-}
-
-HRESULT MessageRequest::OnSendCompleted(MessageContext const* messageContext, ITLObject* messageBody)
-{
-	if (m_sendCompletedCallback == nullptr)
-	{
-		return S_OK;
-	}
-
-	auto unprocessedMessage = Make<MessageResponse>(messageContext->Id, m_connectionType, messageBody);
-	return m_sendCompletedCallback->Invoke(unprocessedMessage.Get(), S_OK);
 }
 
 void MessageRequest::Reset()

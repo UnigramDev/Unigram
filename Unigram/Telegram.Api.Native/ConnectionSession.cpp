@@ -42,17 +42,24 @@ HRESULT ConnectionSession::AddConfirmationMessage(ConnectionManager* connectionM
 		return S_FALSE;
 	}
 
+	HRESULT result;
+	ComPtr<TLMessage> message;
+	ReturnIfFailed(result, CreateConfirmationMessage(connectionManager, &message));
+
+	messages.push_back(message);
+	return S_OK;
+}
+
+HRESULT ConnectionSession::CreateConfirmationMessage(_In_ ConnectionManager* connectionManager, _Out_ TL::TLMessage** messages)
+{
 	auto msgAck = Make<TLMsgsAck>();
 	auto& messagesIds = msgAck->GetMessagesIds();
 	messagesIds.insert(messagesIds.begin(), m_messagesIdsToConfirm.begin(), m_messagesIdsToConfirm.end());
 
 	HRESULT result;
-	ComPtr<TLMessage> message;
-	ReturnIfFailed(result, MakeAndInitialize<TLMessage>(&message, connectionManager->GenerateMessageId(), GenerateMessageSequenceNumber(false), msgAck.Get()));
+	ReturnIfFailed(result, MakeAndInitialize<TLMessage>(messages, connectionManager->GenerateMessageId(), GenerateMessageSequenceNumber(false), msgAck.Get()));
 
 	m_messagesIdsToConfirm.clear();
-
-	messages.push_back(message);
 	return S_OK;
 }
 

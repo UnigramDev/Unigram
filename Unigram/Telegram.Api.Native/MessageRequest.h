@@ -69,6 +69,8 @@ namespace ABI
 			{
 
 				struct ITLBinaryWriterEx;
+				struct IMessageResponse;
+				struct IMessageError;
 
 				MIDL_INTERFACE("AF4AE7B6-02DD-4242-B0EE-92A1F2A9E7D0") IMessageRequest : public IUnknown
 				{
@@ -89,6 +91,8 @@ namespace ABI
 
 using ABI::Telegram::Api::Native::RequestFlag;
 using ABI::Telegram::Api::Native::IMessageRequest;
+using ABI::Telegram::Api::Native::IMessageResponse;
+using ABI::Telegram::Api::Native::IMessageError;
 
 namespace Telegram
 {
@@ -186,6 +190,11 @@ namespace Telegram
 					return (m_flags & RequestFlag::TryDifferentDc) == RequestFlag::TryDifferentDc;
 				}
 
+				inline boolean FailOnServerError() const
+				{
+					return (m_flags & RequestFlag::FailOnServerError) == RequestFlag::FailOnServerError;
+				}
+
 				inline boolean RequiresQuickAck() const
 				{
 					return (m_flags & RequestFlag::RequiresQuickAck) == RequestFlag::RequiresQuickAck;
@@ -201,9 +210,17 @@ namespace Telegram
 					return (m_flags & REQUEST_FLAG_NO_LAYER) == RequestFlag::None;
 				}
 
+				inline ComPtr<IRequestQuickAckReceivedCallback> const& GetQuickAckReceivedCallback() const
+				{
+					return m_quickAckReceivedCallback;
+				}
+
+				inline ComPtr<ISendRequestCompletedCallback> const& GetSendCompletedCallback() const
+				{
+					return m_sendCompletedCallback;
+				}
+
 			private:
-				HRESULT OnQuickAckReceived();
-				HRESULT OnSendCompleted(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody);
 				void Reset();
 
 				inline void SetMessageContext(MessageContext const& mesageContext)

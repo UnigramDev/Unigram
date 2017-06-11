@@ -44,7 +44,6 @@ namespace Telegram
 
 				SOCKET m_socket;
 				WSAEvent m_socketEvent;
-				//Event m_socketConnectedEvent;
 				FILETIME m_timeout;
 				std::vector<BYTE> m_sendBuffer;
 				std::unique_ptr<BYTE[]> m_receiveBuffer;

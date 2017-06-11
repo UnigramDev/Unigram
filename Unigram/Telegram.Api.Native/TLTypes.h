@@ -405,7 +405,7 @@ namespace Telegram
 				};
 
 				template<typename TLObjectTraits>
-				class TLRPCErrorT abstract : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLRPCError, TLObjectT<TLObjectTraits>, CloakedIid<IMessageResponseHandler>>
+				class TLRPCErrorT abstract : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLRPCError, TLObjectT<TLObjectTraits>>
 				{
 					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLRPCError, BaseTrust);
 
@@ -420,8 +420,7 @@ namespace Telegram
 					}
 
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
-					IFACEMETHODIMP get_Code(_Out_ UINT32* value);
+					IFACEMETHODIMP get_Code(_Out_ INT32* value);
 					IFACEMETHODIMP get_Text(_Out_ HSTRING* value);
 
 					//Internal methods
@@ -436,8 +435,6 @@ namespace Telegram
 					}
 
 				protected:
-					HRESULT RuntimeClassInitialize(INT32 code, _In_ HString& text);
-
 					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
 
 				private:
@@ -447,21 +444,6 @@ namespace Telegram
 
 				class TLRPCError WrlSealed : public TLRPCErrorT<TLObjectTraits::TLRPCErrorTraits>
 				{
-				public:
-					//Internal methods
-					STDMETHODIMP RuntimeClassInitialize(INT32 code, _In_ HSTRING text);
-					STDMETHODIMP RuntimeClassInitialize(HRESULT error);
-
-					template<size_t sizeDest>
-					STDMETHODIMP RuntimeClassInitialize(INT32 code, _In_ const WCHAR(&text)[sizeDest])
-					{
-						HRESULT result;
-						HString errorText;
-						ReturnIfFailed(result, errorText.Set<sizeDest>(text));
-
-						return TLRPCErrorT::RuntimeClassInitialize(code, errorText);
-					}
-
 				};
 
 				class TLRpcReqError WrlSealed : public TLRPCErrorT<TLObjectTraits::TLRpcReqErrorTraits>

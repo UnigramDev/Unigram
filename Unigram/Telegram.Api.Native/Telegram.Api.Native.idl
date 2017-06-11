@@ -23,6 +23,7 @@ namespace Telegram
 			runtimeclass Connection;
 			runtimeclass ConnectionManager;
 			runtimeclass MessageResponse;
+			runtimeclass MessageError;
 
 			delegate SendRequestCompletedCallback;
 			delegate RequestQuickAckReceivedCallback;
@@ -226,7 +227,7 @@ namespace Telegram
 				[version(API_VERSION)]
 				interface ITLRPCError : IInspectable
 				{
-					[propget] HRESULT Code([out][retval] UINT32* value);
+					[propget] HRESULT Code([out][retval] INT32* value);
 					[propget] HRESULT Text([out][retval] HSTRING* value);
 				}
 
@@ -368,7 +369,7 @@ namespace Telegram
 			{
 				None = 0,
 				EnableUnauthorized = 1,
-				FailOnServerErrors = 2,
+				FailOnServerError = 2,
 				CanCompress = 4,
 				WithoutLogin = 8,
 				TryDifferentDc = 16,
@@ -401,9 +402,28 @@ namespace Telegram
 			}
 
 
+			[exclusiveto(MessageError)]
+			[uuid(9E438BCC-CB87-4948-8EA4-214C8C2AA3B1)]
+			[version(API_VERSION)]
+			interface IMessageError : IInspectable
+			{
+				[propget] HRESULT Exception([out][retval] HRESULT* value);
+				[propget] HRESULT Code([out][retval] INT32* value);
+				[propget] HRESULT Text([out][retval] HSTRING* value);
+			}
+
+			[marshaling_behavior(agile)]
+			[threading(both)]
+			[version(API_VERSION)]
+			runtimeclass MessageError
+			{
+				[default] interface IMessageError;
+			}
+
+
 			[uuid(CA172FA9-416D-4BD9-AB8C-B8696391D38F)]
 			[version(API_VERSION)]
-			delegate HRESULT SendRequestCompletedCallback([in] MessageResponse* response, HRESULT error);
+			delegate HRESULT SendRequestCompletedCallback([in] MessageResponse* response, [in] MessageError* error);
 
 			[uuid(8F88DCA2-FC97-4C94-B564-3DDBF1675477)]
 			[version(API_VERSION)]
@@ -507,6 +527,7 @@ namespace Telegram
 					[in] INT32 datacenterId,[in] ConnectionType connectionType,[in] RequestFlag flags,[out][retval] INT32* value);
 				HRESULT CancelRequest([in] INT32 requestToken,[in] boolean notifyServer,[out][retval] boolean* value);
 				HRESULT GetDatacenterById([in] INT32 id,[out][retval] Datacenter** value);
+				HRESULT UpdateDatacenters();
 
 				HRESULT BoomBaby([in] IUserConfiguration* userConfiguration,[out] Telegram.Api.Native.TL.ITLObject** object,[out][retval] Connection** value);
 			}

@@ -50,6 +50,7 @@
     </ClCompile>
     <ClCompile Include="MessageResponse.cpp" />
     <ClCompile Include="MethodDebugInfo.cpp" />
+    <ClCompile Include="MessageError.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -104,6 +105,7 @@
     </ClInclude>
     <ClInclude Include="MessageResponse.h" />
     <ClInclude Include="MethodDebugInfo.h" />
+    <ClInclude Include="MessageError.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

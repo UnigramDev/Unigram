@@ -158,11 +158,6 @@ HRESULT ConnectionSocket::SendData(BYTE const* buffer, UINT32 length)
 		return E_NOT_VALID_STATE;
 	}
 
-	/*if (WaitForSingleObject(m_socketConnectedEvent.Get(), INFINITE) != WAIT_OBJECT_0)
-	{
-		return E_FAIL;
-	}*/
-
 	int bytesSent = send(m_socket, reinterpret_cast<const char*>(buffer), length, 0);
 	if (bytesSent == SOCKET_ERROR)
 	{
@@ -212,11 +207,9 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 
 	m_socket = INVALID_SOCKET;
 
-	//SetEvent(m_socketConnectedEvent.Get());
 	DetachFromThreadpool(flags & SOCKET_CLOSE_JOINTHREAD);
 
 	m_socketEvent.Close();
-	//m_socketConnectedEvent.Close();
 	m_sendBuffer = {};
 	m_receiveBuffer.reset();
 
@@ -260,8 +253,6 @@ HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG_
 		if (networkEvents.lNetworkEvents & FD_CONNECT)
 		{
 			BreakIfError(wsaLastError, networkEvents.iErrorCode[FD_CONNECT_BIT]);
-
-			//SetEvent(m_socketConnectedEvent.Get());
 
 			HRESULT result;
 			if (FAILED(result = OnSocketConnected()))

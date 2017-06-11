@@ -47,11 +47,11 @@ namespace Telegram
 			enum class ConnectionFlag
 			{
 				None = 0,
-				ConnectionState = 0x7,
-				Ipv6 = 0x8,
-				CryptographyInitialized = 0x10,
-				TryingNextEndpoint = 0x20,
-				Closed = 0x40
+				ConnectionState = 0xF,
+				Ipv6 = 0x10,
+				CryptographyInitialized = 0x20,
+				TryingNextEndpoint = 0x40,
+				Closed = 0x80
 			};
 
 		}
@@ -103,9 +103,9 @@ namespace Telegram
 				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
 				IFACEMETHODIMP get_SessionId(_Out_ INT64* value);
 
-				inline Datacenter* GetDatacenter() const
+				inline ComPtr<Datacenter> const& GetDatacenter() const
 				{
-					return m_datacenter.Get();
+					return m_datacenter;
 				}
 
 				inline ConnectionType GetType() const
@@ -129,14 +129,15 @@ namespace Telegram
 				{
 					Disconnected = 0x0,
 					Connecting = 0x1,
-					Connected = 0x3,
-					DataReceived = 0x7
+					Reconnecting = 0x3,		
+					Connected = 0x7,
+					DataReceived = 0xF
 				};
 
 				IFACEMETHODIMP Close();
 				HRESULT Connect();
-				HRESULT Connect(_In_ ComPtr<ConnectionManager> const& connectionManager);
-				HRESULT Disconnect();
+				HRESULT Connect(_In_ ComPtr<ConnectionManager> const& connectionManager, boolean ipv6);
+				HRESULT Reconnect();
 				HRESULT CreateMessagePacket(UINT32 messageLength, boolean reportAck, _Out_ ComPtr<TL::TLBinaryWriter>& writer, _Out_ BYTE** messageBuffer);
 				HRESULT SendEncryptedMessage(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _Outptr_opt_ INT32* quickAckId);
 				HRESULT SendUnencryptedMessage(_In_ ITLObject* messageBody, boolean reportAck);

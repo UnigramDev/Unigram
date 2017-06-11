@@ -27,7 +27,7 @@ namespace Telegram
 				HRESULT SubmitWork(_In_ std::function<void()> work);
 
 			protected:
-				HRESULT RuntimeClassInitialize(DWORD minimumThreadCount, DWORD maximumThreadCount);
+				HRESULT RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount);
 
 				inline PTP_CALLBACK_ENVIRON GetEnvironment()
 				{

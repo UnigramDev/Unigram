@@ -34,7 +34,7 @@ namespace Telegram
 				ConnectionInitialized = 0x20,
 				Authorized = 0x40,
 				ImportingAuthorization = 0x80,
-				RequestingSalt = 0x100,
+				RequestingFutureSalts = 0x100,
 				Closed = 0x200
 			};
 
@@ -60,7 +60,7 @@ namespace Telegram
 				class TLServerDHParamsFail;
 				class TLServerDHParamsOk;
 				class TLResPQ;
-				class TLFutureSalts;
+				class TLBadServerSalt;
 
 			}
 
@@ -73,7 +73,7 @@ namespace Telegram
 				friend class TL::TLServerDHParamsFail;
 				friend class TL::TLServerDHParamsOk;
 				friend class TL::TLResPQ;
-				friend class TL::TLFutureSalts;
+				friend class TL::TLBadServerSalt;
 				friend class Connection;
 				friend class ConnectionManager;
 
@@ -123,18 +123,6 @@ namespace Telegram
 					return (m_flags & DatacenterFlag::Authorized) == DatacenterFlag::Authorized;
 				}
 
-				inline boolean IsImportingAuthorization()
-				{
-					auto  lock = LockCriticalSection();
-					return (m_flags & DatacenterFlag::ImportingAuthorization) == DatacenterFlag::ImportingAuthorization;
-				}
-
-				inline boolean IsRequestingSalt()
-				{
-					auto  lock = LockCriticalSection();
-					return (m_flags & DatacenterFlag::RequestingSalt) == DatacenterFlag::RequestingSalt;
-				}
-
 			private:
 				enum class HandshakeState
 				{
@@ -167,7 +155,7 @@ namespace Telegram
 				void RecreateSessions();
 				void GetSessionsIds(_Out_ std::vector<INT64>& sessionIds);
 				void AddServerSalt(_In_ ServerSalt const& salt);
-				HRESULT MergeServerSalts(_In_ std::vector<ServerSalt> const& salts);
+				void MergeServerSalts(_In_ ConnectionManager* connectionManager, _In_ std::vector<ServerSalt> const& salts);
 				boolean ContainsServerSalt(INT64 salt);
 				void ClearServerSalts();
 				HRESULT AddEndpoint(_In_ ServerEndpoint const& endpoint, ConnectionType connectionType, boolean ipv6);
@@ -177,15 +165,15 @@ namespace Telegram
 				IFACEMETHODIMP Close();
 				HRESULT BeginHandshake(boolean reconnect, boolean reset);
 				HRESULT ImportAuthorization();
+				HRESULT RequestFutureSalts(UINT32 count);
 				HRESULT GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, _Out_ ServerEndpoint** endpoint);
 				INT64 GetServerSalt(_In_ ConnectionManager* connectionManager);
-				boolean ContainsServerSalt(INT64 salt, size_t count);
-				HRESULT OnConnectionOpened(_In_ ConnectionManager* connectionManager, _In_ Connection* connection);
-				HRESULT OnConnectionClosed(_In_ ConnectionManager* connectionManager, _In_ Connection* connection);
+				HRESULT OnConnectionOpened(_In_ Connection* connection);
+				HRESULT OnConnectionClosed(_In_ Connection* connection);
 				HRESULT OnHandshakePQResponse(_In_ Connection* connection, _In_ TL::TLResPQ* response);
 				HRESULT OnHandshakeServerDHResponse(_In_ Connection* connection, _In_ TL::TLServerDHParamsOk* response);
 				HRESULT OnHandshakeClientDHResponse(_In_ ConnectionManager* connectionManager, _In_ Connection* connection, _In_ TL::TLDHGenOk* response);
-				HRESULT OnFutureSaltsResponse(_In_ TL::TLFutureSalts* response);
+				HRESULT OnBadServerSaltResponse(_In_ ConnectionManager* connectionManager, INT64 messageId, _In_ TL::TLBadServerSalt* response);
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
 				HRESULT EncryptMessage(_Inout_updates_(length) BYTE* buffer, UINT32 length, UINT32 padding, _Out_opt_ INT32* quickAckId);
 				HRESULT DecryptMessage(INT64 authKeyId, _Inout_updates_(length) BYTE* buffer, UINT32 length);
@@ -208,6 +196,12 @@ namespace Telegram
 					{
 						m_flags &= ~DatacenterFlag::ImportingAuthorization;
 					}
+				}
+
+				inline void SetUnauthorized()
+				{
+					auto lock = LockCriticalSection();
+					m_flags &= ~DatacenterFlag::Authorized;
 				}
 
 				inline HRESULT OnHandshakeError(HRESULT error)

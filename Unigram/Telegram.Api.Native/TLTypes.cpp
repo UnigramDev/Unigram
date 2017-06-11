@@ -628,7 +628,7 @@ HRESULT TLRPCErrorT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
 }
 
 template<typename TLObjectTraits>
-HRESULT TLRPCErrorT<TLObjectTraits>::get_Code(UINT32* value)
+HRESULT TLRPCErrorT<TLObjectTraits>::get_Code(INT32* value)
 {
 	if (value == nullptr)
 	{
@@ -643,51 +643,6 @@ template<typename TLObjectTraits>
 HRESULT TLRPCErrorT<TLObjectTraits>::get_Text(HSTRING* value)
 {
 	return m_text.CopyTo(value);
-}
-
-template<typename TLObjectTraits>
-HRESULT TLRPCErrorT<TLObjectTraits>::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
-{
-	return connectionManager->OnErrorResponse(m_code, m_text);
-}
-
-template<typename TLObjectTraits>
-HRESULT TLRPCErrorT<TLObjectTraits>::RuntimeClassInitialize(INT32 code, HString& text)
-{
-	m_code = code;
-	m_text = std::move(text);
-
-	return S_OK;
-}
-
-
-HRESULT TLRPCError::RuntimeClassInitialize(INT32 code, HSTRING text)
-{
-	HRESULT result;
-	HString errorText;
-	ReturnIfFailed(result, errorText.Set(text));
-
-	return TLRPCErrorT::RuntimeClassInitialize(code, std::move(errorText));
-}
-
-HRESULT TLRPCError::RuntimeClassInitialize(HRESULT error)
-{
-	WCHAR* text;
-	UINT32 length;
-	HRESULT result;
-	HString errorText;
-	if ((length = FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
-		error, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), reinterpret_cast<LPWSTR>(&text), 0, nullptr)) == 0)
-	{
-		ReturnIfFailed(result, errorText.Set(L"Unknown error"));
-	}
-	else
-	{
-		ReturnIfFailed(result, errorText.Set(text, length));
-		LocalFree(text);
-	}
-
-	return TLRPCErrorT::RuntimeClassInitialize(error, errorText);
 }
 
 
@@ -720,6 +675,18 @@ HRESULT TLRpcResult::HandleResponse(MessageContext const* messageContext, Connec
 	}
 
 	return TLObject::CompleteRequest(m_requestMessageId, messageContext, query.Get(), connectionManager, connection);
+
+	/*ReturnIfFailed(result, TLObject::CompleteRequest(m_requestMessageId, messageContext, query.Get(), connectionManager, connection));
+
+	ComPtr<IMessageResponseHandler> responseHandler;
+	if (SUCCEEDED(query.As(&responseHandler)))
+	{
+		return responseHandler->HandleResponse(messageContext, connectionManager, connection);
+	}
+	else
+	{
+		return S_OK;
+	}*/
 }
 
 HRESULT TLRpcResult::ReadBody(ITLBinaryReaderEx* reader)
@@ -1083,9 +1050,7 @@ HRESULT TLBadMessage::HandleResponse(MessageContext const* messageContext, Conne
 
 HRESULT TLBadServerSalt::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLBadServerSalt response handling");
-
-	return S_OK;
+	return connection->GetDatacenter()->OnBadServerSaltResponse(connectionManager, messageContext->Id, this);
 }
 
 HRESULT TLBadServerSalt::ReadBody(ITLBinaryReaderEx* reader)
@@ -1249,9 +1214,7 @@ TLFutureSalts::~TLFutureSalts()
 
 HRESULT TLFutureSalts::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLFutureSalts response handling");
-
-	return S_OK;
+	return TLObject::CompleteRequest(m_requestMessageId, messageContext, this, connectionManager, connection);
 }
 
 HRESULT TLFutureSalts::ReadBody(ITLBinaryReaderEx* reader)
