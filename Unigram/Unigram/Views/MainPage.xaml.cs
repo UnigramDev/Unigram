@@ -657,6 +657,7 @@ namespace Unigram.Views
         {
             NewChatItem.Visibility = NewChannelItem.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
             EditNameItem.Visibility = LogoutItem.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
+            FlyoutSeperator.Visibility = (rpMasterTitlebar.SelectedIndex == 1 || rpMasterTitlebar.SelectedIndex == 2) ? Visibility.Collapsed : Visibility.Visible;
         }
     }
 }
