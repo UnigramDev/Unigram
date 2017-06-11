@@ -528,6 +528,7 @@ namespace Unigram.ViewModels
                         if (dialog != null && dialog.Peer != null && dialog.Peer.Id == notifyPeer.Peer.Id && dialog.Peer.GetType() == notifyPeer.Peer.GetType())
                         {
                             dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                            dialog.RaisePropertyChanged(() => dialog.MutedVisibility);
                             dialog.RaisePropertyChanged(() => dialog.Self);
                             return;
                         }

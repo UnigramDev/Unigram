@@ -1955,6 +1955,7 @@ namespace Unigram.ViewModels
                         {
                             dialog.NotifySettings = _currentDialog.NotifySettings;
                             dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                            dialog.RaisePropertyChanged(() => dialog.MutedVisibility);
                             dialog.RaisePropertyChanged(() => dialog.Self);
 
                             var chatFull = CacheService.GetFullChat(channel.Id);

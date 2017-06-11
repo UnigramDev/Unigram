@@ -52,6 +52,11 @@ namespace Unigram.Views
             }
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            View.NavigateToString(string.Empty);
+        }
+
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
             await ShareView.Current.ShowAsync(_shareMessage);

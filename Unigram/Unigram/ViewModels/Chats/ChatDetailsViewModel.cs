@@ -265,6 +265,7 @@ namespace Unigram.ViewModels.Chats
                     {
                         dialog.NotifySettings = _full.NotifySettings;
                         dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                        dialog.RaisePropertyChanged(() => dialog.MutedVisibility);
                         dialog.RaisePropertyChanged(() => dialog.Self);
                     }
 

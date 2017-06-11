@@ -772,7 +772,8 @@ namespace Unigram.Controls
                 reader.LoadRtfText(rtf);
                 reader.Parse();
 
-                var entities = MessageHelper.GetEntities(ref text);
+                var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
+                var entities = MessageHelper.GetEntities(ref messageText);
                 if (entities == null)
                 {
                     entities = new List<TLMessageEntityBase>();
@@ -784,7 +785,7 @@ namespace Unigram.Controls
                     entities.Add(entity);
                 }
 
-                await ViewModel.SendMessageAsync(text, entities, false);
+                await ViewModel.SendMessageAsync(messageText, entities, false);
             }
             //else
             //{
