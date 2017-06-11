@@ -14,6 +14,7 @@
             <Button Content="GetProfilePic" Click="Button_Click_4" />
             <Button Content="GetConfig" Click="Button_Click_2" />
             <Button Content="Destroy" Click="Button_Click_3" />
+            <Button Content="Logout" Click="Button_Click_5"/>
         </StackPanel>
     </Grid>
 </Page>

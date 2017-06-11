@@ -49,6 +49,8 @@ namespace Telegram.Api.Native.Test
 
         private void ConnectionManager_UnprocessedMessageReceived(ConnectionManager sender, MessageResponse args)
         {
+            Debug.WriteLine(args.Object.GetType());
+
             switch (args.Object)
             {
                 case TLConfig tlConfig:
@@ -103,9 +105,9 @@ namespace Telegram.Api.Native.Test
                     connectionManager.UserId = authorization.User.Id;
                     Debugger.Break();
                 },
-                null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin);
+                null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
             },
-            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin);
+            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin | RequestFlag.TryDifferentDc | RequestFlag.EnableUnauthorized);
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
@@ -155,6 +157,15 @@ namespace Telegram.Api.Native.Test
                 null, big.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc);
             },
             null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
+        }
+
+        private void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+            ConnectionManager.Instance.SendRequest(new TLAuthLogOut(), (message5, ex5) =>
+            {
+                Debugger.Break();
+            },
+            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.EnableUnauthorized);
         }
     }
 }

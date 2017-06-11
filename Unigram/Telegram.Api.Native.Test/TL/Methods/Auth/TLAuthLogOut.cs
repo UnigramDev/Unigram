@@ -24,7 +24,6 @@ namespace Telegram.Api.TL.Methods.Auth
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.WriteUInt32(0x5717DA40);
 		}
 	}
 }
