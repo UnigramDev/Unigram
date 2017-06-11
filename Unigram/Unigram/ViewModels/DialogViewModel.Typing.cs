@@ -12,7 +12,7 @@ using Unigram.Strings;
 
 namespace Unigram.ViewModels
 {
-    public partial class DialogViewModel : IHandle<TLUpdateUserTyping>, IHandle<TLUpdateChatUserTyping>
+    public partial class DialogViewModel /*: IHandle<TLUpdateUserTyping>, IHandle<TLUpdateChatUserTyping>*/
     {
         private bool _isTyping;
 		public bool IsTyping
@@ -104,7 +104,7 @@ namespace Unigram.ViewModels
             return GetTypingString(Peer.ToPeer(), typingUsers, CacheService.GetUser, null);
         }
 
-        public string GetTypingString(TLPeerBase peer, IList<Tuple<int, TLSendMessageActionBase>> typingUsers, Func<int?, TLUserBase> getUser, Action<TLPeerBase> getFullInfoAction)
+        public static string GetTypingString(TLPeerBase peer, IList<Tuple<int, TLSendMessageActionBase>> typingUsers, Func<int?, TLUserBase> getUser, Action<TLPeerBase> getFullInfoAction)
         {
             if (peer is TLPeerUser)
             {

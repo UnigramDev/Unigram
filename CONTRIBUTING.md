@@ -39,7 +39,9 @@ Example:
 Feature requests are welcome, but before opening a feature request, please take a moment to find out whether your idea fits with the scope and aims of the project. Also, make sure that it's not already listed in the [Features list](https://github.com/UnigramDev/Unigram/wiki/Features). It's up to you to make a strong case to convince the project's developers of the merits of this feature. Please provide as much detail and context as possible.
 
 ## Pull requests
-**Please ask first** before embarking on any significant pull request (e.g. implementing features, refactoring code), otherwise you risk spending a lot of time working on something that the project's developers might not want to merge into the project. You can do so by joining the official [Unigram Insiders](https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ) group and talking with the developers.
+**Please ask first** before embarking on any significant pull request (e.g. implementing features, refactoring code), otherwise you risk spending a lot of time working on something that the project's developers might not want to merge into the project. For this, you can do so by joining the official [Unigram Insiders](https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ) group and talking with the developers.
+
+If you're a junior developer or if you are not familiar with the project, it is recommended to **[read the Developer Manual](https://github.com/UnigramDev/Unigram/wiki/Developer-Manual:-Introduction)** section of the Wiki before starting to work on Unigram.
 
 ## License
 By contributing your code, you agree to license your contribution under the [GNU General Public License](https://github.com/UnigramDev/Unigram/blob/develop/LICENSE). 

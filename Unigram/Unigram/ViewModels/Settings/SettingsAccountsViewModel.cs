@@ -74,7 +74,7 @@ namespace Unigram.ViewModels.Settings
 
         private void SwitchAccount()
         {
-            if (_selectedItem != SettingsHelper.SessionGuid)
+            if (_selectedItem != SettingsHelper.SessionGuid && _selectedItem != null)
             {
                 SettingsHelper.SwitchGuid = _selectedItem;
                 App.Current.Exit();

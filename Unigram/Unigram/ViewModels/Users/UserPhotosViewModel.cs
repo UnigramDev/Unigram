@@ -35,6 +35,24 @@ namespace Unigram.ViewModels.Users
         {
             User = user;
 
+            var full = InMemoryCacheService.Current.GetFullUser(user.Id);
+            if (full == null)
+            {
+                var response = await ProtoService.GetFullUserAsync(user.ToInputUser());
+                if (response.IsSucceeded)
+                {
+                    full = response.Result;
+                }
+            }
+
+            if (full != null)
+            {
+                SelectedItem = new GalleryPhotoItem(full.ProfilePhoto as TLPhoto, user);
+                FirstItem = SelectedItem;
+
+                return;
+            }
+
             using (await _loadMoreLock.WaitAsync())
             {
                 var response = await ProtoService.GetUserPhotosAsync(User.ToInputUser(), 0, 0, 0);

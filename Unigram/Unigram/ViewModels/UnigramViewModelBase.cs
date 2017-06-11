@@ -60,7 +60,7 @@ namespace Unigram.ViewModels
         }
 
         private bool _isLoading;
-        public bool IsLoading
+        public virtual bool IsLoading
         {
             get
             {

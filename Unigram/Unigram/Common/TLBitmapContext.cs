@@ -13,8 +13,6 @@ namespace Unigram.Common
     {
         private ConcurrentDictionary<object, Tuple<TLBitmapSource, WeakReference<BitmapImage>>> _context = new ConcurrentDictionary<object, Tuple<TLBitmapSource, WeakReference<BitmapImage>>>();
 
-        private ConcurrentDictionary<long, TLBitmapSource> _context2 = new ConcurrentDictionary<long, TLBitmapSource>();
-
         public BitmapImage this[TLPhoto photo, bool thumbnail = true]
         {
             get
@@ -47,7 +45,7 @@ namespace Unigram.Common
             }
         }
 
-        public BitmapImage this[TLDocument document]
+        public BitmapImage this[TLDocument document, bool thumbnail]
         {
             get
             {
@@ -59,12 +57,34 @@ namespace Unigram.Common
                 if (_context.TryGetValue(document, out Tuple<TLBitmapSource, WeakReference<BitmapImage>> reference) &&
                     reference.Item2.TryGetTarget(out BitmapImage target))
                 {
+                    if (!thumbnail)
+                    {
+                        reference.Item1.Download();
+                    }
+
                     return target;
                 }
 
-                var bitmap = new TLBitmapSource(document);
+                var bitmap = new TLBitmapSource(document, thumbnail);
                 _context[document] = new Tuple<TLBitmapSource, WeakReference<BitmapImage>>(bitmap, new WeakReference<BitmapImage>(bitmap.Image));
                 return bitmap.Image;
+
+
+                //var context = _context;
+                //if (thumbnail)
+                //{
+                //    context = _contextThumb;
+                //}
+
+                //if (context.TryGetValue(document, out Tuple<TLBitmapSource, WeakReference<BitmapImage>> reference) &&
+                //    reference.Item2.TryGetTarget(out BitmapImage target))
+                //{
+                //    return target;
+                //}
+
+                //var bitmap = new TLBitmapSource(document, thumbnail);
+                //context[document] = new Tuple<TLBitmapSource, WeakReference<BitmapImage>>(bitmap, new WeakReference<BitmapImage>(bitmap.Image));
+                //return bitmap.Image;
             }
         }
 

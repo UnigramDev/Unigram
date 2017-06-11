@@ -63,14 +63,7 @@ namespace Unigram.Themes
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
                 var viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
-                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
-                {
-                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                    if (animation != null)
-                    {
-                        animation.TryStart(image);
-                    }
-                });
+                await GalleryView.Current.ShowAsync(viewModel, () => image);
             }
         }
 
@@ -99,14 +92,7 @@ namespace Unigram.Themes
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
                 var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(item, null as string));
-                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
-                {
-                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                    if (animation != null)
-                    {
-                        animation.TryStart(image);
-                    }
-                });
+                await GalleryView.Current.ShowAsync(viewModel, () => image);
             }
         }
 
@@ -138,14 +124,7 @@ namespace Unigram.Themes
                         viewModel = new SingleGalleryViewModel(new GalleryMessageItem(message));
                     }
 
-                    await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
-                    {
-                        var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                        if (animation != null)
-                        {
-                            animation.TryStart(media);
-                        }
-                    });
+                    await GalleryView.Current.ShowAsync(viewModel, () => media);
                 }
                 else if (e != null)
                 {

@@ -13,13 +13,20 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace Unigram.Views.Settings
+// Il modello di elemento Pagina vuota è documentato all'indirizzo https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x410
+
+namespace Telegram.Api.Native.Test
 {
-    public sealed partial class SettingsLastSeenPage : Page
+    /// <summary>
+    /// Pagina vuota che può essere usata autonomamente oppure per l'esplorazione all'interno di un frame.
+    /// </summary>
+    public sealed partial class MainPage : Page
     {
-        public SettingsLastSeenPage()
+        public MainPage()
         {
             this.InitializeComponent();
+
+            var xxx = ConnectionManager.Instance;
         }
     }
 }

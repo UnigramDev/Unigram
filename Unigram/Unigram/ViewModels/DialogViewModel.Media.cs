@@ -536,10 +536,13 @@ namespace Unigram.ViewModels
             var fileName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
             var fileCache = await FileUtils.CreateTempFileAsync(fileName);
 
-            var fileScale = await ImageHelper.ScaleJpegAsync(file, fileCache, 1280, 0.77);
-            if (fileScale == null && Path.GetExtension(file.Name).Equals(".gif"))
+            StorageFile fileScale;
+            try
             {
-                // TODO: animated gif!
+                fileScale = await ImageHelper.ScaleJpegAsync(file, fileCache, 1280, 0.77);
+            }
+            catch (InvalidCastException)
+            {
                 await fileCache.DeleteAsync();
                 await SendGifAsync(file, caption);
                 return;
@@ -668,6 +671,11 @@ namespace Unigram.ViewModels
                         W = (int)imageProps.Width,
                         H = (int)imageProps.Height
                     },
+                    new TLDocumentAttributeVideo
+                    {
+                        W = (int)imageProps.Width,
+                        H = (int)imageProps.Height,
+                    }
                 }
             };
 

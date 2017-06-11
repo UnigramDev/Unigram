@@ -14,7 +14,8 @@
     Background="{x:Null}"
     OverlayBrush="{x:Null}"
     HorizontalAlignment="Stretch"
-    VerticalAlignment="Stretch">
+    VerticalAlignment="Stretch"
+    Unloaded="OnUnloaded">
 
     <Control.Resources>
         <Style x:Name="yolo" TargetType="MediaPlayerElement">
@@ -78,6 +79,7 @@
                 Loaded="ImageView_ImageOpened"
                 Source="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                 Constraint="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}"
+                IsHitTestVisible="False"
                 Grid.RowSpan="3"/>
 
             <local:TransferButton Completed="Download_Click" Transferable="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
@@ -174,6 +176,11 @@
                                             Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
                                             Tag="&#xE105;"
                                             Text="Save file as..." />
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            Command="{x:Bind ViewModel.OpenInAppCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanOpenInApp}"
+                                            Tag="&#xE197;"
+                                            Text="Open in app..." />
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>

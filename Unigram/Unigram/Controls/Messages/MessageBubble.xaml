@@ -13,21 +13,12 @@
     d:DesignWidth="400"
     Margin="{ThemeResource MessageContentMargin}"
     HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
-    MaxWidth="432">
-    <local:MessageBubbleBase.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-    </local:MessageBubbleBase.RowDefinitions>
-    <local:MessageBubbleBase.ColumnDefinitions>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
-    </local:MessageBubbleBase.ColumnDefinitions>
+    MaxWidth="{ThemeResource MessageMaxWidth}">
 
     <!-- TODO: not the right way -->
     <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
-    <UserControl x:Name="LayoutRoot" Grid.Row="1">
+    <UserControl x:Name="LayoutRoot">
         <Grid x:Name="ContentPanel"
               Padding="{ThemeResource MessageContentPadding}"
               CornerRadius="{ThemeResource MessageCornerRadius}"
@@ -69,17 +60,16 @@
                 Click="Reply_Click"
                 Grid.Row="1"/>
 
-            <RichTextBlock
+            <TextBlock
                 x:Name="MessageControl"
                 common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
-                Style="{ThemeResource BodyRichTextBlockStyle}"
+                Style="{ThemeResource BodyTextBlockStyle}"
                 Foreground="{ThemeResource MessageForegroundBrush}"
-                ContextRequested="MessageControl_ContextRequested"
                 Grid.Row="2">
-                <RichTextBlock.Resources>
+                <TextBlock.Resources>
                     <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
-                </RichTextBlock.Resources>
-            </RichTextBlock>
+                </TextBlock.Resources>
+            </TextBlock>
 
             <controls:MediaControl
                 x:Name="MediaControl"
@@ -90,7 +80,7 @@
                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
                 Grid.Row="3"/>
 
-            <local:MessageStatusControl
+            <local:MessageStateControl
                 x:Name="StatusControl"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
@@ -99,16 +89,6 @@
         </Grid>
     </UserControl>
 
-    <Border Visibility="{x:Bind ConvertShare(ViewModel)}"
-            Background="{ThemeResource MessageServiceBackgroundBrush}"
-            VerticalAlignment="Bottom"
-            CornerRadius="14"
-            Margin="8,0,0,2"
-            Grid.Column="1"
-            Grid.Row="1">
-        <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
-    </Border>
-
-    <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Row="2"/>
+    <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2"/>
 
 </local:MessageBubbleBase>

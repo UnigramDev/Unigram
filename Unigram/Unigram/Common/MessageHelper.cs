@@ -30,6 +30,7 @@ using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Views.SignIn;
+using Telegram.Api.Aggregator;
 
 namespace Unigram.Common
 {
@@ -50,7 +51,7 @@ namespace Unigram.Common
 
             if (oldValue == value)
             {
-                OnMessageChanged(obj as RichTextBlock, value);
+                OnMessageChanged(obj as TextBlock, value);
             }
         }
 
@@ -59,23 +60,25 @@ namespace Unigram.Common
 
         private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as RichTextBlock;
+            var sender = d as TextBlock;
             var newValue = e.NewValue as TLMessage;
 
             OnMessageChanged(sender, newValue);
         }
 
-        private static void OnMessageChanged(RichTextBlock sender, TLMessage newValue)
+        private static void OnMessageChanged(TextBlock sender, TLMessage newValue)
         {
-            sender.IsTextSelectionEnabled = false;
+            //sender.IsTextSelectionEnabled = false;
 
             var message = newValue as TLMessage;
             if (message != null /*&& sender.Visibility == Visibility.Visible*/)
             {
+                var text = !string.IsNullOrWhiteSpace(message.Message);
+
                 var caption = false;
-                if (message.Media is ITLMessageMediaCaption)
+                if (message.Media is ITLMessageMediaCaption captionMedia)
                 {
-                    caption = !string.IsNullOrWhiteSpace(((ITLMessageMediaCaption)message.Media).Caption);
+                    caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                 }
 
                 var game = false;
@@ -84,22 +87,22 @@ namespace Unigram.Common
                     game = sender.Tag != null;
                 }
 
-                var empty = false;
-                if (message.Media is TLMessageMediaWebPage)
+                var emptyWebPage = false;
+                if (message.Media is TLMessageMediaWebPage webpageMedia)
                 {
-                    empty = ((TLMessageMediaWebPage)message.Media).WebPage is TLWebPageEmpty;
+                    emptyWebPage = webpageMedia.WebPage is TLWebPageEmpty;
                 }
 
-                sender.Visibility = (message.Media == null || message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage || game || caption ? Visibility.Visible : Visibility.Collapsed);
+                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || text ? Visibility.Visible : Visibility.Collapsed);
                 if (sender.Visibility == Visibility.Collapsed)
                 {
-                    sender.Blocks.Clear();
+                    sender.Inlines.Clear();
                     return;
                 }
 
                 var foreground = sender.Resources["MessageHyperlinkForegroundBrush"] as SolidColorBrush;
 
-                var paragraph = new Paragraph();
+                var paragraph = new Span();
 
                 if (message.HasEntities && message.Entities != null)
                 {
@@ -127,11 +130,11 @@ namespace Unigram.Common
                     }
                     else if (caption)
                     {
-                        var captionMedia = message.Media as ITLMessageMediaCaption;
-                        if (captionMedia != null && !string.IsNullOrWhiteSpace(captionMedia.Caption))
+                        var captionMedia2 = message.Media as ITLMessageMediaCaption;
+                        if (captionMedia2 != null && !string.IsNullOrWhiteSpace(captionMedia2.Caption))
                         {
                             Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a ITLMediaCaption");
-                            ReplaceAll(message, captionMedia.Caption, paragraph, sender.Foreground, true);
+                            ReplaceAll(message, captionMedia2.Caption, paragraph, sender.Foreground, true);
                         }
                     }
 
@@ -145,7 +148,7 @@ namespace Unigram.Common
                     //ReplaceAll(message, text, paragraph, sender.Foreground, true);
                 }
 
-                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || empty || message?.Media == null)
+                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || emptyWebPage || message?.Media == null)
                 {
                     if (IsAnyCharacterRightToLeft(message.Message ?? string.Empty))
                     {
@@ -169,7 +172,7 @@ namespace Unigram.Common
 
                         if (message.HasViews)
                         {
-                            placeholder = "VIEWS" + (message.Views ?? 0) + placeholder;
+                            placeholder = "WS" + (message.Views ?? 0) + placeholder;
 
                             if (message.HasFromId && message.From != null)
                             {
@@ -185,12 +188,12 @@ namespace Unigram.Common
                     paragraph.Inlines.Add(new Run { Text = " " });
                 }
 
-                sender.Blocks.Clear();
-                sender.Blocks.Add(paragraph);
+                sender.Inlines.Clear();
+                sender.Inlines.Add(paragraph);
             }
             else
             {
-                sender.Blocks.Clear();
+                sender.Inlines.Clear();
             }
         }
 
@@ -212,7 +215,7 @@ namespace Unigram.Common
 
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as RichTextBlock;
+            var sender = d as TextBlock;
             var newValue = e.NewValue as string;
             var oldValue = e.OldValue as string;
 
@@ -222,11 +225,11 @@ namespace Unigram.Common
             if (oldValue == newValue) return;
 
             var foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x0f, 0x7d, 0xc7));
-            var paragraph = new Paragraph();
+            var paragraph = new Span();
             ReplaceAll(null, newValue, paragraph, foreground, true);
 
-            sender.Blocks.Clear();
-            sender.Blocks.Add(paragraph);
+            sender.Inlines.Clear();
+            sender.Inlines.Add(paragraph);
         }
         #endregion
 
@@ -349,7 +352,7 @@ namespace Unigram.Common
             EmojiRegex = new Regex(emoji, RegexOptions.Compiled);
         }
 
-        public static void ReplaceEntities(TLMessage message, Paragraph paragraph, Brush foreground)
+        public static void ReplaceEntities(TLMessage message, Span paragraph, Brush foreground)
         {
             var text = message.Message;
             var previous = 0;
@@ -433,7 +436,7 @@ namespace Unigram.Common
             }
         }
 
-        public static void ReplaceAll(TLMessageBase message, string text, Paragraph paragraph, Brush foreground, bool matchLinks)
+        public static void ReplaceAll(TLMessageBase message, string text, Span paragraph, Brush foreground, bool matchLinks)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
 
@@ -703,7 +706,7 @@ namespace Unigram.Common
             return entities;
         }
 
-        private static bool CheckInclusion(int index, List<TLMessageEntityBase> entities)
+        public static bool CheckInclusion(int index, List<TLMessageEntityBase> entities)
         {
             if (entities == null || entities.Count == 0)
             {
@@ -721,7 +724,7 @@ namespace Unigram.Common
             return false;
         }
 
-        private static bool CheckIntersection(int start, int end, List<TLMessageEntityBase> entities)
+        public static bool CheckIntersection(int start, int end, List<TLMessageEntityBase> entities)
         {
             if (entities == null || entities.Count == 0)
             {
@@ -810,6 +813,8 @@ namespace Unigram.Common
                 return;
             }
 
+            StickerSetView.Current.Hide();
+
             if (navstr.StartsWith("@"))
             {
                 Hyperlink_Navigate(TLType.MessageEntityMention, navstr, message);
@@ -864,57 +869,13 @@ namespace Unigram.Common
             }
             else if (type == TLType.MessageEntityMention)
             {
-                var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                if (service != null)
-                {
-                    var user = InMemoryCacheService.Current.GetUser((string)data) as TLUser;
-                    if (user != null && user.HasAccessHash)
-                    {
-                        service.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = user.Id });
-                        return;
-                    }
-
-                    var channel = InMemoryCacheService.Current.GetChannel((string)data);
-                    if (channel != null && channel.HasAccessHash)
-                    {
-                        service.NavigateToDialog(channel);
-                        return;
-                    }
-
-                    var response = await MTProtoService.Current.ResolveUsernameAsync(((string)data).TrimStart('@'));
-                    if (response.IsSucceeded)
-                    {
-                        var peerUser = response.Result.Peer as TLPeerUser;
-                        if (peerUser != null)
-                        {
-                            service.Navigate(typeof(UserDetailsPage), peerUser);
-                            return;
-                        }
-
-                        var peerChannel = response.Result.Peer as TLPeerChannel;
-                        if (peerChannel != null)
-                        {
-                            channel = InMemoryCacheService.Current.GetChannel((string)data);
-                            if (channel != null && channel.HasAccessHash)
-                            {
-                                service.NavigateToDialog(channel);
-                                return;
-                            }
-                        }
-
-                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
-                    }
-                    else
-                    {
-                        // TODO
-                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
-                    }
-                }
+                NavigateToUsername(MTProtoService.Current, (string)data, null, null, null);
             }
             else if (type == TLType.MessageEntityHashtag)
             {
                 //await UnigramContainer.Instance.ResolveType<MainViewModel>().Dialogs.SearchAsync((string)data);
                 UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.SearchQuery = (string)data;
+                UnigramContainer.Current.ResolveType<ITelegramEventAggregator>().Publish("Search");
             }
             else if (type == TLType.MessageEntityBotCommand)
             {
@@ -1198,6 +1159,11 @@ namespace Unigram.Common
 
         public static async void NavigateToUsername(IMTProtoService protoService, string username, string accessToken, string post, string game)
         {
+            if (username.StartsWith("@"))
+            {
+                username = username.Substring(1);
+            }
+
             var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
             if (service != null && protoService != null)
             {
@@ -1218,7 +1184,7 @@ namespace Unigram.Common
                     }
                     else
                     {
-                        service.NavigateToDialog(user);
+                        service.NavigateToDialog(user, accessToken: accessToken);
                     }
 
                     //if (user.IsBot)
@@ -1261,7 +1227,7 @@ namespace Unigram.Common
                             }
                             else
                             {
-                                service.NavigateToDialog(user);
+                                service.NavigateToDialog(user, accessToken: accessToken);
                             }
 
 
@@ -1290,12 +1256,12 @@ namespace Unigram.Common
                             return;
                         }
 
-                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
+                        await new TLMessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
                     else
                     {
                         // TODO
-                        await new MessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
+                        await new TLMessageDialog("No user found with this username", "Argh!").ShowQueuedAsync();
                     }
 
                     //mtProtoService.ResolveUsernameAsync(new TLString(username), delegate (TLResolvedPeer result)
@@ -1503,7 +1469,7 @@ namespace Unigram.Common
 
         public static bool IsValidUsername(string username)
         {
-            if (username.Length <= 3)
+            if (username.Length <= 2)
             {
                 return false;
             }

@@ -43,6 +43,7 @@ using Template10.Controls;
 using Windows.Foundation;
 using Windows.ApplicationModel.Contacts;
 using Telegram.Api.Aggregator;
+using Unigram.Controls;
 
 namespace Unigram
 {
@@ -94,7 +95,7 @@ namespace Unigram
 
                 try
                 {
-                    await new MessageDialog(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
+                    await new TLMessageDialog(args.Exception?.ToString() ?? string.Empty, "Unhandled exception").ShowQueuedAsync();
                 }
                 catch { }
             };
@@ -135,19 +136,19 @@ namespace Unigram
 
             if (active)
             {
-                Locator.LoadStateAndUpdate();
+                //Locator.LoadStateAndUpdate();
 
                 var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
                 protoService.UpdateStatusAsync(false, null);
             }
             else
             {
-                var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-                cacheService.TryCommit();
+                //var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
+                //cacheService.TryCommit();
 
-                var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-                updatesService.SaveState();
-                updatesService.CancelUpdating();
+                //var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
+                //updatesService.SaveState();
+                //updatesService.CancelUpdating();
 
                 var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
                 protoService.UpdateStatusAsync(true, null);
@@ -471,5 +472,6 @@ namespace Unigram
         public TLMessage SwitchInline { get; set; }
 
         public int? NavigateToMessage { get; set; }
+        public string NavigateToAccessToken { get; set; }
     }
 }

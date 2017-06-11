@@ -75,11 +75,15 @@ namespace Unigram.Views
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<DialogViewModel>();
 
+            //NavigationCacheMode = NavigationCacheMode.Required;
+
             ViewModel.TextField = TextField;
 
             CheckMessageBoxEmpty();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
+
+            TextField.LostFocus += TextField_LostFocus;
 
             lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
@@ -101,6 +105,49 @@ namespace Unigram.Views
             {
                 ElapsedLabel.Text = btnVoiceMessage.Elapsed.ToString("m\\:ss\\.ff");
             };
+
+            //if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
+            //{
+            //    var visual = ElementCompositionPreview.GetElementVisual(Header);
+            //    visual.Clip = Window.Current.Compositor.CreateInsetClip();
+
+            //    var showShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //    showShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, -48, 0));
+            //    showShowAnimation.InsertKeyFrame(1.0f, new Vector3());
+            //    showShowAnimation.Target = nameof(Visual.Offset);
+            //    showShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+            //    var showHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //    showHideAnimation.InsertKeyFrame(0.0f, new Vector3());
+            //    showHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, 48, 0));
+            //    showHideAnimation.Target = nameof(Visual.Offset);
+            //    showHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+            //    var hideHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //    hideHideAnimation.InsertKeyFrame(0.0f, new Vector3());
+            //    hideHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, -48, 0));
+            //    hideHideAnimation.Target = nameof(Visual.Offset);
+            //    hideHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+            //    var hideShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            //    hideShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, 48, 0));
+            //    hideShowAnimation.InsertKeyFrame(1.0f, new Vector3());
+            //    hideShowAnimation.Target = nameof(Visual.Offset);
+            //    hideShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
+
+            //    ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, showShowAnimation);
+            //    ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
+            //    ElementCompositionPreview.SetImplicitShowAnimation(InfoPanel, hideShowAnimation);
+            //    ElementCompositionPreview.SetImplicitHideAnimation(InfoPanel, showHideAnimation);
+            //}
+        }
+
+        private void TextField_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (StickersPanel.Visibility == Visibility.Visible)
+            {
+                StickersPanel.Visibility = Visibility.Collapsed;
+            }
         }
 
         //protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -122,57 +169,44 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
-            {
-                var visual = ElementCompositionPreview.GetElementVisual(Header);
-                visual.Clip = Window.Current.Compositor.CreateInsetClip();
+            InputPane.GetForCurrentView().Showing += InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
 
-                var showShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                showShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, -48, 0));
-                showShowAnimation.InsertKeyFrame(1.0f, new Vector3());
-                showShowAnimation.Target = nameof(Visual.Offset);
-                showShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-                var showHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                showHideAnimation.InsertKeyFrame(0.0f, new Vector3());
-                showHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, 48, 0));
-                showHideAnimation.Target = nameof(Visual.Offset);
-                showHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-                var hideHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                hideHideAnimation.InsertKeyFrame(0.0f, new Vector3());
-                hideHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, -48, 0));
-                hideHideAnimation.Target = nameof(Visual.Offset);
-                hideHideAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-                var hideShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                hideShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, 48, 0));
-                hideShowAnimation.InsertKeyFrame(1.0f, new Vector3());
-                hideShowAnimation.Target = nameof(Visual.Offset);
-                hideShowAnimation.Duration = TimeSpan.FromMilliseconds(400);
-
-                ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, showShowAnimation);
-                ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
-                ElementCompositionPreview.SetImplicitShowAnimation(InfoPanel, hideShowAnimation);
-                ElementCompositionPreview.SetImplicitHideAnimation(InfoPanel, showHideAnimation);
-            }
+            ViewModel.IsActive = true;
 
             base.OnNavigatedTo(e);
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
-            {
-                ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, null);
-                ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, null);
-                ElementCompositionPreview.SetImplicitShowAnimation(InfoPanel, null);
-                ElementCompositionPreview.SetImplicitHideAnimation(InfoPanel, null);
-            }
+            //if (_panel != null && ViewModel.With != null)
+            //{
+            //    var container = lvDialogs.ContainerFromIndex(_panel.FirstVisibleIndex);
+            //    if (container != null)
+            //    {
+            //        var peer = ViewModel.With.ToPeer();
+            //        var item = lvDialogs.ItemFromContainer(container) as TLMessageBase;
+
+            //        ApplicationSettings.Current.AddOrUpdateValue(TLSerializationService.Current.Serialize(peer), item?.Id ?? -1);
+            //    }
+            //}
 
             Bindings.StopTracking();
 
             base.OnNavigatingFrom(e);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            if (e.NavigationMode != NavigationMode.Forward || e.SourcePageType != typeof(DialogPage) || e.Parameter != Frame.BackStack.Last()?.Parameter)
+            {
+                InputPane.GetForCurrentView().Showing -= InputPane_Showing;
+                InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+
+                ViewModel.IsActive = false;
+            }
+
+            base.OnNavigatedFrom(e);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -218,9 +252,6 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            InputPane.GetForCurrentView().Showing += InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
-
             _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
             lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
 
@@ -228,12 +259,6 @@ namespace Unigram.Views
             {
                 TextField.Focus(FocusState.Keyboard);
             }
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
         }
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -280,18 +305,25 @@ namespace Unigram.Views
             if (ViewModel != null && TextField.IsEmpty && !forwarding)
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
+                btnCommands.Visibility = Visibility.Visible;
                 btnStickers.Visibility = Visibility.Visible;
                 btnVoiceMessage.Visibility = Visibility.Visible;
             }
             else
             {
+                btnSendMessage.Visibility = Visibility.Visible;
+                btnCommands.Visibility = Visibility.Collapsed;
                 btnStickers.Visibility = Visibility.Collapsed;
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
-                btnSendMessage.Visibility = Visibility.Visible;
             }
         }
 
         private void TextField_TextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
+        {
+            CheckMessageBoxEmpty();
+        }
+
+        private void TextField_TextChanged(object sender, RoutedEventArgs e)
         {
             CheckMessageBoxEmpty();
         }
@@ -443,15 +475,7 @@ namespace Unigram.Views
             else if (e.DataView.Contains(StandardDataFormats.Text))
             {
                 var text = await e.DataView.GetTextAsync();
-
-                if (TextField.Text == "")
-                {
-                    TextField.Text = text;
-                }
-                else
-                {
-                    TextField.Text = (TextField.Text + " " + text);
-                }
+                TextField.Document.GetRange(TextField.Document.Selection.EndPosition, TextField.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
 
                 //gridLoading.Visibility = Visibility.Collapsed;
             }
@@ -502,16 +526,23 @@ namespace Unigram.Views
             if (StickersPanel.Visibility == Visibility.Collapsed)
             {
                 StickersPanel.Visibility = Visibility.Visible;
+                TextField.PreventKeyboardDisplayOnProgrammaticFocus = true;
+                TextField.Focus(FocusState.Programmatic);
+                InputPane.GetForCurrentView().TryHide();
 
                 ViewModel.OpenStickersCommand.Execute(null);
-                InputPane.GetForCurrentView().TryHide();
             }
             else
             {
                 StickersPanel.Visibility = Visibility.Collapsed;
-
                 InputPane.GetForCurrentView().TryShow();
             }
+        }
+
+        private void Commands_Click(object sender, RoutedEventArgs e)
+        {
+            TextField.SetText("/", null);
+            TextField.Focus(FocusState.Keyboard);
         }
 
         private void ProfileBubble_Click(object sender, RoutedEventArgs e)
@@ -808,7 +839,7 @@ namespace Unigram.Views
         {
             ViewModel.SendStickerCommand.Execute(e.ClickedItem);
             ViewModel.StickerPack = null;
-            TextField.Text = null;
+            TextField.SetText(null, null);
         }
 
         private async void StickerSet_Click(object sender, RoutedEventArgs e)
@@ -990,6 +1021,7 @@ namespace Unigram.Views
         {
             AttachTextAreaExpression(ButtonAttach);
             AttachTextAreaExpression(ButtonSilent);
+            AttachTextAreaExpression(btnCommands);
             AttachTextAreaExpression(btnStickers);
             AttachTextAreaExpression(btnEditMessage);
             AttachTextAreaExpression(btnSendMessage);
@@ -1010,6 +1042,7 @@ namespace Unigram.Views
         {
             DetachTextAreaExpression(ButtonAttach);
             DetachTextAreaExpression(ButtonSilent);
+            DetachTextAreaExpression(btnCommands);
             DetachTextAreaExpression(btnStickers);
             DetachTextAreaExpression(btnEditMessage);
             DetachTextAreaExpression(btnSendMessage);
@@ -1032,9 +1065,84 @@ namespace Unigram.Views
                     command += $"@{item.Item1.Username}";
                 }
 
+                TextField.SetText(null, null);
                 ViewModel.SendCommand.Execute(command);
                 ViewModel.BotCommands = null;
-                TextField.Text = null;
+            }
+        }
+
+        private void UsernameHints_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            TextField.Document.GetText(TextGetOptions.None, out string hidden);
+            TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
+
+            var user = e.ClickedItem as TLUser;
+            if (user != null && BubbleTextBox.SearchByUsernames(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string query))
+            {
+                var insert = string.Empty;
+                var adjust = 0;
+
+                if (user.HasUsername)
+                {
+                    insert = user.Username;
+                }
+                else
+                {
+                    insert = user.HasFirstName ? user.FirstName : user.LastName;
+                    adjust = 1;
+                }
+
+                var format = TextField.Document.GetDefaultCharacterFormat();
+                var start = TextField.Document.Selection.StartPosition - query.Length - adjust + insert.Length;
+                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - query.Length - adjust, TextField.Document.Selection.StartPosition);
+                range.SetText(TextSetOptions.None, insert);
+
+                if (user.HasUsername == false)
+                {
+                    //range.CharacterFormat.Underline = UnderlineType.Dash;
+                    range.CharacterFormat.ForegroundColor = Colors.Red;
+                    range.Link = $"\"{user.Id}\"";
+                    start += range.Link.Length + "HYPERLINK ".Length;
+                }
+
+                TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
+                TextField.Document.Selection.StartPosition = start + 1;
+                TextField.Document.SetDefaultCharacterFormat(format);
+
+                ViewModel.UsernameHints = null;
+            }
+        }
+
+        #region Binding
+
+        public Visibility ConvertBotInfo(bool hasInfo, bool last)
+        {
+            return hasInfo && last ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public Visibility ConvertIsEmpty(bool empty, bool self, bool should)
+        {
+            if (should)
+            {
+                return empty && self ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            return empty && !self ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public string ConvertEmptyText(int userId)
+        {
+            return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? "Got a question about Telegram?" : "No messages here yet...";
+        }
+
+        #endregion
+
+        private void Share_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as FrameworkElement;
+            if (button.DataContext is TLMessage message)
+            {
+                ViewModel.MessageShareCommand.Execute(message);
             }
         }
     }

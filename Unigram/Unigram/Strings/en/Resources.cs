@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 05/27/2017 16:55:22
+// 	Generated: 06/03/2017 15:33:57
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -1267,6 +1267,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("YearNominativeSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Users"
+        /// </summary>
+        public static string UserGenitivePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("UserGenitivePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "User"
+        /// </summary>
+        public static string UserGenitiveSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("UserGenitiveSingular");
             }
         }
     }

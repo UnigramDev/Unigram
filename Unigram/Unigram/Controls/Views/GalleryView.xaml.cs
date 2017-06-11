@@ -33,6 +33,8 @@ using LinqToVisualTree;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Microsoft.Graphics.Canvas.Effects;
+using Windows.UI.ViewManagement;
+using Windows.System.Display;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -44,6 +46,9 @@ namespace Unigram.Controls.Views
 
         public BindConvert Convert => BindConvert.Current;
 
+        private Func<FrameworkElement> _closing;
+
+        private DisplayRequest _request;
         private MediaPlayerElement _mediaPlayer;
         private MediaPlayerSurface _mediaSurface;
 
@@ -66,6 +71,7 @@ namespace Unigram.Controls.Views
             _mediaPlayer.AreTransportControlsEnabled = true;
             _mediaPlayer.TransportControls = Transport;
             _mediaPlayer.SetMediaPlayer(new MediaPlayer());
+            _mediaPlayer.MediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
 
             _layerVisual = ElementCompositionPreview.GetElementVisual(Layer);
             //_topBarVisual = ElementCompositionPreview.GetElementVisual(TopBar);
@@ -125,6 +131,32 @@ namespace Unigram.Controls.Views
             }
         }
 
+        private async void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                switch (sender.PlaybackState)
+                {
+                    case MediaPlaybackState.Opening:
+                    case MediaPlaybackState.Buffering:
+                    case MediaPlaybackState.Playing:
+                        if (_request == null)
+                        {
+                            _request = new DisplayRequest();
+                            _request.RequestActive();
+                        }
+                        break;
+                    default:
+                        if (_request != null)
+                        {
+                            _request.RequestRelease();
+                            _request = null;
+                        }
+                        break;
+                }
+            });
+        }
+
         private static GalleryView _current;
         public static GalleryView Current
         {
@@ -139,24 +171,28 @@ namespace Unigram.Controls.Views
             }
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter, EventHandler closing)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing)
         {
-            EventHandler handler = null;
-            handler = new EventHandler((s, args) =>
-            {
-                DataContext = null;
-                Bindings.StopTracking();
+            _closing = closing;
 
-                Closing -= handler;
-                closing?.Invoke(this, args);
-            });
+            //EventHandler handler = null;
+            //handler = new EventHandler((s, args) =>
+            //{
+            //    DataContext = null;
+            //    Bindings.StopTracking();
 
-            Closing += handler;
+            //    Closing -= handler;
+            //    closing?.Invoke(this, args);
+            //});
+
+            //Closing += handler;
             return ShowAsync(parameter);
         }
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter)
         {
+            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+
             DataContext = parameter;
             Bindings.Update();
 
@@ -171,6 +207,22 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
+        protected override void MaskTitleAndStatusBar()
+        {
+            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
+            titlebar.BackgroundColor = Colors.Black;
+            titlebar.ForegroundColor = Colors.White;
+            titlebar.ButtonBackgroundColor = Colors.Black;
+            titlebar.ButtonForegroundColor = Colors.White;
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                var statusBar = StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = Colors.Black;
+                statusBar.ForegroundColor = Colors.White;
+            }
+        }
+
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
             Dispose();
@@ -180,26 +232,24 @@ namespace Unigram.Controls.Views
                 //Flip.Opacity = 0;
                 Surface.Visibility = Visibility.Visible;
 
+                Layer.Visibility = Visibility.Collapsed;
+                TopBar.Visibility = Visibility.Collapsed;
+                BotBar.Visibility = Visibility.Collapsed;
+
                 var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
-                if (animation != null)
+                if (animation != null && _closing != null)
                 {
-                    Prepare();
+                    animation.TryStart(_closing());
 
-                    Layer.Visibility = Visibility.Collapsed;
-                    TopBar.Visibility = Visibility.Collapsed;
-                    BotBar.Visibility = Visibility.Collapsed;
+                    DataContext = null;
+                    Bindings.StopTracking();
 
-                    animation.Completed += (s, args) =>
-                    {
-                        Hide();
-                    };
+                    Hide();
                 }
                 else
                 {
-                    //Flip.Opacity = 0;
-                    Layer.Visibility = Visibility.Collapsed;
-                    TopBar.Visibility = Visibility.Collapsed;
-                    BotBar.Visibility = Visibility.Collapsed;
+                    DataContext = null;
+                    Bindings.StopTracking();
 
                     Hide();
                 }
@@ -210,6 +260,9 @@ namespace Unigram.Controls.Views
                 Layer.Visibility = Visibility.Collapsed;
                 TopBar.Visibility = Visibility.Collapsed;
                 BotBar.Visibility = Visibility.Collapsed;
+
+                DataContext = null;
+                Bindings.StopTracking();
 
                 Hide();
             }
@@ -223,16 +276,23 @@ namespace Unigram.Controls.Views
             if (animation != null)
             {
                 Layer.Visibility = Visibility.Visible;
-                //Flip.Opacity = 1;
-                animation.TryStart(Surface);
-                animation.Completed += (s, args) =>
-                {
-                    TopBar.Visibility = Visibility.Visible;
-                    BotBar.Visibility = Visibility.Visible;
+                TopBar.Visibility = Visibility.Visible;
+                BotBar.Visibility = Visibility.Visible;
 
+                //Flip.Opacity = 1;
+                if (animation.TryStart(Surface))
+                {
+                    animation.Completed += (s, args) =>
+                    {
+                        //Flip.Opacity = 1;
+                        //Surface.Visibility = Visibility.Collapsed;
+                    };
+                }
+                else
+                {
                     //Flip.Opacity = 1;
                     //Surface.Visibility = Visibility.Collapsed;
-                };
+                }
             }
         }
 
@@ -322,6 +382,23 @@ namespace Unigram.Controls.Views
                 _mediaPlayer.MediaPlayer.Pause();
                 _mediaPlayer.Source = null;
             }
+        }
+
+        private void ImageView_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            TopBar.Visibility = TopBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            BotBar.Visibility = BotBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            DataContext = null;
+            Bindings.StopTracking();
+        }
+
+        private void Download_Click(object sender, object e)
+        {
+
         }
     }
 }

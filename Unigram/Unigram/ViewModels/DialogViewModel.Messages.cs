@@ -208,11 +208,16 @@ namespace Unigram.ViewModels
                     {
                         ClearReplyCommand.Execute();
                     }
+                    else if (ReplyInfo != null && ReplyInfo.ReplyToMsgId == messages[j].Id)
+                    {
+                        ClearReplyCommand.Execute();
+                    }
 
                     Messages.Remove(messages[j]);
                 }
 
                 RaisePropertyChanged(() => With);
+                SelectionMode = ListViewSelectionMode.None;
 
                 //this.IsEmptyDialog = (this.Items.get_Count() == 0 && this.LazyItems.get_Count() == 0);
                 //this.NotifyOfPropertyChange<TLObject>(() => this.With);
@@ -280,7 +285,24 @@ namespace Unigram.ViewModels
         #region Multiple Delete
 
         private RelayCommand _messagesDeleteCommand;
-        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages.Count > 0));
+        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(messageCommon =>
+        {
+            var channel = _with as TLChannel;
+            if (channel != null)
+            {
+                if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
+                {
+                    return false;
+                }
+
+                if (!messageCommon.IsOut && !channel.IsCreator && !channel.IsEditor)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        })));
 
         private async void MessagesDeleteExecute()
         {
@@ -421,6 +443,8 @@ namespace Unigram.ViewModels
             var messages = SelectedMessages.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
             {
+                SelectionMode = ListViewSelectionMode.None;
+
                 App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
                 NavigationService.GoBackAt(0);
             }
@@ -482,7 +506,7 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        #region CopyLink
+        #region Copy link
 
         public RelayCommand<TLMessage> MessageCopyLinkCommand => new RelayCommand<TLMessage>(MessageCopyLinkExecute);
         private void MessageCopyLinkExecute(TLMessage message)
@@ -511,7 +535,7 @@ namespace Unigram.ViewModels
                 }
 
                 var dataPackage = new DataPackage();
-                dataPackage.SetWebLink(new Uri(link));
+                dataPackage.SetText(link);
                 Clipboard.SetContent(dataPackage);
             }
         }
@@ -924,14 +948,12 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-                        var dialog = new MessageDialog(urlButton.Url, "Open this link?");
-                        dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
-                        dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
-                        dialog.DefaultCommandIndex = 0;
-                        dialog.CancelCommandIndex = 1;
+                        var dialog = new TLMessageDialog(urlButton.Url, "Open this link?");
+                        dialog.PrimaryButtonText = "OK";
+                        dialog.SecondaryButtonText = "Cancel";
 
                         var result = await dialog.ShowQueuedAsync();
-                        if (result == null || (int)result?.Id == 1)
+                        if (result != ContentDialogResult.Primary)
                         {
                             return;
                         }
@@ -949,12 +971,12 @@ namespace Unigram.ViewModels
                     {
                         if (response.Result.IsAlert)
                         {
-                            await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                            await new TLMessageDialog(response.Result.Message).ShowQueuedAsync();
                         }
                         else
                         {
                             // TODO:
-                            await new MessageDialog(response.Result.Message).ShowQueuedAsync();
+                            await new TLMessageDialog(response.Result.Message).ShowQueuedAsync();
                         }
                     }
                     else if (response.Result.HasUrl && response.Result.IsHasUrl /* ??? */)
@@ -973,14 +995,12 @@ namespace Unigram.ViewModels
                             }
                             else
                             {
-                                var dialog = new MessageDialog(response.Result.Url, "Open this link?");
-                                dialog.Commands.Add(new UICommand("OK", (_) => { }, 0));
-                                dialog.Commands.Add(new UICommand("Cancel", (_) => { }, 1));
-                                dialog.DefaultCommandIndex = 0;
-                                dialog.CancelCommandIndex = 1;
+                                var dialog = new TLMessageDialog(response.Result.Url, "Open this link?");
+                                dialog.PrimaryButtonText = "OK";
+                                dialog.SecondaryButtonText = "Cancel";
 
                                 var result = await dialog.ShowQueuedAsync();
-                                if (result == null || (int)result?.Id == 1)
+                                if (result != ContentDialogResult.Primary)
                                 {
                                     return;
                                 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Common
 {
@@ -14,7 +15,7 @@ namespace Unigram.Common
     /// </summary>
     public static class MessageDialogExtensions
     {
-        private static TaskCompletionSource<MessageDialog> _currentDialogShowRequest;
+        private static TaskCompletionSource<ContentDialog> _currentDialogShowRequest;
 
         /// <summary>
         /// Begins an asynchronous operation showing a dialog.
@@ -25,14 +26,14 @@ namespace Unigram.Common
         /// <param name="dialog">The dialog.</param>
         /// <returns></returns>
         /// <exception cref="System.InvalidOperationException">This method can only be invoked from UI thread.</exception>
-        public static async Task<IUICommand> ShowQueuedAsync(this MessageDialog dialog)
+        public static async Task<ContentDialogResult> ShowQueuedAsync(this ContentDialog dialog)
         {
             while (_currentDialogShowRequest != null)
             {
                 await _currentDialogShowRequest.Task;
             }
 
-            var request = _currentDialogShowRequest = new TaskCompletionSource<MessageDialog>();
+            var request = _currentDialogShowRequest = new TaskCompletionSource<ContentDialog>();
             var result = await dialog.ShowAsync();
             _currentDialogShowRequest = null;
             request.SetResult(dialog);
@@ -49,7 +50,7 @@ namespace Unigram.Common
         /// <param name="dialog">The dialog.</param>
         /// <returns></returns>
         /// <exception cref="System.InvalidOperationException">This method can only be invoked from UI thread.</exception>
-        public static async Task<IUICommand> ShowIfPossibleAsync(this MessageDialog dialog)
+        public static async Task<ContentDialogResult> ShowIfPossibleAsync(this ContentDialog dialog)
         {
             if (!Window.Current.Dispatcher.HasThreadAccess)
             {
@@ -58,10 +59,10 @@ namespace Unigram.Common
 
             while (_currentDialogShowRequest != null)
             {
-                return null;
+                return ContentDialogResult.None;
             }
 
-            var request = _currentDialogShowRequest = new TaskCompletionSource<MessageDialog>();
+            var request = _currentDialogShowRequest = new TaskCompletionSource<ContentDialog>();
             var result = await dialog.ShowAsync();
             _currentDialogShowRequest = null;
             request.SetResult(dialog);
