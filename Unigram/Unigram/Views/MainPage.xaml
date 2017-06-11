@@ -141,7 +141,7 @@
                                                     Text="Logout"
                                                     Tag="&#xE106;"/>
 
-                                    <MenuFlyoutSeparator/>
+                                    <MenuFlyoutSeparator x:Name="FlyoutSeperator"/>
                                     <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                     Click="cbtnMasterAbout_Click"
                                                     Text="About"

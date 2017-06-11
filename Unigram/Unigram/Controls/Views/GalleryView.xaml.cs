@@ -395,5 +395,10 @@ namespace Unigram.Controls.Views
             DataContext = null;
             Bindings.StopTracking();
         }
+
+        private void Download_Click(object sender, object e)
+        {
+
+        }
     }
 }
