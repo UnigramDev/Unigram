@@ -11,6 +11,7 @@ using Telegram.Api.TL;
 using Template10.Mvvm;
 using Unigram.Common;
 using Unigram.Controls.Views;
+using Unigram.Converters;
 using Unigram.Core.Common;
 
 namespace Unigram.ViewModels
@@ -120,6 +121,14 @@ namespace Unigram.ViewModels
             }
         }
 
+        public virtual bool CanOpenInApp
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public RelayCommand StickersCommand => new RelayCommand(StickersExecute);
         private async void StickersExecute()
         {
@@ -147,6 +156,20 @@ namespace Unigram.ViewModels
         public RelayCommand DeleteCommand => new RelayCommand(DeleteExecute);
         protected virtual void DeleteExecute()
         {
+        }
+
+        public RelayCommand OpenInAppCommand => new RelayCommand(OpenInAppExecute);
+        protected virtual void OpenInAppExecute() // TODO Make async again when using the Launcher
+        {
+            // Get the source 
+            //var something = (TLPhoto)DefaultPhotoConverter.Convert(_selectedItem.Source);
+            //var sizeBase = something.Full;
+            //var photoSize = sizeBase as TLPhotoSize;
+            //var fileLocation = photoSize.Location as TLFileLocation;
+            //fileLocation.   // Find a way to get the IStorageFile of that darn picture
+            
+            // Open that file
+            //await Windows.System.Launcher.LaunchFileAsync(*INSERT FILE HERE*);
         }
     }
 
