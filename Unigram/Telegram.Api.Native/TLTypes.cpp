@@ -953,6 +953,15 @@ HRESULT TLGZipPacked::RuntimeClassInitialize(NativeBuffer* rawData)
 	return GZipCompressBuffer(rawData->GetBuffer(), rawData->GetCapacity(), &m_packedData);
 }
 
+HRESULT TLGZipPacked::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+{
+	HRESULT result;
+	ComPtr<ITLObject> query;
+	ReturnIfFailed(result, get_Query(&query));
+
+	return TLObject::HandleResponse(messageContext, query.Get(), connectionManager, connection);
+}
+
 HRESULT TLGZipPacked::get_Query(ITLObject** value)
 {
 	HRESULT result;

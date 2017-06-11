@@ -127,9 +127,10 @@ namespace Telegram
 				HRESULT CreateTransportMessage(_In_ MessageRequest* request, _Inout_ INT64& lastRpcMessageId, _Inout_ boolean& requiresLayer, _Out_ TL::TLMessage** message);
 				HRESULT ProcessDatacenterRequests(_In_ Datacenter* datacenter, ConnectionType connectionType);
 				HRESULT ProcessRequest(_In_ MessageRequest* request, INT32 currentTime, _In_ std::map<UINT32, DatacenterRequestContext>& datacentersContexts);
-				HRESULT ProcessRequests(_In_ std::map<UINT32, DatacenterRequestContext> const& datacentersContexts);
+				HRESULT ProcessRequests(_In_ std::map<UINT32, DatacenterRequestContext>& datacentersContexts);	
 				HRESULT ProcessDatacenterRequests(_In_ DatacenterRequestContext const& datacenterContext);
-				void ResetRequests(std::function<boolean(INT32, ComPtr<MessageRequest> const&)> selector);
+				void ResetRequests(_In_ std::map<UINT32, DatacenterRequestContext> const& datacentersContexts);
+				void ResetRequests(std::function<boolean(INT32, ComPtr<MessageRequest> const&)> selector, boolean resetStartTime);
 				HRESULT CompleteMessageRequest(INT64 requestMessageId, _In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
 				HRESULT HandleRequestError(_In_ Datacenter* datacenter, _In_ MessageRequest* request, INT32 code, _In_ HString const& text);
 				HRESULT OnUnprocessedMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
@@ -167,7 +168,7 @@ namespace Telegram
 				std::list<ComPtr<MessageRequest>> m_requestsQueue;
 				std::list<std::pair<INT32, ComPtr<MessageRequest>>> m_runningRequests;
 				std::map<INT32, std::vector<ComPtr<MessageRequest>>> m_quickAckRequests;
-				UINT32 m_lastProcessedRequestTime;
+				INT64 m_lastProcessedRequestTime;
 				INT32 m_lastRequestToken;
 				INT64 m_lastOutgoingMessageId;
 				INT32 m_timeDifference;

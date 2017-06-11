@@ -207,6 +207,7 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 
 	m_socket = INVALID_SOCKET;
 
+	WSASetEvent(m_socketEvent.Get());
 	DetachFromThreadpool(flags & SOCKET_CLOSE_JOINTHREAD);
 
 	m_socketEvent.Close();

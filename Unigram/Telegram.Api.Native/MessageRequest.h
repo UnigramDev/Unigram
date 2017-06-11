@@ -5,6 +5,7 @@
 #include "Telegram.Api.Native.h"
 #include "Datacenter.h"
 
+#define REQUEST_TIMEOUT 30
 #define REQUEST_FLAG_NO_LAYER static_cast<RequestFlag>(0x4000)
 #define REQUEST_FLAG_INIT_CONNECTION static_cast<RequestFlag>(0x8000)
 
@@ -150,7 +151,7 @@ namespace Telegram
 					return m_datacenterId;
 				}
 
-				inline INT64 GetStartTime() const
+				inline INT32 GetStartTime() const
 				{
 					return m_startTime;
 				}
@@ -210,6 +211,11 @@ namespace Telegram
 					return (m_flags & REQUEST_FLAG_NO_LAYER) == RequestFlag::None;
 				}
 
+				inline boolean IsTimedOut(INT32 currentTime)
+				{
+					return currentTime - m_startTime >= REQUEST_TIMEOUT;
+				}
+
 				inline ComPtr<IRequestQuickAckReceivedCallback> const& GetQuickAckReceivedCallback() const
 				{
 					return m_quickAckReceivedCallback;
@@ -221,14 +227,14 @@ namespace Telegram
 				}
 
 			private:
-				void Reset();
+				void Reset(boolean resetStartTime);
 
 				inline void SetMessageContext(MessageContext const& mesageContext)
 				{
 					m_messageContext = std::make_unique<MessageContext>(mesageContext);
 				}
 
-				inline void SetStartTime(INT64 startTime)
+				inline void SetStartTime(INT32 startTime)
 				{
 					m_startTime = startTime;
 				}
@@ -242,7 +248,7 @@ namespace Telegram
 				INT32 m_token;
 				ConnectionType m_connectionType;
 				INT32 m_datacenterId;
-				INT64 m_startTime;
+				INT32 m_startTime;
 				UINT32 m_retriesCount;
 				std::unique_ptr<MessageContext> m_messageContext;
 				ComPtr<ISendRequestCompletedCallback> m_sendCompletedCallback;

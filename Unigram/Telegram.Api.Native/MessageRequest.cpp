@@ -95,8 +95,13 @@ HRESULT MessageRequest::get_Flags(RequestFlag* value)
 	return S_OK;
 }
 
-void MessageRequest::Reset()
+void MessageRequest::Reset(boolean resetStartTime)
 {
-	m_startTime = 0;
 	m_messageContext.reset();
+	m_flags &= ~REQUEST_FLAG_INIT_CONNECTION;
+
+	if (resetStartTime)
+	{
+		m_startTime = 0;
+	}
 }

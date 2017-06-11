@@ -754,7 +754,7 @@ namespace Telegram
 					HString m_info;
 				};
 
-				class TLGZipPacked WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLGZipPackedTraits>, CloakedIid<ITLObjectWithQuery>>
+				class TLGZipPacked WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLGZipPackedTraits>, CloakedIid<ITLObjectWithQuery>, CloakedIid<IMessageResponseHandler>>
 				{
 					InspectableClass(Traits::RuntimeClassName, BaseTrust);
 
@@ -763,6 +763,7 @@ namespace Telegram
 					IFACEMETHODIMP get_Query(_Out_ ITLObject** value);
 
 					//Internal methods
+					STDMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
 					STDMETHODIMP RuntimeClassInitialize(_In_ ITLObject* object);
 					STDMETHODIMP RuntimeClassInitialize(_In_ NativeBuffer* rawData);
 
