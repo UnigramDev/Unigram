@@ -167,6 +167,64 @@ namespace Telegram.Api.Native.Test
             },
             null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.EnableUnauthorized);
         }
+
+        private void Button_Click_6(object sender, RoutedEventArgs e)
+        {
+            var connectionManager = ConnectionManager.Instance;
+            var resolve = new TLContactsResolveUsername { Username = Constants.Resolve };
+            connectionManager.SendRequest(resolve, (message3, ex3) =>
+            {
+                var resolvedPeer = message3.Object as TLContactsResolvedPeer;
+                if (resolvedPeer == null)
+                {
+                    Debugger.Break();
+                    return;
+                }
+
+                var user = resolvedPeer.Users.FirstOrDefault() as TLUser;
+                if (user == null)
+                {
+                    Debugger.Break();
+                    return;
+                }
+
+                var getHistory = new TLMessagesGetHistory { Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value }, MaxId = int.MaxValue };
+                connectionManager.SendRequest(getHistory, (message4, ex4) =>
+                {
+                    var messages = message4.Object as TLMessagesMessagesBase;
+                    if (messages == null)
+                    {
+                        Debugger.Break();
+                        return;
+                    }
+
+                    Debug.WriteLine("Download started");
+
+                    var first = messages.Messages.FirstOrDefault() as TLMessage;
+                    var documentMedia = first.Media as TLMessageMediaDocument;
+                    var document = documentMedia.Document as TLDocument;
+                    var watch = Stopwatch.StartNew();
+
+                    var chunkSize = 128 * 1024;
+
+                    var steps = Math.Ceiling((double)document.Size / (double)chunkSize);
+                    for (int i = 0; i < steps; i++)
+                    {
+                        var index = i + 0;
+                        var getFile = new TLUploadGetFile { Offset = i * chunkSize, Limit = chunkSize, Location = new TLInputDocumentFileLocation { Id = document.Id, AccessHash = document.AccessHash, Version = document.Version } };
+                        connectionManager.SendRequest(getFile, (message5, ex5) =>
+                        {
+                            Debug.WriteLine("Chunk {0} received, elapsed {1}", index, watch.Elapsed);
+                        },
+                        // Should run on Download connection
+                        null, document.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload | RequestFlag.Immediate);
+                    }
+                },
+                null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
+            },
+            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
+
+        }
     }
 }
 

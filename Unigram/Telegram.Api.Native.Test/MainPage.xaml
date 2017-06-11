@@ -15,6 +15,7 @@
             <Button Content="GetConfig" Click="Button_Click_2" />
             <Button Content="Destroy" Click="Button_Click_3" />
             <Button Content="Logout" Click="Button_Click_5"/>
+            <Button Content="Download" Click="Button_Click_6"/>
         </StackPanel>
     </Grid>
 </Page>
