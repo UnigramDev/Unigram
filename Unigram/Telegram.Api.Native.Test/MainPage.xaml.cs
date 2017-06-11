@@ -214,7 +214,15 @@ namespace Telegram.Api.Native.Test
                         var getFile = new TLUploadGetFile { Offset = i * chunkSize, Limit = chunkSize, Location = new TLInputDocumentFileLocation { Id = document.Id, AccessHash = document.AccessHash, Version = document.Version } };
                         connectionManager.SendRequest(getFile, (message5, ex5) =>
                         {
-                            Debug.WriteLine("Chunk {0} received, elapsed {1}", index, watch.Elapsed);
+                            var result = message5.Object as TLUploadFile;
+                            if (result != null)
+                            {
+                                Debug.WriteLine("Chunk {0}/{1} received, {2} elapsed, {3} bytes", index, (int)steps, watch.Elapsed, result.Bytes.Length);
+                            }
+                            else
+                            {
+                                Debug.WriteLine("Chunk {0}/{1} failed", index, watch.Elapsed);
+                            }
                         },
                         // Should run on Download connection
                         null, document.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload | RequestFlag.Immediate);

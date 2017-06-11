@@ -47,8 +47,7 @@ namespace Telegram.Api.TL
             var count = from.ReadInt32();
             for (int i = 0; i < count; i++)
             {
-                var constructor = from.ReadUInt32();
-                _items.Add(TLFactory.Read<T>(from, (TLType)constructor));
+                _items.Add(TLFactory.Read<T>(from));
             }
         }
 
