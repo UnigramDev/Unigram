@@ -24,9 +24,6 @@
 
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
 
-            <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
-            <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
-
             <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="Green"/>
             <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="Red"/>
 
@@ -53,9 +50,6 @@
             <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#000000"/>
 
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
-
-            <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
-            <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
 
             <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="Green"/>
             <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="Red"/>

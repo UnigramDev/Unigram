@@ -34,6 +34,7 @@ namespace Unigram.Controls
                     var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
                     if (File.Exists(FileUtils.GetTempFileName(fileName)))
                     {
+                        Update();
                         Completed?.Invoke(this, new TransferCompletedEventArgs(fileName));
                     }
                     else
@@ -60,6 +61,7 @@ namespace Unigram.Controls
                 var fileName = document.GetFileName();
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
+                    Update();
                     Completed?.Invoke(this, new TransferCompletedEventArgs(fileName));
                 }
                 else

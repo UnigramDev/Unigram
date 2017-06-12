@@ -105,6 +105,7 @@
     <Compile Include="Common\MessageDialogExtensions.cs" />
     <Compile Include="Common\RatioControl.cs" />
     <Compile Include="Common\TextBlockHelper.cs" />
+    <Compile Include="Common\Theme.cs" />
     <Compile Include="Common\TLBitmapContext.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\VoIPConnection.cs" />
@@ -256,6 +257,9 @@
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
+    <Compile Include="Views\Channels\ChannelAdminRightsPage.xaml.cs">
+      <DependentUpon>ChannelAdminRightsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Channels\ChannelAdminsPage.xaml.cs">
       <DependentUpon>ChannelAdminsPage.xaml</DependentUpon>
     </Compile>
@@ -825,7 +829,6 @@
     <Compile Include="Converters\StateToGlyphConverter.cs" />
     <Compile Include="Converters\TLIntToDateTimeConverter.cs" />
     <Compile Include="Converters\VenueToStaticImageConverter.cs" />
-    <Compile Include="Helpers\ColorHelper.cs" />
     <Compile Include="Helpers\PhraseListHelper.cs" />
     <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Helpers\ShareTargetHelper.cs" />
@@ -1252,6 +1255,10 @@
     <Page Include="Views\AboutPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Channels\ChannelAdminRightsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Channels\ChannelEditPage.xaml">
       <SubType>Designer</SubType>

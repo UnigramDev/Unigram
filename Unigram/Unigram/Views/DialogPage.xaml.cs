@@ -1123,14 +1123,14 @@ namespace Unigram.Views
             return hasInfo && last ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public Visibility ConvertIsEmpty(bool empty, bool self, bool should)
+        public Visibility ConvertIsEmpty(bool empty, bool self, bool bot, bool should)
         {
             if (should)
             {
                 return empty && self ? Visibility.Visible : Visibility.Collapsed;
             }
 
-            return empty && !self ? Visibility.Visible : Visibility.Collapsed;
+            return empty && !self && !bot ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public string ConvertEmptyText(int userId)

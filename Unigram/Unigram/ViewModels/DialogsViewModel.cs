@@ -646,8 +646,12 @@ namespace Unigram.ViewModels
                         {
                             Execute.BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
 
-                            e.Dialog = already;
-                            currentPosition = Items.IndexOf(already);
+                            var index = Items.IndexOf(already);
+
+                            Items.RemoveAt(index);
+                            Items.Insert(index, e.Dialog);
+
+                            currentPosition = index;
                         }
                     }
 

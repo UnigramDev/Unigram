@@ -25,10 +25,6 @@
 
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
 
-            <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
-            <SolidColorBrush x:Key="MessageServiceForegroundBrush" Color="#FFFFFFFF"/>
-            <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
-
             <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="Green"/>
             <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="Red"/>
 
@@ -74,10 +70,6 @@
 
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
 
-            <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
-            <SolidColorBrush x:Key="MessageServiceForegroundBrush" Color="#FFFFFFFF"/>
-            <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
-
             <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="Green"/>
             <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="Red"/>
 
@@ -110,6 +102,10 @@
     <Thickness x:Key="MessageContentPadding">8,4,10,6</Thickness>
     <Thickness x:Key="MessageContentMargin">0,2,0,0</Thickness>
     <CornerRadius x:Key="MessageCornerRadius">0</CornerRadius>
+
+    <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#667A8A96"/>
+    <SolidColorBrush x:Key="MessageServiceForegroundBrush" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#887A8A96"/>
 
     <SolidColorBrush x:Key="TelegramDialogLabelStateBrush" Color="#64BC54"/>
     <SolidColorBrush x:Key="TelegramBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>
