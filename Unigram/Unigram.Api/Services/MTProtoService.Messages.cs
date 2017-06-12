@@ -11,8 +11,9 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Methods;
-using Telegram.Api.TL.Methods.Help;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Help.Methods;
+using Telegram.Api.TL.Messages.Methods;
+using Telegram.Api.TL.Messages;
 
 namespace Telegram.Api.Services
 {

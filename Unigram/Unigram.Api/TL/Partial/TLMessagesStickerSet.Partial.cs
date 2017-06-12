@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Telegram.Api.TL
+namespace Telegram.Api.TL.Messages
 {
     public partial class TLMessagesStickerSet
     {

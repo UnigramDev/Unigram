@@ -9,8 +9,9 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
-using Action = System.Action;
-
+using Telegram.Api.TL.Contacts;
+using Telegram.Api.TL.Messages;
+using Telegram.Api.TL.Updates;
 
 namespace Telegram.Api.Services.Cache
 {

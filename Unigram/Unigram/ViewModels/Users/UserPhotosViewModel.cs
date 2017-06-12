@@ -11,6 +11,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Photos;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;

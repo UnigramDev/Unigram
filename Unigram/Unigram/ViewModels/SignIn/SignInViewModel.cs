@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 using Unigram.Controls;
 using Windows.System;
 using Windows.UI.Core;
-using Telegram.Api.TL.Methods.Auth;
+using Telegram.Api.TL.Auth.Methods;
 using System.Diagnostics;
 using Unigram.Views;
 

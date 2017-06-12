@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Payments;
 using Template10.Common;
 using Template10.Services.LoggingService;
 using Template10.Services.NavigationService;

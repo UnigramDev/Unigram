@@ -18,6 +18,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Extensions;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Updates;
 
 namespace Telegram.Api.Services.Updates
 {

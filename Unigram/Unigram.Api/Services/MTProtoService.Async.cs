@@ -5,8 +5,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Channels;
-using Telegram.Api.TL.Methods.Contacts;
+using Telegram.Api.TL.Account;
+using Telegram.Api.TL.Auth;
+using Telegram.Api.TL.Channels;
+using Telegram.Api.TL.Channels.Methods;
+using Telegram.Api.TL.Contacts;
+using Telegram.Api.TL.Contacts.Methods;
+using Telegram.Api.TL.Help;
+using Telegram.Api.TL.Messages;
+using Telegram.Api.TL.Payments;
+using Telegram.Api.TL.Phone;
+using Telegram.Api.TL.Photos;
+using Telegram.Api.TL.Updates;
+using Telegram.Api.TL.Upload;
 
 namespace Telegram.Api.Services
 {

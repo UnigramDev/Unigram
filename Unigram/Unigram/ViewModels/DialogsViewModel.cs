@@ -13,6 +13,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Messages;
 using Telegram.Logs;
 using Template10.Utils;
 using Unigram.Common;

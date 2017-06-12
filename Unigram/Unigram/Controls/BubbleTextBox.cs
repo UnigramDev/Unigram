@@ -34,6 +34,7 @@ using Windows.UI.Xaml.Media;
 using Unigram.Core;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
+using Telegram.Api.TL.Channels;
 
 namespace Unigram.Controls
 {

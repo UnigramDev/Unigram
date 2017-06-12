@@ -23,6 +23,7 @@ using Windows.UI.ViewManagement;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Template10.Utils;
+using Telegram.Api.TL.Messages;
 
 namespace Unigram.Controls.Views
 {

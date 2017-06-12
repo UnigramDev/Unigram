@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Payments;
+using Telegram.Api.TL.Payments;
+using Telegram.Api.TL.Payments.Methods;
 
 namespace Telegram.Api.Services
 {

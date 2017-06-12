@@ -14,8 +14,8 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.Connection;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Messages;
-using Telegram.Api.TL.Methods.Phone;
+using Telegram.Api.TL.Messages.Methods;
+using Telegram.Api.TL.Phone.Methods;
 using Telegram.Api.Transport;
 using Unigram.Core;
 using Unigram.Core.Services;
@@ -29,6 +29,8 @@ using Windows.Storage;
 using System.Net;
 using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
+using Telegram.Api.TL.Messages;
+using Telegram.Api.TL.Phone;
 
 namespace Unigram.Tasks
 {

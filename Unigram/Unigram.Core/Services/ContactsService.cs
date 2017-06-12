@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Contacts;
 using Unigram.Common;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;

@@ -8,7 +8,7 @@ using System.Text;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Messages.Methods;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;

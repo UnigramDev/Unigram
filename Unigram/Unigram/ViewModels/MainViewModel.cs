@@ -10,8 +10,8 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Phone;
-using Telegram.Api.TL.Methods.Contacts;
+using Telegram.Api.TL.Phone.Methods;
+using Telegram.Api.TL.Contacts.Methods;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
@@ -33,6 +33,7 @@ using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Math;
 using Unigram.Core;
 using Unigram.Common.Dialogs;
+using Telegram.Api.TL.Phone;
 
 namespace Unigram.ViewModels
 {

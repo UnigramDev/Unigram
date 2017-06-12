@@ -10,6 +10,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Messages;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;

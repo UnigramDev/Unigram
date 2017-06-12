@@ -7,6 +7,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Payments;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Payments

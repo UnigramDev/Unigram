@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Phone;
+using Telegram.Api.TL.Phone;
+using Telegram.Api.TL.Phone.Methods;
 
 namespace Telegram.Api.Services
 {

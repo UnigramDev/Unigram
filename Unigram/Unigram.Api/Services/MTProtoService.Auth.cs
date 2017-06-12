@@ -2,7 +2,8 @@
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Auth;
+using Telegram.Api.TL.Auth;
+using Telegram.Api.TL.Auth.Methods;
 using Telegram.Api.Transport;
 
 namespace Telegram.Api.Services

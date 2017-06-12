@@ -42,10 +42,10 @@ using Windows.Storage.FileProperties;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Popups;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Messages.Methods;
 using Telegram.Api;
 using Unigram.Views;
-using Telegram.Api.TL.Methods.Phone;
+using Telegram.Api.TL.Phone.Methods;
 using Windows.ApplicationModel.Calls;
 using Unigram.Tasks;
 using Windows.Media.Effects;
@@ -54,6 +54,7 @@ using Windows.Media.MediaProperties;
 using Telegram.Api.Services.Cache.EventArgs;
 using Windows.Foundation.Metadata;
 using Windows.UI.Text;
+using Telegram.Api.TL.Messages;
 
 namespace Unigram.ViewModels
 {
