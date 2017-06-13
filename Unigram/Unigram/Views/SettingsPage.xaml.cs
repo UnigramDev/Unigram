@@ -19,6 +19,9 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Media.Animation;
 using Telegram.Api.TL;
 using Unigram.ViewModels.Users;
+using Windows.UI.Xaml.Markup;
+using System.Linq;
+using Windows.UI.Xaml.Media;
 
 namespace Unigram.Views
 {
@@ -42,7 +45,7 @@ namespace Unigram.Views
                 optionDelete.Command = ViewModel.DeleteAccountCommand;
                 optionDelete.Content = "!!! DELETE ACCOUNT !!!";
 
-                OptionsGroup4.Children.Clear();
+                //OptionsGroup4.Children.Clear();
                 OptionsGroup4.Children.Add(optionDelete);
             }
 
@@ -138,6 +141,71 @@ namespace Unigram.Views
         private async void Questions_Click(object sender, RoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
+        }
+
+        private async void Theme_Click(object sender, RoutedEventArgs e)
+        {
+            var picker = new FileOpenPicker();
+            picker.FileTypeFilter.Add(".xaml");
+
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                var text = await FileIO.ReadTextAsync(file);
+
+                var dictionary = XamlReader.Load(text) as ResourceDictionary;
+                if (dictionary == null)
+                {
+                    return;
+                }
+
+                var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
+                if (accent == null)
+                {
+                    return;
+                }
+
+                foreach (var theme in dictionary.ThemeDictionaries)
+                {
+                    var item = theme.Value as ResourceDictionary;
+                    if (accent.ThemeDictionaries.TryGetValue(theme.Key, out object value))
+                    {
+                        var pair = value as ResourceDictionary;
+                        if (pair == null)
+                        {
+                            continue;
+                        }
+
+                        foreach (var key in item)
+                        {
+                            if (pair.ContainsKey(key.Key))
+                            {
+                                pair[key.Key] = key.Value;
+                            }
+
+                            //if (key.Value is SolidColorBrush brush && pair.TryGetValue(key.Key, out object original))
+                            //{
+                            //    var solidBrush = original as SolidColorBrush;
+                            //    if (solidBrush == null)
+                            //    {
+                            //        continue;
+                            //    }
+
+                            //    solidBrush.Color = brush.Color;
+                            //}
+                        }
+                    }
+                }
+
+                var frame = Window.Current.Content as Frame;
+                if (frame != null)
+                {
+                    var dark = (bool)App.Current.Resources["IsDarkTheme"];
+
+                    frame.RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
+                    frame.RequestedTheme = ElementTheme.Default;
+                }
+            }
         }
     }
 

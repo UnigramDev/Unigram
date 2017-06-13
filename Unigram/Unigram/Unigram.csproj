@@ -263,6 +263,9 @@
     <Compile Include="Views\Channels\ChannelAdminsPage.xaml.cs">
       <DependentUpon>ChannelAdminsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Channels\ChannelBannedRightsPage.xaml.cs">
+      <DependentUpon>ChannelBannedRightsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Channels\ChannelDetailsPage.xaml.cs">
       <DependentUpon>ChannelDetailsPage.xaml</DependentUpon>
     </Compile>
@@ -1229,7 +1232,7 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
-    <Page Include="Themes\AccentSent.xaml">
+    <Page Include="Themes\AccentOut.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1257,6 +1260,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Channels\ChannelAdminRightsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Channels\ChannelBannedRightsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

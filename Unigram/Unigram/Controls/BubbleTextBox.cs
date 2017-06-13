@@ -310,7 +310,7 @@ namespace Unigram.Controls
 
         private async void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            if (args.VirtualKey == VirtualKey.Enter && FocusState != FocusState.Unfocused)
+            if (args.VirtualKey == VirtualKey.Enter && args.EventType == CoreAcceleratorKeyEventType.KeyDown && FocusState != FocusState.Unfocused)
             {
                 // Check if CTRL or Shift is also pressed in addition to Enter key.
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
