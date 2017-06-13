@@ -463,6 +463,18 @@ namespace Unigram
         //{
         //    ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrush"]).Color = e.WindowActivationState != CoreWindowActivationState.Deactivated ? ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushBase"]).Color : ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushDeactivated"]).Color;
         //}
+
+        public static void RaiseThemeChanged()
+        {
+            var frame = Window.Current.Content as Frame;
+            if (frame != null)
+            {
+                var dark = (bool)App.Current.Resources["IsDarkTheme"];
+
+                frame.RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
+                frame.RequestedTheme = ElementTheme.Default;
+            }
+        }
     }
 
     public class AppInMemoryState

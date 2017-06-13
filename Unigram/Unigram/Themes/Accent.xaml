@@ -171,7 +171,6 @@
             <BitmapImage x:Key="DefaultBackgroundBrush" UriSource="ms-appx:///Assets/Images/DefaultBackground.theme-light.png"/>
 
             <x:Boolean x:Key="IsDarkTheme">false</x:Boolean>
-            
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

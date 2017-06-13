@@ -197,14 +197,7 @@ namespace Unigram.Views
                     }
                 }
 
-                var frame = Window.Current.Content as Frame;
-                if (frame != null)
-                {
-                    var dark = (bool)App.Current.Resources["IsDarkTheme"];
-
-                    frame.RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
-                    frame.RequestedTheme = ElementTheme.Default;
-                }
+                App.RaiseThemeChanged();
             }
         }
     }
