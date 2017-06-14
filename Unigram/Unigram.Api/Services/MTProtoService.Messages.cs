@@ -648,7 +648,7 @@ namespace Telegram.Api.Services
                                     message.RaisePropertyChanged(() => message.Media);
                                 }
 
-                                if (message.Message != messageMessage.Message)
+                                if (message.Message != messageMessage.Message || (message.HasEntities != messageMessage.HasEntities) || (message.Entities?.Count != messageMessage.Entities?.Count))
                                 {
                                     message.HasEntities = messageMessage.HasEntities;
                                     message.Entities = messageMessage.Entities;
