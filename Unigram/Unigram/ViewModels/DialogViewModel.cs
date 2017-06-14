@@ -2349,7 +2349,7 @@ namespace Unigram.ViewModels
 
                 if (previous != null)
                 {
-                    previous.IsLast = item.IsFirst;
+                    previous.IsLast = item.IsFirst || item is TLMessageService;
                 }
             }
             else

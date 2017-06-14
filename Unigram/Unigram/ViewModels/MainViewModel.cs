@@ -34,6 +34,7 @@ using Org.BouncyCastle.Math;
 using Unigram.Core;
 using Unigram.Common.Dialogs;
 using Telegram.Api.TL.Phone;
+using System.Collections.Concurrent;
 
 namespace Unigram.ViewModels
 {
@@ -41,15 +42,15 @@ namespace Unigram.ViewModels
     {
         private readonly IPushService _pushService;
 
-        private readonly Dictionary<int, InputTypingManager> _typingManagers;
-        private readonly Dictionary<int, InputTypingManager> _chatTypingManagers;
+        private readonly ConcurrentDictionary<int, InputTypingManager> _typingManagers;
+        private readonly ConcurrentDictionary<int, InputTypingManager> _chatTypingManagers;
 
         public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPushService pushService, IContactsService contactsService, DialogsViewModel dialogs)
             : base(protoService, cacheService, aggregator)
         {
             _pushService = pushService;
-            _typingManagers = new Dictionary<int, InputTypingManager>();
-            _chatTypingManagers = new Dictionary<int, InputTypingManager>();
+            _typingManagers = new ConcurrentDictionary<int, InputTypingManager>();
+            _chatTypingManagers = new ConcurrentDictionary<int, InputTypingManager>();
 
             //Dialogs = new DialogCollection(protoService, cacheService);
             SearchDialogs = new ObservableCollection<TLDialog>();
