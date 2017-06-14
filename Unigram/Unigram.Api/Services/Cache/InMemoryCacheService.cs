@@ -1476,15 +1476,15 @@ namespace Telegram.Api.Services.Cache
                     if (messageCommon != null)
                     {
                         if (messageCommon.IsOut 
-                            && readMaxId.ReadOutboxMaxId != null 
-                            && readMaxId.ReadOutboxMaxId > 0
+                            //&& readMaxId.ReadOutboxMaxId != null 
+                            //&& readMaxId.ReadOutboxMaxId > 0
                             && readMaxId.ReadOutboxMaxId < messageCommon.Id)
                         {
                             messageCommon.SetUnreadSilent(true);
                         }
                         else if (!messageCommon.IsOut
-                            && readMaxId.ReadInboxMaxId != null
-                            && readMaxId.ReadInboxMaxId > 0
+                            //&& readMaxId.ReadInboxMaxId != null
+                            //&& readMaxId.ReadInboxMaxId > 0
                             && readMaxId.ReadInboxMaxId < messageCommon.Id)
                         {
                             messageCommon.SetUnreadSilent(true);
@@ -2783,6 +2783,12 @@ namespace Telegram.Api.Services.Cache
 
                 if (cachedChat == null)
                 {
+                    // TODO: 14/04/2017
+                    if (chat is TLChannel channel && channel.IsMin)
+                    {
+                        return;
+                    }
+
                     _database.AddChat(chat);
                 }
             }
@@ -2887,6 +2893,13 @@ namespace Telegram.Api.Services.Cache
                     {
                         // add object to cache
                         result.Add(chat);
+
+                        // TODO: 14/04/2017
+                        if (chat is TLChannel channel && channel.IsMin)
+                        {
+                            return;
+                        }
+
                         _database.AddChat(chat);
                     }
                 }
@@ -2940,6 +2953,13 @@ namespace Telegram.Api.Services.Cache
             {
                 // add object to cache
                 result = chat;
+
+                // TODO: 14/04/2017
+                if (chat is TLChannel channel && channel.IsMin)
+                {
+                    return;
+                }
+
                 _database.AddChat(chat);
             }
         }
