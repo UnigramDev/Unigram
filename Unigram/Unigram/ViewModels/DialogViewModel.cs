@@ -819,20 +819,21 @@ namespace Unigram.ViewModels
                     task = ProtoService.GetMessagesAsync(replyIds);
                 }
 
-                var result = await task;
-                if (result.IsSucceeded)
+                var response = await task;
+                if (response.IsSucceeded)
                 {
-                    CacheService.AddChats(result.Result.Chats, (results) => { });
-                    CacheService.AddUsers(result.Result.Users, (results) => { });
+                    //CacheService.AddChats(result.Result.Chats, (results) => { });
+                    //CacheService.AddUsers(result.Result.Users, (results) => { });
+                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
 
-                    for (int j = 0; j < result.Result.Messages.Count; j++)
+                    for (int j = 0; j < response.Result.Messages.Count; j++)
                     {
                         for (int k = 0; k < replyToMsgs.Count; k++)
                         {
                             var message = replyToMsgs[k];
-                            if (message != null && message.ReplyToMsgId.Value == result.Result.Messages[j].Id)
+                            if (message != null && message.ReplyToMsgId.Value == response.Result.Messages[j].Id)
                             {
-                                replyToMsgs[k].Reply = result.Result.Messages[j];
+                                replyToMsgs[k].Reply = response.Result.Messages[j];
                                 replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].Reply);
                                 replyToMsgs[k].RaisePropertyChanged(() => replyToMsgs[k].ReplyInfo);
 
@@ -846,7 +847,7 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    Execute.ShowDebugMessage("messages.getMessages error " + result.Error);
+                    Execute.ShowDebugMessage("messages.getMessages error " + response.Error);
                 }
             }
         }
@@ -1324,23 +1325,24 @@ namespace Unigram.ViewModels
                     task = ProtoService.GetMessagesAsync(new TLVector<int> { draft.ReplyToMsgId.Value });
                 }
 
-                var result = await task;
-                if (result.IsSucceeded)
+                var response = await task;
+                if (response.IsSucceeded)
                 {
-                    CacheService.AddChats(result.Result.Chats, (results) => { });
-                    CacheService.AddUsers(result.Result.Users, (results) => { });
+                    //CacheService.AddChats(result.Result.Chats, (results) => { });
+                    //CacheService.AddUsers(result.Result.Users, (results) => { });
+                    CacheService.SyncUsersAndChats(response.Result.Users, response.Result.Chats, tuple => { });
 
-                    for (int j = 0; j < result.Result.Messages.Count; j++)
+                    for (int j = 0; j < response.Result.Messages.Count; j++)
                     {
-                        if (draft.ReplyToMsgId.Value == result.Result.Messages[j].Id)
+                        if (draft.ReplyToMsgId.Value == response.Result.Messages[j].Id)
                         {
-                            Reply = result.Result.Messages[j];
+                            Reply = response.Result.Messages[j];
                         }
                     }
                 }
                 else
                 {
-                    Execute.ShowDebugMessage("messages.getMessages error " + result.Error);
+                    Execute.ShowDebugMessage("messages.getMessages error " + response.Error);
                 }
             }
         }
