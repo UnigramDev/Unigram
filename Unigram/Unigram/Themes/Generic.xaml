@@ -259,11 +259,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProfilePictureView">
-                    <Border CornerRadius="4096">
-                        <Border.Background>
+                    <Ellipse>
+                        <Ellipse.Fill>
                             <ImageBrush ImageSource="{Binding Source, RelativeSource={RelativeSource Mode=TemplatedParent}}" AlignmentY="Center" AlignmentX="Center" Stretch="UniformToFill"/>
-                        </Border.Background>
-                    </Border>
+                        </Ellipse.Fill>
+                    </Ellipse>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
