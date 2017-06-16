@@ -554,7 +554,7 @@ namespace Unigram.Controls
                 {
                     ViewModel.StickerPack = null;
 
-                    var usernames = SearchByUsernames(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string usernamesText); 
+                    var usernames = SearchByUsernames(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string usernamesText);
                     if (usernames)
                     {
                         ViewModel.UsernameHints = GetUsernames(usernamesText.ToLower(), text.StartsWith('@' + usernamesText));
@@ -1011,6 +1011,49 @@ namespace Unigram.Controls
         {
             if (entities != null && entities.Count > 0)
             {
+                entities = new TLVector<TLMessageEntityBase>(entities);
+
+                var builder = new StringBuilder(text);
+                var addToOffset = 0;
+
+                foreach (var entity in entities.ToList())
+                {
+                    if (entity is TLMessageEntityCode)
+                    {
+                        builder.Insert(entity.Offset + entity.Length + addToOffset, "`");
+                        builder.Insert(entity.Offset + addToOffset, "`");
+                        addToOffset += 2;
+                        entities.Remove(entity);
+                    }
+                    else if (entity is TLMessageEntityPre)
+                    {
+                        builder.Insert(entity.Offset + entity.Length + addToOffset, "```");
+                        builder.Insert(entity.Offset + addToOffset, "```");
+                        addToOffset += 6;
+                        entities.Remove(entity);
+                    }
+                    else if (entity is TLMessageEntityBold)
+                    {
+                        builder.Insert(entity.Offset + entity.Length + addToOffset, "**");
+                        builder.Insert(entity.Offset + addToOffset, "**");
+                        addToOffset += 4;
+                        entities.Remove(entity);
+                    }
+                    else if (entity is TLMessageEntityItalic)
+                    {
+                        builder.Insert(entity.Offset + entity.Length + addToOffset, "__");
+                        builder.Insert(entity.Offset + addToOffset, "__");
+                        addToOffset += 4;
+                        entities.Remove(entity);
+                    }
+                    else
+                    {
+                        entity.Offset += addToOffset;
+                    }
+                }
+
+                text = builder.ToString();
+
                 var document = new RtfDocument(PaperSize.A4, PaperOrientation.Portrait, Lcid.English);
                 var segoe = document.CreateFont("Segoe UI");
                 var consolas = document.CreateFont("Consolas");
@@ -1027,38 +1070,39 @@ namespace Unigram.Controls
                     }
 
                     var type = entity.TypeId;
-                    if (type == TLType.MessageEntityBold)
-                    {
-                        paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
-                        paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).FontStyle.addStyle(FontStyleFlag.Bold);
-                    }
-                    else if (type == TLType.MessageEntityItalic)
-                    {
-                        paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
-                        paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).FontStyle.addStyle(FontStyleFlag.Italic);
-                    }
-                    else if (type == TLType.MessageEntityCode)
-                    {
-                        paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
-                        paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).Font = consolas;
-                    }
-                    else if (type == TLType.MessageEntityPre)
-                    {
-                        // TODO any additional
-                        paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
-                        paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).Font = consolas;
-                    }
-                    else if (type == TLType.MessageEntityUrl ||
-                                type == TLType.MessageEntityEmail ||
-                                type == TLType.MessageEntityMention ||
-                                type == TLType.MessageEntityHashtag ||
-                                type == TLType.MessageEntityBotCommand)
+                    //if (type == TLType.MessageEntityBold)
+                    //{
+                    //    paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
+                    //    paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).FontStyle.addStyle(FontStyleFlag.Bold);
+                    //}
+                    //else if (type == TLType.MessageEntityItalic)
+                    //{
+                    //    paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
+                    //    paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).FontStyle.addStyle(FontStyleFlag.Italic);
+                    //}
+                    //else if (type == TLType.MessageEntityCode)
+                    //{
+                    //    paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
+                    //    paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).Font = consolas;
+                    //}
+                    //else if (type == TLType.MessageEntityPre)
+                    //{
+                    //    // TODO any additional
+                    //    paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
+                    //    paragraph.addCharFormat(entity.Offset, entity.Offset + entity.Length - 1).Font = consolas;
+                    //}
+                    //else 
+                    if (type == TLType.MessageEntityUrl ||
+                             type == TLType.MessageEntityEmail ||
+                             type == TLType.MessageEntityMention ||
+                             type == TLType.MessageEntityHashtag ||
+                             type == TLType.MessageEntityBotCommand)
                     {
                         paragraph.Text.Append(text.Substring(entity.Offset, entity.Length));
                     }
                     else if (type == TLType.MessageEntityTextUrl ||
-                                type == TLType.MessageEntityMentionName ||
-                                type == TLType.InputMessageEntityMentionName)
+                             type == TLType.MessageEntityMentionName ||
+                             type == TLType.InputMessageEntityMentionName)
                     {
                         object data;
                         if (type == TLType.MessageEntityTextUrl)

@@ -357,7 +357,7 @@ namespace Unigram.Common
             var text = message.Message;
             var previous = 0;
 
-            foreach (var entity in message.Entities)
+            foreach (var entity in message.Entities.OrderBy(x => x.Offset))
             {
                 if (entity.Offset > previous)
                 {

@@ -47,7 +47,7 @@ using Windows.UI.Composition;
 
 namespace Unigram.Views
 {
-    public sealed partial class MainPage : Page, IHandle<string>
+    public sealed partial class MainPage : Page, IMasterDetailPage, IHandle<string>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
 
@@ -69,6 +69,15 @@ namespace Unigram.Views
             searchInit();
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
+        }
+
+        public void OnBackRequested(HandledEventArgs args)
+        {
+            if (MasterDetail.CurrentState == MasterDetailState.Narrow && rpMasterTitlebar.SelectedIndex == 3)
+            {
+                rpMasterTitlebar.SelectedIndex = 0;
+                args.Handled = true;
+            }
         }
 
         public void Handle(string message)
