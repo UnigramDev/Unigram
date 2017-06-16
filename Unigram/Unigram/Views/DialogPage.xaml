@@ -1087,7 +1087,6 @@
                             <!-- Manually hidden -->
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                             x:Name="cbtnReportSpam"
-                                            x:Uid="FCBTN-ReportSpam"
                                             Visibility="Collapsed"
                                             IsEnabled="False"
                                             Tag="&#xE1DE;"
@@ -1095,7 +1094,6 @@
                             <!-- Manually hidden -->
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                             x:Name="cbtnSearch"
-                                            x:Uid="FCBTN-Search"
                                             Visibility="Collapsed"
                                             IsEnabled="False"
                                             Tag="&#xE11A;"
@@ -1103,7 +1101,6 @@
                             <!-- Manually hidden -->
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                             x:Name="cbtnPinToStart"
-                                            x:Uid="FCBTN-Pin"
                                             Visibility="Collapsed"
                                             IsEnabled="False"
                                             Tag="&#xE141;"
@@ -1535,7 +1532,6 @@
                 <Grid Grid.ColumnSpan="2" Grid.Row="1">
                     <controls:BubbleTextBox
                         x:Name="TextField"
-                        x:Uid="Chat-Input-Message"
                         Background="Transparent"
                         Reply="{Binding Reply}"
                         UsernameHints="{x:Bind ListUsernameHints}"
@@ -1557,23 +1553,19 @@
                         <FlyoutBase.AttachedFlyout>
                             <MenuFlyout Placement="Top">
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                x:Uid="FCBTN-PhotoOrVideo"
                                                 Tag="&#xEB9F;"
                                                 Text="Photo or video"
                                                 Command="{Binding SendPhotoCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                x:Uid="FCBTN-File"
                                                 Text="File"
                                                 Tag="&#xE160;"
                                                 Command="{Binding SendFileCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                x:Uid="FCBTN-Location"
                                                 Text="Location"
                                                 Tag="&#xE1C4;"
                                                 Visibility="Collapsed"
                                                 Command="{x:Bind ViewModel.SendLocationCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                x:Uid="FCBTN-Contact"
                                                 Text="Contact"
                                                 Visibility="Collapsed"
                                                 Tag="&#xE136;"/>

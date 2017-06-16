@@ -67,6 +67,11 @@ namespace Unigram.Views
             MasterDetail.NavigationService.Navigate(typeof(SettingsGeneralPage));
         }
 
+        private void Phone_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsPhoneWelcomePage));
+        }
+
         private void Username_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsUsernamePage));

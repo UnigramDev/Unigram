@@ -1,8 +1,9 @@
 ﻿<Page
-    x:Class="Unigram.Views.SignIn.SignInPasswordPage"
+    x:Class="Unigram.Views.Settings.SettingsPhoneSentCodePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
+    xmlns:common="using:Unigram.Common"
     xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -25,7 +26,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="Your password" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+            <TextBlock Text="Your code" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
             <controls:GlyphButton x:Name="NextGlyph" Command="{x:Bind ViewModel.SendCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE10B;" Grid.Column="1"/>
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
@@ -39,24 +40,25 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="TitleLabel" Text="Your password" Style="{ThemeResource TitleTextBlockStyle}"/>
-            <TextBlock Text="You have enabled Two-Step Verification, so your account is protected with an additional password." Style="{StaticResource BodyTextBlockStyle}"
+            <TextBlock x:Name="TitleLabel" Text="Your code" Style="{ThemeResource TitleTextBlockStyle}"/>
+            <TextBlock common:TextBlockHelper.SentCodeType="{x:Bind ViewModel.SentCode.Type}"
+                       Style="{StaticResource BodyTextBlockStyle}"
                        Padding="0,8,0,16"
                        Grid.Row="1"/>
 
-            <PasswordBox x:Name="PrimaryInput"
-                         Password="{Binding Password, Mode=TwoWay}"
-                         Margin="0,12,0,8"
-                         Header="Enter your password:"
-                         PlaceholderText="{x:Bind ViewModel.PasswordHint}"
-                         PasswordChanged="PasswordBox_PasswordChanged"
-                         KeyDown="PasswordBox_KeyDown"
-                         Grid.Row="3"/>
+            <controls:UpdateTextBox x:Name="PrimaryInput"
+                                    Text="{Binding PhoneCode, Mode=TwoWay}"
+                                    Margin="0,12,0,8"
+                                    InputScope="Digits"
+                                    IsTextPredictionEnabled="False"
+                                    Header="Enter your code:"
+                                    PlaceholderText="Your code"
+                                    Grid.Row="3"/>
 
-            <HyperlinkButton Command="{x:Bind ViewModel.ForgotCommand}"
-                             Content="Forgot password?"
+            <HyperlinkButton Command="{x:Bind ViewModel.ResendCommand}"
+                             Visibility="{x:Bind (Visibility)ViewModel.SentCode.HasNextType}"
+                             Content="Haven't received the code?"
                              Grid.Row="4"/>
 
             <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="5"/>
@@ -69,16 +71,6 @@
                     Margin="0,8,0,0"
                     Grid.Row="6"
                     Visibility="Collapsed"/>
-
-            <StackPanel Visibility="{x:Bind (Visibility)ViewModel.IsResettable, Mode=OneWay}" Margin="0,24,0,0" Grid.Row="7">
-                <HyperlinkButton Command="{x:Bind ViewModel.ResetCommand}" 
-                                 Content="Reset My Account"
-                                 Foreground="Red"/>
-                <TextBlock Text="You will lose all your chats and messages, along with any media and files you shared, if you proceed with resetting your account."
-                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           Grid.Row="8"/>
-            </StackPanel>
         </Grid>
 
         <VisualStateManager.VisualStateGroups>

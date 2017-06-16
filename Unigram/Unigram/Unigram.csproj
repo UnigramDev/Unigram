@@ -241,6 +241,8 @@
     <Compile Include="ViewModels\Settings\SettingsPrivacyViewModelBase.cs" />
     <Compile Include="ViewModels\Settings\SettingsStatsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWallPaperViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsPhoneSentCodeViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsPhoneViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
@@ -323,6 +325,9 @@
     <Compile Include="Views\Settings\SettingsGeneralPage.xaml.cs">
       <DependentUpon>SettingsGeneralPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsPhoneWelcomePage.xaml.cs">
+      <DependentUpon>SettingsPhoneWelcomePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsPrivacyChatInvitePage.xaml.cs">
       <DependentUpon>SettingsPrivacyChatInvitePage.xaml</DependentUpon>
     </Compile>
@@ -334,6 +339,12 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
       <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsPhonePage.xaml.cs">
+      <DependentUpon>SettingsPhonePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsPhoneSentCodePage.xaml.cs">
+      <DependentUpon>SettingsPhoneSentCodePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
@@ -1383,6 +1394,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\SettingsPhoneWelcomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\SettingsPrivacyChatInvitePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1398,6 +1413,14 @@
     <Page Include="Views\Settings\SettingsStatsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsPhonePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\SettingsPhoneSentCodePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SignIn\SignInPasswordPage.xaml">
       <SubType>Designer</SubType>
