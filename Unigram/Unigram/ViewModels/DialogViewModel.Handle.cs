@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -33,6 +34,11 @@ namespace Unigram.ViewModels
         {
             if (message.Equals("Window_Activated"))
             {
+                if (!IsActive || !App.IsActive || !App.IsVisible)
+                {
+                    return;
+                }
+
                 var participant = _with;
                 var dialog = _currentDialog;
                 if (dialog != null && Messages.Count > 0)

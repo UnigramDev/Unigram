@@ -207,8 +207,19 @@ namespace Unigram.ViewModels
             OnDialogAdded(this, eventArgs);
         }
 
-        public void Handle(DialogRemovedEventArgs args)
+        public async void Handle(DialogRemovedEventArgs args)
         {
+            var response = await ProtoService.GetHistoryAsync(args.Dialog.With.ToInputPeer(), args.Dialog.With.ToPeer(), true, 0, 0, int.MaxValue, 1);
+            if (response.IsSucceeded && response.Result.Messages.Count > 0)
+            {
+                args.Dialog.TopMessageItem = response.Result.Messages[0];
+                args.Dialog.TopMessage = response.Result.Messages[0].Id;
+                args.Dialog.TopMessageRandomId = null;
+
+                Handle(new TopMessageUpdatedEventArgs(args.Dialog, response.Result.Messages[0]));
+                return;
+            }
+
             Execute.BeginOnUIThread(() =>
             {
                 var dialog = Items.FirstOrDefault(x => x.Id == args.Dialog.Id);

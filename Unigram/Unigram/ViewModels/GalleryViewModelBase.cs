@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -13,6 +15,9 @@ using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Core.Common;
+using Unigram.ViewModels.Users;
+using Windows.Storage;
+using Windows.System;
 
 namespace Unigram.ViewModels
 {
@@ -125,7 +130,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return false;
+                return true;
             }
         }
 
@@ -159,15 +164,73 @@ namespace Unigram.ViewModels
         }
 
         public RelayCommand OpenInAppCommand => new RelayCommand(OpenInAppExecute);
-        protected virtual void OpenInAppExecute() // TODO Make async again when using the Launcher
+        protected virtual async void OpenInAppExecute()
         {
+            if (SelectedItem is GalleryMessageItem messageItem)
+            {
+                if (messageItem.Message.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo)
+                {
+                    if (photo.Full is TLPhotoSize photoSize)
+                    {
+                        var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
+                        var file = await FileUtils.TryGetTempFileAsync(fileName);
+                        if (file != null)
+                        {
+                            var options = new LauncherOptions();
+                            options.DisplayApplicationPicker = true;
+
+                            await Launcher.LaunchFileAsync(file as StorageFile, options);
+                        }
+                    }
+                }
+                else if (messageItem.Message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                {
+                    var fileName = document.GetFileName();
+                    var file = await FileUtils.TryGetTempFileAsync(fileName);
+                    if (file != null)
+                    {
+                        var options = new LauncherOptions();
+                        options.DisplayApplicationPicker = true;
+
+                        await Launcher.LaunchFileAsync(file as StorageFile, options);
+                    }
+                }
+            }
+            else if (SelectedItem is GalleryPhotoItem photoItem)
+            {
+                if (photoItem.Photo.Full is TLPhotoSize photoSize)
+                {
+                    var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
+                    var file = await FileUtils.TryGetTempFileAsync(fileName);
+                    if (file != null)
+                    {
+                        var options = new LauncherOptions();
+                        options.DisplayApplicationPicker = true;
+
+                        await Launcher.LaunchFileAsync(file as StorageFile, options);
+                    }
+                }
+            }
+            else if (SelectedItem is GalleryDocumentItem documentItem)
+            {
+                var fileName = documentItem.Document.GetFileName();
+                var file = await FileUtils.TryGetTempFileAsync(fileName);
+                if (file != null)
+                {
+                    var options = new LauncherOptions();
+                    options.DisplayApplicationPicker = true;
+
+                    await Launcher.LaunchFileAsync(file as StorageFile, options);
+                }
+            }
+
             // Get the source 
             //var something = (TLPhoto)DefaultPhotoConverter.Convert(_selectedItem.Source);
             //var sizeBase = something.Full;
             //var photoSize = sizeBase as TLPhotoSize;
             //var fileLocation = photoSize.Location as TLFileLocation;
             //fileLocation.   // Find a way to get the IStorageFile of that darn picture
-            
+
             // Open that file
             //await Windows.System.Launcher.LaunchFileAsync(*INSERT FILE HERE*);
         }
