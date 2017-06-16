@@ -201,7 +201,7 @@ namespace Telegram.Api.Services.FileManager
                     Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
                 });
 
-            manualResetEvent.WaitOne();
+            manualResetEvent.WaitOne(20 * 1000);
             return result;
         }
 
