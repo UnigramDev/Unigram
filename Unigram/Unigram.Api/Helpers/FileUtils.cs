@@ -51,6 +51,11 @@ namespace Telegram.Api.Helpers
             return ApplicationData.Current.LocalFolder.GetFileAsync($"{SettingsHelper.SessionGuid}\\temp\\{fileName}");
         }
 
+        public static IAsyncOperation<IStorageItem> TryGetTempFileAsync(string fileName)
+        {
+            return ApplicationData.Current.LocalFolder.TryGetItemAsync($"{SettingsHelper.SessionGuid}\\temp\\{fileName}");
+        }
+
         public static void CreateTemporaryFolder()
         {
             if (Directory.Exists(Path.Combine(ApplicationData.Current.LocalFolder.Path, SettingsHelper.SessionGuid, "temp\\parts")) == false)

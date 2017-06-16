@@ -180,7 +180,7 @@
                                             Command="{x:Bind ViewModel.OpenInAppCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanOpenInApp}"
                                             Tag="&#xE197;"
-                                            Text="Open in app..." />
+                                            Text="Open with" />
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>
