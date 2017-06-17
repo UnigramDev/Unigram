@@ -15,6 +15,7 @@ using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Core.Common;
+using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Users;
 using Windows.Storage;
 using Windows.System;
@@ -166,54 +167,47 @@ namespace Unigram.ViewModels
         public RelayCommand OpenInAppCommand => new RelayCommand(OpenInAppExecute);
         protected virtual async void OpenInAppExecute()
         {
+            object value = null;
+
             if (SelectedItem is GalleryMessageItem messageItem)
             {
-                if (messageItem.Message.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo)
+                if (messageItem.Message.Media is TLMessageMediaPhoto photoMedia)
                 {
-                    if (photo.Full is TLPhotoSize photoSize)
-                    {
-                        var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
-                        var file = await FileUtils.TryGetTempFileAsync(fileName);
-                        if (file != null)
-                        {
-                            var options = new LauncherOptions();
-                            options.DisplayApplicationPicker = true;
-
-                            await Launcher.LaunchFileAsync(file as StorageFile, options);
-                        }
-                    }
+                    value = photoMedia.Photo;
                 }
                 else if (messageItem.Message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
                 {
-                    var fileName = document.GetFileName();
-                    var file = await FileUtils.TryGetTempFileAsync(fileName);
-                    if (file != null)
-                    {
-                        var options = new LauncherOptions();
-                        options.DisplayApplicationPicker = true;
-
-                        await Launcher.LaunchFileAsync(file as StorageFile, options);
-                    }
+                    value = document;
                 }
+            }
+            else if (SelectedItem is GalleryMessageServiceItem serviceItem && serviceItem.Message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction)
+            {
+                value = chatEditPhotoAction.Photo;
             }
             else if (SelectedItem is GalleryPhotoItem photoItem)
             {
-                if (photoItem.Photo.Full is TLPhotoSize photoSize)
-                {
-                    var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
-                    var file = await FileUtils.TryGetTempFileAsync(fileName);
-                    if (file != null)
-                    {
-                        var options = new LauncherOptions();
-                        options.DisplayApplicationPicker = true;
-
-                        await Launcher.LaunchFileAsync(file as StorageFile, options);
-                    }
-                }
+                value = photoItem.Photo;
             }
             else if (SelectedItem is GalleryDocumentItem documentItem)
             {
-                var fileName = documentItem.Document.GetFileName();
+                value = documentItem.Document;
+            }
+
+            if (value is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
+            {
+                var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
+                var file = await FileUtils.TryGetTempFileAsync(fileName);
+                if (file != null)
+                {
+                    var options = new LauncherOptions();
+                    options.DisplayApplicationPicker = true;
+
+                    await Launcher.LaunchFileAsync(file as StorageFile, options);
+                }
+            }
+            else if (value is TLDocument document)
+            {
+                var fileName = document.GetFileName();
                 var file = await FileUtils.TryGetTempFileAsync(fileName);
                 if (file != null)
                 {

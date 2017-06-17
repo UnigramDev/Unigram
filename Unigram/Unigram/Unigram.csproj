@@ -204,6 +204,7 @@
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
+    <Compile Include="Services\PushService.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
@@ -239,6 +240,8 @@
     <Compile Include="ViewModels\Settings\SettingsPrivacyPhoneCallViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyStatusTimestampViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyViewModelBase.cs" />
+    <Compile Include="ViewModels\Settings\SettingsSecurityChangePasswordViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsSecurityPasswordViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStatsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWallPaperViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPhoneSentCodeViewModel.cs" />
@@ -336,6 +339,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsPrivacyStatusTimestampPage.xaml.cs">
       <DependentUpon>SettingsPrivacyStatusTimestampPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsSecurityChangePasswordPage.xaml.cs">
+      <DependentUpon>SettingsSecurityChangePasswordPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
       <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
@@ -1407,6 +1413,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsPrivacyStatusTimestampPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsSecurityChangePasswordPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
