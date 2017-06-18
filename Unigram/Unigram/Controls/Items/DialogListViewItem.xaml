@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Items"
+    xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -76,11 +77,12 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Ellipse Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2">
+        <!--<Ellipse Width="48" Height="48" VerticalAlignment="Top" Grid.RowSpan="2">
             <Ellipse.Fill>
                 <ImageBrush ImageSource="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
             </Ellipse.Fill>
-        </Ellipse>
+        </Ellipse>-->
+        <controls:ProfilePictureView Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" VerticalAlignment="Top" IsHitTestVisible="False" Grid.RowSpan="2" />
 
         <Grid VerticalAlignment="Top" Margin="12,3,0,0" Grid.Column="1">
             <Grid.ColumnDefinitions>

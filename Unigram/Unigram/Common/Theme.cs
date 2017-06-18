@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
 namespace Unigram.Common
@@ -21,13 +25,38 @@ namespace Unigram.Common
             isolatedStore = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
             Current = this;
             Update();
+
+            this.Add("MessageServiceForegroundBrush", GetBrushOrDefault("MessageServiceForegroundBrush", Colors.White));
+            this.Add("MessageServiceBackgroundBrush", GetBrushOrDefault("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96)));
+            this.Add("MessageServiceBackgroundPressedBrush", GetBrushOrDefault("MessageServiceBackgroundPressedBrush", Color.FromArgb(0x88, 0x7A, 0x8A, 0x96)));
         }
 
         public void Update()
         {
-            this.Add("MessageServiceForegroundBrush", GetBrushOrDefault("MessageServiceForegroundBrush", Colors.White));
-            this.Add("MessageServiceBackgroundBrush", GetBrushOrDefault("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96)));
-            this.Add("MessageServiceBackgroundPressedBrush", GetBrushOrDefault("MessageServiceBackgroundPressedBrush", Color.FromArgb(0x88, 0x7A, 0x8A, 0x96)));
+            var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
+            if (accent == null)
+            {
+                return;
+            }
+
+            var fileName = FileUtils.GetTempFileName("theme.xaml");
+            if (File.Exists(fileName))
+            {
+                var text = File.ReadAllText(fileName);
+
+                var dictionary = XamlReader.Load(text) as ResourceDictionary;
+                if (dictionary == null)
+                {
+                    return;
+                }
+
+                accent.MergedDictionaries.Clear();
+                accent.MergedDictionaries.Add(dictionary);
+            }
+            else
+            {
+                accent.MergedDictionaries.Clear();
+            }
         }
 
         #region Settings

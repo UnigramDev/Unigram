@@ -97,13 +97,24 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Border x:Name="Theme" IsHitTestVisible="False" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="0" Height="0"/>
             <controls:PageHeader/>
             
             <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Grid.RowSpan="2">
                 <Pivot.HeaderTemplate>
                     <DataTemplate x:DataType="x:String">
-                        <TextBlock Text="{x:Bind}" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontFamily" Value="XamlAutoFontFamily" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                    <Setter Property="FontSize" Value="15" />
+                                    <Setter Property="TextTrimming" Value="None" />
+                                    <Setter Property="TextWrapping" Value="Wrap" />
+                                    <Setter Property="LineStackingStrategy" Value="MaxHeight" />
+                                    <Setter Property="TextLineBounds" Value="Full" />
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </DataTemplate>
                 </Pivot.HeaderTemplate>
                 <Pivot.RightHeader>

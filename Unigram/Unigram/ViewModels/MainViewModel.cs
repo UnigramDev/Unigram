@@ -35,10 +35,11 @@ using Unigram.Core;
 using Unigram.Common.Dialogs;
 using Telegram.Api.TL.Phone;
 using System.Collections.Concurrent;
+using Telegram.Api.Services.Updates;
 
 namespace Unigram.ViewModels
 {
-    public class MainViewModel : UnigramViewModelBase, IHandle<TLUpdatePhoneCall>, IHandle<TLUpdateUserTyping>, IHandle<TLUpdateChatUserTyping>
+    public class MainViewModel : UnigramViewModelBase, IHandle<TLUpdatePhoneCall>, IHandle<TLUpdateUserTyping>, IHandle<TLUpdateChatUserTyping>, IHandle<UpdatingEventArgs>
     {
         private readonly IPushService _pushService;
 
@@ -59,6 +60,11 @@ namespace Unigram.ViewModels
             Calls = new CallsViewModel(protoService, cacheService, aggregator);
 
             aggregator.Subscribe(this);
+        }
+
+        public void Handle(UpdatingEventArgs e)
+        {
+            ProtoService.SetMessageOnTime(5, "Updating...");
         }
 
         #region Typing

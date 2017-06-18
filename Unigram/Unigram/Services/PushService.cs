@@ -112,15 +112,15 @@ namespace Unigram.Core.Services
                         return;
                     }
 
-                    if (service.Frame.Content is DialogPage page && peer.Equals(service.CurrentPageParam))
-                    {
-                        if (!page.ViewModel.IsActive || !App.IsActive || !App.IsVisible)
-                        {
-                            return;
-                        }
+                    //if (service.Frame.Content is DialogPage page && peer.Equals(service.CurrentPageParam))
+                    //{
+                    //    if (!page.ViewModel.IsActive || !App.IsActive || !App.IsVisible)
+                    //    {
+                    //        return;
+                    //    }
 
-                        args.Cancel = true;
-                    }
+                    //    args.Cancel = true;
+                    //}
                 }
             }
         }

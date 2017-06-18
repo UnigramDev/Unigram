@@ -22,6 +22,7 @@ using Unigram.ViewModels.Users;
 using Windows.UI.Xaml.Markup;
 using System.Linq;
 using Windows.UI.Xaml.Media;
+using Telegram.Api.Helpers;
 
 namespace Unigram.Views
 {
@@ -150,59 +151,75 @@ namespace Unigram.Views
 
         private async void Theme_Click(object sender, RoutedEventArgs e)
         {
+            if (Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
+            {
+                var remove = await FileUtils.TryGetTempFileAsync("theme.xaml");
+                if (remove != null)
+                {
+                    await remove.DeleteAsync();
+
+                    Theme.Current.Update();
+                    App.RaiseThemeChanged();
+                }
+
+                return;
+            }
+
             var picker = new FileOpenPicker();
             picker.FileTypeFilter.Add(".xaml");
 
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var text = await FileIO.ReadTextAsync(file);
+                var result = await FileUtils.CreateTempFileAsync("theme.xaml");
+                await file.CopyAndReplaceAsync(result);
 
-                var dictionary = XamlReader.Load(text) as ResourceDictionary;
-                if (dictionary == null)
-                {
-                    return;
-                }
-
-                var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
-                if (accent == null)
-                {
-                    return;
-                }
-
-                foreach (var theme in dictionary.ThemeDictionaries)
-                {
-                    var item = theme.Value as ResourceDictionary;
-                    if (accent.ThemeDictionaries.TryGetValue(theme.Key, out object value))
-                    {
-                        var pair = value as ResourceDictionary;
-                        if (pair == null)
-                        {
-                            continue;
-                        }
-
-                        foreach (var key in item)
-                        {
-                            if (pair.ContainsKey(key.Key))
-                            {
-                                pair[key.Key] = key.Value;
-                            }
-
-                            //if (key.Value is SolidColorBrush brush && pair.TryGetValue(key.Key, out object original))
-                            //{
-                            //    var solidBrush = original as SolidColorBrush;
-                            //    if (solidBrush == null)
-                            //    {
-                            //        continue;
-                            //    }
-
-                            //    solidBrush.Color = brush.Color;
-                            //}
-                        }
-                    }
-                }
-
+                Theme.Current.Update();
                 App.RaiseThemeChanged();
+
+                //var text = await FileIO.ReadTextAsync(file);
+
+                //var dictionary = XamlReader.Load(text) as ResourceDictionary;
+                //if (dictionary == null)
+                //{
+                //    return;
+                //}
+
+                //var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
+                //if (accent == null)
+                //{
+                //    return;
+                //}
+
+                //foreach (var theme in dictionary.ThemeDictionaries)
+                //{
+                //    var item = theme.Value as ResourceDictionary;
+                //    if (accent.ThemeDictionaries.TryGetValue(theme.Key, out object value))
+                //    {
+                //        var pair = value as ResourceDictionary;
+                //        if (pair == null)
+                //        {
+                //            continue;
+                //        }
+
+                //        foreach (var key in item)
+                //        {
+                //            if (pair.ContainsKey(key.Key))
+                //            {
+                //                try
+                //                {
+                //                    pair[key.Key] = key.Value;
+                //                }
+                //                catch
+                //                {
+                //                    Debug.WriteLine("Theme: unable to apply " + key.Key);
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
+
+                //App.RaiseThemeChanged();
             }
         }
     }

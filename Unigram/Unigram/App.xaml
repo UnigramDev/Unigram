@@ -20,6 +20,10 @@
                 <common:Theme/>
             </ResourceDictionary.MergedDictionaries>
 
+            <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+                <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseHighBrush}"/>
+            </Style>
+
             <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
 
             <local:ViewModelLocator x:Key="Locator"/>

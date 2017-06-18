@@ -321,6 +321,9 @@ namespace Unigram
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
+            Theme.Current.Update();
+            App.RaiseThemeChanged();
+
             Task.Run(() => OnStartSync());
             //return Task.CompletedTask;
         }

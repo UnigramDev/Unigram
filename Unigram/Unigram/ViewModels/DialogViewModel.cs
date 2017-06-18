@@ -1072,7 +1072,7 @@ namespace Unigram.ViewModels
                 Peer = new TLInputPeerChat { ChatId = forbiddenChat.Id };
             }
 
-            if (dialog != null && Messages.Count > 0)
+            if (dialog != null)
             {
                 var unread = dialog.UnreadCount;
                 if (Peer is TLInputPeerChannel && participant is TLChannel channel)
