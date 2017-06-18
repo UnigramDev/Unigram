@@ -1039,7 +1039,7 @@
                                            TextWrapping="NoWrap"
                                            TextTrimming="CharacterEllipsis"
                                            MaxLines="1"/>
-                                <Grid>
+                                <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
                                     <TextBlock x:Name="tblDialogStatus"
                                                Visibility="{x:Bind ViewModel.With.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"

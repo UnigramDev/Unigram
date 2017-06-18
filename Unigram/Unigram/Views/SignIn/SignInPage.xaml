@@ -11,12 +11,6 @@
     Loaded="OnLoaded"
     mc:Ignorable="d">
 
-    <Page.Transitions>
-        <TransitionCollection>
-            <EntranceThemeTransition FromHorizontalOffset="75"/>
-        </TransitionCollection>
-    </Page.Transitions>
-
     <Page.Resources>
         <CollectionViewSource x:Name="Countries" Source="{Binding Countries}" IsSourceGrouped="True"/>
     </Page.Resources>

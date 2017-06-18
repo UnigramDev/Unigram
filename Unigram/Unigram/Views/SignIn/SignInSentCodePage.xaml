@@ -10,12 +10,6 @@
     Loaded="OnLoaded"
     mc:Ignorable="d">
     
-    <Page.Transitions>
-        <TransitionCollection>
-            <EntranceThemeTransition FromHorizontalOffset="75"/>
-        </TransitionCollection>
-    </Page.Transitions>
-
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

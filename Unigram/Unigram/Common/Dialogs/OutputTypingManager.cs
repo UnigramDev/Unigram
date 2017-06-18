@@ -25,6 +25,11 @@ namespace Unigram.Common.Dialogs
 
         public void SetTyping(TLSendMessageActionBase action)
         {
+            if (_peer is TLInputPeerChannel)
+            {
+                return;
+            }
+
             if (_lastTypingTime.HasValue && _lastTypingTime.Value.AddSeconds(_delay) > DateTime.Now)
             {
                 return;
@@ -36,6 +41,11 @@ namespace Unigram.Common.Dialogs
 
         public void CancelTyping()
         {
+            if (_peer is TLInputPeerChannel)
+            {
+                return;
+            }
+
             _lastTypingTime = null;
             _protoService.SetTypingAsync(_peer, new TLSendMessageCancelAction(), null);
         }

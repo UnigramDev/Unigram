@@ -39,15 +39,9 @@ namespace Unigram.Controls
                     }
                     else
                     {
-                        if (photo.DownloadingProgress > 0 && photo.DownloadingProgress < 1)
+                        if (photo.IsTransferring)
                         {
-                            var manager = UnigramContainer.Current.ResolveType<IDownloadFileManager>();
-                            photo.Cancel(manager, null);
-                        }
-                        else if (photo.UploadingProgress > 0 && photo.UploadingProgress < 1)
-                        {
-                            var manager = UnigramContainer.Current.ResolveType<IUploadFileManager>();
-                            photo.Cancel(null, manager);
+                            photo.Cancel(UnigramContainer.Current.ResolveType<IDownloadFileManager>(), UnigramContainer.Current.ResolveType<IUploadFileManager>());
                         }
                         else
                         {
@@ -66,20 +60,21 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
+                    if (document.IsTransferring)
                     {
-                        var manager = ChooseDownloadManager(document);
-                        document.Cancel(manager, null);
-                    }
-                    else if (document.UploadingProgress > 0 && document.UploadingProgress < 1)
-                    {
-                        var manager = ChooseUploadManager(document);
-                        document.Cancel(null, manager);
+                        document.Cancel(ChooseDownloadManager(document), ChooseUploadManager(document));
                     }
                     else
                     {
-                        var manager = ChooseDownloadManager(document);
-                        document.DownloadAsync(manager);
+                        if (TLMessage.IsGif(document))
+                        {
+                            var context = DefaultPhotoConverter.BitmapContext[document, null];
+                        }
+                        else
+                        {
+                            var manager = ChooseDownloadManager(document);
+                            document.DownloadAsync(manager);
+                        }
                     }
                 }
             }
@@ -202,8 +197,13 @@ namespace Unigram.Controls
             var fileName = document.GetFileName();
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
-                if (TLMessage.IsVideo(document) || TLMessage.IsRoundVideo(document) || TLMessage.IsGif(document) || TLMessage.IsMusic(document))
+                if (TLMessage.IsVideo(document) || TLMessage.IsRoundVideo(document) || TLMessage.IsMusic(document))
                 {
+                    return "\uE102";
+                }
+                else if (TLMessage.IsGif(document))
+                {
+                    Visibility = Visibility.Collapsed;
                     return "\uE102";
                 }
 

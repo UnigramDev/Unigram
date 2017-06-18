@@ -1072,12 +1072,6 @@ namespace Unigram.ViewModels
                 Peer = new TLInputPeerChat { ChatId = forbiddenChat.Id };
             }
 
-            var settings = await ProtoService.GetPeerSettingsAsync(Peer);
-            if (settings.IsSucceeded)
-            {
-                IsReportSpam = settings.Result.IsReportSpam;
-            }
-
             if (dialog != null && Messages.Count > 0)
             {
                 var unread = dialog.UnreadCount;
@@ -1098,6 +1092,12 @@ namespace Unigram.ViewModels
             }
 
             LastSeen = await GetSubtitle();
+
+            var settings = await ProtoService.GetPeerSettingsAsync(Peer);
+            if (settings.IsSucceeded)
+            {
+                IsReportSpam = settings.Result.IsReportSpam;
+            }
         }
 
         private async void ShowPinnedMessage(TLChannel channel)

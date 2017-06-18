@@ -854,7 +854,7 @@ namespace Unigram.Controls.Messages
             else
             {
                 var from = message.From?.FullName ?? string.Empty;
-                if (message.ViaBot != null)
+                if (message.ViaBot != null && message.FwdFrom == null)
                 {
                     from += $" via @{message.ViaBot.Username}";
                 }

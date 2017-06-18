@@ -184,7 +184,7 @@ namespace Unigram.Controls
                             }
                             else
                             {
-                                bubble.Padding = new Thickness(52, 0, MessageToShareConverter.Convert(message) ? 4 : 52, 0);
+                                bubble.Padding = new Thickness(52, 0, MessageToShareConverter.Convert(message) ? 12 : 52, 0);
                             }
                         }
                     }
@@ -202,7 +202,7 @@ namespace Unigram.Controls
                             }
                             else
                             {
-                                bubble.Padding = new Thickness(12, 0, MessageToShareConverter.Convert(message) ? 4 : 52, 0);
+                                bubble.Padding = new Thickness(12, 0, MessageToShareConverter.Convert(message) ? 12 : 52, 0);
                             }
                         }
                     }

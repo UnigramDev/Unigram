@@ -13,7 +13,7 @@
     mc:Ignorable="d">
 
     <DataTemplate x:Key="MediaMusicTemplate">
-        <Grid MinWidth="260">
+        <Grid MinWidth="220">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
@@ -30,7 +30,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaDocumentTemplate">
-        <Grid MinWidth="260">
+        <Grid MinWidth="220">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
@@ -47,7 +47,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaDocumentThumbTemplate">
-        <Grid MinWidth="260">
+        <Grid MinWidth="220">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
@@ -142,6 +142,10 @@
         <Grid Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
+            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
+                                Constraint="{Binding Media.Document}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
             <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                                 Constraint="{Binding Media.Document}"
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
@@ -154,7 +158,7 @@
 
 
     <DataTemplate x:Key="MediaContactTemplate">
-        <Grid MinWidth="260">
+        <Grid MinWidth="220">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>

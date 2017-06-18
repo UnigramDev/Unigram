@@ -246,6 +246,7 @@
     <Compile Include="ViewModels\Settings\SettingsWallPaperViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPhoneSentCodeViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPhoneViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsSecurityEnterPasswordViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
@@ -342,6 +343,9 @@
     </Compile>
     <Compile Include="Views\Settings\SettingsSecurityChangePasswordPage.xaml.cs">
       <DependentUpon>SettingsSecurityChangePasswordPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsSecurityEnterPasswordPage.xaml.cs">
+      <DependentUpon>SettingsSecurityEnterPasswordPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
       <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
@@ -1417,6 +1421,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\SettingsSecurityChangePasswordPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsSecurityEnterPasswordPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
