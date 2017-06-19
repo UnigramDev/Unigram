@@ -1546,8 +1546,7 @@
 			<SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
             <SolidColorBrush x:Key="MessageForegroundOutBrush" Color="#FFFFFF"/>
 
-            <!--<SolidColorBrush x:Key="MessageBackgroundBrush" Color="#1F2C36"/>-->
-			<StaticResource x:Key="MessageBackgroundBrush" ResourceKey="SystemControlAcrylicElementBrush"/>
+            <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#1F2C36"/>
             <SolidColorBrush x:Key="MessageBackgroundOutBrush" Color="{ThemeResource SystemAccentColorDark2}"/>
 
             <SolidColorBrush x:Key="MessageBorderBrush" Color="#144D7B29"/>
@@ -1608,8 +1607,8 @@
 
 
 
-
-
+			<CornerRadius x:Key="MessageCornerRadius">4,4,4,0</CornerRadius>
+			<CornerRadius x:Key="MessageCornerRadiusOut">4,4,0,4</CornerRadius>
 
 
 
@@ -1627,6 +1626,46 @@
 			<BitmapImage x:Key="DefaultBackgroundBrush" UriSource="ms-appx:///Assets/Images/DefaultBackground.theme-dark.png"/>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
+	
+    <Style x:Key="MessageBubbleStyle" TargetType="ContentControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid Margin="-8,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Canvas VerticalAlignment="Bottom" Width="8" Height="10" Visibility="{Binding IsLast, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Path Canvas.Top="8" Width="8" Height="2" Data="F1M0,2L8,2 8,0 0,0z" Fill="{ThemeResource MessageBorderBrush}" StrokeThickness="0" />
+                            <Path Width="8" Height="8" Data="F1M8,0L0,8 8,8" Fill="{ThemeResource MessageBackgroundBrush}" StrokeThickness="0" />
+                        </Canvas>
+                        <ContentPresenter Grid.Column="1"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="MessageBubbleOutStyle" TargetType="ContentControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid Margin="0,0,-8,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="8"/>
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter/>
+                        <Canvas VerticalAlignment="Bottom" Width="8" Height="10" Visibility="{Binding IsLast, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Column="1">
+                            <Path Canvas.Top="8" Width="8" Height="2" Data="F1M0,2L8,2 8,0 0,0z" Fill="{ThemeResource MessageBorderBrush}" StrokeThickness="0" />
+                            <Path Width="8" Height="8" Data="F1M0,0L0,8 8,8z" Fill="{ThemeResource MessageBackgroundBrush}" StrokeThickness="0" />
+                        </Canvas>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 	
 	<Style TargetType="local:ProfilePictureView">
         <Setter Property="Template">

@@ -52,6 +52,9 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
+    <StaticResource x:Key="MessageCornerRadius" ResourceKey="MessageCornerRadiusOut"/>
+    
     <StaticResource x:Key="MessageHorizontalAlignment" ResourceKey="MessageHorizontalAlignmentOut"/>
 
+    <StaticResource x:Key="MessageBubbleStyle" ResourceKey="MessageBubbleOutStyle"/>
 </ResourceDictionary>
