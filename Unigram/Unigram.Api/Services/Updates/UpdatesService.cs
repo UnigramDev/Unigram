@@ -1771,11 +1771,17 @@ namespace Telegram.Api.Services.Updates
                 user.LastName = userName.LastName;
                 user.Username = userName.Username;
 
+                user.HasFirstName = user.FirstName != null;
+                user.HasLastName = user.LastName != null;
+                user.HasUsername = user.Username != null;
+
                 user.RaisePropertyChanged(() => user.FirstName);
                 user.RaisePropertyChanged(() => user.LastName);
                 user.RaisePropertyChanged(() => user.Username);
                 user.RaisePropertyChanged(() => user.FullName);
                 user.RaisePropertyChanged(() => user.DisplayName);
+
+                _cacheService.SyncUser(user, _ => { });
 
                 // TODO
                 //var userWithUserName = user as IUserName;
@@ -1803,7 +1809,10 @@ namespace Telegram.Api.Services.Updates
                 }
 
                 user.Photo = userPhoto.Photo;
+                user.HasPhoto = user.Photo != null;
                 user.RaisePropertyChanged(() => user.PhotoSelf);
+
+                _cacheService.SyncUser(user, _ => { });
 
                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(userPhoto));
                 //_cacheService.SyncUser(user, result => _eventAggregator.Publish(result));
@@ -1821,7 +1830,12 @@ namespace Telegram.Api.Services.Updates
                 }
 
                 user.Phone = userPhone.Phone;
-                Helpers.Execute.BeginOnThreadPool(() => user.RaisePropertyChanged(() => user.Phone));
+                user.HasPhone = user.Phone != null;
+                user.RaisePropertyChanged(() => user.Phone);
+
+                _cacheService.SyncUser(user, _ => { });
+
+                Execute.BeginOnThreadPool(() => user.RaisePropertyChanged(() => user.Phone));
 
                 return true;
             }
