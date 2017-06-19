@@ -44,14 +44,22 @@ namespace Unigram.Common
             {
                 var text = File.ReadAllText(fileName);
 
-                var dictionary = XamlReader.Load(text) as ResourceDictionary;
-                if (dictionary == null)
+                try
                 {
-                    return;
-                }
+                    var dictionary = XamlReader.Load(text) as ResourceDictionary;
+                    if (dictionary == null)
+                    {
+                        return;
+                    }
 
-                accent.MergedDictionaries.Clear();
-                accent.MergedDictionaries.Add(dictionary);
+                    accent.MergedDictionaries.Clear();
+                    accent.MergedDictionaries.Add(dictionary);
+                }
+                catch
+                {
+                    File.Delete(fileName);
+                    Update();
+                }
             }
             else
             {

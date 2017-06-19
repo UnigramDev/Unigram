@@ -161,9 +161,9 @@ namespace Unigram.ViewModels
 
         public override int Date => _message.Date;
 
-        public override bool IsVideo => _message.IsVideo() || _message.IsGif() || _message.IsRoundVideo();
+        public override bool IsVideo => _message.IsVideo() || /*_message.IsGif() ||*/ _message.IsRoundVideo();
 
-        public override bool IsLoop => _message.IsGif();
+        public override bool IsLoop => /*_message.IsGif() ||*/ _message.IsRoundVideo();
 
         public override bool IsShareEnabled => _message.Parent != null;
 
@@ -275,6 +275,87 @@ namespace Unigram.ViewModels
             }
 
             return false;
+        }
+    }
+
+    public class GalleryPhotoItem : GalleryItem
+    {
+        private readonly TLPhoto _photo;
+        private readonly ITLDialogWith _from;
+        private readonly string _caption;
+
+        public GalleryPhotoItem(TLPhoto photo, ITLDialogWith from)
+        {
+            _photo = photo;
+            _from = from;
+        }
+
+        public GalleryPhotoItem(TLPhoto photo, string caption)
+        {
+            _photo = photo;
+            _caption = caption;
+        }
+
+        public TLPhoto Photo => _photo;
+
+        public override ITLTransferable Source => _photo;
+
+        public override string Caption => _caption;
+
+        public override ITLDialogWith From => _from;
+
+        public override int Date => _photo.Date;
+
+        public override bool HasStickers => _photo.IsHasStickers;
+
+        public override TLInputStickeredMediaBase ToInputStickeredMedia()
+        {
+            return new TLInputStickeredMediaPhoto { Id = _photo.ToInputPhoto() };
+        }
+    }
+
+    public class GalleryDocumentItem : GalleryItem
+    {
+        private readonly TLDocument _document;
+        private readonly ITLDialogWith _from;
+        private readonly string _caption;
+
+        public GalleryDocumentItem(TLDocument document, ITLDialogWith from)
+        {
+            _document = document;
+            _from = from;
+        }
+
+        public GalleryDocumentItem(TLDocument document, string caption)
+        {
+            _document = document;
+            _caption = caption;
+        }
+
+        public TLDocument Document => _document;
+
+        public override ITLTransferable Source => _document;
+
+        public override string Caption => _caption;
+
+        public override ITLDialogWith From => _from;
+
+        public override int Date => _document.Date;
+
+        public override bool IsVideo => TLMessage.IsVideo(_document) || /*TLMessage.IsGif(_document) ||*/ TLMessage.IsRoundVideo(_document);
+
+        public override bool IsLoop => /*TLMessage.IsGif(_document) ||*/ TLMessage.IsRoundVideo(_document);
+
+        public override bool HasStickers => _document.Attributes.Any(x => x is TLDocumentAttributeHasStickers);
+
+        public override TLInputStickeredMediaBase ToInputStickeredMedia()
+        {
+            return new TLInputStickeredMediaDocument { Id = _document.ToInputDocument() };
+        }
+
+        public override Uri GetVideoSource()
+        {
+            return FileUtils.GetTempFileUri(_document.GetFileName());
         }
     }
 }
