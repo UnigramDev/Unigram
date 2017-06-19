@@ -1640,7 +1640,6 @@ namespace Telegram.Api.Services.Updates
                     foreach (var message in messages)
                     {
                         message.SetUnread(false);
-                        message.RaisePropertyChanged(() => message.IsUnread);
                     }
 
                     foreach (var dialogBase in dialogs.Values)

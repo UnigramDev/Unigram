@@ -999,14 +999,7 @@
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Icons\MessageStatus\ic_double_tick.png" />
-    <Content Include="Assets\Icons\MessageStatus\ic_double_tick_lightbg.png" />
-    <Content Include="Assets\Icons\MessageStatus\ic_single_tick.png" />
-    <Content Include="Assets\Icons\MessageStatus\ic_single_tick_lightbg.png" />
-    <Content Include="Assets\Icons\MessageStatus\ic_unsent_message.png" />
-    <Content Include="Assets\Icons\MessageStatus\ic_unsent_message_lightbg.png" />
     <Content Include="Assets\Icons\Toast\Send.png" />
-    <Content Include="Assets\Icons\userPos32.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-dark.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-light.png" />
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-100.png" />
@@ -1085,11 +1078,6 @@
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-400.png" />
-    <Content Include="Assets\Mockups\Images\userPhoto.jpg" />
-    <Content Include="Assets\Mockups\Logos\logo-transparent.png" />
-    <Content Include="Assets\Mockups\Logos\logo.png" />
-    <Content Include="Assets\Mockups\README.txt" />
-    <Content Include="Assets\Mockups\UserIcons\user_batman.png" />
     <None Include="Package.StoreAssociation.xml">
       <SubType>Designer</SubType>
     </None>
