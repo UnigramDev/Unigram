@@ -12,7 +12,7 @@ using Telegram.Api.Services.Connection;
 using Telegram.Api.Services.DeviceInfo;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Messages.Methods;
 using Telegram.Api.Transport;
 using Unigram.Core.Notifications;
 using Unigram.Core.Services;
@@ -49,6 +49,7 @@ namespace Unigram.Tasks
                     protoService.Initialized += (s, args) =>
                     {
                         var text = data["QuickMessage"];
+                        var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
 
                         var replyToMsgId = 0;
                         var inputPeer = default(TLInputPeerBase);
@@ -67,7 +68,7 @@ namespace Unigram.Tasks
                             replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) : 0;
                         }
 
-                        var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = replyToMsgId, Message = text, IsBackground = true, RandomId = TLLong.Random() };
+                        var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = replyToMsgId, Message = messageText, IsBackground = true, RandomId = TLLong.Random() };
 
                         protoService.SendInformativeMessageInternal<TLUpdatesBase>("messages.sendMessage", obj, result =>
                         {
@@ -138,7 +139,7 @@ namespace Unigram.Tasks
             }
         }
 
-        public string Model
+        public string DeviceModel
         {
             get
             {

@@ -1,0 +1,19 @@
+﻿<ContentDialog
+    x:Class="Unigram.Controls.Views.EditUserNameView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Edit name"
+    PrimaryButtonText="OK"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <StackPanel>
+        <TextBox x:Name="TextFirstName" TextChanged="OnTextChanged" Header="First name" Margin="0,16,0,12"/>
+        <TextBox x:Name="TextLastName" TextChanged="OnTextChanged" Header="Last name (optional)" Margin="0,0,0,12"/>
+    </StackPanel>
+</ContentDialog>

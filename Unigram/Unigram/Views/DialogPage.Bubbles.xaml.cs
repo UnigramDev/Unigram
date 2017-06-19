@@ -38,6 +38,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+using Unigram.Controls;
 
 namespace Unigram.Views
 {
@@ -49,7 +50,11 @@ namespace Unigram.Views
         {
             if (lvDialogs.ScrollingHost.ScrollableHeight - lvDialogs.ScrollingHost.VerticalOffset < 120)
             {
-                ViewModel.UpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+                if (ViewModel.IsFirstSliceLoaded)
+                {
+                    ViewModel.UpdatingScrollMode = UpdatingScrollMode.KeepLastItemInView;
+                }
+
                 Arrow.Visibility = Visibility.Collapsed;
             }
             else

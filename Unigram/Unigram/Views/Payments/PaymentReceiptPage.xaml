@@ -25,11 +25,15 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
-                    <Image Source="{Binding Invoice.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="80" Height="80" Margin="0,0,12,0" Stretch="UniformToFill" VerticalAlignment="Top" Grid.RowSpan="3"/>
+                    <Border Width="80" Height="80" Margin="0,0,12,0" VerticalAlignment="Top" Grid.RowSpan="3">
+                        <Border.Background>
+                            <ImageBrush ImageSource="{Binding Invoice.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                        </Border.Background>
+                    </Border>
 
                     <StackPanel Grid.Column="1">
                         <TextBlock Text="{x:Bind ViewModel.Invoice.Title, FallbackValue=Empty}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind ViewModel.Invoice.Description, FallbackValue=Empty}" MaxLines="3" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind ViewModel.Invoice.Description, FallbackValue=Empty}" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
                         <TextBlock Text="{x:Bind ViewModel.Bot.FullName, FallbackValue=Empty}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
                     </StackPanel>
                 </Grid>

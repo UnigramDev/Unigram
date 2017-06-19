@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using Telegram.Api.Helpers;
 
 namespace Telegram.Api
 {
     public static partial class Constants
     {
-        public static readonly string FirstServerIpAddress;
+        public static readonly string FirstServerIpAddress = SettingsHelper.IsTestMode ? "149.154.167.40" : "149.154.167.50";
 
         public static readonly int ApiId;
         public static readonly string ApiHash;
@@ -16,7 +17,7 @@ namespace Telegram.Api
 
         public const int DatabaseVersion = 1;
 
-        public const int SupportedLayer = 65;
+        public const int SupportedLayer = 66;
 
         public const int CallsMaxLayer = 65;
         public const int CallsMinLayer = 65;
@@ -60,7 +61,7 @@ namespace Telegram.Api
         public static int DocumentUploadersCount = 3;
         public static int AudioDownloadersCount = 3;
         public static int MaximumChunksCount = 3000;
-        public static int DownloadChunkSize = 64 * 1024;    // 1MB % DownloadedChunkSize = 0 && DownloadedChunkSize % 1KB = 0
+        public static int DownloadChunkSize = 32 * 1024;    // 1MB % DownloadedChunkSize = 0 && DownloadedChunkSize % 1KB = 0
         public static int DocumentDownloadChunkSize = 128 * 1024;    // 1MB % DownloadedChunkSize = 0 && DownloadedChunkSize % 1KB = 0
         public static ulong MaximumUploadedFileSize = 512 * 1024 * 3000;    // 1,5GB
 

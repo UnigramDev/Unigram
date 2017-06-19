@@ -65,13 +65,13 @@ namespace Unigram.Views
             if (operation.Data.Contains(StandardDataFormats.Text))
             {
                 var text = await operation.Data.GetTextAsync();
-                txtMessage.Text = await operation.Data.GetTextAsync();
+                TextField.Text = await operation.Data.GetTextAsync();
             }
 
             if (operation.Data.Contains(StandardDataFormats.WebLink))
             {
                 var link = await operation.Data.GetWebLinkAsync();
-                txtMessage.Text += Environment.NewLine + Environment.NewLine + link;
+                TextField.Text += Environment.NewLine + Environment.NewLine + link;
 
                 var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
                 var preview = await protoService.GetWebPagePreviewAsync(link.AbsoluteUri);
@@ -162,7 +162,7 @@ namespace Unigram.Views
                     prgSendStatus.Value = 40;
 
                     // Send the correct message according to the send content
-                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.Peer, TLMessageState.Sending, true, true, date, txtMessage.Text.Trim(), new TLMessageMediaEmpty(), TLLong.Random(), 0);
+                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.Peer, TLMessageState.Sending, true, true, date, TextField.Text.Trim(), new TLMessageMediaEmpty(), TLLong.Random(), 0);
                     prgSendStatus.Value = 50;
                     cacheService.SyncSendingMessage(message, null, async (m) =>
                     {

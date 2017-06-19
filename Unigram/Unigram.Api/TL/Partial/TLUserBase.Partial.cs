@@ -108,11 +108,6 @@ namespace Telegram.Api.TL
                     //    return Phone != null ? "+" + Phone : string.Empty;
                     //}
 
-                    if (string.Equals(firstName, lastName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return firstName;
-                    }
-
                     if (string.IsNullOrEmpty(firstName))
                     {
                         return lastName;
@@ -212,6 +207,42 @@ namespace Telegram.Api.TL
                 //}
 
                 return ToString();
+            }
+        }
+
+
+
+        private bool _isTyping;
+        public bool IsTyping
+        {
+            get
+            {
+                return _isTyping;
+            }
+            set
+            {
+                if (_isTyping != value)
+                {
+                    _isTyping = value;
+                    RaisePropertyChanged(() => IsTyping);
+                }
+            }
+        }
+
+        private string _typingSubtitle;
+        public string TypingSubtitle
+        {
+            get
+            {
+                return _typingSubtitle;
+            }
+            set
+            {
+                if (_typingSubtitle != value)
+                {
+                    _typingSubtitle = value;
+                    RaisePropertyChanged(() => TypingSubtitle);
+                }
             }
         }
 

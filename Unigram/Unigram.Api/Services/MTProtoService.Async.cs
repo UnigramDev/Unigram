@@ -5,8 +5,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Channels;
-using Telegram.Api.TL.Methods.Contacts;
+using Telegram.Api.TL.Account;
+using Telegram.Api.TL.Auth;
+using Telegram.Api.TL.Channels;
+using Telegram.Api.TL.Channels.Methods;
+using Telegram.Api.TL.Contacts;
+using Telegram.Api.TL.Contacts.Methods;
+using Telegram.Api.TL.Help;
+using Telegram.Api.TL.Messages;
+using Telegram.Api.TL.Payments;
+using Telegram.Api.TL.Phone;
+using Telegram.Api.TL.Photos;
+using Telegram.Api.TL.Updates;
+using Telegram.Api.TL.Upload;
 
 namespace Telegram.Api.Services
 {
@@ -847,15 +858,29 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLUploadFile>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit)
+        public Task<MTProtoResponse<TLCdnConfig>> GetCdnConfigAsync()
         {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFile>>();
-            GetFileAsync(dcId, location, offset, limit, (callback) =>
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLCdnConfig>>();
+            GetCdnConfigAsync((callback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLUploadFile>(callback));
+                tsc.TrySetResult(new MTProtoResponse<TLCdnConfig>(callback));
             }, (faultCallback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLUploadFile>(faultCallback));
+                tsc.TrySetResult(new MTProtoResponse<TLCdnConfig>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLUploadFileBase>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFileBase>>();
+            GetFileAsync(dcId, location, offset, limit, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUploadFileBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUploadFileBase>(faultCallback));
             });
             return tsc.Task;
         }
@@ -2261,15 +2286,15 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLUploadFile>> GetFileAsync(TLInputFileLocationBase location, int offset, int limit)
+        public Task<MTProtoResponse<TLUploadFileBase>> GetFileAsync(TLInputFileLocationBase location, int offset, int limit)
         {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFile>>();
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFileBase>>();
             GetFileAsync(location, offset, limit, (callback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLUploadFile>(callback));
+                tsc.TrySetResult(new MTProtoResponse<TLUploadFileBase>(callback));
             }, (faultCallback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLUploadFile>(faultCallback));
+                tsc.TrySetResult(new MTProtoResponse<TLUploadFileBase>(faultCallback));
             });
             return tsc.Task;
         }

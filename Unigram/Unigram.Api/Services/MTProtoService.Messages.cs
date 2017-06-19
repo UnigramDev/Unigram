@@ -11,8 +11,9 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Methods;
-using Telegram.Api.TL.Methods.Help;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Help.Methods;
+using Telegram.Api.TL.Messages.Methods;
+using Telegram.Api.TL.Messages;
 
 namespace Telegram.Api.Services
 {
@@ -111,7 +112,7 @@ namespace Telegram.Api.Services
 
         public void SetInlineBotResultsAsync(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesSetInlineBotResults { Flags = 0, IsGallery = gallery, IsPrivate = pr, QueryId = queryId, Results = results, CacheTime = cacheTime, NextOffset = nextOffset, HasSwitchPm = switchPM != null, SwitchPm = switchPM };
+            var obj = new TLMessagesSetInlineBotResults { Flags = 0, IsGallery = gallery, IsPrivate = pr, QueryId = queryId, Results = results, CacheTime = cacheTime, NextOffset = nextOffset, HasSwitchPM = switchPM != null, SwitchPM = switchPM };
 
             const string caption = "messages.setInlineBotResults";
             SendInformativeMessage(caption, obj, callback, faultCallback);
@@ -641,7 +642,13 @@ namespace Telegram.Api.Services
 
                             if (messageCommon is TLMessage messageMessage)
                             {
-                                if (message.Message != messageMessage.Message)
+                                if (message.Media != null && messageMessage.Media != null && message.Media.TypeId != messageMessage.Media.TypeId)
+                                {
+                                    message.Media = messageMessage.Media;
+                                    message.RaisePropertyChanged(() => message.Media);
+                                }
+
+                                if (message.Message != messageMessage.Message || (message.HasEntities != messageMessage.HasEntities) || (message.Entities?.Count != messageMessage.Entities?.Count))
                                 {
                                     message.HasEntities = messageMessage.HasEntities;
                                     message.Entities = messageMessage.Entities;

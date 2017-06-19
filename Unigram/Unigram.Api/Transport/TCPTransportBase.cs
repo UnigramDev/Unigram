@@ -48,6 +48,7 @@ namespace Telegram.Api.Transport
         public int Id { get; protected set; }
         public int DCId { get; set; }
         public byte[] AuthKey { get; set; }
+        public string[] PublicKeys { get; set; }
         public long? SessionId { get; set; }
         public long? Salt { get; set; }
         public int SequenceNumber { get; set; }

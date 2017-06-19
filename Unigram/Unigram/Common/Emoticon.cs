@@ -103,7 +103,7 @@ namespace Unigram.Common
                 case ":like:":
                 case "(y)":
                 case "(Y)":
-                    return "󰀀";
+                    return "👍";
                 case ":poop:":
                     return "💩";
                 case "(n)":

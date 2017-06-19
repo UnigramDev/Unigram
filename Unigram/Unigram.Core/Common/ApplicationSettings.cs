@@ -6,6 +6,8 @@ using System.Threading;
 using Windows.Storage;
 using Telegram.Api.TL;
 using Unigram.Core.Services;
+using Telegram.Api.Services;
+using Telegram.Api.TL.Account;
 
 namespace Unigram.Common
 {
@@ -111,6 +113,57 @@ namespace Unigram.Common
             }
         }
 
+        private bool? _isContactsSyncEnabled;
+        public bool IsContactsSyncEnabled
+        {
+            get
+            {
+                if (_isContactsSyncEnabled == null)
+                    _isContactsSyncEnabled = GetValueOrDefault("IsContactsSyncEnabled", true);
+
+                return _isContactsSyncEnabled ?? true;
+            }
+            set
+            {
+                _isContactsSyncEnabled = value;
+                AddOrUpdateValue("IsContactsSyncEnabled", value);
+            }
+        }
+
+        private int? _selectedBackground;
+        public int SelectedBackground
+        {
+            get
+            {
+                if (_selectedBackground == null)
+                    _selectedBackground = GetValueOrDefault("SelectedBackground", 1000001);
+
+                return _selectedBackground ?? 1000001;
+            }
+            set
+            {
+                _selectedBackground = value;
+                AddOrUpdateValue("SelectedBackground", value);
+            }
+        }
+
+        private int? _selectedColor;
+        public int SelectedColor
+        {
+            get
+            {
+                if (_selectedColor == null)
+                    _selectedColor = GetValueOrDefault("SelectedColor", 0);
+
+                return _selectedColor ?? 0;
+            }
+            set
+            {
+                _selectedColor = value;
+                AddOrUpdateValue("SelectedColor", value);
+            }
+        }
+
         private TLAccountTmpPassword _tmpPassword;
         public TLAccountTmpPassword TmpPassword
         {
@@ -134,5 +187,50 @@ namespace Unigram.Common
                 _tmpPassword = value;
             }
         }
+
+        public ApplicationSettingsDownload AutoDownload => new ApplicationSettingsDownload();
+    }
+
+    public class ApplicationSettingsDownload
+    {
+        private int[] _defaults = new int[3];
+
+        public ApplicationSettingsDownload()
+        {
+            _defaults[(int)NetworkType.Mobile] = (int)(AutoDownloadType.Photo | AutoDownloadType.Audio | AutoDownloadType.Music | AutoDownloadType.GIF | AutoDownloadType.Round);
+            _defaults[(int)NetworkType.WiFi] = (int)(AutoDownloadType.Photo | AutoDownloadType.Audio | AutoDownloadType.Music | AutoDownloadType.GIF | AutoDownloadType.Round);
+            _defaults[(int)NetworkType.Roaming] = 0;
+        }
+
+        private AutoDownloadType?[] _autoDownload = new AutoDownloadType?[3];
+        public AutoDownloadType this[NetworkType index]
+        {
+            get
+            {
+                var i = (int)index;
+                if (_autoDownload[i] == null)
+                    _autoDownload[i] = (AutoDownloadType)ApplicationSettings.Current.GetValueOrDefault("auto_download_" + i, _defaults[(int)index]);
+
+                return _autoDownload[i].Value;
+            }
+            set
+            {
+                var i = (int)index;
+                _autoDownload[i] = value;
+                ApplicationSettings.Current.AddOrUpdateValue("auto_download_" + i, (int)value);
+            }
+        }
+    }
+
+    [Flags]
+    public enum AutoDownloadType
+    {
+        Photo = 1,
+        Audio = 2,
+        Video = 4,
+        Document = 8,
+        Music = 16,
+        GIF = 32,
+        Round = 64,
     }
 }

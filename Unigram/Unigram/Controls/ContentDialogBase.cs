@@ -20,11 +20,15 @@ using Windows.Foundation.Metadata;
 using Template10.Services.NavigationService;
 using Template10.Services.ViewService;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Input;
+using Unigram.Core.Helpers;
 
 namespace Unigram.Controls
 {
     public class ContentDialogBase : ContentControl
     {
+        private int _lastHide;
+
         private ApplicationView _applicationView;
         private Popup _popupHost;
 
@@ -50,9 +54,10 @@ namespace Unigram.Controls
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
-            if (BackgroundElement != null && sender.VisibleBounds != Window.Current.Bounds)
+            var bounds = Window.Current.Bounds;
+            if (/*BackgroundElement != null &&*/ sender.VisibleBounds != bounds)
             {
-                Margin = new Thickness(sender.VisibleBounds.X, sender.VisibleBounds.Y, Window.Current.Bounds.Width - sender.VisibleBounds.Right, Window.Current.Bounds.Height - sender.VisibleBounds.Bottom);
+                Margin = new Thickness(sender.VisibleBounds.X - bounds.Left, sender.VisibleBounds.Y - bounds.Top, bounds.Width - (sender.VisibleBounds.Right - bounds.Left), bounds.Height - (sender.VisibleBounds.Bottom - bounds.Top));
                 UpdateViewBase();
             }
             else
@@ -107,6 +112,19 @@ namespace Unigram.Controls
             }
         }
 
+        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Escape)
+            {
+                Hide();
+                e.Handled = true;
+            }
+            else
+            {
+                base.OnKeyDown(e);
+            }
+        }
+
         public bool IsOpen
         {
             get
@@ -137,6 +155,8 @@ namespace Unigram.Controls
                     navigable.NavigationService = new ContentDialogNavigationService(this);
                 }
 
+                var previous = _callback;
+
                 _result = ContentDialogBaseResult.None;
                 _callback = new TaskCompletionSource<ContentDialogBaseResult>();
 
@@ -150,12 +170,28 @@ namespace Unigram.Controls
                     _popupHost.Loading += PopupHost_Loading;
                     _popupHost.Opened += PopupHost_Opened;
                     _popupHost.Closed += PopupHost_Closed;
+                    this.Unloaded += PopupHost_Unloaded;
                 }
+
+                // Cool down
+                if (previous != null)
+                {
+                    await previous.Task;
+                }
+                //if (Environment.TickCount - _lastHide < 500)
+                //{
+                //    await Task.Delay(200);
+                //}
 
                 _popupHost.IsOpen = true;
 
                 return await _callback.Task;
             });
+        }
+
+        private void PopupHost_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _callback.TrySetResult(_result);
         }
 
         private void PopupHost_Loading(FrameworkElement sender, object args)
@@ -180,7 +216,7 @@ namespace Unigram.Controls
         {
             UnmaskTitleAndStatusBar();
 
-            _callback.TrySetResult(_result);
+            //_callback.TrySetResult(_result);
 
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
             _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
@@ -201,7 +237,7 @@ namespace Unigram.Controls
 
         protected void Prepare()
         {
-            Margin = new Thickness(Window.Current.Bounds.Width, Window.Current.Bounds.Height, 0, 0);
+            //Margin = new Thickness(Window.Current.Bounds.Width, Window.Current.Bounds.Height, 0, 0);
             Closing?.Invoke(this, EventArgs.Empty);
         }
 
@@ -212,6 +248,12 @@ namespace Unigram.Controls
 
         public void Hide(ContentDialogBaseResult result)
         {
+            if (_popupHost == null || !_popupHost.IsOpen)
+            {
+                return;
+            }
+
+            _lastHide = Environment.TickCount;
             _result = result;
             _popupHost.IsOpen = false;
         }

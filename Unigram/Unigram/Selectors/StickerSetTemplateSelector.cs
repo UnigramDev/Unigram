@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Messages;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 

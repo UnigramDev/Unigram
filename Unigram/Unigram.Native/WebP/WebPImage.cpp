@@ -198,12 +198,18 @@ IRandomAccessStream^ Unigram::Native::WebPImage::Encode(const Array<uint8> ^byte
 			throw ref new FailureException(ref new String(L"WebPGetFeatures failed"));
 		}
 
-		auto ratioX = (double)256 / iter.width;
-		auto ratioY = (double)256 / iter.height;
-		auto ratio = std::min(ratioX, ratioY);
+		int width = iter.width;
+		int height = iter.height;
 
-		auto width = (int)(iter.width * ratio);
-		auto height = (int)(iter.height * ratio);
+		if (iter.width > 256 || iter.height > 256)
+		{
+			auto ratioX = (double)256 / iter.width;
+			auto ratioY = (double)256 / iter.height;
+			auto ratio = std::min(ratioX, ratioY);
+
+			width = (int)(iter.width * ratio);
+			height = (int)(iter.height * ratio);
+		}
 
 		uint8_t* pixels = new uint8_t[(width * 4) * height];
 

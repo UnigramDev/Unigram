@@ -3,8 +3,19 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Channels;
-using Telegram.Api.TL.Methods.Contacts;
+using Telegram.Api.TL.Account;
+using Telegram.Api.TL.Auth;
+using Telegram.Api.TL.Channels;
+using Telegram.Api.TL.Channels.Methods;
+using Telegram.Api.TL.Contacts;
+using Telegram.Api.TL.Contacts.Methods;
+using Telegram.Api.TL.Help;
+using Telegram.Api.TL.Messages;
+using Telegram.Api.TL.Payments;
+using Telegram.Api.TL.Phone;
+using Telegram.Api.TL.Photos;
+using Telegram.Api.TL.Updates;
+using Telegram.Api.TL.Upload;
 using Telegram.Api.Transport;
 
 namespace Telegram.Api.Services
@@ -58,6 +69,7 @@ namespace Telegram.Api.Services
         void MessageAcknowledgments(TLVector<long> ids);
 
         void SendRequestAsync<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null);
+        void SendRequestAsync<T>(string caption, TLObject obj, int dcId, bool cdn, Action<T> callback, Action<TLRPCError> faultCallback = null);
 
         // auth
         void SendCodeAsync(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null);
@@ -97,8 +109,11 @@ namespace Telegram.Api.Services
         void UpdateProfileAsync(string firstName, string lastName, string about, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null);
         void UpdateStatusAsync(bool offline, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
-        void GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFile> callback, Action<TLRPCError> faultCallback = null);
-        void GetFileAsync(TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFile> callback, Action<TLRPCError> faultCallback = null);
+        void GetWebFileAsync(int dcId, TLInputWebFileLocation location, int offset, int limit, Action<TLUploadWebFile> callback, Action<TLRPCError> faultCallback = null);
+        void GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFileBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetFileAsync(TLInputFileLocationBase location, int offset, int limit, Action<TLUploadFileBase> callback, Action<TLRPCError> faultCallback = null);
+        void GetCdnFileAsync(byte[] fileToken, int offset, int limit, Action<TLUploadCdnFileBase> callback, Action<TLRPCError> faultCallback = null);
+        void ReuploadCdnFileAsync(byte[] fileToken, byte[] requestToken, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SaveFilePartAsync(long fileId, int filePart, byte[] bytes, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SaveBigFilePartAsync(long fileId, int filePart, int fileTotalParts, byte[] bytes, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
@@ -265,6 +280,7 @@ namespace Telegram.Api.Services
         void SendConfirmPhoneCodeAsync(string hash, bool currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null);
 
         // help
+        void GetCdnConfigAsync(Action<TLCdnConfig> callback, Action<TLRPCError> faultCallback = null);
         void GetAppChangelogAsync(string prevAppVersion, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null); 
         void GetTermsOfServiceAsync(string langCode, Action<TLHelpTermsOfService> callback, Action<TLRPCError> faultCallback = null);
 

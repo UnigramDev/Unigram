@@ -10,6 +10,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Contacts;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
@@ -91,7 +92,10 @@ namespace Unigram.ViewModels
                         }
                     });
 
-                    await _contactsService.SyncContactsAsync(response.Result);
+                    if (ApplicationSettings.Current.IsContactsSyncEnabled)
+                    {
+                        await _contactsService.SyncContactsAsync(response.Result);
+                    }
                 }
             }
 

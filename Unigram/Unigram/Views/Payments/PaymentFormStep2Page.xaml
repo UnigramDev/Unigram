@@ -13,10 +13,11 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Text="Shipping methods" 
-                                   Command="{x:Bind ViewModel.SendCommand}"
-                                   IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                                   Glyph="&#xE10B;"/>
+        <controls:ButtonPageHeader
+            Text="Shipping methods" 
+            Command="{x:Bind ViewModel.SendCommand}"
+            IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+            Glyph="&#xE10B;"/>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"

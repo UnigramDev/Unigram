@@ -1,7 +1,8 @@
 ﻿using System;
 using Telegram.Api.Extensions;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Messages;
+using Telegram.Api.TL.Messages.Methods;
 
 namespace Telegram.Api.Services
 {

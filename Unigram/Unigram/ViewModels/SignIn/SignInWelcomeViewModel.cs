@@ -22,7 +22,7 @@ namespace Unigram.ViewModels.SignIn
 
             // TODO: put them in a separate file?
             // TODO: localization
-            Items.Add(new WelcomeTour { Title = "Unigram", Text = "Unigram is a Telegram Universal app built by the Windows Community, for the Windows Community" });
+            Items.Add(new WelcomeTour { Title = "Unigram", Text = "**Unigram** is a Telegram Universal app built by the Windows Community, for the Windows Community" });
             Items.Add(new WelcomeTour { Title = "Fast", Text = "**Telegram** delivers messages faster\nthan any other application." });
             Items.Add(new WelcomeTour { Title = "Free", Text = "**Telegram** is free forever. No ads.\nNo subscription fees." });
             Items.Add(new WelcomeTour { Title = "Powerful", Text = "**Telegram** has no limits on\nthe size of your media and chats." });
@@ -32,7 +32,7 @@ namespace Unigram.ViewModels.SignIn
         }
 
         private RelayCommand _continueCommand;
-        public RelayCommand ContinueCommand => _continueCommand = (_continueCommand ?? new RelayCommand(ContinueExecute, () => SelectedItem == Items.Last()));
+        public RelayCommand ContinueCommand => _continueCommand = (_continueCommand ?? new RelayCommand(ContinueExecute /*, () => SelectedItem == Items.Last()*/));
         private void ContinueExecute()
         {
             NavigationService.Navigate(typeof(SignInPage));

@@ -29,6 +29,12 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+using LinqToVisualTree;
+using Windows.Foundation.Metadata;
+using Windows.UI;
+using Microsoft.Graphics.Canvas.Effects;
+using Windows.UI.ViewManagement;
+using Windows.System.Display;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -40,33 +46,115 @@ namespace Unigram.Controls.Views
 
         public BindConvert Convert => BindConvert.Current;
 
-        private FrameworkElement _firstImage;
+        private Func<FrameworkElement> _closing;
+
+        private DisplayRequest _request;
         private MediaPlayerElement _mediaPlayer;
         private MediaPlayerSurface _mediaSurface;
 
-        private ImageView _surface;
+        private FrameworkElement _surface;
         private SpriteVisual _surfaceVisual;
 
         private Visual _layerVisual;
-        private Visual _topBarVisual;
-        private Visual _botBarVisual;
+        //private Visual _topBarVisual;
+        //private Visual _botBarVisual;
 
         private GalleryView()
         {
             InitializeComponent();
 
+            Layer.Visibility = Visibility.Collapsed;
+            TopBar.Visibility = Visibility.Collapsed;
+            BotBar.Visibility = Visibility.Collapsed;
+
             _mediaPlayer = new MediaPlayerElement { Style = Resources["yolo"] as Style };
             _mediaPlayer.AreTransportControlsEnabled = true;
             _mediaPlayer.TransportControls = Transport;
             _mediaPlayer.SetMediaPlayer(new MediaPlayer());
+            _mediaPlayer.MediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
 
             _layerVisual = ElementCompositionPreview.GetElementVisual(Layer);
-            _topBarVisual = ElementCompositionPreview.GetElementVisual(TopBar);
-            _botBarVisual = ElementCompositionPreview.GetElementVisual(BotBar);
+            //_topBarVisual = ElementCompositionPreview.GetElementVisual(TopBar);
+            //_botBarVisual = ElementCompositionPreview.GetElementVisual(BotBar);
 
-            _layerVisual.Opacity = 0;
-            _topBarVisual.Offset = new Vector3(0, -48, 0);
-            _botBarVisual.Offset = new Vector3(0, 48, 0);
+            //_layerVisual.Opacity = 0;
+            //_topBarVisual.Offset = new Vector3(0, -48, 0);
+            //_botBarVisual.Offset = new Vector3(0, 48, 0);
+
+            if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
+            {
+                var easing = ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction;
+                var duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
+
+                var topShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                topShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, -48, 0), easing);
+                topShowAnimation.InsertKeyFrame(1.0f, new Vector3(), easing);
+                topShowAnimation.Target = nameof(Visual.Offset);
+                topShowAnimation.Duration = duration;
+
+                var botHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                botHideAnimation.InsertKeyFrame(0.0f, new Vector3(), easing);
+                botHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, 48, 0), easing);
+                botHideAnimation.Target = nameof(Visual.Offset);
+                botHideAnimation.Duration = duration;
+
+                var topHideAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                topHideAnimation.InsertKeyFrame(0.0f, new Vector3(), easing);
+                topHideAnimation.InsertKeyFrame(1.0f, new Vector3(0, -48, 0), easing);
+                topHideAnimation.Target = nameof(Visual.Offset);
+                topHideAnimation.Duration = duration;
+
+                var botShowAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                botShowAnimation.InsertKeyFrame(0.0f, new Vector3(0, 48, 0), easing);
+                botShowAnimation.InsertKeyFrame(1.0f, new Vector3(), easing);
+                botShowAnimation.Target = nameof(Visual.Offset);
+                botShowAnimation.Duration = duration;
+
+                var layerShowAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                layerShowAnimation.InsertKeyFrame(0.0f, 0.0f, easing);
+                layerShowAnimation.InsertKeyFrame(1.0f, 1.0f, easing);
+                layerShowAnimation.Target = nameof(Visual.Opacity);
+                layerShowAnimation.Duration = duration;
+
+                var layerHideAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                layerHideAnimation.InsertKeyFrame(0.0f, 1.0f, easing);
+                layerHideAnimation.InsertKeyFrame(1.0f, 0.0f, easing);
+                layerHideAnimation.Target = nameof(Visual.Opacity);
+                layerHideAnimation.Duration = duration;
+
+                ElementCompositionPreview.SetImplicitShowAnimation(TopBar, topShowAnimation);
+                ElementCompositionPreview.SetImplicitHideAnimation(TopBar, topHideAnimation);
+                ElementCompositionPreview.SetImplicitShowAnimation(BotBar, botShowAnimation);
+                ElementCompositionPreview.SetImplicitHideAnimation(BotBar, botHideAnimation);
+                ElementCompositionPreview.SetImplicitShowAnimation(Layer, layerShowAnimation);
+                ElementCompositionPreview.SetImplicitHideAnimation(Layer, layerHideAnimation);
+            }
+        }
+
+        private async void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                switch (sender.PlaybackState)
+                {
+                    case MediaPlaybackState.Opening:
+                    case MediaPlaybackState.Buffering:
+                    case MediaPlaybackState.Playing:
+                        if (_request == null)
+                        {
+                            _request = new DisplayRequest();
+                            _request.RequestActive();
+                        }
+                        break;
+                    default:
+                        if (_request != null)
+                        {
+                            _request.RequestRelease();
+                            _request = null;
+                        }
+                        break;
+                }
+            });
         }
 
         private static GalleryView _current;
@@ -74,7 +162,7 @@ namespace Unigram.Controls.Views
         {
             get
             {
-                return new GalleryView();
+                //return new GalleryView();
 
                 if (_current == null)
                     _current = new GalleryView();
@@ -83,21 +171,28 @@ namespace Unigram.Controls.Views
             }
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter, EventHandler closing)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing)
         {
-            EventHandler handler = null;
-            handler = new EventHandler((s, args) =>
-            {
-                Closing -= handler;
-                closing?.Invoke(this, args);
-            });
+            _closing = closing;
 
-            Closing += handler;
+            //EventHandler handler = null;
+            //handler = new EventHandler((s, args) =>
+            //{
+            //    DataContext = null;
+            //    Bindings.StopTracking();
+
+            //    Closing -= handler;
+            //    closing?.Invoke(this, args);
+            //});
+
+            //Closing += handler;
             return ShowAsync(parameter);
         }
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter)
         {
+            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+
             DataContext = parameter;
             Bindings.Update();
 
@@ -112,49 +207,63 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
+        protected override void MaskTitleAndStatusBar()
+        {
+            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
+            titlebar.BackgroundColor = Colors.Black;
+            titlebar.ForegroundColor = Colors.White;
+            titlebar.ButtonBackgroundColor = Colors.Black;
+            titlebar.ButtonForegroundColor = Colors.White;
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                var statusBar = StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = Colors.Black;
+                statusBar.ForegroundColor = Colors.White;
+            }
+        }
+
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
-            if (Flip.SelectedIndex == 0 && _firstImage != null && _firstImage.ActualWidth > 0)
+            Dispose();
+
+            if (ViewModel.SelectedItem == ViewModel.FirstItem)
             {
-                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _firstImage);
-                if (animation != null)
+                //Flip.Opacity = 0;
+                Surface.Visibility = Visibility.Visible;
+
+                Layer.Visibility = Visibility.Collapsed;
+                TopBar.Visibility = Visibility.Collapsed;
+                BotBar.Visibility = Visibility.Collapsed;
+
+                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
+                if (animation != null && _closing != null)
                 {
-                    Prepare();
+                    animation.TryStart(_closing());
 
-                    if (_layerVisual != null && _topBarVisual != null && _botBarVisual != null)
-                    {
-                        var batch = _layerVisual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                    DataContext = null;
+                    Bindings.StopTracking();
 
-                        var easing = ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction;
-                        var duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
+                    Hide();
+                }
+                else
+                {
+                    DataContext = null;
+                    Bindings.StopTracking();
 
-                        var animOpacity = _layerVisual.Compositor.CreateScalarKeyFrameAnimation();
-                        animOpacity.InsertKeyFrame(0, 1, easing);
-                        animOpacity.InsertKeyFrame(1, 0, easing);
-                        animOpacity.Duration = duration;
-                        _layerVisual.StartAnimation("Opacity", animOpacity);
-
-                        var animTop = _layerVisual.Compositor.CreateVector3KeyFrameAnimation();
-                        animTop.InsertKeyFrame(1, new Vector3(0, -48, 0), easing);
-                        animTop.Duration = duration;
-                        _topBarVisual.StartAnimation("Offset", animTop);
-
-                        var animBot = _layerVisual.Compositor.CreateVector3KeyFrameAnimation();
-                        animBot.InsertKeyFrame(1, new Vector3(0, 48, 0), easing);
-                        animBot.Duration = duration;
-                        _botBarVisual.StartAnimation("Offset", animBot);
-
-                        batch.End();
-                    }
-
-                    animation.Completed += (s, args) =>
-                    {
-                        Hide();
-                    };
+                    Hide();
                 }
             }
             else
             {
+                //Flip.Opacity = 0;
+                Layer.Visibility = Visibility.Collapsed;
+                TopBar.Visibility = Visibility.Collapsed;
+                BotBar.Visibility = Visibility.Collapsed;
+
+                DataContext = null;
+                Bindings.StopTracking();
+
                 Hide();
             }
 
@@ -163,57 +272,27 @@ namespace Unigram.Controls.Views
 
         private void ImageView_ImageOpened(object sender, RoutedEventArgs e)
         {
-            var image = sender as FrameworkElement;
-            if (image != null)
+            var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
+            if (animation != null)
             {
-                image.Opacity = 1;
-            }
+                Layer.Visibility = Visibility.Visible;
+                TopBar.Visibility = Visibility.Visible;
+                BotBar.Visibility = Visibility.Visible;
 
-            if (image.DataContext == ViewModel.SelectedItem)
-            {
-                _firstImage = image;
-
-                var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                if (animation != null)
+                //Flip.Opacity = 1;
+                if (animation.TryStart(Surface))
                 {
-                    if (_layerVisual != null && _topBarVisual != null && _botBarVisual != null)
+                    animation.Completed += (s, args) =>
                     {
-                        var batch = _layerVisual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-
-                        var easing = ConnectedAnimationService.GetForCurrentView().DefaultEasingFunction;
-                        var duration = ConnectedAnimationService.GetForCurrentView().DefaultDuration;
-
-                        var animOpacity = _layerVisual.Compositor.CreateScalarKeyFrameAnimation();
-                        animOpacity.InsertKeyFrame(0, 0, easing);
-                        animOpacity.InsertKeyFrame(1, 1, easing);
-                        animOpacity.Duration = duration;
-                        _layerVisual.StartAnimation("Opacity", animOpacity);
-
-                        var animTop = _layerVisual.Compositor.CreateVector3KeyFrameAnimation();
-                        animTop.InsertKeyFrame(1, new Vector3(0, 0, 0), easing);
-                        animTop.Duration = duration;
-                        _topBarVisual.StartAnimation("Offset", animTop);
-
-                        var animBot = _layerVisual.Compositor.CreateVector3KeyFrameAnimation();
-                        animBot.InsertKeyFrame(1, new Vector3(0, 0, 0), easing);
-                        animBot.Duration = duration;
-                        _botBarVisual.StartAnimation("Offset", animBot);
-
-                        batch.End();
-                    }
-
-                    Flip.Opacity = 1;
-                    animation.TryStart(image);
+                        //Flip.Opacity = 1;
+                        //Surface.Visibility = Visibility.Collapsed;
+                    };
                 }
-            }
-        }
-
-        private void ImageView_Unloaded(object sender, RoutedEventArgs e)
-        {
-            var image = sender as FrameworkElement;
-            if (image != null)
-            {
-                image.Opacity = 0;
+                else
+                {
+                    //Flip.Opacity = 1;
+                    //Surface.Visibility = Visibility.Collapsed;
+                }
             }
         }
 
@@ -236,30 +315,55 @@ namespace Unigram.Controls.Views
 
         private void Play(GalleryItem item)
         {
-            var container = Flip.ContainerFromItem(item) as ContentControl;
-            if (container != null && container.ContentTemplateRoot is Grid parent)
+            try
             {
-                _surface = parent.FindName("Surface") as ImageView;
+                var parent = Surface;
 
-                _mediaPlayer.MediaPlayer.SetSurfaceSize(new Size(_surface.ActualWidth, _surface.ActualHeight));
+                //var container = Flip.ContainerFromItem(item) as ContentControl;
+                //if (container != null && container.ContentTemplateRoot is Grid parent)
+                {
+                    //_surface = parent.FindName("Surface") as ImageView;
+                    _surface = parent;
 
-                var swapchain = _mediaPlayer.MediaPlayer.GetSurface(_layerVisual.Compositor);
-                var brush = _layerVisual.Compositor.CreateSurfaceBrush(swapchain.CompositionSurface);
-                var size = new Vector2((float)_surface.ActualWidth, (float)_surface.ActualHeight);
+                    _mediaPlayer.MediaPlayer.SetSurfaceSize(new Size(_surface.ActualWidth, _surface.ActualHeight));
 
-                _surfaceVisual = _layerVisual.Compositor.CreateSpriteVisual();
-                _surfaceVisual.Size = size;
-                _surfaceVisual.Brush = brush;
+                    var swapchain = _mediaPlayer.MediaPlayer.GetSurface(_layerVisual.Compositor);
+                    var brush = _layerVisual.Compositor.CreateSurfaceBrush(swapchain.CompositionSurface);
+                    var size = new Vector2((float)_surface.ActualWidth, (float)_surface.ActualHeight);
 
-                ElementCompositionPreview.SetElementChildVisual(_surface, _surfaceVisual);
+                    //var mask = Unigram.Common.ImageLoader.Instance.LoadCircle(240, Colors.White).Brush;
+                    //var graphicsEffect = new AlphaMaskEffect
+                    //{
+                    //    Source = new CompositionEffectSourceParameter("image"),
+                    //    AlphaMask = new CompositionEffectSourceParameter("mask")
+                    //};
 
-                _mediaSurface = swapchain;
-                _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
-                _mediaPlayer.MediaPlayer.Play();
+                    //var effectFactory = _layerVisual.Compositor.CreateEffectFactory(graphicsEffect);
+                    //var effectBrush = effectFactory.CreateBrush();
+                    //effectBrush.SetSourceParameter("image", brush);
+                    //effectBrush.SetSourceParameter("mask", mask);
+
+                    _surfaceVisual = _layerVisual.Compositor.CreateSpriteVisual();
+                    _surfaceVisual.Size = size;
+                    _surfaceVisual.Brush = brush;
+
+                    ElementCompositionPreview.SetElementChildVisual(_surface, _surfaceVisual);
+
+                    _mediaSurface = swapchain;
+                    _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
+                    _mediaPlayer.MediaPlayer.IsLoopingEnabled = item.IsLoop;
+                    _mediaPlayer.MediaPlayer.Play();
+                }
             }
+            catch { }
         }
 
         private void Flip_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Dispose();
+        }
+
+        private void Dispose()
         {
             if (_surface != null)
             {
@@ -278,6 +382,23 @@ namespace Unigram.Controls.Views
                 _mediaPlayer.MediaPlayer.Pause();
                 _mediaPlayer.Source = null;
             }
+        }
+
+        private void ImageView_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            TopBar.Visibility = TopBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            BotBar.Visibility = BotBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            DataContext = null;
+            Bindings.StopTracking();
+        }
+
+        private void Download_Click(object sender, object e)
+        {
+
         }
     }
 }

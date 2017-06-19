@@ -1,0 +1,60 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Themes">
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Dark">
+            <StaticResource x:Key="MessageForegroundBrush" ResourceKey="MessageForegroundOutBrush"/>
+            <StaticResource x:Key="MessageBackgroundBrush" ResourceKey="MessageBackgroundOutBrush"/>
+            <StaticResource x:Key="MessageBorderBrush" ResourceKey="MessageBorderOutBrush"/>
+            <StaticResource x:Key="MessageSubtleLabelBrush" ResourceKey="MessageSubtleLabelOutBrush"/>
+            <StaticResource x:Key="MessageSubtleGlyphBrush" ResourceKey="MessageSubtleGlyphOutBrush"/>
+
+            <StaticResource x:Key="MessageSubtleForegroundBrush" ResourceKey="MessageSubtleForegroundOutBrush"/>
+
+            <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundOutBrush"/>
+            <StaticResource x:Key="MessageHeaderForegroundBrush2" ResourceKey="MessageHeaderForegroundOutBrush2"/>
+            <StaticResource x:Key="MessageHeaderBorderBrush" ResourceKey="MessageHeaderBorderOutBrush"/>
+
+            <StaticResource x:Key="MessageMediaForegroundBrush" ResourceKey="MessageMediaForegroundOutBrush"/>
+            <StaticResource x:Key="MessageMediaBackgroundBrush" ResourceKey="MessageMediaBackgroundOutBrush"/>
+
+            <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundOutBrush"/>
+
+            <StaticResource x:Key="MessageOverlayBackgroundBrush" ResourceKey="MessageOverlayBackgroundOutBrush"/>
+
+            <StaticResource x:Key="MessageCallForegroundBrush" ResourceKey="MessageCallForegroundOutBrush"/>
+            <StaticResource x:Key="MessageCallMissedForegroundBrush" ResourceKey="MessageCallMissedForegroundOutBrush"/>
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Light">
+            <StaticResource x:Key="MessageForegroundBrush" ResourceKey="MessageForegroundOutBrush"/>
+            <StaticResource x:Key="MessageBackgroundBrush" ResourceKey="MessageBackgroundOutBrush"/>
+            <StaticResource x:Key="MessageBorderBrush" ResourceKey="MessageBorderOutBrush"/>
+            <StaticResource x:Key="MessageSubtleLabelBrush" ResourceKey="MessageSubtleLabelOutBrush"/>
+            <StaticResource x:Key="MessageSubtleGlyphBrush" ResourceKey="MessageSubtleGlyphOutBrush"/>
+
+            <StaticResource x:Key="MessageSubtleForegroundBrush" ResourceKey="MessageSubtleForegroundOutBrush"/>
+
+            <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundOutBrush"/>
+            <StaticResource x:Key="MessageHeaderForegroundBrush2" ResourceKey="MessageHeaderForegroundOutBrush2"/>
+            <StaticResource x:Key="MessageHeaderBorderBrush" ResourceKey="MessageHeaderBorderOutBrush"/>
+
+            <StaticResource x:Key="MessageMediaForegroundBrush" ResourceKey="MessageMediaForegroundOutBrush"/>
+            <StaticResource x:Key="MessageMediaBackgroundBrush" ResourceKey="MessageMediaBackgroundOutBrush"/>
+
+            <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundOutBrush"/>
+
+            <StaticResource x:Key="MessageOverlayBackgroundBrush" ResourceKey="MessageOverlayBackgroundOutBrush"/>
+
+            <StaticResource x:Key="MessageCallForegroundBrush" ResourceKey="MessageCallForegroundOutBrush"/>
+            <StaticResource x:Key="MessageCallMissedForegroundBrush" ResourceKey="MessageCallMissedForegroundOutBrush"/>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <StaticResource x:Key="MessageCornerRadius" ResourceKey="MessageCornerRadiusOut"/>
+    
+    <StaticResource x:Key="MessageHorizontalAlignment" ResourceKey="MessageHorizontalAlignmentOut"/>
+
+    <StaticResource x:Key="MessageBubbleStyle" ResourceKey="MessageBubbleOutStyle"/>
+</ResourceDictionary>

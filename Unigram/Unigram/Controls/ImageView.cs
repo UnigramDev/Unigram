@@ -14,7 +14,7 @@ namespace Unigram.Controls
 {
     public class ImageView : HyperlinkButton
     {
-        private Image Holder;
+        private FrameworkElement Holder;
 
         public ImageView()
         {
@@ -23,10 +23,14 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            Holder = (Image)GetTemplateChild("Holder");
-            Holder.ImageFailed += Holder_ImageFailed;
-            Holder.ImageOpened += Holder_ImageOpened;
+            Holder = (FrameworkElement)GetTemplateChild("Holder");
             Holder.Loaded += Holder_Loaded;
+
+            if (Holder is Image image)
+            {
+                image.ImageFailed += Holder_ImageFailed;
+                image.ImageOpened += Holder_ImageOpened;
+            }
         }
 
         private void Holder_Loaded(object sender, RoutedEventArgs e)
@@ -129,14 +133,15 @@ namespace Unigram.Controls
             if (constraint is TLPhoto photo)
             {
                 //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
-                var photoSize = photo.Sizes.OfType<TLPhotoSize>().OrderByDescending(x => x.W).FirstOrDefault();
-                if (photoSize != null)
-                {
-                    width = photoSize.W;
-                    height = photoSize.H;
+                constraint = photo.Full;
+            }
 
-                    goto Calculate;
-                }
+            if (constraint is TLPhotoSize photoSize)
+            {
+                width = photoSize.W;
+                height = photoSize.H;
+
+                goto Calculate;
             }
 
             if (constraint is TLDocument document)

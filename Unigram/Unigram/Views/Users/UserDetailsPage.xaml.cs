@@ -34,8 +34,6 @@ namespace Unigram.Views.Users
             InitializeComponent();
             NavigationCacheMode = NavigationCacheMode.Required;
             DataContext = UnigramContainer.Current.ResolveType<UserDetailsViewModel>();
-
-            SizeChanged += OnSizeChanged;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -51,14 +49,16 @@ namespace Unigram.Views.Users
             if (user.HasPhoto && user.Photo is TLUserProfilePhoto photo)
             {
                 var viewModel = new UserPhotosViewModel(user, ViewModel.ProtoService);
-                await GalleryView.Current.ShowAsync(viewModel, (s, args) =>
-                {
-                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                    if (animation != null)
-                    {
-                        animation.TryStart(Picture);
-                    }
-                });
+                await GalleryView.Current.ShowAsync(viewModel, () => Picture);
+            }
+        }
+
+        private void Notifications_Toggled(object sender, RoutedEventArgs e)
+        {
+            var toggle = sender as ToggleSwitch;
+            if (toggle.FocusState != FocusState.Unfocused)
+            {
+                ViewModel.ToggleMuteCommand.Execute();
             }
         }
     }

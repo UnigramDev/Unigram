@@ -29,6 +29,7 @@ namespace Telegram.Api.TL
 			BotInfoVersion = (1 << 14),
 			RestrictionReason = (1 << 18),
 			BotInlinePlaceholder = (1 << 19),
+			LangCode = (1 << 22),
 		}
 
 		public bool IsSelf { get { return Flags.HasFlag(Flag.Self); } set { Flags = value ? (Flags | Flag.Self) : (Flags & ~Flag.Self); } }
@@ -52,6 +53,7 @@ namespace Telegram.Api.TL
 		public bool HasBotInfoVersion { get { return Flags.HasFlag(Flag.BotInfoVersion); } set { Flags = value ? (Flags | Flag.BotInfoVersion) : (Flags & ~Flag.BotInfoVersion); } }
 		public bool HasRestrictionReason { get { return Flags.HasFlag(Flag.RestrictionReason); } set { Flags = value ? (Flags | Flag.RestrictionReason) : (Flags & ~Flag.RestrictionReason); } }
 		public bool HasBotInlinePlaceholder { get { return Flags.HasFlag(Flag.BotInlinePlaceholder); } set { Flags = value ? (Flags | Flag.BotInlinePlaceholder) : (Flags & ~Flag.BotInlinePlaceholder); } }
+		public bool HasLangCode { get { return Flags.HasFlag(Flag.LangCode); } set { Flags = value ? (Flags | Flag.LangCode) : (Flags & ~Flag.LangCode); } }
 
 		public Flag Flags { get; set; }
 		public Int64? AccessHash { get; set; }
@@ -64,6 +66,7 @@ namespace Telegram.Api.TL
 		public Int32? BotInfoVersion { get; set; }
 		public String RestrictionReason { get; set; }
 		public String BotInlinePlaceholder { get; set; }
+		public String LangCode { get; set; }
 
 		public TLUser() { }
 		public TLUser(TLBinaryReader from)
@@ -87,13 +90,14 @@ namespace Telegram.Api.TL
 			if (HasBotInfoVersion) BotInfoVersion = from.ReadInt32();
 			if (HasRestrictionReason) RestrictionReason = from.ReadString();
 			if (HasBotInlinePlaceholder) BotInlinePlaceholder = from.ReadString();
+			if (HasLangCode) LangCode = from.ReadString();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
-			to.Write(0xD10D979A);
+			to.Write(0x2E13F4C3);
 			to.Write((Int32)Flags);
 			to.Write(Id);
 			if (HasAccessHash) to.Write(AccessHash.Value);
@@ -106,6 +110,7 @@ namespace Telegram.Api.TL
 			if (HasBotInfoVersion) to.Write(BotInfoVersion.Value);
 			if (HasRestrictionReason) to.Write(RestrictionReason);
 			if (HasBotInlinePlaceholder) to.Write(BotInlinePlaceholder);
+			if (HasLangCode) to.Write(LangCode);
 		}
 
 		private void UpdateFlags()
@@ -120,6 +125,7 @@ namespace Telegram.Api.TL
 			HasBotInfoVersion = BotInfoVersion != null;
 			HasRestrictionReason = RestrictionReason != null;
 			HasBotInlinePlaceholder = BotInlinePlaceholder != null;
+			HasLangCode = LangCode != null;
 		}
 	}
 }

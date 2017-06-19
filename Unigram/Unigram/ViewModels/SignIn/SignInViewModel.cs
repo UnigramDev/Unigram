@@ -15,6 +15,11 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Controls;
+using Windows.System;
+using Windows.UI.Core;
+using Telegram.Api.TL.Auth.Methods;
+using System.Diagnostics;
+using Unigram.Views;
 
 namespace Unigram.ViewModels.SignIn
 {
@@ -132,9 +137,9 @@ namespace Unigram.ViewModels.SignIn
         public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
-            if(PhoneCode == null || PhoneNumber == null)
+            if (PhoneCode == null || PhoneNumber == null)
             {
-                await new MessageDialog("Please enter your phone number.").ShowQueuedAsync();
+                await new TLMessageDialog("Please enter your phone number.").ShowQueuedAsync();
                 return;
             }
 
@@ -161,7 +166,7 @@ namespace Unigram.ViewModels.SignIn
                 }
                 else
                 {
-                    await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
                 }
             }
         }

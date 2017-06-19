@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Messages.Methods;
 
 namespace Telegram.Api.TL
 {

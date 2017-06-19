@@ -6,6 +6,7 @@
     xmlns:models="using:Telegram.Api.TL"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:common="using:Unigram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -18,7 +19,8 @@
         <controls:ButtonPageHeader
             Text="Info"
             Glyph="&#xE104;"
-            Command="{x:Bind ViewModel.EditCommand}"/>
+            Command="{x:Bind ViewModel.EditCommand}"
+            CommandVisibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"/>
 
         <controls:ScrollViewerBackground 
             Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
@@ -59,7 +61,7 @@
                     </Grid>
                     <controls:HyperButton Content="Set group photo"
                                           Click="EditPhoto_Click"
-                                          Visibility="{x:Bind (Visibility)ViewModel.CanEditNameAndPhoto}"
+                                          Visibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"
                                           Style="{StaticResource HyperButtonStyle}"
                                           Grid.Row="1"/>
 
@@ -68,9 +70,10 @@
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
                         <controls:HyperButton Tag="About"
-                                              Content="{x:Bind ViewModel.Full.About, Mode=OneWay}"
                                               Visibility="{x:Bind ViewModel.Full.About, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                                              Style="{StaticResource SubtitleButtonStyle}"/>
+                                              Style="{StaticResource SubtitleButtonStyle}">
+                            <TextBlock common:MessageHelper.Text="{x:Bind ViewModel.Full.About, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}"/>
+                        </controls:HyperButton>
 
                         <controls:HyperButton Tag="Username"
                                               Content="{x:Bind ViewModel.Item.Username, Mode=OneWay, Converter={StaticResource UsernameConverter}}"
@@ -88,10 +91,10 @@
                                               Style="{StaticResource HyperButtonStyle}"
                                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
 
-                        <controls:HyperCheckButton Content="Enabled"
-                                                   Tag="Notifications and sounds"
-                                                   IsOn="{Binding AreNotificationsEnabled}"
-                                                   Style="{ThemeResource CheckButtonStyle}"/>
+                        <ToggleSwitch Header="Notifications and Sounds"
+                                      IsOn="{x:Bind ViewModel.AreNotificationsEnabled, Mode=OneWay}"
+                                      Style="{ThemeResource CheckButtonStyle}"
+                                      Toggled="Notifications_Toggled"/>
 
                         <controls:HyperButton Content="Sound"
                                               Command="{Binding MediaCommand}"

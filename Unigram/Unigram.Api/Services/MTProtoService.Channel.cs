@@ -2,9 +2,12 @@
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Channels;
-using Telegram.Api.TL.Methods.Messages;
-using Telegram.Api.TL.Methods.Updates;
+using Telegram.Api.TL.Channels;
+using Telegram.Api.TL.Channels.Methods;
+using Telegram.Api.TL.Messages;
+using Telegram.Api.TL.Messages.Methods;
+using Telegram.Api.TL.Updates;
+using Telegram.Api.TL.Updates.Methods;
 
 namespace Telegram.Api.Services
 {

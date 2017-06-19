@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -15,11 +16,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
-    public sealed partial class SettingsWallpaperPage : Page
+    public sealed partial class SettingsWallPaperPage : Page
     {
-        public SettingsWallpaperPage()
+        public SettingsWallPaperViewModel ViewModel => DataContext as SettingsWallPaperViewModel;
+
+        public SettingsWallPaperPage()
         {
             InitializeComponent();
+            DataContext = UnigramContainer.Current.ResolveType<SettingsWallPaperViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

@@ -280,7 +280,7 @@ namespace Unigram.ViewModels.Settings
             if (config != null)
             {
                 var package = new DataPackage();
-                package.SetWebLink(new Uri($"{config.MeUrlPrefix}{_username}"));
+                package.SetText($"{config.MeUrlPrefix}{_username}");
                 Clipboard.SetContent(package);
 
                 await new TLMessageDialog("Link copied to clipboard").ShowAsync();

@@ -5,6 +5,15 @@ namespace Telegram.Api.TL
 {
 	public partial class TLDocumentAttributeVideo : TLDocumentAttributeBase 
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			RoundMessage = (1 << 0),
+		}
+
+		public bool IsRoundMessage { get { return Flags.HasFlag(Flag.RoundMessage); } set { Flags = value ? (Flags | Flag.RoundMessage) : (Flags & ~Flag.RoundMessage); } }
+
+		public Flag Flags { get; set; }
 		public Int32 Duration { get; set; }
 		public Int32 W { get; set; }
 		public Int32 H { get; set; }
@@ -19,6 +28,7 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from)
 		{
+			Flags = (Flag)from.ReadInt32();
 			Duration = from.ReadInt32();
 			W = from.ReadInt32();
 			H = from.ReadInt32();
@@ -26,7 +36,8 @@ namespace Telegram.Api.TL
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x5910CCCB);
+			to.Write(0xEF02CE6);
+			to.Write((Int32)Flags);
 			to.Write(Duration);
 			to.Write(W);
 			to.Write(H);

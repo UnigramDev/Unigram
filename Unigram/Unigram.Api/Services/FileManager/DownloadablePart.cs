@@ -1,4 +1,5 @@
 using Telegram.Api.TL;
+using Telegram.Api.TL.Upload;
 
 namespace Telegram.Api.Services.FileManager
 {
@@ -22,6 +23,8 @@ namespace Telegram.Api.Services.FileManager
         public PartStatus Status { get; set; }
 
         public TLUploadFile File { get; set; }
+
+        public TLUploadWebFile WebFile { get; set; }
 
         public DownloadablePart(DownloadableItem item, int offset, int limit, int number = 0)
         {

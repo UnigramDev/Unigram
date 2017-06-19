@@ -9,7 +9,7 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Methods;
-using Telegram.Api.TL.Methods.Help;
+using Telegram.Api.TL.Help.Methods;
 using Telegram.Api.Transport;
 
 namespace Telegram.Api.Services
@@ -227,7 +227,7 @@ namespace Telegram.Api.Services
                         ApiId = Constants.ApiId,
                         AppVersion = _deviceInfo.AppVersion,
                         Query = obj,
-                        DeviceModel = _deviceInfo.Model,
+                        DeviceModel = _deviceInfo.DeviceModel,
                         LangCode = Utils.CurrentUICulture(),
                         SystemVersion = _deviceInfo.SystemVersion
                     };

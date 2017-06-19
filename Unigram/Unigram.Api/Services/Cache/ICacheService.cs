@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Contacts;
+using Telegram.Api.TL.Messages;
+using Telegram.Api.TL.Updates;
 
 namespace Telegram.Api.Services.Cache
 {

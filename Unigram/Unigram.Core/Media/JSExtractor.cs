@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 
-namespace Unigram.Media
+namespace Unigram.Core.Media
 {
     class JSExtractor
     {

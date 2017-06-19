@@ -32,6 +32,11 @@ namespace Telegram.Api.TL
 
         public override bool Equals(object obj)
         {
+            if (obj == null)
+            {
+                return false;
+            }
+
             var peer = obj as TLPeerBase;
             if ((this is TLPeerUser && obj is TLPeerUser) ||
                 (this is TLPeerChat && obj is TLPeerChat) ||

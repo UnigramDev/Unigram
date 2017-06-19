@@ -14,7 +14,6 @@ namespace Unigram.Controls
     public class RatingBar : Control
     {
         private readonly Dictionary<int, FontIcon> _unselected = new Dictionary<int, FontIcon>();
-        private bool _pointerPressed;
 
         public RatingBar()
         {
@@ -23,11 +22,14 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            _unselected.Clear();
-
             for (int i = 0; i < 5; i++)
             {
                 _unselected[i] = GetTemplateChild($"Star{i}") as FontIcon;
+            }
+
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                return;
             }
 
             PointerMoved += OnPointerMoved;
@@ -35,6 +37,8 @@ namespace Unigram.Controls
             PointerCaptureLost += OnPointerCaptureLost;
             PointerPressed += OnPointerPressed;
             PointerReleased += OnPointerReleased;
+
+            UpdateVisual();
         }
 
         private void OnPointerMoved(object sender, PointerRoutedEventArgs e)
@@ -54,19 +58,16 @@ namespace Unigram.Controls
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            _pointerPressed = true;
             CapturePointer(e.Pointer);
             UpdateVisual(e);
         }
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            _pointerPressed = false;
-
             var position = e.GetCurrentPoint(this);
-            var index = (int)Math.Truncate(position.Position.X / 24);
+            var index = (int)Math.Truncate(position.Position.X / (FontSize + Padding.Left + Padding.Right));
 
-            Value = index + 1;
+            Value = index;
             ReleasePointerCapture(e.Pointer);
             UpdateVisual(e);
         }
@@ -80,10 +81,10 @@ namespace Unigram.Controls
 
         private void UpdateVisual(int index = -1)
         {
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < _unselected.Count; i++)
             {
-                var brush = i <= Value - 1 || (i <= index) ? "TextControlBorderBrushFocused" : "TextControlBorderBrush";
-                var glyph = i <= Value - 1 && (index == -1 ? true : i <= index) ? "\uE1CF" : "\uE1CE";
+                var brush = i <= Value || (i <= index) ? "TextControlBorderBrushFocused" : "TextControlBorderBrush";
+                var glyph = i <= Value && (index == -1 ? true : i <= index) ? "\uE1CF" : "\uE1CE";
 
                 _unselected[i].Foreground = App.Current.Resources[brush] as SolidColorBrush;
                 _unselected[i].Glyph = glyph;
@@ -101,7 +102,7 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register("Value", typeof(int), typeof(RatingBar), new PropertyMetadata(0, OnValueChanged));
+            DependencyProperty.Register("Value", typeof(int), typeof(RatingBar), new PropertyMetadata(-1, OnValueChanged));
 
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -110,6 +111,11 @@ namespace Unigram.Controls
 
         private void OnValueChanged(int newValue, int oldValue)
         {
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
+
             UpdateVisual();
             ValueChanged?.Invoke(this, new RatingBarValueChangedEventArgs(newValue, oldValue));
         }

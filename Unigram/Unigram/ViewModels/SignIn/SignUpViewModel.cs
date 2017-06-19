@@ -9,6 +9,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Auth;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Views;
@@ -105,7 +106,7 @@ namespace Unigram.ViewModels.SignIn
                 }
                 else
                 {
-                    await new MessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
                 }
             }
         }

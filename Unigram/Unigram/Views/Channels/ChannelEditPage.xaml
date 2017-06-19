@@ -79,8 +79,8 @@
                         Command="{x:Bind ViewModel.EditTypeCommand}"
                         Style="{StaticResource BadgeButtonStyle}"/>
 
-                    <controls:HyperCheckButton
-                        Tag="Sign Messages"
+                    <ToggleSwitch
+                        Header="Sign Messages"
                         IsOn="{x:Bind ViewModel.IsSignatures, Mode=TwoWay}"
                         Visibility="{x:Bind (Visibility)ViewModel.CanEditSignatures, Mode=OneWay}"
                         Style="{ThemeResource CheckButtonStyle}"/>

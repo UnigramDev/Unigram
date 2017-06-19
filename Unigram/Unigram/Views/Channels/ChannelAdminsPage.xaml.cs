@@ -32,7 +32,19 @@ namespace Unigram.Views.Channels
         {
             if (e.ClickedItem is TLChannelParticipantBase participant && participant.User != null)
             {
-                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), participant.User.ToPeer());
+                // TODO: Layer 68
+                //if (participant is TLChannelParticipantAdmin)
+                //{
+                //    ViewModel.NavigationService.Navigate(typeof(ChannelAdminRightsPage), TLTuple.Create(ViewModel.Item.ToPeer(), participant.User.ToPeer()));
+                //}
+                //else if (participant is TLChannelParticipantBanned)
+                //{
+                //    ViewModel.NavigationService.Navigate(typeof(ChannelBannedRightsPage), TLTuple.Create(ViewModel.Item.ToPeer(), participant.User.ToPeer()));
+                //}
+                //else
+                {
+                    ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), participant.User.ToPeer());
+                }
             }
         }
     }

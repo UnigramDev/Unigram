@@ -2,7 +2,8 @@
 using System.Threading;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Help;
+using Telegram.Api.TL.Help;
+using Telegram.Api.TL.Help.Methods;
 
 namespace Telegram.Api.Services
 {
@@ -36,6 +37,14 @@ namespace Telegram.Api.Services
                     callback(result);
                 }, 
                 faultCallback);
+        }
+
+        public void GetCdnConfigAsync(Action<TLCdnConfig> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLHelpGetCdnConfig();
+
+            const string caption = "help.getCdnConfig";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         private Timer _getConfigTimer;

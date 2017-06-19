@@ -19,8 +19,8 @@
         <ContentControl.ContentTemplate>
             <!-- THIS WILL BE STICKERS ONLY TEMPLATE -->
             <DataTemplate x:DataType="tl:TLDocument">
-                <Grid>
-                    <Grid.Resources>
+                <StackPanel>
+                    <StackPanel.Resources>
                         <Storyboard x:Key="Board">
                             <DoubleAnimation Storyboard.TargetName="Transform" Storyboard.TargetProperty="CompositeTransform.ScaleX" From="0.8" To="1.0" Duration="0:0:0.5">
                                 <DoubleAnimation.EasingFunction>
@@ -33,7 +33,9 @@
                                 </DoubleAnimation.EasingFunction>
                             </DoubleAnimation>
                         </Storyboard>
-                    </Grid.Resources>
+                    </StackPanel.Resources>
+                    <TextBlock Text="{x:Bind Converter={StaticResource StickerToEmojiConverter}}" TextAlignment="Center" Margin="0,-40,0,20" FontSize="30"/>
+                    
                     <Viewbox StretchDirection="DownOnly" RenderTransformOrigin="0.5,0.5">
                         <Viewbox.RenderTransform>
                             <CompositeTransform x:Name="Transform"/>
@@ -42,8 +44,8 @@
                                             Constraint="{x:Bind}"
                                             HorizontalAlignment="Center" 
                                             VerticalAlignment="Center"
-                                            MaxWidth="256"
-                                            MaxHeight="256">
+                                            MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
+                                            MaxHeight="{StaticResource TelegramLightMediaMaxHeight}">
                             <i:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ImageOpened">
                                     <media:ControlStoryboardAction Storyboard="{StaticResource Board}"/>
@@ -51,7 +53,7 @@
                             </i:Interaction.Behaviors>
                         </controls:ImageView>
                     </Viewbox>
-                </Grid>
+                </StackPanel>
             </DataTemplate>
         </ContentControl.ContentTemplate>
     </ContentControl>

@@ -7,6 +7,7 @@
     xmlns:common="using:Unigram.Common"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:messages="using:Telegram.Api.TL.Messages"
     xmlns:tl="using:Telegram.Api.TL"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -67,7 +68,7 @@
             <GridView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
-                        <DataTemplate x:DataType="tl:TLMessagesStickerSet">
+                        <DataTemplate x:DataType="messages:TLMessagesStickerSet">
                             <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
                                   Height="{ThemeResource AppBarThemeCompactHeight}" 
                                   Loaded="GroupHeader_Loaded"
@@ -75,7 +76,7 @@
                                   Margin="-12,0">
                                 <Border x:Name="LineAccent" BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                                 <Border x:Name="LineTop" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-                                <TextBlock Text="{x:Bind Set.Title}" VerticalAlignment="Center" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                                <TextBlock common:MessageHelper.Text="{x:Bind Set.Title}" VerticalAlignment="Center" Margin="12,0" Style="{StaticResource BaseTextBlockStyle}"/>
                             </Grid>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>

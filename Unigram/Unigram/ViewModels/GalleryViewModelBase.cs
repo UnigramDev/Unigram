@@ -1,17 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Mvvm;
 using Unigram.Common;
 using Unigram.Controls.Views;
+using Unigram.Converters;
 using Unigram.Core.Common;
+using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Users;
+using Windows.Storage;
+using Windows.System;
 
 namespace Unigram.ViewModels
 {
@@ -72,6 +79,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        protected GalleryItem _firstItem;
+        public GalleryItem FirstItem
+        {
+            get
+            {
+                return _firstItem;
+            }
+            set
+            {
+                Set(ref _firstItem, value);
+            }
+        }
+
         protected object _poster;
         public object Poster
         {
@@ -107,6 +127,14 @@ namespace Unigram.ViewModels
             }
         }
 
+        public virtual bool CanOpenInApp
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public RelayCommand StickersCommand => new RelayCommand(StickersExecute);
         private async void StickersExecute()
         {
@@ -135,6 +163,71 @@ namespace Unigram.ViewModels
         protected virtual void DeleteExecute()
         {
         }
+
+        public RelayCommand OpenInAppCommand => new RelayCommand(OpenInAppExecute);
+        protected virtual async void OpenInAppExecute()
+        {
+            object value = null;
+
+            if (SelectedItem is GalleryMessageItem messageItem)
+            {
+                if (messageItem.Message.Media is TLMessageMediaPhoto photoMedia)
+                {
+                    value = photoMedia.Photo;
+                }
+                else if (messageItem.Message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                {
+                    value = document;
+                }
+            }
+            else if (SelectedItem is GalleryMessageServiceItem serviceItem && serviceItem.Message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction)
+            {
+                value = chatEditPhotoAction.Photo;
+            }
+            else if (SelectedItem is GalleryPhotoItem photoItem)
+            {
+                value = photoItem.Photo;
+            }
+            else if (SelectedItem is GalleryDocumentItem documentItem)
+            {
+                value = documentItem.Document;
+            }
+
+            if (value is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
+            {
+                var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
+                var file = await FileUtils.TryGetTempFileAsync(fileName);
+                if (file != null)
+                {
+                    var options = new LauncherOptions();
+                    options.DisplayApplicationPicker = true;
+
+                    await Launcher.LaunchFileAsync(file as StorageFile, options);
+                }
+            }
+            else if (value is TLDocument document)
+            {
+                var fileName = document.GetFileName();
+                var file = await FileUtils.TryGetTempFileAsync(fileName);
+                if (file != null)
+                {
+                    var options = new LauncherOptions();
+                    options.DisplayApplicationPicker = true;
+
+                    await Launcher.LaunchFileAsync(file as StorageFile, options);
+                }
+            }
+
+            // Get the source 
+            //var something = (TLPhoto)DefaultPhotoConverter.Convert(_selectedItem.Source);
+            //var sizeBase = something.Full;
+            //var photoSize = sizeBase as TLPhotoSize;
+            //var fileLocation = photoSize.Location as TLFileLocation;
+            //fileLocation.   // Find a way to get the IStorageFile of that darn picture
+
+            // Open that file
+            //await Windows.System.Launcher.LaunchFileAsync(*INSERT FILE HERE*);
+        }
     }
 
     public class GalleryItem : BindableBase
@@ -144,7 +237,7 @@ namespace Unigram.ViewModels
 
         }
 
-        public GalleryItem(object source, string caption, ITLDialogWith from, int date, bool stickers)
+        public GalleryItem(ITLTransferable source, string caption, ITLDialogWith from, int date, bool stickers)
         {
             Source = source;
             Caption = caption;
@@ -153,7 +246,7 @@ namespace Unigram.ViewModels
             HasStickers = stickers;
         }
 
-        public virtual object Source { get; private set; }
+        public virtual ITLTransferable Source { get; private set; }
 
         public virtual string Caption { get; private set; }
 
@@ -163,6 +256,10 @@ namespace Unigram.ViewModels
 
         public virtual bool IsVideo { get; private set; }
 
+        public virtual bool IsLoop { get; private set; }
+
+        public virtual bool IsShareEnabled { get; private set; }
+
         public virtual bool HasStickers { get; private set; }
 
         public virtual TLInputStickeredMediaBase ToInputStickeredMedia()
@@ -171,6 +268,11 @@ namespace Unigram.ViewModels
         }
 
         public virtual Uri GetVideoSource()
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void Share()
         {
             throw new NotImplementedException();
         }

@@ -4,11 +4,55 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
+using Telegram.Api.Services.FileManager;
 
 namespace Telegram.Api.TL
 {
     public partial class TLDocument
     {
+        public async void DownloadAsync(IDownloadManager manager)
+        {
+            var fileName = this.GetFileName();
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            {
+
+            }
+            else
+            {
+                if (IsTransferring)
+                {
+                    return;
+                }
+
+                IsTransferring = true;
+
+                var operation = manager.DownloadFileAsync(FileName, DCId, ToInputFileLocation(), Size);
+                var download = await operation.AsTask(Download());
+                if (download != null)
+                {
+                    IsTransferring = false;
+                }
+            }
+        }
+
+        public void Cancel(IDownloadManager manager, IUploadManager uploadManager)
+        {
+            if (manager != null)
+            {
+                manager.CancelDownloadFile(this);
+                DownloadingProgress = 0;
+                IsTransferring = false;
+            }
+
+            if (uploadManager != null)
+            {
+                uploadManager.CancelUploadFile(Id);
+                UploadingProgress = 0;
+                IsTransferring = false;
+            }
+        }
+
         public string FileName
         {
             get
@@ -26,6 +70,31 @@ namespace Telegram.Api.TL
                 }
 
                 return "Resources.Document";
+            }
+        }
+
+        public string Title
+        {
+            get
+            {
+                var audioAttribute = Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
+                if (audioAttribute != null)
+                {
+                    if (audioAttribute.HasPerformer && audioAttribute.HasTitle)
+                    {
+                        return $"{audioAttribute.Performer} - {audioAttribute.Title}";
+                    }
+                    else if (audioAttribute.HasPerformer && !audioAttribute.HasTitle)
+                    {
+                        return $"{audioAttribute.Performer} - Unknown Track";
+                    }
+                    else if (audioAttribute.HasTitle && !audioAttribute.HasPerformer)
+                    {
+                        return $"{audioAttribute.Title}";
+                    }
+                }
+
+                return FileName;
             }
         }
 
@@ -64,13 +133,29 @@ namespace Telegram.Api.TL
                 var videoAttribute = Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 if (videoAttribute != null)
                 {
-                    return TimeSpan.FromSeconds(videoAttribute.Duration).ToString("mm\\:ss");
+                    var duration = TimeSpan.FromSeconds(videoAttribute.Duration);
+                    if (duration.TotalHours >= 1)
+                    {
+                        return duration.ToString("h\\:mm\\:ss");
+                    }
+                    else
+                    {
+                        return duration.ToString("mm\\:ss");
+                    }
                 }
 
                 var audioAttribute = Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
                 if (audioAttribute != null)
                 {
-                    return TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
+                    var duration = TimeSpan.FromSeconds(audioAttribute.Duration);
+                    if (duration.TotalHours >= 1)
+                    {
+                        return duration.ToString("h\\:mm\\:ss");
+                    }
+                    else
+                    {
+                        return duration.ToString("mm\\:ss");
+                    }
                 }
 
                 return null;

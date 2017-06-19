@@ -47,6 +47,7 @@ namespace Unigram.Controls.Views
         public SendPhotosView()
         {
             InitializeComponent();
+            DataContext = this;
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -56,6 +57,11 @@ namespace Unigram.Controls.Views
         {
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
+
+            if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+            {
+                CaptionInput.Focus(FocusState.Keyboard);
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)

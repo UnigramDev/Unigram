@@ -15,6 +15,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Telegram.Api.TL.Account;
+using Telegram.Api.TL.Auth;
 
 namespace Unigram.Views.SignIn
 {
@@ -28,9 +30,23 @@ namespace Unigram.Views.SignIn
             DataContext = UnigramContainer.Current.ResolveType<SignInPasswordViewModel>();
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            PrimaryInput.Focus(FocusState.Keyboard);
+        }
+
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             ((PasswordBox)sender).GetBindingExpression(PasswordBox.PasswordProperty)?.UpdateSource();
+        }
+
+        private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                ViewModel.SendCommand.Execute(sender);
+                e.Handled = true;
+            }
         }
 
         public class NavigationParameters

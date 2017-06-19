@@ -39,7 +39,8 @@
                        Padding="0,8,0,16"
                        Grid.Row="1"/>
 
-            <controls:UpdateTextBox Text="{Binding FirstName, Mode=TwoWay}"
+            <controls:UpdateTextBox x:Name="PrimaryInput"
+                                    Text="{Binding FirstName, Mode=TwoWay}"
                                     Margin="0,12,0,8"
                                     InputScope="PersonalFullName"
                                     IsTextPredictionEnabled="False"
@@ -57,7 +58,6 @@
             <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="5"/>
 
             <Button x:Name="NextButton"
-                    x:Uid="BTN-Next"
                     Command="{x:Bind ViewModel.SendCommand}"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                     HorizontalAlignment="Stretch"

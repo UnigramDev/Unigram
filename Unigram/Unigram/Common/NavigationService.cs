@@ -6,11 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Payments;
 using Template10.Common;
 using Template10.Services.LoggingService;
 using Template10.Services.NavigationService;
 using Template10.Services.SerializationService;
 using Template10.Services.ViewService;
+using Unigram.Controls;
 using Unigram.Core.Services;
 using Unigram.Views;
 using Unigram.Views;
@@ -76,11 +78,11 @@ namespace Unigram.Common
             service.Navigate(page, parameter, infoOverride);
         }
 
-        public static void SelectUsers<T>(this INavigationService service, object parameter = null, NavigationTransitionInfo infoOverride = null)
-        {
-            ViewModels.Enqueue(typeof(T));
-            service.Navigate(typeof(UsersSelectionPage), parameter, infoOverride);
-        }
+        //public static void SelectUsers<T>(this INavigationService service, object parameter = null, NavigationTransitionInfo infoOverride = null)
+        //{
+        //    ViewModels.Enqueue(typeof(T));
+        //    service.Navigate(typeof(UsersSelectionPage), parameter, infoOverride);
+        //}
 
         public static Queue<Type> ViewModels { get; } = new Queue<Type>();
 
@@ -102,8 +104,67 @@ namespace Unigram.Common
         }
 
 
+        public static async void NavigateToDialog(this INavigationService service, ITLDialogWith with, int? message = null, string accessToken = null)
+        {
+            if (with is TLUser user && user.IsRestricted)
+            {
+                var reason = user.ExtractRestrictionReason();
+                if (reason != null)
+                {
+                    await TLMessageDialog.ShowAsync(reason, "Sorry", "OK");
+                    return;
+                }
+            }
 
+            if (with is TLChannel channel && channel.IsRestricted)
+            {
+                var reason = channel.ExtractRestrictionReason();
+                if (reason != null)
+                {
+                    await TLMessageDialog.ShowAsync(reason, "Sorry", "OK");
+                    return;
+                }
+            }
 
+            var peer = with.ToPeer();
+            if (service.CurrentPageType == typeof(DialogPage) && peer.Equals(service.CurrentPageParam))
+            {
+                if (service.Frame.Content is DialogPage page && page.ViewModel != null)
+                {
+                    if (message.HasValue)
+                    {
+                        await page.ViewModel.LoadMessageSliceAsync(null, message.Value);
+                    }
+                    
+                    if (accessToken != null)
+                    {
+                        page.ViewModel.AccessToken = accessToken;
+                    }
+                }
+                else
+                {
+                    service.Refresh(TLSerializationService.Current.Serialize(peer));
+                }
+            }
+            else
+            {
+                App.InMemoryState.NavigateToMessage = message;
+                App.InMemoryState.NavigateToAccessToken = accessToken;
+                service.Navigate(typeof(DialogPage), peer);
+            }
+
+            //App.InMemoryState.NavigateToMessage = message;
+
+            //var peer = with.ToPeer();
+            //if (App.InMemoryState.NavigateToMessage.HasValue && service.CurrentPageType == typeof(DialogPage) && peer.Equals(service.CurrentPageParam))
+            //{
+            //    service.Refresh(TLSerializationService.Current.Serialize(peer));
+            //}
+            //else
+            //{
+            //    service.Navigate(typeof(DialogPage), peer);
+            //}
+        }
 
         #region Payments
 

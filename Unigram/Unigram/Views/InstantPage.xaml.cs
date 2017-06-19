@@ -8,7 +8,7 @@ using System.Text;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Messages.Methods;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -35,6 +35,9 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 using Windows.UI.Xaml.Media.Animation;
 using Unigram.Controls.Views;
+using Telegram.Api.Services.Cache;
+using LinqToVisualTree;
+using Unigram.ViewModels.Users;
 
 namespace Unigram.Views
 {
@@ -43,6 +46,7 @@ namespace Unigram.Views
         public InstantViewModel ViewModel => DataContext as InstantViewModel;
 
         private readonly string _injectedJs;
+        private ScrollViewer _scrollingHost;
 
         public InstantPage()
         {
@@ -55,7 +59,10 @@ namespace Unigram.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            LayoutRoot.Children.Clear();
+            ScrollingHost.Items.Clear();
+            ViewModel.Gallery.Items.Clear();
+            ViewModel.Gallery.TotalItems = 0;
+            ViewModel.Gallery.SelectedItem = null;
             _anchors.Clear();
 
             var parameter = TLSerializationService.Current.Deserialize((string)e.Parameter);
@@ -69,6 +76,18 @@ namespace Unigram.Views
             var webpage = parameter as TLWebPage;
             if (webpage != null && webpage.HasCachedPage)
             {
+                var url = webpage.Url;
+                if (url.StartsWith("http") == false)
+                {
+                    url = "http://" + url;
+                }
+
+                if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+                {
+                    ViewModel.ShareLink = uri;
+                    ViewModel.ShareTitle = webpage.HasTitle ? webpage.Title : webpage.Url;
+                }
+
                 _webpageId = webpage.Id;
 
                 var photos = new List<TLPhotoBase>(webpage.CachedPage.Photos);
@@ -81,6 +100,7 @@ namespace Unigram.Views
 
                 var processed = 0;
                 TLPageBlockBase previousBlock = null;
+                FrameworkElement previousElement = null;
                 foreach (var block in webpage.CachedPage.Blocks)
                 {
                     var element = ProcessBlock(webpage.CachedPage, block, photos, videos);
@@ -90,10 +110,11 @@ namespace Unigram.Views
                     if (element != null)
                     {
                         element.Margin = new Thickness(padding, spacing, padding, 0);
-                        LayoutRoot.Children.Add(element);
+                        ScrollingHost.Items.Add(element);
                     }
 
                     previousBlock = block;
+                    previousElement = element;
                     processed++;
                 }
 
@@ -124,10 +145,11 @@ namespace Unigram.Views
                                 if (element != null)
                                 {
                                     element.Margin = new Thickness(padding, spacing, padding, 0);
-                                    LayoutRoot.Children.Add(element);
+                                    ScrollingHost.Items.Add(element);
                                 }
 
                                 previousBlock = newpage.CachedPage.Blocks[i];
+                                previousElement = element;
                             }
                         }
                     }
@@ -183,6 +205,8 @@ namespace Unigram.Views
                     return ProcessAnchor(page, anchor, photos, videos);
                 case TLPageBlockPreformatted preformatted:
                     return ProcessPreformatted(page, preformatted, photos, videos);
+                case TLPageBlockChannel channel:
+                    return ProcessChannel(page, channel, photos, videos);
                 case TLPageBlockUnsupported unsupported:
                     Debug.WriteLine("Unsupported block type: " + block.GetType());
                     break;
@@ -196,9 +220,35 @@ namespace Unigram.Views
             return ProcessBlock(page, block.Cover, photos, videos);
         }
 
+        private FrameworkElement ProcessChannel(TLPageBase page, TLPageBlockChannel channel, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        {
+            var chat = channel.Channel as TLChannel;
+            if (chat.IsMin)
+            {
+                chat = InMemoryCacheService.Current.GetChat(chat.Id) as TLChannel ?? channel.Channel as TLChannel;
+            }
+
+            var button = new Button
+            {
+                Style = Resources["ChannelBlockStyle"] as Style,
+                Content = chat
+            };
+
+            if (chat.IsMin && chat.HasUsername)
+            {
+                MTProtoService.Current.ResolveUsernameAsync(chat.Username,
+                    result =>
+                    {
+                        Execute.BeginOnUIThread(() => button.Content = result.Chats.FirstOrDefault());
+                    });
+            }
+
+            return button;
+        }
+
         private FrameworkElement ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
         {
-            var textBlock = new TextBlock { Style = Resources["AuthorDateTextBlockStyle"] as Style };
+            var textBlock = new TextBlock { Style = Resources["AuthorDateBlockStyle"] as Style };
             textBlock.FontSize = 15;
 
             if (block.Author.TypeId != TLType.TextEmpty)
@@ -267,10 +317,13 @@ namespace Unigram.Views
 
             if (text != null && text.TypeId != TLType.TextEmpty)
             {
-                var textBlock = new TextBlock();
+                var textBlock = new RichTextBlock();
                 var span = new Span();
-                textBlock.Inlines.Add(span);
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add(span);
+                textBlock.Blocks.Add(paragraph);
                 textBlock.TextWrapping = TextWrapping.Wrap;
+
                 //textBlock.Margin = new Thickness(12, 0, 12, 12);
                 ProcessRichText(text, span);
 
@@ -279,7 +332,7 @@ namespace Unigram.Views
                     case TLType.PageBlockTitle:
                         textBlock.FontSize = 28;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                        //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubtitle:
                         textBlock.FontSize = 17;
@@ -289,12 +342,12 @@ namespace Unigram.Views
                     case TLType.PageBlockHeader:
                         textBlock.FontSize = 24;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                        //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockSubheader:
                         textBlock.FontSize = 19;
                         textBlock.FontFamily = new FontFamily("Times New Roman");
-                        textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                        //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                         break;
                     case TLType.PageBlockParagraph:
                         textBlock.FontSize = 17;
@@ -305,16 +358,20 @@ namespace Unigram.Views
                     case TLType.PageBlockFooter:
                         textBlock.FontSize = 15;
                         textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-                        textBlock.TextAlignment = TextAlignment.Center;
+                        //textBlock.TextAlignment = TextAlignment.Center;
                         break;
                     case TLType.PageBlockPhoto:
                     case TLType.PageBlockVideo:
+                        textBlock.FontSize = 15;
+                        textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
+                        textBlock.TextAlignment = TextAlignment.Center;
+                        break;
                     case TLType.PageBlockSlideshow:
                     case TLType.PageBlockEmbed:
                     case TLType.PageBlockEmbedPost:
                         textBlock.FontSize = 15;
                         textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-                        textBlock.TextAlignment = TextAlignment.Center;
+                        //textBlock.TextAlignment = TextAlignment.Center;
                         break;
                     case TLType.PageBlockBlockquote:
                         textBlock.FontSize = caption ? 15 : 17;
@@ -334,7 +391,7 @@ namespace Unigram.Views
                         else
                         {
                             textBlock.FontFamily = new FontFamily("Times New Roman");
-                            textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
+                            //textBlock.TextLineBounds = TextLineBounds.TrimToBaseline;
                             textBlock.TextAlignment = TextAlignment.Center;
                         }
                         break;
@@ -367,7 +424,6 @@ namespace Unigram.Views
             var textBlock = new RichTextBlock();
             textBlock.FontSize = 17;
             textBlock.TextWrapping = TextWrapping.Wrap;
-            textBlock.IsTextSelectionEnabled = false;
 
             for (int i = 0; i < block.Items.Count; i++)
             {
@@ -417,9 +473,11 @@ namespace Unigram.Views
             var photo = photos.FirstOrDefault(x => x.Id == block.PhotoId);
             if (photo != null)
             {
+                var galleryItem = new GalleryPhotoItem(photo as TLPhoto, block.Caption?.ToString());
+                ViewModel.Gallery.Items.Add(galleryItem);
+
                 var element = new StackPanel { Style = Resources["BlockPhotoStyle"] as Style };
 
-                var galleryItem = new GalleryPhotoItem(photo as TLPhoto, block.Caption?.ToString());
                 var child = new ImageView();
                 child.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
                 child.Constraint = photo;
@@ -427,14 +485,37 @@ namespace Unigram.Views
                 child.Click += Image_Click;
                 child.HorizontalAlignment = HorizontalAlignment.Center;
 
-                ViewModel.Gallery.Items.Add(galleryItem);
+                var transferBinding = new Binding();
+                transferBinding.Path = new PropertyPath("IsTransferring");
+                transferBinding.Source = photo;
 
-                element.Children.Add(child);
+                var transfer = new TransferButton();
+                transfer.Completed += (s, args) => Image_Click(child, null);
+                transfer.Transferable = photo;
+                transfer.Style = Application.Current.Resources["MediaTransferButtonStyle"] as Style;
+                transfer.SetBinding(TransferButton.IsTransferringProperty, transferBinding);
+
+                var progressBinding = new Binding();
+                progressBinding.Path = new PropertyPath("Progress");
+                progressBinding.Source = photo;
+
+                var progress = new ProgressBarRing();
+                progress.Background = new SolidColorBrush(Colors.Transparent);
+                progress.Foreground = new SolidColorBrush(Colors.White);
+                progress.IsHitTestVisible = false;
+                progress.SetBinding(ProgressBarRing.ValueProperty, progressBinding);
+
+                var grid = new Grid();
+                grid.Children.Add(child);
+                grid.Children.Add(transfer);
+                grid.Children.Add(progress);
+
+                element.Children.Add(grid);
 
                 var caption = ProcessText(page, block, photos, videos, true);
                 if (caption != null)
                 {
-                    caption.Margin = new Thickness(0, 12, 0, 0);
+                    caption.Margin = new Thickness(0, 8, 0, 0);
                     element.Children.Add(caption);
                 }
 
@@ -449,9 +530,11 @@ namespace Unigram.Views
             var video = videos.FirstOrDefault(x => x.Id == block.VideoId);
             if (video != null)
             {
+                var galleryItem = new GalleryDocumentItem(video as TLDocument, block.Caption?.ToString());
+                ViewModel.Gallery.Items.Add(galleryItem);
+
                 var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
-                var galleryItem = new GalleryDocumentItem(video as TLDocument, block.Caption?.ToString());
                 var child = new ImageView();
                 child.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
                 child.Constraint = video;
@@ -459,14 +542,37 @@ namespace Unigram.Views
                 child.Click += Image_Click;
                 child.HorizontalAlignment = HorizontalAlignment.Center;
 
-                ViewModel.Gallery.Items.Add(galleryItem);
+                var transferBinding = new Binding();
+                transferBinding.Path = new PropertyPath("IsTransferring");
+                transferBinding.Source = video;
 
-                element.Children.Add(child);
+                var transfer = new TransferButton();
+                transfer.Completed += (s, args) => Image_Click(child, null);
+                transfer.Transferable = video;
+                transfer.Style = Application.Current.Resources["MediaTransferButtonStyle"] as Style;
+                transfer.SetBinding(TransferButton.IsTransferringProperty, transferBinding);
+
+                var progressBinding = new Binding();
+                progressBinding.Path = new PropertyPath("Progress");
+                progressBinding.Source = video;
+
+                var progress = new ProgressBarRing();
+                progress.Background = new SolidColorBrush(Colors.Transparent);
+                progress.Foreground = new SolidColorBrush(Colors.White);
+                progress.IsHitTestVisible = false;
+                progress.SetBinding(ProgressBarRing.ValueProperty, progressBinding);
+
+                var grid = new Grid();
+                grid.Children.Add(child);
+                grid.Children.Add(transfer);
+                grid.Children.Add(progress);
+
+                element.Children.Add(grid);
 
                 var caption = ProcessText(page, block, photos, videos, true);
                 if (caption != null)
                 {
-                    caption.Margin = new Thickness(0, _padding, 0, 0);
+                    caption.Margin = new Thickness(0, 8, 0, 0);
                     element.Children.Add(caption);
                 }
 
@@ -493,7 +599,10 @@ namespace Unigram.Views
             if (block.HasHtml)
             {
                 var view = new WebView();
-                view.NavigationCompleted += OnWebViewNavigationCompleted;
+                if (!block.IsAllowScrolling)
+                {
+                    view.NavigationCompleted += OnWebViewNavigationCompleted;
+                }
                 view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
 
                 var ratio = new RatioControl();
@@ -507,7 +616,10 @@ namespace Unigram.Views
             else if (block.HasUrl)
             {
                 var view = new WebView();
-                view.NavigationCompleted += OnWebViewNavigationCompleted;
+                if (!block.IsAllowScrolling)
+                {
+                    view.NavigationCompleted += OnWebViewNavigationCompleted;
+                }
                 view.Navigate(new Uri(block.Url));
 
                 var ratio = new RatioControl();
@@ -690,6 +802,7 @@ namespace Unigram.Views
             element.Children.Add(header);
 
             TLPageBlockBase previousBlock = null;
+            FrameworkElement previousElement = null;
             foreach (var subBlock in block.Blocks)
             {
                 var subLayout = ProcessBlock(page, subBlock, photos, videos);
@@ -702,6 +815,7 @@ namespace Unigram.Views
                 }
 
                 previousBlock = block;
+                previousElement = subLayout;
             }
 
             return element;
@@ -779,7 +893,9 @@ namespace Unigram.Views
                     break;
                 case TLTextUrl urlText:
                     var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
+                    //span.Inlines.Add(new Run { Text = " " });
                     span.Inlines.Add(hyperlink);
+                    //span.Inlines.Add(new Run { Text = " " });
                     hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
                     ProcessRichText(urlText.Text, hyperlink);
                     break;
@@ -790,119 +906,129 @@ namespace Unigram.Views
 
         private double SpacingBetweenBlocks(TLPageBlockBase upper, TLPageBlockBase lower)
         {
-            if (lower is TLPageBlockCover)
+            if (lower is TLPageBlockCover || lower is TLPageBlockChannel)
             {
-                return 0.0f;
+                return 0;
+            }
+
+            return 12;
+
+            if (lower is TLPageBlockCover || lower is TLPageBlockChannel)
+            {
+                return 0;
             }
             else if (lower is TLPageBlockDivider || upper is TLPageBlockDivider)
             {
-                return 25.0f;
+                return 15; // 25;
             }
             else if (lower is TLPageBlockBlockquote || upper is TLPageBlockBlockquote || lower is TLPageBlockPullquote || upper is TLPageBlockPullquote)
             {
-                return 27.0f;
+                return 17; // 27;
             }
             else if (lower is TLPageBlockTitle)
             {
-                return 20.0f;
+                return 12; // 20;
             }
             else if (lower is TLPageBlockAuthorDate)
             {
                 if (upper is TLPageBlockTitle)
                 {
-                    return 26.0f;
+                    return 16; // 26;
                 }
                 else
                 {
-                    return 20.0f;
+                    return 12; // 20;
                 }
             }
             else if (lower is TLPageBlockParagraph)
             {
                 if (upper is TLPageBlockTitle || upper is TLPageBlockAuthorDate)
                 {
-                    return 34.0f;
+                    return 20; // 34;
                 }
                 else if (upper is TLPageBlockHeader || upper is TLPageBlockSubheader)
                 {
-                    return 25.0f;
+                    return 15; // 25;
                 }
                 else if (upper is TLPageBlockParagraph)
                 {
-                    return 25.0f;
+                    return 15; // 25;
                 }
                 else if (upper is TLPageBlockList)
                 {
-                    return 31.0f;
+                    return 19; // 31;
                 }
                 else if (upper is TLPageBlockPreformatted)
                 {
-                    return 19.0f;
+                    return 11; // 19;
                 }
                 else
                 {
-                    return 20.0f;
+                    return 12; // 20;
                 }
             }
             else if (lower is TLPageBlockList)
             {
                 if (upper is TLPageBlockTitle || upper is TLPageBlockAuthorDate)
                 {
-                    return 34.0f;
+                    return 20; // 34;
                 }
                 else if (upper is TLPageBlockHeader || upper is TLPageBlockSubheader)
                 {
-                    return 31.0f;
+                    return 19; // 31;
                 }
                 else if (upper is TLPageBlockParagraph || upper is TLPageBlockList)
                 {
-                    return 31.0f;
+                    return 19; // 31;
                 }
                 else if (upper is TLPageBlockPreformatted)
                 {
-                    return 19.0f;
+                    return 11; // 19;
                 }
                 else
                 {
-                    return 20.0f;
+                    return 12; // 20;
                 }
             }
             else if (lower is TLPageBlockPreformatted)
             {
                 if (upper is TLPageBlockParagraph)
                 {
-                    return 19.0f;
+                    return 11; // 19;
                 }
                 else
                 {
-                    return 20.0f;
+                    return 12; // 20;
                 }
             }
             else if (lower is TLPageBlockHeader)
             {
-                return 32.0f;
+                return 20; // 32;
             }
             else if (lower is TLPageBlockSubheader)
             {
-                return 32.0f;
+                return 20; // 32;
             }
             else if (lower == null)
             {
                 if (upper is TLPageBlockFooter)
                 {
-                    return 24.0f;
+                    return 14; // 24;
                 }
                 else
                 {
-                    return 24.0f;
+                    return 14; // 24;
                 }
             }
-            return 20.0f;
+
+            return 12; // 20;
         }
 
         private double PaddingForBlock(TLPageBlockBase block)
         {
-            if (block is TLPageBlockCover || block is TLPageBlockPreformatted)
+            if (block is TLPageBlockCover || block is TLPageBlockPreformatted ||
+                block is TLPageBlockPhoto || block is TLPageBlockVideo ||
+                block is TLPageBlockSlideshow || block is TLPageBlockChannel)
             {
                 return 0.0;
             }
@@ -919,15 +1045,9 @@ namespace Unigram.Views
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
                 ViewModel.Gallery.SelectedItem = item;
+                ViewModel.Gallery.FirstItem = item;
 
-                await GalleryView.Current.ShowAsync(ViewModel.Gallery, (s, args) =>
-                {
-                    var animation = ConnectedAnimationService.GetForCurrentView().GetAnimation("FullScreenPicture");
-                    if (animation != null)
-                    {
-                        animation.TryStart(image);
-                    }
-                });
+                await GalleryView.Current.ShowAsync(ViewModel.Gallery, () => image);
             }
         }
 
@@ -941,10 +1061,22 @@ namespace Unigram.Views
                     var name = urlText.Url.Substring(fragmentStart + 1);
                     if (_anchors.TryGetValue(name, out Border anchor))
                     {
-                        var transform = anchor.TransformToVisual(LayoutRoot);
-                        var position = transform.TransformPoint(new Point());
+                        ScrollingHost.ScrollIntoView(anchor);
+                        //anchor.StartBringIntoView();
+                        return;
 
-                        ScrollingHost.ChangeView(null, Math.Max(0, position.Y - 8), null, false);
+                        if (_scrollingHost == null)
+                        {
+                            _scrollingHost = ScrollingHost.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+                        }
+
+                        if (_scrollingHost != null)
+                        {
+                            var transform = anchor.TransformToVisual(ScrollingHost.ItemsPanelRoot);
+                            var position = transform.TransformPoint(new Point());
+
+                            _scrollingHost.ChangeView(null, Math.Max(0, position.Y - 8), null, false);
+                        }
                     }
                 }
             }
@@ -988,8 +1120,12 @@ namespace Unigram.Views
 
         private async void OnWebViewNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
-            var jss = _injectedJs;
-            await sender.InvokeScriptAsync("eval", new[] { jss });
+            try
+            {
+                var jss = _injectedJs;
+                await sender.InvokeScriptAsync("eval", new[] { jss });
+            }
+            catch { }
         }
 
         #region Strikethrough

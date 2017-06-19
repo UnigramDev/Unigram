@@ -79,6 +79,25 @@ namespace Telegram.Api
         //}
         //#endregion
 
+        public static TLConfig Merge(TLConfig oldConfig, TLCdnConfig cdnConfig)
+        {
+            foreach (var dcOption in oldConfig.DCOptions)
+            {
+                if (dcOption.IsCdn)
+                {
+                    var keys = new List<string>();
+                    foreach (var newDCOption in cdnConfig.PublicKeys.Where(x => x.DCId.Equals(dcOption.Id)))
+                    {
+                        keys.Add(newDCOption.PublicKey);
+                    }
+
+                    dcOption.PublicKeys = keys.Count > 0 ? keys.ToArray() : null;
+                }
+            }
+
+            return oldConfig;
+        }
+
         public static TLConfig Merge(TLConfig oldConfig, TLConfig newConfig)
         {
             if (oldConfig == null)
@@ -98,6 +117,7 @@ namespace Telegram.Api
                         newDCOption.Salt = dcOption.Salt;
                         newDCOption.SessionId = dcOption.SessionId;
                         newDCOption.ClientTicksDelta = dcOption.ClientTicksDelta;
+                        newDCOption.PublicKeys = dcOption.PublicKeys;
                     }
                 }
             }
@@ -111,6 +131,7 @@ namespace Telegram.Api
                 var dcId = oldConfig.DCOptions[oldConfig.ActiveDCOptionIndex].Id;
                 var ipv6 = oldActiveDCOption.IsIpv6;
                 var media = oldActiveDCOption.IsMediaOnly;
+                var cdn = oldActiveDCOption.IsCdn;
 
                 TLDCOption newActiveDCOption = null;
                 int newActiveDCOptionIndex = 0;
@@ -118,7 +139,8 @@ namespace Telegram.Api
                 {
                     if (newConfig.DCOptions[i].Id == dcId
                         && newConfig.DCOptions[i].IsIpv6 == ipv6
-                        && newConfig.DCOptions[i].IsMediaOnly == media)
+                        && newConfig.DCOptions[i].IsMediaOnly == media
+                        && newConfig.DCOptions[i].IsCdn == cdn)
                     {
                         newActiveDCOption = newConfig.DCOptions[i];
                         newActiveDCOptionIndex = i;

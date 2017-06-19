@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -29,7 +30,7 @@ namespace Unigram.Core.Helpers
                 var decoder = await BitmapDecoder.CreateAsync(imageStream);
                 if (decoder.FrameCount > 1)
                 {
-                    return null;
+                    throw new InvalidCastException();
                 }
 
                 var originalPixelWidth = decoder.PixelWidth;
@@ -120,6 +121,34 @@ namespace Unigram.Core.Helpers
                     return bitmap;
                 }
             }
+        }
+
+        public static async Task<Color[]> GetAccentAsync(StorageFile sourceFile)
+        {
+            var result = new Color[2];
+
+            using (var imageStream = await sourceFile.OpenReadAsync())
+            {
+                var decoder = await BitmapDecoder.CreateAsync(imageStream);
+                var transform = new BitmapTransform
+                {
+                    ScaledWidth = 1,
+                    ScaledHeight = 1
+                };
+
+                var pixelData = await decoder.GetPixelDataAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+                var detach = pixelData.DetachPixelData();
+
+                var hsv = ColorsHelper.RgbToHsv(detach[2], detach[1], detach[0]);
+                hsv[1] = Math.Min(1.0, hsv[1] + 0.05 + 0.1 * (1.0 - hsv[1]));
+                hsv[2] = Math.Max(0, hsv[2] * 0.65);
+
+                var rgb = ColorsHelper.HsvToRgb(hsv[0], hsv[1], hsv[2]);
+                result[0] = Color.FromArgb(0x66, rgb[0], rgb[1], rgb[2]);
+                result[1] = Color.FromArgb(0x88, rgb[0], rgb[1], rgb[2]);
+            }
+
+            return result;
         }
     }
 }

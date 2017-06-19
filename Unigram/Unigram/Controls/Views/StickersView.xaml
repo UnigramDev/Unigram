@@ -7,6 +7,7 @@
     xmlns:controls="using:Unigram.Controls"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:viewModels="using:Unigram.ViewModels"
+    xmlns:messages="using:Telegram.Api.TL.Messages"
     xmlns:tl="using:Telegram.Api.TL"
     xmlns:wuxdata="using:Windows.UI.Xaml.Data"
     xmlns:behaviors="using:Unigram.Behaviors"
@@ -60,7 +61,7 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Pivot x:Name="Pivot" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
+            <Pivot x:Name="Pivot" SelectedIndex="2" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
                 <PivotItem Margin="0,-48,0,0">
                     <controls:ZoomableGridView
                         x:Name="GifsView"
@@ -223,7 +224,7 @@
                                 <GridView.GroupStyle>
                                     <GroupStyle>
                                         <GroupStyle.HeaderTemplate>
-                                            <DataTemplate x:DataType="tl:TLMessagesStickerSet">
+                                            <DataTemplate x:DataType="messages:TLMessagesStickerSet">
                                                 <TextBlock Text="{x:Bind Set.Title}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                                             </DataTemplate>
                                         </GroupStyle.HeaderTemplate>
@@ -290,7 +291,7 @@
                             <ListView ItemsSource="{x:Bind StickersSource.View.CollectionGroups}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="wuxdata:ICollectionViewGroup">
-                                        <TextBlock Text="{x:Bind Group.(tl:TLMessagesStickerSet.Set).Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                                        <TextBlock Text="{x:Bind Group.(messages:TLMessagesStickerSet.Set).Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
                                         <!--<TextBlock Text="{Binding Group.Set.Title}" Style="{StaticResource BaseTextBlockStyle}"/>-->
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
@@ -331,12 +332,12 @@
                 <ListView.ItemTemplateSelector>
                     <selectors:StickerSetTemplateSelector>
                         <selectors:StickerSetTemplateSelector.ItemTemplate>
-                            <DataTemplate x:DataType="tl:TLMessagesStickerSet">
+                            <DataTemplate x:DataType="messages:TLMessagesStickerSet">
                                 <Image Margin="4" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}"/>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.ItemTemplate>
                         <selectors:StickerSetTemplateSelector.RecentsTemplate>
-                            <DataTemplate x:DataType="tl:TLMessagesStickerSet">
+                            <DataTemplate x:DataType="messages:TLMessagesStickerSet">
                                 <Border ToolTipService.ToolTip="{x:Bind Set.Title}" Background="Transparent">
                                     <FontIcon Glyph="&#xE121;" Margin="0,0,0,2"/>
                                 </Border>

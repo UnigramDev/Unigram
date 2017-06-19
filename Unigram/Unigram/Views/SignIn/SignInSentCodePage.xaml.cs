@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Telegram.Api.TL.Auth;
 
 namespace Unigram.Views.SignIn
 {
@@ -25,7 +26,6 @@ namespace Unigram.Views.SignIn
         public SignInSentCodePage()
         {
             InitializeComponent();
-
             DataContext = UnigramContainer.Current.ResolveType<SignInSentCodeViewModel>();
 
             // Used to hide the app gray bar on desktop.
@@ -35,6 +35,11 @@ namespace Unigram.Views.SignIn
             //{
             //    rpMasterTitlebar.Visibility = Visibility.Collapsed;
             //}
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            PrimaryInput.Focus(FocusState.Keyboard);
         }
 
         public class NavigationParameters

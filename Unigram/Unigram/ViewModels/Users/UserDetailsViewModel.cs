@@ -25,13 +25,11 @@ using System.Linq;
 using Unigram.Controls.Views;
 using Unigram.Views.Users;
 using Unigram.Converters;
+using System.Runtime.CompilerServices;
 
 namespace Unigram.ViewModels.Users
 {
-    public class UserDetailsViewModel : UnigramViewModelBase,
-        IHandle<TLUpdateUserBlocked>,
-        IHandle<TLUpdateNotifySettings>,
-        IHandle
+    public class UserDetailsViewModel : UnigramViewModelBase, IHandle<TLUpdateUserBlocked>, IHandle<TLUpdateNotifySettings>
     {
         public string LastSeen { get; internal set; }
 
@@ -81,6 +79,7 @@ namespace Unigram.ViewModels.Users
             if (user != null)
             {
                 Item = user;
+                RaisePropertyChanged(() => IsEditEnabled);
                 RaisePropertyChanged(() => AreNotificationsEnabled);
                 RaisePropertyChanged(() => PhoneVisibility);
                 RaisePropertyChanged(() => AddToGroupVisibility);
@@ -88,10 +87,20 @@ namespace Unigram.ViewModels.Users
                 RaisePropertyChanged(() => ReportVisibility);
                 RaisePropertyChanged(() => AddContactVisibility);
 
-                var result = await ProtoService.GetFullUserAsync(user.ToInputUser());
-                if (result.IsSucceeded)
+                var full = CacheService.GetFullUser(user.Id);
+                if (full == null)
                 {
-                    Full = result.Result;
+                    var response = await ProtoService.GetFullUserAsync(user.ToInputUser());
+                    if (response.IsSucceeded)
+                    {
+                        full = response.Result;
+                    }
+                }
+
+                if (full != null)
+                {
+                    Full = full;
+                    RaisePropertyChanged(() => IsPhoneCallsAvailable);
                     RaisePropertyChanged(() => AboutVisibility);
                     RaisePropertyChanged(() => BlockVisibility);
                     RaisePropertyChanged(() => UnblockVisibility);
@@ -104,7 +113,7 @@ namespace Unigram.ViewModels.Users
 
                 Aggregator.Subscribe(this);
             }
-        }        
+        }
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
             Aggregator.Unsubscribe(this);
@@ -154,12 +163,12 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand SendMessageCommand =>new RelayCommand(SendMessageExecute);
+        public RelayCommand SendMessageCommand => new RelayCommand(SendMessageExecute);
         private void SendMessageExecute()
         {
             if (Item is TLUser user)
             {
-                NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = user.Id });
+                NavigationService.NavigateToDialog(user);
             }
         }
 
@@ -181,8 +190,8 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand CallCommand => new RelayCommand(CallExecute);
-        private void CallExecute()
+        public RelayCommand SystemCallCommand => new RelayCommand(SystemCallExecute);
+        private void SystemCallExecute()
         {
             var user = Item as TLUser;
             if (user != null)
@@ -209,7 +218,7 @@ namespace Unigram.ViewModels.Users
             {
                 // Create the contact-card
                 Contact userContact = new Contact();
-                
+
                 // Check if the user has a normal name
                 if (user.FullName != "" || user.FullName != null)
                 {
@@ -358,7 +367,7 @@ namespace Unigram.ViewModels.Users
                     var result = await ProtoService.ReportPeerAsync(user.ToInputPeer(), reason);
                     if (result.IsSucceeded && result.Result)
                     {
-                        await new MessageDialog("Resources.ReportSpamNotification", "Unigram").ShowQueuedAsync();
+                        await new TLMessageDialog("Resources.ReportSpamNotification", "Unigram").ShowQueuedAsync();
                     }
                 }
             }
@@ -368,7 +377,7 @@ namespace Unigram.ViewModels.Users
         {
             get
             {
-                var settings = Full?.NotifySettings as TLPeerNotifySettings;
+                var settings = _full?.NotifySettings as TLPeerNotifySettings;
                 if (settings != null)
                 {
                     return settings.MuteUntil == 0;
@@ -378,11 +387,29 @@ namespace Unigram.ViewModels.Users
             }
         }
 
+        public bool IsPhoneCallsAvailable
+        {
+            get
+            {
+                return _full != null && _full.IsPhoneCallsAvailable && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
+            }
+        }
+
+        public bool IsEditEnabled
+        {
+            get
+            {
+                return _item != null && (_item.IsContact || _item.IsMutualContact);
+            }
+        }
+
         #region Bot
         public Visibility AboutVisibility
         {
             get
             {
+                return _full == null || string.IsNullOrEmpty(_full.About) ? Visibility.Collapsed : Visibility.Visible;
+
                 var user = Item as TLUser;
                 if (user != null && user.IsBot && Full != null && !string.IsNullOrWhiteSpace(Full.BotInfo.Description))
                 {
@@ -523,6 +550,104 @@ namespace Unigram.ViewModels.Users
                 }
 
                 return Visibility.Collapsed;
+            }
+        }
+
+        public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
+        private async void ToggleMuteExecute()
+        {
+            var notifySettings = _full.NotifySettings as TLPeerNotifySettings;
+            if (notifySettings != null)
+            {
+                var muteUntil = notifySettings.MuteUntil == int.MaxValue ? 0 : int.MaxValue;
+                var settings = new TLInputPeerNotifySettings
+                {
+                    MuteUntil = muteUntil,
+                    IsShowPreviews = notifySettings.IsShowPreviews,
+                    IsSilent = notifySettings.IsSilent,
+                    Sound = notifySettings.Sound
+                };
+
+                var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = _item.ToInputPeer() }, settings);
+                if (response.IsSucceeded)
+                {
+                    notifySettings.MuteUntil = muteUntil;
+                    RaisePropertyChanged(() => AreNotificationsEnabled);
+                    Full.RaisePropertyChanged(() => Full.NotifySettings);
+
+                    var dialog = CacheService.GetDialog(_item.ToPeer());
+                    if (dialog != null)
+                    {
+                        dialog.NotifySettings = _full.NotifySettings;
+                        dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                        dialog.RaisePropertyChanged(() => dialog.Self);
+                    }
+
+                    CacheService.Commit();
+                }
+            }
+        }
+
+        #region Call
+
+        public RelayCommand CallCommand => new RelayCommand(CallExecute);
+        private async void CallExecute()
+        {
+            var user = _item;
+            if (user == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var coordinator = VoipCallCoordinator.GetDefault();
+                var result = await coordinator.ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask");
+                if (result == VoipPhoneCallResourceReservationStatus.Success)
+                {
+                    await VoIPConnection.Current.SendRequestAsync("voip.startCall", user);
+                }
+            }
+            catch
+            {
+                await TLMessageDialog.ShowAsync("Something went wrong. Please, try to close and relaunch the app.", "Unigram", "OK");
+            }
+        }
+
+        #endregion
+
+        public RelayCommand EditNameCommand => new RelayCommand(EditNameExecute);
+        private async void EditNameExecute()
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            var confirm = await EditUserNameView.Current.ShowAsync(_item.FirstName, _item.LastName);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var contact = new TLInputPhoneContact
+                {
+                    FirstName = EditUserNameView.Current.FirstName,
+                    LastName = EditUserNameView.Current.LastName,
+                    Phone = _item.Phone
+                };
+
+                var response = await ProtoService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact }, false);
+                if (response.IsSucceeded)
+                {
+                    _item.RaisePropertyChanged(() => _item.FullName);
+                    _item.RaisePropertyChanged(() => _item.FirstName);
+                    _item.RaisePropertyChanged(() => _item.LastName);
+                    _item.RaisePropertyChanged(() => _item.DisplayName);
+
+                    var dialog = CacheService.GetDialog(_item.ToPeer());
+                    if (dialog != null)
+                    {
+                        dialog.RaisePropertyChanged(() => dialog.With);
+                    }
+                }
             }
         }
     }

@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 using Org.BouncyCastle.Math;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Messages.Methods;
 
 namespace Telegram.Api.TL
 {

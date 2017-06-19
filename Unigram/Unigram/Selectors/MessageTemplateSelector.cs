@@ -23,6 +23,10 @@ namespace Unigram.Selectors
         public DataTemplate FriendStickerTemplate { get; set; }
         public DataTemplate ChatFriendStickerTemplate { get; set; }
 
+        public DataTemplate UserRoundVideoTemplate { get; set; }
+        public DataTemplate FriendRoundVideoTemplate { get; set; }
+        public DataTemplate ChatFriendRoundVideoTemplate { get; set; }
+
         public DataTemplate ServiceUserCallTemplate { get; set; }
         public DataTemplate ServiceFriendCallTemplate { get; set; }
 
@@ -91,6 +95,19 @@ namespace Unigram.Selectors
                 }
 
                 return FriendStickerTemplate;
+            }
+            else if (message.IsRoundVideo())
+            {
+                if (message.IsOut && !message.IsPost)
+                {
+                    return UserRoundVideoTemplate;
+                }
+                else if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
+                {
+                    return ChatFriendRoundVideoTemplate;
+                }
+
+                return FriendRoundVideoTemplate;
             }
             else
             {

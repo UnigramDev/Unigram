@@ -71,6 +71,7 @@ namespace Unigram.Controls.Messages
         //}
 
         #region Binding
+
         protected Visibility EditedVisibility(bool hasEditDate, bool hasViaBotId, TLReplyMarkupBase replyMarkup)
         {
             return hasEditDate && !hasViaBotId && replyMarkup?.TypeId != TLType.ReplyInlineMarkup ? Visibility.Visible : Visibility.Collapsed;
@@ -80,6 +81,64 @@ namespace Unigram.Controls.Messages
         {
             return ViewModel;
         }
+
+        protected Visibility ConvertShare(TLMessage message)
+        {
+            if (message.IsSticker())
+            {
+                return Visibility.Collapsed;
+            }
+            else if (message.HasFwdFrom && message.FwdFrom.HasChannelId && !message.IsOut)
+            {
+                return Visibility.Visible;
+            }
+            else if (message.HasFromId && !message.IsPost)
+            {
+                if (message.Media is TLMessageMediaEmpty || message.Media == null || message.Media is TLMessageMediaWebPage webpageMedia && !(webpageMedia.WebPage is TLWebPage))
+                {
+                    return Visibility.Collapsed;
+                }
+
+                var user = message.From;
+                if (user != null && user.IsBot)
+                {
+                    return Visibility.Visible;
+                }
+
+                if (!message.IsOut)
+                {
+                    if (message.Media is TLMessageMediaGame || message.Media is TLMessageMediaInvoice)
+                    {
+                        return Visibility.Visible;
+                    }
+
+                    var parent = message.Parent as TLChannel;
+                    if (parent != null && parent.IsMegaGroup)
+                    {
+                        //TLRPC.Chat chat = MessagesController.getInstance().getChat(messageObject.messageOwner.to_id.channel_id);
+                        //return chat != null && chat.username != null && chat.username.length() > 0 && !(messageObject.messageOwner.media instanceof TLRPC.TL_messageMediaContact) && !(messageObject.messageOwner.media instanceof TLRPC.TL_messageMediaGeo);
+
+                        return parent.HasUsername && !(message.Media is TLMessageMediaContact) && !(message.Media is TLMessageMediaGeo) ? Visibility.Visible : Visibility.Collapsed;
+                    }
+                }
+            }
+            //else if (messageObject.messageOwner.from_id < 0 || messageObject.messageOwner.post)
+            else if (message.IsPost)
+            {
+                //if (messageObject.messageOwner.to_id.channel_id != 0 && (messageObject.messageOwner.via_bot_id == 0 && messageObject.messageOwner.reply_to_msg_id == 0 || messageObject.type != 13))
+                //{
+                //    return Visibility.Visible;
+                //}
+
+                if (message.ToId is TLPeerChannel && (!message.HasViaBotId && !message.HasReplyToMsgId))
+                {
+                    return Visibility.Visible;
+                }
+            }
+
+            return Visibility.Collapsed;
+        }
+
         #endregion
 
         protected void OnMessageChanged(TextBlock paragraph)
@@ -192,12 +251,11 @@ namespace Unigram.Controls.Messages
             {
                 if (message.FwdFrom.HasChannelPost)
                 {
-                    // TODO
-                    Context.NavigationService.Navigate(typeof(DialogPage), Tuple.Create((TLPeerBase)new TLPeerChannel { ChannelId = message.FwdFromChannel.Id }, message.FwdFrom.ChannelPost ?? int.MaxValue));
+                    Context.NavigationService.NavigateToDialog(message.FwdFromChannel, message.FwdFrom.ChannelPost);
                 }
                 else
                 {
-                    Context.NavigationService.Navigate(typeof(DialogPage), new TLPeerChannel { ChannelId = message.FwdFromChannel.Id });
+                    Context.NavigationService.NavigateToDialog(message.FwdFromChannel);
                 }
             }
             else if (message.FwdFromUser != null)
@@ -208,7 +266,8 @@ namespace Unigram.Controls.Messages
 
         private void ViaBot_Click(TLMessage message)
         {
-            Context.Text = $"@{message.ViaBot.Username} ";
+            Context.SetText($"@{message.ViaBot.Username} ", focus: true);
+            Context.ResolveInlineBot(message.ViaBot.Username);
         }
 
         protected void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
@@ -221,17 +280,28 @@ namespace Unigram.Controls.Messages
             Context.MessageOpenReplyCommand.Execute(ViewModel);
         }
 
+        protected void Share_Click(object sender, RoutedEventArgs e)
+        {
+            if (Context != null)
+            {
+                Context.MessageShareCommand.Execute(ViewModel);
+            }
+        }
+
         protected void MessageControl_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             if (args.TryGetPosition(sender, out Point point))
             {
                 var text = sender as RichTextBlock;
                 var hyperlink = text.GetHyperlinkFromPoint(point);
-                if (hyperlink != null)
+                if (hyperlink != null && hyperlink.NavigateUri != null)
                 {
+                    var open = new MenuFlyoutItem { Text = "Open link" };
+                    var copy = new MenuFlyoutItem { Text = "Copy link" };
+
                     var flyout = new MenuFlyout();
-                    flyout.Items.Add(new MenuFlyoutItem { Text = "Open link" });
-                    flyout.Items.Add(new MenuFlyoutItem { Text = "Copy link" });
+                    flyout.Items.Add(open);
+                    flyout.Items.Add(copy);
                     flyout.ShowAt(sender, point);
                     args.Handled = true;
                 }
@@ -243,7 +313,7 @@ namespace Unigram.Controls.Messages
         /// </summary>
         public new event TypedEventHandler<FrameworkElement, object> Loading;
 
-        private FrameworkElement _statusControl;
+        private FrameworkElement _stateControl;
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -346,12 +416,12 @@ namespace Unigram.Controls.Messages
 
             Calculate:
 
-            if (_statusControl == null)
-                _statusControl = FindName("StatusControl") as FrameworkElement;
-            if (_statusControl.DesiredSize.IsEmpty)
-                _statusControl.Measure(availableSize);
+            if (_stateControl == null)
+                _stateControl = FindName("StatusControl") as FrameworkElement;
+            if (_stateControl.DesiredSize.IsEmpty)
+                _stateControl.Measure(availableSize);
 
-            width = Math.Max(_statusControl.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, width + sumWidth);
+            width = Math.Max(_stateControl.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96) + sumWidth);
 
             if (width > availableWidth || height > availableHeight)
             {

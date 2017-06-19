@@ -9,6 +9,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Payments;
 using Unigram.Common;
 using Unigram.Core.Models;
 using Unigram.Core.Stripe;
@@ -222,11 +223,14 @@ namespace Unigram.ViewModels.Payments
             var month = 0;
             var year = 0;
 
-            var args = _date.Split('/');
-            if (args.Length == 2)
+            if (_date != null)
             {
-                month = int.Parse(args[0]);
-                year = int.Parse(args[1]);
+                var args = _date.Split('/');
+                if (args.Length == 2)
+                {
+                    month = int.Parse(args[0]);
+                    year = int.Parse(args[1]);
+                }
             }
 
             var card = new Card(

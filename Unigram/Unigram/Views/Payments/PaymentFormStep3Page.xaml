@@ -39,11 +39,12 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Text="Payment info" 
-                                   Command="{x:Bind ViewModel.SendCommand}"
-                                   CommandVisibility="{x:Bind ViewModel.IsNativeUsed, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                   IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                                   Glyph="&#xE10B;"/>
+        <controls:ButtonPageHeader
+            Text="Payment info" 
+            Command="{x:Bind ViewModel.SendCommand}"
+            CommandVisibility="{x:Bind ViewModel.IsNativeUsed, Converter={StaticResource BooleanToVisibilityConverter}}"
+            IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+            Glyph="&#xE10B;"/>
 
         <ScrollViewer Visibility="{x:Bind ViewModel.IsNativeUsed, Converter={StaticResource BooleanToVisibilityConverter}}"
                       VerticalScrollBarVisibility="Auto"

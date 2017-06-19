@@ -1,0 +1,44 @@
+﻿<Page
+    x:Class="Unigram.Views.Settings.SettingsGeneralPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:PageHeader Text="Generic"/>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel>
+                <local:TableStackPanel x:Name="SwitchGroup1"
+                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                       Margin="0,0,0,0">
+                    <ToggleSwitch
+                        Header="Send by Enter"
+                        IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+
+                    <ToggleSwitch
+                        Header="Replace emojis"
+                        IsOn="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+
+                    <ToggleSwitch
+                        Header="Sync contacts"
+                        IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+                </local:TableStackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

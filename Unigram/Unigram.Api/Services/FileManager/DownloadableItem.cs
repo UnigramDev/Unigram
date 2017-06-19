@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Upload;
 
 namespace Telegram.Api.Services.FileManager
 {
@@ -23,9 +24,7 @@ namespace Telegram.Api.Services.FileManager
 
         public TLFileLocation Location { get; set; }
 
-        public TLInputDocumentFileLocation InputAudioLocation { get; set; }
-
-        public TLInputDocumentFileLocation InputVideoLocation { get; set; }
+        public TLInputWebFileLocation InputWebFileLocation { get; set; }
 
         public TLInputDocumentFileLocation InputDocumentLocation { get; set; }
 
@@ -38,6 +37,10 @@ namespace Telegram.Api.Services.FileManager
         public bool IsCancelled { get; set; }
 
         public bool SuppressMerge { get; set; }
+
+        public int FileSize { get; set; }
+
+        public TLUploadFileCdnRedirect CdnRedirect { get; set; }
 
         #region Http
 

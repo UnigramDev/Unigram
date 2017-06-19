@@ -12,7 +12,7 @@ using Windows.Data.Json;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 
-namespace Unigram.Media
+namespace Unigram.Core.Media
 {
     public class YouTubeVideoPlayerTask : VideoPlayerTask
     {

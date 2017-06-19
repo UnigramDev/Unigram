@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Messages;
 using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels
@@ -44,7 +45,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return _inlineBotResults != null && ((_inlineBotResults.HasSwitchPm && _inlineBotResults.SwitchPm != null) || (_inlineBotResults.Results != null && _inlineBotResults.Results.Count > 0)) ? Visibility.Visible : Visibility.Collapsed;
+                return _inlineBotResults != null && ((_inlineBotResults.HasSwitchPM && _inlineBotResults.SwitchPM != null) || (_inlineBotResults.Results != null && _inlineBotResults.Results.Count > 0)) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -77,6 +78,12 @@ namespace Unigram.ViewModels
 
         public async void GetInlineBotResults(string text)
         {
+            if (CurrentInlineBot == null)
+            {
+                InlineBotResults = null;
+                return;
+            }
+
             Debug.WriteLine($"@{CurrentInlineBot.Username}: {CurrentInlineBot.BotInlinePlaceholder}, {text}");
 
             // TODO: cache
@@ -136,7 +143,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ProcessBotInlineResult(message, result, currentInlineBot.Id);
+            ProcessBotInlineResult(ref message, result, currentInlineBot.Id);
 
             //if (this.Reply != null && DialogDetailsViewModel.IsWebPagePreview(this.Reply))
             //{
@@ -152,7 +159,7 @@ namespace Unigram.ViewModels
                 Reply = null;
             }
 
-            Text = string.Empty;
+            SetText(string.Empty);
 
             //this.Text = string.Empty;
             var previousMessage = InsertSendingMessage(message, false);
@@ -207,7 +214,7 @@ namespace Unigram.ViewModels
             //});
         }
 
-        private void ProcessBotInlineResult(TLMessage message, TLBotInlineResultBase resultBase, int botId)
+        private void ProcessBotInlineResult(ref TLMessage message, TLBotInlineResultBase resultBase, int botId)
         {
             message.InlineBotResultId = resultBase.Id;
             message.InlineBotResultQueryId = resultBase.QueryId;
@@ -301,6 +308,12 @@ namespace Unigram.ViewModels
                         Caption = string.Empty
                     };
                 }
+            }
+
+            var result = resultBase as TLBotInlineResult;
+            if (result != null)
+            {
+
             }
 
             //var result = resultBase as TLBotInlineResult;
@@ -527,7 +540,7 @@ namespace Unigram.ViewModels
             {
                 message.Message = sendText.Message;
                 message.Entities = sendText.Entities;
-                message.HasEntities = true;
+                message.HasEntities = sendText.HasEntities;
                 //bool arg_878_0 = sendText.NoWebpage;
             }
 
@@ -544,6 +557,7 @@ namespace Unigram.ViewModels
             if (resultBase.SendMessage != null && resultBase.SendMessage.ReplyMarkup != null)
             {
                 message.ReplyMarkup = resultBase.SendMessage.ReplyMarkup;
+                message.HasReplyMarkup = true;
             }
         }
     }

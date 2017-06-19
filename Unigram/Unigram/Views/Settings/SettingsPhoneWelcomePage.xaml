@@ -1,0 +1,23 @@
+﻿<Page
+    x:Class="Unigram.Views.Settings.SettingsPhoneWelcomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}">
+            <Run Text="You can change your Telegram number here. Your account and all your cloud data — messages, media, contacts, etc. will be moved to the new number."/>
+            <LineBreak/>
+            <LineBreak/>
+            <Run Text="Important:" FontWeight="SemiBold"/>
+            <Run Text="all your Telegram contacts will get your"/>
+            <Run Text="new number" FontWeight="SemiBold"/>
+            <Run Text="added to their address book, provided they had your old number and you hanven't blocked them in Telegram"/>
+        </TextBlock>
+
+        <Button Click="Change_Click" Content="CHANGE NUMBER"/>
+    </Grid>
+</Page>

@@ -10,7 +10,11 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Upload;
+using Telegram.Api.TL.Upload.Methods;
 using Windows.Foundation;
+using Windows.Security.Cryptography;
+using Windows.Storage;
 
 namespace Telegram.Api.Services.FileManager
 {
@@ -49,7 +53,7 @@ namespace Telegram.Api.Services.FileManager
 
             for (int i = 0; i < Constants.WorkersNumber; i++)
             {
-                var worker = new Worker(OnDownloading, "downloader"+i);
+                var worker = new Worker(OnDownloading, "downloader" + i);
                 _workers.Add(worker);
             }
 
@@ -98,21 +102,24 @@ namespace Telegram.Api.Services.FileManager
 
             TLRPCError error;
             bool canceled;
-            part.File = GetFile(part.ParentItem.Location, part.Offset, part.Limit, out error, out canceled);
-            if (canceled)
+            do
             {
-                lock (_itemsSyncRoot)
+                TLUploadFileBase result;
+                if (part.ParentItem.CdnRedirect != null)
+                    result = GetCdnFile(part.ParentItem.CdnRedirect, part.ParentItem.Location, part.Offset, part.Limit, out error, out canceled);
+                else
+                    result = GetFile(part.ParentItem.Location, part.Offset, part.Limit, out error, out canceled);
+
+                if (result is TLUploadFileCdnRedirect redirect)
                 {
-                    part.ParentItem.IsCancelled = true;
-                    part.Status = PartStatus.Processed;
-                    _items.Remove(part.ParentItem);
+                    part.ParentItem.CdnRedirect = redirect;
+                    continue;
+                }
+                else
+                {
+                    part.File = result as TLUploadFile;
                 }
 
-                return;
-            }
-            while (part.File == null)
-            {
-                part.File = GetFile(part.ParentItem.Location, part.Offset, part.Limit, out error, out canceled);
                 if (canceled)
                 {
                     lock (_itemsSyncRoot)
@@ -124,7 +131,7 @@ namespace Telegram.Api.Services.FileManager
 
                     return;
                 }
-            }
+            } while (part.File == null);
 
             // indicate progress
             // indicate complete
@@ -149,6 +156,13 @@ namespace Telegram.Api.Services.FileManager
                         var currentItemIndex = part.ParentItem.Parts.IndexOf(part);
                         part.ParentItem.Parts.Insert(currentItemIndex + 1, missingPart);
                     }
+                }
+                else if (data.Length == part.Limit && (part.Number + 1) == part.ParentItem.Parts.Count)
+                {
+                    var currentItemIndex = part.ParentItem.Parts.IndexOf(part);
+                    var missingPart = new DownloadablePart(part.ParentItem, part.Offset + part.Limit, part.Limit, currentItemIndex + 1);
+
+                    part.ParentItem.Parts.Insert(currentItemIndex + 1, missingPart);
                 }
 
                 isCanceled = part.ParentItem.IsCancelled;
@@ -178,7 +192,7 @@ namespace Telegram.Api.Services.FileManager
                     //part.ParentItem.Location.Buffer = bytes;
                     var fileName = String.Format("{0}_{1}_{2}.jpg",
                         part.ParentItem.Location.VolumeId,
-                        part.ParentItem.Location.LocalId, 
+                        part.ParentItem.Location.LocalId,
                         part.ParentItem.Location.Secret);
 
                     FileUtils.WriteTemporaryBites(fileName, bytes);
@@ -210,20 +224,24 @@ namespace Telegram.Api.Services.FileManager
             }
         }
 
-        private TLUploadFile GetFile(TLFileLocation location, int offset, int limit, out TLRPCError er, out bool isCanceled)
-        {
 
+
+        private TLUploadFileBase GetFile(TLFileLocation location, int offset, int limit, out TLRPCError er, out bool isCanceled)
+        {
             var manualResetEvent = new ManualResetEvent(false);
-            TLUploadFile result = null;
+            TLUploadFileBase result = null;
             TLRPCError outError = null;
             var outIsCanceled = false;
             _mtProtoService.GetFileAsync(location.DCId, location.ToInputFileLocation(), offset, limit,
-                file =>
+                callback =>
                 {
-                    result = file;
+                    result = callback;
                     manualResetEvent.Set();
 
-                    _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
+                    if (callback is TLUploadFile file)
+                    {
+                        _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
+                    }
                 },
                 error =>
                 {
@@ -248,18 +266,169 @@ namespace Telegram.Api.Services.FileManager
                     Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
                 });
 
-            manualResetEvent.WaitOne();
+            manualResetEvent.WaitOne(20 * 1000);
             er = outError;
             isCanceled = outIsCanceled;
 
             return result;
         }
 
+        private TLUploadFileBase GetCdnFile(TLUploadFileCdnRedirect redirect, TLFileLocation location, int offset, int limit, out TLRPCError er, out bool isCanceled)
+        {
+            var manualResetEvent = new ManualResetEvent(false);
+            TLUploadFileBase result = null;
+            TLRPCError outError = null;
+            var outIsCanceled = false;
+
+            var req = new TLUploadGetCdnFile();
+            req.FileToken = redirect.FileToken;
+            req.Limit = limit;
+            req.Offset = offset;
+
+            _mtProtoService.SendRequestAsync<TLUploadCdnFileBase>("upload.getCdnFile", req, redirect.DCId, true, callback =>
+            {
+                if (callback is TLUploadCdnFile file)
+                {
+                    var iv = redirect.EncryptionIV;
+                    var counter = offset / 16;
+                    iv[15] = (byte)(counter & 0xFF);
+                    iv[14] = (byte)((counter >> 8) & 0xFF);
+                    iv[13] = (byte)((counter >> 16) & 0xFF);
+                    iv[12] = (byte)((counter >> 24) & 0xFF);
+
+                    var key = CryptographicBuffer.CreateFromByteArray(redirect.EncryptionKey);
+
+                    var ecount_buf = new byte[0];
+                    var num = 0u;
+                    var bytes = Utils.AES_ctr128_encrypt(file.Bytes, key, ref iv, ref ecount_buf, ref num);
+
+                    result = new TLUploadFile { Bytes = bytes };
+                    manualResetEvent.Set();
+
+                    _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, file.Bytes.Length + 4);
+                }
+                else if (callback is TLUploadCdnFileReuploadNeeded reupload)
+                {
+                    result = ReuploadFile(redirect, reupload.RequestToken, location, offset, limit, out outError, out outIsCanceled);
+                    while (result == null)
+                    {
+                        result = ReuploadFile(redirect, reupload.RequestToken, location, offset, limit, out outError, out outIsCanceled);
+                        if (outIsCanceled)
+                        {
+                            break;
+                        }
+                    }
+
+                    manualResetEvent.Set();
+                }
+            },
+            error =>
+            {
+                outError = error;
+
+                if (error.CodeEquals(TLErrorCode.INTERNAL)
+                    || (error.CodeEquals(TLErrorCode.BAD_REQUEST) && (error.TypeEquals(TLErrorType.LOCATION_INVALID) || error.TypeEquals(TLErrorType.VOLUME_LOC_NOT_FOUND)))
+                    || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.ToString().StartsWith("Incorrect dhGen")))
+                {
+                    outIsCanceled = true;
+
+                    manualResetEvent.Set();
+                    return;
+                }
+
+                int delay;
+                lock (_randomRoot)
+                {
+                    delay = _random.Next(1000, 3000);
+                }
+
+                Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
+            });
+
+            manualResetEvent.WaitOne(20 * 1000);
+            er = outError;
+            isCanceled = outIsCanceled;
+
+            return result;
+        }
+
+        private TLUploadFileBase ReuploadFile(TLUploadFileCdnRedirect redirect, byte[] requestToken, TLFileLocation location, int offset, int limit, out TLRPCError er, out bool isCanceled)
+        {
+            var manualResetEvent = new ManualResetEvent(false);
+            TLUploadFileBase result = null;
+            TLRPCError outError = null;
+            var outIsCanceled = false;
+
+            var req = new TLUploadReuploadCdnFile();
+            req.FileToken = redirect.FileToken;
+            req.RequestToken = requestToken;
+
+            _mtProtoService.SendRequestAsync<bool>("upload.reuploadCdnFile", req, location.DCId, false, callback =>
+            {
+                if (callback)
+                {
+                    result = GetCdnFile(redirect, location, offset, limit, out outError, out outIsCanceled);
+                    while (result == null)
+                    {
+                        result = GetCdnFile(redirect, location, offset, limit, out outError, out outIsCanceled);
+                        if (outIsCanceled)
+                        {
+                            break;
+                        }
+                    }
+
+                    manualResetEvent.Set();
+                }
+            },
+            error =>
+            {
+                outError = error;
+
+                if (error.CodeEquals(TLErrorCode.INTERNAL)
+                    || (error.CodeEquals(TLErrorCode.BAD_REQUEST) && (error.TypeEquals(TLErrorType.LOCATION_INVALID) || error.TypeEquals(TLErrorType.VOLUME_LOC_NOT_FOUND)))
+                    || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.ToString().StartsWith("Incorrect dhGen")))
+                {
+                    outIsCanceled = true;
+
+                    manualResetEvent.Set();
+                    return;
+                }
+
+                int delay;
+                lock (_randomRoot)
+                {
+                    delay = _random.Next(1000, 3000);
+                }
+
+                Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
+            });
+
+            manualResetEvent.WaitOne(20 * 1000);
+            er = outError;
+            isCanceled = outIsCanceled;
+
+            return result;
+        }
+
+
+
         public IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(TLFileLocation file, int fileSize)
         {
             return AsyncInfo.Run<DownloadableItem, double>((token, progress) =>
             {
                 var tsc = new TaskCompletionSource<DownloadableItem>();
+                //var boh = new TaskCompletionSource<string>();
+
+                //FileLoader.Current.LoadFile(file, ".jpg", fileSize, false, boh);
+                //var name = await boh.Task;
+
+                //return new DownloadableItem { DestFileName = name };
+
+
+
+
+
+
 
                 var downloadableItem = GetDownloadableItem(file, null, fileSize);
                 downloadableItem.Callback = tsc;
@@ -296,6 +465,14 @@ namespace Telegram.Api.Services.FileManager
 
         public void DownloadFile(TLFileLocation file, int fileSize, Action<DownloadableItem> callback)
         {
+            //var tsc = new TaskCompletionSource<string>();
+
+            //FileLoader.Current.LoadFile(file, ".jpg", fileSize, false, tsc);
+            //var name = await tsc.Task;
+            //callback?.Invoke(new DownloadableItem { DestFileName = name });
+
+            //return;
+
             var downloadableItem = GetDownloadableItem(file, null, fileSize);
             downloadableItem.Action = callback;
 
@@ -336,7 +513,8 @@ namespace Telegram.Api.Services.FileManager
             var item = new DownloadableItem
             {
                 Owner = owner,
-                Location = location
+                Location = location,
+                FileSize = fileSize
             };
             item.Parts = GetItemParts(fileSize, item);
 
@@ -345,12 +523,15 @@ namespace Telegram.Api.Services.FileManager
 
         private List<DownloadablePart> GetItemParts(int size, DownloadableItem item)
         {
-            var chunkSize = Constants.DownloadChunkSize;
+            //var chunkSize = Constants.DownloadChunkSize;
+
+            var chunkSize = size > 1024 * 1024 ? 1024 * 128 : 1024 * 32;
             var parts = new List<DownloadablePart>();
             var partsCount = size / chunkSize + 1;
             for (var i = 0; i < partsCount; i++)
             {
-                var part = new DownloadablePart(item, i * chunkSize, size == 0? 0 : chunkSize);
+                //var part = new DownloadablePart(item, i * chunkSize, size == 0 ? 0 : chunkSize);
+                var part = new DownloadablePart(item, i * chunkSize, chunkSize, i);
                 parts.Add(part);
             }
 

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project InitialTargets="Yolo" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<!--<PropertyGroup>
+		<AppxMSBuildToolsPath Condition="'$(AppxMSBuildToolsPath)' == ''">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\AppxPackage\</AppxMSBuildToolsPath>
+		<AppxMSBuildTaskAssembly Condition="'$(AppxMSBuildTaskAssembly)' == ''">$(AppxMSBuildToolsPath)Microsoft.Build.AppxPackage.dll</AppxMSBuildTaskAssembly>
+	</PropertyGroup>
+
+	<UsingTask AssemblyFile="$(AppxMSBuildTaskAssembly)" TaskName="Microsoft.Build.AppxPackage.ValidateAppxManifest" />
+	<UsingTask AssemblyFile="$(AppxMSBuildTaskAssembly)" TaskName="Microsoft.Build.AppxPackage.ValidateAppxManifestItems" />
+		
+	<Target Name="Yolo">
+		<ValidateAppxManifestItems AppxPackageProject="$(AppxPackage)"
+                             AppxManifestItems="@(AppxManifest)"
+                             CustomAppxManifestItems="@(CustomAppxManifest)">
+			<Output TaskParameter="IdentityName" PropertyName="AppxManifestIdentityName" />
+			<Output TaskParameter="IdentityVersion" PropertyName="AppxManifestIdentityVersion" />
+		</ValidateAppxManifestItems>
+	</Target>-->
+	
+  <PropertyGroup>
+    <DistributionTarget Condition="'$(Configuration)' == 'Debug'">Debug</DistributionTarget>
+    <DistributionTarget Condition="'$(Configuration)' != 'Debug'">$(Configuration)</DistributionTarget>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+	<DistributionTarget>Debug</DistributionTarget>
+  </PropertyGroup>
+
+</Project>
