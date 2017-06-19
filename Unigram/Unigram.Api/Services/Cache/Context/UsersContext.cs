@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Universal.WinSQLite;
 
@@ -15,6 +16,11 @@ namespace Telegram.Api.Services.Cache.Context
         public UsersContext(Database database)
         {
             _database = database;
+        }
+
+        public IDisposable Transaction()
+        {
+            return new DatabaseTransaction(_database);
         }
 
         public override TLUserBase this[long index]
@@ -76,7 +82,7 @@ namespace Telegram.Api.Services.Cache.Context
                             {
                                 LocalId = photo_small_local_id,
                                 Secret = photo_small_secret,
-                                VolumeId = photo_small_secret,
+                                VolumeId = photo_small_volume_id,
                                 DCId = photo_small_dc_id
                             },
                             PhotoBig = new TLFileLocation
@@ -133,6 +139,8 @@ namespace Telegram.Api.Services.Cache.Context
             }
             set
             {
+                base[index] = value;
+
                 if (value is TLUser user)
                 {
                     Statement statement;
@@ -269,8 +277,6 @@ namespace Telegram.Api.Services.Cache.Context
 
                     Sqlite3.sqlite3_finalize(statement);
                 }
-
-                base[index] = value;
             }
         }
     }

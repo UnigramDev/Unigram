@@ -66,7 +66,7 @@ namespace Telegram.Api.Services.Cache
             CreateDatabase.Execute(_database);
 
             UsersContext = new UsersContext(_database);
-            //ChatsContext = new Context<TLChatBase>(_database);
+            ChatsContext = new ChatsContext(_database);
 
             var commitEvents = Observable.FromEventPattern<EventHandler, System.EventArgs>(
                     keh => { CommitInvoked += keh; },
