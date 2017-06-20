@@ -618,10 +618,13 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                if (response.Result.Messages.Count < limit)
-                {
-                    IsFirstSliceLoaded = true;
-                }
+                //if (response.Result.Messages.Count < limit)
+                //{
+                //    IsFirstSliceLoaded = true;
+                //}
+
+                IsLastSliceLoaded = false;
+                IsFirstSliceLoaded = false;
             }
 
             _isLoadingNextSlice = false;
@@ -979,7 +982,7 @@ namespace Unigram.ViewModels
                     }
 
                     UnfilteredBotCommands = commands;
-                    HasBotCommands = UnfilteredBotCommands.Count > 0;
+                    HasBotCommands = UnfilteredBotCommands.Count > 0 && channel.IsMegaGroup;
 
                     var channelFull = full as TLChannelFull;
                     if (channelFull.HasPinnedMsgId)

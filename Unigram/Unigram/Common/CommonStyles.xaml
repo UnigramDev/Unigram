@@ -3051,7 +3051,6 @@
                                         <Grid.RenderTransform>
                                             <CompositeTransform x:Name="PivotLayoutElementTranslateTransform"/>
                                         </Grid.RenderTransform>
-                                        <Border Grid.ColumnSpan="3" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" />
                                         <ContentPresenter x:Name="LeftHeaderPresenter" ContentTemplate="{TemplateBinding LeftHeaderTemplate}" Content="{TemplateBinding LeftHeader}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                                         <ContentControl x:Name="HeaderClipper" Grid.Column="1" HorizontalContentAlignment="Stretch" UseSystemFocusVisuals="True">
                                             <ContentControl.Clip>
@@ -3443,6 +3442,7 @@
         <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
         <Setter Property="Padding" Value="{ThemeResource TextControlThemePadding}"/>
         <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
+        <!--<Setter Property="Height" Value="{ThemeResource TextControlThemeMinHeight}"/>-->
         <Setter Property="InputScope" Value="Search"/>
         <Setter Property="Margin" Value="0"/>
         <Setter Property="Template">

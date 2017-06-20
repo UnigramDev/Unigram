@@ -403,11 +403,11 @@ namespace Unigram.ViewModels
         {
             if (messageCommon == null) return;
 
-            //if (!this._isFirstSliceLoaded)
-            //{
-            //    Execute.ShowDebugMessage("DialogDetailsViewModel.Handle(TLMessageCommon) _isFirstSliceLoaded=false");
-            //    return;
-            //}
+            if (!IsFirstSliceLoaded)
+            {
+                Execute.ShowDebugMessage("DialogViewModel.Handle(TLMessageCommonBase) IsFirstSliceLoaded=false");
+                return;
+            }
 
             if (messageCommon is TLMessage message)
             {

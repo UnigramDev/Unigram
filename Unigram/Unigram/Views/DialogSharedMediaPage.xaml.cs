@@ -26,26 +26,12 @@ namespace Unigram.Views
         public DialogSharedMediaPage()
         {
             InitializeComponent();
-
             DataContext = UnigramContainer.Current.ResolveType<DialogSharedMediaViewModel>();
-
-            // Used to get semi-transparent background for headers.
-            // TODO: Check for performance issues on mobile.
-            ScrollingMedia.Loaded += Host_Loaded;
-            ScrollingFiles.Loaded += Host_Loaded;
-            ScrollingMusic.Loaded += Host_Loaded;
         }
 
-        private void Host_Loaded(object sender, RoutedEventArgs e)
+        private void Photo_Click(object sender, RoutedEventArgs e)
         {
-            var list = sender as ListViewBase;
-            if (list != null)
-            {
-                if (list.ItemsPanelRoot != null)
-                {
-                    list.ItemsPanelRoot.RegisterPropertyChangedCallback(ClipProperty, new DependencyPropertyChangedCallback((s, dp) => list.ItemsPanelRoot.Clip = null));
-                }
-            }
+            Themes.Media.Photo_Click(sender);
         }
     }
 }

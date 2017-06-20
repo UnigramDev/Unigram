@@ -7,6 +7,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
+using Unigram.Converters;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -23,12 +24,33 @@ namespace Unigram.Controls.Items
 {
     public sealed partial class SharedFileListViewItem : UserControl
     {
-        public TLMessage ViewModel => DataContext as TLMessage;
-        private TLMessage _oldViewModel;
+        public TLDocument ViewModel
+        {
+            get
+            {
+                if (DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                {
+                    return document;
+                }
+
+                return null;
+            }
+        }
+
+        private TLDocument _oldViewModel;
+        //private TLDocument _oldValue;
 
         public SharedFileListViewItem()
         {
             InitializeComponent();
+
+            //DataContextChanged += (s, args) =>
+            //{
+            //    if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
+            //    if (ViewModel == null) Bindings.StopTracking();
+
+            //    _oldValue = ViewModel;
+            //};
 
             DataContextChanged += OnDataContextChanged;
         }
@@ -48,8 +70,8 @@ namespace Unigram.Controls.Items
 
                 // To semplify future x:Bind implementation.
                 EllipseIcon.Background = UpdateEllipseBrush(ViewModel);
-                TimeLabel.Text = UpdateTimeLabel(ViewModel);
                 SizeLabel.Text = UpdateSizeLabel(ViewModel);
+                TimeLabel.Text = UpdateTimeLabel(DataContext as TLMessage);
             }
         }
 
@@ -57,7 +79,7 @@ namespace Unigram.Controls.Items
         {
         }
 
-        private Brush UpdateEllipseBrush(TLMessage message)
+        private Brush UpdateEllipseBrush(TLDocument document)
         {
             var brushes = new[]
             {
@@ -67,13 +89,6 @@ namespace Unigram.Controls.Items
                 App.Current.Resources["Placeholder3Brush"]
             };
 
-            var mediaDocument = message.Media as TLMessageMediaDocument;
-            if (mediaDocument == null)
-            {
-                return brushes[0] as SolidColorBrush;
-            }
-
-            var document = mediaDocument.Document as TLDocument;
             if (document == null)
             {
                 return brushes[0] as SolidColorBrush;
@@ -119,15 +134,8 @@ namespace Unigram.Controls.Items
             return brushes[0] as SolidColorBrush;
         }
 
-        private string UpdateSizeLabel(TLMessage message)
+        private string UpdateSizeLabel(TLDocument document)
         {
-            var mediaDocument = message.Media as TLMessageMediaDocument;
-            if (mediaDocument == null)
-            {
-                return "0 B";
-            }
-
-            var document = mediaDocument.Document as TLDocument;
             if (document == null)
             {
                 return "0 B";
@@ -168,6 +176,11 @@ namespace Unigram.Controls.Items
             }
 
             return string.Format($"{{0:dd MMM yyyy}} at {{0:{shortTimePattern}}}", dateTime);
+        }
+
+        private void Download_Click(object sender, TransferCompletedEventArgs e)
+        {
+            Themes.Media.Download(sender, e);
         }
     }
 }

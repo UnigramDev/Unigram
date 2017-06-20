@@ -317,7 +317,7 @@ namespace Unigram.Common
         {
             if (phase >= Phase && location != null)
             {
-                Phase = phase;
+                //Phase = phase;
 
                 var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
@@ -331,6 +331,8 @@ namespace Unigram.Common
                         var result = await _downloadManager.DownloadFileAsync(location, fileSize).AsTask(transferable?.Download());
                         if (result != null && Phase <= phase)
                         {
+                            Phase = phase;
+
                             Execute.BeginOnUIThread(() =>
                             {
                                 if (transferable != null)
@@ -370,7 +372,7 @@ namespace Unigram.Common
         {
             if (phase >= Phase && document != null)
             {
-                Phase = phase;
+                //Phase = phase;
 
                 var fileName = document.GetFileName();
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
@@ -385,6 +387,8 @@ namespace Unigram.Common
                         var result = await _downloadFileManager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), fileSize).AsTask(transferable?.Download());
                         if (result != null && Phase <= phase)
                         {
+                            Phase = phase;
+
                             Execute.BeginOnUIThread(() =>
                             {
                                 if (transferable != null)
@@ -481,7 +485,7 @@ namespace Unigram.Common
         {
             if (phase >= Phase && document != null)
             {
-                Phase = phase;
+                //Phase = phase;
 
                 var fileName = document.GetFileName();
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
@@ -496,6 +500,8 @@ namespace Unigram.Common
                         var result = await _downloadFileManager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), fileSize).AsTask(transferable?.Download());
                         if (result != null && Phase <= phase)
                         {
+                            Phase = phase;
+
                             Execute.BeginOnUIThread(() =>
                             {
                                 if (transferable != null)
