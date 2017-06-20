@@ -60,7 +60,7 @@ namespace Telegram.Api.TL
                 var attribute = Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
                 if (attribute != null)
                 {
-                    return attribute.FileName;
+                    return string.Join("_", attribute.FileName.Split(Path.GetInvalidFileNameChars()));
                 }
 
                 var videoAttribute = Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
@@ -172,7 +172,7 @@ namespace Telegram.Api.TL
             var attribute = Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
             if (attribute != null)
             {
-                return Path.GetExtension(attribute.FileName);
+                return Path.GetExtension(string.Join("_", attribute.FileName.Split(Path.GetInvalidFileNameChars())));
             }
 
             var videoAttribute = Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
