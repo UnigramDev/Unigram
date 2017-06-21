@@ -94,7 +94,7 @@ namespace Unigram.Controls.Items
                 return brushes[0] as SolidColorBrush;
             }
 
-            var name = document.FileName.ToString();
+            var name = document.FileName.ToLower();
             if (name.Length > 0)
             {
                 var color = -1;

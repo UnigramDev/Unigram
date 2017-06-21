@@ -47,6 +47,7 @@ namespace Unigram.Controls.Items
                 //ViewModel.PropertyChanged += OnPropertyChanged;
 
                 var links = new List<string>();
+                var hasThumb = false;
 
                 string title = null;
                 string description = null;
@@ -63,6 +64,8 @@ namespace Unigram.Controls.Items
 
                     description = string.IsNullOrEmpty(webPage.Description) ? null : webPage.Description;
                     webPageLink = webPage.Url;
+
+                    hasThumb = webPage.HasPhoto && webPage.Photo is TLPhoto photo && photo.Thumb != null;
                 }
 
                 if (message != null && message.Entities != null)
@@ -173,6 +176,15 @@ namespace Unigram.Controls.Items
                     links.Add(webPageLink);
                 }
 
+                //if (hasThumb)
+                //{
+                //    Thumbnail.Visibility = Visibility.Visible;
+                //}
+                //else
+                //{
+                //    Thumbnail.Visibility = Visibility.Collapsed;
+                //}
+
                 if (title != null)
                 {
                     TitleLabel.Text = title.Replace('\n', ' ');
@@ -185,7 +197,7 @@ namespace Unigram.Controls.Items
 
                 if (description != null)
                 {
-                    DescriptionLabel.Text = description.Replace('\n', ' ');
+                    DescriptionLabel.Text = description;
                     DescriptionLabel.Visibility = Visibility.Visible;
                 }
                 else
@@ -195,7 +207,7 @@ namespace Unigram.Controls.Items
 
                 if (description2 != null)
                 {
-                    Description2Label.Text = description2.Replace('\n', ' ');
+                    Description2Label.Text = description2;
                     Description2Label.Visibility = Visibility.Visible;
 
                     if (description != null)

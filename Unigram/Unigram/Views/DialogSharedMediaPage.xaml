@@ -12,7 +12,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <CollectionViewSource x:Name="MediaSource" Source="{Binding Media}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="MediaSource" Source="{x:Bind ViewModel.Media}" IsSourceGrouped="True"/>
         <CollectionViewSource x:Name="FilesSource" Source="{x:Bind ViewModel.Files}" IsSourceGrouped="True"/>
         <CollectionViewSource x:Name="LinksSource" Source="{x:Bind ViewModel.Links}" IsSourceGrouped="True"/>
         <CollectionViewSource x:Name="MusicSource" Source="{x:Bind ViewModel.Music}" IsSourceGrouped="True"/>
@@ -20,6 +20,14 @@
         <Style TargetType="PivotItem">
             <Setter Property="Margin" Value="0"/>
         </Style>
+
+        <MenuFlyout x:Key="MessageMenuFlyout" Opening="MenuFlyout_Opening">
+            <MenuFlyoutItem Loaded="MessageGoto_Loaded" Command="{x:Bind ViewModel.MessageGotoCommand}" CommandParameter="{Binding}" Text="Go to message"/>
+            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
+            <MenuFlyoutItem Loaded="MessageForward_Loaded" Command="{x:Bind ViewModel.MessageForwardCommand}" CommandParameter="{Binding}" Text="Forward message"/>
+            <MenuFlyoutItem Loaded="MessageSelect_Loaded" Command="{x:Bind ViewModel.MessageSelectCommand}" CommandParameter="{Binding}" Text="Select message"/>
+        </MenuFlyout>
+
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -29,23 +37,24 @@
         </Grid.RowDefinitions>
         <controls:PageHeader Text="Shared Media"/>
 
-        <Pivot x:Name="ScrollingHost" Style="{StaticResource TabStylePivotStyle}" Grid.RowSpan="2">
-            <PivotItem>
+        <Pivot x:Name="ScrollingHost" IsLocked="{x:Bind ConvertSelectionMode(ViewModel.SelectionMode), Mode=OneWay}" Style="{StaticResource TabStylePivotStyle}" Grid.RowSpan="2">
+            <!--<PivotItem>
                 <PivotItem.Header>
                     <controls:TabHeaderStyle Glyph="&#xE114;" />
                 </PivotItem.Header>
-            </PivotItem>
+            </PivotItem>-->
             <PivotItem>
                 <PivotItem.Header>
                     <controls:TabHeaderStyle Glyph="&#xEB9F;" />
                 </PivotItem.Header>
                 <controls:GroupedGridView
                     x:Name="ScrollingMedia"
-                            ItemsSource="{x:Bind MediaSource.View}"
+                    ItemsSource="{x:Bind MediaSource.View}"
                     ViewSource="{x:Bind MediaSource}"
-                            SelectionMode="None"
-                            Padding="8,0,8,8"
-                            common:FluidGridView.OrientationOnly="False">
+                    SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                    SelectionChanged="List_SelectionChanged"
+                    Padding="8,0,8,8"
+                    common:FluidGridView.OrientationOnly="False">
                     <common:FluidGridView.Triggers>
                         <common:LengthGridViewTrigger ItemLength="72"/>
                     </common:FluidGridView.Triggers>
@@ -58,8 +67,8 @@
                         </Style>
                     </GridView.ItemContainerStyle>
                     <!--<GridView.Header>
-                        <Border Height="6"/>
-                    </GridView.Header>-->
+                         <Border Height="6"/>
+                         </GridView.Header>-->
                     <GridView.Footer>
                         <Border Height="8"/>
                     </GridView.Footer>
@@ -83,12 +92,12 @@
                                                         BorderBrush="{TemplateBinding BorderBrush}"
                                                         BorderThickness="{TemplateBinding BorderThickness}">
                                                     <ContentPresenter x:Name="ContentPresenter"
-                                                                        Margin="{TemplateBinding Padding}"
-                                                                        Content="{TemplateBinding Content}"
-                                                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                        ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                                      Margin="{TemplateBinding Padding}"
+                                                                      Content="{TemplateBinding Content}"
+                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
                                                 </Border>
                                             </ControlTemplate>
                                         </Setter.Value>
@@ -104,10 +113,10 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
                                         <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
-                                                    Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                                                    VerticalAlignment="Bottom"
-                                                    Margin="0,0,0,1"
-                                                    Grid.Column="1">
+                                                   Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                                   VerticalAlignment="Bottom"
+                                                   Margin="0,0,0,1"
+                                                   Grid.Column="1">
                                             <Run Text="{Binding Count}"/>
                                             <Run Text="files"/>
                                         </TextBlock>
@@ -120,14 +129,14 @@
                         <selectors:MediaTemplateSelector>
                             <selectors:MediaTemplateSelector.PhotoTemplate>
                                 <DataTemplate>
-                                    <controls:SimpleHyperlinkButton Click="Photo_Click" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextFlyout="{StaticResource MessageMenuFlyout}" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                                         <Image Source="{Binding Media.Photo.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
                                     </controls:SimpleHyperlinkButton>
                                 </DataTemplate>
                             </selectors:MediaTemplateSelector.PhotoTemplate>
                             <selectors:MediaTemplateSelector.VideoTemplate>
                                 <DataTemplate>
-                                    <controls:SimpleHyperlinkButton Click="Photo_Click" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextFlyout="{StaticResource MessageMenuFlyout}" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                                         <Image Source="{Binding Media.Document.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
                                     </controls:SimpleHyperlinkButton>
                                 </DataTemplate>
@@ -147,9 +156,10 @@
                 </PivotItem.Header>
                 <controls:GroupedListView
                     x:Name="ScrollingFiles"
-                            ItemsSource="{x:Bind FilesSource.View}"
+                    ItemsSource="{x:Bind FilesSource.View}"
                     ViewSource="{x:Bind FilesSource}"
-                            SelectionMode="None">
+                    SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                    SelectionChanged="List_SelectionChanged">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -158,9 +168,9 @@
                     <ListView.Header>
                         <controls:SearchTextBox Text="{Binding Files.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
                         <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
-                                                Text="{Binding Files.Query, Mode=TwoWay}"
-                                                PlaceholderText="Search..."
-                                                Canvas.ZIndex="1"/>-->
+                             Text="{Binding Files.Query, Mode=TwoWay}"
+                             PlaceholderText="Search..."
+                             Canvas.ZIndex="1"/>-->
                     </ListView.Header>
                     <ListView.Footer>
                         <Border Height="6"/>
@@ -185,12 +195,12 @@
                                                         BorderBrush="{TemplateBinding BorderBrush}"
                                                         BorderThickness="{TemplateBinding BorderThickness}">
                                                     <ContentPresenter x:Name="ContentPresenter"
-                                                                        Margin="{TemplateBinding Padding}"
-                                                                        Content="{TemplateBinding Content}"
-                                                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                        ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                                      Margin="{TemplateBinding Padding}"
+                                                                      Content="{TemplateBinding Content}"
+                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
                                                 </Border>
                                             </ControlTemplate>
                                         </Setter.Value>
@@ -206,10 +216,10 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
                                         <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
-                                                    Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                                                    VerticalAlignment="Bottom"
-                                                    Margin="0,0,0,1"
-                                                    Grid.Column="1">
+                                                   Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                                   VerticalAlignment="Bottom"
+                                                   Margin="0,0,0,1"
+                                                   Grid.Column="1">
                                             <Run Text="{Binding Count}"/>
                                             <Run Text="files"/>
                                         </TextBlock>
@@ -220,7 +230,7 @@
                     </ListView.GroupStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <items:SharedFileListViewItem/>
+                            <items:SharedFileListViewItem ContextFlyout="{StaticResource MessageMenuFlyout}"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </controls:GroupedListView>
@@ -230,10 +240,11 @@
                     <controls:TabHeaderStyle Glyph="&#xE71B;" />
                 </PivotItem.Header>
                 <controls:GroupedListView
-                    x:Name="lbLinks"
-                            ItemsSource="{x:Bind LinksSource.View}"
+                    x:Name="ScrollingLinks"
+                    ItemsSource="{x:Bind LinksSource.View}"
                     ViewSource="{x:Bind LinksSource}"
-                    SelectionMode="None">
+                    SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                    SelectionChanged="List_SelectionChanged">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -242,9 +253,9 @@
                     <ListView.Header>
                         <controls:SearchTextBox Text="{Binding Links.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
                         <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
-                                                Text="{Binding Links.Query, Mode=TwoWay}"
-                                                PlaceholderText="Search..."
-                                                Canvas.ZIndex="1"/>-->
+                             Text="{Binding Links.Query, Mode=TwoWay}"
+                             PlaceholderText="Search..."
+                             Canvas.ZIndex="1"/>-->
                     </ListView.Header>
                     <ListView.Footer>
                         <Border Height="6"/>
@@ -269,12 +280,12 @@
                                                         BorderBrush="{TemplateBinding BorderBrush}"
                                                         BorderThickness="{TemplateBinding BorderThickness}">
                                                     <ContentPresenter x:Name="ContentPresenter"
-                                                                        Margin="{TemplateBinding Padding}"
-                                                                        Content="{TemplateBinding Content}"
-                                                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                        ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                                      Margin="{TemplateBinding Padding}"
+                                                                      Content="{TemplateBinding Content}"
+                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
                                                 </Border>
                                             </ControlTemplate>
                                         </Setter.Value>
@@ -290,10 +301,10 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
                                         <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
-                                                    Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                                                    VerticalAlignment="Bottom"
-                                                    Margin="0,0,0,1"
-                                                    Grid.Column="1">
+                                                   Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                                   VerticalAlignment="Bottom"
+                                                   Margin="0,0,0,1"
+                                                   Grid.Column="1">
                                             <Run Text="{Binding Count}"/>
                                             <Run Text="files"/>
                                         </TextBlock>
@@ -304,7 +315,7 @@
                     </ListView.GroupStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <items:SharedLinkListViewItem/>
+                            <items:SharedLinkListViewItem ContextFlyout="{StaticResource MessageMenuFlyout}"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </controls:GroupedListView>
@@ -314,8 +325,9 @@
                     <controls:TabHeaderStyle Glyph="&#xE189;" />
                 </PivotItem.Header>
                 <ListView x:Name="ScrollingMusic"
-                            ItemsSource="{Binding MusicCollection}"
-                            SelectionMode="None">
+                          ItemsSource="{Binding MusicCollection}"
+                          SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                          SelectionChanged="List_SelectionChanged">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -324,9 +336,9 @@
                     <ListView.Header>
                         <controls:SearchTextBox Text="{Binding Music.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
                         <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
-                                                Text="{Binding Music.Query, Mode=TwoWay}"
-                                                PlaceholderText="Search..."
-                                                Canvas.ZIndex="1"/>-->
+                             Text="{Binding Music.Query, Mode=TwoWay}"
+                             PlaceholderText="Search..."
+                             Canvas.ZIndex="1"/>-->
                     </ListView.Header>
                     <ListView.Footer>
                         <Border Height="6"/>
@@ -339,5 +351,48 @@
                 </ListView>
             </PivotItem>
         </Pivot>
+
+        <controls:ContentPageHeader x:Name="ManagePanel" Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Command="{Binding MessagesForwardCommand}" Margin="12,0,4,0" Style="{StaticResource AccentButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Forward" VerticalAlignment="Center"/>
+                        <ContentControl Content="{Binding SelectedMessages.Count}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                            <ContentControl.ContentTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition/>
+                                </TransitionCollection>
+                            </ContentControl.ContentTransitions>
+                            <ContentControl.Clip>
+                                <RectangleGeometry Rect="0,0,200,32"/>
+                            </ContentControl.Clip>
+                        </ContentControl>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding MessagesDeleteCommand}" Margin="4,0,12,0" Style="{StaticResource AccentButtonStyle}" Grid.Column="1">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Delete" VerticalAlignment="Center"/>
+                        <ContentControl Content="{Binding SelectedMessages.Count}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                            <ContentControl.ContentTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition/>
+                                </TransitionCollection>
+                            </ContentControl.ContentTransitions>
+                            <ContentControl.Clip>
+                                <RectangleGeometry Rect="0,0,200,32"/>
+                            </ContentControl.Clip>
+                        </ContentControl>
+                    </StackPanel>
+                </Button>
+
+                <controls:GlyphButton Click="Manage_Click" Glyph="&#xE106;" FontSize="16" Grid.Column="3"/>
+            </Grid>
+        </controls:ContentPageHeader>
     </Grid>
 </Page>

@@ -14,6 +14,7 @@ using Windows.Globalization.NumberFormatting;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+using Windows.System.UserProfile;
 
 namespace Unigram.Converters
 {
@@ -31,10 +32,10 @@ namespace Unigram.Converters
             }
         }
 
-        public DateTimeFormatter ShortDate { get; } = new DateTimeFormatter("shortdate", Windows.System.UserProfile.GlobalizationPreferences.Languages);
-        public DateTimeFormatter ShortTime { get; } = new DateTimeFormatter("shorttime", Windows.System.UserProfile.GlobalizationPreferences.Languages);
-        public DateTimeFormatter LongDate { get; } = new DateTimeFormatter("longdate", Windows.System.UserProfile.GlobalizationPreferences.Languages);
-        public DateTimeFormatter LongTime { get; } = new DateTimeFormatter("longtime", Windows.System.UserProfile.GlobalizationPreferences.Languages);
+        public DateTimeFormatter ShortDate { get; } = new DateTimeFormatter("shortdate", GlobalizationPreferences.Languages);
+        public DateTimeFormatter ShortTime { get; } = new DateTimeFormatter("shorttime", GlobalizationPreferences.Languages);
+        public DateTimeFormatter LongDate { get; } = new DateTimeFormatter("longdate", GlobalizationPreferences.Languages);
+        public DateTimeFormatter LongTime { get; } = new DateTimeFormatter("longtime", GlobalizationPreferences.Languages);
 
         public List<SolidColorBrush> PlaceholderColors { get; private set; }
 

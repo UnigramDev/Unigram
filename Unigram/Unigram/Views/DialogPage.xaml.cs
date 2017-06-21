@@ -592,7 +592,7 @@ namespace Unigram.Views
                     //    }
                     //}
 
-                    var channel = ViewModel.With as TLChannel;
+                    var channel = messageCommon.Parent as TLChannel;
                     if (channel != null)
                     {
                         if (channel.IsBroadcast)
@@ -615,7 +615,7 @@ namespace Unigram.Views
                 var messageCommon = element.DataContext as TLMessageCommonBase;
                 if (messageCommon != null)
                 {
-                    var channel = ViewModel.With as TLChannel;
+                    var channel = messageCommon.Parent as TLChannel;
                     if (channel != null && (channel.IsEditor || channel.IsCreator) && !channel.IsBroadcast)
                     {
                         if (messageCommon.ToId is TLPeerChannel)
@@ -639,7 +639,7 @@ namespace Unigram.Views
                 var message = element.DataContext as TLMessage;
                 if (message != null)
                 {
-                    var channel = ViewModel.With as TLChannel;
+                    var channel = message.Parent as TLChannel;
                     if (message.IsOut && message.ToId is TLPeerUser userPeer && userPeer.Id == SettingsHelper.UserId)
                     {
                         element.Visibility = Visibility.Visible;
@@ -674,7 +674,7 @@ namespace Unigram.Views
                 var messageCommon = element.DataContext as TLMessageCommonBase;
                 if (messageCommon != null)
                 {
-                    var channel = ViewModel.With as TLChannel;
+                    var channel = messageCommon.Parent as TLChannel;
                     if (channel != null)
                     {
                         if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
@@ -740,7 +740,7 @@ namespace Unigram.Views
                 var messageCommon = element.DataContext as TLMessageCommonBase;
                 if (messageCommon != null)
                 {
-                    var channel = ViewModel.With as TLChannel;
+                    var channel = messageCommon.Parent as TLChannel;
                     if (channel != null)
                     {
                         if (channel.IsBroadcast && channel.HasUsername)

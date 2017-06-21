@@ -11,10 +11,10 @@
 
     <Grid Margin="0,12">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="48"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Border Background="Gray" VerticalAlignment="Top">
+        <Border x:Name="Thumbnail" Background="Gray" VerticalAlignment="Top">
             <Image Source="{Binding Media.WebPage.Photo.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" Width="48" Height="48"/>
         </Border>
         <StackPanel Margin="12,0,0,0" Grid.Column="1">
