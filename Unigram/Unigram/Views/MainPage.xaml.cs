@@ -78,6 +78,11 @@ namespace Unigram.Views
                 rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
             }
+            else if (!string.IsNullOrEmpty(SearchDialogs.Text))
+            {
+                SearchDialogs.Text = string.Empty;
+                args.Handled = true;
+            }
         }
 
         public void Handle(string message)
