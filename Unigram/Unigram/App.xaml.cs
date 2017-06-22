@@ -57,6 +57,8 @@ namespace Unigram
 
         public static AppInMemoryState InMemoryState { get; } = new AppInMemoryState();
 
+        public static event TypedEventHandler<CoreDispatcher, AcceleratorKeyEventArgs> AcceleratorKeyActivated;
+
         public ViewModelLocator Locator
         {
             get
@@ -315,10 +317,12 @@ namespace Unigram
             Window.Current.Activated += Window_Activated;
             Window.Current.VisibilityChanged -= Window_VisibilityChanged;
             Window.Current.VisibilityChanged += Window_VisibilityChanged;
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
             ShowStatusBar();
             ColourTitleBar();
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             Theme.Current.Update();
@@ -326,6 +330,23 @@ namespace Unigram
 
             Task.Run(() => OnStartSync());
             //return Task.CompletedTask;
+        }
+
+        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        {
+            if (AcceleratorKeyActivated is MulticastDelegate multicast)
+            {
+                var list = multicast.GetInvocationList();
+                for (int i = list.Length - 1; i >= 0; i--)
+                {
+                    list[i].DynamicInvoke(sender, args);
+
+                    if (args.Handled)
+                    {
+                        return;
+                    }
+                }
+            }
         }
 
         private async void OnStartSync()

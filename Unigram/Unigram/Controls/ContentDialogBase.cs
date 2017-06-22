@@ -207,6 +207,7 @@ namespace Unigram.Controls
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
             BootStrapper.BackRequested += OnBackRequested;
+            App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
             //Window.Current.SizeChanged += OnSizeChanged;
 
             OnVisibleBoundsChanged(_applicationView, null);
@@ -221,12 +222,22 @@ namespace Unigram.Controls
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
             _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
             BootStrapper.BackRequested -= OnBackRequested;
+            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         private void OnBackRequested(object sender, HandledEventArgs e)
         {
             BootStrapper.BackRequested -= OnBackRequested;
             OnBackRequestedOverride(sender, e);
+        }
+
+        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        {
+            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+
+            var e = new HandledEventArgs();
+            OnBackRequestedOverride(sender, e);
+            args.Handled = e.Handled;
         }
 
         protected virtual void OnBackRequestedOverride(object sender, HandledEventArgs e)

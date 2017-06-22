@@ -99,12 +99,12 @@ namespace Unigram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+            App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         protected override void OnApplyTemplate()

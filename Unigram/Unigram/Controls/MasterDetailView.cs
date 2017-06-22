@@ -40,6 +40,7 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(MasterDetailView);
 
             Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
             SizeChanged += OnSizeChanged;
         }
 
@@ -69,6 +70,13 @@ namespace Unigram.Controls
             {
                 ViewStateChanged(this, EventArgs.Empty);
             }
+
+            App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         private void UpdateVisualState()
@@ -100,19 +108,31 @@ namespace Unigram.Controls
             }
         }
 
-        protected override void OnKeyDown(KeyRoutedEventArgs e)
+        //protected override void OnKeyDown(KeyRoutedEventArgs e)
+        //{
+        //    if (e.Key == VirtualKey.Escape)
+        //    {
+        //        if (DetailFrame.CanGoBack && CurrentState == MasterDetailState.Narrow)
+        //        {
+        //            DetailFrame.GoBack();
+        //            e.Handled = true;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        base.OnKeyDown(e);
+        //    }
+        //}
+
+        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            if (e.Key == VirtualKey.Escape)
+            if (args.VirtualKey == VirtualKey.Escape)
             {
                 if (DetailFrame.CanGoBack && CurrentState == MasterDetailState.Narrow)
                 {
                     DetailFrame.GoBack();
-                    e.Handled = true;
+                    args.Handled = true;
                 }
-            }
-            else
-            {
-                base.OnKeyDown(e);
             }
         }
 
