@@ -570,7 +570,7 @@ namespace Unigram.Controls
                         if (commands)
                         {
                             var result = GetCommands(searchText.ToLower());
-                            if (ViewModel.BotCommands != null && ViewModel.BotCommands.SequenceEqual(result))
+                            if (result != null && ViewModel.BotCommands != null && ViewModel.BotCommands.SequenceEqual(result))
                             {
 
                             }
@@ -597,7 +597,11 @@ namespace Unigram.Controls
             var all = ViewModel.UnfilteredBotCommands;
             if (all != null)
             {
-                return all.Where(x => x.Item2.Command.ToLower().StartsWith(command)).ToList();
+                var results = all.Where(x => x.Item2.Command.ToLower().StartsWith(command)).ToList();
+                if (results.Count > 0)
+                {
+                    return results;
+                }
             }
 
             return null;
