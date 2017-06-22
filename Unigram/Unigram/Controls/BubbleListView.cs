@@ -32,6 +32,14 @@ namespace Unigram.Controls
             Loaded += OnLoaded;
         }
 
+        public void ScrollToBottom()
+        {
+            if (ScrollingHost != null)
+            {
+                ScrollingHost.ChangeView(null, ScrollingHost.ScrollableHeight, null);
+            }
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             var panel = ItemsPanelRoot as ItemsStackPanel;

@@ -965,7 +965,7 @@ namespace Telegram.Api.Services.Cache
             }
 
            // TLUtils.WritePerformance(string.Format("GetCachedHistory time ({0}): {1}", _database.CountRecords<TLMessageBase>(), timer.Elapsed));
-            return msgs.Take(limit).ToList();
+            return msgs.OrderByDescending(x => x.Id).Take(limit).ToList();
         }
 
         public void GetHistoryAsync(TLPeerBase peer, Action<IList<TLMessageBase>> callback, int limit = Constants.CachedMessagesCount)

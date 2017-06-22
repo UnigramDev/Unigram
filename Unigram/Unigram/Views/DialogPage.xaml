@@ -1262,7 +1262,7 @@
                             <RowDefinition/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <StackPanel Visibility="{x:Bind ConvertBotInfo(ViewModel.FullUser.HasBotInfo, ViewModel.IsLastSliceLoaded), Mode=OneWay, FallbackValue=Collapsed}"
+                        <StackPanel Visibility="{x:Bind ConvertBotInfo(ViewModel.FullUser.BotInfo, ViewModel.IsLastSliceLoaded), Mode=OneWay, FallbackValue=Collapsed}"
                                     Padding="{ThemeResource MessageContentPadding}"
                                     Background="{ThemeResource MessageBackgroundBrush}"
                                     BorderBrush="{ThemeResource MessageBorderBrush}"

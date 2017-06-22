@@ -78,6 +78,7 @@ namespace Unigram.Views
             //NavigationCacheMode = NavigationCacheMode.Required;
 
             ViewModel.TextField = TextField;
+            ViewModel.ListField = lvDialogs;
 
             CheckMessageBoxEmpty();
 
@@ -1118,9 +1119,9 @@ namespace Unigram.Views
 
         #region Binding
 
-        public Visibility ConvertBotInfo(bool hasInfo, bool last)
+        public Visibility ConvertBotInfo(TLBotInfo info, bool last)
         {
-            return hasInfo && last ? Visibility.Visible : Visibility.Collapsed;
+            return info != null && !string.IsNullOrEmpty(info.Description) && last ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public Visibility ConvertIsEmpty(bool empty, bool self, bool bot, bool should)

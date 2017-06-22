@@ -320,7 +320,7 @@ namespace Unigram.Controls.Items
                             if (attribute != null)
                             {
                                 //return $"{text}{attribute.Alt} ({Resources.Sticker.ToLower()})";
-                                return result + attribute.FileName + caption;
+                                return result + document.FileName + caption;
                             }
                         }
 

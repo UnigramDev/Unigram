@@ -94,8 +94,9 @@ namespace Unigram.Controls.Views
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                e.Handled = true;
                 Flip.Focus(FocusState.Programmatic);
+                Accept_Click(null, null);
+                e.Handled = true;
             }
         }
 

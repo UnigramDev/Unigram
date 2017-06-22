@@ -325,6 +325,7 @@ namespace Unigram.ViewModels
         }
 
         public BubbleTextBox TextField { get; set; }
+        public BubbleListView ListField { get; set; }
 
         public void SetText(string text, TLVector<TLMessageEntityBase> entities = null, bool focus = false)
         {
@@ -754,6 +755,15 @@ namespace Unigram.ViewModels
             IsLoading = false;
         }
 
+        public void ScrollToBottom()
+        {
+            //if (IsFirstSliceLoaded)
+            {
+                ListField.ScrollToBottom();
+                UpdatingScrollMode = UpdatingScrollMode.ForceKeepLastItemInView;
+            }
+        }
+
         public async void ProcessReplies(IList<TLMessageBase> messages)
         {
             var replyIds = new TLVector<int>();
@@ -970,19 +980,27 @@ namespace Unigram.ViewModels
                 {
                     Full = full;
 
-                    var commands = new List<Tuple<TLUser, TLBotCommand>>();
-
-                    foreach (var info in full.BotInfo)
+                    if (channel.IsMegaGroup)
                     {
-                        var bot = CacheService.GetUser(info.UserId) as TLUser;
-                        if (bot != null)
-                        {
-                            commands.AddRange(info.Commands.Select(x => Tuple.Create(bot, x)));
-                        }
-                    }
+                        var commands = new List<Tuple<TLUser, TLBotCommand>>();
 
-                    UnfilteredBotCommands = commands;
-                    HasBotCommands = UnfilteredBotCommands.Count > 0 && channel.IsMegaGroup;
+                        foreach (var info in full.BotInfo)
+                        {
+                            var bot = CacheService.GetUser(info.UserId) as TLUser;
+                            if (bot != null)
+                            {
+                                commands.AddRange(info.Commands.Select(x => Tuple.Create(bot, x)));
+                            }
+                        }
+
+                        UnfilteredBotCommands = commands;
+                        HasBotCommands = UnfilteredBotCommands.Count > 0;
+                    }
+                    else
+                    {
+                        UnfilteredBotCommands = null;
+                        HasBotCommands = false;
+                    }
 
                     var channelFull = full as TLChannelFull;
                     if (channelFull.HasPinnedMsgId)
@@ -1675,13 +1693,14 @@ namespace Unigram.ViewModels
         private TLMessageBase InsertSendingMessage(TLMessage message, bool useReplyMarkup = false)
         {
             TLMessageBase result;
-            if (Messages.Count > 0)
+            if (IsFirstSliceLoaded)
             {
                 if (useReplyMarkup && _replyMarkupMessage != null)
                 {
                     var chat = With as TLChatBase;
                     if (chat != null)
                     {
+                        message.HasReplyToMsgId = true;
                         message.ReplyToMsgId = _replyMarkupMessage.Id;
                         message.Reply = _replyMarkupMessage;
                     }
@@ -1701,6 +1720,7 @@ namespace Unigram.ViewModels
                 {
                     if (Reply.Id != 0)
                     {
+                        message.HasReplyToMsgId = true;
                         message.ReplyToMsgId = Reply.Id;
                         message.Reply = Reply;
                     }
@@ -1728,31 +1748,33 @@ namespace Unigram.ViewModels
                 result = Messages.LastOrDefault();
                 Messages.Add(message);
 
-                if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
+                //if (messagesContainer != null && !string.IsNullOrEmpty(message.Message))
+                //{
+                //    foreach (var fwdMessage in messagesContainer.FwdMessages)
+                //    {
+                //        Messages.Insert(0, fwdMessage);
+                //    }
+                //}
+
+                for (int i = 1; i < Messages.Count; i++)
                 {
-                    foreach (var fwdMessage in messagesContainer.FwdMessages)
+                    var serviceMessage = Messages[i] as TLMessageService;
+                    if (serviceMessage != null)
                     {
-                        Messages.Insert(0, fwdMessage);
+                        var unreadAction = serviceMessage.Action as TLMessageActionUnreadMessages;
+                        if (unreadAction != null)
+                        {
+                            Messages.RemoveAt(i);
+                            break;
+                        }
                     }
                 }
 
-                //for (int i = 1; i < Messages.Count; i++)
-                //{
-                //    var serviceMessage = Messages[i] as TLMessageService;
-                //    if (serviceMessage != null)
-                //    {
-                //        var unreadAction = serviceMessage.Action as TLMessageActionUnreadMessages;
-                //        if (unreadAction != null)
-                //        {
-                //            Messages.RemoveAt(i);
-                //            break;
-                //        }
-                //    }
-                //}
+                ScrollToBottom();
             }
             else
             {
-                var messagesContainer = Reply as TLMessagesContainter;
+                var container = Reply as TLMessagesContainter;
                 if (Reply != null)
                 {
                     if (Reply.Id != 0)
@@ -1761,49 +1783,99 @@ namespace Unigram.ViewModels
                         message.ReplyToMsgId = Reply.Id;
                         message.Reply = Reply;
                     }
-                    else if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
+                    else if (container != null && !string.IsNullOrEmpty(message.Message))
                     {
                         message.Reply = Reply;
                     }
+                    
                     Reply = null;
                 }
 
                 Messages.Clear();
-                Messages.Add(message);
+                Messages.Insert(0, message);
 
                 var history = CacheService.GetHistory(Peer.ToPeer(), 15);
                 result = history.FirstOrDefault();
 
-                //for (int j = 0; j < history.Count; j++)
+                for (int j = 0; j < history.Count; j++)
+                {
+                    Messages.Insert(0, history[j]);
+                }
+
+                //if (container != null && !string.IsNullOrEmpty(message.Message.ToString()))
                 //{
-                //    Messages.Add(history[j]);
-                //}
-
-
-
-
-
-                //if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
-                //{
-                //    foreach (var fwdMessage in messagesContainer.FwdMessages)
+                //    foreach (var fwdMessage in container.FwdMessages)
                 //    {
                 //        Messages.Insert(0, fwdMessage);
                 //    }
                 //}
 
-                //for (int k = 1; k < Messages.Count; k++)
+                for (int k = 1; k < Messages.Count; k++)
+                {
+                    if (Messages[k] is TLMessageService serviceMessage)
+                    {
+                        if (serviceMessage.Action is TLMessageActionUnreadMessages unreadAction)
+                        {
+                            Messages.RemoveAt(k);
+                            break;
+                        }
+                    }
+                }
+
+                //ScrollToBottom();
+
+                //var messagesContainer = Reply as TLMessagesContainter;
+                //if (Reply != null)
                 //{
-                //    var serviceMessage = Messages[k] as TLMessageService;
-                //    if (serviceMessage != null)
+                //    if (Reply.Id != 0)
                 //    {
-                //        var unreadAction = serviceMessage.Action as TLMessageActionUnreadMessages;
-                //        if (unreadAction != null)
-                //        {
-                //            Messages.RemoveAt(k);
-                //            break;
-                //        }
+                //        message.HasReplyToMsgId = true;
+                //        message.ReplyToMsgId = Reply.Id;
+                //        message.Reply = Reply;
                 //    }
+                //    else if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
+                //    {
+                //        message.Reply = Reply;
+                //    }
+                //    Reply = null;
                 //}
+
+                //Messages.Clear();
+                //Messages.Add(message);
+
+                //var history = CacheService.GetHistory(Peer.ToPeer(), 15);
+                //result = history.FirstOrDefault();
+
+                ////for (int j = 0; j < history.Count; j++)
+                ////{
+                ////    Messages.Add(history[j]);
+                ////}
+
+
+
+
+
+                ////if (messagesContainer != null && !string.IsNullOrEmpty(message.Message.ToString()))
+                ////{
+                ////    foreach (var fwdMessage in messagesContainer.FwdMessages)
+                ////    {
+                ////        Messages.Insert(0, fwdMessage);
+                ////    }
+                ////}
+
+                ////for (int k = 1; k < Messages.Count; k++)
+                ////{
+                ////    var serviceMessage = Messages[k] as TLMessageService;
+                ////    if (serviceMessage != null)
+                ////    {
+                ////        var unreadAction = serviceMessage.Action as TLMessageActionUnreadMessages;
+                ////        if (unreadAction != null)
+                ////        {
+                ////            Messages.RemoveAt(k);
+                ////            break;
+                ////        }
+                ////    }
+                ////}
             }
 
             return result;

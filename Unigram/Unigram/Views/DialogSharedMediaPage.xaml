@@ -140,7 +140,7 @@
                     </GridView.ItemTemplateSelector>
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Top" GroupPadding="0,8"/>
+                            <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Top" GroupPadding="0,0,0,8"/>
                         </ItemsPanelTemplate>
                     </GridView.ItemsPanel>
                 </controls:GroupedGridView>

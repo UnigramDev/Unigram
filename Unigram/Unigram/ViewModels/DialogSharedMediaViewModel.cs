@@ -7,6 +7,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
+using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
 using Unigram.Collections;
@@ -245,6 +246,12 @@ namespace Unigram.ViewModels
 
             CacheService.DeleteMessages(Peer.ToPeer(), lastMessage, remoteMessages);
             CacheService.DeleteMessages(cachedMessages);
+
+            var dialog = CacheService.GetDialog(_peer.ToPeer());
+            if (dialog != null)
+            {
+                Aggregator.Publish(new MessagesRemovedEventArgs(dialog, messages));
+            }
 
             Execute.BeginOnUIThread(() =>
             {

@@ -10,6 +10,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Template10.Common;
 using Template10.Mvvm;
 using Unigram.Common;
 using Unigram.Controls.Views;
@@ -111,6 +112,14 @@ namespace Unigram.ViewModels
 
         protected virtual void LoadNext() { }
 
+        public virtual bool CanGoto
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public virtual bool CanDelete
         {
             get
@@ -127,7 +136,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public virtual bool CanOpenInApp
+        public virtual bool CanOpenWith
         {
             get
             {
@@ -159,13 +168,35 @@ namespace Unigram.ViewModels
             }
         }
 
+        public RelayCommand GotoCommand => new RelayCommand(GotoExecute);
+        protected virtual void GotoExecute()
+        {
+            NavigationService.GoBack();
+
+            TLMessageCommonBase messageCommon = null;
+            if (_selectedItem is GalleryMessageItem messageItem)
+            {
+                messageCommon = messageItem.Message;
+            }
+            else if (_selectedItem is GalleryMessageServiceItem serviceItem)
+            {
+                messageCommon = serviceItem.Message;
+            }
+
+            var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+            if (service != null && messageCommon != null)
+            {
+                service.NavigateToDialog(messageCommon.Parent, messageCommon.Id);
+            }
+        }
+
         public RelayCommand DeleteCommand => new RelayCommand(DeleteExecute);
         protected virtual void DeleteExecute()
         {
         }
 
-        public RelayCommand OpenInAppCommand => new RelayCommand(OpenInAppExecute);
-        protected virtual async void OpenInAppExecute()
+        public RelayCommand OpenWithCommand => new RelayCommand(OpenWithExecute);
+        protected virtual async void OpenWithExecute()
         {
             object value = null;
 
