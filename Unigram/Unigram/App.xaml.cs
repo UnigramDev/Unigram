@@ -339,8 +339,7 @@ namespace Unigram
                 var list = multicast.GetInvocationList();
                 for (int i = list.Length - 1; i >= 0; i--)
                 {
-                    list[i].DynamicInvoke(sender, args);
-
+                    var result = list[i].DynamicInvoke(sender, args);
                     if (args.Handled)
                     {
                         return;

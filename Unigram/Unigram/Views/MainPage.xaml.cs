@@ -436,6 +436,10 @@ namespace Unigram.Views
                     MasterDetail.NavigationService.NavigateToDialog(with, message.Id);
                 }
             }
+            else
+            {
+                SearchDialogs.Text = string.Empty;
+            }
 
             if (item is TLUser user)
             {

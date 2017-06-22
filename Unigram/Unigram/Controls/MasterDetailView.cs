@@ -126,7 +126,7 @@ namespace Unigram.Controls
 
         private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            if (args.VirtualKey == VirtualKey.Escape)
+            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased)
             {
                 if (DetailFrame.CanGoBack && CurrentState == MasterDetailState.Narrow)
                 {

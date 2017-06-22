@@ -22,6 +22,7 @@ using Template10.Services.ViewService;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Input;
 using Unigram.Core.Helpers;
+using Windows.System;
 
 namespace Unigram.Controls
 {
@@ -233,11 +234,14 @@ namespace Unigram.Controls
 
         private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased)
+            {
+                App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
 
-            var e = new HandledEventArgs();
-            OnBackRequestedOverride(sender, e);
-            args.Handled = e.Handled;
+                var e = new HandledEventArgs();
+                OnBackRequestedOverride(sender, e);
+                args.Handled = e.Handled;
+            }
         }
 
         protected virtual void OnBackRequestedOverride(object sender, HandledEventArgs e)
