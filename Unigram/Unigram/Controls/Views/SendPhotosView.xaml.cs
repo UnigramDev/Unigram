@@ -94,8 +94,12 @@ namespace Unigram.Controls.Views
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
+                if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                {
+                    Accept_Click(null, null);
+                }
+
                 Flip.Focus(FocusState.Programmatic);
-                Accept_Click(null, null);
                 e.Handled = true;
             }
         }
