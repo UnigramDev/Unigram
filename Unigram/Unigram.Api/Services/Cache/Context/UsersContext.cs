@@ -159,7 +159,7 @@ namespace Telegram.Api.Services.Cache.Context
 
                     Sqlite3.sqlite3_bind_int(statement, 3, (int)user.Flags);
 
-                    if (user.HasFirstName)
+                    if (user.HasFirstName && !string.IsNullOrEmpty(user.FirstName))
                     {
                         Sqlite3.sqlite3_bind_text(statement, 4, user.FirstName, -1);
                     }
@@ -168,7 +168,7 @@ namespace Telegram.Api.Services.Cache.Context
                         Sqlite3.sqlite3_bind_null(statement, 4);
                     }
 
-                    if (user.HasLastName)
+                    if (user.HasLastName && !string.IsNullOrEmpty(user.LastName))
                     {
                         Sqlite3.sqlite3_bind_text(statement, 5, user.LastName, -1);
                     }
@@ -177,7 +177,7 @@ namespace Telegram.Api.Services.Cache.Context
                         Sqlite3.sqlite3_bind_null(statement, 5);
                     }
 
-                    if (user.HasPhone)
+                    if (user.HasPhone && !string.IsNullOrEmpty(user.Phone))
                     {
                         Sqlite3.sqlite3_bind_text(statement, 6, user.Phone, -1);
                     }
@@ -186,7 +186,7 @@ namespace Telegram.Api.Services.Cache.Context
                         Sqlite3.sqlite3_bind_null(statement, 6);
                     }
 
-                    if (user.HasUsername)
+                    if (user.HasUsername && !string.IsNullOrEmpty(user.Username))
                     {
                         Sqlite3.sqlite3_bind_text(statement, 7, user.Username, -1);
                     }
@@ -195,7 +195,7 @@ namespace Telegram.Api.Services.Cache.Context
                         Sqlite3.sqlite3_bind_null(statement, 7);
                     }
 
-                    if (user.HasRestrictionReason)
+                    if (user.HasRestrictionReason && !string.IsNullOrEmpty(user.RestrictionReason))
                     {
                         Sqlite3.sqlite3_bind_text(statement, 8, user.RestrictionReason, -1);
                     }
@@ -204,7 +204,7 @@ namespace Telegram.Api.Services.Cache.Context
                         Sqlite3.sqlite3_bind_null(statement, 8);
                     }
 
-                    if (user.HasBotInfoVersion)
+                    if (user.HasBotInfoVersion && user.BotInfoVersion.HasValue)
                     {
                         Sqlite3.sqlite3_bind_int(statement, 9, user.BotInfoVersion.Value);
                     }
@@ -213,7 +213,7 @@ namespace Telegram.Api.Services.Cache.Context
                         Sqlite3.sqlite3_bind_null(statement, 9);
                     }
 
-                    if (user.HasBotInlinePlaceholder)
+                    if (user.HasBotInlinePlaceholder && !string.IsNullOrEmpty(user.BotInlinePlaceholder))
                     {
                         Sqlite3.sqlite3_bind_text(statement, 10, user.BotInlinePlaceholder, -1);
                     }

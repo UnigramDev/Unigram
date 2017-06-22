@@ -483,7 +483,10 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessage> MessageCopyCommand => new RelayCommand<TLMessage>(MessageCopyExecute);
         private void MessageCopyExecute(TLMessage message)
         {
-            if (message == null) return;
+            if (message == null)
+            {
+                return;
+            }
 
             string text = null;
 

@@ -38,11 +38,6 @@
         <controls:PageHeader Text="Shared Media"/>
 
         <Pivot x:Name="ScrollingHost" IsLocked="{x:Bind ConvertSelectionMode(ViewModel.SelectionMode), Mode=OneWay}" Style="{StaticResource TabStylePivotStyle}" Grid.RowSpan="2">
-            <!--<PivotItem>
-                <PivotItem.Header>
-                    <controls:TabHeaderStyle Glyph="&#xE114;" />
-                </PivotItem.Header>
-            </PivotItem>-->
             <PivotItem>
                 <PivotItem.Header>
                     <controls:TabHeaderStyle Glyph="&#xEB9F;" />
@@ -56,7 +51,7 @@
                     Padding="8,0,8,8"
                     common:FluidGridView.OrientationOnly="False">
                     <common:FluidGridView.Triggers>
-                        <common:LengthGridViewTrigger ItemLength="72"/>
+                        <common:LengthGridViewTrigger ItemLength="96"/>
                     </common:FluidGridView.Triggers>
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem">
