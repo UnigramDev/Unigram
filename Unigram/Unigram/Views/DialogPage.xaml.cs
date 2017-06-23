@@ -353,20 +353,28 @@ namespace Unigram.Views
             }
         }
 
-        private void Attach_Click(object sender, RoutedEventArgs e)
+        private async void Attach_Click(object sender, RoutedEventArgs e)
         {
-            var flyout = FlyoutBase.GetAttachedFlyout(ButtonAttach) as MenuFlyout;
-            if (flyout != null)
+            var pane = InputPane.GetForCurrentView();
+            if (pane.OccludedRect != Rect.Empty)
             {
-                var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
-                if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (bounds.Width < 500 || bounds.Height < 500))
-                {
-                    flyout.LightDismissOverlayMode = LightDismissOverlayMode.On;
-                }
-                else
-                {
-                    flyout.LightDismissOverlayMode = LightDismissOverlayMode.Auto;
-                }
+                pane.TryHide();
+
+                // TODO: Can't find any better solution
+                await Task.Delay(200);
+            }
+
+            if (FlyoutBase.GetAttachedFlyout(ButtonAttach) is MenuFlyout flyout)
+            {
+                //var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
+                //if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (bounds.Width < 500 || bounds.Height < 500))
+                //{
+                //    flyout.LightDismissOverlayMode = LightDismissOverlayMode.On;
+                //}
+                //else
+                //{
+                //    flyout.LightDismissOverlayMode = LightDismissOverlayMode.Auto;
+                //}
 
                 flyout.ShowAt(ButtonAttach, new Point(8, -8));
             }
