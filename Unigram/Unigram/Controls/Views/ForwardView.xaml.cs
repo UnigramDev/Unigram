@@ -53,12 +53,15 @@ namespace Unigram.Controls.Views
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(List<TLMessage> messages)
         {
             ViewModel.Messages = messages;
+            ViewModel.SwitchInline = null;
+            ViewModel.SwitchInlineBot = null;
 
             return ShowAsync();
         }
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLKeyboardButtonSwitchInline switchInline, TLUser bot)
         {
+            ViewModel.Messages = null;
             ViewModel.SwitchInline = switchInline;
             ViewModel.SwitchInlineBot = bot;
 
