@@ -77,6 +77,7 @@ namespace Unigram.Core.Services
 
                     contact.FirstName = item.FirstName ?? string.Empty;
                     contact.LastName = item.LastName ?? string.Empty;
+                    //contact.Nickname = item.Username ?? string.Empty;
                     contact.RemoteId = "u" + item.Id;
                     //contact.Id = item.Id.ToString();
 

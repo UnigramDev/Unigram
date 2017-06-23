@@ -173,6 +173,9 @@
     <Compile Include="Controls\Views\SettingsDownloadView.xaml.cs">
       <DependentUpon>SettingsDownloadView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\ForwardView.xaml.cs">
+      <DependentUpon>ForwardView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\ShareView.xaml.cs">
       <DependentUpon>ShareView.xaml</DependentUpon>
     </Compile>
@@ -250,6 +253,7 @@
     <Compile Include="ViewModels\Settings\SettingsPhoneSentCodeViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsSecurityEnterPasswordViewModel.cs" />
+    <Compile Include="ViewModels\ForwardViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
@@ -1222,6 +1226,10 @@
     <Page Include="Controls\Views\SettingsDownloadView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\ForwardView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\ShareView.xaml">
       <SubType>Designer</SubType>

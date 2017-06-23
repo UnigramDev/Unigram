@@ -929,6 +929,7 @@ namespace Unigram.ViewModels
             //{
             //    messageId = storage;
             //}
+            var dialog = _currentDialog;
 
             if (messageId.HasValue)
             {
@@ -947,13 +948,26 @@ namespace Unigram.ViewModels
                 Reply = new TLMessagesContainter { FwdMessages = new TLVector<TLMessage>(App.InMemoryState.ForwardMessages) };
             }
 
-            var dialog = _currentDialog;
-            if (dialog != null && dialog.HasDraft)
+            if (App.InMemoryState.SwitchInline != null)
             {
-                if (dialog.Draft is TLDraftMessage draft)
+                var switchInlineButton = App.InMemoryState.SwitchInline;
+                var bot = App.InMemoryState.SwitchInlineBot;
+
+                SetText(string.Format("@{0} {1}", bot.Username, switchInlineButton.Query), focus: true);
+                ResolveInlineBot(bot.Username, switchInlineButton.Query);
+
+                App.InMemoryState.SwitchInline = null;
+                App.InMemoryState.SwitchInlineBot = null;
+            }
+            else
+            {
+                if (dialog != null && dialog.HasDraft)
                 {
-                    SetText(draft.Message, draft.Entities);
-                    ProcessDraftReply(draft);
+                    if (dialog.Draft is TLDraftMessage draft)
+                    {
+                        SetText(draft.Message, draft.Entities);
+                        ProcessDraftReply(draft);
+                    }
                 }
             }
 
@@ -1271,6 +1285,11 @@ namespace Unigram.ViewModels
         public void SaveDraft()
         {
             if (_editedMessage != null)
+            {
+                return;
+            }
+
+            if (_currentInlineBot != null)
             {
                 return;
             }

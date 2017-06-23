@@ -113,6 +113,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<SignInPasswordViewModel>();
             container.ContainerBuilder.RegisterType<MainViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<ShareViewModel>().SingleInstance();
+            container.ContainerBuilder.RegisterType<ForwardViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSendLocationViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogsViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogViewModel>();

@@ -34,7 +34,7 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _selectedItems, value);
-                ShareCommand.RaiseCanExecuteChanged();
+                SendCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -107,10 +107,10 @@ namespace Unigram.ViewModels
 
 
 
-        private RelayCommand _shareCommand;
-        public RelayCommand ShareCommand => _shareCommand = (_shareCommand ?? new RelayCommand(ShareExecute, () => SelectedItems.Count > 0));
+        private RelayCommand _sendCommand;
+        public RelayCommand SendCommand => _sendCommand = (_sendCommand ?? new RelayCommand(SendExecute, () => SelectedItems.Count > 0));
 
-        private void ShareExecute()
+        private void SendExecute()
         {
             var dialogs = SelectedItems.ToList();
             if (dialogs.Count == 0)

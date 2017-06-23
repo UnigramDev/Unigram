@@ -500,7 +500,8 @@ namespace Unigram
     {
         public IEnumerable<TLMessage> ForwardMessages { get; set; }
 
-        public TLMessage SwitchInline { get; set; }
+        public TLKeyboardButtonSwitchInline SwitchInline { get; set; }
+        public TLUser SwitchInlineBot { get; set; }
 
         public int? NavigateToMessage { get; set; }
         public string NavigateToAccessToken { get; set; }
