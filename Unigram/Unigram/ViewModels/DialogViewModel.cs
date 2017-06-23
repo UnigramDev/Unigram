@@ -298,6 +298,32 @@ namespace Unigram.ViewModels
             }
         }
 
+        private bool _isShareContactAvailable;
+        public bool IsShareContactAvailable
+        {
+            get
+            {
+                return _isShareContactAvailable;
+            }
+            set
+            {
+                Set(ref _isShareContactAvailable, value);
+            }
+        }
+
+        private bool _isAddContactAvailable;
+        public bool IsAddContactAvailable
+        {
+            get
+            {
+                return _isAddContactAvailable;
+            }
+            set
+            {
+                Set(ref _isAddContactAvailable, value);
+            }
+        }
+
         private UpdatingScrollMode _updatingScrollMode;
         public UpdatingScrollMode UpdatingScrollMode
         {
@@ -934,6 +960,8 @@ namespace Unigram.ViewModels
             if (participant is TLUser user)
             {
                 IsPhoneCallsAvailable = false;
+                IsShareContactAvailable = user.HasAccessHash && !user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact;
+                IsAddContactAvailable = user.HasAccessHash && user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact;
 
                 var full = CacheService.GetFullUser(user.Id);
                 if (full == null)
@@ -965,6 +993,8 @@ namespace Unigram.ViewModels
             else if (participant is TLChannel channel)
             {
                 IsPhoneCallsAvailable = false;
+                IsShareContactAvailable = false;
+                IsAddContactAvailable = false;
 
                 var full = CacheService.GetFullChat(channel.Id) as TLChannelFull;
                 if (full == null)
@@ -1042,6 +1072,8 @@ namespace Unigram.ViewModels
             else if (participant is TLChat chat)
             {
                 IsPhoneCallsAvailable = false;
+                IsShareContactAvailable = false;
+                IsAddContactAvailable = false;
 
                 var full = CacheService.GetFullChat(chat.Id) as TLChatFull;
                 if (full == null)
@@ -2227,6 +2259,31 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Share my contact
+
+        public RelayCommand ShareContactCommand => new RelayCommand(ShareContactExecute);
+        private async void ShareContactExecute()
+        {
+            var user = InMemoryCacheService.Current.GetUser(SettingsHelper.UserId) as TLUser;
+            if (user == null)
+            {
+                return;
+            }
+
+            await SendContactAsync(user);
+        }
+
+        #endregion
+
+        #region Add contact
+
+        public RelayCommand AddContactCommand => new RelayCommand(AddContactExecute);
+        private void AddContactExecute()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
 
         #region Start
 

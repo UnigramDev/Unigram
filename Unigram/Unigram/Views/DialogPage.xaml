@@ -1075,6 +1075,14 @@
                                             Tag="&#xE133;"
                                             Text="Manage"
                                             MinWidth="120"/>
+
+                            <MenuFlyoutItem Text="Share my contact"
+                                            Command="{x:Bind ViewModel.ShareContactCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.IsShareContactAvailable, Mode=OneWay}"/>
+                            <MenuFlyoutItem Text="Add to contacts"
+                                            Command="{x:Bind ViewModel.AddContactCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.IsAddContactAvailable, Mode=OneWay}"/>
+                            
                             <!-- Manually hidden -->
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                             x:Name="cbtnReportSpam"
