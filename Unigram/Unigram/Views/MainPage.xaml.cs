@@ -44,6 +44,7 @@ using Template10.Common;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Composition;
+using Unigram.Views.Users;
 
 namespace Unigram.Views
 {
@@ -160,6 +161,22 @@ namespace Unigram.Views
                         if (Constants.TelegramHosts.Contains(scheme.Host))
                         {
                             MessageHelper.HandleTelegramUrl(parameter);
+                        }
+                        else if (scheme.Scheme.Equals("ms-ipmessaging"))
+                        {
+                            var query = scheme.Query.ParseQueryString();
+                            if (query.TryGetValue("ContactRemoteIds", out string remote))
+                            {
+                                MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = int.Parse(remote.Substring(1)) });
+                            }
+                        }
+                        else if (scheme.Scheme.Equals("ms-contact-profile"))
+                        {
+                            var query = scheme.Query.ParseQueryString();
+                            if (query.TryGetValue("ContactRemoteIds", out string remote))
+                            {
+                                MasterDetail.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = int.Parse(remote.Substring(1)) });
+                            }
                         }
                         else
                         {

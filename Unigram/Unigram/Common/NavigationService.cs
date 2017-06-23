@@ -116,12 +116,19 @@ namespace Unigram.Common
                 }
             }
 
-            if (with is TLChannel channel && channel.IsRestricted)
+            if (with is TLChannel channel)
             {
-                var reason = channel.ExtractRestrictionReason();
-                if (reason != null)
+                if (channel.IsRestricted)
                 {
-                    await TLMessageDialog.ShowAsync(reason, "Sorry", "OK");
+                    var reason = channel.ExtractRestrictionReason();
+                    if (reason != null)
+                    {
+                        await TLMessageDialog.ShowAsync(reason, "Sorry", "OK");
+                        return;
+                    }
+                }
+                else if ((channel.IsLeft || channel.IsKicked) && !channel.HasUsername)
+                {
                     return;
                 }
             }

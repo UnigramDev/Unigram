@@ -35,8 +35,11 @@ namespace Unigram.ViewModels.Settings
                     result.Insert(0, defa);
                 }
 
-                Items.ReplaceWith(result);
-                UpdateView();
+                Execute.BeginOnUIThread(() =>
+                {
+                    Items.ReplaceWith(result);
+                    UpdateView();
+                });
             });
         }
 

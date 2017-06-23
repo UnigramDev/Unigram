@@ -44,6 +44,7 @@ using Windows.Foundation;
 using Windows.ApplicationModel.Contacts;
 using Telegram.Api.Aggregator;
 using Unigram.Controls;
+using Unigram.Views.Users;
 
 namespace Unigram
 {
@@ -186,7 +187,9 @@ namespace Unigram
         public override UIElement CreateRootElement(IActivatedEventArgs e)
         {
             var navigationFrame = new Frame();
-            var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame);
+            var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame) as NavigationService;
+            navigationService.SerializationService = TLSerializationService.Current;
+
             //return new ModalDialog
             //{
             //    DisableBackButtonWhenModal = false,
@@ -277,13 +280,6 @@ namespace Unigram
 
                     var remote = annotations[0].RemoteId;
 
-                    //var user = InMemoryCacheService.Current.GetUser(int.Parse(remote.Substring(1)));
-                    //if (user != null)
-                    //{
-                    //    NavigationService.Navigate(typeof(DialogPage), user.ToPeer());
-                    //}
-
-                    //NavigationService.Navigate(typeof(MainPage), $"from_id={remote.Substring(1)}");
                     NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = int.Parse(remote.Substring(1)) });
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
