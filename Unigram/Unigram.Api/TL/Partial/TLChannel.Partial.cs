@@ -67,7 +67,7 @@ namespace Telegram.Api.TL
 
                 this.Flags = channel.Flags;
                 this.Id = channel.Id;
-                this.AccessHash = channel.AccessHash.Value;
+                this.AccessHash = channel.AccessHash;
                 this.Title = channel.Title;
                 this.Username = channel.Username;
                 this.Photo = channel.Photo;

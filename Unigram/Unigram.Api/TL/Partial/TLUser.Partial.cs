@@ -76,14 +76,14 @@ namespace Telegram.Api.TL
                     // TODO: check if dirty?
 
                     this.Flags = user.Flags;
-                    this.AccessHash = user.AccessHash.Value;
+                    this.AccessHash = user.AccessHash;
                     this.FirstName = user.FirstName;
                     this.LastName = user.LastName;
                     this.Username = user.Username;
                     this.Phone = user.Phone;
                     this.Photo = user.Photo;
                     this.Status = user.Status;
-                    this.BotInfoVersion = user.BotInfoVersion.Value;
+                    this.BotInfoVersion = user.BotInfoVersion;
                     this.RestrictionReason = user.RestrictionReason;
                     this.BotInlinePlaceholder = user.BotInlinePlaceholder;
                     this.LangCode = user.LangCode;
