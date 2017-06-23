@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,6 +58,24 @@ namespace Telegram.Api.TL
             var channel = chatBase as TLChannel;
             if (channel != null)
             {
+                if (channel.IsMin)
+                {
+                    // TODO: ???
+                    Debugger.Break();
+                    return;
+                }
+
+                this.Flags = channel.Flags;
+                this.Id = channel.Id;
+                this.AccessHash = channel.AccessHash.Value;
+                this.Title = channel.Title;
+                this.Username = channel.Username;
+                this.Photo = channel.Photo;
+                this.Date = channel.Date;
+                this.Version = channel.Version;
+                this.RestrictionReason = channel.RestrictionReason;
+
+
                 if (channel.ReadInboxMaxId != 0 && (ReadInboxMaxId == 0 || ReadInboxMaxId < channel.ReadInboxMaxId))
                 {
                     ReadInboxMaxId = channel.ReadInboxMaxId;
