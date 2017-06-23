@@ -24,6 +24,7 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateEditMessage>,
         IHandle<TLUpdateUserStatus>,
         IHandle<TLUpdateDraftMessage>,
+        IHandle<TLUpdateContactLink>,
         IHandle<MessagesRemovedEventArgs>,
         IHandle<DialogRemovedEventArgs>,
         IHandle<UpdateCompletedEventArgs>,
@@ -63,6 +64,24 @@ namespace Unigram.ViewModels
             else if (message.Equals("Window_Deactivated"))
             {
                 SaveDraft();
+            }
+        }
+
+        public void Handle(TLUpdateContactLink update)
+        {
+            if (With is TLUser user && user.Id == update.UserId)
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    IsShareContactAvailable = user.HasAccessHash && !user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact;
+                    IsAddContactAvailable = user.HasAccessHash && user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact;
+
+                    RaisePropertyChanged(() => With);
+
+                    //this.Subtitle = this.GetSubtitle();
+                    //base.NotifyOfPropertyChange<TLObject>(() => this.With);
+                    //this.ChangeUserAction();
+                });
             }
         }
 

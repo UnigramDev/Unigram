@@ -18,7 +18,7 @@ using Unigram.Core.Services;
 
 namespace Unigram.ViewModels
 {
-    public class ContactsViewModel : UnigramViewModelBase, IHandle, IHandle<TLUpdateUserStatus>
+    public class ContactsViewModel : UnigramViewModelBase, IHandle<TLUpdateUserStatus>, IHandle<TLUpdateContactLink>
     {
         private IContactsService _contactsService;
 
@@ -181,6 +181,35 @@ namespace Unigram.ViewModels
 
                     Items.Add(user);
                 }
+            });
+        }
+
+        public void Handle(TLUpdateContactLink update)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                var contact = update.MyLink is TLContactLinkContact;
+                var already = Items.FirstOrDefault(x => x.Id == update.UserId);
+                if (already == null)
+                {
+                    if (contact)
+                    {
+                        var user = CacheService.GetUser(update.UserId) as TLUser;
+                        if (user != null)
+                        {
+                            Items.Add(user);
+                        }
+                    }
+                    return;
+                }
+
+                if (contact)
+                {
+                    Items.Add(already);
+                    return;
+                }
+
+                Items.Remove(already);
             });
         }
 

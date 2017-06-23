@@ -43,6 +43,7 @@ namespace Unigram.ViewModels
         //IHandle<TLUpdateChatUserTyping>, 
         //IHandle<ClearCacheEventArgs>, 
         //IHandle<ClearLocalDatabaseEventArgs>, 
+        IHandle<TLUpdateContactLink>,
         IHandle<TLUpdateEditMessage>,
         IHandle<TLUpdateEditChannelMessage>,
         IHandle<TLUpdateDraftMessage>,
@@ -285,6 +286,21 @@ namespace Unigram.ViewModels
         //{
         //    this.HandleTypingCommon(chatUserTyping, this._chatUserTypingCache);
         //}
+
+        public void Handle(TLUpdateContactLink update)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                for (int i = 0; i < Items.Count; i++)
+                {
+                    if (Items[i].With is TLUserBase user && user.Id == update.UserId)
+                    {
+                        user.RaisePropertyChanged(() => user.DisplayName);
+                        Items[i].RaisePropertyChanged(() => Items[i].With);
+                    }
+                }
+            });
+        }
 
         public void Handle(TLUpdateEditMessage update)
         {

@@ -69,7 +69,6 @@ namespace Telegram.Api.TL
                     if (user.IsMin)
                     {
                         // TODO: ???
-                        Debugger.Break();
                         return;
                     }
 
