@@ -2278,9 +2278,50 @@ namespace Unigram.ViewModels
         #region Add contact
 
         public RelayCommand AddContactCommand => new RelayCommand(AddContactExecute);
-        private void AddContactExecute()
+        private async void AddContactExecute()
         {
-            throw new NotImplementedException();
+            var user = With as TLUser;
+            if (user == null)
+            {
+                return;
+            }
+
+            var confirm = await EditUserNameView.Current.ShowAsync(user.FirstName, user.LastName);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var contact = new TLInputPhoneContact
+                {
+                    ClientId = user.Id,
+                    FirstName = EditUserNameView.Current.FirstName,
+                    LastName = EditUserNameView.Current.LastName,
+                    Phone = user.Phone
+                };
+
+                var response = await ProtoService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact }, false);
+                if (response.IsSucceeded)
+                {
+                    if (response.Result.Users.Count > 0)
+                    {
+                        Aggregator.Publish(new TLUpdateContactLink
+                        {
+                            UserId = response.Result.Users[0].Id,
+                            MyLink = new TLContactLinkContact(),
+                            ForeignLink = new TLContactLinkUnknown()
+                        });
+                    }
+
+                    user.RaisePropertyChanged(() => user.FullName);
+                    user.RaisePropertyChanged(() => user.FirstName);
+                    user.RaisePropertyChanged(() => user.LastName);
+                    user.RaisePropertyChanged(() => user.DisplayName);
+
+                    var dialog = CacheService.GetDialog(user.ToPeer());
+                    if (dialog != null)
+                    {
+                        dialog.RaisePropertyChanged(() => dialog.With);
+                    }
+                }
+            }
         }
 
         #endregion
