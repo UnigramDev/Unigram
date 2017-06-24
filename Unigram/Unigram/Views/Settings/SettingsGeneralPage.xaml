@@ -37,6 +37,8 @@
                         Header="Sync contacts"
                         IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
                         Style="{ThemeResource CheckButtonStyle}"/>
+
+                    <Button Click="Button_Click" Content="ToggleSocks5"/>
                 </local:TableStackPanel>
             </StackPanel>
         </ScrollViewer>

@@ -219,6 +219,23 @@ namespace Telegram.Api.Helpers
                 ApplicationData.Current.LocalSettings.Values["IsTestMode"] = value;
             }
         }
+
+        public static bool IsSocks5
+        {
+            get
+            {
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("IsSocks5"))
+                {
+                    return (bool)ApplicationData.Current.LocalSettings.Values["IsSocks5"];
+                }
+
+                return false;
+            }
+            set
+            {
+                ApplicationData.Current.LocalSettings.Values["IsSocks5"] = value;
+            }
+        }
     }
 
     //public static class SettingsHelper
