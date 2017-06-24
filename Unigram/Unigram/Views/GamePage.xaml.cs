@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Services.SerializationService;
@@ -64,9 +65,12 @@ namespace Unigram.Views
 
         private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
-            sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramGameProxy(async withMyScore =>
+            sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramGameProxy(withMyScore =>
             {
-                await ShareView.Current.ShowAsync(_shareMessage, true);
+                Execute.BeginOnUIThread(async () =>
+                {
+                    await ShareView.Current.ShowAsync(_shareMessage, withMyScore);
+                });
             }));
         }
     }

@@ -36,11 +36,17 @@ namespace Unigram.Core.Services
 
                 var contactList = await GetContactListAsync();
                 var annotationList = await GetAnnotationListAsync();
+                var peopleList = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AllContactsReadOnly);
 
                 if (contactList != null && annotationList != null)
                 {
                     await ExportContacts(contactList, annotationList, result);
                 }
+
+                //if (peopleList != null)
+                //{
+                //    await ImportContacts(peopleList);
+                //}
 
                 Debug.WriteLine("SYNCED CONTACTS");
             }
@@ -59,6 +65,16 @@ namespace Unigram.Core.Services
                 await annotationList.DeleteAsync();
 
                 Debug.WriteLine("UNSYNCED CONTACTS");
+            }
+        }
+
+
+        private async Task ImportContacts(ContactStore peopleList)
+        {
+            var contacts = await peopleList.FindContactsAsync();
+            foreach (var contact in contacts)
+            {
+
             }
         }
 
@@ -126,7 +142,10 @@ namespace Unigram.Core.Services
         private async Task<ContactList> GetContactListAsync()
         {
             var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
-            if (store == null) return null;
+            if (store == null)
+            {
+                return null;
+            }
 
             ContactList contactList;
             var contactsList = await store.FindContactListsAsync();
@@ -145,7 +164,10 @@ namespace Unigram.Core.Services
         private async Task<ContactAnnotationList> GetAnnotationListAsync()
         {
             var store = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
-            if (store == null) return null;
+            if (store == null)
+            {
+                return null;
+            }
 
             ContactAnnotationList contactList;
             var contactsList = await store.FindAnnotationListsAsync();
@@ -160,6 +182,5 @@ namespace Unigram.Core.Services
 
             return contactList;
         }
-
     }
 }

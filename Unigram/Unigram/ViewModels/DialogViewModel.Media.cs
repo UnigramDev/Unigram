@@ -132,6 +132,11 @@ namespace Unigram.ViewModels
 
         private async Task SendFileAsync(StorageFile file, string caption)
         {
+            if (_peer == null)
+            {
+                return;
+            }
+
             var fileLocation = new TLFileLocation
             {
                 VolumeId = TLLong.Random(),
@@ -177,7 +182,7 @@ namespace Unigram.ViewModels
                     Caption = caption
                 };
 
-                var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+                var message = TLUtils.GetMessage(SettingsHelper.UserId, _peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
 
                 if (Reply != null)
                 {
@@ -202,7 +207,7 @@ namespace Unigram.ViewModels
                             Attributes = document.Attributes
                         };
 
-                        var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                        var result = await ProtoService.SendMediaAsync(_peer, inputMedia, message);
                         //if (result.IsSucceeded)
                         //{
                         //    var update = result.Result as TLUpdates;
@@ -243,6 +248,11 @@ namespace Unigram.ViewModels
 
         private async Task SendThumbnailFileAsync(StorageFile file, TLFileLocation fileLocation, string fileName, BasicProperties basicProps, TLPhotoSize thumbnail, StorageFile fileCache, string caption)
         {
+            if (_peer == null)
+            {
+                return;
+            }
+
             var desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
@@ -270,7 +280,7 @@ namespace Unigram.ViewModels
                 Caption = caption
             };
 
-            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, _peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
 
             if (Reply != null)
             {
@@ -300,7 +310,7 @@ namespace Unigram.ViewModels
                             Attributes = document.Attributes
                         };
 
-                        var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                        var result = await ProtoService.SendMediaAsync(_peer, inputMedia, message);
                     }
                     //if (result.IsSucceeded)
                     //{
@@ -325,6 +335,11 @@ namespace Unigram.ViewModels
 
         public async Task SendVideoAsync(StorageFile file, string caption, bool round, VideoTransformEffectDefinition transform = null, MediaEncodingProfile profile = null)
         {
+            if (_peer == null)
+            {
+                return;
+            }
+
             var fileLocation = new TLFileLocation
             {
                 VolumeId = TLLong.Random(),
@@ -342,6 +357,10 @@ namespace Unigram.ViewModels
             var videoProps = await fileCache.Properties.GetVideoPropertiesAsync();
             var thumbnailBase = await FileUtils.GetFileThumbnailAsync(file);
             var thumbnail = thumbnailBase as TLPhotoSize;
+            if (thumbnail == null)
+            {
+                return;
+            }
 
             var desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
 
@@ -386,7 +405,7 @@ namespace Unigram.ViewModels
                 Caption = caption
             };
 
-            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, _peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
 
             if (Reply != null)
             {
@@ -437,7 +456,7 @@ namespace Unigram.ViewModels
                             Attributes = document.Attributes
                         };
 
-                        var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                        var result = await ProtoService.SendMediaAsync(_peer, inputMedia, message);
                     }
                     //if (result.IsSucceeded)
                     //{

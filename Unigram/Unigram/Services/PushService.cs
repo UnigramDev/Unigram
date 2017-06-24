@@ -70,57 +70,60 @@ namespace Unigram.Core.Services
         {
             if (args.NotificationType == PushNotificationType.Raw)
             {
-                var notification = JsonValue.Parse(args.RawNotification.Content).GetObject();
-                var data = notification.GetNamedObject("data");
-
-                if (data.ContainsKey("loc_key"))
+                if (JsonValue.TryParse(args.RawNotification.Content, out JsonValue node))
                 {
-                    var muted = data.GetNamedString("mute", "0") == "1";
-                    if (muted)
-                    {
-                        return;
-                    }
+                    var notification = node.GetObject();
+                    var data = notification.GetNamedObject("data");
 
-                    var peer = default(TLPeerBase);
-                    var custom = data.GetNamedObject("custom");
+                    if (data.ContainsKey("loc_key"))
+                    {
+                        var muted = data.GetNamedString("mute", "0") == "1";
+                        if (muted)
+                        {
+                            return;
+                        }
 
-                    if (custom.ContainsKey("chat_id"))
-                    {
-                        peer = new TLPeerChat { ChatId = int.Parse(custom.GetNamedString("chat_id")) };
-                    }
-                    else if (custom.ContainsKey("channel_id"))
-                    {
-                        peer = new TLPeerChannel { ChannelId = int.Parse(custom.GetNamedString("channel_id")) };
-                    }
-                    else if (custom.ContainsKey("from_id"))
-                    {
-                        peer = new TLPeerUser { UserId = int.Parse(custom.GetNamedString("from_id")) };
-                    }
-                    else if (custom.ContainsKey("contact_id"))
-                    {
-                        peer = new TLPeerUser { UserId = int.Parse(custom.GetNamedString("contact_id")) };
-                    }
+                        var peer = default(TLPeerBase);
+                        var custom = data.GetNamedObject("custom");
 
-                    if (peer == null)
-                    {
-                        return;
+                        if (custom.ContainsKey("chat_id"))
+                        {
+                            peer = new TLPeerChat { ChatId = int.Parse(custom.GetNamedString("chat_id")) };
+                        }
+                        else if (custom.ContainsKey("channel_id"))
+                        {
+                            peer = new TLPeerChannel { ChannelId = int.Parse(custom.GetNamedString("channel_id")) };
+                        }
+                        else if (custom.ContainsKey("from_id"))
+                        {
+                            peer = new TLPeerUser { UserId = int.Parse(custom.GetNamedString("from_id")) };
+                        }
+                        else if (custom.ContainsKey("contact_id"))
+                        {
+                            peer = new TLPeerUser { UserId = int.Parse(custom.GetNamedString("contact_id")) };
+                        }
+
+                        if (peer == null)
+                        {
+                            return;
+                        }
+
+                        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                        if (service == null)
+                        {
+                            return;
+                        }
+
+                        //if (service.Frame.Content is DialogPage page && peer.Equals(service.CurrentPageParam))
+                        //{
+                        //    if (!page.ViewModel.IsActive || !App.IsActive || !App.IsVisible)
+                        //    {
+                        //        return;
+                        //    }
+
+                        //    args.Cancel = true;
+                        //}
                     }
-
-                    var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                    if (service == null )
-                    {
-                        return;
-                    }
-
-                    //if (service.Frame.Content is DialogPage page && peer.Equals(service.CurrentPageParam))
-                    //{
-                    //    if (!page.ViewModel.IsActive || !App.IsActive || !App.IsVisible)
-                    //    {
-                    //        return;
-                    //    }
-
-                    //    args.Cancel = true;
-                    //}
                 }
             }
         }

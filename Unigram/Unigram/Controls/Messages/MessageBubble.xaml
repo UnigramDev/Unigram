@@ -79,6 +79,7 @@
                     VerticalContentAlignment="Stretch"
                     ContentChanged="OnMediaChanged"
                     ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
+                    AllowFocusOnInteraction="False"
                     Grid.Row="3"/>
 
                 <local:MessageStateControl

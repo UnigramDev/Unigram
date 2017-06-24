@@ -1152,7 +1152,11 @@ namespace Unigram.ViewModels
                 }
 
                 var readPeer = With as ITLReadMaxId;
-                readPeer.ReadInboxMaxId = dialog.TopMessage;
+                if (readPeer != null)
+                {
+                    readPeer.ReadInboxMaxId = dialog.TopMessage;
+                }
+
                 dialog.ReadInboxMaxId = dialog.TopMessage;
                 dialog.UnreadCount = dialog.UnreadCount - unread;
                 dialog.RaisePropertyChanged(() => dialog.UnreadCount);
@@ -1838,7 +1842,7 @@ namespace Unigram.ViewModels
                     {
                         message.Reply = Reply;
                     }
-                    
+
                     Reply = null;
                 }
 

@@ -306,6 +306,10 @@ namespace Unigram.Controls.Views
         {
             var border = sender as TransferButton;
             var item = border.DataContext as GalleryItem;
+            if (item == null)
+            {
+                return;
+            }
 
             if (item.IsVideo)
             {
