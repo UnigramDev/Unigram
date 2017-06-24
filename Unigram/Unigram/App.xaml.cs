@@ -129,7 +129,21 @@ namespace Unigram
         private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
         {
             IsVisible = e.Visible;
-            HandleActivated(e.Visible);
+            //HandleActivated(e.Visible);
+
+            if (e.Visible)
+            {
+                Locator.LoadStateAndUpdate();
+            }
+            else
+            {
+                var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
+                cacheService.TryCommit();
+
+                var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
+                updatesService.SaveState();
+                updatesService.CancelUpdating();
+            }
         }
 
         private void HandleActivated(bool active)

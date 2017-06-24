@@ -165,17 +165,25 @@ namespace Unigram.Views
                         else if (scheme.Scheme.Equals("ms-ipmessaging"))
                         {
                             var query = scheme.Query.ParseQueryString();
-                            if (query.TryGetValue("ContactRemoteIds", out string remote))
+                            if (query.TryGetValue("ContactRemoteIds", out string remote) && int.TryParse(remote, out int from_id))
                             {
-                                MasterDetail.NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = int.Parse(remote.Substring(1)) });
+                                var user = ViewModel.CacheService.GetUser(from_id);
+                                if (user != null)
+                                {
+                                    MasterDetail.NavigationService.NavigateToDialog(user);
+                                }
                             }
                         }
                         else if (scheme.Scheme.Equals("ms-contact-profile"))
                         {
                             var query = scheme.Query.ParseQueryString();
-                            if (query.TryGetValue("ContactRemoteIds", out string remote))
+                            if (query.TryGetValue("ContactRemoteIds", out string remote) && int.TryParse(remote, out int from_id))
                             {
-                                MasterDetail.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = int.Parse(remote.Substring(1)) });
+                                var user = ViewModel.CacheService.GetUser(from_id);
+                                if (user != null)
+                                {
+                                    MasterDetail.NavigationService.Navigate(typeof(UserDetailsPage), user.ToPeer());
+                                }
                             }
                         }
                         else
@@ -265,31 +273,28 @@ namespace Unigram.Views
                     else
                     {
                         var data = Toast.SplitArguments(parameter);
-                        if (data.ContainsKey("from_id"))
+                        if (data.ContainsKey("from_id") && int.TryParse(data["from_id"], out int from_id))
                         {
-                            var user = ViewModel.CacheService.GetUser(int.Parse(data["from_id"]));
+                            var user = ViewModel.CacheService.GetUser(from_id);
                             if (user != null)
                             {
-                                ClearNavigation();
                                 MasterDetail.NavigationService.NavigateToDialog(user);
                             }
                         }
-                        else if (data.ContainsKey("chat_id"))
+                        else if (data.ContainsKey("chat_id") && int.TryParse(data["chat_id"], out int chat_id))
                         {
-                            var chat = ViewModel.CacheService.GetChat(int.Parse(data["chat_id"]));
+                            var chat = ViewModel.CacheService.GetChat(chat_id);
                             if (chat != null)
                             {
-                                ClearNavigation();
                                 MasterDetail.NavigationService.NavigateToDialog(chat);
                             }
                         }
-                        else if (data.ContainsKey("channel_id"))
+                        else if (data.ContainsKey("channel_id") && int.TryParse(data["channel_id"], out int channel_id))
                         {
-                            var chat = ViewModel.CacheService.GetChat(int.Parse(data["channel_id"]));
-                            if (chat != null)
+                            var channel = ViewModel.CacheService.GetChat(channel_id);
+                            if (channel != null)
                             {
-                                ClearNavigation();
-                                MasterDetail.NavigationService.NavigateToDialog(chat);
+                                MasterDetail.NavigationService.NavigateToDialog(channel);
                             }
                         }
                     }

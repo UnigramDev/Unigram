@@ -1747,6 +1747,17 @@ namespace Unigram.ViewModels
 
         private TLMessageBase InsertSendingMessage(TLMessage message, bool useReplyMarkup = false)
         {
+            if (_currentDialog != null && _peer != null && _currentDialog.Draft is TLDraftMessage)
+            {
+                var draft = new TLDraftMessageEmpty();
+                var peer = _peer.ToPeer();
+
+                _currentDialog.Draft = draft;
+                _currentDialog.HasDraft = draft != null;
+
+                Aggregator.Publish(new TLUpdateDraftMessage { Peer = peer, Draft = draft });
+            }
+
             TLMessageBase result;
             if (IsFirstSliceLoaded)
             {

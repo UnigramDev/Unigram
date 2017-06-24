@@ -34,6 +34,11 @@ namespace Unigram.Views.Settings
             DataContext = UnigramContainer.Current.ResolveType<SettingsGeneralViewModel>();
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            Socks5.Content = "ToggleSocks5: " + SettingsHelper.IsSocks5;
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             SettingsHelper.IsSocks5 = !SettingsHelper.IsSocks5;
