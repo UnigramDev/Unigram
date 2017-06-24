@@ -107,6 +107,57 @@ namespace Telegram.Api.Transport
 
                 //var address = IPAddress.IsValidIPv6(Host);
                 await _socket.ConnectAsync(new HostName(Host), Port.ToString(CultureInfo.InvariantCulture)).WithTimeout(timeout);
+                //await _socket.ConnectAsync(new HostName("50.235.65.70"), "15990").WithTimeout(timeout);
+
+                //_dataWriter.WriteByte(0x05); // version
+                //_dataWriter.WriteByte(0x02); // number of auth methods
+                //_dataWriter.WriteByte(0x00); // no auth
+                //_dataWriter.WriteByte(0x02); // password
+                //await _dataWriter.StoreAsync();
+                //await _dataReader.LoadAsync(2);
+
+                //var response = new byte[_dataReader.UnconsumedBufferLength];
+                //_dataReader.ReadBytes(response);
+
+                //if (response[1] == 0x02)
+                //{
+                //    // TODO: password
+                //}
+
+                //_dataWriter.WriteByte(0x05); // version
+                //_dataWriter.WriteByte(0x01); // connect
+                //_dataWriter.WriteByte(0x00); // reserved
+
+                //var dest = System.Net.IPAddress.Parse(Host);
+                //switch (dest.AddressFamily)
+                //{
+                //    case System.Net.Sockets.AddressFamily.InterNetwork:
+                //        _dataWriter.WriteByte(0x01); // Ipv4
+                //        break;
+                //    case System.Net.Sockets.AddressFamily.InterNetworkV6:
+                //        _dataWriter.WriteByte(0x04); // Ipv6
+                //        break;
+                //}
+
+                //_dataWriter.WriteBytes(dest.GetAddressBytes());
+                //_dataWriter.WriteUInt16((ushort)Port);
+
+                //await _dataWriter.StoreAsync();
+                //await _dataReader.LoadAsync(64);
+
+                //response = new byte[_dataReader.UnconsumedBufferLength];
+                //_dataReader.ReadBytes(response);
+
+                //if (response[1] != 0x00)
+                //{
+                //    // TODO: failed
+                //}
+
+                //lock (_dataWriterSyncRoot)
+                //{
+                //    var buffer = GetInitBufferInternal();
+                //    _dataWriter.WriteBytes(buffer);
+                //}
 
                 lock (_isConnectedSyncRoot)
                 {
