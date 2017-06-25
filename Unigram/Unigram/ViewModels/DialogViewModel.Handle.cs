@@ -358,6 +358,7 @@ namespace Unigram.ViewModels
                     message.RaisePropertyChanged(() => message.Media);
                     message.RaisePropertyChanged(() => message.ReplyMarkup);
                     message.RaisePropertyChanged(() => message.Self);
+                    message.RaisePropertyChanged(() => message.SelfBase);
                 });
             }
         }
@@ -409,6 +410,7 @@ namespace Unigram.ViewModels
                     message.RaisePropertyChanged(() => message.Media);
                     message.RaisePropertyChanged(() => message.ReplyMarkup);
                     message.RaisePropertyChanged(() => message.Self);
+                    message.RaisePropertyChanged(() => message.SelfBase);
                 });
             }
         }
@@ -529,7 +531,7 @@ namespace Unigram.ViewModels
 
             Execute.BeginOnUIThread(() =>
             {
-                var index = TLDialog.InsertMessageInOrder(Messages, messageCommon);
+                var index = InsertMessageInOrder(Messages, messageCommon);
                 if (index != -1)
                 {
                     var message = messageCommon as TLMessage;
@@ -554,6 +556,49 @@ namespace Unigram.ViewModels
                 }
             });
         }
+
+        public static int InsertMessageInOrder(IList<TLMessageBase> messages, TLMessageBase message)
+        {
+            var position = -1;
+
+            if (messages.Count == 0)
+            {
+                position = 0;
+            }
+
+            for (var i = messages.Count - 1; i >= 0; i--)
+            {
+                if (messages[i].Id == 0)
+                {
+                    if (messages[i].Date < message.Date)
+                    {
+                        position = i + 1;
+                        break;
+                    }
+
+                    continue;
+                }
+
+                if (messages[i].Id == message.Id)
+                {
+                    position = -1;
+                    break;
+                }
+                if (messages[i].Id < message.Id)
+                {
+                    position = i + 1;
+                    break;
+                }
+            }
+
+            if (position != -1)
+            {
+                messages.Insert(position, message);
+            }
+
+            return position;
+        }
+
 
 #if DEBUG
         [DllImport("user32.dll")]

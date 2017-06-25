@@ -56,7 +56,7 @@
                            Grid.Row="0"/>
 
                 <local:MessageReference
-                    Message="{x:Bind ViewModel.Reply, Mode=OneWay}"
+                    Message="{x:Bind ViewModel.Reply.SelfBase, Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
                     Click="Reply_Click"
                     Grid.Row="1"/>
@@ -79,7 +79,6 @@
                     VerticalContentAlignment="Stretch"
                     ContentChanged="OnMediaChanged"
                     ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
-                    AllowFocusOnInteraction="False"
                     Grid.Row="3"/>
 
                 <local:MessageStateControl

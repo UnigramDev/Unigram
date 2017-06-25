@@ -51,7 +51,18 @@ namespace Unigram.Controls.Messages
         public object Message
         {
             get { return (object)GetValue(MessageProperty); }
-            set { SetValue(MessageProperty, value); }
+            //set { SetValue(MessageProperty, value); }
+            set
+            {
+                // TODO: shitty hack!!!
+                var oldValue = (object)GetValue(MessageProperty);
+                SetValue(MessageProperty, value);
+
+                if (oldValue == value)
+                {
+                    SetTemplateCore(value);
+                }
+            }
         }
 
         public static readonly DependencyProperty MessageProperty =
