@@ -125,7 +125,7 @@
                           Grid.Column="3"/>
             </Grid>
             <FontIcon x:Name="StateIcon"
-                      Glyph="&#xE601;"
+                      Glyph="{x:Bind UpdateStateIcon(ViewModel.Draft, ViewModel.TopMessageItem, ViewModel.TopMessageItem.State), Mode=OneWay}"
                       FontFamily="{ThemeResource TelegramThemeFontFamily}"
                       HorizontalAlignment="Right"
                       VerticalAlignment="Bottom"

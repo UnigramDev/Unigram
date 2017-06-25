@@ -1582,7 +1582,7 @@ namespace Unigram.ViewModels
                 var previousMessage = InsertSendingMessage(message, useReplyMarkup);
                 CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
                 {
-                    var response = await ProtoService.SendMessageAsync(message, () => { message.State = TLMessageState.Confirmed; });
+                    var response = await ProtoService.SendMessageAsync(message, null);
                     if (response.IsSucceeded)
                     {
                         message.RaisePropertyChanged(() => message.Media);
