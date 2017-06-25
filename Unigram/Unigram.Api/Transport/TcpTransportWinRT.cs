@@ -110,10 +110,10 @@ namespace Telegram.Api.Transport
                 {
                     Debug.WriteLine(">>> Connecting through SOCKS5");
 
-                    await _socket.ConnectAsync(new HostName("50.235.65.70"), "15990").WithTimeout(timeout);
+                    await _socket.ConnectAsync(new HostName("127.0.0.1"), "1080").WithTimeout(timeout);
 
-                    var username = "";
-                    var password = "";
+                    var username = "frayxrulez";
+                    var password = "frayxrulez";
 
                     _dataWriter.WriteByte(0x05); // version
                     _dataWriter.WriteByte(0x02); // number of auth methods

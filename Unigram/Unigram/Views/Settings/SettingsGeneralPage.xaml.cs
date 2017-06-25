@@ -44,6 +44,7 @@ namespace Unigram.Views.Settings
             SettingsHelper.IsSocks5 = !SettingsHelper.IsSocks5;
             UnigramContainer.Current.ResolveType<ITransportService>().Close();
             UnigramContainer.Current.ResolveType<IMTProtoService>().UpdateStatusAsync(false, null);
+            Socks5.Content = "ToggleSocks5: " + SettingsHelper.IsSocks5;
         }
     }
 }
