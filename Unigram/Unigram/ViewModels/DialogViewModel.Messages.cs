@@ -152,7 +152,7 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
-                else if (Peer is TLInputPeerUser)
+                else if (Peer is TLInputPeerUser && With is TLUser user && !user.IsSelf)
                 {
                     dialog.Message += "\r\n\r\nThis will delete it just for you.";
                 }
@@ -393,7 +393,7 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
-                else if (Peer is TLInputPeerUser)
+                else if (Peer is TLInputPeerUser && With is TLUser user && !user.IsSelf)
                 {
                     dialog.Message += "\r\n\r\nThis will delete it just for you.";
                 }
