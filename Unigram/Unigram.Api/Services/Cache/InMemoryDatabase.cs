@@ -56,13 +56,11 @@ namespace Telegram.Api.Services.Cache
 
         public volatile bool HasChanges;
 
-        private readonly string _path;
         private readonly Database _database;
 
         public InMemoryDatabase(ITelegramEventAggregator eventAggregator)
         {
-            _path = FileUtils.GetFileName("database.sqlite");
-            Sqlite3.sqlite3_open_v2(_path, out _database, 2 | 4, string.Empty);
+            CreateDatabase.Open(out _database);
             CreateDatabase.Execute(_database);
 
             UsersContext = new UsersContext(_database);

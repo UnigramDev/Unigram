@@ -11,6 +11,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
+using Telegram.Api.Services.Cache.Context;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
 using Telegram.Api.TL.Messages.Methods;
@@ -289,9 +290,8 @@ namespace Unigram.Services
                 try
                 {
                     Database database;
-                    DatabaseContext.Current.OpenDatabase(out database);
+                    CreateDatabase.Open(out database);
                     DatabaseContext.Current.Execute(database, "DELETE FROM web_recent_v3 WHERE Id = " + old.Id);
-                    Sqlite3.sqlite3_close(database);
                 }
                 catch (Exception e)
                 {
@@ -316,9 +316,8 @@ namespace Unigram.Services
             try
             {
                 Database database;
-                DatabaseContext.Current.OpenDatabase(out database);
+                CreateDatabase.Open(out database);
                 DatabaseContext.Current.Execute(database, "DELETE FROM web_recent_v3 WHERE Id = " + document.Id);
-                Sqlite3.sqlite3_close(database);
             }
             catch (Exception e)
             {
@@ -351,9 +350,8 @@ namespace Unigram.Services
                 try
                 {
                     Database database;
-                    DatabaseContext.Current.OpenDatabase(out database);
+                    CreateDatabase.Open(out database);
                     DatabaseContext.Current.Execute(database, "DELETE FROM web_recent_v3 WHERE Id = " + old.Id);
-                    Sqlite3.sqlite3_close(database);
                 }
                 catch (Exception e)
                 {
@@ -488,7 +486,7 @@ namespace Unigram.Services
                 {
                     Database database;
                     Statement statement;
-                    DatabaseContext.Current.OpenDatabase(out database);
+                    CreateDatabase.Open(out database);
 
                     List<TLDocument> arrayList = new List<TLDocument>();
 
@@ -512,7 +510,6 @@ namespace Unigram.Services
                     }
 
                     Sqlite3.sqlite3_finalize(statement);
-                    Sqlite3.sqlite3_close(database);
 
                     if (gif)
                     {
@@ -615,7 +612,7 @@ namespace Unigram.Services
 
                     Database database;
                     Statement statement;
-                    DatabaseContext.Current.OpenDatabase(out database);
+                    CreateDatabase.Open(out database);
 
                     DatabaseContext.Current.Execute(database, "CREATE TABLE IF NOT EXISTS `web_recent_v3`(`Id` bigint primary key not null, `AccessHash` bigint, `Date` int, `MimeType` text, `Size` int, `Thumb` string, `DCId` int, `Version` int, `Attributes` string, `MetaType` int, `MetaDate` int)");
                     DatabaseContext.Current.Execute(database, "BEGIN IMMEDIATE TRANSACTION");
@@ -661,8 +658,6 @@ namespace Unigram.Services
                         }
                         DatabaseContext.Current.Execute(database, "COMMIT TRANSACTION");
                     }
-
-                    Sqlite3.sqlite3_close(database);
                 }
                 catch (Exception e)
                 {
@@ -833,7 +828,7 @@ namespace Unigram.Services
 
                 Database database;
                 Statement statement;
-                DatabaseContext.Current.OpenDatabase(out database);
+                CreateDatabase.Open(out database);
                 try
                 {
                     Sqlite3.sqlite3_prepare_v2(database, "SELECT data, unread, date, hash FROM stickers_featured WHERE 1", out statement);
@@ -864,7 +859,7 @@ namespace Unigram.Services
                 }
                 finally
                 {
-                    Sqlite3.sqlite3_close(database);
+                    //Sqlite3.sqlite3_close(database);
                 }
 
                 ProcessLoadedFeaturedStickers(newStickerArray, unread, true, date, hash);
@@ -1024,7 +1019,7 @@ namespace Unigram.Services
             {
                 Database database;
                 Statement statement;
-                DatabaseContext.Current.OpenDatabase(out database);
+                CreateDatabase.Open(out database);
                 DatabaseContext.Current.Execute(database, "CREATE TABLE IF NOT EXISTS stickers_featured(id INTEGER PRIMARY KEY, data BLOB, unread BLOB, date INTEGER, hash TEXT);");
 
                 if (stickersFinal != null)
@@ -1063,8 +1058,6 @@ namespace Unigram.Services
                     Sqlite3.sqlite3_step(statement);
                     Sqlite3.sqlite3_finalize(statement);
                 }
-
-                Sqlite3.sqlite3_close(database);
             }
             catch (Exception e)
             {
@@ -1151,7 +1144,7 @@ namespace Unigram.Services
                 int hash = 0;
                 Database database;
                 Statement statement;
-                DatabaseContext.Current.OpenDatabase(out database);
+                CreateDatabase.Open(out database);
                 try
                 {
                     Sqlite3.sqlite3_prepare_v2(database, "SELECT data, date, hash FROM stickers_v2 WHERE id = " + (type + 1), out statement);
@@ -1175,8 +1168,9 @@ namespace Unigram.Services
                 }
                 finally
                 {
-                    Sqlite3.sqlite3_close(database);
+                    //Sqlite3.sqlite3_close(database);
                 }
+
                 ProcessLoadedStickers(stickerType, newStickerArray, true, date, hash);
             }
             else
@@ -1268,7 +1262,7 @@ namespace Unigram.Services
             {
                 Database database;
                 Statement statement;
-                DatabaseContext.Current.OpenDatabase(out database);
+                CreateDatabase.Open(out database);
                 DatabaseContext.Current.Execute(database, "CREATE TABLE IF NOT EXISTS stickers_v2(id INTEGER PRIMARY KEY, data BLOB, date INTEGER, hash TEXT);");
 
                 if (stickersFinal != null)
@@ -1300,8 +1294,6 @@ namespace Unigram.Services
                     Sqlite3.sqlite3_step(statement);
                     Sqlite3.sqlite3_finalize(statement);
                 }
-
-                Sqlite3.sqlite3_close(database);
             }
             catch (Exception e)
             {

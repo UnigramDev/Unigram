@@ -11,7 +11,12 @@ namespace Telegram.Api.Services.Cache.Context
 {
     public class ChatsContext : Context<TLChatBase>
     {
-        private readonly string _fields = "`id`,`access_hash`,`flags`,`title`,`username`,`version`,`participants_count`,`date`,`restriction_reason`,`photo_small_local_id`,`photo_small_secret`,`photo_small_volume_id`,`photo_small_dc_id`,`photo_big_local_id`,`photo_big_secret`,`photo_big_volume_id`,`photo_big_dc_id`,`migrated_to_id`,`migrated_to_access_hash`,`type`";
+        private const ulong PeerIdMask = 0xFFFFFFFFUL;
+        private const ulong PeerIdTypeMask = 0x300000000UL;
+        private const ulong PeerIdChatShift = 0x100000000UL;
+        private const ulong PeerIdChannelShift = 0x200000000UL;
+
+        private readonly string _fields = "`id`,`access_hash`,`flags`,`title`,`username`,`version`,`participants_count`,`date`,`restriction_reason`,`photo_small_local_id`,`photo_small_secret`,`photo_small_volume_id`,`photo_small_dc_id`,`photo_big_local_id`,`photo_big_secret`,`photo_big_volume_id`,`photo_big_dc_id`,`migrated_to_id`,`migrated_to_access_hash`";
         private readonly Database _database;
 
         public ChatsContext(Database database)
@@ -39,7 +44,7 @@ namespace Telegram.Api.Services.Cache.Context
                 TLChatBase result = null;
                 if (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
                 {
-                    var id = Sqlite3.sqlite3_column_int(statement, 0);
+                    var id = Sqlite3.sqlite3_column_int64(statement, 0);
                     var title = Sqlite3.sqlite3_column_text(statement, 3);
                     var version = Sqlite3.sqlite3_column_int(statement, 5);
                     var date = Sqlite3.sqlite3_column_int(statement, 7);
@@ -81,8 +86,7 @@ namespace Telegram.Api.Services.Cache.Context
                         photo = new TLChatPhotoEmpty();
                     }
 
-                    var type = Sqlite3.sqlite3_column_int(statement, 19);
-                    if (type == 0) // CHAT
+                    if (((ulong)id & PeerIdTypeMask) == PeerIdChatShift) // CHAT
                     {
                         var flags = (TLChat.Flag)Sqlite3.sqlite3_column_int(statement, 2);
                         var participants_count = Sqlite3.sqlite3_column_int(statement, 6);
@@ -98,7 +102,7 @@ namespace Telegram.Api.Services.Cache.Context
 
                         result = new TLChat
                         {
-                            Id = id,
+                            Id = (int)(uint)((ulong)id & PeerIdMask),
                             Flags = flags,
                             Title = title,
                             Version = version,
@@ -108,7 +112,7 @@ namespace Telegram.Api.Services.Cache.Context
                             MigratedTo = migratedTo
                         };
                     }
-                    else
+                    else if (((ulong)id & PeerIdTypeMask) == PeerIdChannelShift) // CHAT
                     {
                         var flags = (TLChannel.Flag)Sqlite3.sqlite3_column_int(statement, 2);
                         var access_hash = Sqlite3.sqlite3_column_int64(statement, 1);
@@ -117,7 +121,7 @@ namespace Telegram.Api.Services.Cache.Context
 
                         result = new TLChannel
                         {
-                            Id = id,
+                            Id = (int)(uint)((ulong)id & PeerIdMask),
                             AccessHash = access_hash,
                             Flags = flags,
                             Title = title,
@@ -140,11 +144,11 @@ namespace Telegram.Api.Services.Cache.Context
                 base[index] = value;
 
                 Statement statement;
-                Sqlite3.sqlite3_prepare_v2(_database, $"INSERT OR REPLACE INTO `Chats` ({_fields}) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", out statement);
+                Sqlite3.sqlite3_prepare_v2(_database, $"INSERT OR REPLACE INTO `Chats` ({_fields}) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", out statement);
 
                 if (value is TLChat chat)
                 {
-                    Sqlite3.sqlite3_bind_int64(statement, 1, chat.Id);
+                    Sqlite3.sqlite3_bind_int64(statement, 1, (long)(PeerIdChatShift | (ulong)(uint)chat.Id));
                     Sqlite3.sqlite3_bind_null(statement, 2);
                     Sqlite3.sqlite3_bind_int(statement, 3, (int)chat.Flags);
                     Sqlite3.sqlite3_bind_text(statement, 4, chat.Title, -1);
@@ -188,11 +192,11 @@ namespace Telegram.Api.Services.Cache.Context
                         Sqlite3.sqlite3_bind_null(statement, 19);
                     }
 
-                    Sqlite3.sqlite3_bind_int(statement, 20, 0);
+                    //Sqlite3.sqlite3_bind_int(statement, 20, 0);
                 }
                 else if (value is TLChannel channel)
                 {
-                    Sqlite3.sqlite3_bind_int64(statement, 1, channel.Id);
+                    Sqlite3.sqlite3_bind_int64(statement, 1, (long)(PeerIdChannelShift | (ulong)(uint)channel.Id));
 
                     if (channel.HasAccessHash)
                     {
@@ -246,7 +250,7 @@ namespace Telegram.Api.Services.Cache.Context
                     Sqlite3.sqlite3_bind_null(statement, 18);
                     Sqlite3.sqlite3_bind_null(statement, 19);
 
-                    Sqlite3.sqlite3_bind_int(statement, 20, 1);
+                    //Sqlite3.sqlite3_bind_int(statement, 20, 1);
                 }
 
                 Sqlite3.sqlite3_step(statement);

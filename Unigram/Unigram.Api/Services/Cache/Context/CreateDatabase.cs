@@ -3,14 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 using Universal.WinSQLite;
 
 namespace Telegram.Api.Services.Cache.Context
 {
-    internal static class CreateDatabase
+    public static class CreateDatabase
     {
+        private static string _path;
+        private static Database _database;
+
+        public static void Open(out Database database)
+        {
+            if (_database == null)
+            {
+                _path = FileUtils.GetFileName("database.sqlite");
+                Sqlite3.sqlite3_open_v2(_path, out _database, 2 | 4, string.Empty);
+            }
+
+            database = _database;
+        }
+
         public static void Execute(Database database)
         {
+            if (SettingsHelper.DatabaseVersion < Constants.DatabaseVersion)
+            {
+                SettingsHelper.DatabaseVersion = Constants.DatabaseVersion;
+                Execute(database, "DROPTABLE IF EXISTS `Chats`");
+            }
+
             Execute(database,
 @"CREATE TABLE IF NOT EXISTS `Users` (
 	`id`	BIGINT NOT NULL,
@@ -62,8 +83,7 @@ namespace Telegram.Api.Services.Cache.Context
 	`photo_big_volume_id`	BIGINT,
 	`photo_big_dc_id`	INTEGER,
 	`migrated_to_id`	INTEGER,
-	`migrated_to_access_hash`	INTEGER,
-    `type`  INTEGER NOT NULL
+	`migrated_to_access_hash`	INTEGER
 );");
             Execute(database, "CREATE INDEX `Chats.title_index` ON `Chats` (`title`);");
             Execute(database, "CREATE INDEX `Chats.username_index` ON `Chats` (`username`);");
