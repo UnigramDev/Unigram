@@ -165,7 +165,7 @@ namespace Unigram.Views
                         else if (scheme.Scheme.Equals("ms-ipmessaging"))
                         {
                             var query = scheme.Query.ParseQueryString();
-                            if (query.TryGetValue("ContactRemoteIds", out string remote) && int.TryParse(remote, out int from_id))
+                            if (query.TryGetValue("ContactRemoteIds", out string remote) && int.TryParse(remote.Substring(1), out int from_id))
                             {
                                 var user = ViewModel.CacheService.GetUser(from_id);
                                 if (user != null)
@@ -177,7 +177,7 @@ namespace Unigram.Views
                         else if (scheme.Scheme.Equals("ms-contact-profile"))
                         {
                             var query = scheme.Query.ParseQueryString();
-                            if (query.TryGetValue("ContactRemoteIds", out string remote) && int.TryParse(remote, out int from_id))
+                            if (query.TryGetValue("ContactRemoteIds", out string remote) && int.TryParse(remote.Substring(1), out int from_id))
                             {
                                 var user = ViewModel.CacheService.GetUser(from_id);
                                 if (user != null)
