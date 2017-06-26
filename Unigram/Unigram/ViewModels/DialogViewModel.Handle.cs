@@ -137,6 +137,8 @@ namespace Unigram.ViewModels
             Execute.BeginOnUIThread(async () =>
             {
                 Messages.Clear();
+                IsFirstSliceLoaded = false;
+                IsLastSliceLoaded = false;
 
                 var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
                 var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;

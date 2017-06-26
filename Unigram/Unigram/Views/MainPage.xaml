@@ -175,6 +175,7 @@
                         <controls:SearchTextBox x:Name="SearchDialogs"
                                                 Style="{StaticResource SearchTextBoxStyle}"
                                                 Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
+                                                PreventKeyboardDisplayOnProgrammaticFocus="True"
                                                 PlaceholderText="Search chats and messages"
                                                 TextChanged="txtSearch_TextChanged"
                                                 Canvas.ZIndex="1"/>

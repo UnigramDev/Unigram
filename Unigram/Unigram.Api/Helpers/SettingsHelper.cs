@@ -236,6 +236,78 @@ namespace Telegram.Api.Helpers
                 ApplicationData.Current.LocalSettings.Values["IsSocks5"] = value;
             }
         }
+
+        #region Proxy
+
+        public static string ProxyServer
+        {
+            get
+            {
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("ProxyServer"))
+                {
+                    return ApplicationData.Current.LocalSettings.Values["ProxyServer"] as string;
+                }
+
+                return null;
+            }
+            set
+            {
+                ApplicationData.Current.LocalSettings.Values["ProxyServer"] = value;
+            }
+        }
+
+        public static string ProxyPort
+        {
+            get
+            {
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("ProxyPort"))
+                {
+                    return ApplicationData.Current.LocalSettings.Values["ProxyPort"] as string;
+                }
+
+                return null;
+            }
+            set
+            {
+                ApplicationData.Current.LocalSettings.Values["ProxyPort"] = value;
+            }
+        }
+
+        public static string ProxyUsername
+        {
+            get
+            {
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("ProxyUsername"))
+                {
+                    return ApplicationData.Current.LocalSettings.Values["ProxyUsername"] as string;
+                }
+
+                return null;
+            }
+            set
+            {
+                ApplicationData.Current.LocalSettings.Values["ProxyUsername"] = value;
+            }
+        }
+
+        public static string ProxyPassword
+        {
+            get
+            {
+                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("ProxyPassword"))
+                {
+                    return ApplicationData.Current.LocalSettings.Values["ProxyPassword"] as string;
+                }
+
+                return null;
+            }
+            set
+            {
+                ApplicationData.Current.LocalSettings.Values["ProxyPassword"] = value;
+            }
+        }
+
+        #endregion
     }
 
     //public static class SettingsHelper

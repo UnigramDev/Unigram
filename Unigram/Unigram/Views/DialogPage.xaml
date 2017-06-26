@@ -785,6 +785,7 @@
                               BorderThickness="{TemplateBinding BorderThickness}"
                               FlowDirection="LeftToRight"
                               RenderTransformOrigin="0.5,0.5"
+                              CornerRadius="18"
                               Visibility="Collapsed">
                             <Grid.MaxWidth>
                                 <Binding Path="TemplateSettings.MaxSideLength">
@@ -820,7 +821,7 @@
                                     <VisualState x:Name="Inactive" />
                                     <VisualState x:Name="Active">
                                         <Storyboard RepeatBehavior="Forever">
-                                            <ObjectAnimationUsingKeyFrames Duration="0" Storyboard.TargetName="Ring" Storyboard.TargetProperty="Visibility">
+                                            <ObjectAnimationUsingKeyFrames Duration="0" BeginTime="0:0:1.4" Storyboard.TargetName="Ring" Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Ellipse01_S24" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
@@ -1332,9 +1333,9 @@
                 </TextBlock>
             </StackPanel>
 
-            <!--<Border Visibility="{x:Bind (Visibility)ViewModel.IsEmpty, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="18">
-                 <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Style="{StaticResource SkypeProgressRingStyle}"/>
-                 </Border>-->
+            <!--<Border Visibility="{x:Bind (Visibility)ViewModel.IsEmpty, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="18">
+                <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Background="{ThemeResource MessageServiceBackgroundBrush}" Style="{StaticResource SkypeProgressRingStyle}"/>
+            </Border>-->
 
             <StackPanel>
                 <Grid x:Name="PinnedMessage"

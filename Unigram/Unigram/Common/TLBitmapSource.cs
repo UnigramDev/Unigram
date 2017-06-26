@@ -525,28 +525,35 @@ namespace Unigram.Common
     {
         public static async void SetSource(this BitmapSource bitmap, byte[] data)
         {
-            using (var stream = new InMemoryRandomAccessStream())
+            try
             {
-                using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                using (var stream = new InMemoryRandomAccessStream())
                 {
-                    writer.WriteBytes(data);
-                    await writer.StoreAsync();
-                }
+                    using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                    {
+                        writer.WriteBytes(data);
+                        await writer.StoreAsync();
+                    }
 
-                try
-                {
                     await bitmap.SetSourceAsync(stream);
                 }
-                catch
-                {
-                    Debug.Write("AGGRESSIVE");
-                }
+            }
+            catch
+            {
+                Debug.Write("AGGRESSIVE");
             }
         }
 
         public static async void SetSource(this AnimatedImageSourceRenderer renderer, Uri uri)
         {
-            await renderer.SetSourceAsync(uri);
+            try
+            {
+                await renderer.SetSourceAsync(uri);
+            }
+            catch
+            {
+                Debug.Write("AGGRESSIVE");
+            }
         }
     }
 }
