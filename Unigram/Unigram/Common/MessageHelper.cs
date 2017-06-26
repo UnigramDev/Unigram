@@ -1112,6 +1112,15 @@ namespace Unigram.Common
 
                                 await Launcher.LaunchUriAsync(new Uri(navigation));
                             }
+                            else if (username.Equals("socks", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var server = query.GetParameter("server");
+                                var port = query.GetParameter("port");
+                                var user = query.GetParameter("user");
+                                var pass = query.GetParameter("pass");
+
+                                NavigateToSocks(server, port, user, pass);
+                            }
                             else
                             {
                                 NavigateToUsername(MTProtoService.Current, username, accessToken, post, string.IsNullOrEmpty(game) ? null : game);
@@ -1120,6 +1129,11 @@ namespace Unigram.Common
                     }
                 }
             }
+        }
+
+        public static void NavigateToSocks(string server, string port, string user, string pass)
+        {
+            // TODO
         }
 
         public static async void NavigateToConfirmPhone(IMTProtoService protoService, string phone, string hash)

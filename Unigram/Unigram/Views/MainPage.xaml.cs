@@ -74,7 +74,7 @@ namespace Unigram.Views
 
         public void OnBackRequested(HandledEventArgs args)
         {
-            if (MasterDetail.CurrentState == MasterDetailState.Narrow && rpMasterTitlebar.SelectedIndex == 3)
+            if (MasterDetail.CurrentState == MasterDetailState.Narrow && rpMasterTitlebar.SelectedIndex != 0)
             {
                 rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
@@ -198,6 +198,10 @@ namespace Unigram.Views
                             string game = null;
                             string phoneHash = null;
                             string post = null;
+                            string server = null;
+                            string port = null;
+                            string user = null;
+                            string pass = null;
                             bool hasUrl = false;
 
                             var query = scheme.Query.ParseQueryString();
@@ -247,14 +251,26 @@ namespace Unigram.Views
                                 phone = query.GetParameter("phone");
                                 phoneHash = query.GetParameter("hash");
                             }
+                            else if (scheme.AbsoluteUri.StartsWith("tg:socks") || scheme.AbsoluteUri.StartsWith("tg://socks"))
+                            {
+                                server = query.GetParameter("server");
+                                port = query.GetParameter("port");
+                                user = query.GetParameter("user");
+                                pass = query.GetParameter("pass");
+                            }
 
                             if (message != null && message.StartsWith("@"))
                             {
                                 message = " " + message;
                             }
+
                             if (phone != null || phoneHash != null)
                             {
                                 MessageHelper.NavigateToConfirmPhone(ViewModel.ProtoService, phone, phoneHash);
+                            }
+                            else if (server != null && port != null)
+                            {
+                                MessageHelper.NavigateToSocks(server, port, user, pass);
                             }
                             else if (group != null)
                             {
