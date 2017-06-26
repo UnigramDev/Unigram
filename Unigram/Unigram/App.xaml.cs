@@ -138,11 +138,17 @@ namespace Unigram
             else
             {
                 var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-                cacheService.TryCommit();
+                if (cacheService != null)
+                {
+                    cacheService.TryCommit();
+                }
 
                 var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-                updatesService.SaveState();
-                updatesService.CancelUpdating();
+                if (updatesService != null)
+                {
+                    updatesService.SaveState();
+                    updatesService.CancelUpdating();
+                }
             }
         }
 
@@ -405,14 +411,18 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
-            //DefaultPhotoConverter.BitmapContext.Clear();
-
             var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-            cacheService.TryCommit();
+            if (cacheService != null)
+            {
+                cacheService.TryCommit();
+            }
 
             var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-            updatesService.SaveState();
-            updatesService.CancelUpdating();
+            if (updatesService != null)
+            {
+                updatesService.SaveState();
+                updatesService.CancelUpdating();
+            }
 
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }

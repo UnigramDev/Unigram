@@ -106,6 +106,11 @@ namespace Unigram.Common
 
         public static async void NavigateToDialog(this INavigationService service, ITLDialogWith with, int? message = null, string accessToken = null)
         {
+            if (with == null)
+            {
+                return;
+            }
+
             if (with is TLUser user && user.IsRestricted)
             {
                 var reason = user.ExtractRestrictionReason();

@@ -710,7 +710,6 @@ namespace Unigram.ViewModels
             //var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
             var limit = 15;
 
-
             Retry:
             var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
             if (response.IsSucceeded)
@@ -1262,7 +1261,7 @@ namespace Unigram.ViewModels
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
-            SaveDraft();
+            Dispatcher.Dispatch(SaveDraft);
             return Task.CompletedTask;
         }
 
