@@ -941,7 +941,7 @@ namespace Unigram.ViewModels
 
                 if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                 {
-                    if (Constants.TelegramHosts.Contains(uri.Host))
+                    if (MessageHelper.IsTelegramUrl(uri))
                     {
                         MessageHelper.HandleTelegramUrl(urlButton.Url);
                     }
@@ -988,7 +988,7 @@ namespace Unigram.ViewModels
 
                         if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                         {
-                            if (Constants.TelegramHosts.Contains(uri.Host))
+                            if (MessageHelper.IsTelegramUrl(uri))
                             {
                                 MessageHelper.HandleTelegramUrl(response.Result.Url);
                             }

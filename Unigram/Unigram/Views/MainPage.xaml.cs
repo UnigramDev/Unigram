@@ -158,7 +158,7 @@ namespace Unigram.Views
                 {
                     if (Uri.TryCreate(parameter, UriKind.Absolute, out Uri scheme))
                     {
-                        if (Constants.TelegramHosts.Contains(scheme.Host))
+                        if (MessageHelper.IsTelegramUrl(scheme))
                         {
                             MessageHelper.HandleTelegramUrl(parameter);
                         }
@@ -283,6 +283,10 @@ namespace Unigram.Views
                             else if (username != null)
                             {
                                 MessageHelper.NavigateToUsername(ViewModel.ProtoService, username, botUser ?? botChat, post, game);
+                            }
+                            else if (message != null)
+                            {
+                                MessageHelper.NavigateToShare(message, hasUrl);
                             }
                         }
                     }

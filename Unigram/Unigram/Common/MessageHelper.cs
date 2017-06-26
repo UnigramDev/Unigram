@@ -905,7 +905,7 @@ namespace Unigram.Common
 
                     if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                     {
-                        if (Constants.TelegramHosts.Contains(uri.Host))
+                        if (MessageHelper.IsTelegramUrl(uri))
                         {
                             HandleTelegramUrl(message, navigation);
                         }
@@ -1029,6 +1029,22 @@ namespace Unigram.Common
             //}
         }
 
+        public static bool IsTelegramUrl(Uri uri)
+        {
+            if (Constants.TelegramHosts.Contains(uri.Host))
+            {
+                return true;
+            }
+
+            var config = InMemoryCacheService.Current.GetConfig();
+            if (config != null && Uri.TryCreate(config.MeUrlPrefix, UriKind.Absolute, out Uri meUri))
+            {
+                return uri.Host.Equals(meUri.Host, StringComparison.OrdinalIgnoreCase);
+            }
+
+            return false;
+        }
+
         public static void HandleTelegramUrl(string url)
         {
             HandleTelegramUrl(null, url);
@@ -1121,6 +1137,35 @@ namespace Unigram.Common
 
                                 NavigateToSocks(server, port, user, pass);
                             }
+                            else if (username.Equals("share"))
+                            {
+                                var hasUrl = false;
+                                var text = query.GetParameter("url");
+                                if (text == null)
+                                {
+                                    text = "";
+                                }
+                                if (query.GetParameter("text") != null)
+                                {
+                                    if (text.Length > 0)
+                                    {
+                                        hasUrl = true;
+                                        text += "\n";
+                                    }
+                                    text += query.GetParameter("text");
+                                }
+                                if (text.Length > 4096 * 4)
+                                {
+                                    text = text.Substring(0, 4096 * 4);
+                                }
+                                while (text.EndsWith("\n"))
+                                {
+                                    text = text.Substring(0, text.Length - 1);
+                                }
+
+
+                                NavigateToShare(text, hasUrl);
+                            }
                             else
                             {
                                 NavigateToUsername(MTProtoService.Current, username, accessToken, post, string.IsNullOrEmpty(game) ? null : game);
@@ -1129,6 +1174,11 @@ namespace Unigram.Common
                     }
                 }
             }
+        }
+
+        public static async void NavigateToShare(string text, bool hasUrl)
+        {
+            await ForwardView.Current.ShowAsync(text, hasUrl);
         }
 
         public static void NavigateToSocks(string server, string port, string user, string pass)
