@@ -7,7 +7,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Channels;
+using Telegram.Api.TL.Channels.Methods;
 using Unigram.Common;
 using Unigram.Views.Channels;
 using Windows.UI.Xaml.Navigation;

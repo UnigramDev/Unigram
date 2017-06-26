@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Unigram.Converters;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -29,6 +30,14 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(ListView);
 
             Loaded += OnLoaded;
+        }
+
+        public void ScrollToBottom()
+        {
+            if (ScrollingHost != null)
+            {
+                ScrollingHost.ChangeView(null, ScrollingHost.ScrollableHeight, null);
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -183,7 +192,7 @@ namespace Unigram.Controls
                             }
                             else
                             {
-                                bubble.Padding = new Thickness(52, 0, 52, 0);
+                                bubble.Padding = new Thickness(52, 0, MessageToShareConverter.Convert(message) ? 12 : 52, 0);
                             }
                         }
                     }
@@ -201,7 +210,7 @@ namespace Unigram.Controls
                             }
                             else
                             {
-                                bubble.Padding = new Thickness(12, 0, 52, 0);
+                                bubble.Padding = new Thickness(12, 0, MessageToShareConverter.Convert(message) ? 12 : 52, 0);
                             }
                         }
                     }

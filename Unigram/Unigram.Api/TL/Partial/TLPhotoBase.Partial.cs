@@ -118,13 +118,14 @@ namespace Telegram.Api.TL
     {
         public void Cancel(IDownloadFileManager manager, IUploadManager uploadManager)
         {
-            if (DownloadingProgress > 0 && DownloadingProgress < 1)
+            if (manager != null)
             {
                 manager.CancelDownloadFile(this);
                 DownloadingProgress = 0;
                 IsTransferring = false;
             }
-            else if (UploadingProgress > 0 && UploadingProgress < 1)
+
+            if (uploadManager != null)
             {
                 uploadManager.CancelUploadFile(Id);
                 UploadingProgress = 0;

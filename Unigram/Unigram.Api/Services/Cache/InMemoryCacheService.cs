@@ -9,8 +9,9 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
-using Action = System.Action;
-
+using Telegram.Api.TL.Contacts;
+using Telegram.Api.TL.Messages;
+using Telegram.Api.TL.Updates;
 
 namespace Telegram.Api.Services.Cache
 {
@@ -964,7 +965,7 @@ namespace Telegram.Api.Services.Cache
             }
 
            // TLUtils.WritePerformance(string.Format("GetCachedHistory time ({0}): {1}", _database.CountRecords<TLMessageBase>(), timer.Elapsed));
-            return msgs.Take(limit).ToList();
+            return msgs.OrderByDescending(x => x.Id).Take(limit).ToList();
         }
 
         public void GetHistoryAsync(TLPeerBase peer, Action<IList<TLMessageBase>> callback, int limit = Constants.CachedMessagesCount)
@@ -1475,15 +1476,15 @@ namespace Telegram.Api.Services.Cache
                     if (messageCommon != null)
                     {
                         if (messageCommon.IsOut 
-                            && readMaxId.ReadOutboxMaxId != null 
-                            && readMaxId.ReadOutboxMaxId > 0
+                            //&& readMaxId.ReadOutboxMaxId != null 
+                            //&& readMaxId.ReadOutboxMaxId > 0
                             && readMaxId.ReadOutboxMaxId < messageCommon.Id)
                         {
                             messageCommon.SetUnreadSilent(true);
                         }
                         else if (!messageCommon.IsOut
-                            && readMaxId.ReadInboxMaxId != null
-                            && readMaxId.ReadInboxMaxId > 0
+                            //&& readMaxId.ReadInboxMaxId != null
+                            //&& readMaxId.ReadInboxMaxId > 0
                             && readMaxId.ReadInboxMaxId < messageCommon.Id)
                         {
                             messageCommon.SetUnreadSilent(true);
@@ -2266,6 +2267,10 @@ namespace Telegram.Api.Services.Cache
                 if (user.TypeId == cachedUser.TypeId)
                 {
                     cachedUser.Update(user);
+
+                    // TODO: 19/06/2017
+                    UsersContext[user.Id] = cachedUser;
+
                     result = cachedUser;
                 }
                 else if (isMinUser)
@@ -2323,6 +2328,8 @@ namespace Telegram.Api.Services.Cache
 
         private void SyncUsersInternal(TLVector<TLUserBase> users, TLVector<TLUserBase> result, IList<ExceptionInfo> exceptions = null)
         {
+            var transaction = ((Context.UsersContext)UsersContext).Transaction();
+
             foreach (var user in users)
             {
                 try
@@ -2342,6 +2349,10 @@ namespace Telegram.Api.Services.Cache
                         if (user.TypeId == cachedUser.TypeId)
                         {
                             cachedUser.Update(user);
+
+                            // TODO: 19/06/2017
+                            UsersContext[user.Id] = cachedUser;
+
                             result.Add(cachedUser);
                         }
                         else if (isMinUser)
@@ -2377,6 +2388,8 @@ namespace Telegram.Api.Services.Cache
                     TLUtils.WriteException("UpdatesService.ProcessDifference Users", ex);
                 }
             }
+
+            transaction.Dispose();
         }
 
         #endregion
@@ -2782,6 +2795,12 @@ namespace Telegram.Api.Services.Cache
 
                 if (cachedChat == null)
                 {
+                    // TODO: 14/04/2017
+                    if (chat is TLChannel channel && channel.IsMin)
+                    {
+                        return;
+                    }
+
                     _database.AddChat(chat);
                 }
             }
@@ -2851,6 +2870,8 @@ namespace Telegram.Api.Services.Cache
 
         private void SyncChatsInternal(TLVector<TLChatBase> chats, TLVector<TLChatBase> result, IList<ExceptionInfo> exceptions = null)
         {
+            var transaction = ((Context.ChatsContext)ChatsContext).Transaction();
+
             foreach (var chat in chats)
             {
                 try
@@ -2870,6 +2891,9 @@ namespace Telegram.Api.Services.Cache
                         if (chat.TypeId == cachedChat.TypeId)
                         {
                             cachedChat.Update(chat);
+
+                            // TODO: 19/06/2017
+                            ChatsContext[chat.Id] = cachedChat;
                         }
                         else if (isMinChannel)
                         {
@@ -2886,6 +2910,13 @@ namespace Telegram.Api.Services.Cache
                     {
                         // add object to cache
                         result.Add(chat);
+
+                        // TODO: 14/04/2017
+                        if (chat is TLChannel channel && channel.IsMin)
+                        {
+                            return;
+                        }
+
                         _database.AddChat(chat);
                     }
                 }
@@ -2904,6 +2935,8 @@ namespace Telegram.Api.Services.Cache
                     TLUtils.WriteException("UpdatesService.ProcessDifference Chats", ex);
                 }
             }
+
+            transaction.Dispose();
         }
 
         private void SyncChatInternal(TLChatBase chat, out TLChatBase result)
@@ -2923,6 +2956,9 @@ namespace Telegram.Api.Services.Cache
                 if (chat.TypeId == cachedChat.TypeId)
                 {
                     cachedChat.Update(chat);
+
+                    // TODO: 19/06/2017
+                    ChatsContext[chat.Id] = cachedChat;
                 }
                 else if (isMinChannel)
                 {
@@ -2939,6 +2975,13 @@ namespace Telegram.Api.Services.Cache
             {
                 // add object to cache
                 result = chat;
+
+                // TODO: 14/04/2017
+                if (chat is TLChannel channel && channel.IsMin)
+                {
+                    return;
+                }
+
                 _database.AddChat(chat);
             }
         }

@@ -133,14 +133,15 @@ namespace Unigram.Controls
             if (constraint is TLPhoto photo)
             {
                 //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
-                var photoSize = photo.Sizes.OfType<TLPhotoSize>().OrderByDescending(x => x.W).FirstOrDefault();
-                if (photoSize != null)
-                {
-                    width = photoSize.W;
-                    height = photoSize.H;
+                constraint = photo.Full;
+            }
 
-                    goto Calculate;
-                }
+            if (constraint is TLPhotoSize photoSize)
+            {
+                width = photoSize.W;
+                height = photoSize.H;
+
+                goto Calculate;
             }
 
             if (constraint is TLDocument document)

@@ -82,9 +82,11 @@ namespace Unigram.Common
                 }
 
                 var game = false;
+                var notGame = true;
                 if (message.Media is TLMessageMediaGame)
                 {
                     game = sender.Tag != null;
+                    notGame = false;
                 }
 
                 var emptyWebPage = false;
@@ -93,7 +95,7 @@ namespace Unigram.Common
                     emptyWebPage = webpageMedia.WebPage is TLWebPageEmpty;
                 }
 
-                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || text ? Visibility.Visible : Visibility.Collapsed);
+                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || (text && notGame) ? Visibility.Visible : Visibility.Collapsed);
                 if (sender.Visibility == Visibility.Collapsed)
                 {
                     sender.Inlines.Clear();
@@ -131,7 +133,7 @@ namespace Unigram.Common
                     else if (caption)
                     {
                         var captionMedia2 = message.Media as ITLMessageMediaCaption;
-                        if (captionMedia2 != null && !string.IsNullOrWhiteSpace(captionMedia2.Caption))
+                        if (captionMedia2 != null)
                         {
                             Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a ITLMediaCaption");
                             ReplaceAll(message, captionMedia2.Caption, paragraph, sender.Foreground, true);
@@ -357,7 +359,7 @@ namespace Unigram.Common
             var text = message.Message;
             var previous = 0;
 
-            foreach (var entity in message.Entities)
+            foreach (var entity in message.Entities.OrderBy(x => x.Offset))
             {
                 if (entity.Offset > previous)
                 {
@@ -1110,6 +1112,15 @@ namespace Unigram.Common
 
                                 await Launcher.LaunchUriAsync(new Uri(navigation));
                             }
+                            else if (username.Equals("socks", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var server = query.GetParameter("server");
+                                var port = query.GetParameter("port");
+                                var user = query.GetParameter("user");
+                                var pass = query.GetParameter("pass");
+
+                                NavigateToSocks(server, port, user, pass);
+                            }
                             else
                             {
                                 NavigateToUsername(MTProtoService.Current, username, accessToken, post, string.IsNullOrEmpty(game) ? null : game);
@@ -1118,6 +1129,11 @@ namespace Unigram.Common
                     }
                 }
             }
+        }
+
+        public static void NavigateToSocks(string server, string port, string user, string pass)
+        {
+            // TODO
         }
 
         public static async void NavigateToConfirmPhone(IMTProtoService protoService, string phone, string hash)
@@ -1469,7 +1485,7 @@ namespace Unigram.Common
 
         public static bool IsValidUsername(string username)
         {
-            if (username.Length <= 3)
+            if (username.Length <= 2)
             {
                 return false;
             }

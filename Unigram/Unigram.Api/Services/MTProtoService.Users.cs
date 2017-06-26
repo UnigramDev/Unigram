@@ -1,7 +1,7 @@
 ﻿using System;
 using Telegram.Api.Extensions;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Users;
+using Telegram.Api.TL.Users.Methods;
 
 namespace Telegram.Api.Services
 {

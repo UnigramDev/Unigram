@@ -13,6 +13,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Messages;
 using Telegram.Logs;
 using Template10.Utils;
 using Unigram.Common;
@@ -42,6 +43,7 @@ namespace Unigram.ViewModels
         //IHandle<TLUpdateChatUserTyping>, 
         //IHandle<ClearCacheEventArgs>, 
         //IHandle<ClearLocalDatabaseEventArgs>, 
+        IHandle<TLUpdateContactLink>,
         IHandle<TLUpdateEditMessage>,
         IHandle<TLUpdateEditChannelMessage>,
         IHandle<TLUpdateDraftMessage>,
@@ -206,8 +208,19 @@ namespace Unigram.ViewModels
             OnDialogAdded(this, eventArgs);
         }
 
-        public void Handle(DialogRemovedEventArgs args)
+        public async void Handle(DialogRemovedEventArgs args)
         {
+            var response = await ProtoService.GetHistoryAsync(args.Dialog.With.ToInputPeer(), args.Dialog.With.ToPeer(), true, 0, 0, int.MaxValue, 1);
+            if (response.IsSucceeded && response.Result.Messages.Count > 0)
+            {
+                args.Dialog.TopMessageItem = response.Result.Messages[0];
+                args.Dialog.TopMessage = response.Result.Messages[0].Id;
+                args.Dialog.TopMessageRandomId = null;
+
+                Handle(new TopMessageUpdatedEventArgs(args.Dialog, response.Result.Messages[0]));
+                return;
+            }
+
             Execute.BeginOnUIThread(() =>
             {
                 var dialog = Items.FirstOrDefault(x => x.Id == args.Dialog.Id);
@@ -273,6 +286,21 @@ namespace Unigram.ViewModels
         //{
         //    this.HandleTypingCommon(chatUserTyping, this._chatUserTypingCache);
         //}
+
+        public void Handle(TLUpdateContactLink update)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                for (int i = 0; i < Items.Count; i++)
+                {
+                    if (Items[i].With is TLUserBase user && user.Id == update.UserId)
+                    {
+                        user.RaisePropertyChanged(() => user.DisplayName);
+                        Items[i].RaisePropertyChanged(() => Items[i].With);
+                    }
+                }
+            });
+        }
 
         public void Handle(TLUpdateEditMessage update)
         {
@@ -528,6 +556,7 @@ namespace Unigram.ViewModels
                         if (dialog != null && dialog.Peer != null && dialog.Peer.Id == notifyPeer.Peer.Id && dialog.Peer.GetType() == notifyPeer.Peer.GetType())
                         {
                             dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                            dialog.RaisePropertyChanged(() => dialog.MutedVisibility);
                             dialog.RaisePropertyChanged(() => dialog.Self);
                             return;
                         }
@@ -622,6 +651,12 @@ namespace Unigram.ViewModels
                     var channel = e.Dialog.With as TLChannel;
                     if (channel != null)
                     {
+                        if (channel.IsLeft || channel.IsKicked)
+                        {
+                            Items.Remove(e.Dialog);
+                            return;
+                        }
+
                         var serviceMessage = e.Dialog.TopMessageItem as TLMessageService;
                         if (serviceMessage != null)
                         {
@@ -644,8 +679,12 @@ namespace Unigram.ViewModels
                         {
                             Execute.BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
 
-                            e.Dialog = already;
-                            currentPosition = Items.IndexOf(already);
+                            var index = Items.IndexOf(already);
+
+                            Items.RemoveAt(index);
+                            Items.Insert(index, e.Dialog);
+
+                            currentPosition = index;
                         }
                     }
 

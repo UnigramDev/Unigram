@@ -8,7 +8,7 @@ using System.Text;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Messages.Methods;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -892,12 +892,18 @@ namespace Unigram.Views
                     }
                     break;
                 case TLTextUrl urlText:
-                    var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
-                    //span.Inlines.Add(new Run { Text = " " });
-                    span.Inlines.Add(hyperlink);
-                    //span.Inlines.Add(new Run { Text = " " });
-                    hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
-                    ProcessRichText(urlText.Text, hyperlink);
+                    try
+                    {
+                        var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
+                        span.Inlines.Add(hyperlink);
+                        hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
+                        ProcessRichText(urlText.Text, hyperlink);
+                    }
+                    catch
+                    {
+                        ProcessRichText(urlText.Text, span);
+                        Debug.WriteLine("InstantPage: Probably nesting textUrl inside textUrl");
+                    }
                     break;
                 case TLTextEmpty emptyText:
                     break;

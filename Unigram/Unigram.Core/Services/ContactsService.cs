@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Contacts;
 using Unigram.Common;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;
@@ -35,11 +36,17 @@ namespace Unigram.Core.Services
 
                 var contactList = await GetContactListAsync();
                 var annotationList = await GetAnnotationListAsync();
+                var peopleList = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AllContactsReadOnly);
 
                 if (contactList != null && annotationList != null)
                 {
                     await ExportContacts(contactList, annotationList, result);
                 }
+
+                //if (peopleList != null)
+                //{
+                //    await ImportContacts(peopleList);
+                //}
 
                 Debug.WriteLine("SYNCED CONTACTS");
             }
@@ -61,6 +68,16 @@ namespace Unigram.Core.Services
             }
         }
 
+
+        private async Task ImportContacts(ContactStore peopleList)
+        {
+            var contacts = await peopleList.FindContactsAsync();
+            foreach (var contact in contacts)
+            {
+
+            }
+        }
+
         private async Task ExportContacts(ContactList contactList, ContactAnnotationList annotationList, TLContactsContactsBase result)
         {
             var contacts = result as TLContactsContacts;
@@ -76,6 +93,7 @@ namespace Unigram.Core.Services
 
                     contact.FirstName = item.FirstName ?? string.Empty;
                     contact.LastName = item.LastName ?? string.Empty;
+                    //contact.Nickname = item.Username ?? string.Empty;
                     contact.RemoteId = "u" + item.Id;
                     //contact.Id = item.Id.ToString();
 
@@ -124,7 +142,10 @@ namespace Unigram.Core.Services
         private async Task<ContactList> GetContactListAsync()
         {
             var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
-            if (store == null) return null;
+            if (store == null)
+            {
+                return null;
+            }
 
             ContactList contactList;
             var contactsList = await store.FindContactListsAsync();
@@ -143,7 +164,10 @@ namespace Unigram.Core.Services
         private async Task<ContactAnnotationList> GetAnnotationListAsync()
         {
             var store = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
-            if (store == null) return null;
+            if (store == null)
+            {
+                return null;
+            }
 
             ContactAnnotationList contactList;
             var contactsList = await store.FindAnnotationListsAsync();
@@ -158,6 +182,5 @@ namespace Unigram.Core.Services
 
             return contactList;
         }
-
     }
 }

@@ -109,35 +109,34 @@ namespace Telegram.Api.TL
 
         public static int InsertMessageInOrder(IList<TLMessageBase> messages, TLMessageBase message)
         {
-            var position = -1;
-
+            int position = -1;
             if (messages.Count == 0)
             {
                 position = 0;
             }
 
-            for (var i = messages.Count - 1; i >= 0; i--)
+            for (int i = 0; i < messages.Count; i++)
             {
                 if (messages[i].Id == 0)
                 {
                     if (messages[i].Date < message.Date)
                     {
-                        position = i + 1;
+                        position = i;
                         break;
                     }
-
-                    continue;
                 }
-
-                if (messages[i].Id == message.Id)
+                else
                 {
-                    position = -1;
-                    break;
-                }
-                if (messages[i].Id < message.Id)
-                {
-                    position = i + 1;
-                    break;
+                    if (messages[i].Id == message.Id)
+                    {
+                        position = -1;
+                        break;
+                    }
+                    if (messages[i].Id < message.Id)
+                    {
+                        position = i;
+                        break;
+                    }
                 }
             }
 
@@ -147,46 +146,6 @@ namespace Telegram.Api.TL
             }
 
             return position;
-
-            //var position = -1;
-
-            //if (messages.Count == 0)
-            //{
-            //    position = 0;
-            //}
-
-            //for (var i = 0; i < messages.Count; i++)
-            //{
-            //    if (messages[i].Id == 0)
-            //    {
-            //        if (messages[i].Date < message.Date)
-            //        {
-            //            position = i;
-            //            break;
-            //        }
-
-            //        continue;
-            //    }
-
-            //    if (messages[i].Id == message.Id)
-            //    {
-            //        position = -1;
-            //        break;
-            //    }
-            //    if (messages[i].Id < message.Id)
-            //    {
-            //        position = i;
-            //        break;
-            //    }
-            //}
-
-            //if (position != -1)
-            //{
-            //    //message._isAnimated = position == 0;
-            //    messages.Insert(position, message);
-            //}
-
-            //return position;
         }
 
 
@@ -340,11 +299,6 @@ namespace Telegram.Api.TL
                 if (notifySettings == null)
                 {
                     return Visibility.Collapsed;
-                }
-
-                if (notifySettings.IsSilent)
-                {
-                    return Visibility.Visible;
                 }
 
                 var clientDelta = MTProtoService.Current.ClientTicksDelta;

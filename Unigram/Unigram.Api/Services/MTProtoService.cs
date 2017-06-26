@@ -22,9 +22,10 @@ using Telegram.Api.TL;
 using Telegram.Api.Transport;
 using Telegram.Logs;
 using Environment = System.Environment;
-using Telegram.Api.TL.Methods.Messages;
-using Telegram.Api.TL.Methods.Auth;
-using Telegram.Api.TL.Methods.Upload;
+using Telegram.Api.TL.Messages.Methods;
+using Telegram.Api.TL.Auth.Methods;
+using Telegram.Api.TL.Upload.Methods;
+using Telegram.Api.TL.Messages;
 
 namespace Telegram.Api.Services
 {

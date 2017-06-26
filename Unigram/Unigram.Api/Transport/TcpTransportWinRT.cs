@@ -12,6 +12,7 @@ using Windows.Storage.Streams;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Windows.Security.Cryptography;
+using System.Diagnostics;
 
 namespace Telegram.Api.Transport
 {
@@ -41,11 +42,11 @@ namespace Telegram.Api.Transport
             _dataReader = new DataReader(_socket.InputStream) { InputStreamOptions = InputStreamOptions.Partial };
             _dataWriter = new DataWriter(_socket.OutputStream);
 
-            lock (_dataWriterSyncRoot)
-            {
-                var buffer = GetInitBufferInternal();
-                _dataWriter.WriteBytes(buffer);
-            }
+            //lock (_dataWriterSyncRoot)
+            //{
+            //    var buffer = GetInitBufferInternal();
+            //    _dataWriter.WriteBytes(buffer);
+            //}
         }
 
 #if TCP_OBFUSCATED_2
@@ -105,8 +106,89 @@ namespace Telegram.Api.Transport
             {
                 RaiseConnectingAsync();
 
-                //var address = IPAddress.IsValidIPv6(Host);
-                await _socket.ConnectAsync(new HostName(Host), Port.ToString(CultureInfo.InvariantCulture)).WithTimeout(timeout);
+                if (SettingsHelper.IsSocks5)
+                {
+                    Debug.WriteLine(">>> Connecting through SOCKS5");
+
+                    await _socket.ConnectAsync(new HostName("127.0.0.1"), "1080").WithTimeout(timeout);
+
+                    var username = "frayxrulez";
+                    var password = "frayxrulez";
+
+                    _dataWriter.WriteByte(0x05); // version
+                    _dataWriter.WriteByte(0x02); // number of auth methods
+                    _dataWriter.WriteByte(0x00); // no auth
+                    _dataWriter.WriteByte(0x02); // password
+
+                    await _dataWriter.StoreAsync();
+                    await _dataReader.LoadAsync(2);
+
+                    var response = new byte[_dataReader.UnconsumedBufferLength];
+                    _dataReader.ReadBytes(response);
+
+                    if (response[1] == 0x02)
+                    {
+                        // TODO: password
+                        _dataWriter.WriteByte(0x01); // version
+                        _dataWriter.WriteByte((byte)username.Length);
+                        _dataWriter.WriteBytes(Encoding.UTF8.GetBytes(username));
+                        _dataWriter.WriteByte((byte)password.Length);
+                        _dataWriter.WriteBytes(Encoding.UTF8.GetBytes(password));
+
+                        await _dataWriter.StoreAsync();
+                        await _dataReader.LoadAsync(2);
+
+                        response = new byte[_dataReader.UnconsumedBufferLength];
+                        _dataReader.ReadBytes(response);
+
+                        if (response[1] != 0x00)
+                        {
+                            // TODO: failed
+                        }
+                    }
+
+                    _dataWriter.WriteByte(0x05); // version
+                    _dataWriter.WriteByte(0x01); // connect
+                    _dataWriter.WriteByte(0x00); // reserved
+
+                    var dest = System.Net.IPAddress.Parse(Host);
+                    switch (dest.AddressFamily)
+                    {
+                        case System.Net.Sockets.AddressFamily.InterNetwork:
+                            _dataWriter.WriteByte(0x01); // Ipv4
+                            break;
+                        case System.Net.Sockets.AddressFamily.InterNetworkV6:
+                            _dataWriter.WriteByte(0x04); // Ipv6
+                            break;
+                    }
+
+                    _dataWriter.WriteBytes(dest.GetAddressBytes());
+                    _dataWriter.WriteUInt16((ushort)Port);
+
+                    await _dataWriter.StoreAsync();
+                    await _dataReader.LoadAsync(64);
+
+                    response = new byte[_dataReader.UnconsumedBufferLength];
+                    _dataReader.ReadBytes(response);
+
+                    if (response[1] != 0x00)
+                    {
+                        // TODO: failed
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine(">>> Connecting");
+
+                    //var address = IPAddress.IsValidIPv6(Host);
+                    await _socket.ConnectAsync(new HostName(Host), Port.ToString(CultureInfo.InvariantCulture)).WithTimeout(timeout);
+                }
+
+                lock (_dataWriterSyncRoot)
+                {
+                    var buffer = GetInitBufferInternal();
+                    _dataWriter.WriteBytes(buffer);
+                }
 
                 lock (_isConnectedSyncRoot)
                 {

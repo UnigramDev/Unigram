@@ -306,6 +306,10 @@ namespace Unigram.Controls.Views
         {
             var border = sender as TransferButton;
             var item = border.DataContext as GalleryItem;
+            if (item == null)
+            {
+                return;
+            }
 
             if (item.IsVideo)
             {
@@ -394,6 +398,11 @@ namespace Unigram.Controls.Views
         {
             DataContext = null;
             Bindings.StopTracking();
+        }
+
+        private void Download_Click(object sender, object e)
+        {
+
         }
     }
 }

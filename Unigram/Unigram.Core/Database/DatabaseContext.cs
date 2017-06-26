@@ -10,6 +10,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Universal.WinSQLite;
 using Windows.Storage;
+using Telegram.Api.TL.Messages;
 
 namespace Unigram.Core
 {

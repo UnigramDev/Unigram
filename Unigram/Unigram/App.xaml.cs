@@ -44,6 +44,7 @@ using Windows.Foundation;
 using Windows.ApplicationModel.Contacts;
 using Telegram.Api.Aggregator;
 using Unigram.Controls;
+using Unigram.Views.Users;
 
 namespace Unigram
 {
@@ -56,6 +57,8 @@ namespace Unigram
         public static AppServiceConnection Connection { get; private set; }
 
         public static AppInMemoryState InMemoryState { get; } = new AppInMemoryState();
+
+        public static event TypedEventHandler<CoreDispatcher, AcceleratorKeyEventArgs> AcceleratorKeyActivated;
 
         public ViewModelLocator Locator
         {
@@ -126,7 +129,27 @@ namespace Unigram
         private void Window_VisibilityChanged(object sender, VisibilityChangedEventArgs e)
         {
             IsVisible = e.Visible;
-            HandleActivated(e.Visible);
+            //HandleActivated(e.Visible);
+
+            if (e.Visible)
+            {
+                Locator.LoadStateAndUpdate();
+            }
+            else
+            {
+                var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
+                if (cacheService != null)
+                {
+                    cacheService.TryCommit();
+                }
+
+                var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
+                if (updatesService != null)
+                {
+                    updatesService.SaveState();
+                    updatesService.CancelUpdating();
+                }
+            }
         }
 
         private void HandleActivated(bool active)
@@ -184,7 +207,9 @@ namespace Unigram
         public override UIElement CreateRootElement(IActivatedEventArgs e)
         {
             var navigationFrame = new Frame();
-            var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame);
+            var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame) as NavigationService;
+            navigationService.SerializationService = TLSerializationService.Current;
+
             //return new ModalDialog
             //{
             //    DisableBackButtonWhenModal = false,
@@ -275,13 +300,6 @@ namespace Unigram
 
                     var remote = annotations[0].RemoteId;
 
-                    //var user = InMemoryCacheService.Current.GetUser(int.Parse(remote.Substring(1)));
-                    //if (user != null)
-                    //{
-                    //    NavigationService.Navigate(typeof(DialogPage), user.ToPeer());
-                    //}
-
-                    //NavigationService.Navigate(typeof(MainPage), $"from_id={remote.Substring(1)}");
                     NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = int.Parse(remote.Substring(1)) });
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
@@ -315,14 +333,35 @@ namespace Unigram
             Window.Current.Activated += Window_Activated;
             Window.Current.VisibilityChanged -= Window_VisibilityChanged;
             Window.Current.VisibilityChanged += Window_VisibilityChanged;
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+            Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
             ShowStatusBar();
             ColourTitleBar();
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Windows.Foundation.Size(320, 500));
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+
+            Theme.Current.Update();
+            App.RaiseThemeChanged();
 
             Task.Run(() => OnStartSync());
             //return Task.CompletedTask;
+        }
+
+        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        {
+            if (AcceleratorKeyActivated is MulticastDelegate multicast)
+            {
+                var list = multicast.GetInvocationList();
+                for (int i = list.Length - 1; i >= 0; i--)
+                {
+                    var result = list[i].DynamicInvoke(sender, args);
+                    if (args.Handled)
+                    {
+                        return;
+                    }
+                }
+            }
         }
 
         private async void OnStartSync()
@@ -372,14 +411,18 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
-            //DefaultPhotoConverter.BitmapContext.Clear();
-
             var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-            cacheService.TryCommit();
+            if (cacheService != null)
+            {
+                cacheService.TryCommit();
+            }
 
             var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-            updatesService.SaveState();
-            updatesService.CancelUpdating();
+            if (updatesService != null)
+            {
+                updatesService.SaveState();
+                updatesService.CancelUpdating();
+            }
 
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }
@@ -463,13 +506,26 @@ namespace Unigram
         //{
         //    ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrush"]).Color = e.WindowActivationState != CoreWindowActivationState.Deactivated ? ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushBase"]).Color : ((SolidColorBrush)Resources["TelegramBackgroundTitlebarBrushDeactivated"]).Color;
         //}
+
+        public static void RaiseThemeChanged()
+        {
+            var frame = Window.Current.Content as Frame;
+            if (frame != null)
+            {
+                var dark = (bool)App.Current.Resources["IsDarkTheme"];
+
+                frame.RequestedTheme = dark ? ElementTheme.Light : ElementTheme.Dark;
+                frame.RequestedTheme = ElementTheme.Default;
+            }
+        }
     }
 
     public class AppInMemoryState
     {
         public IEnumerable<TLMessage> ForwardMessages { get; set; }
 
-        public TLMessage SwitchInline { get; set; }
+        public TLKeyboardButtonSwitchInline SwitchInline { get; set; }
+        public TLUser SwitchInlineBot { get; set; }
 
         public int? NavigateToMessage { get; set; }
         public string NavigateToAccessToken { get; set; }

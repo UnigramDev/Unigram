@@ -75,7 +75,7 @@
                                 <ColumnDefinition x:Name="DetailColumn" Width="0"/>
                             </Grid.ColumnDefinitions>
                             <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}">
-                                <controls:DialogBackground/>
+                                <controls:DialogBackgroundPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                             </Grid>
                             <ContentPresenter x:Name="MasterFrame"
                                               Content="{TemplateBinding Content}"
@@ -97,13 +97,24 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Border x:Name="Theme" IsHitTestVisible="False" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Width="0" Height="0"/>
             <controls:PageHeader/>
             
             <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Grid.RowSpan="2">
                 <Pivot.HeaderTemplate>
                     <DataTemplate x:DataType="x:String">
-                        <TextBlock Text="{x:Bind}" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontFamily" Value="XamlAutoFontFamily" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                    <Setter Property="FontSize" Value="15" />
+                                    <Setter Property="TextTrimming" Value="None" />
+                                    <Setter Property="TextWrapping" Value="Wrap" />
+                                    <Setter Property="LineStackingStrategy" Value="MaxHeight" />
+                                    <Setter Property="TextLineBounds" Value="Full" />
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </DataTemplate>
                 </Pivot.HeaderTemplate>
                 <Pivot.RightHeader>
@@ -141,7 +152,7 @@
                                                     Text="Logout"
                                                     Tag="&#xE106;"/>
 
-                                    <MenuFlyoutSeparator/>
+                                    <MenuFlyoutSeparator x:Name="FlyoutSeperator"/>
                                     <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                     Click="cbtnMasterAbout_Click"
                                                     Text="About"
@@ -164,6 +175,7 @@
                         <controls:SearchTextBox x:Name="SearchDialogs"
                                                 Style="{StaticResource SearchTextBoxStyle}"
                                                 Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
+                                                PreventKeyboardDisplayOnProgrammaticFocus="True"
                                                 PlaceholderText="Search chats and messages"
                                                 TextChanged="txtSearch_TextChanged"
                                                 Canvas.ZIndex="1"/>

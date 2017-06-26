@@ -58,7 +58,6 @@
             <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="5"/>
 
             <Button x:Name="NextButton"
-                    x:Uid="BTN-Next"
                     Command="{x:Bind ViewModel.SendCommand}"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                     HorizontalAlignment="Stretch"

@@ -8,12 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Page.Transitions>
-        <TransitionCollection>
-            <EntranceThemeTransition FromVerticalOffset="75"/>
-        </TransitionCollection>
-    </Page.Transitions>
-
     <Page.Resources>
         <Style x:Key="IndicatorListViewItemStyle" TargetType="ListViewItem">
             <Setter Property="Width" Value="20"/>

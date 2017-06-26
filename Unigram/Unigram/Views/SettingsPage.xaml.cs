@@ -19,6 +19,10 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Media.Animation;
 using Telegram.Api.TL;
 using Unigram.ViewModels.Users;
+using Windows.UI.Xaml.Markup;
+using System.Linq;
+using Windows.UI.Xaml.Media;
+using Telegram.Api.Helpers;
 
 namespace Unigram.Views
 {
@@ -42,7 +46,7 @@ namespace Unigram.Views
                 optionDelete.Command = ViewModel.DeleteAccountCommand;
                 optionDelete.Content = "!!! DELETE ACCOUNT !!!";
 
-                OptionsGroup4.Children.Clear();
+                //OptionsGroup4.Children.Clear();
                 OptionsGroup4.Children.Add(optionDelete);
             }
 
@@ -62,6 +66,11 @@ namespace Unigram.Views
         private void General_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsGeneralPage));
+        }
+
+        private void Phone_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsPhoneWelcomePage));
         }
 
         private void Username_Click(object sender, RoutedEventArgs e)
@@ -99,6 +108,11 @@ namespace Unigram.Views
             MasterDetail.NavigationService.Navigate(typeof(SettingsAccountsPage));
         }
 
+        private void Wallpaper_Click(object sender, RoutedEventArgs e)
+        {
+            MasterDetail.NavigationService.Navigate(typeof(SettingsWallPaperPage));
+        }
+
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Photo);
@@ -133,6 +147,80 @@ namespace Unigram.Views
         private async void Questions_Click(object sender, RoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
+        }
+
+        private async void Theme_Click(object sender, RoutedEventArgs e)
+        {
+            if (Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
+            {
+                var remove = await FileUtils.TryGetTempFileAsync("theme.xaml");
+                if (remove != null)
+                {
+                    await remove.DeleteAsync();
+
+                    Theme.Current.Update();
+                    App.RaiseThemeChanged();
+                }
+
+                return;
+            }
+
+            var picker = new FileOpenPicker();
+            picker.FileTypeFilter.Add(".xaml");
+
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                var result = await FileUtils.CreateTempFileAsync("theme.xaml");
+                await file.CopyAndReplaceAsync(result);
+
+                Theme.Current.Update();
+                App.RaiseThemeChanged();
+
+                //var text = await FileIO.ReadTextAsync(file);
+
+                //var dictionary = XamlReader.Load(text) as ResourceDictionary;
+                //if (dictionary == null)
+                //{
+                //    return;
+                //}
+
+                //var accent = App.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.AbsoluteUri.EndsWith("Accent.xaml"));
+                //if (accent == null)
+                //{
+                //    return;
+                //}
+
+                //foreach (var theme in dictionary.ThemeDictionaries)
+                //{
+                //    var item = theme.Value as ResourceDictionary;
+                //    if (accent.ThemeDictionaries.TryGetValue(theme.Key, out object value))
+                //    {
+                //        var pair = value as ResourceDictionary;
+                //        if (pair == null)
+                //        {
+                //            continue;
+                //        }
+
+                //        foreach (var key in item)
+                //        {
+                //            if (pair.ContainsKey(key.Key))
+                //            {
+                //                try
+                //                {
+                //                    pair[key.Key] = key.Value;
+                //                }
+                //                catch
+                //                {
+                //                    Debug.WriteLine("Theme: unable to apply " + key.Key);
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
+
+                //App.RaiseThemeChanged();
+            }
         }
     }
 

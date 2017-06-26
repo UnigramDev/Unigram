@@ -42,7 +42,7 @@ namespace Unigram.Converters
                     case TLUserStatusOffline offline:
                         return offline.WasOnline;
                     case TLUserStatusOnline online:
-                        return TLUtils.Now;
+                        return int.MaxValue;
                     case TLUserStatusRecently recently:
                         // recently
                         // Before within a week

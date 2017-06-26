@@ -10,7 +10,8 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Upload;
+using Telegram.Api.TL.Upload;
+using Telegram.Api.TL.Upload.Methods;
 using Windows.Foundation;
 using Windows.Security.Cryptography;
 using Windows.Storage;
@@ -156,6 +157,13 @@ namespace Telegram.Api.Services.FileManager
                         part.ParentItem.Parts.Insert(currentItemIndex + 1, missingPart);
                     }
                 }
+                else if (data.Length == part.Limit && (part.Number + 1) == part.ParentItem.Parts.Count)
+                {
+                    var currentItemIndex = part.ParentItem.Parts.IndexOf(part);
+                    var missingPart = new DownloadablePart(part.ParentItem, part.Offset + part.Limit, part.Limit, currentItemIndex + 1);
+
+                    part.ParentItem.Parts.Insert(currentItemIndex + 1, missingPart);
+                }
 
                 isCanceled = part.ParentItem.IsCancelled;
 
@@ -258,7 +266,7 @@ namespace Telegram.Api.Services.FileManager
                     Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
                 });
 
-            manualResetEvent.WaitOne();
+            manualResetEvent.WaitOne(20 * 1000);
             er = outError;
             isCanceled = outIsCanceled;
 
@@ -337,7 +345,7 @@ namespace Telegram.Api.Services.FileManager
                 Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
             });
 
-            manualResetEvent.WaitOne();
+            manualResetEvent.WaitOne(20 * 1000);
             er = outError;
             isCanceled = outIsCanceled;
 
@@ -395,7 +403,7 @@ namespace Telegram.Api.Services.FileManager
                 Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
             });
 
-            manualResetEvent.WaitOne();
+            manualResetEvent.WaitOne(20 * 1000);
             er = outError;
             isCanceled = outIsCanceled;
 

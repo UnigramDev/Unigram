@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Upload;
 
 namespace Telegram.Api.Services.FileManager
 {

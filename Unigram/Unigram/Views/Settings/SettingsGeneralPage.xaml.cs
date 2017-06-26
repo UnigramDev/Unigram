@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.Helpers;
+using Telegram.Api.Services;
+using Telegram.Api.Transport;
 using Unigram.ViewModels.Settings;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -29,6 +32,19 @@ namespace Unigram.Views.Settings
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<SettingsGeneralViewModel>();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            Socks5.Content = "ToggleSocks5: " + SettingsHelper.IsSocks5;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsHelper.IsSocks5 = !SettingsHelper.IsSocks5;
+            UnigramContainer.Current.ResolveType<ITransportService>().Close();
+            UnigramContainer.Current.ResolveType<IMTProtoService>().UpdateStatusAsync(false, null);
+            Socks5.Content = "ToggleSocks5: " + SettingsHelper.IsSocks5;
         }
     }
 }

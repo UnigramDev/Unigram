@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 06/03/2017 15:33:57
+// 	Generated: 06/25/2017 17:31:35
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -303,7 +303,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a contact"
+        /// Localized resource similar to "a contact"
         /// </summary>
         public static string MessageActionPinContact
         {
@@ -314,7 +314,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a file"
+        /// Localized resource similar to "a file"
         /// </summary>
         public static string MessageActionPinFile
         {
@@ -325,7 +325,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a game"
+        /// Localized resource similar to "a game"
         /// </summary>
         public static string MessageActionPinGame
         {
@@ -336,7 +336,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a GIF"
+        /// Localized resource similar to "a GIF"
         /// </summary>
         public static string MessageActionPinGif
         {
@@ -347,7 +347,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a map"
+        /// Localized resource similar to "a map"
         /// </summary>
         public static string MessageActionPinMap
         {
@@ -358,7 +358,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a message"
+        /// Localized resource similar to "a message"
         /// </summary>
         public static string MessageActionPinMessage
         {
@@ -369,7 +369,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a photo"
+        /// Localized resource similar to "a photo"
         /// </summary>
         public static string MessageActionPinPhoto
         {
@@ -380,7 +380,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a {1}sticker"
+        /// Localized resource similar to "a {0}sticker"
         /// </summary>
         public static string MessageActionPinSticker
         {
@@ -402,7 +402,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a track"
+        /// Localized resource similar to "track"
         /// </summary>
         public static string MessageActionPinTrack
         {
@@ -413,7 +413,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a video"
+        /// Localized resource similar to "a video"
         /// </summary>
         public static string MessageActionPinVideo
         {
@@ -424,7 +424,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned a voice message"
+        /// Localized resource similar to "a voice message"
         /// </summary>
         public static string MessageActionPinVoiceMessage
         {
@@ -1073,7 +1073,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} pinned an invoice"
+        /// Localized resource similar to "an invoice"
         /// </summary>
         public static string MessageActionPinInvoice
         {
@@ -1289,6 +1289,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UserGenitiveSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned {1}"
+        /// </summary>
+        public static string MessageActionPin
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPin");
             }
         }
     }

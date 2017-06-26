@@ -17,21 +17,32 @@ namespace Telegram.Api.TL
             var chat = chatBase as TLChat;
             if (chat != null)
             {
-                Title = chat.Title;
-                if (Photo.GetType() != chat.Photo.GetType())
-                {
-                    Photo = chat.Photo;    // при удалении фото чата не обновляется UI при _photo = c.Photo
-                }
-                else
-                {
-                    Photo.Update(chat.Photo);
-                }
-                ParticipantsCount = chat.ParticipantsCount;
-                Date = chat.Date;
-                IsLeft = chat.IsLeft;
-                Version = chat.Version;
+                // TODO: check if dirty?
 
-                Flags = chat.Flags;
+                this.Flags = chat.Flags;
+                this.Title = chat.Title;
+                this.Photo = chat.Photo;
+                this.ParticipantsCount = chat.ParticipantsCount;
+                this.Date = chat.Date;
+                this.Version = chat.Version;
+                this.MigratedTo = chat.MigratedTo;
+
+
+                //Title = chat.Title;
+                //if (Photo.GetType() != chat.Photo.GetType())
+                //{
+                //    Photo = chat.Photo;    // при удалении фото чата не обновляется UI при _photo = c.Photo
+                //}
+                //else
+                //{
+                //    Photo.Update(chat.Photo);
+                //}
+                //ParticipantsCount = chat.ParticipantsCount;
+                //Date = chat.Date;
+                //IsLeft = chat.IsLeft;
+                //Version = chat.Version;
+
+                //Flags = chat.Flags;
 
                 if (chat.ReadInboxMaxId != 0 && (ReadInboxMaxId == 0 || ReadInboxMaxId < chat.ReadInboxMaxId))
                 {
@@ -42,10 +53,10 @@ namespace Telegram.Api.TL
                     ReadOutboxMaxId = chat.ReadOutboxMaxId;
                 }
 
-                //if (c.CustomFlags != null)
-                //{
-                //    CustomFlags = c.CustomFlags;
-                //}
+                ////if (c.CustomFlags != null)
+                ////{
+                ////    CustomFlags = c.CustomFlags;
+                ////}
             }
         }
 

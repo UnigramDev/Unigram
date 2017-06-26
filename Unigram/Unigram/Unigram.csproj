@@ -20,8 +20,8 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>065F0B2E6BD36F1FD48AEA0B5546196B98A1546C</PackageCertificateThumbprint>
+    <AppxBundlePlatforms>x86|arm</AppxBundlePlatforms>
+    <PackageCertificateThumbprint>BCF3F68C8F50DE819284C634BE7D5030F61E2216</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -97,6 +97,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Behaviors\AspectRatioBehavior.cs" />
+    <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\Dialogs\OutputTypingManager.cs" />
     <Compile Include="Common\ImageLoader\ContentDrawer.cs" />
     <Compile Include="Common\ImageLoader\ImageLoader.cs" />
@@ -104,12 +105,17 @@
     <Compile Include="Common\MessageDialogExtensions.cs" />
     <Compile Include="Common\RatioControl.cs" />
     <Compile Include="Common\TextBlockHelper.cs" />
+    <Compile Include="Common\Theme.cs" />
     <Compile Include="Common\TLBitmapContext.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\VoIPConnection.cs" />
+    <Compile Include="Controls\DialogBackgroundPresenter.cs" />
     <Compile Include="Controls\GroupedGridView.cs" />
     <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
+    <Compile Include="Controls\Items\SharedLinkListViewItem.xaml.cs">
+      <DependentUpon>SharedLinkListViewItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\HistoryCallMessageControlBase.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
@@ -167,6 +173,9 @@
     <Compile Include="Controls\Views\SettingsDownloadView.xaml.cs">
       <DependentUpon>SettingsDownloadView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\ForwardView.xaml.cs">
+      <DependentUpon>ForwardView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\ShareView.xaml.cs">
       <DependentUpon>ShareView.xaml</DependentUpon>
     </Compile>
@@ -200,6 +209,8 @@
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
+    <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
+    <Compile Include="Services\PushService.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
@@ -235,7 +246,14 @@
     <Compile Include="ViewModels\Settings\SettingsPrivacyPhoneCallViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyStatusTimestampViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyViewModelBase.cs" />
+    <Compile Include="ViewModels\Settings\SettingsSecurityChangePasswordViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsSecurityPasswordViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsStatsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsWallPaperViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsPhoneSentCodeViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsPhoneViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsSecurityEnterPasswordViewModel.cs" />
+    <Compile Include="ViewModels\ForwardViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\SignIn\SignUpViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsAccountsViewModel.cs" />
@@ -252,8 +270,14 @@
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
+    <Compile Include="Views\Channels\ChannelAdminRightsPage.xaml.cs">
+      <DependentUpon>ChannelAdminRightsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Channels\ChannelAdminsPage.xaml.cs">
       <DependentUpon>ChannelAdminsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Channels\ChannelBannedRightsPage.xaml.cs">
+      <DependentUpon>ChannelBannedRightsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Channels\ChannelDetailsPage.xaml.cs">
       <DependentUpon>ChannelDetailsPage.xaml</DependentUpon>
@@ -312,6 +336,9 @@
     <Compile Include="Views\Settings\SettingsGeneralPage.xaml.cs">
       <DependentUpon>SettingsGeneralPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsPhoneWelcomePage.xaml.cs">
+      <DependentUpon>SettingsPhoneWelcomePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsPrivacyChatInvitePage.xaml.cs">
       <DependentUpon>SettingsPrivacyChatInvitePage.xaml</DependentUpon>
     </Compile>
@@ -321,8 +348,20 @@
     <Compile Include="Views\Settings\SettingsPrivacyStatusTimestampPage.xaml.cs">
       <DependentUpon>SettingsPrivacyStatusTimestampPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsSecurityChangePasswordPage.xaml.cs">
+      <DependentUpon>SettingsSecurityChangePasswordPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsSecurityEnterPasswordPage.xaml.cs">
+      <DependentUpon>SettingsSecurityEnterPasswordPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\SettingsStatsPage.xaml.cs">
       <DependentUpon>SettingsStatsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsPhonePage.xaml.cs">
+      <DependentUpon>SettingsPhonePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsPhoneSentCodePage.xaml.cs">
+      <DependentUpon>SettingsPhoneSentCodePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SignIn\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
@@ -821,7 +860,6 @@
     <Compile Include="Converters\StateToGlyphConverter.cs" />
     <Compile Include="Converters\TLIntToDateTimeConverter.cs" />
     <Compile Include="Converters\VenueToStaticImageConverter.cs" />
-    <Compile Include="Helpers\ColorHelper.cs" />
     <Compile Include="Helpers\PhraseListHelper.cs" />
     <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Helpers\ShareTargetHelper.cs" />
@@ -941,8 +979,8 @@
     <Compile Include="Views\Settings\SettingsUsernamePage.xaml.cs">
       <DependentUpon>SettingsUsernamePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsWallpaperPage.xaml.cs">
-      <DependentUpon>SettingsWallpaperPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsWallPaperPage.xaml.cs">
+      <DependentUpon>SettingsWallPaperPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ShareTargetPage.xaml.cs">
       <DependentUpon>ShareTargetPage.xaml</DependentUpon>
@@ -968,14 +1006,7 @@
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Icons\MessageStatus\ic_double_tick.png" />
-    <Content Include="Assets\Icons\MessageStatus\ic_double_tick_lightbg.png" />
-    <Content Include="Assets\Icons\MessageStatus\ic_single_tick.png" />
-    <Content Include="Assets\Icons\MessageStatus\ic_single_tick_lightbg.png" />
-    <Content Include="Assets\Icons\MessageStatus\ic_unsent_message.png" />
-    <Content Include="Assets\Icons\MessageStatus\ic_unsent_message_lightbg.png" />
     <Content Include="Assets\Icons\Toast\Send.png" />
-    <Content Include="Assets\Icons\userPos32.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-dark.png" />
     <Content Include="Assets\Images\DefaultBackground.theme-light.png" />
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-100.png" />
@@ -1054,11 +1085,6 @@
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Logos\Wide310x150Logo\Wide310x150Logo.scale-400.png" />
-    <Content Include="Assets\Mockups\Images\userPhoto.jpg" />
-    <Content Include="Assets\Mockups\Logos\logo-transparent.png" />
-    <Content Include="Assets\Mockups\Logos\logo.png" />
-    <Content Include="Assets\Mockups\README.txt" />
-    <Content Include="Assets\Mockups\UserIcons\user_batman.png" />
     <None Include="Package.StoreAssociation.xml">
       <SubType>Designer</SubType>
     </None>
@@ -1090,6 +1116,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\DialogSearchBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Items\SharedLinkListViewItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1197,6 +1227,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\ForwardView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Views\ShareView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1222,7 +1256,7 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
-    <Page Include="Themes\AccentSent.xaml">
+    <Page Include="Themes\AccentOut.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -1248,6 +1282,14 @@
     <Page Include="Views\AboutPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Channels\ChannelAdminRightsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Channels\ChannelBannedRightsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Channels\ChannelEditPage.xaml">
       <SubType>Designer</SubType>
@@ -1365,6 +1407,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\SettingsPhoneWelcomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\SettingsPrivacyChatInvitePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1377,9 +1423,25 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\SettingsSecurityChangePasswordPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsSecurityEnterPasswordPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\SettingsStatsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsPhonePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\SettingsPhoneSentCodePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\SignIn\SignInPasswordPage.xaml">
       <SubType>Designer</SubType>
@@ -1469,7 +1531,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\SettingsWallpaperPage.xaml">
+    <Page Include="Views\Settings\SettingsWallPaperPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

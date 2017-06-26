@@ -561,7 +561,7 @@
                  HorizontalAlignment="Stretch" 
                  Margin="12,8,4,8"/>-->
 
-            <Button Command="{x:Bind ViewModel.ShareCommand}" Content="Share" HorizontalAlignment="Stretch" Margin="12,8,4,8"/>
+            <Button Command="{x:Bind ViewModel.SendCommand}" Content="Share" HorizontalAlignment="Stretch" Margin="12,8,4,8"/>
 
             <Button Click="Close_Click" Content="Close" HorizontalAlignment="Stretch" Margin="4,8,12,8" Padding="24,4,24,4" Grid.Column="1"/>
         </Grid>

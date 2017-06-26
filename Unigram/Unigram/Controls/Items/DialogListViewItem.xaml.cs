@@ -68,7 +68,7 @@ namespace Unigram.Controls.Items
                 FromLabel.Text = UpdateFromLabel(ViewModel);
                 BriefLabel.Text = UpdateBriefLabel(ViewModel);
                 UpdateTimeLabel();
-                UpdateStateIcon();
+                //UpdateStateIcon();
                 UpdateUnreadCount();
                 UpdatePicture();
                 UpdateChannelType();
@@ -82,7 +82,7 @@ namespace Unigram.Controls.Items
                 FromLabel.Text = UpdateFromLabel(ViewModel);
                 BriefLabel.Text = UpdateBriefLabel(ViewModel);
                 UpdateTimeLabel();
-                UpdateStateIcon();
+                //UpdateStateIcon();
                 UpdateUnreadCount();
             }
             else if (e.PropertyName == "TopMessageItem")
@@ -90,7 +90,7 @@ namespace Unigram.Controls.Items
                 FromLabel.Text = UpdateFromLabel(ViewModel);
                 BriefLabel.Text = UpdateBriefLabel(ViewModel);
                 UpdateTimeLabel();
-                UpdateStateIcon();
+                //UpdateStateIcon();
                 UpdateUnreadCount();
             }
             else if (e.PropertyName == "UnreadCount")
@@ -320,7 +320,7 @@ namespace Unigram.Controls.Items
                             if (attribute != null)
                             {
                                 //return $"{text}{attribute.Alt} ({Resources.Sticker.ToLower()})";
-                                return result + attribute.FileName + caption;
+                                return result + document.FileName + caption;
                             }
                         }
 
@@ -425,6 +425,32 @@ namespace Unigram.Controls.Items
             {
                 StateIcon.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private string UpdateStateIcon(TLDraftMessageBase draft, TLMessageBase message, TLMessageState state)
+        {
+            if (draft is TLDraftMessage)
+            {
+                return string.Empty;
+            }
+
+            if (message is TLMessage topMessage)
+            {
+                if (topMessage.IsOut && IsOut(ViewModel))
+                {
+                    switch (state)
+                    {
+                        case TLMessageState.Sending:
+                            return "\uE600";
+                        case TLMessageState.Confirmed:
+                            return "\uE602";
+                        case TLMessageState.Read:
+                            return "\uE601";
+                    }
+                }
+            }
+
+            return string.Empty;
         }
 
         private void UpdateTimeLabel()

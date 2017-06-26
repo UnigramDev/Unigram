@@ -5,10 +5,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Core.Common;
 
 namespace Unigram.Common
 {
-    public class KeyedList<TKey, T> : ObservableCollection<T>, INotifyPropertyChanged
+    public class KeyedList<TKey, T> : MvxObservableCollection<T>
     {
         private TKey _key;
         public TKey Key
@@ -41,6 +42,11 @@ namespace Unigram.Common
             _key = source.Key;
         }
 
-        public new event PropertyChangedEventHandler PropertyChanged;
+        public void Update()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Count"));
+        }
+
+        protected override event PropertyChangedEventHandler PropertyChanged;
     }
 }

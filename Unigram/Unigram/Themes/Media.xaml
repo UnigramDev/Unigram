@@ -13,7 +13,7 @@
     mc:Ignorable="d">
 
     <DataTemplate x:Key="MediaMusicTemplate">
-        <Grid MinWidth="260">
+        <Grid MinWidth="220">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
@@ -30,7 +30,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaDocumentTemplate">
-        <Grid MinWidth="260">
+        <Grid MinWidth="220">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
@@ -47,7 +47,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaDocumentThumbTemplate">
-        <Grid MinWidth="260">
+        <Grid MinWidth="220">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
@@ -55,10 +55,8 @@
             <Grid Width="72" Height="72" Background="Black" VerticalAlignment="Top">
                 <Image Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" Width="72" Height="72" Stretch="UniformToFill"/>
 
-                <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                    <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                    <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-                </Grid>
+                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
             </Grid>
             <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
                 <TextBlock Text="{Binding Media.Document.FileName}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
@@ -68,7 +66,8 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaPhotoTemplate">
-        <Grid Background="Black"
+        <Grid x:Name="MediaControl"
+              Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
@@ -85,7 +84,8 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaVideoTemplate">
-        <Grid Background="Black"
+        <Grid x:Name="MediaControl"
+              Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
@@ -103,7 +103,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaRoundVideoTemplate">
-        <Grid>
+        <Grid x:Name="MediaControl">
             <Ellipse Fill="Black"/>
             <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                                 Constraint="{Binding Media.Document}"
@@ -115,10 +115,8 @@
                 <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
             </Border>
 
-            <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageOverlayBackgroundBrush}">
-                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" Foreground="White" CornerRadius="24" RequestedTheme="Dark"/>
-                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-            </Grid>
+            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
         </Grid>
     </DataTemplate>
 
@@ -130,24 +128,30 @@
     </DataTemplate>
 
     <!--<DataTemplate x:Key="MediaGifTemplate">
-        <Grid Background="Black"
-              MinWidth="{ThemeResource TelegramMediaMinWidth}"
-              MinHeight="{ThemeResource TelegramMediaMinHeight}">
-            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                Constraint="{Binding Media.Document}"
-                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
-        </Grid>
-    </DataTemplate>-->
+         <Grid Background="Black"
+         MinWidth="{ThemeResource TelegramMediaMinWidth}"
+         MinHeight="{ThemeResource TelegramMediaMinHeight}">
+         <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
+         Constraint="{Binding Media.Document}"
+         MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+         </Grid>
+         </DataTemplate>-->
 
     <DataTemplate x:Key="MediaGifTemplate">
-        <Grid Background="Black"
+        <Grid x:Name="MediaControl"
+              Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
-            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
+            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
                                 Constraint="{Binding Media.Document}"
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                Constraint="{Binding Media.Document}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                                Click="Photo_Click"/>
 
             <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
@@ -156,7 +160,7 @@
 
 
     <DataTemplate x:Key="MediaContactTemplate">
-        <Grid MinWidth="260">
+        <Grid MinWidth="220">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -192,10 +196,10 @@
                 </Border>
             </Border>
             <!--<Canvas Width="26" Height="31" VerticalAlignment="Center" Margin="0,-31,0,0">
-                <Path Canvas.Left="0.5" Canvas.Top="0.5" Width="25.162" Height="30" Data="F1M12.581,30C12.581,30 0,21.29 0,12.581 0,5.632 5.633,0 12.581,0 19.529,0 25.162,5.632 25.162,12.581 25.162,21.29 12.581,30 12.581,30" Fill="{ThemeResource MessageHeaderForegroundBrush}" StrokeThickness="0" />
-                <Path Width="26" Height="31" Data="F1M13,0C5.82,0 0,5.82 0,13 0,22 13,31 13,31 13,31 26,22 26,13 26,5.82 20.18,0 13,0 M13,2C19.065,2 24,6.935 24,13 24,18.866 16.876,25.546 13,28.521 9.124,25.546 2,18.866 2,13 2,6.935 6.935,2 13,2" Fill="White" StrokeThickness="0" />
-                <Path Canvas.Left="8" Canvas.Top="8" Width="10" Height="10" Data="F1M5,0C2.238,0 0,2.239 0,5 0,7.762 2.238,10 5,10 7.762,10 10,7.762 10,5 10,2.239 7.762,0 5,0" Fill="White" StrokeThickness="0" />
-            </Canvas>-->
+                 <Path Canvas.Left="0.5" Canvas.Top="0.5" Width="25.162" Height="30" Data="F1M12.581,30C12.581,30 0,21.29 0,12.581 0,5.632 5.633,0 12.581,0 19.529,0 25.162,5.632 25.162,12.581 25.162,21.29 12.581,30 12.581,30" Fill="{ThemeResource MessageHeaderForegroundBrush}" StrokeThickness="0" />
+                 <Path Width="26" Height="31" Data="F1M13,0C5.82,0 0,5.82 0,13 0,22 13,31 13,31 13,31 26,22 26,13 26,5.82 20.18,0 13,0 M13,2C19.065,2 24,6.935 24,13 24,18.866 16.876,25.546 13,28.521 9.124,25.546 2,18.866 2,13 2,6.935 6.935,2 13,2" Fill="White" StrokeThickness="0" />
+                 <Path Canvas.Left="8" Canvas.Top="8" Width="10" Height="10" Data="F1M5,0C2.238,0 0,2.239 0,5 0,7.762 2.238,10 5,10 7.762,10 10,7.762 10,5 10,2.239 7.762,0 5,0" Fill="White" StrokeThickness="0" />
+                 </Canvas>-->
         </Grid>
     </DataTemplate>
 
@@ -218,10 +222,10 @@
                     </Border>
                 </Border>
                 <!--<Canvas Width="26" Height="31" VerticalAlignment="Center" Margin="0,-31,0,0">
-                    <Path Canvas.Left="0.5" Canvas.Top="0.5" Width="25.162" Height="30" Data="F1M12.581,30C12.581,30 0,21.29 0,12.581 0,5.632 5.633,0 12.581,0 19.529,0 25.162,5.632 25.162,12.581 25.162,21.29 12.581,30 12.581,30" Fill="{ThemeResource MessageHeaderForegroundBrush}" StrokeThickness="0" />
-                    <Path Width="26" Height="31" Data="F1M13,0C5.82,0 0,5.82 0,13 0,22 13,31 13,31 13,31 26,22 26,13 26,5.82 20.18,0 13,0 M13,2C19.065,2 24,6.935 24,13 24,18.866 16.876,25.546 13,28.521 9.124,25.546 2,18.866 2,13 2,6.935 6.935,2 13,2" Fill="White" StrokeThickness="0" />
-                    <Path Canvas.Left="8" Canvas.Top="8" Width="10" Height="10" Data="F1M5,0C2.238,0 0,2.239 0,5 0,7.762 2.238,10 5,10 7.762,10 10,7.762 10,5 10,2.239 7.762,0 5,0" Fill="White" StrokeThickness="0" />
-                </Canvas>-->
+                     <Path Canvas.Left="0.5" Canvas.Top="0.5" Width="25.162" Height="30" Data="F1M12.581,30C12.581,30 0,21.29 0,12.581 0,5.632 5.633,0 12.581,0 19.529,0 25.162,5.632 25.162,12.581 25.162,21.29 12.581,30 12.581,30" Fill="{ThemeResource MessageHeaderForegroundBrush}" StrokeThickness="0" />
+                     <Path Width="26" Height="31" Data="F1M13,0C5.82,0 0,5.82 0,13 0,22 13,31 13,31 13,31 26,22 26,13 26,5.82 20.18,0 13,0 M13,2C19.065,2 24,6.935 24,13 24,18.866 16.876,25.546 13,28.521 9.124,25.546 2,18.866 2,13 2,6.935 6.935,2 13,2" Fill="White" StrokeThickness="0" />
+                     <Path Canvas.Left="8" Canvas.Top="8" Width="10" Height="10" Data="F1M5,0C2.238,0 0,2.239 0,5 0,7.762 2.238,10 5,10 7.762,10 10,7.762 10,5 10,2.239 7.762,0 5,0" Fill="White" StrokeThickness="0" />
+                     </Canvas>-->
             </Grid>
         </StackPanel>
     </DataTemplate>
@@ -285,12 +289,12 @@
                       MinWidth="{ThemeResource TelegramMediaMinWidth}"
                       MinHeight="{ThemeResource TelegramMediaMinHeight}">
                     <controls:ImageView Source="{Binding Media.WebPage.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
-                                Constraint="{Binding Media.WebPage.Photo}"
-                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Click="SingleMedia_Click"/>
+                                        Constraint="{Binding Media.WebPage.Photo}"
+                                        MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                                        MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Click="SingleMedia_Click"/>
 
                     <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.WebPage.Photo}" IsTransferring="{Binding Media.WebPage.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                     <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.WebPage.Photo.Progress}" IsHitTestVisible="False"/>
@@ -330,9 +334,9 @@
             </StackPanel>
 
             <Grid Background="Black"
-                    MinWidth="{ThemeResource TelegramMediaMinWidth}"
-                    MinHeight="{ThemeResource TelegramMediaMinHeight}"
-                    HorizontalAlignment="Left">
+                  MinWidth="{ThemeResource TelegramMediaMinWidth}"
+                  MinHeight="{ThemeResource TelegramMediaMinHeight}"
+                  HorizontalAlignment="Left">
                 <controls:ImageView Source="{Binding Media.Game.Document, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
                                     Constraint="{Binding Media.Game.Document}"
                                     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
@@ -364,9 +368,9 @@
             </StackPanel>
 
             <Grid Background="Black"
-                    MinWidth="{ThemeResource TelegramMediaMinWidth}"
-                    MinHeight="{ThemeResource TelegramMediaMinHeight}"
-                    Margin="-8,0,-10,0">
+                  MinWidth="{ThemeResource TelegramMediaMinWidth}"
+                  MinHeight="{ThemeResource TelegramMediaMinHeight}"
+                  Margin="-8,0,-10,0">
                 <controls:ImageView Source="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
                                     Constraint="{Binding Media.Photo}"
                                     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"

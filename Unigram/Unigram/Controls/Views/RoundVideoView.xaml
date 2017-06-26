@@ -65,8 +65,8 @@
             </Grid.ColumnDefinitions>
 
             <Grid x:Name="DetailPresenter" SizeChanged="OnSizeChanged" Margin="0,0,0,48">
-                <Ellipse x:Name="Capture" Width="200" Height="200" Fill="Gray"/>
-                <!--<CaptureElement x:Name="Capture" Stretch="UniformToFill" Width="200" Height="200"/>-->
+                <!--<Ellipse x:Name="Capture" Width="200" Height="200" Fill="Gray"/>-->
+                <CaptureElement x:Name="Capture" Stretch="UniformToFill" Width="200" Height="200"/>
 
                 <Path Fill="#54000000">
                     <Path.Data>

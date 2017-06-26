@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Payments;
 using Template10.Common;
 using Template10.Services.LoggingService;
 using Template10.Services.NavigationService;
@@ -105,6 +106,11 @@ namespace Unigram.Common
 
         public static async void NavigateToDialog(this INavigationService service, ITLDialogWith with, int? message = null, string accessToken = null)
         {
+            if (with == null)
+            {
+                return;
+            }
+
             if (with is TLUser user && user.IsRestricted)
             {
                 var reason = user.ExtractRestrictionReason();
@@ -115,12 +121,19 @@ namespace Unigram.Common
                 }
             }
 
-            if (with is TLChannel channel && channel.IsRestricted)
+            if (with is TLChannel channel)
             {
-                var reason = channel.ExtractRestrictionReason();
-                if (reason != null)
+                if (channel.IsRestricted)
                 {
-                    await TLMessageDialog.ShowAsync(reason, "Sorry", "OK");
+                    var reason = channel.ExtractRestrictionReason();
+                    if (reason != null)
+                    {
+                        await TLMessageDialog.ShowAsync(reason, "Sorry", "OK");
+                        return;
+                    }
+                }
+                else if ((channel.IsLeft || channel.IsKicked) && !channel.HasUsername)
+                {
                     return;
                 }
             }

@@ -351,6 +351,11 @@ namespace Unigram.Converters
 
             if (value is TLDocument tLDocument3)
             {
+                //if (TLMessage.IsGif(tLDocument3))
+                //{
+                //    return ReturnOrEnqueueGif(tLDocument3, thumbnail);
+                //}
+
                 return BitmapContext[tLDocument3, thumbnail];
 
                 if (TLMessage.IsSticker(tLDocument3))
@@ -621,16 +626,6 @@ namespace Unigram.Converters
                     bitmap.SetSource(photoCachedSize.Bytes);
                     return bitmap;
                 }
-            }
-
-            var width = 0;
-            var height = 0;
-
-            var videoAttribute = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
-            if (videoAttribute != null)
-            {
-                width = videoAttribute.W;
-                height = videoAttribute.H;
             }
 
             var filename = document.GetFileName();

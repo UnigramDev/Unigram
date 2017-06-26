@@ -113,13 +113,8 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 		ToastNotificationManager::History->RemoveGroup(group, L"App");
 		return;
 	}
-	
-	bool muted = false;
-	if (data->HasKey("mute"))
-	{
-		muted = data->GetNamedString("mute") == L"1";
-	}
 
+	auto muted = data->GetNamedString("mute", "0") == L"1";
 	if (!muted)
 	{
 		auto loc_key = data->GetNamedString("loc_key");

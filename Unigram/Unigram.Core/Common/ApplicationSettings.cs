@@ -7,6 +7,7 @@ using Windows.Storage;
 using Telegram.Api.TL;
 using Unigram.Core.Services;
 using Telegram.Api.Services;
+using Telegram.Api.TL.Account;
 
 namespace Unigram.Common
 {
@@ -126,6 +127,40 @@ namespace Unigram.Common
             {
                 _isContactsSyncEnabled = value;
                 AddOrUpdateValue("IsContactsSyncEnabled", value);
+            }
+        }
+
+        private int? _selectedBackground;
+        public int SelectedBackground
+        {
+            get
+            {
+                if (_selectedBackground == null)
+                    _selectedBackground = GetValueOrDefault("SelectedBackground", 1000001);
+
+                return _selectedBackground ?? 1000001;
+            }
+            set
+            {
+                _selectedBackground = value;
+                AddOrUpdateValue("SelectedBackground", value);
+            }
+        }
+
+        private int? _selectedColor;
+        public int SelectedColor
+        {
+            get
+            {
+                if (_selectedColor == null)
+                    _selectedColor = GetValueOrDefault("SelectedColor", 0);
+
+                return _selectedColor ?? 0;
+            }
+            set
+            {
+                _selectedColor = value;
+                AddOrUpdateValue("SelectedColor", value);
             }
         }
 

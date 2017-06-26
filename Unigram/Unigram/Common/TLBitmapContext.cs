@@ -5,15 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Common
 {
     public class TLBitmapContext
     {
-        private ConcurrentDictionary<object, Tuple<TLBitmapSource, WeakReference<BitmapImage>>> _context = new ConcurrentDictionary<object, Tuple<TLBitmapSource, WeakReference<BitmapImage>>>();
+        private ConcurrentDictionary<object, Tuple<TLBitmapSource, WeakReference<ImageSource>>> _context = new ConcurrentDictionary<object, Tuple<TLBitmapSource, WeakReference<ImageSource>>>();
 
-        public BitmapImage this[TLPhoto photo, bool thumbnail = true]
+        public ImageSource this[TLPhoto photo, bool thumbnail = true]
         {
             get
             {
@@ -22,8 +23,8 @@ namespace Unigram.Common
                     return null;
                 }
 
-                if (_context.TryGetValue(photo, out Tuple<TLBitmapSource, WeakReference<BitmapImage>> reference) && 
-                    reference.Item2.TryGetTarget(out BitmapImage target))
+                if (_context.TryGetValue(photo, out Tuple<TLBitmapSource, WeakReference<ImageSource>> reference) && 
+                    reference.Item2.TryGetTarget(out ImageSource target))
                 {
                     if (thumbnail == false)
                     {
@@ -34,9 +35,9 @@ namespace Unigram.Common
                 }
 
                 var bitmap = new TLBitmapSource(photo);
-                _context[photo] = new Tuple<TLBitmapSource, WeakReference<BitmapImage>>(bitmap, new WeakReference<BitmapImage>(bitmap.Image));
+                _context[photo] = new Tuple<TLBitmapSource, WeakReference<ImageSource>>(bitmap, new WeakReference<ImageSource>(bitmap.Image));
 
-                if (thumbnail == false)
+                if (!thumbnail)
                 {
                     bitmap.Download();
                 }
@@ -45,7 +46,7 @@ namespace Unigram.Common
             }
         }
 
-        public BitmapImage this[TLDocument document, bool thumbnail]
+        public ImageSource this[TLDocument document, bool? thumbnail]
         {
             get
             {
@@ -54,10 +55,16 @@ namespace Unigram.Common
                     return null;
                 }
 
-                if (_context.TryGetValue(document, out Tuple<TLBitmapSource, WeakReference<BitmapImage>> reference) &&
-                    reference.Item2.TryGetTarget(out BitmapImage target))
+                var key = (object)document;
+                if (thumbnail == true)
                 {
-                    if (!thumbnail)
+                    key = document.Id + "_thumbnail";
+                }
+
+                if (_context.TryGetValue(key, out Tuple<TLBitmapSource, WeakReference<ImageSource>> reference) &&
+                    reference.Item2.TryGetTarget(out ImageSource target))
+                {
+                    if (thumbnail == null)
                     {
                         reference.Item1.Download();
                     }
@@ -65,8 +72,14 @@ namespace Unigram.Common
                     return target;
                 }
 
-                var bitmap = new TLBitmapSource(document, thumbnail);
-                _context[document] = new Tuple<TLBitmapSource, WeakReference<BitmapImage>>(bitmap, new WeakReference<BitmapImage>(bitmap.Image));
+                var bitmap = new TLBitmapSource(document, thumbnail == true);
+                _context[key] = new Tuple<TLBitmapSource, WeakReference<ImageSource>>(bitmap, new WeakReference<ImageSource>(bitmap.Image));
+
+                if (thumbnail == null)
+                {
+                    bitmap.Download();
+                }
+
                 return bitmap.Image;
 
 
@@ -76,19 +89,19 @@ namespace Unigram.Common
                 //    context = _contextThumb;
                 //}
 
-                //if (context.TryGetValue(document, out Tuple<TLBitmapSource, WeakReference<BitmapImage>> reference) &&
-                //    reference.Item2.TryGetTarget(out BitmapImage target))
+                //if (context.TryGetValue(document, out Tuple<TLBitmapSource, WeakReference<ImageSource>> reference) &&
+                //    reference.Item2.TryGetTarget(out ImageSource target))
                 //{
                 //    return target;
                 //}
 
                 //var bitmap = new TLBitmapSource(document, thumbnail);
-                //context[document] = new Tuple<TLBitmapSource, WeakReference<BitmapImage>>(bitmap, new WeakReference<BitmapImage>(bitmap.Image));
+                //context[document] = new Tuple<TLBitmapSource, WeakReference<ImageSource>>(bitmap, new WeakReference<ImageSource>(bitmap.Image));
                 //return bitmap.Image;
             }
         }
 
-        public BitmapImage this[TLWebDocument document]
+        public ImageSource this[TLWebDocument document]
         {
             get
             {
@@ -97,19 +110,19 @@ namespace Unigram.Common
                     return null;
                 }
 
-                if (_context.TryGetValue(document, out Tuple<TLBitmapSource, WeakReference<BitmapImage>> reference) &&
-                    reference.Item2.TryGetTarget(out BitmapImage target))
+                if (_context.TryGetValue(document, out Tuple<TLBitmapSource, WeakReference<ImageSource>> reference) &&
+                    reference.Item2.TryGetTarget(out ImageSource target))
                 {
                     return target;
                 }
 
                 var bitmap = new TLBitmapSource(document);
-                _context[document] = new Tuple<TLBitmapSource, WeakReference<BitmapImage>>(bitmap, new WeakReference<BitmapImage>(bitmap.Image));
+                _context[document] = new Tuple<TLBitmapSource, WeakReference<ImageSource>>(bitmap, new WeakReference<ImageSource>(bitmap.Image));
                 return bitmap.Image;
             }
         }
 
-        public BitmapImage this[TLUser user]
+        public ImageSource this[TLUser user]
         {
             get
             {
@@ -124,19 +137,19 @@ namespace Unigram.Common
                     key = user.FullName;
                 }
 
-                if (_context.TryGetValue(key, out Tuple<TLBitmapSource, WeakReference<BitmapImage>> reference) &&
-                    reference.Item2.TryGetTarget(out BitmapImage target))
+                if (_context.TryGetValue(key, out Tuple<TLBitmapSource, WeakReference<ImageSource>> reference) &&
+                    reference.Item2.TryGetTarget(out ImageSource target))
                 {
                     return target;
                 }
 
                 var bitmap = new TLBitmapSource(user);
-                _context[key] = new Tuple<TLBitmapSource, WeakReference<BitmapImage>>(bitmap, new WeakReference<BitmapImage>(bitmap.Image));
+                _context[key] = new Tuple<TLBitmapSource, WeakReference<ImageSource>>(bitmap, new WeakReference<ImageSource>(bitmap.Image));
                 return bitmap.Image;
             }
         }
 
-        public BitmapImage this[TLChat chat]
+        public ImageSource this[TLChat chat]
         {
             get
             {
@@ -145,19 +158,19 @@ namespace Unigram.Common
                     return null;
                 }
 
-                if (_context.TryGetValue(chat.Photo, out Tuple<TLBitmapSource, WeakReference<BitmapImage>> reference) &&
-                    reference.Item2.TryGetTarget(out BitmapImage target))
+                if (_context.TryGetValue(chat.Photo, out Tuple<TLBitmapSource, WeakReference<ImageSource>> reference) &&
+                    reference.Item2.TryGetTarget(out ImageSource target))
                 {
                     return target;
                 }
 
                 var bitmap = new TLBitmapSource(chat);
-                _context[chat.Photo] = new Tuple<TLBitmapSource, WeakReference<BitmapImage>>(bitmap, new WeakReference<BitmapImage>(bitmap.Image));
+                _context[chat.Photo] = new Tuple<TLBitmapSource, WeakReference<ImageSource>>(bitmap, new WeakReference<ImageSource>(bitmap.Image));
                 return bitmap.Image;
             }
         }
 
-        public BitmapImage this[TLChatForbidden forbiddenChat]
+        public ImageSource this[TLChatForbidden forbiddenChat]
         {
             get
             {
@@ -166,19 +179,19 @@ namespace Unigram.Common
                     return null;
                 }
 
-                if (_context.TryGetValue(forbiddenChat.Title, out Tuple<TLBitmapSource, WeakReference<BitmapImage>> reference) &&
-                    reference.Item2.TryGetTarget(out BitmapImage target))
+                if (_context.TryGetValue(forbiddenChat.Title, out Tuple<TLBitmapSource, WeakReference<ImageSource>> reference) &&
+                    reference.Item2.TryGetTarget(out ImageSource target))
                 {
                     return target;
                 }
 
                 var bitmap = new TLBitmapSource(forbiddenChat);
-                _context[forbiddenChat.Title] = new Tuple<TLBitmapSource, WeakReference<BitmapImage>>(bitmap, new WeakReference<BitmapImage>(bitmap.Image));
+                _context[forbiddenChat.Title] = new Tuple<TLBitmapSource, WeakReference<ImageSource>>(bitmap, new WeakReference<ImageSource>(bitmap.Image));
                 return bitmap.Image;
             }
         }
 
-        public BitmapImage this[TLChannel channel]
+        public ImageSource this[TLChannel channel]
         {
             get
             {
@@ -193,14 +206,14 @@ namespace Unigram.Common
                     key = channel.Title;
                 }
 
-                if (_context.TryGetValue(key, out Tuple<TLBitmapSource, WeakReference<BitmapImage>> reference) &&
-                    reference.Item2.TryGetTarget(out BitmapImage target))
+                if (_context.TryGetValue(key, out Tuple<TLBitmapSource, WeakReference<ImageSource>> reference) &&
+                    reference.Item2.TryGetTarget(out ImageSource target))
                 {
                     return target;
                 }
 
                 var bitmap = new TLBitmapSource(channel);
-                _context[key] = new Tuple<TLBitmapSource, WeakReference<BitmapImage>>(bitmap, new WeakReference<BitmapImage>(bitmap.Image));
+                _context[key] = new Tuple<TLBitmapSource, WeakReference<ImageSource>>(bitmap, new WeakReference<ImageSource>(bitmap.Image));
                 return bitmap.Image;
             }
         }

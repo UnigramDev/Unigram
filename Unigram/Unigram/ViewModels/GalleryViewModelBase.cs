@@ -1,17 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Template10.Common;
 using Template10.Mvvm;
 using Unigram.Common;
 using Unigram.Controls.Views;
+using Unigram.Converters;
 using Unigram.Core.Common;
+using Unigram.ViewModels.Chats;
+using Unigram.ViewModels.Users;
+using Windows.Storage;
+using Windows.System;
 
 namespace Unigram.ViewModels
 {
@@ -104,6 +112,14 @@ namespace Unigram.ViewModels
 
         protected virtual void LoadNext() { }
 
+        public virtual bool CanGoto
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public virtual bool CanDelete
         {
             get
@@ -117,6 +133,14 @@ namespace Unigram.ViewModels
             get
             {
                 return false;
+            }
+        }
+
+        public virtual bool CanOpenWith
+        {
+            get
+            {
+                return true;
             }
         }
 
@@ -144,9 +168,96 @@ namespace Unigram.ViewModels
             }
         }
 
+        public RelayCommand GotoCommand => new RelayCommand(GotoExecute);
+        protected virtual void GotoExecute()
+        {
+            NavigationService.GoBack();
+
+            TLMessageCommonBase messageCommon = null;
+            if (_selectedItem is GalleryMessageItem messageItem)
+            {
+                messageCommon = messageItem.Message;
+            }
+            else if (_selectedItem is GalleryMessageServiceItem serviceItem)
+            {
+                messageCommon = serviceItem.Message;
+            }
+
+            var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+            if (service != null && messageCommon != null)
+            {
+                service.NavigateToDialog(messageCommon.Parent, messageCommon.Id);
+            }
+        }
+
         public RelayCommand DeleteCommand => new RelayCommand(DeleteExecute);
         protected virtual void DeleteExecute()
         {
+        }
+
+        public RelayCommand OpenWithCommand => new RelayCommand(OpenWithExecute);
+        protected virtual async void OpenWithExecute()
+        {
+            object value = null;
+
+            if (SelectedItem is GalleryMessageItem messageItem)
+            {
+                if (messageItem.Message.Media is TLMessageMediaPhoto photoMedia)
+                {
+                    value = photoMedia.Photo;
+                }
+                else if (messageItem.Message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                {
+                    value = document;
+                }
+            }
+            else if (SelectedItem is GalleryMessageServiceItem serviceItem && serviceItem.Message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction)
+            {
+                value = chatEditPhotoAction.Photo;
+            }
+            else if (SelectedItem is GalleryPhotoItem photoItem)
+            {
+                value = photoItem.Photo;
+            }
+            else if (SelectedItem is GalleryDocumentItem documentItem)
+            {
+                value = documentItem.Document;
+            }
+
+            if (value is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
+            {
+                var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
+                var file = await FileUtils.TryGetTempFileAsync(fileName);
+                if (file != null)
+                {
+                    var options = new LauncherOptions();
+                    options.DisplayApplicationPicker = true;
+
+                    await Launcher.LaunchFileAsync(file as StorageFile, options);
+                }
+            }
+            else if (value is TLDocument document)
+            {
+                var fileName = document.GetFileName();
+                var file = await FileUtils.TryGetTempFileAsync(fileName);
+                if (file != null)
+                {
+                    var options = new LauncherOptions();
+                    options.DisplayApplicationPicker = true;
+
+                    await Launcher.LaunchFileAsync(file as StorageFile, options);
+                }
+            }
+
+            // Get the source 
+            //var something = (TLPhoto)DefaultPhotoConverter.Convert(_selectedItem.Source);
+            //var sizeBase = something.Full;
+            //var photoSize = sizeBase as TLPhotoSize;
+            //var fileLocation = photoSize.Location as TLFileLocation;
+            //fileLocation.   // Find a way to get the IStorageFile of that darn picture
+
+            // Open that file
+            //await Windows.System.Launcher.LaunchFileAsync(*INSERT FILE HERE*);
         }
     }
 
