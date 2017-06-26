@@ -21,6 +21,8 @@ using Unigram.Controls;
 using Template10.Common;
 using System.ComponentModel;
 using Unigram.Common;
+using Windows.UI.Core;
+using Windows.System;
 
 namespace Unigram.Views
 {
@@ -34,6 +36,25 @@ namespace Unigram.Views
             DataContext = UnigramContainer.Current.ResolveType<DialogSharedMediaViewModel>();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+        }
+
+        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        {
+            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased && ViewModel.SelectionMode != ListViewSelectionMode.None)
+            {
+                ViewModel.SelectionMode = ListViewSelectionMode.None;
+                args.Handled = true;
+            }
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
