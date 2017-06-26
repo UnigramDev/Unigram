@@ -117,7 +117,7 @@
                     <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
                 </Grid>
                 <FontIcon Glyph="&#xE198;"
-                          Visibility="{x:Bind ViewModel.MutedVisibility, Mode=OneWay}"
+                          Visibility="{x:Bind (Visibility)ViewModel.IsMuted, Mode=OneWay}"
                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                           VerticalAlignment="Bottom"
                           FontSize="16"
@@ -190,8 +190,8 @@
                   Margin="8,1,0,0"
                   Visibility="Collapsed"
                   Grid.Column="2">
-                <Border Visibility="{x:Bind UpdateUnreadBadgeBrush(ViewModel.NotifySettings)}" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"/>
-                <Border Visibility="{x:Bind UpdateUnreadBadgeMutedBrush(ViewModel.NotifySettings)}" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeMutedBrush}"/>
+                <Border Visibility="{x:Bind ViewModel.IsMuted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"/>
+                <Border Visibility="{x:Bind ViewModel.IsMuted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" MinWidth="20" Height="20" CornerRadius="10" Background="{ThemeResource TelegramDialogUnreadBadgeMutedBrush}"/>
                 <TextBlock x:Name="UnreadBadge"
                            Text="{Binding UnreadCount}"
                            Style="{ThemeResource CaptionTextBlockStyle}"

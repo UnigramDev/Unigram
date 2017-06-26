@@ -55,6 +55,8 @@ namespace Unigram.Controls.Views
             ViewModel.Messages = messages;
             ViewModel.SwitchInline = null;
             ViewModel.SwitchInlineBot = null;
+            ViewModel.SendMessage = null;
+            ViewModel.SendMessageUrl = false;
 
             return ShowAsync();
         }
@@ -64,9 +66,24 @@ namespace Unigram.Controls.Views
             ViewModel.Messages = null;
             ViewModel.SwitchInline = switchInline;
             ViewModel.SwitchInlineBot = bot;
+            ViewModel.SendMessage = null;
+            ViewModel.SendMessageUrl = false;
 
             return ShowAsync();
         }
+
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(string message, bool hasUrl)
+        {
+            ViewModel.Messages = null;
+            ViewModel.SwitchInline = null;
+            ViewModel.SwitchInlineBot = null;
+            ViewModel.SendMessage = message;
+            ViewModel.SendMessageUrl = hasUrl;
+
+            return ShowAsync();
+        }
+
+
 
         private Border LineTop;
         private Border LineAccent;

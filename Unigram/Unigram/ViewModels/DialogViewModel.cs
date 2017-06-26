@@ -353,8 +353,24 @@ namespace Unigram.ViewModels
         public BubbleTextBox TextField { get; set; }
         public BubbleListView ListField { get; set; }
 
+        public void SetSelection(int start)
+        {
+            if (TextField == null)
+            {
+                return;
+            }
+
+            TextField.Document.GetText(TextGetOptions.None, out string text);
+            TextField.Document.Selection.SetRange(start, text.Length);
+        }
+
         public void SetText(string text, TLVector<TLMessageEntityBase> entities = null, bool focus = false)
         {
+            if (TextField == null)
+            {
+                return;
+            }
+
             if (With is TLChannel channel)
             {
                 if (channel.IsBroadcast && (!channel.IsCreator || !channel.IsEditor || !channel.IsModerator))
@@ -380,6 +396,11 @@ namespace Unigram.ViewModels
 
         public string GetText()
         {
+            if (TextField == null)
+            {
+                return null;
+            }
+
             TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
             return text;
         }
@@ -957,6 +978,21 @@ namespace Unigram.ViewModels
 
                 App.InMemoryState.SwitchInline = null;
                 App.InMemoryState.SwitchInlineBot = null;
+            }
+            else if (App.InMemoryState.SendMessage != null)
+            {
+                var message = App.InMemoryState.SendMessage;
+                var hasUrl = App.InMemoryState.SendMessageUrl;
+
+                SetText(message);
+
+                if (hasUrl)
+                {
+                    SetSelection(message.IndexOf('\n') + 1);
+                }
+
+                App.InMemoryState.SendMessage = null;
+                App.InMemoryState.SendMessageUrl = false;
             }
             else
             {
@@ -2098,7 +2134,7 @@ namespace Unigram.ViewModels
                         {
                             dialog.NotifySettings = _currentDialog.NotifySettings;
                             dialog.RaisePropertyChanged(() => dialog.NotifySettings);
-                            dialog.RaisePropertyChanged(() => dialog.MutedVisibility);
+                            dialog.RaisePropertyChanged(() => dialog.IsMuted);
                             dialog.RaisePropertyChanged(() => dialog.Self);
 
                             var chatFull = CacheService.GetFullChat(channel.Id);

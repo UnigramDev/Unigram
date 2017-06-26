@@ -527,6 +527,9 @@ namespace Unigram
         public TLKeyboardButtonSwitchInline SwitchInline { get; set; }
         public TLUser SwitchInlineBot { get; set; }
 
+        public string SendMessage { get; set; }
+        public bool SendMessageUrl { get; set; }
+
         public int? NavigateToMessage { get; set; }
         public string NavigateToAccessToken { get; set; }
     }

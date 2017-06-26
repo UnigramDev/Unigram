@@ -548,7 +548,7 @@ namespace Unigram.ViewModels
             TLNotifyPeer notifyPeer = notifySettings.Peer as TLNotifyPeer;
             if (notifyPeer != null)
             {
-                Execute.BeginOnUIThread(delegate
+                Execute.BeginOnUIThread(() =>
                 {
                     for (int i = 0; i < Items.Count; i++)
                     {
@@ -556,7 +556,7 @@ namespace Unigram.ViewModels
                         if (dialog != null && dialog.Peer != null && dialog.Peer.Id == notifyPeer.Peer.Id && dialog.Peer.GetType() == notifyPeer.Peer.GetType())
                         {
                             dialog.RaisePropertyChanged(() => dialog.NotifySettings);
-                            dialog.RaisePropertyChanged(() => dialog.MutedVisibility);
+                            dialog.RaisePropertyChanged(() => dialog.IsMuted);
                             dialog.RaisePropertyChanged(() => dialog.Self);
                             return;
                         }
