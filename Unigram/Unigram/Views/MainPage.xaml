@@ -178,6 +178,7 @@
                                                 PreventKeyboardDisplayOnProgrammaticFocus="True"
                                                 PlaceholderText="Search chats and messages"
                                                 TextChanged="txtSearch_TextChanged"
+                                                KeyDown="txtSearch_KeyDown"
                                                 Canvas.ZIndex="1"/>
                         <Grid Canvas.ZIndex="-1" Grid.Row="1">
                             <controls:ScrollViewerBackground

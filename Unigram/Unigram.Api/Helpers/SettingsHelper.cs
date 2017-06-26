@@ -256,16 +256,16 @@ namespace Telegram.Api.Helpers
             }
         }
 
-        public static string ProxyPort
+        public static int ProxyPort
         {
             get
             {
                 if (ApplicationData.Current.LocalSettings.Values.ContainsKey("ProxyPort"))
                 {
-                    return ApplicationData.Current.LocalSettings.Values["ProxyPort"] as string;
+                    return (int)ApplicationData.Current.LocalSettings.Values["ProxyPort"];
                 }
 
-                return null;
+                return 1080;
             }
             set
             {
