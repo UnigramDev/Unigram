@@ -12,12 +12,15 @@ namespace Telegram.Api.TL.Messages.Methods
 		[Flags]
 		public enum Flag : Int32
 		{
-			None = 0
+			FromId = (1 << 0),
 		}
+
+		public bool HasFromId { get { return Flags.HasFlag(Flag.FromId); } set { Flags = value ? (Flags | Flag.FromId) : (Flags & ~Flag.FromId); } }
 
 		public Flag Flags { get; set; }
 		public TLInputPeerBase Peer { get; set; }
 		public String Q { get; set; }
+		public TLInputUserBase FromId { get; set; }
 		public TLMessagesFilterBase Filter { get; set; }
 		public Int32 MinDate { get; set; }
 		public Int32 MaxDate { get; set; }
@@ -38,6 +41,7 @@ namespace Telegram.Api.TL.Messages.Methods
 			Flags = (Flag)from.ReadInt32();
 			Peer = TLFactory.Read<TLInputPeerBase>(from);
 			Q = from.ReadString();
+			if (HasFromId) FromId = TLFactory.Read<TLInputUserBase>(from);
 			Filter = TLFactory.Read<TLMessagesFilterBase>(from);
 			MinDate = from.ReadInt32();
 			MaxDate = from.ReadInt32();
@@ -48,16 +52,24 @@ namespace Telegram.Api.TL.Messages.Methods
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0xD4569248);
+			UpdateFlags();
+
+			to.Write(0xF288A275);
 			to.Write((Int32)Flags);
 			to.WriteObject(Peer);
 			to.Write(Q);
+			if (HasFromId) to.WriteObject(FromId);
 			to.WriteObject(Filter);
 			to.Write(MinDate);
 			to.Write(MaxDate);
 			to.Write(Offset);
 			to.Write(MaxId);
 			to.Write(Limit);
+		}
+
+		private void UpdateFlags()
+		{
+			HasFromId = FromId != null;
 		}
 	}
 }

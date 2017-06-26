@@ -13,6 +13,7 @@ namespace Telegram.Api.TL
 			ParticipantsCount = (1 << 0),
 			AdminsCount = (1 << 1),
 			KickedCount = (1 << 2),
+			BannedCount = (1 << 2),
 			MigratedFromChatId = (1 << 4),
 			MigratedFromMaxId = (1 << 4),
 			PinnedMsgId = (1 << 5),
@@ -23,6 +24,7 @@ namespace Telegram.Api.TL
 		public bool HasParticipantsCount { get { return Flags.HasFlag(Flag.ParticipantsCount); } set { Flags = value ? (Flags | Flag.ParticipantsCount) : (Flags & ~Flag.ParticipantsCount); } }
 		public bool HasAdminsCount { get { return Flags.HasFlag(Flag.AdminsCount); } set { Flags = value ? (Flags | Flag.AdminsCount) : (Flags & ~Flag.AdminsCount); } }
 		public bool HasKickedCount { get { return Flags.HasFlag(Flag.KickedCount); } set { Flags = value ? (Flags | Flag.KickedCount) : (Flags & ~Flag.KickedCount); } }
+		public bool HasBannedCount { get { return Flags.HasFlag(Flag.BannedCount); } set { Flags = value ? (Flags | Flag.BannedCount) : (Flags & ~Flag.BannedCount); } }
 		public bool HasMigratedFromChatId { get { return Flags.HasFlag(Flag.MigratedFromChatId); } set { Flags = value ? (Flags | Flag.MigratedFromChatId) : (Flags & ~Flag.MigratedFromChatId); } }
 		public bool HasMigratedFromMaxId { get { return Flags.HasFlag(Flag.MigratedFromMaxId); } set { Flags = value ? (Flags | Flag.MigratedFromMaxId) : (Flags & ~Flag.MigratedFromMaxId); } }
 		public bool HasPinnedMsgId { get { return Flags.HasFlag(Flag.PinnedMsgId); } set { Flags = value ? (Flags | Flag.PinnedMsgId) : (Flags & ~Flag.PinnedMsgId); } }
@@ -32,6 +34,7 @@ namespace Telegram.Api.TL
 		public Int32? ParticipantsCount { get; set; }
 		public Int32? AdminsCount { get; set; }
 		public Int32? KickedCount { get; set; }
+		public Int32? BannedCount { get; set; }
 		public Int32 ReadInboxMaxId { get; set; }
 		public Int32 ReadOutboxMaxId { get; set; }
 		public Int32 UnreadCount { get; set; }
@@ -55,6 +58,7 @@ namespace Telegram.Api.TL
 			if (HasParticipantsCount) ParticipantsCount = from.ReadInt32();
 			if (HasAdminsCount) AdminsCount = from.ReadInt32();
 			if (HasKickedCount) KickedCount = from.ReadInt32();
+			if (HasBannedCount) BannedCount = from.ReadInt32();
 			ReadInboxMaxId = from.ReadInt32();
 			ReadOutboxMaxId = from.ReadInt32();
 			UnreadCount = from.ReadInt32();
@@ -71,13 +75,14 @@ namespace Telegram.Api.TL
 		{
 			UpdateFlags();
 
-			to.Write(0xC3D5512F);
+			to.Write(0x95CB5F57);
 			to.Write((Int32)Flags);
 			to.Write(Id);
 			to.Write(About);
 			if (HasParticipantsCount) to.Write(ParticipantsCount.Value);
 			if (HasAdminsCount) to.Write(AdminsCount.Value);
 			if (HasKickedCount) to.Write(KickedCount.Value);
+			if (HasBannedCount) to.Write(BannedCount.Value);
 			to.Write(ReadInboxMaxId);
 			to.Write(ReadOutboxMaxId);
 			to.Write(UnreadCount);
@@ -95,6 +100,7 @@ namespace Telegram.Api.TL
 			HasParticipantsCount = ParticipantsCount != null;
 			HasAdminsCount = AdminsCount != null;
 			HasKickedCount = KickedCount != null;
+			HasBannedCount = BannedCount != null;
 			HasMigratedFromChatId = MigratedFromChatId != null;
 			HasMigratedFromMaxId = MigratedFromMaxId != null;
 			HasPinnedMsgId = PinnedMsgId != null;

@@ -7,6 +7,6 @@ namespace Telegram.Api.TL
 	{
 		public TLVector<TLPageBlockBase> Blocks { get; set; }
 		public TLVector<TLPhotoBase> Photos { get; set; }
-		public TLVector<TLDocumentBase> Videos { get; set; }
+		public TLVector<TLDocumentBase> Documents { get; set; }
 	}
 }

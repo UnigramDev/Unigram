@@ -11,7 +11,7 @@ namespace Telegram.Api.TL.Channels.Methods
 	{
 		public TLInputChannelBase Channel { get; set; }
 		public TLInputUserBase UserId { get; set; }
-		public TLChannelParticipantRoleBase Role { get; set; }
+		public TLChannelAdminRights AdminRights { get; set; }
 
 		public TLChannelsEditAdmin() { }
 		public TLChannelsEditAdmin(TLBinaryReader from)
@@ -25,15 +25,15 @@ namespace Telegram.Api.TL.Channels.Methods
 		{
 			Channel = TLFactory.Read<TLInputChannelBase>(from);
 			UserId = TLFactory.Read<TLInputUserBase>(from);
-			Role = TLFactory.Read<TLChannelParticipantRoleBase>(from);
+			AdminRights = TLFactory.Read<TLChannelAdminRights>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0xEB7611D0);
+			to.Write(0x20B88214);
 			to.WriteObject(Channel);
 			to.WriteObject(UserId);
-			to.WriteObject(Role);
+			to.WriteObject(AdminRights);
 		}
 	}
 }

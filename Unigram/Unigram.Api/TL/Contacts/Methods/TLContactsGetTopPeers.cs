@@ -15,6 +15,7 @@ namespace Telegram.Api.TL.Contacts.Methods
 			Correspondents = (1 << 0),
 			BotsPm = (1 << 1),
 			BotsInline = (1 << 2),
+			PhoneCalls = (1 << 3),
 			Groups = (1 << 10),
 			Channels = (1 << 15),
 		}
@@ -22,6 +23,7 @@ namespace Telegram.Api.TL.Contacts.Methods
 		public bool IsCorrespondents { get { return Flags.HasFlag(Flag.Correspondents); } set { Flags = value ? (Flags | Flag.Correspondents) : (Flags & ~Flag.Correspondents); } }
 		public bool IsBotsPm { get { return Flags.HasFlag(Flag.BotsPm); } set { Flags = value ? (Flags | Flag.BotsPm) : (Flags & ~Flag.BotsPm); } }
 		public bool IsBotsInline { get { return Flags.HasFlag(Flag.BotsInline); } set { Flags = value ? (Flags | Flag.BotsInline) : (Flags & ~Flag.BotsInline); } }
+		public bool IsPhoneCalls { get { return Flags.HasFlag(Flag.PhoneCalls); } set { Flags = value ? (Flags | Flag.PhoneCalls) : (Flags & ~Flag.PhoneCalls); } }
 		public bool IsGroups { get { return Flags.HasFlag(Flag.Groups); } set { Flags = value ? (Flags | Flag.Groups) : (Flags & ~Flag.Groups); } }
 		public bool IsChannels { get { return Flags.HasFlag(Flag.Channels); } set { Flags = value ? (Flags | Flag.Channels) : (Flags & ~Flag.Channels); } }
 

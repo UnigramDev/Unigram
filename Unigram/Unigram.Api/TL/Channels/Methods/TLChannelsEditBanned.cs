@@ -4,36 +4,36 @@ using System;
 namespace Telegram.Api.TL.Channels.Methods
 {
 	/// <summary>
-	/// RCP method channels.kickFromChannel.
+	/// RCP method channels.editBanned.
 	/// Returns <see cref="Telegram.Api.TL.TLUpdatesBase"/>
 	/// </summary>
-	public partial class TLChannelsKickFromChannel : TLObject
+	public partial class TLChannelsEditBanned : TLObject
 	{
 		public TLInputChannelBase Channel { get; set; }
 		public TLInputUserBase UserId { get; set; }
-		public Boolean Kicked { get; set; }
+		public TLChannelBannedRights BannedRights { get; set; }
 
-		public TLChannelsKickFromChannel() { }
-		public TLChannelsKickFromChannel(TLBinaryReader from)
+		public TLChannelsEditBanned() { }
+		public TLChannelsEditBanned(TLBinaryReader from)
 		{
 			Read(from);
 		}
 
-		public override TLType TypeId { get { return TLType.ChannelsKickFromChannel; } }
+		public override TLType TypeId { get { return TLType.ChannelsEditBanned; } }
 
 		public override void Read(TLBinaryReader from)
 		{
 			Channel = TLFactory.Read<TLInputChannelBase>(from);
 			UserId = TLFactory.Read<TLInputUserBase>(from);
-			Kicked = from.ReadBoolean();
+			BannedRights = TLFactory.Read<TLChannelBannedRights>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0xA672DE14);
+			to.Write(0xBFD915CD);
 			to.WriteObject(Channel);
 			to.WriteObject(UserId);
-			to.Write(Kicked);
+			to.WriteObject(BannedRights);
 		}
 	}
 }
