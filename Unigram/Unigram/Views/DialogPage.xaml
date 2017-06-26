@@ -1659,17 +1659,17 @@
                                               Glyph="&#xE613;"
                                               Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               FontFamily="{ThemeResource TelegramThemeFontFamily}"
-                                              VerticalAlignment="Bottom"
-                                              Grid.Column="1"/>
+                                              VerticalAlignment="Bottom"/>
                     </Border>
 
-                    <controls:GlyphButton x:Name="btnStickers"
-                                          Click="Stickers_Click"
-                                          AllowFocusOnInteraction="False"
-                                          Glyph="&#xE606;"
-                                          FontFamily="{ThemeResource TelegramThemeFontFamily}"
-                                          VerticalAlignment="Bottom"
-                                          Grid.Column="2"/>
+                    <Border x:Name="btnStickers" Grid.Column="2">
+                        <controls:GlyphButton x:Name="ButtonStickers"
+                                              Click="Stickers_Click"
+                                              AllowFocusOnInteraction="False"
+                                              Glyph="&#xE606;"
+                                              FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                              VerticalAlignment="Bottom"/>
+                    </Border>
 
                     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="{Binding HardwareService.IsMicrophoneAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" VerticalAlignment="Bottom" Grid.Column="3" Canvas.ZIndex="1000">
                         <Ellipse x:Name="Ellipse" Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="96" Height="96" Margin="-24" HorizontalAlignment="Center" VerticalAlignment="Center"/>

@@ -260,7 +260,7 @@ namespace Telegram.Api.Services.Updates
                     {
                         result = true;
                         break;
-                    }   
+                    }
                 }
             }
 
@@ -312,126 +312,126 @@ namespace Telegram.Api.Services.Updates
             GetDifferenceAsync(pts.Value, date.Value, qts.Value,
                 diff =>
                 {
-//#if DEBUG
-//                    Execute.BeginOnThreadPool(TimeSpan.FromSeconds(5.0), () =>
-//                    {
-//#endif
+                    //#if DEBUG
+                    //                    Execute.BeginOnThreadPool(TimeSpan.FromSeconds(5.0), () =>
+                    //                    {
+                    //#endif
 
-                        var processDiffStopwatch = Stopwatch.StartNew();
+                    var processDiffStopwatch = Stopwatch.StartNew();
 
-                        var differenceEmpty = diff as TLUpdatesDifferenceEmpty;
-                        if (differenceEmpty != null)
-                        {
+                    var differenceEmpty = diff as TLUpdatesDifferenceEmpty;
+                    if (differenceEmpty != null)
+                    {
 #if LOG_CLIENTSEQ
-                            TLUtils.WriteLine(
-                                string.Format("{0} {1} clientSeq={2} newSeq={3} pts={4}",
-                                    DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture),
-                                    "processDiff empty", ClientSeq, differenceEmpty.Seq, _pts), LogSeverity.Error);
+                        TLUtils.WriteLine(
+                            string.Format("{0} {1} clientSeq={2} newSeq={3} pts={4}",
+                                DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture),
+                                "processDiff empty", ClientSeq, differenceEmpty.Seq, _pts), LogSeverity.Error);
 #endif
-                            _date = differenceEmpty.Date;
-                            lock (_clientSeqLock)
-                            {
-                                ClientSeq = differenceEmpty.Seq;
-                            }
-
-                            Logs.Log.Write(string.Format("UpdatesService.GetDifference {0} result {1} elapsed={2}", id,
-                                diff, processDiffStopwatch.Elapsed));
-
-                            TLUtils.WritePerformance("UpdateService.GetDifference empty result=" + differenceEmpty.Seq);
-
-                            Execute.BeginOnThreadPool(() =>
-                            {
-                                var updateChannelTooLongList = new List<TLUpdateChannelTooLong>();
-
-                                lock (_updateChannelTooLongSyncRoot)
-                                {
-                                    foreach (var keyValue in _updateChannelTooLongList)
-                                    {
-                                        updateChannelTooLongList.Add(keyValue.Value);
-                                    }
-                                    _updateChannelTooLongList.Clear();
-                                }
-
-                                _eventAggregator.Publish(new UpdateChannelsEventArgs
-                                {
-                                    UpdateChannelTooLongList = updateChannelTooLongList
-                                });
-                            });
-
-                            callback();
-                            return;
+                        _date = differenceEmpty.Date;
+                        lock (_clientSeqLock)
+                        {
+                            ClientSeq = differenceEmpty.Seq;
                         }
 
-                        var difference = diff as TLUpdatesDifference;
-                        if (difference != null)
+                        Logs.Log.Write(string.Format("UpdatesService.GetDifference {0} result {1} elapsed={2}", id,
+                            diff, processDiffStopwatch.Elapsed));
+
+                        TLUtils.WritePerformance("UpdateService.GetDifference empty result=" + differenceEmpty.Seq);
+
+                        Execute.BeginOnThreadPool(() =>
                         {
-                            //Logs.Log.Write("UpdatesService.Publish UpdatingEventArgs");
-                            Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new UpdatingEventArgs()));
+                            var updateChannelTooLongList = new List<TLUpdateChannelTooLong>();
 
-                            var resetEvent = new ManualResetEvent(false);
-
-                            TLUtils.WritePerformance(
-                                string.Format("UpdateService.GetDifference result=[Pts={0} Date={1} Qts={2}]",
-                                    difference.State.Pts, difference.State.Date, difference.State.Qts));
-                            lock (_clientSeqLock)
+                            lock (_updateChannelTooLongSyncRoot)
                             {
-                                SetState(difference.State, "processDiff");
+                                foreach (var keyValue in _updateChannelTooLongList)
+                                {
+                                    updateChannelTooLongList.Add(keyValue.Value);
+                                }
+                                _updateChannelTooLongList.Clear();
                             }
-                            ProcessDifference(difference, () => resetEvent.Set());
+
+                            _eventAggregator.Publish(new UpdateChannelsEventArgs
+                            {
+                                UpdateChannelTooLongList = updateChannelTooLongList
+                            });
+                        });
+
+                        callback();
+                        return;
+                    }
+
+                    var difference = diff as TLUpdatesDifference;
+                    if (difference != null)
+                    {
+                        //Logs.Log.Write("UpdatesService.Publish UpdatingEventArgs");
+                        Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new UpdatingEventArgs()));
+
+                        var resetEvent = new ManualResetEvent(false);
+
+                        TLUtils.WritePerformance(
+                            string.Format("UpdateService.GetDifference result=[Pts={0} Date={1} Qts={2}]",
+                                difference.State.Pts, difference.State.Date, difference.State.Qts));
+                        lock (_clientSeqLock)
+                        {
+                            SetState(difference.State, "processDiff");
+                        }
+                        ProcessDifference(difference, () => resetEvent.Set());
 
 #if DEBUG
-                            resetEvent.WaitOne();
+                        resetEvent.WaitOne();
 #else
                         resetEvent.WaitOne(10000);
 #endif
-                        }
+                    }
 
-                        var otherInfo = new StringBuilder();
-                        if (difference != null && difference.OtherUpdates.Count > 0)
+                    var otherInfo = new StringBuilder();
+                    if (difference != null && difference.OtherUpdates.Count > 0)
+                    {
+                        otherInfo.AppendLine();
+                        for (var i = 0; i < difference.OtherUpdates.Count; i++)
                         {
-                            otherInfo.AppendLine();
-                            for (var i = 0; i < difference.OtherUpdates.Count; i++)
+                            otherInfo.AppendLine(difference.OtherUpdates[i].ToString());
+                        }
+                    }
+                    Logs.Log.Write(string.Format("UpdatesService.GetDifference {0} result {1} elapsed={2}{3}", id,
+                        diff, processDiffStopwatch.Elapsed, otherInfo));
+
+                    var differenceSlice = diff as TLUpdatesDifferenceSlice;
+                    if (differenceSlice != null)
+                    {
+                        GetDifference(id, callback);
+                        //GetDifference(differenceSlice.State.Pts, differenceSlice.State.Date, differenceSlice.State.Qts, callback);
+                    }
+                    else
+                    {
+                        Logs.Log.Write(
+                            string.Format("UpdatesService.GetDifference {0} publish UpdateCompletedEventArgs", id));
+
+                        Execute.BeginOnThreadPool(() =>
+                        {
+                            var updateChannelTooLongList = new List<TLUpdateChannelTooLong>();
+
+                            lock (_updateChannelTooLongSyncRoot)
                             {
-                                otherInfo.AppendLine(difference.OtherUpdates[i].ToString());
-                            }
-                        }
-                        Logs.Log.Write(string.Format("UpdatesService.GetDifference {0} result {1} elapsed={2}{3}", id,
-                            diff, processDiffStopwatch.Elapsed, otherInfo));
-
-                        var differenceSlice = diff as TLUpdatesDifferenceSlice;
-                        if (differenceSlice != null)
-                        {
-                            GetDifference(id, callback);
-                            //GetDifference(differenceSlice.State.Pts, differenceSlice.State.Date, differenceSlice.State.Qts, callback);
-                        }
-                        else
-                        {
-                            Logs.Log.Write(
-                                string.Format("UpdatesService.GetDifference {0} publish UpdateCompletedEventArgs", id));
-
-                            Execute.BeginOnThreadPool(() =>
-                            {
-                                var updateChannelTooLongList = new List<TLUpdateChannelTooLong>();
-
-                                lock (_updateChannelTooLongSyncRoot)
+                                foreach (var keyValue in _updateChannelTooLongList)
                                 {
-                                    foreach (var keyValue in _updateChannelTooLongList)
-                                    {
-                                        updateChannelTooLongList.Add(keyValue.Value);
-                                    }
-                                    _updateChannelTooLongList.Clear();
+                                    updateChannelTooLongList.Add(keyValue.Value);
                                 }
+                                _updateChannelTooLongList.Clear();
+                            }
 
-                                _eventAggregator.Publish(new UpdateCompletedEventArgs
-                                {
-                                    UpdateChannelTooLongList = updateChannelTooLongList
-                                });
+                            _eventAggregator.Publish(new UpdateCompletedEventArgs
+                            {
+                                UpdateChannelTooLongList = updateChannelTooLongList
                             });
-                            callback();
-                        }
-//#if DEBUG
-//                    });
-//#endif
+                        });
+                        callback();
+                    }
+                    //#if DEBUG
+                    //                    });
+                    //#endif
                 },
                 error =>
                 {
@@ -778,78 +778,78 @@ namespace Telegram.Api.Services.Updates
         }
 
         // TODO: Encrypted
-//        public static TLDecryptedMessageBase GetDecryptedMessage(int? currentUserId, TLEncryptedChat cachedChat, TLEncryptedMessageBase encryptedMessageBase, int? qts, out bool commitChat)
-//        {
-//            commitChat = false;
+        //        public static TLDecryptedMessageBase GetDecryptedMessage(int? currentUserId, TLEncryptedChat cachedChat, TLEncryptedMessageBase encryptedMessageBase, int? qts, out bool commitChat)
+        //        {
+        //            commitChat = false;
 
-//            if (cachedChat == null) return null;
-//            if (cachedChat.Key == null) return null;
+        //            if (cachedChat == null) return null;
+        //            if (cachedChat.Key == null) return null;
 
-//            TLDecryptedMessageBase decryptedMessage = null;
-//            try
-//            {
-//                decryptedMessage = TLUtils.DecryptMessage(encryptedMessageBase.Bytes, cachedChat, out commitChat);
-//            }
-//            catch (Exception e)
-//            {
-//#if DEBUG
-//                TLUtils.WriteException(e);
-//#endif
-//            }
+        //            TLDecryptedMessageBase decryptedMessage = null;
+        //            try
+        //            {
+        //                decryptedMessage = TLUtils.DecryptMessage(encryptedMessageBase.Bytes, cachedChat, out commitChat);
+        //            }
+        //            catch (Exception e)
+        //            {
+        //#if DEBUG
+        //                TLUtils.WriteException(e);
+        //#endif
+        //            }
 
-//            if (decryptedMessage == null) return null;
+        //            if (decryptedMessage == null) return null;
 
-//            var participantId = currentUserId.Value == cachedChat.ParticipantId.Value
-//                ? cachedChat.AdminId
-//                : cachedChat.ParticipantId;
-//            var cachedUser = InMemoryCacheService.Instance.GetUser(participantId);
-//            if (cachedUser == null) return null;
+        //            var participantId = currentUserId.Value == cachedChat.ParticipantId.Value
+        //                ? cachedChat.AdminId
+        //                : cachedChat.ParticipantId;
+        //            var cachedUser = InMemoryCacheService.Instance.GetUser(participantId);
+        //            if (cachedUser == null) return null;
 
-//            decryptedMessage.FromId = cachedUser.Id;
-//            decryptedMessage.Out = false;
-//            decryptedMessage.Unread = true;
-//            decryptedMessage.RandomId = encryptedMessageBase.RandomId;
-//            decryptedMessage.ChatId = encryptedMessageBase.ChatId;
-//            decryptedMessage.Date = encryptedMessageBase.Date;
-//            decryptedMessage.Qts = qts;
+        //            decryptedMessage.FromId = cachedUser.Id;
+        //            decryptedMessage.Out = false;
+        //            decryptedMessage.Unread = true;
+        //            decryptedMessage.RandomId = encryptedMessageBase.RandomId;
+        //            decryptedMessage.ChatId = encryptedMessageBase.ChatId;
+        //            decryptedMessage.Date = encryptedMessageBase.Date;
+        //            decryptedMessage.Qts = qts;
 
-//            var message = decryptedMessage as TLDecryptedMessage;
-//            if (message != null)
-//            {
-//                var encryptedMessage = encryptedMessageBase as TLEncryptedMessage;
-//                if (encryptedMessage != null)
-//                {
-//                    message.Media.File = encryptedMessage.File;
-//                    var document = message.Media as TLDecryptedMessageMediaDocument;
-//                    if (document != null)
-//                    {
-//                        var file = document.File as TLEncryptedFile;
-//                        if (file != null)
-//                        {
-//                            file.FileName = document.FileName;
-//                        }
-//                    }
+        //            var message = decryptedMessage as TLDecryptedMessage;
+        //            if (message != null)
+        //            {
+        //                var encryptedMessage = encryptedMessageBase as TLEncryptedMessage;
+        //                if (encryptedMessage != null)
+        //                {
+        //                    message.Media.File = encryptedMessage.File;
+        //                    var document = message.Media as TLDecryptedMessageMediaDocument;
+        //                    if (document != null)
+        //                    {
+        //                        var file = document.File as TLEncryptedFile;
+        //                        if (file != null)
+        //                        {
+        //                            file.FileName = document.FileName;
+        //                        }
+        //                    }
 
-//                    var video = message.Media as TLDecryptedMessageMediaVideo;
-//                    if (video != null)
-//                    {
-//                        var file = video.File as TLEncryptedFile;
-//                        if (file != null)
-//                        {
-//                            file.Duration = video.Duration;
-//                        }
-//                    }
+        //                    var video = message.Media as TLDecryptedMessageMediaVideo;
+        //                    if (video != null)
+        //                    {
+        //                        var file = video.File as TLEncryptedFile;
+        //                        if (file != null)
+        //                        {
+        //                            file.Duration = video.Duration;
+        //                        }
+        //                    }
 
-//                    var audio = message.Media as TLDecryptedMessageMediaAudio;
-//                    if (audio != null)
-//                    {
-//                        audio.UserId = decryptedMessage.FromId;
-//                    }
-//                }
-//            }
+        //                    var audio = message.Media as TLDecryptedMessageMediaAudio;
+        //                    if (audio != null)
+        //                    {
+        //                        audio.UserId = decryptedMessage.FromId;
+        //                    }
+        //                }
+        //            }
 
-//            return decryptedMessage;
-//        }
+        //            return decryptedMessage;
+        //        }
 
         private Dictionary<int, int> _contactRegisteredList = new Dictionary<int, int>();
 
@@ -969,11 +969,11 @@ namespace Telegram.Api.Services.Updates
                 //{
                 //    Execute.ShowDebugMessage(string.Format("updateChannelTooLong channel_id={0}", updateChannelTooLong.ChannelId));
                 //}
-//#if DEBUG
-//                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateChannelTooLong));
-//                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateChannelTooLong));
-//                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateChannelTooLong));
-//#endif
+                //#if DEBUG
+                //                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateChannelTooLong));
+                //                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateChannelTooLong));
+                //                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateChannelTooLong));
+                //#endif
 
                 //UpdateChannelAsync(updateChannelTooLong.ChannelId,
                 //    result =>
@@ -995,7 +995,7 @@ namespace Telegram.Api.Services.Updates
                 //        }
                 //        else
                 //        {
-                            
+
                 //        }
                 //    },
                 //    error =>
@@ -1011,14 +1011,14 @@ namespace Telegram.Api.Services.Updates
             if (updateChannel != null)
             {
                 Execute.ShowDebugMessage("TLUpdateChannel channel_id=" + updateChannel.ChannelId);
-                UpdateChannelAsync(updateChannel.ChannelId, 
+                UpdateChannelAsync(updateChannel.ChannelId,
                     result =>
                     {
                         var channel = result.Chats.FirstOrDefault() as TLChannel;
                         if (channel != null)
                         {
-                            GetParticipantAsync(channel.ToInputChannel(), new TLInputUserSelf(), 
-                            result2 => 
+                            GetParticipantAsync(channel.ToInputChannel(), new TLInputUserSelf(),
+                            result2 =>
                             {
                                 // sync users
                                 var inviter = result2.Participant as ITLChannelInviter;
@@ -1027,7 +1027,7 @@ namespace Telegram.Api.Services.Updates
                                 Execute.ShowDebugMessage(string.Format("updateChannel [channel_id={0} creator={1} kicked={2} left={3} editor={4} moderator={5} broadcast={6} public={7} verified={8} inviter=[id={9} date={10}]]", channel.Id, channel.IsCreator, channel.IsKicked, channel.IsLeft, channel.IsEditor, channel.IsModerator, channel.IsBroadcast, "channel.IsPublic", channel.IsVerified, inviterId, date));
 
                                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateChannel));
-                            }, 
+                            },
                             error2 =>
                             {
                                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateChannel));
@@ -1060,6 +1060,13 @@ namespace Telegram.Api.Services.Updates
                 var channel = _cacheService.GetChat(updateChannelPinnedMessage.ChannelId) as TLChannel;
                 if (channel != null)
                 {
+                    var full = _cacheService.GetFullChat(updateChannelPinnedMessage.ChannelId) as TLChannelFull;
+                    if (full != null)
+                    {
+                        full.PinnedMsgId = updateChannelPinnedMessage.Id;
+                        full.HasPinnedMsgId = true;
+                    }
+
                     channel.PinnedMsgId = updateChannelPinnedMessage.Id;
                     channel.HiddenPinnedMsgId = null;
                     _cacheService.Commit();
@@ -1068,7 +1075,7 @@ namespace Telegram.Api.Services.Updates
                     if (message == null)
                     {
                         GetChannelMessagesAsync(channel.ToInputChannel(),
-                            new TLVector<int> {updateChannelPinnedMessage.Id},
+                            new TLVector<int> { updateChannelPinnedMessage.Id },
                             messagesBase =>
                             {
                                 _cacheService.AddMessagesToContext(messagesBase, result =>
@@ -1725,7 +1732,7 @@ namespace Telegram.Api.Services.Updates
                         _cacheService.Commit();
                     }
                 }
-                
+
                 Execute.ShowDebugMessage(string.Format("TLUpdateChatParticipantAdmin chat_id={0} user_id={1} is_admin={2} version={3}", updateChatParticipantAdmin.ChatId, updateChatParticipantAdmin.UserId, updateChatParticipantAdmin.IsAdmin, updateChatParticipantAdmin.Version));
 
                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateChatParticipantAdmin));
@@ -1867,7 +1874,7 @@ namespace Telegram.Api.Services.Updates
                         },
                         error =>
                         {
-                            
+
                         });
                 }
                 else
@@ -2030,7 +2037,7 @@ namespace Telegram.Api.Services.Updates
                 Execute.ShowDebugMessage("TLUpdateNewStickeSet");
 
                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateNewStickerSet));
-                
+
                 return true;
             }
 
@@ -2501,7 +2508,7 @@ namespace Telegram.Api.Services.Updates
                 //                    }
                 //                }
                 //            });
-                            
+
                 //        }
                 //    }
 
@@ -2865,333 +2872,333 @@ namespace Telegram.Api.Services.Updates
         }
 
         #region TODO: Encrypted
-//        public static void ProcessPFS(SendEncryptedServiceAction sendEncryptedServiceActionAsync, ICacheService cacheService, ITelegramEventAggregator eventAggregator, TLEncryptedChat20 encryptedChat, TLDecryptedMessageService decryptedMessageService)
-//        {
-//            if (encryptedChat == null) return;
-//            if (decryptedMessageService == null) return;
+        //        public static void ProcessPFS(SendEncryptedServiceAction sendEncryptedServiceActionAsync, ICacheService cacheService, ITelegramEventAggregator eventAggregator, TLEncryptedChat20 encryptedChat, TLDecryptedMessageService decryptedMessageService)
+        //        {
+        //            if (encryptedChat == null) return;
+        //            if (decryptedMessageService == null) return;
 
-//            var abortKey = decryptedMessageService.Action as TLDecryptedMessageActionAbortKey;
-//            if (abortKey != null)
-//            {
-//                encryptedChat.PFS_A = null;
-//                encryptedChat.PFS_ExchangeId = null;
-//                cacheService.SyncEncryptedChat(encryptedChat, cachedChat =>
-//                {
+        //            var abortKey = decryptedMessageService.Action as TLDecryptedMessageActionAbortKey;
+        //            if (abortKey != null)
+        //            {
+        //                encryptedChat.PFS_A = null;
+        //                encryptedChat.PFS_ExchangeId = null;
+        //                cacheService.SyncEncryptedChat(encryptedChat, cachedChat =>
+        //                {
 
-//                });
+        //                });
 
-//                return;
-//            }
+        //                return;
+        //            }
 
-//            var noop = decryptedMessageService.Action as TLDecryptedMessageActionNoop;
-//            if (noop != null)
-//            {
-//                return;
-//            }
+        //            var noop = decryptedMessageService.Action as TLDecryptedMessageActionNoop;
+        //            if (noop != null)
+        //            {
+        //                return;
+        //            }
 
-//            var commitKey = decryptedMessageService.Action as TLDecryptedMessageActionCommitKey;
-//            if (commitKey != null)
-//            {
-//                encryptedChat.PFS_A = null;
-//                encryptedChat.PFS_ExchangeId = null;
-//                encryptedChat.Key = encryptedChat.PFS_Key;
-//                encryptedChat.PFS_Key = null;
-//                cacheService.SyncEncryptedChat(encryptedChat, cachedChat =>
-//                {
-//                    eventAggregator.Publish(encryptedChat);
+        //            var commitKey = decryptedMessageService.Action as TLDecryptedMessageActionCommitKey;
+        //            if (commitKey != null)
+        //            {
+        //                encryptedChat.PFS_A = null;
+        //                encryptedChat.PFS_ExchangeId = null;
+        //                encryptedChat.Key = encryptedChat.PFS_Key;
+        //                encryptedChat.PFS_Key = null;
+        //                cacheService.SyncEncryptedChat(encryptedChat, cachedChat =>
+        //                {
+        //                    eventAggregator.Publish(encryptedChat);
 
-//                    var actionNoop = new TLDecryptedMessageActionNoop();
+        //                    var actionNoop = new TLDecryptedMessageActionNoop();
 
-//                    SendEncryptedServiceActionAsync(sendEncryptedServiceActionAsync, cacheService, eventAggregator, encryptedChat, actionNoop,
-//                        (message, result) =>
-//                        {
+        //                    SendEncryptedServiceActionAsync(sendEncryptedServiceActionAsync, cacheService, eventAggregator, encryptedChat, actionNoop,
+        //                        (message, result) =>
+        //                        {
 
-//                        });
-//                });
+        //                        });
+        //                });
 
-//                return;
-//            }
+        //                return;
+        //            }
 
-//            var requestKey = decryptedMessageService.Action as TLDecryptedMessageActionRequestKey;
-//            if (requestKey != null)
-//            {
-//                var bBytes = new byte[256];
-//                var random = new SecureRandom();
-//                random.NextBytes(bBytes);
-//                var p = encryptedChat.P;
-//                var g = encryptedChat.G;
+        //            var requestKey = decryptedMessageService.Action as TLDecryptedMessageActionRequestKey;
+        //            if (requestKey != null)
+        //            {
+        //                var bBytes = new byte[256];
+        //                var random = new SecureRandom();
+        //                random.NextBytes(bBytes);
+        //                var p = encryptedChat.P;
+        //                var g = encryptedChat.G;
 
-//                var gbBytes = MTProtoService.GetGB(bBytes, g, p);
-//                var gb = TLString.FromBigEndianData(gbBytes);
+        //                var gbBytes = MTProtoService.GetGB(bBytes, g, p);
+        //                var gb = TLString.FromBigEndianData(gbBytes);
 
-//                encryptedChat.PFS_A = TLString.FromBigEndianData(bBytes);
-//                encryptedChat.PFS_ExchangeId = requestKey.ExchangeId;
+        //                encryptedChat.PFS_A = TLString.FromBigEndianData(bBytes);
+        //                encryptedChat.PFS_ExchangeId = requestKey.ExchangeId;
 
-//                if (!TLUtils.CheckGaAndGb(requestKey.GA.Data, encryptedChat.P.Data))
-//                {
-//                    return;
-//                }
+        //                if (!TLUtils.CheckGaAndGb(requestKey.GA.Data, encryptedChat.P.Data))
+        //                {
+        //                    return;
+        //                }
 
-//                var key = MTProtoService.GetAuthKey(encryptedChat.PFS_A.Data, requestKey.GA.ToBytes(), encryptedChat.P.ToBytes());
-//                var keyHash = Utils.ComputeSHA1(key);
-//                var keyFingerprint = new long?(BitConverter.ToInt64(keyHash, 12));
+        //                var key = MTProtoService.GetAuthKey(encryptedChat.PFS_A.Data, requestKey.GA.ToBytes(), encryptedChat.P.ToBytes());
+        //                var keyHash = Utils.ComputeSHA1(key);
+        //                var keyFingerprint = new long?(BitConverter.ToInt64(keyHash, 12));
 
-//                encryptedChat.PFS_Key = TLString.FromBigEndianData(key);
-//                encryptedChat.PFS_KeyFingerprint = keyFingerprint;
-//                cacheService.SyncEncryptedChat(encryptedChat, cachedChat =>
-//                {
-//                    var actionAcceptKey = new TLDecryptedMessageActionAcceptKey
-//                    {
-//                        ExchangeId = encryptedChat.PFS_ExchangeId,
-//                        KeyFingerprint = keyFingerprint,
-//                        GB = gb
-//                    };
+        //                encryptedChat.PFS_Key = TLString.FromBigEndianData(key);
+        //                encryptedChat.PFS_KeyFingerprint = keyFingerprint;
+        //                cacheService.SyncEncryptedChat(encryptedChat, cachedChat =>
+        //                {
+        //                    var actionAcceptKey = new TLDecryptedMessageActionAcceptKey
+        //                    {
+        //                        ExchangeId = encryptedChat.PFS_ExchangeId,
+        //                        KeyFingerprint = keyFingerprint,
+        //                        GB = gb
+        //                    };
 
-//                    SendEncryptedServiceActionAsync(sendEncryptedServiceActionAsync, cacheService, eventAggregator, encryptedChat, actionAcceptKey,
-//                        (message, result) =>
-//                        {
+        //                    SendEncryptedServiceActionAsync(sendEncryptedServiceActionAsync, cacheService, eventAggregator, encryptedChat, actionAcceptKey,
+        //                        (message, result) =>
+        //                        {
 
-//                        });
-//                });
+        //                        });
+        //                });
 
-//                return;
-//            }
+        //                return;
+        //            }
 
-//            var acceptKey = decryptedMessageService.Action as TLDecryptedMessageActionAcceptKey;
-//            if (acceptKey != null)
-//            {
-//                if (!TLUtils.CheckGaAndGb(acceptKey.GB.Data, encryptedChat.P.Data))
-//                {
-//                    return;
-//                }
+        //            var acceptKey = decryptedMessageService.Action as TLDecryptedMessageActionAcceptKey;
+        //            if (acceptKey != null)
+        //            {
+        //                if (!TLUtils.CheckGaAndGb(acceptKey.GB.Data, encryptedChat.P.Data))
+        //                {
+        //                    return;
+        //                }
 
-//                var key = MTProtoService.GetAuthKey(encryptedChat.PFS_A.Data, acceptKey.GB.ToBytes(), encryptedChat.P.ToBytes());
-//                var keyHash = Utils.ComputeSHA1(key);
-//                var keyFingerprint = new long?(BitConverter.ToInt64(keyHash, 12));
+        //                var key = MTProtoService.GetAuthKey(encryptedChat.PFS_A.Data, acceptKey.GB.ToBytes(), encryptedChat.P.ToBytes());
+        //                var keyHash = Utils.ComputeSHA1(key);
+        //                var keyFingerprint = new long?(BitConverter.ToInt64(keyHash, 12));
 
-//                // abort for keyfingerprint != acceptKey.keyFingerprint
-//                if (keyFingerprint.Value != acceptKey.KeyFingerprint.Value)
-//                {
-//                    var actionAbortKey = new TLDecryptedMessageActionAbortKey
-//                    {
-//                        ExchangeId = encryptedChat.PFS_ExchangeId
-//                    };
+        //                // abort for keyfingerprint != acceptKey.keyFingerprint
+        //                if (keyFingerprint.Value != acceptKey.KeyFingerprint.Value)
+        //                {
+        //                    var actionAbortKey = new TLDecryptedMessageActionAbortKey
+        //                    {
+        //                        ExchangeId = encryptedChat.PFS_ExchangeId
+        //                    };
 
-//                    SendEncryptedServiceActionAsync(sendEncryptedServiceActionAsync, cacheService, eventAggregator, encryptedChat, actionAbortKey,
-//                        (message, result) =>
-//                        {
-//                            encryptedChat.PFS_A = null;
-//                            encryptedChat.PFS_ExchangeId = null;
+        //                    SendEncryptedServiceActionAsync(sendEncryptedServiceActionAsync, cacheService, eventAggregator, encryptedChat, actionAbortKey,
+        //                        (message, result) =>
+        //                        {
+        //                            encryptedChat.PFS_A = null;
+        //                            encryptedChat.PFS_ExchangeId = null;
 
-//                            eventAggregator.Publish(encryptedChat);
-//                            cacheService.Commit();
-//                        });
+        //                            eventAggregator.Publish(encryptedChat);
+        //                            cacheService.Commit();
+        //                        });
 
-//                    return;
-//                }
+        //                    return;
+        //                }
 
-//                encryptedChat.PFS_Key = TLString.FromBigEndianData(key);
-//                encryptedChat.PFS_KeyFingerprint = keyFingerprint;
-//                cacheService.SyncEncryptedChat(encryptedChat, cachedChat =>
-//                {
-//                    var actionCommitKey = new TLDecryptedMessageActionCommitKey
-//                    {
-//                        ExchangeId = encryptedChat.PFS_ExchangeId,
-//                        KeyFingerprint = keyFingerprint
-//                    };
+        //                encryptedChat.PFS_Key = TLString.FromBigEndianData(key);
+        //                encryptedChat.PFS_KeyFingerprint = keyFingerprint;
+        //                cacheService.SyncEncryptedChat(encryptedChat, cachedChat =>
+        //                {
+        //                    var actionCommitKey = new TLDecryptedMessageActionCommitKey
+        //                    {
+        //                        ExchangeId = encryptedChat.PFS_ExchangeId,
+        //                        KeyFingerprint = keyFingerprint
+        //                    };
 
-//                    SendEncryptedServiceActionAsync(sendEncryptedServiceActionAsync, cacheService, eventAggregator, encryptedChat, actionCommitKey,
-//                        (message, result) =>
-//                        {
-//                            encryptedChat.PFS_ExchangeId = null;
-//                            if (encryptedChat.PFS_Key != null)
-//                            {
-//                                encryptedChat.Key = encryptedChat.PFS_Key;
-//                            }
-//                            encryptedChat.PFS_A = null;
-//                            encryptedChat.PFS_KeyFingerprint = null;
-//                            cacheService.SyncEncryptedChat(encryptedChat, cachedChat2 =>
-//                            {
-//                                eventAggregator.Publish(encryptedChat);
-//                            });
-//                        });
-//                });
+        //                    SendEncryptedServiceActionAsync(sendEncryptedServiceActionAsync, cacheService, eventAggregator, encryptedChat, actionCommitKey,
+        //                        (message, result) =>
+        //                        {
+        //                            encryptedChat.PFS_ExchangeId = null;
+        //                            if (encryptedChat.PFS_Key != null)
+        //                            {
+        //                                encryptedChat.Key = encryptedChat.PFS_Key;
+        //                            }
+        //                            encryptedChat.PFS_A = null;
+        //                            encryptedChat.PFS_KeyFingerprint = null;
+        //                            cacheService.SyncEncryptedChat(encryptedChat, cachedChat2 =>
+        //                            {
+        //                                eventAggregator.Publish(encryptedChat);
+        //                            });
+        //                        });
+        //                });
 
-//                return;
-//            }
-//        }
+        //                return;
+        //            }
+        //        }
 
-//        private static void SendEncryptedServiceActionAsync(SendEncryptedServiceAction sendEncryptedServiceAsync, ICacheService cacheService, ITelegramEventAggregator eventAggregator, TLEncryptedChat20 encryptedChat, TLDecryptedMessageActionBase action, Action<TLDecryptedMessageBase, TLSentEncryptedMessage> callback)
-//        {
-//            if (encryptedChat == null) return;
+        //        private static void SendEncryptedServiceActionAsync(SendEncryptedServiceAction sendEncryptedServiceAsync, ICacheService cacheService, ITelegramEventAggregator eventAggregator, TLEncryptedChat20 encryptedChat, TLDecryptedMessageActionBase action, Action<TLDecryptedMessageBase, TLSentEncryptedMessage> callback)
+        //        {
+        //            if (encryptedChat == null) return;
 
-//            var randomId = TLLong.Random();
+        //            var randomId = TLLong.Random();
 
-//            var currentUserId = MTProtoService.Instance.CurrentUserId;
-//            var clientTicksDelta = MTProtoService.Instance.ClientTicksDelta;
+        //            var currentUserId = MTProtoService.Instance.CurrentUserId;
+        //            var clientTicksDelta = MTProtoService.Instance.ClientTicksDelta;
 
-//            var inSeqNo = TLUtils.GetInSeqNo(currentUserId, encryptedChat);
-//            var outSeqNo = TLUtils.GetOutSeqNo(currentUserId, encryptedChat);
+        //            var inSeqNo = TLUtils.GetInSeqNo(currentUserId, encryptedChat);
+        //            var outSeqNo = TLUtils.GetOutSeqNo(currentUserId, encryptedChat);
 
-//            encryptedChat.RawOutSeqNo = new int?(encryptedChat.RawOutSeqNo.Value + 1);
+        //            encryptedChat.RawOutSeqNo = new int?(encryptedChat.RawOutSeqNo.Value + 1);
 
-//            var message = new TLDecryptedMessageService17
-//            {
-//                Action = action,
-//                RandomId = randomId,
-//                RandomBytes = TLString.Random(Constants.MinRandomBytesLength),
-//                ChatId = encryptedChat.Id,
-//                FromId = currentUserId,
-//                Out = true,
-//                Unread = false,
-//                Date = TLUtils.DateToUniversalTimeTLInt(clientTicksDelta, DateTime.Now),
-//                Status = TLMessageState.Sending,
-//                TTL = 0,
-//                InSeqNo = inSeqNo,
-//                OutSeqNo = outSeqNo
-//            };
+        //            var message = new TLDecryptedMessageService17
+        //            {
+        //                Action = action,
+        //                RandomId = randomId,
+        //                RandomBytes = TLString.Random(Constants.MinRandomBytesLength),
+        //                ChatId = encryptedChat.Id,
+        //                FromId = currentUserId,
+        //                Out = true,
+        //                Unread = false,
+        //                Date = TLUtils.DateToUniversalTimeTLInt(clientTicksDelta, DateTime.Now),
+        //                Status = TLMessageState.Sending,
+        //                TTL = 0,
+        //                InSeqNo = inSeqNo,
+        //                OutSeqNo = outSeqNo
+        //            };
 
-//            var decryptedMessageLayer17 = TLUtils.GetDecryptedMessageLayer(encryptedChat.Layer, inSeqNo, outSeqNo, message);
+        //            var decryptedMessageLayer17 = TLUtils.GetDecryptedMessageLayer(encryptedChat.Layer, inSeqNo, outSeqNo, message);
 
-//            cacheService.SyncDecryptedMessage(
-//                message,
-//                encryptedChat,
-//                messageResult =>
-//                {
-//                    sendEncryptedServiceAsync(
-//                        new TLInputEncryptedChat
-//                        {
-//                            AccessHash = encryptedChat.AccessHash,
-//                            ChatId = encryptedChat.Id
-//                        },
-//                        randomId,
-//                        TLUtils.EncryptMessage(decryptedMessageLayer17, encryptedChat),
-//                        result =>
-//                        {
-//                            message.Status = TLMessageState.Confirmed;
-//                            cacheService.SyncSendingDecryptedMessage(encryptedChat.Id, result.Date, message.RandomId,
-//                                m =>
-//                                {
-//#if DEBUG
-//                                    eventAggregator.Publish(message);
-//#endif
-//                                    callback?.Invoke(message, result);
-//                                });
-//                        },
-//                        error => { Helpers.Execute.ShowDebugMessage("messages.sendEncryptedService error " + error); });
-//                });
-//        }
+        //            cacheService.SyncDecryptedMessage(
+        //                message,
+        //                encryptedChat,
+        //                messageResult =>
+        //                {
+        //                    sendEncryptedServiceAsync(
+        //                        new TLInputEncryptedChat
+        //                        {
+        //                            AccessHash = encryptedChat.AccessHash,
+        //                            ChatId = encryptedChat.Id
+        //                        },
+        //                        randomId,
+        //                        TLUtils.EncryptMessage(decryptedMessageLayer17, encryptedChat),
+        //                        result =>
+        //                        {
+        //                            message.Status = TLMessageState.Confirmed;
+        //                            cacheService.SyncSendingDecryptedMessage(encryptedChat.Id, result.Date, message.RandomId,
+        //                                m =>
+        //                                {
+        //#if DEBUG
+        //                                    eventAggregator.Publish(message);
+        //#endif
+        //                                    callback?.Invoke(message, result);
+        //                                });
+        //                        },
+        //                        error => { Helpers.Execute.ShowDebugMessage("messages.sendEncryptedService error " + error); });
+        //                });
+        //        }
 
-//        public static void UpgradeSecretChatLayerAndSendNotification(SendEncryptedServiceAction sendEncryptedServiceAsync, ICacheService cacheService, ITelegramEventAggregator eventAggregator, TLEncryptedChat encryptedChat, int? layer, int? rawInSeqNo, int? rawOutSeqNo)
-//        {
-//            var newEncryptedChat = new TLEncryptedChat20();
-//            newEncryptedChat.Layer = layer;
+        //        public static void UpgradeSecretChatLayerAndSendNotification(SendEncryptedServiceAction sendEncryptedServiceAsync, ICacheService cacheService, ITelegramEventAggregator eventAggregator, TLEncryptedChat encryptedChat, int? layer, int? rawInSeqNo, int? rawOutSeqNo)
+        //        {
+        //            var newEncryptedChat = new TLEncryptedChat20();
+        //            newEncryptedChat.Layer = layer;
 
-//            newEncryptedChat.RawInSeqNo = rawInSeqNo;
-//            newEncryptedChat.RawOutSeqNo = rawOutSeqNo;
+        //            newEncryptedChat.RawInSeqNo = rawInSeqNo;
+        //            newEncryptedChat.RawOutSeqNo = rawOutSeqNo;
 
-//            newEncryptedChat.Id = encryptedChat.Id;
-//            newEncryptedChat.AccessHash = encryptedChat.AccessHash;
-//            newEncryptedChat.Date = encryptedChat.Date;
-//            newEncryptedChat.AdminId = encryptedChat.AdminId;
-//            newEncryptedChat.ParticipantId = encryptedChat.ParticipantId;
-//            newEncryptedChat.GAorB = encryptedChat.GAorB;
+        //            newEncryptedChat.Id = encryptedChat.Id;
+        //            newEncryptedChat.AccessHash = encryptedChat.AccessHash;
+        //            newEncryptedChat.Date = encryptedChat.Date;
+        //            newEncryptedChat.AdminId = encryptedChat.AdminId;
+        //            newEncryptedChat.ParticipantId = encryptedChat.ParticipantId;
+        //            newEncryptedChat.GAorB = encryptedChat.GAorB;
 
-//            newEncryptedChat.CustomFlags = encryptedChat.CustomFlags;
-//            if (encryptedChat.OriginalKey != null) newEncryptedChat.OriginalKey = encryptedChat.OriginalKey;
-//            if (encryptedChat.ExtendedKey != null) newEncryptedChat.ExtendedKey = encryptedChat.ExtendedKey;
-//            newEncryptedChat.Key = encryptedChat.Key;
-//            newEncryptedChat.KeyFingerprint = encryptedChat.KeyFingerprint;
-//            newEncryptedChat.P = encryptedChat.P;
-//            newEncryptedChat.G = encryptedChat.G;
-//            newEncryptedChat.A = encryptedChat.A;
-//            newEncryptedChat.MessageTTL = encryptedChat.MessageTTL;
+        //            newEncryptedChat.CustomFlags = encryptedChat.CustomFlags;
+        //            if (encryptedChat.OriginalKey != null) newEncryptedChat.OriginalKey = encryptedChat.OriginalKey;
+        //            if (encryptedChat.ExtendedKey != null) newEncryptedChat.ExtendedKey = encryptedChat.ExtendedKey;
+        //            newEncryptedChat.Key = encryptedChat.Key;
+        //            newEncryptedChat.KeyFingerprint = encryptedChat.KeyFingerprint;
+        //            newEncryptedChat.P = encryptedChat.P;
+        //            newEncryptedChat.G = encryptedChat.G;
+        //            newEncryptedChat.A = encryptedChat.A;
+        //            newEncryptedChat.MessageTTL = encryptedChat.MessageTTL;
 
-//            cacheService.SyncEncryptedChat(newEncryptedChat,
-//                result =>
-//                {
-//                    eventAggregator.Publish(newEncryptedChat);
+        //            cacheService.SyncEncryptedChat(newEncryptedChat,
+        //                result =>
+        //                {
+        //                    eventAggregator.Publish(newEncryptedChat);
 
-//                    var currentUserId = MTProtoService.Instance.CurrentUserId;
-//                    var clientTicksDelta = MTProtoService.Instance.ClientTicksDelta;
+        //                    var currentUserId = MTProtoService.Instance.CurrentUserId;
+        //                    var clientTicksDelta = MTProtoService.Instance.ClientTicksDelta;
 
-//                    var randomId = TLLong.Random();
+        //                    var randomId = TLLong.Random();
 
-//                    var notifyLayerAction = new TLDecryptedMessageActionNotifyLayer();
-//                    notifyLayerAction.Layer = new int?(Constants.SecretSupportedLayer);
+        //                    var notifyLayerAction = new TLDecryptedMessageActionNotifyLayer();
+        //                    notifyLayerAction.Layer = new int?(Constants.SecretSupportedLayer);
 
-//                    var inSeqNo = TLUtils.GetInSeqNo(currentUserId, newEncryptedChat);
-//                    var outSeqNo = TLUtils.GetOutSeqNo(currentUserId, newEncryptedChat);
+        //                    var inSeqNo = TLUtils.GetInSeqNo(currentUserId, newEncryptedChat);
+        //                    var outSeqNo = TLUtils.GetOutSeqNo(currentUserId, newEncryptedChat);
 
-//                    var newEncryptedChat17 = cacheService.GetEncryptedChat(newEncryptedChat.Id) as TLEncryptedChat17;
-//                    if (newEncryptedChat17 != null)
-//                    {
-//                        newEncryptedChat17.RawOutSeqNo = new int?(newEncryptedChat17.RawOutSeqNo.Value + 1);
-//                    }
+        //                    var newEncryptedChat17 = cacheService.GetEncryptedChat(newEncryptedChat.Id) as TLEncryptedChat17;
+        //                    if (newEncryptedChat17 != null)
+        //                    {
+        //                        newEncryptedChat17.RawOutSeqNo = new int?(newEncryptedChat17.RawOutSeqNo.Value + 1);
+        //                    }
 
-//                    var decryptedMessageService17 = new TLDecryptedMessageService17
-//                    {
-//                        Action = notifyLayerAction,
-//                        RandomId = randomId,
-//                        RandomBytes = TLString.Random(Constants.MinRandomBytesLength),
+        //                    var decryptedMessageService17 = new TLDecryptedMessageService17
+        //                    {
+        //                        Action = notifyLayerAction,
+        //                        RandomId = randomId,
+        //                        RandomBytes = TLString.Random(Constants.MinRandomBytesLength),
 
-//                        ChatId = encryptedChat.Id,
-//                        FromId = currentUserId,
-//                        Out = true,
-//                        Unread = false,
-//                        Date = TLUtils.DateToUniversalTimeTLInt(clientTicksDelta, DateTime.Now),
-//                        Status = TLMessageState.Sending,
+        //                        ChatId = encryptedChat.Id,
+        //                        FromId = currentUserId,
+        //                        Out = true,
+        //                        Unread = false,
+        //                        Date = TLUtils.DateToUniversalTimeTLInt(clientTicksDelta, DateTime.Now),
+        //                        Status = TLMessageState.Sending,
 
-//                        TTL = 0,
-//                        InSeqNo = inSeqNo,
-//                        OutSeqNo = outSeqNo
-//                    };
+        //                        TTL = 0,
+        //                        InSeqNo = inSeqNo,
+        //                        OutSeqNo = outSeqNo
+        //                    };
 
-//                    var decryptedMessageLayer17 = TLUtils.GetDecryptedMessageLayer(newEncryptedChat17.Layer, inSeqNo, outSeqNo, decryptedMessageService17);
+        //                    var decryptedMessageLayer17 = TLUtils.GetDecryptedMessageLayer(newEncryptedChat17.Layer, inSeqNo, outSeqNo, decryptedMessageService17);
 
-//                    cacheService.SyncDecryptedMessage(
-//                        decryptedMessageService17,
-//                        encryptedChat,
-//                        messageResult =>
-//                        {
-//                            sendEncryptedServiceAsync(
-//                                new TLInputEncryptedChat
-//                                {
-//                                    AccessHash = encryptedChat.AccessHash,
-//                                    ChatId = encryptedChat.Id
-//                                },
-//                                randomId,
-//                                TLUtils.EncryptMessage(decryptedMessageLayer17, encryptedChat),
-//                                sentEncryptedMessage =>
-//                                {
-//                                    decryptedMessageService17.Status = TLMessageState.Confirmed;
-//                                    cacheService.SyncSendingDecryptedMessage(encryptedChat.Id, sentEncryptedMessage.Date, decryptedMessageService17.RandomId,
-//                                        m =>
-//                                        {
-//#if DEBUG
-//                                            eventAggregator.Publish(decryptedMessageService17);
-//#endif
-//                                        });
-//                                },
-//                                error =>
-//                                {
-//                                    Helpers.Execute.ShowDebugMessage("messages.sendEncryptedService error " + error);
-//                                });
-//                        });
-//                });
-//        }
+        //                    cacheService.SyncDecryptedMessage(
+        //                        decryptedMessageService17,
+        //                        encryptedChat,
+        //                        messageResult =>
+        //                        {
+        //                            sendEncryptedServiceAsync(
+        //                                new TLInputEncryptedChat
+        //                                {
+        //                                    AccessHash = encryptedChat.AccessHash,
+        //                                    ChatId = encryptedChat.Id
+        //                                },
+        //                                randomId,
+        //                                TLUtils.EncryptMessage(decryptedMessageLayer17, encryptedChat),
+        //                                sentEncryptedMessage =>
+        //                                {
+        //                                    decryptedMessageService17.Status = TLMessageState.Confirmed;
+        //                                    cacheService.SyncSendingDecryptedMessage(encryptedChat.Id, sentEncryptedMessage.Date, decryptedMessageService17.RandomId,
+        //                                        m =>
+        //                                        {
+        //#if DEBUG
+        //                                            eventAggregator.Publish(decryptedMessageService17);
+        //#endif
+        //                                        });
+        //                                },
+        //                                error =>
+        //                                {
+        //                                    Helpers.Execute.ShowDebugMessage("messages.sendEncryptedService error " + error);
+        //                                });
+        //                        });
+        //                });
+        //        }
 
-//        public static int GetRawInFromReceivedMessage(int? currentUserId, TLEncryptedChat17 chat, ISeqNo message)
-//        {
-//            var isAdmin = chat.AdminId.Value == currentUserId.Value;
-//            var x = isAdmin ? 0 : 1;
-//            return (message.OutSeqNo.Value - x) / 2;
-//        }
+        //        public static int GetRawInFromReceivedMessage(int? currentUserId, TLEncryptedChat17 chat, ISeqNo message)
+        //        {
+        //            var isAdmin = chat.AdminId.Value == currentUserId.Value;
+        //            var x = isAdmin ? 0 : 1;
+        //            return (message.OutSeqNo.Value - x) / 2;
+        //        }
 
-//        public static bool IsSyncRequierd(TLDecryptedMessageBase decryptedMessage)
-//        {
-//            return true;
-//        }
+        //        public static bool IsSyncRequierd(TLDecryptedMessageBase decryptedMessage)
+        //        {
+        //            return true;
+        //        }
         #endregion
 
         private readonly object _clientSeqLock = new object();
@@ -3535,10 +3542,10 @@ namespace Telegram.Api.Services.Updates
         }
 
         private static void ProcessReadingUpdates(
-            bool outbox, IList<TLUpdateBase> readHistoryList, 
-            IList<TLUpdateShortChatMessage> shortChatMessageList, 
+            bool outbox, IList<TLUpdateBase> readHistoryList,
+            IList<TLUpdateShortChatMessage> shortChatMessageList,
             IList<TLUpdateNewMessage> newChatMessageList,
-            IList<TLUpdateShortMessage> shortMessageList, 
+            IList<TLUpdateShortMessage> shortMessageList,
             IList<TLUpdateNewMessage> newMessageList)
         {
             if (readHistoryList.Count == 0) return;
@@ -3622,10 +3629,10 @@ namespace Telegram.Api.Services.Updates
             }
         }
 
-        private static void GetReadingUpdates(TLUpdateBase updateBase, 
-            IList<TLUpdateBase> readHistoryInboxList, 
+        private static void GetReadingUpdates(TLUpdateBase updateBase,
+            IList<TLUpdateBase> readHistoryInboxList,
             IList<TLUpdateBase> readHistoryOutboxList,
-            IList<TLUpdateNewMessage> newChatMessageList, 
+            IList<TLUpdateNewMessage> newChatMessageList,
             IList<TLUpdateNewMessage> newMessageList)
         {
             var readHistoryInbox = updateBase as TLUpdateReadHistoryInbox;
@@ -3811,7 +3818,7 @@ namespace Telegram.Api.Services.Updates
             }
 
             Logs.Log.Write("UpdatesService.LoadStateAndUpdate stop LoadFileState elapsed=" + stopwatch.Elapsed);
-            
+
             FileUtils.Copy(_differenceSyncRoot, Constants.DifferenceFileName, Constants.TempDifferenceFileName);
             FileUtils.Delete(_differenceSyncRoot, Constants.DifferenceFileName);
             FileUtils.Delete(_differenceTimeSyncRoot, Constants.DifferenceTimeFileName);
@@ -3931,7 +3938,7 @@ namespace Telegram.Api.Services.Updates
 
     public class UpdateCompletedEventArgs : EventArgs
     {
-        public IList<TLUpdateChannelTooLong> UpdateChannelTooLongList { get; set; } 
+        public IList<TLUpdateChannelTooLong> UpdateChannelTooLongList { get; set; }
     }
 
     public class UpdateChannelsEventArgs : EventArgs
