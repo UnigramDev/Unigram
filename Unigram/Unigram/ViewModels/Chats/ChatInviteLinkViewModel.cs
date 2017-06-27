@@ -152,7 +152,7 @@ namespace Unigram.ViewModels.Chats
             package.SetText(_inviteLink);
             Clipboard.SetContent(package);
 
-            await new TLMessageDialog("Link copied to clipboard").ShowAsync();
+            await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
         }
 
         public RelayCommand RevokeCommand => new RelayCommand(RevokeExecute);

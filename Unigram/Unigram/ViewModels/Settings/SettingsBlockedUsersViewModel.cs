@@ -107,7 +107,7 @@ namespace Unigram.ViewModels.Settings
             dialog.PrimaryButtonText = "Yes";
             dialog.SecondaryButtonText = "No";
 
-            var confirm = await dialog.ShowAsync();
+            var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.UnblockAsync(user.ToInputUser());

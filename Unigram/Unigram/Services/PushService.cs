@@ -84,23 +84,27 @@ namespace Unigram.Core.Services
                         }
 
                         var peer = default(TLPeerBase);
-                        var custom = data.GetNamedObject("custom");
+                        var custom = data.GetNamedObject("custom", null);
+                        if (custom == null)
+                        {
+                            return;
+                        }
 
-                        if (custom.ContainsKey("chat_id"))
+                        if (custom.ContainsKey("chat_id") && int.TryParse(custom.GetNamedString("chat_id"), out int chat_id))
                         {
-                            peer = new TLPeerChat { ChatId = int.Parse(custom.GetNamedString("chat_id")) };
+                            peer = new TLPeerChat { ChatId = chat_id };
                         }
-                        else if (custom.ContainsKey("channel_id"))
+                        else if (custom.ContainsKey("channel_id") && int.TryParse(custom.GetNamedString("chat_id"), out int channel_id))
                         {
-                            peer = new TLPeerChannel { ChannelId = int.Parse(custom.GetNamedString("channel_id")) };
+                            peer = new TLPeerChannel { ChannelId = channel_id };
                         }
-                        else if (custom.ContainsKey("from_id"))
+                        else if (custom.ContainsKey("from_id") && int.TryParse(custom.GetNamedString("from_id"), out int from_id))
                         {
-                            peer = new TLPeerUser { UserId = int.Parse(custom.GetNamedString("from_id")) };
+                            peer = new TLPeerUser { UserId = from_id };
                         }
-                        else if (custom.ContainsKey("contact_id"))
+                        else if (custom.ContainsKey("contact_id") && int.TryParse(custom.GetNamedString("contact_id"), out int contact_id))
                         {
-                            peer = new TLPeerUser { UserId = int.Parse(custom.GetNamedString("contact_id")) };
+                            peer = new TLPeerUser { UserId = contact_id };
                         }
 
                         if (peer == null)

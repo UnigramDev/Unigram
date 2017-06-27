@@ -1632,7 +1632,7 @@ namespace Unigram.ViewModels
                             dialog.PrimaryButtonText = "More info";
                             dialog.SecondaryButtonText = "OK";
 
-                            var confirm = await dialog.ShowAsync();
+                            var confirm = await dialog.ShowQueuedAsync();
                             if (confirm == ContentDialogResult.Primary)
                             {
                                 MessageHelper.HandleTelegramUrl("t.me/SpamBot");
@@ -2435,7 +2435,7 @@ namespace Unigram.ViewModels
                             dialog.PrimaryButtonText = "More info";
                             dialog.SecondaryButtonText = "OK";
 
-                            var confirm = await dialog.ShowAsync();
+                            var confirm = await dialog.ShowQueuedAsync();
                             if (confirm == ContentDialogResult.Primary)
                             {
                                 MessageHelper.HandleTelegramUrl("t.me/SpamBot");

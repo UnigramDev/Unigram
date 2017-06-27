@@ -1041,7 +1041,7 @@ namespace Unigram.ViewModels
                 question.Title = "Warning";
                 question.Message = string.Format("Sorry, you can pin no more than {0} chats to the top.", PinnedDialogsCountMax);
                 question.PrimaryButtonText = "OK";
-                await question.ShowAsync();
+                await question.ShowQueuedAsync();
                 return;
             }
 

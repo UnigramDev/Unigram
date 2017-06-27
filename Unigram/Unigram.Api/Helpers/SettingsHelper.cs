@@ -145,7 +145,13 @@ namespace Telegram.Api.Helpers
             get
             {
                 if (_sessionGuid == null)
-                    _sessionGuid = GetValueOrDefault("SessionGuid", Guid.NewGuid().ToString());
+                    _sessionGuid = GetValueOrDefault<string>("SessionGuid", null);
+
+                if (_sessionGuid == null)
+                {
+                    _sessionGuid = Guid.NewGuid().ToString();
+                    AddOrUpdateValue("SessionGuid", _sessionGuid);
+                }
 
                 return _sessionGuid;
             }
