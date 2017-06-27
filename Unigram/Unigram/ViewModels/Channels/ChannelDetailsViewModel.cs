@@ -100,7 +100,7 @@ namespace Unigram.ViewModels.Channels
         {
             get
             {
-                return _item != null && (_item.IsCreator || _item.IsEditor || _item.IsModerator);
+                return _item != null && (_item.IsCreator || _item.HasAdminRights);
             }
         }
 

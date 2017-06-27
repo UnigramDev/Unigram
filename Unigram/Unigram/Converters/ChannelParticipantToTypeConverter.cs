@@ -16,8 +16,7 @@ namespace Unigram.Converters
             {
                 case TLChannelParticipantCreator creator:
                     return "Creator";
-                case TLChannelParticipantModerator moderator:
-                case TLChannelParticipantEditor editor:
+                case TLChannelParticipantAdmin moderator:
                     return "Admin";
                 case TLChannelParticipant participant:
                 default:

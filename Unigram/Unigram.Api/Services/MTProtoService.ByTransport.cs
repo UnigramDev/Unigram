@@ -1053,6 +1053,7 @@ namespace Telegram.Api.Services
                         AppVersion = _deviceInfo.AppVersion,
                         Query = obj,
                         DeviceModel = _deviceInfo.DeviceModel,
+                        SystemLangCode = Utils.CurrentUICulture(),
                         LangCode = Utils.CurrentUICulture(),
                         SystemVersion = _deviceInfo.SystemVersion
                     };

@@ -651,7 +651,7 @@ namespace Unigram.ViewModels
                     var channel = e.Dialog.With as TLChannel;
                     if (channel != null)
                     {
-                        if (channel.IsLeft || channel.IsKicked)
+                        if (channel.IsLeft || channel.HasBannedRights)
                         {
                             Items.Remove(e.Dialog);
                             return;

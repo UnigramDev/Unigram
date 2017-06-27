@@ -32,7 +32,7 @@ namespace Unigram.Controls
                 {
                     JoinCommand?.Execute(null);
                 }
-                else if (channel.IsKicked)
+                else if (channel.HasBannedRights)
                 {
                     DeleteAndExitCommand?.Execute(null);
                 }
@@ -40,7 +40,7 @@ namespace Unigram.Controls
                 {
                     if (channel.IsBroadcast)
                     {
-                        if (channel.IsCreator || channel.IsEditor)
+                        if (channel.IsCreator || channel.HasAdminRights)
                         {
 
                         }
@@ -218,7 +218,7 @@ namespace Unigram.Controls
                     Content = channel.IsBroadcast ? "Join channel" : "Join";
                     return false;
                 }
-                else if (channel.IsKicked)
+                else if (channel.HasBannedRights)
                 {
                     Content = "Delete and exit";
                     return false;
@@ -227,7 +227,7 @@ namespace Unigram.Controls
                 {
                     if (channel.IsBroadcast)
                     {
-                        if (channel.IsCreator || channel.IsEditor)
+                        if (channel.IsCreator || channel.HasAdminRights)
                         {
                             return true;
                         }

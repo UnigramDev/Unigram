@@ -619,7 +619,7 @@ namespace Unigram.Views
                     {
                         if (channel.IsBroadcast)
                         {
-                            element.Visibility = channel.IsCreator || channel.IsEditor ? Visibility.Visible : Visibility.Collapsed;
+                            element.Visibility = channel.IsCreator || channel.HasAdminRights ? Visibility.Visible : Visibility.Collapsed;
                             return;
                         }
                     }
@@ -638,7 +638,7 @@ namespace Unigram.Views
                 if (messageCommon != null)
                 {
                     var channel = messageCommon.Parent as TLChannel;
-                    if (channel != null && (channel.IsEditor || channel.IsCreator) && !channel.IsBroadcast)
+                    if (channel != null && (channel.IsCreator || channel.HasAdminRights && channel.AdminRights.IsPinMessages) && !channel.IsBroadcast)
                     {
                         if (messageCommon.ToId is TLPeerChannel)
                         {
@@ -667,7 +667,7 @@ namespace Unigram.Views
                         element.Visibility = Visibility.Visible;
                         return;
                     }
-                    else if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMessageMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
+                    else if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || channel.HasAdminRights && channel.AdminRights.IsEditMessages))) && (message.Media is ITLMessageMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
                     {
                         var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
                         var config = ViewModel.CacheService.GetConfig();
@@ -704,7 +704,7 @@ namespace Unigram.Views
                             element.Visibility = Visibility.Collapsed;
                         }
 
-                        if (!messageCommon.IsOut && !channel.IsCreator && !channel.IsEditor)
+                        if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || !channel.AdminRights.IsDeleteMessages)
                         {
                             element.Visibility = Visibility.Collapsed;
                         }

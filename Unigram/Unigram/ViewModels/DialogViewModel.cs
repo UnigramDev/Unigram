@@ -373,7 +373,7 @@ namespace Unigram.ViewModels
 
             if (With is TLChannel channel)
             {
-                if (channel.IsBroadcast && (!channel.IsCreator || !channel.IsEditor || !channel.IsModerator))
+                if (channel.IsBroadcast && (!channel.IsCreator || !channel.HasAdminRights))
                 {
                     return;
                 }
@@ -1340,7 +1340,7 @@ namespace Unigram.ViewModels
 
             if (With is TLChannel channel)
             {
-                if (channel.IsBroadcast && (!channel.IsCreator || !channel.IsEditor || !channel.IsModerator))
+                if (channel.IsBroadcast && (!channel.IsCreator || !channel.HasAdminRights))
                 {
                     return;
                 }
@@ -2256,7 +2256,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (channel.IsCreator || channel.IsEditor || channel.IsModerator)
+            if (channel.IsCreator || channel.HasAdminRights && channel.AdminRights.IsPinMessages)
             {
                 var confirm = await TLMessageDialog.ShowAsync("Would you like to unpin this message?", "Unigram", "Yes", "No");
                 if (confirm == ContentDialogResult.Primary)

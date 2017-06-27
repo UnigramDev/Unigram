@@ -91,7 +91,7 @@ namespace Unigram.Views
                 _webpageId = webpage.Id;
 
                 var photos = new List<TLPhotoBase>(webpage.CachedPage.Photos);
-                var documents = new List<TLDocumentBase>(webpage.CachedPage.Videos);
+                var documents = new List<TLDocumentBase>(webpage.CachedPage.Documents);
 
                 if (webpage.HasPhoto)
                 {
@@ -128,7 +128,7 @@ namespace Unigram.Views
                         if (newpage != null && newpage.HasCachedPage)
                         {
                             photos = new List<TLPhotoBase>(newpage.CachedPage.Photos);
-                            documents = new List<TLDocumentBase>(newpage.CachedPage.Videos);
+                            documents = new List<TLDocumentBase>(newpage.CachedPage.Documents);
 
                             if (webpage.HasPhoto)
                             {

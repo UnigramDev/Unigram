@@ -132,7 +132,7 @@ namespace Unigram.Common
                         return;
                     }
                 }
-                else if ((channel.IsLeft || channel.IsKicked) && !channel.HasUsername)
+                else if ((channel.IsLeft || channel.HasBannedRights) && !channel.HasUsername)
                 {
                     return;
                 }

@@ -592,10 +592,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLUpdatesBase>> EditAdminAsync(TLChannel channel, TLInputUserBase userId, TLChannelParticipantRoleBase role)
+        public Task<MTProtoResponse<TLUpdatesBase>> EditAdminAsync(TLChannel channel, TLInputUserBase userId, TLChannelAdminRights rights)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            EditAdminAsync(channel, userId, role, (callback) =>
+            EditAdminAsync(channel, userId, rights, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>
@@ -1628,10 +1628,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLUpdatesBase>> KickFromChannelAsync(TLChannel channel, TLInputUserBase userId, bool kicked)
+        public Task<MTProtoResponse<TLUpdatesBase>> EditBannedAsync(TLChannel channel, TLInputUserBase userId, TLChannelBannedRights rights)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            KickFromChannelAsync(channel, userId, kicked, (callback) =>
+            EditBannedAsync(channel, userId, rights, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>

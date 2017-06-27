@@ -40,7 +40,7 @@ namespace Telegram.Api.TL
         {
             get
             {
-                return this is TLChannelParticipantEditor || IsCreator;
+                return this is TLChannelParticipantAdmin || IsCreator;
             }
         }
     }
