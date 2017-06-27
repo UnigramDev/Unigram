@@ -36,7 +36,7 @@ namespace Telegram.Api.TL
         //    }
         //}
 
-        public bool IsEditor
+        public bool IsAdmin
         {
             get
             {

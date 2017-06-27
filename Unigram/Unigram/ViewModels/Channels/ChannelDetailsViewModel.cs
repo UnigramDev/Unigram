@@ -203,7 +203,7 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand KickedCommand => new RelayCommand(KickedExecute);
         private void KickedExecute()
         {
-            NavigationService.Navigate(typeof(ChannelKickedPage), _item.ToPeer());
+            NavigationService.Navigate(typeof(ChannelBannedPage), _item.ToPeer());
         }
 
         public RelayCommand ParticipantsCommand => new RelayCommand(ParticipantsExecute);

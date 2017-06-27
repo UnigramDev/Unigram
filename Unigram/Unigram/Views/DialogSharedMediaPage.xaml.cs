@@ -178,7 +178,7 @@ namespace Unigram.Views
                             element.Visibility = Visibility.Collapsed;
                         }
 
-                        if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || !channel.AdminRights.IsDeleteMessages)
+                        if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
                         {
                             element.Visibility = Visibility.Collapsed;
                         }

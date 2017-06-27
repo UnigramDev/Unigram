@@ -38,8 +38,6 @@ namespace Unigram.Views.Chats
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
-            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Picture);
-
             var chat = ViewModel.Item as TLChat;
             var chatFull = ViewModel.Full as TLChatFull;
             if (chat.Photo is TLChatPhoto photo && chatFull != null && chatFull.ChatPhoto is TLPhoto)

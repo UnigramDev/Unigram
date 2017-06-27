@@ -333,7 +333,7 @@ namespace Unigram.ViewModels
                     return false;
                 }
 
-                if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || !channel.AdminRights.IsDeleteMessages)
+                if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
                 {
                     return false;
                 }

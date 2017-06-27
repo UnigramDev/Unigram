@@ -18,21 +18,21 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Channels
 {
-    public sealed partial class ChannelKickedPage : Page
+    public sealed partial class ChannelBannedPage : Page
     {
-        public ChannelKickedViewModel ViewModel => DataContext as ChannelKickedViewModel;
+        public ChannelBannedViewModel ViewModel => DataContext as ChannelBannedViewModel;
 
-        public ChannelKickedPage()
+        public ChannelBannedPage()
         {
             InitializeComponent();
-            DataContext = UnigramContainer.Current.ResolveType<ChannelKickedViewModel>();
+            DataContext = UnigramContainer.Current.ResolveType<ChannelBannedViewModel>();
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is TLChannelParticipantBase participant && participant.User != null)
+            if (e.ClickedItem is TLChannelParticipantBanned participant && participant.User != null)
             {
-                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), participant.User.ToPeer());
+                ViewModel.NavigationService.Navigate(typeof(ChannelBannedRightsPage), TLTuple.Create(ViewModel.Item.ToPeer(), participant));
             }
         }
     }

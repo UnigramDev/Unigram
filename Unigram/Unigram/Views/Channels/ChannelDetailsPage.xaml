@@ -18,7 +18,7 @@
         </Grid.RowDefinitions>
         <controls:ButtonPageHeader
             Text="Info"
-            Glyph="&#xE104;"
+            Glyph="&#xE115;"
             Command="{x:Bind ViewModel.EditCommand}"
             CommandVisibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"/>
 
@@ -160,7 +160,7 @@
                         <TextBlock Text="admin"
                                    Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   Visibility="{x:Bind (Visibility)IsEditor}"
+                                   Visibility="{x:Bind (Visibility)IsAdmin}"
                                    Grid.Column="2"
                                    Grid.RowSpan="2"/>
                     </Grid>

@@ -217,7 +217,9 @@
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelAdminRightsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelAdminsViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelBannedRightsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelDetailsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelEditTypeViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelEditViewModel.cs" />
@@ -226,7 +228,7 @@
     <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
-    <Compile Include="ViewModels\Channels\ChannelKickedViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelBannedViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
@@ -291,8 +293,8 @@
     <Compile Include="Views\Channels\ChannelEditTypePage.xaml.cs">
       <DependentUpon>ChannelEditTypePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Channels\ChannelKickedPage.xaml.cs">
-      <DependentUpon>ChannelKickedPage.xaml</DependentUpon>
+    <Compile Include="Views\Channels\ChannelBannedPage.xaml.cs">
+      <DependentUpon>ChannelBannedPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Channels\ChannelParticipantsPage.xaml.cs">
       <DependentUpon>ChannelParticipantsPage.xaml</DependentUpon>
@@ -1330,7 +1332,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Channels\ChannelKickedPage.xaml">
+    <Page Include="Views\Channels\ChannelBannedPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
