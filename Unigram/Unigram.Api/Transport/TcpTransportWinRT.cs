@@ -106,7 +106,7 @@ namespace Telegram.Api.Transport
             {
                 RaiseConnectingAsync();
 
-                if (SettingsHelper.IsSocks5)
+                if (SettingsHelper.IsProxyEnabled)
                 {
                     Debug.WriteLine(">>> Connecting through SOCKS5");
 
