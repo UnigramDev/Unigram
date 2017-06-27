@@ -271,9 +271,9 @@ namespace Unigram.Views
                             {
                                 MessageHelper.NavigateToConfirmPhone(ViewModel.ProtoService, phone, phoneHash);
                             }
-                            else if (server != null && port != null)
+                            if (server != null && int.TryParse(port, out int portCode))
                             {
-                                MessageHelper.NavigateToSocks(server, port, user, pass);
+                                MessageHelper.NavigateToSocks(server, portCode, user, pass);
                             }
                             else if (group != null)
                             {

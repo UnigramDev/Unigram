@@ -33,18 +33,5 @@ namespace Unigram.Views.Settings
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<SettingsGeneralViewModel>();
         }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            Socks5.Content = "ToggleSocks5: " + SettingsHelper.IsProxyEnabled;
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            SettingsHelper.IsProxyEnabled = !SettingsHelper.IsProxyEnabled;
-            UnigramContainer.Current.ResolveType<ITransportService>().Close();
-            UnigramContainer.Current.ResolveType<IMTProtoService>().UpdateStatusAsync(false, null);
-            Socks5.Content = "ToggleSocks5: " + SettingsHelper.IsProxyEnabled;
-        }
     }
 }

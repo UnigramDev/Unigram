@@ -24,21 +24,19 @@
                                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                        Margin="0,0,0,0">
                     <ToggleSwitch
-                        Header="Send by Enter"
                         IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
+                        Header="Send by Enter"
                         Style="{ThemeResource CheckButtonStyle}"/>
 
                     <ToggleSwitch
-                        Header="Replace emojis"
                         IsOn="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
+                        Header="Replace emojis"
                         Style="{ThemeResource CheckButtonStyle}"/>
 
                     <ToggleSwitch
-                        Header="Sync contacts"
                         IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
+                        Header="Sync contacts"
                         Style="{ThemeResource CheckButtonStyle}"/>
-
-                    <Button x:Name="Socks5" Click="Button_Click" Content="ToggleSocks5"/>
                 </local:TableStackPanel>
             </StackPanel>
         </ScrollViewer>

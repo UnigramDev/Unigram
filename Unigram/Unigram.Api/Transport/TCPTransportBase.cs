@@ -24,6 +24,12 @@ namespace Telegram.Api.Transport
         public int Port { get; protected set; }
         public virtual TransportType Type { get { return TransportType.Tcp; } }
 
+        protected bool _proxyEnabled;
+        protected string _proxyServer;
+        protected int _proxyPort;
+        protected string _proxyUsername;
+        protected string _proxyPassword;
+
         protected TcpTransportBase(string host, int port)
         {
             MessageIdDict = new Dictionary<long, long>();
