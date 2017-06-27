@@ -128,14 +128,14 @@ namespace Telegram.Api.Helpers
             get
             {
                 if (_userId == null)
-                    _userId = GetValueOrDefault("UserId", 0);
+                    _userId = GetValueOrDefault(SessionGuid + "UserId", 0);
 
                 return _userId ?? 0;
             }
             set
             {
                 _userId = value;
-                AddOrUpdateValue("UserId", value);
+                AddOrUpdateValue(SessionGuid + "UserId", value);
             }
         }
 
