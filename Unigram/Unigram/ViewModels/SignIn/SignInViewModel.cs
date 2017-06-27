@@ -20,6 +20,9 @@ using Windows.UI.Core;
 using Telegram.Api.TL.Auth.Methods;
 using System.Diagnostics;
 using Unigram.Views;
+using Unigram.Controls.Views;
+using Windows.UI.Xaml.Controls;
+using Telegram.Api.Transport;
 
 namespace Unigram.ViewModels.SignIn
 {
@@ -167,6 +170,35 @@ namespace Unigram.ViewModels.SignIn
                 else
                 {
                     await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                }
+            }
+        }
+
+        public RelayCommand ProxyCommand => new RelayCommand(ProxyExecute);
+        private async void ProxyExecute()
+        {
+            var dialog = new ProxyView();
+            dialog.Server = SettingsHelper.ProxyServer;
+            dialog.Port = SettingsHelper.ProxyPort.ToString();
+            dialog.Username = SettingsHelper.ProxyUsername;
+            dialog.Password = SettingsHelper.ProxyPassword;
+            dialog.IsProxyEnabled = SettingsHelper.IsProxyEnabled;
+
+            var enabled = SettingsHelper.IsProxyEnabled == true;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                SettingsHelper.ProxyServer = dialog.Server;
+                SettingsHelper.ProxyPort = int.Parse(dialog.Port);
+                SettingsHelper.ProxyUsername = dialog.Username;
+                SettingsHelper.ProxyPassword = dialog.Password;
+                SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
+
+                if (enabled != SettingsHelper.IsProxyEnabled)
+                {
+                    UnigramContainer.Current.ResolveType<ITransportService>().Close();
+                    UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
                 }
             }
         }

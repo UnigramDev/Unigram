@@ -38,6 +38,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock x:Name="TitleLabel" Text="Your phone number" Visibility="Collapsed" Style="{ThemeResource TitleTextBlockStyle}"/>
             <TextBlock Text="Please select the country you live in and enter your phone number"
@@ -88,7 +89,11 @@
 
             </Grid>
 
-            <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="4"/>
+            <HyperlinkButton Command="{x:Bind ViewModel.ProxyCommand}"
+                             Content="Proxy Settings"
+                             Grid.Row="4"/>
+
+            <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="5"/>
 
             <Button x:Name="NextButton"
                     Command="{x:Bind ViewModel.SendCommand}"
@@ -96,7 +101,7 @@
                     HorizontalAlignment="Stretch"
                     Content="Next"
                     Margin="0,8,0,0"
-                    Grid.Row="5"
+                    Grid.Row="6"
                     Visibility="Collapsed"/>
 
         </Grid>
