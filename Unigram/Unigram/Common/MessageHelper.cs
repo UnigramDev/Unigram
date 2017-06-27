@@ -31,6 +31,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Views.SignIn;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Transport;
 
 namespace Unigram.Common
 {
@@ -1135,9 +1136,9 @@ namespace Unigram.Common
                                 var user = query.GetParameter("user");
                                 var pass = query.GetParameter("pass");
 
-                                if (server != null && port != null)
+                                if (server != null && int.TryParse(port, out int portCode))
                                 {
-                                    NavigateToSocks(server, port, user, pass);
+                                    NavigateToSocks(server, portCode, user, pass);
                                 }
                             }
                             else if (username.Equals("share"))
@@ -1184,16 +1185,20 @@ namespace Unigram.Common
             await ForwardView.Current.ShowAsync(text, hasUrl);
         }
 
-        public static async void NavigateToSocks(string server, string port, string user, string pass)
+        public static async void NavigateToSocks(string server, int port, string user, string pass)
         {
             var userText = user != null ? string.Format("Username: {0}\n", user) : string.Empty;
             var passText = pass != null ? string.Format("Password: {0}\n", pass) : string.Empty;
             var confirm = await TLMessageDialog.ShowAsync(string.Format("Are you sure you want to enable this proxy?\n\nServer: {0}\nPort: {1}\n{2}{3}\nYou can change your proxy server later in the Settings (Data and Storage).", server, port, userText, passText), "Proxy", "Enable", "Cancel");
             if (confirm == ContentDialogResult.Primary)
             {
-
-                // TODO
-
+                SettingsHelper.ProxyServer = server;
+                SettingsHelper.ProxyPort = port;
+                SettingsHelper.ProxyUsername = user;
+                SettingsHelper.ProxyPassword = pass;
+                SettingsHelper.IsProxyEnabled = true;
+                UnigramContainer.Current.ResolveType<ITransportService>().Close();
+                UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
             }
         }
 

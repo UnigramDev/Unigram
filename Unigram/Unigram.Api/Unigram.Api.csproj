@@ -1212,9 +1212,9 @@
     <Compile Include="Transport\DataEventArgs.cs" />
     <Compile Include="Transport\ITransport.cs" />
     <Compile Include="Transport\ITransportService.cs" />
-    <Compile Include="Transport\TCPTransport.cs" />
-    <Compile Include="Transport\TCPTransportBase.cs" />
-    <Compile Include="Transport\TCPTransportResult.cs" />
+    <Compile Include="Transport\TcpTransport.cs" />
+    <Compile Include="Transport\TcpTransportBase.cs" />
+    <Compile Include="Transport\TcpTransportResult.cs" />
     <Compile Include="Transport\TcpTransportWinRT.cs" />
     <Compile Include="Transport\TransportService.cs" />
     <EmbeddedResource Include="Properties\Unigram.Api.rd.xml" />

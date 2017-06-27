@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services;
+using Telegram.Api.TL;
+using Telegram.Api.Transport;
 using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Settings;
@@ -46,6 +49,9 @@ namespace Unigram.Views.Settings
             dialog.Port = SettingsHelper.ProxyPort.ToString();
             dialog.Username = SettingsHelper.ProxyUsername;
             dialog.Password = SettingsHelper.ProxyPassword;
+            dialog.IsProxyEnabled = SettingsHelper.IsProxyEnabled;
+
+            var enabled = SettingsHelper.IsProxyEnabled == true;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
@@ -54,6 +60,13 @@ namespace Unigram.Views.Settings
                 SettingsHelper.ProxyPort = int.Parse(dialog.Port);
                 SettingsHelper.ProxyUsername = dialog.Username;
                 SettingsHelper.ProxyPassword = dialog.Password;
+                SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
+
+                if (enabled != SettingsHelper.IsProxyEnabled)
+                {
+                    UnigramContainer.Current.ResolveType<ITransportService>().Close();
+                    UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
+                }
             }
         }
     }

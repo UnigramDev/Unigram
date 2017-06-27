@@ -288,7 +288,7 @@ namespace Unigram
             var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
             if (protoService != null)
             {
-                protoService.SetMessageOnTime(25, "Connecting...");
+                protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? "Connecting to proxy..." : "Connecting...");
             }
         }
 

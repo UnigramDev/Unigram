@@ -26,6 +26,18 @@ namespace Unigram.Controls.Views
             this.InitializeComponent();
         }
 
+        public bool IsProxyEnabled
+        {
+            get
+            {
+                return FieldEnabled.IsChecked == true;
+            }
+            set
+            {
+                FieldEnabled.IsChecked = value;
+            }
+        }
+
         public string Server
         {
             get
