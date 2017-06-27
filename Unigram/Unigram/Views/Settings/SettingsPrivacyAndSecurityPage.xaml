@@ -79,7 +79,7 @@
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="CALLS" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <ToggleSwitch Header="Peer-to-Peer" Margin="-12,0,-12,-0" Style="{StaticResource CheckButtonStyle}"/>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsPeerToPeer, Mode=TwoWay}" Header="Peer-to-Peer" Margin="-12,0,-12,-0" Style="{StaticResource CheckButtonStyle}"/>
 
                     <TextBlock Text="Disabling peer-to-peer will relay all calls through Telegram servers to avoid revealing your IP address, but may slightly decrease audio quality." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>

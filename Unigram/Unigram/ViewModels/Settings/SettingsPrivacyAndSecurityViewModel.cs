@@ -62,6 +62,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsPeerToPeer
+        {
+            get
+            {
+                return ApplicationSettings.Current.IsPeerToPeer;
+            }
+            set
+            {
+                ApplicationSettings.Current.IsPeerToPeer = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #endregion
 
         public RelayCommand PasswordCommand => new RelayCommand(PasswordExecute);

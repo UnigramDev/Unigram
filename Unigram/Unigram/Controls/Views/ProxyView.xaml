@@ -10,7 +10,9 @@
     PrimaryButtonText="OK"
     SecondaryButtonText="Cancel"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded">
 
     <ContentDialog.Style>
         <Style TargetType="ContentDialog">
@@ -126,7 +128,15 @@
     </ContentDialog.Style>
     
     <ContentDialog.Title>
-        <controls:ButtonPageHeader Text="Proxy Settings" Glyph="&#xE72D;"/>
+        <Grid Height="{ThemeResource AppBarThemeCompactHeight}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Proxy Settings" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+            <controls:GlyphButton Click="Share_Click" Glyph="&#xE72D;" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
+            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+        </Grid>
     </ContentDialog.Title>
     
     <Grid>
@@ -136,12 +146,16 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <CheckBox x:Name="FieldEnabled" Content="Use proxy settings" Margin="12"/>
 
-        <TextBox x:Name="FieldServer" Header="Hostname" Margin="12,12,12,12" Grid.Row="1"/>
+        <TextBox x:Name="FieldServer" Header="Server" Margin="12,12,12,12" Grid.Row="1"/>
         <TextBox x:Name="FieldPort" Header="Port" Margin="12,0,12,12" Grid.Row="2"/>
         <TextBox x:Name="FieldUsername" Header="Username" Margin="12,12,12,12" Grid.Row="3"/>
         <PasswordBox x:Name="FieldPassword" Header="Password" Margin="12,0,12,12" Grid.Row="4"/>
+
+        <TextBlock Text="SOCKS5 proxy settings" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="12,0,12,12" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="6"/>
+
     </Grid>
 </ContentDialog>

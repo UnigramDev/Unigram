@@ -373,7 +373,7 @@ namespace Unigram.ViewModels
 
             if (With is TLChannel channel)
             {
-                if (channel.IsBroadcast && (!channel.IsCreator || !channel.HasAdminRights))
+                if (channel.IsBroadcast && !(channel.IsCreator || channel.HasAdminRights))
                 {
                     return;
                 }

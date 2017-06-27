@@ -94,6 +94,7 @@ namespace Unigram.Controls.Views
         {
             var package = args.Request.Data;
             package.Properties.Title = ViewModel.ShareTitle;
+            package.SetText(ViewModel.ShareLink.ToString());
             package.SetWebLink(ViewModel.ShareLink);
         }
 
