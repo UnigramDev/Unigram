@@ -83,18 +83,18 @@ namespace Unigram.Core.Services
                             return;
                         }
 
-                        var peer = default(TLPeerBase);
                         var custom = data.GetNamedObject("custom", null);
                         if (custom == null)
                         {
                             return;
                         }
 
+                        TLPeerBase peer = null;
                         if (custom.ContainsKey("chat_id") && int.TryParse(custom.GetNamedString("chat_id"), out int chat_id))
                         {
                             peer = new TLPeerChat { ChatId = chat_id };
                         }
-                        else if (custom.ContainsKey("channel_id") && int.TryParse(custom.GetNamedString("chat_id"), out int channel_id))
+                        else if (custom.ContainsKey("channel_id") && int.TryParse(custom.GetNamedString("channel_id"), out int channel_id))
                         {
                             peer = new TLPeerChannel { ChannelId = channel_id };
                         }
