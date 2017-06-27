@@ -9,10 +9,12 @@
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <CollectionViewSource x:Name="MediaSource" Source="{Binding Media}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="MediaSource" Source="{x:Bind ViewModel.Media}" IsSourceGrouped="True"/>
         <CollectionViewSource x:Name="FilesSource" Source="{x:Bind ViewModel.Files}" IsSourceGrouped="True"/>
         <CollectionViewSource x:Name="LinksSource" Source="{x:Bind ViewModel.Links}" IsSourceGrouped="True"/>
         <CollectionViewSource x:Name="MusicSource" Source="{x:Bind ViewModel.Music}" IsSourceGrouped="True"/>
@@ -20,331 +22,374 @@
         <Style TargetType="PivotItem">
             <Setter Property="Margin" Value="0"/>
         </Style>
+
+        <MenuFlyout x:Key="MessageMenuFlyout" Opening="MenuFlyout_Opening">
+            <MenuFlyoutItem Loaded="MessageGoto_Loaded" Command="{x:Bind ViewModel.MessageGotoCommand}" CommandParameter="{Binding}" Text="Go to message"/>
+            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
+            <MenuFlyoutItem Loaded="MessageForward_Loaded" Command="{x:Bind ViewModel.MessageForwardCommand}" CommandParameter="{Binding}" Text="Forward message"/>
+            <MenuFlyoutItem Loaded="MessageSelect_Loaded" Command="{x:Bind ViewModel.MessageSelectCommand}" CommandParameter="{Binding}" Text="Select message"/>
+        </MenuFlyout>
+
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Border x:Name="ContentRoot" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.RowSpan="2">
-            <Pivot x:Name="ScrollingHost" Style="{StaticResource TabStylePivotStyle}">
-                <PivotItem>
-                    <PivotItem.Header>
-                        <controls:TabHeaderStyle Glyph="&#xE114;" />
-                    </PivotItem.Header>
-                </PivotItem>
-                <PivotItem>
-                    <PivotItem.Header>
-                        <controls:TabHeaderStyle Glyph="&#xE114;" />
-                    </PivotItem.Header>
-                    <controls:GroupedGridView
-                        x:Name="ScrollingMedia"
-                              ItemsSource="{x:Bind MediaSource.View}"
-                        ViewSource="{x:Bind MediaSource}"
-                              SelectionMode="None"
-                              Padding="6,0,6,6"
-                              common:FluidGridView.OrientationOnly="False">
-                        <common:FluidGridView.Triggers>
-                            <common:LengthGridViewTrigger ItemLength="72"/>
-                        </common:FluidGridView.Triggers>
-                        <GridView.ItemContainerStyle>
-                            <Style TargetType="GridViewItem">
-                                <Setter Property="Margin" Value="6"/>
-                                <Setter Property="Padding" Value="0"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                            </Style>
-                        </GridView.ItemContainerStyle>
-                        <GridView.Header>
-                            <Border Height="6"/>
-                        </GridView.Header>
-                        <GridView.Footer>
-                            <Border Height="6"/>
-                        </GridView.Footer>
-                        <GridView.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.HeaderContainerStyle>
-                                    <Style TargetType="GridViewHeaderItem">
-                                        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
-                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                        <Setter Property="Margin" Value="0,0,0,0"/>
-                                        <Setter Property="Padding" Value="6,8,6,9"/>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        <Setter Property="VerticalContentAlignment" Value="Top" />
-                                        <Setter Property="MinHeight" Value="0"/>
-                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="GridViewHeaderItem">
-                                                    <Border Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                                        <ContentPresenter x:Name="ContentPresenter"
-                                                                          Margin="{TemplateBinding Padding}"
-                                                                          Content="{TemplateBinding Content}"
-                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </GroupStyle.HeaderContainerStyle>
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                            <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
-                                                       Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                                                       VerticalAlignment="Bottom"
-                                                       Margin="0,0,0,1"
-                                                       Grid.Column="1">
-                                                <Run Text="{Binding Count}"/>
-                                                <Run Text="files"/>
-                                            </TextBlock>
-                                        </Grid>
-                                    </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </GridView.GroupStyle>
-                        <GridView.ItemTemplateSelector>
-                            <selectors:MediaTemplateSelector>
-                                <selectors:MediaTemplateSelector.PhotoTemplate>
-                                    <DataTemplate>
-                                        <Border Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                                            <Image Source="{Binding Media.Photo.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
-                                        </Border>
-                                    </DataTemplate>
-                                </selectors:MediaTemplateSelector.PhotoTemplate>
-                                <selectors:MediaTemplateSelector.VideoTemplate>
-                                    <DataTemplate>
-                                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                                            <Image Source="{Binding Media.Document.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </selectors:MediaTemplateSelector.VideoTemplate>
-                            </selectors:MediaTemplateSelector>
-                        </GridView.ItemTemplateSelector>
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Top"/>
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-                    </controls:GroupedGridView>
-                </PivotItem>
-                <PivotItem>
-                    <PivotItem.Header>
-                        <controls:TabHeaderStyle Glyph="&#xE8C8;" />
-                    </PivotItem.Header>
-                    <ListView x:Name="ScrollingFiles"
-                              ItemsSource="{Binding FilesCollection}"
-                              SelectionMode="None">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.Header>
-                            <controls:SearchTextBox Text="{Binding Files.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
-                        </ListView.Header>
-                        <ListView.Footer>
-                            <Border Height="6"/>
-                        </ListView.Footer>
-                        <ListView.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.HeaderContainerStyle>
-                                    <Style TargetType="ListViewHeaderItem">
-                                        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
-                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                        <Setter Property="Margin" Value="0,0,0,0"/>
-                                        <Setter Property="Padding" Value="12,8,12,9"/>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        <Setter Property="VerticalContentAlignment" Value="Top" />
-                                        <Setter Property="MinHeight" Value="0"/>
-                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="ListViewHeaderItem">
-                                                    <Border Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                                        <ContentPresenter x:Name="ContentPresenter"
-                                                                          Margin="{TemplateBinding Padding}"
-                                                                          Content="{TemplateBinding Content}"
-                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </GroupStyle.HeaderContainerStyle>
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                            <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
-                                                       Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                                                       VerticalAlignment="Bottom"
-                                                       Margin="0,0,0,1"
-                                                       Grid.Column="1">
-                                                <Run Text="{Binding Count}"/>
-                                                <Run Text="files"/>
-                                            </TextBlock>
-                                        </Grid>
-                                    </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </ListView.GroupStyle>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <items:SharedFileListViewItem/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </PivotItem>
-                <PivotItem>
-                    <PivotItem.Header>
-                        <controls:TabHeaderStyle Glyph="&#xE71B;" />
-                    </PivotItem.Header>
-                    <controls:GroupedListView
-                        x:Name="lbLinks"
-                              ItemsSource="{x:Bind LinksSource.View}"
-                        ViewSource="{x:Bind LinksSource}">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.Header>
-                            <controls:SearchTextBox Text="{Binding Links.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
-                        </ListView.Header>
-                        <ListView.Footer>
-                            <Border Height="6"/>
-                        </ListView.Footer>
-                        <ListView.GroupStyle>
-                            <GroupStyle>
-                                <GroupStyle.HeaderContainerStyle>
-                                    <Style TargetType="ListViewHeaderItem">
-                                        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
-                                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                        <Setter Property="Margin" Value="0,0,0,0"/>
-                                        <Setter Property="Padding" Value="12,8,12,9"/>
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        <Setter Property="VerticalContentAlignment" Value="Top" />
-                                        <Setter Property="MinHeight" Value="0"/>
-                                        <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="ListViewHeaderItem">
-                                                    <Border Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                                        <ContentPresenter x:Name="ContentPresenter"
-                                                                          Margin="{TemplateBinding Padding}"
-                                                                          Content="{TemplateBinding Content}"
-                                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </GroupStyle.HeaderContainerStyle>
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                            <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
-                                                       Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                                                       VerticalAlignment="Bottom"
-                                                       Margin="0,0,0,1"
-                                                       Grid.Column="1">
-                                                <Run Text="{Binding Count}"/>
-                                                <Run Text="files"/>
-                                            </TextBlock>
-                                        </Grid>
-                                    </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </ListView.GroupStyle>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <Border Background="Gray" VerticalAlignment="Top">
-                                        <Image Width="36" Height="36"/>
-                                    </Border>
-                                    <StackPanel Margin="12,0,0,8" Visibility="{Binding Media.WebPage.SummaryVisibility}" Grid.Column="1">
-                                        <TextBlock Text="{Binding Media.WebPage.SiteName}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.SiteNameVisibility}" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                        <TextBlock Text="{Binding Media.WebPage.Author}" MaxLines="1" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.AuthorVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                        <TextBlock Text="{Binding Media.WebPage.Title}" MaxLines="2" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.TitleVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                        <TextBlock Text="{Binding Media.WebPage.Description}" MaxLines="3" TextTrimming="CharacterEllipsis" Visibility="{Binding Media.WebPage.DescriptionVisibility}" Foreground="{ThemeResource MessageForegroundBrush}" Style="{StaticResource BodyTextBlockStyle}"/>
-                                    </StackPanel>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </controls:GroupedListView>
-                </PivotItem>
-                <PivotItem>
-                    <PivotItem.Header>
-                        <controls:TabHeaderStyle Glyph="&#xE189;" />
-                    </PivotItem.Header>
-                    <ListView x:Name="ScrollingMusic"
-                              ItemsSource="{Binding MusicCollection}"
-                              SelectionMode="None">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.Header>
-                            <controls:SearchTextBox Text="{Binding Music.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
-                        </ListView.Header>
-                        <ListView.Footer>
-                            <Border Height="6"/>
-                        </ListView.Footer>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <items:SharedFileListViewItem/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </PivotItem>
-            </Pivot>
-        </Border>
-        <Border Height="{ThemeResource AppBarThemeCompactHeight}" Padding="12,0">
-            <TextBlock Text="SHARED MEDIA"
-                       Foreground="{ThemeResource ButtonForegroundThemeBrush}"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Left"
-                       Style="{StaticResource BaseTextBlockStyle}"/>
-        </Border>
+        <controls:PageHeader Text="Shared Media"/>
+
+        <Pivot x:Name="ScrollingHost" IsLocked="{x:Bind ConvertSelectionMode(ViewModel.SelectionMode), Mode=OneWay}" Style="{StaticResource TabStylePivotStyle}" Grid.RowSpan="2">
+            <PivotItem>
+                <PivotItem.Header>
+                    <controls:TabHeaderStyle Glyph="&#xEB9F;" />
+                </PivotItem.Header>
+                <controls:GroupedGridView
+                    x:Name="ScrollingMedia"
+                    ItemsSource="{x:Bind MediaSource.View}"
+                    ViewSource="{x:Bind MediaSource}"
+                    SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                    SelectionChanged="List_SelectionChanged"
+                    Padding="8,0,8,8"
+                    common:FluidGridView.OrientationOnly="False">
+                    <common:FluidGridView.Triggers>
+                        <common:LengthGridViewTrigger ItemLength="96"/>
+                    </common:FluidGridView.Triggers>
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="Margin" Value="4"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                    <!--<GridView.Header>
+                         <Border Height="6"/>
+                         </GridView.Header>-->
+                    <GridView.Footer>
+                        <Border Height="8"/>
+                    </GridView.Footer>
+                    <GridView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderContainerStyle>
+                                <Style TargetType="GridViewHeaderItem">
+                                    <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                    <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                    <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                    <Setter Property="Margin" Value="-8,0,-8,0"/>
+                                    <Setter Property="Padding" Value="12,8,12,9"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalContentAlignment" Value="Top" />
+                                    <Setter Property="MinHeight" Value="0"/>
+                                    <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="GridViewHeaderItem">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                                    <ContentPresenter x:Name="ContentPresenter"
+                                                                      Margin="{TemplateBinding Padding}"
+                                                                      Content="{TemplateBinding Content}"
+                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.HeaderContainerStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                                   Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                                   VerticalAlignment="Bottom"
+                                                   Margin="0,0,0,1"
+                                                   Grid.Column="1">
+                                            <Run Text="{Binding Count}"/>
+                                            <Run Text="files"/>
+                                        </TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </GridView.GroupStyle>
+                    <GridView.ItemTemplateSelector>
+                        <selectors:MediaTemplateSelector>
+                            <selectors:MediaTemplateSelector.PhotoTemplate>
+                                <DataTemplate>
+                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextFlyout="{StaticResource MessageMenuFlyout}" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                        <Image Source="{Binding Media.Photo.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
+                                    </controls:SimpleHyperlinkButton>
+                                </DataTemplate>
+                            </selectors:MediaTemplateSelector.PhotoTemplate>
+                            <selectors:MediaTemplateSelector.VideoTemplate>
+                                <DataTemplate>
+                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextFlyout="{StaticResource MessageMenuFlyout}" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                        <Image Source="{Binding Media.Document.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
+                                    </controls:SimpleHyperlinkButton>
+                                </DataTemplate>
+                            </selectors:MediaTemplateSelector.VideoTemplate>
+                        </selectors:MediaTemplateSelector>
+                    </GridView.ItemTemplateSelector>
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Top" GroupPadding="0,0,0,8"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                </controls:GroupedGridView>
+            </PivotItem>
+            <PivotItem>
+                <PivotItem.Header>
+                    <controls:TabHeaderStyle Glyph="&#xE8C8;" />
+                </PivotItem.Header>
+                <controls:GroupedListView
+                    x:Name="ScrollingFiles"
+                    ItemsSource="{x:Bind FilesSource.View}"
+                    ViewSource="{x:Bind FilesSource}"
+                    SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                    SelectionChanged="List_SelectionChanged">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.Header>
+                        <controls:SearchTextBox Text="{Binding Files.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                        <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
+                             Text="{Binding Files.Query, Mode=TwoWay}"
+                             PlaceholderText="Search..."
+                             Canvas.ZIndex="1"/>-->
+                    </ListView.Header>
+                    <ListView.Footer>
+                        <Border Height="6"/>
+                    </ListView.Footer>
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderContainerStyle>
+                                <Style TargetType="ListViewHeaderItem">
+                                    <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                    <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                    <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                    <Setter Property="Margin" Value="0,0,0,0"/>
+                                    <Setter Property="Padding" Value="12,8,12,9"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalContentAlignment" Value="Top" />
+                                    <Setter Property="MinHeight" Value="0"/>
+                                    <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListViewHeaderItem">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                                    <ContentPresenter x:Name="ContentPresenter"
+                                                                      Margin="{TemplateBinding Padding}"
+                                                                      Content="{TemplateBinding Content}"
+                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.HeaderContainerStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                                   Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                                   VerticalAlignment="Bottom"
+                                                   Margin="0,0,0,1"
+                                                   Grid.Column="1">
+                                            <Run Text="{Binding Count}"/>
+                                            <Run Text="files"/>
+                                        </TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <items:SharedFileListViewItem ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </controls:GroupedListView>
+            </PivotItem>
+            <PivotItem>
+                <PivotItem.Header>
+                    <controls:TabHeaderStyle Glyph="&#xE71B;" />
+                </PivotItem.Header>
+                <controls:GroupedListView
+                    x:Name="ScrollingLinks"
+                    ItemsSource="{x:Bind LinksSource.View}"
+                    ViewSource="{x:Bind LinksSource}"
+                    SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                    SelectionChanged="List_SelectionChanged">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.Header>
+                        <controls:SearchTextBox Text="{Binding Links.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                        <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
+                             Text="{Binding Links.Query, Mode=TwoWay}"
+                             PlaceholderText="Search..."
+                             Canvas.ZIndex="1"/>-->
+                    </ListView.Header>
+                    <ListView.Footer>
+                        <Border Height="6"/>
+                    </ListView.Footer>
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderContainerStyle>
+                                <Style TargetType="ListViewHeaderItem">
+                                    <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                    <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                    <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                    <Setter Property="Margin" Value="0,0,0,0"/>
+                                    <Setter Property="Padding" Value="12,8,12,9"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalContentAlignment" Value="Top" />
+                                    <Setter Property="MinHeight" Value="0"/>
+                                    <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListViewHeaderItem">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                                    <ContentPresenter x:Name="ContentPresenter"
+                                                                      Margin="{TemplateBinding Padding}"
+                                                                      Content="{TemplateBinding Content}"
+                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.HeaderContainerStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Key, Converter={StaticResource DateTimeToFormatConverter}, ConverterParameter='unigram.monthgrouping'}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}"
+                                                   Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                                   VerticalAlignment="Bottom"
+                                                   Margin="0,0,0,1"
+                                                   Grid.Column="1">
+                                            <Run Text="{Binding Count}"/>
+                                            <Run Text="files"/>
+                                        </TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <items:SharedLinkListViewItem ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </controls:GroupedListView>
+            </PivotItem>
+            <PivotItem>
+                <PivotItem.Header>
+                    <controls:TabHeaderStyle Glyph="&#xE189;" />
+                </PivotItem.Header>
+                <ListView x:Name="ScrollingMusic"
+                          ItemsSource="{Binding MusicCollection}"
+                          SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                          SelectionChanged="List_SelectionChanged">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.Header>
+                        <controls:SearchTextBox Text="{Binding Music.Query, Mode=TwoWay}" PlaceholderText="Search..." Margin="12,8" InputScope="Search"/>
+                        <!--<controls:SearchTextBox Style="{StaticResource SearchTextBoxStyle}"
+                             Text="{Binding Music.Query, Mode=TwoWay}"
+                             PlaceholderText="Search..."
+                             Canvas.ZIndex="1"/>-->
+                    </ListView.Header>
+                    <ListView.Footer>
+                        <Border Height="6"/>
+                    </ListView.Footer>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <items:SharedFileListViewItem/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </PivotItem>
+        </Pivot>
+
+        <controls:ContentPageHeader x:Name="ManagePanel" Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Command="{Binding MessagesForwardCommand}" Margin="12,0,4,0" Style="{StaticResource AccentButtonStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Forward" VerticalAlignment="Center"/>
+                        <ContentControl Content="{Binding SelectedMessages.Count}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                            <ContentControl.ContentTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition/>
+                                </TransitionCollection>
+                            </ContentControl.ContentTransitions>
+                            <ContentControl.Clip>
+                                <RectangleGeometry Rect="0,0,200,32"/>
+                            </ContentControl.Clip>
+                        </ContentControl>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding MessagesDeleteCommand}" Margin="4,0,12,0" Style="{StaticResource AccentButtonStyle}" Grid.Column="1">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Delete" VerticalAlignment="Center"/>
+                        <ContentControl Content="{Binding SelectedMessages.Count}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                            <ContentControl.ContentTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition/>
+                                </TransitionCollection>
+                            </ContentControl.ContentTransitions>
+                            <ContentControl.Clip>
+                                <RectangleGeometry Rect="0,0,200,32"/>
+                            </ContentControl.Clip>
+                        </ContentControl>
+                    </StackPanel>
+                </Button>
+
+                <controls:GlyphButton Click="Manage_Click" Glyph="&#xE106;" FontSize="16" Grid.Column="3"/>
+            </Grid>
+        </controls:ContentPageHeader>
     </Grid>
 </Page>

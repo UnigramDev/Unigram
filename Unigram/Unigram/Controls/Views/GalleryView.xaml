@@ -167,15 +167,17 @@
                               Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
                     <Button.Flyout>
                         <MenuFlyout>
-                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                            Command="{x:Bind ViewModel.DeleteCommand}"
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.GotoCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanGoto}"
+                                            Text="Go to message"/>
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.DeleteCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
-                                            Tag="&#xE107;"
                                             Text="Delete"/>
-                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
-                                            Tag="&#xE105;"
+                            <MenuFlyoutItem Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
                                             Text="Save file as..." />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.OpenWithCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanOpenWith}"
+                                            Text="Open with" />
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>

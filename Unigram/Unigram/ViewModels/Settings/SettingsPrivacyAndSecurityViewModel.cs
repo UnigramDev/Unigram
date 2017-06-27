@@ -9,8 +9,10 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Account;
 using Unigram.Common;
 using Unigram.Strings;
+using Unigram.Views.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -60,7 +62,41 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsPeerToPeer
+        {
+            get
+            {
+                return ApplicationSettings.Current.IsPeerToPeer;
+            }
+            set
+            {
+                ApplicationSettings.Current.IsPeerToPeer = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #endregion
+
+        public RelayCommand PasswordCommand => new RelayCommand(PasswordExecute);
+        private async void PasswordExecute()
+        {
+            var response = await ProtoService.GetPasswordAsync();
+            if (response.IsSucceeded)
+            {
+                if (response.Result is TLAccountPassword)
+                {
+                    NavigationService.Navigate(typeof(SettingsSecurityEnterPasswordPage), response.Result);
+                }
+                else
+                {
+
+                }
+            }
+            else
+            {
+                // TODO
+            }
+        }
 
         public RelayCommand ClearPaymentsCommand => new RelayCommand(ClearPaymentsExecute);
         private async void ClearPaymentsExecute()

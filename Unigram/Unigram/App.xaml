@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:template="using:Template10.Common"
     xmlns:themes="using:Unigram.Themes"
+    xmlns:common="using:Unigram.Common"
     xmlns:views="using:Unigram.Views"
     xmlns:converters="using:Unigram.Converters"
     xmlns:local="using:Unigram">
@@ -16,7 +17,12 @@
                 <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
                 <themes:Messages/>
                 <themes:Media/>
+                <common:Theme/>
             </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
+                <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseHighBrush}"/>
+            </Style>
 
             <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
 

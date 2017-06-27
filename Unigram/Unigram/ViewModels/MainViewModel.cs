@@ -10,8 +10,8 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Phone;
-using Telegram.Api.TL.Methods.Contacts;
+using Telegram.Api.TL.Phone.Methods;
+using Telegram.Api.TL.Contacts.Methods;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Converters;
@@ -33,22 +33,25 @@ using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Math;
 using Unigram.Core;
 using Unigram.Common.Dialogs;
+using Telegram.Api.TL.Phone;
+using System.Collections.Concurrent;
+using Telegram.Api.Services.Updates;
 
 namespace Unigram.ViewModels
 {
-    public class MainViewModel : UnigramViewModelBase, IHandle<TLUpdatePhoneCall>, IHandle<TLUpdateUserTyping>, IHandle<TLUpdateChatUserTyping>
+    public class MainViewModel : UnigramViewModelBase, IHandle<TLUpdatePhoneCall>, IHandle<TLUpdateUserTyping>, IHandle<TLUpdateChatUserTyping>, IHandle<UpdatingEventArgs>
     {
         private readonly IPushService _pushService;
 
-        private readonly Dictionary<int, InputTypingManager> _typingManagers;
-        private readonly Dictionary<int, InputTypingManager> _chatTypingManagers;
+        private readonly ConcurrentDictionary<int, InputTypingManager> _typingManagers;
+        private readonly ConcurrentDictionary<int, InputTypingManager> _chatTypingManagers;
 
         public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPushService pushService, IContactsService contactsService, DialogsViewModel dialogs)
             : base(protoService, cacheService, aggregator)
         {
             _pushService = pushService;
-            _typingManagers = new Dictionary<int, InputTypingManager>();
-            _chatTypingManagers = new Dictionary<int, InputTypingManager>();
+            _typingManagers = new ConcurrentDictionary<int, InputTypingManager>();
+            _chatTypingManagers = new ConcurrentDictionary<int, InputTypingManager>();
 
             //Dialogs = new DialogCollection(protoService, cacheService);
             SearchDialogs = new ObservableCollection<TLDialog>();
@@ -57,6 +60,11 @@ namespace Unigram.ViewModels
             Calls = new CallsViewModel(protoService, cacheService, aggregator);
 
             aggregator.Subscribe(this);
+        }
+
+        public void Handle(UpdatingEventArgs e)
+        {
+            ProtoService.SetMessageOnTime(5, "Updating...");
         }
 
         #region Typing

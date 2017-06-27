@@ -21,6 +21,8 @@ using Template10.Services.NavigationService;
 using Template10.Services.ViewService;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Input;
+using Unigram.Core.Helpers;
+using Windows.System;
 
 namespace Unigram.Controls
 {
@@ -53,9 +55,10 @@ namespace Unigram.Controls
 
         private void OnVisibleBoundsChanged(ApplicationView sender, object args)
         {
-            if (/*BackgroundElement != null &&*/ sender.VisibleBounds != Window.Current.Bounds)
+            var bounds = Window.Current.Bounds;
+            if (/*BackgroundElement != null &&*/ sender.VisibleBounds != bounds)
             {
-                Margin = new Thickness(sender.VisibleBounds.X, sender.VisibleBounds.Y, Window.Current.Bounds.Width - sender.VisibleBounds.Right, Window.Current.Bounds.Height - sender.VisibleBounds.Bottom);
+                Margin = new Thickness(sender.VisibleBounds.X - bounds.Left, sender.VisibleBounds.Y - bounds.Top, bounds.Width - (sender.VisibleBounds.Right - bounds.Left), bounds.Height - (sender.VisibleBounds.Bottom - bounds.Top));
                 UpdateViewBase();
             }
             else
@@ -205,6 +208,7 @@ namespace Unigram.Controls
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             _applicationView.VisibleBoundsChanged += OnVisibleBoundsChanged;
             BootStrapper.BackRequested += OnBackRequested;
+            App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
             //Window.Current.SizeChanged += OnSizeChanged;
 
             OnVisibleBoundsChanged(_applicationView, null);
@@ -219,12 +223,25 @@ namespace Unigram.Controls
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = BackButtonVisibility;
             _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
             BootStrapper.BackRequested -= OnBackRequested;
+            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         private void OnBackRequested(object sender, HandledEventArgs e)
         {
             BootStrapper.BackRequested -= OnBackRequested;
             OnBackRequestedOverride(sender, e);
+        }
+
+        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        {
+            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased)
+            {
+                App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+
+                var e = new HandledEventArgs();
+                OnBackRequestedOverride(sender, e);
+                args.Handled = e.Handled;
+            }
         }
 
         protected virtual void OnBackRequestedOverride(object sender, HandledEventArgs e)

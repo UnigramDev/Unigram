@@ -23,6 +23,14 @@ namespace Telegram.Api.TL
 
         public TLMessageBase Reply { get; set; }
 
+        public TLMessageBase SelfBase
+        {
+            get
+            {
+                return this;
+            }
+        }
+
         //public virtual ReplyInfo ReplyInfo
         //{
         //    get { return null; }

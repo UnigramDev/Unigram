@@ -96,6 +96,7 @@
     <Compile Include="Database\DatabaseContext.cs" />
     <Compile Include="Dependency\UnigramContainerBuilder.cs" />
     <Compile Include="EncryptionKeyEmojifier.cs" />
+    <Compile Include="Helpers\ColorsHelper.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Managers\BackgroundTaskManager.cs" />
     <Compile Include="Managers\ResourcesManager.cs" />
@@ -140,7 +141,6 @@
     <Compile Include="Services\KeyboardService.cs" />
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />
-    <Compile Include="Services\PushService.cs" />
     <Compile Include="Services\StatsService.cs" />
     <Compile Include="Services\StickersService.cs" />
     <Compile Include="Services\TLSerializationService.cs" />

@@ -35,8 +35,11 @@ namespace Telegram.Api.TL
         }
         public TLVector(int capacity)
         {
+            Capacity = capacity;
             _items = new List<T>(capacity);
         }
+
+        public int Capacity { get; private set; }
 
         public override TLType TypeId { get { return TLType.Vector; } }
 

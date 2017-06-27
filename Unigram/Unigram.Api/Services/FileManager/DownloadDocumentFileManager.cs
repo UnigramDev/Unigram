@@ -12,7 +12,8 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Upload;
+using Telegram.Api.TL.Upload;
+using Telegram.Api.TL.Upload.Methods;
 using Windows.Foundation;
 using Windows.Security.Cryptography;
 
@@ -282,7 +283,7 @@ namespace Telegram.Api.Services.FileManager
                     Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
                 });
 
-            manualResetEvent.WaitOne();
+            manualResetEvent.WaitOne(20 * 1000);
             er = outError;
             isCanceled = outIsCanceled;
 
@@ -361,7 +362,7 @@ namespace Telegram.Api.Services.FileManager
                 Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
             });
 
-            manualResetEvent.WaitOne();
+            manualResetEvent.WaitOne(20 * 1000);
             er = outError;
             isCanceled = outIsCanceled;
 
@@ -419,7 +420,7 @@ namespace Telegram.Api.Services.FileManager
                 Execute.BeginOnThreadPool(TimeSpan.FromMilliseconds(delay), () => manualResetEvent.Set());
             });
 
-            manualResetEvent.WaitOne();
+            manualResetEvent.WaitOne(20 * 1000);
             er = outError;
             isCanceled = outIsCanceled;
 

@@ -13,7 +13,7 @@
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <StackPanel>
-        <TextBox Text="{x:Bind ViewModel.FirstName, Mode=TwoWay}" Header="First name" Margin="0,24,0,12"/>
+        <TextBox Text="{x:Bind ViewModel.FirstName, Mode=TwoWay}" Header="First name" Margin="0,16,0,12"/>
         <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay}" Header="Last name"/>
     </StackPanel>
 </ContentDialog>

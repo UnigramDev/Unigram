@@ -9,7 +9,7 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Methods;
-using Telegram.Api.TL.Methods.Help;
+using Telegram.Api.TL.Help.Methods;
 using Telegram.Api.Transport;
 
 namespace Telegram.Api.Services

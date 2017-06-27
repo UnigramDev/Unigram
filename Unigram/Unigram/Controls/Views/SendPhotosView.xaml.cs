@@ -57,6 +57,11 @@ namespace Unigram.Controls.Views
         {
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
+
+            if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+            {
+                CaptionInput.Focus(FocusState.Keyboard);
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -89,8 +94,13 @@ namespace Unigram.Controls.Views
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
-                e.Handled = true;
+                if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                {
+                    Accept_Click(null, null);
+                }
+
                 Flip.Focus(FocusState.Programmatic);
+                e.Handled = true;
             }
         }
 

@@ -10,7 +10,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Upload;
+using Telegram.Api.TL.Upload.Methods;
 using Windows.Foundation;
 
 namespace Telegram.Api.Services.FileManager

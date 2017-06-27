@@ -9,6 +9,8 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Account;
+using Telegram.Api.TL.Payments;
 using Unigram.Common;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;

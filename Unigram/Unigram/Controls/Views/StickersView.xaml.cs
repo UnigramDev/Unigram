@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Navigation;
 using LinqToVisualTree;
 using Unigram.Common;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Messages;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 

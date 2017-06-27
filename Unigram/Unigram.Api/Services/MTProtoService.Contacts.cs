@@ -1,7 +1,8 @@
 ﻿using System;
 using Telegram.Api.Extensions;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Contacts;
+using Telegram.Api.TL.Contacts;
+using Telegram.Api.TL.Contacts.Methods;
 
 namespace Telegram.Api.Services
 {

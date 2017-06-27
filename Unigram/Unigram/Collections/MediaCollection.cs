@@ -17,6 +17,7 @@ namespace Unigram.Collections
         private readonly TLInputPeerBase _peer;
 
         private int _lastMaxId;
+        private bool _hasMore;
 
         public MediaCollection(IMTProtoService protoService, TLInputPeerBase peer, TLMessagesFilterBase filter)
         {
@@ -51,15 +52,20 @@ namespace Unigram.Collections
         {
             try
             {
-                var result = await _protoService.SearchAsync(_peer, _query, _filter, 0, 0, 0, _lastMaxId, 50);
-                if (result.IsSucceeded)
+                var response = await _protoService.SearchAsync(_peer, _query, _filter, 0, 0, 0, _lastMaxId, 50);
+                if (response.IsSucceeded)
                 {
-                    if (result.Result.Messages.Count > 0)
+                    if (response.Result.Messages.Count > 0)
                     {
-                        _lastMaxId = result.Result.Messages.Min(x => x.Id);
+                        _lastMaxId = response.Result.Messages.Min(x => x.Id);
+                        _hasMore = response.Result.Messages.Count == 50;
+                    }
+                    else
+                    {
+                        _hasMore = false;
                     }
 
-                    return result.Result.Messages.OfType<TLMessage>().GroupBy(x =>
+                    return response.Result.Messages.OfType<TLMessage>().GroupBy(x =>
                     {
                         var clientDelta = MTProtoService.Current.ClientTicksDelta;
                         var utc0SecsLong = x.Date * 4294967296 - clientDelta;
@@ -76,18 +82,34 @@ namespace Unigram.Collections
             return new KeyedList<DateTime, TLMessage>[0];
         }
 
+        protected override bool GetHasMoreItems()
+        {
+            return _hasMore;
+        }
+
         protected override void Merge(IList<KeyedList<DateTime, TLMessage>> result)
         {
+            base.Merge(result);
+            return;
+
             var last = this.LastOrDefault();
+            if (last == null)
+            {
+                Add(new KeyedList<DateTime, TLMessage>(DateTime.Now));
+            }
 
             foreach (var group in result)
             {
                 if (last != null && last.Key.Date == group.Key.Date)
                 {
+                    //last.AddRange(group);
+
                     foreach (var item in group)
                     {
                         last.Add(item);
                     }
+
+                    last.Update();
                 }
                 else
                 {

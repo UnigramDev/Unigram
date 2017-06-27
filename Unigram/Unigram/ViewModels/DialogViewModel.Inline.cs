@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Messages;
 using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels

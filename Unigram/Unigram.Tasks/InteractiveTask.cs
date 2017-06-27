@@ -12,7 +12,7 @@ using Telegram.Api.Services.Connection;
 using Telegram.Api.Services.DeviceInfo;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Messages.Methods;
 using Telegram.Api.Transport;
 using Unigram.Core.Notifications;
 using Unigram.Core.Services;

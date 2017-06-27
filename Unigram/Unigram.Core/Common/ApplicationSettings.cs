@@ -7,6 +7,7 @@ using Windows.Storage;
 using Telegram.Api.TL;
 using Unigram.Core.Services;
 using Telegram.Api.Services;
+using Telegram.Api.TL.Account;
 
 namespace Unigram.Common
 {
@@ -160,6 +161,36 @@ namespace Unigram.Common
             {
                 _selectedColor = value;
                 AddOrUpdateValue("SelectedColor", value);
+            }
+        }
+
+        //private bool? _isPeerToPeer;
+        //public bool IsPeerToPeer
+        //{
+        //    get
+        //    {
+        //        if (_isPeerToPeer == null)
+        //            _isPeerToPeer = GetValueOrDefault("IsPeerToPeer", true);
+
+        //        return _isPeerToPeer ?? true;
+        //    }
+        //    set
+        //    {
+        //        _isPeerToPeer = value;
+        //        AddOrUpdateValue("IsPeerToPeer", value);
+        //    }
+        //}
+
+        // This setting should not be cached or changes will be not be reflected during the session
+        public bool IsPeerToPeer
+        {
+            get
+            {
+                return GetValueOrDefault("IsPeerToPeer", true);
+            }
+            set
+            {
+                AddOrUpdateValue("IsPeerToPeer", value);
             }
         }
 

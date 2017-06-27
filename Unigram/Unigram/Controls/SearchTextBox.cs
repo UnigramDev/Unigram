@@ -19,7 +19,7 @@ namespace Unigram.Controls
         {
             DefaultStyleKey = typeof(SearchTextBox);
 
-            DataContextChanged += OnDataContextChanged;
+            //DataContextChanged += OnDataContextChanged;
             TextChanged += OnTextChanged;
         }
 

@@ -7,42 +7,77 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="MessageForegroundOutBrush" Color="#FFFFFF"/>
+
             <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#1F2C36"/>
+            <SolidColorBrush x:Key="MessageBackgroundOutBrush" Color="{ThemeResource SystemAccentColorDark2}"/>
+
             <SolidColorBrush x:Key="MessageBorderBrush" Color="#144D7B29"/>
+            <SolidColorBrush x:Key="MessageBorderOutBrush" Color="{ThemeResource SystemAccentColorDark3}"/>
+
+            
+            
             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#a0acb6"/>
+            <SolidColorBrush x:Key="MessageSubtleLabelOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#a0acb6"/>
+            <SolidColorBrush x:Key="MessageSubtleGlyphOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
+            
+            
             <StaticResource x:Key="MessageSubtleForegroundBrush" ResourceKey="SystemControlDisabledChromeDisabledLowBrush"/>
+            <SolidColorBrush x:Key="MessageSubtleForegroundOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
+            
+            
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
+            <SolidColorBrush x:Key="MessageHeaderForegroundOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush2" Color="#0e7acd"/>
+            <SolidColorBrush x:Key="MessageHeaderForegroundOutBrush2" Color="{StaticResource SystemAccentColorLight2}"/>
+
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
+            <SolidColorBrush x:Key="MessageHeaderBorderOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
 
+            
+            
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#ffffff"/>
-            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#007ee5"/>
+            <SolidColorBrush x:Key="MessageMediaForegroundOutBrush" Color="{ThemeResource SystemAccentColorDark3}"/>
 
+            <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#007ee5"/>
+            <SolidColorBrush x:Key="MessageMediaBackgroundOutBrush" Color="{ThemeResource SystemAccentColor}"/>
+
+            
+            
             <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="MessageHyperlinkForegroundOutBrush" Color="#000000"/>
+
+
 
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
+            <SolidColorBrush x:Key="MessageOverlayBackgroundOutBrush" Color="#54000000"/>
 
-            <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
-            <SolidColorBrush x:Key="MessageServiceForegroundBrush" Color="#FFFFFFFF"/>
-            <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
+
 
             <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="Green"/>
-            <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="Red"/>
+            <SolidColorBrush x:Key="MessageCallForegroundOutBrush" Color="Green"/>
 
-            <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
+            <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="Red"/>
+            <SolidColorBrush x:Key="MessageCallMissedForegroundOutBrush" Color="Red"/>
+
+
+
+
+
+
+
+
+
+
+
+
 
             <ElementTheme x:Key="MessageTextBlockTheme">Dark</ElementTheme>
-
-
-
-
-
-
-
-
 
             <StaticResource x:Key="TelegramBackgroundTitlebarBrush" ResourceKey="CommandBarBackground"/>
             <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
@@ -53,45 +88,78 @@
 
             <BitmapImage x:Key="DefaultBackgroundBrush" UriSource="ms-appx:///Assets/Images/DefaultBackground.theme-dark.png"/>
 
+            <x:Boolean x:Key="IsDarkTheme">true</x:Boolean>
+            
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="MessageForegroundBrush" Color="#000000"/>
+            <SolidColorBrush x:Key="MessageForegroundOutBrush" Color="#000000"/>
+            
             <SolidColorBrush x:Key="MessageBackgroundBrush" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="MessageBackgroundOutBrush" Color="{ThemeResource SystemAccentColorLight3}"/>
+
             <SolidColorBrush x:Key="MessageBorderBrush" Color="#29748ea2"/>
+            <SolidColorBrush x:Key="MessageBorderOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+
             <SolidColorBrush x:Key="MessageSubtleLabelBrush" Color="#a0acb6"/>
+            <SolidColorBrush x:Key="MessageSubtleLabelOutBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+
             <SolidColorBrush x:Key="MessageSubtleGlyphBrush" Color="#a0acb6"/>
+            <SolidColorBrush x:Key="MessageSubtleGlyphOutBrush" Color="{ThemeResource SystemAccentColorLight1}"/>
+
+
 
             <StaticResource x:Key="MessageSubtleForegroundBrush" ResourceKey="SystemControlDisabledChromeDisabledLowBrush"/>
+            <SolidColorBrush x:Key="MessageSubtleForegroundOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+
+
 
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#0e7acd"/>
+            <SolidColorBrush x:Key="MessageHeaderForegroundOutBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+
             <SolidColorBrush x:Key="MessageHeaderForegroundBrush2" Color="#0e7acd"/>
+            <SolidColorBrush x:Key="MessageHeaderForegroundOutBrush2" Color="{StaticResource SystemAccentColorDark1}"/>
+
             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#2fa9e2"/>
+            <SolidColorBrush x:Key="MessageHeaderBorderOutBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+
+
 
             <SolidColorBrush x:Key="MessageMediaForegroundBrush" Color="#ffffff"/>
+            <SolidColorBrush x:Key="MessageMediaForegroundOutBrush" Color="{ThemeResource SystemAccentColorDark1}"/>
+
             <SolidColorBrush x:Key="MessageMediaBackgroundBrush" Color="#007ee5"/>
+            <SolidColorBrush x:Key="MessageMediaBackgroundOutBrush" Color="{ThemeResource SystemAccentColorLight2}"/>
+
+
 
             <SolidColorBrush x:Key="MessageHyperlinkForegroundBrush" Color="#000000"/>
+            <SolidColorBrush x:Key="MessageHyperlinkForegroundOutBrush" Color="#000000"/>
+
+
 
             <SolidColorBrush x:Key="MessageOverlayBackgroundBrush" Color="#54000000"/>
+            <SolidColorBrush x:Key="MessageOverlayBackgroundOutBrush" Color="#54000000"/>
 
-            <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#7F89A0B4"/>
-            <SolidColorBrush x:Key="MessageServiceForegroundBrush" Color="#FFFFFFFF"/>
-            <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#A2BBC8D4"/>
+
 
             <SolidColorBrush x:Key="MessageCallForegroundBrush" Color="Green"/>
-            <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="Red"/>
+            <SolidColorBrush x:Key="MessageCallForegroundOutBrush" Color="Green"/>
 
-            <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
+            <SolidColorBrush x:Key="MessageCallMissedForegroundBrush" Color="Red"/>
+            <SolidColorBrush x:Key="MessageCallMissedForegroundOutBrush" Color="Red"/>
+
+
+
+
+
+
+
+
+
+
 
             <ElementTheme x:Key="MessageTextBlockTheme">Light</ElementTheme>
-
-
-
-
-
-
-
-
 
             <StaticResource x:Key="TelegramBackgroundTitlebarBrush" ResourceKey="CommandBarBackground"/>
             <StaticResource x:Key="TelegramBackgroundSubtitleBarBrush" ResourceKey="CommandBarOverflowPresenterBackground"/>
@@ -102,6 +170,7 @@
 
             <BitmapImage x:Key="DefaultBackgroundBrush" UriSource="ms-appx:///Assets/Images/DefaultBackground.theme-light.png"/>
 
+            <x:Boolean x:Key="IsDarkTheme">false</x:Boolean>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -109,7 +178,13 @@
     <x:Double x:Key="MessageMaxWidth">432</x:Double>
     <Thickness x:Key="MessageContentPadding">8,4,10,6</Thickness>
     <Thickness x:Key="MessageContentMargin">0,2,0,0</Thickness>
-    <CornerRadius x:Key="MessageCornerRadius">0</CornerRadius>
+
+    <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
+    <HorizontalAlignment x:Key="MessageHorizontalAlignmentOut">Right</HorizontalAlignment>
+
+    <SolidColorBrush x:Key="MessageServiceBackgroundBrush" Color="#667A8A96"/>
+    <SolidColorBrush x:Key="MessageServiceForegroundBrush" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="MessageServiceBackgroundPressedBrush" Color="#887A8A96"/>
 
     <SolidColorBrush x:Key="TelegramDialogLabelStateBrush" Color="#64BC54"/>
     <SolidColorBrush x:Key="TelegramBackgroundAccentBrush" Color="{ThemeResource SystemAccentColor}"/>

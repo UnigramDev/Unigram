@@ -74,45 +74,85 @@ namespace Telegram.Api.Helpers
             }
         }
 
+        private static readonly ApplicationDataContainer isolatedStore;
+
+        static SettingsHelper()
+        {
+            try
+            {
+                isolatedStore = ApplicationData.Current.LocalSettings;
+            }
+            catch { }
+        }
+
+        private static bool AddOrUpdateValue(string key, Object value)
+        {
+            bool valueChanged = false;
+
+            if (isolatedStore.Values.ContainsKey(key))
+            {
+                if (isolatedStore.Values[key] != value)
+                {
+                    isolatedStore.Values[key] = value;
+                    valueChanged = true;
+                }
+            }
+            else
+            {
+                isolatedStore.Values.Add(key, value);
+                valueChanged = true;
+            }
+
+            return valueChanged;
+        }
+
+        private static valueType GetValueOrDefault<valueType>(string key, valueType defaultValue)
+        {
+            valueType value;
+
+            if (isolatedStore.Values.ContainsKey(key))
+            {
+                value = (valueType)isolatedStore.Values[key];
+            }
+            else
+            {
+                value = defaultValue;
+            }
+
+            return value;
+        }
+
+        private static int? _userId;
         public static int UserId
         {
             get
             {
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("UserId"))
-                {
-                    UserId = (int)ApplicationData.Current.LocalSettings.Values["UserId"];
-                }
+                if (_userId == null)
+                    _userId = GetValueOrDefault("UserId", 0);
 
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey(SessionGuid + "UserId"))
-                {
-                    return (int)ApplicationData.Current.LocalSettings.Values[SessionGuid + "UserId"];
-                }
-
-                return 0;
+                return _userId ?? 0;
             }
             set
             {
-                ApplicationData.Current.LocalSettings.Values[SessionGuid + "UserId"] = value;
+                _userId = value;
+                AddOrUpdateValue("UserId", value);
             }
         }
 
+        private static string _sessionGuid;
         public static string SessionGuid
         {
             get
             {
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("SessionGuid"))
-                {
-                    return (string)ApplicationData.Current.LocalSettings.Values["SessionGuid"];
-                }
-                else
-                {
-                    SessionGuid = Guid.NewGuid().ToString();
-                    return SessionGuid;
-                }
+                if (_sessionGuid == null)
+                    _sessionGuid = GetValueOrDefault("SessionGuid", Guid.NewGuid().ToString());
+
+                return _sessionGuid;
             }
             set
             {
-                ApplicationData.Current.LocalSettings.Values["SessionGuid"] = value;
+                _sessionGuid = value;
+                AddOrUpdateValue("SessionGuid", value);
             }
         }
 
@@ -134,20 +174,20 @@ namespace Telegram.Api.Helpers
             }
         }
 
+        private static bool? _isAuthorized;
         public static bool IsAuthorized
         {
             get
             {
-                if (ApplicationData.Current.LocalSettings.Values.ContainsKey("IsAuthorized"))
-                {
-                    return (bool)ApplicationData.Current.LocalSettings.Values["IsAuthorized"];
-                }
+                if (_isAuthorized == null)
+                    _isAuthorized = GetValueOrDefault("IsAuthorized", false);
 
-                return false;
+                return _isAuthorized ?? false;
             }
             set
             {
-                ApplicationData.Current.LocalSettings.Values["IsAuthorized"] = value;
+                _isAuthorized = value;
+                AddOrUpdateValue("IsAuthorized", value);
             }
         }
 
@@ -219,6 +259,95 @@ namespace Telegram.Api.Helpers
                 ApplicationData.Current.LocalSettings.Values["IsTestMode"] = value;
             }
         }
+
+        #region Proxy
+
+        private static bool? _isProxyEnabled;
+        public static bool IsProxyEnabled
+        {
+            get
+            {
+                if (_isProxyEnabled == null)
+                    _isProxyEnabled = GetValueOrDefault("ProxyEnabled", false);
+
+                return _isProxyEnabled ?? false;
+            }
+            set
+            {
+                _isProxyEnabled = value;
+                AddOrUpdateValue("ProxyEnabled", value);
+            }
+        }
+
+        private static string _proxyServer;
+        public static string ProxyServer
+        {
+            get
+            {
+                if (_proxyServer == null)
+                    _proxyServer = GetValueOrDefault<string>("ProxyServer", null);
+
+                return _proxyServer;
+            }
+            set
+            {
+                _proxyServer = value;
+                AddOrUpdateValue("ProxyServer", value);
+            }
+        }
+
+        private static int? _proxyPort;
+        public static int ProxyPort
+        {
+            get
+            {
+                if (_proxyPort == null)
+                    _proxyPort = GetValueOrDefault("ProxyPort", 1080);
+
+                return _proxyPort ?? 1080;
+            }
+            set
+            {
+                _proxyPort = value;
+                AddOrUpdateValue("ProxyPort", value);
+            }
+        }
+
+        private static string _proxyUsername;
+        public static string ProxyUsername
+        {
+            get
+            {
+                if (_proxyUsername == null)
+                    _proxyUsername = GetValueOrDefault<string>("ProxyUsername", null);
+
+                return _proxyUsername;
+            }
+            set
+            {
+                _proxyUsername = value;
+                AddOrUpdateValue("ProxyUsername", value);
+            }
+        }
+
+        private static string _proxyPassword;
+        public static string ProxyPassword
+        {
+            get
+            {
+                if (_proxyPassword == null)
+                    _proxyPassword = GetValueOrDefault<string>("ProxyPassword", null);
+
+                return _proxyPassword;
+            }
+            set
+            {
+                _proxyPassword = value;
+                AddOrUpdateValue("ProxyPassword", value);
+            }
+        }
+
+        #endregion
     }
 
     //public static class SettingsHelper
