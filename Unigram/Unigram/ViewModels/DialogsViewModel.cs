@@ -677,7 +677,7 @@ namespace Unigram.ViewModels
                         var already = Items.FirstOrDefault(x => x.Id == e.Dialog.Id);
                         if (already != null)
                         {
-                            Execute.BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
+                            //Execute.BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
 
                             var index = Items.IndexOf(already);
 

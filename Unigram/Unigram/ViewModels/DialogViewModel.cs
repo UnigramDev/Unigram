@@ -1297,7 +1297,11 @@ namespace Unigram.ViewModels
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
-            Dispatcher.Dispatch(SaveDraft);
+            if (Dispatcher != null)
+            {
+                Dispatcher.Dispatch(SaveDraft);
+            }
+
             return Task.CompletedTask;
         }
 
