@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
 
@@ -41,8 +42,8 @@ namespace Telegram.Api.Transport
             else
             {
                 var transport = 
-#if !WIN_RT
-                    new TcpTransportWinRT(host, port);
+#if WIN_RT
+                    new TcpTransportWinRT(host, port, SettingsHelper.IsProxyEnabled, SettingsHelper.ProxyServer, SettingsHelper.ProxyPort, SettingsHelper.ProxyUsername, SettingsHelper.ProxyPassword);
 #else
                     new TcpTransport(host, port);
 #endif
@@ -86,8 +87,8 @@ namespace Telegram.Api.Transport
 #endif
             {
                 var transport = 
-#if !WIN_RT
-                    new TcpTransportWinRT(host, port);
+#if WIN_RT
+                    new TcpTransportWinRT(host, port, SettingsHelper.IsProxyEnabled, SettingsHelper.ProxyServer, SettingsHelper.ProxyPort, SettingsHelper.ProxyUsername, SettingsHelper.ProxyPassword);
 #else
                     new TcpTransport(host, port);
 #endif
@@ -160,7 +161,6 @@ namespace Telegram.Api.Transport
         }
 
         public event EventHandler<TransportEventArgs> TransportConnecting;
-
         protected virtual void RaiseTransportConnecting(ITransport transport)
         {
             TransportConnecting?.Invoke(this, new TransportEventArgs { Transport = transport });
@@ -179,7 +179,6 @@ namespace Telegram.Api.Transport
         }
 
         public event EventHandler<TransportEventArgs> TransportConnected;
-
         protected virtual void RaiseTransportConnected(ITransport transport)
         {
             TransportConnected?.Invoke(this, new TransportEventArgs { Transport = transport });
@@ -198,19 +197,15 @@ namespace Telegram.Api.Transport
         }
 
         public event EventHandler<TransportEventArgs> ConnectionLost;
-
         protected virtual void RaiseConnectionLost(ITransport transport)
         {
-            var handler = ConnectionLost;
-            if (handler != null) handler(this, new TransportEventArgs { Transport = transport });
+            ConnectionLost?.Invoke(this, new TransportEventArgs { Transport = transport });
         }
 
         public event EventHandler<TransportEventArgs> FileConnectionLost;
-
         protected virtual void RaiseFileConnectionLost(ITransport transport)
         {
-            var handler = FileConnectionLost;
-            if (handler != null) handler(this, new TransportEventArgs { Transport = transport });
+            FileConnectionLost?.Invoke(this, new TransportEventArgs { Transport = transport });
         }
 
         private void OnConnectionLost(object sender, EventArgs e)

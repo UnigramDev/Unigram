@@ -45,15 +45,16 @@ namespace Telegram.Api.Services.Connection
             {
                 if (_profile != null)
                 {
-                    if (_profile.GetConnectionCost().Roaming)
+                    var cost = _profile.GetConnectionCost();
+                    if (cost != null && cost.Roaming)
                     {
                         return NetworkType.Roaming;
                     }
-                    else if (_profile.IsWwanConnectionProfile)
+                    else if (_profile != null && _profile.IsWwanConnectionProfile)
                     {
                         return NetworkType.Mobile;
                     }
-                    else if (_profile.IsWlanConnectionProfile)
+                    else if (_profile != null && _profile.IsWlanConnectionProfile)
                     {
                         return NetworkType.WiFi;
                     }

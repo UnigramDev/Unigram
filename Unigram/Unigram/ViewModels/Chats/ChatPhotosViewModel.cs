@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Messages;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Core.Common;
@@ -107,6 +108,8 @@ namespace Unigram.ViewModels.Chats
                 }
             }
         }
+
+        public override bool CanGoto => true;
     }
 
     //public class GalleryChatPhotoItem : GalleryItem
@@ -136,64 +139,4 @@ namespace Unigram.ViewModels.Chats
     //        return new TLInputStickeredMediaPhoto { Id = _photo.ToInputPhoto() };
     //    }
     //}
-
-    public class GalleryMessageServiceItem : GalleryItem
-    {
-        private readonly TLMessageService _message;
-
-        public GalleryMessageServiceItem(TLMessageService message)
-        {
-            _message = message;
-        }
-
-        public TLMessageService Message => _message;
-
-        public override ITLTransferable Source
-        {
-            get
-            {
-                if (_message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction && chatEditPhotoAction.Photo is TLPhoto photo)
-                {
-                    return photo;
-                }
-
-                return null;
-            }
-        }
-
-        //public override ITLDialogWith From => _message.IsPost ? _message.Parent : _message.From;
-
-        public override ITLDialogWith From
-        {
-            get
-            {
-                return _message.IsPost ? _message.Parent : _message.From;
-            }
-        }
-
-        public override int Date => _message.Date;
-
-        public override bool HasStickers
-        {
-            get
-            {
-                if (_message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction && chatEditPhotoAction.Photo is TLPhoto photo)
-                {
-                    return photo.IsHasStickers;
-                }
-
-                return false;
-            }
-        }
-
-        public override TLInputStickeredMediaBase ToInputStickeredMedia()
-        {
-            if (_message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction && chatEditPhotoAction.Photo is TLPhoto photo)
-            {
-                return new TLInputStickeredMediaPhoto { Id = photo.ToInputPhoto() };
-            }
-
-            return null;
-        }
-    }
 }

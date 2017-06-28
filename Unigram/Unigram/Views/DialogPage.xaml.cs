@@ -78,6 +78,7 @@ namespace Unigram.Views
             //NavigationCacheMode = NavigationCacheMode.Required;
 
             ViewModel.TextField = TextField;
+            ViewModel.ListField = lvDialogs;
 
             CheckMessageBoxEmpty();
 
@@ -169,9 +170,6 @@ namespace Unigram.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            InputPane.GetForCurrentView().Showing += InputPane_Showing;
-            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
-
             ViewModel.IsActive = true;
 
             base.OnNavigatedTo(e);
@@ -200,9 +198,6 @@ namespace Unigram.Views
         {
             if (e.NavigationMode != NavigationMode.Forward || e.SourcePageType != typeof(DialogPage) || e.Parameter != Frame.BackStack.Last()?.Parameter)
             {
-                InputPane.GetForCurrentView().Showing -= InputPane_Showing;
-                InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
-
                 ViewModel.IsActive = false;
             }
 
@@ -252,6 +247,11 @@ namespace Unigram.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            InputPane.GetForCurrentView().Showing += InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
+
+            App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+
             _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
             lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
 
@@ -259,6 +259,14 @@ namespace Unigram.Views
             {
                 TextField.Focus(FocusState.Keyboard);
             }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            InputPane.GetForCurrentView().Showing -= InputPane_Showing;
+            InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
+
+            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
         }
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -274,6 +282,15 @@ namespace Unigram.Views
         {
             args.EnsuredFocusedElementInView = true;
             KeyboardPlaceholder.Height = new GridLength(1, GridUnitType.Auto);
+        }
+
+        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        {
+            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased && ViewModel.SelectionMode != ListViewSelectionMode.None)
+            {
+                ViewModel.SelectionMode = ListViewSelectionMode.None;
+                args.Handled = true;
+            }
         }
 
         public void OnBackRequested(HandledEventArgs args)
@@ -349,20 +366,28 @@ namespace Unigram.Views
             }
         }
 
-        private void Attach_Click(object sender, RoutedEventArgs e)
+        private async void Attach_Click(object sender, RoutedEventArgs e)
         {
-            var flyout = FlyoutBase.GetAttachedFlyout(ButtonAttach) as MenuFlyout;
-            if (flyout != null)
+            var pane = InputPane.GetForCurrentView();
+            if (pane.OccludedRect != Rect.Empty)
             {
-                var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
-                if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (bounds.Width < 500 || bounds.Height < 500))
-                {
-                    flyout.LightDismissOverlayMode = LightDismissOverlayMode.On;
-                }
-                else
-                {
-                    flyout.LightDismissOverlayMode = LightDismissOverlayMode.Auto;
-                }
+                pane.TryHide();
+
+                // TODO: Can't find any better solution
+                await Task.Delay(200);
+            }
+
+            if (FlyoutBase.GetAttachedFlyout(ButtonAttach) is MenuFlyout flyout)
+            {
+                //var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
+                //if (AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && (bounds.Width < 500 || bounds.Height < 500))
+                //{
+                //    flyout.LightDismissOverlayMode = LightDismissOverlayMode.On;
+                //}
+                //else
+                //{
+                //    flyout.LightDismissOverlayMode = LightDismissOverlayMode.Auto;
+                //}
 
                 flyout.ShowAt(ButtonAttach, new Point(8, -8));
             }
@@ -589,7 +614,7 @@ namespace Unigram.Views
                     //    }
                     //}
 
-                    var channel = ViewModel.With as TLChannel;
+                    var channel = messageCommon.Parent as TLChannel;
                     if (channel != null)
                     {
                         if (channel.IsBroadcast)
@@ -612,7 +637,7 @@ namespace Unigram.Views
                 var messageCommon = element.DataContext as TLMessageCommonBase;
                 if (messageCommon != null)
                 {
-                    var channel = ViewModel.With as TLChannel;
+                    var channel = messageCommon.Parent as TLChannel;
                     if (channel != null && (channel.IsEditor || channel.IsCreator) && !channel.IsBroadcast)
                     {
                         if (messageCommon.ToId is TLPeerChannel)
@@ -636,7 +661,7 @@ namespace Unigram.Views
                 var message = element.DataContext as TLMessage;
                 if (message != null)
                 {
-                    var channel = ViewModel.With as TLChannel;
+                    var channel = message.Parent as TLChannel;
                     if (message.IsOut && message.ToId is TLPeerUser userPeer && userPeer.Id == SettingsHelper.UserId)
                     {
                         element.Visibility = Visibility.Visible;
@@ -671,7 +696,7 @@ namespace Unigram.Views
                 var messageCommon = element.DataContext as TLMessageCommonBase;
                 if (messageCommon != null)
                 {
-                    var channel = ViewModel.With as TLChannel;
+                    var channel = messageCommon.Parent as TLChannel;
                     if (channel != null)
                     {
                         if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
@@ -737,7 +762,7 @@ namespace Unigram.Views
                 var messageCommon = element.DataContext as TLMessageCommonBase;
                 if (messageCommon != null)
                 {
-                    var channel = ViewModel.With as TLChannel;
+                    var channel = messageCommon.Parent as TLChannel;
                     if (channel != null)
                     {
                         if (channel.IsBroadcast && channel.HasUsername)
@@ -1115,19 +1140,19 @@ namespace Unigram.Views
 
         #region Binding
 
-        public Visibility ConvertBotInfo(bool hasInfo, bool last)
+        public Visibility ConvertBotInfo(TLBotInfo info, bool last)
         {
-            return hasInfo && last ? Visibility.Visible : Visibility.Collapsed;
+            return info != null && !string.IsNullOrEmpty(info.Description) && last ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public Visibility ConvertIsEmpty(bool empty, bool self, bool should)
+        public Visibility ConvertIsEmpty(bool empty, bool self, bool bot, bool should)
         {
             if (should)
             {
                 return empty && self ? Visibility.Visible : Visibility.Collapsed;
             }
 
-            return empty && !self ? Visibility.Visible : Visibility.Collapsed;
+            return empty && !self && !bot ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public string ConvertEmptyText(int userId)

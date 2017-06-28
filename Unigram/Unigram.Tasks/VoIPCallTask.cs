@@ -14,8 +14,8 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.Connection;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Messages;
-using Telegram.Api.TL.Methods.Phone;
+using Telegram.Api.TL.Messages.Methods;
+using Telegram.Api.TL.Phone.Methods;
 using Telegram.Api.Transport;
 using Unigram.Core;
 using Unigram.Core.Services;
@@ -29,6 +29,9 @@ using Windows.Storage;
 using System.Net;
 using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
+using Telegram.Api.TL.Messages;
+using Telegram.Api.TL.Phone;
+using Unigram.Common;
 
 namespace Unigram.Tasks
 {
@@ -419,7 +422,7 @@ namespace Unigram.Tasks
                             endpoints[i + 1] = connection.ToEndpoint();
                         }
 
-                        _controller.SetPublicEndpoints(endpoints, call.Protocol.IsUdpP2p);
+                        _controller.SetPublicEndpoints(endpoints, call.Protocol.IsUdpP2p && ApplicationSettings.Current.IsPeerToPeer);
                         _controller.Start();
                         _controller.Connect();
                     }

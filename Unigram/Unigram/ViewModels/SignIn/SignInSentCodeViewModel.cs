@@ -9,6 +9,8 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Account;
+using Telegram.Api.TL.Auth;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Views;

@@ -7,8 +7,10 @@ using Windows.UI.Notifications;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Account;
-using Telegram.Api.TL.Methods.Auth;
+using Telegram.Api.TL.Account.Methods;
+using Telegram.Api.TL.Auth.Methods;
+using Telegram.Api.TL.Auth;
+using Telegram.Api.TL.Account;
 
 namespace Telegram.Api.Services
 {

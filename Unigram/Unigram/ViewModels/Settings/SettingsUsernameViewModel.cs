@@ -283,7 +283,7 @@ namespace Unigram.ViewModels.Settings
                 package.SetText($"{config.MeUrlPrefix}{_username}");
                 Clipboard.SetContent(package);
 
-                await new TLMessageDialog("Link copied to clipboard").ShowAsync();
+                await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
             }
         }
     }

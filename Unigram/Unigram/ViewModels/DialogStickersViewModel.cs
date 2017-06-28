@@ -18,6 +18,7 @@ using Template10.Utils;
 using Unigram.Core.Common;
 using Template10.Mvvm;
 using System.ComponentModel;
+using Telegram.Api.TL.Messages;
 
 namespace Unigram.ViewModels
 {

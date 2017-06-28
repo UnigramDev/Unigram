@@ -9,6 +9,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Messages;
 using Template10.Utils;
 using Unigram.Common;
 using Unigram.Services;

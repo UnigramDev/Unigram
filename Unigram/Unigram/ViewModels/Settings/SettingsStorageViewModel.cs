@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Unigram.Common;
+using Unigram.Controls;
 using Unigram.Native;
 using Windows.Storage;
 using Windows.Storage.Search;
@@ -45,8 +47,7 @@ namespace Unigram.ViewModels.Settings
 
             try
             {
-                var folder = await ApplicationData.Current.LocalFolder.GetFolderAsync("temp");
-                CacheSize = NativeUtils.GetDirectorySize(folder.Path);
+                CacheSize = NativeUtils.GetDirectorySize(FileUtils.GetTempFileName(string.Empty));
             }
             catch { }
         }
@@ -54,8 +55,29 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ClearCacheCommand => new RelayCommand(ClearCacheExecute);
         private async void ClearCacheExecute()
         {
-            await ApplicationData.Current.LocalFolder.CreateFolderAsync("temp", CreationCollisionOption.ReplaceExisting);
+            IsLoading = true;
+
+            var folder = await StorageFolder.GetFolderFromPathAsync(FileUtils.GetTempFileName(string.Empty));
+            var queryOptions = new QueryOptions();
+            queryOptions.FolderDepth = FolderDepth.Deep;
+
+            var query = folder.CreateFileQueryWithOptions(queryOptions);
+            var result = await query.GetFilesAsync();
+
+            foreach (var file in result)
+            {
+                try
+                {
+                    await file.DeleteAsync();
+                    await UpdateCacheSizeAsync();
+                }
+                catch { }
+            }
+
+            IsLoading = false;
+
             await UpdateCacheSizeAsync();
+            await TLMessageDialog.ShowAsync("Done", "Done", "Done");
         }
     }
 }

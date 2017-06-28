@@ -468,7 +468,7 @@ namespace Unigram.Views
                 _debugDialog = dialog;
                 _debugTimer.Start();
 
-                await dialog.ShowAsync();
+                await dialog.ShowQueuedAsync();
             }
         }
 

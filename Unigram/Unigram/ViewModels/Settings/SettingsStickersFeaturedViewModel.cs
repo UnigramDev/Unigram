@@ -16,6 +16,7 @@ using Unigram.Views;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 using Unigram.Core.Common;
+using Telegram.Api.TL.Messages;
 
 namespace Unigram.ViewModels.Settings
 {

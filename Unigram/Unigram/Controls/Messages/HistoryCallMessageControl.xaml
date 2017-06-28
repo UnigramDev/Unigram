@@ -48,7 +48,7 @@
                            Style="{StaticResource BodyTextBlockStyle}"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis">
-                    <Run x:Name="DisplayLabel" Text="{x:Bind ViewModel.Peer.DisplayName}"/>
+                    <Run x:Name="DisplayLabel" Text="{x:Bind ViewModel.Peer.FullName}"/>
                     <Run Text="{x:Bind ConvertCount(ViewModel, ViewModel.Items.Count)}"/>
                 </TextBlock>
                 <TextBlock Text="{x:Bind Convert.DateExtended(ViewModel.Message.Date)}"

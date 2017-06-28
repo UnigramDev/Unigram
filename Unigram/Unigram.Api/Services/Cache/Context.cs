@@ -19,7 +19,7 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
-        public new T this[long index]
+        public virtual new T this[long index]
         {
             get
             {
@@ -32,7 +32,7 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
-        public void Remove(long key)
+        public virtual void Remove(long key)
         {
             TryRemove(key, out T value);
         }

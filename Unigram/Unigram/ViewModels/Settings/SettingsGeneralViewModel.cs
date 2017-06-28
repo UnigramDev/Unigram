@@ -8,6 +8,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Contacts;
 using Unigram.Common;
 using Unigram.Core.Services;
 

@@ -38,13 +38,14 @@ namespace Telegram.Api.TL
 
         public void Cancel(IDownloadManager manager, IUploadManager uploadManager)
         {
-            if (DownloadingProgress > 0 && DownloadingProgress < 1)
+            if (manager != null)
             {
                 manager.CancelDownloadFile(this);
                 DownloadingProgress = 0;
                 IsTransferring = false;
             }
-            else if (UploadingProgress > 0 && UploadingProgress < 1)
+
+            if (uploadManager != null)
             {
                 uploadManager.CancelUploadFile(Id);
                 UploadingProgress = 0;
@@ -52,23 +53,38 @@ namespace Telegram.Api.TL
             }
         }
 
+        private string _fileName;
         public string FileName
         {
             get
             {
-                var attribute = Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
-                if (attribute != null)
+                if (_fileName == null)
                 {
-                    return attribute.FileName;
+                    var attribute = Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
+                    if (attribute != null)
+                    {
+                        _fileName = string.Join("_", attribute.FileName.Split(Path.GetInvalidFileNameChars())).Replace("\u0085", string.Empty);
+                        return _fileName;
+                    }
+
+                    var videoAttribute = Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
+                    if (videoAttribute != null)
+                    {
+                        _fileName = "Video.mp4";
+                        return _fileName;
+                    }
+
+                    var audioAttribute = Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
+                    if (audioAttribute != null)
+                    {
+                        _fileName = "Audio.ogg";
+                        return _fileName;
+                    }
+
+                    _fileName = "File.dat";
                 }
 
-                var videoAttribute = Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
-                if (videoAttribute != null)
-                {
-                    return "Video.mp4";
-                }
-
-                return "Resources.Document";
+                return _fileName;
             }
         }
 
@@ -163,15 +179,22 @@ namespace Telegram.Api.TL
 
         public string GetFileName()
         {
+            if (Version > 0)
+            {
+                return string.Format("document{0}_{1}{2}", Id, Version, GetFileExtension());
+            }
+
             return string.Format("document{0}_{1}{2}", Id, AccessHash, GetFileExtension());
         }
 
         public string GetFileExtension()
         {
+            return Path.GetExtension(FileName);
+
             var attribute = Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
             if (attribute != null)
             {
-                return Path.GetExtension(attribute.FileName);
+                return Path.GetExtension(string.Join("_", attribute.FileName.Split(Path.GetInvalidFileNameChars())));
             }
 
             var videoAttribute = Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();

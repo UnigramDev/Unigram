@@ -64,7 +64,7 @@
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                            Margin="0,24,0,18">
-                        <controls:HyperButton Content="Shared media"
+                        <controls:HyperButton Content="Shared Media"
                                               Command="{x:Bind ViewModel.MediaCommand}"
                                               Style="{StaticResource HyperButtonStyle}"
                                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>

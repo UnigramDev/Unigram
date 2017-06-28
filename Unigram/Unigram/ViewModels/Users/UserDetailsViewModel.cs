@@ -332,7 +332,7 @@ namespace Unigram.ViewModels.Users
                 dialog.PrimaryButtonText = "Resources.OK";
                 dialog.SecondaryButtonText = "Resources.Cancel";
 
-                var dialogResult = await dialog.ShowAsync();
+                var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
                 {
                     var reason = opt1.IsChecked == true
@@ -353,7 +353,7 @@ namespace Unigram.ViewModels.Users
                         input.PrimaryButtonText = "Resources.OK";
                         input.SecondaryButtonText = "Resources.Cancel";
 
-                        var inputResult = await input.ShowAsync();
+                        var inputResult = await input.ShowQueuedAsync();
                         if (inputResult == ContentDialogResult.Primary)
                         {
                             reason = new TLInputReportReasonOther { Text = input.Text };
@@ -556,6 +556,11 @@ namespace Unigram.ViewModels.Users
         public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
         private async void ToggleMuteExecute()
         {
+            if (_item == null || _full == null)
+            {
+                return;
+            }
+
             var notifySettings = _full.NotifySettings as TLPeerNotifySettings;
             if (notifySettings != null)
             {

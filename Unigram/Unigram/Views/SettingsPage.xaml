@@ -55,7 +55,8 @@
                                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
                     <controls:HyperButton Tag="Phone"
                                           Content="{x:Bind ViewModel.Self.Phone, Mode=OneWay, Converter={StaticResource PhoneNumberFormatConverter}}"
-                                          Style="{StaticResource SubtitleButtonStyle}"/>
+                                          Style="{StaticResource SubtitleButtonStyle}"
+                                          Click="Phone_Click"/>
 
                     <controls:HyperButton Tag="Username"
                                           Content="{x:Bind ViewModel.Self.Username, Mode=OneWay, Converter={StaticResource UsernameConverter}}"
@@ -101,6 +102,10 @@
                                           Style="{StaticResource HyperButtonStyle}"/>
                     <controls:HyperButton Content="Telegram FAQ"
                                           Click="Questions_Click"
+                                          Style="{StaticResource HyperButtonStyle}"/>
+                    <controls:HyperButton Content="Theme"
+                                          Click="Theme_Click"
+                                          Visibility="Collapsed"
                                           Style="{StaticResource HyperButtonStyle}"/>
                 </local:TableStackPanel>
                 <local:TableStackPanel x:Name="OptionsGroup3"

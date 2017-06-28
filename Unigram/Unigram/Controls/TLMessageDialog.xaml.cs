@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Unigram.Common;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -76,7 +78,7 @@ namespace Unigram.Controls
             }
         }
 
-        public static IAsyncOperation<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null)
+        public static Task<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null)
         {
             var dialog = new TLMessageDialog();
             dialog.Title = title;
@@ -84,7 +86,7 @@ namespace Unigram.Controls
             dialog.PrimaryButtonText = primary ?? string.Empty;
             dialog.SecondaryButtonText = secondary ?? string.Empty;
 
-            return dialog.ShowAsync();
+            return dialog.ShowQueuedAsync();
         }
     }
 }

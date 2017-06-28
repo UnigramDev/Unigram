@@ -63,11 +63,14 @@ namespace Unigram.ViewModels.Channels
             private readonly TLInputChannelBase _inputChannel;
             private readonly TLChannelParticipantsFilterBase _filter;
 
+            private bool _hasMore;
+
             public ItemsCollection(IMTProtoService protoService, TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter)
             {
                 _protoService = protoService;
                 _inputChannel = inputChannel;
                 _filter = filter;
+                _hasMore = true;
             }
 
             public override async Task<IList<TLChannelParticipantBase>> LoadDataAsync()
@@ -75,10 +78,20 @@ namespace Unigram.ViewModels.Channels
                 var response = await _protoService.GetParticipantsAsync(_inputChannel, _filter, Items.Count, 200);
                 if (response.IsSucceeded)
                 {
+                    if (response.Result.Participants.Count < 200)
+                    {
+                        _hasMore = false;
+                    }
+
                     return response.Result.Participants;
                 }
 
                 return new TLChannelParticipantBase[0];
+            }
+
+            protected override bool GetHasMoreItems()
+            {
+                return _hasMore;
             }
         }
     }

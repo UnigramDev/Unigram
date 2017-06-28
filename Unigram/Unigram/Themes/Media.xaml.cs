@@ -60,7 +60,7 @@ namespace Unigram.Themes
 
             if (message != null)
             {
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
+                //ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
                 var viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
                 await GalleryView.Current.ShowAsync(viewModel, () => image);
@@ -89,7 +89,7 @@ namespace Unigram.Themes
 
             if (item != null)
             {
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
+                //ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 
                 var viewModel = new SingleGalleryViewModel(new GalleryPhotoItem(item, null as string));
                 await GalleryView.Current.ShowAsync(viewModel, () => image);
@@ -111,8 +111,12 @@ namespace Unigram.Themes
                 if (message.IsVideo() || message.IsRoundVideo() || message.IsGif() || message.IsPhoto())
                 {
                     var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
+                    if (media == null)
+                    {
+                        media = element;
+                    }
 
-                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
+                    //ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
 
                     GalleryViewModelBase viewModel;
                     if (message.Parent != null)

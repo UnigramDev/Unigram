@@ -215,6 +215,11 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
         private async void ToggleMuteExecute()
         {
+            if (_item == null || _full == null)
+            {
+                return;
+            }
+
             var notifySettings = _full.NotifySettings as TLPeerNotifySettings;
             if (notifySettings != null)
             {
@@ -239,6 +244,7 @@ namespace Unigram.ViewModels.Channels
                     {
                         dialog.NotifySettings = _full.NotifySettings;
                         dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                        dialog.RaisePropertyChanged(() => dialog.IsMuted);
                         dialog.RaisePropertyChanged(() => dialog.Self);
                     }
 

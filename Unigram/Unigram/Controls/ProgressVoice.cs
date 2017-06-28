@@ -20,6 +20,12 @@ namespace Unigram.Controls
         public ProgressVoice()
         {
             DefaultStyleKey = typeof(ProgressVoice);
+            //SizeChanged += OnSizeChanged;
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            OnMediaChanged(Media, null);
         }
 
         protected override void OnApplyTemplate()
@@ -50,11 +56,9 @@ namespace Unigram.Controls
 
         private void OnMediaChanged(TLMessageMediaBase newValue, TLMessageMediaBase oldValue)
         {
-            var documentMedia = newValue as TLMessageMediaDocument;
-            if (documentMedia != null)
+            if (newValue is TLMessageMediaDocument documentMedia)
             {
-                var document = documentMedia.Document as TLDocument;
-                if (document != null)
+                if (documentMedia.Document is TLDocument document)
                 {
                     var audioAttribute = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
                     if (audioAttribute != null)
@@ -92,8 +96,10 @@ namespace Unigram.Controls
                 result[i] = ((waveform[j] | ((j + 1 < waveform.Length ? waveform[j + 1] : 0) << 8)) >> shift & 0x1F) / 31.0;
             }
 
-            var imageWidth = 209.0;
-            var imageHeight = 24;
+            //var imageWidth = 209.0;
+            //var imageHeight = 24;
+            var imageWidth = 142d; // double.IsNaN(ActualWidth) ? 142 : ActualWidth;
+            var imageHeight = 20;
 
             var space = 1.0;
             var lineWidth = 2.0;

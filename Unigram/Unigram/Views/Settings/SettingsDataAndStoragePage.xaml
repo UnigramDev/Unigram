@@ -142,6 +142,15 @@
                         <ComboBoxItem Content="Always"/>
                     </ComboBox>
                 </StackPanel>
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="PROXY" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:HyperButton
+                        Tag="Proxy Settings"
+                        Click="Proxy_Click"
+                        Margin="-12,0,-12,-12"
+                        BorderBrush="Transparent"
+                        Style="{StaticResource HyperDetailButtonStyle}"/>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>

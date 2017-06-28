@@ -8,7 +8,8 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Methods;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Messages.Methods;
+using Telegram.Api.TL.Messages;
 
 namespace Telegram.Api.Services
 {

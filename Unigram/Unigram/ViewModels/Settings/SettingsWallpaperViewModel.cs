@@ -11,8 +11,10 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Common;
+using Unigram.Core.Helpers;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.UI;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
@@ -33,8 +35,11 @@ namespace Unigram.ViewModels.Settings
                     result.Insert(0, defa);
                 }
 
-                Items.ReplaceWith(result);
-                UpdateView();
+                Execute.BeginOnUIThread(() =>
+                {
+                    Items.ReplaceWith(result);
+                    UpdateView();
+                });
             });
         }
 
@@ -163,11 +168,20 @@ namespace Unigram.ViewModels.Settings
                     {
                         var result = await FileUtils.CreateTempFileAsync("wallpaper.jpg");
                         await file.CopyAndReplaceAsync(result);
+
+                        var accent = await ImageHelper.GetAccentAsync(result);
+                        Theme.Current.AddOrUpdateValue("MessageServiceBackgroundBrush", accent[0]);
+                        Theme.Current.AddOrUpdateValue("MessageServiceBackgroundPressedBrush", accent[1]);
                     }
                     else
                     {
                         return;
                     }
+                }
+                else
+                {
+                    Theme.Current.AddOrUpdateValue("MessageServiceBackgroundBrush", Color.FromArgb(0x66, 0x7A, 0x8A, 0x96));
+                    Theme.Current.AddOrUpdateValue("MessageServiceBackgroundPressedBrush", Color.FromArgb(0x88, 0x7A, 0x8A, 0x96));
                 }
 
                 ApplicationSettings.Current.SelectedBackground = wallpaper.Id;
@@ -184,7 +198,11 @@ namespace Unigram.ViewModels.Settings
                 if (item is StorageFile file)
                 {
                     var result = await FileUtils.CreateTempFileAsync("wallpaper.jpg");
-                    await file.MoveAndReplaceAsync(result);
+                    await file.CopyAndReplaceAsync(result);
+
+                    var accent = await ImageHelper.GetAccentAsync(result);
+                    Theme.Current.AddOrUpdateValue("MessageServiceBackgroundBrush", accent[0]);
+                    Theme.Current.AddOrUpdateValue("MessageServiceBackgroundPressedBrush", accent[1]);
                 }
                 else
                 {

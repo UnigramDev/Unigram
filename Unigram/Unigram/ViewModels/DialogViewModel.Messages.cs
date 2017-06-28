@@ -10,6 +10,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Messages;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
@@ -78,7 +79,7 @@ namespace Unigram.ViewModels
             {
                 var dialog = new DeleteChannelMessageDialog();
 
-                var result = await dialog.ShowAsync();
+                var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
                 {
                     var channel = With as TLChannel;
@@ -151,7 +152,7 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
-                else if (Peer is TLInputPeerUser)
+                else if (Peer is TLInputPeerUser && With is TLUser user && !user.IsSelf)
                 {
                     dialog.Message += "\r\n\r\nThis will delete it just for you.";
                 }
@@ -164,7 +165,7 @@ namespace Unigram.ViewModels
                     dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
                 }
 
-                var result = await dialog.ShowAsync();
+                var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
                 {
                     var revoke = dialog.IsChecked == true;
@@ -258,15 +259,14 @@ namespace Unigram.ViewModels
         #region Forward
 
         public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
-        private void MessageForwardExecute(TLMessageBase message)
+        private async void MessageForwardExecute(TLMessageBase message)
         {
             if (message is TLMessage)
             {
-                //await ShareView.Current.ShowAsync(new TLStickerSet());
-                //return;
+                await ForwardView.Current.ShowAsync(new List<TLMessage> { message as TLMessage });
 
-                App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
-                NavigationService.GoBackAt(0);
+                //App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
+                //NavigationService.GoBackAt(0);
             }
         }
 
@@ -393,7 +393,7 @@ namespace Unigram.ViewModels
                         }
                     }
                 }
-                else if (Peer is TLInputPeerUser)
+                else if (Peer is TLInputPeerUser && With is TLUser user && !user.IsSelf)
                 {
                     dialog.Message += "\r\n\r\nThis will delete it just for you.";
                 }
@@ -406,7 +406,7 @@ namespace Unigram.ViewModels
                     dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
                 }
 
-                var result = await dialog.ShowAsync();
+                var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
                 {
                     var revoke = dialog.IsChecked == true;
@@ -438,22 +438,18 @@ namespace Unigram.ViewModels
         private RelayCommand _messagesForwardCommand;
         public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(x => x is TLMessage)));
 
-        private void MessagesForwardExecute()
+        private async void MessagesForwardExecute()
         {
             var messages = SelectedMessages.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
             {
                 SelectionMode = ListViewSelectionMode.None;
 
-                App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
-                NavigationService.GoBackAt(0);
+                await ForwardView.Current.ShowAsync(messages);
+
+                //App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
+                //NavigationService.GoBackAt(0);
             }
-
-            //_stateService.ForwardMessages = Messages.Where(x => x.IsSelected).ToList();
-            //_stateService.ForwardMessages.Reverse();
-
-            //SelectionMode = Windows.UI.Xaml.Controls.ListViewSelectionMode.None;
-            //NavigationService.GoBack();
         }
 
         #endregion
@@ -482,7 +478,10 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessage> MessageCopyCommand => new RelayCommand<TLMessage>(MessageCopyExecute);
         private void MessageCopyExecute(TLMessage message)
         {
-            if (message == null) return;
+            if (message == null)
+            {
+                return;
+            }
 
             string text = null;
 
@@ -750,7 +749,7 @@ namespace Unigram.ViewModels
                 dialog.PrimaryButtonText = "Yes";
                 dialog.SecondaryButtonText = "No";
 
-                var dialogResult = await dialog.ShowAsync();
+                var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
                 {
                     var channel = Peer as TLInputPeerChannel;
@@ -773,7 +772,7 @@ namespace Unigram.ViewModels
                 dialog.PrimaryButtonText = "Yes";
                 dialog.SecondaryButtonText = "No";
 
-                var dialogResult = await dialog.ShowAsync();
+                var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
                 {
                     var channel = Peer as TLInputPeerChannel;
@@ -802,7 +801,7 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        #region KeyboardButton
+        #region Keyboard button
 
         private TLMessage _replyMarkupMessage;
         private TLReplyMarkupBase _replyMarkup;
@@ -928,7 +927,7 @@ namespace Unigram.ViewModels
                     }
                     else
                     {
-
+                        await ForwardView.Current.ShowAsync(switchInlineButton, bot);
                     }
                 }
             }
@@ -942,7 +941,7 @@ namespace Unigram.ViewModels
 
                 if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                 {
-                    if (Constants.TelegramHosts.Contains(uri.Host))
+                    if (MessageHelper.IsTelegramUrl(uri))
                     {
                         MessageHelper.HandleTelegramUrl(urlButton.Url);
                     }
@@ -989,7 +988,7 @@ namespace Unigram.ViewModels
 
                         if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                         {
-                            if (Constants.TelegramHosts.Contains(uri.Host))
+                            if (MessageHelper.IsTelegramUrl(uri))
                             {
                                 MessageHelper.HandleTelegramUrl(response.Result.Url);
                             }

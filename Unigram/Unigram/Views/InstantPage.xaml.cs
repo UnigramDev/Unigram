@@ -8,7 +8,7 @@ using System.Text;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Messages.Methods;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Converters;
@@ -91,7 +91,7 @@ namespace Unigram.Views
                 _webpageId = webpage.Id;
 
                 var photos = new List<TLPhotoBase>(webpage.CachedPage.Photos);
-                var videos = new List<TLDocumentBase>(webpage.CachedPage.Videos);
+                var documents = new List<TLDocumentBase>(webpage.CachedPage.Videos);
 
                 if (webpage.HasPhoto)
                 {
@@ -103,7 +103,7 @@ namespace Unigram.Views
                 FrameworkElement previousElement = null;
                 foreach (var block in webpage.CachedPage.Blocks)
                 {
-                    var element = ProcessBlock(webpage.CachedPage, block, photos, videos);
+                    var element = ProcessBlock(webpage.CachedPage, block, photos, documents);
                     var spacing = SpacingBetweenBlocks(previousBlock, block);
                     var padding = PaddingForBlock(block);
 
@@ -128,7 +128,7 @@ namespace Unigram.Views
                         if (newpage != null && newpage.HasCachedPage)
                         {
                             photos = new List<TLPhotoBase>(newpage.CachedPage.Photos);
-                            videos = new List<TLDocumentBase>(newpage.CachedPage.Videos);
+                            documents = new List<TLDocumentBase>(newpage.CachedPage.Videos);
 
                             if (webpage.HasPhoto)
                             {
@@ -138,7 +138,7 @@ namespace Unigram.Views
                             for (int i = processed; i < newpage.CachedPage.Blocks.Count; i++)
                             {
                                 var block = newpage.CachedPage.Blocks[i];
-                                var element = ProcessBlock(newpage.CachedPage, block, photos, videos);
+                                var element = ProcessBlock(newpage.CachedPage, block, photos, documents);
                                 var spacing = SpacingBetweenBlocks(previousBlock, block);
                                 var padding = PaddingForBlock(block);
 
@@ -166,47 +166,47 @@ namespace Unigram.Views
 
         private Dictionary<string, Border> _anchors = new Dictionary<string, Border>();
 
-        private FrameworkElement ProcessBlock(TLPageBase page, TLPageBlockBase block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessBlock(TLPageBase page, TLPageBlockBase block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             switch (block)
             {
                 case TLPageBlockCover cover:
-                    return ProcessCover(page, cover, photos, videos);
+                    return ProcessCover(page, cover, photos, documents);
                 case TLPageBlockAuthorDate authorDate:
-                    return ProcessAuthorDate(page, authorDate, photos, videos);
+                    return ProcessAuthorDate(page, authorDate, photos, documents);
                 case TLPageBlockHeader header:
                 case TLPageBlockSubheader subheader:
                 case TLPageBlockTitle title:
                 case TLPageBlockSubtitle subtitle:
                 case TLPageBlockFooter footer:
                 case TLPageBlockParagraph paragraph:
-                    return ProcessText(page, block, photos, videos, false);
+                    return ProcessText(page, block, photos, documents, false);
                 case TLPageBlockBlockquote blockquote:
-                    return ProcessBlockquote(page, blockquote, photos, videos);
+                    return ProcessBlockquote(page, blockquote, photos, documents);
                 case TLPageBlockDivider divider:
-                    return ProcessDivider(page, divider, photos, videos);
+                    return ProcessDivider(page, divider, photos, documents);
                 case TLPageBlockPhoto photo:
-                    return ProcessPhoto(page, photo, photos, videos);
+                    return ProcessPhoto(page, photo, photos, documents);
                 case TLPageBlockList list:
-                    return ProcessList(page, list, photos, videos);
+                    return ProcessList(page, list, photos, documents);
                 case TLPageBlockVideo video:
-                    return ProcessVideo(page, video, photos, videos);
+                    return ProcessVideo(page, video, photos, documents);
                 case TLPageBlockEmbedPost embedPost:
-                    return ProcessEmbedPost(page, embedPost, photos, videos);
+                    return ProcessEmbedPost(page, embedPost, photos, documents);
                 case TLPageBlockSlideshow slideshow:
-                    return ProcessSlideshow(page, slideshow, photos, videos);
+                    return ProcessSlideshow(page, slideshow, photos, documents);
                 case TLPageBlockCollage collage:
-                    return ProcessCollage(page, collage, photos, videos);
+                    return ProcessCollage(page, collage, photos, documents);
                 case TLPageBlockEmbed embed:
-                    return ProcessEmbed(page, embed, photos, videos);
+                    return ProcessEmbed(page, embed, photos, documents);
                 case TLPageBlockPullquote pullquote:
-                    return ProcessPullquote(page, pullquote, photos, videos);
+                    return ProcessPullquote(page, pullquote, photos, documents);
                 case TLPageBlockAnchor anchor:
-                    return ProcessAnchor(page, anchor, photos, videos);
+                    return ProcessAnchor(page, anchor, photos, documents);
                 case TLPageBlockPreformatted preformatted:
-                    return ProcessPreformatted(page, preformatted, photos, videos);
+                    return ProcessPreformatted(page, preformatted, photos, documents);
                 case TLPageBlockChannel channel:
-                    return ProcessChannel(page, channel, photos, videos);
+                    return ProcessChannel(page, channel, photos, documents);
                 case TLPageBlockUnsupported unsupported:
                     Debug.WriteLine("Unsupported block type: " + block.GetType());
                     break;
@@ -215,12 +215,12 @@ namespace Unigram.Views
             return null;
         }
 
-        private FrameworkElement ProcessCover(TLPageBase page, TLPageBlockCover block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessCover(TLPageBase page, TLPageBlockCover block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
-            return ProcessBlock(page, block.Cover, photos, videos);
+            return ProcessBlock(page, block.Cover, photos, documents);
         }
 
-        private FrameworkElement ProcessChannel(TLPageBase page, TLPageBlockChannel channel, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessChannel(TLPageBase page, TLPageBlockChannel channel, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             var chat = channel.Channel as TLChannel;
             if (chat.IsMin)
@@ -246,7 +246,7 @@ namespace Unigram.Views
             return button;
         }
 
-        private FrameworkElement ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessAuthorDate(TLPageBase page, TLPageBlockAuthorDate block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             var textBlock = new TextBlock { Style = Resources["AuthorDateBlockStyle"] as Style };
             textBlock.FontSize = 15;
@@ -266,7 +266,7 @@ namespace Unigram.Views
             return textBlock;
         }
 
-        private FrameworkElement ProcessText(TLPageBase page, TLPageBlockBase block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos, bool caption)
+        private FrameworkElement ProcessText(TLPageBase page, TLPageBlockBase block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents, bool caption)
         {
             TLRichTextBase text = null;
             switch (block)
@@ -403,23 +403,23 @@ namespace Unigram.Views
             return null;
         }
 
-        private FrameworkElement ProcessPreformatted(TLPageBase page, TLPageBlockPreformatted block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessPreformatted(TLPageBase page, TLPageBlockPreformatted block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             var element = new StackPanel { Style = Resources["BlockPreformattedStyle"] as Style };
 
-            var text = ProcessText(page, block, photos, videos, false);
+            var text = ProcessText(page, block, photos, documents, false);
             if (text != null) element.Children.Add(text);
 
             return element;
         }
 
-        private FrameworkElement ProcessDivider(TLPageBase page, TLPageBlockDivider block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessDivider(TLPageBase page, TLPageBlockDivider block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             var element = new Rectangle { Style = Resources["BlockDividerStyle"] as Style };
             return element;
         }
 
-        private FrameworkElement ProcessList(TLPageBase page, TLPageBlockList block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessList(TLPageBase page, TLPageBlockList block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             var textBlock = new RichTextBlock();
             textBlock.FontSize = 17;
@@ -442,33 +442,33 @@ namespace Unigram.Views
             return textBlock;
         }
 
-        private FrameworkElement ProcessBlockquote(TLPageBase page, TLPageBlockBlockquote block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessBlockquote(TLPageBase page, TLPageBlockBlockquote block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             var element = new StackPanel { Style = Resources["BlockBlockquoteStyle"] as Style };
 
-            var text = ProcessText(page, block, photos, videos, false);
+            var text = ProcessText(page, block, photos, documents, false);
             if (text != null) element.Children.Add(text);
 
-            var caption = ProcessText(page, block, photos, videos, true);
+            var caption = ProcessText(page, block, photos, documents, true);
             if (caption != null) element.Children.Add(caption);
 
             return element;
         }
 
-        private FrameworkElement ProcessPullquote(TLPageBase page, TLPageBlockPullquote block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessPullquote(TLPageBase page, TLPageBlockPullquote block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             var element = new StackPanel { Style = Resources["BlockPullquoteStyle"] as Style };
 
-            var text = ProcessText(page, block, photos, videos, false);
+            var text = ProcessText(page, block, photos, documents, false);
             if (text != null) element.Children.Add(text);
 
-            var caption = ProcessText(page, block, photos, videos, true);
+            var caption = ProcessText(page, block, photos, documents, true);
             if (caption != null) element.Children.Add(caption);
 
             return element;
         }
 
-        private FrameworkElement ProcessPhoto(TLPageBase page, TLPageBlockPhoto block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessPhoto(TLPageBase page, TLPageBlockPhoto block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             var photo = photos.FirstOrDefault(x => x.Id == block.PhotoId);
             if (photo != null)
@@ -512,7 +512,7 @@ namespace Unigram.Views
 
                 element.Children.Add(grid);
 
-                var caption = ProcessText(page, block, photos, videos, true);
+                var caption = ProcessText(page, block, photos, documents, true);
                 if (caption != null)
                 {
                     caption.Margin = new Thickness(0, 8, 0, 0);
@@ -525,9 +525,9 @@ namespace Unigram.Views
             return null;
         }
 
-        private FrameworkElement ProcessVideo(TLPageBase page, TLPageBlockVideo block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessVideo(TLPageBase page, TLPageBlockVideo block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
-            var video = videos.FirstOrDefault(x => x.Id == block.VideoId);
+            var video = documents.FirstOrDefault(x => x.Id == block.VideoId);
             if (video != null)
             {
                 var galleryItem = new GalleryDocumentItem(video as TLDocument, block.Caption?.ToString());
@@ -569,7 +569,7 @@ namespace Unigram.Views
 
                 element.Children.Add(grid);
 
-                var caption = ProcessText(page, block, photos, videos, true);
+                var caption = ProcessText(page, block, photos, documents, true);
                 if (caption != null)
                 {
                     caption.Margin = new Thickness(0, 8, 0, 0);
@@ -582,7 +582,7 @@ namespace Unigram.Views
             return null;
         }
 
-        private FrameworkElement ProcessEmbed(TLPageBase page, TLPageBlockEmbed block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessEmbed(TLPageBase page, TLPageBlockEmbed block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             var element = new StackPanel { Style = Resources["BlockEmbedStyle"] as Style };
 
@@ -633,7 +633,7 @@ namespace Unigram.Views
 
             element.Children.Add(child);
 
-            var caption = ProcessText(page, block, photos, videos, true);
+            var caption = ProcessText(page, block, photos, documents, true);
             if (caption != null)
             {
                 caption.Margin = new Thickness(0, _padding, 0, 0);
@@ -643,7 +643,7 @@ namespace Unigram.Views
             return element;
         }
 
-        private FrameworkElement ProcessSlideshow(TLPageBase page, TLPageBlockSlideshow block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessSlideshow(TLPageBase page, TLPageBlockSlideshow block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             var element = new StackPanel { Style = Resources["BlockSlideshowStyle"] as Style };
 
@@ -664,7 +664,7 @@ namespace Unigram.Views
                 }
                 else if (item is TLPageBlockVideo videoBlock)
                 {
-                    var video = videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
+                    var video = documents.FirstOrDefault(x => x.Id == videoBlock.VideoId);
                     if (video != null)
                     {
                         var child = new ImageView();
@@ -681,7 +681,7 @@ namespace Unigram.Views
 
             element.Children.Add(flip);
 
-            var caption = ProcessText(page, block, photos, videos, true);
+            var caption = ProcessText(page, block, photos, documents, true);
             if (caption != null)
             {
                 caption.Margin = new Thickness(0, _padding, 0, 0);
@@ -691,7 +691,7 @@ namespace Unigram.Views
             return element;
         }
 
-        private FrameworkElement ProcessCollage(TLPageBase page, TLPageBlockCollage block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessCollage(TLPageBase page, TLPageBlockCollage block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             var element = new StackPanel { Style = Resources["BlockCollageStyle"] as Style };
 
@@ -715,7 +715,7 @@ namespace Unigram.Views
                 }
                 else if (item is TLPageBlockVideo videoBlock)
                 {
-                    var video = videos.FirstOrDefault(x => x.Id == videoBlock.VideoId);
+                    var video = documents.FirstOrDefault(x => x.Id == videoBlock.VideoId);
                     if (video != null)
                     {
                         var child = new Image();
@@ -752,7 +752,7 @@ namespace Unigram.Views
 
             element.Children.Add(grid);
 
-            var caption = ProcessText(page, block, photos, videos, true);
+            var caption = ProcessText(page, block, photos, documents, true);
             if (caption != null)
             {
                 caption.Margin = new Thickness(0, _padding, 0, 0);
@@ -762,7 +762,7 @@ namespace Unigram.Views
             return element;
         }
 
-        private FrameworkElement ProcessEmbedPost(TLPageBase page, TLPageBlockEmbedPost block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessEmbedPost(TLPageBase page, TLPageBlockEmbedPost block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             var element = new StackPanel { Style = Resources["BlockEmbedPostStyle"] as Style };
 
@@ -805,7 +805,7 @@ namespace Unigram.Views
             FrameworkElement previousElement = null;
             foreach (var subBlock in block.Blocks)
             {
-                var subLayout = ProcessBlock(page, subBlock, photos, videos);
+                var subLayout = ProcessBlock(page, subBlock, photos, documents);
                 var spacing = SpacingBetweenBlocks(previousBlock, block);
 
                 if (subLayout != null)
@@ -821,7 +821,7 @@ namespace Unigram.Views
             return element;
         }
 
-        private FrameworkElement ProcessAnchor(TLPageBase page, TLPageBlockAnchor block, IList<TLPhotoBase> photos, IList<TLDocumentBase> videos)
+        private FrameworkElement ProcessAnchor(TLPageBase page, TLPageBlockAnchor block, IList<TLPhotoBase> photos, IList<TLDocumentBase> documents)
         {
             var element = new Border();
             _anchors[block.Name] = element;
@@ -892,12 +892,18 @@ namespace Unigram.Views
                     }
                     break;
                 case TLTextUrl urlText:
-                    var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
-                    //span.Inlines.Add(new Run { Text = " " });
-                    span.Inlines.Add(hyperlink);
-                    //span.Inlines.Add(new Run { Text = " " });
-                    hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
-                    ProcessRichText(urlText.Text, hyperlink);
+                    try
+                    {
+                        var hyperlink = new Hyperlink { UnderlineStyle = UnderlineStyle.None };
+                        span.Inlines.Add(hyperlink);
+                        hyperlink.Click += (s, args) => Hyperlink_Click(urlText);
+                        ProcessRichText(urlText.Text, hyperlink);
+                    }
+                    catch
+                    {
+                        ProcessRichText(urlText.Text, span);
+                        Debug.WriteLine("InstantPage: Probably nesting textUrl inside textUrl");
+                    }
                     break;
                 case TLTextEmpty emptyText:
                     break;
@@ -1106,7 +1112,7 @@ namespace Unigram.Views
 
                 if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                 {
-                    if (Constants.TelegramHosts.Contains(uri.Host))
+                    if (MessageHelper.IsTelegramUrl(uri))
                     {
                         MessageHelper.HandleTelegramUrl(urlText.Url);
                     }

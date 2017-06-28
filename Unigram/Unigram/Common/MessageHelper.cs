@@ -31,6 +31,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Views.SignIn;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Transport;
 
 namespace Unigram.Common
 {
@@ -82,9 +83,11 @@ namespace Unigram.Common
                 }
 
                 var game = false;
+                var notGame = true;
                 if (message.Media is TLMessageMediaGame)
                 {
                     game = sender.Tag != null;
+                    notGame = false;
                 }
 
                 var emptyWebPage = false;
@@ -93,7 +96,7 @@ namespace Unigram.Common
                     emptyWebPage = webpageMedia.WebPage is TLWebPageEmpty;
                 }
 
-                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || text ? Visibility.Visible : Visibility.Collapsed);
+                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || (text && notGame) ? Visibility.Visible : Visibility.Collapsed);
                 if (sender.Visibility == Visibility.Collapsed)
                 {
                     sender.Inlines.Clear();
@@ -131,7 +134,7 @@ namespace Unigram.Common
                     else if (caption)
                     {
                         var captionMedia2 = message.Media as ITLMessageMediaCaption;
-                        if (captionMedia2 != null && !string.IsNullOrWhiteSpace(captionMedia2.Caption))
+                        if (captionMedia2 != null)
                         {
                             Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a ITLMediaCaption");
                             ReplaceAll(message, captionMedia2.Caption, paragraph, sender.Foreground, true);
@@ -357,7 +360,7 @@ namespace Unigram.Common
             var text = message.Message;
             var previous = 0;
 
-            foreach (var entity in message.Entities)
+            foreach (var entity in message.Entities.OrderBy(x => x.Offset))
             {
                 if (entity.Offset > previous)
                 {
@@ -903,7 +906,7 @@ namespace Unigram.Common
 
                     if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                     {
-                        if (Constants.TelegramHosts.Contains(uri.Host))
+                        if (MessageHelper.IsTelegramUrl(uri))
                         {
                             HandleTelegramUrl(message, navigation);
                         }
@@ -930,7 +933,7 @@ namespace Unigram.Common
                                 dialog.PrimaryButtonText = "Open";
                                 dialog.SecondaryButtonText = "Cancel";
 
-                                var result = await dialog.ShowAsync();
+                                var result = await dialog.ShowQueuedAsync();
                                 if (result != ContentDialogResult.Primary)
                                 {
                                     return;
@@ -1027,6 +1030,22 @@ namespace Unigram.Common
             //}
         }
 
+        public static bool IsTelegramUrl(Uri uri)
+        {
+            if (Constants.TelegramHosts.Contains(uri.Host))
+            {
+                return true;
+            }
+
+            var config = InMemoryCacheService.Current.GetConfig();
+            if (config != null && Uri.TryCreate(config.MeUrlPrefix, UriKind.Absolute, out Uri meUri))
+            {
+                return uri.Host.Equals(meUri.Host, StringComparison.OrdinalIgnoreCase);
+            }
+
+            return false;
+        }
+
         public static void HandleTelegramUrl(string url)
         {
             HandleTelegramUrl(null, url);
@@ -1110,6 +1129,47 @@ namespace Unigram.Common
 
                                 await Launcher.LaunchUriAsync(new Uri(navigation));
                             }
+                            else if (username.Equals("socks", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var server = query.GetParameter("server");
+                                var port = query.GetParameter("port");
+                                var user = query.GetParameter("user");
+                                var pass = query.GetParameter("pass");
+
+                                if (server != null && int.TryParse(port, out int portCode))
+                                {
+                                    NavigateToSocks(server, portCode, user, pass);
+                                }
+                            }
+                            else if (username.Equals("share"))
+                            {
+                                var hasUrl = false;
+                                var text = query.GetParameter("url");
+                                if (text == null)
+                                {
+                                    text = "";
+                                }
+                                if (query.GetParameter("text") != null)
+                                {
+                                    if (text.Length > 0)
+                                    {
+                                        hasUrl = true;
+                                        text += "\n";
+                                    }
+                                    text += query.GetParameter("text");
+                                }
+                                if (text.Length > 4096 * 4)
+                                {
+                                    text = text.Substring(0, 4096 * 4);
+                                }
+                                while (text.EndsWith("\n"))
+                                {
+                                    text = text.Substring(0, text.Length - 1);
+                                }
+
+
+                                NavigateToShare(text, hasUrl);
+                            }
                             else
                             {
                                 NavigateToUsername(MTProtoService.Current, username, accessToken, post, string.IsNullOrEmpty(game) ? null : game);
@@ -1117,6 +1177,28 @@ namespace Unigram.Common
                         }
                     }
                 }
+            }
+        }
+
+        public static async void NavigateToShare(string text, bool hasUrl)
+        {
+            await ForwardView.Current.ShowAsync(text, hasUrl);
+        }
+
+        public static async void NavigateToSocks(string server, int port, string user, string pass)
+        {
+            var userText = user != null ? string.Format("Username: {0}\n", user) : string.Empty;
+            var passText = pass != null ? string.Format("Password: {0}\n", pass) : string.Empty;
+            var confirm = await TLMessageDialog.ShowAsync(string.Format("Are you sure you want to enable this proxy?\n\nServer: {0}\nPort: {1}\n{2}{3}\nYou can change your proxy server later in the Settings (Data and Storage).", server, port, userText, passText), "Proxy", "Enable", "Cancel");
+            if (confirm == ContentDialogResult.Primary)
+            {
+                SettingsHelper.ProxyServer = server;
+                SettingsHelper.ProxyPort = port;
+                SettingsHelper.ProxyUsername = user;
+                SettingsHelper.ProxyPassword = pass;
+                SettingsHelper.IsProxyEnabled = true;
+                UnigramContainer.Current.ResolveType<ITransportService>().Close();
+                UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
             }
         }
 

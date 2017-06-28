@@ -20,19 +20,21 @@
             <Setter Property="MinHeight" Value="{ThemeResource ProgressBarThemeMinHeight}" />
             <Setter Property="IsTabStop" Value="False" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
-            <Setter Property="Width" Value="209"/>
+            <!--<Setter Property="Width" Value="209"/>-->
+            <Setter Property="MinWidth" Value="142"/>
+            <Setter Property="Margin" Value="0,4,0,0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="controls:ProgressVoice">
                         <Grid>
                             <Path x:Name="HorizontalTrackRect"
-                                Margin="{TemplateBinding Padding}"
-                                Fill="{TemplateBinding Background}"
-                                HorizontalAlignment="Stretch" />
+                                  Margin="{TemplateBinding Padding}"
+                                  Fill="{TemplateBinding Background}"
+                                  HorizontalAlignment="Stretch" />
                             <Path x:Name="ProgressBarIndicator"
-                                Margin="{TemplateBinding Padding}"
-                                Fill="{TemplateBinding Foreground}"
-                                HorizontalAlignment="Left" />
+                                  Margin="{TemplateBinding Padding}"
+                                  Fill="{TemplateBinding Foreground}"
+                                  HorizontalAlignment="Left" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -49,8 +51,8 @@
             <Setter Property="UseSystemFocusVisuals" Value="True"/>
             <Setter Property="FocusVisualMargin" Value="-7,0,-7,0"/>
             <Setter Property="IsFocusEngagementEnabled" Value="True"/>
-            <Setter Property="Width" Value="209"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <!--<Setter Property="Width" Value="209"/>-->
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Slider">
@@ -117,7 +119,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid Background="{ThemeResource MessageMediaBackgroundBrush}" Width="48" Height="48" CornerRadius="24" VerticalAlignment="Top">
-            <controls:GlyphHyperlinkButton x:Name="StatusGlyph" Click="Toggle_Click" Glyph="&#xE118;" Foreground="{ThemeResource MessageMediaForegroundBrush}" RequestedTheme="Dark" CornerRadius="24"/>
+            <controls:GlyphHyperlinkButton x:Name="StatusGlyph" Click="Toggle_Click" Glyph="&#xE118;" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Document.Progress}"/>
         </Grid>
 
@@ -128,12 +130,12 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <!--<Slider x:Name="Slide" Value="50" Style="{StaticResource SliderStyle}" IsThumbToolTipEnabled="False" VerticalAlignment="Center"/>-->
-            <controls:ProgressVoice x:Name="Slide" HorizontalAlignment="Left" Value="50" Media="{Binding Media}"/>
+            <controls:ProgressVoice x:Name="Slide" Value="50" Media="{Binding Media}"/>
 
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,4,0,0" RequestedTheme="Light" Grid.Row="1">
-                <TextBlock x:Name="DurationLabel" Text="00:01" Foreground="{ThemeResource SliderTrackFill}" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                <TextBlock x:Name="DurationLabel" Text="00:01" Foreground="{ThemeResource MessageSubtleForegroundBrush}" Style="{ThemeResource CaptionTextBlockStyle}"/>
                 <!--<TextBlock Visibility="{x:Bind (Visibility)ViewModel.IsMediaUnread, Mode=OneWay}" Text=" ●" Foreground="{ThemeResource SliderTrackFill}" Style="{ThemeResource CaptionTextBlockStyle}" Margin="0,-1,0,0"/>-->
-                <Ellipse Visibility="{x:Bind (Visibility)ViewModel.IsMediaUnread, Mode=OneWay}" Width="6" Height="6" Fill="{ThemeResource SliderTrackFill}" Margin="6,2,0,0"/>
+                <Ellipse Visibility="{x:Bind (Visibility)ViewModel.IsMediaUnread, Mode=OneWay}" Width="6" Height="6" Fill="{ThemeResource MessageSubtleForegroundBrush}" Margin="6,2,0,0"/>
             </StackPanel>
         </Grid>
     </Grid>

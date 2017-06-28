@@ -16,36 +16,201 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using LinqToVisualTree;
 using System.Threading.Tasks;
+using Telegram.Api.TL;
+using Unigram.Controls;
+using Template10.Common;
+using System.ComponentModel;
+using Unigram.Common;
+using Windows.UI.Core;
+using Windows.System;
 
 namespace Unigram.Views
 {
-    public sealed partial class DialogSharedMediaPage : Page
+    public sealed partial class DialogSharedMediaPage : Page, IMasterDetailPage
     {
         public DialogSharedMediaViewModel ViewModel => DataContext as DialogSharedMediaViewModel;
 
         public DialogSharedMediaPage()
         {
             InitializeComponent();
-
             DataContext = UnigramContainer.Current.ResolveType<DialogSharedMediaViewModel>();
 
-            // Used to get semi-transparent background for headers.
-            // TODO: Check for performance issues on mobile.
-            ScrollingMedia.Loaded += Host_Loaded;
-            ScrollingFiles.Loaded += Host_Loaded;
-            ScrollingMusic.Loaded += Host_Loaded;
+            ViewModel.PropertyChanged += OnPropertyChanged;
         }
 
-        private void Host_Loaded(object sender, RoutedEventArgs e)
+        private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var list = sender as ListViewBase;
-            if (list != null)
+            App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            App.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+        }
+
+        private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
+        {
+            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased && ViewModel.SelectionMode != ListViewSelectionMode.None)
             {
-                if (list.ItemsPanelRoot != null)
+                ViewModel.SelectionMode = ListViewSelectionMode.None;
+                args.Handled = true;
+            }
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("SelectedItems"))
+            {
+                switch (ScrollingHost.SelectedIndex)
                 {
-                    list.ItemsPanelRoot.RegisterPropertyChangedCallback(ClipProperty, new DependencyPropertyChangedCallback((s, dp) => list.ItemsPanelRoot.Clip = null));
+                    case 0:
+                        ScrollingMedia.SelectedItems.AddRange(ViewModel.SelectedMessages);
+                        break;
+                    case 1:
+                        ScrollingFiles.SelectedItems.AddRange(ViewModel.SelectedMessages);
+                        break;
+                    case 2:
+                        ScrollingLinks.SelectedItems.AddRange(ViewModel.SelectedMessages);
+                        break;
+                    case 3:
+                        ScrollingMusic.SelectedItems.AddRange(ViewModel.SelectedMessages);
+                        break;
                 }
             }
         }
+
+        public void OnBackRequested(HandledEventArgs args)
+        {
+            if (ViewModel.SelectionMode != ListViewSelectionMode.None)
+            {
+                ViewModel.SelectionMode = ListViewSelectionMode.None;
+                args.Handled = true;
+            }
+        }
+
+        private void Photo_Click(object sender, RoutedEventArgs e)
+        {
+            Themes.Media.Photo_Click(sender);
+        }
+
+        private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                ManagePanel.Visibility = Visibility.Collapsed;
+                //InfoPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ManagePanel.Visibility = Visibility.Visible;
+                //InfoPanel.Visibility = Visibility.Collapsed;
+            }
+
+            ViewModel.MessagesForwardCommand.RaiseCanExecuteChanged();
+            ViewModel.MessagesDeleteCommand.RaiseCanExecuteChanged();
+        }
+
+        private void Manage_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                ViewModel.SelectionMode = ListViewSelectionMode.Multiple;
+            }
+            else
+            {
+                ViewModel.SelectionMode = ListViewSelectionMode.None;
+            }
+        }
+
+        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ViewModel.SelectedMessages = new List<TLMessageCommonBase>(((ListViewBase)sender).SelectedItems.Cast<TLMessageCommonBase>());
+        }
+
+        private bool ConvertSelectionMode(ListViewSelectionMode mode)
+        {
+            List_SelectionModeChanged(null, null);
+            return mode == ListViewSelectionMode.None ? false : true;
+        }
+
+        #region Context menu
+
+        private void MenuFlyout_Opening(object sender, object e)
+        {
+            var flyout = sender as MenuFlyout;
+
+            foreach (var item in flyout.Items)
+            {
+                item.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void MessageGoto_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var messageCommon = element.DataContext as TLMessageCommonBase;
+                if (messageCommon != null)
+                {
+
+                }
+
+                element.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void MessageDelete_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                element.Visibility = Visibility.Visible;
+
+                var messageCommon = element.DataContext as TLMessageCommonBase;
+                if (messageCommon != null)
+                {
+                    var channel = messageCommon.Parent as TLChannel;
+                    if (channel != null)
+                    {
+                        if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
+                        {
+                            element.Visibility = Visibility.Collapsed;
+                        }
+
+                        if (!messageCommon.IsOut && !channel.IsCreator && !channel.IsEditor)
+                        {
+                            element.Visibility = Visibility.Collapsed;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void MessageForward_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var messageCommon = element.DataContext as TLMessageCommonBase;
+                if (messageCommon != null)
+                {
+
+                }
+
+                element.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void MessageSelect_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                element.Visibility = ViewModel.SelectionMode == ListViewSelectionMode.None ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        #endregion
     }
 }

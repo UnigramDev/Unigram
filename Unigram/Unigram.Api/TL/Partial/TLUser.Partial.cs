@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -65,20 +66,41 @@ namespace Telegram.Api.TL
                 var user = userBase as TLUser;
                 if (user != null)
                 {
-                    FirstName = user.FirstName;
-                    LastName = user.LastName;
-                    Phone = user.Phone;
-
-                    if (Photo != null && user.Photo != null && Photo.GetType() != user.Photo.GetType())
+                    if (user.IsMin)
                     {
-                        Photo.Update(user.Photo);
-                    }
-                    else
-                    {
-                        Photo = user.Photo;
+                        // TODO: ???
+                        return;
                     }
 
-                    Status = user.Status;
+                    // TODO: check if dirty?
+
+                    this.Flags = user.Flags;
+                    this.AccessHash = user.AccessHash;
+                    this.FirstName = user.FirstName;
+                    this.LastName = user.LastName;
+                    this.Username = user.Username;
+                    this.Phone = user.Phone;
+                    this.Photo = user.Photo;
+                    this.Status = user.Status;
+                    this.BotInfoVersion = user.BotInfoVersion;
+                    this.RestrictionReason = user.RestrictionReason;
+                    this.BotInlinePlaceholder = user.BotInlinePlaceholder;
+                    this.LangCode = user.LangCode;
+
+                    //FirstName = user.FirstName;
+                    //LastName = user.LastName;
+                    //Phone = user.Phone;
+
+                    //if (Photo != null && user.Photo != null && Photo.GetType() != user.Photo.GetType())
+                    //{
+                    //    Photo.Update(user.Photo);
+                    //}
+                    //else
+                    //{
+                    //    Photo = user.Photo;
+                    //}
+
+                    //Status = user.Status;
                 }
             }
             catch (Exception e)

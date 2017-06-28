@@ -11,12 +11,6 @@
     Loaded="OnLoaded"
     mc:Ignorable="d">
 
-    <Page.Transitions>
-        <TransitionCollection>
-            <EntranceThemeTransition FromHorizontalOffset="75"/>
-        </TransitionCollection>
-    </Page.Transitions>
-
     <Page.Resources>
         <CollectionViewSource x:Name="Countries" Source="{Binding Countries}" IsSourceGrouped="True"/>
     </Page.Resources>
@@ -31,7 +25,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock x:Uid="Login-PhoneNumber-Title" Text="Your phone number" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+            <TextBlock Text="Your phone number" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
             <controls:GlyphButton x:Name="NextGlyph" Command="{x:Bind ViewModel.SendCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE10B;" Grid.Column="1"/>
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
         </Grid>
@@ -44,16 +38,15 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="TitleLabel" x:Uid="Login-PhoneNumber-Title" Text="Your phone number" Visibility="Collapsed" Style="{ThemeResource TitleTextBlockStyle}"/>
-            <TextBlock x:Uid="Login-PhoneNumber-Intro"
-                       Text="Please select the country you live in and enter your phone number"
+            <TextBlock x:Name="TitleLabel" Text="Your phone number" Visibility="Collapsed" Style="{ThemeResource TitleTextBlockStyle}"/>
+            <TextBlock Text="Please select the country you live in and enter your phone number"
                        Style="{StaticResource BodyTextBlockStyle}"
                        Padding="0,8,0,16"
                        Grid.Row="1"/>
 
-            <ComboBox x:Uid="Login-PhoneNumber-CountryInput"
-                      ItemsSource="{Binding Source={StaticResource Countries}}"
+            <ComboBox ItemsSource="{Binding Source={StaticResource Countries}}"
                       SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
                       Header="Country:"
                       MinWidth="280"
@@ -77,16 +70,14 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- The user can enter their phone number here -->
-                <controls:UpdateTextBox x:Uid="Login-PhoneNumber-CountryCode"
-                                        Text="{Binding PhoneCode, Mode=TwoWay}"
+                <controls:UpdateTextBox Text="{Binding PhoneCode, Mode=TwoWay}"
                                         Margin="0,0,12,0"
                                         Width="30"
                                         Header="Code:"
                                         InputScope="TelephoneNumber"
                                         PlaceholderText="+"
                                         Style="{StaticResource InlinePlaceholderTextBoxStyle}"/>
-                <controls:UpdateTextBox x:Uid="Login-PhoneNumber-PhoneNumber"
-                                        x:Name="PrimaryInput"
+                <controls:UpdateTextBox x:Name="PrimaryInput"
                                         Text="{Binding PhoneNumber, Mode=TwoWay}"
                                         MinWidth="200"
                                         InputScope="TelephoneNumber"
@@ -98,16 +89,19 @@
 
             </Grid>
 
-            <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="4"/>
+            <HyperlinkButton Command="{x:Bind ViewModel.ProxyCommand}"
+                             Content="Proxy Settings"
+                             Grid.Row="4"/>
+
+            <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="5"/>
 
             <Button x:Name="NextButton"
-                    x:Uid="BTN-Next"
                     Command="{x:Bind ViewModel.SendCommand}"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                     HorizontalAlignment="Stretch"
                     Content="Next"
                     Margin="0,8,0,0"
-                    Grid.Row="5"
+                    Grid.Row="6"
                     Visibility="Collapsed"/>
 
         </Grid>
