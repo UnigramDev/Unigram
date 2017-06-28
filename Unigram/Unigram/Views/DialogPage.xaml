@@ -535,14 +535,14 @@
 
         <!-- Region Service -->
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,8,0,2">
+            <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,6,12,6" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,8,0,2">
-                <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,6">
+                <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,6,12,6" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                     <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
                 </Border>
 
@@ -558,7 +558,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessageLocalTemplate">
-            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,6" Margin="0,8,0,2">
+            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,6,12,6" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource BodyRichTextBlockStyle}"/>
             </Border>
         </DataTemplate>
@@ -1312,11 +1312,11 @@
                      </ListView.GroupStyle>-->
             </controls:BubbleListView>
 
-            <Border Visibility="{x:Bind ConvertIsEmpty(ViewModel.IsEmpty, ViewModel.WithUser.IsSelf, ViewModel.WithUser.IsBot, x:False), Mode=OneWay, FallbackValue=Collapsed}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,5,12,6" Margin="12" RenderTransformOrigin="0.5,0.5">
+            <Border Visibility="{x:Bind ConvertIsEmpty(ViewModel.IsEmpty, ViewModel.WithUser.IsSelf, ViewModel.WithUser.IsBot, x:False), Mode=OneWay, FallbackValue=Collapsed}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <TextBlock Text="{x:Bind ConvertEmptyText(ViewModel.WithUser.Id), Mode=OneWay, FallbackValue=Collapsed}" Foreground="White" Style="{ThemeResource BodyTextBlockStyle}"/>
             </Border>
 
-            <StackPanel Visibility="{x:Bind ConvertIsEmpty(ViewModel.IsEmpty, ViewModel.WithUser.IsSelf, ViewModel.WithUser.IsBot, x:True), Mode=OneWay, FallbackValue=Collapsed}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,5,12,6" Margin="12" RenderTransformOrigin="0.5,0.5">
+            <StackPanel Visibility="{x:Bind ConvertIsEmpty(ViewModel.IsEmpty, ViewModel.WithUser.IsSelf, ViewModel.WithUser.IsBot, x:True), Mode=OneWay, FallbackValue=Collapsed}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <FontIcon Glyph="&#xE753;" Foreground="White" FontSize="64"/>
                 <TextBlock Text="Your cloud storage" Foreground="White" Style="{StaticResource BaseTextBlockStyle}"/>
                 <TextBlock Foreground="White" Style="{ThemeResource BodyTextBlockStyle}">
@@ -1370,8 +1370,8 @@
                     <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                 </Grid>
 
-                <Border x:Name="DateHeader" Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,12,0,2" Grid.ColumnSpan="2">
-                    <Button Padding="12,5,12,6" Style="{StaticResource EmptyButtonStyle}">
+                <Border x:Name="DateHeader" Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,12,0,2"  CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.ColumnSpan="2">
+                    <Button Padding="12,6,12,6" Style="{StaticResource EmptyButtonStyle}">
                         <Button.Flyout>
                             <DatePickerFlyout DatePicked="DatePickerFlyout_DatePicked" Placement="Bottom" />
                         </Button.Flyout>

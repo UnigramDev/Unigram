@@ -8,6 +8,7 @@
 
     <CornerRadius x:Key="MessageCornerRadius">0</CornerRadius>
     <CornerRadius x:Key="MessageCornerRadiusOut">0</CornerRadius>
+    <CornerRadius x:Key="MessageServiceCornerRadius">16</CornerRadius>
 
     <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
         <Setter Property="Padding" Value="12,8,12,12"/>
