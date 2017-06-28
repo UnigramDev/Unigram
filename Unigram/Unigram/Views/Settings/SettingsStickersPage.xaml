@@ -20,7 +20,11 @@
                   ItemTemplate="{StaticResource StickerSetItemTemplate}"
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
+                  DragItemsCompleted="ListView_DragItemsCompleted"
+                  CanReorderItems="True"
+                  CanDragItems="True"
                   SelectionMode="None"
+                  AllowDrop="True"
                   Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
