@@ -67,7 +67,10 @@ namespace Unigram.ViewModels
             }
             else if (message.Equals("Window_Deactivated"))
             {
-                Dispatcher.Dispatch(SaveDraft);
+                if (Dispatcher != null)
+                {
+                    Dispatcher.Dispatch(SaveDraft);
+                }
             }
         }
 

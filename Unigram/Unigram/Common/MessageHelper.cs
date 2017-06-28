@@ -933,7 +933,7 @@ namespace Unigram.Common
                                 dialog.PrimaryButtonText = "Open";
                                 dialog.SecondaryButtonText = "Cancel";
 
-                                var result = await dialog.ShowAsync();
+                                var result = await dialog.ShowQueuedAsync();
                                 if (result != ContentDialogResult.Primary)
                                 {
                                     return;

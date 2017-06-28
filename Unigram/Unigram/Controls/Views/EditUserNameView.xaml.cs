@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Unigram.Common;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -70,12 +72,12 @@ namespace Unigram.Controls.Views
             }
         }
 
-        public IAsyncOperation<ContentDialogResult> ShowAsync(string firstName, string lastName)
+        public Task<ContentDialogResult> ShowAsync(string firstName, string lastName)
         {
             FirstName = firstName;
             LastName = lastName;
 
-            return ShowAsync();
+            return this.ShowQueuedAsync();
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

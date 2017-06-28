@@ -79,7 +79,7 @@ namespace Unigram.ViewModels
             {
                 var dialog = new DeleteChannelMessageDialog();
 
-                var result = await dialog.ShowAsync();
+                var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
                 {
                     var channel = With as TLChannel;
@@ -166,7 +166,7 @@ namespace Unigram.ViewModels
                     dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
                 }
 
-                var result = await dialog.ShowAsync();
+                var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
                 {
                     var revoke = dialog.IsChecked == true;
@@ -407,7 +407,7 @@ namespace Unigram.ViewModels
                     dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
                 }
 
-                var result = await dialog.ShowAsync();
+                var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
                 {
                     var revoke = dialog.IsChecked == true;
@@ -750,7 +750,7 @@ namespace Unigram.ViewModels
                 dialog.PrimaryButtonText = "Yes";
                 dialog.SecondaryButtonText = "No";
 
-                var dialogResult = await dialog.ShowAsync();
+                var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
                 {
                     var channel = Peer as TLInputPeerChannel;
@@ -773,7 +773,7 @@ namespace Unigram.ViewModels
                 dialog.PrimaryButtonText = "Yes";
                 dialog.SecondaryButtonText = "No";
 
-                var dialogResult = await dialog.ShowAsync();
+                var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
                 {
                     var channel = Peer as TLInputPeerChannel;

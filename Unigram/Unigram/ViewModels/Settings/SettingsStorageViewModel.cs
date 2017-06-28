@@ -55,6 +55,8 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ClearCacheCommand => new RelayCommand(ClearCacheExecute);
         private async void ClearCacheExecute()
         {
+            IsLoading = true;
+
             var folder = await StorageFolder.GetFolderFromPathAsync(FileUtils.GetTempFileName(string.Empty));
             var queryOptions = new QueryOptions();
             queryOptions.FolderDepth = FolderDepth.Deep;
@@ -71,6 +73,8 @@ namespace Unigram.ViewModels.Settings
                 }
                 catch { }
             }
+
+            IsLoading = false;
 
             await UpdateCacheSizeAsync();
             await TLMessageDialog.ShowAsync("Done", "Done", "Done");

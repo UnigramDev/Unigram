@@ -123,7 +123,7 @@ namespace Unigram.ViewModels.Channels
             dialog.PrimaryButtonText = "Revoke";
             dialog.SecondaryButtonText = "Cancel";
 
-            var confirm = await dialog.ShowAsync();
+            var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
                 var response = await ProtoService.UpdateUsernameAsync(channel.ToInputChannel(), string.Empty);
