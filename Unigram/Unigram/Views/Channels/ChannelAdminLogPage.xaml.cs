@@ -30,5 +30,10 @@ namespace Unigram.Views.Channels
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<ChannelAdminLogViewModel>();
         }
+
+        private void ProfileBubble_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

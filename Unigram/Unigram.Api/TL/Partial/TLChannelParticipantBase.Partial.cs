@@ -16,6 +16,7 @@ namespace Telegram.Api.TL
             {
                 if (_user == null)
                     _user = InMemoryCacheService.Current.GetUser(UserId) as TLUser;
+
                 return _user;
             }
         }

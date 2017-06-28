@@ -4,6 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Channels"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:common="using:Unigram.Common"
+    xmlns:selectors="using:Unigram.Selectors"
+    xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -44,7 +47,103 @@
         </Grid>
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}" Grid.Row="1">
-            
+            <!--<ListView.ItemTemplate>
+                <DataTemplate>
+                    <RichTextBlock common:AdminLogHelper.Message="{Binding}" Style="{StaticResource BodyRichTextBlockStyle}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>-->
+            <ListView.ItemTemplateSelector>
+                <selectors:AdminLogTemplateSelector>
+                    <selectors:AdminLogTemplateSelector.ParticipantToggleAdmin>
+                        <DataTemplate>
+                            <Grid x:Name="ContentPanel"
+                  Padding="{ThemeResource MessageContentPadding}"
+                  CornerRadius="{ThemeResource MessageCornerRadius}"
+                  Background="{ThemeResource MessageBackgroundBrush}"
+                  BorderBrush="{ThemeResource MessageBorderBrush}"
+                  BorderThickness="0,0,0,2">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup>
+                                        <VisualState x:Name="FullMedia">
+                                            <VisualState.Setters>
+                                                <Setter Target="StatusControl.Padding" Value="6,4,6,4"/>
+                                                <Setter Target="StatusControl.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
+                                                <Setter Target="StatusControl.Foreground" Value="White"/>
+                                                <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState x:Name="Default"/>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock x:Name="HeaderLabel"
+                           Margin="0,0,0,2"
+                           Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                           RequestedTheme="{ThemeResource MessageTextBlockTheme}"
+                           Style="{ThemeResource CaptionTextBlockStyle}"
+                           FontWeight="SemiBold"
+                           Visibility="Collapsed"
+                           Grid.Row="0"/>
+
+                                <!--<local:MessageReference
+                    Message="{x:Bind ViewModel.Reply.SelfBase, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
+                    Click="Reply_Click"
+                    Grid.Row="1"/>-->
+
+                                <RichTextBlock
+                    x:Name="MessageControl"
+                    common:AdminLogHelper.Message="{Binding}"
+                    Style="{ThemeResource BodyRichTextBlockStyle}"
+                    Foreground="{ThemeResource MessageForegroundBrush}"
+                    Grid.Row="2">
+                                    <RichTextBlock.Resources>
+                                        <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
+                                    </RichTextBlock.Resources>
+                                </RichTextBlock>
+
+                                <!--<controls:MediaControl
+                    x:Name="MediaControl"
+                    Media="{x:Bind ConvertMedia(ViewModel.Media), Mode=OneWay}"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
+                    ContentChanged="OnMediaChanged"
+                    ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
+                    Grid.Row="3"/>
+
+                                <local:MessageStateControl
+                    x:Name="StatusControl"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Right"
+                    Margin="0,0,-6,-2"
+                    Grid.Row="4"/>-->
+                            </Grid>
+                        </DataTemplate>
+                    </selectors:AdminLogTemplateSelector.ParticipantToggleAdmin>
+                    <selectors:AdminLogTemplateSelector.DeleteMessage>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,0" HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="52"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <controls:ProfilePictureView
+                                             x:Name="PhotoBubble"
+                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
+                                             Source="{Binding Event.Action.Message.From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                             Click="ProfileBubble_Click"/>
+                                <messages:MessageBubble DataContext="{Binding Event.Action.Message}" Grid.Column="1"/>
+                            </Grid>
+                        </DataTemplate>
+                    </selectors:AdminLogTemplateSelector.DeleteMessage>
+                </selectors:AdminLogTemplateSelector>
+            </ListView.ItemTemplateSelector>
         </ListView>
     </Grid>
 </Page>

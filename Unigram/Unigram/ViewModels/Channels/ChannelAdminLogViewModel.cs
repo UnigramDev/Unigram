@@ -47,7 +47,7 @@ namespace Unigram.ViewModels.Channels
             {
                 Item = channel;
 
-                Items = new ItemsCollection(ProtoService, channel.ToInputChannel());
+                Items = new ItemsCollection(ProtoService, channel);
                 RaisePropertyChanged(() => Items);
             }
 
@@ -56,24 +56,26 @@ namespace Unigram.ViewModels.Channels
 
         public ItemsCollection Items { get; protected set; }
 
-        public class ItemsCollection : IncrementalCollection<TLChannelAdminLogEvent>
+        public class ItemsCollection : IncrementalCollection<AdminLogEvent>
         {
             private readonly IMTProtoService _protoService;
             private readonly TLInputChannelBase _inputChannel;
+            private readonly TLChannel _channel;
             //private readonly TLChannelParticipantsFilterBase _filter;
 
             private long _minEventId = long.MaxValue;
             private bool _hasMore;
 
-            public ItemsCollection(IMTProtoService protoService, TLInputChannelBase inputChannel)
+            public ItemsCollection(IMTProtoService protoService, TLChannel channel)
             {
                 _protoService = protoService;
-                _inputChannel = inputChannel;
+                _inputChannel = channel.ToInputChannel();
+                _channel = channel;
                 //_filter = filter;
                 _hasMore = true;
             }
 
-            public override async Task<IList<TLChannelAdminLogEvent>> LoadDataAsync()
+            public override async Task<IList<AdminLogEvent>> LoadDataAsync()
             {
                 var maxId = Count > 0 ? _minEventId : 0;
 
@@ -90,10 +92,10 @@ namespace Unigram.ViewModels.Channels
                         _hasMore = false;
                     }
 
-                    return response.Result.Events;
+                    return response.Result.Events.Select(x => new AdminLogEvent { Channel = _channel, Event = x }).ToArray();
                 }
 
-                return new TLChannelAdminLogEvent[0];
+                return new AdminLogEvent[0];
             }
 
             protected override bool GetHasMoreItems()

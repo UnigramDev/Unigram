@@ -431,6 +431,7 @@
     <Compile Include="TL\Methods\TLSetClientDHParams.cs" />
     <Compile Include="TL\Partial\TLAuthorization.Partial.cs" />
     <Compile Include="TL\Partial\TLBotInlineResultBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLChannelAdminLogEvent.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelFull.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelParticipantBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChatParticipantBase.Partial.cs" />
