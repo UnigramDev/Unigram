@@ -14,6 +14,10 @@
     </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <messages:MessageReference/>
+        <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+            <TextBlock Text="This is a test message" Foreground="White" Style="{ThemeResource CaptionTextBlockStyle}"/>
+        </Border>
+
+
     </Grid>
 </Page>
