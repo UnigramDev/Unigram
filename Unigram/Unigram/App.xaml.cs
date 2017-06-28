@@ -45,6 +45,7 @@ using Windows.ApplicationModel.Contacts;
 using Telegram.Api.Aggregator;
 using Unigram.Controls;
 using Unigram.Views.Users;
+using System.Linq;
 
 namespace Unigram
 {
@@ -264,29 +265,36 @@ namespace Unigram
                     if (store != null && annotationStore != null)
                     {
                         var full = await store.GetContactAsync(contact.Contact.Id);
-                        var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
-                        var first = annotations.FirstOrDefault();
-                        if (first != null)
+                        if (full == null)
                         {
-                            var remote = first.RemoteId;
-                            if (int.TryParse(remote.Substring(1), out int userId))
-                            {
-                                NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = userId });
-                            }
-                            else
-                            {
-                                NavigationService.Navigate(typeof(MainPage));
-                            }
+                            goto Navigate;
+                        }
+
+                        var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
+
+                        var first = annotations.FirstOrDefault();
+                        if (first == null)
+                        {
+                            goto Navigate;
+                        }
+
+                        var remote = first.RemoteId;
+                        if (int.TryParse(remote.Substring(1), out int userId))
+                        {
+                            NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = userId });
                         }
                         else
                         {
-                            NavigationService.Navigate(typeof(MainPage));
+                            goto Navigate;
                         }
                     }
                     else
                     {
                         NavigationService.Navigate(typeof(MainPage));
                     }
+
+                    Navigate:
+                    NavigationService.Navigate(typeof(MainPage));
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
                 {
