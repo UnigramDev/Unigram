@@ -45,6 +45,7 @@ using Windows.ApplicationModel.Contacts;
 using Telegram.Api.Aggregator;
 using Unigram.Controls;
 using Unigram.Views.Users;
+using System.Linq;
 
 namespace Unigram
 {
