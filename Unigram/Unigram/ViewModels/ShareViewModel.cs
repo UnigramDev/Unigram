@@ -219,6 +219,10 @@ namespace Unigram.ViewModels
                                 }
                             }
                         }
+                        else if (fwdMessage.ToId is TLPeerUser peerUser && peerUser.UserId == SettingsHelper.UserId)
+                        {
+
+                        }
                         else
                         {
                             clone.HasFwdFrom = true;

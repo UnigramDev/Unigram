@@ -96,18 +96,21 @@ namespace Unigram.Controls.Views
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (string.IsNullOrEmpty(Server) || !IPAddress.TryParse(Server, out IPAddress server))
+            if (IsProxyEnabled)
             {
-                VisualUtilities.ShakeView(FieldServer);
-                args.Cancel = true;
-                return;
-            }
+                if (string.IsNullOrEmpty(Server) || !IPAddress.TryParse(Server, out IPAddress server))
+                {
+                    VisualUtilities.ShakeView(FieldServer);
+                    args.Cancel = true;
+                    return;
+                }
 
-            if (string.IsNullOrEmpty(Port) || !int.TryParse(Port, out int port))
-            {
-                VisualUtilities.ShakeView(FieldPort);
-                args.Cancel = true;
-                return;
+                if (string.IsNullOrEmpty(Port) || !int.TryParse(Port, out int port))
+                {
+                    VisualUtilities.ShakeView(FieldPort);
+                    args.Cancel = true;
+                    return;
+                }
             }
         }
 
