@@ -23,6 +23,8 @@ namespace Telegram.Api.Services
 {
     public partial interface IMTProtoService
     {
+        Task<MTProtoResponse<TLChannelsAdminLogResults>> GetAdminLogAsync(TLInputChannelBase inputChannel, string query, TLChannelAdminLogEventsFilter filter, TLVector<TLInputUserBase> admins, long maxId, long minId, int limit);
+
         Task<MTProtoResponse<T>> SendRequestAsync<T>(string caption, TLObject obj);
 
         Task<MTProtoResponse<bool>> ClearSavedInfoAsync(bool info, bool credentials);

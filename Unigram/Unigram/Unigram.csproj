@@ -217,12 +217,14 @@
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelAdminLogViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelAdminRightsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelAdminsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelBannedRightsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelDetailsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelEditTypeViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelEditViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelManageViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelParticipantsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelParticipantsViewModelBase.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
@@ -275,6 +277,9 @@
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
+    <Compile Include="Views\Channels\ChannelAdminLogPage.xaml.cs">
+      <DependentUpon>ChannelAdminLogPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Channels\ChannelAdminRightsPage.xaml.cs">
       <DependentUpon>ChannelAdminRightsPage.xaml</DependentUpon>
     </Compile>
@@ -295,6 +300,9 @@
     </Compile>
     <Compile Include="Views\Channels\ChannelBannedPage.xaml.cs">
       <DependentUpon>ChannelBannedPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Channels\ChannelManagePage.xaml.cs">
+      <DependentUpon>ChannelManagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Channels\ChannelParticipantsPage.xaml.cs">
       <DependentUpon>ChannelParticipantsPage.xaml</DependentUpon>
@@ -1292,6 +1300,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Channels\ChannelAdminLogPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Channels\ChannelAdminRightsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1305,6 +1317,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Channels\ChannelEditTypePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Channels\ChannelManagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -30,18 +30,35 @@ namespace Telegram.Api.Services
         //        faultCallback);
         //}
 
+        public void GetAdminLogAsync(TLInputChannelBase inputChannel, string query, TLChannelAdminLogEventsFilter filter, TLVector<TLInputUserBase> admins, long maxId, long minId, int limit, Action<TLChannelsAdminLogResults> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLChannelsGetAdminLog { Channel = inputChannel, Q = query, EventsFilter = filter, Admins = admins, MaxId = maxId, MinId = minId, Limit = limit };
+
+            const string caption = "channels.getAdminLog";
+            SendInformativeMessage<TLChannelsAdminLogResults>(caption, obj, result =>
+            {
+                var chats = result as TLChannelsAdminLogResults;
+                if (chats != null)
+                {
+                    _cacheService.SyncUsersAndChats(chats.Users, chats.Chats, tuple => callback?.Invoke(result));
+                }
+            }, faultCallback);
+        }
+
         public void GetChannelDifferenceAsync(TLInputChannelBase inputChannel, TLChannelMessagesFilterBase filter, int pts, int limit, Action<TLUpdatesChannelDifferenceBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUpdatesGetChannelDifference { Channel = inputChannel, Filter = filter, Pts = pts, Limit = limit };
 
-            SendInformativeMessage("updates.getChannelDifference", obj, callback, faultCallback);
+            const string caption = "updates.getChannelDifference";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsGetMessages { Channel = inputChannel, Id = id };
 
-            SendInformativeMessage("channels.getMessages", obj, callback, faultCallback);
+            const string caption = "channels.getMessages";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetAdminedPublicChannelsAsync(Action<TLMessagesChatsBase> callback, Action<TLRPCError> faultCallback = null)
@@ -49,15 +66,14 @@ namespace Telegram.Api.Services
             var obj = new TLChannelsGetAdminedPublicChannels();
 
             const string caption = "channels.getAdminedPublicChannels";
-            SendInformativeMessage<TLMessagesChatsBase>(caption, obj, 
-                result =>
+            SendInformativeMessage<TLMessagesChatsBase>(caption, obj, result =>
             {
                 var chats = result as TLMessagesChats;
                 if (chats != null)
                 {
                     _cacheService.SyncUsersAndChats(new TLVector<TLUserBase>(), chats.Chats, tuple => callback?.Invoke(result));
                 }
-            }, 
+            },
             faultCallback);
         }
 
@@ -121,7 +137,7 @@ namespace Telegram.Api.Services
                 _cacheService.SyncUsers(result.Users, r => { });
 
                 callback?.Invoke(result);
-            }, 
+            },
             faultCallback);
         }
 
@@ -378,7 +394,7 @@ namespace Telegram.Api.Services
                     }
 
                     callback?.Invoke(result);
-                }, 
+                },
                 faultCallback);
         }
 
@@ -522,7 +538,7 @@ namespace Telegram.Api.Services
 
         public void EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesEditMessage { Flags=0, Peer = peer, Id = id, Message = message, IsNoWebPage = noWebPage, Entities = entities, ReplyMarkup = replyMarkup };
+            var obj = new TLMessagesEditMessage { Flags = 0, Peer = peer, Id = id, Message = message, IsNoWebPage = noWebPage, Entities = entities, ReplyMarkup = replyMarkup };
 
             const string caption = "messages.editMessage";
             SendInformativeMessage<TLUpdatesBase>(caption, obj,

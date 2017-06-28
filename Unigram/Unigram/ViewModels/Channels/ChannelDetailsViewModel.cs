@@ -179,7 +179,7 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand EditCommand => new RelayCommand(EditExecute);
         private void EditExecute()
         {
-            NavigationService.Navigate(typeof(ChannelEditPage), _item.ToPeer());
+            NavigationService.Navigate(typeof(ChannelManagePage), _item.ToPeer());
         }
 
         public RelayCommand InviteCommand => new RelayCommand(InviteExecute);

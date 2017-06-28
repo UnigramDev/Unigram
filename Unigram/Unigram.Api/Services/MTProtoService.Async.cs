@@ -24,6 +24,20 @@ namespace Telegram.Api.Services
     public partial class MTProtoService
     {
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLChannelsAdminLogResults>> GetAdminLogAsync(TLInputChannelBase inputChannel, string query, TLChannelAdminLogEventsFilter filter, TLVector<TLInputUserBase> admins, long maxId, long minId, int limit)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLChannelsAdminLogResults>>();
+            GetAdminLogAsync(inputChannel, query, filter, admins, maxId, minId, limit, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLChannelsAdminLogResults>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLChannelsAdminLogResults>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLPhonePhoneCall>> AcceptCallAsync(TLInputPhoneCall peer, byte[] gb)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLPhonePhoneCall>>();
