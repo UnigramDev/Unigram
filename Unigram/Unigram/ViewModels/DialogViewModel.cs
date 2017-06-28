@@ -1297,7 +1297,11 @@ namespace Unigram.ViewModels
 
         public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
         {
-            Dispatcher.Dispatch(SaveDraft);
+            if (Dispatcher != null)
+            {
+                Dispatcher.Dispatch(SaveDraft);
+            }
+
             return Task.CompletedTask;
         }
 
@@ -1632,7 +1636,7 @@ namespace Unigram.ViewModels
                             dialog.PrimaryButtonText = "More info";
                             dialog.SecondaryButtonText = "OK";
 
-                            var confirm = await dialog.ShowAsync();
+                            var confirm = await dialog.ShowQueuedAsync();
                             if (confirm == ContentDialogResult.Primary)
                             {
                                 MessageHelper.HandleTelegramUrl("t.me/SpamBot");
@@ -1755,6 +1759,10 @@ namespace Unigram.ViewModels
                                 clone.FwdFrom.ChannelPost = fwdMessage.Id;
                             }
                         }
+                    }
+                    else if (fwdMessage.ToId is TLPeerUser peerUser && peerUser.UserId == SettingsHelper.UserId)
+                    {
+
                     }
                     else
                     {
@@ -2435,7 +2443,7 @@ namespace Unigram.ViewModels
                             dialog.PrimaryButtonText = "More info";
                             dialog.SecondaryButtonText = "OK";
 
-                            var confirm = await dialog.ShowAsync();
+                            var confirm = await dialog.ShowQueuedAsync();
                             if (confirm == ContentDialogResult.Primary)
                             {
                                 MessageHelper.HandleTelegramUrl("t.me/SpamBot");

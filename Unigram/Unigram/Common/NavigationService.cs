@@ -48,7 +48,7 @@ namespace Unigram.Common
             }
 
             _currentDialog = dialog;
-            return await dialog.ShowAsync();
+            return await dialog.ShowQueuedAsync();
         }
 
         public static void PopModal(this INavigationService service)

@@ -677,7 +677,7 @@ namespace Unigram.ViewModels
                         var already = Items.FirstOrDefault(x => x.Id == e.Dialog.Id);
                         if (already != null)
                         {
-                            Execute.BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
+                            //Execute.BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
 
                             var index = Items.IndexOf(already);
 
@@ -1041,7 +1041,7 @@ namespace Unigram.ViewModels
                 question.Title = "Warning";
                 question.Message = string.Format("Sorry, you can pin no more than {0} chats to the top.", PinnedDialogsCountMax);
                 question.PrimaryButtonText = "OK";
-                await question.ShowAsync();
+                await question.ShowQueuedAsync();
                 return;
             }
 

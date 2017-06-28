@@ -45,6 +45,7 @@ using Windows.ApplicationModel.Contacts;
 using Telegram.Api.Aggregator;
 using Unigram.Controls;
 using Unigram.Views.Users;
+using System.Linq;
 
 namespace Unigram
 {
@@ -228,40 +229,6 @@ namespace Unigram
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            //NavigationService.Navigate(typeof(PlaygroundPage2));
-            //return;
-            //return Task.CompletedTask;
-
-            //PhoneCallPage newPlayer = null;
-            //CoreApplicationView newView = CoreApplication.CreateNewView();
-            //var newViewId = 0;
-            //await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            //{
-            //    newPlayer = new PhoneCallPage();
-            //    Window.Current.Content = newPlayer;
-            //    Window.Current.Activate();
-            //    newViewId = ApplicationView.GetForCurrentView().Id;
-            //});
-
-            //await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-            //{
-            //    var overlay = ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay);
-            //    if (overlay)
-            //    {
-            //        var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
-            //        preferences.CustomSize = new Size(340, 200);
-
-            //        var viewShown = await ApplicationViewSwitcher.TryShowAsViewModeAsync(newViewId, ApplicationViewMode.CompactOverlay, preferences);
-            //    }
-            //    else
-            //    {
-            //        //await ApplicationViewSwitcher.SwitchAsync(newViewId);
-            //        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
-            //    }
-            //});
-
-            //return;
-
             if (SettingsHelper.IsAuthorized)
             {
                 if (args is ShareTargetActivatedEventArgs share)
@@ -293,14 +260,41 @@ namespace Unigram
                     var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
                     contact.ContactPanel.HeaderColor = backgroundBrush.Color;
 
-                    var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
                     var annotationStore = await ContactManager.RequestAnnotationStoreAsync(ContactAnnotationStoreAccessType.AppAnnotationsReadWrite);
-                    var full = await store.GetContactAsync(contact.Contact.Id);
-                    var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
+                    var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
+                    if (store != null && annotationStore != null)
+                    {
+                        var full = await store.GetContactAsync(contact.Contact.Id);
+                        if (full == null)
+                        {
+                            goto Navigate;
+                        }
 
-                    var remote = annotations[0].RemoteId;
+                        var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
 
-                    NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = int.Parse(remote.Substring(1)) });
+                        var first = annotations.FirstOrDefault();
+                        if (first == null)
+                        {
+                            goto Navigate;
+                        }
+
+                        var remote = first.RemoteId;
+                        if (int.TryParse(remote.Substring(1), out int userId))
+                        {
+                            NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = userId });
+                        }
+                        else
+                        {
+                            goto Navigate;
+                        }
+                    }
+                    else
+                    {
+                        NavigationService.Navigate(typeof(MainPage));
+                    }
+
+                    Navigate:
+                    NavigationService.Navigate(typeof(MainPage));
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
                 {
@@ -318,16 +312,6 @@ namespace Unigram
             {
                 NavigationService.Navigate(typeof(SignInWelcomePage));
             }
-
-            // NO! Many tv models have borders!
-            //// Remove borders on Xbox
-            //var device = Windows.ApplicationModel.Resources.Core.ResourceContext.GetForCurrentView().QualifierValues;
-            //bool isXbox = (device.ContainsKey("DeviceFamily") && device["DeviceFamily"] == "Xbox");
-
-            //if (isXbox == true)
-            //{
-            //    Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
-            //}
 
             Window.Current.Activated -= Window_Activated;
             Window.Current.Activated += Window_Activated;
