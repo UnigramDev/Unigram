@@ -7,6 +7,7 @@
     xmlns:common="using:Unigram.Common"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:messages="using:Unigram.Controls.Messages"
+    xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -46,13 +47,30 @@
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
         </Grid>
 
-        <ListView ItemsSource="{x:Bind ViewModel.Items}" Grid.Row="1">
+        <controls:BubbleListView ItemsSource="{x:Bind ViewModel.Items}" Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="tl:TLMessage">
+                    <Grid Margin="-52,0,0,0" HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="52"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <controls:ProfilePictureView x:Phase="3"
+                                             x:Name="PhotoBubble"
+                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
+                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
+                                             Click="ProfileBubble_Click"/>
+                        <messages:MessageBubble Grid.Column="1"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
             <!--<ListView.ItemTemplate>
                 <DataTemplate>
                     <RichTextBlock common:AdminLogHelper.Message="{Binding}" Style="{StaticResource BodyRichTextBlockStyle}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>-->
-            <ListView.ItemTemplateSelector>
+            <!--<ListView.ItemTemplateSelector>
                 <selectors:AdminLogTemplateSelector>
                     <selectors:AdminLogTemplateSelector.ParticipantToggleAdmin>
                         <DataTemplate>
@@ -91,11 +109,11 @@
                            Visibility="Collapsed"
                            Grid.Row="0"/>
 
-                                <!--<local:MessageReference
+                                --><!--<local:MessageReference
                     Message="{x:Bind ViewModel.Reply.SelfBase, Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
                     Click="Reply_Click"
-                    Grid.Row="1"/>-->
+                    Grid.Row="1"/>--><!--
 
                                 <RichTextBlock
                     x:Name="MessageControl"
@@ -108,7 +126,7 @@
                                     </RichTextBlock.Resources>
                                 </RichTextBlock>
 
-                                <!--<controls:MediaControl
+                                --><!--<controls:MediaControl
                     x:Name="MediaControl"
                     Media="{x:Bind ConvertMedia(ViewModel.Media), Mode=OneWay}"
                     HorizontalContentAlignment="Stretch"
@@ -122,7 +140,7 @@
                     VerticalAlignment="Bottom"
                     HorizontalAlignment="Right"
                     Margin="0,0,-6,-2"
-                    Grid.Row="4"/>-->
+                    Grid.Row="4"/>--><!--
                             </Grid>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.ParticipantToggleAdmin>
@@ -143,7 +161,7 @@
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.DeleteMessage>
                 </selectors:AdminLogTemplateSelector>
-            </ListView.ItemTemplateSelector>
-        </ListView>
+            </ListView.ItemTemplateSelector>-->
+        </controls:BubbleListView>
     </Grid>
 </Page>

@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Strings;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
@@ -56,7 +58,7 @@ namespace Unigram.ViewModels.Channels
 
         public ItemsCollection Items { get; protected set; }
 
-        public class ItemsCollection : IncrementalCollection<AdminLogEvent>
+        public class ItemsCollection : IncrementalCollection<TLMessageBase>
         {
             private readonly IMTProtoService _protoService;
             private readonly TLInputChannelBase _inputChannel;
@@ -75,16 +77,256 @@ namespace Unigram.ViewModels.Channels
                 _hasMore = true;
             }
 
-            public override async Task<IList<AdminLogEvent>> LoadDataAsync()
+            public override async Task<IList<TLMessageBase>> LoadDataAsync()
             {
                 var maxId = Count > 0 ? _minEventId : 0;
 
                 var response = await _protoService.GetAdminLogAsync(_inputChannel, null, null, null, maxId, 0, 50);
                 if (response.IsSucceeded)
                 {
+                    var result = new List<TLMessageBase>();
+
                     foreach (var item in response.Result.Events)
                     {
                         _minEventId = Math.Min(_minEventId, item.Id);
+
+                        /*blic DataTemplate ChangeTitle { get; set; }
+                        public DataTemplate ChangeAbout { get; set; }
+                        public DataTemplate ChangeUsername { get; set; }
+                        public DataTemplate ChangePhoto { get; set; }
+                        public DataTemplate ToggleInvites { get; set; }
+                        public DataTemplate ToggleSignatures { get; set; }
+                        public DataTemplate UpdatePinned { get; set; }
+                        public DataTemplate EditMessage { get; set; }
+                        public DataTemplate DeleteMessage { get; set; }
+                        public DataTemplate ParticipantJoin { get; set; }
+                        public DataTemplate ParticipantLeave { get; set; }
+                        public DataTemplate ParticipantInvite { get; set; }
+                        public DataTemplate ParticipantToggleBan { get; set; }
+                        public DataTemplate ParticipantToggleAdmin { get; set; }*/
+
+                        if (item.Action is TLChannelAdminLogEventActionChangeTitle changeTitle)
+                        {
+                            //return ChangeTitle;
+                        }
+                        //else if (item.Action is TLChannelAdminLogEventActionChangeAbout changeAbout)
+                        //{
+                        //    return ChangeAbout;
+                        //}
+                        //else if (item.Action is TLChannelAdminLogEventActionChangeUsername changeUsername)
+                        //{
+                        //    return ChangeUsername;
+                        //}
+                        //else if (item.Action is TLChannelAdminLogEventActionChangePhoto changePhoto)
+                        //{
+                        //    return ChangePhoto;
+                        //}
+                        //else if (item.Action is TLChannelAdminLogEventActionToggleInvites toggleInvites)
+                        //{
+                        //    return ToggleInvites;
+                        //}
+                        //else if (item.Action is TLChannelAdminLogEventActionToggleSignatures toggleSignatures)
+                        //{
+                        //    return ToggleSignatures;
+                        //}
+                        //else if (item.Action is TLChannelAdminLogEventActionUpdatePinned updatePinned)
+                        //{
+                        //    return UpdatePinned;
+                        //}
+                        //else if (item.Action is TLChannelAdminLogEventActionEditMessage editMessage)
+                        //{
+                        //    return EditMessage;
+                        //}
+                        //else if (item.Action is TLChannelAdminLogEventActionDeleteMessage deleteMessage)
+                        //{
+                        //    return DeleteMessage;
+                        //}
+                        //else if (item.Action is TLChannelAdminLogEventActionParticipantJoin participantJoin)
+                        //{
+                        //    return ParticipantJoin;
+                        //}
+                        //else if (item.Action is TLChannelAdminLogEventActionParticipantInvite participantInvite)
+                        //{
+                        //    return ParticipantInvite;
+                        //}
+                        else if (item.Action is TLChannelAdminLogEventActionParticipantToggleBan participantToggleBan)
+                        {
+                            var message = new TLMessage();
+                            //message.Id = item.Id;
+                            message.FromId = item.UserId;
+                            message.ToId = _channel.ToPeer();
+                            message.Date = item.Date;
+                            //message.Message = from.ReadString();
+                            message.Entities = new TLVector<TLMessageEntityBase>();
+
+                            message.HasFromId = true;
+                            message.HasEntities = true;
+
+                            var whoUser = participantToggleBan.PrevParticipant.User;
+                            TLChannelBannedRights o2 = null;
+                            TLChannelBannedRights n2 = null;
+
+                            if (participantToggleBan.PrevParticipant is TLChannelParticipantBanned prevBanned)
+                            {
+                                o2 = prevBanned.BannedRights;
+                            }
+                            if (participantToggleBan.NewParticipant is TLChannelParticipantBanned newBanned)
+                            {
+                                n2 = newBanned.BannedRights;
+                            }
+                            if (!_channel.IsMegaGroup || (n2 != null && n2.IsViewMessages && (n2 == null || o2 == null || n2.UntilDate == o2.UntilDate)))
+                            {
+                                string str;
+                                if (n2 == null || !(o2 == null || n2.IsViewMessages))
+                                {
+                                    str = AppResources.EventLogChannelUnrestricted;
+                                }
+                                else
+                                {
+                                    str = AppResources.EventLogChannelRestricted;
+                                }
+
+                                var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
+                                message.Message = string.Format(str, userName);
+                            }
+                            else
+                            {
+                                StringBuilder builder;
+                                if (n2 == null || AdminLogHelper.IsBannedForever(n2.UntilDate))
+                                {
+                                    var str = AppResources.EventLogRestricted;
+                                    var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
+                                    builder = new StringBuilder(String.Format(str, userName));
+                                }
+                                else
+                                {
+                                    var bannedDuration = "";
+                                    int duration = n2.UntilDate - item.Date;
+                                    int days = ((duration / 60) / 60) / 24;
+                                    duration -= ((days * 60) * 60) * 24;
+                                    int hours = (duration / 60) / 60;
+                                    int minutes = (duration - ((hours * 60) * 60)) / 60;
+                                    int count = 0;
+                                    for (int a = 0; a < 3; a++)
+                                    {
+                                        String addStr = null;
+                                        if (a == 0)
+                                        {
+                                            if (days != 0)
+                                            {
+                                                //addStr = LocaleController.formatPluralString("Days", days);
+                                                addStr = $"{days} days";
+                                                count++;
+                                            }
+                                        }
+                                        else if (a == 1)
+                                        {
+                                            if (hours != 0)
+                                            {
+                                                //addStr = LocaleController.formatPluralString("Hours", hours);
+                                                addStr = $"{hours} hours";
+                                                count++;
+                                            }
+                                        }
+                                        else if (minutes != 0)
+                                        {
+                                            //addStr = LocaleController.formatPluralString("Minutes", minutes);
+                                            addStr = $"{minutes} minutes";
+                                            count++;
+                                        }
+                                        if (addStr != null)
+                                        {
+                                            if (bannedDuration.Length > 0)
+                                            {
+                                                bannedDuration = bannedDuration + ", ";
+                                            }
+                                            bannedDuration = bannedDuration + addStr;
+                                        }
+                                        if (count == 2)
+                                        {
+                                            break;
+                                        }
+                                    }
+
+                                    var str = AppResources.EventLogRestrictedUntil;
+                                    var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
+                                    builder = new StringBuilder(String.Format(str, userName, bannedDuration));
+                                }
+
+                                var added = false;
+                                if (o2 == null)
+                                {
+                                    o2 = new TLChannelBannedRights();
+                                }
+                                if (n2 == null)
+                                {
+                                    n2 = new TLChannelBannedRights();
+                                }
+
+                                if (o2.IsViewMessages != n2.IsViewMessages)
+                                {
+                                    if (!added)
+                                    {
+                                        builder.Append('\n');
+                                        added = true;
+                                    }
+
+                                    builder.Append('\n').Append(!n2.IsViewMessages ? '+' : '-').Append(' ');
+                                    builder.Append(AppResources.EventLogRestrictedReadMessages);
+                                }
+                                if (o2.IsSendMessages != n2.IsSendMessages)
+                                {
+                                    if (!added)
+                                    {
+                                        builder.Append('\n');
+                                        added = true;
+                                    }
+
+                                    builder.Append('\n').Append(!n2.IsSendMessages ? '+' : '-').Append(' ');
+                                    builder.Append(AppResources.EventLogRestrictedSendMessages);
+                                }
+                                if (!(o2.IsSendStickers == n2.IsSendStickers && o2.IsSendInline == n2.IsSendInline && o2.IsSendGifs == n2.IsSendGifs && o2.IsSendGames == n2.IsSendGames))
+                                {
+                                    if (!added)
+                                    {
+                                        builder.Append('\n');
+                                        added = true;
+                                    }
+
+                                    builder.Append('\n').Append(!n2.IsSendStickers ? '+' : '-').Append(' ');
+                                    builder.Append(AppResources.EventLogRestrictedSendStickers);
+                                }
+                                if (o2.IsSendMedia != n2.IsSendMedia)
+                                {
+                                    if (!added)
+                                    {
+                                        builder.Append('\n');
+                                        added = true;
+                                    }
+
+                                    builder.Append('\n').Append(!n2.IsSendMedia ? '+' : '-').Append(' ');
+                                    builder.Append(AppResources.EventLogRestrictedSendMedia);
+                                }
+                                if (o2.IsEmbedLinks != n2.IsEmbedLinks)
+                                {
+                                    if (!added)
+                                    {
+                                        builder.Append('\n');
+                                    }
+
+                                    builder.Append('\n').Append(!n2.IsEmbedLinks ? '+' : '-').Append(' ');
+                                    builder.Append(AppResources.EventLogRestrictedSendEmbed);
+                                }
+
+                                message.Message = builder.ToString();
+                            }
+
+                            result.Insert(0, message);
+                        }
+                        //else if (item.Action is TLChannelAdminLogEventActionParticipantToggleAdmin participantToggleAdmin)
+                        //{
+                        //    return ParticipantToggleAdmin;
+                        //}
                     }
 
                     if (response.Result.Events.Count < 50)
@@ -92,17 +334,259 @@ namespace Unigram.ViewModels.Channels
                         _hasMore = false;
                     }
 
-                    return response.Result.Events.Select(x => new AdminLogEvent { Channel = _channel, Event = x }).ToArray();
+                    return result;
                 }
 
-                return new AdminLogEvent[0];
+                return new TLMessageBase[0];
+            }
+
+            private String GetUserName(TLUser user, TLVector<TLMessageEntityBase> entities, int offset)
+            {
+                string name;
+                if (user == null)
+                {
+                    name = string.Empty;
+                }
+                else
+                {
+                    name = user.FullName;
+                }
+
+                if (offset >= 0)
+                {
+                    var entity = new TLMessageEntityMentionName();
+                    entity.UserId = user.Id;
+                    entity.Offset = offset;
+                    entity.Length = name.Length;
+                    entities.Add(entity);
+                }
+
+                if (string.IsNullOrEmpty(user.Username))
+                {
+                    return name;
+                }
+
+                if (offset >= 0)
+                {
+                    var entity = new TLMessageEntityMentionName();
+                    entity.UserId = user.Id;
+                    entity.Offset = (name.Length + offset) + 2;
+                    entity.Length = user.Username.Length + 1;
+                    entities.Add(entity);
+                }
+
+                return String.Format("{0} (@{1})", name, user.Username);
             }
 
             protected override bool GetHasMoreItems()
             {
                 return _hasMore;
             }
+
+            #region Insert
+
+            protected override void InsertItem(int index, TLMessageBase item)
+            {
+                base.InsertItem(index, item);
+
+                var previous = index > 0 ? this[index - 1] : null;
+                var next = index < Count - 1 ? this[index + 1] : null;
+
+                //if (next is TLMessageEmpty)
+                //{
+                //    next = index > 1 ? this[index - 2] : null;
+                //}
+                //if (previous is TLMessageEmpty)
+                //{
+                //    previous = index < Count - 2 ? this[index + 2] : null;
+                //}
+
+                UpdateSeparatorOnInsert(item, next, index);
+                UpdateSeparatorOnInsert(previous, item, index - 1);
+
+                UpdateAttach(next, item, index + 1);
+                UpdateAttach(item, previous, index);
+            }
+
+            protected override void RemoveItem(int index)
+            {
+                var next = index > 0 ? this[index - 1] : null;
+                var previous = index < Count - 1 ? this[index + 1] : null;
+
+                UpdateAttach(previous, next, index + 1);
+
+                base.RemoveItem(index);
+
+                UpdateSeparatorOnRemove(next, previous, index);
+            }
+
+            private void UpdateSeparatorOnInsert(TLMessageBase item, TLMessageBase previous, int index)
+            {
+                if (item != null && previous != null)
+                {
+                    var itemDate = Utils.UnixTimestampToDateTime(item.Date);
+                    var previousDate = Utils.UnixTimestampToDateTime(previous.Date);
+                    if (previousDate.Date != itemDate.Date)
+                    {
+                        var timestamp = (int)Utils.DateTimeToUnixTimestamp(previousDate.Date);
+                        var service = new TLMessageService
+                        {
+                            Date = timestamp,
+                            FromId = SettingsHelper.UserId,
+                            HasFromId = true,
+                            Action = new TLMessageActionDate
+                            {
+                                Date = timestamp
+                            }
+                        };
+
+                        base.InsertItem(index + 1, service);
+                    }
+                }
+            }
+
+            private void UpdateSeparatorOnRemove(TLMessageBase next, TLMessageBase previous, int index)
+            {
+                if (next is TLMessageService && previous != null)
+                {
+                    var action = ((TLMessageService)next).Action as TLMessageActionDate;
+                    if (action != null)
+                    {
+                        var itemDate = Utils.UnixTimestampToDateTime(action.Date);
+                        var previousDate = Utils.UnixTimestampToDateTime(previous.Date);
+                        if (previousDate.Date != itemDate.Date)
+                        {
+                            base.RemoveItem(index - 1);
+                        }
+                    }
+                }
+                else if (next is TLMessageService && previous == null)
+                {
+                    var action = ((TLMessageService)next).Action as TLMessageActionDate;
+                    if (action != null)
+                    {
+                        base.RemoveItem(index - 1);
+                    }
+                }
+            }
+
+            private void UpdateAttach(TLMessageBase item, TLMessageBase previous, int index)
+            {
+                if (item == null)
+                {
+                    if (previous != null)
+                    {
+                        previous.IsLast = true;
+                    }
+
+                    return;
+                }
+
+                var oldFirst = item.IsFirst;
+                var isItemPost = false;
+                if (item is TLMessage) isItemPost = ((TLMessage)item).IsPost;
+
+                if (!isItemPost)
+                {
+                    var attach = false;
+                    if (previous != null)
+                    {
+                        var isPreviousPost = false;
+                        if (previous is TLMessage) isPreviousPost = ((TLMessage)previous).IsPost;
+
+                        attach = !isPreviousPost &&
+                                 !(previous is TLMessageService && !(((TLMessageService)previous).Action is TLMessageActionPhoneCall)) &&
+                                 !(previous is TLMessageEmpty) &&
+                                 previous.FromId == item.FromId &&
+                                 item.Date - previous.Date < 900;
+                    }
+
+                    item.IsFirst = !attach;
+
+                    if (previous != null)
+                    {
+                        previous.IsLast = item.IsFirst || item is TLMessageService;
+                    }
+                }
+                else
+                {
+                    item.IsFirst = true;
+
+                    if (previous != null)
+                    {
+                        previous.IsLast = false;
+                    }
+                }
+
+                //if (item.IsFirst && item is TLMessage)
+                //{
+                //    var message = item as TLMessage;
+                //    if (message != null && !message.IsPost && !message.IsOut)
+                //    {
+                //        base.InsertItem(index, new TLMessageEmpty { Date = item.Date, FromId = item.FromId, Id = item.Id, ToId = item.ToId });
+                //    }
+                //}
+
+                //if (!item.IsFirst && oldFirst)
+                //{
+                //    var next = index > 0 ? this[index - 1] : null;
+                //    if (next is TLMessageEmpty)
+                //    {
+                //        Remove(item);
+                //    }
+                //}
+            }
+
+            #endregion
         }
+
+        //public class ItemsCollection : IncrementalCollection<AdminLogEvent>
+        //{
+        //    private readonly IMTProtoService _protoService;
+        //    private readonly TLInputChannelBase _inputChannel;
+        //    private readonly TLChannel _channel;
+        //    //private readonly TLChannelParticipantsFilterBase _filter;
+
+        //    private long _minEventId = long.MaxValue;
+        //    private bool _hasMore;
+
+        //    public ItemsCollection(IMTProtoService protoService, TLChannel channel)
+        //    {
+        //        _protoService = protoService;
+        //        _inputChannel = channel.ToInputChannel();
+        //        _channel = channel;
+        //        //_filter = filter;
+        //        _hasMore = true;
+        //    }
+
+        //    public override async Task<IList<AdminLogEvent>> LoadDataAsync()
+        //    {
+        //        var maxId = Count > 0 ? _minEventId : 0;
+
+        //        var response = await _protoService.GetAdminLogAsync(_inputChannel, null, null, null, maxId, 0, 50);
+        //        if (response.IsSucceeded)
+        //        {
+        //            foreach (var item in response.Result.Events)
+        //            {
+        //                _minEventId = Math.Min(_minEventId, item.Id);
+        //            }
+
+        //            if (response.Result.Events.Count < 50)
+        //            {
+        //                _hasMore = false;
+        //            }
+
+        //            return response.Result.Events.Select(x => new AdminLogEvent { Channel = _channel, Event = x }).ToArray();
+        //        }
+
+        //        return new AdminLogEvent[0];
+        //    }
+
+        //    protected override bool GetHasMoreItems()
+        //    {
+        //        return _hasMore;
+        //    }
+        //}
 
     }
 }
