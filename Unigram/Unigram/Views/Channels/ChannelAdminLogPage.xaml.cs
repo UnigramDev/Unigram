@@ -3,7 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.TL;
+using Unigram.Controls;
+using Unigram.Controls.Views;
+using Unigram.Strings;
+using Unigram.Themes;
 using Unigram.ViewModels.Channels;
+using Unigram.Views.Users;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -33,22 +39,43 @@ namespace Unigram.Views.Channels
 
         private void ProfileBubble_Click(object sender, RoutedEventArgs e)
         {
-
+            var control = sender as FrameworkElement;
+            var message = control.DataContext as TLMessage;
+            if (message != null && message.HasFromId)
+            {
+                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FromId.Value });
+            }
         }
 
         private void Download_Click(object sender, Controls.TransferCompletedEventArgs e)
         {
-
+            Media.Download(sender, e);
         }
 
-        private void Reply_Click(object sender, RoutedEventArgs e)
+        private async void StickerSet_Click(object sender, RoutedEventArgs e)
         {
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
 
+            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                var stickerAttribute = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                if (stickerAttribute != null && stickerAttribute.StickerSet.TypeId != TLType.InputStickerSetEmpty)
+                {
+                    await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet);
+                }
+            }
         }
 
-        private void StickerSet_Click(object sender, RoutedEventArgs e)
+        private async void Help_Click(object sender, RoutedEventArgs e)
         {
+            var channel = ViewModel.Item as TLChannel;
+            if (channel == null)
+            {
+                return;
+            }
 
+            await TLMessageDialog.ShowAsync(channel.IsMegaGroup ? AppResources.EventLogInfoDetail : AppResources.EventLogInfoDetailChannel, AppResources.EventLogInfoTitle, "OK");
         }
     }
 }

@@ -7,7 +7,7 @@
     xmlns:common="using:Unigram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vmc="using:Telegram.Api.TL"
+    xmlns:tl="using:Telegram.Api.TL"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -55,12 +55,21 @@
                            Visibility="Collapsed"
                            Grid.Row="0"/>
 
-                <local:MessageReference
+                <!--<local:MessageReference
                     Title="Original message"
                     Message="{x:Bind ViewModel.Reply.SelfBase, Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
                     Click="Reply_Click"
-                    Grid.Row="1"/>
+                    Grid.Row="1"/>-->
+
+                <Border BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0" Margin="0,4,0,4" Grid.Row="1">
+                    <TextBlock common:TextBlockHelper.Edited="{x:Bind ViewModel}" Margin="0,0,0,2" Style="{StaticResource CaptionTextBlockStyle}">
+                        <Run FontWeight="SemiBold" Foreground="{ThemeResource MessageHeaderForegroundBrush}"/>
+                        <LineBreak/>
+                        <Run/>
+                    </TextBlock>
+                </Border>
+
 
                 <TextBlock
                     x:Name="MessageControl"

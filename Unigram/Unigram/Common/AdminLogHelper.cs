@@ -14,6 +14,7 @@ using Unigram.Views;
 using Unigram.Views.Users;
 using Windows.ApplicationModel.Resources;
 using Windows.Globalization.DateTimeFormatting;
+using Windows.System.UserProfile;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -265,11 +266,15 @@ namespace Unigram.Common
             {
                 var channel = InMemoryCacheService.Current.GetChat(serviceMessage.ToId.Id) as TLChannel;
 
-                var eventAction = action as TLMessageActionAdminLogEvent;
-                if (eventAction != null && _actionsCache.TryGetValue(eventAction.Event.Action.GetType(), out Func<TLMessageService, TLChannelAdminLogEventActionBase, int, string, bool, Paragraph> func))
+                if (action is TLMessageActionAdminLogEvent eventAction && _actionsCache.TryGetValue(eventAction.Event.Action.GetType(), out Func<TLMessageService, TLChannelAdminLogEventActionBase, int, string, bool, Paragraph> func))
                 {
                     return func.Invoke(serviceMessage, eventAction.Event.Action, fromId.Value, userFullName, useActiveLinks);
                 }
+            }
+
+            if (action is TLMessageActionDate dateAction)
+            {
+                return ReplaceLinks(serviceMessage, DateTimeToFormatConverter.ConvertDayGrouping(Utils.UnixTimestampToDateTime(dateAction.Date)));
             }
 
             var paragraph = new Paragraph();

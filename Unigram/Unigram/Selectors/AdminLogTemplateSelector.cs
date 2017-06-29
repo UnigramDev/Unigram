@@ -76,7 +76,7 @@ namespace Unigram.Selectors
             {
                 return RoundVideoTemplate;
             }
-            else if (message.HasReplyToMsgId)
+            else if (message.Reply != null)
             {
                 return EditedTemplate;
             }
