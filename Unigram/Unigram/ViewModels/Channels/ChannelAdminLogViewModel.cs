@@ -227,6 +227,20 @@ namespace Unigram.ViewModels.Channels
                         else if (item.Action is TLChannelAdminLogEventActionEditMessage editMessage)
                         {
                             // TODO: the actual message
+                            if (editMessage.NewMessage is TLMessageCommonBase messageCommon)
+                            {
+                                messageCommon.ReplyToMsgId = editMessage.PrevMessage.Id;
+                                messageCommon.IsOut = false;
+                                messageCommon.IsPost = false;
+                            }
+                            if (editMessage.NewMessage is TLMessage message)
+                            {
+                                message.Reply = editMessage.PrevMessage;
+                                message.EditDate = null;
+                                message.HasEditDate = false;
+                            }
+
+                            result.Insert(0, editMessage.NewMessage);
                             result.Insert(0, GetServiceMessage(item));
                         }
                         else if (item.Action is TLChannelAdminLogEventActionDeleteMessage deleteMessage)

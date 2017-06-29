@@ -118,6 +118,9 @@
       <DependentUpon>SharedLinkListViewItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\HistoryCallMessageControlBase.cs" />
+    <Compile Include="Controls\Messages\EditedMessageBubble.xaml.cs">
+      <DependentUpon>EditedMessageBubble.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />
@@ -1137,6 +1140,10 @@
     <Page Include="Controls\Items\SharedLinkListViewItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Messages\EditedMessageBubble.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\InlineBotResultsView.xaml">
       <SubType>Designer</SubType>

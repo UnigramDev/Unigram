@@ -133,6 +133,23 @@
                             </Grid>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.MessageTemplate>
+                    <selectors:AdminLogTemplateSelector.EditedTemplate>
+                        <DataTemplate x:DataType="tl:TLMessage">
+                            <Grid HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="52"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <controls:ProfilePictureView x:Phase="3"
+                                                             x:Name="PhotoBubble"
+                                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
+                                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
+                                                             Click="ProfileBubble_Click"/>
+                                <messages:EditedMessageBubble Grid.Column="1"/>
+                            </Grid>
+                        </DataTemplate>
+                    </selectors:AdminLogTemplateSelector.EditedTemplate>
                     <selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
                         <DataTemplate>
                             <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">

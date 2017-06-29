@@ -17,6 +17,7 @@ namespace Unigram.Selectors
         protected DataTemplate EmptyMessageTemplate = new DataTemplate();
 
         public DataTemplate MessageTemplate { get; set; }
+        public DataTemplate EditedTemplate { get; set; }
         public DataTemplate StickerTemplate { get; set; }
         public DataTemplate RoundVideoTemplate { get; set; }
 
@@ -50,6 +51,10 @@ namespace Unigram.Selectors
 
                     return ServiceMessagePhotoTemplate;
                 }
+                //else if (adminLog.Event.Action is TLChannelAdminLogEventActionEditMessage)
+                //{
+                //    return EditedTemplate;
+                //}
             }
 
             return ServiceMessageTemplate;
@@ -71,10 +76,12 @@ namespace Unigram.Selectors
             {
                 return RoundVideoTemplate;
             }
-            else
+            else if (message.HasReplyToMsgId)
             {
-                return MessageTemplate;
+                return EditedTemplate;
             }
+
+            return MessageTemplate;
         }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
