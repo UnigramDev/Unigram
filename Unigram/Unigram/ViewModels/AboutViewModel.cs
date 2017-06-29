@@ -19,6 +19,7 @@ namespace Unigram.ViewModels
         public string UsefulPrivacy = "http://unigram.me/privacy.html";
         public string UsefulFaq = "http://unigram.me/faq.html";
         public string UsefulWebsite = "http://unigram.me";
+        public string UsefulChangelog = "https://github.com/UnigramDev/Unigram/releases";
 
         // Support.
         public string SupportEmail = "mailto:team@unigram.me";
@@ -69,6 +70,13 @@ namespace Unigram.ViewModels
         private async void UsefulWebsiteExecute()
         {
             var uri = new Uri(@UsefulWebsite);
+            var success = await Windows.System.Launcher.LaunchUriAsync(uri);
+        }
+
+        public RelayCommand UsefulChangelogCommand => new RelayCommand(UsefulChangelogExecute);
+        private async void UsefulChangelogExecute()
+        {
+            var uri = new Uri(@UsefulChangelog);
             var success = await Windows.System.Launcher.LaunchUriAsync(uri);
         }
 
