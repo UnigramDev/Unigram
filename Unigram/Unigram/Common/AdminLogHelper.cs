@@ -91,6 +91,7 @@ namespace Unigram.Common
                 {
                     n = new TLChannelAdminRights();
                 }
+
                 if (o.IsChangeInfo != n.IsChangeInfo)
                 {
                     if (!added)

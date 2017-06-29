@@ -163,21 +163,21 @@ namespace Unigram.ViewModels.Channels
                             message.HasEntities = true;
 
                             var whoUser = participantToggleBan.PrevParticipant.User;
-                            TLChannelBannedRights o2 = null;
-                            TLChannelBannedRights n2 = null;
+                            TLChannelBannedRights o = null;
+                            TLChannelBannedRights n = null;
 
                             if (participantToggleBan.PrevParticipant is TLChannelParticipantBanned prevBanned)
                             {
-                                o2 = prevBanned.BannedRights;
+                                o = prevBanned.BannedRights;
                             }
                             if (participantToggleBan.NewParticipant is TLChannelParticipantBanned newBanned)
                             {
-                                n2 = newBanned.BannedRights;
+                                n = newBanned.BannedRights;
                             }
-                            if (!_channel.IsMegaGroup || (n2 != null && n2.IsViewMessages && (n2 == null || o2 == null || n2.UntilDate == o2.UntilDate)))
+                            if (!_channel.IsMegaGroup || (n != null && n.IsViewMessages && (n == null || o == null || n.UntilDate == o.UntilDate)))
                             {
                                 string str;
-                                if (n2 == null || !(o2 == null || n2.IsViewMessages))
+                                if (n == null || !(o == null || n.IsViewMessages))
                                 {
                                     str = AppResources.EventLogChannelUnrestricted;
                                 }
@@ -192,7 +192,7 @@ namespace Unigram.ViewModels.Channels
                             else
                             {
                                 StringBuilder builder;
-                                if (n2 == null || AdminLogHelper.IsBannedForever(n2.UntilDate))
+                                if (n == null || AdminLogHelper.IsBannedForever(n.UntilDate))
                                 {
                                     var str = AppResources.EventLogRestricted;
                                     var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
@@ -201,7 +201,7 @@ namespace Unigram.ViewModels.Channels
                                 else
                                 {
                                     var bannedDuration = "";
-                                    int duration = n2.UntilDate - item.Date;
+                                    int duration = n.UntilDate - item.Date;
                                     int days = ((duration / 60) / 60) / 24;
                                     duration -= ((days * 60) * 60) * 24;
                                     int hours = (duration / 60) / 60;
@@ -254,16 +254,16 @@ namespace Unigram.ViewModels.Channels
                                 }
 
                                 var added = false;
-                                if (o2 == null)
+                                if (o == null)
                                 {
-                                    o2 = new TLChannelBannedRights();
+                                    o = new TLChannelBannedRights();
                                 }
-                                if (n2 == null)
+                                if (n == null)
                                 {
-                                    n2 = new TLChannelBannedRights();
+                                    n = new TLChannelBannedRights();
                                 }
 
-                                if (o2.IsViewMessages != n2.IsViewMessages)
+                                void AppendChange(bool value, string label)
                                 {
                                     if (!added)
                                     {
@@ -271,51 +271,29 @@ namespace Unigram.ViewModels.Channels
                                         added = true;
                                     }
 
-                                    builder.Append('\n').Append(!n2.IsViewMessages ? '+' : '-').Append(' ');
-                                    builder.Append(AppResources.EventLogRestrictedReadMessages);
+                                    builder.Append('\n').Append(!value ? '+' : '-').Append(' ');
+                                    builder.Append(label);
                                 }
-                                if (o2.IsSendMessages != n2.IsSendMessages)
-                                {
-                                    if (!added)
-                                    {
-                                        builder.Append('\n');
-                                        added = true;
-                                    }
 
-                                    builder.Append('\n').Append(!n2.IsSendMessages ? '+' : '-').Append(' ');
-                                    builder.Append(AppResources.EventLogRestrictedSendMessages);
+                                if (o.IsViewMessages != n.IsViewMessages)
+                                {
+                                    AppendChange(n.IsViewMessages, AppResources.EventLogRestrictedReadMessages);
                                 }
-                                if (!(o2.IsSendStickers == n2.IsSendStickers && o2.IsSendInline == n2.IsSendInline && o2.IsSendGifs == n2.IsSendGifs && o2.IsSendGames == n2.IsSendGames))
+                                if (o.IsSendMessages != n.IsSendMessages)
                                 {
-                                    if (!added)
-                                    {
-                                        builder.Append('\n');
-                                        added = true;
-                                    }
-
-                                    builder.Append('\n').Append(!n2.IsSendStickers ? '+' : '-').Append(' ');
-                                    builder.Append(AppResources.EventLogRestrictedSendStickers);
+                                    AppendChange(n.IsSendMessages, AppResources.EventLogRestrictedSendMessages);
                                 }
-                                if (o2.IsSendMedia != n2.IsSendMedia)
+                                if (!(o.IsSendStickers == n.IsSendStickers && o.IsSendInline == n.IsSendInline && o.IsSendGifs == n.IsSendGifs && o.IsSendGames == n.IsSendGames))
                                 {
-                                    if (!added)
-                                    {
-                                        builder.Append('\n');
-                                        added = true;
-                                    }
-
-                                    builder.Append('\n').Append(!n2.IsSendMedia ? '+' : '-').Append(' ');
-                                    builder.Append(AppResources.EventLogRestrictedSendMedia);
+                                    AppendChange(n.IsSendStickers, AppResources.EventLogRestrictedSendStickers);
                                 }
-                                if (o2.IsEmbedLinks != n2.IsEmbedLinks)
+                                if (o.IsSendMedia != n.IsSendMedia)
                                 {
-                                    if (!added)
-                                    {
-                                        builder.Append('\n');
-                                    }
-
-                                    builder.Append('\n').Append(!n2.IsEmbedLinks ? '+' : '-').Append(' ');
-                                    builder.Append(AppResources.EventLogRestrictedSendEmbed);
+                                    AppendChange(n.IsSendMedia, AppResources.EventLogRestrictedSendMedia);
+                                }
+                                if (o.IsEmbedLinks != n.IsEmbedLinks)
+                                {
+                                    AppendChange(n.IsEmbedLinks, AppResources.EventLogRestrictedSendEmbed);
                                 }
 
                                 message.Message = builder.ToString();
@@ -323,10 +301,102 @@ namespace Unigram.ViewModels.Channels
 
                             result.Insert(0, message);
                         }
-                        //else if (item.Action is TLChannelAdminLogEventActionParticipantToggleAdmin participantToggleAdmin)
-                        //{
-                        //    return ParticipantToggleAdmin;
-                        //}
+                        else if (item.Action is TLChannelAdminLogEventActionParticipantToggleAdmin participantToggleAdmin)
+                        {
+                            var message = new TLMessage();
+                            //message.Id = item.Id;
+                            message.FromId = item.UserId;
+                            message.ToId = _channel.ToPeer();
+                            message.Date = item.Date;
+                            //message.Message = from.ReadString();
+                            message.Entities = new TLVector<TLMessageEntityBase>();
+
+                            message.HasFromId = true;
+                            message.HasEntities = true;
+
+                            var whoUser = participantToggleAdmin.PrevParticipant.User;
+                            var str = AppResources.EventLogPromoted;
+                            var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
+                            var builder = new StringBuilder(string.Format(str, userName));
+                            var added = false;
+
+                            TLChannelAdminRights o = null;
+                            TLChannelAdminRights n = null;
+
+                            if (participantToggleAdmin.PrevParticipant is TLChannelParticipantAdmin prevAdmin)
+                            {
+                                o = prevAdmin.AdminRights;
+                            }
+                            if (participantToggleAdmin.NewParticipant is TLChannelParticipantAdmin newAdmin)
+                            {
+                                n = newAdmin.AdminRights;
+                            }
+
+                            if (o == null)
+                            {
+                                o = new TLChannelAdminRights();
+                            }
+                            if (n == null)
+                            {
+                                n = new TLChannelAdminRights();
+                            }
+
+                            void AppendChange(bool value, string label)
+                            {
+                                if (!added)
+                                {
+                                    builder.Append('\n');
+                                    added = true;
+                                }
+
+                                builder.Append('\n').Append(value ? '+' : '-').Append(' ');
+                                builder.Append(label);
+                            }
+
+                            if (o.IsChangeInfo != n.IsChangeInfo)
+                            {
+                                AppendChange(n.IsChangeInfo, _channel.IsMegaGroup ? AppResources.EventLogPromotedChangeGroupInfo : AppResources.EventLogPromotedChangeChannelInfo);
+                            }
+
+                            if (!_channel.IsMegaGroup)
+                            {
+                                if (o.IsPostMessages!= n.IsPostMessages)
+                                {
+                                    AppendChange(n.IsPostMessages, AppResources.EventLogPromotedPostMessages);
+                                }
+                                if (o.IsEditMessages != n.IsEditMessages)
+                                {
+                                    AppendChange(n.IsEditMessages, AppResources.EventLogPromotedEditMessages);
+                                }
+                            }
+                            if (o.IsDeleteMessages != n.IsDeleteMessages)
+                            {
+                                AppendChange(n.IsDeleteMessages, AppResources.EventLogPromotedDeleteMessages);
+                            }
+                            if (o.IsAddAdmins != n.IsAddAdmins)
+                            {
+                                AppendChange(n.IsAddAdmins, AppResources.EventLogPromotedAddAdmins);
+                            }
+                            if (_channel.IsMegaGroup)
+                            {
+                                if (o.IsBanUsers != n.IsBanUsers)
+                                {
+                                    AppendChange(n.IsBanUsers, AppResources.EventLogPromotedBanUsers);
+                                }
+                                if (o.IsInviteUsers != n.IsInviteUsers)
+                                {
+                                    AppendChange(n.IsInviteUsers, AppResources.EventLogPromotedAddUsers);
+                                }
+                                if (o.IsPinMessages != n.IsPinMessages)
+                                {
+                                    AppendChange(n.IsPinMessages, AppResources.EventLogPromotedPinMessages);
+                                }
+                            }
+
+                            message.Message = builder.ToString();
+
+                            result.Insert(0, message);
+                        }
                     }
 
                     if (response.Result.Events.Count < 50)

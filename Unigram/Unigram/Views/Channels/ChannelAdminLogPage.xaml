@@ -56,11 +56,11 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <controls:ProfilePictureView x:Phase="3"
-                                             x:Name="PhotoBubble"
-                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
-                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                             Click="ProfileBubble_Click"/>
+                                                     x:Name="PhotoBubble"
+                                                     Style="{StaticResource MessageBubbleProfilePictureStyle}"
+                                                     Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                                     Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
+                                                     Click="ProfileBubble_Click"/>
                         <messages:MessageBubble Grid.Column="1"/>
                     </Grid>
                 </DataTemplate>
