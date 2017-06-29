@@ -224,6 +224,25 @@ namespace Unigram
         {
             Execute.Initialize();
             Locator.Configure();
+
+            if (Window.Current != null)
+            {
+                Window.Current.Activated -= Window_Activated;
+                Window.Current.Activated += Window_Activated;
+                Window.Current.VisibilityChanged -= Window_VisibilityChanged;
+                Window.Current.VisibilityChanged += Window_VisibilityChanged;
+                Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+                Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+
+                ShowStatusBar();
+                ColourTitleBar();
+                ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+
+                Theme.Current.Update();
+                App.RaiseThemeChanged();
+            }
+
             return base.OnInitializeAsync(args);
         }
 
