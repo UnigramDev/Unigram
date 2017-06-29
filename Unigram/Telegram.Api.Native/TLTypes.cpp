@@ -529,11 +529,6 @@ HRESULT TLConfig::get_DisabledFeatures(__FIVectorView_1_Telegram__CApi__CNative_
 	return S_OK;
 }
 
-HRESULT TLConfig::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
-{
-	return connectionManager->OnConfigResponse(this);
-}
-
 
 HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 {
@@ -1051,9 +1046,7 @@ HRESULT TLBadMsgNotificationT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reade
 
 HRESULT TLBadMessage::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
 {
-	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLBadMessage response handling");
-
-	return S_OK;
+	return connection->GetDatacenter()->OnBadMessageResponse(connectionManager, messageContext->Id, this);
 }
 
 

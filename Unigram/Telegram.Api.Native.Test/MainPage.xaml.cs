@@ -40,6 +40,12 @@ namespace Telegram.Api.Native.Test
             connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
             connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;
 
+
+            var proxySettings = ProxySettings.Create("127.0.0.1", 8080);
+            var proxySettingsWithCredentials = ProxySettings.Create("127.0.0.1", 8080, "pippo", "pluto");
+
+            connectionManager.UpdateDatacenters();
+
             TLTestObject.Register();
         }
 

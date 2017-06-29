@@ -9,7 +9,7 @@
 #include "TLTypes.h"
 #include "ConnectionManager.h"
 
-#include "MethodDebugInfo.h"
+#include "MethodDebug.h"
 
 #if _DEBUG
 #define NEXT_ENDPOINT_CONNECTION_TIMEOUT INFINITE
@@ -125,8 +125,6 @@ HRESULT Connection::Connect()
 
 HRESULT Connection::Connect(ComPtr<ConnectionManager> const& connectionManager, boolean ipv6)
 {
-	METHOD_DEBUG_INFO();
-
 	auto lock = LockCriticalSection();
 
 	if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) > ConnectionState::Disconnected)
@@ -190,8 +188,6 @@ HRESULT Connection::Connect(ComPtr<ConnectionManager> const& connectionManager, 
 
 HRESULT Connection::Reconnect()
 {
-	METHOD_DEBUG_INFO();
-
 	auto lock = LockCriticalSection();
 
 	m_flags = (m_flags & ~ConnectionFlag::ConnectionState) | static_cast<ConnectionFlag>(ConnectionState::Reconnecting);
@@ -275,8 +271,6 @@ HRESULT Connection::CreateMessagePacket(UINT32 messageLength, boolean reportAck,
 
 HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, ITLObject* messageBody, INT32* quickAckId)
 {
-	METHOD_DEBUG_INFO();
-
 	if (messageContext == nullptr || messageBody == nullptr)
 	{
 		return E_INVALIDARG;
@@ -345,8 +339,6 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 
 HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, boolean reportAck)
 {
-	METHOD_DEBUG_INFO();
-
 	if (messageBody == nullptr)
 	{
 		return E_INVALIDARG;
@@ -431,19 +423,23 @@ HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, 
 
 HRESULT Connection::OnNewSessionCreatedResponse(ConnectionManager* connectionManager, TLNewSessionCreated* response)
 {
-	if (IsSessionProcessed(response->GetUniqueId()))
 	{
-		return S_OK;
+		auto lock = LockCriticalSection();
+
+		if (IsSessionProcessed(response->GetUniqueId()))
+		{
+			return S_OK;
+		}
+
+		ServerSalt salt = {};
+		salt.ValidSince = connectionManager->GetCurrentTime();
+		salt.ValidUntil = salt.ValidSince + 30 * 60;
+		salt.Salt = response->GetServerSalt();
+
+		m_datacenter->AddServerSalt(salt);
+
+		AddProcessedSession(response->GetUniqueId());
 	}
-
-	ServerSalt salt = {};
-	salt.ValidSince = connectionManager->GetCurrentTime();
-	salt.ValidUntil = salt.ValidSince + 30 * 60;
-	salt.Salt = response->GetServerSalt();
-
-	m_datacenter->AddServerSalt(salt);
-
-	AddProcessedSession(response->GetUniqueId());
 
 	return connectionManager->OnConnectionSessionCreated(this, response->GetFirstMesssageId());
 }
@@ -489,8 +485,7 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 	{
 		return Connect(connectionManager, (m_flags & ConnectionFlag::Ipv6) == ConnectionFlag::Ipv6);
 	}
-
-	/*else if (m_datacenter->IsHandshaking() || connectionManager->IsCurrentDatacenter(m_datacenter->GetId()))
+	else if (m_datacenter->IsHandshaking() || connectionManager->IsCurrentDatacenter(m_datacenter->GetId()))
 	{
 		m_failedConnectionCount++;
 
@@ -516,7 +511,7 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 
 			return m_reconnectionTimer->Start();
 		}
-	}*/
+	}
 
 	return S_OK;
 }
@@ -638,7 +633,7 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 
 HRESULT Connection::OnMessageReceived(ComPtr<ConnectionManager> const& connectionManager, TLBinaryReader* messageReader, UINT32 messageLength)
 {
-	METHOD_DEBUG_INFO();
+	METHOD_DEBUG();
 
 	HRESULT result;
 	if (messageLength == 4)

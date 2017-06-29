@@ -24,6 +24,8 @@ namespace Telegram
 			runtimeclass ConnectionManager;
 			runtimeclass MessageResponse;
 			runtimeclass MessageError;
+			runtimeclass ProxyCredentials;
+			runtimeclass ProxySettings;
 
 			delegate SendRequestCompletedCallback;
 			delegate RequestQuickAckReceivedCallback;
@@ -444,6 +446,54 @@ namespace Telegram
 			}
 
 
+			[exclusiveto(ProxyCredentials)]
+			[uuid(54973C12-DC69-4ACF-BD5B-DD0AF572E78D)]
+			[version(API_VERSION)]
+			interface IProxyCredentials : IInspectable
+			{
+				[propget] HRESULT UserName([out][retval] HSTRING* value);
+				[propget] HRESULT Password([out][retval] HSTRING* value);
+			}
+
+			[marshaling_behavior(agile)]
+			[threading(both)]
+			[version(API_VERSION)]
+			runtimeclass ProxyCredentials
+			{
+				[default] interface IProxyCredentials;
+			}
+
+
+			[exclusiveto(ProxySettings)]
+			[uuid(2DA09C89-E8AB-46F8-8624-36248D63C429)]
+			[version(API_VERSION)]
+			interface IProxySettingsStatics : IInspectable
+			{
+				[overload("Create")] HRESULT Create([in] HSTRING host,[in] UINT32 port,[out][retval] ProxySettings** value);
+				[overload("Create")] HRESULT CreateWithCredentials([in] HSTRING host,[in] UINT32 port,[in] HSTRING userName,[in] HSTRING password,[out][retval] ProxySettings** value);
+			}
+
+
+			[exclusiveto(ProxySettings)]
+			[uuid(CA79C322-DDC8-4959-B472-25B6AA8C5F57)]
+			[version(API_VERSION)]
+			interface IProxySettings : IInspectable
+			{
+				[propget] HRESULT Host([out][retval] HSTRING* value);
+				[propget] HRESULT Port([out][retval] UINT32* value);
+				[propget] HRESULT Credentials([out][retval] ProxyCredentials** value);
+			}
+
+			[static(IProxySettingsStatics, API_VERSION)]
+			[marshaling_behavior(agile)]
+			[threading(both)]
+			[version(API_VERSION)]
+			runtimeclass ProxySettings
+			{
+				[default] interface IProxySettings;
+			}
+
+
 			[exclusiveto(Datacenter)]
 			[uuid(ACBC9624-7B96-417D-A9F9-A7F93C195C86)]
 			[version(API_VERSION)]
@@ -518,6 +568,8 @@ namespace Telegram
 				[propput] HRESULT UserConfiguration([in] IUserConfiguration* value);
 				[propget] HRESULT UserId([out][retval] INT32* value);
 				[propput] HRESULT UserId([in] INT32 value);
+				[propget] HRESULT Proxy([out][retval] ProxySettings** value);
+				[propput] HRESULT Proxy([in] ProxySettings* value);
 				[propget] HRESULT Datacenters([out][retval] Windows.Foundation.Collections.IVectorView<Datacenter*>** value);
 				[overload("SendRequest")] HRESULT SendRequest([in] Telegram.Api.Native.TL.ITLObject* object,[in] SendRequestCompletedCallback* onCompleted,[in] RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
 					[in] ConnectionType connectionType,[out][retval] INT32* value);

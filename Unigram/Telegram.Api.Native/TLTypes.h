@@ -176,7 +176,7 @@ namespace Telegram
 					HString m_description;
 				};
 
-				class TLConfig WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLConfig, TLObjectT<TLObjectTraits::TLConfigTraits>, CloakedIid<IMessageResponseHandler>>
+				class TLConfig WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLConfig, TLObjectT<TLObjectTraits::TLConfigTraits>>
 				{
 					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLConfig, BaseTrust);
 
@@ -215,7 +215,6 @@ namespace Telegram
 					IFACEMETHODIMP get_CallPacketTimeoutMs(_Out_ INT32* value);
 					IFACEMETHODIMP get_MeUrlPrefix(_Out_ HSTRING* value);
 					IFACEMETHODIMP get_DisabledFeatures(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDisabledFeature** value);
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
 
 					inline INT32 GetFlags() const
 					{

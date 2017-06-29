@@ -16,7 +16,7 @@
 #include "Wrappers\OpenSSL.h"
 #include "Helpers\COMHelper.h"
 
-#include "MethodDebugInfo.h"
+#include "MethodDebug.h"
 
 #define ENCRYPT_KEY_IV_PARAM 0
 #define DECRYPT_KEY_IV_PARAM 8
@@ -379,8 +379,6 @@ HRESULT Datacenter::ReplaceEndpoints(std::vector<ServerEndpoint> const& newEndpo
 
 HRESULT Datacenter::GetGenericConnection(boolean create, ComPtr<Connection>& value)
 {
-	METHOD_DEBUG_INFO();
-
 	auto lock = LockCriticalSection();
 
 	if ((m_flags & DatacenterFlag::Closed) == DatacenterFlag::Closed)
@@ -445,8 +443,6 @@ HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, ComPtr<Con
 
 HRESULT Datacenter::BeginHandshake(boolean reconnect, boolean reset)
 {
-	METHOD_DEBUG_INFO();
-
 	auto lock = LockCriticalSection();
 
 	if (reset)
@@ -484,8 +480,6 @@ HRESULT Datacenter::BeginHandshake(boolean reconnect, boolean reset)
 
 HRESULT Datacenter::ImportAuthorization()
 {
-	METHOD_DEBUG_INFO();
-
 	auto lock = LockCriticalSection();
 
 	if ((m_flags & DatacenterFlag::ImportingAuthorization) == DatacenterFlag::ImportingAuthorization)
@@ -552,8 +546,6 @@ HRESULT Datacenter::ImportAuthorization()
 
 HRESULT Datacenter::RequestFutureSalts(UINT32 count)
 {
-	METHOD_DEBUG_INFO();
-
 	auto lock = LockCriticalSection();
 
 	if ((m_flags & DatacenterFlag::RequestingFutureSalts) == DatacenterFlag::RequestingFutureSalts)
@@ -1044,6 +1036,24 @@ HRESULT Datacenter::OnBadServerSaltResponse(ConnectionManager* connectionManager
 	});
 }
 
+HRESULT Datacenter::OnBadMessageResponse(ConnectionManager* connectionManager, INT64 messageId, TLBadMessage* response)
+{
+	switch (response->GetErrorCode())
+	{
+	case 16:
+	case 17:
+	case 19:
+	case 32:
+	case 33:
+	case 64:
+		RecreateSessions();
+
+		return connectionManager->OnDatacenterBadMessage(this, response->GetBadMessageContext()->Id, messageId);
+	default:
+		return S_OK;
+	}
+}
+
 HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, UINT32 padding, INT32* quickAckId)
 {
 	auto lock = LockCriticalSection();
@@ -1100,7 +1110,7 @@ HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, UINT32 padding, 
 	AES_ige_encrypt(buffer + 24, buffer + 24, length - 24, &aesEncryptKey, messageKey + 64, AES_ENCRYPT);
 
 	return S_OK;
-}
+	}
 
 HRESULT Datacenter::DecryptMessage(INT64 authKeyId, BYTE* buffer, UINT32 length)
 {
@@ -1153,7 +1163,7 @@ HRESULT Datacenter::DecryptMessage(INT64 authKeyId, BYTE* buffer, UINT32 length)
 	}
 
 	return S_OK;
-}
+	}
 
 void Datacenter::GenerateMessageKey(BYTE const* authKey, BYTE* messageKey, BYTE* result, UINT32 x)
 {
@@ -1238,7 +1248,7 @@ HRESULT Datacenter::SendPing()
 		return connectionManager->m_unprocessedMessageReceivedEventSource.InvokeAll(connectionManager.Get(), response);
 	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::WithoutLogin | RequestFlag::CanCompress, &requestToken));
 
-	return connectionManager->ProcessDatacenterRequests(this, ConnectionType::Generic);
+	return connectionManager->ProcessRequestsForDatacenter(this, ConnectionType::Generic);
 
 	//return genericConnection->SendEncryptedMessage(invokeWithLayer.Get(), false, nullptr);
 }
