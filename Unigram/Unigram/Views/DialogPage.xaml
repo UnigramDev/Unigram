@@ -547,11 +547,6 @@
                 </Border>
 
                 <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
-                    <!--<Ellipse>
-                         <Ellipse.Fill>
-                         <ImageBrush ImageSource="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}"/>
-                         </Ellipse.Fill>
-                         </Ellipse>-->
                     <controls:ProfilePictureView Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                 </Border>
             </StackPanel>

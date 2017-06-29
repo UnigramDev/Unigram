@@ -464,7 +464,7 @@
     <value>Event Log</value>
   </data>
   <data name="EventLogAdded" xml:space="preserve">
-    <value>un1 added un2</value>
+    <value>{0} added {1}</value>
   </data>
   <data name="EventLogAllAdmins" xml:space="preserve">
     <value>All admins</value>
@@ -473,13 +473,13 @@
     <value>All events</value>
   </data>
   <data name="EventLogChangedChannelLink" xml:space="preserve">
-    <value>un1 changed the channel link:</value>
+    <value>{0} changed the channel link:</value>
   </data>
   <data name="EventLogChangedGroupLink" xml:space="preserve">
-    <value>un1 changed the group link:</value>
+    <value>{0} changed the group link:</value>
   </data>
   <data name="EventLogChannelJoined" xml:space="preserve">
-    <value>un1 joined the channel</value>
+    <value>{0} joined the channel</value>
   </data>
   <data name="EventLogChannelRestricted" xml:space="preserve">
     <value>banned {0}</value>
@@ -488,31 +488,31 @@
     <value>unbanned {1}</value>
   </data>
   <data name="EventLogDeletedMessages" xml:space="preserve">
-    <value>un1 deleted this message:</value>
+    <value>{0} deleted this message:</value>
   </data>
   <data name="EventLogEditedCaption" xml:space="preserve">
-    <value>un1 edited caption:</value>
+    <value>{0} edited caption:</value>
   </data>
   <data name="EventLogEditedChannelDescription" xml:space="preserve">
-    <value>un1 edited the channel description:</value>
+    <value>{0} edited the channel description:</value>
   </data>
   <data name="EventLogEditedChannelPhoto" xml:space="preserve">
-    <value>un1 set a new channel photo</value>
+    <value>{0} set a new channel photo</value>
   </data>
   <data name="EventLogEditedChannelTitle" xml:space="preserve">
-    <value>un1 renamed the channel to "%1$s"</value>
+    <value>{0} renamed the channel to "{1}"</value>
   </data>
   <data name="EventLogEditedGroupDescription" xml:space="preserve">
-    <value>un1 edited the group description:</value>
+    <value>{0} edited the group description:</value>
   </data>
   <data name="EventLogEditedGroupPhoto" xml:space="preserve">
-    <value>un1 set a new group photo</value>
+    <value>{0} set a new group photo</value>
   </data>
   <data name="EventLogEditedGroupTitle" xml:space="preserve">
-    <value>un1 renamed the group to "%1$s"</value>
+    <value>{0} renamed the group to "{1}"</value>
   </data>
   <data name="EventLogEditedMessages" xml:space="preserve">
-    <value>un1 edited this message:</value>
+    <value>{0} edited this message:</value>
   </data>
   <data name="EventLogEditedYouChannelPhoto" xml:space="preserve">
     <value>You set new channel photo</value>
@@ -575,7 +575,7 @@
     <value>Pinned messages</value>
   </data>
   <data name="EventLogGroupJoined" xml:space="preserve">
-    <value>un1 joined the group</value>
+    <value>{0} joined the group</value>
   </data>
   <data name="EventLogInfoDetail" xml:space="preserve">
     <value>This is a list of all service actions taken by the group's members and admins in the last 48 hours.</value>
@@ -587,13 +587,13 @@
     <value>What is the Event Log?</value>
   </data>
   <data name="EventLogLeft" xml:space="preserve">
-    <value>un1 left the group</value>
+    <value>{0} left the group</value>
   </data>
   <data name="EventLogLeftChannel" xml:space="preserve">
-    <value>un1 left the channel</value>
+    <value>{0} left the channel</value>
   </data>
   <data name="EventLogLeftGroup" xml:space="preserve">
-    <value>un1 left the group</value>
+    <value>{0} left the group</value>
   </data>
   <data name="EventLogOriginalCaption" xml:space="preserve">
     <value>Original caption</value>
@@ -605,7 +605,7 @@
     <value>Original message</value>
   </data>
   <data name="EventLogPinnedMessages" xml:space="preserve">
-    <value>un1 pinned this message:</value>
+    <value>{0} pinned this message:</value>
   </data>
   <data name="EventLogPreviousChannelLink" xml:space="preserve">
     <value>Previous channel link</value>
@@ -653,19 +653,19 @@
     <value>Post messages</value>
   </data>
   <data name="EventLogRemoved" xml:space="preserve">
-    <value>un1 removed un2</value>
+    <value>{0} removed {1}</value>
   </data>
   <data name="EventLogRemovedChannelLink" xml:space="preserve">
-    <value>un1 removed channel link</value>
+    <value>{0} removed channel link</value>
   </data>
   <data name="EventLogRemovedChannelPhoto" xml:space="preserve">
-    <value>un1 removed the channel photo</value>
+    <value>{0} removed the channel photo</value>
   </data>
   <data name="EventLogRemovedGroupLink" xml:space="preserve">
-    <value>un1 removed group link</value>
+    <value>{0} removed group link</value>
   </data>
-  <data name="EventLogRemovedWGroupPhoto" xml:space="preserve">
-    <value>un1 removed the group photo</value>
+  <data name="EventLogRemovedGroupPhoto" xml:space="preserve">
+    <value>{0} removed the group photo</value>
   </data>
   <data name="EventLogRemovedYouChannelPhoto" xml:space="preserve">
     <value>You removed channel photo</value>
@@ -700,19 +700,19 @@ Duration: {1}</value>
     <value>Selected events</value>
   </data>
   <data name="EventLogToggledInvitesOff" xml:space="preserve">
-    <value>un1 disabled group invites</value>
+    <value>{0} disabled group invites</value>
   </data>
   <data name="EventLogToggledInvitesOn" xml:space="preserve">
-    <value>un1 enabled group invites</value>
+    <value>{0} enabled group invites</value>
   </data>
   <data name="EventLogToggledSignaturesOff" xml:space="preserve">
-    <value>un1 disabled signatures</value>
+    <value>{0} disabled signatures</value>
   </data>
   <data name="EventLogToggledSignaturesOn" xml:space="preserve">
-    <value>un1 enabled signatures</value>
+    <value>{0} enabled signatures</value>
   </data>
   <data name="EventLogUnpinnedMessages" xml:space="preserve">
-    <value>un1 unpinned message</value>
+    <value>{0} unpinned message</value>
   </data>
   <data name="EventLogYouChannelJoined" xml:space="preserve">
     <value>You joined channel</value>

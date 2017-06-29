@@ -35,5 +35,20 @@ namespace Unigram.Views.Channels
         {
 
         }
+
+        private void Download_Click(object sender, Controls.TransferCompletedEventArgs e)
+        {
+
+        }
+
+        private void Reply_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void StickerSet_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

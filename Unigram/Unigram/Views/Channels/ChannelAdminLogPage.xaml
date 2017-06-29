@@ -12,10 +12,67 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Style x:Key="SendButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{ThemeResource TelegramForegroundAccentBrush}"/>
+            <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckedStates">
+                                    <VisualState x:Name="Unchecked"/>
+                                    <VisualState x:Name="Checked">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Indicator">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="RootGrid">
+                                <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentTransitions="{TemplateBinding ContentTransitions}" Content="{TemplateBinding Content}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" Grid.Column="1"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid x:Name="Header"
               Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
@@ -38,130 +95,225 @@
             </StackPanel>
 
             <!--<controls:GlyphButton
-                Command="{x:Bind ViewModel.CallCommand}"
-                Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable, Mode=OneWay}"
-                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                Glyph="&#xE11A;"
-                Grid.Column="2"/>-->
+                 Command="{x:Bind ViewModel.CallCommand}"
+                 Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable, Mode=OneWay}"
+                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                 Glyph="&#xE11A;"
+                 Grid.Column="2"/>-->
 
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
         </Grid>
 
-        <controls:BubbleListView ItemsSource="{x:Bind ViewModel.Items}" Grid.Row="1">
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="tl:TLMessage">
-                    <Grid Margin="-52,0,0,0" HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="52"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <controls:ProfilePictureView x:Phase="3"
-                                                     x:Name="PhotoBubble"
-                                                     Style="{StaticResource MessageBubbleProfilePictureStyle}"
-                                                     Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                                                     Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                                     Click="ProfileBubble_Click"/>
-                        <messages:MessageBubble Grid.Column="1"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-            <!--<ListView.ItemTemplate>
-                <DataTemplate>
-                    <RichTextBlock common:AdminLogHelper.Message="{Binding}" Style="{StaticResource BodyRichTextBlockStyle}"/>
-                </DataTemplate>
-            </ListView.ItemTemplate>-->
-            <!--<ListView.ItemTemplateSelector>
+        <ListView ItemsSource="{x:Bind ViewModel.Items}"
+                  SelectionMode="None"
+                  Grid.Row="1">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="MinHeight" Value="0"/>
+                    <Setter Property="Padding" Value="0"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplateSelector>
                 <selectors:AdminLogTemplateSelector>
-                    <selectors:AdminLogTemplateSelector.ParticipantToggleAdmin>
-                        <DataTemplate>
-                            <Grid x:Name="ContentPanel"
-                  Padding="{ThemeResource MessageContentPadding}"
-                  CornerRadius="{ThemeResource MessageCornerRadius}"
-                  Background="{ThemeResource MessageBackgroundBrush}"
-                  BorderBrush="{ThemeResource MessageBorderBrush}"
-                  BorderThickness="0,0,0,2">
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup>
-                                        <VisualState x:Name="FullMedia">
-                                            <VisualState.Setters>
-                                                <Setter Target="StatusControl.Padding" Value="6,4,6,4"/>
-                                                <Setter Target="StatusControl.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
-                                                <Setter Target="StatusControl.Foreground" Value="White"/>
-                                                <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState x:Name="Default"/>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock x:Name="HeaderLabel"
-                           Margin="0,0,0,2"
-                           Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                           RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                           Style="{ThemeResource CaptionTextBlockStyle}"
-                           FontWeight="SemiBold"
-                           Visibility="Collapsed"
-                           Grid.Row="0"/>
-
-                                --><!--<local:MessageReference
-                    Message="{x:Bind ViewModel.Reply.SelfBase, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
-                    Click="Reply_Click"
-                    Grid.Row="1"/>--><!--
-
-                                <RichTextBlock
-                    x:Name="MessageControl"
-                    common:AdminLogHelper.Message="{Binding}"
-                    Style="{ThemeResource BodyRichTextBlockStyle}"
-                    Foreground="{ThemeResource MessageForegroundBrush}"
-                    Grid.Row="2">
-                                    <RichTextBlock.Resources>
-                                        <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
-                                    </RichTextBlock.Resources>
-                                </RichTextBlock>
-
-                                --><!--<controls:MediaControl
-                    x:Name="MediaControl"
-                    Media="{x:Bind ConvertMedia(ViewModel.Media), Mode=OneWay}"
-                    HorizontalContentAlignment="Stretch"
-                    VerticalContentAlignment="Stretch"
-                    ContentChanged="OnMediaChanged"
-                    ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
-                    Grid.Row="3"/>
-
-                                <local:MessageStateControl
-                    x:Name="StatusControl"
-                    VerticalAlignment="Bottom"
-                    HorizontalAlignment="Right"
-                    Margin="0,0,-6,-2"
-                    Grid.Row="4"/>--><!--
-                            </Grid>
-                        </DataTemplate>
-                    </selectors:AdminLogTemplateSelector.ParticipantToggleAdmin>
-                    <selectors:AdminLogTemplateSelector.DeleteMessage>
-                        <DataTemplate>
-                            <Grid Margin="0,0,0,0" HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
+                    <selectors:AdminLogTemplateSelector.MessageTemplate>
+                        <DataTemplate x:DataType="tl:TLMessage">
+                            <Grid HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="52"/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <controls:ProfilePictureView
-                                             x:Name="PhotoBubble"
-                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
-                                             Source="{Binding Event.Action.Message.From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                                             Click="ProfileBubble_Click"/>
-                                <messages:MessageBubble DataContext="{Binding Event.Action.Message}" Grid.Column="1"/>
+                                <controls:ProfilePictureView x:Phase="3"
+                                                             x:Name="PhotoBubble"
+                                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
+                                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
+                                                             Click="ProfileBubble_Click"/>
+                                <messages:MessageBubble Grid.Column="1"/>
                             </Grid>
                         </DataTemplate>
-                    </selectors:AdminLogTemplateSelector.DeleteMessage>
+                    </selectors:AdminLogTemplateSelector.MessageTemplate>
+                    <selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
+                        <DataTemplate>
+                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                                <RichTextBlock common:AdminLogHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
+                            </Border>
+                        </DataTemplate>
+                    </selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
+                    <selectors:AdminLogTemplateSelector.ServiceMessagePhotoTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,8,0,2">
+                                <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                                    <RichTextBlock common:AdminLogHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
+                                </Border>
+
+                                <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
+                                    <controls:ProfilePictureView Source="{Binding Action.Event.Action.NewPhoto, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
+                                </Border>
+                            </StackPanel>
+                        </DataTemplate>
+                    </selectors:AdminLogTemplateSelector.ServiceMessagePhotoTemplate>
+                    <selectors:AdminLogTemplateSelector.StickerTemplate>
+                        <DataTemplate x:DataType="tl:TLMessage">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="52"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <controls:ProfilePictureView x:Phase="3"
+                                                             x:Name="PhotoBubble"
+                                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
+                                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
+                                                             Click="ProfileBubble_Click"/>
+
+                                <Grid Margin="0,2" Grid.Column="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <!-- TODO: not the right way -->
+                                    <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+
+                                    <Grid Grid.Row="1">
+                                        <controls:StickerView
+                                            Source="{x:Bind ((tl:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                            Constraint="{x:Bind ((tl:TLMessageMediaDocument)Media).Document}"
+                                            MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
+                                            MaxHeight="{StaticResource TelegramLightMediaMaxHeight}"
+                                            HorizontalAlignment="Left"
+                                            Click="StickerSet_Click"/>
+
+                                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                                    </Grid>
+
+                                    <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
+                                                Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                                VerticalAlignment="Top"
+                                                HorizontalAlignment="Left"
+                                                MaxWidth="180"
+                                                Padding="8,0,8,6"
+                                                Margin="4,0,0,4"
+                                                Grid.Column="1"
+                                                Grid.Row="1">
+                                        <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
+                                            <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
+                                                <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
+                                            </Hyperlink>
+                                        </TextBlock>
+                                        <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
+                                            <messages:MessageReference.Resources>
+                                                <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
+                                                <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
+                                                <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+                                                <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="#FFFFFF"/>
+                                            </messages:MessageReference.Resources>
+                                        </messages:MessageReference>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </selectors:AdminLogTemplateSelector.StickerTemplate>
+                    <selectors:AdminLogTemplateSelector.RoundVideoTemplate>
+                        <DataTemplate x:DataType="tl:TLMessage">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="52"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <controls:ProfilePictureView x:Phase="3"
+                                                             x:Name="PhotoBubble"
+                                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
+                                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
+                                                             Click="ProfileBubble_Click"/>
+
+                                <Grid Margin="0,2" Grid.Column="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <!-- TODO: not the right way -->
+                                    <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+
+                                    <Grid x:Name="MediaControl" Grid.Row="1">
+                                        <Ellipse Fill="Black"/>
+                                        <controls:ImageView
+                                            Source="{x:Bind ((tl:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                            Constraint="{x:Bind ((tl:TLMessageMediaDocument)Media).Document}"
+                                            Style="{StaticResource RoundImageViewStyle}"
+                                            MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
+                                            MaxHeight="{StaticResource TelegramLightMediaMaxHeight}"
+                                            HorizontalAlignment="Left"/>
+
+                                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
+
+                                        <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                                            <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                                            <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
+                                        </StackPanel>
+
+                                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                                    </Grid>
+
+                                    <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
+                                                Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                                VerticalAlignment="Top"
+                                                HorizontalAlignment="Left"
+                                                MaxWidth="180"
+                                                Padding="8,0,8,6"
+                                                Margin="4,0,0,4"
+                                                Grid.Column="1"
+                                                Grid.Row="1">
+                                        <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
+                                            <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
+                                                <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
+                                            </Hyperlink>
+                                        </TextBlock>
+                                        <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
+                                            <messages:MessageReference.Resources>
+                                                <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
+                                                <SolidColorBrush x:Key="MessageHeaderForegroundBrush" Color="#FFFFFF"/>
+                                                <SolidColorBrush x:Key="MessageForegroundBrush" Color="#FFFFFF"/>
+                                                <SolidColorBrush x:Key="MessageSubtleForegroundBrush" Color="#FFFFFF"/>
+                                            </messages:MessageReference.Resources>
+                                        </messages:MessageReference>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </selectors:AdminLogTemplateSelector.RoundVideoTemplate>
                 </selectors:AdminLogTemplateSelector>
-            </ListView.ItemTemplateSelector>-->
-        </controls:BubbleListView>
+            </ListView.ItemTemplateSelector>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView"
+                                     VerticalAlignment="Bottom" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.Footer>
+                <Border Height="8"/>
+            </ListView.Footer>
+        </ListView>
+
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="{ThemeResource AppBarThemeCompactHeight}" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Content="SETTINGS" Style="{StaticResource SendButtonStyle}" Grid.ColumnSpan="2"/>
+            <controls:GlyphButton Glyph="&#xE11B;" Grid.Column="1"/>
+
+            <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+        </Grid>
     </Grid>
 </Page>

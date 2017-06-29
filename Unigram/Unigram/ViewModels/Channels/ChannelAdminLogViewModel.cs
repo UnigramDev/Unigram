@@ -107,48 +107,153 @@ namespace Unigram.ViewModels.Channels
 
                         if (item.Action is TLChannelAdminLogEventActionChangeTitle changeTitle)
                         {
-                            //return ChangeTitle;
+                            result.Insert(0, GetServiceMessage(item));
                         }
-                        //else if (item.Action is TLChannelAdminLogEventActionChangeAbout changeAbout)
-                        //{
-                        //    return ChangeAbout;
-                        //}
-                        //else if (item.Action is TLChannelAdminLogEventActionChangeUsername changeUsername)
-                        //{
-                        //    return ChangeUsername;
-                        //}
-                        //else if (item.Action is TLChannelAdminLogEventActionChangePhoto changePhoto)
-                        //{
-                        //    return ChangePhoto;
-                        //}
-                        //else if (item.Action is TLChannelAdminLogEventActionToggleInvites toggleInvites)
-                        //{
-                        //    return ToggleInvites;
-                        //}
-                        //else if (item.Action is TLChannelAdminLogEventActionToggleSignatures toggleSignatures)
-                        //{
-                        //    return ToggleSignatures;
-                        //}
-                        //else if (item.Action is TLChannelAdminLogEventActionUpdatePinned updatePinned)
-                        //{
-                        //    return UpdatePinned;
-                        //}
-                        //else if (item.Action is TLChannelAdminLogEventActionEditMessage editMessage)
-                        //{
-                        //    return EditMessage;
-                        //}
-                        //else if (item.Action is TLChannelAdminLogEventActionDeleteMessage deleteMessage)
-                        //{
-                        //    return DeleteMessage;
-                        //}
-                        //else if (item.Action is TLChannelAdminLogEventActionParticipantJoin participantJoin)
-                        //{
-                        //    return ParticipantJoin;
-                        //}
-                        //else if (item.Action is TLChannelAdminLogEventActionParticipantInvite participantInvite)
-                        //{
-                        //    return ParticipantInvite;
-                        //}
+                        else if (item.Action is TLChannelAdminLogEventActionChangeAbout changeAbout)
+                        {
+                            var message = new TLMessage();
+                            //message.Id = item.Id;
+                            message.FromId = item.UserId;
+                            message.ToId = _channel.ToPeer();
+                            message.Date = item.Date;
+                            message.Message = changeAbout.NewValue;
+                            message.HasMedia = true;
+
+                            if (string.IsNullOrEmpty(changeAbout.PrevValue))
+                            {
+                                message.Media = new TLMessageMediaEmpty();
+                            }
+                            else
+                            {
+                                message.Media = new TLMessageMediaWebPage
+                                {
+                                    WebPage = new TLWebPage
+                                    {
+                                        SiteName = AppResources.EventLogPreviousGroupDescription,
+                                        Description = changeAbout.PrevValue,
+                                        HasSiteName = true,
+                                        HasDescription = true
+                                    }
+                                };
+                            }
+
+                            result.Insert(0, message);
+                            result.Insert(0, GetServiceMessage(item));
+                        }
+                        else if (item.Action is TLChannelAdminLogEventActionChangeUsername changeUsername)
+                        {
+                            var config = InMemoryCacheService.Current.GetConfig();
+                            if (config == null)
+                            {
+                                continue;
+                            }
+
+                            var linkPrefix = config.MeUrlPrefix;
+                            if (linkPrefix.EndsWith("/"))
+                            {
+                                linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
+                            }
+                            if (linkPrefix.StartsWith("https://"))
+                            {
+                                linkPrefix = linkPrefix.Substring(8);
+                            }
+                            else if (linkPrefix.StartsWith("http://"))
+                            {
+                                linkPrefix = linkPrefix.Substring(7);
+                            }
+
+                            var message = new TLMessage();
+                            //message.Id = item.Id;
+                            message.FromId = item.UserId;
+                            message.ToId = _channel.ToPeer();
+                            message.Date = item.Date;
+                            message.Message = string.IsNullOrEmpty(changeUsername.NewValue) ? string.Empty : $"https://{linkPrefix}/{changeUsername.NewValue}";
+                            message.Entities = new TLVector<TLMessageEntityBase>();
+                            message.HasMedia = true;
+                            message.HasEntities = true;
+
+                            message.Entities.Add(new TLMessageEntityUrl { Offset = 0, Length = message.Message.Length });
+
+                            if (string.IsNullOrEmpty(changeUsername.PrevValue))
+                            {
+                                message.Media = new TLMessageMediaEmpty();
+                            }
+                            else
+                            {
+                                message.Media = new TLMessageMediaWebPage
+                                {
+                                    WebPage = new TLWebPage
+                                    {
+                                        SiteName = AppResources.EventLogPreviousLink,
+                                        Description = $"https://{linkPrefix}/{changeUsername.PrevValue}",
+                                        HasSiteName = true,
+                                        HasDescription = true
+                                    }
+                                };
+                            }
+
+                            result.Insert(0, message);
+                            result.Insert(0, GetServiceMessage(item));
+                        }
+                        else if (item.Action is TLChannelAdminLogEventActionChangePhoto changePhoto)
+                        {
+                            result.Insert(0, GetServiceMessage(item));
+                        }
+                        else if (item.Action is TLChannelAdminLogEventActionToggleInvites toggleInvites)
+                        {
+                            result.Insert(0, GetServiceMessage(item));
+                        }
+                        else if (item.Action is TLChannelAdminLogEventActionToggleSignatures toggleSignatures)
+                        {
+                            result.Insert(0, GetServiceMessage(item));
+                        }
+                        else if (item.Action is TLChannelAdminLogEventActionUpdatePinned updatePinned)
+                        {
+                            // Patch for view
+                            if (updatePinned.Message is TLMessageCommonBase messageCommon)
+                            {
+                                messageCommon.ReplyToMsgId = null;
+                                messageCommon.IsOut = false;
+                                messageCommon.IsPost = false;
+                            }
+
+                            if (!(updatePinned.Message is TLMessageEmpty))
+                            {
+                                result.Insert(0, updatePinned.Message);
+                            }
+
+                            result.Insert(0, GetServiceMessage(item));
+                        }
+                        else if (item.Action is TLChannelAdminLogEventActionEditMessage editMessage)
+                        {
+                            // TODO: the actual message
+                            result.Insert(0, GetServiceMessage(item));
+                        }
+                        else if (item.Action is TLChannelAdminLogEventActionDeleteMessage deleteMessage)
+                        {
+                            // Patch for view
+                            if (deleteMessage.Message is TLMessageCommonBase messageCommon)
+                            {
+                                messageCommon.ReplyToMsgId = null;
+                                messageCommon.IsOut = false;
+                                messageCommon.IsPost = false;
+                            }
+
+                            result.Insert(0, deleteMessage.Message);
+                            result.Insert(0, GetServiceMessage(item));
+                        }
+                        else if (item.Action is TLChannelAdminLogEventActionParticipantJoin participantJoin)
+                        {
+                            result.Insert(0, GetServiceMessage(item));
+                        }
+                        else if (item.Action is TLChannelAdminLogEventActionParticipantLeave participantLeave)
+                        {
+                            result.Insert(0, GetServiceMessage(item));
+                        }
+                        else if (item.Action is TLChannelAdminLogEventActionParticipantInvite participantInvite)
+                        {
+                            result.Insert(0, GetServiceMessage(item));
+                        }
                         else if (item.Action is TLChannelAdminLogEventActionParticipantToggleBan participantToggleBan)
                         {
                             var message = new TLMessage();
@@ -360,7 +465,7 @@ namespace Unigram.ViewModels.Channels
 
                             if (!_channel.IsMegaGroup)
                             {
-                                if (o.IsPostMessages!= n.IsPostMessages)
+                                if (o.IsPostMessages != n.IsPostMessages)
                                 {
                                     AppendChange(n.IsPostMessages, AppResources.EventLogPromotedPostMessages);
                                 }
@@ -410,7 +515,19 @@ namespace Unigram.ViewModels.Channels
                 return new TLMessageBase[0];
             }
 
-            private String GetUserName(TLUser user, TLVector<TLMessageEntityBase> entities, int offset)
+            private TLMessageService GetServiceMessage(TLChannelAdminLogEvent item)
+            {
+                var message = new TLMessageService();
+                //message.Id = item.Id;
+                message.FromId = item.UserId;
+                message.ToId = _channel.ToPeer();
+                message.Date = item.Date;
+                message.Action = new TLMessageActionAdminLogEvent { Event = item };
+
+                return message;
+            }
+
+            private string GetUserName(TLUser user, TLVector<TLMessageEntityBase> entities, int offset)
             {
                 string name;
                 if (user == null)

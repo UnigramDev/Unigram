@@ -280,6 +280,7 @@
     <Compile Include="TL\LangPack\Methods\TLLangPackGetLangPack.cs" />
     <Compile Include="TL\LangPack\Methods\TLLangPackGetLanguages.cs" />
     <Compile Include="TL\LangPack\Methods\TLLangPackGetStrings.cs" />
+    <Compile Include="TL\Local\TLMessageActionAdminLogEvent.cs" />
     <Compile Include="TL\Local\TLMessageActionBotInfo.cs" />
     <Compile Include="TL\Local\TLPhoneCallState.cs" />
     <Compile Include="TL\Local\TLMessageActionDate.cs" />

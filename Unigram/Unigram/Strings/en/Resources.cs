@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 06/28/2017 16:32:26
+// 	Generated: 06/29/2017 11:14:48
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -1315,7 +1315,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 added un2"
+        /// Localized resource similar to "{0} added {1}"
         /// </summary>
         public static string EventLogAdded
         {
@@ -1348,7 +1348,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 changed the channel link:"
+        /// Localized resource similar to "{0} changed the channel link:"
         /// </summary>
         public static string EventLogChangedChannelLink
         {
@@ -1359,7 +1359,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 changed the group link:"
+        /// Localized resource similar to "{0} changed the group link:"
         /// </summary>
         public static string EventLogChangedGroupLink
         {
@@ -1370,7 +1370,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 joined the channel"
+        /// Localized resource similar to "{0} joined the channel"
         /// </summary>
         public static string EventLogChannelJoined
         {
@@ -1403,7 +1403,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 deleted this message:"
+        /// Localized resource similar to "{0} deleted this message:"
         /// </summary>
         public static string EventLogDeletedMessages
         {
@@ -1414,7 +1414,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 edited caption:"
+        /// Localized resource similar to "{0} edited caption:"
         /// </summary>
         public static string EventLogEditedCaption
         {
@@ -1425,7 +1425,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 edited the channel description:"
+        /// Localized resource similar to "{0} edited the channel description:"
         /// </summary>
         public static string EventLogEditedChannelDescription
         {
@@ -1436,7 +1436,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 set a new channel photo"
+        /// Localized resource similar to "{0} set a new channel photo"
         /// </summary>
         public static string EventLogEditedChannelPhoto
         {
@@ -1447,7 +1447,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 renamed the channel to "%1$s""
+        /// Localized resource similar to "{0} renamed the channel to "{1}""
         /// </summary>
         public static string EventLogEditedChannelTitle
         {
@@ -1458,7 +1458,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 edited the group description:"
+        /// Localized resource similar to "{0} edited the group description:"
         /// </summary>
         public static string EventLogEditedGroupDescription
         {
@@ -1469,7 +1469,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 set a new group photo"
+        /// Localized resource similar to "{0} set a new group photo"
         /// </summary>
         public static string EventLogEditedGroupPhoto
         {
@@ -1480,7 +1480,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 renamed the group to "%1$s""
+        /// Localized resource similar to "{0} renamed the group to "{1}""
         /// </summary>
         public static string EventLogEditedGroupTitle
         {
@@ -1491,7 +1491,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 edited this message:"
+        /// Localized resource similar to "{0} edited this message:"
         /// </summary>
         public static string EventLogEditedMessages
         {
@@ -1722,7 +1722,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 joined the group"
+        /// Localized resource similar to "{0} joined the group"
         /// </summary>
         public static string EventLogGroupJoined
         {
@@ -1766,7 +1766,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 left the group"
+        /// Localized resource similar to "{0} left the group"
         /// </summary>
         public static string EventLogLeft
         {
@@ -1777,7 +1777,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 left the channel"
+        /// Localized resource similar to "{0} left the channel"
         /// </summary>
         public static string EventLogLeftChannel
         {
@@ -1788,7 +1788,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 left the group"
+        /// Localized resource similar to "{0} left the group"
         /// </summary>
         public static string EventLogLeftGroup
         {
@@ -1832,7 +1832,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 pinned this message:"
+        /// Localized resource similar to "{0} pinned this message:"
         /// </summary>
         public static string EventLogPinnedMessages
         {
@@ -2008,7 +2008,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 removed un2"
+        /// Localized resource similar to "{0} removed {1}"
         /// </summary>
         public static string EventLogRemoved
         {
@@ -2019,7 +2019,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 removed channel link"
+        /// Localized resource similar to "{0} removed channel link"
         /// </summary>
         public static string EventLogRemovedChannelLink
         {
@@ -2030,7 +2030,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 removed the channel photo"
+        /// Localized resource similar to "{0} removed the channel photo"
         /// </summary>
         public static string EventLogRemovedChannelPhoto
         {
@@ -2041,7 +2041,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 removed group link"
+        /// Localized resource similar to "{0} removed group link"
         /// </summary>
         public static string EventLogRemovedGroupLink
         {
@@ -2052,13 +2052,13 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 removed the group photo"
+        /// Localized resource similar to "{0} removed the group photo"
         /// </summary>
-        public static string EventLogRemovedWGroupPhoto
+        public static string EventLogRemovedGroupPhoto
         {
             get
             {
-                return resourceLoader.GetString("EventLogRemovedWGroupPhoto");
+                return resourceLoader.GetString("EventLogRemovedGroupPhoto");
             }
         }
         
@@ -2175,7 +2175,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 disabled group invites"
+        /// Localized resource similar to "{0} disabled group invites"
         /// </summary>
         public static string EventLogToggledInvitesOff
         {
@@ -2186,7 +2186,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 enabled group invites"
+        /// Localized resource similar to "{0} enabled group invites"
         /// </summary>
         public static string EventLogToggledInvitesOn
         {
@@ -2197,7 +2197,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 disabled signatures"
+        /// Localized resource similar to "{0} disabled signatures"
         /// </summary>
         public static string EventLogToggledSignaturesOff
         {
@@ -2208,7 +2208,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 enabled signatures"
+        /// Localized resource similar to "{0} enabled signatures"
         /// </summary>
         public static string EventLogToggledSignaturesOn
         {
@@ -2219,7 +2219,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "un1 unpinned message"
+        /// Localized resource similar to "{0} unpinned message"
         /// </summary>
         public static string EventLogUnpinnedMessages
         {

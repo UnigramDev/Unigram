@@ -12,63 +12,85 @@ namespace Unigram.Selectors
 {
     public class AdminLogTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate ChangeTitle { get; set; }
-        public DataTemplate ChangeAbout { get; set; }
-        public DataTemplate ChangeUsername { get; set; }
-        public DataTemplate ChangePhoto { get; set; }
-        public DataTemplate ToggleInvites { get; set; }
-        public DataTemplate ToggleSignatures { get; set; }
-        public DataTemplate UpdatePinned { get; set; }
-        public DataTemplate EditMessage { get; set; }
-        public DataTemplate DeleteMessage { get; set; }
-        public DataTemplate ParticipantJoin { get; set; }
-        public DataTemplate ParticipantLeave { get; set; }
-        public DataTemplate ParticipantInvite { get; set; }
-        public DataTemplate ParticipantToggleBan { get; set; }
-        public DataTemplate ParticipantToggleAdmin { get; set; }
+        private readonly Dictionary<Type, Func<TLMessageBase, DataTemplate>> _templatesCache;
 
-        protected override DataTemplate SelectTemplateCore(object item)
+        protected DataTemplate EmptyMessageTemplate = new DataTemplate();
+
+        public DataTemplate MessageTemplate { get; set; }
+        public DataTemplate StickerTemplate { get; set; }
+        public DataTemplate RoundVideoTemplate { get; set; }
+
+        public DataTemplate ServiceMessageTemplate { get; set; }
+        public DataTemplate ServiceMessagePhotoTemplate { get; set; }
+
+        public AdminLogTemplateSelector()
         {
-            if (item is AdminLogEvent log)
+            _templatesCache = new Dictionary<Type, Func<TLMessageBase, DataTemplate>>();
+            _templatesCache.Add(typeof(TLMessageService), new Func<TLMessageBase, DataTemplate>(GenerateServiceMessageTemplate));
+            _templatesCache.Add(typeof(TLMessageEmpty), (TLMessageBase m) => EmptyMessageTemplate);
+            _templatesCache.Add(typeof(TLMessage), new Func<TLMessageBase, DataTemplate>(GenerateCommonMessageTemplate));
+        }
+
+        private DataTemplate GenerateServiceMessageTemplate(TLMessageBase message)
+        {
+            var serviceMessage = message as TLMessageService;
+            if (serviceMessage == null)
             {
-                item = log.Event;
+                return EmptyMessageTemplate;
             }
 
-            var adminEvent = item as TLChannelAdminLogEvent;
-            if (adminEvent != null)
+            if (serviceMessage.Action is TLMessageActionAdminLogEvent adminLog)
             {
-                switch (adminEvent.Action)
+                if (adminLog.Event.Action is TLChannelAdminLogEventActionChangePhoto changePhotoAction)
                 {
-                    case TLChannelAdminLogEventActionChangeTitle changeTitle:
-                        return ChangeTitle;
-                    case TLChannelAdminLogEventActionChangeAbout changeAbout:
-                        return ChangeAbout;
-                    case TLChannelAdminLogEventActionChangeUsername changeUsername:
-                        return ChangeUsername;
-                    case TLChannelAdminLogEventActionChangePhoto changePhoto:
-                        return ChangePhoto;
-                    case TLChannelAdminLogEventActionToggleInvites toggleInvites:
-                        return ToggleInvites;
-                    case TLChannelAdminLogEventActionToggleSignatures toggleSignatures:
-                        return ToggleSignatures;
-                    case TLChannelAdminLogEventActionUpdatePinned updatePinned:
-                        return UpdatePinned;
-                    case TLChannelAdminLogEventActionEditMessage editMessage:
-                        return EditMessage;
-                    case TLChannelAdminLogEventActionDeleteMessage deleteMessage:
-                        return DeleteMessage;
-                    case TLChannelAdminLogEventActionParticipantJoin participantJoin:
-                        return ParticipantJoin;
-                    case TLChannelAdminLogEventActionParticipantInvite participantInvite:
-                        return ParticipantInvite;
-                    case TLChannelAdminLogEventActionParticipantToggleBan participantToggleBan:
-                        return ParticipantToggleBan;
-                    case TLChannelAdminLogEventActionParticipantToggleAdmin participantToggleAdmin:
-                        return ParticipantToggleAdmin;
+                    if (changePhotoAction.NewPhoto is TLChatPhotoEmpty)
+                    {
+                        return ServiceMessageTemplate;
+                    }
+
+                    return ServiceMessagePhotoTemplate;
                 }
             }
 
-            return base.SelectTemplateCore(item);
+            return ServiceMessageTemplate;
+        }
+
+        private DataTemplate GenerateCommonMessageTemplate(TLMessageBase m)
+        {
+            var message = m as TLMessage;
+            if (message == null)
+            {
+                return EmptyMessageTemplate;
+            }
+
+            if (message.IsSticker())
+            {
+                return StickerTemplate;
+            }
+            else if (message.IsRoundVideo())
+            {
+                return RoundVideoTemplate;
+            }
+            else
+            {
+                return MessageTemplate;
+            }
+        }
+
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+        {
+            var message = item as TLMessageBase;
+            if (message == null)
+            {
+                return EmptyMessageTemplate;
+            }
+
+            if (_templatesCache.TryGetValue(message.GetType(), out Func<TLMessageBase, DataTemplate> func))
+            {
+                return func.Invoke(message);
+            }
+
+            return EmptyMessageTemplate;
         }
     }
 }
