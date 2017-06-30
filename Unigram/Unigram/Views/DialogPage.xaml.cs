@@ -145,9 +145,14 @@ namespace Unigram.Views
 
         private void TextField_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (StickersPanel.Visibility == Visibility.Visible)
+            if (StickersPanel.Visibility == Visibility.Visible && TextField.FocusState == FocusState.Unfocused)
             {
                 StickersPanel.Visibility = Visibility.Collapsed;
+
+                if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                {
+                    TextField.Focus(FocusState.Keyboard);
+                }
             }
         }
 
@@ -305,6 +310,16 @@ namespace Unigram.Views
             {
                 ViewModel.SelectionMode = ListViewSelectionMode.None;
                 args.Handled = true;
+            }
+
+            if (args.Handled)
+            {
+                Focus(FocusState.Programmatic);
+
+                if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                {
+                    TextField.Focus(FocusState.Keyboard);
+                }
             }
         }
 
@@ -564,17 +579,21 @@ namespace Unigram.Views
 
             if (StickersPanel.Visibility == Visibility.Collapsed)
             {
-                StickersPanel.Visibility = Visibility.Visible;
-                TextField.PreventKeyboardDisplayOnProgrammaticFocus = true;
+                Focus(FocusState.Programmatic);
                 TextField.Focus(FocusState.Programmatic);
+
                 InputPane.GetForCurrentView().TryHide();
+
+                StickersPanel.Visibility = Visibility.Visible;
 
                 ViewModel.OpenStickersCommand.Execute(null);
             }
             else
             {
+                Focus(FocusState.Programmatic);
+                TextField.Focus(FocusState.Keyboard);
+
                 StickersPanel.Visibility = Visibility.Collapsed;
-                InputPane.GetForCurrentView().TryShow();
             }
         }
 

@@ -584,7 +584,7 @@
     <value>This is a list of all service actions taken by the channel's admins in the last 48 hours.</value>
   </data>
   <data name="EventLogInfoTitle" xml:space="preserve">
-    <value>What is the Event Log?</value>
+    <value>What is the Recent Actions?</value>
   </data>
   <data name="EventLogLeft" xml:space="preserve">
     <value>{0} left the group</value>

@@ -98,7 +98,7 @@ namespace Unigram.Controls.Views
         {
             if (IsProxyEnabled)
             {
-                if (string.IsNullOrEmpty(Server) || !IPAddress.TryParse(Server, out IPAddress server))
+                if (string.IsNullOrEmpty(Server) /* || !IPAddress.TryParse(Server, out IPAddress server)*/)
                 {
                     VisualUtilities.ShakeView(FieldServer);
                     args.Cancel = true;

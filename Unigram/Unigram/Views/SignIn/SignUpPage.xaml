@@ -49,7 +49,7 @@
                                     Grid.Row="3"/>
 
             <controls:UpdateTextBox Text="{Binding LastName, Mode=TwoWay}"
-                                    Margin="0,0,0,8"
+                                    Margin="0,0,0,4"
                                     InputScope="PersonalFullName"
                                     IsTextPredictionEnabled="False"
                                     PlaceholderText="Last name (optional)"
@@ -60,9 +60,10 @@
             <Button x:Name="NextButton"
                     Command="{x:Bind ViewModel.SendCommand}"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                    Foreground="White"
                     HorizontalAlignment="Stretch"
                     Content="Next"
-                    Margin="0,8,0,0"
+                    Margin="0,4,0,0"
                     Grid.Row="6"
                     Visibility="Collapsed"/>
         </Grid>

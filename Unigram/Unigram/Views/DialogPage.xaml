@@ -1538,6 +1538,7 @@
                         IsSpellCheckEnabled="True"
                         VerticalAlignment="Bottom"
                         VerticalContentAlignment="Bottom"
+                        PreventKeyboardDisplayOnProgrammaticFocus="True"
                         MinHeight="48"
                         MaxHeight="96"
                         TextChanged="TextField_TextChanged"/>

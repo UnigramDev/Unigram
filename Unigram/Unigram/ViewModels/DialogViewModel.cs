@@ -1025,7 +1025,7 @@ namespace Unigram.ViewModels
                 if (full != null)
                 {
                     Full = full;
-                    IsPhoneCallsAvailable = full.IsPhoneCallsAvailable && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
+                    IsPhoneCallsAvailable = full.IsPhoneCallsAvailable && !user.IsSelf && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
 
                     if (user.IsBot && full.HasBotInfo)
                     {

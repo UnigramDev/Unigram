@@ -19,7 +19,10 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
             <StackPanel>
-                <Button Command="{x:Bind ViewModel.AdminLogCommand}" Content="Event Log"/>
+                <controls:HyperButton Content="Recent Actions"
+                                      Command="{x:Bind ViewModel.AdminLogCommand}"
+                                      Style="{StaticResource HyperButtonStyle}"
+                                      Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

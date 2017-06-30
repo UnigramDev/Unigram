@@ -598,24 +598,26 @@ namespace Unigram.ViewModels.Users
         public RelayCommand CallCommand => new RelayCommand(CallExecute);
         private async void CallExecute()
         {
-            var user = _item;
-            if (user == null)
+            if (_item == null || _full == null)
             {
                 return;
             }
 
-            try
+            if (_full.IsPhoneCallsAvailable && !_item.IsSelf && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1))
             {
-                var coordinator = VoipCallCoordinator.GetDefault();
-                var result = await coordinator.ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask");
-                if (result == VoipPhoneCallResourceReservationStatus.Success)
+                try
                 {
-                    await VoIPConnection.Current.SendRequestAsync("voip.startCall", user);
+                    var coordinator = VoipCallCoordinator.GetDefault();
+                    var result = await coordinator.ReserveCallResourcesAsync("Unigram.Tasks.VoIPCallTask");
+                    if (result == VoipPhoneCallResourceReservationStatus.Success)
+                    {
+                        await VoIPConnection.Current.SendRequestAsync("voip.startCall", _item);
+                    }
                 }
-            }
-            catch
-            {
-                await TLMessageDialog.ShowAsync("Something went wrong. Please, try to close and relaunch the app.", "Unigram", "OK");
+                catch
+                {
+                    await TLMessageDialog.ShowAsync("Something went wrong. Please, try to close and relaunch the app.", "Unigram", "OK");
+                }
             }
         }
 

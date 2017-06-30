@@ -148,10 +148,10 @@
         </Grid.RowDefinitions>
         <CheckBox x:Name="FieldEnabled" Content="Use proxy settings" Margin="12"/>
 
-        <TextBox x:Name="FieldServer" Header="Server" Margin="12,12,12,12" Grid.Row="1"/>
-        <TextBox x:Name="FieldPort" Header="Port" InputScope="Number" Margin="12,0,12,12" Grid.Row="2"/>
-        <TextBox x:Name="FieldUsername" Header="Username" Margin="12,12,12,12" Grid.Row="3"/>
-        <PasswordBox x:Name="FieldPassword" Header="Password" Margin="12,0,12,12" Grid.Row="4"/>
+        <TextBox x:Name="FieldServer" Header="Connection" PlaceholderText="Server" Margin="12,12,12,12" Grid.Row="1"/>
+        <TextBox x:Name="FieldPort" PlaceholderText="Port" InputScope="Number" Margin="12,0,12,12" Grid.Row="2"/>
+        <TextBox x:Name="FieldUsername" Header="Credentials (optional)" PlaceholderText="Username" Margin="12,12,12,12" Grid.Row="3"/>
+        <PasswordBox x:Name="FieldPassword" PlaceholderText="Password" Margin="12,0,12,12" Grid.Row="4"/>
 
         <TextBlock Text="SOCKS5 proxy settings" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="12,0,12,12" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="6"/>
 

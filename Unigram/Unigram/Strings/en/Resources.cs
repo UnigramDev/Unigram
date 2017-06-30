@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 06/29/2017 11:14:48
+// 	Generated: 06/30/2017 18:44:04
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -1755,7 +1755,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "What is the Event Log?"
+        /// Localized resource similar to "What is the Recent Actions?"
         /// </summary>
         public static string EventLogInfoTitle
         {
