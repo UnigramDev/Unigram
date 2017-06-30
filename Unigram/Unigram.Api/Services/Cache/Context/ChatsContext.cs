@@ -16,7 +16,7 @@ namespace Telegram.Api.Services.Cache.Context
         private const ulong PeerIdChatShift = 0x100000000UL;
         private const ulong PeerIdChannelShift = 0x200000000UL;
 
-        private readonly string _fields = "`id`,`access_hash`,`flags`,`title`,`username`,`version`,`participants_count`,`date`,`restriction_reason`,`photo_small_local_id`,`photo_small_secret`,`photo_small_volume_id`,`photo_small_dc_id`,`photo_big_local_id`,`photo_big_secret`,`photo_big_volume_id`,`photo_big_dc_id`,`migrated_to_id`,`migrated_to_access_hash`";
+        private readonly string _fields = "`id`,`access_hash`,`flags`,`title`,`username`,`version`,`participants_count`,`date`,`restriction_reason`,`photo_small_local_id`,`photo_small_secret`,`photo_small_volume_id`,`photo_small_dc_id`,`photo_big_local_id`,`photo_big_secret`,`photo_big_volume_id`,`photo_big_dc_id`,`migrated_to_id`,`migrated_to_access_hash`,`admin_rights`,`banned_rights`";
         private readonly Database _database;
 
         public ChatsContext(Database database)
@@ -112,12 +112,24 @@ namespace Telegram.Api.Services.Cache.Context
                             MigratedTo = migratedTo
                         };
                     }
-                    else if (((ulong)id & PeerIdTypeMask) == PeerIdChannelShift) // CHAT
+                    else if (((ulong)id & PeerIdTypeMask) == PeerIdChannelShift) // CHANNEL
                     {
                         var flags = (TLChannel.Flag)Sqlite3.sqlite3_column_int(statement, 2);
                         var access_hash = Sqlite3.sqlite3_column_int64(statement, 1);
                         var username = Sqlite3.sqlite3_column_text(statement, 4);
                         var restriction_reason = Sqlite3.sqlite3_column_text(statement, 8);
+
+                        TLChannelAdminRights adminRights = null;
+                        if (flags.HasFlag(TLChannel.Flag.AdminRights))
+                        {
+                            adminRights = new TLChannelAdminRights { Flags = (TLChannelAdminRights.Flag)Sqlite3.sqlite3_column_int(statement, 19) };
+                        }
+
+                        TLChannelBannedRights bannedRights = null;
+                        if (flags.HasFlag(TLChannel.Flag.AdminRights))
+                        {
+                            bannedRights = new TLChannelBannedRights { Flags = (TLChannelBannedRights.Flag)Sqlite3.sqlite3_column_int(statement, 20) };
+                        }
 
                         result = new TLChannel
                         {
@@ -129,7 +141,9 @@ namespace Telegram.Api.Services.Cache.Context
                             Version = version,
                             Date = date,
                             RestrictionReason = restriction_reason,
-                            Photo = photo
+                            Photo = photo,
+                            AdminRights = adminRights,
+                            BannedRights = bannedRights
                         };
                     }
 
@@ -144,7 +158,7 @@ namespace Telegram.Api.Services.Cache.Context
                 base[index] = value;
 
                 Statement statement;
-                Sqlite3.sqlite3_prepare_v2(_database, $"INSERT OR REPLACE INTO `Chats` ({_fields}) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", out statement);
+                Sqlite3.sqlite3_prepare_v2(_database, $"INSERT OR REPLACE INTO `Chats` ({_fields}) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", out statement);
 
                 if (value is TLChat chat)
                 {
@@ -192,7 +206,8 @@ namespace Telegram.Api.Services.Cache.Context
                         Sqlite3.sqlite3_bind_null(statement, 19);
                     }
 
-                    //Sqlite3.sqlite3_bind_int(statement, 20, 0);
+                    Sqlite3.sqlite3_bind_null(statement, 20);
+                    Sqlite3.sqlite3_bind_null(statement, 21);
                 }
                 else if (value is TLChannel channel)
                 {
@@ -251,6 +266,24 @@ namespace Telegram.Api.Services.Cache.Context
                     Sqlite3.sqlite3_bind_null(statement, 19);
 
                     //Sqlite3.sqlite3_bind_int(statement, 20, 1);
+
+                    if (channel.HasAdminRights)
+                    {
+                        Sqlite3.sqlite3_bind_int(statement, 20, (int)channel.AdminRights.Flags);
+                    }
+                    else
+                    {
+                        Sqlite3.sqlite3_bind_null(statement, 20);
+                    }
+
+                    if (channel.HasBannedRights)
+                    {
+                        Sqlite3.sqlite3_bind_int(statement, 21, (int)channel.BannedRights.Flags);
+                    }
+                    else
+                    {
+                        Sqlite3.sqlite3_bind_null(statement, 21);
+                    }
                 }
 
                 Sqlite3.sqlite3_step(statement);

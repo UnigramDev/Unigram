@@ -38,6 +38,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock x:Name="TitleLabel" Text="Your phone number" Visibility="Collapsed" Style="{ThemeResource TitleTextBlockStyle}"/>
             <TextBlock Text="Please select the country you live in and enter your phone number"
@@ -62,7 +63,7 @@
                 </ComboBox.ItemTemplate>
             </ComboBox>
 
-            <Grid Margin="0,12,0,8" Grid.Row="3">
+            <Grid Margin="0,12,0,4" Grid.Row="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -93,12 +94,16 @@
             <Button x:Name="NextButton"
                     Command="{x:Bind ViewModel.SendCommand}"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                    Foreground="White"
                     HorizontalAlignment="Stretch"
                     Content="Next"
-                    Margin="0,8,0,0"
+                    Margin="0,4,0,8"
                     Grid.Row="5"
                     Visibility="Collapsed"/>
 
+            <HyperlinkButton Command="{x:Bind ViewModel.ProxyCommand}"
+                             Content="Proxy Settings"
+                             Grid.Row="6"/>
         </Grid>
 
         <VisualStateManager.VisualStateGroups>

@@ -52,7 +52,8 @@ namespace Unigram.Core.Helpers
                         transform = new BitmapTransform
                         {
                             ScaledWidth = width,
-                            ScaledHeight = height
+                            ScaledHeight = height,
+                            InterpolationMode = BitmapInterpolationMode.Linear
                         };
                     }
                     else
@@ -99,7 +100,8 @@ namespace Unigram.Core.Helpers
                         transform = new BitmapTransform
                         {
                             ScaledWidth = width,
-                            ScaledHeight = height
+                            ScaledHeight = height,
+                            InterpolationMode = BitmapInterpolationMode.Linear
                         };
                     }
                     else
@@ -127,25 +129,38 @@ namespace Unigram.Core.Helpers
         {
             var result = new Color[2];
 
-            using (var imageStream = await sourceFile.OpenReadAsync())
+            try
             {
-                var decoder = await BitmapDecoder.CreateAsync(imageStream);
-                var transform = new BitmapTransform
+                using (var imageStream = await sourceFile.OpenReadAsync())
                 {
-                    ScaledWidth = 1,
-                    ScaledHeight = 1
-                };
+                    var decoder = await BitmapDecoder.CreateAsync(imageStream);
+                    var transform = new BitmapTransform
+                    {
+                        ScaledWidth = 1,
+                        ScaledHeight = 1
+                    };
 
-                var pixelData = await decoder.GetPixelDataAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-                var detach = pixelData.DetachPixelData();
+                    var pixelData = await decoder.GetPixelDataAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+                    var detach = pixelData.DetachPixelData();
 
-                var hsv = ColorsHelper.RgbToHsv(detach[2], detach[1], detach[0]);
-                hsv[1] = Math.Min(1.0, hsv[1] + 0.05 + 0.1 * (1.0 - hsv[1]));
-                hsv[2] = Math.Max(0, hsv[2] * 0.65);
+                    var hsv = ColorsHelper.RgbToHsv(detach[2], detach[1], detach[0]);
+                    hsv[1] = Math.Min(1.0, hsv[1] + 0.05 + 0.1 * (1.0 - hsv[1]));
+                    hsv[2] = Math.Max(0, hsv[2] * 0.65);
 
-                var rgb = ColorsHelper.HsvToRgb(hsv[0], hsv[1], hsv[2]);
-                result[0] = Color.FromArgb(0x66, rgb[0], rgb[1], rgb[2]);
-                result[1] = Color.FromArgb(0x88, rgb[0], rgb[1], rgb[2]);
+                    var rgb = ColorsHelper.HsvToRgb(hsv[0], hsv[1], hsv[2]);
+                    result[0] = Color.FromArgb(0x66, rgb[0], rgb[1], rgb[2]);
+                    result[1] = Color.FromArgb(0x88, rgb[0], rgb[1], rgb[2]);
+                }
+            }
+            catch { }
+
+            if (result[0] == null)
+            {
+                result[0] = Color.FromArgb(0x66, 0x7A, 0x8A, 0x96);
+            }
+            if (result[1] == null)
+            {
+                result[1] = Color.FromArgb(0x88, 0x7A, 0x8A, 0x96);
             }
 
             return result;

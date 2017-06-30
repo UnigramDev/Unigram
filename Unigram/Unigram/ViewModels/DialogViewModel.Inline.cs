@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
+using Unigram.Controls;
 using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels
@@ -108,11 +109,18 @@ namespace Unigram.ViewModels
             }
         }
 
-        public void SendBotInlineResult(TLBotInlineResultBase result)
+        public async void SendBotInlineResult(TLBotInlineResultBase result)
         {
             var currentInlineBot = CurrentInlineBot;
             if (currentInlineBot == null)
             {
+                return;
+            }
+
+            var channel = With as TLChannel;
+            if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendGames && result.Type.Equals("game", StringComparison.OrdinalIgnoreCase))
+            {
+                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting media content here.", "Warning", "OK");
                 return;
             }
 

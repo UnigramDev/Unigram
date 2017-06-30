@@ -25,6 +25,7 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateUserStatus>,
         IHandle<TLUpdateDraftMessage>,
         IHandle<TLUpdateContactLink>,
+        IHandle<TLUpdateChannel>,
         IHandle<MessagesRemovedEventArgs>,
         IHandle<DialogRemovedEventArgs>,
         IHandle<UpdateCompletedEventArgs>,
@@ -67,7 +68,10 @@ namespace Unigram.ViewModels
             }
             else if (message.Equals("Window_Deactivated"))
             {
-                Dispatcher.Dispatch(SaveDraft);
+                if (Dispatcher != null)
+                {
+                    Dispatcher.Dispatch(SaveDraft);
+                }
             }
         }
 
@@ -698,6 +702,22 @@ namespace Unigram.ViewModels
 
                 CacheService.Commit();
             });
+        }
+
+        public void Handle(TLUpdateChannel update)
+        {
+            if (With is TLChannel channel && channel.Id == update.ChannelId)
+            {
+                RaisePropertyChanged(() => With);
+                RaisePropertyChanged(() => Full);
+                RaisePropertyChanged(() => WithChannel);
+                RaisePropertyChanged(() => FullChannel);
+
+                if (channel.HasBannedRights && channel.BannedRights.IsSendMessages)
+                {
+                    Execute.BeginOnUIThread(() => SetText(null));
+                }
+            }
         }
     }
 }

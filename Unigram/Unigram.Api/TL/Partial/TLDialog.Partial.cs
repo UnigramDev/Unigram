@@ -291,14 +291,14 @@ namespace Telegram.Api.TL
             }
         }
 
-        public Visibility MutedVisibility
+        public bool IsMuted
         {
             get
             {
                 var notifySettings = NotifySettings as TLPeerNotifySettings;
                 if (notifySettings == null)
                 {
-                    return Visibility.Collapsed;
+                    return false;
                 }
 
                 var clientDelta = MTProtoService.Current.ClientTicksDelta;
@@ -306,8 +306,7 @@ namespace Telegram.Api.TL
                 var utc0SecsInt = utc0SecsLong / 4294967296.0;
 
                 var muteUntilDateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
-
-                return muteUntilDateTime > DateTime.Now ? Visibility.Visible : Visibility.Collapsed;
+                return muteUntilDateTime > DateTime.Now;
             }
         }
         #endregion

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Telegram.Api.TL;
 using Unigram.Controls.Views;
 using Unigram.Native;
 using Unigram.ViewModels;
@@ -89,8 +90,15 @@ namespace Unigram.Controls
             };
         }
 
-        protected override void OnPointerPressed(PointerRoutedEventArgs e)
+        protected override async void OnPointerPressed(PointerRoutedEventArgs e)
         {
+            var channel = ViewModel.With as TLChannel;
+            if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendMedia)
+            {
+                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting media content here.", "Warning", "OK");
+                return;
+            }
+
             //Start();
             _timer.Stop();
             _timer.Start();

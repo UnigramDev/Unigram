@@ -60,6 +60,9 @@ Have a bug or a feature request? Please first read the [issue guidelines](https:
 ## Contributing
 Please read through our [contributing guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md). Included are directions for opening issues, bug and feature requests, and notes on pull requests.
 
+## Changelog
+See the [Releases section of our GitHub project](https://github.com/UnigramDev/Unigram/releases) for changelogs for each release version of Unigram. Release announcement posts on the official [Unigram News channel](https://t.me/unigram) contain summaries of the most noteworthy changes made in each release.
+
 ## Community
 Get updates on Unigram's development and chat with the project maintainers and community members.
 

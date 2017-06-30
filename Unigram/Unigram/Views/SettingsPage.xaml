@@ -105,6 +105,7 @@
                                           Style="{StaticResource HyperButtonStyle}"/>
                     <controls:HyperButton Content="Theme"
                                           Click="Theme_Click"
+                                          Visibility="Collapsed"
                                           Style="{StaticResource HyperButtonStyle}"/>
                 </local:TableStackPanel>
                 <local:TableStackPanel x:Name="OptionsGroup3"

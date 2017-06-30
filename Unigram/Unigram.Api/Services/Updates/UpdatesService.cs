@@ -1024,7 +1024,8 @@ namespace Telegram.Api.Services.Updates
                                 var inviter = result2.Participant as ITLChannelInviter;
                                 var inviterId = inviter != null ? inviter.InviterId.ToString() : "unknown";
                                 var date = inviter != null ? inviter.Date.ToString() : "unknown";
-                                Execute.ShowDebugMessage(string.Format("updateChannel [channel_id={0} creator={1} kicked={2} left={3} editor={4} moderator={5} broadcast={6} public={7} verified={8} inviter=[id={9} date={10}]]", channel.Id, channel.IsCreator, channel.IsKicked, channel.IsLeft, channel.IsEditor, channel.IsModerator, channel.IsBroadcast, "channel.IsPublic", channel.IsVerified, inviterId, date));
+                                //TODO: layer 68
+                                //Execute.ShowDebugMessage(string.Format("updateChannel [channel_id={0} creator={1} kicked={2} left={3} editor={4} moderator={5} broadcast={6} public={7} verified={8} inviter=[id={9} date={10}]]", channel.Id, channel.IsCreator, channel.IsKicked, channel.IsLeft, channel.IsEditor, channel.IsModerator, channel.IsBroadcast, "channel.IsPublic", channel.IsVerified, inviterId, date));
 
                                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateChannel));
                             },

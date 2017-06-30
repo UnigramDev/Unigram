@@ -16,6 +16,7 @@ namespace Telegram.Api.TL
             {
                 if (_user == null)
                     _user = InMemoryCacheService.Current.GetUser(UserId) as TLUser;
+
                 return _user;
             }
         }
@@ -36,11 +37,11 @@ namespace Telegram.Api.TL
         //    }
         //}
 
-        public bool IsEditor
+        public bool IsAdmin
         {
             get
             {
-                return this is TLChannelParticipantEditor || IsCreator;
+                return this is TLChannelParticipantAdmin || IsCreator;
             }
         }
     }

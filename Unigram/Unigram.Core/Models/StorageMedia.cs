@@ -49,20 +49,24 @@ namespace Unigram.Core.Models
 
         private async void LoadThumbnail()
         {
-            if (!File.Attributes.HasFlag(FileAttributes.Temporary))
+            try
             {
-                using (var thumbnail = await File.GetThumbnailAsync(ThumbnailMode.ListView, 96, ThumbnailOptions.UseCurrentScale))
+                if (!File.Attributes.HasFlag(FileAttributes.Temporary))
                 {
-                    if (thumbnail != null)
+                    using (var thumbnail = await File.GetThumbnailAsync(ThumbnailMode.ListView, 96, ThumbnailOptions.UseCurrentScale))
                     {
-                        var bitmapImage = new BitmapImage();
-                        await bitmapImage.SetSourceAsync(thumbnail);
-                        _thumbnail = bitmapImage;
+                        if (thumbnail != null)
+                        {
+                            var bitmapImage = new BitmapImage();
+                            await bitmapImage.SetSourceAsync(thumbnail);
+                            _thumbnail = bitmapImage;
+                        }
                     }
-                }
 
-                RaisePropertyChanged(() => Thumbnail);
+                    RaisePropertyChanged(() => Thumbnail);
+                }
             }
+            catch { }
         }
 
         public virtual StorageMedia Clone()

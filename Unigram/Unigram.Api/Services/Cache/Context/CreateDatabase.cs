@@ -26,9 +26,8 @@ namespace Telegram.Api.Services.Cache.Context
 
         public static void Execute(Database database)
         {
-            if (SettingsHelper.DatabaseVersion < Constants.DatabaseVersion)
+            if (SettingsHelper.DatabaseVersion < 6)
             {
-                SettingsHelper.DatabaseVersion = Constants.DatabaseVersion;
                 Execute(database, "DROPTABLE IF EXISTS `Chats`");
             }
 
@@ -84,11 +83,25 @@ namespace Telegram.Api.Services.Cache.Context
 	`photo_big_dc_id`	INTEGER,
 	`migrated_to_id`	INTEGER,
 	`migrated_to_access_hash`	INTEGER
+    `admin_rights` INTEGER,
+    `banned_rights` INTEGER,
+    PRIMARY KEY(`id`)
 );");
             Execute(database, "CREATE INDEX `Chats.title_index` ON `Chats` (`title`);");
             Execute(database, "CREATE INDEX `Chats.username_index` ON `Chats` (`username`);");
             Execute(database, "CREATE INDEX `Chats.migrated_to_id_index` ON `Chats` (`migrated_to_id`);");
             Execute(database, "CREATE INDEX `Chats.id_index` ON `Chats` (`id`);");
+
+            var version = SettingsHelper.DatabaseVersion;
+            if (version < 6)
+            {
+                Execute(database, "ALTER TABLE `Chats` ADD COLUMN `admin_rights` INTEGER");
+                Execute(database, "ALTER TABLE `Chats` ADD COLUMN `banned_rights` INTEGER");
+
+                version = 6;
+            }
+
+            SettingsHelper.DatabaseVersion = version;
         }
 
         private static void Execute(Database database, string query)

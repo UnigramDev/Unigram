@@ -236,7 +236,7 @@ namespace Unigram.Common
                         Execute.BeginOnUIThread(async () =>
                         {
                             var dialog = new PhoneCallRatingView();
-                            var confirm = await dialog.ShowAsync();
+                            var confirm = await dialog.ShowQueuedAsync();
                             if (confirm == ContentDialogResult.Primary)
                             {
                                 await MTProtoService.Current.SetCallRatingAsync(peer, dialog.Rating, dialog.Rating >= 0 && dialog.Rating <= 3 ? dialog.Comment : null);

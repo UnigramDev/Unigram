@@ -24,7 +24,7 @@
     </Page.Transitions>
 
     <Page.Resources>
-        <CollectionViewSource x:Key="SearchResults" Source="{Binding Dialogs.Search}" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="SearchResults" Source="{Binding Dialogs.Search}" IsSourceGrouped="True"/>
 
         <MenuFlyout x:Key="DialogMenuFlyout" Opening="MenuFlyout_Opening">
             <MenuFlyoutItem Loaded="DialogPin_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogPinCommand}" CommandParameter="{Binding}" Text="Pin to top"/>
@@ -178,6 +178,7 @@
                                                 PreventKeyboardDisplayOnProgrammaticFocus="True"
                                                 PlaceholderText="Search chats and messages"
                                                 TextChanged="txtSearch_TextChanged"
+                                                KeyDown="txtSearch_KeyDown"
                                                 Canvas.ZIndex="1"/>
                         <Grid Canvas.ZIndex="-1" Grid.Row="1">
                             <controls:ScrollViewerBackground

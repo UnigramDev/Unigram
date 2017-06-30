@@ -32,19 +32,11 @@ namespace Unigram.Views.Users
         public UserDetailsPage()
         {
             InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Required;
             DataContext = UnigramContainer.Current.ResolveType<UserDetailsViewModel>();
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            VisualStateManager.GoToState(this, e.NewSize.Width < 500 ? "NarrowState" : "FilledState", false);
         }
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
-            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Picture);
-
             var user = ViewModel.Item as TLUser;
             if (user.HasPhoto && user.Photo is TLUserProfilePhoto photo)
             {

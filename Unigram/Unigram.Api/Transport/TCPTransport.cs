@@ -61,6 +61,21 @@ namespace Telegram.Api.Transport
             _listener.Completed += OnReceived;
         }
 
+        protected TcpTransport(string host, int port, string proxyServer, int proxyPort)
+            : this (host, port, proxyServer, proxyPort, null, null)
+        {
+
+        }
+
+        protected TcpTransport(string host, int port, string proxyServer, int proxyPort, string username, string password)
+            : this(host, port)
+        {
+            _proxyServer = proxyServer;
+            _proxyPort = proxyPort;
+            _proxyUsername = username;
+            _proxyPassword = password;
+        }
+
         public override string GetTransportInfo()
         {
             var info = new StringBuilder();

@@ -32,7 +32,7 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Grid.Row="1">
+            <StackPanel Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Padding="0,0,0,72" Grid.Row="1">
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="PRIVACY" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton
@@ -76,6 +76,12 @@
                     <controls:HyperButton Command="{x:Bind ViewModel.ClearPaymentsCommand}" Tag="Clear Payment and Shipping Info" Margin="-12,0,-12,-0" Style="{StaticResource HyperDetailButtonStyle}"/>
 
                     <TextBlock Text="You can delete your shipping info and instruct all payment providers to remove your saved credit cards. Note that Telegram never stores your credit card data." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+                <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                    <TextBlock Text="CALLS" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsPeerToPeer, Mode=TwoWay}" Header="Peer-to-Peer" Margin="-12,0,-12,-0" Style="{StaticResource CheckButtonStyle}"/>
+
+                    <TextBlock Text="Disabling peer-to-peer will relay all calls through Telegram servers to avoid revealing your IP address, but may slightly decrease audio quality." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,8,0,0" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

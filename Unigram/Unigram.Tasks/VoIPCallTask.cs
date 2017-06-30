@@ -31,6 +31,7 @@ using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
 using Telegram.Api.TL.Messages;
 using Telegram.Api.TL.Phone;
+using Unigram.Common;
 
 namespace Unigram.Tasks
 {
@@ -421,7 +422,7 @@ namespace Unigram.Tasks
                             endpoints[i + 1] = connection.ToEndpoint();
                         }
 
-                        _controller.SetPublicEndpoints(endpoints, call.Protocol.IsUdpP2p);
+                        _controller.SetPublicEndpoints(endpoints, call.Protocol.IsUdpP2p && ApplicationSettings.Current.IsPeerToPeer);
                         _controller.Start();
                         _controller.Connect();
                     }

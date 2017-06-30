@@ -13,6 +13,8 @@ namespace Telegram.Api.TL.Methods
 		public String DeviceModel { get; set; }
 		public String SystemVersion { get; set; }
 		public String AppVersion { get; set; }
+		public String SystemLangCode { get; set; }
+		public String LangPack { get; set; }
 		public String LangCode { get; set; }
 		public TLObject Query { get; set; }
 
@@ -30,17 +32,21 @@ namespace Telegram.Api.TL.Methods
 			DeviceModel = from.ReadString();
 			SystemVersion = from.ReadString();
 			AppVersion = from.ReadString();
+			SystemLangCode = from.ReadString();
+			LangPack = from.ReadString();
 			LangCode = from.ReadString();
 			Query = TLFactory.Read<TLObject>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x69796DE9);
+			to.Write(0xC7481DA6);
 			to.Write(ApiId);
 			to.Write(DeviceModel);
 			to.Write(SystemVersion);
 			to.Write(AppVersion);
+			to.Write(SystemLangCode);
+			to.Write(LangPack);
 			to.Write(LangCode);
 			to.WriteObject(Query);
 		}

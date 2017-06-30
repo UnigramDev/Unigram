@@ -1054,6 +1054,7 @@ namespace Telegram.Api.Services
                         Query = obj,
                         DeviceModel = _deviceInfo.DeviceModel,
                         LangCode = Utils.CurrentUICulture(),
+                        SystemLangCode = Utils.CurrentUICulture(),
                         SystemVersion = _deviceInfo.SystemVersion
                     };
 

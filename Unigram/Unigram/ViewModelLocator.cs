@@ -119,6 +119,11 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<DialogViewModel>();
             container.ContainerBuilder.RegisterType<DialogStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<UserDetailsViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelManageViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelAdminLogViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelAdminLogFilterViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelAdminRightsViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelBannedRightsViewModel>();
             container.ContainerBuilder.RegisterType<UserCommonChatsViewModel>();
             container.ContainerBuilder.RegisterType<ChatDetailsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChatInviteViewModel>();// .SingleInstance();
@@ -127,6 +132,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<ChannelEditViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelEditTypeViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelAdminsViewModel>();// .SingleInstance();
+            container.ContainerBuilder.RegisterType<ChannelBannedViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelKickedViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelParticipantsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
@@ -286,7 +292,7 @@ namespace Unigram
             var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
             if (protoService != null)
             {
-                protoService.SetMessageOnTime(25, "Connecting...");
+                protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? "Connecting to proxy..." : "Connecting...");
             }
         }
 

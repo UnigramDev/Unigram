@@ -233,7 +233,7 @@
     <DataTemplate x:Key="WebPageMediaTemplate">
         <StackPanel Margin="0,8,0,6">
             <Border BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0">
-                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" Margin="0,0,0,2">
+                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" Margin="0,0,0,2" Style="{StaticResource CaptionRichTextBlockStyle}">
                     <RichTextBlock.Resources>
                         <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
                     </RichTextBlock.Resources>
@@ -248,22 +248,22 @@
         <StackPanel Margin="0,8,0,6">
             <Grid BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="48"/>
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="48"/>
                 </Grid.ColumnDefinitions>
 
-                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" OverflowContentTarget="{Binding ElementName=OverflowArea}" MaxLines="3" TextTrimming="CharacterEllipsis" Margin="0,0,8,0">
+                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" OverflowContentTarget="{Binding ElementName=OverflowArea}" MaxLines="3" TextTrimming="CharacterEllipsis" Margin="0,0,8,0" Style="{StaticResource CaptionRichTextBlockStyle}">
                     <RichTextBlock.Resources>
                         <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
                     </RichTextBlock.Resources>
                 </RichTextBlock>
 
-                <Border Width="60" Height="60" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Grid.Column="1">
+                <Border Width="48" Height="48" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Grid.Column="1">
                     <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
 
@@ -277,7 +277,7 @@
     <DataTemplate x:Key="WebPagePhotoMediaTemplate">
         <StackPanel Margin="0,8,0,6">
             <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0">
-                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" MaxLines="6" TextTrimming="CharacterEllipsis" Margin="0,0,0,8">
+                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" MaxLines="6" TextTrimming="CharacterEllipsis" Margin="0,0,0,8" Style="{StaticResource CaptionRichTextBlockStyle}">
                     <RichTextBlock.Resources>
                         <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
                     </RichTextBlock.Resources>
@@ -308,7 +308,7 @@
     <DataTemplate x:Key="WebPageDocumentMediaTemplate">
         <StackPanel Margin="0,8,0,6">
             <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0">
-                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" MaxLines="6" TextTrimming="CharacterEllipsis" Margin="0,0,0,8">
+                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" MaxLines="6" TextTrimming="CharacterEllipsis" Margin="0,0,0,8" Style="{StaticResource CaptionRichTextBlockStyle}">
                     <RichTextBlock.Resources>
                         <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
                     </RichTextBlock.Resources>
@@ -325,8 +325,8 @@
     <DataTemplate x:Key="MediaGameTemplate" x:DataType="tl:TLMessage">
         <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Margin="0,8,0,6" Padding="8,0,0,0">
             <StackPanel Margin="0,0,0,8">
-                <TextBlock Text="{Binding Media.Game.Title}" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
-                <TextBlock common:MessageHelper.Message="{x:Bind Self, Mode=OneWay}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource MessageForegroundBrush}" Tag="Game">
+                <TextBlock Text="{Binding Media.Game.Title}" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
+                <TextBlock common:MessageHelper.Message="{x:Bind Self, Mode=OneWay}" Style="{StaticResource CaptionRichTextBlockStyle}" Foreground="{ThemeResource MessageForegroundBrush}" Tag="Game">
                     <TextBlock.Resources>
                         <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
                     </TextBlock.Resources>

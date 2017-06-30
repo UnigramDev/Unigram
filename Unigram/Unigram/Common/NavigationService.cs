@@ -48,7 +48,7 @@ namespace Unigram.Common
             }
 
             _currentDialog = dialog;
-            return await dialog.ShowAsync();
+            return await dialog.ShowQueuedAsync();
         }
 
         public static void PopModal(this INavigationService service)
@@ -132,7 +132,7 @@ namespace Unigram.Common
                         return;
                     }
                 }
-                else if ((channel.IsLeft || channel.IsKicked) && !channel.HasUsername)
+                else if ((channel.IsLeft) && !channel.HasUsername)
                 {
                     return;
                 }
@@ -151,6 +151,38 @@ namespace Unigram.Common
                     if (accessToken != null)
                     {
                         page.ViewModel.AccessToken = accessToken;
+                    }
+
+                    if (App.InMemoryState.ForwardMessages != null)
+                    {
+                        page.ViewModel.Reply = new TLMessagesContainter { FwdMessages = new TLVector<TLMessage>(App.InMemoryState.ForwardMessages) };
+                    }
+
+                    if (App.InMemoryState.SwitchInline != null)
+                    {
+                        var switchInlineButton = App.InMemoryState.SwitchInline;
+                        var bot = App.InMemoryState.SwitchInlineBot;
+
+                        page.ViewModel.SetText(string.Format("@{0} {1}", bot.Username, switchInlineButton.Query), focus: true);
+                        page.ViewModel.ResolveInlineBot(bot.Username, switchInlineButton.Query);
+
+                        App.InMemoryState.SwitchInline = null;
+                        App.InMemoryState.SwitchInlineBot = null;
+                    }
+                    else if (App.InMemoryState.SendMessage != null)
+                    {
+                        var text = App.InMemoryState.SendMessage;
+                        var hasUrl = App.InMemoryState.SendMessageUrl;
+
+                        page.ViewModel.SetText(text);
+
+                        if (hasUrl)
+                        {
+                            page.ViewModel.SetSelection(text.IndexOf('\n') + 1);
+                        }
+
+                        App.InMemoryState.SendMessage = null;
+                        App.InMemoryState.SendMessageUrl = false;
                     }
                 }
                 else

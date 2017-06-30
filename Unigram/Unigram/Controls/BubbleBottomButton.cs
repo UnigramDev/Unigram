@@ -32,7 +32,7 @@ namespace Unigram.Controls
                 {
                     JoinCommand?.Execute(null);
                 }
-                else if (channel.IsKicked)
+                else if (channel.HasBannedRights && channel.BannedRights.IsViewMessages)
                 {
                     DeleteAndExitCommand?.Execute(null);
                 }
@@ -40,7 +40,7 @@ namespace Unigram.Controls
                 {
                     if (channel.IsBroadcast)
                     {
-                        if (channel.IsCreator || channel.IsEditor)
+                        if (channel.IsCreator || channel.HasAdminRights)
                         {
 
                         }
@@ -203,13 +203,14 @@ namespace Unigram.Controls
             var enabled = UpdateView(newValue);
             if (TextArea != null)
             {
-                TextArea.IsEnabled = enabled;
+                TextArea.IsEnabled = enabled == true;
             }
 
-            Visibility = enabled ? Visibility.Collapsed : Visibility.Visible;
+            Visibility = enabled == true ? Visibility.Collapsed : Visibility.Visible;
+            IsEnabled = enabled.HasValue;
         }
 
-        private bool UpdateView(object with)
+        private bool? UpdateView(object with)
         {
             if (with is TLChannel channel)
             {
@@ -218,16 +219,24 @@ namespace Unigram.Controls
                     Content = channel.IsBroadcast ? "Join channel" : "Join";
                     return false;
                 }
-                else if (channel.IsKicked)
+                else if (channel.HasBannedRights)
                 {
-                    Content = "Delete and exit";
-                    return false;
+                    if (channel.BannedRights.IsViewMessages)
+                    {
+                        Content = "Delete and exit";
+                        return false;
+                    }
+                    else if (channel.BannedRights.IsSendMessages)
+                    {
+                        Content = "The admins of this group have restricted you from writing here.";
+                        return null;
+                    }
                 }
                 else
                 {
                     if (channel.IsBroadcast)
                     {
-                        if (channel.IsCreator || channel.IsEditor)
+                        if (channel.IsCreator || channel.HasAdminRights)
                         {
                             return true;
                         }

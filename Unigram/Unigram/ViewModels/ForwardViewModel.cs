@@ -39,44 +39,13 @@ namespace Unigram.ViewModels
             }
         }
 
-        private List<TLMessage> _messages;
-        public List<TLMessage> Messages
-        {
-            get
-            {
-                return _messages;
-            }
-            set
-            {
-                Set(ref _messages, value);
-            }
-        }
+        public List<TLMessage> Messages { get; set; }
 
-        private TLKeyboardButtonSwitchInline _switchInline;
-        public TLKeyboardButtonSwitchInline SwitchInline
-        {
-            get
-            {
-                return _switchInline;
-            }
-            set
-            {
-                Set(ref _switchInline, value);
-            }
-        }
+        public TLKeyboardButtonSwitchInline SwitchInline { get; set; }
+        public TLUser SwitchInlineBot { get; set; }
 
-        private TLUser _switchInlineBot;
-        public TLUser SwitchInlineBot
-        {
-            get
-            {
-                return _switchInlineBot;
-            }
-            set
-            {
-                Set(ref _switchInlineBot, value);
-            }
-        }
+        public string SendMessage { get; set; }
+        public bool SendMessageUrl { get; set; }
 
         public DialogsViewModel Dialogs { get; private set; }
 
@@ -89,9 +58,11 @@ namespace Unigram.ViewModels
 
         private void SendExecute()
         {
-            var messages = _messages?.ToList();
-            var switchInline = _switchInline;
-            var switchInlineBot = _switchInlineBot;
+            var messages = Messages?.ToList();
+            var switchInline = SwitchInline;
+            var switchInlineBot = SwitchInlineBot;
+            var sendMessage = SendMessage;
+            var sendMessageUrl = SendMessageUrl;
 
             NavigationService.GoBack();
 
@@ -101,6 +72,8 @@ namespace Unigram.ViewModels
                 App.InMemoryState.ForwardMessages = messages;
                 App.InMemoryState.SwitchInline = switchInline;
                 App.InMemoryState.SwitchInlineBot = switchInlineBot;
+                App.InMemoryState.SendMessage = sendMessage;
+                App.InMemoryState.SendMessageUrl = sendMessageUrl;
                 service.NavigateToDialog(_selectedItem.With);
             }
         }

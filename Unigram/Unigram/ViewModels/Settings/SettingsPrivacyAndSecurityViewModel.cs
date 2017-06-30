@@ -62,6 +62,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsPeerToPeer
+        {
+            get
+            {
+                return ApplicationSettings.Current.IsPeerToPeer;
+            }
+            set
+            {
+                ApplicationSettings.Current.IsPeerToPeer = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #endregion
 
         public RelayCommand PasswordCommand => new RelayCommand(PasswordExecute);
@@ -112,7 +125,7 @@ namespace Unigram.ViewModels.Settings
             dialog.PrimaryButtonText = "Clear";
             dialog.SecondaryButtonText = "Cancel";
 
-            var confirm = await dialog.ShowAsync();
+            var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
                 var info = checkShipping.IsChecked == true;
@@ -175,7 +188,7 @@ namespace Unigram.ViewModels.Settings
             dialog.PrimaryButtonText = "OK";
             dialog.SecondaryButtonText = "Cancel";
 
-            var confirm = await dialog.ShowAsync();
+            var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)
             {
                 var days = 180;

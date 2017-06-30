@@ -16,10 +16,10 @@
         <controls:PageHeader Text="Storage usage"/>
 
         <StackPanel Grid.Row="1">
-            <Button Command="{Binding ClearCacheCommand}" Grid.Column="1">
+            <Button Command="{x:Bind ViewModel.ClearCacheCommand}" IsEnabled="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" Grid.Column="1">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Clear cache" VerticalAlignment="Center"/>
-                    <ContentControl Content="{Binding CacheSize, Converter={StaticResource FileSizeConverter}}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                    <ContentControl Content="{x:Bind ViewModel.CacheSize, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
                         <ContentControl.ContentTransitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition/>

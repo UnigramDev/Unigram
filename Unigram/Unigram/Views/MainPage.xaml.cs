@@ -45,6 +45,9 @@ using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Composition;
 using Unigram.Views.Users;
+using Windows.System;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 
 namespace Unigram.Views
 {
@@ -158,7 +161,7 @@ namespace Unigram.Views
                 {
                     if (Uri.TryCreate(parameter, UriKind.Absolute, out Uri scheme))
                     {
-                        if (Constants.TelegramHosts.Contains(scheme.Host))
+                        if (MessageHelper.IsTelegramUrl(scheme))
                         {
                             MessageHelper.HandleTelegramUrl(parameter);
                         }
@@ -268,9 +271,9 @@ namespace Unigram.Views
                             {
                                 MessageHelper.NavigateToConfirmPhone(ViewModel.ProtoService, phone, phoneHash);
                             }
-                            else if (server != null && port != null)
+                            if (server != null && int.TryParse(port, out int portCode))
                             {
-                                MessageHelper.NavigateToSocks(server, port, user, pass);
+                                MessageHelper.NavigateToSocks(server, portCode, user, pass);
                             }
                             else if (group != null)
                             {
@@ -283,6 +286,10 @@ namespace Unigram.Views
                             else if (username != null)
                             {
                                 MessageHelper.NavigateToUsername(ViewModel.ProtoService, username, botUser ?? botChat, post, game);
+                            }
+                            else if (message != null)
+                            {
+                                MessageHelper.NavigateToShare(message, hasUrl);
                             }
                         }
                     }
@@ -581,6 +588,48 @@ namespace Unigram.Views
                 //  lvMasterChats.Visibility = Visibility.Visible;
                 DialogsSearchListView.Visibility = Visibility.Collapsed;
                 // lvMasterChats.ItemsSource = ViewModel.Dialogs;
+            }
+        }
+
+        private void txtSearch_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (DialogsSearchListView.Visibility == Visibility.Collapsed)
+            {
+                return;
+            }
+
+            if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
+            {
+                var index = e.Key == VirtualKey.Up ? -1 : 1;
+                var next = DialogsSearchListView.SelectedIndex + index;
+                if (next >= 0 && next < SearchResults.View.Count)
+                {
+                    DialogsSearchListView.SelectedIndex = next;
+                    DialogsSearchListView.ScrollIntoView(DialogsSearchListView.SelectedItem);
+                }
+
+                //var index = Math.Max(DialogsSearchListView.SelectedIndex, 0);
+                //var container = DialogsSearchListView.ContainerFromIndex(index) as ListViewItem;
+                //if (container != null)
+                //{
+                //    DialogsSearchListView.SelectedIndex = index;
+                //    container.Focus(FocusState.Keyboard);
+                //}
+
+                e.Handled = true;
+            }
+            else if (e.Key == VirtualKey.Enter)
+            {
+                var index = Math.Max(DialogsSearchListView.SelectedIndex, 0);
+                var container = DialogsSearchListView.ContainerFromIndex(index) as ListViewItem;
+                if (container != null)
+                {
+                    var peer = new ListViewItemAutomationPeer(container);
+                    var invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+                    invokeProv.Invoke();
+                }
+
+                e.Handled = true;
             }
         }
 

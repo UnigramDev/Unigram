@@ -32,7 +32,8 @@ namespace Telegram.Api.Transport
 
         private readonly double _timeout;
 
-        public TcpTransportWinRT(string host, int port) : base(host, port)
+        public TcpTransportWinRT(string host, int port)
+            : base(host, port)
         {
             _timeout = 25.0;
             _socket = new StreamSocket();
@@ -47,6 +48,22 @@ namespace Telegram.Api.Transport
             //    var buffer = GetInitBufferInternal();
             //    _dataWriter.WriteBytes(buffer);
             //}
+        }
+
+        public TcpTransportWinRT(string host, int port, bool proxyEnabled, string proxyServer, int proxyPort)
+            : this (host, port, proxyEnabled, proxyServer, proxyPort, null, null)
+        {
+
+        }
+
+        public TcpTransportWinRT(string host, int port, bool proxyEnabled, string proxyServer, int proxyPort, string username, string password)
+            : this(host, port)
+        {
+            _proxyEnabled = proxyEnabled;
+            _proxyServer = proxyServer;
+            _proxyPort = proxyPort;
+            _proxyUsername = username;
+            _proxyPassword = password;
         }
 
 #if TCP_OBFUSCATED_2
@@ -106,14 +123,11 @@ namespace Telegram.Api.Transport
             {
                 RaiseConnectingAsync();
 
-                if (SettingsHelper.IsSocks5)
+                if (_proxyEnabled)
                 {
                     Debug.WriteLine(">>> Connecting through SOCKS5");
 
-                    await _socket.ConnectAsync(new HostName("127.0.0.1"), "1080").WithTimeout(timeout);
-
-                    var username = "frayxrulez";
-                    var password = "frayxrulez";
+                    await _socket.ConnectAsync(new HostName(_proxyServer), _proxyPort.ToString()).WithTimeout(timeout);
 
                     _dataWriter.WriteByte(0x05); // version
                     _dataWriter.WriteByte(0x02); // number of auth methods
@@ -128,7 +142,9 @@ namespace Telegram.Api.Transport
 
                     if (response[1] == 0x02)
                     {
-                        // TODO: password
+                        var username = _proxyUsername ?? string.Empty;
+                        var password = _proxyUsername ?? string.Empty;
+
                         _dataWriter.WriteByte(0x01); // version
                         _dataWriter.WriteByte((byte)username.Length);
                         _dataWriter.WriteBytes(Encoding.UTF8.GetBytes(username));

@@ -79,7 +79,7 @@ namespace Unigram.ViewModels
             {
                 var dialog = new DeleteChannelMessageDialog();
 
-                var result = await dialog.ShowAsync();
+                var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
                 {
                     var channel = With as TLChannel;
@@ -102,19 +102,20 @@ namespace Unigram.ViewModels
 
                     if (dialog.BanUser)
                     {
-                        var response = await ProtoService.KickFromChannelAsync(channel, message.From.ToInputUser(), true);
-                        if (response.IsSucceeded)
-                        {
-                            var updates = response.Result as TLUpdates;
-                            if (updates != null)
-                            {
-                                var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
-                                if (newChannelMessageUpdate != null)
-                                {
-                                    Aggregator.Publish(newChannelMessageUpdate.Message);
-                                }
-                            }
-                        }
+                        // TODO: layer 68
+                        //var response = await ProtoService.KickFromChannelAsync(channel, message.From.ToInputUser(), true);
+                        //if (response.IsSucceeded)
+                        //{
+                        //    var updates = response.Result as TLUpdates;
+                        //    if (updates != null)
+                        //    {
+                        //        var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
+                        //        if (newChannelMessageUpdate != null)
+                        //        {
+                        //            Aggregator.Publish(newChannelMessageUpdate.Message);
+                        //        }
+                        //    }
+                        //}
                     }
 
                     if (dialog.ReportSpam)
@@ -165,7 +166,7 @@ namespace Unigram.ViewModels
                     dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
                 }
 
-                var result = await dialog.ShowAsync();
+                var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
                 {
                     var revoke = dialog.IsChecked == true;
@@ -295,7 +296,7 @@ namespace Unigram.ViewModels
                     return false;
                 }
 
-                if (!messageCommon.IsOut && !channel.IsCreator && !channel.IsEditor)
+                if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
                 {
                     return false;
                 }
@@ -406,7 +407,7 @@ namespace Unigram.ViewModels
                     dialog.Message += "\r\n\r\nThis will delete it for everyone in this chat.";
                 }
 
-                var result = await dialog.ShowAsync();
+                var result = await dialog.ShowQueuedAsync();
                 if (result == ContentDialogResult.Primary)
                 {
                     var revoke = dialog.IsChecked == true;
@@ -749,7 +750,7 @@ namespace Unigram.ViewModels
                 dialog.PrimaryButtonText = "Yes";
                 dialog.SecondaryButtonText = "No";
 
-                var dialogResult = await dialog.ShowAsync();
+                var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
                 {
                     var channel = Peer as TLInputPeerChannel;
@@ -772,7 +773,7 @@ namespace Unigram.ViewModels
                 dialog.PrimaryButtonText = "Yes";
                 dialog.SecondaryButtonText = "No";
 
-                var dialogResult = await dialog.ShowAsync();
+                var dialogResult = await dialog.ShowQueuedAsync();
                 if (dialogResult == ContentDialogResult.Primary)
                 {
                     var channel = Peer as TLInputPeerChannel;
@@ -941,7 +942,7 @@ namespace Unigram.ViewModels
 
                 if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                 {
-                    if (Constants.TelegramHosts.Contains(uri.Host))
+                    if (MessageHelper.IsTelegramUrl(uri))
                     {
                         MessageHelper.HandleTelegramUrl(urlButton.Url);
                     }
@@ -988,7 +989,7 @@ namespace Unigram.ViewModels
 
                         if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
                         {
-                            if (Constants.TelegramHosts.Contains(uri.Host))
+                            if (MessageHelper.IsTelegramUrl(uri))
                             {
                                 MessageHelper.HandleTelegramUrl(response.Result.Url);
                             }

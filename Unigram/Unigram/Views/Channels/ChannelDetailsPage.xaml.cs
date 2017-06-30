@@ -37,8 +37,6 @@ namespace Unigram.Views.Channels
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
-            ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Picture);
-
             var channel = ViewModel.Item as TLChannel;
             var channelFull = ViewModel.Full as TLChannelFull;
             if (channel.Photo is TLChatPhoto photo && channelFull != null && channelFull.ChatPhoto is TLPhoto)

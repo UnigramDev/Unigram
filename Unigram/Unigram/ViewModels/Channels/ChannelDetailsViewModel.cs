@@ -100,7 +100,7 @@ namespace Unigram.ViewModels.Channels
         {
             get
             {
-                return _item != null && (_item.IsCreator || _item.IsEditor || _item.IsModerator);
+                return _item != null && (_item.IsCreator || _item.HasAdminRights);
             }
         }
 
@@ -179,7 +179,7 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand EditCommand => new RelayCommand(EditExecute);
         private void EditExecute()
         {
-            NavigationService.Navigate(typeof(ChannelEditPage), _item.ToPeer());
+            NavigationService.Navigate(typeof(ChannelManagePage), _item.ToPeer());
         }
 
         public RelayCommand InviteCommand => new RelayCommand(InviteExecute);
@@ -198,6 +198,12 @@ namespace Unigram.ViewModels.Channels
         private void AdminsExecute()
         {
             NavigationService.Navigate(typeof(ChannelAdminsPage), _item.ToPeer());
+        }
+
+        public RelayCommand BannedCommand => new RelayCommand(BannedExecute);
+        private void BannedExecute()
+        {
+            NavigationService.Navigate(typeof(ChannelBannedPage), _item.ToPeer());
         }
 
         public RelayCommand KickedCommand => new RelayCommand(KickedExecute);
@@ -244,7 +250,7 @@ namespace Unigram.ViewModels.Channels
                     {
                         dialog.NotifySettings = _full.NotifySettings;
                         dialog.RaisePropertyChanged(() => dialog.NotifySettings);
-                        dialog.RaisePropertyChanged(() => dialog.MutedVisibility);
+                        dialog.RaisePropertyChanged(() => dialog.IsMuted);
                         dialog.RaisePropertyChanged(() => dialog.Self);
                     }
 

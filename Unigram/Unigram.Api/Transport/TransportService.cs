@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
 
@@ -42,7 +43,7 @@ namespace Telegram.Api.Transport
             {
                 var transport = 
 #if WIN_RT
-                    new TcpTransportWinRT(host, port);
+                    new TcpTransportWinRT(host, port, SettingsHelper.IsProxyEnabled, SettingsHelper.ProxyServer, SettingsHelper.ProxyPort, SettingsHelper.ProxyUsername, SettingsHelper.ProxyPassword);
 #else
                     new TcpTransport(host, port);
 #endif
@@ -87,7 +88,7 @@ namespace Telegram.Api.Transport
             {
                 var transport = 
 #if WIN_RT
-                    new TcpTransportWinRT(host, port);
+                    new TcpTransportWinRT(host, port, SettingsHelper.IsProxyEnabled, SettingsHelper.ProxyServer, SettingsHelper.ProxyPort, SettingsHelper.ProxyUsername, SettingsHelper.ProxyPassword);
 #else
                     new TcpTransport(host, port);
 #endif

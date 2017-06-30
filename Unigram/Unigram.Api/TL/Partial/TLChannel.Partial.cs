@@ -73,7 +73,8 @@ namespace Telegram.Api.TL
                 this.Date = channel.Date;
                 this.Version = channel.Version;
                 this.RestrictionReason = channel.RestrictionReason;
-
+                this.AdminRights = channel.AdminRights;
+                this.BannedRights = channel.BannedRights;
 
                 if (channel.ReadInboxMaxId != 0 && (ReadInboxMaxId == 0 || ReadInboxMaxId < channel.ReadInboxMaxId))
                 {

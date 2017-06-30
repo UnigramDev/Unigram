@@ -548,7 +548,7 @@ namespace Unigram.ViewModels
             TLNotifyPeer notifyPeer = notifySettings.Peer as TLNotifyPeer;
             if (notifyPeer != null)
             {
-                Execute.BeginOnUIThread(delegate
+                Execute.BeginOnUIThread(() =>
                 {
                     for (int i = 0; i < Items.Count; i++)
                     {
@@ -556,7 +556,7 @@ namespace Unigram.ViewModels
                         if (dialog != null && dialog.Peer != null && dialog.Peer.Id == notifyPeer.Peer.Id && dialog.Peer.GetType() == notifyPeer.Peer.GetType())
                         {
                             dialog.RaisePropertyChanged(() => dialog.NotifySettings);
-                            dialog.RaisePropertyChanged(() => dialog.MutedVisibility);
+                            dialog.RaisePropertyChanged(() => dialog.IsMuted);
                             dialog.RaisePropertyChanged(() => dialog.Self);
                             return;
                         }
@@ -651,7 +651,7 @@ namespace Unigram.ViewModels
                     var channel = e.Dialog.With as TLChannel;
                     if (channel != null)
                     {
-                        if (channel.IsLeft || channel.IsKicked)
+                        if (channel.IsLeft || channel.HasBannedRights)
                         {
                             Items.Remove(e.Dialog);
                             return;
@@ -677,7 +677,7 @@ namespace Unigram.ViewModels
                         var already = Items.FirstOrDefault(x => x.Id == e.Dialog.Id);
                         if (already != null)
                         {
-                            Execute.BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
+                            //Execute.BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
 
                             var index = Items.IndexOf(already);
 
@@ -1041,7 +1041,7 @@ namespace Unigram.ViewModels
                 question.Title = "Warning";
                 question.Message = string.Format("Sorry, you can pin no more than {0} chats to the top.", PinnedDialogsCountMax);
                 question.PrimaryButtonText = "OK";
-                await question.ShowAsync();
+                await question.ShowQueuedAsync();
                 return;
             }
 

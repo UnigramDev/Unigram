@@ -100,6 +100,8 @@ namespace Unigram.Services
         event FeaturedStickersDidLoadedEventHandler FeaturedStickersDidLoaded;
         event RecentsDidLoadedEventHandler RecentsDidLoaded;
         event ArchivedStickersCountDidLoadedEventHandler ArchivedStickersCountDidLoaded;
+
+        void RaiseStickersDidLoaded(StickerType type);
     }
 
     public class StickersService : IStickersService, IHandle, 
@@ -1588,7 +1590,10 @@ namespace Unigram.Services
         public event RecentsDidLoadedEventHandler RecentsDidLoaded;
         public event ArchivedStickersCountDidLoadedEventHandler ArchivedStickersCountDidLoaded;
 
-
+        public void RaiseStickersDidLoaded(StickerType type)
+        {
+            StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(type));
+        }
 
 
 
