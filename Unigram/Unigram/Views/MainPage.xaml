@@ -172,14 +172,15 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <controls:SearchTextBox x:Name="SearchDialogs"
-                                                Style="{StaticResource SearchTextBoxStyle}"
-                                                Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
-                                                PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                                PlaceholderText="Search chats and messages"
-                                                TextChanged="txtSearch_TextChanged"
-                                                KeyDown="txtSearch_KeyDown"
-                                                Canvas.ZIndex="1"/>
+                        <controls:ReturnHeader x:Name="header" TargetListViewBase="{x:Bind DialogsListView}">
+                            <controls:SearchTextBox x:Name="SearchDialogs"
+                                                    Style="{StaticResource SearchTextBoxStyle}"
+                                                    Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
+                                                    PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                                    PlaceholderText="Search chats and messages"
+                                                    TextChanged="txtSearch_TextChanged"
+                                                    KeyDown="txtSearch_KeyDown"/>
+                        </controls:ReturnHeader>
                         <Grid Canvas.ZIndex="-1" Grid.Row="1">
                             <controls:ScrollViewerBackground
                                 Visibility="{x:Bind (Visibility)ViewModel.Dialogs.IsFirstPinned, Mode=OneWay}"
