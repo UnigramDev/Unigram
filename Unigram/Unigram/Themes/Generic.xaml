@@ -286,7 +286,7 @@
         <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
         <Setter Property="BorderThickness" Value="0,1,0,0"/>
-        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Padding" Value="0,0,0,2"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
@@ -312,6 +312,13 @@
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundDisabled}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>

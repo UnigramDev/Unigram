@@ -34,5 +34,15 @@ namespace Unigram.Controls.Views
         }
 
         public event ItemClickEventHandler ItemClick;
+
+        private Visibility ConvertBannedRights(ITLDialogWith with, bool invert)
+        {
+            if (with is TLChannel channel && channel.HasBannedRights && channel.BannedRights.IsSendInline)
+            {
+                return invert ? Visibility.Collapsed : Visibility.Visible;
+            }
+
+            return invert ? Visibility.Visible : Visibility.Collapsed;
+        }
     }
 }

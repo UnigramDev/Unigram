@@ -368,6 +368,13 @@ namespace Unigram.Views
 
         private async void Attach_Click(object sender, RoutedEventArgs e)
         {
+            var channel = ViewModel.With as TLChannel;
+            if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendMedia)
+            {
+                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting media content here.", "Warning", "OK");
+                return;
+            }
+
             var pane = InputPane.GetForCurrentView();
             if (pane.OccludedRect != Rect.Empty)
             {
@@ -546,8 +553,15 @@ namespace Unigram.Views
             ViewModel.KeyboardButtonExecute(e.Button, null);
         }
 
-        private void Stickers_Click(object sender, RoutedEventArgs e)
+        private async void Stickers_Click(object sender, RoutedEventArgs e)
         {
+            var channel = ViewModel.With as TLChannel;
+            if (channel != null && channel.HasBannedRights && (channel.BannedRights.IsSendStickers || channel.BannedRights.IsSendGifs))
+            {
+                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting stickers here.", "Warning", "OK");
+                return;
+            }
+
             if (StickersPanel.Visibility == Visibility.Collapsed)
             {
                 StickersPanel.Visibility = Visibility.Visible;

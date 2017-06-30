@@ -1723,6 +1723,12 @@
             JoinCommand="{x:Bind ViewModel.JoinChannelCommand}"
             UnblockCommand="{x:Bind ViewModel.UnblockCommand}"
             StartCommand="{x:Bind ViewModel.StartCommand}"
-            Grid.Row="3"/>
+            Grid.Row="3">
+            <Button.ContentTemplate>
+                <DataTemplate x:DataType="x:String">
+                    <TextBlock Text="{x:Bind}" TextWrapping="Wrap" TextAlignment="Center"/>
+                </DataTemplate>
+            </Button.ContentTemplate>
+        </controls:BubbleBottomButton>
     </Grid>
 </Page>
