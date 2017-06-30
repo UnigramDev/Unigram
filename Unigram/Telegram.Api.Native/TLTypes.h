@@ -12,7 +12,10 @@ using ABI::Windows::Foundation::IReference;
 using ABI::Telegram::Api::Native::TL::ITLRPCError;
 using ABI::Telegram::Api::Native::TL::ITLDCOption;
 using ABI::Telegram::Api::Native::TL::ITLDisabledFeature;
+using ABI::Telegram::Api::Native::TL::TLConfigFlag;
+using ABI::Telegram::Api::Native::TL::TLDCOptionFlag;
 using ABI::Telegram::Api::Native::TL::ITLConfig;
+
 
 namespace Telegram
 {
@@ -27,6 +30,8 @@ namespace Telegram
 				class TLDCOption;
 				class TLDisabledFeature;
 				class TLConfig;
+				class TLCDNPublicKey;
+				class TLCDNConfig;
 				class TLRPCError;
 				class TLRpcReqError;
 				class TLRpcResult;
@@ -65,7 +70,9 @@ namespace Telegram
 
 					MakeTLTypeTraits(TLDCOption, 0x5d8c6cc);
 					MakeTLTypeTraits(TLDisabledFeature, 0xae636f24);
-					MakeTLTypeTraits(TLConfig, 0xcb601684);
+					MakeTLTypeTraits(TLConfig, 0x7feec888);
+					MakeTLTypeTraits(TLCDNPublicKey, 0xc982eaba);
+					MakeTLTypeTraits(TLCDNConfig, 0x5725e40a);
 					MakeTLTypeTraits(TLRPCError, 0x2144ca19);
 					MakeTLTypeTraits(TLRpcReqError, 0x7ae432f5);
 					MakeTLTypeTraits(TLRpcResult, 0xf35c6d01);
@@ -110,13 +117,13 @@ namespace Telegram
 					~TLDCOption();
 
 					//COM exported methods
-					STDMETHODIMP get_Flags(_Out_ INT32* value);
+					STDMETHODIMP get_Flags(_Out_ TLDCOptionFlag* value);
 					STDMETHODIMP get_Id(_Out_ INT32* value);
 					STDMETHODIMP get_IpAddress(_Out_ HSTRING* value);
 					STDMETHODIMP get_Port(_Out_ INT32* value);
 
 					//Internal methods
-					inline INT32 GetFlags() const
+					inline TLDCOptionFlag GetFlags() const
 					{
 						return m_flags;
 					}
@@ -141,7 +148,7 @@ namespace Telegram
 					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
 
 				private:
-					INT32 m_flags;
+					TLDCOptionFlag m_flags;
 					INT32 m_id;
 					HString m_ipAddress;
 					INT32 m_port;
@@ -185,7 +192,7 @@ namespace Telegram
 					~TLConfig();
 
 					//COM exported methods
-					IFACEMETHODIMP get_Flags(_Out_ INT32* value);
+					IFACEMETHODIMP get_Flags(_Out_ TLConfigFlag* value);
 					IFACEMETHODIMP get_Date(_Out_ INT32* value);
 					IFACEMETHODIMP get_Expires(_Out_ INT32* value);
 					IFACEMETHODIMP get_TestMode(_Out_ boolean* value);
@@ -214,9 +221,11 @@ namespace Telegram
 					IFACEMETHODIMP get_CallConnectTimeoutMs(_Out_ INT32* value);
 					IFACEMETHODIMP get_CallPacketTimeoutMs(_Out_ INT32* value);
 					IFACEMETHODIMP get_MeUrlPrefix(_Out_ HSTRING* value);
+					IFACEMETHODIMP get_SuggestedLangCode(_Out_ HSTRING* value);
+					IFACEMETHODIMP get_LangPackVersion(_Out_ HSTRING* value);
 					IFACEMETHODIMP get_DisabledFeatures(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDisabledFeature** value);
 
-					inline INT32 GetFlags() const
+					inline TLConfigFlag GetFlags() const
 					{
 						return m_flags;
 					}
@@ -361,6 +370,16 @@ namespace Telegram
 						return m_meUrlPrefix;
 					}
 
+					inline HString const& GetSuggestedLangCode() const
+					{
+						return m_suggestedLangCode;
+					}
+
+					inline HString const& GetLangPackVersion() const
+					{
+						return m_langPackVersion;
+					}
+
 					inline std::vector<ComPtr<TLDisabledFeature>> const& GetDisabledFeatures() const
 					{
 						return m_disabledFeatures;
@@ -371,7 +390,7 @@ namespace Telegram
 					virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
 
 				private:
-					INT32 m_flags;
+					TLConfigFlag m_flags;
 					INT32 m_date;
 					INT32 m_expires;
 					boolean m_testMode;
@@ -400,7 +419,54 @@ namespace Telegram
 					INT32 m_callConnectTimeoutMs;
 					INT32 m_callPacketTimeoutMs;
 					HString m_meUrlPrefix;
+					HString m_suggestedLangCode;
+					HString m_langPackVersion;
 					std::vector<ComPtr<TLDisabledFeature>> m_disabledFeatures;
+				};
+
+				class TLCDNPublicKey WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLCDNPublicKeyTraits>>
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				public:
+					TLCDNPublicKey();
+					~TLCDNPublicKey();
+
+					//Internal methods
+					inline INT32 GetDatacenterId() const
+					{
+						return m_datacenterId;
+					}
+
+					inline HString const& GetPublicKey() const
+					{
+						return m_publicKey;
+					}
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+
+				private:
+					INT32 m_datacenterId;
+					HString m_publicKey;
+				};
+
+				class TLCDNConfig WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLCDNConfigTraits>>
+				{
+					InspectableClass(Traits::RuntimeClassName, BaseTrust);
+
+				public:
+					//Internal methods
+					inline std::vector<ComPtr<TLCDNPublicKey>> const& GetPublicKeys() const
+					{
+						return m_publicKeys;
+					}
+
+				protected:
+					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
+
+				private:
+					std::vector<ComPtr<TLCDNPublicKey>> m_publicKeys;
 				};
 
 				template<typename TLObjectTraits>

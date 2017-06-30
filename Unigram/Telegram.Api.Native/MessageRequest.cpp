@@ -25,7 +25,7 @@ HRESULT MessageRequest::RuntimeClassInitialize(ITLObject* object, INT32 token, C
 	m_quickAckReceivedCallback = quickAckReceivedCallback;
 	m_flags = flags;
 	m_startTime = 0;
-	m_retriesCount = 0;
+	m_attemptCount = 0;
 
 	return S_OK;
 }

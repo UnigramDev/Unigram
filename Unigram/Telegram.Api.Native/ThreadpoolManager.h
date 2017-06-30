@@ -28,6 +28,7 @@ namespace Telegram
 
 			protected:
 				HRESULT RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount);
+				void CloseAllObjects(boolean wait);
 
 				inline PTP_CALLBACK_ENVIRON GetEnvironment()
 				{
@@ -36,6 +37,7 @@ namespace Telegram
 
 			private:
 				static void NTAPI WorkCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ PTP_WORK work);
+				static void NTAPI GroupCancelCallback(_Inout_opt_ PVOID objectContext, _Inout_opt_ PVOID cleanupContext);
 
 				TP_CALLBACK_ENVIRON m_threadpoolEnvironment;
 				PTP_POOL m_threadpool;

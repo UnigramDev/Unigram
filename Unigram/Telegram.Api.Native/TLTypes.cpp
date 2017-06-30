@@ -20,6 +20,8 @@ using Windows::Foundation::Collections::VectorView;
 RegisterTLObjectConstructor(TLDCOption);
 RegisterTLObjectConstructor(TLDisabledFeature);
 RegisterTLObjectConstructor(TLConfig);
+RegisterTLObjectConstructor(TLCDNPublicKey);
+RegisterTLObjectConstructor(TLCDNConfig);
 RegisterTLObjectConstructor(TLRPCError);
 RegisterTLObjectConstructor(TLRpcReqError);
 RegisterTLObjectConstructor(TLRpcResult);
@@ -52,7 +54,7 @@ RegisterTLObjectConstructor(TLFutureSalt);
 
 
 TLDCOption::TLDCOption() :
-	m_flags(0),
+	m_flags(TLDCOptionFlag::None),
 	m_id(0),
 	m_port(0)
 {
@@ -62,7 +64,7 @@ TLDCOption::~TLDCOption()
 {
 }
 
-HRESULT TLDCOption::get_Flags(INT32* value)
+HRESULT TLDCOption::get_Flags(TLDCOptionFlag* value)
 {
 	if (value == nullptr)
 	{
@@ -103,7 +105,7 @@ HRESULT TLDCOption::get_Port(INT32* value)
 HRESULT TLDCOption::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
-	ReturnIfFailed(result, reader->ReadInt32(&m_flags));
+	ReturnIfFailed(result, reader->ReadInt32(reinterpret_cast<INT32*>(&m_flags)));
 	ReturnIfFailed(result, reader->ReadInt32(&m_id));
 	ReturnIfFailed(result, reader->ReadString(m_ipAddress.GetAddressOf()));
 
@@ -113,7 +115,7 @@ HRESULT TLDCOption::ReadBody(ITLBinaryReaderEx* reader)
 HRESULT TLDCOption::WriteBody(ITLBinaryWriterEx* writer)
 {
 	HRESULT result;
-	ReturnIfFailed(result, writer->WriteInt32(m_flags));
+	ReturnIfFailed(result, writer->WriteInt32(static_cast<INT32>(m_flags)));
 	ReturnIfFailed(result, writer->WriteInt32(m_id));
 	ReturnIfFailed(result, writer->WriteString(m_ipAddress.Get()));
 
@@ -149,7 +151,7 @@ HRESULT TLDisabledFeature::WriteBody(ITLBinaryWriterEx* writer)
 
 
 TLConfig::TLConfig() :
-	m_flags(0),
+	m_flags(TLConfigFlag::None),
 	m_date(0),
 	m_expires(0),
 	m_testMode(false),
@@ -183,7 +185,7 @@ TLConfig::~TLConfig()
 {
 }
 
-HRESULT TLConfig::get_Flags(INT32* value)
+HRESULT TLConfig::get_Flags(TLConfigFlag* value)
 {
 	if (value == nullptr)
 	{
@@ -439,7 +441,7 @@ HRESULT TLConfig::get_TmpSessions(__FIReference_1_int** value)
 		return E_POINTER;
 	}
 
-	if (m_flags & 1)
+	if ((m_flags & TLConfigFlag::TmpSessions) == TLConfigFlag::TmpSessions)
 	{
 		*value = Make<Windows::Foundation::Reference<INT32>>(m_tmpSessions).Detach();
 	}
@@ -511,6 +513,16 @@ HRESULT TLConfig::get_MeUrlPrefix(HSTRING* value)
 	return m_meUrlPrefix.CopyTo(value);
 }
 
+HRESULT TLConfig::get_SuggestedLangCode(HSTRING* value)
+{
+	return m_suggestedLangCode.CopyTo(value);
+}
+
+HRESULT TLConfig::get_LangPackVersion(HSTRING* value)
+{
+	return m_langPackVersion.CopyTo(value);
+}
+
 HRESULT TLConfig::get_DisabledFeatures(__FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDisabledFeature** value)
 {
 	if (value == nullptr)
@@ -529,11 +541,10 @@ HRESULT TLConfig::get_DisabledFeatures(__FIVectorView_1_Telegram__CApi__CNative_
 	return S_OK;
 }
 
-
 HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
-	ReturnIfFailed(result, reader->ReadInt32(&m_flags));
+	ReturnIfFailed(result, reader->ReadInt32(reinterpret_cast<INT32*>(&m_flags)));
 	ReturnIfFailed(result, reader->ReadInt32(&m_date));
 	ReturnIfFailed(result, reader->ReadInt32(&m_expires));
 	ReturnIfFailed(result, reader->ReadBoolean(&m_testMode));
@@ -556,7 +567,7 @@ HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 	ReturnIfFailed(result, reader->ReadInt32(&m_ratingEDecay));
 	ReturnIfFailed(result, reader->ReadInt32(&m_stickersRecentLimit));
 
-	if (m_flags & 1)
+	if ((m_flags & TLConfigFlag::TmpSessions) == TLConfigFlag::TmpSessions)
 	{
 		ReturnIfFailed(result, reader->ReadInt32(&m_tmpSessions));
 	}
@@ -568,13 +579,19 @@ HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 	ReturnIfFailed(result, reader->ReadInt32(&m_callPacketTimeoutMs));
 	ReturnIfFailed(result, reader->ReadString(m_meUrlPrefix.GetAddressOf()));
 
+	if ((m_flags & TLConfigFlag::SuggestedLangCode) == TLConfigFlag::SuggestedLangCode)
+	{
+		ReturnIfFailed(result, reader->ReadString(m_suggestedLangCode.GetAddressOf()));
+		ReturnIfFailed(result, reader->ReadString(m_langPackVersion.GetAddressOf()));
+	}
+
 	return ReadTLObjectVector<TLDisabledFeature>(reader, m_disabledFeatures);
 }
 
 HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
 {
 	HRESULT result;
-	ReturnIfFailed(result, writer->WriteInt32(m_flags));
+	ReturnIfFailed(result, writer->WriteInt32(static_cast<INT32>(m_flags)));
 	ReturnIfFailed(result, writer->WriteInt32(m_date));
 	ReturnIfFailed(result, writer->WriteInt32(m_expires));
 	ReturnIfFailed(result, writer->WriteBoolean(m_testMode));
@@ -597,7 +614,7 @@ HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
 	ReturnIfFailed(result, writer->WriteInt32(m_ratingEDecay));
 	ReturnIfFailed(result, writer->WriteInt32(m_stickersRecentLimit));
 
-	if (m_flags & 1)
+	if ((m_flags & TLConfigFlag::TmpSessions) == TLConfigFlag::TmpSessions)
 	{
 		ReturnIfFailed(result, writer->WriteInt32(m_tmpSessions));
 	}
@@ -609,7 +626,37 @@ HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
 	ReturnIfFailed(result, writer->WriteInt32(m_callPacketTimeoutMs));
 	ReturnIfFailed(result, writer->WriteString(m_meUrlPrefix.Get()));
 
+	if ((m_flags & TLConfigFlag::SuggestedLangCode) == TLConfigFlag::SuggestedLangCode)
+	{
+		ReturnIfFailed(result, writer->WriteString(m_suggestedLangCode.Get()));
+		ReturnIfFailed(result, writer->WriteString(m_langPackVersion.Get()));
+	}
+
 	return WriteTLObjectVector<TLDisabledFeature>(writer, m_disabledFeatures);
+}
+
+
+TLCDNPublicKey::TLCDNPublicKey() :
+	m_datacenterId(0)
+{
+}
+
+TLCDNPublicKey::~TLCDNPublicKey()
+{
+}
+
+HRESULT TLCDNPublicKey::ReadBody(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt32(&m_datacenterId));
+
+	return reader->ReadString(m_publicKey.GetAddressOf());
+}
+
+
+HRESULT TLCDNConfig::ReadBody(ITLBinaryReaderEx* reader)
+{
+	return ReadTLObjectVector<TLCDNPublicKey>(reader, m_publicKeys);
 }
 
 

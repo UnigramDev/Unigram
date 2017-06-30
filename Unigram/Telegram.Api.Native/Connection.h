@@ -48,10 +48,11 @@ namespace Telegram
 			{
 				None = 0,
 				ConnectionState = 0xF,
-				Ipv6 = 0x10,
-				CryptographyInitialized = 0x20,
-				TryingNextEndpoint = 0x40,
-				Closed = 0x80
+				CurrentNeworkType = 0x70,
+				Ipv6 = 0x80,
+				CryptographyInitialized = 0x100,
+				TryingNextEndpoint = 0x200,
+				Closed = 0x400
 			};
 
 		}
@@ -113,11 +114,6 @@ namespace Telegram
 					return m_type;
 				}
 
-				inline ConnectionNeworkType GetCurrentNeworkType() const
-				{
-					return m_currentNetworkType;
-				}
-
 				inline boolean IsConnected()
 				{
 					auto lock = LockCriticalSection();
@@ -129,7 +125,7 @@ namespace Telegram
 				{
 					Disconnected = 0x0,
 					Connecting = 0x1,
-					Reconnecting = 0x3,		
+					Reconnecting = 0x3,
 					Connected = 0x7,
 					DataReceived = 0xF
 				};
@@ -149,7 +145,6 @@ namespace Telegram
 				HRESULT OnMessageReceived(_In_ ComPtr<ConnectionManager> const& connectionManager, _In_ TL::TLBinaryReader* messageReader, UINT32 messageLength);
 
 				ConnectionType m_type;
-				ConnectionNeworkType m_currentNetworkType;
 				ConnectionFlag m_flags;
 				ComPtr<Datacenter> m_datacenter;
 				ComPtr<Timer> m_reconnectionTimer;

@@ -16,6 +16,7 @@
 #endif
 
 using namespace Microsoft::WRL;
+using namespace Microsoft::WRL::Wrappers;
 using ABI::Windows::Storage::Streams::IBuffer;
 using Windows::Storage::Streams::IBufferByteAccess;
 
@@ -162,6 +163,96 @@ namespace Telegram
 			private:
 				UINT32 m_capacity;
 				BYTE* m_buffer;
+			};
+
+			class MappedFileBuffer : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IBuffer, IBufferByteAccess>
+			{
+				InspectableClass(L"Telegram.Api.Native.MappedFileBuffer", BaseTrust);
+
+			public:
+				MappedFileBuffer() :
+					m_capacity(0),
+					m_buffer(nullptr)
+				{
+				}
+
+				~MappedFileBuffer()
+				{
+					UnmapViewOfFile(m_buffer);
+				}
+
+				//COM exported methods
+				IFACEMETHODIMP Buffer(_Out_ BYTE** value)
+				{
+					if (value == nullptr)
+					{
+						return E_POINTER;
+					}
+
+					*value = m_buffer;
+					return S_OK;
+				}
+
+				IFACEMETHODIMP get_Capacity(_Out_ UINT32* value)
+				{
+					if (value == nullptr)
+					{
+						return E_POINTER;
+					}
+
+					*value = m_capacity;
+					return S_OK;
+				}
+
+				IFACEMETHODIMP get_Length(_Out_ UINT32* value)
+				{
+					if (value == nullptr)
+					{
+						return E_POINTER;
+					}
+
+					*value = m_capacity;
+					return S_OK;
+				}
+
+				IFACEMETHODIMP put_Length(UINT32 value)
+				{
+					return E_ILLEGAL_METHOD_CALL;
+				}
+
+				//Internal methods
+				STDMETHODIMP RuntimeClassInitialize(_In_ HANDLE file)
+				{
+					LARGE_INTEGER fileSize;
+					if (!GetFileSizeEx(file, &fileSize))
+					{
+						return GetLastHRESULT();
+					}
+
+					if (fileSize.QuadPart == 0)
+					{
+						return E_INVALIDARG;
+					}
+
+					m_fileMapping.Attach(CreateFileMapping(file, nullptr, PAGE_READWRITE, fileSize.HighPart, fileSize.LowPart, nullptr));
+					if (!m_fileMapping.IsValid())
+					{
+						return GetLastHRESULT();
+					}
+
+					if ((m_buffer = reinterpret_cast<BYTE*>(MapViewOfFile(m_fileMapping.Get(), PAGE_READWRITE, 0, 0, 0))) == nullptr)
+					{
+						return GetLastHRESULT();
+					}
+
+					m_capacity = static_cast<UINT32>(min(fileSize.QuadPart, UINT32_MAX));
+					return S_OK;
+				}
+
+			private:
+				UINT32 m_capacity;
+				BYTE* m_buffer;
+				HandleT<HandleTraits::HANDLENullTraits> m_fileMapping;
 			};
 
 			class NativeBufferWrapper : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IBuffer, IBufferByteAccess>

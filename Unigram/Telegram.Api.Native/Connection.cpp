@@ -23,6 +23,8 @@
 #define UPLOAD_CONNECTION_TIMEOUT 25000
 #endif
 
+#define FLAGS_GET_CURRENTNETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>(flags & ConnectionFlag::CurrentNeworkType) >> 4)
+#define FLAGS_SET_CURRENTNETWORKTYPE(flags, networkType) (flags & ~ConnectionFlag::CurrentNeworkType) | static_cast<ConnectionFlag>(static_cast<int>(networkType) << 4)
 #define CONNECTION_RECONNECTION_TIMEOUT 1000
 #define CONNECTION_MAX_ATTEMPTS 5
 #define CONNECTION_MAX_PACKET_LENGTH 2 * 1024 * 1024
@@ -34,7 +36,6 @@ using namespace Telegram::Api::Native::TL;
 Connection::Connection(Datacenter* datacenter, ConnectionType type) :
 	m_type(type),
 	m_datacenter(datacenter),
-	m_currentNetworkType(ConnectionNeworkType::WiFi),
 	m_flags(ConnectionFlag::None),
 	m_failedConnectionCount(0)
 {
@@ -78,7 +79,7 @@ HRESULT Connection::get_CurrentNetworkType(ConnectionNeworkType* value)
 
 	auto lock = LockCriticalSection();
 
-	*value = m_currentNetworkType;
+	*value = FLAGS_GET_CURRENTNETWORKTYPE(m_flags);
 	return S_OK;
 }
 
@@ -96,7 +97,6 @@ HRESULT Connection::get_SessionId(INT64* value)
 HRESULT Connection::Close()
 {
 	auto lock = LockCriticalSection();
-
 
 	if ((m_flags & ConnectionFlag::Closed) == ConnectionFlag::Closed)
 	{
@@ -175,14 +175,16 @@ HRESULT Connection::Connect(ComPtr<ConnectionManager> const& connectionManager, 
 	}
 
 	ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), endpoint, ipv6));
-	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&m_currentNetworkType));
+
+	ConnectionNeworkType currentNetworkType;
+	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&currentNetworkType));
 
 	if (ipv6)
 	{
 		m_flags |= ConnectionFlag::Ipv6;
 	}
 
-	m_flags |= static_cast<ConnectionFlag>(ConnectionState::Connecting);
+	m_flags = FLAGS_SET_CURRENTNETWORKTYPE(m_flags, currentNetworkType) | static_cast<ConnectionFlag>(ConnectionState::Connecting);
 	return S_OK;
 }
 

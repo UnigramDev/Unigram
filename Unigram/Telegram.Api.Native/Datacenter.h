@@ -83,7 +83,6 @@ namespace Telegram
 
 			public:
 				Datacenter(UINT32 id);
-				Datacenter();
 				~Datacenter();
 
 				//COM exported methods			

@@ -33,6 +33,9 @@ namespace Telegram
 			namespace TL
 			{
 
+				typedef enum TLConfigFlag TLConfigFlag;
+				typedef enum TLDCOptionFlag TLDCOptionFlag;
+
 				interface ITLObject;
 				interface ITLBinaryReader;
 				interface ITLBinaryWriter;
@@ -243,12 +246,26 @@ namespace Telegram
 				}
 
 
+				[version(API_VERSION)]
+				enum TLDCOptionFlag
+				{
+					None = 0,
+					IPv6 = 1,
+					MediaOnly = 2, 
+					TCPOnly = 4,
+					CDN = 8,
+					Static = 16
+				};
+
+				cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(ABI::Telegram::Api::Native::TL::TLDCOptionFlag);")
+
+
 				[exclusiveto(TLDCOption)]
 				[uuid(BFE5D247-DDAE-4EDD-AC25-894FD115E937)]
 				[version(API_VERSION)]
 				interface ITLDCOption : IInspectable
 				{
-					[propget] HRESULT Flags([out][retval] INT32* value);
+					[propget] HRESULT Flags([out][retval] TLDCOptionFlag* value);
 					[propget] HRESULT Id([out][retval] INT32* value);
 					[propget] HRESULT IpAddress([out][retval] HSTRING* value);
 					[propget] HRESULT Port([out][retval] INT32* value);
@@ -283,12 +300,25 @@ namespace Telegram
 				}
 
 
+				[version(API_VERSION)]
+				enum TLConfigFlag
+				{
+					None = 0,	
+					TmpSessions = 1,
+					PhoneCallsEnabled = 2,
+					SuggestedLangCode = 4,
+					LangPackVersion = 4
+				};
+
+				cpp_quote("DEFINE_ENUM_FLAG_OPERATORS(ABI::Telegram::Api::Native::TL::TLConfigFlag);")
+
+
 				[exclusiveto(TLConfig)]
 				[uuid(3368AE99-FD5C-44C9-A780-3935276EC61F)]
 				[version(API_VERSION)]
 				interface ITLConfig : IInspectable
 				{
-					[propget] HRESULT Flags([out][retval] INT32* value);
+					[propget] HRESULT Flags([out][retval] TLConfigFlag* value);
 					[propget] HRESULT Date([out][retval] INT32* value);
 					[propget] HRESULT Expires([out][retval] INT32* value);
 					[propget] HRESULT TestMode([out][retval] boolean* value);
@@ -317,6 +347,8 @@ namespace Telegram
 					[propget] HRESULT CallConnectTimeoutMs([out][retval] INT32* value);
 					[propget] HRESULT CallPacketTimeoutMs([out][retval] INT32* value);
 					[propget] HRESULT MeUrlPrefix([out][retval] HSTRING* value);
+					[propget] HRESULT SuggestedLangCode([out][retval] HSTRING* value);
+					[propget] HRESULT LangPackVersion([out][retval] HSTRING* value);
 					[propget] HRESULT DisabledFeatures([out][retval] Windows.Foundation.Collections.IVectorView<TLDisabledFeature*>** value);
 				}
 
@@ -580,6 +612,7 @@ namespace Telegram
 				HRESULT CancelRequest([in] INT32 requestToken,[in] boolean notifyServer,[out][retval] boolean* value);
 				HRESULT GetDatacenterById([in] INT32 id,[out][retval] Datacenter** value);
 				HRESULT UpdateDatacenters();
+				HRESULT Reset();
 
 				HRESULT BoomBaby([in] IUserConfiguration* userConfiguration,[out] Telegram.Api.Native.TL.ITLObject** object,[out][retval] Connection** value);
 			}

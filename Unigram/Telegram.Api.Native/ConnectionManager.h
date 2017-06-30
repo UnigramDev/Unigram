@@ -13,7 +13,7 @@
 #define MAX_THREAD_COUNT UINT32_MAX
 #define TELEGRAM_API_NATIVE_PROTOVERSION 2
 #define TELEGRAM_API_NATIVE_VERSION 1
-#define TELEGRAM_API_NATIVE_LAYER 66
+#define TELEGRAM_API_NATIVE_LAYER 68
 #define TELEGRAM_API_NATIVE_APIID 6
 
 using namespace Microsoft::WRL;
@@ -40,6 +40,30 @@ namespace Telegram
 	{
 		namespace Native
 		{
+
+			enum class ConnectionManagerFlag
+			{
+				None = 0,
+				ConnectionState = 0x3,
+				NetworkType = 0xC,
+				UseIpv6 = 0x10,
+				UpdatingDatacenters = 0x20,
+				UpdatingCDNPublicKeys = 0x40
+			};
+
+		}
+	}
+}
+
+DEFINE_ENUM_FLAG_OPERATORS(Telegram::Api::Native::ConnectionManagerFlag);
+
+
+namespace Telegram
+{
+	namespace Api
+	{
+		namespace Native
+		{
 			namespace TL
 			{
 
@@ -56,13 +80,13 @@ namespace Telegram
 			struct MessageContext;
 			class MessageRequest;
 
-			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager>, public ThreadpoolManager
+			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager>, public virtual ThreadpoolManager, public virtual EventObjectT<EventTraits::TimerTraits>
 			{
 				friend class Datacenter;
 				friend class Connection;
 				friend class TL::TLObject;
 				friend class TL::TLUnparsedObject;
-			
+
 				InspectableClass(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
 
 			public:
@@ -98,14 +122,25 @@ namespace Telegram
 				IFACEMETHODIMP CancelRequest(INT32 requestToken, boolean notifyServer, _Out_ boolean* value);
 				IFACEMETHODIMP GetDatacenterById(INT32 id, _Out_ IDatacenter** value);
 				IFACEMETHODIMP UpdateDatacenters();
+				IFACEMETHODIMP Reset();
 
 				IFACEMETHODIMP BoomBaby(_In_ IUserConfiguration* userConfiguration, _Out_ ITLObject** object, _Out_ IConnection** value);
 
 				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize(UINT32 minimumThreadCount = MIN_THREAD_COUNT, UINT32 maximumThreadCount = MAX_THREAD_COUNT);
-				boolean IsNetworkAvailable();
 				INT32 GetCurrentTime();
 				INT64 GenerateMessageId();
+
+				inline const std::wstring& GetSettingsFolderPath() const
+				{
+					return m_settingsFolderPath;
+				}
+
+				inline boolean IsNetworkAvailable()
+				{
+					auto lock = LockCriticalSection();
+					return static_cast<ConnectionNeworkType>(m_flags & ConnectionManagerFlag::NetworkType) != ConnectionNeworkType::None;
+				}
 
 				static HRESULT GetInstance(_Out_ ComPtr<ConnectionManager>& value);
 
@@ -124,13 +159,15 @@ namespace Telegram
 
 			private:
 				HRESULT InitializeDatacenters();
+				HRESULT InitializeSettings();
 				HRESULT UpdateNetworkStatus(boolean raiseEvent);
 				HRESULT MoveToDatacenter(INT32 datacenterId);
+				HRESULT UpdateCDNPublicKeys();
 				HRESULT CreateTransportMessage(_In_ MessageRequest* request, _Inout_ INT64& lastRpcMessageId, _Inout_ boolean& requiresLayer, _Out_ TL::TLMessage** message);
 				HRESULT ProcessRequests();
 				HRESULT ProcessRequestsForDatacenter(_In_ Datacenter* datacenter, ConnectionType connectionType);
 				HRESULT ProcessRequest(_In_ MessageRequest* request, INT32 currentTime, _In_ std::map<UINT32, DatacenterRequestContext>& datacentersContexts);
-				HRESULT ProcessRequests(_In_ std::map<UINT32, DatacenterRequestContext>& datacentersContexts);	
+				HRESULT ProcessRequests(_In_ std::map<UINT32, DatacenterRequestContext>& datacentersContexts);
 				HRESULT ProcessDatacenterRequests(_In_ DatacenterRequestContext const& datacenterContext);
 				void ResetRequests(_In_ std::map<UINT32, DatacenterRequestContext> const& datacentersContexts);
 				void ResetRequests(std::function<boolean(INT32, ComPtr<MessageRequest> const&)> selector, boolean resetStartTime);
@@ -146,9 +183,9 @@ namespace Telegram
 				HRESULT OnDatacenterBadServerSalt(_In_ Datacenter* datacenter, INT64 requestMessageId, INT64 responseMessageId);
 				HRESULT OnDatacenterBadMessage(_In_ Datacenter* datacenter, INT64 requestMessageId, INT64 responseMessageId);
 				HRESULT OnConnectionSessionCreated(_In_ Connection* connection, INT64 firstMessageId);
-				HRESULT OnRequestEnqueued(_In_ PTP_CALLBACK_INSTANCE instance);
 				boolean GetDatacenterById(UINT32 id, _Out_ ComPtr<Datacenter>& datacenter);
 				boolean GetRequestByMessageId(INT64 messageId, _Out_ ComPtr<MessageRequest>& request);
+				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _In_ ULONG_PTR param) override;
 
 				inline boolean IsCurrentDatacenter(INT32 datacenterId)
 				{
@@ -156,13 +193,9 @@ namespace Telegram
 					return datacenterId == m_currentDatacenterId || datacenterId == m_movingToDatacenterId;
 				}
 
-				static void NTAPI RequestsTimerCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ PTP_TIMER timer);
-
 				ComPtr<INetworkInformationStatics> m_networkInformation;
 				EventRegistrationToken m_networkChangedEventToken;
-				ConnectionState m_connectionState;
-				ConnectionNeworkType m_currentNetworkType;
-				boolean m_isIpv6Enabled;
+				ConnectionManagerFlag m_flags;
 				INT32 m_currentDatacenterId;
 				INT32 m_movingToDatacenterId;
 				std::map<INT32, ComPtr<Datacenter>> m_datacenters;
@@ -170,13 +203,13 @@ namespace Telegram
 				std::list<ComPtr<MessageRequest>> m_requestsQueue;
 				std::list<std::pair<INT32, ComPtr<MessageRequest>>> m_runningRequests;
 				std::map<INT32, std::vector<ComPtr<MessageRequest>>> m_quickAckRequests;
-				PTP_TIMER m_requestsTimer;
 				INT32 m_lastRequestToken;
 				INT64 m_lastOutgoingMessageId;
 				INT32 m_timeDifference;
 				INT32 m_userId;
 				ComPtr<IUserConfiguration> m_userConfiguration;
 				ComPtr<IProxySettings> m_proxySettings;
+				std::wstring m_settingsFolderPath;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_sessionCreatedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_currentNetworkTypeChangedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_connectionStateChangedEventSource;

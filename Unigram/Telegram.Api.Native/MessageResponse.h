@@ -1,4 +1,5 @@
 #pragma once
+#include <type_traits>
 #include <wrl.h>
 #include "Telegram.Api.Native.h"
 
@@ -48,6 +49,12 @@ namespace Telegram
 				ConnectionType m_connectionType;
 				ComPtr<ITLObject> m_object;
 			};
+
+			template<typename TLObjectType>
+			inline typename std::enable_if<std::is_base_of<ITLObject, TLObjectType>::value, TLObjectType>::type* GetMessageResponseObject(_In_ IMessageResponse* response)
+			{
+				return static_cast<typename TLObjectType*>(static_cast<MessageResponse*>(response)->GetObject().Get());
+			}
 
 		}
 	}

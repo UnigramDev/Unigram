@@ -35,11 +35,6 @@ Datacenter::Datacenter(UINT32 id) :
 {
 }
 
-Datacenter::Datacenter() :
-	Datacenter(0)
-{
-}
-
 Datacenter::~Datacenter()
 {
 }
@@ -102,6 +97,7 @@ HRESULT Datacenter::Close()
 
 		m_flags = DatacenterFlag::Closed;
 		m_authenticationContext.reset();
+		m_serverSalts.clear();
 
 		if (m_genericConnection != nullptr)
 		{
@@ -126,7 +122,6 @@ HRESULT Datacenter::Close()
 				m_uploadConnections[i].Reset();
 			}
 		}
-
 	}
 
 	for (auto& connection : connectionsToClose)
@@ -484,7 +479,7 @@ HRESULT Datacenter::ImportAuthorization()
 
 	if ((m_flags & DatacenterFlag::ImportingAuthorization) == DatacenterFlag::ImportingAuthorization)
 	{
-		return S_OK;
+		return S_FALSE;
 	}
 
 	HRESULT result;
@@ -504,30 +499,31 @@ HRESULT Datacenter::ImportAuthorization()
 
 		if (error == nullptr)
 		{
+			auto authExportedAuthorization = GetMessageResponseObject<TLAuthExportedAuthorization>(response);
+
 			HRESULT result;
 			ComPtr<Methods::TLAuthImportAuthorization> authImportAuthorization;
-			auto authExportedAuthorization = static_cast<TLAuthExportedAuthorization*>(static_cast<MessageResponse*>(response)->GetObject().Get());
 			ReturnIfFailed(result, MakeAndInitialize<Methods::TLAuthImportAuthorization>(&authImportAuthorization, authExportedAuthorization->GetId(), authExportedAuthorization->GetBytes().Get()));
 
 			INT32 requestToken;
 			return connectionManager->SendRequestWithFlags(authImportAuthorization.Get(), Callback<ISendRequestCompletedCallback>([datacenter, connectionManager](IMessageResponse* response, IMessageError* error) -> HRESULT
 			{
-				auto lock = datacenter->LockCriticalSection();
-
-				datacenter->m_flags &= ~DatacenterFlag::ImportingAuthorization;
-
-				if (error == nullptr)
 				{
-					datacenter->m_flags |= DatacenterFlag::Authorized;
-					return connectionManager->SubmitWork([connectionManager, datacenter]() -> void
+					auto lock = datacenter->LockCriticalSection();
+
+					datacenter->m_flags &= ~DatacenterFlag::ImportingAuthorization;
+
+					if (error == nullptr)
 					{
-						connectionManager->OnDatacenterImportAuthorizationComplete(datacenter.Get());
-					});
+						datacenter->m_flags |= DatacenterFlag::Authorized;
+					}
+					else
+					{
+						return S_OK;
+					}
 				}
-				else
-				{
-					return S_OK;
-				}
+
+				return connectionManager->OnDatacenterImportAuthorizationComplete(datacenter.Get());
 			}).Get(), nullptr, datacenter->m_id, ConnectionType::Generic, RequestFlag::EnableUnauthorized | RequestFlag::Immediate, &requestToken);
 		}
 		else
@@ -572,7 +568,7 @@ HRESULT Datacenter::RequestFutureSalts(UINT32 count)
 
 		if (error == nullptr)
 		{
-			auto futureSalts = static_cast<TLFutureSalts*>(static_cast<MessageResponse*>(response)->GetObject().Get());
+			auto futureSalts = GetMessageResponseObject<TLFutureSalts>(response);
 			datacenter->MergeServerSalts(connectionManager.Get(), futureSalts->GetSalts());
 		}
 
@@ -674,7 +670,7 @@ HRESULT Datacenter::OnConnectionClosed(Connection* connection)
 	{
 		auto lock = LockCriticalSection();
 
-		if (static_cast<HandshakeState> (m_flags & DatacenterFlag::HandshakeState) != HandshakeState::Authenticated)
+		if (static_cast<HandshakeState>(m_flags & DatacenterFlag::HandshakeState) != HandshakeState::Authenticated)
 		{
 			m_authenticationContext.reset();
 			m_flags &= ~DatacenterFlag::HandshakeState;
@@ -738,20 +734,6 @@ HRESULT Datacenter::OnHandshakePQResponse(Connection* connection, TLResPQ* respo
 	SHA1(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH, innerDataLength, innerDataWriter->GetBuffer());
 	RAND_bytes(innerDataWriter->GetBuffer() + SHA_DIGEST_LENGTH + innerDataLength, 255 - innerDataLength - SHA_DIGEST_LENGTH);
 
-	Wrappers::BIO keyBio(BIO_new(BIO_s_mem()));
-	if (!keyBio.IsValid())
-	{
-		return E_INVALIDARG;
-	}
-
-	BIO_write(keyBio.Get(), serverPublicKey->Key.c_str(), static_cast<int>(serverPublicKey->Key.size()));
-
-	Wrappers::RSA rsaKey(PEM_read_bio_RSAPublicKey(keyBio.Get(), nullptr, nullptr, nullptr));
-	if (!rsaKey.IsValid())
-	{
-		return E_INVALIDARG;
-	}
-
 	Wrappers::BigNum a(BN_bin2bn(innerDataWriter->GetBuffer(), 255, nullptr));
 	if (!a.IsValid())
 	{
@@ -764,7 +746,7 @@ HRESULT Datacenter::OnHandshakePQResponse(Connection* connection, TLResPQ* respo
 		return E_INVALIDARG;
 	}
 
-	BN_mod_exp(r.Get(), a.Get(), rsaKey->e, rsaKey->n, DatacenterCryptography::GetBNContext());
+	BN_mod_exp(r.Get(), a.Get(), serverPublicKey->Key->e, serverPublicKey->Key->n, DatacenterCryptography::GetBNContext());
 
 	auto encryptedDataLength = BN_bn2bin(r.Get(), innerDataWriter->GetBuffer());
 	if (encryptedDataLength < 256)
@@ -1017,23 +999,20 @@ HRESULT Datacenter::OnHandshakeClientDHResponse(ConnectionManager* connectionMan
 
 HRESULT Datacenter::OnBadServerSaltResponse(ConnectionManager* connectionManager, INT64 messageId, TLBadServerSalt* response)
 {
-	auto lock = LockCriticalSection();
-
-	ClearServerSalts();
-
-	ServerSalt salt;
-	salt.ValidSince = connectionManager->GetCurrentTime();
-	salt.ValidUntil = salt.ValidSince + 30 * 60;
-	salt.Salt = response->GetNewServerSalt();
-
-	AddServerSalt(salt);
-
-	ComPtr<Datacenter> datacenter = this;
-	auto requestMessageId = response->GetBadMessageContext()->Id;
-	return connectionManager->SubmitWork([connectionManager, requestMessageId, messageId, datacenter]() -> void
 	{
-		connectionManager->OnDatacenterBadServerSalt(datacenter.Get(), requestMessageId, messageId);
-	});
+		auto lock = LockCriticalSection();
+
+		ClearServerSalts();
+
+		ServerSalt salt;
+		salt.ValidSince = connectionManager->GetCurrentTime();
+		salt.ValidUntil = salt.ValidSince + 30 * 60;
+		salt.Salt = response->GetNewServerSalt();
+
+		AddServerSalt(salt);
+	}
+
+	return connectionManager->OnDatacenterBadServerSalt(this, response->GetBadMessageContext()->Id, messageId);
 }
 
 HRESULT Datacenter::OnBadMessageResponse(ConnectionManager* connectionManager, INT64 messageId, TLBadMessage* response)
@@ -1110,7 +1089,7 @@ HRESULT Datacenter::EncryptMessage(BYTE* buffer, UINT32 length, UINT32 padding, 
 	AES_ige_encrypt(buffer + 24, buffer + 24, length - 24, &aesEncryptKey, messageKey + 64, AES_ENCRYPT);
 
 	return S_OK;
-	}
+}
 
 HRESULT Datacenter::DecryptMessage(INT64 authKeyId, BYTE* buffer, UINT32 length)
 {
@@ -1163,7 +1142,7 @@ HRESULT Datacenter::DecryptMessage(INT64 authKeyId, BYTE* buffer, UINT32 length)
 	}
 
 	return S_OK;
-	}
+}
 
 void Datacenter::GenerateMessageKey(BYTE const* authKey, BYTE* messageKey, BYTE* result, UINT32 x)
 {
@@ -1226,6 +1205,52 @@ HRESULT Datacenter::SendAckRequest(Connection* connection, INT64 messageId)
 
 	return connection->SendUnencryptedMessage(msgsAck.Get(), false);
 }
+
+//HRESULT Datacenter::GetConfigFileName(INT32 id, std::wstring& fileName)
+//{
+//	HRESULT result;
+//	ComPtr<IApplicationDataStatics> applicationDataStatics;
+//	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Storage_ApplicationData).Get(), &applicationDataStatics));
+//
+//	ComPtr<IApplicationData> applicationData;
+//	ReturnIfFailed(result, applicationDataStatics->get_Current(&applicationData));
+//
+//	ComPtr<IStorageFolder> localStorageFolder;
+//	ReturnIfFailed(result, applicationData->get_LocalFolder(&localStorageFolder));
+//
+//	Event asyncOperationEvent(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, WRITE_OWNER | EVENT_ALL_ACCESS));
+//	if (!asyncOperationEvent.IsValid())
+//	{
+//		return GetLastHRESULT();
+//	}
+//
+//	auto callback = Callback<ABI::Windows::Foundation::IAsyncOperationCompletedHandler<StorageFolder*>>
+//		([&asyncOperationEvent](__FIAsyncOperation_1_Windows__CStorage__CStorageFolder*, ABI::Windows::Foundation::AsyncStatus) -> HRESULT
+//	{
+//		SetEvent(asyncOperationEvent.Get());
+//		return S_OK;
+//	});
+//
+//	ComPtr<__FIAsyncOperation_1_Windows__CStorage__CStorageFolder> asyncOperation;
+//	ReturnIfFailed(result, localStorageFolder->CreateFolderAsync(HStringReference(L"Settings").Get(), CreationCollisionOption_OpenIfExists, &asyncOperation));
+//	ReturnIfFailed(result, asyncOperation->put_Completed(callback.Get()));
+//
+//
+//	WaitForSingleObject(asyncOperationEvent.Get(), INFINITE);
+//
+//	ComPtr<IStorageFolder> settingsStorageFolder;
+//	ReturnIfFailed(result, asyncOperation->GetResults(&settingsStorageFolder));
+//
+//	ComPtr<IStorageItem> localStorageItem;
+//	ReturnIfFailed(result, settingsStorageFolder.As(&localStorageItem));
+//
+//	HString localPath;
+//	ReturnIfFailed(result, localStorageItem->get_Path(localPath.GetAddressOf()));
+//
+//	fileName.resize(MAX_PATH);
+//	fileName.resize(swprintf(&fileName[0], MAX_PATH, L"%s\\DC_%d.config", localPath.GetRawBuffer(nullptr), id));
+//	return S_OK;
+//}
 
 
 HRESULT Datacenter::SendPing()

@@ -156,9 +156,9 @@ namespace Telegram
 					return m_startTime;
 				}
 
-				inline UINT32 GetRetriesCount() const
+				inline UINT32 GetAttemptCount() const
 				{
-					return m_retriesCount;
+					return m_attemptCount;
 				}
 
 				inline boolean MatchesMessage(INT64 messageId)
@@ -213,7 +213,7 @@ namespace Telegram
 
 				inline boolean IsTimedOut(INT32 currentTime)
 				{
-					return currentTime - m_startTime >= REQUEST_TIMEOUT;
+					return m_startTime > 0 && currentTime - m_startTime >= REQUEST_TIMEOUT;
 				}
 
 				inline ComPtr<IRequestQuickAckReceivedCallback> const& GetQuickAckReceivedCallback() const
@@ -234,6 +234,11 @@ namespace Telegram
 					m_messageContext = std::make_unique<MessageContext>(mesageContext);
 				}
 
+				inline void IncrementAttemptCount()
+				{
+					m_attemptCount++;
+				}
+
 				inline void SetStartTime(INT32 startTime)
 				{
 					m_startTime = startTime;
@@ -249,7 +254,7 @@ namespace Telegram
 				ConnectionType m_connectionType;
 				INT32 m_datacenterId;
 				INT32 m_startTime;
-				UINT32 m_retriesCount;
+				UINT32 m_attemptCount;
 				std::unique_ptr<MessageContext> m_messageContext;
 				ComPtr<ISendRequestCompletedCallback> m_sendCompletedCallback;
 				ComPtr<IRequestQuickAckReceivedCallback> m_quickAckReceivedCallback;

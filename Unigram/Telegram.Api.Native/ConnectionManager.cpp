@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <iphlpapi.h>
+#include <Windows.Storage.h>
 #include "ConnectionManager.h"
 #include "Datacenter.h"
 #include "Connection.h"
@@ -17,9 +18,14 @@
 
 #include "MethodDebug.h"
 
+#define FLAGS_GET_CONNECTIONSTATE(flags) static_cast<ConnectionState>(flags & ConnectionManagerFlag::ConnectionState)
+#define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) (flags & ~ConnectionManagerFlag::ConnectionState) | static_cast<ConnectionManagerFlag>(connectionState)
+#define FLAGS_GET_NETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>(flags & ConnectionManagerFlag::NetworkType) >> 2)
+#define FLAGS_SET_NETWORKTYPE(flags, networkType) (flags & ~ConnectionManagerFlag::NetworkType) | static_cast<ConnectionManagerFlag>(static_cast<int>(networkType) << 2)
 #define REQUEST_TIMER_TIMEOUT 1000
 #define REQUEST_TIMER_WINDOW 0
 
+using namespace ABI::Windows::Storage;
 using namespace ABI::Windows::Networking::Connectivity;
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
@@ -29,9 +35,7 @@ ActivatableStaticOnlyFactory(ConnectionManagerStatics);
 
 
 ConnectionManager::ConnectionManager() :
-	m_connectionState(ConnectionState::Connecting),
-	m_currentNetworkType(ConnectionNeworkType::None),
-	m_isIpv6Enabled(false),
+	m_flags(static_cast<ConnectionManagerFlag>(ConnectionState::Connecting)),
 	m_currentDatacenterId(0),
 	m_movingToDatacenterId(0),
 	m_timeDifference(0),
@@ -67,15 +71,12 @@ HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 	}
 
 	ReturnIfFailed(result, ThreadpoolManager::RuntimeClassInitialize(minimumThreadCount, maximumThreadCount));
-
-	if ((m_requestsTimer = CreateThreadpoolTimer(ConnectionManager::RequestsTimerCallback, this, ThreadpoolManager::GetEnvironment())) == nullptr)
-	{
-		return GetLastHRESULT();
-	}
-
+	ReturnIfFailed(result, EventObjectT::AttachToThreadpool(this));
 	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Networking_Connectivity_NetworkInformation).Get(), &m_networkInformation));
 	ReturnIfFailed(result, m_networkInformation->add_NetworkStatusChanged(Callback<INetworkStatusChangedEventHandler>(this, &ConnectionManager::OnNetworkStatusChanged).Get(), &m_networkChangedEventToken));
 	ReturnIfFailed(result, UpdateNetworkStatus(false));
+
+	ReturnIfFailed(result, InitializeSettings());
 
 	return InitializeDatacenters();
 }
@@ -129,7 +130,7 @@ HRESULT ConnectionManager::get_ConnectionState(ConnectionState* value)
 
 	auto lock = LockCriticalSection();
 
-	*value = m_connectionState;
+	*value = FLAGS_GET_CONNECTIONSTATE(m_flags);
 	return S_OK;
 }
 
@@ -142,7 +143,7 @@ HRESULT ConnectionManager::get_CurrentNetworkType(ConnectionNeworkType* value)
 
 	auto lock = LockCriticalSection();
 
-	*value = m_currentNetworkType;
+	*value = FLAGS_GET_NETWORKTYPE(m_flags);
 	return S_OK;
 }
 
@@ -173,7 +174,7 @@ HRESULT ConnectionManager::get_IsIpv6Enabled(boolean* value)
 
 	auto lock = LockCriticalSection();
 
-	*value = m_isIpv6Enabled;
+	*value = (m_flags & ConnectionManagerFlag::UseIpv6) == ConnectionManagerFlag::UseIpv6;
 	return S_OK;
 }
 
@@ -186,7 +187,7 @@ HRESULT ConnectionManager::get_IsNetworkAvailable(boolean* value)
 
 	auto lock = LockCriticalSection();
 
-	*value = m_currentNetworkType != ConnectionNeworkType::None;
+	*value = FLAGS_GET_NETWORKTYPE(m_flags) != ConnectionNeworkType::None;
 	return S_OK;
 }
 
@@ -345,16 +346,17 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 		m_requestsQueue.push_back(request);
 	}
 
+	auto requestsTimer = EventObjectT::GetHandle();
 	if ((flags & RequestFlag::Immediate) == RequestFlag::Immediate)
 	{
 		FILETIME timeout = {};
-		SetThreadpoolTimer(m_requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
+		SetThreadpoolTimer(requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
 	}
-	else if (!IsThreadpoolTimerSet(m_requestsTimer))
+	else if (!IsThreadpoolTimerSet(requestsTimer))
 	{
 		FILETIME timeout;
 		TimeoutToFileTime(REQUEST_TIMER_TIMEOUT, timeout);
-		SetThreadpoolTimer(m_requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
+		SetThreadpoolTimer(requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
 	}
 
 	*value = requestToken;
@@ -438,17 +440,27 @@ HRESULT ConnectionManager::UpdateDatacenters()
 {
 	auto lock = LockCriticalSection();
 
-	INT32 requestToken;
+	if ((m_flags & ConnectionManagerFlag::UpdatingDatacenters) == ConnectionManagerFlag::UpdatingDatacenters)
+	{
+		return S_FALSE;
+	}
+
 	auto helpGetConfig = Make<Methods::TLHelpGetConfig>();
+
+	m_flags |= ConnectionManagerFlag::UpdatingDatacenters;
+
+	INT32 requestToken;
 	return SendRequestWithFlags(helpGetConfig.Get(), Callback<ISendRequestCompletedCallback>([this](IMessageResponse* response, IMessageError* error) -> HRESULT
 	{
 		auto lock = LockCriticalSection();
 
+		m_flags &= ~ConnectionManagerFlag::UpdatingDatacenters;
+
 		if (error == nullptr)
 		{
-			auto config = static_cast<TLConfig*>(static_cast<MessageResponse*>(response)->GetObject().Get());
-			
-			std::map<std::pair<INT32, INT32>, std::vector<ServerEndpoint>> datacentersEndpoints;
+			auto config = GetMessageResponseObject<TLConfig>(response);
+
+			std::map<std::pair<INT32, TLDCOptionFlag>, std::vector<ServerEndpoint>> datacentersEndpoints;
 
 			for (auto& dcOption : config->GetDcOptions())
 			{
@@ -465,8 +477,8 @@ HRESULT ConnectionManager::UpdateDatacenters()
 					datacenter = m_datacenters.insert(datacenter, std::make_pair(datacenterEndpoints.first.first, Make<Datacenter>(datacenterEndpoints.first.first)));
 				}
 
-				ReturnIfFailed(result, datacenter->second->ReplaceEndpoints(datacenterEndpoints.second, datacenterEndpoints.first.second & 0x2 ?
-					ConnectionType::Download : ConnectionType::Generic, datacenterEndpoints.first.second & 0x1));
+				ReturnIfFailed(result, datacenter->second->ReplaceEndpoints(datacenterEndpoints.second, (datacenterEndpoints.first.second & TLDCOptionFlag::MediaOnly) == TLDCOptionFlag::MediaOnly ?
+					ConnectionType::Download : ConnectionType::Generic, (datacenterEndpoints.first.second & TLDCOptionFlag::IPv6) == TLDCOptionFlag::IPv6));
 
 				if (datacenterEndpoints.first.first == m_movingToDatacenterId)
 				{
@@ -477,12 +489,14 @@ HRESULT ConnectionManager::UpdateDatacenters()
 			}
 
 			FILETIME timeout = {};
-			SetThreadpoolTimer(m_requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
+			SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
 
 			return m_unprocessedMessageReceivedEventSource.InvokeAll(this, response);
 		}
-
-		return S_OK;
+		else
+		{
+			return S_OK;
+		}
 	}).Get(), nullptr, m_currentDatacenterId, ConnectionType::Generic, RequestFlag::EnableUnauthorized | RequestFlag::WithoutLogin | RequestFlag::TryDifferentDc, &requestToken);
 }
 
@@ -624,20 +638,110 @@ HRESULT ConnectionManager::UpdateNetworkStatus(boolean raiseEvent)
 		}
 	}
 
-	if (currentNetworkType != m_currentNetworkType)
+	if (currentNetworkType != FLAGS_GET_NETWORKTYPE(m_flags))
 	{
-		m_currentNetworkType = currentNetworkType;
+		m_flags = FLAGS_SET_NETWORKTYPE(m_flags, currentNetworkType);
 		return m_currentNetworkTypeChangedEventSource.InvokeAll(this, nullptr);
 	}
 
 	return S_OK;
 }
 
+HRESULT ConnectionManager::Reset()
+{
+	auto lock = LockCriticalSection();
+	auto requestsLock = m_requestsCriticalSection.Lock();
+
+	CloseAllObjects(true);
+
+	for (auto& datacenter : m_datacenters)
+	{
+		datacenter.second->Close();
+	}
+
+	m_userId = 0;
+	m_datacenters.clear();
+	m_requestsQueue.clear();
+	m_runningRequests.clear();
+	m_quickAckRequests.clear();
+
+	HRESULT result;
+	ReturnIfFailed(result, EventObjectT::AttachToThreadpool(this));
+
+	return InitializeDatacenters();
+}
+
+HRESULT ConnectionManager::UpdateCDNPublicKeys()
+{
+	auto lock = LockCriticalSection();
+
+	if ((m_flags & ConnectionManagerFlag::UpdatingCDNPublicKeys) == ConnectionManagerFlag::UpdatingCDNPublicKeys)
+	{
+		return S_FALSE;
+	}
+
+	auto helpGetCDNConfig = Make<Methods::TLHelpGetCDNConfig>();
+
+	m_flags |= ConnectionManagerFlag::UpdatingCDNPublicKeys;
+
+	INT32 requestToken;
+	return SendRequestWithFlags(helpGetCDNConfig.Get(), Callback<ISendRequestCompletedCallback>([this](IMessageResponse* response, IMessageError* error) -> HRESULT
+	{
+		auto lock = LockCriticalSection();
+
+		m_flags &= ~ConnectionManagerFlag::UpdatingCDNPublicKeys;
+
+		if (error == nullptr)
+		{
+			auto cdnConfig = GetMessageResponseObject<TLCDNConfig>(response);
+
+			//std::map<std::pair<INT32, INT32>, std::vector<ServerEndpoint>> datacentersEndpoints;
+
+			//for (auto& dcOption : config->GetDcOptions())
+			//{
+			//	auto& key = std::make_pair(dcOption->GetId(), dcOption->GetFlags());
+			//	datacentersEndpoints[key].push_back({ dcOption->GetIpAddress().GetRawBuffer(nullptr), static_cast<UINT32>(dcOption->GetPort()) });
+			//}
+
+			//HRESULT result;
+			//for (auto& datacenterEndpoints : datacentersEndpoints)
+			//{
+			//	auto& datacenter = m_datacenters.find(datacenterEndpoints.first.first);
+			//	if (datacenter == m_datacenters.end())
+			//	{
+			//		datacenter = m_datacenters.insert(datacenter, std::make_pair(datacenterEndpoints.first.first, Make<Datacenter>(datacenterEndpoints.first.first)));
+			//	}
+
+			//	ReturnIfFailed(result, datacenter->second->ReplaceEndpoints(datacenterEndpoints.second, datacenterEndpoints.first.second & 0x2 ?
+			//		ConnectionType::Download : ConnectionType::Generic, datacenterEndpoints.first.second & 0x1));
+
+			//	//ipv6:flags.0 ? true media_only : flags.1 ? true tcpo_only : flags.2 ? true cdn : flags.3 ? true static : flags.4 ? true
+
+			//	if (datacenterEndpoints.first.first == m_movingToDatacenterId)
+			//	{
+			//		m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
+
+			//		ReturnIfFailed(result, MoveToDatacenter(datacenterEndpoints.first.first));
+			//	}
+			//}
+
+			//FILETIME timeout = {};
+			//SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
+
+			return m_unprocessedMessageReceivedEventSource.InvokeAll(this, response);
+		}
+		else
+		{
+			return S_OK;
+		}
+	}).Get(), nullptr, m_currentDatacenterId, ConnectionType::Generic, RequestFlag::Immediate, &requestToken);
+}
+
 HRESULT ConnectionManager::MoveToDatacenter(INT32 datacenterId)
 {
 	if (datacenterId == m_movingToDatacenterId)
 	{
-		return S_OK;
+		return S_FALSE;
 	}
 
 	auto datacenterIterator = m_datacenters.find(datacenterId);
@@ -676,8 +780,7 @@ HRESULT ConnectionManager::MoveToDatacenter(INT32 datacenterId)
 
 		HRESULT result;
 		INT32 requestToken;
-		if (FAILED(result = SendRequestWithFlags(authExportAuthorization.Get(),
-			Callback<ISendRequestCompletedCallback>([this, datacenter](IMessageResponse* response, IMessageError* error) -> HRESULT
+		if (FAILED(result = SendRequestWithFlags(authExportAuthorization.Get(), Callback<ISendRequestCompletedCallback>([this, datacenter](IMessageResponse* response, IMessageError* error) -> HRESULT
 		{
 			auto lock = LockCriticalSection();
 
@@ -690,22 +793,20 @@ HRESULT ConnectionManager::MoveToDatacenter(INT32 datacenterId)
 					return datacenterId == m_movingToDatacenterId;
 				}, true);
 
+				HRESULT result;
 				if (!datacenter->IsAuthenticated())
 				{
 					datacenter->ClearServerSalts();
-
-					HRESULT result;
 					ReturnIfFailed(result, datacenter->BeginHandshake(true, false));
 				}
 
-				HRESULT result;
+				auto authExportedAuthorization = GetMessageResponseObject<TLAuthExportedAuthorization>(response);
+
 				ComPtr<Methods::TLAuthImportAuthorization> authImportAuthorization;
-				auto authExportedAuthorization = static_cast<TLAuthExportedAuthorization*>(static_cast<MessageResponse*>(response)->GetObject().Get());
 				ReturnIfFailed(result, MakeAndInitialize<Methods::TLAuthImportAuthorization>(&authImportAuthorization, authExportedAuthorization->GetId(), authExportedAuthorization->GetBytes().Get()));
 
 				INT32 requestToken;
-				return SendRequestWithFlags(authImportAuthorization.Get(),
-					Callback<ISendRequestCompletedCallback>([this, datacenter](IMessageResponse* response, IMessageError* error) -> HRESULT
+				return SendRequestWithFlags(authImportAuthorization.Get(), Callback<ISendRequestCompletedCallback>([this, datacenter](IMessageResponse* response, IMessageError* error) -> HRESULT
 				{
 					auto lock = LockCriticalSection();
 
@@ -959,41 +1060,11 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, INT32 current
 		datacenterId = m_currentDatacenterId;
 	}
 
-	ComPtr<Datacenter> datacenter;
-	if (!GetDatacenterById(datacenterId, datacenter))
-	{
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("We should reload datacenters list if that happens");
-		return E_UNEXPECTED;
-	}
-
-	auto datacenterContextIterator = datacentersContexts.find(datacenterId);
-	if (datacenterContextIterator == datacentersContexts.end())
-	{
-		datacenterContextIterator = datacentersContexts.insert(datacenterContextIterator, std::make_pair(datacenterId, DatacenterRequestContext(datacenter.Get())));
-	}
-
-	if (!datacenter->IsAuthenticated())
-	{
-		datacenterContextIterator->second.Flags |= DatacenterRequestContextFlag::RequiresHandshake;
-		return S_FALSE;
-	}
-
-	if (!(request->EnableUnauthorized() || datacenterId == m_currentDatacenterId || datacenter->IsAuthorized()))
-	{
-		if (m_userId != 0 && datacenterId != m_movingToDatacenterId)
-		{
-			datacenterContextIterator->second.Flags |= DatacenterRequestContextFlag::RequiresAuthorization;
-		}
-
-		return S_FALSE;
-	}
-
 	if (request->GetStartTime() > currentTime)
 	{
 		return S_FALSE;
 	}
-
-	if (request->IsTimedOut(currentTime))
+	else if (request->IsTimedOut(currentTime))
 	{
 		if (request->TryDifferentDc())
 		{
@@ -1012,22 +1083,52 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, INT32 current
 		}
 	}
 
+	auto datacenterContextIterator = datacentersContexts.find(datacenterId);
+	if (datacenterContextIterator == datacentersContexts.end())
+	{
+		ComPtr<Datacenter> datacenter;
+		GetDatacenterById(datacenterId, datacenter);
+
+		datacenterContextIterator = datacentersContexts.insert(datacenterContextIterator, std::make_pair(datacenterId, DatacenterRequestContext(datacenter.Get())));
+	}
+
+	if (datacenterContextIterator->second.Datacenter == nullptr)
+	{
+		return S_FALSE;
+	}
+
+	if (!datacenterContextIterator->second.Datacenter->IsAuthenticated())
+	{
+		datacenterContextIterator->second.Flags |= DatacenterRequestContextFlag::RequiresHandshake;
+		return S_FALSE;
+	}
+
+	if (!(request->EnableUnauthorized() || datacenterId == m_currentDatacenterId || datacenterContextIterator->second.Datacenter->IsAuthorized()))
+	{
+		if (m_userId != 0 && datacenterId != m_movingToDatacenterId)
+		{
+			datacenterContextIterator->second.Flags |= DatacenterRequestContextFlag::RequiresAuthorization;
+		}
+
+		return S_FALSE;
+	}
+
 	HRESULT result;
 	ComPtr<Connection> connection;
 	switch (request->GetConnectionType())
 	{
 	case ConnectionType::Generic:
-		ReturnIfFailed(result, datacenter->GetGenericConnection(true, connection));
+		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetGenericConnection(true, connection));
 
 		datacenterContextIterator->second.GenericRequests.push_back(request);
 		break;
 	case ConnectionType::Download:
-		ReturnIfFailed(result, datacenter->GetDownloadConnection(0, true, connection));
+		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetDownloadConnection(0, true, connection));
 
 		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement Download requests processing");
 		break;
 	case ConnectionType::Upload:
-		ReturnIfFailed(result, datacenter->GetUploadConnection(0, true, connection));
+		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetUploadConnection(0, true, connection));
 
 		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement Upload requests processing");
 		break;
@@ -1041,13 +1142,22 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, INT32 current
 HRESULT ConnectionManager::ProcessRequests(std::map<UINT32, DatacenterRequestContext>& datacentersContexts)
 {
 	HRESULT result = S_OK;
+	boolean updateDatacenters = false;
 
 	auto datacenterIterator = datacentersContexts.begin();
 	while (datacenterIterator != datacentersContexts.end())
 	{
 		auto& datacenterContext = datacenterIterator->second;
 
-		if ((datacenterContext.Flags & DatacenterRequestContextFlag::RequiresHandshake) == DatacenterRequestContextFlag::RequiresHandshake)
+		if (datacenterContext.Datacenter == nullptr)
+		{
+			if (!updateDatacenters)
+			{
+				updateDatacenters = true;
+				ReturnIfFailed(result, UpdateDatacenters());
+			}
+		}
+		else if ((datacenterContext.Flags & DatacenterRequestContextFlag::RequiresHandshake) == DatacenterRequestContextFlag::RequiresHandshake)
 		{
 			ReturnIfFailed(result, datacenterContext.Datacenter->BeginHandshake(true, false));
 		}
@@ -1169,7 +1279,6 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 		m_runningRequests.erase(requestIterator);
 	}
 
-
 	ComPtr<ITLRPCError> rpcError;
 	if (SUCCEEDED(messageBody->QueryInterface(IID_PPV_ARGS(&rpcError))))
 	{
@@ -1201,7 +1310,7 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 			}
 
 			FILETIME timeout = {};
-			SetThreadpoolTimer(m_requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
+			SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
 			return S_OK;
 		}
 	}
@@ -1299,7 +1408,7 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 	default:
 		if (code == 500 || code < 0)
 		{
-			waitTime = max(request->GetRetriesCount(), 10);
+			waitTime = max(request->GetAttemptCount(), 10);
 		}
 		else
 		{
@@ -1328,8 +1437,6 @@ void ConnectionManager::ResetRequests(std::function<boolean(INT32, ComPtr<Messag
 {
 	auto requestsLock = m_requestsCriticalSection.Lock();
 
-	//auto requestsCount = m_requestsQueue.size();
-
 	auto requestIterator = m_runningRequests.begin();
 	while (requestIterator != m_runningRequests.end())
 	{
@@ -1345,11 +1452,6 @@ void ConnectionManager::ResetRequests(std::function<boolean(INT32, ComPtr<Messag
 			requestIterator++;
 		}
 	}
-
-	/*if (m_requestsQueue.size() != requestsCount)
-	{
-		SetEvent(m_requestEnqueuedEvent.Get());
-	}*/
 }
 
 HRESULT ConnectionManager::OnUnprocessedMessageResponse(MessageContext const* messageContext, ITLObject* messageBody, Connection* connection)
@@ -1372,9 +1474,9 @@ HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
 	{
 		auto lock = LockCriticalSection();
 
-		if (datacenter->GetId() == m_currentDatacenterId && m_connectionState != ConnectionState::Connected)
+		if (datacenter->GetId() == m_currentDatacenterId && FLAGS_GET_CONNECTIONSTATE(m_flags) != ConnectionState::Connected)
 		{
-			m_connectionState = ConnectionState::Connected;
+			m_flags = FLAGS_SET_CONNECTIONSTATE(m_flags, ConnectionState::Connected);
 
 			HRESULT result;
 			ReturnIfFailed(result, m_connectionStateChangedEventSource.InvokeAll(this, nullptr));
@@ -1398,19 +1500,19 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 
 		if (datacenter->GetId() == m_currentDatacenterId)
 		{
-			if (m_currentNetworkType == ConnectionNeworkType::None)
+			if (static_cast<ConnectionNeworkType>(m_flags & ConnectionManagerFlag::NetworkType) == ConnectionNeworkType::None)
 			{
-				if (m_connectionState != ConnectionState::WaitingForNetwork)
+				if (FLAGS_GET_CONNECTIONSTATE(m_flags) != ConnectionState::WaitingForNetwork)
 				{
-					m_connectionState = ConnectionState::WaitingForNetwork;
+					m_flags = FLAGS_SET_CONNECTIONSTATE(m_flags, ConnectionState::WaitingForNetwork);
 					return m_connectionStateChangedEventSource.InvokeAll(this, nullptr);
 				}
 			}
 			else
 			{
-				if (m_connectionState != ConnectionState::Connecting)
+				if (FLAGS_GET_CONNECTIONSTATE(m_flags) != ConnectionState::Connecting)
 				{
-					m_connectionState = ConnectionState::Connecting;
+					m_flags = FLAGS_SET_CONNECTIONSTATE(m_flags, ConnectionState::Connecting);
 					return m_connectionStateChangedEventSource.InvokeAll(this, nullptr);
 				}
 			}
@@ -1524,6 +1626,13 @@ HRESULT ConnectionManager::OnConnectionSessionCreated(Connection* connection, IN
 	return S_OK;
 }
 
+HRESULT ConnectionManager::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG_PTR param)
+{
+	SetThreadpoolTimer(EventObjectT::GetHandle(), nullptr, 0, 0);
+
+	return ProcessRequests();
+}
+
 HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLObject** object, IConnection** value)
 {
 	if (object == nullptr || value == nullptr)
@@ -1533,12 +1642,12 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 
 	//*object = Make<TLRPCError>().Detach();
 
-	HRESULT result;
+	/*HRESULT result;
 	ComPtr<Datacenter> datacenter;
 	GetDatacenterById(m_currentDatacenterId, datacenter);
-	ReturnIfFailed(result, datacenter->RequestFutureSalts(10));
+	ReturnIfFailed(result, datacenter->RequestFutureSalts(10));*/
 
-	return S_OK;
+	return UpdateCDNPublicKeys();
 }
 
 boolean ConnectionManager::GetDatacenterById(UINT32 id, ComPtr<Datacenter>& datacenter)
@@ -1587,12 +1696,6 @@ INT64 ConnectionManager::GenerateMessageId()
 	return messageId;
 }
 
-boolean ConnectionManager::IsNetworkAvailable()
-{
-	auto lock = LockCriticalSection();
-	return m_currentNetworkType != ConnectionNeworkType::None;
-}
-
 INT32 ConnectionManager::GetCurrentTime()
 {
 	auto lock = LockCriticalSection();
@@ -1612,11 +1715,86 @@ HRESULT ConnectionManager::GetInstance(ComPtr<ConnectionManager>& value)
 	return S_OK;
 }
 
-void ConnectionManager::RequestsTimerCallback(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP_TIMER timer)
+HRESULT ConnectionManager::InitializeSettings()
 {
-	SetThreadpoolTimer(timer, nullptr, 0, 0);
+	HRESULT result;
+	ComPtr<IApplicationDataStatics> applicationDataStatics;
+	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Storage_ApplicationData).Get(), &applicationDataStatics));
 
-	reinterpret_cast<ConnectionManager*>(context)->ProcessRequests();
+	ComPtr<IApplicationData> applicationData;
+	ReturnIfFailed(result, applicationDataStatics->get_Current(&applicationData));
+
+	ComPtr<IStorageFolder> localStorageFolder;
+	ReturnIfFailed(result, applicationData->get_LocalFolder(&localStorageFolder));
+
+	ComPtr<IStorageItem> localStorageItem;
+	ReturnIfFailed(result, localStorageFolder.As(&localStorageItem));
+
+	HString localStorageFolderPath;
+	ReturnIfFailed(result, localStorageItem->get_Path(localStorageFolderPath.GetAddressOf()));
+
+	m_settingsFolderPath.resize(MAX_PATH);
+	m_settingsFolderPath.resize(swprintf_s(&m_settingsFolderPath[0], MAX_PATH, L"%s\\Telegram.Api.Native", localStorageFolderPath.GetRawBuffer(nullptr)));
+
+	CreateDirectory(m_settingsFolderPath.data(), nullptr);
+
+	std::wstring configFileName = m_settingsFolderPath + L"\\ConnectionManager.dat";
+
+	//FileHandle settingsFile(CreateFile2(configFileName.data(), GENERIC_READ | GENERIC_WRITE, NULL, OPEN_ALWAYS, nullptr));
+	//if (!settingsFile.IsValid())
+	//{
+	//	return GetLastHRESULT();
+	//}
+
+	///*SetFilePointerEx(settingsFile.Get(), { 4096 }, nullptr, FILE_BEGIN);
+	//SetEndOfFile(settingsFile.Get());*/
+
+	//ComPtr<MappedFileBuffer> mappedFileBuffer;
+	//ReturnIfFailed(result, MakeAndInitialize<MappedFileBuffer>(&mappedFileBuffer, settingsFile.Get()));
+
+	//ComPtr<TLBinaryReader> configReader;
+	//ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&configReader, mappedFileBuffer.Get()));
+
+	//CreateDirectory(m_settingsFolderPath.data(), nullptr);
+
+	/*Event asyncOperationEvent(CreateEvent(nullptr, TRUE, FALSE, nullptr));
+	if (!asyncOperationEvent.IsValid())
+	{
+		return GetLastHRESULT();
+	}
+
+	auto callback = Callback<ABI::Windows::Foundation::IAsyncOperationCompletedHandler<StorageFolder*>>
+		([&asyncOperationEvent](__FIAsyncOperation_1_Windows__CStorage__CStorageFolder*, ABI::Windows::Foundation::AsyncStatus) -> HRESULT
+	{
+		__debugbreak();
+		SetEvent(asyncOperationEvent.Get());
+		return S_OK;
+	});*/
+
+	/*auto callback = Callback<ABI::Windows::Foundation::IAsyncOperationCompletedHandler<StorageFolder*>>
+		([this](__FIAsyncOperation_1_Windows__CStorage__CStorageFolder* asyncOperation, ABI::Windows::Foundation::AsyncStatus asyncResult) -> HRESULT
+	{
+		__debugbreak();
+		return S_OK;
+	});
+
+	ComPtr<__FIAsyncOperation_1_Windows__CStorage__CStorageFolder> asyncOperation;
+	ReturnIfFailed(result, localStorageFolder->CreateFolderAsync(HStringReference(L"Settings").Get(), CreationCollisionOption_OpenIfExists, &asyncOperation));
+	ReturnIfFailed(result, asyncOperation->put_Completed(callback.Get()));*/
+
+	/*ReturnIfFailed(result, SubmitWork([asyncOperation, callback, &asyncOperationEvent]() -> void
+	{
+		if (FAILED(asyncOperation->put_Completed(callback.Get())))
+		{
+			SetEvent(asyncOperationEvent.Get());
+		}
+	}));
+
+	WaitForSingleObject(asyncOperationEvent.Get(), INFINITE);
+
+	ReturnIfFailed(result, asyncOperation->GetResults(&m_settingsFolder));*/
+
+	return S_OK;
 }
 
 
