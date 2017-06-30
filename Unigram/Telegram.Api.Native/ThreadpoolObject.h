@@ -19,12 +19,9 @@ namespace Telegram
 
 			}
 
-
 			class EventObject abstract : public virtual MultiThreadObject
 			{
 				friend class ThreadpoolManager;
-				template<typename EventTraits>
-				friend class EventObjectT;
 				friend struct EventTraits::TimerTraits;
 				friend struct EventTraits::WaitTraits;
 				friend struct EventTraits::WorkerTraits;
@@ -33,6 +30,9 @@ namespace Telegram
 				virtual HRESULT AttachToThreadpool(_In_ ThreadpoolManager* threadpoolManager) = 0;
 				virtual HRESULT DetachFromThreadpool(boolean waitCallback) = 0;
 				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _In_ ULONG_PTR param) = 0;
+
+			private:
+				virtual void OnGroupCancel() = 0;
 			};
 
 
@@ -155,6 +155,11 @@ namespace Telegram
 				}
 
 			protected:
+				inline boolean IsAttached()
+				{
+					return m_handle != nullptr;
+				}
+
 				inline typename EventTraits::Handle GetHandle() const
 				{
 					return m_handle;
@@ -199,8 +204,7 @@ namespace Telegram
 						return E_NOT_VALID_STATE;
 					}
 
-					m_handle = EventTraits::Create(this, threadpoolManager->GetEnvironment());
-					if (m_handle == nullptr)
+					if ((m_handle = EventTraits::Create(this, threadpoolManager->GetEnvironment())) == nullptr)
 					{
 						return GetLastHRESULT();
 					}
@@ -227,6 +231,13 @@ namespace Telegram
 				}
 
 			private:
+				virtual void OnGroupCancel() override final
+				{
+					auto lock = LockCriticalSection();
+
+					m_handle = nullptr;
+				}
+
 				typename EventTraits::Handle m_handle;
 			};
 

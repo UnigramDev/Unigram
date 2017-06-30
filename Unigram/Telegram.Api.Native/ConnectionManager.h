@@ -13,7 +13,7 @@
 #define MAX_THREAD_COUNT UINT32_MAX
 #define TELEGRAM_API_NATIVE_PROTOVERSION 2
 #define TELEGRAM_API_NATIVE_VERSION 1
-#define TELEGRAM_API_NATIVE_LAYER 66
+#define TELEGRAM_API_NATIVE_LAYER 68
 #define TELEGRAM_API_NATIVE_APIID 6
 
 using namespace Microsoft::WRL;
@@ -22,6 +22,7 @@ using ABI::Windows::Networking::Connectivity::INetworkInformationStatics;
 using ABI::Telegram::Api::Native::IConnectionManager;
 using ABI::Telegram::Api::Native::IConnectionManagerStatics;
 using ABI::Telegram::Api::Native::IUserConfiguration;
+using ABI::Telegram::Api::Native::IProxySettings;
 using ABI::Telegram::Api::Native::Version;
 using ABI::Telegram::Api::Native::ConnectionState;
 using ABI::Telegram::Api::Native::ConnectionNeworkType;
@@ -32,6 +33,30 @@ using ABI::Telegram::Api::Native::IDatacenter;
 using ABI::Telegram::Api::Native::IConnection;
 using ABI::Telegram::Api::Native::RequestFlag;
 using ABI::Telegram::Api::Native::TL::ITLObject;
+
+namespace Telegram
+{
+	namespace Api
+	{
+		namespace Native
+		{
+
+			enum class ConnectionManagerFlag
+			{
+				None = 0,
+				ConnectionState = 0x3,
+				NetworkType = 0xC,
+				UseIpv6 = 0x10,
+				UpdatingDatacenters = 0x20,
+				UpdatingCDNPublicKeys = 0x40
+			};
+
+		}
+	}
+}
+
+DEFINE_ENUM_FLAG_OPERATORS(Telegram::Api::Native::ConnectionManagerFlag);
+
 
 namespace Telegram
 {
@@ -55,13 +80,12 @@ namespace Telegram
 			struct MessageContext;
 			class MessageRequest;
 
-			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager>, public ThreadpoolManager
+			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager>, public virtual ThreadpoolManager, public virtual EventObjectT<EventTraits::TimerTraits>
 			{
 				friend class Datacenter;
 				friend class Connection;
 				friend class TL::TLObject;
 				friend class TL::TLUnparsedObject;
-				friend class TL::TLConfig;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
 
@@ -87,6 +111,8 @@ namespace Telegram
 				IFACEMETHODIMP put_UserConfiguration(_In_ IUserConfiguration* value);
 				IFACEMETHODIMP get_UserId(_Out_ INT32* value);
 				IFACEMETHODIMP put_UserId(INT32 value);
+				IFACEMETHODIMP get_Proxy(_Out_ IProxySettings** value);
+				IFACEMETHODIMP put_Proxy(_In_ IProxySettings* value);
 				IFACEMETHODIMP get_Datacenters(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CDatacenter** value);
 				IFACEMETHODIMP SendRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived, ConnectionType connectionType, _Out_ INT32* value);
 				IFACEMETHODIMP SendRequestWithDatacenter(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
@@ -96,14 +122,25 @@ namespace Telegram
 				IFACEMETHODIMP CancelRequest(INT32 requestToken, boolean notifyServer, _Out_ boolean* value);
 				IFACEMETHODIMP GetDatacenterById(INT32 id, _Out_ IDatacenter** value);
 				IFACEMETHODIMP UpdateDatacenters();
+				IFACEMETHODIMP Reset();
 
 				IFACEMETHODIMP BoomBaby(_In_ IUserConfiguration* userConfiguration, _Out_ ITLObject** object, _Out_ IConnection** value);
 
 				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize(UINT32 minimumThreadCount = MIN_THREAD_COUNT, UINT32 maximumThreadCount = MAX_THREAD_COUNT);
-				boolean IsNetworkAvailable();
 				INT32 GetCurrentTime();
 				INT64 GenerateMessageId();
+
+				inline const std::wstring& GetSettingsFolderPath() const
+				{
+					return m_settingsFolderPath;
+				}
+
+				inline boolean IsNetworkAvailable()
+				{
+					auto lock = LockCriticalSection();
+					return static_cast<ConnectionNeworkType>(m_flags & ConnectionManagerFlag::NetworkType) != ConnectionNeworkType::None;
+				}
 
 				static HRESULT GetInstance(_Out_ ComPtr<ConnectionManager>& value);
 
@@ -122,19 +159,21 @@ namespace Telegram
 
 			private:
 				HRESULT InitializeDatacenters();
+				HRESULT InitializeSettings();
 				HRESULT UpdateNetworkStatus(boolean raiseEvent);
 				HRESULT MoveToDatacenter(INT32 datacenterId);
+				HRESULT UpdateCDNPublicKeys();
 				HRESULT CreateTransportMessage(_In_ MessageRequest* request, _Inout_ INT64& lastRpcMessageId, _Inout_ boolean& requiresLayer, _Out_ TL::TLMessage** message);
-				HRESULT ProcessDatacenterRequests(_In_ Datacenter* datacenter, ConnectionType connectionType);
+				HRESULT ProcessRequests();
+				HRESULT ProcessRequestsForDatacenter(_In_ Datacenter* datacenter, ConnectionType connectionType);
 				HRESULT ProcessRequest(_In_ MessageRequest* request, INT32 currentTime, _In_ std::map<UINT32, DatacenterRequestContext>& datacentersContexts);
-				HRESULT ProcessRequests(_In_ std::map<UINT32, DatacenterRequestContext>& datacentersContexts);	
+				HRESULT ProcessRequests(_In_ std::map<UINT32, DatacenterRequestContext>& datacentersContexts);
 				HRESULT ProcessDatacenterRequests(_In_ DatacenterRequestContext const& datacenterContext);
 				void ResetRequests(_In_ std::map<UINT32, DatacenterRequestContext> const& datacentersContexts);
 				void ResetRequests(std::function<boolean(INT32, ComPtr<MessageRequest> const&)> selector, boolean resetStartTime);
 				HRESULT CompleteMessageRequest(INT64 requestMessageId, _In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
 				HRESULT HandleRequestError(_In_ Datacenter* datacenter, _In_ MessageRequest* request, INT32 code, _In_ HString const& text);
 				HRESULT OnUnprocessedMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
-				HRESULT OnConfigResponse(_In_ TL::TLConfig* response);
 				HRESULT OnNetworkStatusChanged(_In_ IInspectable* sender);
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionQuickAckReceived(_In_ Connection* connection, INT32 ack);
@@ -142,10 +181,11 @@ namespace Telegram
 				HRESULT OnDatacenterHandshakeComplete(_In_ Datacenter* datacenter, INT32 timeDifference);
 				HRESULT OnDatacenterImportAuthorizationComplete(_In_ Datacenter* datacenter);
 				HRESULT OnDatacenterBadServerSalt(_In_ Datacenter* datacenter, INT64 requestMessageId, INT64 responseMessageId);
+				HRESULT OnDatacenterBadMessage(_In_ Datacenter* datacenter, INT64 requestMessageId, INT64 responseMessageId);
 				HRESULT OnConnectionSessionCreated(_In_ Connection* connection, INT64 firstMessageId);
-				HRESULT OnRequestEnqueued(_In_ PTP_CALLBACK_INSTANCE instance);
 				boolean GetDatacenterById(UINT32 id, _Out_ ComPtr<Datacenter>& datacenter);
 				boolean GetRequestByMessageId(INT64 messageId, _Out_ ComPtr<MessageRequest>& request);
+				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _In_ ULONG_PTR param) override;
 
 				inline boolean IsCurrentDatacenter(INT32 datacenterId)
 				{
@@ -153,28 +193,23 @@ namespace Telegram
 					return datacenterId == m_currentDatacenterId || datacenterId == m_movingToDatacenterId;
 				}
 
-				static void NTAPI RequestEnqueuedCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ PTP_WAIT wait, _In_ TP_WAIT_RESULT waitResult);
-
 				ComPtr<INetworkInformationStatics> m_networkInformation;
 				EventRegistrationToken m_networkChangedEventToken;
-				ConnectionState m_connectionState;
-				ConnectionNeworkType m_currentNetworkType;
-				boolean m_isIpv6Enabled;
+				ConnectionManagerFlag m_flags;
 				INT32 m_currentDatacenterId;
 				INT32 m_movingToDatacenterId;
 				std::map<INT32, ComPtr<Datacenter>> m_datacenters;
-				Event m_requestEnqueuedEvent;
 				CriticalSection m_requestsCriticalSection;
 				std::list<ComPtr<MessageRequest>> m_requestsQueue;
 				std::list<std::pair<INT32, ComPtr<MessageRequest>>> m_runningRequests;
 				std::map<INT32, std::vector<ComPtr<MessageRequest>>> m_quickAckRequests;
-				INT64 m_lastProcessedRequestTime;
 				INT32 m_lastRequestToken;
 				INT64 m_lastOutgoingMessageId;
 				INT32 m_timeDifference;
 				INT32 m_userId;
 				ComPtr<IUserConfiguration> m_userConfiguration;
-
+				ComPtr<IProxySettings> m_proxySettings;
+				std::wstring m_settingsFolderPath;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_sessionCreatedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_currentNetworkTypeChangedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_connectionStateChangedEventSource;

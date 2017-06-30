@@ -128,7 +128,7 @@ HRESULT TLBinaryReader::ReadInt16(INT16* value)
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
 
-	*value = (m_buffer[m_position] & 0xff) | ((m_buffer[m_position + 1] & 0xff) << 8);
+	*value = static_cast<INT16>(m_buffer[m_position]) | (static_cast<INT16>(m_buffer[m_position + 1]) << 8);
 
 	m_position += sizeof(INT16);
 	return S_OK;
@@ -151,8 +151,8 @@ HRESULT TLBinaryReader::ReadInt32(INT32* value)
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
 
-	*value = (m_buffer[m_position] & 0xff) | ((m_buffer[m_position + 1] & 0xff) << 8) |
-		((m_buffer[m_position + 2] & 0xff) << 16) | ((m_buffer[m_position + 3] & 0xff) << 24);
+	*value = static_cast<INT32>(m_buffer[m_position]) | (static_cast<INT32>(m_buffer[m_position + 1]) << 8) |
+		(static_cast<INT32>(m_buffer[m_position + 2]) << 16) | (static_cast<INT32>(m_buffer[m_position + 3]) << 24);
 
 	m_position += sizeof(INT32);
 	return S_OK;
@@ -175,10 +175,10 @@ HRESULT TLBinaryReader::ReadInt64(INT64* value)
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
 
-	*value = (m_buffer[m_position] & 0xffLL) | ((m_buffer[m_position + 1] & 0xffLL) << 8LL) |
-		((m_buffer[m_position + 2] & 0xffLL) << 16LL) | ((m_buffer[m_position + 3] & 0xffLL) << 24LL) |
-		((m_buffer[m_position + 4] & 0xffLL) << 32LL) | ((m_buffer[m_position + 5] & 0xffLL) << 40LL) |
-		((m_buffer[m_position + 6] & 0xffLL) << 48LL) | ((m_buffer[m_position + 7] & 0xffLL) << 56LL);
+	*value = static_cast<INT64>(m_buffer[m_position]) | (static_cast<INT64>(m_buffer[m_position + 1]) << 8LL) |
+		(static_cast<INT64>(m_buffer[m_position + 2]) << 16LL) | (static_cast<INT64>(m_buffer[m_position + 3]) << 24LL) |
+		(static_cast<INT64>(m_buffer[m_position + 4]) << 32LL) | (static_cast<INT64>(m_buffer[m_position + 5]) << 40LL) |
+		(static_cast<INT64>(m_buffer[m_position + 6]) << 48LL) | (static_cast<INT64>(m_buffer[m_position + 7]) << 56LL);
 
 	m_position += sizeof(INT64);
 	return S_OK;

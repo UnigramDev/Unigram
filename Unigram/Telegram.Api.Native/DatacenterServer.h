@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <Windows.h>
+#include "Wrappers\OpenSSL.h"
 
 namespace Telegram
 {
@@ -24,7 +25,8 @@ namespace Telegram
 
 			struct ServerPublicKey
 			{
-				std::string Key;
+				//std::string Key;
+				Wrappers::RSA Key;
 				INT64 Fingerprint;
 			};
 

@@ -594,8 +594,8 @@ namespace Telegram.Api.Native.Test
             TLObjectSerializer.RegisterObjectConstructor(0xEC82E140, () => new TLPhonePhoneCall());
             TLObjectSerializer.RegisterObjectConstructor(0xEEA8E46E, () => new TLUploadCdnFileReuploadNeeded());
             TLObjectSerializer.RegisterObjectConstructor(0xA99FCA4F, () => new TLUploadCdnFile());
-            TLObjectSerializer.RegisterObjectConstructor(0xC982EABA, () => new TLCdnPublicKey());
-            TLObjectSerializer.RegisterObjectConstructor(0x5725E40A, () => new TLCdnConfig());
+            //TLObjectSerializer.RegisterObjectConstructor(0xC982EABA, () => new TLCdnPublicKey());
+            //TLObjectSerializer.RegisterObjectConstructor(0x5725E40A, () => new TLCdnConfig());
             TLObjectSerializer.RegisterObjectConstructor(0xC09BE45F, () => new TLMessage());
             TLObjectSerializer.RegisterObjectConstructor(0x9E19A1F6, () => new TLMessageService());
         }

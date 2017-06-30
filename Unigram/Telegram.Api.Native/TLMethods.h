@@ -33,27 +33,28 @@ namespace Telegram
 					class TLInvokeAfterMsg;
 					class TLInvokeWithLayer;
 					class TLInitConnection;
-
 					class TLHelpGetConfig;
+					class TLHelpGetCDNConfig;
 
 
 					namespace TLObjectTraits
 					{
 
-						MakeTLMethodTraits(TLRpcDropAnswer, 0x58e4a740); // false
+						MakeTLMethodTraits(TLRpcDropAnswer, 0x58e4a740);
 						MakeTLMethodTraits(TLAuthExportAuthorization, 0xe5bfffcd);
 						MakeTLMethodTraits(TLAuthImportAuthorization, 0xe3ef9613);
-						MakeTLMethodTraits(TLDestroySession, 0xe7512126); // false
-						MakeTLMethodTraits(TLPing, 0x7abe77ec); // false
-						MakeTLMethodTraits(TLPingDelayDisconnect, 0xf3427b8c);  // false
+						MakeTLMethodTraits(TLDestroySession, 0xe7512126);
+						MakeTLMethodTraits(TLPing, 0x7abe77ec);
+						MakeTLMethodTraits(TLPingDelayDisconnect, 0xf3427b8c);
 						MakeTLMethodTraits(TLSetClientDHParams, 0xf5045f1f);
 						MakeTLMethodTraits(TLReqDHParams, 0xd712e4be);
 						MakeTLMethodTraits(TLReqPQ, 0x60469778);
-						MakeTLMethodTraits(TLGetFutureSalts, 0xb921bd04); // false
+						MakeTLMethodTraits(TLGetFutureSalts, 0xb921bd04); 
 						MakeTLMethodTraits(TLInvokeAfterMsg, 0xcb9f372d);
 						MakeTLMethodTraits(TLInvokeWithLayer, 0xda9b0d0d);
-						MakeTLMethodTraits(TLInitConnection, 0x69796de9);
+						MakeTLMethodTraits(TLInitConnection, 0xc7481da6);
 						MakeTLMethodTraits(TLHelpGetConfig, 0xc4f9186b);
+						MakeTLMethodTraits(TLHelpGetCDNConfig, 0x52029342);
 
 					}
 
@@ -371,8 +372,12 @@ namespace Telegram
 						ComPtr<IUserConfiguration> m_userConfiguration;
 					};
 
-
 					class TLHelpGetConfig WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLHelpGetConfigTraits>>
+					{
+						InspectableClass(Traits::RuntimeClassName, BaseTrust);
+					};
+
+					class TLHelpGetCDNConfig WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLHelpGetCDNConfigTraits>>
 					{
 						InspectableClass(Traits::RuntimeClassName, BaseTrust);
 					};

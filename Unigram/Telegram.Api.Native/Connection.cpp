@@ -9,7 +9,7 @@
 #include "TLTypes.h"
 #include "ConnectionManager.h"
 
-#include "MethodDebugInfo.h"
+#include "MethodDebug.h"
 
 #if _DEBUG
 #define NEXT_ENDPOINT_CONNECTION_TIMEOUT INFINITE
@@ -23,6 +23,8 @@
 #define UPLOAD_CONNECTION_TIMEOUT 25000
 #endif
 
+#define FLAGS_GET_CURRENTNETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>(flags & ConnectionFlag::CurrentNeworkType) >> 4)
+#define FLAGS_SET_CURRENTNETWORKTYPE(flags, networkType) (flags & ~ConnectionFlag::CurrentNeworkType) | static_cast<ConnectionFlag>(static_cast<int>(networkType) << 4)
 #define CONNECTION_RECONNECTION_TIMEOUT 1000
 #define CONNECTION_MAX_ATTEMPTS 5
 #define CONNECTION_MAX_PACKET_LENGTH 2 * 1024 * 1024
@@ -34,7 +36,6 @@ using namespace Telegram::Api::Native::TL;
 Connection::Connection(Datacenter* datacenter, ConnectionType type) :
 	m_type(type),
 	m_datacenter(datacenter),
-	m_currentNetworkType(ConnectionNeworkType::WiFi),
 	m_flags(ConnectionFlag::None),
 	m_failedConnectionCount(0)
 {
@@ -78,7 +79,7 @@ HRESULT Connection::get_CurrentNetworkType(ConnectionNeworkType* value)
 
 	auto lock = LockCriticalSection();
 
-	*value = m_currentNetworkType;
+	*value = FLAGS_GET_CURRENTNETWORKTYPE(m_flags);
 	return S_OK;
 }
 
@@ -96,7 +97,6 @@ HRESULT Connection::get_SessionId(INT64* value)
 HRESULT Connection::Close()
 {
 	auto lock = LockCriticalSection();
-
 
 	if ((m_flags & ConnectionFlag::Closed) == ConnectionFlag::Closed)
 	{
@@ -125,8 +125,6 @@ HRESULT Connection::Connect()
 
 HRESULT Connection::Connect(ComPtr<ConnectionManager> const& connectionManager, boolean ipv6)
 {
-	METHOD_DEBUG_INFO();
-
 	auto lock = LockCriticalSection();
 
 	if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) > ConnectionState::Disconnected)
@@ -177,21 +175,21 @@ HRESULT Connection::Connect(ComPtr<ConnectionManager> const& connectionManager, 
 	}
 
 	ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), endpoint, ipv6));
-	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&m_currentNetworkType));
+
+	ConnectionNeworkType currentNetworkType;
+	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&currentNetworkType));
 
 	if (ipv6)
 	{
 		m_flags |= ConnectionFlag::Ipv6;
 	}
 
-	m_flags |= static_cast<ConnectionFlag>(ConnectionState::Connecting);
+	m_flags = FLAGS_SET_CURRENTNETWORKTYPE(m_flags, currentNetworkType) | static_cast<ConnectionFlag>(ConnectionState::Connecting);
 	return S_OK;
 }
 
 HRESULT Connection::Reconnect()
 {
-	METHOD_DEBUG_INFO();
-
 	auto lock = LockCriticalSection();
 
 	m_flags = (m_flags & ~ConnectionFlag::ConnectionState) | static_cast<ConnectionFlag>(ConnectionState::Reconnecting);
@@ -275,8 +273,6 @@ HRESULT Connection::CreateMessagePacket(UINT32 messageLength, boolean reportAck,
 
 HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, ITLObject* messageBody, INT32* quickAckId)
 {
-	METHOD_DEBUG_INFO();
-
 	if (messageContext == nullptr || messageBody == nullptr)
 	{
 		return E_INVALIDARG;
@@ -345,8 +341,6 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 
 HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, boolean reportAck)
 {
-	METHOD_DEBUG_INFO();
-
 	if (messageBody == nullptr)
 	{
 		return E_INVALIDARG;
@@ -431,19 +425,23 @@ HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, 
 
 HRESULT Connection::OnNewSessionCreatedResponse(ConnectionManager* connectionManager, TLNewSessionCreated* response)
 {
-	if (IsSessionProcessed(response->GetUniqueId()))
 	{
-		return S_OK;
+		auto lock = LockCriticalSection();
+
+		if (IsSessionProcessed(response->GetUniqueId()))
+		{
+			return S_OK;
+		}
+
+		ServerSalt salt = {};
+		salt.ValidSince = connectionManager->GetCurrentTime();
+		salt.ValidUntil = salt.ValidSince + 30 * 60;
+		salt.Salt = response->GetServerSalt();
+
+		m_datacenter->AddServerSalt(salt);
+
+		AddProcessedSession(response->GetUniqueId());
 	}
-
-	ServerSalt salt = {};
-	salt.ValidSince = connectionManager->GetCurrentTime();
-	salt.ValidUntil = salt.ValidSince + 30 * 60;
-	salt.Salt = response->GetServerSalt();
-
-	m_datacenter->AddServerSalt(salt);
-
-	AddProcessedSession(response->GetUniqueId());
 
 	return connectionManager->OnConnectionSessionCreated(this, response->GetFirstMesssageId());
 }
@@ -489,8 +487,7 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 	{
 		return Connect(connectionManager, (m_flags & ConnectionFlag::Ipv6) == ConnectionFlag::Ipv6);
 	}
-
-	/*else if (m_datacenter->IsHandshaking() || connectionManager->IsCurrentDatacenter(m_datacenter->GetId()))
+	else if (m_datacenter->IsHandshaking() || connectionManager->IsCurrentDatacenter(m_datacenter->GetId()))
 	{
 		m_failedConnectionCount++;
 
@@ -516,7 +513,7 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 
 			return m_reconnectionTimer->Start();
 		}
-	}*/
+	}
 
 	return S_OK;
 }
@@ -638,7 +635,7 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 
 HRESULT Connection::OnMessageReceived(ComPtr<ConnectionManager> const& connectionManager, TLBinaryReader* messageReader, UINT32 messageLength)
 {
-	METHOD_DEBUG_INFO();
+	METHOD_DEBUG();
 
 	HRESULT result;
 	if (messageLength == 4)

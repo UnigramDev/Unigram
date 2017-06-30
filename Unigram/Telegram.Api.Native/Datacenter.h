@@ -61,6 +61,7 @@ namespace Telegram
 				class TLServerDHParamsOk;
 				class TLResPQ;
 				class TLBadServerSalt;
+				class TLBadMessage;
 
 			}
 
@@ -74,6 +75,7 @@ namespace Telegram
 				friend class TL::TLServerDHParamsOk;
 				friend class TL::TLResPQ;
 				friend class TL::TLBadServerSalt;
+				friend class TL::TLBadMessage;
 				friend class Connection;
 				friend class ConnectionManager;
 
@@ -81,7 +83,6 @@ namespace Telegram
 
 			public:
 				Datacenter(UINT32 id);
-				Datacenter();
 				~Datacenter();
 
 				//COM exported methods			
@@ -174,6 +175,7 @@ namespace Telegram
 				HRESULT OnHandshakeServerDHResponse(_In_ Connection* connection, _In_ TL::TLServerDHParamsOk* response);
 				HRESULT OnHandshakeClientDHResponse(_In_ ConnectionManager* connectionManager, _In_ Connection* connection, _In_ TL::TLDHGenOk* response);
 				HRESULT OnBadServerSaltResponse(_In_ ConnectionManager* connectionManager, INT64 messageId, _In_ TL::TLBadServerSalt* response);
+				HRESULT OnBadMessageResponse(_In_ ConnectionManager* connectionManager, INT64 messageId, _In_ TL::TLBadMessage* response);
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
 				HRESULT EncryptMessage(_Inout_updates_(length) BYTE* buffer, UINT32 length, UINT32 padding, _Out_opt_ INT32* quickAckId);
 				HRESULT DecryptMessage(INT64 authKeyId, _Inout_updates_(length) BYTE* buffer, UINT32 length);

@@ -250,6 +250,8 @@ HRESULT TLInitConnection::WriteBody(ITLBinaryWriterEx* writer)
 	HString language;
 	ReturnIfFailed(result, m_userConfiguration->get_Language(language.GetAddressOf()));
 	ReturnIfFailed(result, writer->WriteString(language.Get()));
+	ReturnIfFailed(result, writer->WriteWString(L""));
+	ReturnIfFailed(result, writer->WriteString(language.Get()));
 
 	return TLObjectWithQuery::WriteQuery(writer);
 }

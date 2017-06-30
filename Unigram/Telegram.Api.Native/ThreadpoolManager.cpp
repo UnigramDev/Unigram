@@ -64,9 +64,14 @@ HRESULT ThreadpoolManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 	}
 
 	SetThreadpoolCallbackPool(&m_threadpoolEnvironment, m_threadpool);
-	SetThreadpoolCallbackCleanupGroup(&m_threadpoolEnvironment, m_threadpoolCleanupGroup, nullptr);
+	SetThreadpoolCallbackCleanupGroup(&m_threadpoolEnvironment, m_threadpoolCleanupGroup, ThreadpoolManager::GroupCancelCallback);
 
 	return S_OK;
+}
+
+void ThreadpoolManager::CloseAllObjects(boolean wait)
+{
+	CloseThreadpoolCleanupGroupMembers(m_threadpoolCleanupGroup, wait, nullptr);
 }
 
 HRESULT ThreadpoolManager::AttachEventObject(EventObject* object)
@@ -110,4 +115,9 @@ void ThreadpoolManager::WorkCallback(PTP_CALLBACK_INSTANCE instance, PVOID conte
 	(*workHandler)();
 
 	CloseThreadpoolWork(work);
+}
+
+void ThreadpoolManager::GroupCancelCallback(PVOID objectContext, PVOID cleanupContext)
+{
+	reinterpret_cast<EventObject*>(objectContext)->OnGroupCancel();
 }

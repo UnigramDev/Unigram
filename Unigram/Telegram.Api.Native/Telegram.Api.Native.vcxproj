@@ -294,8 +294,9 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="DatacenterCryptography.h" />
     <ClInclude Include="DatacenterServer.h" />
     <ClInclude Include="MessageError.h" />
-    <ClInclude Include="MethodDebugInfo.h" />
+    <ClInclude Include="MethodDebug.h" />
     <ClInclude Include="DefaultUserConfiguration.h" />
+    <ClInclude Include="ProxySettings.h" />
     <ClInclude Include="ThreadpoolObject.h" />
     <ClInclude Include="GZip.h" />
     <ClInclude Include="NativeBuffer.h" />
@@ -326,7 +327,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClCompile Include="DatacenterCryptography.cpp" />
     <ClCompile Include="DefaultUserConfiguration.cpp" />
     <ClCompile Include="MessageError.cpp" />
-    <ClCompile Include="MethodDebugInfo.cpp" />
+    <ClCompile Include="MethodDebug.cpp" />
     <ClCompile Include="NetworkExtensions.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -338,6 +339,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     </ClCompile>
     <ClCompile Include="ConnectionSocket.cpp" />
     <ClCompile Include="MessageRequest.cpp" />
+    <ClCompile Include="ProxySettings.cpp" />
     <ClCompile Include="ThreadpoolManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TLBinaryReader.cpp" />

@@ -20,88 +20,17 @@ namespace Telegram
 			class DatacenterCryptography
 			{
 			public:
-				inline static boolean FactorizePQ(UINT64 pq, UINT32& p, UINT32& q)
-				{
-					UINT32 it = 0;
-					UINT64 g = 0;
+				static boolean FactorizePQ(UINT64 pq, UINT32& p, UINT32& q);
 
-					for (UINT32 i = 0; i < 3 || it < 1000; i++)
-					{
-						UINT64 t = ((Random(128) & 15) + 17) % pq;
-						UINT64 x = Random(1000000000) % (pq - 1) + 1;
-						UINT64 y = x;
+				static INT64 ComputePublickKeyFingerprint(_In_::RSA* key);
 
-						for (INT32 j = 1; j < 1 << (i + 18); j++)
-						{
-							++it;
-							UINT64 a = x;
-							UINT64 b = x;
-							UINT64 c = t;
+				static boolean SelectPublicKey(_In_ std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
 
-							while (b)
-							{
-								if (b & 1)
-								{
-									c += a;
+				static boolean IsGoodGaAndGb(_In_ BIGNUM* ga, _In_ BIGNUM* p);
 
-									if (c >= pq)
-									{
-										c -= pq;
-									}
-								}
+				static boolean IsGoodPrime(_In_ BIGNUM* p, UINT32 g);
 
-								a += a;
-								if (a >= pq)
-								{
-									a -= pq;
-								}
-
-								b >>= 1;
-							}
-							x = c;
-
-							UINT64 z = x < y ? pq + x - y : x - y;
-
-							g = GCD(z, pq);
-
-							if (g != 1)
-							{
-								break;
-							}
-
-							if (!(j & (j - 1)))
-							{
-								y = x;
-							}
-						}
-
-						if (g > 1 && g < pq)
-						{
-							break;
-						}
-					}
-
-					if (g > 1 && g < pq)
-					{
-						p = static_cast<UINT32>(g);
-						q = static_cast<UINT32>(pq / g);
-
-						if (p > q)
-						{
-							UINT32 tmp = p;
-							p = q;
-							q = tmp;
-						}
-
-						return true;
-					}
-					else
-					{
-						p = 0;
-						q = 0;
-						return false;
-					}
-				}
+				static BN_CTX* GetBNContext();
 
 				inline static boolean CheckNonces(_In_reads_(16) BYTE const* a, _In_reads_(16) BYTE const* b)
 				{
@@ -119,16 +48,10 @@ namespace Telegram
 					return result != 0;
 				}
 
-				static boolean SelectPublicKey(_In_ std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
-
-				static boolean IsGoodGaAndGb(_In_ BIGNUM* ga, _In_ BIGNUM* p);
-
-				static boolean IsGoodPrime(_In_ BIGNUM* p, UINT32 g);
-
-				static BN_CTX* GetBNContext();
-
 			private:
-				inline static int BN_primality_test(int *is_probably_prime, const BIGNUM *candidate, int checks, BN_CTX* ctx, int do_trial_division, BN_GENCB* cb) 
+				static void WriteTLBigNum(_In_ BYTE* buffer, _In_ BIGNUM* number, UINT32 length);
+
+				inline static int BN_primality_test(int *is_probably_prime, const BIGNUM *candidate, int checks, BN_CTX* ctx, int do_trial_division, BN_GENCB* cb)
 				{
 					switch (BN_is_prime_fasttest_ex(candidate, checks, ctx, do_trial_division, cb))
 					{
@@ -174,6 +97,14 @@ namespace Telegram
 				inline static UINT64 Random(UINT64 max)
 				{
 					return static_cast<UINT64>(max * (rand() / (RAND_MAX + 1.0)));
+				}
+
+				inline static ::RSA* GetRSAPublicKey(std::string const& key)
+				{
+					Wrappers::BIO keyBio(BIO_new(BIO_s_mem()));
+					BIO_write(keyBio.Get(), key.c_str(), static_cast<int>(key.size()));
+
+					return PEM_read_bio_RSAPublicKey(keyBio.Get(), nullptr, nullptr, nullptr);
 				}
 			};
 

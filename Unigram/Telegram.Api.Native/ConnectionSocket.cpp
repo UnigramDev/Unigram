@@ -40,7 +40,7 @@ void ConnectionSocket::SetTimeout(UINT32 timeoutMs)
 
 HRESULT ConnectionSocket::Close()
 {
-	return CloseSocket(NO_ERROR, SOCKET_CLOSE_JOINTHREAD);
+	return CloseSocket(NO_ERROR, SOCKET_CLOSE_NONE); // SOCKET_CLOSE_JOINTHREAD);
 }
 
 HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, ServerEndpoint const* endpoint, boolean ipv6)
