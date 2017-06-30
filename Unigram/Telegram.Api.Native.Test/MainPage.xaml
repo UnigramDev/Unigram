@@ -17,6 +17,7 @@
             <Button Content="Logout" Click="Button_Click_5"/>
             <Button Content="Download" Click="Button_Click_6"/>
             <Button Content="Reset" Click="Button_Click_7"/>
+            <Button Content="CDN" Click="Button_Click_8"/>
         </StackPanel>
     </Grid>
 </Page>

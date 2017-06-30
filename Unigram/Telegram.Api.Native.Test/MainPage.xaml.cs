@@ -125,125 +125,186 @@ namespace Telegram.Api.Native.Test
           null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.EnableUnauthorized);
         }
 
-    private void Button_Click_3(object sender, RoutedEventArgs e)
-    {
-        ConnectionManager.Instance.BoomBaby(null, out ITLObject xxx);
-    }
-
-    private void Button_Click_4(object sender, RoutedEventArgs e)
-    {
-        var connectionManager = ConnectionManager.Instance;
-        var resolve = new TLContactsResolveUsername { Username = Constants.Resolve };
-        connectionManager.SendRequest(resolve, (message3, ex3) =>
+        private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            var resolvedPeer = message3.Object as TLContactsResolvedPeer;
-            if (resolvedPeer == null)
-            {
-                Debugger.Break();
-                return;
-            }
+            ConnectionManager.Instance.BoomBaby(null, out ITLObject xxx);
+        }
 
-            var user = resolvedPeer.Users.FirstOrDefault() as TLUser;
-            if (user == null)
-            {
-                Debugger.Break();
-                return;
-            }
-
-            var photo = user.Photo as TLUserProfilePhoto;
-            var big = photo.PhotoBig as TLFileLocation;
-
-            var getFile = new TLUploadGetFile { Offset = 0, Limit = 32 * 1024, Location = new TLInputFileLocation { VolumeId = big.VolumeId, LocalId = big.LocalId, Secret = big.Secret } };
-            connectionManager.SendRequest(getFile, (message5, ex5) =>
-            {
-                Debugger.Break();
-            },
-            // Should run on Download connection
-            null, big.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc);
-        },
-        null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
-    }
-
-    private void Button_Click_5(object sender, RoutedEventArgs e)
-    {
-        ConnectionManager.Instance.SendRequest(new TLAuthLogOut(), (message5, ex5) =>
+        private void Button_Click_4(object sender, RoutedEventArgs e)
         {
-            Debugger.Break();
-        },
-        null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.EnableUnauthorized);
-    }
-
-    private void Button_Click_6(object sender, RoutedEventArgs e)
-    {
-        var connectionManager = ConnectionManager.Instance;
-        var resolve = new TLContactsResolveUsername { Username = Constants.Resolve };
-        connectionManager.SendRequest(resolve, (message3, ex3) =>
-        {
-            var resolvedPeer = message3.Object as TLContactsResolvedPeer;
-            if (resolvedPeer == null)
+            var connectionManager = ConnectionManager.Instance;
+            var resolve = new TLContactsResolveUsername { Username = Constants.Resolve };
+            connectionManager.SendRequest(resolve, (message3, ex3) =>
             {
-                Debugger.Break();
-                return;
-            }
-
-            var user = resolvedPeer.Users.FirstOrDefault() as TLUser;
-            if (user == null)
-            {
-                Debugger.Break();
-                return;
-            }
-
-            var getHistory = new TLMessagesGetHistory { Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value }, MaxId = int.MaxValue };
-            connectionManager.SendRequest(getHistory, (message4, ex4) =>
-            {
-                var messages = message4.Object as TLMessagesMessagesBase;
-                if (messages == null)
+                var resolvedPeer = message3.Object as TLContactsResolvedPeer;
+                if (resolvedPeer == null)
                 {
                     Debugger.Break();
                     return;
                 }
 
-                Debug.WriteLine("Download started");
-
-                var first = messages.Messages.FirstOrDefault() as TLMessage;
-                var documentMedia = first.Media as TLMessageMediaDocument;
-                var document = documentMedia.Document as TLDocument;
-                var watch = Stopwatch.StartNew();
-
-                var chunkSize = 128 * 1024;
-
-                var steps = Math.Ceiling((double)document.Size / (double)chunkSize);
-                for (int i = 0; i < steps; i++)
+                var user = resolvedPeer.Users.FirstOrDefault() as TLUser;
+                if (user == null)
                 {
-                    var index = i + 0;
-                    var getFile = new TLUploadGetFile { Offset = i * chunkSize, Limit = chunkSize, Location = new TLInputDocumentFileLocation { Id = document.Id, AccessHash = document.AccessHash, Version = document.Version } };
+                    Debugger.Break();
+                    return;
+                }
+
+                var photo = user.Photo as TLUserProfilePhoto;
+                var big = photo.PhotoBig as TLFileLocation;
+
+                var getFile = new TLUploadGetFile { Offset = 0, Limit = 32 * 1024, Location = new TLInputFileLocation { VolumeId = big.VolumeId, LocalId = big.LocalId, Secret = big.Secret } };
+                connectionManager.SendRequest(getFile, (message5, ex5) =>
+                {
+                    Debugger.Break();
+                },
+                // Should run on Download connection
+                null, big.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc);
+            },
+            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
+        }
+
+        private void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+            ConnectionManager.Instance.SendRequest(new TLAuthLogOut(), (message5, ex5) =>
+            {
+                Debugger.Break();
+            },
+            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.EnableUnauthorized);
+        }
+
+        private void Button_Click_6(object sender, RoutedEventArgs e)
+        {
+            var connectionManager = ConnectionManager.Instance;
+            var resolve = new TLContactsResolveUsername { Username = Constants.Resolve };
+            connectionManager.SendRequest(resolve, (message3, ex3) =>
+            {
+                var resolvedPeer = message3.Object as TLContactsResolvedPeer;
+                if (resolvedPeer == null)
+                {
+                    Debugger.Break();
+                    return;
+                }
+
+                var user = resolvedPeer.Users.FirstOrDefault() as TLUser;
+                if (user == null)
+                {
+                    Debugger.Break();
+                    return;
+                }
+
+                var getHistory = new TLMessagesGetHistory { Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value }, MaxId = int.MaxValue };
+                connectionManager.SendRequest(getHistory, (message4, ex4) =>
+                {
+                    var messages = message4.Object as TLMessagesMessagesBase;
+                    if (messages == null)
+                    {
+                        Debugger.Break();
+                        return;
+                    }
+
+                    Debug.WriteLine("Download started");
+
+                    var first = messages.Messages.FirstOrDefault() as TLMessage;
+                    var documentMedia = first.Media as TLMessageMediaDocument;
+                    var document = documentMedia.Document as TLDocument;
+                    var watch = Stopwatch.StartNew();
+
+                    var chunkSize = 128 * 1024;
+
+                    var steps = Math.Ceiling((double)document.Size / (double)chunkSize);
+                    for (int i = 0; i < steps; i++)
+                    {
+                        var index = i + 0;
+                        var getFile = new TLUploadGetFile { Offset = i * chunkSize, Limit = chunkSize, Location = new TLInputDocumentFileLocation { Id = document.Id, AccessHash = document.AccessHash, Version = document.Version } };
+                        connectionManager.SendRequest(getFile, (message5, ex5) =>
+                        {
+                            var result = message5.Object as TLUploadFile;
+                            if (result != null)
+                            {
+                                Debug.WriteLine("Chunk {0}/{1} received, {2} elapsed, {3} bytes", index, (int)steps, watch.Elapsed, result.Bytes.Length);
+                            }
+                            else
+                            {
+                                Debug.WriteLine("Chunk {0}/{1} failed", index, watch.Elapsed);
+                            }
+                        },
+                        // Should run on Download connection
+                        null, document.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload | RequestFlag.Immediate);
+                    }
+                },
+                null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
+            },
+            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
+
+        }
+
+        private void Button_Click_7(object sender, RoutedEventArgs e)
+        {
+            ConnectionManager.Instance.Reset();
+        }
+
+        private void Button_Click_8(object sender, RoutedEventArgs e)
+        {
+            var connectionManager = ConnectionManager.Instance;
+            var resolve = new TLContactsResolveUsername { Username = Constants.Resolve };
+            connectionManager.SendRequest(resolve, (message3, ex3) =>
+            {
+                var resolvedPeer = message3.Object as TLContactsResolvedPeer;
+                if (resolvedPeer == null)
+                {
+                    Debugger.Break();
+                    return;
+                }
+
+                var user = resolvedPeer.Users.FirstOrDefault() as TLUser;
+                if (user == null)
+                {
+                    Debugger.Break();
+                    return;
+                }
+
+                var getHistory = new TLMessagesGetHistory { Peer = new TLInputPeerUser { UserId = user.Id, AccessHash = user.AccessHash.Value }, MaxId = int.MaxValue };
+                connectionManager.SendRequest(getHistory, (message4, ex4) =>
+                {
+                    var messages = message4.Object as TLMessagesMessagesBase;
+                    if (messages == null)
+                    {
+                        Debugger.Break();
+                        return;
+                    }
+
+                    Debug.WriteLine("Download started");
+
+                    var first = messages.Messages.FirstOrDefault() as TLMessage;
+                    var documentMedia = first.Media as TLMessageMediaDocument;
+                    var document = documentMedia.Document as TLDocument;
+                    var watch = Stopwatch.StartNew();
+
+                    var chunkSize = 128 * 1024;
+
+                    var getFile = new TLUploadGetFile { Offset = 0, Limit = chunkSize, Location = new TLInputDocumentFileLocation { Id = document.Id, AccessHash = document.AccessHash, Version = document.Version } };
                     connectionManager.SendRequest(getFile, (message5, ex5) =>
                     {
-                        var result = message5.Object as TLUploadFile;
+                        var result = message5.Object as TLUploadFileCdnRedirect;
                         if (result != null)
                         {
-                            Debug.WriteLine("Chunk {0}/{1} received, {2} elapsed, {3} bytes", index, (int)steps, watch.Elapsed, result.Bytes.Length);
-                        }
-                        else
-                        {
-                            Debug.WriteLine("Chunk {0}/{1} failed", index, watch.Elapsed);
+                            var getCdnFile = new TLUploadGetCdnFile { Offset = 0, Limit = chunkSize, FileToken = result.FileToken };
+                            connectionManager.SendRequest(getCdnFile, (message6, ex6) =>
+                            {
+                                Debugger.Break();
+                            },
+                            null, result.DCId, ConnectionType.Generic);
                         }
                     },
                     // Should run on Download connection
                     null, document.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload | RequestFlag.Immediate);
-                }
+                },
+                null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
             },
             null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
-        },
-        null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
-
+        }
     }
-
-    private void Button_Click_7(object sender, RoutedEventArgs e)
-    {
-        ConnectionManager.Instance.Reset();
-    }
-}
 }
 
 namespace Telegram.Api.TL
