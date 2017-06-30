@@ -178,6 +178,7 @@ namespace Telegram.Api.Services
         public void UpdateStatusAsync(bool offline, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             if (_activeTransport.AuthKey == null) return;
+            if (!SettingsHelper.IsAuthorized) return;
 
 #if WIN_RT
             if (_deviceInfo != null && _deviceInfo.IsBackground)

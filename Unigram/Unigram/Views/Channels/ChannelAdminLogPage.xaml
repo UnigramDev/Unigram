@@ -275,7 +275,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Content="SETTINGS" Style="{StaticResource SendButtonStyle}" Grid.ColumnSpan="2"/>
+            <Button Click="Settings_Click" Content="SETTINGS" Style="{StaticResource SendButtonStyle}" Grid.ColumnSpan="2"/>
             <controls:GlyphButton Click="Help_Click" Glyph="&#xE11B;" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Grid.Column="1"/>
 
             <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>

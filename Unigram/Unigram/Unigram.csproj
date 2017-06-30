@@ -150,6 +150,9 @@
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
     <Compile Include="Controls\PrivacyRadioButton.cs" />
+    <Compile Include="Controls\Views\ChannelAdminLogFilterContentView.xaml.cs">
+      <DependentUpon>ChannelAdminLogFilterContentView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\EditUserNameView.xaml.cs">
       <DependentUpon>EditUserNameView.xaml</DependentUpon>
     </Compile>
@@ -185,6 +188,9 @@
     </Compile>
     <Compile Include="Controls\Views\ShareView.xaml.cs">
       <DependentUpon>ShareView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\ChannelAdminLogFilterView.xaml.cs">
+      <DependentUpon>ChannelAdminLogFilterView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\StickerSetView.xaml.cs">
       <DependentUpon>StickerSetView.xaml</DependentUpon>
@@ -222,6 +228,7 @@
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelAdminLogFilterViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelAdminLogViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelAdminRightsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelAdminsViewModel.cs" />
@@ -1145,6 +1152,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Views\ChannelAdminLogFilterContentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\InlineBotResultsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1260,6 +1271,10 @@
     <Page Include="Controls\Views\ShareView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\ChannelAdminLogFilterView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\StickerSetView.xaml">
       <Generator>MSBuild:Compile</Generator>

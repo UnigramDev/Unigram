@@ -77,5 +77,16 @@ namespace Unigram.Views.Channels
 
             await TLMessageDialog.ShowAsync(channel.IsMegaGroup ? AppResources.EventLogInfoDetail : AppResources.EventLogInfoDetailChannel, AppResources.EventLogInfoTitle, "OK");
         }
+
+        private async void Settings_Click(object sender, RoutedEventArgs e)
+        {
+            var channel = ViewModel.Item as TLChannel;
+            if (channel == null)
+            {
+                return;
+            }
+
+            await ChannelAdminLogFilterView.Current.ShowAsync(channel.ToPeer());
+        }
     }
 }

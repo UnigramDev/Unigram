@@ -121,6 +121,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<UserDetailsViewModel>();
             container.ContainerBuilder.RegisterType<ChannelManageViewModel>();
             container.ContainerBuilder.RegisterType<ChannelAdminLogViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelAdminLogFilterViewModel>();
             container.ContainerBuilder.RegisterType<ChannelAdminRightsViewModel>();
             container.ContainerBuilder.RegisterType<ChannelBannedRightsViewModel>();
             container.ContainerBuilder.RegisterType<UserCommonChatsViewModel>();
