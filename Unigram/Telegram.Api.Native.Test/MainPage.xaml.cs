@@ -294,7 +294,7 @@ namespace Telegram.Api.Native.Test
                             {
                                 Debugger.Break();
                             },
-                            null, result.DCId, ConnectionType.Generic);
+                            null, result.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload | RequestFlag.Immediate);
                         }
                     },
                     // Should run on Download connection
