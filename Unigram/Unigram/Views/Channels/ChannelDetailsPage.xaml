@@ -117,7 +117,12 @@
                                               Badge="{x:Bind ViewModel.Full.AdminsCount, Mode=OneWay}"
                                               Visibility="{x:Bind ViewModel.Full.HasAdminsCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
-                        <controls:BadgeButton Content="Blacklist"
+                        <controls:BadgeButton Content="Restricted Users"
+                                              Command="{x:Bind ViewModel.BannedCommand}"
+                                              Badge="{x:Bind ViewModel.Full.BannedCount, Mode=OneWay}"
+                                              Visibility="{x:Bind ViewModel.Full.HasBannedCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                              Style="{StaticResource BadgeButtonStyle}"/>
+                        <controls:BadgeButton Content="Banned Users"
                                               Command="{x:Bind ViewModel.KickedCommand}"
                                               Badge="{x:Bind ViewModel.Full.KickedCount, Mode=OneWay}"
                                               Visibility="{x:Bind ViewModel.Full.HasKickedCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"

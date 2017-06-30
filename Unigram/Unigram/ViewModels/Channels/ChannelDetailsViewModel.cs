@@ -200,10 +200,16 @@ namespace Unigram.ViewModels.Channels
             NavigationService.Navigate(typeof(ChannelAdminsPage), _item.ToPeer());
         }
 
+        public RelayCommand BannedCommand => new RelayCommand(BannedExecute);
+        private void BannedExecute()
+        {
+            NavigationService.Navigate(typeof(ChannelBannedPage), _item.ToPeer());
+        }
+
         public RelayCommand KickedCommand => new RelayCommand(KickedExecute);
         private void KickedExecute()
         {
-            NavigationService.Navigate(typeof(ChannelBannedPage), _item.ToPeer());
+            NavigationService.Navigate(typeof(ChannelKickedPage), _item.ToPeer());
         }
 
         public RelayCommand ParticipantsCommand => new RelayCommand(ParticipantsExecute);

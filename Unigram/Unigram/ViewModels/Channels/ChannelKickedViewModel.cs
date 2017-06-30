@@ -12,10 +12,10 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
 {
-    public class ChannelBannedViewModel : ChannelParticipantsViewModelBase
+    public class ChannelKickedViewModel : ChannelParticipantsViewModelBase
     {
-        public ChannelBannedViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
-            : base(protoService, cacheService, aggregator, new TLChannelParticipantsBanned())
+        public ChannelKickedViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+            : base(protoService, cacheService, aggregator, new TLChannelParticipantsKicked())
         {
         }
     }
