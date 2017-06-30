@@ -117,7 +117,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var channel = ViewModel.With as TLChannel;
+            var channel = With as TLChannel;
             if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendGames && result.Type.Equals("game", StringComparison.OrdinalIgnoreCase))
             {
                 await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting media content here.", "Warning", "OK");
