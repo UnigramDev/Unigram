@@ -1396,6 +1396,7 @@
                       AllowFocusOnInteraction="False"
                       IsItemClickEnabled="True"
                       ItemClick="Stickers_ItemClick"
+                      SelectionMode="None"
                       ScrollViewer.VerticalScrollBarVisibility="Disabled"
                       ScrollViewer.VerticalScrollMode="Disabled"
                       ScrollViewer.IsVerticalRailEnabled="False"

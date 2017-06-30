@@ -240,8 +240,7 @@ namespace Telegram.Api.Helpers
                     return (int)ApplicationData.Current.LocalSettings.Values["DatabaseVersion"];
                 }
 
-                // TODO: maybe we have to remove - 1 when publishing in the store
-                return Constants.DatabaseVersion - 1;
+                return Constants.DatabaseVersion;
             }
             set
             {
