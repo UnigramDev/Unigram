@@ -13,7 +13,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Text="Ban User" Glyph="&#xE10B;"/>
+        <controls:ButtonPageHeader Text="Ban User" Glyph="&#xE10B;" Command="{x:Bind ViewModel.SendCommand}"/>
 
         <controls:ScrollViewerBackground 
             Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
@@ -56,18 +56,19 @@
                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                        Margin="0,24">
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsViewMessages, Mode=TwoWay}"
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsViewMessages, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}}"
                                   Header="Can Read Messages"
                                   Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsSendMessages, Mode=TwoWay}"
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsSendMessages, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}}"
                                   Header="Can Send Messages"
                                   Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsSendMedia, Mode=TwoWay}"
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsSendMedia, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}}"
                                   Header="Can Send Media"
                                   Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch Header="Can Send Stickers &amp; GIFs"
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsSendStickers, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}}"
+                                  Header="Can Send Stickers &amp; GIFs"
                                   Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsEmbedLinks, Mode=TwoWay}"
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsEmbedLinks, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}}"
                                   Header="Can Embed Links"
                                   Style="{ThemeResource CheckButtonStyle}"/>
                 </local:TableStackPanel>

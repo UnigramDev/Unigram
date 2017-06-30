@@ -874,8 +874,15 @@ namespace Unigram.Views
             Media.Download(sender, e);
         }
 
-        private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
+        private async void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
+            var channel = ViewModel.With as TLChannel;
+            if (channel != null && channel.HasBannedRights && (channel.BannedRights.IsSendStickers || channel.BannedRights.IsSendGifs))
+            {
+                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting stickers here.", "Warning", "OK");
+                return;
+            }
+
             ViewModel.SendStickerCommand.Execute(e.ClickedItem);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);

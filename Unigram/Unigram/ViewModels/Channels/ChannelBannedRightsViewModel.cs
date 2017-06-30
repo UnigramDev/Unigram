@@ -7,6 +7,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
@@ -82,6 +83,12 @@ namespace Unigram.ViewModels.Channels
             set
             {
                 Set(ref _isViewMessages, value);
+
+                // Don't allow send messages
+                if (value && !_isSendMessages)
+                {
+                    IsSendMessages = true;
+                }
             }
         }
 
@@ -95,6 +102,18 @@ namespace Unigram.ViewModels.Channels
             set
             {
                 Set(ref _isSendMessages, value);
+
+                // Allow view
+                if (!value && _isViewMessages)
+                {
+                    IsViewMessages = false;
+                }
+
+                // Don't allow send media
+                if (value && !_isSendMedia)
+                {
+                    IsSendMedia = true;
+                }
             }
         }
 
@@ -108,6 +127,24 @@ namespace Unigram.ViewModels.Channels
             set
             {
                 Set(ref _isSendMedia, value);
+
+                // Allow send messages
+                if (!value && _isSendMessages)
+                {
+                    IsSendMessages = false;
+                }
+
+                // Don't allow send stickers
+                if (value && !_isSendStickers)
+                {
+                    IsSendStickers = true;
+                }
+
+                // Don't allow embed links
+                if (value && !_isEmbedLinks)
+                {
+                    IsEmbedLinks = true;
+                }
             }
         }
 
@@ -121,6 +158,16 @@ namespace Unigram.ViewModels.Channels
             set
             {
                 Set(ref _isSendStickers, value);
+
+                _isSendGifs = value;
+                _isSendGames = value;
+                _isSendInline = value;
+
+                // Allow send media
+                if (!value && _isSendMedia)
+                {
+                    IsSendMedia = false;
+                }
             }
         }
 
@@ -173,9 +220,37 @@ namespace Unigram.ViewModels.Channels
             set
             {
                 Set(ref _isEmbedLinks, value);
+
+                if (!value && _isSendMedia)
+                {
+                    IsSendMedia = false;
+                }
             }
         }
 
         #endregion
+
+        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        private async void SendExecute()
+        {
+            var rights = new TLChannelBannedRights
+            {
+                IsViewMessages =_isViewMessages,
+                IsSendMessages = _isViewMessages,
+                IsSendMedia = _isSendMedia,
+                IsSendStickers = _isSendStickers,
+                IsSendGifs = _isSendGifs,
+                IsSendGames = _isSendGames,
+                IsSendInline = _isSendInline,
+                IsEmbedLinks = _isEmbedLinks
+            };
+
+            var response = await ProtoService.EditBannedAsync(_channel, _item.User.ToInputUser(), rights);
+            if (response.IsSucceeded)
+            {
+                NavigationService.GoBack();
+                NavigationService.Frame.ForwardStack.Clear();
+            }
+        }
     }
 }
