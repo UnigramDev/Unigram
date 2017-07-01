@@ -21,6 +21,9 @@ namespace Unigram.Selectors
         public DataTemplate StickerTemplate { get; set; }
         public DataTemplate RoundVideoTemplate { get; set; }
 
+        public DataTemplate EventMessageTemplate { get; set; }
+        public DataTemplate EventMessagePhotoTemplate { get; set; }
+
         public DataTemplate ServiceMessageTemplate { get; set; }
         public DataTemplate ServiceMessagePhotoTemplate { get; set; }
 
@@ -46,15 +49,21 @@ namespace Unigram.Selectors
                 {
                     if (changePhotoAction.NewPhoto is TLChatPhotoEmpty)
                     {
-                        return ServiceMessageTemplate;
+                        return EventMessageTemplate;
                     }
 
-                    return ServiceMessagePhotoTemplate;
+                    return EventMessagePhotoTemplate;
                 }
                 //else if (adminLog.Event.Action is TLChannelAdminLogEventActionEditMessage)
                 //{
                 //    return EditedTemplate;
                 //}
+
+                return EventMessageTemplate;
+            }
+            else if (serviceMessage.Action is TLMessageActionChatEditPhoto)
+            {
+                return ServiceMessagePhotoTemplate;
             }
 
             return ServiceMessageTemplate;

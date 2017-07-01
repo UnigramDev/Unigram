@@ -146,14 +146,14 @@
                             </Grid>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.EditedTemplate>
-                    <selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
+                    <selectors:AdminLogTemplateSelector.EventMessageTemplate>
                         <DataTemplate>
                             <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                                 <RichTextBlock common:AdminLogHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                             </Border>
                         </DataTemplate>
-                    </selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
-                    <selectors:AdminLogTemplateSelector.ServiceMessagePhotoTemplate>
+                    </selectors:AdminLogTemplateSelector.EventMessageTemplate>
+                    <selectors:AdminLogTemplateSelector.EventMessagePhotoTemplate>
                         <DataTemplate>
                             <StackPanel Margin="0,8,0,2">
                                 <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
@@ -162,6 +162,26 @@
 
                                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
                                     <controls:ProfilePictureView Source="{Binding Action.Event.Action.NewPhoto, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
+                                </Border>
+                            </StackPanel>
+                        </DataTemplate>
+                    </selectors:AdminLogTemplateSelector.EventMessagePhotoTemplate>
+                    <selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
+                        <DataTemplate>
+                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                                <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
+                            </Border>
+                        </DataTemplate>
+                    </selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
+                    <selectors:AdminLogTemplateSelector.ServiceMessagePhotoTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,8,0,2">
+                                <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                                    <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
+                                </Border>
+
+                                <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
+                                    <controls:ProfilePictureView Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                                 </Border>
                             </StackPanel>
                         </DataTemplate>

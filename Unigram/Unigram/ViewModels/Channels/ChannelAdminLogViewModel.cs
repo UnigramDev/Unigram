@@ -625,6 +625,16 @@ namespace Unigram.ViewModels.Channels
             {
                 if (item != null && previous != null)
                 {
+                    if ((item is TLMessageService itemService && itemService.Action is TLMessageActionAdminLogEvent) || (previous is TLMessageService previousService && previousService.Action is TLMessageActionAdminLogEvent))
+                    {
+                        return;
+                    }
+
+                    if (item.Id == previous.Id)
+                    {
+                        return;
+                    }
+
                     var itemDate = Utils.UnixTimestampToDateTime(item.Date);
                     var previousDate = Utils.UnixTimestampToDateTime(previous.Date);
                     if (previousDate.Date != itemDate.Date)
@@ -740,54 +750,5 @@ namespace Unigram.ViewModels.Channels
 
             #endregion
         }
-
-        //public class ItemsCollection : IncrementalCollection<AdminLogEvent>
-        //{
-        //    private readonly IMTProtoService _protoService;
-        //    private readonly TLInputChannelBase _inputChannel;
-        //    private readonly TLChannel _channel;
-        //    //private readonly TLChannelParticipantsFilterBase _filter;
-
-        //    private long _minEventId = long.MaxValue;
-        //    private bool _hasMore;
-
-        //    public ItemsCollection(IMTProtoService protoService, TLChannel channel)
-        //    {
-        //        _protoService = protoService;
-        //        _inputChannel = channel.ToInputChannel();
-        //        _channel = channel;
-        //        //_filter = filter;
-        //        _hasMore = true;
-        //    }
-
-        //    public override async Task<IList<AdminLogEvent>> LoadDataAsync()
-        //    {
-        //        var maxId = Count > 0 ? _minEventId : 0;
-
-        //        var response = await _protoService.GetAdminLogAsync(_inputChannel, null, null, null, maxId, 0, 50);
-        //        if (response.IsSucceeded)
-        //        {
-        //            foreach (var item in response.Result.Events)
-        //            {
-        //                _minEventId = Math.Min(_minEventId, item.Id);
-        //            }
-
-        //            if (response.Result.Events.Count < 50)
-        //            {
-        //                _hasMore = false;
-        //            }
-
-        //            return response.Result.Events.Select(x => new AdminLogEvent { Channel = _channel, Event = x }).ToArray();
-        //        }
-
-        //        return new AdminLogEvent[0];
-        //    }
-
-        //    protected override bool GetHasMoreItems()
-        //    {
-        //        return _hasMore;
-        //    }
-        //}
-
     }
 }
