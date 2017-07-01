@@ -24,7 +24,7 @@ namespace Telegram
 
 				static INT64 ComputePublickKeyFingerprint(_In_::RSA* key);
 
-				static boolean SelectPublicKey(_In_ std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
+				static boolean GetDatacenterPublicKey(_In_ std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
 
 				static boolean IsGoodGaAndGb(_In_ BIGNUM* ga, _In_ BIGNUM* p);
 
@@ -48,8 +48,30 @@ namespace Telegram
 					return result != 0;
 				}
 
+				inline static ::RSA* GetRSAPublicKey(HString const& key)
+				{
+					UINT32 length;
+					auto buffer = key.GetRawBuffer(&length);
+					auto mbLength = WideCharToMultiByte(CP_UTF8, 0, buffer, length, nullptr, 0, nullptr, nullptr);
+					auto mbString = std::make_unique<char[]>(mbLength);
+					WideCharToMultiByte(CP_UTF8, 0, buffer, length, mbString.get(), mbLength, nullptr, nullptr);
+
+					Wrappers::BIO keyBio(BIO_new(BIO_s_mem()));
+					BIO_write(keyBio.Get(), mbString.get(), mbLength);
+
+					return PEM_read_bio_RSAPublicKey(keyBio.Get(), nullptr, nullptr, nullptr);
+				}
+
 			private:
 				static void WriteTLBigNum(_In_ BYTE* buffer, _In_ BIGNUM* number, UINT32 length);
+
+				inline static ::RSA* GetRSAPublicKey(std::string const& key)
+				{
+					Wrappers::BIO keyBio(BIO_new(BIO_s_mem()));
+					BIO_write(keyBio.Get(), key.c_str(), static_cast<int>(key.size()));
+
+					return PEM_read_bio_RSAPublicKey(keyBio.Get(), nullptr, nullptr, nullptr);
+				}
 
 				inline static int BN_primality_test(int *is_probably_prime, const BIGNUM *candidate, int checks, BN_CTX* ctx, int do_trial_division, BN_GENCB* cb)
 				{
@@ -97,14 +119,6 @@ namespace Telegram
 				inline static UINT64 Random(UINT64 max)
 				{
 					return static_cast<UINT64>(max * (rand() / (RAND_MAX + 1.0)));
-				}
-
-				inline static ::RSA* GetRSAPublicKey(std::string const& key)
-				{
-					Wrappers::BIO keyBio(BIO_new(BIO_s_mem()));
-					BIO_write(keyBio.Get(), key.c_str(), static_cast<int>(key.size()));
-
-					return PEM_read_bio_RSAPublicKey(keyBio.Get(), nullptr, nullptr, nullptr);
 				}
 			};
 

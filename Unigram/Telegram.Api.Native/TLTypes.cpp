@@ -1232,7 +1232,7 @@ HRESULT TLResPQ::HandleResponse(MessageContext const* messageContext, Connection
 {
 	HRESULT result;
 	auto datacenter = connection->GetDatacenter();
-	if (FAILED(result = datacenter->OnHandshakePQResponse(connection, this)))
+	if (FAILED(result = datacenter->OnHandshakePQResponse(connectionManager, connection, this)))
 	{
 		return datacenter->OnHandshakeError(result);
 	}

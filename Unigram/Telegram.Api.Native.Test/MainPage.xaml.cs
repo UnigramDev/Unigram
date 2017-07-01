@@ -105,7 +105,7 @@ namespace Telegram.Api.Native.Test
                     connectionManager.UserId = authorization.User.Id;
                     Debugger.Break();
 
-                    connectionManager.BoomBaby(null, out var xxx);
+                    //connectionManager.BoomBaby(null, out var xxx);
                 },
                 null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
             },
@@ -230,7 +230,7 @@ namespace Telegram.Api.Native.Test
                             }
                         },
                         // Should run on Download connection
-                        null, document.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload | RequestFlag.Immediate);
+                        null, document.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload );  // | RequestFlag.Immediate
                     }
                 },
                 null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);

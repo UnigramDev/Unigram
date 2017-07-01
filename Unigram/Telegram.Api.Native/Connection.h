@@ -49,7 +49,7 @@ namespace Telegram
 				None = 0,
 				ConnectionState = 0xF,
 				CurrentNeworkType = 0x70,
-				Ipv6 = 0x80,
+				IPv6 = 0x80,
 				CryptographyInitialized = 0x100,
 				TryingNextEndpoint = 0x200,
 				Closed = 0x400

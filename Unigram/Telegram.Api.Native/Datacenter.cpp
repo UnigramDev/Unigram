@@ -25,13 +25,13 @@ using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
 
 
-Datacenter::Datacenter(UINT32 id) :
+Datacenter::Datacenter(UINT32 id, boolean isCdn) :
 	m_id(id),
-	m_flags(DatacenterFlag::None),
+	m_flags(isCdn ? DatacenterFlag::CDN : DatacenterFlag::None),
 	m_currentIpv4EndpointIndex(0),
 	m_currentIpv4DownloadEndpointIndex(0),
-	m_currentIpv6EndpointIndex(0),
-	m_currentIpv6DownloadEndpointIndex(0)
+	m_currentIPv6EndpointIndex(0),
+	m_currentIPv6DownloadEndpointIndex(0)
 {
 }
 
@@ -194,7 +194,7 @@ void Datacenter::NextEndpoint(ConnectionType connectionType, boolean ipv6)
 	case ConnectionType::Upload:
 		if (ipv6)
 		{
-			m_currentIpv6EndpointIndex = (m_currentIpv6EndpointIndex + 1) % m_ipv6Endpoints.size();
+			m_currentIPv6EndpointIndex = (m_currentIPv6EndpointIndex + 1) % m_ipv6Endpoints.size();
 		}
 		else
 		{
@@ -204,7 +204,7 @@ void Datacenter::NextEndpoint(ConnectionType connectionType, boolean ipv6)
 	case ConnectionType::Download:
 		if (ipv6)
 		{
-			m_currentIpv6DownloadEndpointIndex = (m_currentIpv6DownloadEndpointIndex + 1) % m_ipv6DownloadEndpoints.size();
+			m_currentIPv6DownloadEndpointIndex = (m_currentIPv6DownloadEndpointIndex + 1) % m_ipv6DownloadEndpoints.size();
 		}
 		else
 		{
@@ -220,8 +220,8 @@ void Datacenter::ResetEndpoint()
 
 	m_currentIpv4EndpointIndex = 0;
 	m_currentIpv4DownloadEndpointIndex = 0;
-	m_currentIpv6EndpointIndex = 0;
-	m_currentIpv6DownloadEndpointIndex = 0;
+	m_currentIPv6EndpointIndex = 0;
+	m_currentIPv6DownloadEndpointIndex = 0;
 }
 
 void Datacenter::AddServerSalt(ServerSalt const& salt)
@@ -445,12 +445,25 @@ HRESULT Datacenter::BeginHandshake(boolean reconnect, boolean reset)
 		m_authenticationContext.reset();
 		m_flags &= ~DatacenterFlag::HandshakeState;
 	}
-	else if (static_cast<INT32>(m_flags) & 0xf)
+	else if (static_cast<INT32>(m_flags) & static_cast<INT32>(HandshakeState::Started))
 	{
-		return S_OK;
+		return S_FALSE;
 	}
 
 	HRESULT result;
+	if ((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN)
+	{
+		ComPtr<ConnectionManager> connectionManager;
+		ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
+
+		if (!connectionManager->HasCDNPublicKey(m_id))
+		{
+			ReturnIfFailed(result, connectionManager->UpdateCDNPublicKeys());
+
+			return S_FALSE;
+		}
+	}
+
 	ComPtr<Connection> genericConnection;
 	ReturnIfFailed(result, GetGenericConnection(true, genericConnection));
 
@@ -477,9 +490,13 @@ HRESULT Datacenter::ImportAuthorization()
 {
 	auto lock = LockCriticalSection();
 
-	if ((m_flags & DatacenterFlag::ImportingAuthorization) == DatacenterFlag::ImportingAuthorization)
+	if (static_cast<INT32>(m_flags) & static_cast<INT32>(AuthorizationState::Importing))
 	{
 		return S_FALSE;
+	}
+	else if ((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN)
+	{
+		return E_ILLEGAL_METHOD_CALL;
 	}
 
 	HRESULT result;
@@ -488,7 +505,7 @@ HRESULT Datacenter::ImportAuthorization()
 
 	auto authExportAuthorization = Make<Methods::TLAuthExportAuthorization>(m_id);
 
-	m_flags |= DatacenterFlag::ImportingAuthorization;
+	m_flags |= static_cast<DatacenterFlag>(AuthorizationState::Importing);
 
 	INT32 requestToken;
 	ComPtr<Datacenter> datacenter = this;
@@ -511,29 +528,27 @@ HRESULT Datacenter::ImportAuthorization()
 				{
 					auto lock = datacenter->LockCriticalSection();
 
-					datacenter->m_flags &= ~DatacenterFlag::ImportingAuthorization;
-
 					if (error == nullptr)
 					{
-						datacenter->m_flags |= DatacenterFlag::Authorized;
+						datacenter->m_flags |= static_cast<DatacenterFlag>(AuthorizationState::Authorized);
+						return connectionManager->OnDatacenterImportAuthorizationComplete(datacenter.Get());
 					}
 					else
 					{
+						datacenter->m_flags &= ~DatacenterFlag::AuthorizationState;
 						return S_OK;
 					}
 				}
-
-				return connectionManager->OnDatacenterImportAuthorizationComplete(datacenter.Get());
 			}).Get(), nullptr, datacenter->m_id, ConnectionType::Generic, RequestFlag::EnableUnauthorized | RequestFlag::Immediate, &requestToken);
 		}
 		else
 		{
-			datacenter->m_flags &= ~DatacenterFlag::ImportingAuthorization;
+			datacenter->m_flags &= ~DatacenterFlag::AuthorizationState;
 			return S_OK;
 		}
 	}).Get(), nullptr, DEFAULT_DATACENTER_ID, ConnectionType::Generic, RequestFlag::Immediate, &requestToken)))
 	{
-		m_flags &= ~DatacenterFlag::ImportingAuthorization;
+		m_flags &= ~DatacenterFlag::AuthorizationState;
 		return result;
 	}
 
@@ -593,7 +608,7 @@ HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ip
 	case ConnectionType::Upload:
 		if (ipv6)
 		{
-			currentEndpointIndex = m_currentIpv6EndpointIndex;
+			currentEndpointIndex = m_currentIPv6EndpointIndex;
 			endpoints = &m_ipv6Endpoints;
 		}
 		else
@@ -605,7 +620,7 @@ HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ip
 	case ConnectionType::Download:
 		if (ipv6)
 		{
-			currentEndpointIndex = m_currentIpv6DownloadEndpointIndex;
+			currentEndpointIndex = m_currentIPv6DownloadEndpointIndex;
 			endpoints = &m_ipv6DownloadEndpoints;
 		}
 		else
@@ -680,7 +695,7 @@ HRESULT Datacenter::OnConnectionClosed(Connection* connection)
 	return S_OK;
 }
 
-HRESULT Datacenter::OnHandshakePQResponse(Connection* connection, TLResPQ* response)
+HRESULT Datacenter::OnHandshakePQResponse(ConnectionManager* connectionManager, Connection* connection, TLResPQ* response)
 {
 	auto lock = LockCriticalSection();
 
@@ -695,15 +710,23 @@ HRESULT Datacenter::OnHandshakePQResponse(Connection* connection, TLResPQ* respo
 		return E_INVALIDARG;
 	}
 
+	/*if (!((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN && connectionManager->GetCDNPublicKey(m_id, response->GetServerPublicKeyFingerprints(), &serverPublicKey)) ||
+		  !DatacenterCryptography::GetDatacenterPublicKey(response->GetServerPublicKeyFingerprints(), &serverPublicKey))
+	{
+			return E_FAIL;
+	}*/
+
 	ServerPublicKey const* serverPublicKey;
-	if (!DatacenterCryptography::SelectPublicKey(response->GetServerPublicKeyFingerprints(), &serverPublicKey))
+	if (!(DatacenterCryptography::GetDatacenterPublicKey(response->GetServerPublicKeyFingerprints(), &serverPublicKey) || connectionManager->GetCDNPublicKey(m_id, response->GetServerPublicKeyFingerprints(), &serverPublicKey)))
 	{
 		return E_FAIL;
 	}
 
 	auto pq = response->GetPQ();
-	UINT64 pq64 = ((pq[0] & 0xffULL) << 56ULL) | ((pq[1] & 0xffULL) << 48ULL) | ((pq[2] & 0xffULL) << 40ULL) | ((pq[3] & 0xffULL) << 32ULL) |
-		((pq[4] & 0xffULL) << 24ULL) | ((pq[5] & 0xffULL) << 16ULL) | ((pq[6] & 0xffULL) << 8ULL) | ((pq[7] & 0xffULL));
+	UINT64 pq64 = (static_cast<UINT64>(pq[0]) << 56ULL) | (static_cast<UINT64>(pq[1]) << 48ULL) |
+		(static_cast<UINT64>(pq[2]) << 40ULL) | (static_cast<UINT64>(pq[3]) << 32ULL) |
+		(static_cast<UINT64>(pq[4]) << 24ULL) | (static_cast<UINT64>(pq[5]) << 16ULL) |
+		(static_cast<UINT64>(pq[6]) << 8ULL) | static_cast<UINT64>(pq[7]);
 
 	UINT32 p32;
 	UINT32 q32;
@@ -929,7 +952,7 @@ HRESULT Datacenter::OnHandshakeServerDHResponse(Connection* connection, TLServer
 		ZeroMemory(handshakeContext->AuthKey, 256 - authKeyNumLength);
 	}
 
-	handshakeContext->TimeDifference = serverTime - static_cast<INT32>(ConnectionManager::GetCurrentRealTime() / 1000);
+	handshakeContext->TimeDifference = serverTime - static_cast<INT32>(ConnectionManager::GetCurrentSystemTime() / 1000);
 	handshakeContext->Salt.ValidSince = serverTime - 5;
 	handshakeContext->Salt.ValidUntil = handshakeContext->Salt.ValidSince + 30 * 60;
 

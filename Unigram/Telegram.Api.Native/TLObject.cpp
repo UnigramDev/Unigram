@@ -25,13 +25,13 @@ std::unordered_map<UINT32, ComPtr<ITLObjectConstructorDelegate>>& TLObject::GetO
 HRESULT TLObject::GetObjectConstructor(UINT32 constructor, ComPtr<ITLObjectConstructorDelegate>& delegate)
 {
 	auto& objectConstructors = GetObjectConstructors();
-	auto objectConstructor = objectConstructors.find(constructor);
-	if (objectConstructor == objectConstructors.end())
+	auto objectConstructorIterator = objectConstructors.find(constructor);
+	if (objectConstructorIterator == objectConstructors.end())
 	{
 		return E_INVALIDARG;
 	}
 
-	delegate = objectConstructor->second;
+	delegate = objectConstructorIterator->second;
 	return S_OK;
 }
 
@@ -43,12 +43,13 @@ HRESULT TLObject::RegisterTLObjecConstructor(UINT32 constructor, ITLObjectConstr
 	}
 
 	auto& objectConstructors = GetObjectConstructors();
-	if (objectConstructors.find(constructor) != objectConstructors.end())
+	auto objectConstructorIterator = objectConstructors.find(constructor);
+	if (objectConstructorIterator != objectConstructors.end())
 	{
 		return PLA_E_NO_DUPLICATES;
 	}
 
-	objectConstructors[constructor] = delegate;
+	objectConstructors.insert(objectConstructorIterator, std::make_pair(constructor, delegate));
 	return S_OK;
 }
 

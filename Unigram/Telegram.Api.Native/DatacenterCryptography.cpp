@@ -131,7 +131,7 @@ INT64 DatacenterCryptography::ComputePublickKeyFingerprint(::RSA* key)
 		(static_cast<INT64>(sha1[13]) << 8LL) | static_cast<INT64>(sha1[12]);
 }
 
-boolean DatacenterCryptography::SelectPublicKey(std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey)
+boolean DatacenterCryptography::GetDatacenterPublicKey(std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey)
 {
 	struct ServerPublicKeys
 	{

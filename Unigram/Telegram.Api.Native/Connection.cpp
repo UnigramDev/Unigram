@@ -118,7 +118,7 @@ HRESULT Connection::Connect()
 	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
 
 	boolean ipv6;
-	ReturnIfFailed(result, connectionManager->get_IsIpv6Enabled(&ipv6));
+	ReturnIfFailed(result, connectionManager->get_IsIPv6Enabled(&ipv6));
 
 	return Connect(connectionManager, ipv6);
 }
@@ -181,7 +181,7 @@ HRESULT Connection::Connect(ComPtr<ConnectionManager> const& connectionManager, 
 
 	if (ipv6)
 	{
-		m_flags |= ConnectionFlag::Ipv6;
+		m_flags |= ConnectionFlag::IPv6;
 	}
 
 	m_flags = FLAGS_SET_CURRENTNETWORKTYPE(m_flags, currentNetworkType) | static_cast<ConnectionFlag>(ConnectionState::Connecting);
@@ -331,7 +331,7 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 	if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) < ConnectionState::Connecting)
 	{
 		boolean ipv6;
-		ReturnIfFailed(result, connectionManager->get_IsIpv6Enabled(&ipv6));
+		ReturnIfFailed(result, connectionManager->get_IsIPv6Enabled(&ipv6));
 
 		Connect(connectionManager, ipv6);
 	}
@@ -370,7 +370,7 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, boolean repor
 	if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) < ConnectionState::Connecting)
 	{
 		boolean ipv6;
-		ReturnIfFailed(result, connectionManager->get_IsIpv6Enabled(&ipv6));
+		ReturnIfFailed(result, connectionManager->get_IsIPv6Enabled(&ipv6));
 
 		Connect(connectionManager, ipv6);
 	}
@@ -485,7 +485,7 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 
 	if (connectionState == ConnectionState::Reconnecting)
 	{
-		return Connect(connectionManager, (m_flags & ConnectionFlag::Ipv6) == ConnectionFlag::Ipv6);
+		return Connect(connectionManager, (m_flags & ConnectionFlag::IPv6) == ConnectionFlag::IPv6);
 	}
 	else if (m_datacenter->IsHandshaking() || connectionManager->IsCurrentDatacenter(m_datacenter->GetId()))
 	{
@@ -500,12 +500,12 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 			{
 				m_flags |= ConnectionFlag::TryingNextEndpoint;
 				m_failedConnectionCount = 0;
-				m_datacenter->NextEndpoint(m_type, (m_flags & ConnectionFlag::Ipv6) == ConnectionFlag::Ipv6);
+				m_datacenter->NextEndpoint(m_type, (m_flags & ConnectionFlag::IPv6) == ConnectionFlag::IPv6);
 			}
 
 			m_reconnectionTimer = Make<Timer>([this, connectionManager]() -> void
 			{
-				Connect(connectionManager, (m_flags & ConnectionFlag::Ipv6) == ConnectionFlag::Ipv6);
+				Connect(connectionManager, (m_flags & ConnectionFlag::IPv6) == ConnectionFlag::IPv6);
 			});
 
 			ReturnIfFailed(result, connectionManager->AttachEventObject(m_reconnectionTimer.Get()));
