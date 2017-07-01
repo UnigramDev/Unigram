@@ -33,6 +33,7 @@ namespace Unigram.Selectors
         public DataTemplate ServiceMessageTemplate { get; set; }
         public DataTemplate ServiceMessagePhotoTemplate { get; set; }
         public DataTemplate ServiceMessageLocalTemplate { get; set; }
+        public DataTemplate ServiceMessageDateTemplate { get; set; }
 
         public MessageTemplateSelector()
         {
@@ -60,7 +61,7 @@ namespace Unigram.Selectors
             }
             else if (serviceMessage.Action is TLMessageActionDate)
             {
-                return ServiceMessageLocalTemplate;
+                return ServiceMessageDateTemplate;
             }
             else if (serviceMessage.Action is TLMessageActionUnreadMessages)
             {

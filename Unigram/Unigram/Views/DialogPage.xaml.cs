@@ -1210,6 +1210,24 @@ namespace Unigram.Views
                 ViewModel.MessageShareCommand.Execute(message);
             }
         }
+
+        private async void Date_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as FrameworkElement;
+            if (button.DataContext is TLMessageCommonBase message)
+            {
+                var dialog = new Controls.Views.CalendarView();
+                dialog.MaxDate = DateTimeOffset.Now.Date;
+                dialog.SelectedDates.Add(BindConvert.Current.DateTime(message.Date));
+
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
+                {
+                    var offset = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, dialog.SelectedDates.FirstOrDefault().Date);
+                    await ViewModel.LoadDateSliceAsync(offset);
+                }
+            }
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
