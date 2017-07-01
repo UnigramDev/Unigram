@@ -371,17 +371,22 @@ namespace Unigram.Controls.Items
         private bool IsOut(TLDialog dialog)
         {
             var topMessage = dialog.TopMessageItem as TLMessage;
-            if (topMessage != null /*&& topMessage.ShowFrom*/)
+            //if (topMessage != null /*&& topMessage.ShowFrom*/)
+            //{
+            //    var from = topMessage.FromId;
+            //    if (from != null)
+            //    {
+            //        int currentUserId = MTProtoService.Current.CurrentUserId;
+            //        if (currentUserId == from.Value)
+            //        {
+            //            return true;
+            //        }
+            //    }
+            //}
+
+            if (topMessage != null && topMessage.From is TLUser from && from.IsSelf)
             {
-                var from = topMessage.FromId;
-                if (from != null)
-                {
-                    int currentUserId = MTProtoService.Current.CurrentUserId;
-                    if (currentUserId == from.Value)
-                    {
-                        return true;
-                    }
-                }
+                return true;
             }
 
             return false;

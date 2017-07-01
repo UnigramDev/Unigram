@@ -58,6 +58,7 @@ namespace Unigram.ViewModels
                     if (user != null)
                     {
                         Self = user;
+                        SettingsHelper.UserId = user.Id;
                     }
                 }
             }

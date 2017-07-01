@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
 {
-    public class ChannelDetailsViewModel : ChannelParticipantsViewModelBase, IHandle<TLUpdateNotifySettings>
+    public class ChannelDetailsViewModel : ChannelParticipantsViewModelBase, IHandle<TLUpdateChannel>, IHandle<TLUpdateNotifySettings>
     {
         private readonly IUploadFileManager _uploadFileManager;
 
@@ -150,9 +150,24 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public void Handle(TLUpdateNotifySettings message)
+        public void Handle(TLUpdateChannel update)
         {
-            var notifyPeer = message.Peer as TLNotifyPeer;
+            if (_item == null)
+            {
+                return;
+            }
+
+            if (_item.Id == update.ChannelId)
+            {
+                RaisePropertyChanged(() => Item);
+                RaisePropertyChanged(() => Full);
+                RaisePropertyChanged(() => AreNotificationsEnabled);
+            }
+        }
+
+        public void Handle(TLUpdateNotifySettings update)
+        {
+            var notifyPeer = update.Peer as TLNotifyPeer;
             if (notifyPeer != null)
             {
                 var peer = notifyPeer.Peer;
@@ -160,7 +175,7 @@ namespace Unigram.ViewModels.Channels
                 {
                     Execute.BeginOnUIThread(() =>
                     {
-                        Full.NotifySettings = message.NotifySettings;
+                        Full.NotifySettings = update.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);
                         RaisePropertyChanged(() => AreNotificationsEnabled);
 
