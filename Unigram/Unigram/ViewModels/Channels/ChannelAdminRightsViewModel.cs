@@ -7,6 +7,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
@@ -25,19 +26,65 @@ namespace Unigram.ViewModels.Channels
             {
                 using (var from = new TLBinaryReader(buffer))
                 {
-                    var tuple = new TLTuple<TLPeerChannel, TLChannelParticipantAdmin>(from);
+                    var tuple = new TLTuple<TLPeerChannel, TLChannelParticipantBase>(from);
+                    if (tuple.Item2 is TLChannelParticipant participant)
+                    {
+                        IsAdminAlready = false;
+
+                        tuple.Item2 = new TLChannelParticipantAdmin
+                        {
+                            UserId = participant.UserId,
+                            Date = participant.Date,
+                            IsCanEdit = true,
+                            AdminRights = new TLChannelAdminRights
+                            {
+                                IsChangeInfo = true,
+                                IsPinMessages = true,
+                                IsInviteLink = true,
+                                IsInviteUsers = true,
+                                IsBanUsers = true,
+                                IsDeleteMessages = true,
+                                IsEditMessages = true,
+                                IsPostMessages = true,
+                                IsAddAdmins  = false
+                            }
+                        };
+                    }
+                    else if (tuple.Item2 is TLChannelParticipantBanned banned)
+                    {
+                        IsAdminAlready = false;
+
+                        tuple.Item2 = new TLChannelParticipantAdmin
+                        {
+                            UserId = banned.UserId,
+                            Date = banned.Date,
+                            IsCanEdit = true,
+                            AdminRights = new TLChannelAdminRights
+                            {
+                                IsChangeInfo = true,
+                                IsPinMessages = true,
+                                IsInviteLink = true,
+                                IsInviteUsers = true,
+                                IsBanUsers = true,
+                                IsDeleteMessages = true,
+                                IsEditMessages = true,
+                                IsPostMessages = true,
+                                IsAddAdmins = false
+                            }
+                        };
+                    }
 
                     Channel = CacheService.GetChat(tuple.Item1.ChannelId) as TLChannel;
-                    Item = tuple.Item2;
+                    Item = tuple.Item2 as TLChannelParticipantAdmin;
 
                     IsAddAdmins = _item.AdminRights.IsAddAdmins;
                     IsPinMessages = _item.AdminRights.IsPinMessages;
-                    //IsInviteLink = _item.AdminRights.IsInviteLink;
-                    //IsInviteUsers = _item.AdminRights.IsInviteUsers;
+                    IsInviteLink = _item.AdminRights.IsInviteLink;
+                    IsInviteUsers = _item.AdminRights.IsInviteUsers;
                     IsBanUsers = _item.AdminRights.IsBanUsers;
                     IsDeleteMessages = _item.AdminRights.IsDeleteMessages;
-                    //IsEditMessages = _item.AdminRights.IsEditMessages;
-                    //IsPostMessages = _item.AdminRights.IsPostMessages;
+                    IsEditMessages = _item.AdminRights.IsEditMessages;
+                    IsPostMessages = _item.AdminRights.IsPostMessages;
                     IsChangeInfo = _item.AdminRights.IsChangeInfo;
                 }
             }
@@ -68,6 +115,19 @@ namespace Unigram.ViewModels.Channels
             set
             {
                 Set(ref _item, value);
+            }
+        }
+
+        private bool _isAdminAlready = true;
+        public bool IsAdminAlready
+        {
+            get
+            {
+                return _isAdminAlready;
+            }
+            set
+            {
+                Set(ref _isAdminAlready, value);
             }
         }
 
@@ -148,6 +208,8 @@ namespace Unigram.ViewModels.Channels
             set
             {
                 Set(ref _isInviteUsers, value);
+
+                _isInviteLink = value;
             }
         }
 
@@ -191,5 +253,42 @@ namespace Unigram.ViewModels.Channels
         }
 
         #endregion
+
+        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        private async void SendExecute()
+        {
+            var rights = new TLChannelAdminRights
+            {
+                IsChangeInfo = _isChangeInfo,
+                IsPostMessages = _isPostMessages,
+                IsEditMessages = _isEditMessages,
+                IsDeleteMessages = _isDeleteMessages,
+                IsBanUsers = _isBanUsers,
+                IsInviteUsers = _isInviteUsers,
+                IsInviteLink = _isInviteLink,
+                IsPinMessages = _isPinnedMessages,
+                IsAddAdmins = _isAddAdmins
+            };
+
+            var response = await ProtoService.EditAdminAsync(_channel, _item.User.ToInputUser(), rights);
+            if (response.IsSucceeded)
+            {
+                NavigationService.GoBack();
+                NavigationService.Frame.ForwardStack.Clear();
+            }
+        }
+
+        public RelayCommand DismissCommand => new RelayCommand(DismissExecute);
+        private async void DismissExecute()
+        {
+            var rights = new TLChannelAdminRights();
+
+            var response = await ProtoService.EditAdminAsync(_channel, _item.User.ToInputUser(), rights);
+            if (response.IsSucceeded)
+            {
+                NavigationService.GoBack();
+                NavigationService.Frame.ForwardStack.Clear();
+            }
+        }
     }
 }

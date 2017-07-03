@@ -310,17 +310,17 @@ namespace Unigram.Controls
 
         private async void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            if (args.VirtualKey == VirtualKey.Enter && args.EventType == CoreAcceleratorKeyEventType.KeyDown && FocusState != FocusState.Unfocused)
+            if ((args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.Tab) && args.EventType == CoreAcceleratorKeyEventType.KeyDown && FocusState != FocusState.Unfocused)
             {
                 // Check if CTRL or Shift is also pressed in addition to Enter key.
                 var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
-                var key = Window.Current.CoreWindow.GetKeyState(args.VirtualKey);
+                var key = Window.Current.CoreWindow.GetKeyState(VirtualKey.Enter);
 
                 if (UsernameHints != null && ViewModel.UsernameHints != null)
                 {
                     var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                    if (send)
+                    if (send || args.VirtualKey == VirtualKey.Tab)
                     {
                         AcceptsReturn = false;
                         var container = UsernameHints.ContainerFromIndex(Math.Max(0, UsernameHints.SelectedIndex)) as ListViewItem;
@@ -342,7 +342,7 @@ namespace Unigram.Controls
                 if (BotCommands != null && ViewModel.BotCommands != null)
                 {
                     var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                    if (send)
+                    if (send || args.VirtualKey == VirtualKey.Tab)
                     {
                         AcceptsReturn = false;
                         var container = BotCommands.ContainerFromIndex(Math.Max(0, BotCommands.SelectedIndex)) as ListViewItem;
@@ -460,6 +460,10 @@ namespace Unigram.Controls
 
                         e.Handled = true;
                     }
+                }
+                else if (e.Key == VirtualKey.Tab)
+                {
+                    e.Handled = true;
                 }
             }
             else if (e.Key == VirtualKey.Escape && ViewModel.Reply is TLMessagesContainter container && container.EditMessage != null)

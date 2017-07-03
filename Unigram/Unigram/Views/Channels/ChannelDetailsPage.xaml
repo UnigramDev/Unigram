@@ -10,6 +10,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <MenuFlyout x:Key="ParticipantMenuFlyout" Opening="MenuFlyout_Opening">
+            <MenuFlyoutItem Loaded="ParticipantEdit_Loaded" Command="{x:Bind ViewModel.ParticipantEditCommand}" CommandParameter="{Binding}" Text="Edit permissions"/>
+            <MenuFlyoutItem Loaded="ParticipantPromote_Loaded" Command="{x:Bind ViewModel.ParticipantPromoteCommand}" CommandParameter="{Binding}" Text="Promote"/>
+            <MenuFlyoutItem Loaded="ParticipantRestrict_Loaded" Command="{x:Bind ViewModel.ParticipantRestrictCommand}" CommandParameter="{Binding}" Text="Restrict"/>
+        </MenuFlyout>
+    </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -138,7 +146,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:TLChannelParticipantBase">
-                    <Grid Margin="0,6">
+                    <Grid Padding="0,6" Background="Transparent" ContextFlyout="{StaticResource ParticipantMenuFlyout}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>

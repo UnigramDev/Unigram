@@ -273,6 +273,50 @@ namespace Unigram.ViewModels.Channels
                 }
             }
         }
+
+        #region Context menu
+
+        public RelayCommand<TLChannelParticipantBase> ParticipantEditCommand => new RelayCommand<TLChannelParticipantBase>(ParticipantEditExecute);
+        private void ParticipantEditExecute(TLChannelParticipantBase participant)
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            if (participant is TLChannelParticipantAdmin)
+            {
+                NavigationService.Navigate(typeof(ChannelAdminRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+            }
+            else if (participant is TLChannelParticipantBanned)
+            {
+                NavigationService.Navigate(typeof(ChannelBannedRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+            }
+        }
+
+        public RelayCommand<TLChannelParticipantBase> ParticipantPromoteCommand => new RelayCommand<TLChannelParticipantBase>(ParticipantPromoteExecute);
+        private void ParticipantPromoteExecute(TLChannelParticipantBase participant)
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(ChannelAdminRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+        }
+
+        public RelayCommand<TLChannelParticipantBase> ParticipantRestrictCommand => new RelayCommand<TLChannelParticipantBase>(ParticipantRestrictExecute);
+        private void ParticipantRestrictExecute(TLChannelParticipantBase participant)
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(ChannelBannedRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+        }
+
+        #endregion
     }
 
     public class TLChannelParticipantBaseComparer : IComparer<TLChannelParticipantBase>

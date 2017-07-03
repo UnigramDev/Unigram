@@ -13,7 +13,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Text="Admin" Glyph="&#xE10B;"/>
+        <controls:ButtonPageHeader Text="Edit Admin" Glyph="&#xE10B;" CommandVisibility="{x:Bind ViewModel.Item.IsCanEdit, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
         <controls:ScrollViewerBackground 
             Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
@@ -52,6 +52,7 @@
                 </Grid>
 
                 <local:TableStackPanel x:Name="Group2"
+                                       Visibility="{x:Bind ViewModel.Channel.IsMegaGroup, Converter={StaticResource BooleanToVisibilityConverter}}"
                                        BorderThickness="0,0,0,1"
                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
@@ -64,18 +65,19 @@
                                   IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
                                   Header="Delete Messages"
                                   Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsBanUsers,Mode=TwoWay}"
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsBanUsers, Mode=TwoWay}"
                                   IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
                                   Header="Ban Users"
                                   Style="{ThemeResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsInviteUsers, Mode=TwoWay}"
                                   IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
+                                  Visibility="{x:Bind ViewModel.Channel.IsDemocracy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                                   Header="Add Users"
                                   Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsInviteLink, Mode=TwoWay}"
+                    <!--<ToggleSwitch IsOn="{x:Bind ViewModel.IsInviteLink, Mode=TwoWay}"
                                   IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
                                   Header="Invite Users Via Link"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
+                                  Style="{ThemeResource CheckButtonStyle}"/>-->
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsPinMessages, Mode=TwoWay}"
                                   IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
                                   Header="Pin Messages"
@@ -86,12 +88,42 @@
                                   Style="{ThemeResource CheckButtonStyle}"/>
                 </local:TableStackPanel>
 
+                <local:TableStackPanel x:Name="Group4"
+                                       Visibility="{x:Bind ViewModel.Channel.IsBroadcast, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                       BorderThickness="0,0,0,1"
+                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                       Margin="0,24,0,0">
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsChangeInfo, Mode=TwoWay}"
+                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
+                                  Header="Change Channel Info"
+                                  Style="{ThemeResource CheckButtonStyle}"/>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsDeleteMessages, Mode=TwoWay}"
+                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
+                                  Header="Post Messages"
+                                  Style="{ThemeResource CheckButtonStyle}"/>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsEditMessages, Mode=TwoWay}"
+                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
+                                  Header="Edit Messages"
+                                  Style="{ThemeResource CheckButtonStyle}"/>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsDeleteMessages, Mode=TwoWay}"
+                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
+                                  Header="Delete Messages"
+                                  Style="{ThemeResource CheckButtonStyle}"/>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsAddAdmins, Mode=TwoWay}"
+                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
+                                  Header="Add New Admins"
+                                  Style="{ThemeResource CheckButtonStyle}"/>
+                </local:TableStackPanel>
+
                 <local:TableStackPanel x:Name="Group3"
+                                       Visibility="{x:Bind ViewModel.IsAdminAlready, Converter={StaticResource BooleanToVisibilityConverter}}"
                                        BorderThickness="0,0,0,1"
                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                        Margin="0,24">
-                    <controls:HyperButton Content="Dismiss Admin"
+                    <controls:HyperButton Command="{x:Bind ViewModel.DismissCommand}"
+                                          Content="Dismiss Admin"
                                           Style="{StaticResource HyperButtonStyle}"
                                           Foreground="Red"/>
                 </local:TableStackPanel>

@@ -26,10 +26,52 @@ namespace Unigram.ViewModels.Channels
             {
                 using (var from = new TLBinaryReader(buffer))
                 {
-                    var tuple = new TLTuple<TLPeerChannel, TLChannelParticipantBanned>(from);
+                    var tuple = new TLTuple<TLPeerChannel, TLChannelParticipantBase>(from);
+                    if (tuple.Item2 is TLChannelParticipant participant)
+                    {
+                        IsBannedAlready = false;
+
+                        tuple.Item2 = new TLChannelParticipantBanned
+                        {
+                            UserId = participant.UserId,
+                            Date = participant.Date,
+                            BannedRights = new TLChannelBannedRights
+                            {
+                                IsViewMessages = true,
+                                IsSendMessages = false,
+                                IsSendMedia = false,
+                                IsSendStickers = false,
+                                IsSendGifs = false,
+                                IsSendGames = false,
+                                IsSendInline = false,
+                                IsEmbedLinks = false
+                            }
+                        };
+                    }
+                    else if (tuple.Item2 is TLChannelParticipantAdmin admin)
+                    {
+                        IsBannedAlready = false;
+
+                        tuple.Item2 = new TLChannelParticipantBanned
+                        {
+                            UserId = admin.UserId,
+                            Date = admin.Date,
+                            BannedRights = new TLChannelBannedRights
+                            {
+                                IsViewMessages = true,
+                                IsSendMessages = false,
+                                IsSendMedia = false,
+                                IsSendStickers = false,
+                                IsSendGifs = false,
+                                IsSendGames = false,
+                                IsSendInline = false,
+                                IsEmbedLinks = false
+                            }
+                        };
+                    }
 
                     Channel = CacheService.GetChat(tuple.Item1.ChannelId) as TLChannel;
-                    Item = tuple.Item2;
+                    Item = tuple.Item2 as TLChannelParticipantBanned;
 
                     IsEmbedLinks = _item.BannedRights.IsEmbedLinks;
                     IsSendInline = _item.BannedRights.IsSendInline;
@@ -68,6 +110,19 @@ namespace Unigram.ViewModels.Channels
             set
             {
                 Set(ref _item, value);
+            }
+        }
+
+        private bool _isBannedAlready = true;
+        public bool IsBannedAlready
+        {
+            get
+            {
+                return _isBannedAlready;
+            }
+            set
+            {
+                Set(ref _isBannedAlready, value);
             }
         }
 
@@ -235,7 +290,7 @@ namespace Unigram.ViewModels.Channels
         {
             var rights = new TLChannelBannedRights
             {
-                IsViewMessages =_isViewMessages,
+                IsViewMessages = _isViewMessages,
                 IsSendMessages = _isViewMessages,
                 IsSendMedia = _isSendMedia,
                 IsSendStickers = _isSendStickers,
@@ -244,6 +299,19 @@ namespace Unigram.ViewModels.Channels
                 IsSendInline = _isSendInline,
                 IsEmbedLinks = _isEmbedLinks
             };
+
+            var response = await ProtoService.EditBannedAsync(_channel, _item.User.ToInputUser(), rights);
+            if (response.IsSucceeded)
+            {
+                NavigationService.GoBack();
+                NavigationService.Frame.ForwardStack.Clear();
+            }
+        }
+
+        public RelayCommand DismissCommand => new RelayCommand(DismissExecute);
+        private async void DismissExecute()
+        {
+            var rights = new TLChannelBannedRights();
 
             var response = await ProtoService.EditBannedAsync(_channel, _item.User.ToInputUser(), rights);
             if (response.IsSucceeded)
