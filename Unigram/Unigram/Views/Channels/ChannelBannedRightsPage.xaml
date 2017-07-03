@@ -89,7 +89,7 @@
                                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                        Margin="0,24">
                     <controls:HyperButton Command="{x:Bind ViewModel.DismissCommand}"
-                                          Content="Dismiss Admin"
+                                          Content="Ban User"
                                           Style="{StaticResource HyperButtonStyle}"
                                           Foreground="Red"/>
                 </local:TableStackPanel>
