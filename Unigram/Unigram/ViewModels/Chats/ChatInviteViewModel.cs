@@ -35,7 +35,7 @@ namespace Unigram.ViewModels.Chats
         {
             get
             {
-                return _item != null && ((_item is TLChannel channel && channel.IsCreator) || (_item is TLChat chat && chat.IsCreator));
+                return _item != null && ((_item is TLChannel channel && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsInviteLink))) || (_item is TLChat chat && chat.IsCreator));
             }
         }
 

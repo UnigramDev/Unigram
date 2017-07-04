@@ -337,14 +337,14 @@ namespace Unigram.Controls.Messages
             {
                 constraint = invoiceMedia.Photo;
             }
-            else if (ViewModel?.Media is TLMessageMediaWebPage webPageMedia)
-            {
-                if (webPageMedia.WebPage is TLWebPage webPage && MediaTemplateSelector.IsWebPagePhotoTemplate(webPage))
-                {
-                    sumWidth = 8 + 10 + 10;
-                    constraint = webPage.Photo;
-                }
-            }
+            //else if (ViewModel?.Media is TLMessageMediaWebPage webPageMedia)
+            //{
+            //    if (webPageMedia.WebPage is TLWebPage webPage && MediaTemplateSelector.IsWebPagePhotoTemplate(webPage))
+            //    {
+            //        sumWidth = 8 + 10 + 10;
+            //        constraint = webPage.Photo;
+            //    }
+            //}
             else if (ViewModel?.Media is TLMessageMediaGeo || ViewModel?.Media is TLMessageMediaVenue)
             {
                 constraint = ViewModel?.Media;
@@ -465,15 +465,15 @@ namespace Unigram.Controls.Messages
                     return true;
                 }
             }
-            else if (media.TypeId == TLType.MessageMediaWebPage && width)
-            {
-                var webPageMedia = media as TLMessageMediaWebPage;
-                var webPage = webPageMedia.WebPage as TLWebPage;
-                if (webPage != null && MediaTemplateSelector.IsWebPagePhotoTemplate(webPage))
-                {
-                    return true;
-                }
-            }
+            //else if (media.TypeId == TLType.MessageMediaWebPage && width)
+            //{
+            //    var webPageMedia = media as TLMessageMediaWebPage;
+            //    var webPage = webPageMedia.WebPage as TLWebPage;
+            //    if (webPage != null && MediaTemplateSelector.IsWebPagePhotoTemplate(webPage))
+            //    {
+            //        return true;
+            //    }
+            //}
 
             return false;
         }

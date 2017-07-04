@@ -111,6 +111,7 @@
 
                         <controls:HyperButton Content="Add members"
                                               Command="{x:Bind ViewModel.InviteCommand}"
+                                              Visibility="{x:Bind ViewModel.IsInviteUsers, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               Style="{StaticResource HyperButtonStyle}"
                                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
                     </local:TableStackPanel>

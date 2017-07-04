@@ -234,6 +234,10 @@ namespace Unigram.Controls.Items
                                 {
                                     result = $"{user.Username.Trim()}: ";
                                 }
+                                else if (user.IsDeleted)
+                                {
+                                    return $"Deleted Account: ";
+                                }
                                 else
                                 {
                                     result = $"{user.Id}: ";

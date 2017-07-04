@@ -104,6 +104,14 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
+        public bool IsInviteUsers
+        {
+            get
+            {
+                return _item != null && (_item.IsCreator || (_item.HasAdminRights && _item.AdminRights.IsInviteUsers));
+            }
+        }
+
         public bool AreNotificationsEnabled
         {
             get
@@ -162,6 +170,9 @@ namespace Unigram.ViewModels.Channels
                 RaisePropertyChanged(() => Item);
                 RaisePropertyChanged(() => Full);
                 RaisePropertyChanged(() => AreNotificationsEnabled);
+
+                RaisePropertyChanged(() => IsInviteUsers);
+                RaisePropertyChanged(() => IsEditEnabled);
             }
         }
 

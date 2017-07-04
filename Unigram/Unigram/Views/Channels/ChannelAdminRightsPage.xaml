@@ -104,11 +104,16 @@
                                   Style="{ThemeResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsEditMessages, Mode=TwoWay}"
                                   IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Header="Edit Messages"
+                                  Header="Edit Messages of Others"
                                   Style="{ThemeResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsDeleteMessages, Mode=TwoWay}"
                                   IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Header="Delete Messages"
+                                  Header="Delete Messages of Others"
+                                  Style="{ThemeResource CheckButtonStyle}"/>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsInviteUsers, Mode=TwoWay}"
+                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
+                                  Visibility="{x:Bind ViewModel.Channel.IsDemocracy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                  Header="Add Users"
                                   Style="{ThemeResource CheckButtonStyle}"/>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsAddAdmins, Mode=TwoWay}"
                                   IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
