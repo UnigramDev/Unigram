@@ -69,14 +69,16 @@ namespace Telegram.Api.Native.Test
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            ConnectionManager.Instance.SendRequest(new TLHelpInviteText(), (message5, ex5) =>
-            {
-                Debugger.Break();
-            },
-            // Should run on Download connection
-            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.EnableUnauthorized);
+            ConnectionManager.Instance.BoomBaby(null, out var xxx);
 
-            GC.Collect();
+            //ConnectionManager.Instance.SendRequest(new TLHelpInviteText(), (message5, ex5) =>
+            //{
+            //    Debugger.Break();
+            //},
+            //// Should run on Download connection
+            //null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.EnableUnauthorized);
+
+            //GC.Collect();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -298,7 +300,7 @@ namespace Telegram.Api.Native.Test
                         }
                     },
                     // Should run on Download connection
-                    null, document.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload | RequestFlag.Immediate);
+                    null, document.DCId, ConnectionType.Download, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload | RequestFlag.Immediate);
                 },
                 null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
             },

@@ -1,5 +1,6 @@
 #pragma once
 #include "ThreadpoolManager.h"
+#include "MultithreadObject.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Microsoft::WRL;
@@ -19,7 +20,8 @@ namespace Telegram
 
 			}
 
-			class EventObject abstract : public virtual MultiThreadObject
+			
+			class EventObject abstract : public ThreadpoolObject, public virtual MultiThreadObject
 			{
 				friend class ThreadpoolManager;
 				friend struct EventTraits::TimerTraits;
@@ -28,11 +30,8 @@ namespace Telegram
 
 			protected:
 				virtual HRESULT AttachToThreadpool(_In_ ThreadpoolManager* threadpoolManager) = 0;
-				virtual HRESULT DetachFromThreadpool(boolean waitCallback) = 0;
+				virtual HRESULT DetachFromThreadpool(bool waitCallback) = 0;
 				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _In_ ULONG_PTR param) = 0;
-
-			private:
-				virtual void OnGroupCancel() = 0;
 			};
 
 
@@ -44,7 +43,7 @@ namespace Telegram
 				public:
 					typedef PTP_TIMER Handle;
 
-					inline static Handle Create(_In_ EventObject* eventObject, _In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) throw()
+					inline static Handle Create(_In_ ThreadpoolObject* eventObject, _In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) throw()
 					{
 						return ::CreateThreadpoolTimer(TimerTraits::EventCallback, eventObject, threadpoolEnvironment);
 					}
@@ -67,7 +66,7 @@ namespace Telegram
 				private:
 					static void NTAPI EventCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ Handle work)
 					{
-						reinterpret_cast<EventObject*>(context)->OnEvent(instance, NULL);
+						static_cast<EventObject*>(reinterpret_cast<ThreadpoolObject*>(context))->OnEvent(instance, NULL);
 					}
 				};
 
@@ -76,7 +75,7 @@ namespace Telegram
 				public:
 					typedef PTP_WAIT Handle;
 
-					inline static Handle Create(_In_ EventObject* eventObject, _In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) throw()
+					inline static Handle Create(_In_ ThreadpoolObject* eventObject, _In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) throw()
 					{
 						return ::CreateThreadpoolWait(WaitTraits::EventCallback, eventObject, threadpoolEnvironment);
 					}
@@ -99,7 +98,7 @@ namespace Telegram
 				private:
 					static void NTAPI EventCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ Handle wait, _In_ TP_WAIT_RESULT waitResult)
 					{
-						reinterpret_cast<EventObject*>(context)->OnEvent(instance, waitResult);
+						static_cast<EventObject*>(reinterpret_cast<ThreadpoolObject*>(context))->OnEvent(instance, waitResult);
 					}
 				};
 
@@ -108,7 +107,7 @@ namespace Telegram
 				public:
 					typedef PTP_WORK Handle;
 
-					inline static Handle Create(_In_ EventObject* eventObject, _In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) throw()
+					inline static Handle Create(_In_ ThreadpoolObject* eventObject, _In_ PTP_CALLBACK_ENVIRON threadpoolEnvironment) throw()
 					{
 						return ::CreateThreadpoolWork(WorkerTraits::EventCallback, eventObject, threadpoolEnvironment);
 					}
@@ -131,7 +130,7 @@ namespace Telegram
 				private:
 					static void NTAPI EventCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ Handle work)
 					{
-						reinterpret_cast<EventObject*>(context)->OnEvent(instance, NULL);
+						static_cast<EventObject*>(reinterpret_cast<ThreadpoolObject*>(context))->OnEvent(instance, NULL);
 					}
 				};
 
@@ -155,7 +154,7 @@ namespace Telegram
 				}
 
 			protected:
-				inline boolean IsAttached()
+				inline bool IsAttached()
 				{
 					return m_handle != nullptr;
 				}
@@ -165,7 +164,7 @@ namespace Telegram
 					return m_handle;
 				}
 
-				inline HRESULT WaitForThreadpoolCallback(boolean cancelPendingCallbacks)
+				inline HRESULT WaitForThreadpoolCallback(bool cancelPendingCallbacks)
 				{
 					if (m_handle == nullptr)
 					{
@@ -176,7 +175,7 @@ namespace Telegram
 					return S_OK;
 				}
 
-				inline HRESULT ResetThreadpoolObject(boolean waitCallback)
+				inline HRESULT ResetThreadpoolObject(bool waitCallback)
 				{
 					if (m_handle == nullptr)
 					{
@@ -212,7 +211,7 @@ namespace Telegram
 					return S_OK;
 				}
 
-				virtual HRESULT DetachFromThreadpool(boolean waitCallback) override final
+				virtual HRESULT DetachFromThreadpool(bool waitCallback) override final
 				{
 					if (m_handle == nullptr)
 					{

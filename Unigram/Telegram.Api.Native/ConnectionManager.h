@@ -6,7 +6,7 @@
 #include <list>
 #include <wrl.h>
 #include <Windows.Networking.Connectivity.h>
-#include "ThreadpoolObject.h"
+#include "EventObject.h"
 #include "DatacenterServer.h"
 #include "Telegram.Api.Native.h"
 
@@ -137,7 +137,7 @@ namespace Telegram
 					return m_settingsFolderPath;
 				}
 
-				inline boolean IsNetworkAvailable()
+				inline bool IsNetworkAvailable()
 				{
 					auto lock = LockCriticalSection();
 					return static_cast<ConnectionNeworkType>(m_flags & ConnectionManagerFlag::NetworkType) != ConnectionNeworkType::None;
@@ -153,25 +153,26 @@ namespace Telegram
 					return ((static_cast<UINT64>(time.dwHighDateTime) << 32) | static_cast<UINT64>(time.dwLowDateTime)) / 1000000ULL;
 				}
 
-				/*inline static UINT64 GetCurrentMonotonicTime()
+				inline static UINT64 GetCurrentMonotonicTime()
 				{
 					return GetTickCount64();
-				}*/
+				}
 
 			private:
 				HRESULT InitializeDatacenters();
 				HRESULT InitializeSettings();
-				HRESULT UpdateNetworkStatus(boolean raiseEvent);
+				HRESULT UpdateNetworkStatus(bool raiseEvent);
 				HRESULT MoveToDatacenter(INT32 datacenterId);
 				HRESULT UpdateCDNPublicKeys();
-				HRESULT CreateTransportMessage(_In_ MessageRequest* request, _Inout_ INT64& lastRpcMessageId, _Inout_ boolean& requiresLayer, _Out_ TL::TLMessage** message);
+				HRESULT CreateTransportMessage(_In_ MessageRequest* request, _Inout_ INT64& lastRpcMessageId, _Inout_ bool& requiresLayer, _Out_ TL::TLMessage** message);
 				HRESULT ProcessRequests();
 				HRESULT ProcessRequestsForDatacenter(_In_ Datacenter* datacenter, ConnectionType connectionType);
 				HRESULT ProcessRequest(_In_ MessageRequest* request, INT32 currentTime, _In_ std::map<UINT32, DatacenterRequestContext>& datacentersContexts);
 				HRESULT ProcessRequests(_In_ std::map<UINT32, DatacenterRequestContext>& datacentersContexts);
 				HRESULT ProcessDatacenterRequests(_In_ DatacenterRequestContext const& datacenterContext);
+				HRESULT ProcessConnectionRequest(_In_ Connection* connection, _In_ MessageRequest* request);
 				void ResetRequests(_In_ std::map<UINT32, DatacenterRequestContext> const& datacentersContexts);
-				void ResetRequests(std::function<boolean(INT32, ComPtr<MessageRequest> const&)> selector, boolean resetStartTime);
+				void ResetRequests(std::function<bool(INT32, ComPtr<MessageRequest> const&)> selector, bool resetStartTime);
 				HRESULT CompleteMessageRequest(INT64 requestMessageId, _In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
 				HRESULT HandleRequestError(_In_ Datacenter* datacenter, _In_ MessageRequest* request, INT32 code, _In_ HString const& text);
 				HRESULT OnUnprocessedMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
@@ -184,18 +185,19 @@ namespace Telegram
 				HRESULT OnDatacenterBadServerSalt(_In_ Datacenter* datacenter, INT64 requestMessageId, INT64 responseMessageId);
 				HRESULT OnDatacenterBadMessage(_In_ Datacenter* datacenter, INT64 requestMessageId, INT64 responseMessageId);
 				HRESULT OnConnectionSessionCreated(_In_ Connection* connection, INT64 firstMessageId);
-				boolean GetDatacenterById(UINT32 id, _Out_ ComPtr<Datacenter>& datacenter);
-				boolean GetRequestByMessageId(INT64 messageId, _Out_ ComPtr<MessageRequest>& request);
-				boolean GetCDNPublicKey(INT32 datacenterId, _In_ std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
+				bool GetDatacenterById(UINT32 id, _Out_ ComPtr<Datacenter>& datacenter);
+				bool GetRequestByMessageId(INT64 messageId, _Out_ ComPtr<MessageRequest>& request);
+				bool GetCDNPublicKey(INT32 datacenterId, _In_ std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
+				void AdjustCurrentTime(INT64 messageId);
 				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _In_ ULONG_PTR param) override;
 
-				inline boolean IsCurrentDatacenter(INT32 datacenterId)
+				inline bool IsCurrentDatacenter(INT32 datacenterId)
 				{
 					auto lock = LockCriticalSection();
 					return datacenterId == m_currentDatacenterId || datacenterId == m_movingToDatacenterId;
 				}
 
-				inline boolean HasCDNPublicKey(INT32 datacenterId)
+				inline bool HasCDNPublicKey(INT32 datacenterId)
 				{
 					auto lock = LockCriticalSection();
 					return m_cdnPublicKeys.find(datacenterId) != m_cdnPublicKeys.end();

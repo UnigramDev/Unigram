@@ -12,6 +12,14 @@ namespace Telegram
 		namespace Native
 		{
 
+			class ThreadpoolObject abstract
+			{
+				friend class ThreadpoolManager;
+
+			protected:
+				virtual void OnGroupCancel() = 0;
+			};
+
 			class ThreadpoolManager abstract : public virtual MultiThreadObject
 			{
 				friend class EventObject;
@@ -23,12 +31,12 @@ namespace Telegram
 				~ThreadpoolManager();
 
 				HRESULT AttachEventObject(_In_ EventObject* object);
-				HRESULT DetachEventObject(_In_ EventObject* object, boolean waitCallback);
-				HRESULT SubmitWork(_In_ std::function<void()> work);
+				HRESULT DetachEventObject(_In_ EventObject* object, bool waitCallback);
+				HRESULT SubmitWork(_In_ std::function<void()> const& work);
 
 			protected:
 				HRESULT RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount);
-				void CloseAllObjects(boolean wait);
+				void CloseAllObjects(bool wait);
 
 				inline PTP_CALLBACK_ENVIRON GetEnvironment()
 				{
@@ -36,6 +44,29 @@ namespace Telegram
 				}
 
 			private:
+				class WorkContext : public ThreadpoolObject
+				{
+				public:
+					WorkContext(std::function<void()> const& work) :
+						m_work(work)
+					{
+					}
+
+					inline void Invoke()
+					{
+						m_work();
+					}
+
+				protected:
+					virtual void OnGroupCancel() override
+					{
+						delete this;
+					}
+
+				private:
+					const std::function<void()> m_work;
+				};
+
 				static void NTAPI WorkCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ PTP_WORK work);
 				static void NTAPI GroupCancelCallback(_Inout_opt_ PVOID objectContext, _Inout_opt_ PVOID cleanupContext);
 

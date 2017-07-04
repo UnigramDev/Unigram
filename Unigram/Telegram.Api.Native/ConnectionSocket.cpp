@@ -43,7 +43,7 @@ HRESULT ConnectionSocket::Close()
 	return CloseSocket(NO_ERROR, SOCKET_CLOSE_NONE); // SOCKET_CLOSE_JOINTHREAD);
 }
 
-HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, ServerEndpoint const* endpoint, boolean ipv6)
+HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, ServerEndpoint const* endpoint, bool ipv6)
 {
 	if (m_socket != INVALID_SOCKET)
 	{
@@ -126,7 +126,7 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, Se
 	return S_OK;
 }
 
-HRESULT ConnectionSocket::DisconnectSocket(boolean immediate)
+HRESULT ConnectionSocket::DisconnectSocket(bool immediate)
 {
 	if (immediate)
 	{

@@ -118,7 +118,7 @@ namespace Telegram
 						return m_capacity - m_position;
 					}
 
-					inline boolean HasUnconsumedBuffer() const
+					inline bool HasUnconsumedBuffer() const
 					{
 						return m_position < m_capacity;
 					}

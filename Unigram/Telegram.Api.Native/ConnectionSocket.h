@@ -4,8 +4,8 @@
 #include <string>
 #include <Winsock2.h>
 #include <wrl.h>
+#include "EventObject.h"
 #include "Wrappers\WSAEvent.h"
-#include "ThreadpoolObject.h"
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -29,8 +29,8 @@ namespace Telegram
 			protected:
 				void SetTimeout(UINT32 timeout);
 				HRESULT Close();		
-				HRESULT ConnectSocket(_In_ ConnectionManager* connectionManager, _In_ ServerEndpoint const* endpoint, boolean ipv6);
-				HRESULT DisconnectSocket(boolean immediate);
+				HRESULT ConnectSocket(_In_ ConnectionManager* connectionManager, _In_ ServerEndpoint const* endpoint, bool ipv6);
+				HRESULT DisconnectSocket(bool immediate);
 				HRESULT SendData(_In_reads_(length) BYTE const* buffer, UINT32 length);
 
 				virtual HRESULT OnSocketConnected() = 0;

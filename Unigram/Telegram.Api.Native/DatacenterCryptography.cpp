@@ -28,7 +28,7 @@ void DatacenterCryptography::WriteTLBigNum(BYTE* buffer, BIGNUM* number, UINT32 
 	}
 }
 
-boolean DatacenterCryptography::FactorizePQ(UINT64 pq, UINT32& p, UINT32& q)
+bool DatacenterCryptography::FactorizePQ(UINT64 pq, UINT32& p, UINT32& q)
 {
 	UINT32 it = 0;
 	UINT64 g = 0;
@@ -131,7 +131,7 @@ INT64 DatacenterCryptography::ComputePublickKeyFingerprint(::RSA* key)
 		(static_cast<INT64>(sha1[13]) << 8LL) | static_cast<INT64>(sha1[12]);
 }
 
-boolean DatacenterCryptography::GetDatacenterPublicKey(std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey)
+bool DatacenterCryptography::GetDatacenterPublicKey(std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey)
 {
 	struct ServerPublicKeys
 	{
@@ -199,7 +199,7 @@ boolean DatacenterCryptography::GetDatacenterPublicKey(std::vector<INT64> const&
 	return false;
 }
 
-boolean DatacenterCryptography::IsGoodGaAndGb(BIGNUM* ga, BIGNUM* p)
+bool DatacenterCryptography::IsGoodGaAndGb(BIGNUM* ga, BIGNUM* p)
 {
 	if (BN_num_bytes(ga) > 256 || BN_num_bits(ga) < 2048 - 64 || BN_cmp(p, ga) <= 0)
 	{
@@ -212,7 +212,7 @@ boolean DatacenterCryptography::IsGoodGaAndGb(BIGNUM* ga, BIGNUM* p)
 	return BN_num_bits(dif.Get()) >= 2048 - 64;
 }
 
-boolean DatacenterCryptography::IsGoodPrime(BIGNUM* p, UINT32 g)
+bool DatacenterCryptography::IsGoodPrime(BIGNUM* p, UINT32 g)
 {
 	if (g < 2 || g > 7 || BN_num_bits(p) != 2048)
 	{
@@ -239,7 +239,7 @@ boolean DatacenterCryptography::IsGoodPrime(BIGNUM* p, UINT32 g)
 		return false;
 	}
 
-	boolean result = true;
+	bool result = true;
 	switch (g)
 	{
 	case 2:

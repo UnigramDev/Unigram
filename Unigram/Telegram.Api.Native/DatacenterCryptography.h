@@ -20,24 +20,24 @@ namespace Telegram
 			class DatacenterCryptography
 			{
 			public:
-				static boolean FactorizePQ(UINT64 pq, UINT32& p, UINT32& q);
+				static bool FactorizePQ(UINT64 pq, UINT32& p, UINT32& q);
 
 				static INT64 ComputePublickKeyFingerprint(_In_::RSA* key);
 
-				static boolean GetDatacenterPublicKey(_In_ std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
+				static bool GetDatacenterPublicKey(_In_ std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
 
-				static boolean IsGoodGaAndGb(_In_ BIGNUM* ga, _In_ BIGNUM* p);
+				static bool IsGoodGaAndGb(_In_ BIGNUM* ga, _In_ BIGNUM* p);
 
-				static boolean IsGoodPrime(_In_ BIGNUM* p, UINT32 g);
+				static bool IsGoodPrime(_In_ BIGNUM* p, UINT32 g);
 
 				static BN_CTX* GetBNContext();
 
-				inline static boolean CheckNonces(_In_reads_(16) BYTE const* a, _In_reads_(16) BYTE const* b)
+				inline static bool CheckNonces(_In_reads_(16) BYTE const* a, _In_reads_(16) BYTE const* b)
 				{
 					return memcmp(a, b, 16) == 0;
 				}
 
-				inline static boolean CheckPrime(_In_ BIGNUM* p, _In_ BN_CTX* bnContext)
+				inline static bool CheckPrime(_In_ BIGNUM* p, _In_ BN_CTX* bnContext)
 				{
 					int result = 0;
 					if (!BN_primality_test(&result, p, BN_prime_checks, bnContext, 0, NULL))

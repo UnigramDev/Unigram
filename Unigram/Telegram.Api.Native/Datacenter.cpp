@@ -25,7 +25,7 @@ using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
 
 
-Datacenter::Datacenter(UINT32 id, boolean isCdn) :
+Datacenter::Datacenter(UINT32 id, bool isCdn) :
 	m_id(id),
 	m_flags(isCdn ? DatacenterFlag::CDN : DatacenterFlag::None),
 	m_currentIpv4EndpointIndex(0),
@@ -184,7 +184,7 @@ void Datacenter::GetSessionsIds(std::vector<INT64>& sessionIds)
 	}
 }
 
-void Datacenter::NextEndpoint(ConnectionType connectionType, boolean ipv6)
+void Datacenter::NextEndpoint(ConnectionType connectionType, bool ipv6)
 {
 	auto lock = LockCriticalSection();
 
@@ -261,7 +261,7 @@ void Datacenter::MergeServerSalts(ConnectionManager* connectionManager, std::vec
 	}
 }
 
-boolean Datacenter::ContainsServerSalt(INT64 salt)
+bool Datacenter::ContainsServerSalt(INT64 salt)
 {
 	for (auto& serverSalt : m_serverSalts)
 	{
@@ -317,7 +317,7 @@ void Datacenter::ClearServerSalts()
 	m_serverSalts.clear();
 }
 
-HRESULT Datacenter::AddEndpoint(ServerEndpoint const& endpoint, ConnectionType connectionType, boolean ipv6)
+HRESULT Datacenter::AddEndpoint(ServerEndpoint const& endpoint, ConnectionType connectionType, bool ipv6)
 {
 #if _DEBUG
 	ADDRINFOW* addressInfo;
@@ -347,7 +347,7 @@ HRESULT Datacenter::AddEndpoint(ServerEndpoint const& endpoint, ConnectionType c
 	return S_OK;
 }
 
-HRESULT Datacenter::ReplaceEndpoints(std::vector<ServerEndpoint> const& newEndpoints, ConnectionType connectionType, boolean ipv6)
+HRESULT Datacenter::ReplaceEndpoints(std::vector<ServerEndpoint> const& newEndpoints, ConnectionType connectionType, bool ipv6)
 {
 #if _DEBUG
 	for (size_t i = 0; i < newEndpoints.size(); i++)
@@ -436,7 +436,7 @@ HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, ComPtr<Con
 	return S_OK;
 }
 
-HRESULT Datacenter::BeginHandshake(boolean reconnect, boolean reset)
+HRESULT Datacenter::BeginHandshake(ConnectionManager* connectionManager, bool reconnect, bool reset)
 {
 	auto lock = LockCriticalSection();
 
@@ -453,9 +453,6 @@ HRESULT Datacenter::BeginHandshake(boolean reconnect, boolean reset)
 	HRESULT result;
 	if ((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN)
 	{
-		ComPtr<ConnectionManager> connectionManager;
-		ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
-
 		if (!connectionManager->HasCDNPublicKey(m_id))
 		{
 			ReturnIfFailed(result, connectionManager->UpdateCDNPublicKeys());
@@ -483,10 +480,10 @@ HRESULT Datacenter::BeginHandshake(boolean reconnect, boolean reset)
 	m_authenticationContext = std::move(handshakeContext);
 	m_flags |= static_cast<DatacenterFlag>(HandshakeState::Started);
 
-	return genericConnection->SendUnencryptedMessage(pqRequest.Get(), false);
+	return genericConnection->SendUnencryptedMessage(connectionManager, pqRequest.Get(), false);
 }
 
-HRESULT Datacenter::ImportAuthorization()
+HRESULT Datacenter::ImportAuthorization(_In_ ConnectionManager* connectionManager)
 {
 	auto lock = LockCriticalSection();
 
@@ -499,14 +496,11 @@ HRESULT Datacenter::ImportAuthorization()
 		return E_ILLEGAL_METHOD_CALL;
 	}
 
-	HRESULT result;
-	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
-
 	auto authExportAuthorization = Make<Methods::TLAuthExportAuthorization>(m_id);
 
 	m_flags |= static_cast<DatacenterFlag>(AuthorizationState::Importing);
 
+	HRESULT result;
 	INT32 requestToken;
 	ComPtr<Datacenter> datacenter = this;
 	if (FAILED(result = connectionManager->SendRequestWithFlags(authExportAuthorization.Get(),
@@ -555,7 +549,30 @@ HRESULT Datacenter::ImportAuthorization()
 	return S_OK;
 }
 
-HRESULT Datacenter::RequestFutureSalts(UINT32 count)
+HRESULT Datacenter::SendPing(_In_ ConnectionManager* connectionManager)
+{
+	HRESULT result;
+	ComPtr<Connection> genericConnection;
+	ReturnIfFailed(result, GetGenericConnection(true, genericConnection));
+
+	auto ping = Make<Methods::TLPing>(ConnectionManager::GetCurrentMonotonicTime());
+
+	INT32 requestToken;
+	return connectionManager->SendRequestWithFlags(ping.Get(), Callback<ISendRequestCompletedCallback>([connectionManager](IMessageResponse* response, IMessageError* error) -> HRESULT
+	{
+		if (error == nullptr)
+		{
+			auto pong = GetMessageResponseObject<TLPong>(response);
+			auto pindDelay = static_cast<UINT32>(ConnectionManager::GetCurrentMonotonicTime() - static_cast<UINT64>(pong->GetPingId()));
+
+			OutputDebugStringFormat(L"Pong after %dms\n", pindDelay);
+		}
+
+		return S_OK;
+	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::Immediate, &requestToken);
+}
+
+HRESULT Datacenter::RequestFutureSalts(ConnectionManager* connectionManager, UINT32 count)
 {
 	auto lock = LockCriticalSection();
 
@@ -564,14 +581,11 @@ HRESULT Datacenter::RequestFutureSalts(UINT32 count)
 		return S_OK;
 	}
 
-	HRESULT result;
-	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
-
 	auto getFutureSalts = Make<Methods::TLGetFutureSalts>(count);
 
 	m_flags |= DatacenterFlag::RequestingFutureSalts;
 
+	HRESULT result;
 	INT32 requestToken;
 	ComPtr<Datacenter> datacenter = this;
 	if (FAILED(result = connectionManager->SendRequestWithFlags(getFutureSalts.Get(),
@@ -584,7 +598,7 @@ HRESULT Datacenter::RequestFutureSalts(UINT32 count)
 		if (error == nullptr)
 		{
 			auto futureSalts = GetMessageResponseObject<TLFutureSalts>(response);
-			datacenter->MergeServerSalts(connectionManager.Get(), futureSalts->GetSalts());
+			datacenter->MergeServerSalts(connectionManager, futureSalts->GetSalts());
 		}
 
 		return S_OK;
@@ -597,7 +611,7 @@ HRESULT Datacenter::RequestFutureSalts(UINT32 count)
 	return S_OK;
 }
 
-HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ipv6, ServerEndpoint** endpoint)
+HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, bool ipv6, ServerEndpoint** endpoint)
 {
 	size_t currentEndpointIndex;
 	std::vector<ServerEndpoint>* endpoints;
@@ -616,6 +630,11 @@ HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ip
 			currentEndpointIndex = m_currentIpv4EndpointIndex;
 			endpoints = &m_ipv4Endpoints;
 		}
+
+		if (currentEndpointIndex >= endpoints->size())
+		{
+			return E_BOUNDS;
+		}
 		break;
 	case ConnectionType::Download:
 		if (ipv6)
@@ -628,21 +647,21 @@ HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, boolean ip
 			currentEndpointIndex = m_currentIpv4DownloadEndpointIndex;
 			endpoints = &m_ipv4DownloadEndpoints;
 		}
+
+		if (currentEndpointIndex >= endpoints->size())
+		{
+			return GetCurrentEndpoint(ConnectionType::Generic, ipv6, endpoint);
+		}
 		break;
 	default:
 		return E_INVALIDARG;
-	}
-
-	if (currentEndpointIndex >= endpoints->size())
-	{
-		return E_BOUNDS;
 	}
 
 	*endpoint = &(*endpoints)[currentEndpointIndex];
 	return S_OK;
 }
 
-HRESULT Datacenter::GetEndpointsForConnectionType(ConnectionType connectionType, boolean ipv6, std::vector<ServerEndpoint>** endpoints)
+HRESULT Datacenter::GetEndpointsForConnectionType(ConnectionType connectionType, bool ipv6, std::vector<ServerEndpoint>** endpoints)
 {
 	switch (connectionType)
 	{
@@ -777,10 +796,10 @@ HRESULT Datacenter::OnHandshakePQResponse(ConnectionManager* connectionManager, 
 		ZeroMemory(innerDataWriter->GetBuffer() + encryptedDataLength, 256 - encryptedDataLength);
 	}
 
-	return connection->SendUnencryptedMessage(dhParams.Get(), false);
+	return connection->SendUnencryptedMessage(connectionManager, dhParams.Get(), false);
 }
 
-HRESULT Datacenter::OnHandshakeServerDHResponse(Connection* connection, TLServerDHParamsOk* response)
+HRESULT Datacenter::OnHandshakeServerDHResponse(ConnectionManager* connectionManager, Connection* connection, TLServerDHParamsOk* response)
 {
 	auto lock = LockCriticalSection();
 
@@ -814,7 +833,7 @@ HRESULT Datacenter::OnHandshakeServerDHResponse(Connection* connection, TLServer
 	AES_set_decrypt_key(aesKeyAndIvBuffer, 32 * 8, &aesDecryptKey);
 	AES_ige_encrypt(innerDataReader->GetBuffer(), innerDataReader->GetBuffer(), innerDataReader->GetCapacity(), &aesDecryptKey, ivBuffer, AES_DECRYPT);
 
-	boolean hashVerified = false;
+	bool hashVerified = false;
 	for (UINT16 i = 0; i < 16; i++)
 	{
 		SHA1(innerDataReader->GetBuffer() + SHA_DIGEST_LENGTH, innerDataReader->GetCapacity() - i - SHA_DIGEST_LENGTH, aesKeyAndIvBuffer + 64);
@@ -962,7 +981,7 @@ HRESULT Datacenter::OnHandshakeServerDHResponse(Connection* connection, TLServer
 		handshakeContext->Salt.Salt |= (handshakeContext->NewNonce[i] ^ handshakeContext->ServerNonce[i]);
 	}
 
-	return connection->SendUnencryptedMessage(setClientDHParams.Get(), false);
+	return connection->SendUnencryptedMessage(connectionManager, setClientDHParams.Get(), false);
 }
 
 HRESULT Datacenter::OnHandshakeClientDHResponse(ConnectionManager* connectionManager, Connection* connection, TLDHGenOk* response)
@@ -1221,12 +1240,12 @@ void Datacenter::GenerateMessageKey(BYTE const* authKey, BYTE* messageKey, BYTE*
 #endif
 }
 
-HRESULT Datacenter::SendAckRequest(Connection* connection, INT64 messageId)
+HRESULT Datacenter::SendAckRequest(ConnectionManager* connectionManager, Connection* connection, INT64 messageId)
 {
 	auto msgsAck = Make<TLMsgsAck>();
 	msgsAck->GetMessagesIds().push_back(messageId);
 
-	return connection->SendUnencryptedMessage(msgsAck.Get(), false);
+	return connection->SendUnencryptedMessage(connectionManager, msgsAck.Get(), false);
 }
 
 //HRESULT Datacenter::GetConfigFileName(INT32 id, std::wstring& fileName)
@@ -1274,29 +1293,3 @@ HRESULT Datacenter::SendAckRequest(Connection* connection, INT64 messageId)
 //	fileName.resize(swprintf(&fileName[0], MAX_PATH, L"%s\\DC_%d.config", localPath.GetRawBuffer(nullptr), id));
 //	return S_OK;
 //}
-
-
-HRESULT Datacenter::SendPing()
-{
-	HRESULT result;
-	ComPtr<Connection> genericConnection;
-	ReturnIfFailed(result, GetGenericConnection(true, genericConnection));
-
-	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
-
-	//auto ping = Make<Methods::TLPing>(1);
-	//auto getFutureSalts = Make<Methods::TLGetFutureSalts>(5);
-
-	auto helpGetConfig = Make<Methods::TLHelpGetConfig>();
-
-	INT32 requestToken;
-	ReturnIfFailed(result, connectionManager->SendRequestWithFlags(helpGetConfig.Get(), Callback<ISendRequestCompletedCallback>([connectionManager](IMessageResponse* response, IMessageError* error) -> HRESULT
-	{
-		return connectionManager->m_unprocessedMessageReceivedEventSource.InvokeAll(connectionManager.Get(), response);
-	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::WithoutLogin | RequestFlag::CanCompress, &requestToken));
-
-	return connectionManager->ProcessRequestsForDatacenter(this, ConnectionType::Generic);
-
-	//return genericConnection->SendEncryptedMessage(invokeWithLayer.Get(), false, nullptr);
-}

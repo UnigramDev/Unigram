@@ -106,38 +106,39 @@ HRESULT Connection::Close()
 	ConnectionSocket::Close();
 	m_flags = ConnectionFlag::Closed;
 	m_datacenter.Reset();
-	m_reconnectionTimer.Reset();
+	//m_reconnectionTimer.Reset();
 
 	return S_OK;
 }
 
-HRESULT Connection::Connect()
-{
-	HRESULT result;
-	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
+//HRESULT Connection::Connect()
+//{
+//	HRESULT result;
+//	ComPtr<ConnectionManager> connectionManager;
+//	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
+//
+//	boolean ipv6;
+//	ReturnIfFailed(result, connectionManager->get_IsIPv6Enabled(&ipv6));
+//
+//	return Connect(connectionManager.Get(), ipv6);
+//}
 
-	boolean ipv6;
-	ReturnIfFailed(result, connectionManager->get_IsIPv6Enabled(&ipv6));
-
-	return Connect(connectionManager, ipv6);
-}
-
-HRESULT Connection::Connect(ComPtr<ConnectionManager> const& connectionManager, boolean ipv6)
+HRESULT Connection::Connect(ConnectionManager* connectionManager, bool ipv6)
 {
 	auto lock = LockCriticalSection();
 
 	if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) > ConnectionState::Disconnected)
 	{
-		return E_NOT_VALID_STATE;
+		return S_FALSE;
 	}
 
-	HRESULT result;
+	/*HRESULT result;
 	if (m_reconnectionTimer != nullptr)
 	{
 		ReturnIfFailed(result, m_reconnectionTimer->Stop());
-	}
+	}*/
 
+	HRESULT result;
 	if (!connectionManager->IsNetworkAvailable())
 	{
 		connectionManager->OnConnectionClosed(this);
@@ -174,7 +175,7 @@ HRESULT Connection::Connect(ComPtr<ConnectionManager> const& connectionManager, 
 		}
 	}
 
-	ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), endpoint, ipv6));
+	ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager, endpoint, ipv6));
 
 	ConnectionNeworkType currentNetworkType;
 	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&currentNetworkType));
@@ -197,7 +198,7 @@ HRESULT Connection::Reconnect()
 	return DisconnectSocket(true);
 }
 
-HRESULT Connection::CreateMessagePacket(UINT32 messageLength, boolean reportAck, ComPtr<TLBinaryWriter>& writer, BYTE** messageBuffer)
+HRESULT Connection::CreateMessagePacket(UINT32 messageLength, bool reportAck, ComPtr<TLBinaryWriter>& writer, BYTE** messageBuffer)
 {
 	UINT32 packetBufferLength = messageLength;
 	UINT32 packetLength = messageLength / 4;
@@ -271,17 +272,14 @@ HRESULT Connection::CreateMessagePacket(UINT32 messageLength, boolean reportAck,
 	return S_OK;
 }
 
-HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, ITLObject* messageBody, INT32* quickAckId)
+HRESULT Connection::SendEncryptedMessage(ConnectionManager* connectionManager, MessageContext const* messageContext, ITLObject* messageBody, INT32* quickAckId)
 {
-	if (messageContext == nullptr || messageBody == nullptr)
+	/*if (messageContext == nullptr || messageBody == nullptr)
 	{
 		return E_INVALIDARG;
-	}
+	}*/
 
 	HRESULT result;
-	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
-
 	UINT32 messageBodySize;
 	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(messageBody, &messageBodySize));
 
@@ -310,7 +308,7 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 	ComPtr<TLBinaryWriter> packetWriter;
 	ReturnIfFailed(result, CreateMessagePacket(encryptedMessageLength, quickAckId != nullptr, packetWriter, &packetBufferBytes));
 	ReturnIfFailed(result, packetWriter->SeekCurrent(24));
-	ReturnIfFailed(result, packetWriter->WriteInt64(m_datacenter->GetServerSalt(connectionManager.Get())));
+	ReturnIfFailed(result, packetWriter->WriteInt64(m_datacenter->GetServerSalt(connectionManager)));
 	ReturnIfFailed(result, packetWriter->WriteInt64(GetSessionId()));
 
 	ReturnIfFailed(result, packetWriter->WriteInt64(messageContext->Id));
@@ -332,24 +330,42 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 	{
 		boolean ipv6;
 		ReturnIfFailed(result, connectionManager->get_IsIPv6Enabled(&ipv6));
-
-		Connect(connectionManager, ipv6);
+		ReturnIfFailed(result, Connect(connectionManager, ipv6));
 	}
 
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
 }
 
-HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, boolean reportAck)
+HRESULT Connection::SendEncryptedMessageWithConfirmation(ConnectionManager* connectionManager, MessageContext const* messageContext, ITLObject* messageBody, INT32* quickAckId)
 {
-	if (messageBody == nullptr)
+	if (HasMessagesToConfirm())
+	{
+		HRESULT result;
+		ComPtr<TLMessage> transportMessages[2];
+		ReturnIfFailed(result, MakeAndInitialize<TLMessage>(&transportMessages[0], messageContext, messageBody));
+		ReturnIfFailed(result, CreateConfirmationMessage(connectionManager, &transportMessages[1]));
+
+		auto msgContainer = Make<TLMsgContainer>();
+		auto& messages = msgContainer->GetMessages();
+		messages.insert(messages.begin(), std::begin(transportMessages), std::end(transportMessages));
+
+		MessageContext containerMessageContext = { connectionManager->GenerateMessageId(), GenerateMessageSequenceNumber(false) };
+		return SendEncryptedMessage(connectionManager, &containerMessageContext, msgContainer.Get(), nullptr);
+	}
+	else
+	{
+		return SendEncryptedMessage(connectionManager, messageContext, messageBody, nullptr);
+	}
+}
+
+HRESULT Connection::SendUnencryptedMessage(ConnectionManager* connectionManager, ITLObject* messageBody, bool reportAck)
+{
+	/*if (messageBody == nullptr)
 	{
 		return E_INVALIDARG;
-	}
+	}*/
 
 	HRESULT result;
-	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
-
 	UINT32 messageBodySize;
 	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(messageBody, &messageBodySize));
 
@@ -371,14 +387,13 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, boolean repor
 	{
 		boolean ipv6;
 		ReturnIfFailed(result, connectionManager->get_IsIPv6Enabled(&ipv6));
-
-		Connect(connectionManager, ipv6);
+		ReturnIfFailed(result, Connect(connectionManager, ipv6));
 	}
 
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
 }
 
-HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, ITLObject* messageBody, ConnectionManager* connectionManager)
+HRESULT Connection::HandleMessageResponse(ConnectionManager* connectionManager, MessageContext const* messageContext, ITLObject* messageBody)
 {
 	HRESULT result;
 
@@ -397,7 +412,7 @@ HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, 
 				ComPtr<TLMessage> confirmationMessageBody;
 				ReturnIfFailed(result, ConnectionSession::CreateConfirmationMessage(connectionManager, &confirmationMessageBody));
 
-				return SendEncryptedMessage(confirmationMessageBody->GetMessageContext(), confirmationMessageBody.Get(), nullptr);
+				return SendEncryptedMessage(connectionManager, confirmationMessageBody->GetMessageContext(), confirmationMessageBody.Get(), nullptr);
 			}
 
 			return S_OK;
@@ -446,6 +461,58 @@ HRESULT Connection::OnNewSessionCreatedResponse(ConnectionManager* connectionMan
 	return connectionManager->OnConnectionSessionCreated(this, response->GetFirstMesssageId());
 }
 
+HRESULT Connection::OnMsgDetailedInfoResponse(ConnectionManager* connectionManager, TLMsgDetailedInfo* response)
+{
+	bool requestResend = false;
+
+	ComPtr<MessageRequest> request;
+	if (connectionManager->GetRequestByMessageId(response->GetMessageId(), request))
+	{
+		auto currentTime = static_cast<INT32>(ConnectionManager::GetCurrentSystemTime() / 1000);
+
+		if (currentTime - request->GetStartTime() >= 60)
+		{
+			request->SetStartTime(currentTime);
+			requestResend = true;
+		}
+		else
+		{
+			return S_OK;
+		}
+	}
+	else
+	{
+		requestResend = true;
+	}
+
+	if (requestResend)
+	{
+		MessageContext messageContext = { connectionManager->GenerateMessageId(), GenerateMessageSequenceNumber(true) };
+
+		auto resendReq = Make<TLMsgResendReq>();
+		resendReq->GetMessagesIds().push_back(response->GetAnswerMessageId());
+
+		return SendEncryptedMessageWithConfirmation(connectionManager, &messageContext, resendReq.Get(), nullptr);
+	}
+	else
+	{
+		auto lock = LockCriticalSection();
+
+		AddMessageToConfirm(response->GetAnswerMessageId());
+		return S_OK;
+	}
+}
+
+HRESULT Connection::OnMsgNewDetailedInfoResponse(ConnectionManager* connectionManager, TLMsgNewDetailedInfo* response)
+{
+	MessageContext messageContext = { connectionManager->GenerateMessageId(), GenerateMessageSequenceNumber(true) };
+
+	auto resendReq = Make<TLMsgResendReq>();
+	resendReq->GetMessagesIds().push_back(response->GetAnswerMessageId());
+
+	return SendEncryptedMessageWithConfirmation(connectionManager, &messageContext, resendReq.Get(), nullptr);
+}
+
 HRESULT Connection::OnSocketConnected()
 {
 	m_flags |= static_cast<ConnectionFlag>(ConnectionState::Connected);
@@ -467,7 +534,7 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 {
 	auto connectionState = static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState);
 	m_flags &= ~ConnectionFlag::ConnectionState;
-	m_reconnectionTimer.Reset();
+	//m_reconnectionTimer.Reset();
 	m_partialPacketBuffer.Reset();
 
 	HRESULT result;
@@ -485,7 +552,7 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 
 	if (connectionState == ConnectionState::Reconnecting)
 	{
-		return Connect(connectionManager, (m_flags & ConnectionFlag::IPv6) == ConnectionFlag::IPv6);
+		return Connect(connectionManager.Get(), (m_flags & ConnectionFlag::IPv6) == ConnectionFlag::IPv6);
 	}
 	else if (m_datacenter->IsHandshaking() || connectionManager->IsCurrentDatacenter(m_datacenter->GetId()))
 	{
@@ -503,7 +570,7 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 				m_datacenter->NextEndpoint(m_type, (m_flags & ConnectionFlag::IPv6) == ConnectionFlag::IPv6);
 			}
 
-			m_reconnectionTimer = Make<Timer>([this, connectionManager]() -> void
+			/*m_reconnectionTimer = Make<Timer>([this, connectionManager]() -> void
 			{
 				Connect(connectionManager, (m_flags & ConnectionFlag::IPv6) == ConnectionFlag::IPv6);
 			});
@@ -511,7 +578,7 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 			ReturnIfFailed(result, connectionManager->AttachEventObject(m_reconnectionTimer.Get()));
 			ReturnIfFailed(result, m_reconnectionTimer->SetTimeout(CONNECTION_RECONNECTION_TIMEOUT, false));
 
-			return m_reconnectionTimer->Start();
+			return m_reconnectionTimer->Start();*/
 		}
 	}
 
@@ -593,7 +660,7 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 			break;
 		}
 
-		if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH || FAILED(OnMessageReceived(connectionManager, packetReader.Get(), packetLength)))
+		if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH || FAILED(OnMessageReceived(connectionManager.Get(), packetReader.Get(), packetLength)))
 		{
 			return Reconnect();
 		}
@@ -633,7 +700,7 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 	return S_OK;
 }
 
-HRESULT Connection::OnMessageReceived(ComPtr<ConnectionManager> const& connectionManager, TLBinaryReader* messageReader, UINT32 messageLength)
+HRESULT Connection::OnMessageReceived(ConnectionManager* connectionManager, TLBinaryReader* messageReader, UINT32 messageLength)
 {
 	METHOD_DEBUG();
 
@@ -695,6 +762,6 @@ HRESULT Connection::OnMessageReceived(ComPtr<ConnectionManager> const& connectio
 	ComPtr<Connection> connection = this;
 	return connectionManager->SubmitWork([messageContext, messageObject, connection, connectionManager]()-> void
 	{
-		connection->HandleMessageResponse(&messageContext, messageObject.Get(), connectionManager.Get());
+		connection->HandleMessageResponse(connectionManager, &messageContext, messageObject.Get());
 	});
 }

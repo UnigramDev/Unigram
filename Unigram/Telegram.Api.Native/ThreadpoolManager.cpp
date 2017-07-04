@@ -1,7 +1,7 @@
 #include "pch.h"
 #include <memory>
 #include "ThreadpoolManager.h"
-#include "ThreadpoolObject.h"
+#include "EventObject.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
@@ -69,7 +69,7 @@ HRESULT ThreadpoolManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 	return S_OK;
 }
 
-void ThreadpoolManager::CloseAllObjects(boolean wait)
+void ThreadpoolManager::CloseAllObjects(bool wait)
 {
 	CloseThreadpoolCleanupGroupMembers(m_threadpoolCleanupGroup, wait, nullptr);
 }
@@ -84,7 +84,7 @@ HRESULT ThreadpoolManager::AttachEventObject(EventObject* object)
 	return object->AttachToThreadpool(this);
 }
 
-HRESULT ThreadpoolManager::DetachEventObject(EventObject* object, boolean waitCallback)
+HRESULT ThreadpoolManager::DetachEventObject(EventObject* object, bool waitCallback)
 {
 	if (object == nullptr)
 	{
@@ -94,9 +94,9 @@ HRESULT ThreadpoolManager::DetachEventObject(EventObject* object, boolean waitCa
 	return object->DetachFromThreadpool(waitCallback);
 }
 
-HRESULT ThreadpoolManager::SubmitWork(std::function<void()> workHandler)
+HRESULT ThreadpoolManager::SubmitWork(std::function<void()> const& workHandler)
 {
-	auto workContext = std::make_unique<std::function<void()>>(workHandler);
+	auto workContext = std::make_unique<WorkContext>(workHandler);
 	auto workHandle = CreateThreadpoolWork(ThreadpoolManager::WorkCallback, workContext.get(), &m_threadpoolEnvironment);
 	if (workHandle == nullptr)
 	{
@@ -111,13 +111,13 @@ HRESULT ThreadpoolManager::SubmitWork(std::function<void()> workHandler)
 
 void ThreadpoolManager::WorkCallback(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP_WORK work)
 {
-	auto workHandler = std::unique_ptr<std::function<void()>>(reinterpret_cast<std::function<void()>*>(context));
-	(*workHandler)();
-
 	CloseThreadpoolWork(work);
+
+	auto workHandler = std::unique_ptr<WorkContext>(reinterpret_cast<WorkContext*>(context));
+	workHandler->Invoke();
 }
 
 void ThreadpoolManager::GroupCancelCallback(PVOID objectContext, PVOID cleanupContext)
 {
-	reinterpret_cast<EventObject*>(objectContext)->OnGroupCancel();
+	reinterpret_cast<ThreadpoolObject*>(objectContext)->OnGroupCancel();
 }

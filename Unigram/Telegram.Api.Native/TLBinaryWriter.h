@@ -112,7 +112,7 @@ namespace Telegram
 						return m_capacity - m_position;
 					}
 
-					inline boolean HasUnstoredBuffer() const
+					inline bool HasUnstoredBuffer() const
 					{
 						return m_position < m_capacity;
 					}
