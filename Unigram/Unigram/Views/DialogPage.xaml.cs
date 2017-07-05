@@ -291,10 +291,29 @@ namespace Unigram.Views
 
         private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased && ViewModel.SelectionMode != ListViewSelectionMode.None)
+            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased)
             {
-                ViewModel.SelectionMode = ListViewSelectionMode.None;
-                args.Handled = true;
+                if (StickersPanel.Visibility == Visibility.Visible)
+                {
+                    StickersPanel.Visibility = Visibility.Collapsed;
+                    args.Handled = true;
+                }
+
+                if (ViewModel.SelectionMode != ListViewSelectionMode.None)
+                {
+                    ViewModel.SelectionMode = ListViewSelectionMode.None;
+                    args.Handled = true;
+                }
+
+                if (args.Handled)
+                {
+                    Focus(FocusState.Programmatic);
+
+                    if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                    {
+                        TextField.Focus(FocusState.Keyboard);
+                    }
+                }
             }
         }
 
