@@ -41,7 +41,7 @@ namespace Unigram.ViewModels
         public virtual int Maximum => 5000;
         public virtual int Minimum => 0;
 
-        public ListViewSelectionMode SelectionMode => Maximum > 1 ? ListViewSelectionMode.Extended : ListViewSelectionMode.None;
+        public ListViewSelectionMode SelectionMode => Maximum > 1 ? ListViewSelectionMode.Multiple : ListViewSelectionMode.None;
 
         public virtual bool AllowGlobalSearch => true;
 

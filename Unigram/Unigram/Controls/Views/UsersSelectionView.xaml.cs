@@ -41,6 +41,11 @@ namespace Unigram.Controls.Views
 
         private void SelectedItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                return;
+            }
+
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
                 foreach (var item in e.NewItems)
@@ -59,6 +64,11 @@ namespace Unigram.Controls.Views
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                return;
+            }
+
             if (e.AddedItems != null)
             {
                 foreach (var item in e.AddedItems)
@@ -80,6 +90,7 @@ namespace Unigram.Controls.Views
         {
             if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
+                ViewModel.SelectedItems.Clear();
                 ViewModel.SelectedItems.Add(e.ClickedItem as TLUser);
                 ViewModel.SendCommand.Execute();
             }
@@ -92,9 +103,9 @@ namespace Unigram.Controls.Views
 
         #region Binding
 
-        private Visibility ConvertMaximum(int maximum)
+        private Visibility ConvertMaximum(int maximum, bool infinite)
         {
-            return maximum == int.MaxValue ? Visibility.Collapsed : Visibility.Visible;
+            return (maximum == int.MaxValue && infinite) || maximum == 1 ? Visibility.Collapsed : Visibility.Visible;
         }
 
         #endregion
