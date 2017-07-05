@@ -25,6 +25,7 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             Items = new SortedObservableCollection<TLUser>(new TLUserComparer(false));
+            Search = new ObservableCollection<KeyedList<string, TLObject>>();
             SelectedItems = new ObservableCollection<TLUser>();
             SelectedItems.CollectionChanged += OnCollectionChanged;
         }
@@ -119,5 +120,113 @@ namespace Unigram.ViewModels
         {
 
         }
+
+        #region Search
+
+        public ObservableCollection<KeyedList<string, TLObject>> Search { get; private set; }
+
+        private string _searchQuery;
+        public string SearchQuery
+        {
+            get
+            {
+                return _searchQuery;
+            }
+            set
+            {
+                Set(ref _searchQuery, value);
+                SearchSync(value);
+            }
+        }
+
+        public async void SearchSync(string query)
+        {
+            var local = await SearchLocalAsync(query.TrimStart('@'));
+
+            if (query.Equals(_searchQuery))
+            {
+                Search.Clear();
+                if (local != null) Search.Insert(0, local);
+            }
+        }
+
+        public async Task SearchAsync(string query)
+        {
+            var global = await SearchGlobalAsync(query);
+
+            if (query.Equals(_searchQuery))
+            {
+                if (Search.Count > 1) Search.RemoveAt(1);
+                if (global != null) Search.Add(global);
+            }
+
+            //SearchQuery = query;
+        }
+
+        private async Task<KeyedList<string, TLObject>> SearchLocalAsync(string query)
+        {
+            var dialogs = await Task.Run(() => CacheService.GetDialogs());
+            var contacts = await Task.Run(() => CacheService.GetContacts());
+
+            if (dialogs != null && contacts != null)
+            {
+                var simple = new List<TLUser>();
+
+                var contactsResults = contacts.OfType<TLUser>().Where(x =>
+                    (x.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
+                    (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase)));
+
+                foreach (var result in contactsResults)
+                {
+                    simple.Add(result);
+                }
+
+                if (simple.Count > 0)
+                {
+                    return new KeyedList<string, TLObject>(null, simple);
+                }
+            }
+
+            return null;
+        }
+
+        private async Task<KeyedList<string, TLObject>> SearchGlobalAsync(string query)
+        {
+            if (query.Length < 5)
+            {
+                return null;
+            }
+
+            var result = await ProtoService.SearchAsync(query, 100);
+            if (result.IsSucceeded)
+            {
+                if (result.Result.Results.Count > 0)
+                {
+                    var parent = new KeyedList<string, TLObject>("Global search results");
+
+                    CacheService.SyncUsersAndChats(result.Result.Users, result.Result.Chats,
+                        tuple =>
+                        {
+                            result.Result.Users = tuple.Item1;
+                            result.Result.Chats = tuple.Item2;
+
+                            foreach (var peer in result.Result.Results)
+                            {
+                                var item = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id);
+                                if (item != null)
+                                {
+                                    parent.Add(item);
+                                }
+                            }
+                        });
+
+                    return parent;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 }
