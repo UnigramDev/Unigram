@@ -19,6 +19,30 @@ using ABI::Windows::Foundation::IClosable;
 using ABI::Telegram::Api::Native::ConnectionType;
 using ABI::Telegram::Api::Native::TL::ITLObject;
 
+namespace ABI
+{
+	namespace Telegram
+	{
+		namespace Api
+		{
+			namespace Native
+			{
+				namespace TL
+				{
+
+					struct ITLBinaryReaderEx;
+					struct ITLBinaryWriterEx;
+
+				}
+			}
+		}
+	}
+}
+
+
+using ABI::Telegram::Api::Native::TL::ITLBinaryReaderEx;
+using ABI::Telegram::Api::Native::TL::ITLBinaryWriterEx;
+
 namespace Telegram
 {
 	namespace Api
@@ -81,7 +105,7 @@ namespace Telegram
 				InspectableClass(RuntimeClass_Telegram_Api_Native_Datacenter, BaseTrust);
 
 			public:
-				Datacenter(UINT32 id, bool isCdn);
+				Datacenter();
 				~Datacenter();
 
 				//COM exported methods			
@@ -90,6 +114,8 @@ namespace Telegram
 				IFACEMETHODIMP GetCurrentPort(ConnectionType connectionType, boolean ipv6, _Out_ UINT32* value);
 
 				//Internal methods
+				STDMETHODIMP RuntimeClassInitialize(_In_ ConnectionManager* connectionManager, INT32 id, bool isCdn);
+				STDMETHODIMP RuntimeClassInitialize(_In_ ConnectionManager* connectionManager, _In_ ITLBinaryReaderEx* reader);
 				HRESULT GetGenericConnection(boolean create, _Out_  ComPtr<Connection>& value);
 				HRESULT GetDownloadConnection(UINT32 index, boolean create, _Out_ ComPtr<Connection>& value);
 				HRESULT GetUploadConnection(UINT32 index, boolean create, _Out_  ComPtr<Connection>& value);
@@ -97,6 +123,11 @@ namespace Telegram
 				inline INT32 GetId() const
 				{
 					return m_id;
+				}
+
+				inline ComPtr<ConnectionManager> const& GetConnectionManager() const
+				{
+					return m_connectionManager;
 				}
 
 				inline bool IsCDN()
@@ -168,7 +199,7 @@ namespace Telegram
 				void RecreateSessions();
 				void GetSessionsIds(_Out_ std::vector<INT64>& sessionIds);
 				void AddServerSalt(_In_ ServerSalt const& salt);
-				void MergeServerSalts(_In_ ConnectionManager* connectionManager, _In_ std::vector<ServerSalt> const& salts);
+				void MergeServerSalts(_In_ std::vector<ServerSalt> const& salts);
 				bool ContainsServerSalt(INT64 salt);
 				void ClearServerSalts();
 				HRESULT AddEndpoint(_In_ ServerEndpoint const& endpoint, ConnectionType connectionType, bool ipv6);
@@ -176,19 +207,20 @@ namespace Telegram
 				void NextEndpoint(ConnectionType connectionType, bool ipv6);
 				void ResetEndpoint();
 				IFACEMETHODIMP Close();
-				HRESULT BeginHandshake(_In_ ConnectionManager* connectionManager, bool reconnect, bool reset);
-				HRESULT ImportAuthorization(_In_ ConnectionManager* connectionManager);
-				HRESULT RequestFutureSalts(_In_ ConnectionManager* connectionManager, UINT32 count);
-				HRESULT SendPing(_In_ ConnectionManager* connectionManager);
+				HRESULT SaveSettings(_In_ ITLBinaryWriterEx* writer);
+				HRESULT BeginHandshake(bool reconnect, bool reset);
+				HRESULT ImportAuthorization();
+				HRESULT RequestFutureSalts(UINT32 count);
+				HRESULT SendPing();
 				HRESULT GetCurrentEndpoint(ConnectionType connectionType, bool ipv6, _Out_ ServerEndpoint** endpoint);
-				INT64 GetServerSalt(_In_ ConnectionManager* connectionManager);
+				INT64 GetServerSalt();
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionClosed(_In_ Connection* connection);
-				HRESULT OnHandshakePQResponse(_In_ ConnectionManager* connectionManager, _In_ Connection* connection, _In_ TL::TLResPQ* response);
-				HRESULT OnHandshakeServerDHResponse(_In_ ConnectionManager* connectionManager, _In_ Connection* connection, _In_ TL::TLServerDHParamsOk* response);
-				HRESULT OnHandshakeClientDHResponse(_In_ ConnectionManager* connectionManager, _In_ Connection* connection, _In_ TL::TLDHGenOk* response);
-				HRESULT OnBadServerSaltResponse(_In_ ConnectionManager* connectionManager, INT64 messageId, _In_ TL::TLBadServerSalt* response);
-				HRESULT OnBadMessageResponse(_In_ ConnectionManager* connectionManager, INT64 messageId, _In_ TL::TLBadMessage* response);
+				HRESULT OnHandshakePQResponse(_In_ Connection* connection, _In_ TL::TLResPQ* response);
+				HRESULT OnHandshakeServerDHResponse(_In_ Connection* connection, _In_ TL::TLServerDHParamsOk* response);
+				HRESULT OnHandshakeClientDHResponse(_In_ Connection* connection, _In_ TL::TLDHGenOk* response);
+				HRESULT OnBadServerSaltResponse(INT64 messageId, _In_ TL::TLBadServerSalt* response);
+				HRESULT OnBadMessageResponse(INT64 messageId, _In_ TL::TLBadMessage* response);
 				HRESULT GetEndpointsForConnectionType(ConnectionType connectionType, bool ipv6, _Out_ std::vector<ServerEndpoint>** endpoints);
 				HRESULT EncryptMessage(_Inout_updates_(length) BYTE* buffer, UINT32 length, UINT32 padding, _Out_opt_ INT32* quickAckId);
 				HRESULT DecryptMessage(INT64 authKeyId, _Inout_updates_(length) BYTE* buffer, UINT32 length);
@@ -217,14 +249,14 @@ namespace Telegram
 					m_flags &= ~DatacenterFlag::AuthorizationState;
 				}
 
-				inline HRESULT OnHandshakeError(_In_ ConnectionManager* connectionManager, HRESULT error)
+				inline HRESULT OnHandshakeError(HRESULT error)
 				{
 					if (error == E_UNEXPECTED)
 					{
 						return S_OK;
 					}
 
-					return BeginHandshake(connectionManager, false, true);
+					return BeginHandshake(false, true);
 				}
 
 				inline HRESULT GetHandshakeContext(_Out_ HandshakeContext** handshakeContext, HandshakeState currentState)
@@ -239,7 +271,9 @@ namespace Telegram
 				}
 
 				static void GenerateMessageKey(_In_ BYTE const* authKey, _Inout_ BYTE* messageKey, BYTE* result, UINT32 x);
-				static HRESULT SendAckRequest(_In_ ConnectionManager* connectionManager, _In_ Connection* connection, INT64 messageId);
+				static HRESULT ReadSettingsEndpoints(_In_ ITLBinaryReaderEx* reader, _Out_ std::vector<ServerEndpoint>& endpoints, _Out_ size_t* currentIndex);
+				static HRESULT WriteSettingsEndpoints(_In_ ITLBinaryWriterEx* writer, _In_ std::vector<ServerEndpoint> const& endpoints, size_t currentIndex);
+				static HRESULT SendAckRequest(_In_ Connection* connection, INT64 messageId);
 
 				INT32 m_id;
 				DatacenterFlag m_flags;
@@ -248,11 +282,12 @@ namespace Telegram
 				std::vector<ServerEndpoint> m_ipv4DownloadEndpoints;
 				std::vector<ServerEndpoint> m_ipv6Endpoints;
 				std::vector<ServerEndpoint> m_ipv6DownloadEndpoints;
-				size_t m_currentIpv4EndpointIndex;
-				size_t m_currentIpv4DownloadEndpointIndex;
+				size_t m_currentIPv4EndpointIndex;
+				size_t m_currentIPv4DownloadEndpointIndex;
 				size_t m_currentIPv6EndpointIndex;
 				size_t m_currentIPv6DownloadEndpointIndex;
 				std::vector<ServerSalt> m_serverSalts;
+				ComPtr<ConnectionManager> m_connectionManager;
 				ComPtr<Connection> m_genericConnection;
 				ComPtr<Connection> m_downloadConnections[DOWNLOAD_CONNECTIONS_COUNT];
 				ComPtr<Connection> m_uploadConnections[UPLOAD_CONNECTIONS_COUNT];

@@ -92,6 +92,9 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AnimatedImagePlayer.xaml.cs">
+      <DependentUpon>AnimatedImagePlayer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -985,6 +988,41 @@
     <None Include="Telegram.Api.Native.Test_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\GIFs\document4938226368988053544_6417613346525661527.mp4" />
+    <Content Include="Assets\GIFs\document5105169114968621115_-6101347766628141158.mp4" />
+    <Content Include="Assets\GIFs\document532576515934688123_-395972785533525615.mp4" />
+    <Content Include="Assets\GIFs\document532576962611256146_1572293871930175521.mp4" />
+    <Content Include="Assets\GIFs\document532577151589816063_5073510856294492794.mp4" />
+    <Content Include="Assets\GIFs\document532577246079101123_-3534930386075429920.mp4" />
+    <Content Include="Assets\GIFs\document532578306936013685_-436033575980233059.mp4" />
+    <Content Include="Assets\GIFs\document532579376382906691_5197617820008653940.mp4" />
+    <Content Include="Assets\GIFs\document532579548181562117_-5012125571830088166.mp4" />
+    <Content Include="Assets\GIFs\document532580097937377280_-6983798539193914596.mp4" />
+    <Content Include="Assets\GIFs\document532580372815290807_-1877732021264928316.mp4" />
+    <Content Include="Assets\GIFs\document532580480189501585_-8111955000298434911.mp4" />
+    <Content Include="Assets\GIFs\document532581261873513428_-2368472704366000750.mp4" />
+    <Content Include="Assets\GIFs\document532581833104169517_1418835724808465296.mp4" />
+    <Content Include="Assets\GIFs\document532582812356707228_5132470735173203438.mp4" />
+    <Content Include="Assets\GIFs\document532582842421490451_-7498430482621660512.mp4" />
+    <Content Include="Assets\GIFs\document532582902551021251_-6621132137850636178.mp4" />
+    <Content Include="Assets\GIFs\document532583207493732508_-1490706649893958060.mp4" />
+    <Content Include="Assets\GIFs\document532583512436377525_6328410531567016110.mp4" />
+    <Content Include="Assets\GIFs\document532583795904219372_7502185537669242114.mp4" />
+    <Content Include="Assets\GIFs\document532584139501618071_-2874337850319245613.mp4" />
+    <Content Include="Assets\GIFs\document5330173917506043969_-736200830000410081.mp4" />
+    <Content Include="Assets\GIFs\document5355137435661500598_-8881836532743456304.mp4" />
+    <Content Include="Assets\GIFs\document5855005228721504470_-1072720559050409214.mp4" />
+    <Content Include="Assets\GIFs\document5870504193734738300_1748547599531013060.mp4" />
+    <Content Include="Assets\GIFs\document5920241602944565385_4698821606664248028.mp4" />
+    <Content Include="Assets\GIFs\document5949731204881187099_10418167337776639.mp4" />
+    <Content Include="Assets\GIFs\document5951823635638386943_-6471785450633437344.mp4" />
+    <Content Include="Assets\GIFs\document5958644241272930518_-2959117579979529485.mp4" />
+    <Content Include="Assets\GIFs\document5961064841891283212_-9190345492667802049.mp4" />
+    <Content Include="Assets\GIFs\document5963110324360970492_8588673152219401734.mp4" />
+    <Content Include="Assets\GIFs\document5963152492349882596_-8552966192109345594.mp4" />
+    <Content Include="Assets\GIFs\document5967293686931784291_-8409358172828838008.mp4" />
+    <Content Include="Assets\GIFs\document665859281093918795_-2716404913172810500.mp4" />
+    <Content Include="Assets\GIFs\document944074214418161955_4622301106363803740.mp4" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -999,6 +1037,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="AnimatedImagePlayer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1013,6 +1055,10 @@
     <ProjectReference Include="..\Telegram.Api.Native\Telegram.Api.Native.vcxproj">
       <Project>{6a7d27d0-36e8-4364-ac69-740b75ee653c}</Project>
       <Name>Telegram.Api.Native</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Unigram.Native\Unigram.Native.vcxproj">
+      <Project>{1b521e77-46bd-4d60-89f6-d68e9bb9abff}</Project>
+      <Name>Unigram.Native</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

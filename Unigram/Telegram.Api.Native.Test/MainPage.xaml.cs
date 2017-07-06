@@ -78,7 +78,7 @@ namespace Telegram.Api.Native.Test
             //// Should run on Download connection
             //null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.EnableUnauthorized);
 
-            //GC.Collect();
+            GC.Collect();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -232,7 +232,7 @@ namespace Telegram.Api.Native.Test
                             }
                         },
                         // Should run on Download connection
-                        null, document.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload );  // | RequestFlag.Immediate
+                        null, document.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload);  // | RequestFlag.Immediate
                     }
                 },
                 null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
@@ -305,6 +305,11 @@ namespace Telegram.Api.Native.Test
                 null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
             },
             null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
+        }
+
+        private void Button_Click_9(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AnimatedImagePlayer));
         }
     }
 }

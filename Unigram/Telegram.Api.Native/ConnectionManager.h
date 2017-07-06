@@ -16,6 +16,7 @@
 #define TELEGRAM_API_NATIVE_VERSION 1
 #define TELEGRAM_API_NATIVE_LAYER 68
 #define TELEGRAM_API_NATIVE_APIID 6
+#define TELEGRAM_API_NATIVE_SETTINGS_VERSION 1
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -34,6 +35,30 @@ using ABI::Telegram::Api::Native::IDatacenter;
 using ABI::Telegram::Api::Native::IConnection;
 using ABI::Telegram::Api::Native::RequestFlag;
 using ABI::Telegram::Api::Native::TL::ITLObject;
+
+namespace ABI
+{
+	namespace Telegram
+	{
+		namespace Api
+		{
+			namespace Native
+			{
+				namespace TL
+				{
+
+					struct ITLBinaryReaderEx;
+					struct ITLBinaryWriterEx;
+
+				}
+			}
+		}
+	}
+}
+
+
+using ABI::Telegram::Api::Native::TL::ITLBinaryReaderEx;
+using ABI::Telegram::Api::Native::TL::ITLBinaryWriterEx;
 
 namespace Telegram
 {
@@ -143,8 +168,6 @@ namespace Telegram
 					return static_cast<ConnectionNeworkType>(m_flags & ConnectionManagerFlag::NetworkType) != ConnectionNeworkType::None;
 				}
 
-				static HRESULT GetInstance(_Out_ ComPtr<ConnectionManager>& value);
-
 				inline static UINT64 GetCurrentSystemTime()
 				{
 					FILETIME time;
@@ -159,8 +182,12 @@ namespace Telegram
 				}
 
 			private:
-				HRESULT InitializeDatacenters();
+				HRESULT ResetDatacenters();
 				HRESULT InitializeSettings();
+				HRESULT LoadSettings(_In_ ITLBinaryReaderEx* reader);
+				HRESULT SaveSettings(_In_ ITLBinaryWriterEx* writer);
+				HRESULT LoadCDNPublicKeys(_In_ ITLBinaryReaderEx* reader);
+				HRESULT SaveCDNPublicKeys(_In_ ITLBinaryWriterEx* writer);
 				HRESULT UpdateNetworkStatus(bool raiseEvent);
 				HRESULT MoveToDatacenter(INT32 datacenterId);
 				HRESULT UpdateCDNPublicKeys();
@@ -203,6 +230,14 @@ namespace Telegram
 					return m_cdnPublicKeys.find(datacenterId) != m_cdnPublicKeys.end();
 				}
 
+				inline std::wstring const& GetDatacenterSettingsFileName(INT32 datacenterId)
+				{
+					std::wstring fileName(MAX_PATH, '\0');
+					fileName.resize(swprintf(&fileName[0], MAX_PATH, L"%s\\DC_%d.config", m_settingsFolderPath.data(), datacenterId));
+
+					return std::move(fileName);
+				}
+
 				ComPtr<INetworkInformationStatics> m_networkInformation;
 				EventRegistrationToken m_networkChangedEventToken;
 				ConnectionManagerFlag m_flags;
@@ -235,9 +270,16 @@ namespace Telegram
 				InspectableClassStatic(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
 
 			public:
+				//COM exported methods
 				IFACEMETHODIMP get_Instance(_Out_ IConnectionManager** value);
 				IFACEMETHODIMP get_Version(_Out_ Version* value);
 				IFACEMETHODIMP get_DefaultDatacenterId(_Out_ INT32* value);
+
+				//Internal methods
+				STDMETHODIMP RuntimeClassInitialize();
+
+			private:
+				ComPtr<IConnectionManager> m_instance;
 			};
 
 		}

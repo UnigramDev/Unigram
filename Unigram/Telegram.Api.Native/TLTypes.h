@@ -536,7 +536,7 @@ namespace Telegram
 					~TLRpcResult();
 
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					inline INT64 GetRequestMessageId() const
@@ -596,7 +596,7 @@ namespace Telegram
 
 				public:
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					inline std::vector<INT64>& GetMessagesIds()
@@ -624,7 +624,7 @@ namespace Telegram
 					~TLMessage();
 
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(_In_ MessageContext const* messageContext, _In_ ITLObject* object);
@@ -655,7 +655,7 @@ namespace Telegram
 
 				public:
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					inline std::vector<ComPtr<TLMessage>>& GetMessages()
@@ -779,7 +779,7 @@ namespace Telegram
 					~TLMsgDetailedInfo();
 
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					inline INT64 GetMessageId() const
@@ -798,7 +798,7 @@ namespace Telegram
 				{
 				public:
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 				};
 
 				class TLMsgsAllInfo WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLMsgsAllInfoTraits>>
@@ -834,7 +834,7 @@ namespace Telegram
 					IFACEMETHODIMP get_Query(_Out_ ITLObject** value);
 
 					//Internal methods
-					STDMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					STDMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 					STDMETHODIMP RuntimeClassInitialize(_In_ ITLObject* object);
 					STDMETHODIMP RuntimeClassInitialize(_In_ NativeBuffer* rawData);
 
@@ -887,7 +887,7 @@ namespace Telegram
 					~TLNewSessionCreated();
 
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					inline INT64 GetFirstMesssageId() const
@@ -966,14 +966,14 @@ namespace Telegram
 				{
 				public:
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 				};
 
 				class TLBadServerSalt WrlSealed : public TLBadMsgNotificationT<TLObjectTraits::TLBadServerSaltTraits>
 				{
 				public:
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					inline INT64 GetNewServerSalt() const
@@ -997,7 +997,7 @@ namespace Telegram
 					~TLPong();
 
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					inline INT64 GetMessageId()
@@ -1064,21 +1064,21 @@ namespace Telegram
 				{
 				public:
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 				};
 
 				class TLDHGenFail WrlSealed : public TLDHGenT<TLObjectTraits::TLDHGenFailTraits>
 				{
 				public:
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 				};
 
 				class TLDHGenRetry WrlSealed : public TLDHGenT<TLObjectTraits::TLDHGenRetryTraits>
 				{
 				public:
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 				};
 
 				template<typename TLObjectTraits>
@@ -1122,7 +1122,7 @@ namespace Telegram
 
 				public:
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					inline TLInt128 const& GetNewNonceHash() const
@@ -1141,7 +1141,7 @@ namespace Telegram
 				{
 				public:
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					inline NativeBuffer* GetEncryptedData() const
@@ -1165,7 +1165,7 @@ namespace Telegram
 					~TLResPQ();
 
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					inline TLInt128 const& GetNonce() const
@@ -1207,7 +1207,7 @@ namespace Telegram
 					~TLFutureSalts();
 
 					//COM exported methods
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					inline INT64 GetRequestMessageId() const

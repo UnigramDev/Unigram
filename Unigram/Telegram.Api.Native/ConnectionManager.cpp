@@ -85,7 +85,7 @@ HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 
 	ReturnIfFailed(result, InitializeSettings());
 
-	return InitializeDatacenters();
+	return ResetDatacenters();
 }
 
 HRESULT ConnectionManager::add_SessionCreated(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, EventRegistrationToken* token)
@@ -482,8 +482,10 @@ HRESULT ConnectionManager::UpdateDatacenters()
 				auto datacenterIterator = m_datacenters.find(datacenterEndpoints.first.first);
 				if (datacenterIterator == m_datacenters.end())
 				{
-					datacenterIterator = m_datacenters.insert(datacenterIterator, std::make_pair(datacenterEndpoints.first.first,
-						Make<Datacenter>(datacenterEndpoints.first.first, (datacenterEndpoints.first.second & TLDCOptionFlag::CDN) == TLDCOptionFlag::CDN)));
+					ComPtr<Datacenter> datacenter;
+					ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&datacenter, this, datacenterEndpoints.first.first, (datacenterEndpoints.first.second & TLDCOptionFlag::CDN) == TLDCOptionFlag::CDN));
+
+					datacenterIterator = m_datacenters.insert(datacenterIterator, std::make_pair(datacenterEndpoints.first.first, std::move(datacenter)));
 				}
 
 				ReturnIfFailed(result, datacenterIterator->second->ReplaceEndpoints(datacenterEndpoints.second, (datacenterEndpoints.first.second & TLDCOptionFlag::MediaOnly) == TLDCOptionFlag::MediaOnly ?
@@ -511,7 +513,7 @@ HRESULT ConnectionManager::UpdateDatacenters()
 	}).Get(), nullptr, m_currentDatacenterId, ConnectionType::Generic, RequestFlag::EnableUnauthorized | RequestFlag::WithoutLogin | RequestFlag::TryDifferentDc, &requestToken);
 }
 
-HRESULT ConnectionManager::InitializeDatacenters()
+HRESULT ConnectionManager::ResetDatacenters()
 {
 	HRESULT result;
 
@@ -519,76 +521,62 @@ HRESULT ConnectionManager::InitializeDatacenters()
 
 	if (m_datacenters.find(1) == m_datacenters.end())
 	{
-		auto datacenter = Make<Datacenter>(1, false);
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.175.40", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:b28:f23d:f001:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
-
-		m_datacenters[1] = datacenter;
+		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[1], this, 1, false));
+		ReturnIfFailed(result, m_datacenters[1]->AddEndpoint({ L"149.154.175.40", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, m_datacenters[1]->AddEndpoint({ L"2001:b28:f23d:f001:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
 	}
 
 	if (m_datacenters.find(2) == m_datacenters.end())
 	{
-		auto datacenter = Make<Datacenter>(2, false);
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.167.40", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:67c:4e8:f002:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
-
-		m_datacenters[2] = datacenter;
+		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[2], this, 2, false));
+		ReturnIfFailed(result, m_datacenters[2]->AddEndpoint({ L"149.154.167.40", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, m_datacenters[2]->AddEndpoint({ L"2001:67c:4e8:f002:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
 	}
 
 	if (m_datacenters.find(3) == m_datacenters.end())
 	{
-		auto datacenter = Make<Datacenter>(3, false);
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.175.117", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:b28:f23d:f003:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
-
-		m_datacenters[3] = datacenter;
+		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[3], this, 3, false));
+		ReturnIfFailed(result, m_datacenters[3]->AddEndpoint({ L"149.154.175.117", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, m_datacenters[3]->AddEndpoint({ L"2001:b28:f23d:f003:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
 	}
 
 #else
 
 	if (m_datacenters.find(1) == m_datacenters.end())
 	{
-		auto datacenter = Make<Datacenter>(1, false);
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.175.50", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:b28:f23d:f001:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
-
-		m_datacenters[1] = datacenter;
+		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[1], this, 1, false));
+		ReturnIfFailed(result, m_datacenters[1]->AddEndpoint({ L"149.154.175.50", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, m_datacenters[1]->AddEndpoint({ L"2001:b28:f23d:f001:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
 	}
 
 	if (m_datacenters.find(2) == m_datacenters.end())
 	{
-		auto datacenter = Make<Datacenter>(2, false);
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.167.51", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:67c:4e8:f002:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
-
-		m_datacenters[2] = datacenter;
+		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[2], this, 2, false));
+		ReturnIfFailed(result, m_datacenters[2]->AddEndpoint({ L"149.154.167.51", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, m_datacenters[2]->AddEndpoint({ L"2001:67c:4e8:f002:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
 	}
 
 	if (m_datacenters.find(3) == m_datacenters.end())
 	{
-		auto datacenter = Make<Datacenter>(3, false);
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.175.100", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:b28:f23d:f003:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
-
-		m_datacenters[3] = datacenter;
+		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[3], this, 3, false));
+		ReturnIfFailed(result, m_datacenters[3]->AddEndpoint({ L"149.154.175.100", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, m_datacenters[3]->AddEndpoint({ L"2001:b28:f23d:f003:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
 	}
 
 	if (m_datacenters.find(4) == m_datacenters.end())
 	{
-		auto datacenter = Make<Datacenter>(4, false);
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.167.91", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:67c:4e8:f004:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
+		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[4], this, 4, false));
+		ReturnIfFailed(result, m_datacenters[4]->AddEndpoint({ L"149.154.167.91", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, m_datacenters[4]->AddEndpoint({ L"2001:67c:4e8:f004:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
 
 		m_datacenters[4] = datacenter;
 	}
 
 	if (m_datacenters.find(5) == m_datacenters.end())
 	{
-		auto datacenter = Make<Datacenter>(5, false);
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"149.154.171.5", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, datacenter->AddEndpoint({ L"2001:b28:f23f:f005:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
-
-		m_datacenters[5] = datacenter;
+		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[5], this, 5, false));
+		ReturnIfFailed(result, m_datacenters[5]->AddEndpoint({ L"149.154.171.5", 443 }, ConnectionType::Generic, false));
+		ReturnIfFailed(result, m_datacenters[5]->AddEndpoint({ L"2001:b28:f23f:f005:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
 	}
 
 #endif
@@ -683,7 +671,7 @@ HRESULT ConnectionManager::Reset()
 	HRESULT result;
 	ReturnIfFailed(result, EventObjectT::AttachToThreadpool(this));
 
-	return InitializeDatacenters();
+	return ResetDatacenters();
 }
 
 HRESULT ConnectionManager::UpdateCDNPublicKeys()
@@ -799,7 +787,7 @@ HRESULT ConnectionManager::MoveToDatacenter(INT32 datacenterId)
 				if (!datacenter->IsAuthenticated())
 				{
 					datacenter->ClearServerSalts();
-					ReturnIfFailed(result, datacenter->BeginHandshake(this, true, false));
+					ReturnIfFailed(result, datacenter->BeginHandshake(true, false));
 				}
 
 				auto authExportedAuthorization = GetMessageResponseObject<TLAuthExportedAuthorization>(response);
@@ -1179,13 +1167,13 @@ HRESULT ConnectionManager::ProcessRequests(std::map<UINT32, DatacenterRequestCon
 		}
 		else if ((datacenterContext.Flags & DatacenterRequestContextFlag::RequiresHandshake) == DatacenterRequestContextFlag::RequiresHandshake)
 		{
-			ReturnIfFailed(result, datacenterContext.Datacenter->BeginHandshake(this, true, false));
+			ReturnIfFailed(result, datacenterContext.Datacenter->BeginHandshake(true, false));
 		}
 		else
 		{
 			if ((datacenterContext.Flags & DatacenterRequestContextFlag::RequiresAuthorization) == DatacenterRequestContextFlag::RequiresAuthorization)
 			{
-				ReturnIfFailed(result, datacenterContext.Datacenter->ImportAuthorization(this));
+				ReturnIfFailed(result, datacenterContext.Datacenter->ImportAuthorization());
 			}
 
 			ReturnIfFailed(result, ProcessDatacenterRequests(datacenterContext));
@@ -1259,14 +1247,14 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 	if (requiresQuickAck)
 	{
 		INT32 quickAckId;
-		ReturnIfFailed(result, connection->SendEncryptedMessage(this, &messageContext, messageBody.Get(), &quickAckId));
+		ReturnIfFailed(result, connection->SendEncryptedMessage(&messageContext, messageBody.Get(), &quickAckId));
 
 		auto& quickAckRequests = m_quickAckRequests[quickAckId];
 		quickAckRequests.insert(quickAckRequests.begin(), datacenterContext.GenericRequests.begin(), datacenterContext.GenericRequests.end());
 	}
 	else
 	{
-		ReturnIfFailed(result, connection->SendEncryptedMessage(this, &messageContext, messageBody.Get(), nullptr));
+		ReturnIfFailed(result, connection->SendEncryptedMessage(&messageContext, messageBody.Get(), nullptr));
 	}
 
 	auto datacenterId = datacenterContext.Datacenter->GetId();
@@ -1317,14 +1305,14 @@ HRESULT ConnectionManager::ProcessConnectionRequest(Connection* connection, Mess
 	if (request->RequiresQuickAck())
 	{
 		INT32 quickAckId;
-		ReturnIfFailed(result, connection->SendEncryptedMessage(this, &messageContext, messageBody.Get(), &quickAckId));
+		ReturnIfFailed(result, connection->SendEncryptedMessage(&messageContext, messageBody.Get(), &quickAckId));
 
 		auto& quickAckRequests = m_quickAckRequests[quickAckId];
 		quickAckRequests.insert(quickAckRequests.begin(), request);
 	}
 	else
 	{
-		ReturnIfFailed(result, connection->SendEncryptedMessage(this, &messageContext, messageBody.Get(), nullptr));
+		ReturnIfFailed(result, connection->SendEncryptedMessage(&messageContext, messageBody.Get(), nullptr));
 	}
 
 	m_runningRequestCount[static_cast<UINT32>(request->GetConnectionType()) >> 1]++;
@@ -1647,7 +1635,7 @@ HRESULT ConnectionManager::OnDatacenterBadServerSalt(Datacenter* datacenter, INT
 	}, true);
 
 	HRESULT result;
-	ReturnIfFailed(result, datacenter->RequestFutureSalts(this, 32));
+	ReturnIfFailed(result, datacenter->RequestFutureSalts(32));
 
 	if (datacenter->IsAuthenticated())
 	{
@@ -1735,7 +1723,7 @@ HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLOb
 	GetDatacenterById(m_currentDatacenterId, datacenter);
 	/*ReturnIfFailed(result, datacenter->RequestFutureSalts(10));*/
 
-	return datacenter->SendPing(this);
+	return datacenter->SendPing();
 }
 
 bool ConnectionManager::GetDatacenterById(UINT32 id, ComPtr<Datacenter>& datacenter)
@@ -1837,6 +1825,8 @@ HRESULT ConnectionManager::InitializeSettings()
 
 	std::wstring configFileName = m_settingsFolderPath + L"\\ConnectionManager.dat";
 
+	return S_OK;
+
 	//FileHandle settingsFile(CreateFile2(configFileName.data(), GENERIC_READ | GENERIC_WRITE, NULL, OPEN_ALWAYS, nullptr));
 	//if (!settingsFile.IsValid())
 	//{
@@ -1849,64 +1839,158 @@ HRESULT ConnectionManager::InitializeSettings()
 	//ComPtr<MappedFileBuffer> mappedFileBuffer;
 	//ReturnIfFailed(result, MakeAndInitialize<MappedFileBuffer>(&mappedFileBuffer, settingsFile.Get()));
 
-	//ComPtr<TLBinaryReader> configReader;
+	ComPtr<TLBinaryReader> configReader;
 	//ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&configReader, mappedFileBuffer.Get()));
 
-	//CreateDirectory(m_settingsFolderPath.data(), nullptr);
-
-	/*Event asyncOperationEvent(CreateEvent(nullptr, TRUE, FALSE, nullptr));
-	if (!asyncOperationEvent.IsValid())
-	{
-		return GetLastHRESULT();
-	}
-
-	auto callback = Callback<ABI::Windows::Foundation::IAsyncOperationCompletedHandler<StorageFolder*>>
-		([&asyncOperationEvent](__FIAsyncOperation_1_Windows__CStorage__CStorageFolder*, ABI::Windows::Foundation::AsyncStatus) -> HRESULT
-	{
-		__debugbreak();
-		SetEvent(asyncOperationEvent.Get());
-		return S_OK;
-	});*/
-
-	/*auto callback = Callback<ABI::Windows::Foundation::IAsyncOperationCompletedHandler<StorageFolder*>>
-		([this](__FIAsyncOperation_1_Windows__CStorage__CStorageFolder* asyncOperation, ABI::Windows::Foundation::AsyncStatus asyncResult) -> HRESULT
-	{
-		__debugbreak();
-		return S_OK;
-	});
-
-	ComPtr<__FIAsyncOperation_1_Windows__CStorage__CStorageFolder> asyncOperation;
-	ReturnIfFailed(result, localStorageFolder->CreateFolderAsync(HStringReference(L"Settings").Get(), CreationCollisionOption_OpenIfExists, &asyncOperation));
-	ReturnIfFailed(result, asyncOperation->put_Completed(callback.Get()));*/
-
-	/*ReturnIfFailed(result, SubmitWork([asyncOperation, callback, &asyncOperationEvent]() -> void
-	{
-		if (FAILED(asyncOperation->put_Completed(callback.Get())))
-		{
-			SetEvent(asyncOperationEvent.Get());
-		}
-	}));
-
-	WaitForSingleObject(asyncOperationEvent.Get(), INFINITE);
-
-	ReturnIfFailed(result, asyncOperation->GetResults(&m_settingsFolder));*/
-
+	LoadSettings(configReader.Get());
 	return S_OK;
 }
 
-HRESULT ConnectionManager::GetInstance(ComPtr<ConnectionManager>& value)
+HRESULT ConnectionManager::LoadSettings(ITLBinaryReaderEx* reader)
 {
-	static ComPtr<ConnectionManager> instance;
-	if (instance == nullptr)
+	HRESULT result;
+	UINT32 version;
+	ReturnIfFailed(result, reader->ReadUInt32(&version));
+
+	if (version != TELEGRAM_API_NATIVE_SETTINGS_VERSION)
 	{
-		HRESULT result;
-		ReturnIfFailed(result, MakeAndInitialize<ConnectionManager>(&instance));
+		return COMADMIN_E_APP_FILE_VERSION;
 	}
 
-	value = instance;
+	INT32 currentDatacenterId;
+	ReturnIfFailed(result, reader->ReadInt32(&currentDatacenterId));
+
+	INT32 datacentersExpirationTime;
+	ReturnIfFailed(result, reader->ReadInt32(&datacentersExpirationTime));
+
+	INT32 timeDifference;
+	ReturnIfFailed(result, reader->ReadInt32(&timeDifference));
+
+	UINT32 datacenterCount;
+	ReturnIfFailed(result, reader->ReadUInt32(&datacenterCount));
+
+	std::vector<ComPtr<Datacenter>> datacenters;
+
+	for (UINT32 i = 0; i < datacenterCount; i++)
+	{
+		INT32 datacenterId;
+		ReturnIfFailed(result, reader->ReadInt32(&datacenterId));
+
+		auto settingsFileName = GetDatacenterSettingsFileName(datacenterId);
+
+		//ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&datacenters[i], this, reader));
+	}
+
+	if (datacenters.empty())
+	{
+		return E_FAIL;
+	}
+
+	auto lock = LockCriticalSection();
+
+	m_currentDatacenterId = currentDatacenterId;
+	m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
+	m_datacentersExpirationTime = datacentersExpirationTime;
+	m_timeDifference = timeDifference;
+	m_datacenters.clear();
+
+	for (auto& datacenter : datacenters)
+	{
+		m_datacenters[datacenter->GetId()] = std::move(datacenter);
+	}
+
 	return S_OK;
 }
 
+HRESULT ConnectionManager::SaveSettings(ITLBinaryWriterEx* writer)
+{
+	auto lock = LockCriticalSection();
+
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteUInt32(TELEGRAM_API_NATIVE_SETTINGS_VERSION));
+	ReturnIfFailed(result, writer->WriteInt32(m_currentDatacenterId));
+	ReturnIfFailed(result, writer->WriteInt32(m_datacentersExpirationTime));
+	ReturnIfFailed(result, writer->WriteInt32(m_timeDifference));
+	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(m_datacenters.size())));
+
+	for (auto& datacenter : m_datacenters)
+	{
+		ReturnIfFailed(result, writer->WriteInt32(datacenter.first));
+	}
+
+	return S_OK;
+}
+
+HRESULT ConnectionManager::LoadCDNPublicKeys(ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	UINT32 version;
+	ReturnIfFailed(result, reader->ReadUInt32(&version));
+
+	if (version != TELEGRAM_API_NATIVE_SETTINGS_VERSION)
+	{
+		return COMADMIN_E_APP_FILE_VERSION;
+	}
+
+	UINT32 cdnPublicKeyCount;
+	ReturnIfFailed(result, reader->ReadUInt32(&cdnPublicKeyCount));
+
+	std::vector<std::pair<INT32, ServerPublicKey>> cdnPublicKeys(cdnPublicKeyCount);
+	for (UINT32 i = 0; i < cdnPublicKeyCount; i++)
+	{
+		ReturnIfFailed(result, reader->ReadInt32(&cdnPublicKeys[i].first));
+		ReturnIfFailed(result, reader->ReadInt64(&cdnPublicKeys[i].second.Fingerprint));
+
+		BYTE const* buffer;
+		UINT32 length;
+		ReturnIfFailed(result, reader->ReadBuffer2(&buffer, &length));
+
+		Wrappers::BIO keyBio(BIO_new_mem_buf(buffer, length));
+		cdnPublicKeys[i].second.Key.Attach(PEM_read_bio_RSAPublicKey(keyBio.Get(), nullptr, nullptr, nullptr));
+	}
+
+	auto lock = LockCriticalSection();
+
+	m_cdnPublicKeys.clear();
+
+	for (auto& publicKey : cdnPublicKeys)
+	{
+		m_cdnPublicKeys[publicKey.first] = std::move(publicKey.second);
+	}
+
+	return S_OK;
+}
+
+HRESULT ConnectionManager::SaveCDNPublicKeys(ITLBinaryWriterEx* writer)
+{
+	auto lock = LockCriticalSection();
+
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteUInt32(TELEGRAM_API_NATIVE_SETTINGS_VERSION));
+	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(m_cdnPublicKeys.size())));
+
+	for (auto& publicKey : m_cdnPublicKeys)
+	{
+		ReturnIfFailed(result, writer->WriteInt32(publicKey.first));
+		ReturnIfFailed(result, writer->WriteInt64(publicKey.second.Fingerprint));
+
+		Wrappers::BIO keyBio(BIO_new(BIO_s_mem()));
+		PEM_write_bio_RSAPublicKey(keyBio.Get(), publicKey.second.Key.Get());
+
+		std::vector<BYTE> buffer(BIO_pending(keyBio.Get()));
+		BIO_read(keyBio.Get(), buffer.data(), static_cast<int>(buffer.size()));
+
+		ReturnIfFailed(result, writer->WriteBuffer(buffer.data(), static_cast<UINT32>(buffer.size())));
+	}
+
+	return S_OK;
+}
+
+
+HRESULT ConnectionManagerStatics::RuntimeClassInitialize()
+{
+	return MakeAndInitialize<ConnectionManager>(&m_instance);
+}
 
 HRESULT ConnectionManagerStatics::get_Instance(IConnectionManager** value)
 {
@@ -1915,12 +1999,7 @@ HRESULT ConnectionManagerStatics::get_Instance(IConnectionManager** value)
 		return E_POINTER;
 	}
 
-	HRESULT result;
-	ComPtr<ConnectionManager> connectionManager;
-	ReturnIfFailed(result, ConnectionManager::GetInstance(connectionManager));
-
-	*value = connectionManager.Detach();
-	return S_OK;
+	return m_instance.CopyTo(value);
 }
 
 HRESULT ConnectionManagerStatics::get_Version(Version* value)

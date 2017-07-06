@@ -53,21 +53,23 @@ HRESULT TLObject::RegisterTLObjecConstructor(UINT32 constructor, ITLObjectConstr
 	return S_OK;
 }
 
-HRESULT TLObject::HandleResponse(MessageContext const* messageContext, ITLObject* messageBody, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLObject::HandleResponse(MessageContext const* messageContext, ITLObject* messageBody, Connection* connection)
 {
 	ComPtr<IMessageResponseHandler> responseHandler;
 	if (SUCCEEDED(messageBody->QueryInterface(IID_PPV_ARGS(&responseHandler))))
 	{
-		return responseHandler->HandleResponse(messageContext, connectionManager, connection);
+		return responseHandler->HandleResponse(messageContext, connection);
 	}
 	else
 	{
+		auto& connectionManager = connection->GetDatacenter()->GetConnectionManager();
 		return connectionManager->OnUnprocessedMessageResponse(messageContext, messageBody, connection);
 	}
 }
 
-HRESULT TLObject::CompleteRequest(INT64 requestMessageId, MessageContext const* messageContext, ITLObject* messageBody, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLObject::CompleteRequest(INT64 requestMessageId, MessageContext const* messageContext, ITLObject* messageBody, Connection* connection)
 {
+	auto& connectionManager = connection->GetDatacenter()->GetConnectionManager();
 	return connectionManager->CompleteMessageRequest(requestMessageId, messageContext, messageBody, connection);
 }
 
@@ -88,9 +90,9 @@ HRESULT TLObjectWithQuery::get_Query(ITLObject** value)
 	return m_query.CopyTo(value);
 }
 
-HRESULT TLObjectWithQuery::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLObjectWithQuery::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
-	return TLObject::HandleResponse(messageContext, m_query.Get(), connectionManager, connection);
+	return TLObject::HandleResponse(messageContext, m_query.Get(), connection);
 }
 
 

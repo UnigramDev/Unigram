@@ -20,16 +20,20 @@
 
 #define ENCRYPT_KEY_IV_PARAM 0
 #define DECRYPT_KEY_IV_PARAM 8
+#define FLAGS_GET_HANDSHAKESTATE(flags) static_cast<HandshakeState>(flags & DatacenterFlag::HandshakeState)
+#define FLAGS_SET_HANDSHAKESTATE(flags, handshakeState) (flags & ~DatacenterFlag::HandshakeState) | static_cast<DatacenterFlag>(handshakeState)
+#define FLAGS_GET_AUTHORIZATIONSTATE(flags) static_cast<AuthorizationState>(flags & DatacenterFlag::AuthorizationState)
+#define FLAGS_SET_AUTHORIZATIONSTATE(flags, authorizationState) (flags & ~DatacenterFlag::AuthorizationState) | static_cast<DatacenterFlag>(authorizationState)
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
 
 
-Datacenter::Datacenter(UINT32 id, bool isCdn) :
-	m_id(id),
-	m_flags(isCdn ? DatacenterFlag::CDN : DatacenterFlag::None),
-	m_currentIpv4EndpointIndex(0),
-	m_currentIpv4DownloadEndpointIndex(0),
+Datacenter::Datacenter() :
+	m_id(0),
+	m_flags(DatacenterFlag::None),
+	m_currentIPv4EndpointIndex(0),
+	m_currentIPv4DownloadEndpointIndex(0),
 	m_currentIPv6EndpointIndex(0),
 	m_currentIPv6DownloadEndpointIndex(0)
 {
@@ -37,6 +41,62 @@ Datacenter::Datacenter(UINT32 id, bool isCdn) :
 
 Datacenter::~Datacenter()
 {
+}
+
+HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager, INT32 id, bool isCdn)
+{
+	if (isCdn)
+	{
+		m_flags |= DatacenterFlag::CDN;
+	}
+
+	m_id = id;
+	m_connectionManager = connectionManager;
+	return S_OK;
+}
+
+HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager, ITLBinaryReaderEx* reader)
+{
+	HRESULT result;
+	ReturnIfFailed(result, reader->ReadInt32(&m_id));
+	ReturnIfFailed(result, reader->ReadInt32(reinterpret_cast<INT32*>(&m_flags)));
+
+	if (FLAGS_GET_HANDSHAKESTATE(m_flags) == HandshakeState::Authenticated)
+	{
+		auto authKeyContext = std::make_unique<AuthKeyContext>();
+		ReturnIfFailed(result, reader->ReadInt64(&authKeyContext->AuthKeyId));
+		ReturnIfFailed(result, reader->ReadRawBuffer(sizeof(authKeyContext->AuthKey), authKeyContext->AuthKey));
+
+		m_authenticationContext = std::move(authKeyContext);
+	}
+	else
+	{
+		m_flags &= ~DatacenterFlag::HandshakeState;
+	}
+
+	if (FLAGS_GET_AUTHORIZATIONSTATE(m_flags) != AuthorizationState::Authorized)
+	{
+		m_flags &= ~DatacenterFlag::AuthorizationState;
+	}
+
+	UINT32 serverSaltCount;
+	ReturnIfFailed(result, reader->ReadUInt32(&serverSaltCount));
+
+	m_serverSalts.resize(serverSaltCount);
+
+	for (UINT32 i = 0; i < serverSaltCount; i++)
+	{
+		ReturnIfFailed(result, reader->ReadInt32(&m_serverSalts[i].ValidSince));
+		ReturnIfFailed(result, reader->ReadInt32(&m_serverSalts[i].ValidUntil));
+		ReturnIfFailed(result, reader->ReadInt64(&m_serverSalts[i].Salt));
+	}
+
+	ReturnIfFailed(result, ReadSettingsEndpoints(reader, m_ipv4Endpoints, &m_currentIPv4EndpointIndex));
+	ReturnIfFailed(result, ReadSettingsEndpoints(reader, m_ipv4DownloadEndpoints, &m_currentIPv4DownloadEndpointIndex));
+	ReturnIfFailed(result, ReadSettingsEndpoints(reader, m_ipv6Endpoints, &m_currentIPv6EndpointIndex));
+	ReturnIfFailed(result, ReadSettingsEndpoints(reader, m_ipv6DownloadEndpoints, &m_currentIPv6DownloadEndpointIndex));
+
+	return S_OK;
 }
 
 HRESULT Datacenter::get_Id(INT32* value)
@@ -98,6 +158,7 @@ HRESULT Datacenter::Close()
 		m_flags = DatacenterFlag::Closed;
 		m_authenticationContext.reset();
 		m_serverSalts.clear();
+		m_connectionManager.Reset();
 
 		if (m_genericConnection != nullptr)
 		{
@@ -198,7 +259,7 @@ void Datacenter::NextEndpoint(ConnectionType connectionType, bool ipv6)
 		}
 		else
 		{
-			m_currentIpv4EndpointIndex = (m_currentIpv4EndpointIndex + 1) % m_ipv4Endpoints.size();
+			m_currentIPv4EndpointIndex = (m_currentIPv4EndpointIndex + 1) % m_ipv4Endpoints.size();
 		}
 		break;
 	case ConnectionType::Download:
@@ -208,7 +269,7 @@ void Datacenter::NextEndpoint(ConnectionType connectionType, bool ipv6)
 		}
 		else
 		{
-			m_currentIpv4DownloadEndpointIndex = (m_currentIpv4DownloadEndpointIndex + 1) % m_ipv4DownloadEndpoints.size();
+			m_currentIPv4DownloadEndpointIndex = (m_currentIPv4DownloadEndpointIndex + 1) % m_ipv4DownloadEndpoints.size();
 		}
 		break;
 	}
@@ -218,8 +279,8 @@ void Datacenter::ResetEndpoint()
 {
 	auto lock = LockCriticalSection();
 
-	m_currentIpv4EndpointIndex = 0;
-	m_currentIpv4DownloadEndpointIndex = 0;
+	m_currentIPv4EndpointIndex = 0;
+	m_currentIPv4DownloadEndpointIndex = 0;
 	m_currentIPv6EndpointIndex = 0;
 	m_currentIPv6DownloadEndpointIndex = 0;
 }
@@ -239,10 +300,10 @@ void Datacenter::AddServerSalt(ServerSalt const& salt)
 	}
 }
 
-void Datacenter::MergeServerSalts(ConnectionManager* connectionManager, std::vector<ServerSalt> const& salts)
+void Datacenter::MergeServerSalts(std::vector<ServerSalt> const& salts)
 {
 	auto serverSaltCount = m_serverSalts.size();
-	auto timeStamp = connectionManager->GetCurrentTime();
+	auto timeStamp = m_connectionManager->GetCurrentTime();
 
 	for (auto& serverSalt : salts)
 	{
@@ -274,13 +335,13 @@ bool Datacenter::ContainsServerSalt(INT64 salt)
 	return false;
 }
 
-INT64 Datacenter::GetServerSalt(ConnectionManager* connectionManager)
+INT64 Datacenter::GetServerSalt()
 {
 	auto lock = LockCriticalSection();
 
 	INT32 maxOffset = -1;
 	INT64 salt = 0;
-	auto timeStamp = connectionManager->GetCurrentTime();
+	auto timeStamp = m_connectionManager->GetCurrentTime();
 
 	auto serverSaltIterator = m_serverSalts.begin();
 	while (serverSaltIterator != m_serverSalts.end())
@@ -436,7 +497,7 @@ HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, ComPtr<Con
 	return S_OK;
 }
 
-HRESULT Datacenter::BeginHandshake(ConnectionManager* connectionManager, bool reconnect, bool reset)
+HRESULT Datacenter::BeginHandshake(bool reconnect, bool reset)
 {
 	auto lock = LockCriticalSection();
 
@@ -453,9 +514,9 @@ HRESULT Datacenter::BeginHandshake(ConnectionManager* connectionManager, bool re
 	HRESULT result;
 	if ((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN)
 	{
-		if (!connectionManager->HasCDNPublicKey(m_id))
+		if (!m_connectionManager->HasCDNPublicKey(m_id))
 		{
-			ReturnIfFailed(result, connectionManager->UpdateCDNPublicKeys());
+			ReturnIfFailed(result, m_connectionManager->UpdateCDNPublicKeys());
 
 			return S_FALSE;
 		}
@@ -480,10 +541,10 @@ HRESULT Datacenter::BeginHandshake(ConnectionManager* connectionManager, bool re
 	m_authenticationContext = std::move(handshakeContext);
 	m_flags |= static_cast<DatacenterFlag>(HandshakeState::Started);
 
-	return genericConnection->SendUnencryptedMessage(connectionManager, pqRequest.Get(), false);
+	return genericConnection->SendUnencryptedMessage(pqRequest.Get(), false);
 }
 
-HRESULT Datacenter::ImportAuthorization(_In_ ConnectionManager* connectionManager)
+HRESULT Datacenter::ImportAuthorization()
 {
 	auto lock = LockCriticalSection();
 
@@ -503,8 +564,8 @@ HRESULT Datacenter::ImportAuthorization(_In_ ConnectionManager* connectionManage
 	HRESULT result;
 	INT32 requestToken;
 	ComPtr<Datacenter> datacenter = this;
-	if (FAILED(result = connectionManager->SendRequestWithFlags(authExportAuthorization.Get(),
-		Callback<ISendRequestCompletedCallback>([datacenter, connectionManager](IMessageResponse* response, IMessageError* error) -> HRESULT
+	if (FAILED(result = m_connectionManager->SendRequestWithFlags(authExportAuthorization.Get(),
+		Callback<ISendRequestCompletedCallback>([datacenter](IMessageResponse* response, IMessageError* error) -> HRESULT
 	{
 		auto lock = datacenter->LockCriticalSection();
 
@@ -517,7 +578,7 @@ HRESULT Datacenter::ImportAuthorization(_In_ ConnectionManager* connectionManage
 			ReturnIfFailed(result, MakeAndInitialize<Methods::TLAuthImportAuthorization>(&authImportAuthorization, authExportedAuthorization->GetId(), authExportedAuthorization->GetBytes().Get()));
 
 			INT32 requestToken;
-			return connectionManager->SendRequestWithFlags(authImportAuthorization.Get(), Callback<ISendRequestCompletedCallback>([datacenter, connectionManager](IMessageResponse* response, IMessageError* error) -> HRESULT
+			return datacenter->m_connectionManager->SendRequestWithFlags(authImportAuthorization.Get(), Callback<ISendRequestCompletedCallback>([datacenter](IMessageResponse* response, IMessageError* error) -> HRESULT
 			{
 				{
 					auto lock = datacenter->LockCriticalSection();
@@ -525,7 +586,7 @@ HRESULT Datacenter::ImportAuthorization(_In_ ConnectionManager* connectionManage
 					if (error == nullptr)
 					{
 						datacenter->m_flags |= static_cast<DatacenterFlag>(AuthorizationState::Authorized);
-						return connectionManager->OnDatacenterImportAuthorizationComplete(datacenter.Get());
+						return datacenter->m_connectionManager->OnDatacenterImportAuthorizationComplete(datacenter.Get());
 					}
 					else
 					{
@@ -549,7 +610,7 @@ HRESULT Datacenter::ImportAuthorization(_In_ ConnectionManager* connectionManage
 	return S_OK;
 }
 
-HRESULT Datacenter::SendPing(_In_ ConnectionManager* connectionManager)
+HRESULT Datacenter::SendPing()
 {
 	HRESULT result;
 	ComPtr<Connection> genericConnection;
@@ -558,7 +619,7 @@ HRESULT Datacenter::SendPing(_In_ ConnectionManager* connectionManager)
 	auto ping = Make<Methods::TLPing>(ConnectionManager::GetCurrentMonotonicTime());
 
 	INT32 requestToken;
-	return connectionManager->SendRequestWithFlags(ping.Get(), Callback<ISendRequestCompletedCallback>([connectionManager](IMessageResponse* response, IMessageError* error) -> HRESULT
+	return m_connectionManager->SendRequestWithFlags(ping.Get(), Callback<ISendRequestCompletedCallback>([](IMessageResponse* response, IMessageError* error) -> HRESULT
 	{
 		if (error == nullptr)
 		{
@@ -572,7 +633,7 @@ HRESULT Datacenter::SendPing(_In_ ConnectionManager* connectionManager)
 	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::Immediate, &requestToken);
 }
 
-HRESULT Datacenter::RequestFutureSalts(ConnectionManager* connectionManager, UINT32 count)
+HRESULT Datacenter::RequestFutureSalts(UINT32 count)
 {
 	auto lock = LockCriticalSection();
 
@@ -588,8 +649,8 @@ HRESULT Datacenter::RequestFutureSalts(ConnectionManager* connectionManager, UIN
 	HRESULT result;
 	INT32 requestToken;
 	ComPtr<Datacenter> datacenter = this;
-	if (FAILED(result = connectionManager->SendRequestWithFlags(getFutureSalts.Get(),
-		Callback<ISendRequestCompletedCallback>([datacenter, connectionManager](IMessageResponse* response, IMessageError* error) -> HRESULT
+	if (FAILED(result = m_connectionManager->SendRequestWithFlags(getFutureSalts.Get(),
+		Callback<ISendRequestCompletedCallback>([datacenter](IMessageResponse* response, IMessageError* error) -> HRESULT
 	{
 		auto lock = datacenter->LockCriticalSection();
 
@@ -598,7 +659,7 @@ HRESULT Datacenter::RequestFutureSalts(ConnectionManager* connectionManager, UIN
 		if (error == nullptr)
 		{
 			auto futureSalts = GetMessageResponseObject<TLFutureSalts>(response);
-			datacenter->MergeServerSalts(connectionManager, futureSalts->GetSalts());
+			datacenter->MergeServerSalts(futureSalts->GetSalts());
 		}
 
 		return S_OK;
@@ -627,7 +688,7 @@ HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, bool ipv6,
 		}
 		else
 		{
-			currentEndpointIndex = m_currentIpv4EndpointIndex;
+			currentEndpointIndex = m_currentIPv4EndpointIndex;
 			endpoints = &m_ipv4Endpoints;
 		}
 
@@ -644,7 +705,7 @@ HRESULT Datacenter::GetCurrentEndpoint(ConnectionType connectionType, bool ipv6,
 		}
 		else
 		{
-			currentEndpointIndex = m_currentIpv4DownloadEndpointIndex;
+			currentEndpointIndex = m_currentIPv4DownloadEndpointIndex;
 			endpoints = &m_ipv4DownloadEndpoints;
 		}
 
@@ -714,7 +775,7 @@ HRESULT Datacenter::OnConnectionClosed(Connection* connection)
 	return S_OK;
 }
 
-HRESULT Datacenter::OnHandshakePQResponse(ConnectionManager* connectionManager, Connection* connection, TLResPQ* response)
+HRESULT Datacenter::OnHandshakePQResponse(Connection* connection, TLResPQ* response)
 {
 	auto lock = LockCriticalSection();
 
@@ -729,14 +790,14 @@ HRESULT Datacenter::OnHandshakePQResponse(ConnectionManager* connectionManager, 
 		return E_INVALIDARG;
 	}
 
-	/*if (!((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN && connectionManager->GetCDNPublicKey(m_id, response->GetServerPublicKeyFingerprints(), &serverPublicKey)) ||
+	/*if (!((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN && m_connectionManager->GetCDNPublicKey(m_id, response->GetServerPublicKeyFingerprints(), &serverPublicKey)) ||
 		  !DatacenterCryptography::GetDatacenterPublicKey(response->GetServerPublicKeyFingerprints(), &serverPublicKey))
 	{
 			return E_FAIL;
 	}*/
 
 	ServerPublicKey const* serverPublicKey;
-	if (!(DatacenterCryptography::GetDatacenterPublicKey(response->GetServerPublicKeyFingerprints(), &serverPublicKey) || connectionManager->GetCDNPublicKey(m_id, response->GetServerPublicKeyFingerprints(), &serverPublicKey)))
+	if (!(DatacenterCryptography::GetDatacenterPublicKey(response->GetServerPublicKeyFingerprints(), &serverPublicKey) || m_connectionManager->GetCDNPublicKey(m_id, response->GetServerPublicKeyFingerprints(), &serverPublicKey)))
 	{
 		return E_FAIL;
 	}
@@ -796,10 +857,10 @@ HRESULT Datacenter::OnHandshakePQResponse(ConnectionManager* connectionManager, 
 		ZeroMemory(innerDataWriter->GetBuffer() + encryptedDataLength, 256 - encryptedDataLength);
 	}
 
-	return connection->SendUnencryptedMessage(connectionManager, dhParams.Get(), false);
+	return connection->SendUnencryptedMessage(dhParams.Get(), false);
 }
 
-HRESULT Datacenter::OnHandshakeServerDHResponse(ConnectionManager* connectionManager, Connection* connection, TLServerDHParamsOk* response)
+HRESULT Datacenter::OnHandshakeServerDHResponse(Connection* connection, TLServerDHParamsOk* response)
 {
 	auto lock = LockCriticalSection();
 
@@ -981,10 +1042,10 @@ HRESULT Datacenter::OnHandshakeServerDHResponse(ConnectionManager* connectionMan
 		handshakeContext->Salt.Salt |= (handshakeContext->NewNonce[i] ^ handshakeContext->ServerNonce[i]);
 	}
 
-	return connection->SendUnencryptedMessage(connectionManager, setClientDHParams.Get(), false);
+	return connection->SendUnencryptedMessage(setClientDHParams.Get(), false);
 }
 
-HRESULT Datacenter::OnHandshakeClientDHResponse(ConnectionManager* connectionManager, Connection* connection, TLDHGenOk* response)
+HRESULT Datacenter::OnHandshakeClientDHResponse(Connection* connection, TLDHGenOk* response)
 {
 	INT32 timeDifference;
 
@@ -1036,10 +1097,10 @@ HRESULT Datacenter::OnHandshakeClientDHResponse(ConnectionManager* connectionMan
 		m_flags |= static_cast<DatacenterFlag>(HandshakeState::Authenticated);
 	}
 
-	return connectionManager->OnDatacenterHandshakeComplete(this, timeDifference);
+	return m_connectionManager->OnDatacenterHandshakeComplete(this, timeDifference);
 }
 
-HRESULT Datacenter::OnBadServerSaltResponse(ConnectionManager* connectionManager, INT64 messageId, TLBadServerSalt* response)
+HRESULT Datacenter::OnBadServerSaltResponse(INT64 messageId, TLBadServerSalt* response)
 {
 	{
 		auto lock = LockCriticalSection();
@@ -1047,17 +1108,17 @@ HRESULT Datacenter::OnBadServerSaltResponse(ConnectionManager* connectionManager
 		ClearServerSalts();
 
 		ServerSalt salt;
-		salt.ValidSince = connectionManager->GetCurrentTime();
+		salt.ValidSince = m_connectionManager->GetCurrentTime();
 		salt.ValidUntil = salt.ValidSince + 30 * 60;
 		salt.Salt = response->GetNewServerSalt();
 
 		AddServerSalt(salt);
 	}
 
-	return connectionManager->OnDatacenterBadServerSalt(this, response->GetBadMessageContext()->Id, messageId);
+	return m_connectionManager->OnDatacenterBadServerSalt(this, response->GetBadMessageContext()->Id, messageId);
 }
 
-HRESULT Datacenter::OnBadMessageResponse(ConnectionManager* connectionManager, INT64 messageId, TLBadMessage* response)
+HRESULT Datacenter::OnBadMessageResponse(INT64 messageId, TLBadMessage* response)
 {
 	switch (response->GetErrorCode())
 	{
@@ -1069,7 +1130,7 @@ HRESULT Datacenter::OnBadMessageResponse(ConnectionManager* connectionManager, I
 	case 64:
 		RecreateSessions();
 
-		return connectionManager->OnDatacenterBadMessage(this, response->GetBadMessageContext()->Id, messageId);
+		return m_connectionManager->OnDatacenterBadMessage(this, response->GetBadMessageContext()->Id, messageId);
 	default:
 		return S_OK;
 	}
@@ -1240,56 +1301,82 @@ void Datacenter::GenerateMessageKey(BYTE const* authKey, BYTE* messageKey, BYTE*
 #endif
 }
 
-HRESULT Datacenter::SendAckRequest(ConnectionManager* connectionManager, Connection* connection, INT64 messageId)
+HRESULT Datacenter::SaveSettings(ITLBinaryWriterEx* writer)
+{
+	auto lock = LockCriticalSection();
+
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteInt32(m_id));
+	ReturnIfFailed(result, writer->WriteInt32(static_cast<INT32>(m_flags & (DatacenterFlag::HandshakeState |
+		DatacenterFlag::AuthorizationState | DatacenterFlag::CDN | DatacenterFlag::ConnectionInitialized))));
+
+	if (FLAGS_GET_HANDSHAKESTATE(m_flags) == HandshakeState::Authenticated)
+	{
+		auto authKeyContext = static_cast<AuthKeyContext*>(m_authenticationContext.get());
+		ReturnIfFailed(result, writer->WriteInt64(authKeyContext->AuthKeyId));
+		ReturnIfFailed(result, writer->WriteRawBuffer(sizeof(authKeyContext->AuthKey), authKeyContext->AuthKey));
+	}
+
+	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(m_serverSalts.size())));
+
+	for (auto& serverSalt : m_serverSalts)
+	{
+		ReturnIfFailed(result, writer->WriteInt32(serverSalt.ValidSince));
+		ReturnIfFailed(result, writer->WriteInt32(serverSalt.ValidUntil));
+		ReturnIfFailed(result, writer->WriteInt64(serverSalt.Salt));
+	}
+
+	ReturnIfFailed(result, WriteSettingsEndpoints(writer, m_ipv4Endpoints, m_currentIPv4EndpointIndex));
+	ReturnIfFailed(result, WriteSettingsEndpoints(writer, m_ipv4DownloadEndpoints, m_currentIPv4DownloadEndpointIndex));
+	ReturnIfFailed(result, WriteSettingsEndpoints(writer, m_ipv6Endpoints, m_currentIPv6EndpointIndex));
+	ReturnIfFailed(result, WriteSettingsEndpoints(writer, m_ipv6DownloadEndpoints, m_currentIPv6DownloadEndpointIndex));
+
+	return S_OK;
+}
+
+HRESULT Datacenter::ReadSettingsEndpoints(ITLBinaryReaderEx* reader, std::vector<ServerEndpoint>& endpoints, size_t* currentIndex)
+{
+	HRESULT result;
+	UINT32 endpointCount;
+	ReturnIfFailed(result, reader->ReadUInt32(&endpointCount));
+
+	endpoints.resize(endpointCount);
+
+	for (UINT32 i = 0; i < endpointCount; i++)
+	{
+		ReturnIfFailed(result, reader->ReadWString(endpoints[i].Address));
+		ReturnIfFailed(result, reader->ReadUInt32(&endpoints[i].Port));
+	}
+
+#ifdef _WIN64
+	return reader->ReadUInt64(currentIndex);
+#else
+	return reader->ReadUInt32(currentIndex);
+#endif
+}
+
+HRESULT Datacenter::WriteSettingsEndpoints(ITLBinaryWriterEx* writer, std::vector<ServerEndpoint> const& endpoints, size_t currentIndex)
+{
+	HRESULT result;
+	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(endpoints.size())));
+
+	for (auto& endpoint : endpoints)
+	{
+		ReturnIfFailed(result, writer->WriteWString(endpoint.Address));
+		ReturnIfFailed(result, writer->WriteUInt32(endpoint.Port));
+	}
+
+#ifdef _WIN64
+	return writer->WriteUInt64(currentIndex);
+#else
+	return writer->WriteUInt32(currentIndex);
+#endif
+}
+
+HRESULT Datacenter::SendAckRequest(Connection* connection, INT64 messageId)
 {
 	auto msgsAck = Make<TLMsgsAck>();
 	msgsAck->GetMessagesIds().push_back(messageId);
 
-	return connection->SendUnencryptedMessage(connectionManager, msgsAck.Get(), false);
+	return connection->SendUnencryptedMessage(msgsAck.Get(), false);
 }
-
-//HRESULT Datacenter::GetConfigFileName(INT32 id, std::wstring& fileName)
-//{
-//	HRESULT result;
-//	ComPtr<IApplicationDataStatics> applicationDataStatics;
-//	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Storage_ApplicationData).Get(), &applicationDataStatics));
-//
-//	ComPtr<IApplicationData> applicationData;
-//	ReturnIfFailed(result, applicationDataStatics->get_Current(&applicationData));
-//
-//	ComPtr<IStorageFolder> localStorageFolder;
-//	ReturnIfFailed(result, applicationData->get_LocalFolder(&localStorageFolder));
-//
-//	Event asyncOperationEvent(CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, WRITE_OWNER | EVENT_ALL_ACCESS));
-//	if (!asyncOperationEvent.IsValid())
-//	{
-//		return GetLastHRESULT();
-//	}
-//
-//	auto callback = Callback<ABI::Windows::Foundation::IAsyncOperationCompletedHandler<StorageFolder*>>
-//		([&asyncOperationEvent](__FIAsyncOperation_1_Windows__CStorage__CStorageFolder*, ABI::Windows::Foundation::AsyncStatus) -> HRESULT
-//	{
-//		SetEvent(asyncOperationEvent.Get());
-//		return S_OK;
-//	});
-//
-//	ComPtr<__FIAsyncOperation_1_Windows__CStorage__CStorageFolder> asyncOperation;
-//	ReturnIfFailed(result, localStorageFolder->CreateFolderAsync(HStringReference(L"Settings").Get(), CreationCollisionOption_OpenIfExists, &asyncOperation));
-//	ReturnIfFailed(result, asyncOperation->put_Completed(callback.Get()));
-//
-//
-//	WaitForSingleObject(asyncOperationEvent.Get(), INFINITE);
-//
-//	ComPtr<IStorageFolder> settingsStorageFolder;
-//	ReturnIfFailed(result, asyncOperation->GetResults(&settingsStorageFolder));
-//
-//	ComPtr<IStorageItem> localStorageItem;
-//	ReturnIfFailed(result, settingsStorageFolder.As(&localStorageItem));
-//
-//	HString localPath;
-//	ReturnIfFailed(result, localStorageItem->get_Path(localPath.GetAddressOf()));
-//
-//	fileName.resize(MAX_PATH);
-//	fileName.resize(swprintf(&fileName[0], MAX_PATH, L"%s\\DC_%d.config", localPath.GetRawBuffer(nullptr), id));
-//	return S_OK;
-//}

@@ -91,7 +91,7 @@ namespace Telegram
 					STDMETHODIMP RuntimeClassInitialize(_In_ IBuffer* underlyingBuffer);
 					STDMETHODIMP RuntimeClassInitialize(_In_ TLBinaryReader* reader, UINT32 length);
 					STDMETHODIMP RuntimeClassInitialize(UINT32 capacity);
-					STDMETHODIMP SeekCurrent(INT32 bytes);
+					HRESULT SeekCurrent(INT32 bytes);
 
 					inline BYTE* GetBuffer() const
 					{

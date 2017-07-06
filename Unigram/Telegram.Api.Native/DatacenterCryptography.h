@@ -56,9 +56,10 @@ namespace Telegram
 					auto mbString = std::make_unique<char[]>(mbLength);
 					WideCharToMultiByte(CP_UTF8, 0, buffer, length, mbString.get(), mbLength, nullptr, nullptr);
 
-					Wrappers::BIO keyBio(BIO_new(BIO_s_mem()));
-					BIO_write(keyBio.Get(), mbString.get(), mbLength);
+					/*Wrappers::BIO keyBio(BIO_new(BIO_s_mem()));
+					BIO_write(keyBio.Get(), mbString.get(), mbLength);*/
 
+					Wrappers::BIO keyBio(BIO_new_mem_buf(mbString.get(), mbLength));
 					return PEM_read_bio_RSAPublicKey(keyBio.Get(), nullptr, nullptr, nullptr);
 				}
 
@@ -67,9 +68,10 @@ namespace Telegram
 
 				inline static ::RSA* GetRSAPublicKey(std::string const& key)
 				{
-					Wrappers::BIO keyBio(BIO_new(BIO_s_mem()));
-					BIO_write(keyBio.Get(), key.c_str(), static_cast<int>(key.size()));
+					/*Wrappers::BIO keyBio(BIO_new(BIO_s_mem()));
+					BIO_write(keyBio.Get(), key.c_str(), static_cast<int>(key.size()));*/
 
+					Wrappers::BIO keyBio(BIO_new_mem_buf(key.c_str(), static_cast<int>(key.size())));
 					return PEM_read_bio_RSAPublicKey(keyBio.Get(), nullptr, nullptr, nullptr);
 				}
 

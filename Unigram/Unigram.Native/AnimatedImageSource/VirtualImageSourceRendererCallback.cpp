@@ -23,9 +23,9 @@ VirtualImageSourceRendererCallback::~VirtualImageSourceRendererCallback()
 
 HRESULT VirtualImageSourceRendererCallback::StartTimer(LONGLONG delay)
 {
-	HRESULT result;
 	if (m_timerKey != NULL)
 	{
+		HRESULT result;
 		ReturnIfFailed(result, MFCancelWorkItem(m_timerKey));
 	}
 
