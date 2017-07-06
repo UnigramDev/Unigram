@@ -732,4 +732,19 @@ Duration: {1}</value>
   <data name="UserRestrictionsUntilForever" xml:space="preserve">
     <value>Forever</value>
   </data>
+  <data name="BotsTooMuch" xml:space="preserve">
+    <value>Sorry, too many bots in this group.</value>
+  </data>
+  <data name="PeerFloodAddContact" xml:space="preserve">
+    <value>Sorry, you can only add mutual contacts to groups at the moment.</value>
+  </data>
+  <data name="UserNotMutualContact" xml:space="preserve">
+    <value>Sorry, you can't add this user to groups.</value>
+  </data>
+  <data name="UsersTooMuch" xml:space="preserve">
+    <value>Sorry, this group is full.</value>
+  </data>
+  <data name="EventLogInvited" xml:space="preserve">
+    <value>invited {0}</value>
+  </data>
 </root>

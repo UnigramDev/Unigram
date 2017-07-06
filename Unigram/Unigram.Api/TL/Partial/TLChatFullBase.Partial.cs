@@ -62,6 +62,7 @@ namespace Telegram.Api.TL
                 this.ParticipantsCount = channel.ParticipantsCount;
                 this.AdminsCount = channel.AdminsCount;
                 this.KickedCount = channel.KickedCount;
+                this.BannedCount = channel.BannedCount;
                 this.ReadInboxMaxId = channel.ReadInboxMaxId;
                 this.ReadOutboxMaxId = channel.ReadOutboxMaxId;
                 this.UnreadCount = channel.UnreadCount;

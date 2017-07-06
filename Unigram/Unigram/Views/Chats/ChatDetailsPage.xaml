@@ -95,7 +95,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:TLChatParticipantBase">
-                    <Grid Margin="0,6" Background="Transparent" ContextFlyout="{StaticResource ParticipantMenuFlyout}">
+                    <Grid Padding="0,6" Background="Transparent" ContextFlyout="{StaticResource ParticipantMenuFlyout}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>

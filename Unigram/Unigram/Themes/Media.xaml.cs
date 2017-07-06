@@ -73,11 +73,22 @@ namespace Unigram.Themes
             var message = image.DataContext as TLMessage;
             var bubble = image.Ancestors<MessageBubbleBase>().FirstOrDefault() as MessageBubbleBase;
 
-            if (bubble != null)
+            if (bubble != null && bubble.Context != null)
             {
-                if (bubble.Context != null)
+                if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
                 {
-                    bubble.Context.NavigationService.Navigate(typeof(InstantPage), message.Media);
+                    if (webPage.HasCachedPage)
+                    {
+                        bubble.Context.NavigationService.Navigate(typeof(InstantPage), message.Media);
+                    }
+                    else if (webPage.HasType && webPage.Type.Equals("telegram_megagroup", StringComparison.OrdinalIgnoreCase))
+                    {
+                        MessageHelper.HandleTelegramUrl(webPage.Url);
+                    }
+                    else if (webPage.HasType && webPage.Type.Equals("telegram_channel", StringComparison.OrdinalIgnoreCase))
+                    {
+                        MessageHelper.HandleTelegramUrl(webPage.Url);
+                    }
                 }
             }
         }

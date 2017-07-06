@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 06/30/2017 18:44:04
+// 	Generated: 07/06/2017 10:59:42
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2292,6 +2292,61 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UserRestrictionsUntilForever");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, too many bots in this group."
+        /// </summary>
+        public static string BotsTooMuch
+        {
+            get
+            {
+                return resourceLoader.GetString("BotsTooMuch");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only add mutual contacts to groups at the moment."
+        /// </summary>
+        public static string PeerFloodAddContact
+        {
+            get
+            {
+                return resourceLoader.GetString("PeerFloodAddContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user to groups."
+        /// </summary>
+        public static string UserNotMutualContact
+        {
+            get
+            {
+                return resourceLoader.GetString("UserNotMutualContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this group is full."
+        /// </summary>
+        public static string UsersTooMuch
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersTooMuch");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "invited {0}"
+        /// </summary>
+        public static string EventLogInvited
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogInvited");
             }
         }
     }

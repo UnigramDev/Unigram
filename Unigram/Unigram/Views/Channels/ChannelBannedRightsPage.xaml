@@ -13,7 +13,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Text="Ban User" Glyph="&#xE10B;" Command="{x:Bind ViewModel.SendCommand}"/>
+        <controls:ButtonPageHeader Text="User Restrictions" Glyph="&#xE10B;" Command="{x:Bind ViewModel.SendCommand}"/>
 
         <controls:ScrollViewerBackground 
             Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
@@ -71,6 +71,27 @@
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsEmbedLinks, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}}"
                                   Header="Can Embed Links"
                                   Style="{ThemeResource CheckButtonStyle}"/>
+                </local:TableStackPanel>
+
+                <local:TableStackPanel x:Name="Group5"
+                                       BorderThickness="0,0,0,1"
+                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                       Margin="0,24">
+                    <DatePicker Header="Banned until"/>
+                    <TimePicker/>
+                </local:TableStackPanel>
+
+                <local:TableStackPanel x:Name="Group3"
+                                       Visibility="{x:Bind ViewModel.IsBannedAlready, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                       BorderThickness="0,0,0,1"
+                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                       Margin="0,24">
+                    <controls:HyperButton Command="{x:Bind ViewModel.DismissCommand}"
+                                          Content="Ban User"
+                                          Style="{StaticResource HyperButtonStyle}"
+                                          Foreground="Red"/>
                 </local:TableStackPanel>
             </StackPanel>
         </ScrollViewer>
