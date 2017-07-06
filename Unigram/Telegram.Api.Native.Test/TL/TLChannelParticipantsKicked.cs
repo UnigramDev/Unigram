@@ -6,6 +6,8 @@ namespace Telegram.Api.TL
 {
 	public partial class TLChannelParticipantsKicked : TLChannelParticipantsFilterBase 
 	{
+		public String Q { get; set; }
+
 		public TLChannelParticipantsKicked() { }
 		public TLChannelParticipantsKicked(TLBinaryReader from)
 		{
@@ -16,11 +18,12 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from)
 		{
+			Q = from.ReadString();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.WriteUInt32(0x3C37BB7A);
+			to.WriteString(Q ?? string.Empty);
 		}
 	}
 }

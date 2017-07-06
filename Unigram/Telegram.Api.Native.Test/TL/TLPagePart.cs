@@ -18,14 +18,14 @@ namespace Telegram.Api.TL
 		{
 			Blocks = TLFactory.Read<TLVector<TLPageBlockBase>>(from);
 			Photos = TLFactory.Read<TLVector<TLPhotoBase>>(from);
-			Videos = TLFactory.Read<TLVector<TLDocumentBase>>(from);
+			Documents = TLFactory.Read<TLVector<TLDocumentBase>>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			to.WriteObject(Blocks);
 			to.WriteObject(Photos);
-			to.WriteObject(Videos);
+			to.WriteObject(Documents);
 		}
 	}
 }

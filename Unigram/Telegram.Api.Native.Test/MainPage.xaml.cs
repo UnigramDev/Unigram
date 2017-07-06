@@ -14,13 +14,17 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Telegram.Api.Native.TL;
 using Windows.Security.Cryptography;
-using Telegram.Api.TL.Methods.Auth;
 using Telegram.Api.TL;
 using System.Diagnostics;
-using Telegram.Api.TL.Methods.Contacts;
 using System.ComponentModel;
-using Telegram.Api.TL.Methods.Upload;
-using Telegram.Api.TL.Methods.Messages;
+using Telegram.Api.TL.Auth.Methods;
+using Telegram.Api.TL.Auth;
+using Telegram.Api.TL.Contacts;
+using Telegram.Api.TL.Contacts.Methods;
+using Telegram.Api.TL.Upload.Methods;
+using Telegram.Api.TL.Messages.Methods;
+using Telegram.Api.TL.Messages;
+using Telegram.Api.TL.Upload;
 
 // Il modello di elemento Pagina vuota è documentato all'indirizzo https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x410
 
