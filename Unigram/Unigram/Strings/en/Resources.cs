@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 07/05/2017 11:57:03
+// 	Generated: 07/06/2017 10:59:42
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2336,6 +2336,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UsersTooMuch");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "invited {0}"
+        /// </summary>
+        public static string EventLogInvited
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogInvited");
             }
         }
     }

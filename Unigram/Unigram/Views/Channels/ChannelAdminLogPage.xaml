@@ -290,12 +290,24 @@
             </ListView.Footer>
         </ListView>
 
+        <StackPanel Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.Row="1">
+            <TextBlock Text="No events yet" Foreground="White" Style="{StaticResource BaseTextBlockStyle}"/>
+            <TextBlock Foreground="White" Style="{ThemeResource BodyTextBlockStyle}">
+                <Run Text="There where no service actions"/>
+                <LineBreak/>
+                <Run Text="taken by the group's members"/>
+                <LineBreak/>
+                <Run Text="and admins in the last 48 hours."/>
+            </TextBlock>
+        </StackPanel>
+
+
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="{ThemeResource AppBarThemeCompactHeight}" Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Click="Settings_Click" Content="SETTINGS" Style="{StaticResource SendButtonStyle}" Grid.ColumnSpan="2"/>
+            <Button Click="Settings_Click" Content="FILTER" Style="{StaticResource SendButtonStyle}" Grid.ColumnSpan="2"/>
             <controls:GlyphButton Click="Help_Click" Glyph="&#xE11B;" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Grid.Column="1"/>
 
             <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>

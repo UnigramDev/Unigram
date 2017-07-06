@@ -744,4 +744,7 @@ Duration: {1}</value>
   <data name="UsersTooMuch" xml:space="preserve">
     <value>Sorry, this group is full.</value>
   </data>
+  <data name="EventLogInvited" xml:space="preserve">
+    <value>invited {0}</value>
+  </data>
 </root>

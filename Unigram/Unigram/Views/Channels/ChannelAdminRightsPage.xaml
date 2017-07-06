@@ -13,7 +13,11 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:ButtonPageHeader Text="Edit Admin" Glyph="&#xE10B;" CommandVisibility="{x:Bind ViewModel.Item.IsCanEdit, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <controls:ButtonPageHeader
+            Text="Edit Admin"
+            Glyph="&#xE10B;"
+            Command="{x:Bind ViewModel.SendCommand}"
+            CommandVisibility="{x:Bind ViewModel.Item.IsCanEdit, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
         <controls:ScrollViewerBackground 
             Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"

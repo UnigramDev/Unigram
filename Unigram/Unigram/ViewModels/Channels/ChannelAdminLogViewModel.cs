@@ -34,9 +34,36 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
+        private bool _isEmpty = true;
+        public bool IsEmpty
+        {
+            get
+            {
+                return _isEmpty && !IsLoading;
+            }
+            set
+            {
+                Set(ref _isEmpty, value);
+            }
+        }
+
+        public override bool IsLoading
+        {
+            get
+            {
+                return base.IsLoading;
+            }
+            set
+            {
+                base.IsLoading = value;
+                RaisePropertyChanged(() => IsEmpty);
+            }
+        }
+
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             Item = null;
+            IsLoading = true;
 
             var channel = parameter as TLChannel;
             var peer = parameter as TLPeerChannel;
@@ -49,7 +76,9 @@ namespace Unigram.ViewModels.Channels
             {
                 Item = channel;
 
-                Items = new ItemsCollection(ProtoService, channel);
+                Items = new ItemsCollection(ProtoService, this, channel);
+                Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
+
                 RaisePropertyChanged(() => Items);
             }
 
@@ -61,6 +90,7 @@ namespace Unigram.ViewModels.Channels
         public class ItemsCollection : IncrementalCollection<TLMessageBase>
         {
             private readonly IMTProtoService _protoService;
+            private readonly ChannelAdminLogViewModel _viewModel;
             private readonly TLInputChannelBase _inputChannel;
             private readonly TLChannel _channel;
             //private readonly TLChannelParticipantsFilterBase _filter;
@@ -68,9 +98,10 @@ namespace Unigram.ViewModels.Channels
             private long _minEventId = long.MaxValue;
             private bool _hasMore;
 
-            public ItemsCollection(IMTProtoService protoService, TLChannel channel)
+            public ItemsCollection(IMTProtoService protoService, ChannelAdminLogViewModel viewModel, TLChannel channel)
             {
                 _protoService = protoService;
+                _viewModel = viewModel;
                 _inputChannel = channel.ToInputChannel();
                 _channel = channel;
                 //_filter = filter;
@@ -79,31 +110,20 @@ namespace Unigram.ViewModels.Channels
 
             public override async Task<IList<TLMessageBase>> LoadDataAsync()
             {
+                _viewModel.IsLoading = true;
+
                 var maxId = Count > 0 ? _minEventId : 0;
 
                 var response = await _protoService.GetAdminLogAsync(_inputChannel, null, null, null, maxId, 0, 50);
                 if (response.IsSucceeded)
                 {
+                    _viewModel.IsLoading = false;
+
                     var result = new List<TLMessageBase>();
 
                     foreach (var item in response.Result.Events)
                     {
                         _minEventId = Math.Min(_minEventId, item.Id);
-
-                        /*blic DataTemplate ChangeTitle { get; set; }
-                        public DataTemplate ChangeAbout { get; set; }
-                        public DataTemplate ChangeUsername { get; set; }
-                        public DataTemplate ChangePhoto { get; set; }
-                        public DataTemplate ToggleInvites { get; set; }
-                        public DataTemplate ToggleSignatures { get; set; }
-                        public DataTemplate UpdatePinned { get; set; }
-                        public DataTemplate EditMessage { get; set; }
-                        public DataTemplate DeleteMessage { get; set; }
-                        public DataTemplate ParticipantJoin { get; set; }
-                        public DataTemplate ParticipantLeave { get; set; }
-                        public DataTemplate ParticipantInvite { get; set; }
-                        public DataTemplate ParticipantToggleBan { get; set; }
-                        public DataTemplate ParticipantToggleAdmin { get; set; }*/
 
                         if (item.Action is TLChannelAdminLogEventActionChangeTitle changeTitle)
                         {
@@ -266,7 +286,26 @@ namespace Unigram.ViewModels.Channels
                         }
                         else if (item.Action is TLChannelAdminLogEventActionParticipantInvite participantInvite)
                         {
-                            result.Insert(0, GetServiceMessage(item));
+                            var message = new TLMessage();
+                            //message.Id = item.Id;
+                            message.FromId = item.UserId;
+                            message.ToId = _channel.ToPeer();
+                            message.Date = item.Date;
+                            //message.Message = from.ReadString();
+                            message.Entities = new TLVector<TLMessageEntityBase>();
+
+                            message.HasFromId = true;
+                            message.HasEntities = true;
+
+                            var whoUser = participantInvite.Participant.User;
+                            var str = AppResources.EventLogInvited;
+                            var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
+                            var builder = new StringBuilder(string.Format(str, userName));
+
+                            message.Message = string.Format(str, userName);
+                            result.Insert(0, message);
+
+                            //result.Insert(0, GetServiceMessage(item));
                         }
                         else if (item.Action is TLChannelAdminLogEventActionParticipantToggleBan participantToggleBan)
                         {
@@ -525,6 +564,8 @@ namespace Unigram.ViewModels.Channels
 
                     return result;
                 }
+
+                _viewModel.IsLoading = false;
 
                 return new TLMessageBase[0];
             }
