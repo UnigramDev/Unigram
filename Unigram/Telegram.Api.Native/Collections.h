@@ -34,7 +34,7 @@ namespace Windows
 						return S_OK;
 					}
 
-					static boolean Equals(WrappedItemType const& x, TItem const& y)
+					static bool Equals(WrappedItemType const& x, TItem const& y)
 					{
 						return x == y;
 					}
@@ -56,7 +56,7 @@ namespace Windows
 						return value.CopyTo(result);
 					}
 
-					static boolean Equals(WrappedItemType const& x, TItem* y)
+					static bool Equals(WrappedItemType const& x, TItem* y)
 					{
 						return x.Get() == y;
 					}
@@ -78,7 +78,7 @@ namespace Windows
 						return value.CopyTo(result);
 					}
 
-					static boolean Equals(WrappedItemType const& x, HSTRING y)
+					static bool Equals(WrappedItemType const& x, HSTRING y)
 					{
 						return x == y;
 					}

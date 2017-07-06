@@ -42,7 +42,20 @@
       </uap:VisualElements>
     </Application>
   </Applications>
-
+  <Extensions>
+    <Extension Category="windows.activatableClass.inProcessServer">
+      <InProcessServer>
+        <Path>Unigram.Native.dll</Path>
+        <ActivatableClass ActivatableClassId="Unigram.Native.GIFByteStreamHandler" ThreadingModel="both" />
+      </InProcessServer>
+    </Extension>
+    <Extension Category="windows.activatableClass.inProcessServer">
+      <InProcessServer>
+        <Path>Unigram.Native.dll</Path>
+        <ActivatableClass ActivatableClassId="Unigram.Native.OpusByteStreamHandler" ThreadingModel="both" />
+      </InProcessServer>
+    </Extension>
+  </Extensions>
   <Capabilities>
     <Capability Name="internetClient" />
   </Capabilities>

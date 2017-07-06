@@ -3,7 +3,7 @@
 #include <wrl.h>
 #include <windows.foundation.h>
 #include "Telegram.Api.Native.h"
-#include "ThreadpoolObject.h"
+#include "EventObject.h"
 #include "Timer.h"
 #include "ConnectionSession.h"
 #include "ConnectionSocket.h"
@@ -34,8 +34,8 @@ namespace ABI
 	}
 }
 
-
 using ABI::Telegram::Api::Native::IMessageRequest;
+
 
 namespace Telegram
 {
@@ -49,7 +49,7 @@ namespace Telegram
 				None = 0,
 				ConnectionState = 0xF,
 				CurrentNeworkType = 0x70,
-				Ipv6 = 0x80,
+				IPv6 = 0x80,
 				CryptographyInitialized = 0x100,
 				TryingNextEndpoint = 0x200,
 				Closed = 0x400
@@ -76,6 +76,9 @@ namespace Telegram
 				class TLObject;
 				class TLMessage;
 				class TLNewSessionCreated;
+				class TLMsgDetailedInfo;
+				class TLMsgNewDetailedInfo;
+
 			}
 
 
@@ -91,6 +94,8 @@ namespace Telegram
 				friend class TL::TLObject;
 				friend class TL::TLMessage;
 				friend class TL::TLNewSessionCreated;
+				friend class TL::TLMsgDetailedInfo;
+				friend class TL::TLMsgNewDetailedInfo;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_Connection, BaseTrust);
 
@@ -114,7 +119,7 @@ namespace Telegram
 					return m_type;
 				}
 
-				inline boolean IsConnected()
+				inline bool IsConnected()
 				{
 					auto lock = LockCriticalSection();
 					return static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) > ConnectionState::Disconnected;
@@ -131,23 +136,24 @@ namespace Telegram
 				};
 
 				IFACEMETHODIMP Close();
-				HRESULT Connect();
-				HRESULT Connect(_In_ ComPtr<ConnectionManager> const& connectionManager, boolean ipv6);
+				HRESULT Connect(bool ipv6);
 				HRESULT Reconnect();
-				HRESULT CreateMessagePacket(UINT32 messageLength, boolean reportAck, _Out_ ComPtr<TL::TLBinaryWriter>& writer, _Out_ BYTE** messageBuffer);
+				HRESULT CreateMessagePacket(UINT32 messageLength, bool reportAck, _Out_ ComPtr<TL::TLBinaryWriter>& writer, _Out_ BYTE** messageBuffer);
 				HRESULT SendEncryptedMessage(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _Outptr_opt_ INT32* quickAckId);
-				HRESULT SendUnencryptedMessage(_In_ ITLObject* messageBody, boolean reportAck);
-				HRESULT HandleMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ ConnectionManager* connectionManager);
-				HRESULT OnNewSessionCreatedResponse(_In_ ConnectionManager* connectionManager, _In_ TL::TLNewSessionCreated* response);
+				HRESULT SendEncryptedMessageWithConfirmation(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _Outptr_opt_ INT32* quickAckId);
+				HRESULT SendUnencryptedMessage(_In_ ITLObject* messageBody, bool reportAck);
+				HRESULT HandleMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody);
+				HRESULT OnNewSessionCreatedResponse(_In_ TL::TLNewSessionCreated* response);
+				HRESULT OnMsgDetailedInfoResponse(_In_ TL::TLMsgDetailedInfo* response);
+				HRESULT OnMsgNewDetailedInfoResponse(_In_ TL::TLMsgNewDetailedInfo* response);
+				HRESULT OnMessageReceived(_In_ TL::TLBinaryReader* messageReader, UINT32 messageLength);
 				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE* buffer, UINT32 length) override;
 				virtual HRESULT OnSocketDisconnected(int wsaError) override;
-				HRESULT OnMessageReceived(_In_ ComPtr<ConnectionManager> const& connectionManager, _In_ TL::TLBinaryReader* messageReader, UINT32 messageLength);
 
 				ConnectionType m_type;
 				ConnectionFlag m_flags;
 				ComPtr<Datacenter> m_datacenter;
-				ComPtr<Timer> m_reconnectionTimer;
 				ComPtr<NativeBuffer> m_partialPacketBuffer;
 				UINT32 m_failedConnectionCount;
 			};

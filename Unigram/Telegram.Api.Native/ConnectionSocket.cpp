@@ -43,7 +43,7 @@ HRESULT ConnectionSocket::Close()
 	return CloseSocket(NO_ERROR, SOCKET_CLOSE_NONE); // SOCKET_CLOSE_JOINTHREAD);
 }
 
-HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, ServerEndpoint const* endpoint, boolean ipv6)
+HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, ServerEndpoint const* endpoint, bool ipv6)
 {
 	if (m_socket != INVALID_SOCKET)
 	{
@@ -53,11 +53,11 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, Se
 	sockaddr_storage socketAddress = {};
 	if (ipv6)
 	{
-		auto socketAddressIpv6 = reinterpret_cast<sockaddr_in6*>(&socketAddress);
-		socketAddressIpv6->sin6_family = AF_INET6;
-		socketAddressIpv6->sin6_port = htons(endpoint->Port);
+		auto socketAddressIPv6 = reinterpret_cast<sockaddr_in6*>(&socketAddress);
+		socketAddressIPv6->sin6_family = AF_INET6;
+		socketAddressIPv6->sin6_port = htons(endpoint->Port);
 
-		if (InetPton(AF_INET6, endpoint->Address.c_str(), &socketAddressIpv6->sin6_addr) != 1)
+		if (InetPton(AF_INET6, endpoint->Address.c_str(), &socketAddressIPv6->sin6_addr) != 1)
 		{
 			return WSAGetLastHRESULT();
 		}
@@ -126,7 +126,7 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, Se
 	return S_OK;
 }
 
-HRESULT ConnectionSocket::DisconnectSocket(boolean immediate)
+HRESULT ConnectionSocket::DisconnectSocket(bool immediate)
 {
 	if (immediate)
 	{

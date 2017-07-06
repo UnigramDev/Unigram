@@ -101,13 +101,13 @@
     <ClInclude Include="MultiThreadObject.h">
       <Filter>Threading</Filter>
     </ClInclude>
-    <ClInclude Include="ThreadpoolObject.h">
-      <Filter>Threading</Filter>
-    </ClInclude>
     <ClInclude Include="MessageResponse.h" />
     <ClInclude Include="MessageError.h" />
     <ClInclude Include="MethodDebug.h" />
     <ClInclude Include="ProxySettings.h" />
+    <ClInclude Include="EventObject.h">
+      <Filter>Threading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -112,6 +112,7 @@ namespace Telegram
 			class MessageRequest WrlSealed : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IMessageRequest>
 			{
 				friend class ConnectionManager;
+				friend class Connection;
 
 			public:
 				//COM exported methods
@@ -161,57 +162,57 @@ namespace Telegram
 					return m_attemptCount;
 				}
 
-				inline boolean MatchesMessage(INT64 messageId)
+				inline bool MatchesMessage(INT64 messageId)
 				{
 					return m_messageContext->Id == messageId;
 				}
 
-				inline boolean MatchesConnection(ConnectionType connectionType)
+				inline bool MatchesConnection(ConnectionType connectionType)
 				{
 					return (m_connectionType & connectionType) == m_connectionType;
 				}
 
-				inline boolean EnableUnauthorized() const
+				inline bool EnableUnauthorized() const
 				{
 					return (m_flags & RequestFlag::EnableUnauthorized) == RequestFlag::EnableUnauthorized;
 				}
 
-				inline boolean CanCompress() const
+				inline bool CanCompress() const
 				{
 					return (m_flags & RequestFlag::CanCompress) == RequestFlag::CanCompress;
 				}
 
-				inline boolean InvokeAfter() const
+				inline bool InvokeAfter() const
 				{
 					return (m_flags & RequestFlag::InvokeAfter) == RequestFlag::InvokeAfter;
 				}
 
-				inline boolean TryDifferentDc() const
+				inline bool TryDifferentDc() const
 				{
 					return (m_flags & RequestFlag::TryDifferentDc) == RequestFlag::TryDifferentDc;
 				}
 
-				inline boolean FailOnServerError() const
+				inline bool FailOnServerError() const
 				{
 					return (m_flags & RequestFlag::FailOnServerError) == RequestFlag::FailOnServerError;
 				}
 
-				inline boolean RequiresQuickAck() const
+				inline bool RequiresQuickAck() const
 				{
 					return (m_flags & RequestFlag::RequiresQuickAck) == RequestFlag::RequiresQuickAck;
 				}
 
-				inline boolean IsInitConnection() const
+				inline bool IsInitConnection() const
 				{
 					return (m_flags & REQUEST_FLAG_INIT_CONNECTION) == REQUEST_FLAG_INIT_CONNECTION;
 				}
 
-				inline boolean IsLayerRequired() const
+				inline bool IsLayerRequired() const
 				{
 					return (m_flags & REQUEST_FLAG_NO_LAYER) == RequestFlag::None;
 				}
 
-				inline boolean IsTimedOut(INT32 currentTime)
+				inline bool IsTimedOut(INT32 currentTime)
 				{
 					return m_startTime > 0 && currentTime - m_startTime >= REQUEST_TIMEOUT;
 				}
@@ -227,7 +228,7 @@ namespace Telegram
 				}
 
 			private:
-				void Reset(boolean resetStartTime);
+				void Reset(bool resetStartTime);
 
 				inline void SetMessageContext(MessageContext const& mesageContext)
 				{

@@ -53,35 +53,6 @@ HRESULT AnimatedImageSourceRenderer::Draw(RECT const& drawingBounds)
 	}
 
 	return result;
-
-	/*POINT offset;
-	ComPtr<ID2D1DeviceContext> deviceContext;
-	if (SUCCEEDED(result = m_imageSourceNativeD2D->BeginDraw(drawingBounds, IID_PPV_ARGS(&deviceContext), &offset)))
-	{
-		deviceContext->SetTransform(D2D1::Matrix3x2F::Translation(static_cast<float>(offset.x - drawingBounds.left),
-			static_cast<float>(offset.y - drawingBounds.top)));
-
-		deviceContext->Clear(D2D1::ColorF(D2D1::ColorF::Black, 0.0f));
-
-		if (m_frameBitmap != nullptr)
-			deviceContext->DrawBitmap(m_frameBitmap.Get());
-
-		deviceContext->SetTransform(D2D1::IdentityMatrix());
-
-		return m_imageSourceNativeD2D->EndDraw();
-	}
-	else if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
-	{
-		ReturnIfFailed(result, m_owner->NotifyDeviceContentLost());
-
-		return Draw(drawingBounds);
-	}
-	else if (result == E_SURFACE_CONTENTS_LOST)
-	{
-		ReturnIfFailed(result, InitializeImageSource());
-
-		return Draw(drawingBounds);
-	}*/
 }
 
 HRESULT AnimatedImageSourceRenderer::Invalidate(bool resize)
@@ -91,14 +62,13 @@ HRESULT AnimatedImageSourceRenderer::Invalidate(bool resize)
 		return WS_E_INVALID_OPERATION;
 	}
 
-	HRESULT result;
 	if (resize)
 	{
+		HRESULT result;
 		ReturnIfFailed(result, m_imageSourceNative->Resize(m_size.width, m_size.height));
 	}
 
-	RECT bounds = { 0, 0, static_cast<LONG>(m_size.width), static_cast<LONG>(m_size.height) };
-	return m_imageSourceNative->Invalidate(bounds);
+	return m_imageSourceNative->Invalidate({ 0, 0, static_cast<LONG>(m_size.width), static_cast<LONG>(m_size.height) });
 }
 
 void AnimatedImageSourceRenderer::NotifyPropertyChanged(String^ propertyName)
@@ -117,9 +87,14 @@ HRESULT AnimatedImageSourceRenderer::OnUpdatesNeeded()
 	auto drawingBounds = std::vector<RECT>(drawingBoundsCount);
 	ReturnIfFailed(result, m_imageSourceNative->GetUpdateRects(drawingBounds.data(), drawingBoundsCount));
 
-	for (uint32 i = 0; i < std::min(1UL, drawingBoundsCount); i++)
+	for (ULONG i = 0; i < drawingBoundsCount; i++)
 	{
 		ReturnIfFailed(result, Draw(drawingBounds[i]));
+	}
+
+	if (!m_updatesCallback->IsTimerRunning())
+	{
+		return OnTimerTick();
 	}
 
 	return S_OK;
@@ -148,7 +123,7 @@ HRESULT AnimatedImageSourceRenderer::OnTimerTick()
 		}
 		else
 		{
-			return m_updatesCallback->StartTimer(5000000);
+			return m_updatesCallback->StopTimer();
 		}
 	}
 
@@ -160,11 +135,6 @@ HRESULT AnimatedImageSourceRenderer::InitializeImageSource()
 	m_imageSource = ref new VirtualSurfaceImageSource(m_size.width, m_size.height, false);
 
 	HRESULT result;
-	/*ReturnIfFailed(result, reinterpret_cast<IUnknown*>(m_imageSource)->QueryInterface(IID_PPV_ARGS(&m_imageSourceNativeD2D)));
-	ReturnIfFailed(result, m_imageSourceNativeD2D->SetDevice(m_owner->GetD2DDevice()));
-	ReturnIfFailed(result, m_imageSourceNativeD2D.As(&m_imageSourceNative));
-	ReturnIfFailed(result, m_imageSourceNative->RegisterForUpdatesNeeded(m_updatesCallback.Get()));*/
-
 	ComPtr<IDXGIDevice> dxgiDevice;
 	ReturnIfFailed(result, m_owner->GetD3DDevice()->QueryInterface(IID_PPV_ARGS(&dxgiDevice)));
 	ReturnIfFailed(result, reinterpret_cast<IUnknown*>(m_imageSource)->QueryInterface(IID_PPV_ARGS(&m_imageSourceNative)));

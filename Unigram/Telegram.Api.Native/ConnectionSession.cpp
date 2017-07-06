@@ -63,7 +63,7 @@ HRESULT ConnectionSession::CreateConfirmationMessage(_In_ ConnectionManager* con
 	return S_OK;
 }
 
-UINT32 ConnectionSession::GenerateMessageSequenceNumber(boolean increment)
+UINT32 ConnectionSession::GenerateMessageSequenceNumber(bool increment)
 {
 	auto lock = LockCriticalSection();
 
@@ -115,7 +115,7 @@ void ConnectionSession::AddProcessedSession(INT64 sessionId)
 INT64 ConnectionSession::GenereateNewSessionId()
 {
 	INT64 newSessionId;
-	RAND_bytes(reinterpret_cast<UINT8*>(&newSessionId), 8);
+	RAND_bytes(reinterpret_cast<BYTE*>(&newSessionId), sizeof(INT64));
 
 #if _DEBUG
 	return 0xabcd000000000000L | (newSessionId & 0x0000ffffffffffffL);

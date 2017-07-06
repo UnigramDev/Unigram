@@ -18,6 +18,7 @@
             <Button Content="Download" Click="Button_Click_6"/>
             <Button Content="Reset" Click="Button_Click_7"/>
             <Button Content="CDN" Click="Button_Click_8"/>
+            <Button Content="GIF Test" Click="Button_Click_9"/>
         </StackPanel>
     </Grid>
 </Page>

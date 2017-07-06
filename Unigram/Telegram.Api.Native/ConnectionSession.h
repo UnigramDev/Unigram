@@ -34,7 +34,7 @@ namespace Telegram
 				HRESULT AddConfirmationMessage(_In_ ConnectionManager* connectionManager, _In_ std::vector<ComPtr<TL::TLMessage>>& messages);
 				HRESULT CreateConfirmationMessage(_In_ ConnectionManager* connectionManager, _Out_ TL::TLMessage** messages);
 				void RecreateSession();
-				UINT32 GenerateMessageSequenceNumber(boolean increment);
+				UINT32 GenerateMessageSequenceNumber(bool increment);
 				bool IsMessageIdProcessed(INT64 messageId);
 				void AddProcessedMessageId(INT64 messageId);
 				void AddMessageToConfirm(INT64 messageId);
@@ -51,7 +51,7 @@ namespace Telegram
 					m_id = sessionId;
 				}
 
-				inline boolean HasMessagesToConfirm()
+				inline bool HasMessagesToConfirm()
 				{
 					auto lock = LockCriticalSection();
 					return !m_messagesIdsToConfirm.empty();

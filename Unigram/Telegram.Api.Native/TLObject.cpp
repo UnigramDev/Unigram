@@ -25,13 +25,13 @@ std::unordered_map<UINT32, ComPtr<ITLObjectConstructorDelegate>>& TLObject::GetO
 HRESULT TLObject::GetObjectConstructor(UINT32 constructor, ComPtr<ITLObjectConstructorDelegate>& delegate)
 {
 	auto& objectConstructors = GetObjectConstructors();
-	auto objectConstructor = objectConstructors.find(constructor);
-	if (objectConstructor == objectConstructors.end())
+	auto objectConstructorIterator = objectConstructors.find(constructor);
+	if (objectConstructorIterator == objectConstructors.end())
 	{
 		return E_INVALIDARG;
 	}
 
-	delegate = objectConstructor->second;
+	delegate = objectConstructorIterator->second;
 	return S_OK;
 }
 
@@ -43,30 +43,33 @@ HRESULT TLObject::RegisterTLObjecConstructor(UINT32 constructor, ITLObjectConstr
 	}
 
 	auto& objectConstructors = GetObjectConstructors();
-	if (objectConstructors.find(constructor) != objectConstructors.end())
+	auto objectConstructorIterator = objectConstructors.find(constructor);
+	if (objectConstructorIterator != objectConstructors.end())
 	{
 		return PLA_E_NO_DUPLICATES;
 	}
 
-	objectConstructors[constructor] = delegate;
+	objectConstructors.insert(objectConstructorIterator, std::make_pair(constructor, delegate));
 	return S_OK;
 }
 
-HRESULT TLObject::HandleResponse(MessageContext const* messageContext, ITLObject* messageBody, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLObject::HandleResponse(MessageContext const* messageContext, ITLObject* messageBody, Connection* connection)
 {
 	ComPtr<IMessageResponseHandler> responseHandler;
 	if (SUCCEEDED(messageBody->QueryInterface(IID_PPV_ARGS(&responseHandler))))
 	{
-		return responseHandler->HandleResponse(messageContext, connectionManager, connection);
+		return responseHandler->HandleResponse(messageContext, connection);
 	}
 	else
 	{
+		auto& connectionManager = connection->GetDatacenter()->GetConnectionManager();
 		return connectionManager->OnUnprocessedMessageResponse(messageContext, messageBody, connection);
 	}
 }
 
-HRESULT TLObject::CompleteRequest(INT64 requestMessageId, MessageContext const* messageContext, ITLObject* messageBody, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLObject::CompleteRequest(INT64 requestMessageId, MessageContext const* messageContext, ITLObject* messageBody, Connection* connection)
 {
+	auto& connectionManager = connection->GetDatacenter()->GetConnectionManager();
 	return connectionManager->CompleteMessageRequest(requestMessageId, messageContext, messageBody, connection);
 }
 
@@ -87,9 +90,9 @@ HRESULT TLObjectWithQuery::get_Query(ITLObject** value)
 	return m_query.CopyTo(value);
 }
 
-HRESULT TLObjectWithQuery::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLObjectWithQuery::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
-	return TLObject::HandleResponse(messageContext, m_query.Get(), connectionManager, connection);
+	return TLObject::HandleResponse(messageContext, m_query.Get(), connection);
 }
 
 

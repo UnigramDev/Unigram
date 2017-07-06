@@ -33,7 +33,7 @@ RegisterTLObjectConstructor(TLMessage);
 RegisterTLObjectConstructor(TLMsgContainer);
 RegisterTLObjectConstructor(TLMsgCopy);
 RegisterTLObjectConstructor(TLMsgsStateReq);
-RegisterTLObjectConstructor(TLMsgResendStateReq);
+RegisterTLObjectConstructor(TLMsgResendReq);
 RegisterTLObjectConstructor(TLMsgDetailedInfo);
 RegisterTLObjectConstructor(TLMsgNewDetailedInfo);
 RegisterTLObjectConstructor(TLMsgsAllInfo);
@@ -706,7 +706,7 @@ TLRpcResult::~TLRpcResult()
 {
 }
 
-HRESULT TLRpcResult::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLRpcResult::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
 	HRESULT result;
 	ComPtr<ITLObject> query = GetQuery();
@@ -716,7 +716,7 @@ HRESULT TLRpcResult::HandleResponse(MessageContext const* messageContext, Connec
 		ReturnIfFailed(result, objectWithQuery->get_Query(&query));
 	}
 
-	return TLObject::CompleteRequest(m_requestMessageId, messageContext, query.Get(), connectionManager, connection);
+	return TLObject::CompleteRequest(m_requestMessageId, messageContext, query.Get(), connection);
 
 	/*ReturnIfFailed(result, TLObject::CompleteRequest(m_requestMessageId, messageContext, query.Get(), connectionManager, connection));
 
@@ -760,7 +760,7 @@ HRESULT TLRpcAnswerDropped::ReadBody(ITLBinaryReaderEx* reader)
 }
 
 
-HRESULT TLMsgsAck::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLMsgsAck::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
 	I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement TLMsgsAck response handling");
 
@@ -814,9 +814,9 @@ HRESULT TLMessage::RuntimeClassInitialize(INT64 messageId, UINT32 sequenceNumber
 	return TLObjectWithQuery::RuntimeClassInitialize(object);
 }
 
-HRESULT TLMessage::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLMessage::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
-	return connection->HandleMessageResponse(&m_messageContext, GetQuery().Get(), connectionManager);
+	return connection->HandleMessageResponse(&m_messageContext, GetQuery().Get());
 }
 
 HRESULT TLMessage::ReadBody(ITLBinaryReaderEx* reader)
@@ -841,12 +841,12 @@ HRESULT TLMessage::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
-HRESULT TLMsgContainer::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLMsgContainer::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
 	HRESULT result;
 	for (size_t i = 0; i < m_messages.size(); i++)
 	{
-		ReturnIfFailed(result, m_messages[i]->HandleResponse(messageContext, connectionManager, connection));
+		ReturnIfFailed(result, m_messages[i]->HandleResponse(messageContext, connection));
 	}
 
 	return S_OK;
@@ -918,12 +918,12 @@ HRESULT TLMsgsStateReq::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
-HRESULT TLMsgResendStateReq::ReadBody(ITLBinaryReaderEx* reader)
+HRESULT TLMsgResendReq::ReadBody(ITLBinaryReaderEx* reader)
 {
 	return ReadTLVector<INT64>(reader, m_messagesIds);
 }
 
-HRESULT TLMsgResendStateReq::WriteBody(ITLBinaryWriterEx* writer)
+HRESULT TLMsgResendReq::WriteBody(ITLBinaryWriterEx* writer)
 {
 	return WriteTLVector<INT64>(writer, m_messagesIds);
 }
@@ -949,12 +949,23 @@ TLMsgDetailedInfo::~TLMsgDetailedInfo()
 {
 }
 
+HRESULT TLMsgDetailedInfo::HandleResponse(MessageContext const* messageContext, Connection* connection)
+{
+	return connection->OnMsgDetailedInfoResponse(this);
+}
+
 HRESULT TLMsgDetailedInfo::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
 	ReturnIfFailed(result, reader->ReadInt64(&m_messageId));
 
 	return TLMsgDetailedInfoT::ReadBody(reader);
+}
+
+
+HRESULT TLMsgNewDetailedInfo::HandleResponse(MessageContext const* messageContext, Connection* connection)
+{
+	return connection->OnMsgNewDetailedInfoResponse(this);
 }
 
 
@@ -995,13 +1006,13 @@ HRESULT TLGZipPacked::RuntimeClassInitialize(NativeBuffer* rawData)
 	return GZipCompressBuffer(rawData->GetBuffer(), rawData->GetCapacity(), &m_packedData);
 }
 
-HRESULT TLGZipPacked::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLGZipPacked::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
 	HRESULT result;
 	ComPtr<ITLObject> query;
 	ReturnIfFailed(result, get_Query(&query));
 
-	return TLObject::HandleResponse(messageContext, query.Get(), connectionManager, connection);
+	return TLObject::HandleResponse(messageContext, query.Get(), connection);
 }
 
 HRESULT TLGZipPacked::get_Query(ITLObject** value)
@@ -1065,9 +1076,9 @@ TLNewSessionCreated::~TLNewSessionCreated()
 {
 }
 
-HRESULT TLNewSessionCreated::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLNewSessionCreated::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
-	return connection->OnNewSessionCreatedResponse(connectionManager, this);
+	return connection->OnNewSessionCreatedResponse(this);
 }
 
 HRESULT TLNewSessionCreated::ReadBody(ITLBinaryReaderEx* reader)
@@ -1091,15 +1102,15 @@ HRESULT TLBadMsgNotificationT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reade
 }
 
 
-HRESULT TLBadMessage::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLBadMessage::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
-	return connection->GetDatacenter()->OnBadMessageResponse(connectionManager, messageContext->Id, this);
+	return connection->GetDatacenter()->OnBadMessageResponse(messageContext->Id, this);
 }
 
 
-HRESULT TLBadServerSalt::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLBadServerSalt::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
-	return connection->GetDatacenter()->OnBadServerSaltResponse(connectionManager, messageContext->Id, this);
+	return connection->GetDatacenter()->OnBadServerSaltResponse(messageContext->Id, this);
 }
 
 HRESULT TLBadServerSalt::ReadBody(ITLBinaryReaderEx* reader)
@@ -1119,6 +1130,11 @@ TLPong::TLPong() :
 
 TLPong::~TLPong()
 {
+}
+
+HRESULT TLPong::HandleResponse(MessageContext const* messageContext, Connection* connection)
+{
+	return TLObject::CompleteRequest(m_messageId, messageContext, this, connection);
 }
 
 HRESULT TLPong::ReadBody(ITLBinaryReaderEx* reader)
@@ -1141,11 +1157,11 @@ HRESULT TLDHGenT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
 }
 
 
-HRESULT TLDHGenOk::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLDHGenOk::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
 	HRESULT result;
 	auto datacenter = connection->GetDatacenter();
-	if (FAILED(result = datacenter->OnHandshakeClientDHResponse(connectionManager, connection, this)))
+	if (FAILED(result = datacenter->OnHandshakeClientDHResponse(connection, this)))
 	{
 		return datacenter->OnHandshakeError(result);
 	}
@@ -1154,13 +1170,13 @@ HRESULT TLDHGenOk::HandleResponse(MessageContext const* messageContext, Connecti
 }
 
 
-HRESULT TLDHGenFail::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLDHGenFail::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
 	return connection->GetDatacenter()->OnHandshakeError(E_FAIL);
 }
 
 
-HRESULT TLDHGenRetry::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLDHGenRetry::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
 	return connection->GetDatacenter()->OnHandshakeError(E_FAIL);
 }
@@ -1176,7 +1192,7 @@ HRESULT TLServerDHParamsT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
 }
 
 
-HRESULT TLServerDHParamsFail::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLServerDHParamsFail::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
 	return connection->GetDatacenter()->OnHandshakeError(E_FAIL);
 }
@@ -1190,7 +1206,7 @@ HRESULT TLServerDHParamsFail::ReadBody(ITLBinaryReaderEx* reader)
 }
 
 
-HRESULT TLServerDHParamsOk::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLServerDHParamsOk::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
 	HRESULT result;
 	auto datacenter = connection->GetDatacenter();
@@ -1228,7 +1244,7 @@ TLResPQ::~TLResPQ()
 {
 }
 
-HRESULT TLResPQ::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLResPQ::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
 	HRESULT result;
 	auto datacenter = connection->GetDatacenter();
@@ -1261,9 +1277,9 @@ TLFutureSalts::~TLFutureSalts()
 {
 }
 
-HRESULT TLFutureSalts::HandleResponse(MessageContext const* messageContext, ConnectionManager* connectionManager, Connection* connection)
+HRESULT TLFutureSalts::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
-	return TLObject::CompleteRequest(m_requestMessageId, messageContext, this, connectionManager, connection);
+	return TLObject::CompleteRequest(m_requestMessageId, messageContext, this, connection);
 }
 
 HRESULT TLFutureSalts::ReadBody(ITLBinaryReaderEx* reader)

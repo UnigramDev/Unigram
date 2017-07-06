@@ -69,12 +69,14 @@ namespace Telegram.Api.Native.Test
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            ConnectionManager.Instance.SendRequest(new TLHelpInviteText(), (message5, ex5) =>
-            {
-                Debugger.Break();
-            },
-            // Should run on Download connection
-            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.EnableUnauthorized);
+            ConnectionManager.Instance.BoomBaby(null, out var xxx);
+
+            //ConnectionManager.Instance.SendRequest(new TLHelpInviteText(), (message5, ex5) =>
+            //{
+            //    Debugger.Break();
+            //},
+            //// Should run on Download connection
+            //null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.EnableUnauthorized);
 
             GC.Collect();
         }
@@ -105,7 +107,7 @@ namespace Telegram.Api.Native.Test
                     connectionManager.UserId = authorization.User.Id;
                     Debugger.Break();
 
-                    connectionManager.BoomBaby(null, out var xxx);
+                    //connectionManager.BoomBaby(null, out var xxx);
                 },
                 null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
             },
@@ -230,7 +232,7 @@ namespace Telegram.Api.Native.Test
                             }
                         },
                         // Should run on Download connection
-                        null, document.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload | RequestFlag.Immediate);
+                        null, document.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload);  // | RequestFlag.Immediate
                     }
                 },
                 null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
@@ -298,11 +300,16 @@ namespace Telegram.Api.Native.Test
                         }
                     },
                     // Should run on Download connection
-                    null, document.DCId, ConnectionType.Generic, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload | RequestFlag.Immediate);
+                    null, document.DCId, ConnectionType.Download, RequestFlag.TryDifferentDc | RequestFlag.ForceDownload | RequestFlag.Immediate);
                 },
                 null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
             },
             null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic);
+        }
+
+        private void Button_Click_9(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(AnimatedImagePlayer));
         }
     }
 }

@@ -42,7 +42,7 @@ HRESULT Timer::SetTimeout(UINT32 timeoutMs, boolean repeat)
 {
 	auto lock = LockCriticalSection();
 
-	if (timeoutMs != m_timeout || repeat != m_repeatable)
+	if (timeoutMs != m_timeout || static_cast<bool>(repeat) != m_repeatable)
 	{
 		m_timeout = timeoutMs;
 		m_repeatable = repeat;
@@ -71,7 +71,7 @@ HRESULT Timer::Start()
 
 HRESULT Timer::Stop()
 {
-	boolean started;
+	bool started;
 
 	{
 		auto lock = LockCriticalSection();

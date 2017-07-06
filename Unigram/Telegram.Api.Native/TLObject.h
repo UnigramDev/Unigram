@@ -59,7 +59,7 @@ namespace ABI
 				MIDL_INTERFACE("41D24AD6-4BCA-4775-92D0-30EC69ED55C9") IMessageResponseHandler : public IUnknown
 				{
 				public:
-					virtual HRESULT STDMETHODCALLTYPE HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection) = 0;
+					virtual HRESULT STDMETHODCALLTYPE HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection) = 0;
 				};
 
 			}
@@ -128,10 +128,8 @@ namespace Telegram
 						return S_OK;
 					}
 
-					static HRESULT HandleResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody,
-						_In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
-					static HRESULT CompleteRequest(INT64 requestMessageId, _In_ MessageContext const* messageContext, _In_ ITLObject* messageBody,
-						_In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					static HRESULT HandleResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_::Telegram::Api::Native::Connection* connection);
+					static HRESULT CompleteRequest(INT64 requestMessageId, _In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_::Telegram::Api::Native::Connection* connection);
 
 				private:
 					typedef HRESULT(*TLObjectConstructor)(_Out_ ITLObject**);
@@ -158,7 +156,7 @@ namespace Telegram
 				public:
 					//COM exported methods
 					IFACEMETHODIMP get_Query(_Out_ ITLObject** value);
-					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::ConnectionManager* connectionManager, _In_::Telegram::Api::Native::Connection* connection);
+					IFACEMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 
 					//Internal methods
 					inline ComPtr<ITLObject>& GetQuery()

@@ -353,8 +353,10 @@ HRESULT TLBinaryReader::ReadBigEndianInt32(INT32* value)
 		return E_NOT_SUFFICIENT_BUFFER;
 	}
 
-	*value = ((m_buffer[m_position++] & 0xff) << 24) | ((m_buffer[m_position++] & 0xff) << 16) |
-		((m_buffer[m_position++] & 0xff) << 8) | (m_buffer[m_position++] & 0xff);
+	*value = (static_cast<INT32>(m_buffer[m_position]) << 24) | (static_cast<INT32>(m_buffer[m_position + 1]) << 16) |
+		(static_cast<INT32>(m_buffer[m_position + 2]) << 8) | static_cast<INT32>(m_buffer[m_position + 3]);
+
+	m_position += sizeof(INT32);
 	return S_OK;
 }
 
