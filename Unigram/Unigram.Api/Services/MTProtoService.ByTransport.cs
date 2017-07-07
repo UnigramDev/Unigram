@@ -41,7 +41,7 @@ namespace Telegram.Api.Services
             SendNonEncryptedMessageByTransport(transport, "set_client_DH_params", obj, callback, faultCallback);
         }
 
-        private void LoadCdnConfigAsync(int cdnId, TLVector<Int64> fingerprints, Action<string> callback, Action<TLRPCError> faultCallback = null)
+        private void LoadCdnConfigAsync(int cdnId, TLVector<Int64> fingerprints, Action<Tuple<long, string>> callback, Action<TLRPCError> faultCallback = null)
         {
             TryReadConfig(read =>
             {
@@ -76,7 +76,7 @@ namespace Telegram.Api.Services
                             {
                                 if (pairs.ContainsKey(fingerprint))
                                 {
-                                    callback?.Invoke(pairs[fingerprint]);
+                                    callback?.Invoke(Tuple.Create(fingerprint, pairs[fingerprint]));
                                     return;
                                 }
                             }
@@ -140,7 +140,7 @@ namespace Telegram.Api.Services
                         TimeSpan calcTime;
                         Tuple<ulong, ulong> pqPair;
                         var innerData = GetInnerData(resPQ, newNonce, out calcTime, out pqPair);
-                        var encryptedInnerData = GetEncryptedInnerData(innerData, publicKey);
+                        var encryptedInnerData = GetEncryptedInnerData(innerData, publicKey.Item2);
 
 #if LOG_REGISTRATION
                     TLUtils.WriteLog("Start ReqDHParams");
@@ -151,7 +151,7 @@ namespace Telegram.Api.Services
                             resPQ.ServerNonce,
                             innerData.P,
                             innerData.Q,
-                            resPQ.ServerPublicKeyFingerprints[0],
+                            publicKey.Item1,
                             encryptedInnerData,
                             serverDHParams =>
                             {
