@@ -154,6 +154,8 @@ namespace Telegram.Api.Services
                 callback,
                 faultCallback);
 
+            //Logs.Log.Write(string.Format("SendPacketAsync dc_id={0} caption={1}", transport.DCId, caption));
+
             _statsService.IncrementSentBytesCount(_connectionService.NetworkType, DataType.Total, payload.Length);
 	    }
 

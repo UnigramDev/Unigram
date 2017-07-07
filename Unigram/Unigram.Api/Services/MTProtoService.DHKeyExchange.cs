@@ -22,13 +22,13 @@ namespace Telegram.Api.Services
         /// <summary>
         /// Список имеющихся ключей авторизации
         /// </summary>
-        private static readonly Dictionary<long, AuthKeyItem> _authKeys = new Dictionary<long, AuthKeyItem>(); 
+        private static readonly Dictionary<long, AuthKeyItem> _authKeys = new Dictionary<long, AuthKeyItem>();
 
         private static readonly object _authKeysRoot = new object();
 
         private void ReqPQAsync(TLInt128 nonce, Action<TLResPQ> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLReqPQ{ Nonce = nonce };
+            var obj = new TLReqPQ { Nonce = nonce };
 
             SendNonEncryptedMessage("req_pq", obj, callback, faultCallback);
         }
@@ -137,8 +137,8 @@ namespace Telegram.Api.Services
                                 if (faultCallback != null) faultCallback(error);
                                 TLUtils.WriteLine(error.ToString());
 #if LOG_REGISTRATION
-                            
-                                TLUtils.WriteLog("ServerDHParams " + serverDHParams);  
+
+                                TLUtils.WriteLog("ServerDHParams " + serverDHParams);
 #endif
                                 return;
                             }
@@ -160,7 +160,7 @@ namespace Telegram.Api.Services
 #endif
 
                                 if (faultCallback != null) faultCallback(error);
-                                TLUtils.WriteLine(error.ToString());    
+                                TLUtils.WriteLine(error.ToString());
                             }
 
                             if (!TLUtils.CheckPrime(serverDHInnerData.DHPrime, serverDHInnerData.G))
@@ -171,7 +171,7 @@ namespace Telegram.Api.Services
 #endif
 
                                 if (faultCallback != null) faultCallback(error);
-                                TLUtils.WriteLine(error.ToString());                  
+                                TLUtils.WriteLine(error.ToString());
                             }
 
                             if (!TLUtils.CheckGaAndGb(serverDHInnerData.GA, serverDHInnerData.DHPrime))
@@ -200,7 +200,7 @@ namespace Telegram.Api.Services
 
                             var encryptedClientDHInnerData = GetEncryptedClientDHInnerData(clientDHInnerData, aesParams);
 #if LOG_REGISTRATION                 
-                            TLUtils.WriteLog("Start SetClientDHParams");  
+                            TLUtils.WriteLog("Start SetClientDHParams");
 #endif
                             SetClientDHParamsAsync(resPQ.Nonce, resPQ.ServerNonce, encryptedClientDHInnerData,
                                 dhGen =>
@@ -371,14 +371,14 @@ namespace Telegram.Api.Services
             sb.AppendLine("newNonce " + innerData.NewNonce.ToArray().Length);
             sb.AppendLine("innerData length " + innerDataBytes.Length);
 
-            TLUtils.WriteLog(sb.ToString());
+            Logs.Log.Write(sb.ToString());
 #endif
 
             var sha1 = Utils.ComputeSHA1(innerDataBytes);
             var dataWithHash = TLUtils.Combine(sha1, innerDataBytes); //116
 
 #if LOG_REGISTRATION
-            TLUtils.WriteLog("innerData+hash length " + dataWithHash.Length);
+            Logs.Log.Write("innerData+hash length " + dataWithHash.Length);
 #endif
 
             var data255 = new byte[255];
