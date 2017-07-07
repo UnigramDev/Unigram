@@ -25,7 +25,7 @@ namespace Unigram.Controls
         private Grid DragBackground;
         private RectangleGeometry DragClip;
         private TranslateTransform DragClipTransform;
-        private Border DragContainer;
+        private ContentPresenter DragContainer;
 
         public SwipeListViewItem()
         {
@@ -46,7 +46,7 @@ namespace Unigram.Controls
             DragBackground = (Grid)GetTemplateChild("DragBackground");
             DragClip = (RectangleGeometry)GetTemplateChild("DragClip");
             DragClipTransform = (TranslateTransform)GetTemplateChild("DragClipTransform");
-            DragContainer = (Border)GetTemplateChild("DragContainer");
+            DragContainer = (ContentPresenter)GetTemplateChild("DragContainer");
         }
 
         /// <summary>
@@ -114,12 +114,12 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    e.Complete();
+                    //e.Complete();
                     return;
                 }
             }
 
-            if (_direction == SwipeListDirection.Left)
+            /*if (_direction == SwipeListDirection.Left)
             {
                 var area1 = LeftBehavior == SwipeListBehavior.Collapse ? 1.5 : 2.5;
                 var area2 = LeftBehavior == SwipeListBehavior.Collapse ? 2 : 3;
@@ -145,7 +145,7 @@ namespace Unigram.Controls
                     _direction = SwipeListDirection.None;
                 }
             }
-            else if (_direction == SwipeListDirection.Right)
+            else*/ if (_direction == SwipeListDirection.Right)
             {
                 var area1 = RightBehavior == SwipeListBehavior.Collapse ? 1.5 : 2.5;
                 var area2 = RightBehavior == SwipeListBehavior.Collapse ? 2 : 3;
@@ -166,21 +166,17 @@ namespace Unigram.Controls
                     RightTransform.X = Math.Max(-ActualWidth, Math.Min(cumulative.X, 0)) + RightContainer.ActualWidth;
                 }
 
-                if (ContentDragTransform.X == 0 && delta.X > 0)
-                {
-                    _direction = SwipeListDirection.None;
-                }
+                //if (ContentDragTransform.X == 0 && delta.X > 0)
+                //{
+                //    _direction = SwipeListDirection.None;
+                //}
             }
 
             e.Handled = true;
             base.OnManipulationDelta(e);
         }
 
-#if SILVERLIGHT
-        protected override void OnManipulationCompleted(ManipulationCompletedEventArgs e)
-#else
         protected override void OnManipulationCompleted(ManipulationCompletedRoutedEventArgs e)
-#endif
         {
             var target = (ActualWidth / 5) * 2;
             if ((_direction == SwipeListDirection.Left && LeftBehavior == SwipeListBehavior.Expand) ||
