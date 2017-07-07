@@ -370,6 +370,7 @@ namespace Telegram
 				UINT32 ProtocolVersion;
 				UINT32 Layer;
 				UINT32 ApiId;
+				UINT32 SettingsVersion;
 			};
 
 

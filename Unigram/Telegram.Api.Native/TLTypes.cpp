@@ -989,8 +989,8 @@ HRESULT TLGZipPacked::RuntimeClassInitialize(ITLObject* object)
 	UINT32 objectSize;
 	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object, &objectSize));
 
-	ComPtr<TLBinaryWriter> writer;
-	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&writer, objectSize));
+	ComPtr<TLMemoryBinaryWriter> writer;
+	ReturnIfFailed(result, MakeAndInitialize<TLMemoryBinaryWriter>(&writer, objectSize));
 	ReturnIfFailed(result, writer->WriteObject(object));
 
 	return GZipCompressBuffer(writer->GetBuffer(), objectSize, &m_packedData);
@@ -1018,8 +1018,8 @@ HRESULT TLGZipPacked::HandleResponse(MessageContext const* messageContext, Conne
 HRESULT TLGZipPacked::get_Query(ITLObject** value)
 {
 	HRESULT result;
-	ComPtr<TLBinaryReader> reader;
-	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&reader, m_packedData.Get()));
+	ComPtr<TLMemoryBinaryReader> reader;
+	ReturnIfFailed(result, MakeAndInitialize<TLMemoryBinaryReader>(&reader, m_packedData.Get()));
 
 	UINT32 constructor;
 	return reader->ReadObjectAndConstructor(m_packedData->GetCapacity(), &constructor, value);

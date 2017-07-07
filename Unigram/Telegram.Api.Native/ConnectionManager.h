@@ -93,7 +93,7 @@ namespace Telegram
 			namespace TL
 			{
 
-				class TLBinaryReader;
+				class TLMemoryBinaryReader;
 				class TLObject;
 				class TLMessage;
 				class TLUnparsedObject;
@@ -182,12 +182,14 @@ namespace Telegram
 				}
 
 			private:
-				HRESULT ResetDatacenters();
+				HRESULT InitializeDefaultDatacenters();
 				HRESULT InitializeSettings();
-				HRESULT LoadSettings(_In_ ITLBinaryReaderEx* reader);
-				HRESULT SaveSettings(_In_ ITLBinaryWriterEx* writer);
-				HRESULT LoadCDNPublicKeys(_In_ ITLBinaryReaderEx* reader);
-				HRESULT SaveCDNPublicKeys(_In_ ITLBinaryWriterEx* writer);
+				HRESULT LoadSettings();
+				HRESULT SaveSettings();
+				HRESULT LoadCDNPublicKeys();
+				HRESULT SaveCDNPublicKeys();
+				HRESULT SaveDatacenterSettings(_In_ Datacenter* datacenter);
+				HRESULT AdjustCurrentTime(INT64 messageId);
 				HRESULT UpdateNetworkStatus(bool raiseEvent);
 				HRESULT MoveToDatacenter(INT32 datacenterId);
 				HRESULT UpdateCDNPublicKeys();
@@ -215,7 +217,6 @@ namespace Telegram
 				bool GetDatacenterById(UINT32 id, _Out_ ComPtr<Datacenter>& datacenter);
 				bool GetRequestByMessageId(INT64 messageId, _Out_ ComPtr<MessageRequest>& request);
 				bool GetCDNPublicKey(INT32 datacenterId, _In_ std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
-				void AdjustCurrentTime(INT64 messageId);
 				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _In_ ULONG_PTR param) override;
 
 				inline bool IsCurrentDatacenter(INT32 datacenterId)
@@ -230,12 +231,10 @@ namespace Telegram
 					return m_cdnPublicKeys.find(datacenterId) != m_cdnPublicKeys.end();
 				}
 
-				inline std::wstring const& GetDatacenterSettingsFileName(INT32 datacenterId)
+				inline void GetDatacenterSettingsFileName(INT32 datacenterId, std::wstring& fileName)
 				{
-					std::wstring fileName(MAX_PATH, '\0');
-					fileName.resize(swprintf(&fileName[0], MAX_PATH, L"%s\\DC_%d.config", m_settingsFolderPath.data(), datacenterId));
-
-					return std::move(fileName);
+					fileName.resize(MAX_PATH);
+					fileName.resize(swprintf_s(&fileName[0], MAX_PATH, L"%s\\DC_%d.dat", m_settingsFolderPath.data(), datacenterId));
 				}
 
 				ComPtr<INetworkInformationStatics> m_networkInformation;

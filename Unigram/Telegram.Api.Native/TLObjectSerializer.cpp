@@ -29,8 +29,8 @@ HRESULT TLObjectSerializerStatics::Serialize(ITLObject* object, IBuffer** value)
 	ComPtr<NativeBuffer> nativeBuffer;
 	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&nativeBuffer, objectSize));
 
-	ComPtr<TLBinaryWriter> binaryWriter;
-	ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&binaryWriter, nativeBuffer.Get()));
+	ComPtr<TLMemoryBinaryWriter> binaryWriter;
+	ReturnIfFailed(result, MakeAndInitialize<TLMemoryBinaryWriter>(&binaryWriter, nativeBuffer.Get()));
 	ReturnIfFailed(result, binaryWriter->WriteObject(object));
 
 	*value = nativeBuffer.Detach();
@@ -40,8 +40,8 @@ HRESULT TLObjectSerializerStatics::Serialize(ITLObject* object, IBuffer** value)
 HRESULT TLObjectSerializerStatics::Deserialize(IBuffer* buffer, ITLObject** value)
 {
 	HRESULT result;
-	ComPtr<TLBinaryReader> binaryReader;
-	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&binaryReader, buffer));
+	ComPtr<TLMemoryBinaryReader> binaryReader;
+	ReturnIfFailed(result, MakeAndInitialize<TLMemoryBinaryReader>(&binaryReader, buffer));
 
 	return binaryReader->ReadObject(value);
 }

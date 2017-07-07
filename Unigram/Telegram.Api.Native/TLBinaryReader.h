@@ -32,7 +32,7 @@ namespace ABI
 						virtual HRESULT STDMETHODCALLTYPE ReadBuffer(_Out_writes_(length) BYTE* buffer, UINT32 length) = 0;
 						virtual HRESULT STDMETHODCALLTYPE ReadBuffer2(_Out_ BYTE const** buffer, _Out_ UINT32* length) = 0;
 						virtual HRESULT STDMETHODCALLTYPE ReadRawBuffer2(_Out_ BYTE const** buffer, UINT32 length) = 0;
-						virtual void STDMETHODCALLTYPE Reset() = 0;
+						virtual HRESULT STDMETHODCALLTYPE Reset() = 0;
 					};
 
 				}
@@ -53,24 +53,24 @@ namespace Telegram
 			namespace TL
 			{
 
-				class TLBinaryReader WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryReaderEx>, ITLBinaryReader>
+				class TLBinaryReader abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryReaderEx>, ITLBinaryReader>
 				{
-					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLBinaryReader, BaseTrust);
-
 				public:
-					TLBinaryReader();
-					~TLBinaryReader();
-
-					//COM exported methods
-					IFACEMETHODIMP get_Position(_Out_ UINT32* value);
-					IFACEMETHODIMP put_Position(UINT32 value);
-					IFACEMETHODIMP get_UnconsumedBufferLength(_Out_ UINT32* value);
-					IFACEMETHODIMP ReadByte(_Out_ BYTE* value);
-					IFACEMETHODIMP ReadInt16(_Out_ INT16* value);
+					virtual HRESULT STDMETHODCALLTYPE get_Position(_Out_ UINT32* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE put_Position(UINT32 value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE get_UnconsumedBufferLength(_Out_ UINT32* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE ReadByte(_Out_ BYTE* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE ReadInt16(_Out_ INT16* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE ReadInt32(_Out_ INT32* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE ReadInt64(_Out_ INT64* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE ReadObjectAndConstructor(UINT32 objectSize, _Out_ UINT32* constructor, _Out_ ITLObject** value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE ReadBigEndianInt32(_Out_ INT32* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE ReadRawBuffer(UINT32 __valueSize, _Out_writes_(__valueSize) BYTE* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE ReadBuffer2(_Out_ BYTE const** buffer, _Out_ UINT32* length) = 0;
+					virtual HRESULT STDMETHODCALLTYPE ReadRawBuffer2(_Out_ BYTE const** buffer, UINT32 length) = 0;
+					virtual HRESULT STDMETHODCALLTYPE Reset() = 0;
 					IFACEMETHODIMP ReadUInt16(_Out_ UINT16* value);
-					IFACEMETHODIMP ReadInt32(_Out_ INT32* value);
 					IFACEMETHODIMP ReadUInt32(_Out_ UINT32* value);
-					IFACEMETHODIMP ReadInt64(_Out_ INT64* value);
 					IFACEMETHODIMP ReadUInt64(_Out_ UINT64* value);
 					IFACEMETHODIMP ReadBoolean(_Out_ boolean* value);
 					IFACEMETHODIMP ReadString(_Out_ HSTRING* value);
@@ -78,18 +78,36 @@ namespace Telegram
 					IFACEMETHODIMP ReadDouble(_Out_ double* value);
 					IFACEMETHODIMP ReadFloat(_Out_ float* value);
 					IFACEMETHODIMP ReadObject(_Out_ ITLObject** value);
+					IFACEMETHODIMP ReadWString(_Out_ std::wstring& string);
+					IFACEMETHODIMP ReadBuffer(_Out_writes_(length) BYTE* buffer, UINT32 length);
+				};
+
+				class TLMemoryBinaryReader WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLBinaryReader>
+				{
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLBinaryReader, BaseTrust);
+
+				public:
+					TLMemoryBinaryReader();
+					~TLMemoryBinaryReader();
+
+					//COM exported methods
+					IFACEMETHODIMP get_Position(_Out_ UINT32* value);
+					IFACEMETHODIMP put_Position(UINT32 value);
+					IFACEMETHODIMP get_UnconsumedBufferLength(_Out_ UINT32* value);
+					IFACEMETHODIMP ReadByte(_Out_ BYTE* value);
+					IFACEMETHODIMP ReadInt16(_Out_ INT16* value);
+					IFACEMETHODIMP ReadInt32(_Out_ INT32* value);
+					IFACEMETHODIMP ReadInt64(_Out_ INT64* value);
 					IFACEMETHODIMP ReadObjectAndConstructor(UINT32 objectSize, _Out_ UINT32* constructor, _Out_ ITLObject** value);
 					IFACEMETHODIMP ReadBigEndianInt32(_Out_ INT32* value);
-					IFACEMETHODIMP ReadWString(_Out_ std::wstring& string);
 					IFACEMETHODIMP ReadRawBuffer(UINT32 __valueSize, _Out_writes_(__valueSize) BYTE* value);
-					IFACEMETHODIMP ReadBuffer(_Out_writes_(length) BYTE* buffer, UINT32 length);
 					IFACEMETHODIMP ReadBuffer2(_Out_ BYTE const** buffer, _Out_ UINT32* length);
 					IFACEMETHODIMP ReadRawBuffer2(_Out_ BYTE const** buffer, UINT32 length);
-					IFACEMETHODIMP_(void) Reset();
+					IFACEMETHODIMP Reset();
 
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(_In_ IBuffer* underlyingBuffer);
-					STDMETHODIMP RuntimeClassInitialize(_In_ TLBinaryReader* reader, UINT32 length);
+					STDMETHODIMP RuntimeClassInitialize(_In_ TLMemoryBinaryReader* reader, UINT32 length);
 					STDMETHODIMP RuntimeClassInitialize(UINT32 capacity);
 					HRESULT SeekCurrent(INT32 bytes);
 
@@ -133,6 +151,34 @@ namespace Telegram
 					UINT32 m_position;
 					UINT32 m_capacity;
 					ComPtr<IBuffer> m_underlyingBuffer;
+				};
+
+				class TLFileBinaryReader WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLBinaryReader>
+				{
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLBinaryReader, BaseTrust);
+
+				public:
+					//COM exported methods
+					IFACEMETHODIMP get_Position(_Out_ UINT32* value);
+					IFACEMETHODIMP put_Position(UINT32 value);
+					IFACEMETHODIMP get_UnconsumedBufferLength(_Out_ UINT32* value);
+					IFACEMETHODIMP ReadByte(_Out_ BYTE* value);
+					IFACEMETHODIMP ReadInt16(_Out_ INT16* value);
+					IFACEMETHODIMP ReadInt32(_Out_ INT32* value);
+					IFACEMETHODIMP ReadInt64(_Out_ INT64* value);
+					IFACEMETHODIMP ReadObjectAndConstructor(UINT32 objectSize, _Out_ UINT32* constructor, _Out_ ITLObject** value);
+					IFACEMETHODIMP ReadBigEndianInt32(_Out_ INT32* value);
+					IFACEMETHODIMP ReadRawBuffer(UINT32 __valueSize, _Out_writes_(__valueSize) BYTE* value);
+					IFACEMETHODIMP ReadBuffer2(_Out_ BYTE const** buffer, _Out_ UINT32* length);
+					IFACEMETHODIMP ReadRawBuffer2(_Out_ BYTE const** buffer, UINT32 length);
+					IFACEMETHODIMP Reset();
+
+					//Internal methods
+					STDMETHODIMP RuntimeClassInitialize(_In_ LPCWSTR fileName, DWORD creationDisposition);
+
+				private:
+					std::vector<BYTE> m_buffer;
+					FileHandle m_file;
 				};
 
 			}

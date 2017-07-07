@@ -96,7 +96,7 @@ HRESULT TLObjectWithQuery::HandleResponse(MessageContext const* messageContext, 
 }
 
 
-HRESULT TLUnparsedObject::RuntimeClassInitialize(UINT32 constructor, TLBinaryReader* reader)
+HRESULT TLUnparsedObject::RuntimeClassInitialize(UINT32 constructor, TLMemoryBinaryReader* reader)
 {
 	if (reader == nullptr)
 	{
@@ -108,7 +108,7 @@ HRESULT TLUnparsedObject::RuntimeClassInitialize(UINT32 constructor, TLBinaryRea
 	return S_OK;
 }
 
-HRESULT TLUnparsedObject::RuntimeClassInitialize(UINT32 constructor, UINT32 objectSizeWithoutConstructor, TLBinaryReader* reader)
+HRESULT TLUnparsedObject::RuntimeClassInitialize(UINT32 constructor, UINT32 objectSizeWithoutConstructor, TLMemoryBinaryReader* reader)
 {
 	if (reader == nullptr)
 	{
@@ -116,7 +116,7 @@ HRESULT TLUnparsedObject::RuntimeClassInitialize(UINT32 constructor, UINT32 obje
 	}
 
 	HRESULT result;
-	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&m_reader, objectSizeWithoutConstructor));
+	ReturnIfFailed(result, MakeAndInitialize<TLMemoryBinaryReader>(&m_reader, objectSizeWithoutConstructor));
 
 	CopyMemory(m_reader->GetBuffer(), reader->GetBufferAtPosition(), m_reader->GetCapacity());
 
