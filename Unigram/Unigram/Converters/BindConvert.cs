@@ -15,6 +15,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.System.UserProfile;
+using Windows.Globalization;
 
 namespace Unigram.Converters
 {
@@ -32,15 +33,23 @@ namespace Unigram.Converters
             }
         }
 
-        public DateTimeFormatter ShortDate { get; } = new DateTimeFormatter("shortdate", GlobalizationPreferences.Languages);
-        public DateTimeFormatter ShortTime { get; } = new DateTimeFormatter("shorttime", GlobalizationPreferences.Languages);
-        public DateTimeFormatter LongDate { get; } = new DateTimeFormatter("longdate", GlobalizationPreferences.Languages);
-        public DateTimeFormatter LongTime { get; } = new DateTimeFormatter("longtime", GlobalizationPreferences.Languages);
+        public DateTimeFormatter ShortDate { get; private set; }
+        public DateTimeFormatter ShortTime { get; private set; }
+        public DateTimeFormatter LongDate { get; private set; }
+        public DateTimeFormatter LongTime { get; private set; }
 
         public List<SolidColorBrush> PlaceholderColors { get; private set; }
 
         private BindConvert()
         {
+            var region = new GeographicRegion();
+            var code = region.CodeTwoLetter;
+
+            ShortDate = new DateTimeFormatter("shortdate", new[] { code });
+            ShortTime = new DateTimeFormatter("shorttime", new[] { code });
+            LongDate = new DateTimeFormatter("longdate", new[] { code });
+            LongTime = new DateTimeFormatter("longtime", new[] { code });
+
             PlaceholderColors = new List<SolidColorBrush>();
 
             for (int i = 0; i < 6; i++)
@@ -299,7 +308,10 @@ namespace Unigram.Converters
             {
                 if (_formatterCache.TryGetValue("dayofweek.abbreviated", out DateTimeFormatter formatter) == false)
                 {
-                    formatter = new DateTimeFormatter("dayofweek.abbreviated", Windows.System.UserProfile.GlobalizationPreferences.Languages);
+                    var region = new GeographicRegion();
+                    var code = region.CodeTwoLetter;
+
+                    formatter = new DateTimeFormatter("dayofweek.abbreviated", new[] { code });
                     _formatterCache["dayofweek.abbreviated"] = formatter;
                 }
 

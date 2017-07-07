@@ -92,6 +92,7 @@
     <Compile Include="Helpers\PhoneNumber.cs" />
     <Compile Include="Services\Cache\Context\ChatsContext.cs" />
     <Compile Include="Services\Cache\Context\CreateDatabase.cs" />
+    <Compile Include="Services\Cache\Context\DialogsContext.cs" />
     <Compile Include="Services\Cache\Context\UsersContext.cs" />
     <Compile Include="Services\FileManager\DownloadAudioFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadDocumentFileManager.cs" />

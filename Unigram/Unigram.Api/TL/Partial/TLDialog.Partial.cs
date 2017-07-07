@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
+using Telegram.Api.Services.Cache;
 using Telegram.Helpers;
 using Windows.UI.Xaml;
 
@@ -204,6 +205,14 @@ namespace Telegram.Api.TL
         {
             get
             {
+                //if (_with == null)
+                //{
+                //    if (Peer is TLPeerUser)
+                //        _with = InMemoryCacheService.Current.GetUser(Peer.Id);
+                //    if (Peer is TLPeerChat || Peer is TLPeerChannel)
+                //        _with = InMemoryCacheService.Current.GetChat(Peer.Id);
+                //}
+
                 return _with;
             }
             set
