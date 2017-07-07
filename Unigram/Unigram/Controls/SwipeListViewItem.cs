@@ -68,6 +68,19 @@ namespace Unigram.Controls
 
         private SwipeListDirection _direction = SwipeListDirection.None;
 
+        protected override void OnManipulationStarting(ManipulationStartingRoutedEventArgs e)
+        {
+            if (Clip == null)
+            {
+                Clip = new RectangleGeometry();
+            }
+
+            Clip.Rect = new Rect(0, 0, ActualWidth, ActualHeight);
+
+            e.Handled = true;
+            base.OnManipulationStarting(e);
+        }
+
         protected override void OnManipulationDelta(ManipulationDeltaRoutedEventArgs e)
         {
 #if !DEBUG
@@ -304,20 +317,6 @@ namespace Unigram.Controls
         /// Occurs when the item is swiped from left or right.
         /// </summary>
         public event ItemSwipeEventHandler ItemSwipe;
-
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            var size = base.MeasureOverride(availableSize);
-
-            if (Clip == null)
-            {
-                Clip = new RectangleGeometry();
-            }
-
-            Clip.Rect = new Rect(0, 0, size.Width, size.Height);
-
-            return size;
-        }
 
         #region LeftContentTemplate
         public DataTemplate LeftContentTemplate
