@@ -10,6 +10,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <MenuFlyout x:Key="ParticipantMenuFlyout" Opening="MenuFlyout_Opening">
+            <MenuFlyoutItem Loaded="ParticipantEdit_Loaded" Command="{x:Bind ViewModel.ParticipantEditCommand}" CommandParameter="{Binding}" Text="Edit permissions"/>
+            <MenuFlyoutItem Loaded="ParticipantPromote_Loaded" Command="{x:Bind ViewModel.ParticipantPromoteCommand}" CommandParameter="{Binding}" Text="Promote"/>
+            <MenuFlyoutItem Loaded="ParticipantRestrict_Loaded" Command="{x:Bind ViewModel.ParticipantRestrictCommand}" CommandParameter="{Binding}" Text="Restrict"/>
+        </MenuFlyout>
+    </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -103,6 +111,7 @@
 
                         <controls:HyperButton Content="Add members"
                                               Command="{x:Bind ViewModel.InviteCommand}"
+                                              Visibility="{x:Bind ViewModel.IsInviteUsers, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               Style="{StaticResource HyperButtonStyle}"
                                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
                     </local:TableStackPanel>
@@ -115,22 +124,22 @@
                         <controls:BadgeButton Content="Admins"
                                               Command="{x:Bind ViewModel.AdminsCommand}"
                                               Badge="{x:Bind ViewModel.Full.AdminsCount, Mode=OneWay}"
-                                              Visibility="{x:Bind ViewModel.Full.HasAdminsCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                              Visibility="{x:Bind ViewModel.Full.HasAdminsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
                         <controls:BadgeButton Content="Restricted Users"
                                               Command="{x:Bind ViewModel.BannedCommand}"
                                               Badge="{x:Bind ViewModel.Full.BannedCount, Mode=OneWay}"
-                                              Visibility="{x:Bind ViewModel.Full.HasBannedCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                              Visibility="{x:Bind ViewModel.Full.HasBannedCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
                         <controls:BadgeButton Content="Banned Users"
                                               Command="{x:Bind ViewModel.KickedCommand}"
                                               Badge="{x:Bind ViewModel.Full.KickedCount, Mode=OneWay}"
-                                              Visibility="{x:Bind ViewModel.Full.HasKickedCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                              Visibility="{x:Bind ViewModel.Full.HasKickedCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
                         <controls:BadgeButton Content="Members"
                                               Command="{x:Bind ViewModel.ParticipantsCommand}"
                                               Badge="{x:Bind ViewModel.Full.ParticipantsCount, Mode=OneWay}"
-                                              Visibility="{x:Bind ViewModel.Full.HasParticipantsCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                              Visibility="{x:Bind ViewModel.Full.HasParticipantsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
                     </local:TableStackPanel>
 
@@ -138,7 +147,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:TLChannelParticipantBase">
-                    <Grid Margin="0,6">
+                    <Grid Padding="0,6" Background="Transparent" ContextFlyout="{StaticResource ParticipantMenuFlyout}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>

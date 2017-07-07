@@ -342,9 +342,9 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <TextBlock x:Name="ContentPresenter" HorizontalAlignment="Center">
+                        <TextBlock x:Name="ContentPresenter" HorizontalAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
                             <Run Text="&#xE611;" FontFamily="{ThemeResource TelegramThemeFontFamily}" />
-                            <Run Text="INSTANT VIEW" />
+                            <Run Text="  INSTANT VIEW  " />
                             <Run Text="&#xE611;" Foreground="{x:Null}" FontFamily="{ThemeResource TelegramThemeFontFamily}" />
                         </TextBlock>
                     </Grid>

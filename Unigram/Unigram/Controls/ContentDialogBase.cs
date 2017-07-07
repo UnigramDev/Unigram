@@ -169,6 +169,7 @@ namespace Unigram.Controls
                     _popupHost = new Popup();
                     _popupHost.Child = this;
                     _popupHost.Loading += PopupHost_Loading;
+                    _popupHost.Loaded += PopupHostLoaded;
                     _popupHost.Opened += PopupHost_Opened;
                     _popupHost.Closed += PopupHost_Closed;
                     this.Unloaded += PopupHost_Unloaded;
@@ -198,6 +199,11 @@ namespace Unigram.Controls
         private void PopupHost_Loading(FrameworkElement sender, object args)
         {
             OnVisibleBoundsChanged(_applicationView, null);
+        }
+
+        private void PopupHostLoaded(object sender, RoutedEventArgs e)
+        {
+            Focus(FocusState.Programmatic);
         }
 
         private void PopupHost_Opened(object sender, object e)

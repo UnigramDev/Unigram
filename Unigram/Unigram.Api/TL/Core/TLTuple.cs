@@ -51,7 +51,7 @@ namespace Telegram.Api.TL
 
     public class TLTuple<T1> : TLTuple
     {
-        public T1 Item1 { get; private set; }
+        public T1 Item1 { get; set; }
 
         public TLTuple(T1 item1)
         {
@@ -78,7 +78,7 @@ namespace Telegram.Api.TL
 
     public class TLTuple<T1, T2> : TLTuple<T1>
     {
-        public T2 Item2 { get; private set; }
+        public T2 Item2 { get; set; }
 
         public TLTuple(T1 item1, T2 item2)
             : base(item1)
@@ -107,7 +107,7 @@ namespace Telegram.Api.TL
 
     public class TLTuple<T1, T2, T3> : TLTuple<T1, T2>
     {
-        public T3 Item3 { get; private set; }
+        public T3 Item3 { get; set; }
 
         public TLTuple(T1 item1, T2 item2, T3 item3)
             : base(item1, item2)
@@ -136,7 +136,7 @@ namespace Telegram.Api.TL
 
     public class TLTuple<T1, T2, T3, T4> : TLTuple<T1, T2, T3>
     {
-        public T4 Item4 { get; private set; }
+        public T4 Item4 { get; set; }
 
         public TLTuple(T1 item1, T2 item2, T3 item3, T4 item4)
             : base(item1, item2, item3)
@@ -165,7 +165,7 @@ namespace Telegram.Api.TL
 
     public class TLTuple<T1, T2, T3, T4, T5> : TLTuple<T1, T2, T3, T4>
     {
-        public T5 Item5 { get; private set; }
+        public T5 Item5 { get; set; }
 
         public TLTuple(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5)
             : base(item1, item2, item3, item4)
@@ -194,7 +194,7 @@ namespace Telegram.Api.TL
 
     public class TLTuple<T1, T2, T3, T4, T5, T6> : TLTuple<T1, T2, T3, T4, T5>
     {
-        public T6 Item6 { get; private set; }
+        public T6 Item6 { get; set; }
 
         public TLTuple(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6)
             : base(item1, item2, item3, item4, item5)
@@ -223,7 +223,7 @@ namespace Telegram.Api.TL
 
     public class TLTuple<T1, T2, T3, T4, T5, T6, T7> : TLTuple<T1, T2, T3, T4, T5, T6>
     {
-        public T7 Item7 { get; private set; }
+        public T7 Item7 { get; set; }
 
         public TLTuple(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7)
             : base(item1, item2, item3, item4, item5, item6)
@@ -252,7 +252,7 @@ namespace Telegram.Api.TL
 
     public class TLTuple<T1, T2, T3, T4, T5, T6, T7, T8> : TLTuple<T1, T2, T3, T4, T5, T6, T7>
     {
-        public T8 Item8 { get; private set; }
+        public T8 Item8 { get; set; }
 
         public TLTuple(T1 item1, T2 item2, T3 item3, T4 item4, T5 item5, T6 item6, T7 item7, T8 item8)
             : base(item1, item2, item3, item4, item5, item6, item7)

@@ -16,8 +16,10 @@ namespace Unigram.Converters
             {
                 case TLChannelParticipantCreator creator:
                     return "Creator";
-                case TLChannelParticipantAdmin moderator:
-                    return "Admin";
+                case TLChannelParticipantAdmin admin:
+                    return string.Format("Promoted by {0}", admin.PromotedByUser.FullName);
+                case TLChannelParticipantBanned banned:
+                    return string.Format("Restricted by {0}", banned.KickedByUser.FullName);
                 case TLChannelParticipant participant:
                 default:
                     return "User";

@@ -17,9 +17,10 @@
                 Style="{StaticResource HyperButtonStyle}">
                 <StackPanel Orientation="Horizontal" Margin="0,-8">
                     <Border Width="36" Height="36" Margin="0,0,12,0">
-                        <FontIcon Glyph="&#xE1E2;" Margin="0,2,0,0"/>
+                        <FontIcon Glyph="&#xE71B;" Margin="0,2,0,0"/>
                     </Border>
-                    <TextBlock Text="Invite to Group via Link" VerticalAlignment="Center"/>
+                    <TextBlock Text="Invite to Group via Link" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.IsGroup, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <TextBlock Text="Invite to Channel via Link" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.IsGroup, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"/>
                 </StackPanel>
             </controls:HyperButton>
         </views:UsersSelectionView.Header>

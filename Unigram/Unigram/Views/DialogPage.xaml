@@ -557,6 +557,14 @@
                 <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
             </Border>
         </DataTemplate>
+
+        <DataTemplate x:Key="ServiceMessageDateTemplate">
+            <controls:SimpleButton Click="Date_Click" Margin="0,8,0,2" HorizontalAlignment="Center" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                    <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
+                </Border>
+            </controls:SimpleButton>
+        </DataTemplate>
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">
@@ -645,6 +653,7 @@
                                            ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
                                            ServiceMessagePhotoTemplate="{StaticResource ServiceMessagePhotoTemplate}"
                                            ServiceMessageLocalTemplate="{StaticResource ServiceMessageLocalTemplate}"
+                                           ServiceMessageDateTemplate="{StaticResource ServiceMessageDateTemplate}"
                                            ServiceUserCallTemplate="{StaticResource ServiceUserCallMessageTemplate}"
                                            ServiceFriendCallTemplate="{StaticResource ServiceFriendCallMessageTemplate}"/>
 
@@ -1365,14 +1374,11 @@
                     <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                 </Grid>
 
-                <Border x:Name="DateHeader" Visibility="Collapsed" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,12,0,2"  CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.ColumnSpan="2">
-                    <Button Padding="12,5,12,7" Style="{StaticResource EmptyButtonStyle}">
-                        <Button.Flyout>
-                            <DatePickerFlyout DatePicked="DatePickerFlyout_DatePicked" Placement="Bottom" />
-                        </Button.Flyout>
+                <controls:SimpleButton Click="Date_Click" x:Name="DateHeader" Visibility="Collapsed" Margin="0,8,0,2" HorizontalAlignment="Center" CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.ColumnSpan="2">
+                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                         <RichTextBlock x:Name="DateHeaderLabel" IsTextSelectionEnabled="False" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
-                    </Button>
-                </Border>
+                    </Border>
+                </controls:SimpleButton>
             </StackPanel>
 
             <Border x:Name="Arrow"

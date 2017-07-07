@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
 {
-    public class ChannelDetailsViewModel : ChannelParticipantsViewModelBase, IHandle<TLUpdateNotifySettings>
+    public class ChannelDetailsViewModel : ChannelParticipantsViewModelBase, IHandle<TLUpdateChannel>, IHandle<TLUpdateNotifySettings>
     {
         private readonly IUploadFileManager _uploadFileManager;
 
@@ -104,6 +104,14 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
+        public bool IsInviteUsers
+        {
+            get
+            {
+                return _item != null && (_item.IsCreator || (_item.HasAdminRights && _item.AdminRights.IsInviteUsers));
+            }
+        }
+
         public bool AreNotificationsEnabled
         {
             get
@@ -150,9 +158,27 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public void Handle(TLUpdateNotifySettings message)
+        public void Handle(TLUpdateChannel update)
         {
-            var notifyPeer = message.Peer as TLNotifyPeer;
+            if (_item == null)
+            {
+                return;
+            }
+
+            if (_item.Id == update.ChannelId)
+            {
+                RaisePropertyChanged(() => Item);
+                RaisePropertyChanged(() => Full);
+                RaisePropertyChanged(() => AreNotificationsEnabled);
+
+                RaisePropertyChanged(() => IsInviteUsers);
+                RaisePropertyChanged(() => IsEditEnabled);
+            }
+        }
+
+        public void Handle(TLUpdateNotifySettings update)
+        {
+            var notifyPeer = update.Peer as TLNotifyPeer;
             if (notifyPeer != null)
             {
                 var peer = notifyPeer.Peer;
@@ -160,7 +186,7 @@ namespace Unigram.ViewModels.Channels
                 {
                     Execute.BeginOnUIThread(() =>
                     {
-                        Full.NotifySettings = message.NotifySettings;
+                        Full.NotifySettings = update.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);
                         RaisePropertyChanged(() => AreNotificationsEnabled);
 
@@ -258,6 +284,50 @@ namespace Unigram.ViewModels.Channels
                 }
             }
         }
+
+        #region Context menu
+
+        public RelayCommand<TLChannelParticipantBase> ParticipantEditCommand => new RelayCommand<TLChannelParticipantBase>(ParticipantEditExecute);
+        private void ParticipantEditExecute(TLChannelParticipantBase participant)
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            if (participant is TLChannelParticipantAdmin)
+            {
+                NavigationService.Navigate(typeof(ChannelAdminRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+            }
+            else if (participant is TLChannelParticipantBanned)
+            {
+                NavigationService.Navigate(typeof(ChannelBannedRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+            }
+        }
+
+        public RelayCommand<TLChannelParticipantBase> ParticipantPromoteCommand => new RelayCommand<TLChannelParticipantBase>(ParticipantPromoteExecute);
+        private void ParticipantPromoteExecute(TLChannelParticipantBase participant)
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(ChannelAdminRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+        }
+
+        public RelayCommand<TLChannelParticipantBase> ParticipantRestrictCommand => new RelayCommand<TLChannelParticipantBase>(ParticipantRestrictExecute);
+        private void ParticipantRestrictExecute(TLChannelParticipantBase participant)
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(ChannelBannedRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+        }
+
+        #endregion
     }
 
     public class TLChannelParticipantBaseComparer : IComparer<TLChannelParticipantBase>

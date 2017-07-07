@@ -240,7 +240,7 @@
                 </RichTextBlock>
             </Border>
 
-            <Button Click="InstantView_Click" Style="{StaticResource InstantViewButtonStyle}" Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <controls:WebPageButton Click="InstantView_Click" WebPage="{Binding Media.WebPage}" Style="{StaticResource InstantViewButtonStyle}"/>
         </StackPanel>
     </DataTemplate>
 
@@ -270,7 +270,7 @@
                 <RichTextBlockOverflow x:Name="OverflowArea" MaxLines="3" Grid.ColumnSpan="2" Grid.Row="1"/>
             </Grid>
 
-            <Button Click="InstantView_Click" Style="{StaticResource InstantViewButtonStyle}" Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <controls:WebPageButton Click="InstantView_Click" WebPage="{Binding Media.WebPage}" Style="{StaticResource InstantViewButtonStyle}"/>
         </StackPanel>
     </DataTemplate>
 
@@ -301,7 +301,7 @@
                 </Grid>
             </StackPanel>
 
-            <Button Click="InstantView_Click" Style="{StaticResource InstantViewButtonStyle}" Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <controls:WebPageButton Click="InstantView_Click" WebPage="{Binding Media.WebPage}" Style="{StaticResource InstantViewButtonStyle}"/>
         </StackPanel>
     </DataTemplate>
 
@@ -318,7 +318,7 @@
                                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"/>
             </StackPanel>
 
-            <Button Click="InstantView_Click" Style="{StaticResource InstantViewButtonStyle}" Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <controls:WebPageButton Click="InstantView_Click" WebPage="{Binding Media.WebPage}" Style="{StaticResource InstantViewButtonStyle}"/>
         </StackPanel>
     </DataTemplate>
 
@@ -326,7 +326,7 @@
         <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Margin="0,8,0,6" Padding="8,0,0,0">
             <StackPanel Margin="0,0,0,8">
                 <TextBlock Text="{Binding Media.Game.Title}" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
-                <TextBlock common:MessageHelper.Message="{x:Bind Self, Mode=OneWay}" Style="{StaticResource CaptionRichTextBlockStyle}" Foreground="{ThemeResource MessageForegroundBrush}" Tag="Game">
+                <TextBlock common:MessageHelper.Message="{x:Bind Self, Mode=OneWay}" Foreground="{ThemeResource MessageForegroundBrush}" Tag="Game" Style="{StaticResource CaptionTextBlockStyle}">
                     <TextBlock.Resources>
                         <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
                     </TextBlock.Resources>

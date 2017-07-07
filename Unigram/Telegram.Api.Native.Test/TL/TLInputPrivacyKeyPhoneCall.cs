@@ -20,7 +20,6 @@ namespace Telegram.Api.TL
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.WriteUInt32(0xFABADC5F);
 		}
 	}
 }

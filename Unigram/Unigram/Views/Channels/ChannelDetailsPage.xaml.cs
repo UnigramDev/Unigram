@@ -81,5 +81,82 @@ namespace Unigram.Views.Channels
                 ViewModel.ToggleMuteCommand.Execute();
             }
         }
+
+        #region Context menu
+
+        private void MenuFlyout_Opening(object sender, object e)
+        {
+            var flyout = sender as MenuFlyout;
+
+            foreach (var item in flyout.Items)
+            {
+                item.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ParticipantEdit_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var participant = element.DataContext as TLChannelParticipantBase;
+
+            var channel = ViewModel.Item as TLChannel;
+            if (channel == null)
+            {
+                return;
+            }
+
+            if ((channel.IsCreator || (channel.HasAdminRights && (channel.AdminRights.IsAddAdmins || channel.AdminRights.IsBanUsers))) && ((participant is TLChannelParticipantAdmin admin && admin.IsCanEdit) || participant is TLChannelParticipantBanned))
+            {
+                element.Visibility = participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
+            }
+            else
+            {
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ParticipantPromote_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var participant = element.DataContext as TLChannelParticipantBase;
+
+            var channel = ViewModel.Item as TLChannel;
+            if (channel == null)
+            {
+                return;
+            }
+
+            if ((channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsAddAdmins)) && !(participant is TLChannelParticipantAdmin))
+            {
+                element.Visibility = participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
+            }
+            else
+            {
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void ParticipantRestrict_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var participant = element.DataContext as TLChannelParticipantBase;
+
+            var channel = ViewModel.Item as TLChannel;
+            if (channel == null)
+            {
+                return;
+            }
+
+            if ((channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsBanUsers)) && !(participant is TLChannelParticipantBanned))
+            {
+                element.Visibility = participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
+            }
+            else
+            {
+                element.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        #endregion
     }
 }

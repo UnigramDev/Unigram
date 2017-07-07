@@ -40,7 +40,7 @@ namespace Unigram.Controls
                 {
                     if (channel.IsBroadcast)
                     {
-                        if (channel.IsCreator || channel.HasAdminRights)
+                        if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPostMessages))
                         {
 
                         }
@@ -236,7 +236,7 @@ namespace Unigram.Controls
                 {
                     if (channel.IsBroadcast)
                     {
-                        if (channel.IsCreator || channel.HasAdminRights)
+                        if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPostMessages))
                         {
                             return true;
                         }

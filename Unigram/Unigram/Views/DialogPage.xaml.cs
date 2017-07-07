@@ -291,10 +291,29 @@ namespace Unigram.Views
 
         private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased && ViewModel.SelectionMode != ListViewSelectionMode.None)
+            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased)
             {
-                ViewModel.SelectionMode = ListViewSelectionMode.None;
-                args.Handled = true;
+                if (StickersPanel.Visibility == Visibility.Visible)
+                {
+                    StickersPanel.Visibility = Visibility.Collapsed;
+                    args.Handled = true;
+                }
+
+                if (ViewModel.SelectionMode != ListViewSelectionMode.None)
+                {
+                    ViewModel.SelectionMode = ListViewSelectionMode.None;
+                    args.Handled = true;
+                }
+
+                if (args.Handled)
+                {
+                    Focus(FocusState.Programmatic);
+
+                    if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                    {
+                        TextField.Focus(FocusState.Keyboard);
+                    }
+                }
             }
         }
 
@@ -671,7 +690,7 @@ namespace Unigram.Views
                 if (messageCommon != null)
                 {
                     var channel = messageCommon.Parent as TLChannel;
-                    if (channel != null && (channel.IsCreator || channel.HasAdminRights && channel.AdminRights.IsPinMessages) && !channel.IsBroadcast)
+                    if (channel != null && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPinMessages)) && !channel.IsBroadcast)
                     {
                         if (messageCommon.ToId is TLPeerChannel)
                         {
@@ -700,7 +719,7 @@ namespace Unigram.Views
                         element.Visibility = Visibility.Visible;
                         return;
                     }
-                    else if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || channel.HasAdminRights && channel.AdminRights.IsEditMessages))) && (message.Media is ITLMessageMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
+                    else if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsEditMessages)))) && (message.Media is ITLMessageMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
                     {
                         var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
                         var config = ViewModel.CacheService.GetConfig();
@@ -1208,6 +1227,24 @@ namespace Unigram.Views
             if (button.DataContext is TLMessage message)
             {
                 ViewModel.MessageShareCommand.Execute(message);
+            }
+        }
+
+        private async void Date_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as FrameworkElement;
+            if (button.DataContext is TLMessageCommonBase message)
+            {
+                var dialog = new Controls.Views.CalendarView();
+                dialog.MaxDate = DateTimeOffset.Now.Date;
+                dialog.SelectedDates.Add(BindConvert.Current.DateTime(message.Date));
+
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
+                {
+                    var offset = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, dialog.SelectedDates.FirstOrDefault().Date);
+                    await ViewModel.LoadDateSliceAsync(offset);
+                }
             }
         }
     }

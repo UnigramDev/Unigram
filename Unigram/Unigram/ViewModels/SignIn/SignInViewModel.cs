@@ -190,7 +190,7 @@ namespace Unigram.ViewModels.SignIn
             if (confirm == ContentDialogResult.Primary)
             {
                 SettingsHelper.ProxyServer = dialog.Server;
-                SettingsHelper.ProxyPort = int.Parse(dialog.Port);
+                SettingsHelper.ProxyPort = int.Parse(dialog.Port ?? "1080");
                 SettingsHelper.ProxyUsername = dialog.Username;
                 SettingsHelper.ProxyPassword = dialog.Password;
                 SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;

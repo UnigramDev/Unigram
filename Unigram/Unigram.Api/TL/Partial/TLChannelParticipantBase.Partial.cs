@@ -45,4 +45,34 @@ namespace Telegram.Api.TL
             }
         }
     }
+
+    public partial class TLChannelParticipantAdmin
+    {
+        private TLUser _promotedByUser;
+        public TLUser PromotedByUser
+        {
+            get
+            {
+                if (_promotedByUser == null)
+                    _promotedByUser = InMemoryCacheService.Current.GetUser(PromotedBy) as TLUser;
+
+                return _promotedByUser;
+            }
+        }
+    }
+
+    public partial class TLChannelParticipantBanned
+    {
+        private TLUser _kickedByUser;
+        public TLUser KickedByUser
+        {
+            get
+            {
+                if (_kickedByUser == null)
+                    _kickedByUser = InMemoryCacheService.Current.GetUser(KickedBy) as TLUser;
+
+                return _kickedByUser;
+            }
+        }
+    }
 }

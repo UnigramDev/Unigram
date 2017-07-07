@@ -146,14 +146,14 @@
                             </Grid>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.EditedTemplate>
-                    <selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
+                    <selectors:AdminLogTemplateSelector.EventMessageTemplate>
                         <DataTemplate>
                             <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                                 <RichTextBlock common:AdminLogHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                             </Border>
                         </DataTemplate>
-                    </selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
-                    <selectors:AdminLogTemplateSelector.ServiceMessagePhotoTemplate>
+                    </selectors:AdminLogTemplateSelector.EventMessageTemplate>
+                    <selectors:AdminLogTemplateSelector.EventMessagePhotoTemplate>
                         <DataTemplate>
                             <StackPanel Margin="0,8,0,2">
                                 <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
@@ -162,6 +162,26 @@
 
                                 <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
                                     <controls:ProfilePictureView Source="{Binding Action.Event.Action.NewPhoto, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
+                                </Border>
+                            </StackPanel>
+                        </DataTemplate>
+                    </selectors:AdminLogTemplateSelector.EventMessagePhotoTemplate>
+                    <selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
+                        <DataTemplate>
+                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                                <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
+                            </Border>
+                        </DataTemplate>
+                    </selectors:AdminLogTemplateSelector.ServiceMessageTemplate>
+                    <selectors:AdminLogTemplateSelector.ServiceMessagePhotoTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,8,0,2">
+                                <Border Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                                    <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
+                                </Border>
+
+                                <Border Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
+                                    <controls:ProfilePictureView Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                                 </Border>
                             </StackPanel>
                         </DataTemplate>
@@ -270,12 +290,24 @@
             </ListView.Footer>
         </ListView>
 
+        <StackPanel Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.Row="1">
+            <TextBlock Text="No events yet" Foreground="White" Style="{StaticResource BaseTextBlockStyle}"/>
+            <TextBlock Foreground="White" Style="{ThemeResource BodyTextBlockStyle}">
+                <Run Text="There where no service actions"/>
+                <LineBreak/>
+                <Run Text="taken by the group's members"/>
+                <LineBreak/>
+                <Run Text="and admins in the last 48 hours."/>
+            </TextBlock>
+        </StackPanel>
+
+
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Height="{ThemeResource AppBarThemeCompactHeight}" Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Click="Settings_Click" Content="SETTINGS" Style="{StaticResource SendButtonStyle}" Grid.ColumnSpan="2"/>
+            <Button Click="Settings_Click" Content="FILTER" Style="{StaticResource SendButtonStyle}" Grid.ColumnSpan="2"/>
             <controls:GlyphButton Click="Help_Click" Glyph="&#xE11B;" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Grid.Column="1"/>
 
             <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>

@@ -44,6 +44,7 @@ namespace Unigram.ViewModels.Payments
                     Shipping = tuple.Item5;
                     CredentialsTitle = string.IsNullOrEmpty(tuple.Item6) ? null : tuple.Item6;
                     Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
+                    Provider = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.ProviderId) as TLUser;
 
                     if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard && _credentialsTitle == null)
                     {
@@ -85,6 +86,19 @@ namespace Unigram.ViewModels.Payments
             set
             {
                 Set(ref _bot, value);
+            }
+        }
+
+        private TLUser _provider;
+        public TLUser Provider
+        {
+            get
+            {
+                return _provider;
+            }
+            set
+            {
+                Set(ref _provider, value);
             }
         }
 
@@ -144,7 +158,8 @@ namespace Unigram.ViewModels.Payments
         public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(string.Format("Do you really want to transfer {0} to the {1} bot for {2}?", BindConvert.Current.FormatAmount(_totalAmount, _paymentForm.Invoice.Currency), _bot.FullName, _invoice.Title), "Transaction review", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(string .Format("Neither Telegram, nor {0} will have access to your credit card information. Credit card details will be handled only by the payment system, {1}.\n\nPayments will go directly to the developer of {0}. Telegram cannot provide any guarantees, so proceed at your own risk. In case of problems, please contact the developer of {0} or your bank.", _bot.FullName, _provider.FullName), "Transaction review", "OK", "Cancel");
+            //var confirm = await TLMessageDialog.ShowAsync(string.Format("Do you really want to transfer {0} to the {1} bot for {2}?", BindConvert.Current.FormatAmount(_totalAmount, _paymentForm.Invoice.Currency), _bot.FullName, _invoice.Title), "Transaction review", "OK", "Cancel");
             if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
             {
                 return;
