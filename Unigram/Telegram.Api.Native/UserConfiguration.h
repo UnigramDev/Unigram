@@ -6,26 +6,6 @@ using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
 using ABI::Telegram::Api::Native::IUserConfiguration;
 
-namespace ABI
-{
-	namespace Telegram
-	{
-		namespace Api
-		{
-			namespace Native
-			{
-
-				MIDL_INTERFACE("7A370BE4-415B-4471-8940-09A01F2F0E88") IDefaultUserConfiguration : public IUnknown
-				{
-				};
-
-			}
-		}
-	}
-}
-
-
-using ABI::Telegram::Api::Native::IDefaultUserConfiguration;
 
 namespace Telegram
 {
@@ -34,9 +14,9 @@ namespace Telegram
 		namespace Native
 		{
 
-			class DefaultUserConfiguration WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<IDefaultUserConfiguration>, IUserConfiguration>
+			class UserConfiguration WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IUserConfiguration>
 			{
-				InspectableClass(L"Telegram.Api.Native.DefaultUserConfiguration", BaseTrust);
+				InspectableClass(RuntimeClass_Telegram_Api_Native_UserConfiguration, BaseTrust);
 
 			public:
 				//COM exported methods		
@@ -47,6 +27,26 @@ namespace Telegram
 
 				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize();
+
+				inline HString const& GetDeviceModel() const
+				{
+					return m_deviceModel;
+				}
+
+				inline HString const& GetSystemVersion() const
+				{
+					return m_systemVersion;
+				}
+
+				inline HString const& GetAppVersion() const
+				{
+					return m_appVersion;
+				}
+
+				inline HString const& GetLanguage() const
+				{
+					return m_language;
+				}
 
 			private:
 				static HRESULT FormatVersion(UINT64 major, UINT64 minor, UINT64 build, UINT64 revision, _Out_ HString& version);

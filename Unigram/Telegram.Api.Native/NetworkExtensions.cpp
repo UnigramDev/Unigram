@@ -76,3 +76,11 @@ DWORD WINAPI GetPerAdapterInfo(ULONG IfIndex, PIP_PER_ADAPTER_INFO pPerAdapterIn
 
 	return procGetPerAdapterInfo(IfIndex, pPerAdapterInfo, pOutBufLen);
 }
+
+ULONG WINAPI GetAdaptersAddresses(ULONG Family, ULONG Flags, PVOID Reserved, PIP_ADAPTER_ADDRESSES AdapterAddresses, PULONG SizePointer)
+{
+	typedef ULONG(WINAPI *pGetAdaptersAddresses)(_In_ ULONG, _In_ ULONG, _In_ PVOID, _Inout_ PIP_ADAPTER_ADDRESSES, _Inout_ PULONG);
+	static const auto procGetAdaptersAddresses = s_iphlpapi.GetMethod<pGetAdaptersAddresses>("GetAdaptersAddresses");
+
+	return procGetAdaptersAddresses(Family, Flags, Reserved, AdapterAddresses, SizePointer);
+}

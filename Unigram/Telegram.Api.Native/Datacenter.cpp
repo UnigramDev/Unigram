@@ -57,6 +57,8 @@ HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager,
 
 HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager, ITLBinaryReaderEx* reader)
 {
+	m_connectionManager = connectionManager;
+
 	HRESULT result;
 	UINT32 version;
 	ReturnIfFailed(result, reader->ReadUInt32(&version));
@@ -102,10 +104,8 @@ HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager,
 	ReturnIfFailed(result, ReadSettingsEndpoints(reader, m_ipv4Endpoints, &m_currentIPv4EndpointIndex));
 	ReturnIfFailed(result, ReadSettingsEndpoints(reader, m_ipv4DownloadEndpoints, &m_currentIPv4DownloadEndpointIndex));
 	ReturnIfFailed(result, ReadSettingsEndpoints(reader, m_ipv6Endpoints, &m_currentIPv6EndpointIndex));
-	ReturnIfFailed(result, ReadSettingsEndpoints(reader, m_ipv6DownloadEndpoints, &m_currentIPv6DownloadEndpointIndex));
 
-	m_connectionManager = connectionManager;
-	return S_OK;
+	return ReadSettingsEndpoints(reader, m_ipv6DownloadEndpoints, &m_currentIPv6DownloadEndpointIndex);
 }
 
 HRESULT Datacenter::get_Id(INT32* value)
@@ -1346,9 +1346,8 @@ HRESULT Datacenter::SaveSettings(ITLBinaryWriterEx* writer)
 	ReturnIfFailed(result, WriteSettingsEndpoints(writer, m_ipv4Endpoints, m_currentIPv4EndpointIndex));
 	ReturnIfFailed(result, WriteSettingsEndpoints(writer, m_ipv4DownloadEndpoints, m_currentIPv4DownloadEndpointIndex));
 	ReturnIfFailed(result, WriteSettingsEndpoints(writer, m_ipv6Endpoints, m_currentIPv6EndpointIndex));
-	ReturnIfFailed(result, WriteSettingsEndpoints(writer, m_ipv6DownloadEndpoints, m_currentIPv6DownloadEndpointIndex));
 
-	return S_OK;
+	return WriteSettingsEndpoints(writer, m_ipv6DownloadEndpoints, m_currentIPv6DownloadEndpointIndex);
 }
 
 HRESULT Datacenter::ReadSettingsEndpoints(ITLBinaryReaderEx* reader, std::vector<ServerEndpoint>& endpoints, size_t* currentIndex)

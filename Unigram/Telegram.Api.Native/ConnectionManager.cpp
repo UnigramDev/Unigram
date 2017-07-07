@@ -1,5 +1,4 @@
 #include "pch.h"
-#include <iphlpapi.h>
 #include <Windows.Storage.h>
 #include "ConnectionManager.h"
 #include "Datacenter.h"
@@ -10,11 +9,12 @@
 #include "MessageError.h"
 #include "TLTypes.h"
 #include "TLMethods.h"
-#include "DefaultUserConfiguration.h"
+#include "UserConfiguration.h"
 #include "Collections.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "NativeBuffer.h"
+#include "NetworkExtensions.h"
 #include "Helpers\COMHelper.h"
 
 #include "MethodDebug.h"
@@ -69,7 +69,7 @@ ConnectionManager::~ConnectionManager()
 HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount)
 {
 	HRESULT result;
-	ReturnIfFailed(result, MakeAndInitialize<DefaultUserConfiguration>(&m_userConfiguration));
+	ReturnIfFailed(result, MakeAndInitialize<UserConfiguration>(&m_userConfiguration));
 
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
@@ -94,6 +94,16 @@ HRESULT ConnectionManager::add_SessionCreated(__FITypedEventHandler_2_Telegram__
 HRESULT ConnectionManager::remove_SessionCreated(EventRegistrationToken token)
 {
 	return m_sessionCreatedEventSource.Remove(token);
+}
+
+HRESULT ConnectionManager::add_AuthenticationRequested(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, EventRegistrationToken* token)
+{
+	return m_authenticationRequestedEventSource.Add(handler, token);
+}
+
+HRESULT ConnectionManager::remove_AuthenticationRequested(EventRegistrationToken token)
+{
+	return m_authenticationRequestedEventSource.Remove(token);
 }
 
 HRESULT ConnectionManager::add_CurrentNetworkTypeChanged(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, EventRegistrationToken* token)
@@ -198,38 +208,7 @@ HRESULT ConnectionManager::get_IsNetworkAvailable(boolean* value)
 
 HRESULT ConnectionManager::get_UserConfiguration(IUserConfiguration** value)
 {
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	auto lock = LockCriticalSection();
 	return m_userConfiguration.CopyTo(value);
-}
-
-HRESULT ConnectionManager::put_UserConfiguration(IUserConfiguration* value)
-{
-	auto lock = LockCriticalSection();
-
-	if (value != m_userConfiguration.Get())
-	{
-		if (value == nullptr)
-		{
-			ComPtr<IDefaultUserConfiguration> defaultUserConfiguration;
-			if (FAILED(m_userConfiguration.As(&defaultUserConfiguration)))
-			{
-				return MakeAndInitialize<DefaultUserConfiguration>(&m_userConfiguration);
-			}
-		}
-		else
-		{
-			m_userConfiguration = value;
-
-			I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle UserConfiguration changes");
-		}
-	}
-
-	return S_OK;
 }
 
 HRESULT ConnectionManager::get_UserId(INT32* value)
@@ -255,7 +234,7 @@ HRESULT ConnectionManager::put_UserId(INT32 value)
 
 		if (m_userId != 0)
 		{
-			I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle UserId changes");
+			return UpdateDatacenters();
 		}
 	}
 
@@ -415,30 +394,6 @@ HRESULT ConnectionManager::CancelRequest(INT32 requestToken, boolean notifyServe
 	}
 
 	*value = false;
-	return S_OK;
-}
-
-HRESULT ConnectionManager::GetDatacenterById(INT32 id, IDatacenter** value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	auto lock = LockCriticalSection();
-
-	if (id == DEFAULT_DATACENTER_ID)
-	{
-		id = m_currentDatacenterId;
-	}
-
-	ComPtr<Datacenter> datacenter;
-	if (!GetDatacenterById(id, datacenter))
-	{
-		return E_INVALIDARG;
-	}
-
-	*value = datacenter.Detach();
 	return S_OK;
 }
 
@@ -614,15 +569,15 @@ HRESULT ConnectionManager::UpdateNetworkStatus(bool raiseEvent)
 		boolean isRoaming;
 		ReturnIfFailed(result, connectionCost->get_Roaming(&isRoaming));
 
+		ComPtr<INetworkAdapter> networkAdapter;
+		ReturnIfFailed(result, connectionProfile->get_NetworkAdapter(&networkAdapter));
+
 		if (isRoaming)
 		{
 			currentNetworkType = ConnectionNeworkType::Roaming;
 		}
 		else
 		{
-			ComPtr<INetworkAdapter> networkAdapter;
-			ReturnIfFailed(result, connectionProfile->get_NetworkAdapter(&networkAdapter));
-
 			UINT32 interfaceIanaType;
 			ReturnIfFailed(result, networkAdapter->get_IanaInterfaceType(&interfaceIanaType));
 
@@ -640,6 +595,18 @@ HRESULT ConnectionManager::UpdateNetworkStatus(bool raiseEvent)
 				currentNetworkType = ConnectionNeworkType::None;
 				break;
 			}
+		}
+
+		bool ipv6Enabled;
+		ReturnIfFailed(result, IsIPv6Enabled(networkAdapter.Get(), &ipv6Enabled));
+
+		if (ipv6Enabled)
+		{
+			m_flags |= ConnectionManagerFlag::UseIPv6;
+		}
+		else
+		{
+			m_flags &= ~ConnectionManagerFlag::UseIPv6;
 		}
 	}
 
@@ -1423,7 +1390,7 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 
 HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageRequest* request, INT32 code, HString const& text)
 {
-	static const std::wstring knownErrors[] = { L"NETWORK_MIGRATE_", L"PHONE_MIGRATE_", L"USER_MIGRATE_", L"MSG_WAIT_FAILED", L"SESSION_PASSWORD_NEEDED", L"FLOOD_WAIT_" };
+	static const std::wstring knownErrors[] = { L"NETWORK_MIGRATE_", L"PHONE_MIGRATE_", L"USER_MIGRATE_", L"MSG_WAIT_FAILED", L"SESSION_PASSWORD_NEEDED", L"AUTH_KEY_UNREGISTERED", L"FLOOD_WAIT_" };
 
 	auto lock = LockCriticalSection();
 	auto errorText = text.GetRawBuffer(nullptr);
@@ -1452,40 +1419,44 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 	switch (code)
 	{
 	case 400:
+	{
 		if (wcsstr(errorText, knownErrors[3].c_str()) == nullptr)
 		{
 			return S_OK;
 		}
 
 		waitTime = 1;
-		break;
+	}
+	break;
 	case 401:
-		if (wcsstr(errorText, knownErrors[4].c_str()) == nullptr)
-		{
-			if ((datacenter->GetId() == m_currentDatacenterId || datacenter->GetId() == m_movingToDatacenterId) &&
-				request->GetConnectionType() == ConnectionType::Generic && m_userId != 0)
-			{
-				I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle user logout");
-			}
+	{
+		datacenter->SetUnauthorized();
 
-			datacenter->SetUnauthorized();
-		}
-		else
+		for (size_t i = 4; i < 6; i++)
 		{
-			return S_OK;
+			if (wcsstr(errorText, knownErrors[i].c_str()) != nullptr)
+			{
+				return m_authenticationRequestedEventSource.InvokeAll(this, nullptr);
+			}
 		}
-		break;
+
+		return S_OK;
+	}
+	break;
 	case 420:
-		if (wcsstr(errorText, knownErrors[5].c_str()) == nullptr)
+	{
+		if (wcsstr(errorText, knownErrors[6].c_str()) == nullptr)
 		{
 			return S_OK;
 		}
-		else if ((waitTime = _wtoi(errorText + knownErrors[5].size())) <= 0)
+		else if ((waitTime = _wtoi(errorText + knownErrors[6].size())) <= 0)
 		{
 			waitTime = 2;
 		}
-		break;
+	}
+	break;
 	default:
+	{
 		if (code == 500 || code < 0)
 		{
 			waitTime = max(request->GetAttemptCount(), 10);
@@ -1494,7 +1465,8 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 		{
 			return S_OK;
 		}
-		break;
+	}
+	break;
 	}
 
 	request->SetStartTime(static_cast<INT32>(GetCurrentSystemTime() / 1000) + waitTime);
@@ -1732,13 +1704,8 @@ HRESULT ConnectionManager::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG
 	return ProcessRequests();
 }
 
-HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLObject** object, IConnection** value)
+HRESULT ConnectionManager::BoomBaby()
 {
-	if (object == nullptr || value == nullptr)
-	{
-		return E_POINTER;
-	}
-
 	auto lock = LockCriticalSection();
 
 	HRESULT result;
@@ -2075,6 +2042,57 @@ HRESULT ConnectionManager::SaveDatacenterSettings(Datacenter* datacenter)
 	ReturnIfFailed(result, MakeAndInitialize<TLFileBinaryWriter>(&settingsWriter, settingsFileName.data(), CREATE_ALWAYS));
 
 	return datacenter->SaveSettings(settingsWriter.Get());
+}
+
+HRESULT ConnectionManager::IsIPv6Enabled(INetworkAdapter* networkAdapter, bool* enabled)
+{
+	HRESULT result;
+	GUID networkAdapterId;
+	ReturnIfFailed(result, networkAdapter->get_NetworkAdapterId(&networkAdapterId));
+
+	ULONG error;
+	NET_LUID networkAdapterLuid;
+	if ((error = ConvertInterfaceGuidToLuid(&networkAdapterId, &networkAdapterLuid)) != NO_ERROR)
+	{
+		return HRESULT_FROM_WIN32(result);
+	}
+
+	struct addresses_deleter
+	{
+		void operator()(void* x)
+		{
+			NATIVEBUFFER_FREE(x);
+		}
+	};
+
+	ULONG bufferSize = 15000;
+	std::unique_ptr<IP_ADAPTER_ADDRESSES, addresses_deleter> addresses;
+
+	do
+	{
+		addresses = std::unique_ptr<IP_ADAPTER_ADDRESSES, addresses_deleter>(reinterpret_cast<IP_ADAPTER_ADDRESSES*>(NATIVEBUFFER_ALLOC(bufferSize)));
+		error = GetAdaptersAddresses(AF_INET6, GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER | GAA_FLAG_SKIP_FRIENDLY_NAME, nullptr, addresses.get(), &bufferSize);
+	} while (error == ERROR_BUFFER_OVERFLOW);
+
+	if (error != NO_ERROR)
+	{
+		return HRESULT_FROM_WIN32(result);
+	}
+
+	auto currentAddress = addresses.get();
+	while (currentAddress != nullptr)
+	{
+		if (memcmp(&currentAddress->Luid, &networkAdapterLuid, sizeof(NET_LUID)) == 0)
+		{
+			*enabled = true;
+			return S_OK;
+		}
+
+		currentAddress = currentAddress->Next;
+	}
+
+	*enabled = false;
+	return S_OK;
 }
 
 
