@@ -1888,7 +1888,7 @@ HRESULT ConnectionManager::LoadSettings()
 
 	if (version != TELEGRAM_API_NATIVE_SETTINGS_VERSION)
 	{
-		return COMADMIN_E_APP_FILE_VERSION;
+		return E_FAIL;
 	}
 
 	INT32 currentDatacenterId;
@@ -2004,7 +2004,7 @@ HRESULT ConnectionManager::LoadCDNPublicKeys()
 
 	if (version != TELEGRAM_API_NATIVE_SETTINGS_VERSION)
 	{
-		return COMADMIN_E_APP_FILE_VERSION;
+		return E_FAIL;
 	}
 
 	UINT32 cdnPublicKeyCount;

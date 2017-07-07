@@ -58,6 +58,14 @@ HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager,
 HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager, ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
+	UINT32 version;
+	ReturnIfFailed(result, reader->ReadUInt32(&version));
+
+	if (version != TELEGRAM_API_NATIVE_SETTINGS_VERSION)
+	{
+		return E_FAIL;
+	}
+
 	ReturnIfFailed(result, reader->ReadInt32(&m_id));
 	ReturnIfFailed(result, reader->ReadInt32(reinterpret_cast<INT32*>(&m_flags)));
 
@@ -1314,6 +1322,7 @@ HRESULT Datacenter::SaveSettings(ITLBinaryWriterEx* writer)
 	auto lock = LockCriticalSection();
 
 	HRESULT result;
+	ReturnIfFailed(result, writer->WriteUInt32(TELEGRAM_API_NATIVE_SETTINGS_VERSION));
 	ReturnIfFailed(result, writer->WriteInt32(m_id));
 	ReturnIfFailed(result, writer->WriteInt32(static_cast<INT32>(m_flags & (DatacenterFlag::HandshakeState |
 		DatacenterFlag::AuthorizationState | DatacenterFlag::CDN | DatacenterFlag::ConnectionInitialized))));
