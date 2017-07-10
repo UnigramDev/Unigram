@@ -343,7 +343,7 @@ namespace Telegram
 					[propget] HRESULT RatingEDecay([out][retval] INT32* value);
 					[propget] HRESULT StickersRecentLimit([out][retval] INT32* value);
 					[propget] HRESULT TmpSessions([out][retval] Windows.Foundation.IReference<INT32>** value);
-					[propget] HRESULT PinnedDalogsCountMax([out][retval] INT32* value);
+					[propget] HRESULT PinnedDialogsCountMax([out][retval] INT32* value);
 					[propget] HRESULT CallReceiveTimeoutMs([out][retval] INT32* value);
 					[propget] HRESULT CallRingTimeoutMs([out][retval] INT32* value);
 					[propget] HRESULT CallConnectTimeoutMs([out][retval] INT32* value);

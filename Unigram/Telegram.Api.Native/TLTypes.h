@@ -215,7 +215,7 @@ namespace Telegram
 					IFACEMETHODIMP get_RatingEDecay(_Out_ INT32* value);
 					IFACEMETHODIMP get_StickersRecentLimit(_Out_ INT32* value);
 					IFACEMETHODIMP get_TmpSessions(_Out_ __FIReference_1_int** value);
-					IFACEMETHODIMP get_PinnedDalogsCountMax(_Out_ INT32* value);
+					IFACEMETHODIMP get_PinnedDialogsCountMax(_Out_ INT32* value);
 					IFACEMETHODIMP get_CallReceiveTimeoutMs(_Out_ INT32* value);
 					IFACEMETHODIMP get_CallRingTimeoutMs(_Out_ INT32* value);
 					IFACEMETHODIMP get_CallConnectTimeoutMs(_Out_ INT32* value);
@@ -340,9 +340,9 @@ namespace Telegram
 						return m_tmpSessions;
 					}
 
-					inline INT32 GetPinnedDalogsCountMax() const
+					inline INT32 GetPinnedDialogsCountMax() const
 					{
-						return m_pinnedDalogsCountMax;
+						return m_PinnedDialogsCountMax;
 					}
 
 					inline INT32 GetCallReceiveTimeoutMs() const
@@ -413,7 +413,7 @@ namespace Telegram
 					INT32 m_ratingEDecay;
 					INT32 m_stickersRecentLimit;
 					INT32 m_tmpSessions;
-					INT32 m_pinnedDalogsCountMax;
+					INT32 m_PinnedDialogsCountMax;
 					INT32 m_callReceiveTimeoutMs;
 					INT32 m_callRingTimeoutMs;
 					INT32 m_callConnectTimeoutMs;
