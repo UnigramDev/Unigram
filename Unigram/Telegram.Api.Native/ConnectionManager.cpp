@@ -272,6 +272,19 @@ HRESULT ConnectionManager::put_Proxy(IProxySettings* value)
 	return S_OK;
 }
 
+HRESULT ConnectionManager::get_TimeDifference(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	auto lock = LockCriticalSection();
+
+	*value = m_timeDifference;
+	return S_OK;
+}
+
 HRESULT ConnectionManager::get_Datacenters(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CDatacenter** value)
 {
 	if (value == nullptr)
@@ -533,7 +546,7 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 		ReturnIfFailed(result, m_datacenters[4]->AddEndpoint({ L"2001:67c:4e8:f004:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
 
 		m_datacenters[4] = datacenter;
-	}
+}
 
 	if (m_datacenters.find(5) == m_datacenters.end())
 	{

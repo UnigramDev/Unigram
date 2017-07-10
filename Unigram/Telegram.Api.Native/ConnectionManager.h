@@ -142,6 +142,7 @@ namespace Telegram
 				IFACEMETHODIMP put_UserId(INT32 value);
 				IFACEMETHODIMP get_Proxy(_Out_ IProxySettings** value);
 				IFACEMETHODIMP put_Proxy(_In_ IProxySettings* value);
+				IFACEMETHODIMP get_TimeDifference(_Out_ INT32* value);
 				IFACEMETHODIMP get_Datacenters(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CDatacenter** value);
 				IFACEMETHODIMP SendRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived, ConnectionType connectionType, _Out_ INT32* value);
 				IFACEMETHODIMP SendRequestWithDatacenter(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,

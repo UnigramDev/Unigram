@@ -611,6 +611,7 @@ namespace Telegram
 				[propput] HRESULT UserId([in] INT32 value);
 				[propget] HRESULT Proxy([out][retval] ProxySettings** value);
 				[propput] HRESULT Proxy([in] ProxySettings* value);
+				[propget] HRESULT TimeDifference([out][retval] INT32* value);
 				[propget] HRESULT Datacenters([out][retval] Windows.Foundation.Collections.IVectorView<Datacenter*>** value);
 				[overload("SendRequest")] HRESULT SendRequest([in] Telegram.Api.Native.TL.ITLObject* object,[in] SendRequestCompletedCallback* onCompleted,[in] RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
 					[in] ConnectionType connectionType,[out][retval] INT32* value);
