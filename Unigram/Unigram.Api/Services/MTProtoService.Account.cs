@@ -11,6 +11,7 @@ using Telegram.Api.TL.Account.Methods;
 using Telegram.Api.TL.Auth.Methods;
 using Telegram.Api.TL.Auth;
 using Telegram.Api.TL.Account;
+using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.Services
 {
@@ -80,16 +81,16 @@ namespace Telegram.Api.Services
 
         public void RegisterDeviceAsync(int tokenType, string token, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            if (_activeTransport.AuthKey == null)
-            {
-                faultCallback?.Invoke(new TLRPCError
-                {
-                    ErrorCode = 404,
-                    ErrorMessage = "Service is not initialized to register device"
-                });
+            //if (_activeTransport.AuthKey == null)
+            //{
+            //    faultCallback?.Invoke(new TLRPCError
+            //    {
+            //        ErrorCode = 404,
+            //        ErrorMessage = "Service is not initialized to register device"
+            //    });
 
-                return;
-            }
+            //    return;
+            //}
 
             var obj = new TLAccountRegisterDevice
             {
@@ -177,8 +178,8 @@ namespace Telegram.Api.Services
 
         public void UpdateStatusAsync(bool offline, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
-            if (_activeTransport.AuthKey == null) return;
-            if (!SettingsHelper.IsAuthorized) return;
+            //if (_activeTransport.AuthKey == null) return;
+            //if (!SettingsHelper.IsAuthorized) return;
 
 #if WIN_RT
             if (_deviceInfo != null && _deviceInfo.IsBackground)

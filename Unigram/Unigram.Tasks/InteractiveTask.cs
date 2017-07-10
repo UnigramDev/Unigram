@@ -13,7 +13,6 @@ using Telegram.Api.Services.DeviceInfo;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages.Methods;
-using Telegram.Api.Transport;
 using Unigram.Core.Notifications;
 using Unigram.Core.Services;
 using Windows.ApplicationModel;
@@ -40,11 +39,10 @@ namespace Unigram.Tasks
                     var eventAggregator = new TelegramEventAggregator();
                     var cacheService = new InMemoryCacheService(eventAggregator);
                     var updatesService = new UpdatesService(cacheService, eventAggregator);
-                    var transportService = new TransportService();
                     var connectionService = new ConnectionService(deviceInfoService);
                     var statsService = new StatsService();
                     var manualResetEvent = new ManualResetEvent(false);
-                    var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, transportService, connectionService, statsService);
+                    var protoService = new MTProtoService(deviceInfoService, updatesService, cacheService, connectionService, statsService);
 
                     protoService.Initialized += (s, args) =>
                     {
@@ -104,7 +102,7 @@ namespace Unigram.Tasks
                     };
 
                     //cacheService.Init();
-                    protoService.Initialize();
+                    //protoService.Initialize();
 
                     manualResetEvent.WaitOne(15000);
                 }

@@ -22,7 +22,6 @@ using System.Diagnostics;
 using Unigram.Views;
 using Unigram.Controls.Views;
 using Windows.UI.Xaml.Controls;
-using Telegram.Api.Transport;
 
 namespace Unigram.ViewModels.SignIn
 {
@@ -199,8 +198,9 @@ namespace Unigram.ViewModels.SignIn
 
                 if (enabled != SettingsHelper.IsProxyEnabled)
                 {
-                    UnigramContainer.Current.ResolveType<ITransportService>().Close();
-                    UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
+                    // TODO: 10/07/2017
+                    //UnigramContainer.Current.ResolveType<ITransportService>().Close();
+                    //UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
                 }
             }
         }

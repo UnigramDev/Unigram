@@ -10,6 +10,7 @@ using System.Windows;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services.FileManager.EventArgs;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Upload;
@@ -266,7 +267,7 @@ namespace Telegram.Api.Services.FileManager
 
                     if (error.CodeEquals(TLErrorCode.INTERNAL)
                         || (error.CodeEquals(TLErrorCode.BAD_REQUEST) && (error.TypeEquals(TLErrorType.LOCATION_INVALID) || error.TypeEquals(TLErrorType.VOLUME_LOC_NOT_FOUND)))
-                        || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.ToString().StartsWith("Incorrect dhGen")))
+                        || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.StartsWith("Incorrect dhGen")))
                     {
                         outIsCanceled = true;
 
@@ -345,7 +346,7 @@ namespace Telegram.Api.Services.FileManager
 
                 if (error.CodeEquals(TLErrorCode.INTERNAL)
                     || (error.CodeEquals(TLErrorCode.BAD_REQUEST) && (error.TypeEquals(TLErrorType.LOCATION_INVALID) || error.TypeEquals(TLErrorType.VOLUME_LOC_NOT_FOUND)))
-                    || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.ToString().StartsWith("Incorrect dhGen")))
+                    || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.StartsWith("Incorrect dhGen")))
                 {
                     outIsCanceled = true;
 
@@ -403,7 +404,7 @@ namespace Telegram.Api.Services.FileManager
 
                 if (error.CodeEquals(TLErrorCode.INTERNAL)
                     || (error.CodeEquals(TLErrorCode.BAD_REQUEST) && (error.TypeEquals(TLErrorType.LOCATION_INVALID) || error.TypeEquals(TLErrorType.VOLUME_LOC_NOT_FOUND)))
-                    || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.ToString().StartsWith("Incorrect dhGen")))
+                    || (error.CodeEquals(TLErrorCode.NOT_FOUND) && error.ErrorMessage != null && error.ErrorMessage.StartsWith("Incorrect dhGen")))
                 {
                     outIsCanceled = true;
 

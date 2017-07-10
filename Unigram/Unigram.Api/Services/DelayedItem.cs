@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Telegram.Api.Native.TL;
 using Telegram.Api.TL;
 
 namespace Telegram.Api.Services

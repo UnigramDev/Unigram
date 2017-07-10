@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.TL
 {
@@ -20,16 +21,13 @@ namespace Telegram.Api.TL
             else if (typeof(T) == typeof(Boolean)) return (T)(Object)from.ReadBoolean();
             else if (typeof(T) == typeof(String)) return (T)(Object)from.ReadString();
             else if (typeof(T) == typeof(Byte[])) return (T)(Object)from.ReadByteArray();
-            else if (typeof(T) == typeof(TLInt128)) return (T)(Object)new TLInt128(from);
-            else if (typeof(T) == typeof(TLInt256)) return (T)(Object)new TLInt256(from);
-            else if (typeof(T) == typeof(TLNonEncryptedTransportMessage)) return (T)(Object)new TLNonEncryptedTransportMessage(from);
 
             var type = from.ReadUInt32();
-            if (type == 0xFFFFFF0D || typeof(T) == typeof(TLActionInfo))
+            /*if (type == 0xFFFFFF0D || typeof(T) == typeof(TLActionInfo))
             {
                 return (T)(Object)new TLActionInfo(from);
             }
-            else if ((TLType)type == TLType.Vector)
+            else*/ if ((TLType)type == TLType.Vector)
             {
                 if (typeof(T) != typeof(object) && typeof(T) != typeof(TLObject))
                 {
@@ -41,7 +39,7 @@ namespace Telegram.Api.TL
                     if (length > 0)
                     {
                         var inner = from.ReadUInt32();
-                        from.BaseStream.Position -= 8;
+                        from.Position -= 8;
 
                         var innerType = Type.GetType($"Telegram.Api.TL.TL{(TLType)inner}");
                         if (innerType != null)
@@ -90,30 +88,20 @@ namespace Telegram.Api.TL
         {
             if (value == null)
             {
-                to.Write(0x56730BCC);
+                to.WriteUInt32(0x56730BCC);
                 return;
             }
 
             var type = value.GetType();
-            if (type == typeof(UInt32)) to.Write((uint)value);
-            else if (type == typeof(Int32)) to.Write((int)value);
-            else if (type == typeof(UInt64)) to.Write((ulong)value);
-            else if (type == typeof(Int64)) to.Write((long)value);
-            else if (type == typeof(Double)) to.Write((double)value);
-            else if (type == typeof(Boolean)) to.Write((bool)value);
-            else if (type == typeof(String)) to.Write((string)value);
+            if (type == typeof(UInt32)) to.WriteUInt32((uint)value);
+            else if (type == typeof(Int32)) to.WriteInt32((int)value);
+            else if (type == typeof(UInt64)) to.WriteUInt64((ulong)value);
+            else if (type == typeof(Int64)) to.WriteInt64((long)value);
+            else if (type == typeof(Double)) to.WriteDouble((double)value);
+            else if (type == typeof(Boolean)) to.WriteBoolean((bool)value);
+            else if (type == typeof(String)) to.WriteString((string)value);
             else if (type == typeof(Byte[])) to.WriteByteArray((byte[])value);
-            else if (type == typeof(TLInt128)) ((TLInt128)value).Write(to);
-            else if (type == typeof(TLInt256)) ((TLInt256)value).Write(to);
             else ((TLObject)value).Write(to);
-        }
-
-        public static T From<T>(byte[] bytes)
-        {
-            using (var reader = new TLBinaryReader(bytes))
-            {
-                return Read<T>(reader);
-            }
         }
     }
 }

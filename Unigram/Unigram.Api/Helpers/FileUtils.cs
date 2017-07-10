@@ -16,6 +16,8 @@ using Telegram.Api.Services.FileManager.EventArgs;
 using Windows.Storage.FileProperties;
 using Windows.Graphics.Imaging;
 using Windows.ApplicationModel;
+using Telegram.Api.Native.TL;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Telegram.Api.Helpers
 {
@@ -634,13 +636,16 @@ namespace Telegram.Api.Helpers
         public static void SaveWithTempFile<T>(string fileName, T data) where T : TLObject
         {
             string text = fileName + ".temp";
-            using (var file = File.Open(GetFileName(text), FileMode.Create))
-            {
-                using (var to = new TLBinaryWriter(file))
-                {
-                    data.Write(to);
-                }
-            }
+            //using (var file = File.Open(GetFileName(text), FileMode.Create))
+            //{
+            //    using (var to = new TLBinaryWriter(file))
+            //    {
+            //        data.Write(to);
+            //    }
+
+            //}
+            var buffer = TLObjectSerializer.Serialize(data);
+            File.WriteAllBytes(GetFileName(text), buffer.ToArray());
 
             File.Copy(GetFileName(text), GetFileName(fileName), true);
         }

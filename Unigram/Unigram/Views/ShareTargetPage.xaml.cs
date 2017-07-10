@@ -182,7 +182,7 @@ namespace Unigram.Views
                 };
                 cacheService.Init();
                 prgSendStatus.Value = 80;
-                protoService.Initialize();
+                //protoService.Initialize();
                 prgSendStatus.Value = 90;
                 manualResetEvent.WaitOne(4000);
                 prgSendStatus.Value = 100;

@@ -1,37 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Autofac;
+using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
-using Autofac;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.Connection;
 using Telegram.Api.Services.DeviceInfo;
-using Telegram.Api.Services.Updates;
-using Telegram.Api.TL;
-using Telegram.Api.Transport;
 using Telegram.Api.Services.FileManager;
-using Telegram.Api;
-using System.IO;
-using Windows.Storage;
-using Unigram.Views;
+using Telegram.Api.Services.Updates;
+using Unigram.Common;
 using Unigram.Core.Services;
-using Unigram.ViewModels;
-using Unigram.ViewModels.SignIn;
-using Unigram.Views.SignIn;
-using Unigram.ViewModels.Settings;
 using Unigram.Services;
+using Unigram.ViewModels;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
-using Unigram.ViewModels.Users;
 using Unigram.ViewModels.Payments;
+using Unigram.ViewModels.Settings;
+using Unigram.ViewModels.SignIn;
+using Unigram.ViewModels.Users;
+using Unigram.Views;
+using Unigram.Views.SignIn;
 using Windows.Foundation.Metadata;
-using Unigram.Common;
-using Windows.UI.Xaml;
 using Windows.UI.ViewManagement;
 
 namespace Unigram
@@ -59,7 +51,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<InMemoryCacheService>().As<ICacheService>().SingleInstance();
             container.ContainerBuilder.RegisterType<DeviceInfoService>().As<IDeviceInfoService>().SingleInstance();
             container.ContainerBuilder.RegisterType<UpdatesService>().As<IUpdatesService>().SingleInstance();
-            container.ContainerBuilder.RegisterType<TransportService>().As<ITransportService>().SingleInstance();
+            //container.ContainerBuilder.RegisterType<TransportService>().As<ITransportService>().SingleInstance();
             container.ContainerBuilder.RegisterType<ConnectionService>().As<IConnectionService>().SingleInstance();
 
             // Files
@@ -231,7 +223,7 @@ namespace Unigram
             var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
             var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>() as MTProtoService;
             var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-            var transportService = UnigramContainer.Current.ResolveType<ITransportService>();
+            //var transportService = UnigramContainer.Current.ResolveType<ITransportService>();
             //cacheService.Init();
             updatesService.GetCurrentUserId = () => protoService.CurrentUserId;
             updatesService.GetStateAsync = protoService.GetStateAsync;
@@ -252,10 +244,10 @@ namespace Unigram
             protoService.PropertyChanged -= OnPropertyChanged;
             protoService.PropertyChanged += OnPropertyChanged;
 
-            transportService.TransportConnecting -= OnTransportConnecting;
-            transportService.TransportConnecting += OnTransportConnecting;
-            transportService.TransportConnected -= OnTransportConnected;
-            transportService.TransportConnected += OnTransportConnected;
+            //transportService.TransportConnecting -= OnTransportConnecting;
+            //transportService.TransportConnecting += OnTransportConnecting;
+            //transportService.TransportConnected -= OnTransportConnected;
+            //transportService.TransportConnected += OnTransportConnected;
         }
 
         private async void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -287,23 +279,23 @@ namespace Unigram
             }
         }
 
-        private void OnTransportConnecting(object sender, TransportEventArgs e)
-        {
-            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-            if (protoService != null)
-            {
-                protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? "Connecting to proxy..." : "Connecting...");
-            }
-        }
+        //private void OnTransportConnecting(object sender, TransportEventArgs e)
+        //{
+        //    var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+        //    if (protoService != null)
+        //    {
+        //        protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? "Connecting to proxy..." : "Connecting...");
+        //    }
+        //}
 
-        private void OnTransportConnected(object sender, TransportEventArgs e)
-        {
-            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-            if (protoService != null)
-            {
-                protoService.SetMessageOnTime(0, null);
-            }
-        }
+        //private void OnTransportConnected(object sender, TransportEventArgs e)
+        //{
+        //    var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+        //    if (protoService != null)
+        //    {
+        //        protoService.SetMessageOnTime(0, null);
+        //    }
+        //}
 
         private void OnAuthorizationRequired(object sender, AuthorizationRequiredEventArgs e)
         {

@@ -19,6 +19,7 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Updates;
+using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.Services.Updates
 {
@@ -3688,36 +3689,36 @@ namespace Telegram.Api.Services.Updates
             ProcessUpdates(updatesList, updatesTooLongList, notifyNewMessages);
         }
 
-        public void ProcessTransportMessage(TLTransportMessage transportMessage)
-        {
-            try
-            {
-                var isUpdating = false;
-                lock (_getDifferenceRequestRoot)
-                {
-                    if (_getDifferenceRequests.Count > 0)
-                    {
-                        isUpdating = true;
-                    }
-                }
+        //public void ProcessTransportMessage(TLTransportMessage transportMessage)
+        //{
+        //    try
+        //    {
+        //        var isUpdating = false;
+        //        lock (_getDifferenceRequestRoot)
+        //        {
+        //            if (_getDifferenceRequests.Count > 0)
+        //            {
+        //                isUpdating = true;
+        //            }
+        //        }
 
-                if (isUpdating)
-                {
-                    //Execute.ShowDebugMessage("UpdatesService.ProcessTransportMessage Skip");
-                    return;
-                }
+        //        if (isUpdating)
+        //        {
+        //            //Execute.ShowDebugMessage("UpdatesService.ProcessTransportMessage Skip");
+        //            return;
+        //        }
 
-                var updatesList = TLUtils.FindInnerObjects<TLUpdatesBase>(transportMessage).ToList();
-                var updatesTooLong = TLUtils.FindInnerObjects<TLUpdatesTooLong>(transportMessage).ToList();
+        //        var updatesList = TLUtils.FindInnerObjects<TLUpdatesBase>(transportMessage).ToList();
+        //        var updatesTooLong = TLUtils.FindInnerObjects<TLUpdatesTooLong>(transportMessage).ToList();
 
-                ProcessUpdates(updatesList, updatesTooLong);
-            }
-            catch (Exception e)
-            {
-                TLUtils.WriteLine("Error during processing update: ", LogSeverity.Error);
-                TLUtils.WriteException(e);
-            }
-        }
+        //        ProcessUpdates(updatesList, updatesTooLong);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        TLUtils.WriteLine("Error during processing update: ", LogSeverity.Error);
+        //        TLUtils.WriteException(e);
+        //    }
+        //}
 
         private readonly object _stateRoot = new object();
 

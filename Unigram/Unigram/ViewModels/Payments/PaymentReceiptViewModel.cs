@@ -26,15 +26,15 @@ namespace Unigram.ViewModels.Payments
             var buffer = parameter as byte[];
             if (buffer != null)
             {
-                using (var from = new TLBinaryReader(buffer))
-                {
-                    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentReceipt>(from);
+                //using (var from = new TLBinaryReader(buffer))
+                //{
+                //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentReceipt>(from);
 
-                    _message = tuple.Item1;
-                    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                    Receipt = tuple.Item2;
-                    Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
-                }
+                //    _message = tuple.Item1;
+                //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+                //    Receipt = tuple.Item2;
+                //    Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
+                //}
             }
 
             return Task.CompletedTask;

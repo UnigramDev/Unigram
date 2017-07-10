@@ -31,7 +31,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Views.SignIn;
 using Telegram.Api.Aggregator;
-using Telegram.Api.Transport;
 
 namespace Unigram.Common
 {
@@ -935,8 +934,8 @@ namespace Unigram.Common
                 SettingsHelper.ProxyUsername = user;
                 SettingsHelper.ProxyPassword = pass;
                 SettingsHelper.IsProxyEnabled = true;
-                UnigramContainer.Current.ResolveType<ITransportService>().Close();
-                UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
+                //UnigramContainer.Current.ResolveType<ITransportService>().Close();
+                //UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
             }
         }
 

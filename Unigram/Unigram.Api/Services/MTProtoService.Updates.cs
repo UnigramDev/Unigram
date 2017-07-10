@@ -1,4 +1,5 @@
 ﻿using System;
+using Telegram.Api.Native.TL;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Methods;
 using Telegram.Api.TL.Updates;
