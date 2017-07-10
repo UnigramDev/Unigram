@@ -267,6 +267,16 @@ namespace Telegram.Api.Helpers
 
         #region Proxy
 
+        public static void CleanUp()
+        {
+            _isProxyEnabled = null;
+            _isCallsProxyEnabled = null;
+            _proxyServer = null;
+            _proxyPort = null;
+            _proxyUsername = null;
+            _proxyPassword = null;
+        }
+
         private static bool? _isProxyEnabled;
         public static bool IsProxyEnabled
         {
@@ -281,6 +291,23 @@ namespace Telegram.Api.Helpers
             {
                 _isProxyEnabled = value;
                 AddOrUpdateValue("ProxyEnabled", value);
+            }
+        }
+
+        private static bool? _isCallsProxyEnabled;
+        public static bool IsCallsProxyEnabled
+        {
+            get
+            {
+                if (_isCallsProxyEnabled == null)
+                    _isCallsProxyEnabled = GetValueOrDefault("CallsProxyEnabled", false);
+
+                return _isCallsProxyEnabled ?? false;
+            }
+            set
+            {
+                _isCallsProxyEnabled = value;
+                AddOrUpdateValue("CallsProxyEnabled", value);
             }
         }
 

@@ -26,9 +26,10 @@ namespace Telegram.Api.Services.Cache.Context
 
         public static void Execute(Database database)
         {
-            if (SettingsHelper.DatabaseVersion < 6)
+            if (SettingsHelper.DatabaseVersion < 8)
             {
-                Execute(database, "DROPTABLE IF EXISTS `Chats`");
+                Execute(database, "DROP TABLE IF EXISTS `Chats`");
+                Execute(database, "DROP TABLE IF EXISTS `Dialogs`");
             }
 
             Execute(database,
@@ -55,7 +56,7 @@ namespace Telegram.Api.Services.Cache.Context
 	`status`	INTEGER,
 	`status_was_online`	INTEGER,
 	`status_expires`	INTEGER,
-	PRIMARY KEY(`id`)
+    PRIMARY KEY(`id`)
 );");
             Execute(database, "CREATE INDEX IF NOT EXISTS `Users.username_index` ON `Users` (`username`);");
             Execute(database, "CREATE INDEX IF NOT EXISTS `Users.phone_index` ON `Users` (`phone`);");
@@ -65,6 +66,7 @@ namespace Telegram.Api.Services.Cache.Context
             Execute(database,
 @"CREATE TABLE `Chats` (
 	`id`	BIGINT NOT NULL,
+    `index` INTEGER NOT NULL,
 	`access_hash`	BIGINT,
 	`flags`	INTEGER NOT NULL,
 	`title`	TEXT,
@@ -82,23 +84,54 @@ namespace Telegram.Api.Services.Cache.Context
 	`photo_big_volume_id`	BIGINT,
 	`photo_big_dc_id`	INTEGER,
 	`migrated_to_id`	INTEGER,
-	`migrated_to_access_hash`	INTEGER
+	`migrated_to_access_hash`	INTEGER,
     `admin_rights` INTEGER,
     `banned_rights` INTEGER,
     PRIMARY KEY(`id`)
 );");
-            Execute(database, "CREATE INDEX `Chats.title_index` ON `Chats` (`title`);");
-            Execute(database, "CREATE INDEX `Chats.username_index` ON `Chats` (`username`);");
-            Execute(database, "CREATE INDEX `Chats.migrated_to_id_index` ON `Chats` (`migrated_to_id`);");
-            Execute(database, "CREATE INDEX `Chats.id_index` ON `Chats` (`id`);");
+            Execute(database, "CREATE INDEX IF NOT EXISTS `Chats.title_index` ON `Chats` (`title`);");
+            Execute(database, "CREATE INDEX IF NOT EXISTS `Chats.username_index` ON `Chats` (`username`);");
+            Execute(database, "CREATE INDEX IF NOT EXISTS `Chats.migrated_to_id_index` ON `Chats` (`migrated_to_id`);");
+            Execute(database, "CREATE INDEX IF NOT EXISTS `Chats.id_index` ON `Chats` (`id`);");
+
+            Execute(database,
+@"CREATE TABLE `Dialogs` (
+	`flags`	INTEGER NOT NULL,
+	`peer`	BIGINT NOT NULL,
+    `index` INTEGER NOT NULL,
+	`top_message`	INTEGER NOT NULL,
+	`read_inbox_max_id`	INTEGER NOT NULL,
+	`read_outbox_max_id`	INTEGER NOT NULL,
+	`unread_count`	INTEGER NOT NULL,
+	`notify_settings_flags`	INTEGER,
+	`notify_settings_mute_until`	INTEGER,
+	`notify_settings_sound`	TEXT,
+	`pts`	INTEGER,
+	`draft_flags`	INTEGER,
+	`draft_reply_to_msg_id`	INTEGER,
+	`draft_message`	TEXT,
+	`draft_entities`	TEXT,
+	`draft_date`	INTEGER,
+    PRIMARY KEY(`peer`)
+);");
+            Execute(database, "CREATE INDEX IF NOT EXISTS `Dialogs.peer_index` ON `Dialogs` (`peer`);");
+
+
 
             var version = SettingsHelper.DatabaseVersion;
-            if (version < 6)
+            if (version < 7)
             {
                 Execute(database, "ALTER TABLE `Chats` ADD COLUMN `admin_rights` INTEGER");
                 Execute(database, "ALTER TABLE `Chats` ADD COLUMN `banned_rights` INTEGER");
 
-                version = 6;
+                version = 7;
+            }
+            if (version < 8)
+            {
+                Execute(database, "ALTER TABLE `Chats` ADD COLUMN `index` INTEGER NOT NULL");
+                Execute(database, "ALTER TABLE `Dialogs` ADD COLUMN `index` INTEGER NOT NULL");
+
+                version = 8;
             }
 
             SettingsHelper.DatabaseVersion = version;

@@ -782,7 +782,7 @@ namespace Unigram.Controls
                 reader.Parse();
 
                 var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
-                var entities = MessageHelper.GetEntities(ref messageText);
+                var entities = Utils.GetEntities(ref messageText);
                 if (entities == null)
                 {
                     entities = new List<TLMessageEntityBase>();

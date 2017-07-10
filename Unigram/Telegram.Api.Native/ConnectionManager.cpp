@@ -1327,17 +1327,17 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 	if (SUCCEEDED(messageBody->QueryInterface(IID_PPV_ARGS(&rpcError))))
 	{
 		INT32 errorCode;
-		ReturnIfFailed(result, rpcError->get_Code(&errorCode));
+		ReturnIfFailed(result, rpcError->get_ErrorCode(&errorCode));
 
-		HString errorText;
-		ReturnIfFailed(result, rpcError->get_Text(errorText.GetAddressOf()));
+		HString errorMessage;
+		ReturnIfFailed(result, rpcError->get_ErrorMessage(errorMessage.GetAddressOf()));
 
-		if ((result = HandleRequestError(connection->GetDatacenter().Get(), request.Get(), errorCode, errorText)) == S_OK)
+		if ((result = HandleRequestError(connection->GetDatacenter().Get(), request.Get(), errorCode, errorMessage)) == S_OK)
 		{
 			auto& sendCompletedCallback = request->GetSendCompletedCallback();
 			if (sendCompletedCallback != nullptr)
 			{
-				auto messageError = Make<MessageError>(errorCode, std::move(errorText));
+				auto messageError = Make<MessageError>(errorCode, std::move(errorMessage));
 				auto messageResponse = Make<MessageResponse>(messageContext->Id, request->GetConnectionType(), messageBody);
 				return sendCompletedCallback->Invoke(messageResponse.Get(), messageError.Get());
 			}
@@ -1388,21 +1388,21 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 	return S_OK;
 }
 
-HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageRequest* request, INT32 code, HString const& text)
+HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageRequest* request, INT32 code, HString const& message)
 {
 	static const std::wstring knownErrors[] = { L"NETWORK_MIGRATE_", L"PHONE_MIGRATE_", L"USER_MIGRATE_", L"MSG_WAIT_FAILED", L"SESSION_PASSWORD_NEEDED", L"AUTH_KEY_UNREGISTERED", L"FLOOD_WAIT_" };
 
 	auto lock = LockCriticalSection();
-	auto errorText = text.GetRawBuffer(nullptr);
+	auto errorMessage = message.GetRawBuffer(nullptr);
 
 	if (code == 303)
 	{
 		HRESULT result;
 		for (size_t i = 0; i < 3; i++)
 		{
-			if (wcsstr(errorText, knownErrors[i].c_str()) != nullptr)
+			if (wcsstr(errorMessage, knownErrors[i].c_str()) != nullptr)
 			{
-				INT32 datacenterId = _wtoi(errorText + knownErrors[i].size());
+				INT32 datacenterId = _wtoi(errorMessage + knownErrors[i].size());
 				ReturnIfFailed(result, MoveToDatacenter(datacenterId));
 				return S_FALSE;
 			}
@@ -1420,7 +1420,7 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 	{
 	case 400:
 	{
-		if (wcsstr(errorText, knownErrors[3].c_str()) == nullptr)
+		if (wcsstr(errorMessage, knownErrors[3].c_str()) == nullptr)
 		{
 			return S_OK;
 		}
@@ -1434,7 +1434,7 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 
 		for (size_t i = 4; i < 6; i++)
 		{
-			if (wcsstr(errorText, knownErrors[i].c_str()) != nullptr)
+			if (wcsstr(errorMessage, knownErrors[i].c_str()) != nullptr)
 			{
 				return m_authenticationRequestedEventSource.InvokeAll(this, nullptr);
 			}
@@ -1445,11 +1445,11 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 	break;
 	case 420:
 	{
-		if (wcsstr(errorText, knownErrors[6].c_str()) == nullptr)
+		if (wcsstr(errorMessage, knownErrors[6].c_str()) == nullptr)
 		{
 			return S_OK;
 		}
-		else if ((waitTime = _wtoi(errorText + knownErrors[6].size())) <= 0)
+		else if ((waitTime = _wtoi(errorMessage + knownErrors[6].size())) <= 0)
 		{
 			waitTime = 2;
 		}

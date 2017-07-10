@@ -20,7 +20,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>BCF3F68C8F50DE819284C634BE7D5030F61E2216</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -114,6 +114,8 @@
     <Compile Include="Controls\GroupedGridView.cs" />
     <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
+    <Compile Include="Controls\ItemSwipeEventArgs.cs" />
+    <Compile Include="Controls\ItemSwipeEventHandler.cs" />
     <Compile Include="Controls\Items\SharedLinkListViewItem.xaml.cs">
       <DependentUpon>SharedLinkListViewItem.xaml</DependentUpon>
     </Compile>
@@ -150,6 +152,9 @@
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
     <Compile Include="Controls\PrivacyRadioButton.cs" />
+    <Compile Include="Controls\SwipeListBehavior.cs" />
+    <Compile Include="Controls\SwipeListDirection.cs" />
+    <Compile Include="Controls\SwipeListViewItem.cs" />
     <Compile Include="Controls\Views\CalendarView.xaml.cs">
       <DependentUpon>CalendarView.xaml</DependentUpon>
     </Compile>
@@ -1627,7 +1632,7 @@
       <Version>2.0.0</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>10.0.2</Version>
+      <Version>10.0.3</Version>
     </PackageReference>
     <PackageReference Include="System.Reactive">
       <Version>3.1.1</Version>
@@ -1636,7 +1641,7 @@
       <Version>3.12.2.2</Version>
     </PackageReference>
     <PackageReference Include="Win2D.Uwp">
-      <Version>1.20.0</Version>
+      <Version>1.21.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

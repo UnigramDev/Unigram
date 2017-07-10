@@ -92,6 +92,7 @@
     <Compile Include="Helpers\PhoneNumber.cs" />
     <Compile Include="Services\Cache\Context\ChatsContext.cs" />
     <Compile Include="Services\Cache\Context\CreateDatabase.cs" />
+    <Compile Include="Services\Cache\Context\DialogsContext.cs" />
     <Compile Include="Services\Cache\Context\UsersContext.cs" />
     <Compile Include="Services\FileManager\DownloadAudioFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadDocumentFileManager.cs" />
@@ -1226,7 +1227,7 @@
       <Version>5.3.3</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>10.0.2</Version>
+      <Version>10.0.3</Version>
     </PackageReference>
     <PackageReference Include="Portable.BouncyCastle">
       <Version>1.8.1.2</Version>

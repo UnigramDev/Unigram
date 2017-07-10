@@ -73,6 +73,16 @@ namespace Unigram.Controls.Views
             {
                 Toolbar.SelectedItem = null;
             }
+
+            //if (Pivot.SelectedIndex == 0)
+            //{
+            //    var text = ViewModel.GetText();
+            //    if (string.IsNullOrWhiteSpace(text))
+            //    {
+            //        ViewModel.SetText("@gif ");
+            //        ViewModel.ResolveInlineBot("gif");
+            //    }
+            //}
         }
 
         private void Toolbar_SelectionChanged(object sender, SelectionChangedEventArgs e)

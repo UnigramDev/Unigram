@@ -173,7 +173,7 @@ TLConfig::TLConfig() :
 	m_ratingEDecay(0),
 	m_stickersRecentLimit(0),
 	m_tmpSessions(0),
-	m_pinnedDalogsCountMax(0),
+	m_pinnedDialogsCountMax(0),
 	m_callReceiveTimeoutMs(0),
 	m_callRingTimeoutMs(0),
 	m_callConnectTimeoutMs(0),
@@ -269,7 +269,7 @@ HRESULT TLConfig::get_ChatSizeMax(INT32* value)
 	return S_OK;
 }
 
-HRESULT TLConfig::get_MegagroupSizeMax(INT32* value)
+HRESULT TLConfig::get_MegaGroupSizeMax(INT32* value)
 {
 	if (value == nullptr)
 	{
@@ -453,14 +453,14 @@ HRESULT TLConfig::get_TmpSessions(__FIReference_1_int** value)
 	return S_OK;
 }
 
-HRESULT TLConfig::get_PinnedDalogsCountMax(INT32* value)
+HRESULT TLConfig::get_PinnedDialogsCountMax(INT32* value)
 {
 	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	*value = m_pinnedDalogsCountMax;
+	*value = m_pinnedDialogsCountMax;
 	return S_OK;
 }
 
@@ -572,7 +572,7 @@ HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 		ReturnIfFailed(result, reader->ReadInt32(&m_tmpSessions));
 	}
 
-	ReturnIfFailed(result, reader->ReadInt32(&m_pinnedDalogsCountMax));
+	ReturnIfFailed(result, reader->ReadInt32(&m_pinnedDialogsCountMax));
 	ReturnIfFailed(result, reader->ReadInt32(&m_callReceiveTimeoutMs));
 	ReturnIfFailed(result, reader->ReadInt32(&m_callRingTimeoutMs));
 	ReturnIfFailed(result, reader->ReadInt32(&m_callConnectTimeoutMs));
@@ -619,7 +619,7 @@ HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
 		ReturnIfFailed(result, writer->WriteInt32(m_tmpSessions));
 	}
 
-	ReturnIfFailed(result, writer->WriteInt32(m_pinnedDalogsCountMax));
+	ReturnIfFailed(result, writer->WriteInt32(m_pinnedDialogsCountMax));
 	ReturnIfFailed(result, writer->WriteInt32(m_callReceiveTimeoutMs));
 	ReturnIfFailed(result, writer->WriteInt32(m_callRingTimeoutMs));
 	ReturnIfFailed(result, writer->WriteInt32(m_callConnectTimeoutMs));
@@ -664,27 +664,27 @@ template<typename TLObjectTraits>
 HRESULT TLRPCErrorT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
-	ReturnIfFailed(result, reader->ReadInt32(&m_code));
+	ReturnIfFailed(result, reader->ReadInt32(&m_errorCode));
 
-	return reader->ReadString(m_text.GetAddressOf());
+	return reader->ReadString(m_errorMessage.GetAddressOf());
 }
 
 template<typename TLObjectTraits>
-HRESULT TLRPCErrorT<TLObjectTraits>::get_Code(INT32* value)
+HRESULT TLRPCErrorT<TLObjectTraits>::get_ErrorCode(INT32* value)
 {
 	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	*value = m_code;
+	*value = m_errorCode;
 	return S_OK;
 }
 
 template<typename TLObjectTraits>
-HRESULT TLRPCErrorT<TLObjectTraits>::get_Text(HSTRING* value)
+HRESULT TLRPCErrorT<TLObjectTraits>::get_ErrorMessage(HSTRING* value)
 {
-	return m_text.CopyTo(value);
+	return m_errorMessage.CopyTo(value);
 }
 
 

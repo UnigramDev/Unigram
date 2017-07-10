@@ -46,6 +46,7 @@ using Telegram.Api.Aggregator;
 using Unigram.Controls;
 using Unigram.Views.Users;
 using System.Linq;
+using Telegram.Logs;
 
 namespace Unigram
 {
@@ -132,25 +133,27 @@ namespace Unigram
             IsVisible = e.Visible;
             //HandleActivated(e.Visible);
 
-            if (e.Visible)
-            {
-                Locator.LoadStateAndUpdate();
-            }
-            else
-            {
-                var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-                if (cacheService != null)
-                {
-                    cacheService.TryCommit();
-                }
+            //if (e.Visible)
+            //{
+            //    Log.Write("Window_VisibilityChanged");
 
-                var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-                if (updatesService != null)
-                {
-                    updatesService.SaveState();
-                    updatesService.CancelUpdating();
-                }
-            }
+            //    Task.Run(() => Locator.LoadStateAndUpdate());
+            //}
+            //else
+            //{
+            //    var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
+            //    if (cacheService != null)
+            //    {
+            //        cacheService.TryCommit();
+            //    }
+
+            //    var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
+            //    if (updatesService != null)
+            //    {
+            //        updatesService.SaveState();
+            //        updatesService.CancelUpdating();
+            //    }
+            //}
         }
 
         private void HandleActivated(bool active)
@@ -160,20 +163,11 @@ namespace Unigram
 
             if (active)
             {
-                //Locator.LoadStateAndUpdate();
-
                 var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
                 protoService.UpdateStatusAsync(false, null);
             }
             else
             {
-                //var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-                //cacheService.TryCommit();
-
-                //var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-                //updatesService.SaveState();
-                //updatesService.CancelUpdating();
-
                 var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
                 protoService.UpdateStatusAsync(true, null);
             }
@@ -402,6 +396,8 @@ namespace Unigram
 
         public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
+            Log.Write("OnResuming");
+
             var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
             updatesService.LoadStateAndUpdate(() => { });
 
@@ -414,6 +410,8 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
+            Log.Write("OnSuspendingAsync");
+
             var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
             if (cacheService != null)
             {
