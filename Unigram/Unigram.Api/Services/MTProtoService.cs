@@ -77,7 +77,7 @@ namespace Telegram.Api.Services
             }
         }
 
-        public long ClientTicksDelta { get { return 0; } }
+        public long ClientTicksDelta { get { return ConnectionManager.Instance.TimeDifference; } }
 
         //private bool _isInitialized;
 
