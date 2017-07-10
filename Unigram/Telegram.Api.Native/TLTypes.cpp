@@ -453,7 +453,7 @@ HRESULT TLConfig::get_TmpSessions(__FIReference_1_int** value)
 	return S_OK;
 }
 
-HRESULT TLConfig::get_pinnedDialogsCountMax(INT32* value)
+HRESULT TLConfig::get_PinnedDialogsCountMax(INT32* value)
 {
 	if (value == nullptr)
 	{
