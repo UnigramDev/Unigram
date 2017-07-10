@@ -173,7 +173,7 @@ TLConfig::TLConfig() :
 	m_ratingEDecay(0),
 	m_stickersRecentLimit(0),
 	m_tmpSessions(0),
-	m_PinnedDialogsCountMax(0),
+	m_pinnedDialogsCountMax(0),
 	m_callReceiveTimeoutMs(0),
 	m_callRingTimeoutMs(0),
 	m_callConnectTimeoutMs(0),
@@ -453,14 +453,14 @@ HRESULT TLConfig::get_TmpSessions(__FIReference_1_int** value)
 	return S_OK;
 }
 
-HRESULT TLConfig::get_PinnedDialogsCountMax(INT32* value)
+HRESULT TLConfig::get_pinnedDialogsCountMax(INT32* value)
 {
 	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	*value = m_PinnedDialogsCountMax;
+	*value = m_pinnedDialogsCountMax;
 	return S_OK;
 }
 
@@ -572,7 +572,7 @@ HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 		ReturnIfFailed(result, reader->ReadInt32(&m_tmpSessions));
 	}
 
-	ReturnIfFailed(result, reader->ReadInt32(&m_PinnedDialogsCountMax));
+	ReturnIfFailed(result, reader->ReadInt32(&m_pinnedDialogsCountMax));
 	ReturnIfFailed(result, reader->ReadInt32(&m_callReceiveTimeoutMs));
 	ReturnIfFailed(result, reader->ReadInt32(&m_callRingTimeoutMs));
 	ReturnIfFailed(result, reader->ReadInt32(&m_callConnectTimeoutMs));
@@ -619,7 +619,7 @@ HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
 		ReturnIfFailed(result, writer->WriteInt32(m_tmpSessions));
 	}
 
-	ReturnIfFailed(result, writer->WriteInt32(m_PinnedDialogsCountMax));
+	ReturnIfFailed(result, writer->WriteInt32(m_pinnedDialogsCountMax));
 	ReturnIfFailed(result, writer->WriteInt32(m_callReceiveTimeoutMs));
 	ReturnIfFailed(result, writer->WriteInt32(m_callRingTimeoutMs));
 	ReturnIfFailed(result, writer->WriteInt32(m_callConnectTimeoutMs));
