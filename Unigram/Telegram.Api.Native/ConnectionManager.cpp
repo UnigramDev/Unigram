@@ -182,7 +182,8 @@ HRESULT ConnectionManager::get_CurrentDatacenter(IDatacenter** value)
 
 HRESULT ConnectionManager::get_IsIPv6Enabled(boolean* value)
 {
-	return E_POINTER;
+	*value = false;
+	return S_OK;
 
 	if (value == nullptr)
 	{
