@@ -234,8 +234,8 @@ namespace Telegram
 				[version(API_VERSION)]
 				interface ITLRPCError : IInspectable
 				{
-					[propget] HRESULT Code([out][retval] INT32* value);
-					[propget] HRESULT Text([out][retval] HSTRING* value);
+					[propget] HRESULT ErrorCode([out][retval] INT32* value);
+					[propget] HRESULT ErrorMessage([out][retval] HSTRING* value);
 				}
 
 				[marshaling_behavior(agile)]
@@ -327,7 +327,7 @@ namespace Telegram
 					[propget] HRESULT ThisDc([out][retval] INT32* value);
 					[propget] HRESULT DCOptions([out][retval] Windows.Foundation.Collections.IVectorView<TLDCOption*>** value);
 					[propget] HRESULT ChatSizeMax([out][retval] INT32* value);
-					[propget] HRESULT MegagroupSizeMax([out][retval] INT32* value);
+					[propget] HRESULT MegaGroupSizeMax([out][retval] INT32* value);
 					[propget] HRESULT ForwardedCountMax([out][retval] INT32* value);
 					[propget] HRESULT OnlineUpdatePeriodMs([out][retval] INT32* value);
 					[propget] HRESULT OfflineBlurTimeoutMs([out][retval] INT32* value);

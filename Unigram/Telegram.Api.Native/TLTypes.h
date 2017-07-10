@@ -199,7 +199,7 @@ namespace Telegram
 					IFACEMETHODIMP get_ThisDc(_Out_ INT32* value);
 					IFACEMETHODIMP get_DCOptions(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CTL__CTLDCOption** value);
 					IFACEMETHODIMP get_ChatSizeMax(_Out_ INT32* value);
-					IFACEMETHODIMP get_MegagroupSizeMax(_Out_ INT32* value);
+					IFACEMETHODIMP get_MegaGroupSizeMax(_Out_ INT32* value);
 					IFACEMETHODIMP get_ForwardedCountMax(_Out_ INT32* value);
 					IFACEMETHODIMP get_OnlineUpdatePeriodMs(_Out_ INT32* value);
 					IFACEMETHODIMP get_OfflineBlurTimeoutMs(_Out_ INT32* value);
@@ -260,7 +260,7 @@ namespace Telegram
 						return m_chatSizeMax;
 					}
 
-					inline INT32 GetMegagroupSizeMax() const
+					inline INT32 GetMegaGroupSizeMax() const
 					{
 						return m_megagroupSizeMax;
 					}
@@ -476,7 +476,7 @@ namespace Telegram
 
 				public:
 					TLRPCErrorT() :
-						m_code(0)
+						m_errorCode(0)
 					{
 					}
 
@@ -485,26 +485,26 @@ namespace Telegram
 					}
 
 					//COM exported methods
-					IFACEMETHODIMP get_Code(_Out_ INT32* value);
-					IFACEMETHODIMP get_Text(_Out_ HSTRING* value);
+					IFACEMETHODIMP get_ErrorCode(_Out_ INT32* value);
+					IFACEMETHODIMP get_ErrorMessage(_Out_ HSTRING* value);
 
 					//Internal methods
-					inline INT32 GetCode() const
+					inline INT32 GetErrorCode() const
 					{
-						return m_code;
+						return m_errorCode;
 					}
 
-					inline HString const& GetText() const
+					inline HString const& GetErrorMessage() const
 					{
-						return m_text;
+						return m_errorMessage;
 					}
 
 				protected:
 					virtual HRESULT ReadBody(_In_ ITLBinaryReaderEx* reader) override;
 
 				private:
-					INT32 m_code;
-					HString m_text;
+					INT32 m_errorCode;
+					HString m_errorMessage;
 				};
 
 				class TLRPCError WrlSealed : public TLRPCErrorT<TLObjectTraits::TLRPCErrorTraits>

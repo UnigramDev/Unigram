@@ -269,7 +269,7 @@ HRESULT TLConfig::get_ChatSizeMax(INT32* value)
 	return S_OK;
 }
 
-HRESULT TLConfig::get_MegagroupSizeMax(INT32* value)
+HRESULT TLConfig::get_MegaGroupSizeMax(INT32* value)
 {
 	if (value == nullptr)
 	{
@@ -664,27 +664,27 @@ template<typename TLObjectTraits>
 HRESULT TLRPCErrorT<TLObjectTraits>::ReadBody(ITLBinaryReaderEx* reader)
 {
 	HRESULT result;
-	ReturnIfFailed(result, reader->ReadInt32(&m_code));
+	ReturnIfFailed(result, reader->ReadInt32(&m_errorCode));
 
-	return reader->ReadString(m_text.GetAddressOf());
+	return reader->ReadString(m_errorMessage.GetAddressOf());
 }
 
 template<typename TLObjectTraits>
-HRESULT TLRPCErrorT<TLObjectTraits>::get_Code(INT32* value)
+HRESULT TLRPCErrorT<TLObjectTraits>::get_ErrorCode(INT32* value)
 {
 	if (value == nullptr)
 	{
 		return E_POINTER;
 	}
 
-	*value = m_code;
+	*value = m_errorCode;
 	return S_OK;
 }
 
 template<typename TLObjectTraits>
-HRESULT TLRPCErrorT<TLObjectTraits>::get_Text(HSTRING* value)
+HRESULT TLRPCErrorT<TLObjectTraits>::get_ErrorMessage(HSTRING* value)
 {
-	return m_text.CopyTo(value);
+	return m_errorMessage.CopyTo(value);
 }
 
 
