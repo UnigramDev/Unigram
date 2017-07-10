@@ -180,7 +180,7 @@ HRESULT Connection::Reconnect()
 	return DisconnectSocket(true);
 }
 
-HRESULT Connection::CreateMessagePacket(UINT32 messageLength, bool reportAck, ComPtr<TLBinaryWriter>& writer, BYTE** messageBuffer)
+HRESULT Connection::CreateMessagePacket(UINT32 messageLength, bool reportAck, ComPtr<TLMemoryBinaryWriter>& writer, BYTE** messageBuffer)
 {
 	UINT32 packetBufferLength = messageLength;
 	UINT32 packetLength = messageLength / 4;
@@ -196,10 +196,10 @@ HRESULT Connection::CreateMessagePacket(UINT32 messageLength, bool reportAck, Co
 
 	HRESULT result;
 	BYTE* packetBufferBytes;
-	ComPtr<TLBinaryWriter> packetWriter;
+	ComPtr<TLMemoryBinaryWriter> packetWriter;
 	if ((m_flags & ConnectionFlag::CryptographyInitialized) == ConnectionFlag::CryptographyInitialized)
 	{
-		ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&packetWriter, packetBufferLength));
+		ReturnIfFailed(result, MakeAndInitialize<TLMemoryBinaryWriter>(&packetWriter, packetBufferLength));
 
 		packetBufferBytes = packetWriter->GetBuffer();
 	}
@@ -207,7 +207,7 @@ HRESULT Connection::CreateMessagePacket(UINT32 messageLength, bool reportAck, Co
 	{
 		packetBufferLength += 64;
 
-		ReturnIfFailed(result, MakeAndInitialize<TLBinaryWriter>(&packetWriter, packetBufferLength));
+		ReturnIfFailed(result, MakeAndInitialize<TLMemoryBinaryWriter>(&packetWriter, packetBufferLength));
 
 		packetBufferBytes = packetWriter->GetBuffer();
 
@@ -287,7 +287,7 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 	auto lock = LockCriticalSection();
 
 	BYTE* packetBufferBytes;
-	ComPtr<TLBinaryWriter> packetWriter;
+	ComPtr<TLMemoryBinaryWriter> packetWriter;
 	ReturnIfFailed(result, CreateMessagePacket(encryptedMessageLength, quickAckId != nullptr, packetWriter, &packetBufferBytes));
 	ReturnIfFailed(result, packetWriter->SeekCurrent(24));
 	ReturnIfFailed(result, packetWriter->WriteInt64(m_datacenter->GetServerSalt()));
@@ -360,7 +360,7 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, bool reportAc
 	auto& connectionManager = m_datacenter->GetConnectionManager();
 
 	BYTE* packetBufferBytes;
-	ComPtr<TLBinaryWriter> packetWriter;
+	ComPtr<TLMemoryBinaryWriter> packetWriter;
 	ReturnIfFailed(result, CreateMessagePacket(messageLength, reportAck, packetWriter, &packetBufferBytes));
 	ReturnIfFailed(result, packetWriter->WriteInt64(0));
 	ReturnIfFailed(result, packetWriter->WriteInt64(connectionManager->GenerateMessageId()));
@@ -592,8 +592,8 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 		packetBuffer = m_partialPacketBuffer;
 	}
 
-	ComPtr<TLBinaryReader> packetReader;
-	ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&packetReader, packetBuffer.Get()));
+	ComPtr<TLMemoryBinaryReader> packetReader;
+	ReturnIfFailed(result, MakeAndInitialize<TLMemoryBinaryReader>(&packetReader, packetBuffer.Get()));
 
 	UINT32 packetPosition;
 	auto& connectionManager = m_datacenter->GetConnectionManager();
@@ -680,7 +680,7 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 	return S_OK;
 }
 
-HRESULT Connection::OnMessageReceived(TLBinaryReader* messageReader, UINT32 messageLength)
+HRESULT Connection::OnMessageReceived(TLMemoryBinaryReader* messageReader, UINT32 messageLength)
 {
 	METHOD_DEBUG();
 

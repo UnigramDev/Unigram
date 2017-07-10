@@ -221,31 +221,26 @@ namespace Telegram
 				}
 
 				//Internal methods
-				STDMETHODIMP RuntimeClassInitialize(_In_ HANDLE file)
+				STDMETHODIMP RuntimeClassInitialize(_In_ HANDLE file, UINT32 capacity)
 				{
-					LARGE_INTEGER fileSize;
-					if (!GetFileSizeEx(file, &fileSize))
+					LARGE_INTEGER position;
+					if (!SetFilePointerEx(file, { 0 }, &position, FILE_CURRENT))
 					{
 						return GetLastHRESULT();
 					}
 
-					if (fileSize.QuadPart == 0)
-					{
-						return E_INVALIDARG;
-					}
-
-					m_fileMapping.Attach(CreateFileMapping(file, nullptr, PAGE_READWRITE, fileSize.HighPart, fileSize.LowPart, nullptr));
+					m_fileMapping.Attach(CreateFileMapping(file, nullptr, PAGE_READWRITE, 0, 0, nullptr));
 					if (!m_fileMapping.IsValid())
 					{
 						return GetLastHRESULT();
 					}
 
-					if ((m_buffer = reinterpret_cast<BYTE*>(MapViewOfFile(m_fileMapping.Get(), PAGE_READWRITE, 0, 0, 0))) == nullptr)
+					if ((m_buffer = reinterpret_cast<BYTE*>(MapViewOfFile(m_fileMapping.Get(), PAGE_READWRITE, position.HighPart, position.LowPart, capacity))) == nullptr)
 					{
 						return GetLastHRESULT();
 					}
 
-					m_capacity = static_cast<UINT32>(min(fileSize.QuadPart, UINT32_MAX));
+					m_capacity = capacity;
 					return S_OK;
 				}
 
@@ -338,92 +333,6 @@ namespace Telegram
 				UINT32 m_capacity;
 				BYTE* m_buffer;
 			};
-
-			//class NativeBufferWrapper : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IBuffer, IBufferByteAccess>
-			//{
-			//	friend class NativeBuffer;
-
-			//	InspectableClass(L"Telegram.Api.Native.NativeBufferWrapper", BaseTrust);
-
-			//public:
-			//	NativeBufferWrapper() :
-			//		m_capacity(0),
-			//		m_buffer(nullptr)
-			//	{
-			//	}
-
-			//	~NativeBufferWrapper()
-			//	{
-			//	}
-
-			//	//COM exported methods
-			//	IFACEMETHODIMP Buffer(_Out_ BYTE** value)
-			//	{
-			//		if (value == nullptr)
-			//		{
-			//			return E_POINTER;
-			//		}
-
-			//		*value = m_buffer;
-			//		return S_OK;
-			//	}
-
-			//	IFACEMETHODIMP get_Capacity(_Out_ UINT32* value)
-			//	{
-			//		if (value == nullptr)
-			//		{
-			//			return E_POINTER;
-			//		}
-
-			//		*value = m_capacity;
-			//		return S_OK;
-			//	}
-
-			//	IFACEMETHODIMP get_Length(_Out_ UINT32* value)
-			//	{
-			//		if (value == nullptr)
-			//		{
-			//			return E_POINTER;
-			//		}
-
-			//		*value = m_capacity;
-			//		return S_OK;
-			//	}
-
-			//	IFACEMETHODIMP put_Length(UINT32 value)
-			//	{
-			//		return E_ILLEGAL_METHOD_CALL;
-			//	}
-
-			//	//Internal methods
-			//	STDMETHODIMP RuntimeClassInitialize(_In_ NativeBuffer* wrappedBuffer, UINT32 offset, UINT32 length)
-			//	{
-			//		if (offset + length > wrappedBuffer->GetCapacity())
-			//		{
-			//			return E_INVALIDARG;
-			//		}
-
-			//		m_capacity = length;
-			//		m_buffer = wrappedBuffer->GetBuffer() + offset;
-			//		m_wrappedBuffer = wrappedBuffer;
-			//		return S_OK;
-			//	}
-
-			//	inline BYTE* GetBuffer() const
-			//	{
-			//		return m_buffer;
-			//	}
-
-			//	inline UINT32 GetCapacity() const
-			//	{
-			//		return m_capacity;
-			//	}
-
-			//private:
-			//	UINT32 m_capacity;
-			//	BYTE* m_buffer;
-			//	ComPtr<NativeBuffer> m_wrappedBuffer;
-			//};
 
 		}
 	}

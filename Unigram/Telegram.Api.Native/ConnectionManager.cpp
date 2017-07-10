@@ -1,5 +1,4 @@
 #include "pch.h"
-#include <iphlpapi.h>
 #include <Windows.Storage.h>
 #include "ConnectionManager.h"
 #include "Datacenter.h"
@@ -10,11 +9,12 @@
 #include "MessageError.h"
 #include "TLTypes.h"
 #include "TLMethods.h"
-#include "DefaultUserConfiguration.h"
+#include "UserConfiguration.h"
 #include "Collections.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "NativeBuffer.h"
+#include "NetworkExtensions.h"
 #include "Helpers\COMHelper.h"
 
 #include "MethodDebug.h"
@@ -69,7 +69,7 @@ ConnectionManager::~ConnectionManager()
 HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount)
 {
 	HRESULT result;
-	ReturnIfFailed(result, MakeAndInitialize<DefaultUserConfiguration>(&m_userConfiguration));
+	ReturnIfFailed(result, MakeAndInitialize<UserConfiguration>(&m_userConfiguration));
 
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
@@ -83,9 +83,7 @@ HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 	ReturnIfFailed(result, m_networkInformation->add_NetworkStatusChanged(Callback<INetworkStatusChangedEventHandler>(this, &ConnectionManager::OnNetworkStatusChanged).Get(), &m_networkChangedEventToken));
 	ReturnIfFailed(result, UpdateNetworkStatus(false));
 
-	ReturnIfFailed(result, InitializeSettings());
-
-	return ResetDatacenters();
+	return InitializeSettings();
 }
 
 HRESULT ConnectionManager::add_SessionCreated(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, EventRegistrationToken* token)
@@ -96,6 +94,16 @@ HRESULT ConnectionManager::add_SessionCreated(__FITypedEventHandler_2_Telegram__
 HRESULT ConnectionManager::remove_SessionCreated(EventRegistrationToken token)
 {
 	return m_sessionCreatedEventSource.Remove(token);
+}
+
+HRESULT ConnectionManager::add_AuthenticationRequested(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, EventRegistrationToken* token)
+{
+	return m_authenticationRequestedEventSource.Add(handler, token);
+}
+
+HRESULT ConnectionManager::remove_AuthenticationRequested(EventRegistrationToken token)
+{
+	return m_authenticationRequestedEventSource.Remove(token);
 }
 
 HRESULT ConnectionManager::add_CurrentNetworkTypeChanged(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, EventRegistrationToken* token)
@@ -200,38 +208,7 @@ HRESULT ConnectionManager::get_IsNetworkAvailable(boolean* value)
 
 HRESULT ConnectionManager::get_UserConfiguration(IUserConfiguration** value)
 {
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	auto lock = LockCriticalSection();
 	return m_userConfiguration.CopyTo(value);
-}
-
-HRESULT ConnectionManager::put_UserConfiguration(IUserConfiguration* value)
-{
-	auto lock = LockCriticalSection();
-
-	if (value != m_userConfiguration.Get())
-	{
-		if (value == nullptr)
-		{
-			ComPtr<IDefaultUserConfiguration> defaultUserConfiguration;
-			if (FAILED(m_userConfiguration.As(&defaultUserConfiguration)))
-			{
-				return MakeAndInitialize<DefaultUserConfiguration>(&m_userConfiguration);
-			}
-		}
-		else
-		{
-			m_userConfiguration = value;
-
-			I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle UserConfiguration changes");
-		}
-	}
-
-	return S_OK;
 }
 
 HRESULT ConnectionManager::get_UserId(INT32* value)
@@ -257,7 +234,7 @@ HRESULT ConnectionManager::put_UserId(INT32 value)
 
 		if (m_userId != 0)
 		{
-			I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle UserId changes");
+			return UpdateDatacenters();
 		}
 	}
 
@@ -420,30 +397,6 @@ HRESULT ConnectionManager::CancelRequest(INT32 requestToken, boolean notifyServe
 	return S_OK;
 }
 
-HRESULT ConnectionManager::GetDatacenterById(INT32 id, IDatacenter** value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	auto lock = LockCriticalSection();
-
-	if (id == DEFAULT_DATACENTER_ID)
-	{
-		id = m_currentDatacenterId;
-	}
-
-	ComPtr<Datacenter> datacenter;
-	if (!GetDatacenterById(id, datacenter))
-	{
-		return E_INVALIDARG;
-	}
-
-	*value = datacenter.Detach();
-	return S_OK;
-}
-
 HRESULT ConnectionManager::UpdateDatacenters()
 {
 	auto lock = LockCriticalSection();
@@ -504,7 +457,14 @@ HRESULT ConnectionManager::UpdateDatacenters()
 			FILETIME timeout = {};
 			SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
 
-			return m_unprocessedMessageReceivedEventSource.InvokeAll(this, response);
+			ReturnIfFailed(result, m_unprocessedMessageReceivedEventSource.InvokeAll(this, response));
+
+			for (auto& datacenter : m_datacenters)
+			{
+				ReturnIfFailed(result, SaveDatacenterSettings(datacenter.second.Get()));
+			}
+
+			return SaveSettings();
 		}
 		else
 		{
@@ -513,7 +473,7 @@ HRESULT ConnectionManager::UpdateDatacenters()
 	}).Get(), nullptr, m_currentDatacenterId, ConnectionType::Generic, RequestFlag::EnableUnauthorized | RequestFlag::WithoutLogin | RequestFlag::TryDifferentDc, &requestToken);
 }
 
-HRESULT ConnectionManager::ResetDatacenters()
+HRESULT ConnectionManager::InitializeDefaultDatacenters()
 {
 	HRESULT result;
 
@@ -609,15 +569,15 @@ HRESULT ConnectionManager::UpdateNetworkStatus(bool raiseEvent)
 		boolean isRoaming;
 		ReturnIfFailed(result, connectionCost->get_Roaming(&isRoaming));
 
+		ComPtr<INetworkAdapter> networkAdapter;
+		ReturnIfFailed(result, connectionProfile->get_NetworkAdapter(&networkAdapter));
+
 		if (isRoaming)
 		{
 			currentNetworkType = ConnectionNeworkType::Roaming;
 		}
 		else
 		{
-			ComPtr<INetworkAdapter> networkAdapter;
-			ReturnIfFailed(result, connectionProfile->get_NetworkAdapter(&networkAdapter));
-
 			UINT32 interfaceIanaType;
 			ReturnIfFailed(result, networkAdapter->get_IanaInterfaceType(&interfaceIanaType));
 
@@ -635,6 +595,18 @@ HRESULT ConnectionManager::UpdateNetworkStatus(bool raiseEvent)
 				currentNetworkType = ConnectionNeworkType::None;
 				break;
 			}
+		}
+
+		bool ipv6Enabled;
+		ReturnIfFailed(result, IsIPv6Enabled(networkAdapter.Get(), &ipv6Enabled));
+
+		if (ipv6Enabled)
+		{
+			m_flags |= ConnectionManagerFlag::UseIPv6;
+		}
+		else
+		{
+			m_flags &= ~ConnectionManagerFlag::UseIPv6;
 		}
 	}
 
@@ -670,8 +642,9 @@ HRESULT ConnectionManager::Reset()
 
 	HRESULT result;
 	ReturnIfFailed(result, EventObjectT::AttachToThreadpool(this));
+	ReturnIfFailed(result, InitializeDefaultDatacenters());
 
-	return ResetDatacenters();
+	return SaveSettings();
 }
 
 HRESULT ConnectionManager::UpdateCDNPublicKeys()
@@ -712,6 +685,8 @@ HRESULT ConnectionManager::UpdateCDNPublicKeys()
 
 			FILETIME timeout = {};
 			SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
+
+			return SaveCDNPublicKeys();
 		}
 
 		return S_OK;
@@ -728,8 +703,6 @@ HRESULT ConnectionManager::MoveToDatacenter(INT32 datacenterId)
 	auto datacenterIterator = m_datacenters.find(datacenterId);
 	if (datacenterIterator == m_datacenters.end())
 	{
-		//return E_INVALIDARG;
-
 		HRESULT result;
 		ReturnIfFailed(result, UpdateDatacenters());
 
@@ -787,6 +760,7 @@ HRESULT ConnectionManager::MoveToDatacenter(INT32 datacenterId)
 				if (!datacenter->IsAuthenticated())
 				{
 					datacenter->ClearServerSalts();
+
 					ReturnIfFailed(result, datacenter->BeginHandshake(true, false));
 				}
 
@@ -802,19 +776,24 @@ HRESULT ConnectionManager::MoveToDatacenter(INT32 datacenterId)
 
 					if (error == nullptr)
 					{
-						datacenter->SetAuthorized();
-
 						m_currentDatacenterId = m_movingToDatacenterId;
 						m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
 
-						return S_OK;
+						datacenter->SetAuthorized();
+
+						HRESULT result;
+						ReturnIfFailed(result, SaveDatacenterSettings(datacenter.Get()));
+
+						return SaveSettings();
 					}
 					else
 					{
-						datacenter->SetUnauthorized();
+
 
 						auto movingToDatacenterId = m_movingToDatacenterId;
 						m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
+
+						datacenter->SetUnauthorized();
 
 						return MoveToDatacenter(movingToDatacenterId);
 					}
@@ -1382,7 +1361,10 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 
 	if (request->IsInitConnection())
 	{
-		connection->GetDatacenter()->SetConnectionInitialized();
+		auto& datacenter = connection->GetDatacenter();
+		datacenter->SetConnectionInitialized();
+
+		ReturnIfFailed(result, SaveDatacenterSettings(datacenter.Get()));
 	}
 
 	auto& sendCompletedCallback = request->GetSendCompletedCallback();
@@ -1408,7 +1390,7 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 
 HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageRequest* request, INT32 code, HString const& text)
 {
-	static const std::wstring knownErrors[] = { L"NETWORK_MIGRATE_", L"PHONE_MIGRATE_", L"USER_MIGRATE_", L"MSG_WAIT_FAILED", L"SESSION_PASSWORD_NEEDED", L"FLOOD_WAIT_" };
+	static const std::wstring knownErrors[] = { L"NETWORK_MIGRATE_", L"PHONE_MIGRATE_", L"USER_MIGRATE_", L"MSG_WAIT_FAILED", L"SESSION_PASSWORD_NEEDED", L"AUTH_KEY_UNREGISTERED", L"FLOOD_WAIT_" };
 
 	auto lock = LockCriticalSection();
 	auto errorText = text.GetRawBuffer(nullptr);
@@ -1437,40 +1419,44 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 	switch (code)
 	{
 	case 400:
+	{
 		if (wcsstr(errorText, knownErrors[3].c_str()) == nullptr)
 		{
 			return S_OK;
 		}
 
 		waitTime = 1;
-		break;
+	}
+	break;
 	case 401:
-		if (wcsstr(errorText, knownErrors[4].c_str()) == nullptr)
-		{
-			if ((datacenter->GetId() == m_currentDatacenterId || datacenter->GetId() == m_movingToDatacenterId) &&
-				request->GetConnectionType() == ConnectionType::Generic && m_userId != 0)
-			{
-				I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle user logout");
-			}
+	{
+		datacenter->SetUnauthorized();
 
-			datacenter->SetUnauthorized();
-		}
-		else
+		for (size_t i = 4; i < 6; i++)
 		{
-			return S_OK;
+			if (wcsstr(errorText, knownErrors[i].c_str()) != nullptr)
+			{
+				return m_authenticationRequestedEventSource.InvokeAll(this, nullptr);
+			}
 		}
-		break;
+
+		return S_OK;
+	}
+	break;
 	case 420:
-		if (wcsstr(errorText, knownErrors[5].c_str()) == nullptr)
+	{
+		if (wcsstr(errorText, knownErrors[6].c_str()) == nullptr)
 		{
 			return S_OK;
 		}
-		else if ((waitTime = _wtoi(errorText + knownErrors[5].size())) <= 0)
+		else if ((waitTime = _wtoi(errorText + knownErrors[6].size())) <= 0)
 		{
 			waitTime = 2;
 		}
-		break;
+	}
+	break;
 	default:
+	{
 		if (code == 500 || code < 0)
 		{
 			waitTime = max(request->GetAttemptCount(), 10);
@@ -1479,7 +1465,8 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 		{
 			return S_OK;
 		}
-		break;
+	}
+	break;
 	}
 
 	request->SetStartTime(static_cast<INT32>(GetCurrentSystemTime() / 1000) + waitTime);
@@ -1520,7 +1507,7 @@ void ConnectionManager::ResetRequests(std::function<bool(INT32, ComPtr<MessageRe
 	}
 }
 
-void ConnectionManager::AdjustCurrentTime(INT64 messageId)
+HRESULT ConnectionManager::AdjustCurrentTime(INT64 messageId)
 {
 	auto lock = LockCriticalSection();
 
@@ -1529,6 +1516,8 @@ void ConnectionManager::AdjustCurrentTime(INT64 messageId)
 
 	m_timeDifference = static_cast<INT32>((messageTime - currentTime) / 1000LL); // -currentPingTime / 2);
 	m_lastOutgoingMessageId = 0;
+
+	return SaveSettings();
 }
 
 HRESULT ConnectionManager::OnUnprocessedMessageResponse(MessageContext const* messageContext, ITLObject* messageBody, Connection* connection)
@@ -1608,6 +1597,9 @@ HRESULT ConnectionManager::OnDatacenterHandshakeComplete(Datacenter* datacenter,
 		{
 			m_timeDifference = timeDifference;
 
+			HRESULT result;
+			ReturnIfFailed(result, SaveSettings());
+
 			datacenter->RecreateSessions();
 
 			ResetRequests([datacenter](INT32 datacenterId, auto& request) -> boolean
@@ -1627,14 +1619,14 @@ HRESULT ConnectionManager::OnDatacenterImportAuthorizationComplete(Datacenter* d
 
 HRESULT ConnectionManager::OnDatacenterBadServerSalt(Datacenter* datacenter, INT64 requestMessageId, INT64 responseMessageId)
 {
-	AdjustCurrentTime(responseMessageId);
+	HRESULT result;
+	ReturnIfFailed(result, AdjustCurrentTime(responseMessageId));
 
 	ResetRequests([datacenter](auto datacenterId, auto const& request) -> boolean
 	{
 		return datacenterId == datacenter->GetId();
 	}, true);
 
-	HRESULT result;
 	ReturnIfFailed(result, datacenter->RequestFutureSalts(32));
 
 	if (datacenter->IsAuthenticated())
@@ -1647,7 +1639,8 @@ HRESULT ConnectionManager::OnDatacenterBadServerSalt(Datacenter* datacenter, INT
 
 HRESULT ConnectionManager::OnDatacenterBadMessage(Datacenter* datacenter, INT64 requestMessageId, INT64 responseMessageId)
 {
-	AdjustCurrentTime(responseMessageId);
+	HRESULT result;
+	ReturnIfFailed(result, AdjustCurrentTime(responseMessageId));
 
 	ResetRequests([datacenter](auto datacenterId, auto const& request) -> boolean
 	{
@@ -1711,14 +1704,23 @@ HRESULT ConnectionManager::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG
 	return ProcessRequests();
 }
 
-HRESULT ConnectionManager::BoomBaby(IUserConfiguration* userConfiguration, ITLObject** object, IConnection** value)
+HRESULT ConnectionManager::BoomBaby()
 {
-	if (object == nullptr || value == nullptr)
-	{
-		return E_POINTER;
-	}
+	auto lock = LockCriticalSection();
 
 	HRESULT result;
+	ReturnIfFailed(result, SaveSettings());
+
+	for (auto& datacenter : m_datacenters)
+	{
+		std::wstring settingsFileName;
+		GetDatacenterSettingsFileName(datacenter.first, settingsFileName);
+
+		ComPtr<TLFileBinaryWriter> settingsWriter;
+		ReturnIfFailed(result, MakeAndInitialize<TLFileBinaryWriter>(&settingsWriter, settingsFileName.data(), CREATE_ALWAYS));
+		ReturnIfFailed(result, datacenter.second->SaveSettings(settingsWriter.Get()));
+	}
+
 	ComPtr<Datacenter> datacenter;
 	GetDatacenterById(m_currentDatacenterId, datacenter);
 	/*ReturnIfFailed(result, datacenter->RequestFutureSalts(10));*/
@@ -1823,62 +1825,79 @@ HRESULT ConnectionManager::InitializeSettings()
 
 	CreateDirectory(m_settingsFolderPath.data(), nullptr);
 
-	std::wstring configFileName = m_settingsFolderPath + L"\\ConnectionManager.dat";
+	if (LoadSettings() != S_OK)
+	{
+		ReturnIfFailed(result, InitializeDefaultDatacenters());
+		ReturnIfFailed(result, SaveSettings());
+	}
 
-	return S_OK;
-
-	//FileHandle settingsFile(CreateFile2(configFileName.data(), GENERIC_READ | GENERIC_WRITE, NULL, OPEN_ALWAYS, nullptr));
-	//if (!settingsFile.IsValid())
-	//{
-	//	return GetLastHRESULT();
-	//}
-
-	//*SetFilePointerEx(settingsFile.Get(), { 4096 }, nullptr, FILE_BEGIN);
-	//SetEndOfFile(settingsFile.Get());*/
-
-	//ComPtr<MappedFileBuffer> mappedFileBuffer;
-	//ReturnIfFailed(result, MakeAndInitialize<MappedFileBuffer>(&mappedFileBuffer, settingsFile.Get()));
-
-	ComPtr<TLBinaryReader> configReader;
-	//ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&configReader, mappedFileBuffer.Get()));
-
-	LoadSettings(configReader.Get());
-	return S_OK;
+	return LoadCDNPublicKeys();
 }
 
-HRESULT ConnectionManager::LoadSettings(ITLBinaryReaderEx* reader)
+HRESULT ConnectionManager::LoadSettings()
 {
+	std::wstring settingsFileName = m_settingsFolderPath + L"\\Settings.dat";
+
 	HRESULT result;
+	ComPtr<TLFileBinaryReader> settingsReader;
+	if (FAILED(result = MakeAndInitialize<TLFileBinaryReader>(&settingsReader, settingsFileName.data(), OPEN_EXISTING)))
+	{
+		if (result == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
+		{
+			return S_FALSE;
+		}
+
+		return result;
+	}
+
 	UINT32 version;
-	ReturnIfFailed(result, reader->ReadUInt32(&version));
+	ReturnIfFailed(result, settingsReader->ReadUInt32(&version));
 
 	if (version != TELEGRAM_API_NATIVE_SETTINGS_VERSION)
 	{
-		return COMADMIN_E_APP_FILE_VERSION;
+		return E_FAIL;
 	}
 
 	INT32 currentDatacenterId;
-	ReturnIfFailed(result, reader->ReadInt32(&currentDatacenterId));
+	ReturnIfFailed(result, settingsReader->ReadInt32(&currentDatacenterId));
 
 	INT32 datacentersExpirationTime;
-	ReturnIfFailed(result, reader->ReadInt32(&datacentersExpirationTime));
+	ReturnIfFailed(result, settingsReader->ReadInt32(&datacentersExpirationTime));
 
 	INT32 timeDifference;
-	ReturnIfFailed(result, reader->ReadInt32(&timeDifference));
+	ReturnIfFailed(result, settingsReader->ReadInt32(&timeDifference));
 
 	UINT32 datacenterCount;
-	ReturnIfFailed(result, reader->ReadUInt32(&datacenterCount));
+	ReturnIfFailed(result, settingsReader->ReadUInt32(&datacenterCount));
 
 	std::vector<ComPtr<Datacenter>> datacenters;
 
 	for (UINT32 i = 0; i < datacenterCount; i++)
 	{
 		INT32 datacenterId;
-		ReturnIfFailed(result, reader->ReadInt32(&datacenterId));
+		ReturnIfFailed(result, settingsReader->ReadInt32(&datacenterId));
 
-		auto settingsFileName = GetDatacenterSettingsFileName(datacenterId);
+		std::wstring settingsFileName;
+		GetDatacenterSettingsFileName(datacenterId, settingsFileName);
 
-		//ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&datacenters[i], this, reader));
+		ComPtr<TLFileBinaryReader> datacenterSettingsReader;
+		if (FAILED(result = MakeAndInitialize<TLFileBinaryReader>(&datacenterSettingsReader, settingsFileName.data(), OPEN_EXISTING)))
+		{
+			if (result == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
+			{
+				continue;
+			}
+
+			return result;
+		}
+
+		if (SUCCEEDED(MakeAndInitialize<TLFileBinaryReader>(&datacenterSettingsReader, settingsFileName.data(), OPEN_EXISTING)))
+		{
+			ComPtr<Datacenter> datacenter;
+			ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&datacenter, this, datacenterSettingsReader.Get()));
+
+			datacenters.push_back(std::move(datacenter));
+		}
 	}
 
 	if (datacenters.empty())
@@ -1886,12 +1905,18 @@ HRESULT ConnectionManager::LoadSettings(ITLBinaryReaderEx* reader)
 		return E_FAIL;
 	}
 
-	auto lock = LockCriticalSection();
+	//auto lock = LockCriticalSection();
 
 	m_currentDatacenterId = currentDatacenterId;
 	m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
 	m_datacentersExpirationTime = datacentersExpirationTime;
 	m_timeDifference = timeDifference;
+
+	for (auto& datacenter : m_datacenters)
+	{
+		datacenter.second->Close();
+	}
+
 	m_datacenters.clear();
 
 	for (auto& datacenter : datacenters)
@@ -1902,54 +1927,71 @@ HRESULT ConnectionManager::LoadSettings(ITLBinaryReaderEx* reader)
 	return S_OK;
 }
 
-HRESULT ConnectionManager::SaveSettings(ITLBinaryWriterEx* writer)
+HRESULT ConnectionManager::SaveSettings()
 {
-	auto lock = LockCriticalSection();
+	std::wstring settingsFileName = m_settingsFolderPath + L"\\Settings.dat";
+
+	//auto lock = LockCriticalSection();
 
 	HRESULT result;
-	ReturnIfFailed(result, writer->WriteUInt32(TELEGRAM_API_NATIVE_SETTINGS_VERSION));
-	ReturnIfFailed(result, writer->WriteInt32(m_currentDatacenterId));
-	ReturnIfFailed(result, writer->WriteInt32(m_datacentersExpirationTime));
-	ReturnIfFailed(result, writer->WriteInt32(m_timeDifference));
-	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(m_datacenters.size())));
+	ComPtr<TLFileBinaryWriter> settingsWriter;
+	ReturnIfFailed(result, MakeAndInitialize<TLFileBinaryWriter>(&settingsWriter, settingsFileName.data(), CREATE_ALWAYS));
+	ReturnIfFailed(result, settingsWriter->WriteUInt32(TELEGRAM_API_NATIVE_SETTINGS_VERSION));
+	ReturnIfFailed(result, settingsWriter->WriteInt32(m_currentDatacenterId));
+	ReturnIfFailed(result, settingsWriter->WriteInt32(m_datacentersExpirationTime));
+	ReturnIfFailed(result, settingsWriter->WriteInt32(m_timeDifference));
+	ReturnIfFailed(result, settingsWriter->WriteUInt32(static_cast<UINT32>(m_datacenters.size())));
 
 	for (auto& datacenter : m_datacenters)
 	{
-		ReturnIfFailed(result, writer->WriteInt32(datacenter.first));
+		ReturnIfFailed(result, settingsWriter->WriteInt32(datacenter.first));
 	}
 
 	return S_OK;
 }
 
-HRESULT ConnectionManager::LoadCDNPublicKeys(ITLBinaryReaderEx* reader)
+HRESULT ConnectionManager::LoadCDNPublicKeys()
 {
+	std::wstring publicKeysFileName = m_settingsFolderPath + L"\\CDN_PublicKeys.dat";
+
 	HRESULT result;
+	ComPtr<TLFileBinaryReader> publicKeysReader;
+	if (FAILED(result = MakeAndInitialize<TLFileBinaryReader>(&publicKeysReader, publicKeysFileName.data(), OPEN_EXISTING)))
+	{
+		if (result == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
+		{
+			return S_FALSE;
+		}
+
+		return result;
+	}
+
 	UINT32 version;
-	ReturnIfFailed(result, reader->ReadUInt32(&version));
+	ReturnIfFailed(result, publicKeysReader->ReadUInt32(&version));
 
 	if (version != TELEGRAM_API_NATIVE_SETTINGS_VERSION)
 	{
-		return COMADMIN_E_APP_FILE_VERSION;
+		return E_FAIL;
 	}
 
 	UINT32 cdnPublicKeyCount;
-	ReturnIfFailed(result, reader->ReadUInt32(&cdnPublicKeyCount));
+	ReturnIfFailed(result, publicKeysReader->ReadUInt32(&cdnPublicKeyCount));
 
 	std::vector<std::pair<INT32, ServerPublicKey>> cdnPublicKeys(cdnPublicKeyCount);
 	for (UINT32 i = 0; i < cdnPublicKeyCount; i++)
 	{
-		ReturnIfFailed(result, reader->ReadInt32(&cdnPublicKeys[i].first));
-		ReturnIfFailed(result, reader->ReadInt64(&cdnPublicKeys[i].second.Fingerprint));
+		ReturnIfFailed(result, publicKeysReader->ReadInt32(&cdnPublicKeys[i].first));
+		ReturnIfFailed(result, publicKeysReader->ReadInt64(&cdnPublicKeys[i].second.Fingerprint));
 
 		BYTE const* buffer;
 		UINT32 length;
-		ReturnIfFailed(result, reader->ReadBuffer2(&buffer, &length));
+		ReturnIfFailed(result, publicKeysReader->ReadBuffer2(&buffer, &length));
 
 		Wrappers::BIO keyBio(BIO_new_mem_buf(buffer, length));
 		cdnPublicKeys[i].second.Key.Attach(PEM_read_bio_RSAPublicKey(keyBio.Get(), nullptr, nullptr, nullptr));
 	}
 
-	auto lock = LockCriticalSection();
+	//auto lock = LockCriticalSection();
 
 	m_cdnPublicKeys.clear();
 
@@ -1961,18 +2003,22 @@ HRESULT ConnectionManager::LoadCDNPublicKeys(ITLBinaryReaderEx* reader)
 	return S_OK;
 }
 
-HRESULT ConnectionManager::SaveCDNPublicKeys(ITLBinaryWriterEx* writer)
+HRESULT ConnectionManager::SaveCDNPublicKeys()
 {
-	auto lock = LockCriticalSection();
+	std::wstring publicKeysFileName = m_settingsFolderPath + L"\\CDN_PublicKeys.dat";
+
+	//auto lock = LockCriticalSection();
 
 	HRESULT result;
-	ReturnIfFailed(result, writer->WriteUInt32(TELEGRAM_API_NATIVE_SETTINGS_VERSION));
-	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(m_cdnPublicKeys.size())));
+	ComPtr<TLFileBinaryWriter> publicKeysWriter;
+	ReturnIfFailed(result, MakeAndInitialize<TLFileBinaryWriter>(&publicKeysWriter, publicKeysFileName.data(), CREATE_ALWAYS));
+	ReturnIfFailed(result, publicKeysWriter->WriteUInt32(TELEGRAM_API_NATIVE_SETTINGS_VERSION));
+	ReturnIfFailed(result, publicKeysWriter->WriteUInt32(static_cast<UINT32>(m_cdnPublicKeys.size())));
 
 	for (auto& publicKey : m_cdnPublicKeys)
 	{
-		ReturnIfFailed(result, writer->WriteInt32(publicKey.first));
-		ReturnIfFailed(result, writer->WriteInt64(publicKey.second.Fingerprint));
+		ReturnIfFailed(result, publicKeysWriter->WriteInt32(publicKey.first));
+		ReturnIfFailed(result, publicKeysWriter->WriteInt64(publicKey.second.Fingerprint));
 
 		Wrappers::BIO keyBio(BIO_new(BIO_s_mem()));
 		PEM_write_bio_RSAPublicKey(keyBio.Get(), publicKey.second.Key.Get());
@@ -1980,9 +2026,72 @@ HRESULT ConnectionManager::SaveCDNPublicKeys(ITLBinaryWriterEx* writer)
 		std::vector<BYTE> buffer(BIO_pending(keyBio.Get()));
 		BIO_read(keyBio.Get(), buffer.data(), static_cast<int>(buffer.size()));
 
-		ReturnIfFailed(result, writer->WriteBuffer(buffer.data(), static_cast<UINT32>(buffer.size())));
+		ReturnIfFailed(result, publicKeysWriter->WriteBuffer(buffer.data(), static_cast<UINT32>(buffer.size())));
 	}
 
+	return S_OK;
+}
+
+HRESULT ConnectionManager::SaveDatacenterSettings(Datacenter* datacenter)
+{
+	std::wstring settingsFileName;
+	GetDatacenterSettingsFileName(datacenter->GetId(), settingsFileName);
+
+	HRESULT result;
+	ComPtr<TLFileBinaryWriter> settingsWriter;
+	ReturnIfFailed(result, MakeAndInitialize<TLFileBinaryWriter>(&settingsWriter, settingsFileName.data(), CREATE_ALWAYS));
+
+	return datacenter->SaveSettings(settingsWriter.Get());
+}
+
+HRESULT ConnectionManager::IsIPv6Enabled(INetworkAdapter* networkAdapter, bool* enabled)
+{
+	HRESULT result;
+	GUID networkAdapterId;
+	ReturnIfFailed(result, networkAdapter->get_NetworkAdapterId(&networkAdapterId));
+
+	ULONG error;
+	NET_LUID networkAdapterLuid;
+	if ((error = ConvertInterfaceGuidToLuid(&networkAdapterId, &networkAdapterLuid)) != NO_ERROR)
+	{
+		return HRESULT_FROM_WIN32(result);
+	}
+
+	struct addresses_deleter
+	{
+		void operator()(void* x)
+		{
+			NATIVEBUFFER_FREE(x);
+		}
+	};
+
+	ULONG bufferSize = 15000;
+	std::unique_ptr<IP_ADAPTER_ADDRESSES, addresses_deleter> addresses;
+
+	do
+	{
+		addresses = std::unique_ptr<IP_ADAPTER_ADDRESSES, addresses_deleter>(reinterpret_cast<IP_ADAPTER_ADDRESSES*>(NATIVEBUFFER_ALLOC(bufferSize)));
+		error = GetAdaptersAddresses(AF_INET6, GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER | GAA_FLAG_SKIP_FRIENDLY_NAME, nullptr, addresses.get(), &bufferSize);
+	} while (error == ERROR_BUFFER_OVERFLOW);
+
+	if (error != NO_ERROR)
+	{
+		return HRESULT_FROM_WIN32(result);
+	}
+
+	auto currentAddress = addresses.get();
+	while (currentAddress != nullptr)
+	{
+		if (memcmp(&currentAddress->Luid, &networkAdapterLuid, sizeof(NET_LUID)) == 0)
+		{
+			*enabled = true;
+			return S_OK;
+		}
+
+		currentAddress = currentAddress->Next;
+	}
+
+	*enabled = false;
 	return S_OK;
 }
 
@@ -2012,6 +2121,7 @@ HRESULT ConnectionManagerStatics::get_Version(Version* value)
 	value->ProtocolVersion = TELEGRAM_API_NATIVE_PROTOVERSION;
 	value->Layer = TELEGRAM_API_NATIVE_LAYER;
 	value->ApiId = TELEGRAM_API_NATIVE_APIID;
+	value->SettingsVersion = TELEGRAM_API_NATIVE_SETTINGS_VERSION;
 	return S_OK;
 }
 

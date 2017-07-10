@@ -114,9 +114,9 @@ bool DatacenterCryptography::FactorizePQ(UINT64 pq, UINT32& p, UINT32& q)
 INT64 DatacenterCryptography::ComputePublickKeyFingerprint(::RSA* key)
 {
 	auto nLength = BN_num_bytes(key->n);
-	auto nTLLength = TLBinaryWriter::GetByteArrayLength(nLength);
+	auto nTLLength = TLMemoryBinaryWriter::GetByteArrayLength(nLength);
 	auto eLength = BN_num_bytes(key->e);
-	auto eTLLength = TLBinaryWriter::GetByteArrayLength(eLength);
+	auto eTLLength = TLMemoryBinaryWriter::GetByteArrayLength(eLength);
 
 	std::vector<BYTE> buffer(nTLLength + eTLLength);
 	WriteTLBigNum(buffer.data(), key->n, nLength);

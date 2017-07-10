@@ -29,7 +29,7 @@ namespace ABI
 						virtual HRESULT STDMETHODCALLTYPE WriteBigEndianInt32(INT32 value) = 0;
 						virtual HRESULT STDMETHODCALLTYPE WriteWString(_In_ std::wstring const& string) = 0;
 						virtual HRESULT STDMETHODCALLTYPE WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length) = 0;
-						virtual void STDMETHODCALLTYPE Reset() = 0;
+						virtual HRESULT STDMETHODCALLTYPE Reset() = 0;
 					};
 
 				}
@@ -50,24 +50,23 @@ namespace Telegram
 			namespace TL
 			{
 
-				class TLBinaryWriter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryWriterEx>, ITLBinaryWriter>
+				class TLBinaryWriter abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryWriterEx>, ITLBinaryWriter>
 				{
-					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLBinaryWriter, BaseTrust);
-
 				public:
-					TLBinaryWriter();
-					~TLBinaryWriter();
-
 					//COM exported methods
-					IFACEMETHODIMP get_Position(_Out_ UINT32* value);
-					IFACEMETHODIMP put_Position(UINT32 value);
-					IFACEMETHODIMP get_UnstoredBufferLength(_Out_ UINT32* value);
-					IFACEMETHODIMP WriteByte(BYTE value);
-					IFACEMETHODIMP WriteInt16(INT16 value);
+					virtual HRESULT STDMETHODCALLTYPE get_Position(_Out_ UINT32* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE put_Position(UINT32 value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE get_UnstoredBufferLength(_Out_ UINT32* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE WriteByte(BYTE value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE WriteInt16(INT16 value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE WriteInt32(INT32 value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE WriteInt64(INT64 value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE WriteRawBuffer(UINT32 __valueSize, _In_reads_(__valueSize) BYTE* value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE WriteBigEndianInt32(INT32 value) = 0;
+					virtual HRESULT STDMETHODCALLTYPE WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length) = 0;
+					virtual HRESULT STDMETHODCALLTYPE Reset() = 0;
 					IFACEMETHODIMP WriteUInt16(UINT16 value);
-					IFACEMETHODIMP WriteInt32(INT32 value);
 					IFACEMETHODIMP WriteUInt32(UINT32 value);
-					IFACEMETHODIMP WriteInt64(INT64 value);
 					IFACEMETHODIMP WriteUInt64(UINT64 value);
 					IFACEMETHODIMP WriteBoolean(boolean value);
 					IFACEMETHODIMP WriteString(HSTRING value);
@@ -75,15 +74,61 @@ namespace Telegram
 					IFACEMETHODIMP WriteDouble(double value);
 					IFACEMETHODIMP WriteFloat(float value);
 					IFACEMETHODIMP WriteObject(_In_ ITLObject* value);
+					IFACEMETHODIMP WriteWString(_In_ std::wstring const& string);
+
+					//Internal methods
+					inline static UINT32 GetByteArrayLength(UINT32 length)
+					{
+						if (length < 254)
+						{
+							UINT32 padding = (length + 1) % 4;
+							if (padding != 0)
+							{
+								padding = 4 - padding;
+							}
+
+							return 1 + length + padding;
+						}
+						else
+						{
+							UINT32 padding = (length + 4) % 4;
+							if (padding != 0)
+							{
+								padding = 4 - padding;
+							}
+
+							return 4 + length + padding;
+						}
+					}
+
+				private:
+					HRESULT WriteString(_In_ LPCWCHAR buffer, UINT32 length);
+				};
+
+				class TLMemoryBinaryWriter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLBinaryWriter>
+				{
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLBinaryWriter, BaseTrust);
+
+				public:
+					TLMemoryBinaryWriter();
+					~TLMemoryBinaryWriter();
+
+					//COM exported methods
+					IFACEMETHODIMP get_Position(_Out_ UINT32* value);
+					IFACEMETHODIMP put_Position(UINT32 value);
+					IFACEMETHODIMP get_UnstoredBufferLength(_Out_ UINT32* value);
+					IFACEMETHODIMP WriteByte(BYTE value);
+					IFACEMETHODIMP WriteInt16(INT16 value);
+					IFACEMETHODIMP WriteInt32(INT32 value);
+					IFACEMETHODIMP WriteInt64(INT64 value);
 					IFACEMETHODIMP WriteRawBuffer(UINT32 __valueSize, _In_reads_(__valueSize) BYTE* value);
 					IFACEMETHODIMP WriteBigEndianInt32(INT32 value);
-					IFACEMETHODIMP WriteWString(_In_ std::wstring const& string);
 					IFACEMETHODIMP WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length);
-					IFACEMETHODIMP_(void) Reset();
+					IFACEMETHODIMP Reset();
 
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(_In_ IBuffer* underlyingBuffer);
-					STDMETHODIMP RuntimeClassInitialize(_In_ TLBinaryWriter* writer, UINT32 length);
+					STDMETHODIMP RuntimeClassInitialize(_In_ TLMemoryBinaryWriter* writer, UINT32 length);
 					STDMETHODIMP RuntimeClassInitialize(UINT32 capacity);
 					HRESULT SeekCurrent(INT32 bytes);
 
@@ -122,40 +167,39 @@ namespace Telegram
 						return m_underlyingBuffer.Get();
 					}
 
-					inline static UINT32 GetByteArrayLength(UINT32 length)
-					{
-						if (length < 254)
-						{
-							UINT32 padding = (length + 1) % 4;
-							if (padding != 0)
-							{
-								padding = 4 - padding;
-							}
-
-							return 1 + length + padding;
-						}
-						else
-						{
-							UINT32 padding = (length + 4) % 4;
-							if (padding != 0)
-							{
-								padding = 4 - padding;
-							}
-
-							return 4 + length + padding;
-						}
-					}
-
 				private:
-					HRESULT WriteString(_In_ LPCWCHAR buffer, UINT32 length);
-
 					BYTE* m_buffer;
 					UINT32 m_position;
 					UINT32 m_capacity;
 					ComPtr<IBuffer> m_underlyingBuffer;
 				};
 
-				class TLObjectSizeCalculator : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryWriterEx>>
+				class TLFileBinaryWriter WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLBinaryWriter>
+				{
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLBinaryWriter, BaseTrust);
+
+				public:
+					//COM exported methods
+					IFACEMETHODIMP get_Position(_Out_ UINT32* value);
+					IFACEMETHODIMP put_Position(UINT32 value);
+					IFACEMETHODIMP get_UnstoredBufferLength(_Out_ UINT32* value);
+					IFACEMETHODIMP WriteByte(BYTE value);
+					IFACEMETHODIMP WriteInt16(INT16 value);
+					IFACEMETHODIMP WriteInt32(INT32 value);
+					IFACEMETHODIMP WriteInt64(INT64 value);
+					IFACEMETHODIMP WriteRawBuffer(UINT32 __valueSize, _In_reads_(__valueSize) BYTE* value);
+					IFACEMETHODIMP WriteBigEndianInt32(INT32 value);
+					IFACEMETHODIMP WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length);
+					IFACEMETHODIMP Reset();
+
+					//Internal methods
+					STDMETHODIMP RuntimeClassInitialize(_In_ LPCWSTR fileName, DWORD creationDisposition);
+
+				private:
+					FileHandle m_file;
+				};
+
+				class TLObjectSizeCalculator WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryWriterEx>>
 				{
 					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLBinaryWriter, BaseTrust);
 
@@ -164,7 +208,6 @@ namespace Telegram
 					~TLObjectSizeCalculator();
 
 					//COM exported methods
-					IFACEMETHODIMP get_TotalLength(_Out_  UINT32* value);
 					IFACEMETHODIMP get_Position(_Out_ UINT32* value);
 					IFACEMETHODIMP put_Position(UINT32 value);
 					IFACEMETHODIMP get_UnstoredBufferLength(_Out_ UINT32* value);
@@ -185,16 +228,16 @@ namespace Telegram
 					IFACEMETHODIMP WriteBigEndianInt32(INT32 value);
 					IFACEMETHODIMP WriteWString(_In_ std::wstring const& string);
 					IFACEMETHODIMP WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length);
-					IFACEMETHODIMP_(void) Reset();
+					IFACEMETHODIMP Reset();
 
 					//Internal methods
+					HRESULT get_TotalLength(_Out_  UINT32* value);
+
 					static HRESULT GetSize(_In_ ITLObject* object, _Out_ UINT32* value);
 
 				private:
 					UINT32 m_position;
 					UINT32 m_length;
-
-					static thread_local ComPtr<TLObjectSizeCalculator> s_instance;
 				};
 
 			}

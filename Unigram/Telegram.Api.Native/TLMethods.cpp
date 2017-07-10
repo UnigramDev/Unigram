@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "TLMethods.h"
 #include "ConnectionManager.h"
+#include "UserConfiguration.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "Helpers\COMHelper.h"
@@ -219,7 +220,7 @@ HRESULT TLInvokeWithLayer::WriteBody(ITLBinaryWriterEx* writer)
 }
 
 
-HRESULT TLInitConnection::RuntimeClassInitialize(IUserConfiguration* userConfiguration, ITLObject* query)
+HRESULT TLInitConnection::RuntimeClassInitialize(UserConfiguration* userConfiguration, ITLObject* query)
 {
 	if (userConfiguration == nullptr || query == nullptr)
 	{
@@ -234,21 +235,11 @@ HRESULT TLInitConnection::WriteBody(ITLBinaryWriterEx* writer)
 {
 	HRESULT result;
 	ReturnIfFailed(result, writer->WriteInt32(TELEGRAM_API_NATIVE_APIID));
+	ReturnIfFailed(result, writer->WriteString(m_userConfiguration->GetDeviceModel().Get()));
+	ReturnIfFailed(result, writer->WriteString(m_userConfiguration->GetSystemVersion().Get()));
+	ReturnIfFailed(result, writer->WriteString(m_userConfiguration->GetAppVersion().Get()));
 
-	HString deviceModel;
-	ReturnIfFailed(result, m_userConfiguration->get_DeviceModel(deviceModel.GetAddressOf()));
-	ReturnIfFailed(result, writer->WriteString(deviceModel.Get()));
-
-	HString systemVersion;
-	ReturnIfFailed(result, m_userConfiguration->get_SystemVersion(systemVersion.GetAddressOf()));
-	ReturnIfFailed(result, writer->WriteString(systemVersion.Get()));
-
-	HString appVersion;
-	ReturnIfFailed(result, m_userConfiguration->get_AppVersion(appVersion.GetAddressOf()));
-	ReturnIfFailed(result, writer->WriteString(appVersion.Get()));
-
-	HString language;
-	ReturnIfFailed(result, m_userConfiguration->get_Language(language.GetAddressOf()));
+	auto& language = m_userConfiguration->GetLanguage();
 	ReturnIfFailed(result, writer->WriteString(language.Get()));
 	ReturnIfFailed(result, writer->WriteWString(L""));
 	ReturnIfFailed(result, writer->WriteString(language.Get()));

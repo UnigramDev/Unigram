@@ -15,6 +15,10 @@ namespace Telegram
 	{
 		namespace Native
 		{
+
+			class UserConfiguration;
+
+
 			namespace TL
 			{
 				namespace Methods
@@ -363,13 +367,13 @@ namespace Telegram
 
 					public:
 						//Internal methods
-						STDMETHODIMP RuntimeClassInitialize(_In_ IUserConfiguration* userConfiguration, _In_ ITLObject* query);
+						STDMETHODIMP RuntimeClassInitialize(_In_ UserConfiguration* userConfiguration, _In_ ITLObject* query);
 
 					protected:
 						virtual HRESULT WriteBody(_In_ ITLBinaryWriterEx* writer) override;
 
 					private:
-						ComPtr<IUserConfiguration> m_userConfiguration;
+						ComPtr<UserConfiguration> m_userConfiguration;
 					};
 
 					class TLHelpGetConfig WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLHelpGetConfigTraits>>

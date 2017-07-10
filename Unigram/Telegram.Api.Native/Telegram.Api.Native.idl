@@ -24,6 +24,7 @@ namespace Telegram
 			runtimeclass ConnectionManager;
 			runtimeclass MessageResponse;
 			runtimeclass MessageError;
+			runtimeclass UserConfiguration;
 			runtimeclass ProxyCredentials;
 			runtimeclass ProxySettings;
 
@@ -66,6 +67,7 @@ namespace Telegram
 			{
 
 				interface Windows.Foundation.Collections.IVectorView<Datacenter*>;
+				interface Windows.Foundation.Collections.IVectorView<Connection*>;
 
 			}
 		}
@@ -370,6 +372,7 @@ namespace Telegram
 				UINT32 ProtocolVersion;
 				UINT32 Layer;
 				UINT32 ApiId;
+				UINT32 SettingsVersion;
 			};
 
 
@@ -464,6 +467,7 @@ namespace Telegram
 			delegate HRESULT RequestQuickAckReceivedCallback();
 
 
+			[exclusiveto(UserConfiguration)]
 			[uuid(27960B7A-14F2-4F63-AA65-6201B9A190EC)]
 			[version(API_VERSION)]
 			interface IUserConfiguration : IInspectable
@@ -472,9 +476,14 @@ namespace Telegram
 				[propget] HRESULT SystemVersion([out][retval] HSTRING* value);
 				[propget] HRESULT AppVersion([out][retval] HSTRING* value);
 				[propget] HRESULT Language([out][retval] HSTRING* value);
-				//[propget] HRESULT ConfigurationPath([out][retval] HSTRING* value);
-				//[propget] HRESULT LogPath([out][retval] HSTRING* value);
-				//[propget] HRESULT UserId([out][retval] INT32* value);
+			}
+
+			[marshaling_behavior(agile)]
+			[threading(both)]
+			[version(API_VERSION)]
+			runtimeclass UserConfiguration
+			{
+				[default] interface IUserConfiguration;
 			}
 
 
@@ -532,11 +541,9 @@ namespace Telegram
 			interface IDatacenter : IInspectable
 			{
 				[propget] HRESULT Id([out][retval] INT32* value);
+				//[propget] HRESULT Connections([out][retval] Windows.Foundation.Collections.IVectorView<Connection*>** value);
 				HRESULT GetCurrentAddress([in] ConnectionType connectionType,[in] boolean ipv6,[out][retval] HSTRING* value);
 				HRESULT GetCurrentPort([in] ConnectionType connectionType,[in] boolean ipv6,[out][retval] UINT32* value);
-				//HRESULT GetDownloadConnection([in] UINT32 index,[in] boolean create, [out][retval] Connection** value);
-				//HRESULT GetUploadConnection([in] UINT32 index, [in] boolean create, [out][retval] Connection** value);
-				//HRESULT GetGenericConnection([in] boolean create, [out][retval] Connection** value);
 			}
 
 			[marshaling_behavior(agile)]
@@ -585,6 +592,8 @@ namespace Telegram
 			{
 				[eventadd] HRESULT SessionCreated([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler, [out][retval] EventRegistrationToken* token);
 				[eventremove] HRESULT SessionCreated([in] EventRegistrationToken token);
+				[eventadd] HRESULT AuthenticationRequested([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler, [out][retval] EventRegistrationToken* token);
+				[eventremove] HRESULT AuthenticationRequested([in] EventRegistrationToken token);
 				[eventadd] HRESULT CurrentNetworkTypeChanged([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler,[out][retval] EventRegistrationToken* token);
 				[eventremove] HRESULT CurrentNetworkTypeChanged([in] EventRegistrationToken token);
 				[eventadd] HRESULT ConnectionStateChanged([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler,[out][retval] EventRegistrationToken* token);
@@ -596,8 +605,7 @@ namespace Telegram
 				[propget] HRESULT CurrentDatacenter([out][retval] Datacenter** value);
 				[propget] HRESULT IsIPv6Enabled([out][retval] boolean* value);
 				[propget] HRESULT IsNetworkAvailable([out][retval] boolean* value);
-				[propget] HRESULT UserConfiguration([out][retval] IUserConfiguration** value);
-				[propput] HRESULT UserConfiguration([in] IUserConfiguration* value);
+				[propget] HRESULT UserConfiguration([out][retval] UserConfiguration** value);
 				[propget] HRESULT UserId([out][retval] INT32* value);
 				[propput] HRESULT UserId([in] INT32 value);
 				[propget] HRESULT Proxy([out][retval] ProxySettings** value);
@@ -610,11 +618,10 @@ namespace Telegram
 				[overload("SendRequest")] HRESULT SendRequestWithFlags([in] Telegram.Api.Native.TL.ITLObject* object,[in] SendRequestCompletedCallback* onCompleted,[in] RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
 					[in] INT32 datacenterId,[in] ConnectionType connectionType,[in] RequestFlag flags,[out][retval] INT32* value);
 				HRESULT CancelRequest([in] INT32 requestToken,[in] boolean notifyServer,[out][retval] boolean* value);
-				HRESULT GetDatacenterById([in] INT32 id,[out][retval] Datacenter** value);
 				HRESULT UpdateDatacenters();
 				HRESULT Reset();
 
-				HRESULT BoomBaby([in] IUserConfiguration* userConfiguration,[out] Telegram.Api.Native.TL.ITLObject** object,[out][retval] Connection** value);
+				HRESULT BoomBaby();
 			}
 
 			[static(IConnectionManagerStatics, API_VERSION)]

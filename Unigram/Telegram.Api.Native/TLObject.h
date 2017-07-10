@@ -99,7 +99,7 @@ namespace Telegram
 				typedef BYTE TLInt128[16];
 				typedef BYTE TLInt256[32];
 
-				class TLBinaryReader;
+				class TLMemoryBinaryReader;
 
 				class TLObject abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, ITLObject>
 				{
@@ -217,12 +217,12 @@ namespace Telegram
 					IFACEMETHODIMP Write(_In_ ITLBinaryWriter* writer);
 
 					//Internal methods
-					STDMETHODIMP RuntimeClassInitialize(UINT32 constructor, _In_ TLBinaryReader* reader);
-					STDMETHODIMP RuntimeClassInitialize(UINT32 constructor, UINT32 objectSizeWithoutConstructor, _In_ TLBinaryReader* reader);
+					STDMETHODIMP RuntimeClassInitialize(UINT32 constructor, _In_ TLMemoryBinaryReader* reader);
+					STDMETHODIMP RuntimeClassInitialize(UINT32 constructor, UINT32 objectSizeWithoutConstructor, _In_ TLMemoryBinaryReader* reader);
 
 				private:
 					UINT32 m_constructor;
-					ComPtr<TLBinaryReader> m_reader;
+					ComPtr<TLMemoryBinaryReader> m_reader;
 				};
 
 

@@ -32,7 +32,6 @@
     <ClCompile Include="TLObject.cpp">
       <Filter>TLProtocolScheme</Filter>
     </ClCompile>
-    <ClCompile Include="DefaultUserConfiguration.cpp" />
     <ClCompile Include="TLObjectSerializer.cpp">
       <Filter>TLProtocolScheme</Filter>
     </ClCompile>
@@ -52,6 +51,7 @@
     <ClCompile Include="MessageError.cpp" />
     <ClCompile Include="MethodDebug.cpp" />
     <ClCompile Include="ProxySettings.cpp" />
+    <ClCompile Include="UserConfiguration.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -71,7 +71,6 @@
     <ClInclude Include="TLObject.h">
       <Filter>TLProtocolScheme</Filter>
     </ClInclude>
-    <ClInclude Include="DefaultUserConfiguration.h" />
     <ClInclude Include="TLObjectSerializer.h">
       <Filter>TLProtocolScheme</Filter>
     </ClInclude>
@@ -108,10 +107,13 @@
     <ClInclude Include="EventObject.h">
       <Filter>Threading</Filter>
     </ClInclude>
+    <ClInclude Include="UserConfiguration.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Telegram.Api.Native.def" />
+    <None Include="Telegram.Api.Native.def">
+      <Filter>MIDL</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="Telegram.Api.Native.idl">

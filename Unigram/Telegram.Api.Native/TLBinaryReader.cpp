@@ -9,179 +9,14 @@ using namespace Telegram::Api::Native::TL;
 using Windows::Storage::Streams::IBufferByteAccess;
 
 
-TLBinaryReader::TLBinaryReader() :
-	m_buffer(nullptr),
-	m_position(0),
-	m_capacity(0)
-{
-}
-
-TLBinaryReader::~TLBinaryReader()
-{
-}
-
-HRESULT TLBinaryReader::RuntimeClassInitialize(IBuffer* underlyingBuffer)
-{
-	if (underlyingBuffer == nullptr)
-	{
-		return E_INVALIDARG;
-	}
-
-	HRESULT result;
-	ComPtr<IBufferByteAccess> bufferByteAccess;
-	ReturnIfFailed(result, underlyingBuffer->QueryInterface(IID_PPV_ARGS(&bufferByteAccess)));
-	ReturnIfFailed(result, bufferByteAccess->Buffer(&m_buffer));
-	ReturnIfFailed(result, underlyingBuffer->get_Capacity(&m_capacity));
-
-	m_underlyingBuffer = underlyingBuffer;
-	return S_OK;
-}
-
-HRESULT TLBinaryReader::RuntimeClassInitialize(TLBinaryReader* reader, UINT32 length)
-{
-	if (reader == nullptr)
-	{
-		return E_INVALIDARG;
-	}
-
-	if (reader->m_position + length > reader->m_capacity)
-	{
-		return E_NOT_SUFFICIENT_BUFFER;
-	}
-
-	m_buffer = reader->m_buffer + reader->m_position;
-	m_capacity = length;
-	m_underlyingBuffer = reader->m_underlyingBuffer;
-	return S_OK;
-}
-
-HRESULT TLBinaryReader::RuntimeClassInitialize(UINT32 capacity)
-{
-	HRESULT result;
-	ComPtr<NativeBuffer> nativeBuffer;
-	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&nativeBuffer, capacity));
-
-	m_buffer = nativeBuffer->GetBuffer();
-	m_capacity = nativeBuffer->GetCapacity();
-	m_underlyingBuffer = nativeBuffer;
-	return S_OK;
-}
-
-HRESULT TLBinaryReader::get_Position(UINT32* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	*value = m_position;
-	return S_OK;
-}
-
-HRESULT TLBinaryReader::put_Position(UINT32 value)
-{
-	if (value > m_capacity)
-	{
-		return E_BOUNDS;
-	}
-
-	m_position = value;
-	return S_OK;
-}
-
-HRESULT TLBinaryReader::get_UnconsumedBufferLength(UINT32* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	*value = m_capacity - m_position;
-	return S_OK;
-}
-
-HRESULT TLBinaryReader::ReadByte(BYTE* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	if (m_position + sizeof(BYTE) > m_capacity)
-	{
-		return E_NOT_SUFFICIENT_BUFFER;
-	}
-
-	*value = m_buffer[m_position++];
-	return S_OK;
-}
-
-HRESULT TLBinaryReader::ReadInt16(INT16* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	if (m_position + sizeof(INT16) > m_capacity)
-	{
-		return E_NOT_SUFFICIENT_BUFFER;
-	}
-
-	*value = static_cast<INT16>(m_buffer[m_position]) | (static_cast<INT16>(m_buffer[m_position + 1]) << 8);
-
-	m_position += sizeof(INT16);
-	return S_OK;
-}
-
 HRESULT TLBinaryReader::ReadUInt16(UINT16* value)
 {
 	return ReadInt16(reinterpret_cast<INT16*>(value));
 }
 
-HRESULT TLBinaryReader::ReadInt32(INT32* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	if (m_position + sizeof(INT32) > m_capacity)
-	{
-		return E_NOT_SUFFICIENT_BUFFER;
-	}
-
-	*value = static_cast<INT32>(m_buffer[m_position]) | (static_cast<INT32>(m_buffer[m_position + 1]) << 8) |
-		(static_cast<INT32>(m_buffer[m_position + 2]) << 16) | (static_cast<INT32>(m_buffer[m_position + 3]) << 24);
-
-	m_position += sizeof(INT32);
-	return S_OK;
-}
-
 HRESULT TLBinaryReader::ReadUInt32(UINT32* value)
 {
 	return ReadInt32(reinterpret_cast<INT32*>(value));
-}
-
-HRESULT TLBinaryReader::ReadInt64(INT64* value)
-{
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	if (m_position + sizeof(INT64) > m_capacity)
-	{
-		return E_NOT_SUFFICIENT_BUFFER;
-	}
-
-	*value = static_cast<INT64>(m_buffer[m_position]) | (static_cast<INT64>(m_buffer[m_position + 1]) << 8LL) |
-		(static_cast<INT64>(m_buffer[m_position + 2]) << 16LL) | (static_cast<INT64>(m_buffer[m_position + 3]) << 24LL) |
-		(static_cast<INT64>(m_buffer[m_position + 4]) << 32LL) | (static_cast<INT64>(m_buffer[m_position + 5]) << 40LL) |
-		(static_cast<INT64>(m_buffer[m_position + 6]) << 48LL) | (static_cast<INT64>(m_buffer[m_position + 7]) << 56LL);
-
-	m_position += sizeof(INT64);
-	return S_OK;
 }
 
 HRESULT TLBinaryReader::ReadUInt64(UINT64* value)
@@ -295,7 +130,198 @@ HRESULT TLBinaryReader::ReadObject(ITLObject** value)
 	}
 }
 
-HRESULT TLBinaryReader::ReadObjectAndConstructor(UINT32 objectSize, UINT32* constructor, ITLObject** value)
+HRESULT TLBinaryReader::ReadWString(std::wstring& string)
+{
+	HRESULT result;
+	UINT32 mbLength;
+	LPCCH mbString;
+	ReturnIfFailed(result, ReadBuffer2(reinterpret_cast<BYTE const**>(&mbString), &mbLength));
+
+	auto length = MultiByteToWideChar(CP_UTF8, 0, mbString, mbLength, nullptr, 0);
+	string.resize(length);
+
+	MultiByteToWideChar(CP_UTF8, 0, mbString, mbLength, &string[0], length);
+	return S_OK;
+}
+
+HRESULT TLBinaryReader::ReadBuffer(BYTE* buffer, UINT32 length)
+{
+	HRESULT result;
+	UINT32 sourceLength;
+	BYTE const* sourceBuffer;
+	ReturnIfFailed(result, ReadBuffer2(&sourceBuffer, &sourceLength));
+
+	CopyMemory(buffer, sourceBuffer, min(length, sourceLength));
+	return S_OK;
+}
+
+
+TLMemoryBinaryReader::TLMemoryBinaryReader() :
+	m_buffer(nullptr),
+	m_position(0),
+	m_capacity(0)
+{
+}
+
+TLMemoryBinaryReader::~TLMemoryBinaryReader()
+{
+}
+
+HRESULT TLMemoryBinaryReader::RuntimeClassInitialize(IBuffer* underlyingBuffer)
+{
+	if (underlyingBuffer == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	HRESULT result;
+	ComPtr<IBufferByteAccess> bufferByteAccess;
+	ReturnIfFailed(result, underlyingBuffer->QueryInterface(IID_PPV_ARGS(&bufferByteAccess)));
+	ReturnIfFailed(result, bufferByteAccess->Buffer(&m_buffer));
+	ReturnIfFailed(result, underlyingBuffer->get_Capacity(&m_capacity));
+
+	m_underlyingBuffer = underlyingBuffer;
+	return S_OK;
+}
+
+HRESULT TLMemoryBinaryReader::RuntimeClassInitialize(TLMemoryBinaryReader* reader, UINT32 length)
+{
+	if (reader == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (reader->m_position + length > reader->m_capacity)
+	{
+		return E_NOT_SUFFICIENT_BUFFER;
+	}
+
+	m_buffer = reader->m_buffer + reader->m_position;
+	m_capacity = length;
+	m_underlyingBuffer = reader->m_underlyingBuffer;
+	return S_OK;
+}
+
+HRESULT TLMemoryBinaryReader::RuntimeClassInitialize(UINT32 capacity)
+{
+	HRESULT result;
+	ComPtr<NativeBuffer> nativeBuffer;
+	ReturnIfFailed(result, MakeAndInitialize<NativeBuffer>(&nativeBuffer, capacity));
+
+	m_buffer = nativeBuffer->GetBuffer();
+	m_capacity = nativeBuffer->GetCapacity();
+	m_underlyingBuffer = nativeBuffer;
+	return S_OK;
+}
+
+HRESULT TLMemoryBinaryReader::get_Position(UINT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_position;
+	return S_OK;
+}
+
+HRESULT TLMemoryBinaryReader::put_Position(UINT32 value)
+{
+	if (value > m_capacity)
+	{
+		return E_BOUNDS;
+	}
+
+	m_position = value;
+	return S_OK;
+}
+
+HRESULT TLMemoryBinaryReader::get_UnconsumedBufferLength(UINT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_capacity - m_position;
+	return S_OK;
+}
+
+HRESULT TLMemoryBinaryReader::ReadByte(BYTE* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	if (m_position + sizeof(BYTE) > m_capacity)
+	{
+		return E_NOT_SUFFICIENT_BUFFER;
+	}
+
+	*value = m_buffer[m_position++];
+	return S_OK;
+}
+
+HRESULT TLMemoryBinaryReader::ReadInt16(INT16* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	if (m_position + sizeof(INT16) > m_capacity)
+	{
+		return E_NOT_SUFFICIENT_BUFFER;
+	}
+
+	*value = static_cast<INT16>(m_buffer[m_position]) | (static_cast<INT16>(m_buffer[m_position + 1]) << 8);
+
+	m_position += sizeof(INT16);
+	return S_OK;
+}
+
+HRESULT TLMemoryBinaryReader::ReadInt32(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	if (m_position + sizeof(INT32) > m_capacity)
+	{
+		return E_NOT_SUFFICIENT_BUFFER;
+	}
+
+	*value = static_cast<INT32>(m_buffer[m_position]) | (static_cast<INT32>(m_buffer[m_position + 1]) << 8) |
+		(static_cast<INT32>(m_buffer[m_position + 2]) << 16) | (static_cast<INT32>(m_buffer[m_position + 3]) << 24);
+
+	m_position += sizeof(INT32);
+	return S_OK;
+}
+
+HRESULT TLMemoryBinaryReader::ReadInt64(INT64* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	if (m_position + sizeof(INT64) > m_capacity)
+	{
+		return E_NOT_SUFFICIENT_BUFFER;
+	}
+
+	*value = static_cast<INT64>(m_buffer[m_position]) | (static_cast<INT64>(m_buffer[m_position + 1]) << 8LL) |
+		(static_cast<INT64>(m_buffer[m_position + 2]) << 16LL) | (static_cast<INT64>(m_buffer[m_position + 3]) << 24LL) |
+		(static_cast<INT64>(m_buffer[m_position + 4]) << 32LL) | (static_cast<INT64>(m_buffer[m_position + 5]) << 40LL) |
+		(static_cast<INT64>(m_buffer[m_position + 6]) << 48LL) | (static_cast<INT64>(m_buffer[m_position + 7]) << 56LL);
+
+	m_position += sizeof(INT64);
+	return S_OK;
+}
+
+HRESULT TLMemoryBinaryReader::ReadObjectAndConstructor(UINT32 objectSize, UINT32* constructor, ITLObject** value)
 {
 	if (constructor == nullptr || value == nullptr)
 	{
@@ -325,8 +351,8 @@ HRESULT TLBinaryReader::ReadObjectAndConstructor(UINT32 objectSize, UINT32* cons
 		{
 			ReturnIfFailed(result, constructorDelegate->Invoke(&object));
 
-			ComPtr<TLBinaryReader> reader;
-			ReturnIfFailed(result, MakeAndInitialize<TLBinaryReader>(&reader, this, objectSize));
+			ComPtr<TLMemoryBinaryReader> reader;
+			ReturnIfFailed(result, MakeAndInitialize<TLMemoryBinaryReader>(&reader, this, objectSize));
 			ReturnIfFailed(result, object->Read(static_cast<ITLBinaryReaderEx*>(reader.Get())));
 		}
 		else
@@ -341,7 +367,7 @@ HRESULT TLBinaryReader::ReadObjectAndConstructor(UINT32 objectSize, UINT32* cons
 	}
 }
 
-HRESULT TLBinaryReader::ReadBigEndianInt32(INT32* value)
+HRESULT TLMemoryBinaryReader::ReadBigEndianInt32(INT32* value)
 {
 	if (value == nullptr)
 	{
@@ -360,21 +386,7 @@ HRESULT TLBinaryReader::ReadBigEndianInt32(INT32* value)
 	return S_OK;
 }
 
-HRESULT TLBinaryReader::ReadWString(std::wstring& string)
-{
-	HRESULT result;
-	UINT32 mbLength;
-	LPCCH mbString;
-	ReturnIfFailed(result, ReadBuffer2(reinterpret_cast<BYTE const**>(&mbString), &mbLength));
-
-	auto length = MultiByteToWideChar(CP_UTF8, 0, mbString, mbLength, nullptr, 0);
-	string.resize(length);
-
-	MultiByteToWideChar(CP_UTF8, 0, mbString, mbLength, &string[0], length);
-	return S_OK;
-}
-
-HRESULT TLBinaryReader::ReadRawBuffer(UINT32 __valueSize, BYTE* value)
+HRESULT TLMemoryBinaryReader::ReadRawBuffer(UINT32 __valueSize, BYTE* value)
 {
 	if (value == nullptr)
 	{
@@ -392,23 +404,13 @@ HRESULT TLBinaryReader::ReadRawBuffer(UINT32 __valueSize, BYTE* value)
 	return S_OK;
 }
 
-HRESULT TLBinaryReader::ReadBuffer(BYTE* buffer, UINT32 length)
+HRESULT TLMemoryBinaryReader::Reset()
 {
-	HRESULT result;
-	UINT32 sourceLength;
-	BYTE const* sourceBuffer;
-	ReturnIfFailed(result, ReadBuffer2(&sourceBuffer, &sourceLength));
-
-	CopyMemory(buffer, sourceBuffer, min(length, sourceLength));
+	m_position = 0;
 	return S_OK;
 }
 
-void TLBinaryReader::Reset()
-{
-	m_position = 0;
-}
-
-HRESULT TLBinaryReader::ReadBuffer2(BYTE const** buffer, UINT32* length)
+HRESULT TLMemoryBinaryReader::ReadBuffer2(BYTE const** buffer, UINT32* length)
 {
 	if (m_position + 1 > m_capacity)
 	{
@@ -425,7 +427,7 @@ HRESULT TLBinaryReader::ReadBuffer2(BYTE const** buffer, UINT32* length)
 			return E_NOT_SUFFICIENT_BUFFER;
 		}
 
-		l = m_buffer[m_position] | (m_buffer[m_position + 1] << 8) | (m_buffer[m_position + 2] << 16);
+		l = static_cast<UINT32>(m_buffer[m_position]) | (static_cast<UINT32>(m_buffer[m_position + 1]) << 8) | (static_cast<UINT32>(m_buffer[m_position + 2]) << 16);
 		sl = 4;
 
 		m_position += 3;
@@ -449,7 +451,7 @@ HRESULT TLBinaryReader::ReadBuffer2(BYTE const** buffer, UINT32* length)
 	return S_OK;
 }
 
-HRESULT TLBinaryReader::ReadRawBuffer2(BYTE const** buffer, UINT32 length)
+HRESULT TLMemoryBinaryReader::ReadRawBuffer2(BYTE const** buffer, UINT32 length)
 {
 	if (m_position + length > m_capacity)
 	{
@@ -462,7 +464,7 @@ HRESULT TLBinaryReader::ReadRawBuffer2(BYTE const** buffer, UINT32 length)
 	return S_OK;
 }
 
-HRESULT TLBinaryReader::SeekCurrent(INT32 bytes)
+HRESULT TLMemoryBinaryReader::SeekCurrent(INT32 bytes)
 {
 	if (m_position + bytes > m_capacity)
 	{
@@ -470,5 +472,261 @@ HRESULT TLBinaryReader::SeekCurrent(INT32 bytes)
 	}
 
 	m_position += bytes;
+	return S_OK;
+}
+
+
+HRESULT TLFileBinaryReader::RuntimeClassInitialize(LPCWSTR fileName, DWORD creationDisposition)
+{
+	m_file.Attach(CreateFile2(fileName, GENERIC_READ, NULL, creationDisposition, nullptr));
+	if (!m_file.IsValid())
+	{
+		return GetLastHRESULT();
+	}
+
+	return S_OK;
+}
+
+HRESULT TLFileBinaryReader::get_Position(UINT32* value)
+{
+	LARGE_INTEGER position;
+	if (!SetFilePointerEx(m_file.Get(), { 0 }, &position, FILE_CURRENT))
+	{
+		return GetLastHRESULT();
+	}
+
+	*value = position.LowPart;
+	return S_OK;
+}
+
+HRESULT TLFileBinaryReader::put_Position(UINT32 value)
+{
+	if (!SetFilePointerEx(m_file.Get(), { value }, nullptr, FILE_BEGIN))
+	{
+		return GetLastHRESULT();
+	}
+
+	return S_OK;
+}
+
+HRESULT TLFileBinaryReader::get_UnconsumedBufferLength(UINT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	LARGE_INTEGER position;
+	if (!SetFilePointerEx(m_file.Get(), { 0 }, &position, FILE_CURRENT))
+	{
+		return GetLastHRESULT();
+	}
+
+	LARGE_INTEGER fileSize;
+	if (!GetFileSizeEx(m_file.Get(), &fileSize))
+	{
+		return GetLastHRESULT();
+	}
+
+	*value = static_cast<UINT32>(fileSize.QuadPart - position.QuadPart);
+	return S_OK;
+}
+
+HRESULT TLFileBinaryReader::ReadByte(BYTE* value)
+{
+	return ReadRawBuffer(sizeof(BYTE), value);
+}
+
+HRESULT TLFileBinaryReader::ReadInt16(INT16* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	HRESULT result;
+	BYTE buffer[sizeof(INT16)];
+	ReturnIfFailed(result, ReadRawBuffer(sizeof(INT16), buffer));
+
+	*value = static_cast<INT16>(buffer[0]) | (static_cast<INT16>(buffer[1]) << 8);
+	return S_OK;
+}
+
+HRESULT TLFileBinaryReader::ReadInt32(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	HRESULT result;
+	BYTE buffer[sizeof(INT32)];
+	ReturnIfFailed(result, ReadRawBuffer(sizeof(INT32), buffer));
+
+	*value = static_cast<INT32>(buffer[0]) | (static_cast<INT32>(buffer[1]) << 8) |
+		(static_cast<INT32>(buffer[2]) << 16) | (static_cast<INT32>(buffer[3]) << 24);
+	return S_OK;
+}
+
+HRESULT TLFileBinaryReader::ReadInt64(INT64* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	HRESULT result;
+	BYTE buffer[sizeof(INT64)];
+	ReturnIfFailed(result, ReadRawBuffer(sizeof(INT64), buffer));
+
+	*value = static_cast<INT64>(buffer[0]) | (static_cast<INT64>(buffer[1]) << 8LL) |
+		(static_cast<INT64>(buffer[2]) << 16LL) | (static_cast<INT64>(buffer[3]) << 24LL) |
+		(static_cast<INT64>(buffer[4]) << 32LL) | (static_cast<INT64>(buffer[5]) << 40LL) |
+		(static_cast<INT64>(buffer[6]) << 48LL) | (static_cast<INT64>(buffer[7]) << 56LL);
+	return S_OK;
+}
+
+HRESULT TLFileBinaryReader::ReadObjectAndConstructor(UINT32 objectSize, UINT32* constructor, ITLObject** value)
+{
+	if (constructor == nullptr || value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	HRESULT result;
+	ReturnIfFailed(result, ReadUInt32(constructor));
+
+	objectSize -= sizeof(UINT32);
+
+	if (*constructor == 0x56730BCC)
+	{
+		*value = nullptr;
+		return S_OK;
+	}
+	else
+	{
+		ComPtr<MappedFileBuffer> buffer;
+		ReturnIfFailed(result, MakeAndInitialize<MappedFileBuffer>(&buffer, m_file.Get(), objectSize));
+
+		ComPtr<TLMemoryBinaryReader> reader;
+		ReturnIfFailed(result, MakeAndInitialize<TLMemoryBinaryReader>(&reader, buffer.Get()));
+
+		ComPtr<ITLObject> object;
+		ComPtr<ITLObjectConstructorDelegate> constructorDelegate;
+		if (SUCCEEDED(result = TLObject::GetObjectConstructor(*constructor, constructorDelegate)))
+		{
+			ReturnIfFailed(result, constructorDelegate->Invoke(&object));
+			ReturnIfFailed(result, object->Read(static_cast<ITLBinaryReaderEx*>(reader.Get())));
+		}
+		else
+		{
+			ReturnIfFailed(result, MakeAndInitialize<TLUnparsedObject>(&object, *constructor, objectSize, reader.Get()));
+		}
+
+		if (!SetFilePointerEx(m_file.Get(), { objectSize }, nullptr, FILE_CURRENT))
+		{
+			return GetLastHRESULT();
+		}
+
+		*value = object.Detach();
+		return S_OK;
+	}
+}
+
+HRESULT TLFileBinaryReader::ReadBigEndianInt32(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	HRESULT result;
+	BYTE buffer[sizeof(INT32)];
+	ReturnIfFailed(result, ReadRawBuffer(sizeof(INT32), buffer));
+
+	*value = (static_cast<INT32>(buffer[0]) << 24) | (static_cast<INT32>(buffer[1]) << 16) |
+		(static_cast<INT32>(buffer[2]) << 8) | static_cast<INT32>(buffer[3]);
+	return S_OK;
+}
+
+HRESULT TLFileBinaryReader::ReadRawBuffer(UINT32 __valueSize, BYTE* value)
+{
+	DWORD bytesRead;
+	if (!ReadFile(m_file.Get(), value, __valueSize, &bytesRead, nullptr))
+	{
+		return GetLastHRESULT();
+	}
+
+	if (bytesRead < __valueSize)
+	{
+		return E_BOUNDS;
+	}
+
+	return S_OK;
+}
+
+HRESULT TLFileBinaryReader::Reset()
+{
+	if (!SetFilePointerEx(m_file.Get(), { 0 }, nullptr, FILE_BEGIN))
+	{
+		return GetLastHRESULT();
+	}
+
+	m_buffer.clear();
+	return S_OK;
+}
+
+HRESULT TLFileBinaryReader::ReadBuffer2(BYTE const** buffer, UINT32* length)
+{
+	HRESULT result;
+	BYTE lb;
+	ReturnIfFailed(result, ReadByte(&lb));
+
+	UINT32 sl = 1;
+	UINT32 l = lb;
+
+	if (l > 253)
+	{
+		BYTE sizeBuffer[3];
+		ReturnIfFailed(result, ReadRawBuffer(3, sizeBuffer));
+
+		l = static_cast<UINT32>(sizeBuffer[0]) | (static_cast<UINT32>(sizeBuffer[1]) << 8) | (static_cast<UINT32>(sizeBuffer[2]) << 16);
+		sl = 4;
+	}
+
+	UINT32 padding = (l + sl) % 4;
+	if (padding != 0)
+	{
+		padding = 4 - padding;
+	}
+
+	if (m_buffer.size() < l)
+	{
+		m_buffer.resize(l);
+	}
+
+	ReturnIfFailed(result, ReadRawBuffer(l, m_buffer.data()));
+
+	if (!SetFilePointerEx(m_file.Get(), { padding }, nullptr, FILE_CURRENT))
+	{
+		return GetLastHRESULT();
+	}
+
+	*length = l;
+	*buffer = m_buffer.data();
+	return S_OK;
+}
+
+HRESULT TLFileBinaryReader::ReadRawBuffer2(BYTE const** buffer, UINT32 length)
+{
+	if (m_buffer.size() < length)
+	{
+		m_buffer.resize(length);
+	}
+
+	HRESULT result;
+	ReturnIfFailed(result, ReadRawBuffer(length, m_buffer.data()));
+
+	*buffer = m_buffer.data();
 	return S_OK;
 }

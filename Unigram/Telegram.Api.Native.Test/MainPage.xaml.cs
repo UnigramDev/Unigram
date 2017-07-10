@@ -43,8 +43,15 @@ namespace Telegram.Api.Native.Test
             connectionManager.CurrentNetworkTypeChanged += Instance_CurrentNetworkTypeChanged;
             connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
             connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;
+            connectionManager.AuthenticationRequested += ConnectionManager_AuthenticationRequested;
+
 
             TLTestObject.Register();
+        }
+
+        private void ConnectionManager_AuthenticationRequested(ConnectionManager sender, object args)
+        {
+
         }
 
         private void ConnectionManager_ConnectionStateChanged(ConnectionManager sender, object args)
@@ -73,7 +80,7 @@ namespace Telegram.Api.Native.Test
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            ConnectionManager.Instance.BoomBaby(null, out var xxx);
+            ConnectionManager.Instance.BoomBaby();
 
             //ConnectionManager.Instance.SendRequest(new TLHelpInviteText(), (message5, ex5) =>
             //{
@@ -133,7 +140,7 @@ namespace Telegram.Api.Native.Test
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            ConnectionManager.Instance.BoomBaby(null, out ITLObject xxx);
+            ConnectionManager.Instance.BoomBaby();
         }
 
         private void Button_Click_4(object sender, RoutedEventArgs e)

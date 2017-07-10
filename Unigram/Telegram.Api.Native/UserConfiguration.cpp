@@ -4,13 +4,13 @@
 #include <windows.system.userprofile.h>
 #include <Windows.ApplicationModel.h>
 #include <Windows.Security.ExchangeActiveSyncProvisioning.h>
-#include "DefaultUserConfiguration.h"
+#include "UserConfiguration.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
 
 
-HRESULT DefaultUserConfiguration::RuntimeClassInitialize()
+HRESULT UserConfiguration::RuntimeClassInitialize()
 {
 	HRESULT result;
 	ComPtr<ABI::Windows::System::Profile::IAnalyticsInfoStatics> analiticsInfo;
@@ -61,27 +61,27 @@ HRESULT DefaultUserConfiguration::RuntimeClassInitialize()
 	return S_OK;
 }
 
-HRESULT DefaultUserConfiguration::get_DeviceModel(HSTRING* value)
+HRESULT UserConfiguration::get_DeviceModel(HSTRING* value)
 {
 	return m_deviceModel.CopyTo(value);
 }
 
-HRESULT DefaultUserConfiguration::get_SystemVersion(HSTRING* value)
+HRESULT UserConfiguration::get_SystemVersion(HSTRING* value)
 {
 	return m_systemVersion.CopyTo(value);
 }
 
-HRESULT DefaultUserConfiguration::get_AppVersion(HSTRING* value)
+HRESULT UserConfiguration::get_AppVersion(HSTRING* value)
 {
 	return m_appVersion.CopyTo(value);
 }
 
-HRESULT DefaultUserConfiguration::get_Language(HSTRING* value)
+HRESULT UserConfiguration::get_Language(HSTRING* value)
 {
 	return m_language.CopyTo(value);
 }
 
-HRESULT DefaultUserConfiguration::FormatVersion(UINT64 major, UINT64 minor, UINT64 build, UINT64 revision, HString& version)
+HRESULT UserConfiguration::FormatVersion(UINT64 major, UINT64 minor, UINT64 build, UINT64 revision, HString& version)
 {
 	WCHAR versionBuffer[100];
 	auto length = swprintf_s(versionBuffer, L"%I64u.%I64u.%I64u.%I64u", major, minor, build, revision);
