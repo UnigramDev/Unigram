@@ -215,7 +215,7 @@ namespace Telegram
 					IFACEMETHODIMP get_RatingEDecay(_Out_ INT32* value);
 					IFACEMETHODIMP get_StickersRecentLimit(_Out_ INT32* value);
 					IFACEMETHODIMP get_TmpSessions(_Out_ __FIReference_1_int** value);
-					IFACEMETHODIMP get_pinnedDialogsCountMax(_Out_ INT32* value);
+					IFACEMETHODIMP get_PinnedDialogsCountMax(_Out_ INT32* value);
 					IFACEMETHODIMP get_CallReceiveTimeoutMs(_Out_ INT32* value);
 					IFACEMETHODIMP get_CallRingTimeoutMs(_Out_ INT32* value);
 					IFACEMETHODIMP get_CallConnectTimeoutMs(_Out_ INT32* value);
