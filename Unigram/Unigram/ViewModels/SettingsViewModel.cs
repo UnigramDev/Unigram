@@ -147,7 +147,7 @@ namespace Unigram.ViewModels
 
                 SettingsHelper.IsAuthorized = false;
                 SettingsHelper.UserId = 0;
-                ProtoService.ClearQueue();
+                //ProtoService.ClearQueue();
                 _updatesService.ClearState();
                 _stickersService.Cleanup();
                 CacheService.ClearAsync();

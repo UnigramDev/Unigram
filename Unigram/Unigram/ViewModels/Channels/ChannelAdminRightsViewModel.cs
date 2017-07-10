@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -24,69 +25,69 @@ namespace Unigram.ViewModels.Channels
             var buffer = parameter as byte[];
             if (buffer != null)
             {
-                using (var from = new TLBinaryReader(buffer))
-                {
-                    var tuple = new TLTuple<TLPeerChannel, TLChannelParticipantBase>(from);
-                    if (tuple.Item2 is TLChannelParticipant participant)
-                    {
-                        IsAdminAlready = false;
+                //using (var from = new TLBinaryReader(buffer))
+                //{
+                //    var tuple = new TLTuple<TLPeerChannel, TLChannelParticipantBase>(from);
+                //    if (tuple.Item2 is TLChannelParticipant participant)
+                //    {
+                //        IsAdminAlready = false;
 
-                        tuple.Item2 = new TLChannelParticipantAdmin
-                        {
-                            UserId = participant.UserId,
-                            Date = participant.Date,
-                            IsCanEdit = true,
-                            AdminRights = new TLChannelAdminRights
-                            {
-                                IsChangeInfo = true,
-                                IsPinMessages = true,
-                                IsInviteLink = true,
-                                IsInviteUsers = true,
-                                IsBanUsers = true,
-                                IsDeleteMessages = true,
-                                IsEditMessages = true,
-                                IsPostMessages = true,
-                                IsAddAdmins  = false
-                            }
-                        };
-                    }
-                    else if (tuple.Item2 is TLChannelParticipantBanned banned)
-                    {
-                        IsAdminAlready = false;
+                //        tuple.Item2 = new TLChannelParticipantAdmin
+                //        {
+                //            UserId = participant.UserId,
+                //            Date = participant.Date,
+                //            IsCanEdit = true,
+                //            AdminRights = new TLChannelAdminRights
+                //            {
+                //                IsChangeInfo = true,
+                //                IsPinMessages = true,
+                //                IsInviteLink = true,
+                //                IsInviteUsers = true,
+                //                IsBanUsers = true,
+                //                IsDeleteMessages = true,
+                //                IsEditMessages = true,
+                //                IsPostMessages = true,
+                //                IsAddAdmins  = false
+                //            }
+                //        };
+                //    }
+                //    else if (tuple.Item2 is TLChannelParticipantBanned banned)
+                //    {
+                //        IsAdminAlready = false;
 
-                        tuple.Item2 = new TLChannelParticipantAdmin
-                        {
-                            UserId = banned.UserId,
-                            Date = banned.Date,
-                            IsCanEdit = true,
-                            AdminRights = new TLChannelAdminRights
-                            {
-                                IsChangeInfo = true,
-                                IsPinMessages = true,
-                                IsInviteLink = true,
-                                IsInviteUsers = true,
-                                IsBanUsers = true,
-                                IsDeleteMessages = true,
-                                IsEditMessages = true,
-                                IsPostMessages = true,
-                                IsAddAdmins = false
-                            }
-                        };
-                    }
+                //        tuple.Item2 = new TLChannelParticipantAdmin
+                //        {
+                //            UserId = banned.UserId,
+                //            Date = banned.Date,
+                //            IsCanEdit = true,
+                //            AdminRights = new TLChannelAdminRights
+                //            {
+                //                IsChangeInfo = true,
+                //                IsPinMessages = true,
+                //                IsInviteLink = true,
+                //                IsInviteUsers = true,
+                //                IsBanUsers = true,
+                //                IsDeleteMessages = true,
+                //                IsEditMessages = true,
+                //                IsPostMessages = true,
+                //                IsAddAdmins = false
+                //            }
+                //        };
+                //    }
 
-                    Channel = CacheService.GetChat(tuple.Item1.ChannelId) as TLChannel;
-                    Item = tuple.Item2 as TLChannelParticipantAdmin;
+                //    Channel = CacheService.GetChat(tuple.Item1.ChannelId) as TLChannel;
+                //    Item = tuple.Item2 as TLChannelParticipantAdmin;
 
-                    IsAddAdmins = _item.AdminRights.IsAddAdmins;
-                    IsPinMessages = _item.AdminRights.IsPinMessages;
-                    IsInviteLink = _item.AdminRights.IsInviteLink;
-                    IsInviteUsers = _item.AdminRights.IsInviteUsers;
-                    IsBanUsers = _item.AdminRights.IsBanUsers;
-                    IsDeleteMessages = _item.AdminRights.IsDeleteMessages;
-                    IsEditMessages = _item.AdminRights.IsEditMessages;
-                    IsPostMessages = _item.AdminRights.IsPostMessages;
-                    IsChangeInfo = _item.AdminRights.IsChangeInfo;
-                }
+                //    IsAddAdmins = _item.AdminRights.IsAddAdmins;
+                //    IsPinMessages = _item.AdminRights.IsPinMessages;
+                //    IsInviteLink = _item.AdminRights.IsInviteLink;
+                //    IsInviteUsers = _item.AdminRights.IsInviteUsers;
+                //    IsBanUsers = _item.AdminRights.IsBanUsers;
+                //    IsDeleteMessages = _item.AdminRights.IsDeleteMessages;
+                //    IsEditMessages = _item.AdminRights.IsEditMessages;
+                //    IsPostMessages = _item.AdminRights.IsPostMessages;
+                //    IsChangeInfo = _item.AdminRights.IsChangeInfo;
+                //}
             }
 
             return Task.CompletedTask;

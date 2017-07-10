@@ -14,6 +14,7 @@ using Telegram.Api.TL.Methods;
 using Telegram.Api.TL.Help.Methods;
 using Telegram.Api.TL.Messages.Methods;
 using Telegram.Api.TL.Messages;
+using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.Services
 {
@@ -1633,64 +1634,6 @@ namespace Telegram.Api.Services
                     callback?.Invoke(result);
                 },
                 faultCallback);
-        }
-
-        public void SendActionsAsync(List<TLObject> actions, Action<TLObject, object> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var container = new TLMsgContainer { Messages = new List<TLContainerTransportMessage>() };
-            var historyItems = new List<HistoryItem>();
-            for (var i = 0; i < actions.Count; i++)
-            {
-                var obj = actions[i];
-                int sequenceNumber;
-                long messageId;
-                lock (_activeTransportRoot)
-                {
-                    sequenceNumber = _activeTransport.SequenceNumber * 2 + 1;
-                    _activeTransport.SequenceNumber++;
-                    messageId = _activeTransport.GenerateMessageId(true);
-                }
-
-                var data = i > 0 ? new TLInvokeAfterMsg { MsgId = container.Messages[i - 1].MsgId, Query = obj } : obj;
-                var invokeWithoutUpdates = new TLInvokeWithoutUpdates { Query = data };
-
-                var transportMessage = new TLContainerTransportMessage
-                {
-                    MsgId = messageId,
-                    SeqNo = sequenceNumber,
-                    Query = invokeWithoutUpdates
-                };
-
-                var historyItem = new HistoryItem
-                {
-                    SendTime = DateTime.Now,
-                    Caption = "messages.containerPart" + i,
-                    Object = obj,
-                    Message = transportMessage,
-                    Callback = result => callback(obj, result),
-                    AttemptFailed = null,
-                    FaultCallback = faultCallback,
-                    ClientTicksDelta = ClientTicksDelta,
-                    Status = RequestStatus.Sent,
-                };
-                historyItems.Add(historyItem);
-
-                container.Messages.Add(transportMessage);
-            }
-
-
-            lock (_historyRoot)
-            {
-                foreach (var historyItem in historyItems)
-                {
-                    _history[historyItem.Hash] = historyItem;
-                }
-            }
-#if DEBUG
-            RaisePropertyChanged(() => History);
-#endif
-
-            SendNonInformativeMessage<TLObject>("messages.container", container, result => callback(null, result), faultCallback);
         }
 
         public void ToggleChatAdminsAsync(int chatId, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)

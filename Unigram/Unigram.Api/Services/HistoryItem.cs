@@ -1,4 +1,5 @@
 ﻿using System;
+using Telegram.Api.Native.TL;
 using Telegram.Api.TL;
 
 namespace Telegram.Api.Services
@@ -13,8 +14,8 @@ namespace Telegram.Api.Services
 
     public class HistoryItem
     {
-        public long Hash { get { return Message != null ? Message.MsgId : 0; } }
-        public TLTransportMessageBase Message { get; set; }
+        //public long Hash { get { return Message != null ? Message.MsgId : 0; } }
+        //public TLTransportMessageBase Message { get; set; }
         public TLObject Object { get; set; }
         public string Caption { get; set; }
         public DateTime SendTime { get; set; }

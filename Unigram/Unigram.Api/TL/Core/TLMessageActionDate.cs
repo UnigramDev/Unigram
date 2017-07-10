@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.TL
 {
@@ -27,8 +28,8 @@ namespace Telegram.Api.TL
 
         public override void Write(TLBinaryWriter to)
         {
-            to.Write(0xFFFFFF10);
-            to.Write(Date);
+            to.WriteUInt32(0xFFFFFF10);
+            to.WriteInt32(Date);
         }
     }
 }

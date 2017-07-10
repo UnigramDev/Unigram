@@ -34,26 +34,26 @@ namespace Unigram.ViewModels.Payments
             var buffer = parameter as byte[];
             if (buffer != null)
             {
-                using (var from = new TLBinaryReader(buffer))
-                {
-                    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
+                //using (var from = new TLBinaryReader(buffer))
+                //{
+                //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
 
-                    Message = tuple.Item1;
-                    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                    PaymentForm = tuple.Item2;
+                //    Message = tuple.Item1;
+                //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+                //    PaymentForm = tuple.Item2;
 
-                    // TODO: real hint
-                    PasswordHint = "Password";
+                //    // TODO: real hint
+                //    PasswordHint = "Password";
 
-                    if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
-                    {
-                        CredentialsTitle = savedCard.Title;
-                    }
+                //    if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
+                //    {
+                //        CredentialsTitle = savedCard.Title;
+                //    }
 
-                    _info = tuple.Item3;
-                    _requestedInfo = tuple.Item4;
-                    _shipping = tuple.Item5;
-                }
+                //    _info = tuple.Item3;
+                //    _requestedInfo = tuple.Item4;
+                //    _shipping = tuple.Item5;
+                //}
             }
 
             return Task.CompletedTask;

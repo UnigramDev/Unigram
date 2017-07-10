@@ -180,7 +180,6 @@
     <Compile Include="TL\Auth\TLAuthCodeTypeCall.cs" />
     <Compile Include="TL\Auth\TLAuthCodeTypeFlashCall.cs" />
     <Compile Include="TL\Auth\TLAuthCodeTypeSms.cs" />
-    <Compile Include="TL\Auth\TLAuthExportedAuthorization.cs" />
     <Compile Include="TL\Auth\TLAuthPasswordRecovery.cs" />
     <Compile Include="TL\Auth\TLAuthSentCode.cs" />
     <Compile Include="TL\Auth\TLAuthSentCodeTypeApp.cs" />
@@ -281,11 +280,11 @@
     <Compile Include="TL\LangPack\Methods\TLLangPackGetLangPack.cs" />
     <Compile Include="TL\LangPack\Methods\TLLangPackGetLanguages.cs" />
     <Compile Include="TL\LangPack\Methods\TLLangPackGetStrings.cs" />
-    <Compile Include="TL\Local\TLMessageActionAdminLogEvent.cs" />
-    <Compile Include="TL\Local\TLMessageActionBotInfo.cs" />
-    <Compile Include="TL\Local\TLPhoneCallState.cs" />
-    <Compile Include="TL\Local\TLMessageActionDate.cs" />
-    <Compile Include="TL\Local\TLMessagesContainer.cs" />
+    <Compile Include="TL\Core\TLMessageActionAdminLogEvent.cs" />
+    <Compile Include="TL\Core\TLMessageActionBotInfo.cs" />
+    <Compile Include="TL\Core\TLPhoneCallState.cs" />
+    <Compile Include="TL\Core\TLMessageActionDate.cs" />
+    <Compile Include="TL\Core\TLMessagesContainer.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesAcceptEncryption.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesAddChatUser.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesCheckChatInvite.cs" />
@@ -417,20 +416,11 @@
     <Compile Include="TL\Messages\TLMessagesStickerSetInstallResultBase.cs" />
     <Compile Include="TL\Messages\TLMessagesStickerSetInstallResultSuccess.cs" />
     <Compile Include="TL\Messages\TLMessagesStickersNotModified.cs" />
-    <Compile Include="TL\Methods\TLDestroyAuthKey.cs" />
-    <Compile Include="TL\Methods\TLDestroySession.cs" />
-    <Compile Include="TL\Methods\TLGetFutureSalts.cs" />
     <Compile Include="TL\Methods\TLInitConnection.cs" />
     <Compile Include="TL\Methods\TLInvokeAfterMsg.cs" />
     <Compile Include="TL\Methods\TLInvokeAfterMsgs.cs" />
     <Compile Include="TL\Methods\TLInvokeWithLayer.cs" />
     <Compile Include="TL\Methods\TLInvokeWithoutUpdates.cs" />
-    <Compile Include="TL\Methods\TLPing.cs" />
-    <Compile Include="TL\Methods\TLPingDelayDisconnect.cs" />
-    <Compile Include="TL\Methods\TLReqDHParams.cs" />
-    <Compile Include="TL\Methods\TLReqPQ.cs" />
-    <Compile Include="TL\Methods\TLRPCDropAnswer.cs" />
-    <Compile Include="TL\Methods\TLSetClientDHParams.cs" />
     <Compile Include="TL\Partial\TLAuthorization.Partial.cs" />
     <Compile Include="TL\Partial\TLBotInlineResultBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelAdminLogEvent.Partial.cs" />
@@ -451,10 +441,8 @@
     <Compile Include="TL\Partial\TLChat.Partial.cs" />
     <Compile Include="TL\Partial\TLChatPhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLChatPhotoBase.Partial.cs" />
-    <Compile Include="TL\Partial\TLConfig.Partial.cs" />
     <Compile Include="TL\Partial\TLContactsContactsBase.Partial.cs" />
     <Compile Include="TL\Partial\TLContactsImportedContacts.Partial.cs" />
-    <Compile Include="TL\Partial\TLDCOption.Partial.cs" />
     <Compile Include="TL\Partial\TLDialog.Partial.cs" />
     <Compile Include="TL\Partial\TLDocument.Partial.cs" />
     <Compile Include="TL\Partial\TLFileLocation.Partial.cs" />
@@ -465,7 +453,6 @@
     <Compile Include="TL\Partial\TLPhoneConnection.Partial.cs" />
     <Compile Include="TL\Partial\TLPhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLPhotoBase.Partial.cs" />
-    <Compile Include="TL\Partial\TLRPCError.Partial.cs" />
     <Compile Include="TL\Partial\TLStickerSet.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdateBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdatesBase.Partial.cs" />
@@ -506,12 +493,10 @@
     <Compile Include="Services\MTProtoService.DHKeyExchange.cs" />
     <Compile Include="Services\MTProtoService.Help.cs" />
     <Compile Include="Services\MTProtoService.Helpers.cs" />
-    <Compile Include="Services\MTProtoService.HttpLongPoll.cs" />
     <Compile Include="Services\MTProtoService.Messages.cs" />
     <Compile Include="Services\MTProtoService.Photos.cs" />
     <Compile Include="Services\MTProtoService.SecretChats.cs" />
     <Compile Include="Services\MTProtoService.SendingQueue.cs" />
-    <Compile Include="Services\MTProtoService.Stuff.cs" />
     <Compile Include="Services\MTProtoService.Updates.cs" />
     <Compile Include="Services\MTProtoService.Upload.cs" />
     <Compile Include="Services\MTProtoService.Users.cs" />
@@ -521,25 +506,12 @@
     <Compile Include="Services\Updates\UpdatesBySeqComparer.cs" />
     <Compile Include="Services\Updates\UpdatesService.cs" />
     <Compile Include="TL\Core\ITLMultiPts.cs" />
-    <Compile Include="TL\Core\TLBinaryReader.cs" />
-    <Compile Include="TL\Core\TLBinaryWriter.cs" />
-    <Compile Include="TL\Core\TLContainerTransportMessage.cs" />
-    <Compile Include="TL\Core\TLEncryptedTransportMessage.cs" />
     <Compile Include="TL\Core\TLErrorCode.cs" />
     <Compile Include="TL\Core\TLErrorType.cs" />
     <Compile Include="TL\Core\TLFactory.Base.cs" />
-    <Compile Include="TL\Core\TLGzipPacked.cs" />
-    <Compile Include="TL\Core\TLInt128.cs" />
-    <Compile Include="TL\Core\TLInt256.cs" />
     <Compile Include="TL\Core\TLLong.cs" />
-    <Compile Include="TL\Core\TLMsgContainer.cs" />
     <Compile Include="TL\Core\TLMessageState.cs" />
-    <Compile Include="TL\Core\TLNonEncryptedTransportMessage.cs" />
     <Compile Include="TL\Core\TLObject.cs" />
-    <Compile Include="TL\Core\TLRPCReqError.cs" />
-    <Compile Include="TL\Core\TLRPCResult.cs" />
-    <Compile Include="TL\Core\TLTransportMessage.cs" />
-    <Compile Include="TL\Core\TLTransportMessageBase.cs" />
     <Compile Include="TL\Core\TLUtils.cs" />
     <Compile Include="TL\Core\TLUtils.Log.cs" />
     <Compile Include="TL\Core\TLVector.cs" />
@@ -598,9 +570,6 @@
     <Compile Include="TL\Storage\TLStorageFileWebp.cs" />
     <Compile Include="TL\TLAccountDaysTTL.cs" />
     <Compile Include="TL\TLAuthorization.cs" />
-    <Compile Include="TL\TLBadMsgNotification.cs" />
-    <Compile Include="TL\TLBadMsgNotificationBase.cs" />
-    <Compile Include="TL\TLBadServerSalt.cs" />
     <Compile Include="TL\TLBotCommand.cs" />
     <Compile Include="TL\TLBotInfo.cs" />
     <Compile Include="TL\TLBotInlineMediaResult.cs" />
@@ -612,8 +581,6 @@
     <Compile Include="TL\TLBotInlineMessageText.cs" />
     <Compile Include="TL\TLBotInlineResult.cs" />
     <Compile Include="TL\TLBotInlineResultBase.cs" />
-    <Compile Include="TL\TLCdnConfig.cs" />
-    <Compile Include="TL\TLCdnPublicKey.cs" />
     <Compile Include="TL\TLChannel.cs" />
     <Compile Include="TL\TLChannelAdminLogEvent.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionBase.cs" />
@@ -673,8 +640,6 @@
     <Compile Include="TL\TLChatPhoto.cs" />
     <Compile Include="TL\TLChatPhotoBase.cs" />
     <Compile Include="TL\TLChatPhotoEmpty.cs" />
-    <Compile Include="TL\TLClientDHInnerData.cs" />
-    <Compile Include="TL\TLConfig.cs" />
     <Compile Include="TL\TLContact.cs" />
     <Compile Include="TL\TLContactBlocked.cs" />
     <Compile Include="TL\TLContactLinkBase.cs" />
@@ -684,19 +649,7 @@
     <Compile Include="TL\TLContactLinkUnknown.cs" />
     <Compile Include="TL\TLContactStatus.cs" />
     <Compile Include="TL\TLDataJSON.cs" />
-    <Compile Include="TL\TLDCOption.cs" />
-    <Compile Include="TL\TLDestroyAuthKeyFail.cs" />
-    <Compile Include="TL\TLDestroyAuthKeyNone.cs" />
-    <Compile Include="TL\TLDestroyAuthKeyOk.cs" />
-    <Compile Include="TL\TLDestroyAuthKeyResBase.cs" />
-    <Compile Include="TL\TLDestroySessionNone.cs" />
-    <Compile Include="TL\TLDestroySessionOk.cs" />
-    <Compile Include="TL\TLDestroySessionResBase.cs" />
-    <Compile Include="TL\TLDHGenFail.cs" />
-    <Compile Include="TL\TLDHGenOk.cs" />
-    <Compile Include="TL\TLDHGenRetry.cs" />
     <Compile Include="TL\TLDialog.cs" />
-    <Compile Include="TL\TLDisabledFeature.cs" />
     <Compile Include="TL\TLDocument.cs" />
     <Compile Include="TL\TLDocumentAttributeAnimated.cs" />
     <Compile Include="TL\TLDocumentAttributeAudio.cs" />
@@ -723,7 +676,6 @@
     <Compile Include="TL\TLEncryptedMessage.cs" />
     <Compile Include="TL\TLEncryptedMessageBase.cs" />
     <Compile Include="TL\TLEncryptedMessageService.cs" />
-    <Compile Include="TL\TLError.cs" />
     <Compile Include="TL\TLExportedChatInviteBase.cs" />
     <Compile Include="TL\TLExportedMessageLink.cs" />
     <Compile Include="TL\TLFactory.cs" />
@@ -733,14 +685,11 @@
     <Compile Include="TL\TLFoundGif.cs" />
     <Compile Include="TL\TLFoundGifBase.cs" />
     <Compile Include="TL\TLFoundGifCached.cs" />
-    <Compile Include="TL\TLFutureSalt.cs" />
-    <Compile Include="TL\TLFutureSalts.cs" />
     <Compile Include="TL\TLGame.cs" />
     <Compile Include="TL\TLGeoPoint.cs" />
     <Compile Include="TL\TLGeoPointBase.cs" />
     <Compile Include="TL\TLGeoPointEmpty.cs" />
     <Compile Include="TL\TLHighScore.cs" />
-    <Compile Include="TL\TLHttpWait.cs" />
     <Compile Include="TL\TLImportedContact.cs" />
     <Compile Include="TL\TLInlineBotSwitchPM.cs" />
     <Compile Include="TL\TLInputAppEvent.cs" />
@@ -938,17 +887,7 @@
     <Compile Include="TL\TLMessageRange.cs" />
     <Compile Include="TL\TLMessageService.cs" />
     <Compile Include="TL\TLMessagesFilterBase.cs" />
-    <Compile Include="TL\TLMsgDetailedInfo.cs" />
-    <Compile Include="TL\TLMsgDetailedInfoBase.cs" />
-    <Compile Include="TL\TLMsgNewDetailedInfo.cs" />
-    <Compile Include="TL\TLMsgResendReq.cs" />
-    <Compile Include="TL\TLMsgsAck.cs" />
-    <Compile Include="TL\TLMsgsAllInfo.cs" />
-    <Compile Include="TL\TLMsgsStateInfo.cs" />
-    <Compile Include="TL\TLMsgsStateReq.cs" />
     <Compile Include="TL\TLNearestDC.cs" />
-    <Compile Include="TL\TLNewSessionBase.cs" />
-    <Compile Include="TL\TLNewSessionCreated.cs" />
     <Compile Include="TL\TLNotifyAll.cs" />
     <Compile Include="TL\TLNotifyChats.cs" />
     <Compile Include="TL\TLNotifyPeer.cs" />
@@ -1017,9 +956,7 @@
     <Compile Include="TL\TLPhotoSize.cs" />
     <Compile Include="TL\TLPhotoSizeBase.cs" />
     <Compile Include="TL\TLPhotoSizeEmpty.cs" />
-    <Compile Include="TL\TLPong.cs" />
     <Compile Include="TL\TLPostAddress.cs" />
-    <Compile Include="TL\TLPQInnerData.cs" />
     <Compile Include="TL\TLPrivacyKeyBase.cs" />
     <Compile Include="TL\TLPrivacyKeyChatInvite.cs" />
     <Compile Include="TL\TLPrivacyKeyPhoneCall.cs" />
@@ -1038,13 +975,7 @@
     <Compile Include="TL\TLReplyKeyboardMarkup.cs" />
     <Compile Include="TL\TLReplyMarkupBase.cs" />
     <Compile Include="TL\TLReportReasonBase.cs" />
-    <Compile Include="TL\TLResPQ.cs" />
     <Compile Include="TL\TLRichTextBase.cs" />
-    <Compile Include="TL\TLRPCAnswerDropped.cs" />
-    <Compile Include="TL\TLRPCAnswerDroppedRunning.cs" />
-    <Compile Include="TL\TLRPCAnswerUnknown.cs" />
-    <Compile Include="TL\TLRPCDropAnswerBase.cs" />
-    <Compile Include="TL\TLRPCError.cs" />
     <Compile Include="TL\TLSendMessageActionBase.cs" />
     <Compile Include="TL\TLSendMessageCancelAction.cs" />
     <Compile Include="TL\TLSendMessageChooseContactAction.cs" />
@@ -1059,11 +990,6 @@
     <Compile Include="TL\TLSendMessageUploadPhotoAction.cs" />
     <Compile Include="TL\TLSendMessageUploadRoundAction.cs" />
     <Compile Include="TL\TLSendMessageUploadVideoAction.cs" />
-    <Compile Include="TL\TLServerDHInnerData.cs" />
-    <Compile Include="TL\TLServerDHParamsBase.cs" />
-    <Compile Include="TL\TLServerDHParamsFail.cs" />
-    <Compile Include="TL\TLServerDHParamsOk.cs" />
-    <Compile Include="TL\TLSetClientDHParamsAnswerBase.cs" />
     <Compile Include="TL\TLShippingOption.cs" />
     <Compile Include="TL\TLStickerPack.cs" />
     <Compile Include="TL\TLStickerSet.cs" />
@@ -1212,14 +1138,6 @@
     <Compile Include="TL\Upload\TLUploadWebFile.cs" />
     <Compile Include="TL\Users\Methods\TLUsersGetFullUser.cs" />
     <Compile Include="TL\Users\Methods\TLUsersGetUsers.cs" />
-    <Compile Include="Transport\DataEventArgs.cs" />
-    <Compile Include="Transport\ITransport.cs" />
-    <Compile Include="Transport\ITransportService.cs" />
-    <Compile Include="Transport\TcpTransport.cs" />
-    <Compile Include="Transport\TcpTransportBase.cs" />
-    <Compile Include="Transport\TcpTransportResult.cs" />
-    <Compile Include="Transport\TcpTransportWinRT.cs" />
-    <Compile Include="Transport\TransportService.cs" />
     <EmbeddedResource Include="Properties\Unigram.Api.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -1249,6 +1167,10 @@
     <ProjectReference Include="..\Libraries\libtgvoip\libtgvoip.UWP.vcxproj">
       <Project>{88803693-7606-484b-9d2f-4bb789d57c29}</Project>
       <Name>libtgvoip</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telegram.Api.Native\Telegram.Api.Native.vcxproj">
+      <Project>{6a7d27d0-36e8-4364-ac69-740b75ee653c}</Project>
+      <Name>Telegram.Api.Native</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

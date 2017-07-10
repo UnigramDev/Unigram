@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.TL
 {
@@ -57,8 +58,8 @@ namespace Telegram.Api.TL
         {
             var notNull = _items.Where(x => x != null).ToList();
 
-            to.Write(0x1CB5C415);
-            to.Write(notNull.Count());
+            to.WriteUInt32(0x1CB5C415);
+            to.WriteInt32(notNull.Count());
 
             foreach (var item in notNull)
             {

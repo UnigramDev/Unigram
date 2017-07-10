@@ -8,6 +8,8 @@ using Org.BouncyCastle.Math;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL.Messages.Methods;
+using Telegram.Api.Native.TL;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Telegram.Api.TL
 {
@@ -557,16 +559,21 @@ namespace Telegram.Api.TL
             {
                 lock (syncRoot)
                 {
-                    using (var fileStream = FileUtils.GetLocalFileStreamForRead(fileName))
-                    {
-                        if (fileStream.Length > 0)
-                        {
-                            using (var from = new TLBinaryReader(fileStream))
-                            {
-                                return TLFactory.Read<T>(from);
-                            }
-                        }
-                    }
+                    //using (var fileStream = FileUtils.GetLocalFileStreamForRead(fileName))
+                    //{
+                    //    if (fileStream.Length > 0)
+                    //    {
+                    //        using (var from = new TLBinaryReader(fileStream))
+                    //        {
+                    //            return TLFactory.Read<T>(from);
+                    //        }
+                    //    }
+                    //}
+
+                    var bytes = File.ReadAllBytes(FileUtils.GetTempFileName(fileName));
+                    var obj = TLObjectSerializer.Deserialize(bytes.AsBuffer());
+
+                    return (T)(object)obj;
                 }
             }
             catch (Exception e)
@@ -708,50 +715,50 @@ namespace Telegram.Api.TL
             return true;
         }
 
-        public static IEnumerable<T> FindInnerObjects<T>(TLTransportMessage obj)
-            where T : TLObject
-        {
-            var result = obj.Query as T;
-            if (result != null)
-            {
-                yield return (T)obj.Query;
-            }
-            else
-            {
-                var gzipData = obj.Query as TLGzipPacked;
-                if (gzipData != null)
-                {
-                    result = gzipData.Query as T;
-                    if (result != null)
-                    {
-                        yield return result;
-                    }
-                }
+        //public static IEnumerable<T> FindInnerObjects<T>(TLTransportMessage obj)
+        //    where T : TLObject
+        //{
+        //    var result = obj.Query as T;
+        //    if (result != null)
+        //    {
+        //        yield return (T)obj.Query;
+        //    }
+        //    else
+        //    {
+        //        var gzipData = obj.Query as TLGzipPacked;
+        //        if (gzipData != null)
+        //        {
+        //            result = gzipData.Query as T;
+        //            if (result != null)
+        //            {
+        //                yield return result;
+        //            }
+        //        }
 
-                var container = obj.Query as TLMsgContainer;
-                if (container != null)
-                {
-                    foreach (var message in container.Messages)
-                    {
-                        result = message.Query as T;
-                        if (result != null)
-                        {
-                            yield return (T)message.Query;
-                        }
+        //        var container = obj.Query as TLMsgContainer;
+        //        if (container != null)
+        //        {
+        //            foreach (var message in container.Messages)
+        //            {
+        //                result = message.Query as T;
+        //                if (result != null)
+        //                {
+        //                    yield return (T)message.Query;
+        //                }
 
-                        gzipData = message.Query as TLGzipPacked;
-                        if (gzipData != null)
-                        {
-                            result = gzipData.Query as T;
-                            if (result != null)
-                            {
-                                yield return result;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //                gzipData = message.Query as TLGzipPacked;
+        //                if (gzipData != null)
+        //                {
+        //                    result = gzipData.Query as T;
+        //                    if (result != null)
+        //                    {
+        //                        yield return result;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
         public static int InputPeerToId(TLInputPeerBase inputPeer, int? selfId)
         {

@@ -36,20 +36,20 @@ namespace Unigram.Views
             var buffer = TLSerializationService.Current.Deserialize((string)e.Parameter) as byte[];
             if (buffer != null)
             {
-                using (var from = new TLBinaryReader(buffer))
-                {
-                    var tuple = new TLTuple<string, string, string, TLMessage>(from);
+                //using (var from = new TLBinaryReader(buffer))
+                //{
+                //    var tuple = new TLTuple<string, string, string, TLMessage>(from);
 
-                    _shareMessage = tuple.Item4;
+                //    _shareMessage = tuple.Item4;
 
-                    TitleLabel.Text = tuple.Item1;
-                    UsernameLabel.Text = "@" + tuple.Item2;
+                //    TitleLabel.Text = tuple.Item1;
+                //    UsernameLabel.Text = "@" + tuple.Item2;
 
-                    TitleLabel.Visibility = string.IsNullOrWhiteSpace(tuple.Item1) ? Visibility.Collapsed : Visibility.Visible;
-                    UsernameLabel.Visibility = string.IsNullOrWhiteSpace(tuple.Item2) ? Visibility.Collapsed : Visibility.Visible;
+                //    TitleLabel.Visibility = string.IsNullOrWhiteSpace(tuple.Item1) ? Visibility.Collapsed : Visibility.Visible;
+                //    UsernameLabel.Visibility = string.IsNullOrWhiteSpace(tuple.Item2) ? Visibility.Collapsed : Visibility.Visible;
 
-                    View.Navigate(new Uri(tuple.Item3));
-                }
+                //    View.Navigate(new Uri(tuple.Item3));
+                //}
             }
         }
 

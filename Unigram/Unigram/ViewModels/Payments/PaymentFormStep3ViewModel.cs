@@ -37,46 +37,46 @@ namespace Unigram.ViewModels.Payments
             var buffer = parameter as byte[];
             if (buffer != null)
             {
-                using (var from = new TLBinaryReader(buffer))
-                {
-                    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
+                //using (var from = new TLBinaryReader(buffer))
+                //{
+                //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
 
-                    Message = tuple.Item1;
-                    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                    PaymentForm = tuple.Item2;
+                //    Message = tuple.Item1;
+                //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+                //    PaymentForm = tuple.Item2;
 
-                    _info = tuple.Item3;
-                    _requestedInfo = tuple.Item4;
-                    _shipping = tuple.Item5;
+                //    _info = tuple.Item3;
+                //    _requestedInfo = tuple.Item4;
+                //    _shipping = tuple.Item5;
 
-                    if (_paymentForm.HasNativeProvider && _paymentForm.HasNativeParams && _paymentForm.NativeProvider.Equals("stripe"))
-                    {
-                        IsNativeUsed = true;
-                        SelectedCountry = null;
+                //    if (_paymentForm.HasNativeProvider && _paymentForm.HasNativeParams && _paymentForm.NativeProvider.Equals("stripe"))
+                //    {
+                //        IsNativeUsed = true;
+                //        SelectedCountry = null;
 
-                        var json = JsonObject.Parse(_paymentForm.NativeParams.Data);
+                //        var json = JsonObject.Parse(_paymentForm.NativeParams.Data);
 
-                        NeedCountry = json.GetNamedBoolean("need_country", false);
-                        NeedZip = json.GetNamedBoolean("need_zip", false);
-                        NeedCardholderName = json.GetNamedBoolean("need_cardholder_name", false);
+                //        NeedCountry = json.GetNamedBoolean("need_country", false);
+                //        NeedZip = json.GetNamedBoolean("need_zip", false);
+                //        NeedCardholderName = json.GetNamedBoolean("need_cardholder_name", false);
 
-                        _publishableKey = json.GetNamedString("publishable_key", string.Empty);
-                    }
-                    else
-                    {
-                        IsNativeUsed = false;
-                        RaisePropertyChanged("Navigate");
-                    }
+                //        _publishableKey = json.GetNamedString("publishable_key", string.Empty);
+                //    }
+                //    else
+                //    {
+                //        IsNativeUsed = false;
+                //        RaisePropertyChanged("Navigate");
+                //    }
 
-                    //var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
-                    //if (info.ShippingAddress == null)
-                    //{
-                    //    info.ShippingAddress = new TLPostAddress();
-                    //}
+                //    //var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
+                //    //if (info.ShippingAddress == null)
+                //    //{
+                //    //    info.ShippingAddress = new TLPostAddress();
+                //    //}
 
-                    //Info = info;
-                    //SelectedCountry = null;
-                }
+                //    //Info = info;
+                //    //SelectedCountry = null;
+                //}
             }
 
             return Task.CompletedTask;

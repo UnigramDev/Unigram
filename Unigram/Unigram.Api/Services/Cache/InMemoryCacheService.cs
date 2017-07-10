@@ -6,6 +6,7 @@ using System.Linq;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
@@ -3588,23 +3589,23 @@ namespace Telegram.Api.Services.Cache
 
         public void ClearConfigImportAsync()
         {
-            GetConfigAsync(config =>
-            {
-                foreach (var option in config.DCOptions)
-                {
-                    option.IsAuthorized = false;
-                    //if (config.ThisDC.Value != option.Id.Value)
-                    //{
-                    //    option.IsAuthorized = false;
-                    //}
-                    //else
-                    //{
-                    //    option.IsAuthorized = true;
-                    //}
-                }
+            //GetConfigAsync(config =>
+            //{
+            //    foreach (var option in config.DCOptions)
+            //    {
+            //        option.IsAuthorized = false;
+            //        //if (config.ThisDC.Value != option.Id.Value)
+            //        //{
+            //        //    option.IsAuthorized = false;
+            //        //}
+            //        //else
+            //        //{
+            //        //    option.IsAuthorized = true;
+            //        //}
+            //    }
 
-                SetConfig(config);
-            });
+            //    SetConfig(config);
+            //});
         }
 
         #endregion

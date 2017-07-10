@@ -28,17 +28,17 @@ namespace Unigram.ViewModels.Payments
             var buffer = parameter as byte[];
             if (buffer != null)
             {
-                using (var from = new TLBinaryReader(buffer))
-                {
-                    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo>(from);
+                //using (var from = new TLBinaryReader(buffer))
+                //{
+                //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo>(from);
 
-                    Message = tuple.Item1;
-                    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                    PaymentForm = tuple.Item2;
-                    RequestedInfo = tuple.Item4;
+                //    Message = tuple.Item1;
+                //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+                //    PaymentForm = tuple.Item2;
+                //    RequestedInfo = tuple.Item4;
 
-                    _info = tuple.Item3;
-                }
+                //    _info = tuple.Item3;
+                //}
             }
 
             return Task.CompletedTask;

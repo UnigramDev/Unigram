@@ -1,6 +1,7 @@
 ﻿using System;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
+using Telegram.Api.Native.TL;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Channels;
 using Telegram.Api.TL.Channels.Methods;

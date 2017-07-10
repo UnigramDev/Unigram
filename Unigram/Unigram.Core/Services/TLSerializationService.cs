@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Native.TL;
 using Telegram.Api.TL;
 using Template10.Services.SerializationService;
 
@@ -63,10 +65,10 @@ namespace Unigram.Core.Services
                 return (T)(object)bytes.Skip(4).ToArray();
             }
 
-            using (var from = new TLBinaryReader(bytes))
-            {
-                return TLFactory.Read<T>(from);
-            }
+            var buffer = bytes.AsBuffer();
+            var from = TLObjectSerializer.Deserialize(buffer);
+
+            return (T)(object)from;
         }
 
         public string Serialize(object parameter)
@@ -76,18 +78,12 @@ namespace Unigram.Core.Services
                 return null;
             }
 
-            if (parameter is TLObject)
+            if (parameter is TLObject obj)
             {
-                var obj = parameter as TLObject;
-                using (var stream = new MemoryStream())
-                {
-                    using (var to = new TLBinaryWriter(stream))
-                    {
-                        obj.Write(to);
-                    }
+                var buffer = TLObjectSerializer.Serialize(obj);
+                var array = buffer.ToArray();
 
-                    return BitConverter.ToString(stream.ToArray()).Replace("-", string.Empty);
-                }
+                return BitConverter.ToString(array).Replace("-", string.Empty);
             }
 
             return SerializationService.Json.Serialize(parameter);

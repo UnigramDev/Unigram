@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Telegram.Api.Native.TL;
 
 namespace Telegram.Api
 {
@@ -78,98 +79,6 @@ namespace Telegram.Api
         //    ((TLObject)value).ToStream(output);
         //}
         //#endregion
-
-        public static TLConfig Merge(TLConfig oldConfig, TLCdnConfig cdnConfig)
-        {
-            foreach (var dcOption in oldConfig.DCOptions)
-            {
-                if (dcOption.IsCdn)
-                {
-                    var keys = new List<string>();
-                    foreach (var newDCOption in cdnConfig.PublicKeys.Where(x => x.DCId.Equals(dcOption.Id)))
-                    {
-                        keys.Add(newDCOption.PublicKey);
-                    }
-
-                    dcOption.PublicKeys = keys.Count > 0 ? keys.ToArray() : null;
-                }
-            }
-
-            return oldConfig;
-        }
-
-        public static TLConfig Merge(TLConfig oldConfig, TLConfig newConfig)
-        {
-            if (oldConfig == null)
-                return newConfig;
-
-            if (newConfig == null)
-                return oldConfig;
-
-            foreach (var dcOption in oldConfig.DCOptions)
-            {
-                if (dcOption.AuthKey != null)
-                {
-                    var option = dcOption;
-                    foreach (var newDCOption in newConfig.DCOptions.Where(x => x.AreEquals(option)))
-                    {
-                        newDCOption.AuthKey = dcOption.AuthKey;
-                        newDCOption.Salt = dcOption.Salt;
-                        newDCOption.SessionId = dcOption.SessionId;
-                        newDCOption.ClientTicksDelta = dcOption.ClientTicksDelta;
-                        newDCOption.PublicKeys = dcOption.PublicKeys;
-                    }
-                }
-            }
-            if (!string.IsNullOrEmpty(oldConfig.Country))
-            {
-                newConfig.Country = oldConfig.Country;
-            }
-            if (oldConfig.ActiveDCOptionIndex != default(int))
-            {
-                var oldActiveDCOption = oldConfig.DCOptions[oldConfig.ActiveDCOptionIndex];
-                var dcId = oldConfig.DCOptions[oldConfig.ActiveDCOptionIndex].Id;
-                var ipv6 = oldActiveDCOption.IsIpv6;
-                var media = oldActiveDCOption.IsMediaOnly;
-                var cdn = oldActiveDCOption.IsCdn;
-
-                TLDCOption newActiveDCOption = null;
-                int newActiveDCOptionIndex = 0;
-                for (var i = 0; i < newConfig.DCOptions.Count; i++)
-                {
-                    if (newConfig.DCOptions[i].Id == dcId
-                        && newConfig.DCOptions[i].IsIpv6 == ipv6
-                        && newConfig.DCOptions[i].IsMediaOnly == media
-                        && newConfig.DCOptions[i].IsCdn == cdn)
-                    {
-                        newActiveDCOption = newConfig.DCOptions[i];
-                        newActiveDCOptionIndex = i;
-                        break;
-                    }
-                }
-
-                if (newActiveDCOption == null)
-                {
-                    for (var i = 0; i < newConfig.DCOptions.Count; i++)
-                    {
-                        if (newConfig.DCOptions[i].Id == dcId)
-                        {
-                            newActiveDCOption = newConfig.DCOptions[i];
-                            newActiveDCOptionIndex = i;
-                            break;
-                        }
-                    }
-                }
-
-                newConfig.ActiveDCOptionIndex = newActiveDCOptionIndex;
-            }
-            if (oldConfig.LastUpdate != default(DateTime))
-            {
-                newConfig.LastUpdate = oldConfig.LastUpdate;
-            }
-
-            return newConfig;
-        }
 
         public static byte[] ToBytes(this byte[] data)
         {

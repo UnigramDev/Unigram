@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Api.Helpers;
+﻿using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.TL;
-using Telegram.Api.Transport;
 using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.ViewModels.Settings;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Views.Settings
 {
@@ -66,8 +53,9 @@ namespace Unigram.Views.Settings
 
                 if (enabled != SettingsHelper.IsProxyEnabled)
                 {
-                    UnigramContainer.Current.ResolveType<ITransportService>().Close();
-                    UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
+                    // TODO: 10/07/2017
+                    //UnigramContainer.Current.ResolveType<ITransportService>().Close();
+                    //UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
                 }
             }
         }

@@ -28,23 +28,23 @@ namespace Unigram.ViewModels.Payments
             var buffer = parameter as byte[];
             if (buffer != null)
             {
-                using (var from = new TLBinaryReader(buffer))
-                {
-                    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm>(from);
+                //using (var from = new TLBinaryReader(buffer))
+                //{
+                //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm>(from);
 
-                    Message = tuple.Item1;
-                    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                    PaymentForm = tuple.Item2;
+                //    Message = tuple.Item1;
+                //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+                //    PaymentForm = tuple.Item2;
 
-                    var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
-                    if (info.ShippingAddress == null)
-                    {
-                        info.ShippingAddress = new TLPostAddress();
-                    }
+                //    var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
+                //    if (info.ShippingAddress == null)
+                //    {
+                //        info.ShippingAddress = new TLPostAddress();
+                //    }
 
-                    Info = info;
-                    SelectedCountry = Country.Countries.FirstOrDefault(x => x.Code.Equals(info.ShippingAddress.CountryIso2, StringComparison.OrdinalIgnoreCase));
-                }
+                //    Info = info;
+                //    SelectedCountry = Country.Countries.FirstOrDefault(x => x.Code.Equals(info.ShippingAddress.CountryIso2, StringComparison.OrdinalIgnoreCase));
+                //}
             }
 
             return Task.CompletedTask;

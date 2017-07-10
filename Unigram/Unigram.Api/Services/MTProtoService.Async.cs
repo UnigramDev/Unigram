@@ -872,20 +872,6 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLCdnConfig>> GetCdnConfigAsync()
-        {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLCdnConfig>>();
-            GetCdnConfigAsync((callback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLCdnConfig>(callback));
-            }, (faultCallback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLCdnConfig>(faultCallback));
-            });
-            return tsc.Task;
-        }
-
-        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLUploadFileBase>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUploadFileBase>>();
@@ -1670,20 +1656,6 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLPong>> PingAsync(long pingId)
-        {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLPong>>();
-            PingAsync(pingId, (callback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLPong>(callback));
-            }, (faultCallback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLPong>(faultCallback));
-            });
-            return tsc.Task;
-        }
-
-        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
@@ -2267,20 +2239,6 @@ namespace Telegram.Api.Services
             }, (faultCallback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLAccountDaysTTL>(faultCallback));
-            });
-            return tsc.Task;
-        }
-
-        [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLPong>> PingDelayDisconnectAsync(long pingId, int disconnectDelay)
-        {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLPong>>();
-            PingDelayDisconnectAsync(pingId, disconnectDelay, (callback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLPong>(callback));
-            }, (faultCallback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLPong>(faultCallback));
             });
             return tsc.Task;
         }

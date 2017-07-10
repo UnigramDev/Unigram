@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Telegram.Api.Native.TL;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Upload;
 using Telegram.Api.TL.Upload.Methods;

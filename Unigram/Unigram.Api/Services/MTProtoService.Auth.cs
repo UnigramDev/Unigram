@@ -1,10 +1,10 @@
 ﻿using System;
 using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
+using Telegram.Api.Native.TL;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Auth;
 using Telegram.Api.TL.Auth.Methods;
-using Telegram.Api.Transport;
 
 namespace Telegram.Api.Services
 {
@@ -87,11 +87,6 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-	    public void CancelSignInAsync()
-	    {
-	        CancelDelayedItemsAsync(true);
-	    }
-
         public void LogOutAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthLogOut();
@@ -117,27 +112,6 @@ namespace Telegram.Api.Services
 
             SendInformativeMessage("auth.sendInvites", obj, callback, faultCallback);
 	    }
-
-	    public void ExportAuthorizationAsync(int dcId, Action<TLAuthExportedAuthorization> callback, Action<TLRPCError> faultCallback = null)
-	    {
-            var obj = new TLAuthExportAuthorization { DCId = dcId };
-
-            SendInformativeMessage("auth.exportAuthorization dc_id=" + dcId, obj, callback, faultCallback);
-	    }
-
-	    public void ImportAuthorizationAsync(int id, byte[] bytes, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
-	    {
-            var obj = new TLAuthImportAuthorization { Id = id, Bytes = bytes };
-
-            SendInformativeMessage("auth.importAuthorization id=" + id, obj, callback, faultCallback);
-	    }
-
-        public void ImportAuthorizationByTransportAsync(ITransport transport, int id, byte[] bytes, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLAuthImportAuthorization { Id = id, Bytes = bytes };
-
-            SendInformativeMessageByTransport(transport, "auth.importAuthorization dc_id=" + transport.DCId, obj, callback, faultCallback);
-        }
 
         public void ResetAuthorizationsAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
