@@ -10,11 +10,11 @@
 #include "TLTypes.h"
 #include "TLMethods.h"
 #include "UserConfiguration.h"
-#include "Collections.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "NativeBuffer.h"
 #include "NetworkExtensions.h"
+#include "Collections.h"
 #include "Helpers\COMHelper.h"
 
 #include "MethodDebug.h"

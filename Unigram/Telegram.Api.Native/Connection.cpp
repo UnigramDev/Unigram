@@ -25,6 +25,8 @@
 
 #define FLAGS_GET_CURRENTNETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>(flags & ConnectionFlag::CurrentNeworkType) >> 4)
 #define FLAGS_SET_CURRENTNETWORKTYPE(flags, networkType) (flags & ~ConnectionFlag::CurrentNeworkType) | static_cast<ConnectionFlag>(static_cast<int>(networkType) << 4)
+#define FLAGS_GET_CONNECTIONSTATE(flags) static_cast<ConnectionState>(static_cast<int>(flags & ConnectionFlag::ConnectionState))
+#define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) (flags & ~ConnectionFlag::ConnectionState) | static_cast<ConnectionFlag>(static_cast<int>(connectionState))
 #define CONNECTION_RECONNECTION_TIMEOUT 1000
 #define CONNECTION_MAX_ATTEMPTS 5
 #define CONNECTION_MAX_PACKET_LENGTH 2 * 1024 * 1024
@@ -91,6 +93,17 @@ HRESULT Connection::get_SessionId(INT64* value)
 	}
 
 	*value = ConnectionSession::GetSessionId();
+	return S_OK;
+}
+
+HRESULT Connection::get_IsConnected(boolean* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = FLAGS_GET_CONNECTIONSTATE(m_flags) >= ConnectionState::Connected;
 	return S_OK;
 }
 
@@ -175,7 +188,7 @@ HRESULT Connection::Reconnect()
 {
 	auto lock = LockCriticalSection();
 
-	m_flags = (m_flags & ~ConnectionFlag::ConnectionState) | static_cast<ConnectionFlag>(ConnectionState::Reconnecting);
+	m_flags = FLAGS_SET_CONNECTIONSTATE(m_flags, ConnectionState::Reconnecting);
 
 	return DisconnectSocket(true);
 }
@@ -382,7 +395,7 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, bool reportAc
 HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, ITLObject* messageBody)
 {
 	HRESULT result;
-	
+
 	{
 		auto lock = LockCriticalSection();
 
@@ -524,7 +537,7 @@ HRESULT Connection::OnSocketConnected()
 
 HRESULT Connection::OnSocketDisconnected(int wsaError)
 {
-	auto connectionState = static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState);
+	auto connectionState = FLAGS_GET_CONNECTIONSTATE(m_flags);
 	m_flags &= ~ConnectionFlag::ConnectionState;
 	m_partialPacketBuffer.Reset();
 

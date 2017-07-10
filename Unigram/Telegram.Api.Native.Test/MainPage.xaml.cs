@@ -82,6 +82,8 @@ namespace Telegram.Api.Native.Test
         {
             ConnectionManager.Instance.BoomBaby();
 
+            var connections = ConnectionManager.Instance.Datacenters.SelectMany(d => d.Connections).ToArray();
+
             //ConnectionManager.Instance.SendRequest(new TLHelpInviteText(), (message5, ex5) =>
             //{
             //    Debugger.Break();

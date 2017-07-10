@@ -13,6 +13,7 @@
 #include "MessageResponse.h"
 #include "MessageRequest.h"
 #include "MessageError.h"
+#include "Collections.h"
 #include "Wrappers\OpenSSL.h"
 #include "Helpers\COMHelper.h"
 
@@ -27,6 +28,7 @@
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
+using Windows::Foundation::Collections::VectorView;
 
 
 Datacenter::Datacenter() :
@@ -116,6 +118,42 @@ HRESULT Datacenter::get_Id(INT32* value)
 	}
 
 	*value = m_id;
+	return S_OK;
+}
+
+HRESULT Datacenter::get_Connections(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CConnection** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	auto lock = LockCriticalSection();
+	auto vectorView = Make<VectorView<ABI::Telegram::Api::Native::Connection*>>();
+	auto& connections = vectorView->GetItems();
+
+	if (m_genericConnection != nullptr)
+	{
+		connections.emplace_back(m_genericConnection);
+	}
+
+	for (size_t i = 0; i < DOWNLOAD_CONNECTIONS_COUNT; i++)
+	{
+		if (m_downloadConnections[i] != nullptr)
+		{
+			connections.emplace_back(m_downloadConnections[i]);
+		}
+	}
+
+	for (size_t i = 0; i < UPLOAD_CONNECTIONS_COUNT; i++)
+	{
+		if (m_uploadConnections[i] != nullptr)
+		{
+			connections.emplace_back(m_uploadConnections[i]);
+		}
+	}
+
+	*value = vectorView.Detach();
 	return S_OK;
 }
 

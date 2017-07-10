@@ -108,6 +108,7 @@ namespace Telegram
 				IFACEMETHODIMP get_Type(_Out_ ConnectionType* value);
 				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
 				IFACEMETHODIMP get_SessionId(_Out_ INT64* value);
+				IFACEMETHODIMP get_IsConnected(_Out_ boolean* value);
 
 				inline ComPtr<Datacenter> const& GetDatacenter() const
 				{
