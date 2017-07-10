@@ -541,7 +541,7 @@ namespace Telegram
 			interface IDatacenter : IInspectable
 			{
 				[propget] HRESULT Id([out][retval] INT32* value);
-				//[propget] HRESULT Connections([out][retval] Windows.Foundation.Collections.IVectorView<Connection*>** value);
+				[propget] HRESULT Connections([out][retval] Windows.Foundation.Collections.IVectorView<Connection*>** value);
 				HRESULT GetCurrentAddress([in] ConnectionType connectionType,[in] boolean ipv6,[out][retval] HSTRING* value);
 				HRESULT GetCurrentPort([in] ConnectionType connectionType,[in] boolean ipv6,[out][retval] UINT32* value);
 			}
@@ -564,6 +564,7 @@ namespace Telegram
 				[propget] HRESULT Type([out][retval] ConnectionType* value);
 				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
 				[propget] HRESULT SessionId([out][retval] INT64* value);
+				[propget] HRESULT IsConnected([out][retval] boolean* value);
 			}
 
 			[marshaling_behavior(agile)]

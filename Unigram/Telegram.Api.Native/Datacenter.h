@@ -110,6 +110,7 @@ namespace Telegram
 
 				//COM exported methods			
 				IFACEMETHODIMP get_Id(_Out_ INT32* value);
+				IFACEMETHODIMP get_Connections(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CConnection** value);
 				IFACEMETHODIMP GetCurrentAddress(ConnectionType connectionType, boolean ipv6, _Out_ HSTRING* value);
 				IFACEMETHODIMP GetCurrentPort(ConnectionType connectionType, boolean ipv6, _Out_ UINT32* value);
 
