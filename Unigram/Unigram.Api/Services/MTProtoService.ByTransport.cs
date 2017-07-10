@@ -41,7 +41,7 @@ namespace Telegram.Api.Services
             SendNonEncryptedMessageByTransport(transport, "set_client_DH_params", obj, callback, faultCallback);
         }
 
-        private void LoadCdnConfigAsync(int cdnId, TLVector<Int64> fingerprints, Action<string> callback, Action<TLRPCError> faultCallback = null)
+        private void LoadCdnConfigAsync(int cdnId, TLVector<Int64> fingerprints, Action<Tuple<long, string>> callback, Action<TLRPCError> faultCallback = null)
         {
             TryReadConfig(read =>
             {
@@ -76,7 +76,7 @@ namespace Telegram.Api.Services
                             {
                                 if (pairs.ContainsKey(fingerprint))
                                 {
-                                    callback?.Invoke(pairs[fingerprint]);
+                                    callback?.Invoke(Tuple.Create(fingerprint, pairs[fingerprint]));
                                     return;
                                 }
                             }
@@ -96,7 +96,7 @@ namespace Telegram.Api.Services
                     }
                     else
                     {
-                        callback?.Invoke(null);
+                        callback?.Invoke(Tuple.Create(fingerprints.FirstOrDefault(), null as string));
                     }
                 }
                 else
@@ -112,11 +112,11 @@ namespace Telegram.Api.Services
             var newNonce = TLInt256.Random();
 
 #if LOG_REGISTRATION
-            TLUtils.WriteLog("Start ReqPQ");
+            Logs.Log.Write("Start ReqPQ");
 #endif
             var nonce = TLInt128.Random();
             ReqPQByTransportAsync(
-                transport, 
+                transport,
                 nonce,
                 resPQ =>
                 {
@@ -125,7 +125,7 @@ namespace Telegram.Api.Services
                     {
                         var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop ReqPQ with error " + error);
+                        Logs.Log.Write("Stop ReqPQ with error " + error);
 #endif
 
                         faultCallback?.Invoke(error);
@@ -133,17 +133,17 @@ namespace Telegram.Api.Services
                     }
 
 #if LOG_REGISTRATION
-                    TLUtils.WriteLog("Stop ReqPQ");
+                    Logs.Log.Write("Stop ReqPQ");
 #endif
                     LoadCdnConfigAsync(transport.DCId, resPQ.ServerPublicKeyFingerprints, publicKey =>
                     {
                         TimeSpan calcTime;
                         Tuple<ulong, ulong> pqPair;
                         var innerData = GetInnerData(resPQ, newNonce, out calcTime, out pqPair);
-                        var encryptedInnerData = GetEncryptedInnerData(innerData, publicKey);
+                        var encryptedInnerData = GetEncryptedInnerData(innerData, publicKey.Item2);
 
 #if LOG_REGISTRATION
-                    TLUtils.WriteLog("Start ReqDHParams");
+                        Logs.Log.Write("Start ReqDHParams");
 #endif
                         ReqDHParamsByTransportAsync(
                             transport,
@@ -151,7 +151,7 @@ namespace Telegram.Api.Services
                             resPQ.ServerNonce,
                             innerData.P,
                             innerData.Q,
-                            resPQ.ServerPublicKeyFingerprints[0],
+                            publicKey.Item1,
                             encryptedInnerData,
                             serverDHParams =>
                             {
@@ -159,7 +159,7 @@ namespace Telegram.Api.Services
                                 {
                                     var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
 #if LOG_REGISTRATION
-                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+                                    Logs.Log.Write("Stop ReqDHParams with error " + error);
 #endif
 
                                     faultCallback?.Invoke(error);
@@ -169,7 +169,7 @@ namespace Telegram.Api.Services
                                 {
                                     var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
 #if LOG_REGISTRATION
-                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+                                    Logs.Log.Write("Stop ReqDHParams with error " + error);
 #endif
 
                                     faultCallback?.Invoke(error);
@@ -177,7 +177,7 @@ namespace Telegram.Api.Services
                                 }
 
 #if LOG_REGISTRATION
-                            TLUtils.WriteLog("Stop ReqDHParams");
+                                Logs.Log.Write("Stop ReqDHParams");
 #endif
                                 var random = new SecureRandom();
 
@@ -188,8 +188,7 @@ namespace Telegram.Api.Services
                                     faultCallback?.Invoke(error);
                                     TLUtils.WriteLine(error.ToString());
 #if LOG_REGISTRATION
-                            
-                                TLUtils.WriteLog("ServerDHParams " + serverDHParams);  
+                                    Logs.Log.Write("ServerDHParams " + serverDHParams);
 #endif
                                     return;
                                 }
@@ -207,7 +206,7 @@ namespace Telegram.Api.Services
                                 {
                                     var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect sha1 TLServerDHInnerData" };
 #if LOG_REGISTRATION
-                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+                                    Logs.Log.Write("Stop ReqDHParams with error " + error);
 #endif
 
                                     faultCallback?.Invoke(error);
@@ -218,7 +217,7 @@ namespace Telegram.Api.Services
                                 {
                                     var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect (p, q) pair" };
 #if LOG_REGISTRATION
-                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+                                    Logs.Log.Write("Stop ReqDHParams with error " + error);
 #endif
 
                                     faultCallback?.Invoke(error);
@@ -229,7 +228,7 @@ namespace Telegram.Api.Services
                                 {
                                     var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect g_a" };
 #if LOG_REGISTRATION
-                                TLUtils.WriteLog("Stop ReqDHParams with error " + error);
+                                    Logs.Log.Write("Stop ReqDHParams with error " + error);
 #endif
 
                                     faultCallback?.Invoke(error);
@@ -251,7 +250,7 @@ namespace Telegram.Api.Services
 
                                 var encryptedClientDHInnerData = GetEncryptedClientDHInnerData(clientDHInnerData, aesParams);
 #if LOG_REGISTRATION
-                            TLUtils.WriteLog("Start SetClientDHParams");  
+                                Logs.Log.Write("Start SetClientDHParams");
 #endif
                                 SetClientDHParamsByTransportAsync(
                                         transport,
@@ -264,20 +263,20 @@ namespace Telegram.Api.Services
                                             {
                                                 var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect nonce" };
 #if LOG_REGISTRATION
-                                        TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
+                                                Logs.Log.Write("Stop SetClientDHParams with error " + error);
 #endif
 
-                                            faultCallback?.Invoke(error);
+                                                faultCallback?.Invoke(error);
                                                 TLUtils.WriteLine(error.ToString());
                                             }
                                             if (serverNonce != dhGen.ServerNonce)
                                             {
                                                 var error = new TLRPCError { ErrorCode = 404, ErrorMessage = "incorrect server_nonce" };
 #if LOG_REGISTRATION
-                                        TLUtils.WriteLog("Stop SetClientDHParams with error " + error);
+                                                Logs.Log.Write("Stop SetClientDHParams with error " + error);
 #endif
 
-                                            faultCallback?.Invoke(error);
+                                                faultCallback?.Invoke(error);
                                                 TLUtils.WriteLine(error.ToString());
                                             }
 
@@ -288,50 +287,50 @@ namespace Telegram.Api.Services
                                                 faultCallback?.Invoke(error);
                                                 TLUtils.WriteLine(error.ToString());
 #if LOG_REGISTRATION
-                                        TLUtils.WriteLog("DHGen result " + serverDHParams);
+                                                Logs.Log.Write("DHGen result " + serverDHParams);
 #endif
-                                            return;
+                                                return;
                                             }
 
 #if LOG_REGISTRATION
-                                    TLUtils.WriteLog("Stop SetClientDHParams");
+                                            TLUtils.WriteLog("Stop SetClientDHParams");
 #endif
-                                        var getKeyTimer = Stopwatch.StartNew();
+                                            var getKeyTimer = Stopwatch.StartNew();
                                             var authKey = GetAuthKey(bBytes, serverDHInnerData.GA.ToBytes(), serverDHInnerData.DHPrime.ToBytes());
 
 #if LOG_REGISTRATION
-                                    var logCountersString = new StringBuilder();
+                                            var logCountersString = new StringBuilder();
 
-                                    logCountersString.AppendLine("Auth Counters");
-                                    logCountersString.AppendLine();
-                                    logCountersString.AppendLine("pq factorization time: " + calcTime);
-                                    logCountersString.AppendLine("calc auth key time: " + getKeyTimer.Elapsed);
-                                    logCountersString.AppendLine("auth time: " + authTime.Elapsed);
+                                            logCountersString.AppendLine("Auth Counters");
+                                            logCountersString.AppendLine();
+                                            logCountersString.AppendLine("pq factorization time: " + calcTime);
+                                            logCountersString.AppendLine("calc auth key time: " + getKeyTimer.Elapsed);
+                                            logCountersString.AppendLine("auth time: " + authTime.Elapsed);
 
-                                    TLUtils.WriteLog(logCountersString.ToString());
+                                            Logs.Log.Write(logCountersString.ToString());
 #endif
-                                        //newNonce - little endian
-                                        //authResponse.ServerNonce - little endian
-                                        var salt = GetSalt(newNonce.ToArray(), resPQ.ServerNonce.ToArray());
+                                            //newNonce - little endian
+                                            //authResponse.ServerNonce - little endian
+                                            var salt = GetSalt(newNonce.ToArray(), resPQ.ServerNonce.ToArray());
                                             var sessionId = new byte[8];
                                             random.NextBytes(sessionId);
 
-                                        // authKey, salt, sessionId
-                                        callback(new Tuple<byte[], long?, long?>(authKey, new long?(BitConverter.ToInt64(salt, 0)), new long?(BitConverter.ToInt64(sessionId, 0))));
+                                            // authKey, salt, sessionId
+                                            callback(new Tuple<byte[], long?, long?>(authKey, new long?(BitConverter.ToInt64(salt, 0)), new long?(BitConverter.ToInt64(sessionId, 0))));
                                         },
                                         error =>
                                         {
 #if LOG_REGISTRATION
-                                    TLUtils.WriteLog("Stop SetClientDHParams with error " + error.ToString());
+                                            Logs.Log.Write("Stop SetClientDHParams with error " + error.ToString());
 #endif
-                                        faultCallback?.Invoke(error);
+                                            faultCallback?.Invoke(error);
                                             TLUtils.WriteLine(error.ToString());
                                         });
                             },
                             error =>
                             {
 #if LOG_REGISTRATION
-                            TLUtils.WriteLog("Stop ReqDHParams with error " + error.ToString());
+                                Logs.Log.Write("Stop ReqDHParams with error " + error.ToString());
 #endif
                                 faultCallback?.Invoke(error);
                                 TLUtils.WriteLine(error.ToString());
@@ -339,7 +338,7 @@ namespace Telegram.Api.Services
                     }, error =>
                     {
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog("Stop ReqPQ with error " + error.ToString());
+                        Logs.Log.Write("Stop ReqPQ with error " + error.ToString());
 #endif
                         faultCallback?.Invoke(error);
                         TLUtils.WriteLine(error.ToString());
@@ -348,7 +347,7 @@ namespace Telegram.Api.Services
                 error =>
                 {
 #if LOG_REGISTRATION
-                    TLUtils.WriteLog("Stop ReqPQ with error " + error.ToString());
+                    Logs.Log.Write("Stop ReqPQ with error " + error.ToString());
 #endif
                     faultCallback?.Invoke(error);
                     TLUtils.WriteLine(error.ToString());
@@ -373,7 +372,7 @@ namespace Telegram.Api.Services
                             continue;
                         }
 
-                        var local = i; 
+                        var local = i;
                         var handle = new ManualResetEvent(false);
                         waitHandles.Add(handle);
                         Execute.BeginOnThreadPool(() =>
@@ -459,7 +458,7 @@ namespace Telegram.Api.Services
                         transport.IsAuthorizing = false;
                         transport.IsAuthorized = false;
                     }
-                }, 
+                },
                 faultCallback);
         }
 
@@ -907,7 +906,7 @@ namespace Telegram.Api.Services
                             {
                                 lock (toTransport.SyncRoot)
                                 {
-                                    toTransport.IsAuthorized = true; 
+                                    toTransport.IsAuthorized = true;
                                     toTransport.IsAuthorizing = false;
                                 }
 
@@ -1004,7 +1003,7 @@ namespace Telegram.Api.Services
                     MaxAttempt = maxAttempt
                 };
 #if LOG_REGISTRATION
-                    TLUtils.WriteLog(DateTime.Now.ToLocalTime() + ": Enqueue delayed item\n " + delayedItem); 
+                Logs.Log.Write(DateTime.Now.ToLocalTime() + ": Enqueue delayed item\n " + delayedItem);
 #endif
                 lock (_delayedItemsRoot)
                 {
@@ -1306,7 +1305,7 @@ namespace Telegram.Api.Services
 #if DEBUG
                     RaisePropertyChanged(() => History);
 #endif
-                    
+
                     var saveConfig = false;
                     lock (transport.SyncRoot)
                     {
@@ -1323,7 +1322,7 @@ namespace Telegram.Api.Services
                         {
                             transport.ClientTicksDelta += serverTime - clientTime;
                             saveConfig = true;
-                            errorInfo.AppendLine("Set ticks delta: " + transport.ClientTicksDelta + "(" + (serverDateTime-clientDateTime).TotalSeconds + " seconds)");
+                            errorInfo.AppendLine("Set ticks delta: " + transport.ClientTicksDelta + "(" + (serverDateTime - clientDateTime).TotalSeconds + " seconds)");
                         }
                     }
 
@@ -1338,8 +1337,8 @@ namespace Telegram.Api.Services
                     }
 
                     TLUtils.WriteLine(errorInfo.ToString(), LogSeverity.Error);
-                    
-                
+
+
                     // TODO: replace with SendInformativeMessage
                     var transportMessage = (TLContainerTransportMessage)historyItem.Message;
                     int sequenceNumber;
@@ -1636,7 +1635,7 @@ namespace Telegram.Api.Services
                     }
                     else
                     {
-                        RaiseAuthorizationRequired(new AuthorizationRequiredEventArgs{MethodName = "ByTransport " + transport.DCId + " " + historyItem.Caption, Error = error, AuthKeyId = keyId});
+                        RaiseAuthorizationRequired(new AuthorizationRequiredEventArgs { MethodName = "ByTransport " + transport.DCId + " " + historyItem.Caption, Error = error, AuthKeyId = keyId });
                     }
                 }
                 else if (historyItem != null && historyItem.FaultCallback != null)
@@ -1893,14 +1892,14 @@ namespace Telegram.Api.Services
                     if (item != null)
                     {
 #if LOG_REGISTRATION
-                            TLUtils.WriteLog("OnReceivedBytes !IsInitialized try historyItem " + item.Caption);
+                        Logs.Log.Write("OnReceivedBytes !IsInitialized try historyItem " + item.Caption);
 #endif
                         item.Callback?.Invoke(message.Query);
                     }
                     else
                     {
 #if LOG_REGISTRATION
-                        TLUtils.WriteLog("OnReceivedBytes !IsInitialized cannot try historyItem ");
+                        Logs.Log.Write("OnReceivedBytes !IsInitialized cannot try historyItem ");
 #endif
                     }
 
@@ -1912,15 +1911,15 @@ namespace Telegram.Api.Services
 
                     var sb = new StringBuilder();
                     sb.AppendLine("OnPacketReceived !IsInitialized catch Exception: \n" + ex);
-                    sb.AppendLine(transport.PrintNonEncryptedHistory());                   
-                    TLUtils.WriteLog(sb.ToString());
+                    sb.AppendLine(transport.PrintNonEncryptedHistory());
+                    Logs.Log.Write(sb.ToString());
 #endif
                 }
 
                 if (!handled)
                 {
 #if LOG_REGISTRATION
-                    TLUtils.WriteLog("OnPacketReceived !IsInitialized !handled invoke ReceiveBytesAsync");
+                    Logs.Log.Write("OnPacketReceived !IsInitialized !handled invoke ReceiveBytesAsync");
 #endif
                     ReceiveBytesByTransportAsync(transport, e.Data);
                 }
@@ -1928,7 +1927,7 @@ namespace Telegram.Api.Services
             else
             {
 #if LOG_REGISTRATION
-                TLUtils.WriteLog("OnPacketReceived IsInitialized invoke ReceiveBytesAsync");
+                Logs.Log.Write("OnPacketReceived IsInitialized invoke ReceiveBytesAsync");
 #endif
                 ReceiveBytesByTransportAsync(transport, e.Data);
             }
@@ -2107,7 +2106,7 @@ namespace Telegram.Api.Services
                         catch (Exception e)
                         {
 #if LOG_REGISTRATION
-                                TLUtils.WriteLog(e.ToString());
+                            Logs.Log.Write(e.ToString());
 #endif
                             TLUtils.WriteException(e);
                         }
@@ -2117,7 +2116,7 @@ namespace Telegram.Api.Services
             catch (Exception e)
             {
 #if LOG_REGISTRATION
-                TLUtils.WriteLog("ReceiveBytesAsyncException:\n" + e);
+                Logs.Log.Write("ReceiveBytesAsyncException:\n" + e);
 #endif
                 TLUtils.WriteException(e);
                 ClearHistoryByTransport(transport);

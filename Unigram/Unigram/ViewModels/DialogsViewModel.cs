@@ -81,6 +81,44 @@ namespace Unigram.ViewModels
 
         public async void LoadFirstSlice()
         {
+            var test = CacheService.GetDialogs();
+            if (test.Count > 0)
+            {
+                var config = CacheService.GetConfig();
+                var pinnedIndex = 0;
+
+                var items = new List<TLDialog>(test.Count);
+
+                foreach (var item in test)
+                {
+                    if (item.IsPinned)
+                    {
+                        item.PinnedIndex = pinnedIndex++;
+                    }
+
+                    if (item.With is TLChat chat && chat.HasMigratedTo)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        items.Add(item);
+                    }
+                }
+
+                Execute.BeginOnUIThread(() =>
+                {
+                    Items.ReplaceWith(items);
+                    IsFirstPinned = Items.Any(x => x.IsPinned);
+                    PinnedDialogsIndex = pinnedIndex;
+                    PinnedDialogsCountMax = config.PinnedDialogsCountMax;
+                });
+
+                Aggregator.Subscribe(this);
+
+                return;
+            }
+
             var lastDate = 0;
             var lastMsgId = 0;
             var lastPeer = (TLInputPeerBase)new TLInputPeerEmpty();

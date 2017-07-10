@@ -409,6 +409,21 @@ namespace Unigram.Tasks
                         _controller = new VoIPControllerWrapper();
                         _controller.SetConfig(config.CallPacketTimeoutMs / 1000.0, config.CallConnectTimeoutMs / 1000.0, DataSavingMode.Never, true, true, true, logFile, statsDumpFile);
 
+                        SettingsHelper.CleanUp();
+                        if (SettingsHelper.IsCallsProxyEnabled)
+                        {
+                            var server = SettingsHelper.ProxyServer ?? string.Empty;
+                            var port = SettingsHelper.ProxyPort;
+                            var user = SettingsHelper.ProxyUsername ?? string.Empty;
+                            var pass = SettingsHelper.ProxyPassword ?? string.Empty;
+
+                            _controller.SetProxy(ProxyProtocol.SOCKS5, server, (ushort)port, user, pass);
+                        }
+                        else
+                        {
+                            _controller.SetProxy(ProxyProtocol.None, string.Empty, 0, string.Empty, string.Empty);
+                        }
+
                         _controller.SetStateCallback(this);
                         _controller.SetEncryptionKey(auth_key, _outgoing);
 

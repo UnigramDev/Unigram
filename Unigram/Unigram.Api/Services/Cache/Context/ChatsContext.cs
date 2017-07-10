@@ -16,7 +16,7 @@ namespace Telegram.Api.Services.Cache.Context
         private const ulong PeerIdChatShift = 0x100000000UL;
         private const ulong PeerIdChannelShift = 0x200000000UL;
 
-        private readonly string _fields = "`id`,`access_hash`,`flags`,`title`,`username`,`version`,`participants_count`,`date`,`restriction_reason`,`photo_small_local_id`,`photo_small_secret`,`photo_small_volume_id`,`photo_small_dc_id`,`photo_big_local_id`,`photo_big_secret`,`photo_big_volume_id`,`photo_big_dc_id`,`migrated_to_id`,`migrated_to_access_hash`,`admin_rights`,`banned_rights`";
+        private readonly string _fields = "`id`,`index`,`access_hash`,`flags`,`title`,`username`,`version`,`participants_count`,`date`,`restriction_reason`,`photo_small_local_id`,`photo_small_secret`,`photo_small_volume_id`,`photo_small_dc_id`,`photo_big_local_id`,`photo_big_secret`,`photo_big_volume_id`,`photo_big_dc_id`,`migrated_to_id`,`migrated_to_access_hash`,`admin_rights`,`banned_rights`";
         private readonly Database _database;
 
         public ChatsContext(Database database)
@@ -39,29 +39,29 @@ namespace Telegram.Api.Services.Cache.Context
                 }
 
                 Statement statement;
-                Sqlite3.sqlite3_prepare_v2(_database, $"SELECT {_fields} FROM `Chats` WHERE `id` = {index}", out statement);
+                Sqlite3.sqlite3_prepare_v2(_database, $"SELECT {_fields} FROM `Chats` WHERE `index` = {index}", out statement);
 
                 TLChatBase result = null;
                 if (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
                 {
                     var id = Sqlite3.sqlite3_column_int64(statement, 0);
-                    var title = Sqlite3.sqlite3_column_text(statement, 3);
-                    var version = Sqlite3.sqlite3_column_int(statement, 5);
-                    var date = Sqlite3.sqlite3_column_int(statement, 7);
+                    var title = Sqlite3.sqlite3_column_text(statement, 4);
+                    var version = Sqlite3.sqlite3_column_int(statement, 6);
+                    var date = Sqlite3.sqlite3_column_int(statement, 8);
 
                     TLChatPhotoBase photo = null;
-                    var photoType = Sqlite3.sqlite3_column_type(statement, 9);
+                    var photoType = Sqlite3.sqlite3_column_type(statement, 10);
                     if (photoType == 1) // SQLITE_INTEGER
                     {
-                        var photo_small_local_id = Sqlite3.sqlite3_column_int(statement, 9);
-                        var photo_small_secret = Sqlite3.sqlite3_column_int64(statement, 10);
-                        var photo_small_volume_id = Sqlite3.sqlite3_column_int64(statement, 11);
-                        var photo_small_dc_id = Sqlite3.sqlite3_column_int(statement, 12);
+                        var photo_small_local_id = Sqlite3.sqlite3_column_int(statement, 10);
+                        var photo_small_secret = Sqlite3.sqlite3_column_int64(statement, 11);
+                        var photo_small_volume_id = Sqlite3.sqlite3_column_int64(statement, 12);
+                        var photo_small_dc_id = Sqlite3.sqlite3_column_int(statement, 13);
 
-                        var photo_big_local_id = Sqlite3.sqlite3_column_int(statement, 13);
-                        var photo_big_secret = Sqlite3.sqlite3_column_int64(statement, 14);
-                        var photo_big_volume_id = Sqlite3.sqlite3_column_int64(statement, 15);
-                        var photo_big_dc_id = Sqlite3.sqlite3_column_int(statement, 16);
+                        var photo_big_local_id = Sqlite3.sqlite3_column_int(statement, 14);
+                        var photo_big_secret = Sqlite3.sqlite3_column_int64(statement, 15);
+                        var photo_big_volume_id = Sqlite3.sqlite3_column_int64(statement, 16);
+                        var photo_big_dc_id = Sqlite3.sqlite3_column_int(statement, 17);
 
                         photo = new TLChatPhoto
                         {
@@ -88,14 +88,14 @@ namespace Telegram.Api.Services.Cache.Context
 
                     if (((ulong)id & PeerIdTypeMask) == PeerIdChatShift) // CHAT
                     {
-                        var flags = (TLChat.Flag)Sqlite3.sqlite3_column_int(statement, 2);
-                        var participants_count = Sqlite3.sqlite3_column_int(statement, 6);
+                        var flags = (TLChat.Flag)Sqlite3.sqlite3_column_int(statement, 3);
+                        var participants_count = Sqlite3.sqlite3_column_int(statement, 7);
 
                         TLInputChannelBase migratedTo = null;
                         if (flags.HasFlag(TLChat.Flag.MigratedTo))
                         {
-                            var channel_id = Sqlite3.sqlite3_column_int(statement, 17);
-                            var access_hash = Sqlite3.sqlite3_column_int64(statement, 18);
+                            var channel_id = Sqlite3.sqlite3_column_int(statement, 18);
+                            var access_hash = Sqlite3.sqlite3_column_int64(statement, 19);
 
                             migratedTo = new TLInputChannel { ChannelId = channel_id, AccessHash = access_hash };
                         }
@@ -114,21 +114,21 @@ namespace Telegram.Api.Services.Cache.Context
                     }
                     else if (((ulong)id & PeerIdTypeMask) == PeerIdChannelShift) // CHANNEL
                     {
-                        var flags = (TLChannel.Flag)Sqlite3.sqlite3_column_int(statement, 2);
-                        var access_hash = Sqlite3.sqlite3_column_int64(statement, 1);
-                        var username = Sqlite3.sqlite3_column_text(statement, 4);
-                        var restriction_reason = Sqlite3.sqlite3_column_text(statement, 8);
+                        var flags = (TLChannel.Flag)Sqlite3.sqlite3_column_int(statement, 3);
+                        var access_hash = Sqlite3.sqlite3_column_int64(statement, 2);
+                        var username = Sqlite3.sqlite3_column_text(statement, 5);
+                        var restriction_reason = Sqlite3.sqlite3_column_text(statement, 9);
 
                         TLChannelAdminRights adminRights = null;
                         if (flags.HasFlag(TLChannel.Flag.AdminRights))
                         {
-                            adminRights = new TLChannelAdminRights { Flags = (TLChannelAdminRights.Flag)Sqlite3.sqlite3_column_int(statement, 19) };
+                            adminRights = new TLChannelAdminRights { Flags = (TLChannelAdminRights.Flag)Sqlite3.sqlite3_column_int(statement, 20) };
                         }
 
                         TLChannelBannedRights bannedRights = null;
                         if (flags.HasFlag(TLChannel.Flag.AdminRights))
                         {
-                            bannedRights = new TLChannelBannedRights { Flags = (TLChannelBannedRights.Flag)Sqlite3.sqlite3_column_int(statement, 20) };
+                            bannedRights = new TLChannelBannedRights { Flags = (TLChannelBannedRights.Flag)Sqlite3.sqlite3_column_int(statement, 21) };
                         }
 
                         result = new TLChannel
@@ -158,34 +158,34 @@ namespace Telegram.Api.Services.Cache.Context
                 base[index] = value;
 
                 Statement statement;
-                Sqlite3.sqlite3_prepare_v2(_database, $"INSERT OR REPLACE INTO `Chats` ({_fields}) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", out statement);
+                Sqlite3.sqlite3_prepare_v2(_database, $"INSERT OR REPLACE INTO `Chats` ({_fields}) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", out statement);
 
                 if (value is TLChat chat)
                 {
                     Sqlite3.sqlite3_bind_int64(statement, 1, (long)(PeerIdChatShift | (ulong)(uint)chat.Id));
-                    Sqlite3.sqlite3_bind_null(statement, 2);
-                    Sqlite3.sqlite3_bind_int(statement, 3, (int)chat.Flags);
-                    Sqlite3.sqlite3_bind_text(statement, 4, chat.Title, -1);
-                    Sqlite3.sqlite3_bind_null(statement, 5);
-                    Sqlite3.sqlite3_bind_int(statement, 6, chat.Version);
-                    Sqlite3.sqlite3_bind_int(statement, 7, chat.ParticipantsCount);
-                    Sqlite3.sqlite3_bind_int(statement, 8, chat.Date);
-                    Sqlite3.sqlite3_bind_null(statement, 9);
+                    Sqlite3.sqlite3_bind_int(statement, 2, chat.Id);
+                    Sqlite3.sqlite3_bind_null(statement, 3);
+                    Sqlite3.sqlite3_bind_int(statement, 4, (int)chat.Flags);
+                    Sqlite3.sqlite3_bind_text(statement, 5, chat.Title, -1);
+                    Sqlite3.sqlite3_bind_null(statement, 6);
+                    Sqlite3.sqlite3_bind_int(statement, 7, chat.Version);
+                    Sqlite3.sqlite3_bind_int(statement, 8, chat.ParticipantsCount);
+                    Sqlite3.sqlite3_bind_int(statement, 9, chat.Date);
+                    Sqlite3.sqlite3_bind_null(statement, 10);
 
                     if (chat.Photo is TLChatPhoto photo && photo.PhotoSmall is TLFileLocation small && photo.PhotoBig is TLFileLocation big)
                     {
-                        Sqlite3.sqlite3_bind_int(statement, 10, small.LocalId);
-                        Sqlite3.sqlite3_bind_int64(statement, 11, small.Secret);
-                        Sqlite3.sqlite3_bind_int64(statement, 12, small.VolumeId);
-                        Sqlite3.sqlite3_bind_int(statement, 13, small.DCId);
-                        Sqlite3.sqlite3_bind_int(statement, 14, big.LocalId);
-                        Sqlite3.sqlite3_bind_int64(statement, 15, big.Secret);
-                        Sqlite3.sqlite3_bind_int64(statement, 16, big.VolumeId);
-                        Sqlite3.sqlite3_bind_int(statement, 17, big.DCId);
+                        Sqlite3.sqlite3_bind_int(statement, 11, small.LocalId);
+                        Sqlite3.sqlite3_bind_int64(statement, 12, small.Secret);
+                        Sqlite3.sqlite3_bind_int64(statement, 13, small.VolumeId);
+                        Sqlite3.sqlite3_bind_int(statement, 14, small.DCId);
+                        Sqlite3.sqlite3_bind_int(statement, 15, big.LocalId);
+                        Sqlite3.sqlite3_bind_int64(statement, 16, big.Secret);
+                        Sqlite3.sqlite3_bind_int64(statement, 17, big.VolumeId);
+                        Sqlite3.sqlite3_bind_int(statement, 18, big.DCId);
                     }
                     else
                     {
-                        Sqlite3.sqlite3_bind_null(statement, 10);
                         Sqlite3.sqlite3_bind_null(statement, 11);
                         Sqlite3.sqlite3_bind_null(statement, 12);
                         Sqlite3.sqlite3_bind_null(statement, 13);
@@ -193,66 +193,67 @@ namespace Telegram.Api.Services.Cache.Context
                         Sqlite3.sqlite3_bind_null(statement, 15);
                         Sqlite3.sqlite3_bind_null(statement, 16);
                         Sqlite3.sqlite3_bind_null(statement, 17);
+                        Sqlite3.sqlite3_bind_null(statement, 18);
                     }
 
                     if (chat.HasMigratedTo && chat.MigratedTo is TLInputChannel inputChannel)
                     {
-                        Sqlite3.sqlite3_bind_int(statement, 18, inputChannel.ChannelId);
-                        Sqlite3.sqlite3_bind_int64(statement, 19, inputChannel.AccessHash);
+                        Sqlite3.sqlite3_bind_int(statement, 19, inputChannel.ChannelId);
+                        Sqlite3.sqlite3_bind_int64(statement, 20, inputChannel.AccessHash);
                     }
                     else
                     {
-                        Sqlite3.sqlite3_bind_null(statement, 18);
                         Sqlite3.sqlite3_bind_null(statement, 19);
+                        Sqlite3.sqlite3_bind_null(statement, 20);
                     }
 
-                    Sqlite3.sqlite3_bind_null(statement, 20);
                     Sqlite3.sqlite3_bind_null(statement, 21);
+                    Sqlite3.sqlite3_bind_null(statement, 22);
                 }
                 else if (value is TLChannel channel)
                 {
                     Sqlite3.sqlite3_bind_int64(statement, 1, (long)(PeerIdChannelShift | (ulong)(uint)channel.Id));
+                    Sqlite3.sqlite3_bind_int(statement, 2, channel.Id);
 
                     if (channel.HasAccessHash)
                     {
-                        Sqlite3.sqlite3_bind_int64(statement, 2, channel.AccessHash.Value);
+                        Sqlite3.sqlite3_bind_int64(statement, 3, channel.AccessHash.Value);
                     }
                     else
                     {
-                        Sqlite3.sqlite3_bind_null(statement, 2);
+                        Sqlite3.sqlite3_bind_null(statement, 3);
                     }
 
-                    Sqlite3.sqlite3_bind_int(statement, 3, (int)channel.Flags);
-                    Sqlite3.sqlite3_bind_text(statement, 4, channel.Title, -1);
+                    Sqlite3.sqlite3_bind_int(statement, 4, (int)channel.Flags);
+                    Sqlite3.sqlite3_bind_text(statement, 5, channel.Title, -1);
 
                     if (channel.HasUsername)
                     {
-                        Sqlite3.sqlite3_bind_text(statement, 5, channel.Username, -1);
+                        Sqlite3.sqlite3_bind_text(statement, 6, channel.Username, -1);
                     }
                     else
                     {
-                        Sqlite3.sqlite3_bind_null(statement, 5);
+                        Sqlite3.sqlite3_bind_null(statement, 6);
                     }
 
-                    Sqlite3.sqlite3_bind_int(statement, 6, channel.Version);
-                    Sqlite3.sqlite3_bind_null(statement, 7);
-                    Sqlite3.sqlite3_bind_int(statement, 8, channel.Date);
-                    Sqlite3.sqlite3_bind_null(statement, 9);
+                    Sqlite3.sqlite3_bind_int(statement, 7, channel.Version);
+                    Sqlite3.sqlite3_bind_null(statement, 8);
+                    Sqlite3.sqlite3_bind_int(statement, 9, channel.Date);
+                    Sqlite3.sqlite3_bind_null(statement, 10);
 
                     if (channel.Photo is TLChatPhoto photo && photo.PhotoSmall is TLFileLocation small && photo.PhotoBig is TLFileLocation big)
                     {
-                        Sqlite3.sqlite3_bind_int(statement, 10, small.LocalId);
-                        Sqlite3.sqlite3_bind_int64(statement, 11, small.Secret);
-                        Sqlite3.sqlite3_bind_int64(statement, 12, small.VolumeId);
-                        Sqlite3.sqlite3_bind_int(statement, 13, small.DCId);
-                        Sqlite3.sqlite3_bind_int(statement, 14, big.LocalId);
-                        Sqlite3.sqlite3_bind_int64(statement, 15, big.Secret);
-                        Sqlite3.sqlite3_bind_int64(statement, 16, big.VolumeId);
-                        Sqlite3.sqlite3_bind_int(statement, 17, big.DCId);
+                        Sqlite3.sqlite3_bind_int(statement, 11, small.LocalId);
+                        Sqlite3.sqlite3_bind_int64(statement, 12, small.Secret);
+                        Sqlite3.sqlite3_bind_int64(statement, 13, small.VolumeId);
+                        Sqlite3.sqlite3_bind_int(statement, 14, small.DCId);
+                        Sqlite3.sqlite3_bind_int(statement, 15, big.LocalId);
+                        Sqlite3.sqlite3_bind_int64(statement, 16, big.Secret);
+                        Sqlite3.sqlite3_bind_int64(statement, 17, big.VolumeId);
+                        Sqlite3.sqlite3_bind_int(statement, 18, big.DCId);
                     }
                     else
                     {
-                        Sqlite3.sqlite3_bind_null(statement, 10);
                         Sqlite3.sqlite3_bind_null(statement, 11);
                         Sqlite3.sqlite3_bind_null(statement, 12);
                         Sqlite3.sqlite3_bind_null(statement, 13);
@@ -260,29 +261,30 @@ namespace Telegram.Api.Services.Cache.Context
                         Sqlite3.sqlite3_bind_null(statement, 15);
                         Sqlite3.sqlite3_bind_null(statement, 16);
                         Sqlite3.sqlite3_bind_null(statement, 17);
+                        Sqlite3.sqlite3_bind_null(statement, 18);
                     }
 
-                    Sqlite3.sqlite3_bind_null(statement, 18);
                     Sqlite3.sqlite3_bind_null(statement, 19);
+                    Sqlite3.sqlite3_bind_null(statement, 20);
 
                     //Sqlite3.sqlite3_bind_int(statement, 20, 1);
 
                     if (channel.HasAdminRights)
                     {
-                        Sqlite3.sqlite3_bind_int(statement, 20, (int)channel.AdminRights.Flags);
-                    }
-                    else
-                    {
-                        Sqlite3.sqlite3_bind_null(statement, 20);
-                    }
-
-                    if (channel.HasBannedRights)
-                    {
-                        Sqlite3.sqlite3_bind_int(statement, 21, (int)channel.BannedRights.Flags);
+                        Sqlite3.sqlite3_bind_int(statement, 21, (int)channel.AdminRights.Flags);
                     }
                     else
                     {
                         Sqlite3.sqlite3_bind_null(statement, 21);
+                    }
+
+                    if (channel.HasBannedRights)
+                    {
+                        Sqlite3.sqlite3_bind_int(statement, 22, (int)channel.BannedRights.Flags);
+                    }
+                    else
+                    {
+                        Sqlite3.sqlite3_bind_null(statement, 22);
                     }
                 }
 

@@ -46,6 +46,18 @@ namespace Unigram.Controls.Views
             }
         }
 
+        public bool IsCallsProxyEnabled
+        {
+            get
+            {
+                return FieldCalls.IsChecked == true;
+            }
+            set
+            {
+                FieldCalls.IsChecked = value;
+            }
+        }
+
         public string Server
         {
             get
@@ -162,6 +174,12 @@ namespace Unigram.Controls.Views
             var link = new Uri($"https://{linkPrefix}/socks?{string.Join("&", builder)}");
 
             await ShareView.Current.ShowAsync(link, title);
+        }
+
+        private void Enable_Toggled(object sender, RoutedEventArgs e)
+        {
+            FieldCalls.IsEnabled = FieldEnabled.IsChecked == true;
+            FieldCalls.IsChecked = false;
         }
     }
 }

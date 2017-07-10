@@ -109,8 +109,20 @@ namespace Unigram.Views
 
                     if (element != null)
                     {
-                        element.Margin = new Thickness(padding, spacing, padding, 0);
-                        ScrollingHost.Items.Add(element);
+                        if (block is TLPageBlockChannel && previousBlock is TLPageBlockCover)
+                        {
+                            if (previousElement is StackPanel stack && element is Button)
+                            {
+                                element.Style = Resources["CoverChannelBlockStyle"] as Style;
+                                element.Margin = new Thickness(padding, -40, padding, 0);
+                                stack.Children.Insert(1, element);
+                            }
+                        }
+                        else
+                        {
+                            element.Margin = new Thickness(padding, spacing, padding, 0);
+                            ScrollingHost.Items.Add(element);
+                        }
                     }
 
                     previousBlock = block;

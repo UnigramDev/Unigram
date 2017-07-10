@@ -65,6 +65,7 @@ namespace Telegram.Api.Services.Cache
 
             UsersContext = new UsersContext(_database);
             ChatsContext = new ChatsContext(_database);
+            //DialogsContext = new DialogsContext(_database);
 
             var commitEvents = Observable.FromEventPattern<EventHandler, System.EventArgs>(
                     keh => { CommitInvoked += keh; },
@@ -1693,6 +1694,18 @@ namespace Telegram.Api.Services.Cache
 
         public void Open()
         {
+            //if (DialogsContext is Context.DialogsContext context)
+            //{
+            //    context.Load();
+
+            //    //foreach (var dialog in context.Values)
+            //    //{
+            //    //    dialog.TopMessageItem = new TLMessageEmpty { Id = dialog.TopMessage };
+            //    //}
+
+            //    Dialogs = new ObservableCollection<TLDialog>(context.Values);
+            //}
+
 #warning Open FORCED RETURN
             return;
 
