@@ -1074,6 +1074,23 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Sticker info
+
+        public RelayCommand<TLMessage> MessageStickerPackInfoCommand => new RelayCommand<TLMessage>(MessageStickerPackInfoExecute);
+        private async void MessageStickerPackInfoExecute(TLMessage message)
+        {
+            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                var stickerAttribute = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                if (stickerAttribute != null && stickerAttribute.StickerSet.TypeId != TLType.InputStickerSetEmpty)
+                {
+                    await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet);
+                }
+            }
+        }
+
+        #endregion
+
         #region Save sticker as
 
         public RelayCommand<TLMessage> MessageSaveStickerCommand => new RelayCommand<TLMessage>(MessageSaveStickerExecute);
