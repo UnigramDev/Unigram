@@ -57,8 +57,6 @@ namespace Unigram.Views
         public MainViewModel ViewModel => DataContext as MainViewModel;
 
         private object _lastSelected;
-        private readonly UISettings _uiSettings = new UISettings();
-        private Color currentBackground;
 
         public MainPage()
         {
@@ -68,7 +66,6 @@ namespace Unigram.Views
             NavigationCacheMode = NavigationCacheMode.Required;
 
             ViewModel.Aggregator.Subscribe(this);
-            LayoutUpdated += View_Ready;
             Loaded += OnLoaded;
 
             //Theme.RegisterPropertyChangedCallback(Border.BackgroundProperty, OnThemeChanged);
@@ -76,69 +73,7 @@ namespace Unigram.Views
             searchInit();
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
-        }
-
-        private void View_Ready(object sender, object e)
-        {
-            if (currentBackground != _uiSettings.GetColorValue(UIColorType.Background))
-            {
-                currentBackground = _uiSettings.GetColorValue(UIColorType.Background);
-                UpdateBars();
-            }
-
-        }
-
-        /// <summary>
-        /// Update the Title and Status Bars colors.
-        /// </summary>
-        private void UpdateBars()
-        {
-            var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
-            var foregroundBrush = Application.Current.Resources["SystemControlPageTextBaseHighBrush"] as SolidColorBrush;
-
-            // Desktop Title Bar
-            try
-            {
-                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-
-                // Background
-                titleBar.BackgroundColor = backgroundBrush.Color;
-                titleBar.InactiveBackgroundColor = backgroundBrush.Color;
-
-                // Foreground
-                titleBar.ForegroundColor = foregroundBrush.Color;
-                titleBar.ButtonForegroundColor = foregroundBrush.Color;
-
-                // Buttons
-                titleBar.ButtonBackgroundColor = backgroundBrush.Color;
-                titleBar.ButtonInactiveBackgroundColor = backgroundBrush.Color;
-
-                // Apply buttons feedback based on Light or Dark theme
-                if (_uiSettings.GetColorValue(UIColorType.Background) == Colors.Black)
-                {
-                    // Buttons feedback
-                    titleBar.ButtonPressedBackgroundColor = Color.FromArgb(255, 76, 76, 76);
-                    titleBar.ButtonHoverBackgroundColor = Color.FromArgb(255, 53, 53, 53);
-                }
-                else
-                {
-                    // Buttons feedback
-                    titleBar.ButtonPressedBackgroundColor = Color.FromArgb(255, 184, 184, 184);
-                    titleBar.ButtonHoverBackgroundColor = Color.FromArgb(255, 207, 207, 207);
-                }
-            }
-            catch
-            {
-                Debug.WriteLine("Device does not have a Titlebar");
-            }
-
-            // Mobile Status Bar
-            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = backgroundBrush.Color;
-            }
-        }
+        }      
 
         public void OnBackRequested(HandledEventArgs args)
         {
