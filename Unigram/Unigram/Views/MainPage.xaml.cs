@@ -48,6 +48,7 @@ using Unigram.Views.Users;
 using Windows.System;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
+using Windows.UI;
 
 namespace Unigram.Views
 {
@@ -65,7 +66,6 @@ namespace Unigram.Views
             NavigationCacheMode = NavigationCacheMode.Required;
 
             ViewModel.Aggregator.Subscribe(this);
-
             Loaded += OnLoaded;
 
             //Theme.RegisterPropertyChangedCallback(Border.BackgroundProperty, OnThemeChanged);
@@ -73,7 +73,7 @@ namespace Unigram.Views
             searchInit();
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
-        }
+        }      
 
         public void OnBackRequested(HandledEventArgs args)
         {
