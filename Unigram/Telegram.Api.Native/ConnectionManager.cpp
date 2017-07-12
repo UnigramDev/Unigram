@@ -327,6 +327,7 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 
 	INT32 requestToken;
 	ComPtr<MessageRequest> request;
+	auto requestsLock = m_requestsCriticalSection.Lock();
 
 	{
 		auto lock = LockCriticalSection();
@@ -345,7 +346,6 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 	}
 
 	{
-		auto requestsLock = m_requestsCriticalSection.Lock();
 		m_requestsQueue.push_back(request);
 
 		auto requestsTimer = EventObjectT::GetHandle();
@@ -563,7 +563,7 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 	m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
 	m_datacentersExpirationTime = static_cast<INT32>(GetCurrentSystemTime() / 1000) + DATACENTER_EXPIRATION_TIME;
 	return S_OK;
-}
+	}
 
 HRESULT ConnectionManager::UpdateNetworkStatus(bool raiseEvent)
 {
@@ -1421,7 +1421,7 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 		UINT32 constructor;
 		obejct->get_Constructor(&constructor);
 
-		OutputDebugStringFormat(L"Error %d (%s) for TLObject of type %s (0x08X)\n", code, errorMessage, className.GetRawBuffer(nullptr), constructor);
+		OutputDebugStringFormat(L"Error %d (%s) for TLObject of type %s (0x%08X)\n", code, errorMessage, className.GetRawBuffer(nullptr), constructor);
 	}
 
 	if (code == 303)
@@ -2111,14 +2111,6 @@ HRESULT ConnectionManager::IsIPv6Enabled(INetworkAdapter* networkAdapter, bool* 
 	auto currentAddress = addresses.get();
 	while (currentAddress != nullptr)
 	{
-		auto socketAddress = currentAddress->FirstUnicastAddress->Address;
-
-		DWORD bufferLength;
-		WSAAddressToString(socketAddress.lpSockaddr, socketAddress.iSockaddrLength, nullptr, nullptr, &bufferLength);
-
-		std::wstring buffer(bufferLength, '\0');
-		WSAAddressToString(socketAddress.lpSockaddr, socketAddress.iSockaddrLength, nullptr, &buffer[0], &bufferLength);
-
 		if (memcmp(&currentAddress->Luid, &networkAdapterLuid, sizeof(NET_LUID)) == 0)
 		{
 			*enabled = true;
