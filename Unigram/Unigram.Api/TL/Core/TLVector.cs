@@ -58,7 +58,7 @@ namespace Telegram.Api.TL
         {
             var notNull = _items.Where(x => x != null).ToList();
 
-            to.WriteUInt32(0x1CB5C415);
+            //to.WriteUInt32(0x1CB5C415);
             to.WriteInt32(notNull.Count());
 
             foreach (var item in notNull)

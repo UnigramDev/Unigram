@@ -187,6 +187,9 @@ HRESULT ConnectionManager::get_IsIPv6Enabled(boolean* value)
 		return E_POINTER;
 	}
 
+	*value = false;
+	return S_OK;
+
 	auto lock = LockCriticalSection();
 
 	*value = (m_flags & ConnectionManagerFlag::UseIPv6) == ConnectionManagerFlag::UseIPv6;
@@ -495,7 +498,7 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 {
 	HRESULT result;
 
-#if _DEBUG
+#ifndef _DEBUG
 
 	if (m_datacenters.find(1) == m_datacenters.end())
 	{
@@ -546,8 +549,6 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[4], this, 4, false));
 		ReturnIfFailed(result, m_datacenters[4]->AddEndpoint({ L"149.154.167.91", 443 }, ConnectionType::Generic, false));
 		ReturnIfFailed(result, m_datacenters[4]->AddEndpoint({ L"2001:67c:4e8:f004:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
-
-		m_datacenters[4] = datacenter;
 	}
 
 	if (m_datacenters.find(5) == m_datacenters.end())
@@ -559,7 +560,7 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 
 #endif
 
-	m_currentDatacenterId = 1;
+	m_currentDatacenterId = 2;
 	m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
 	m_datacentersExpirationTime = static_cast<INT32>(GetCurrentSystemTime() / 1000) + DATACENTER_EXPIRATION_TIME;
 	return S_OK;

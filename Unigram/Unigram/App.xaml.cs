@@ -161,16 +161,16 @@ namespace Unigram
             var aggregator = UnigramContainer.Current.ResolveType<ITelegramEventAggregator>();
             aggregator.Publish(active ? "Window_Activated" : "Window_Deactivated");
 
-            if (active)
-            {
-                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-                protoService.UpdateStatusAsync(false, null);
-            }
-            else
-            {
-                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-                protoService.UpdateStatusAsync(true, null);
-            }
+            //if (active)
+            //{
+            //    var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+            //    protoService.UpdateStatusAsync(false, null);
+            //}
+            //else
+            //{
+            //    var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+            //    protoService.UpdateStatusAsync(true, null);
+            //}
         }
 
         /////// <summary>
@@ -398,8 +398,11 @@ namespace Unigram
         {
             Log.Write("OnResuming");
 
-            var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-            updatesService.LoadStateAndUpdate(() => { });
+            if (SettingsHelper.IsAuthorized)
+            {
+                var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
+                updatesService.LoadStateAndUpdate(() => { });
+            }
 
             //#if DEBUG
             await VoIPConnection.Current.ConnectAsync();

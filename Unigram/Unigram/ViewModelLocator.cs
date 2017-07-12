@@ -237,7 +237,11 @@ namespace Unigram
             updatesService.GetFullUserAsync = protoService.GetFullUserAsync;
             updatesService.GetFullChatAsync = protoService.GetFullChatAsync;
             updatesService.GetChannelMessagesAsync = protoService.GetMessagesAsync;
-            updatesService.LoadStateAndUpdate(() => { });
+
+            if (SettingsHelper.IsAuthorized)
+            {
+                updatesService.LoadStateAndUpdate(() => { });
+            }
 
             protoService.AuthorizationRequired -= OnAuthorizationRequired;
             protoService.AuthorizationRequired += OnAuthorizationRequired;

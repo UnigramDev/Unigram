@@ -55,17 +55,15 @@ namespace Telegram.Api.Services
             get { return "IT"; }
         }
 
-        private int _currentUserId;
         public int CurrentUserId
         {
             get
             {
-                return _currentUserId;
+                return ConnectionManager.Instance.UserId;
             }
             set
             {
-                _currentUserId = value;
-                
+                ConnectionManager.Instance.UserId = value;
             }
         }
 
