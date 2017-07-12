@@ -182,8 +182,6 @@ HRESULT ConnectionManager::get_CurrentDatacenter(IDatacenter** value)
 
 HRESULT ConnectionManager::get_IsIPv6Enabled(boolean* value)
 {
-	return E_POINTER;
-
 	if (value == nullptr)
 	{
 		return E_POINTER;
@@ -327,39 +325,44 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 		return E_POINTER;
 	}
 
-	auto lock = LockCriticalSection();
-
-	if (m_userId == 0 && (flags & RequestFlag::WithoutLogin) != RequestFlag::WithoutLogin)
-	{
-		return E_INVALIDARG;
-	}
-
-	auto requestToken = m_lastRequestToken + 1;
-
-	HRESULT result;
+	INT32 requestToken;
 	ComPtr<MessageRequest> request;
-	ReturnIfFailed(result, MakeAndInitialize<MessageRequest>(&request, object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags));
+
+	{
+		auto lock = LockCriticalSection();
+
+		if (m_userId == 0 && (flags & RequestFlag::WithoutLogin) != RequestFlag::WithoutLogin)
+		{
+			return E_INVALIDARG;
+		}
+
+		requestToken = m_lastRequestToken + 1;
+
+		HRESULT result;
+		ReturnIfFailed(result, MakeAndInitialize<MessageRequest>(&request, object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags));
+
+		m_lastRequestToken = requestToken;
+	}
 
 	{
 		auto requestsLock = m_requestsCriticalSection.Lock();
 		m_requestsQueue.push_back(request);
-	}
 
-	auto requestsTimer = EventObjectT::GetHandle();
-	if ((flags & RequestFlag::Immediate) == RequestFlag::Immediate)
-	{
-		FILETIME timeout = {};
-		SetThreadpoolTimer(requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
-	}
-	else if (!IsThreadpoolTimerSet(requestsTimer))
-	{
-		FILETIME timeout;
-		TimeoutToFileTime(REQUEST_TIMER_TIMEOUT, timeout);
-		SetThreadpoolTimer(requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
+		auto requestsTimer = EventObjectT::GetHandle();
+		if ((flags & RequestFlag::Immediate) == RequestFlag::Immediate)
+		{
+			FILETIME timeout = {};
+			SetThreadpoolTimer(requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
+		}
+		else if (!IsThreadpoolTimerSet(requestsTimer))
+		{
+			FILETIME timeout;
+			TimeoutToFileTime(REQUEST_TIMER_TIMEOUT, timeout);
+			SetThreadpoolTimer(requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
+		}
 	}
 
 	*value = requestToken;
-	m_lastRequestToken = requestToken;
 	return S_OK;
 }
 
@@ -545,7 +548,7 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 		ReturnIfFailed(result, m_datacenters[4]->AddEndpoint({ L"2001:67c:4e8:f004:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
 
 		m_datacenters[4] = datacenter;
-}
+	}
 
 	if (m_datacenters.find(5) == m_datacenters.end())
 	{
@@ -877,7 +880,6 @@ HRESULT ConnectionManager::CreateTransportMessage(MessageRequest* request, INT64
 HRESULT ConnectionManager::ProcessRequests()
 {
 	auto currentTime = static_cast<INT32>(GetCurrentSystemTime() / 1000);
-
 	auto requestsLock = m_requestsCriticalSection.Lock();
 
 	{
@@ -1319,9 +1321,9 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 	METHOD_DEBUG();
 
 	ComPtr<MessageRequest> request;
+	auto requestsLock = m_requestsCriticalSection.Lock();
 
 	{
-		auto requestsLock = m_requestsCriticalSection.Lock();
 		auto requestIterator = std::find_if(m_runningRequests.begin(), m_runningRequests.end(), [&requestMessageId](auto const& request)
 		{
 			return request.second->MatchesMessage(requestMessageId);
@@ -1409,6 +1411,18 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 
 	auto lock = LockCriticalSection();
 	auto errorMessage = message.GetRawBuffer(nullptr);
+
+	{
+		auto& obejct = request->GetObject();
+
+		HString className;
+		obejct->GetRuntimeClassName(className.GetAddressOf());
+
+		UINT32 constructor;
+		obejct->get_Constructor(&constructor);
+
+		OutputDebugStringFormat(L"Error %d (%s) for TLObject of type %s (0x08X)\n", code, errorMessage, className.GetRawBuffer(nullptr), constructor);
+	}
 
 	if (code == 303)
 	{
@@ -2097,6 +2111,14 @@ HRESULT ConnectionManager::IsIPv6Enabled(INetworkAdapter* networkAdapter, bool* 
 	auto currentAddress = addresses.get();
 	while (currentAddress != nullptr)
 	{
+		auto socketAddress = currentAddress->FirstUnicastAddress->Address;
+
+		DWORD bufferLength;
+		WSAAddressToString(socketAddress.lpSockaddr, socketAddress.iSockaddrLength, nullptr, nullptr, &bufferLength);
+
+		std::wstring buffer(bufferLength, '\0');
+		WSAAddressToString(socketAddress.lpSockaddr, socketAddress.iSockaddrLength, nullptr, &buffer[0], &bufferLength);
+
 		if (memcmp(&currentAddress->Luid, &networkAdapterLuid, sizeof(NET_LUID)) == 0)
 		{
 			*enabled = true;
