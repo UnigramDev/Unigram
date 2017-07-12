@@ -15,7 +15,7 @@ using Telegram.Api.Native;
 
 namespace Telegram.Api.Services
 {
-	public partial class MTProtoService
+    public partial class MTProtoService
     {
         private void PrintCaption(string caption)
         {
@@ -27,11 +27,11 @@ namespace Telegram.Api.Services
 
         private readonly object _historyRoot = new object();
 
-	    public void SendInformativeMessageInternal<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null,
-	        int? maxAttempt = null, // to send delayed items
-	        Action<int> attemptFailed = null,
+        public void SendInformativeMessageInternal<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null,
+            int? maxAttempt = null, // to send delayed items
+            Action<int> attemptFailed = null,
             Action fastCallback = null) // to send delayed items
-	    {
+        {
             var connectionManager = ConnectionManager.Instance;
             var messageToken = connectionManager.SendRequest(obj, (message, ex) =>
             {
@@ -52,14 +52,11 @@ namespace Telegram.Api.Services
             SendInformativeMessage<T>(caption, obj, callback, faultCallback);
         }
 
-	    private void SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null, 
+        private void SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null,
             int? maxAttempt = null,                 // to send delayed items
             Action<int> attemptFailed = null)       // to send delayed items
-	    {
-            Execute.BeginOnThreadPool(() =>
-            {
-                SendInformativeMessageInternal(caption, obj, callback, faultCallback, maxAttempt, attemptFailed);
-            });
+        {
+            SendInformativeMessageInternal(caption, obj, callback, faultCallback, maxAttempt, attemptFailed);
         }
     }
 }
