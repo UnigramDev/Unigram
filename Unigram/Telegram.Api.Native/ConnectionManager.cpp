@@ -282,7 +282,7 @@ HRESULT ConnectionManager::get_TimeDifference(INT32* value)
 	return S_OK;
 }
 
-HRESULT ConnectionManager::get_Datacenters(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CDatacenter** value)
+HRESULT ConnectionManager::get_Datacenters(__FIVectorView_1_Telegram__CApi__CNative__CDatacenter** value)
 {
 	if (value == nullptr)
 	{
@@ -563,7 +563,7 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 	m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
 	m_datacentersExpirationTime = static_cast<INT32>(GetCurrentSystemTime() / 1000) + DATACENTER_EXPIRATION_TIME;
 	return S_OK;
-	}
+}
 
 HRESULT ConnectionManager::UpdateNetworkStatus(bool raiseEvent)
 {
@@ -1365,10 +1365,10 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 		{
 			request->Reset(false);
 
-			{
-				auto requestsLock = m_requestsCriticalSection.Lock();
-				m_requestsQueue.push_back(std::move(request));
-			}
+			//{
+				//auto requestsLock = m_requestsCriticalSection.Lock();
+			m_requestsQueue.push_back(std::move(request));
+			//}
 
 			FILETIME timeout = {};
 			SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
