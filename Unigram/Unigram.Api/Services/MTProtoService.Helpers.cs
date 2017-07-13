@@ -44,7 +44,7 @@ namespace Telegram.Api.Services
                 }
                 else if (message.Object is TLUnparsedObject unparsed)
                 {
-                    callback?.Invoke(TLFactory.Read<T>(unparsed.Reader));
+                    callback?.Invoke(TLFactory.Read<T>(unparsed.Reader, unparsed.Constructor));
                 }
                 else
                 {
