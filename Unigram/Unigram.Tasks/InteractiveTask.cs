@@ -69,7 +69,7 @@ namespace Unigram.Tasks
 
                         var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = replyToMsgId, Message = messageText, Entities = new TLVector<TLMessageEntityBase>(entities), IsBackground = true, RandomId = TLLong.Random() };
 
-                        protoService.SendInformativeMessageInternal<TLUpdatesBase>("messages.sendMessage", obj, result =>
+                        protoService.SendInformativeMessage<TLUpdatesBase>("messages.sendMessage", obj, result =>
                         {
                             manualResetEvent.Set();
                         },

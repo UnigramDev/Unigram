@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Telegram.Api.Helpers;
+using Telegram.Api.Native;
 using Telegram.Api.Native.TL;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Help;
@@ -8,8 +9,8 @@ using Telegram.Api.TL.Help.Methods;
 
 namespace Telegram.Api.Services
 {
-	public partial class MTProtoService
-	{
+    public partial class MTProtoService
+    {
         /// <summary>
         /// Список доступных серверов, максимальный размер участников беседы и др.
         /// </summary>
@@ -26,7 +27,7 @@ namespace Telegram.Api.Services
                 result =>
                 {
                     callback(result);
-                }, 
+                },
                 faultCallback);
         }
 
@@ -51,20 +52,20 @@ namespace Telegram.Api.Services
             var obj = new TLHelpGetInviteText();
 
             const string caption = "help.getInviteText";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError);
         }
 
-        public void GetSupportAsync( Action<TLHelpSupport> callback, Action<TLRPCError> faultCallback = null)
+        public void GetSupportAsync(Action<TLHelpSupport> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLHelpGetSupport();
 
             const string caption = "help.getSupport";
-            SendInformativeMessage<TLHelpSupport>(caption, obj, 
+            SendInformativeMessage<TLHelpSupport>(caption, obj,
                 result =>
                 {
                     _cacheService.SyncUser(result.User, _ => { });
                     callback(result);
-                }, 
+                },
                 faultCallback);
         }
 
@@ -75,5 +76,5 @@ namespace Telegram.Api.Services
             const string caption = "help.getAppChangelog";
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
-	}
+    }
 }

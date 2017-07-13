@@ -1101,7 +1101,7 @@ namespace Unigram.Views
             else if (urlText.WebPageId != 0)
             {
                 var protoService = (MTProtoService)MTProtoService.Current;
-                protoService.SendInformativeMessageInternal<TLWebPageBase>("messages.getWebPage", new TLMessagesGetWebPage { Url = urlText.Url, Hash = 0 },
+                protoService.SendInformativeMessage<TLWebPageBase>("messages.getWebPage", new TLMessagesGetWebPage { Url = urlText.Url, Hash = 0 },
                     result =>
                     {
                         Execute.BeginOnUIThread(() =>

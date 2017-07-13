@@ -35,8 +35,6 @@ namespace Telegram.Api.Services
 
         int CurrentUserId { get; set; }
 
-        IList<HistoryItem> History { get; }
-
         long ClientTicksDelta { get; }
 
         /// <summary>

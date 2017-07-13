@@ -109,33 +109,11 @@ namespace Telegram.Api.Services
             InitializationFailed?.Invoke(this, EventArgs.Empty);
         }
 
-        private readonly object _fileTransportRoot = new object();
-
-        private readonly object _activeTransportRoot = new object();
-
         private readonly ICacheService _cacheService;
         private readonly IUpdatesService _updatesService;
         private readonly IConnectionService _connectionService;
         private readonly IDeviceInfoService _deviceInfo;
         private readonly IStatsService _statsService;
-
-        private readonly Dictionary<long, HistoryItem> _history = new Dictionary<long, HistoryItem>();
-
-#if DEBUG
-        private readonly Dictionary<long, HistoryItem> _removedHistory = new Dictionary<long, HistoryItem>();
-#endif
-
-        public IList<HistoryItem> History
-        {
-            get { return _history.Values.ToList(); }
-        }
-
-        private readonly object _delayedItemsRoot = new object();
-
-        /// <summary>
-        /// Отложенные запросы, будут выполнены сразу же после получения авторизационного ключа
-        /// </summary>
-        private readonly List<DelayedItem> _delayedItems = new List<DelayedItem>();
 
         private Timer _deviceLockedTimer;
         private Timer _checkTransportTimer;
