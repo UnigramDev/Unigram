@@ -871,10 +871,15 @@ namespace Unigram.ViewModels
 
             }
 
+            if (_replyMarkupMessage != null && _replyMarkupMessage.Id > message.Id)
+            {
+                return;
+            }
+
             //this.SuppressOpenCommandsKeyboard = (message != null && message.ReplyMarkup != null && suppressOpenKeyboard);
 
             _replyMarkupMessage = message;
-            ReplyMarkup = message?.ReplyMarkup;
+            ReplyMarkup = message.ReplyMarkup;
         }
 
         //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand => new RelayCommand<TLKeyboardButtonBase>(KeyboardButtonExecute);
