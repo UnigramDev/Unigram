@@ -24,6 +24,8 @@ using Windows.ApplicationModel.Calls;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI.Text;
+using Telegram.Api.TL.Messages;
+using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -923,6 +925,20 @@ namespace Unigram.ViewModels
             //}
             var dialog = _currentDialog;
 
+            //for (int i = 0; i < 200;)
+            //{
+            //    var request = new TLMessagesSendMessage { Peer = _peer, Message = "Message " + i, RandomId = TLLong.Random() };
+            //    var response = await ProtoService.SendRequestAsync<TLUpdatesBase>("messages.sendMessage", request);
+            //    if (response.IsSucceeded)
+            //    {
+            //        i++;
+            //    }
+            //    else
+            //    {
+            //        await Task.Delay(500);
+            //    }
+            //}
+
             if (messageId.HasValue)
             {
                 LoadMessageSliceAsync(null, messageId.Value);
@@ -1167,6 +1183,8 @@ namespace Unigram.ViewModels
                 dialog.ReadInboxMaxId = dialog.TopMessage;
                 dialog.UnreadCount = dialog.UnreadCount - unread;
                 dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+
+                RemoveNotifications();
             }
 
             LastSeen = await GetSubtitle();
@@ -1295,6 +1313,28 @@ namespace Unigram.ViewModels
             }
 
             return null;
+        }
+
+        private void RemoveNotifications()
+        {
+            var group = string.Empty;
+            if (_peer is TLInputPeerUser peerUser)
+            {
+                group = "u" + peerUser.UserId;
+            }
+            else if (_peer is TLInputPeerChannel peerChannel)
+            {
+                group = "c" + peerChannel.ChannelId;
+            }
+            else if (_peer is TLInputPeerChat peerChat)
+            {
+                group = "c" + peerChat.ChatId;
+            }
+
+            Execute.BeginOnThreadPool(() =>
+            {
+                ToastNotificationManager.History.RemoveGroup(group, "App");
+            });
         }
 
         public void SaveDraft()

@@ -43,7 +43,7 @@ namespace Unigram.Common
             switch (type)
             {
                 case TLAuthSentCodeTypeApp appType:
-                    sender.Inlines.Add(new Run { Text = "We've sent the code the " });
+                    sender.Inlines.Add(new Run { Text = "We've sent the code to the " });
                     sender.Inlines.Add(new Run { Text = "Telegram", FontWeight = FontWeights.SemiBold });
                     sender.Inlines.Add(new Run { Text = " app on your other device." });
                     break;

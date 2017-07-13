@@ -239,7 +239,7 @@ namespace Unigram.Common
 
         #endregion
 
-        public static void RemovePeerFromBackStack(this INavigationService service, TLPeerBase target)
+        public static void RemovePeerFromStack(this INavigationService service, TLPeerBase target)
         {
             TLPeerBase peer;
             bool found = false;

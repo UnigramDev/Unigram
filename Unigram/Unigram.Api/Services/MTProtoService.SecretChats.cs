@@ -22,7 +22,8 @@ namespace Telegram.Api.Services
         //{
         //    var obj = new TLMessagesRequestEncryption { UserId = userId, RandomId = randomId, GA = ga };
 
-        //    SendInformativeMessage<TLEncryptedChatBase>("messages.requestEncryption", obj,
+        //    const string caption = "messages.requestEncryption";
+        //    SendInformativeMessage<TLEncryptedChatBase>(caption, obj,
         //        encryptedChat =>
         //        {
         //            _cacheService.SyncEncryptedChat(encryptedChat, callback.SafeInvoke);
@@ -35,7 +36,8 @@ namespace Telegram.Api.Services
         //{
         //    var obj = new TLMessagesAcceptEncryption { Peer = peer, GB = gb, KeyFingerprint = keyFingerprint };
 
-        //    SendInformativeMessage<TLEncryptedChatBase>("messages.acceptEncryption", obj,
+        //    const string caption = "messages.acceptEncryption";
+        //    SendInformativeMessage<TLEncryptedChatBase>(caption, obj,
         //        encryptedChat =>
         //        {
         //            _cacheService.SyncEncryptedChat(encryptedChat, callback.SafeInvoke);
@@ -48,7 +50,8 @@ namespace Telegram.Api.Services
         //{
         //    var obj = new TLMessagesDiscardEncryption { ChatId = chatId };
 
-        //    SendInformativeMessage("messages.discardEncryption", obj, callback, faultCallback);
+        //    const string caption = "messages.discardEncryption";
+        //    SendInformativeMessage(caption, obj, callback, faultCallback);
         //}
     }
 }

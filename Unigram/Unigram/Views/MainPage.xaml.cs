@@ -48,6 +48,7 @@ using Unigram.Views.Users;
 using Windows.System;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
+using Windows.UI;
 
 namespace Unigram.Views
 {
@@ -65,7 +66,6 @@ namespace Unigram.Views
             NavigationCacheMode = NavigationCacheMode.Required;
 
             ViewModel.Aggregator.Subscribe(this);
-
             Loaded += OnLoaded;
 
             //Theme.RegisterPropertyChangedCallback(Border.BackgroundProperty, OnThemeChanged);
@@ -73,7 +73,7 @@ namespace Unigram.Views
             searchInit();
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
-        }
+        }      
 
         public void OnBackRequested(HandledEventArgs args)
         {
@@ -147,6 +147,20 @@ namespace Unigram.Views
             {
                 MasterDetail.Initialize("Main", Frame);
                 MasterDetail.NavigationService.Frame.Navigated += OnNavigated;
+            }
+            else
+            {
+                while (MasterDetail.NavigationService.Frame.BackStackDepth > 1)
+                {
+                    MasterDetail.NavigationService.Frame.BackStack.RemoveAt(1);
+                }
+
+                if (MasterDetail.NavigationService.Frame.CanGoBack)
+                {
+                    MasterDetail.NavigationService.Frame.GoBack();
+                }
+
+                MasterDetail.NavigationService.Frame.ForwardStack.Clear();
             }
 
             ViewModel.NavigationService = MasterDetail.NavigationService;

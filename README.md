@@ -1,7 +1,23 @@
-# Unigram
-The Telegram client for the Windows 10 platform, built by the community for the community.
+<p align="center">
+  <a href="http://unigram.me">
+    <img src="https://github.com/UnigramDev/Unigram/blob/develop/Unigram/Unigram/Assets/Logos/Placeholder/Placeholder-2.png?raw=true" width=80 height=80>
+  </a>
 
-**[Explore Unigram »](http://unigram.me)**
+  <h3 align="center">Unigram</h3>
+
+  <p align="center">
+    The Telegram client for the Windows 10 platform, built by the community for the community.
+    <br>
+    <br>
+    <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">Download</a>
+    &middot;
+    <a href="http://unigram.me">Website</a>
+    &middot;
+    <a href="https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ">Insiders Group</a>
+  </p>
+</p>
+
+<br>
 
 ## Build instructions
 1. First, check that you have the [necessary tools](#requirements) installed.

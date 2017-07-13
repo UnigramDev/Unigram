@@ -174,6 +174,8 @@ namespace Unigram.ViewModels
                     var messages = new List<TLMessageBase>() { messageBase };
                     if (messageBase.Id == 0 && messageBase.RandomId != 0L)
                     {
+                        await TLMessageDialog.ShowAsync("This message has no ID, so it will be deleted locally only.", "Warning", "OK");
+
                         DeleteMessagesInternal(null, messages);
                         return;
                     }
@@ -526,7 +528,21 @@ namespace Unigram.ViewModels
                     var config = CacheService.GetConfig();
                     if (config != null)
                     {
-                        link = $"{config.MeUrlPrefix}{link}";
+                        var linkPrefix = config.MeUrlPrefix;
+                        if (linkPrefix.EndsWith("/"))
+                        {
+                            linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
+                        }
+                        if (linkPrefix.StartsWith("https://"))
+                        {
+                            linkPrefix = linkPrefix.Substring(8);
+                        }
+                        else if (linkPrefix.StartsWith("http://"))
+                        {
+                            linkPrefix = linkPrefix.Substring(7);
+                        }
+
+                        link = $"https://{linkPrefix}/{link}";
                     }
                     else
                     {
@@ -857,10 +873,15 @@ namespace Unigram.ViewModels
 
             }
 
+            if (_replyMarkupMessage != null && _replyMarkupMessage.Id > message.Id)
+            {
+                return;
+            }
+
             //this.SuppressOpenCommandsKeyboard = (message != null && message.ReplyMarkup != null && suppressOpenKeyboard);
 
             _replyMarkupMessage = message;
-            ReplyMarkup = message?.ReplyMarkup;
+            ReplyMarkup = message.ReplyMarkup;
         }
 
         //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand => new RelayCommand<TLKeyboardButtonBase>(KeyboardButtonExecute);

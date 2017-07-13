@@ -13,14 +13,16 @@ namespace Telegram.Api.Services
         {
             var obj = new TLContactsResetTopPeerRating { Category = category, Peer = peer };
 
-            SendInformativeMessage<bool>("contacts.resetTopPeerRating", obj, callback, faultCallback);
+            const string caption = "contacts.resetTopPeerRating";
+            SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
         }
 
         public void GetTopPeersAsync(TLContactsGetTopPeers.Flag flags, int offset, int limit, int hash, Action<TLContactsTopPeersBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsGetTopPeers { Flags = flags, Offset  = offset, Limit = limit, Hash = hash };
 
-            SendInformativeMessage<TLContactsTopPeersBase>("contacts.getTopPeers", obj, result =>
+            const string caption = "contacts.getTopPeers";
+            SendInformativeMessage<TLContactsTopPeersBase>(caption, obj, result =>
             {
                 var topPeers = result as TLContactsTopPeers;
                 if (topPeers != null)
@@ -44,7 +46,8 @@ namespace Telegram.Api.Services
         {
             var obj = new TLContactsResolveUsername { Username = username };
 
-            SendInformativeMessage<TLContactsResolvedPeer>("contacts.resolveUsername", obj,
+            const string caption = "contacts.resolveUsername";
+            SendInformativeMessage<TLContactsResolvedPeer>(caption, obj,
                 result =>
                 {
                     _cacheService.SyncUsersAndChats(result.Users, result.Chats, 
@@ -62,7 +65,8 @@ namespace Telegram.Api.Services
         {
             var obj = new TLContactsGetStatuses();
 
-            SendInformativeMessage<TLVector<TLContactStatus>>("contacts.getStatuses", obj, 
+            const string caption = "contacts.getStatuses";
+            SendInformativeMessage<TLVector<TLContactStatus>>(caption, obj, 
                 contacts =>
                 {
                     _cacheService.SyncStatuses(contacts, callback);
@@ -74,49 +78,56 @@ namespace Telegram.Api.Services
         {
             var obj = new TLContactsGetContacts { Hash = hash };
 
-            SendInformativeMessage<TLContactsContactsBase>("contacts.getContacts", obj, result => _cacheService.SyncContacts(result, callback), faultCallback);
+            const string caption = "contacts.getContacts";
+            SendInformativeMessage<TLContactsContactsBase>(caption, obj, result => _cacheService.SyncContacts(result, callback), faultCallback);
         }
 
         public void ImportContactsAsync(TLVector<TLInputContactBase> contacts, bool replace, Action<TLContactsImportedContacts> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsImportContacts { Contacts = contacts, Replace = replace };
 
-            SendInformativeMessage<TLContactsImportedContacts>("contacts.importContacts", obj, result => _cacheService.SyncContacts(result, callback), faultCallback);
+            const string caption = "contacts.importContacts";
+            SendInformativeMessage<TLContactsImportedContacts>(caption, obj, result => _cacheService.SyncContacts(result, callback), faultCallback);
         }
 
         public void DeleteContactAsync(TLInputUserBase id, Action<TLContactsLink> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsDeleteContact { Id = id };
 
-            SendInformativeMessage<TLContactsLink>("contacts.deleteContact", obj, result => _cacheService.SyncUserLink(result, callback), faultCallback);
+            const string caption = "contacts.deleteContact";
+            SendInformativeMessage<TLContactsLink>(caption, obj, result => _cacheService.SyncUserLink(result, callback), faultCallback);
         }
 
         public void DeleteContactsAsync(TLVector<TLInputUserBase> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsDeleteContacts { Id = id };
 
-            SendInformativeMessage("contacts.deleteContacts", obj, callback, faultCallback);
+            const string caption = "contacts.deleteContacts";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void BlockAsync(TLInputUserBase id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsBlock { Id = id };
 
-            SendInformativeMessage("contacts.block", obj, callback, faultCallback);
+            const string caption = "contacts.block";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void UnblockAsync(TLInputUserBase id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsUnblock { Id = id };
 
-            SendInformativeMessage("contacts.unblock", obj, callback, faultCallback);
+            const string caption = "contacts.unblock";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetBlockedAsync(int offset, int limit, Action<TLContactsBlockedBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsGetBlocked { Offset = offset, Limit = limit };
 
-            SendInformativeMessage<TLContactsBlockedBase>("contacts.getBlocked", obj, 
+            const string caption = "contacts.getBlocked";
+            SendInformativeMessage<TLContactsBlockedBase>(caption, obj, 
                 result =>
                 {
                     _cacheService.SyncUsers(result.Users, 
@@ -131,8 +142,9 @@ namespace Telegram.Api.Services
         public void SearchAsync(string q, int limit, Action<TLContactsFound> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsSearch { Q = q, Limit = limit };
-            //var invokeWithLayer18 = new TLInvokeWithLayer18 {Data = obj};
-            SendInformativeMessage("contacts.search", obj, callback, faultCallback);
+
+            const string caption = "contacts.search";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
     }
 }

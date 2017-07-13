@@ -30,7 +30,8 @@ namespace Telegram.Api.Services
         {
             var obj = new TLUploadGetFile { Location = location, Offset = offset, Limit = limit };
 
-            SendInformativeMessage("upload.getFile", obj, callback, faultCallback);
+            const string caption = "upload.getFile";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetCdnFileAsync(byte[] fileToken, int offset, int limit, Action<TLUploadCdnFileBase> callback, Action<TLRPCError> faultCallback = null)

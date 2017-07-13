@@ -335,6 +335,9 @@
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                 </Style>
                             </ListView.ItemContainerStyle>
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection/>
+                            </ListView.ItemContainerTransitions>
                             <ListView.GroupStyle>
                                 <GroupStyle>
                                     <GroupStyle.HeaderTemplate>

@@ -98,7 +98,7 @@ namespace Unigram.ViewModels.SignIn
 
             if (_password == null)
             {
-                await TLMessageDialog.ShowAsync("Please enter your password.");
+                await TLMessageDialog.ShowAsync("Please enter your password.", "Warning", "OK");
                 return;
             }
 

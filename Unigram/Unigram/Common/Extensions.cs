@@ -48,8 +48,19 @@ namespace Unigram.Common
 
         public static bool IsLike(this string source, string query, StringComparison comp)
         {
+            var result = query.Split(' ').All(x =>
+            {
+                var index = source.IndexOf(x, comp);
+                if (index > -1)
+                {
+                    return index == 0 || char.IsSeparator(source[index - 1]) || !char.IsLetterOrDigit(source[index - 1]);
+                }
+
+                return false;
+            });
+
             source = Unidecoder.Unidecode(source);
-            return query.Split(' ').All(x =>
+            return result || query.Split(' ').All(x =>
             {
                 var index = source.IndexOf(x, comp);
                 if (index > -1)

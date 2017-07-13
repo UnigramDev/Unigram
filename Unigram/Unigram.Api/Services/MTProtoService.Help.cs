@@ -21,7 +21,8 @@ namespace Telegram.Api.Services
 
             Logs.Log.Write("help.getConfig");
 
-            SendInformativeMessage<TLConfig>("help.getConfig", obj,
+            const string caption = "help.getConfig";
+            SendInformativeMessage<TLConfig>(caption, obj,
                 result =>
                 {
                     callback(result);
@@ -33,28 +34,32 @@ namespace Telegram.Api.Services
         {
             var obj = new TLHelpGetTermsOfService();
 
-            SendInformativeMessage("help.getTermsOfService", obj, callback, faultCallback);
+            const string caption = "help.getTermsOfService";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetNearestDCAsync(Action<TLNearestDC> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLHelpGetNearestDC();
 
-            SendInformativeMessage("help.getNearestDc", obj, callback, faultCallback);
+            const string caption = "help.getNearestDc";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetInviteTextAsync(string langCode, Action<TLHelpInviteText> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLHelpGetInviteText();
 
-            SendInformativeMessage("help.getInviteText", obj, callback, faultCallback);
+            const string caption = "help.getInviteText";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetSupportAsync( Action<TLHelpSupport> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLHelpGetSupport();
 
-            SendInformativeMessage<TLHelpSupport>("help.getSupport", obj, 
+            const string caption = "help.getSupport";
+            SendInformativeMessage<TLHelpSupport>(caption, obj, 
                 result =>
                 {
                     _cacheService.SyncUser(result.User, _ => { });
@@ -67,7 +72,8 @@ namespace Telegram.Api.Services
         {
             var obj = new TLHelpGetAppChangelog();
 
-            SendInformativeMessage("help.getAppChangelog", obj, callback, faultCallback);
+            const string caption = "help.getAppChangelog";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 	}
 }

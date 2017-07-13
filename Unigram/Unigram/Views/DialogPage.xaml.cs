@@ -815,13 +815,11 @@ namespace Unigram.Views
                 if (messageCommon != null)
                 {
                     var channel = messageCommon.Parent as TLChannel;
-                    if (channel != null)
+                    if (channel != null && channel.HasUsername)
                     {
-                        if (channel.IsBroadcast && channel.HasUsername)
-                        {
-                            element.Visibility = Visibility.Visible;
-                            return;
-                        }
+                        element.Text = channel.IsBroadcast ? "Copy post link" : "Copy message link";
+                        element.Visibility = Visibility.Visible;
+                        return;
                     }
                 }
 
