@@ -142,7 +142,7 @@ namespace Unigram.ViewModels.SignIn
         {
             if (PhoneCode == null || PhoneNumber == null)
             {
-                await new TLMessageDialog("Please enter your phone number.").ShowQueuedAsync();
+                await TLMessageDialog.ShowAsync("Please enter your phone number.", "Warning", "OK");
                 return;
             }
 

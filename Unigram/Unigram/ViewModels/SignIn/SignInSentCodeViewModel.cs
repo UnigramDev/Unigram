@@ -97,7 +97,7 @@ namespace Unigram.ViewModels.SignIn
 
             if (_phoneCode == null)
             {
-                await TLMessageDialog.ShowAsync("Please enter your code.");
+                await TLMessageDialog.ShowAsync("Please enter your code.", "Warning", "OK");
                 return;
             }
 
