@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
+using Telegram.Api.Native;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.Connection;
@@ -252,6 +253,25 @@ namespace Unigram
             //transportService.TransportConnecting += OnTransportConnecting;
             //transportService.TransportConnected -= OnTransportConnected;
             //transportService.TransportConnected += OnTransportConnected;
+
+            ConnectionManager.Instance.ConnectionStateChanged -= OnConnectionStateChanged;
+            ConnectionManager.Instance.ConnectionStateChanged += OnConnectionStateChanged;
+        }
+
+        private void OnConnectionStateChanged(ConnectionManager sender, object args)
+        {
+            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+            if (protoService != null)
+            {
+                if (sender.ConnectionState == ConnectionState.Connected)
+                {
+                    protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? "Connecting to proxy..." : "Connecting...");
+                }
+                else
+                {
+                    protoService.SetMessageOnTime(0, null);
+                }
+            }
         }
 
         private async void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
