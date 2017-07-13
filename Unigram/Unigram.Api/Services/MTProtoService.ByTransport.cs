@@ -45,7 +45,7 @@ namespace Telegram.Api.Services
                     callback?.Invoke((TLUploadFileBase)(object)message.Object);
                 }
             },
-            null, dcId, ConnectionType.Download, flags | RequestFlag.Immediate);
+            null, dcId, ConnectionType.Download, flags);
         }
 
         public void GetWebFileAsync(int dcId, TLInputWebFileLocation location, int offset, int limit, Action<TLUploadWebFile> callback, Action<TLRPCError> faultCallback = null)
@@ -72,7 +72,7 @@ namespace Telegram.Api.Services
                     callback?.Invoke((TLUploadWebFile)(object)message.Object);
                 }
             },
-            null, dcId, ConnectionType.Download, flags | RequestFlag.Immediate);
+            null, dcId, ConnectionType.Download, flags);
         }
 
         public void SendRequestAsync<T>(string caption, TLObject obj, int dcId, bool cdn, Action<T> callback, Action<TLRPCError> faultCallback = null)
@@ -101,7 +101,7 @@ namespace Telegram.Api.Services
                     callback?.Invoke((T)(object)message.Object);
                 }
             },
-            null, dcId, ConnectionType.Download, flags | RequestFlag.Immediate);
+            null, dcId, ConnectionType.Download, flags);
         }
     }
 }

@@ -845,8 +845,10 @@ HRESULT Datacenter::OnHandshakePQResponse(Connection* connection, TLResPQ* respo
 	}
 
 	ServerPublicKey const* serverPublicKey;
-	if (((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN && !m_connectionManager->GetCDNPublicKey(m_id, response->GetServerPublicKeyFingerprints(), &serverPublicKey)) ||
-		!DatacenterCryptography::GetDatacenterPublicKey(response->GetServerPublicKeyFingerprints(), &serverPublicKey))
+	//if (((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN && !m_connectionManager->GetCDNPublicKey(m_id, response->GetServerPublicKeyFingerprints(), &serverPublicKey)) ||
+	//	!DatacenterCryptography::GetDatacenterPublicKey(response->GetServerPublicKeyFingerprints(), &serverPublicKey))
+	if (!(((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN && m_connectionManager->GetCDNPublicKey(m_id, response->GetServerPublicKeyFingerprints(), &serverPublicKey)) ||
+		DatacenterCryptography::GetDatacenterPublicKey(response->GetServerPublicKeyFingerprints(), &serverPublicKey)))
 	{
 		return E_FAIL;
 	}
