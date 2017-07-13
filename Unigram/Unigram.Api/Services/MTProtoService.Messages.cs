@@ -1247,7 +1247,7 @@ namespace Telegram.Api.Services
                     else
                     {
                         // TODO: Verify Value.PtsCount, before was Seq.
-                        _updatesService.SetState(result.PtsCount, result.Pts, null, null, null, caption);
+                        _updatesService.SetState(null, result.Pts, null, null, null, caption);
                     }
 
                     callback(result);
