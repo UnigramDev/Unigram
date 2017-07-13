@@ -29,6 +29,11 @@ namespace Telegram.Api.Services
 
         public void SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null, RequestFlag flags = 0, Action fastCallback = null)
         {
+            SendInformativeMessage(caption, obj, callback, faultCallback, fastCallback, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, flags | RequestFlag.Immediate);
+        }
+
+        public int SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback, Action fastCallback, int datacenterId, ConnectionType connectionType, RequestFlag flags)
+        {
             RequestQuickAckReceivedCallback quick = null;
             if (fastCallback != null)
             {
@@ -38,7 +43,7 @@ namespace Telegram.Api.Services
             Debug.WriteLine("Sending " + caption);
 
             var connectionManager = ConnectionManager.Instance;
-            var messageToken = connectionManager.SendRequest(obj, (message, ex) =>
+            return connectionManager.SendRequest(obj, (message, ex) =>
             {
                 if (message.Object is TLRPCError error)
                 {
@@ -53,7 +58,7 @@ namespace Telegram.Api.Services
                     callback?.Invoke((T)(object)message.Object);
                 }
             },
-            quick, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, flags | RequestFlag.Immediate);
+            quick, datacenterId, ConnectionType.Generic, flags);
         }
 
         public void SendRequestAsync<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null)

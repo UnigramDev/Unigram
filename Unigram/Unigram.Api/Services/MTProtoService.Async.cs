@@ -175,7 +175,7 @@ namespace Telegram.Api.Services
         public Task<MTProtoResponse<T>> SendRequestAsync<T>(string caption, TLObject obj)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<T>>();
-            SendRequestAsync<T>(caption, obj, (callback) =>
+            SendInformativeMessage<T>(caption, obj, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<T>(callback));
             }, (faultCallback) =>
