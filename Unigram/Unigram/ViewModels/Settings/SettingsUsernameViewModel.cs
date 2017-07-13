@@ -279,8 +279,22 @@ namespace Unigram.ViewModels.Settings
             var config = CacheService.GetConfig();
             if (config != null)
             {
+                var linkPrefix = config.MeUrlPrefix;
+                if (linkPrefix.EndsWith("/"))
+                {
+                    linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
+                }
+                if (linkPrefix.StartsWith("https://"))
+                {
+                    linkPrefix = linkPrefix.Substring(8);
+                }
+                else if (linkPrefix.StartsWith("http://"))
+                {
+                    linkPrefix = linkPrefix.Substring(7);
+                }
+
                 var package = new DataPackage();
-                package.SetText($"{config.MeUrlPrefix}{_username}");
+                package.SetText($"https://{linkPrefix}/{_username}");
                 Clipboard.SetContent(package);
 
                 await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();

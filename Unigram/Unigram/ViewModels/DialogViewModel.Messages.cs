@@ -526,7 +526,21 @@ namespace Unigram.ViewModels
                     var config = CacheService.GetConfig();
                     if (config != null)
                     {
-                        link = $"{config.MeUrlPrefix}{link}";
+                        var linkPrefix = config.MeUrlPrefix;
+                        if (linkPrefix.EndsWith("/"))
+                        {
+                            linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
+                        }
+                        if (linkPrefix.StartsWith("https://"))
+                        {
+                            linkPrefix = linkPrefix.Substring(8);
+                        }
+                        else if (linkPrefix.StartsWith("http://"))
+                        {
+                            linkPrefix = linkPrefix.Substring(7);
+                        }
+
+                        link = $"https://{linkPrefix}/{link}";
                     }
                     else
                     {
