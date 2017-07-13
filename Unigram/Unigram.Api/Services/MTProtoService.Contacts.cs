@@ -1,5 +1,6 @@
 ﻿using System;
 using Telegram.Api.Extensions;
+using Telegram.Api.Native;
 using Telegram.Api.Native.TL;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Contacts;
@@ -87,7 +88,12 @@ namespace Telegram.Api.Services
             var obj = new TLContactsImportContacts { Contacts = contacts, Replace = replace };
 
             const string caption = "contacts.importContacts";
-            SendInformativeMessage<TLContactsImportedContacts>(caption, obj, result => _cacheService.SyncContacts(result, callback), faultCallback);
+            SendInformativeMessage<TLContactsImportedContacts>(caption, obj,
+                result =>
+                {
+                    _cacheService.SyncContacts(result, callback);
+                },
+                faultCallback, RequestFlag.FailOnServerError | RequestFlag.CanCompress);
         }
 
         public void DeleteContactAsync(TLInputUserBase id, Action<TLContactsLink> callback, Action<TLRPCError> faultCallback = null)
@@ -144,7 +150,7 @@ namespace Telegram.Api.Services
             var obj = new TLContactsSearch { Q = q, Limit = limit };
 
             const string caption = "contacts.search";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError);
         }
     }
 }

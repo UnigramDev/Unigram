@@ -27,12 +27,14 @@ namespace Telegram.Api.Services
 
         private readonly object _historyRoot = new object();
 
-        public void SendInformativeMessageInternal<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null,
-            RequestFlag flags = RequestFlag.FailOnServerError | RequestFlag.WithoutLogin | RequestFlag.TryDifferentDc | RequestFlag.EnableUnauthorized,
-            int? maxAttempt = null, // to send delayed items
-            Action<int> attemptFailed = null,
-            Action fastCallback = null) // to send delayed items
+        public void SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null, RequestFlag flags = 0, Action fastCallback = null)
         {
+            RequestQuickAckReceivedCallback quick = null;
+            if (fastCallback != null)
+            {
+                quick = () => fastCallback?.Invoke();
+            }
+
             var connectionManager = ConnectionManager.Instance;
             var messageToken = connectionManager.SendRequest(obj, (message, ex) =>
             {
@@ -42,7 +44,7 @@ namespace Telegram.Api.Services
                 }
                 else if (message.Object is TLUnparsedObject unparsed)
                 {
-                    callback?.Invoke(TLFactory.Read<T>(unparsed.Reader));
+                    callback?.Invoke(TLFactory.Read<T>(unparsed.Reader, unparsed.Constructor));
                 }
                 else
                 {
@@ -55,14 +57,6 @@ namespace Telegram.Api.Services
         public void SendRequestAsync<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null)
         {
             SendInformativeMessage<T>(caption, obj, callback, faultCallback);
-        }
-
-        private void SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null,
-            RequestFlag flags = RequestFlag.FailOnServerError | RequestFlag.WithoutLogin | RequestFlag.TryDifferentDc | RequestFlag.EnableUnauthorized,
-            int? maxAttempt = null,                 // to send delayed items
-            Action<int> attemptFailed = null)       // to send delayed items
-        {
-            SendInformativeMessageInternal(caption, obj, callback, faultCallback, flags, maxAttempt, attemptFailed);
         }
     }
 }

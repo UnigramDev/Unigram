@@ -14,7 +14,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesGetDHConfig { Version = version, RandomLength = randomLength };
 
             const string caption = "messages.getDhConfig";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, Native.RequestFlag.FailOnServerError);
         }
 
         // TODO: Encrypted 

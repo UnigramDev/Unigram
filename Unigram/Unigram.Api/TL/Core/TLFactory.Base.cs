@@ -84,6 +84,77 @@ namespace Telegram.Api.TL
             }
         }
 
+        public static T Read<T>(TLBinaryReader from, uint constructor)
+        {
+            // TODO
+            //if (typeof(T) == typeof(UInt32)) return (T)(Object)from.ReadUInt32();
+            //else if (typeof(T) == typeof(Int32)) return (T)(Object)from.ReadInt32();
+            //else if (typeof(T) == typeof(UInt64)) return (T)(Object)from.ReadUInt64();
+            //else if (typeof(T) == typeof(Int64)) return (T)(Object)from.ReadInt64();
+            //else if (typeof(T) == typeof(Double)) return (T)(Object)from.ReadDouble();
+            //else if (typeof(T) == typeof(Boolean)) return (T)(Object)from.ReadBoolean();
+            //else if (typeof(T) == typeof(String)) return (T)(Object)from.ReadString();
+            //else if (typeof(T) == typeof(Byte[])) return (T)(Object)from.ReadByteArray();
+
+            if (constructor == 0x997275B5)
+            {
+                return (T)(Object)true;
+            }
+            else if (constructor == 0xBC799737)
+            {
+                return (T)(Object)false;
+            }
+
+            var type = (TLType)constructor;
+            if (type == TLType.Vector)
+            {
+                if (typeof(T) != typeof(object) && typeof(T) != typeof(TLObject))
+                {
+                    return (T)(Object)Activator.CreateInstance(typeof(T), from);
+                }
+                else
+                {
+                    var length = from.ReadUInt32();
+                    if (length > 0)
+                    {
+                        var inner = from.ReadUInt32();
+                        from.Position -= 8;
+
+                        var innerType = Type.GetType($"Telegram.Api.TL.TL{(TLType)inner}");
+                        if (innerType != null)
+                        {
+                            var baseType = innerType.GetTypeInfo().BaseType;
+                            if (baseType.Name != "TLObject")
+                            {
+                                innerType = baseType;
+                            }
+
+                            var d1 = typeof(TLVector<>);
+                            var typeArgs = new Type[] { innerType };
+                            var makeme = d1.MakeGenericType(typeArgs);
+                            return (T)(Object)Activator.CreateInstance(makeme, from);
+                        }
+                        else
+                        {
+                            // A base type collection (int, long, double, bool)
+                            // TODO:
+                            return (T)(Object)null;
+                        }
+                    }
+                    else
+                    {
+                        // An empty collection, so we can't determine the generic type
+                        // TODO:
+                        return (T)(Object)new TLVectorEmpty();
+                    }
+                }
+            }
+            else
+            {
+                return Read<T>(from, type);
+            }
+        }
+
         public static void Write(TLBinaryWriter to, object value)
         {
             if (value == null)

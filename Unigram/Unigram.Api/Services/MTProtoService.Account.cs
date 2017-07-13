@@ -12,6 +12,7 @@ using Telegram.Api.TL.Auth.Methods;
 using Telegram.Api.TL.Auth;
 using Telegram.Api.TL.Account;
 using Telegram.Api.Native.TL;
+using Telegram.Api.Native;
 
 namespace Telegram.Api.Services
 {
@@ -34,7 +35,7 @@ namespace Telegram.Api.Services
             var obj = new TLAccountGetTmpPassword { PasswordHash = hash, Period = period };
 
             const string caption = "account.getTmpPassword";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError);
         }
 
         public void ReportPeerAsync(TLInputPeerBase peer, TLReportReasonBase reason, Action<bool> callback, Action<TLRPCError> faultCallback = null)
@@ -50,7 +51,7 @@ namespace Telegram.Api.Services
             var obj = new TLAccountDeleteAccount { Reason = reason };
 
             const string caption = "account.deleteAccount";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
 	    }
 
         public void UpdateDeviceLockedAsync(int period, Action<bool> callback, Action<TLRPCError> faultCallback = null)
@@ -74,7 +75,7 @@ namespace Telegram.Api.Services
             var obj = new TLAccountSendChangePhoneCode { Flags = 0, PhoneNumber = phoneNumber, CurrentNumber = currentNumber };
 
             const string caption = "account.sendChangePhoneCode";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError);
         }
 
         public void ChangePhoneAsync(string phoneNumber, string phoneCodeHash, string phoneCode, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null)
@@ -82,7 +83,12 @@ namespace Telegram.Api.Services
             var obj = new TLAccountChangePhone { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode };
 
             const string caption = "account.changePhone";
-            SendInformativeMessage<TLUserBase>(caption, obj, user => _cacheService.SyncUser(user, callback), faultCallback);
+            SendInformativeMessage<TLUserBase>(caption, obj,
+                user =>
+                {
+                    _cacheService.SyncUser(user, callback);
+                },
+                faultCallback, RequestFlag.FailOnServerError);
         }
 
         public void RegisterDeviceAsync(int tokenType, string token, Action<bool> callback, Action<TLRPCError> faultCallback = null)
@@ -240,7 +246,7 @@ namespace Telegram.Api.Services
             var obj = new TLAccountCheckUsername { Username = username };
 
             const string caption = "account.checkUsername";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError);
 	    }
 
 	    public void UpdateUsernameAsync(string username, Action<TLUserBase> callback, Action<TLRPCError> faultCallback = null)
@@ -248,7 +254,7 @@ namespace Telegram.Api.Services
             var obj = new TLAccountUpdateUsername { Username = username };
 
             const string caption = "account.updateUsername";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError);
 	    }
 
 	    public void GetAccountTTLAsync(Action<TLAccountDaysTTL> callback, Action<TLRPCError> faultCallback = null)
@@ -272,7 +278,7 @@ namespace Telegram.Api.Services
             var obj = new TLAccountDeleteAccount { Reason = reason };
 
             const string caption = "account.deleteAccount";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
         }
 
         public void GetPrivacyAsync(TLInputPrivacyKeyBase key, Action<TLAccountPrivacyRules> callback, Action<TLRPCError> faultCallback = null)
@@ -312,7 +318,7 @@ namespace Telegram.Api.Services
             var obj = new TLAccountGetPassword();
 
             const string caption = "account.getPassword";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
 	    }
 
 	    public void GetPasswordSettingsAsync(byte[] currentPasswordHash, Action<TLAccountPasswordSettings> callback, Action<TLRPCError> faultCallback = null)
@@ -320,7 +326,7 @@ namespace Telegram.Api.Services
             var obj = new TLAccountGetPasswordSettings { CurrentPasswordHash = currentPasswordHash };
 
             const string caption = "account.getPasswordSettings";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
 	    }
 
 	    public void UpdatePasswordSettingsAsync(byte[] currentPasswordHash, TLAccountPasswordInputSettings newSettings, Action<bool> callback, Action<TLRPCError> faultCallback = null)
@@ -328,7 +334,7 @@ namespace Telegram.Api.Services
             var obj = new TLAccountUpdatePasswordSettings { CurrentPasswordHash = currentPasswordHash, NewSettings = newSettings };
 
             const string caption = "account.updatePasswordSettings";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
 	    }
 
 	    public void CheckPasswordAsync(byte[] passwordHash, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
@@ -336,7 +342,7 @@ namespace Telegram.Api.Services
             var obj = new TLAuthCheckPassword { PasswordHash = passwordHash };
 
             const string caption = "auth.checkPassword";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
 	    }
 
 	    public void RequestPasswordRecoveryAsync(Action<TLAuthPasswordRecovery> callback, Action<TLRPCError> faultCallback = null)
@@ -344,7 +350,7 @@ namespace Telegram.Api.Services
             var obj = new TLAuthRequestPasswordRecovery();
 
             const string caption = "auth.requestPasswordRecovery";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
 	    }
 
 	    public void RecoverPasswordAsync(string code, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
@@ -352,7 +358,7 @@ namespace Telegram.Api.Services
 	        var obj = new TLAuthRecoverPassword {Code = code};
 
             const string caption = "auth.recoverPassword";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
 	    }
 
 
@@ -361,7 +367,7 @@ namespace Telegram.Api.Services
             var obj = new TLAccountConfirmPhone { PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode };
 
             const string caption = "account.confirmPhone";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError);
 	    }
 
 	    public void SendConfirmPhoneCodeAsync(string hash, bool currentNumber, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null)
@@ -369,7 +375,7 @@ namespace Telegram.Api.Services
             var obj = new TLAccountSendConfirmPhoneCode { Flags = 0, Hash = hash, CurrentNumber = currentNumber };
 
             const string caption = "account.sendConfirmPhoneCode";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError);
 	    }
 	}
 }
