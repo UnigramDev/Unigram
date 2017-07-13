@@ -193,7 +193,7 @@ namespace Telegram.Api.Services
             }
             else if (args.Object is TLUpdatesBase updates)
             {
-                _updatesService.ProcessUpdates(updates);
+                _updatesService.ProcessUpdates(updates, true);
             }
             else
             {

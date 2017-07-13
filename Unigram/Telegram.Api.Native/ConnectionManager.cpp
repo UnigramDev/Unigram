@@ -514,7 +514,7 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 {
 	HRESULT result;
 
-#if _DEBUG
+#ifndef _DEBUG
 
 	if (m_datacenters.find(1) == m_datacenters.end())
 	{
