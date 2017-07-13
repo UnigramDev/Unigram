@@ -371,7 +371,6 @@ namespace Telegram
 			{
 				UINT32 ProtocolVersion;
 				UINT32 Layer;
-				UINT32 ApiId;
 				UINT32 SettingsVersion;
 			};
 
@@ -472,10 +471,16 @@ namespace Telegram
 			[version(API_VERSION)]
 			interface IUserConfiguration : IInspectable
 			{
+				[propget] HRESULT AppId([out][retval] INT32* value);
+				[propput] HRESULT AppId([in] INT32 value);
 				[propget] HRESULT DeviceModel([out][retval] HSTRING* value);
+				[propput] HRESULT DeviceModel([in] HSTRING value);
 				[propget] HRESULT SystemVersion([out][retval] HSTRING* value);
+				[propput] HRESULT SystemVersion([in] HSTRING value);
 				[propget] HRESULT AppVersion([out][retval] HSTRING* value);
+				[propput] HRESULT AppVersion([in] HSTRING value);
 				[propget] HRESULT Language([out][retval] HSTRING* value);
+				[propput] HRESULT Language([in] HSTRING value);
 			}
 
 			[marshaling_behavior(agile)]
@@ -593,8 +598,10 @@ namespace Telegram
 			{
 				[eventadd] HRESULT SessionCreated([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler, [out][retval] EventRegistrationToken* token);
 				[eventremove] HRESULT SessionCreated([in] EventRegistrationToken token);
-				[eventadd] HRESULT AuthenticationRequested([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler, [out][retval] EventRegistrationToken* token);
-				[eventremove] HRESULT AuthenticationRequested([in] EventRegistrationToken token);
+				[eventadd] HRESULT AuthenticationRequired([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler, [out][retval] EventRegistrationToken* token);
+				[eventremove] HRESULT AuthenticationRequired([in] EventRegistrationToken token);
+				[eventadd] HRESULT UserConfigurationRequired([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, UserConfiguration*>* handler, [out][retval] EventRegistrationToken* token);
+				[eventremove] HRESULT UserConfigurationRequired([in] EventRegistrationToken token);
 				[eventadd] HRESULT CurrentNetworkTypeChanged([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler,[out][retval] EventRegistrationToken* token);
 				[eventremove] HRESULT CurrentNetworkTypeChanged([in] EventRegistrationToken token);
 				[eventadd] HRESULT ConnectionStateChanged([in] Windows.Foundation.TypedEventHandler<ConnectionManager*, IInspectable*>* handler,[out][retval] EventRegistrationToken* token);
@@ -606,7 +613,7 @@ namespace Telegram
 				[propget] HRESULT CurrentDatacenter([out][retval] Datacenter** value);
 				[propget] HRESULT IsIPv6Enabled([out][retval] boolean* value);
 				[propget] HRESULT IsNetworkAvailable([out][retval] boolean* value);
-				[propget] HRESULT UserConfiguration([out][retval] UserConfiguration** value);
+				/*[propget] HRESULT UserConfiguration([out][retval] UserConfiguration** value);*/
 				[propget] HRESULT UserId([out][retval] INT32* value);
 				[propput] HRESULT UserId([in] INT32 value);
 				[propget] HRESULT Proxy([out][retval] ProxySettings** value);

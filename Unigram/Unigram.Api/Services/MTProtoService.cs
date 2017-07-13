@@ -112,7 +112,7 @@ namespace Telegram.Api.Services
         private readonly object _fileTransportRoot = new object();
 
         private readonly object _activeTransportRoot = new object();
-        
+
         private readonly ICacheService _cacheService;
         private readonly IUpdatesService _updatesService;
         private readonly IConnectionService _connectionService;
@@ -140,7 +140,7 @@ namespace Telegram.Api.Services
         private Timer _deviceLockedTimer;
         private Timer _checkTransportTimer;
 
-        public MTProtoService(IDeviceInfoService deviceInfo,IUpdatesService updatesService, ICacheService cacheService, IConnectionService connectionService, IStatsService statsService)
+        public MTProtoService(IDeviceInfoService deviceInfo, IUpdatesService updatesService, ICacheService cacheService, IConnectionService connectionService, IStatsService statsService)
         {
             var isBackground = deviceInfo != null && deviceInfo.IsBackground;
 
@@ -191,7 +191,8 @@ namespace Telegram.Api.Services
             //connectionManager.CurrentNetworkTypeChanged += ConnectionManager_CurrentNetworkTypeChanged;
             //connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
             connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;
-            connectionManager.AuthenticationRequested += ConnectionManager_AuthenticationRequested;
+            connectionManager.AuthenticationRequired += ConnectionManager_AuthenticationRequired;
+            connectionManager.UserConfigurationRequired += ConnectionManager_UserConfigurationRequired;
 
             Current = this;
         }
@@ -210,7 +211,7 @@ namespace Telegram.Api.Services
         {
             if (args.Object is TLConfig config)
             {
-                _cacheService.SetConfig(config); 
+                _cacheService.SetConfig(config);
             }
             else if (args.Object is TLUpdatesBase updates)
             {
@@ -222,9 +223,14 @@ namespace Telegram.Api.Services
             }
         }
 
-        private void ConnectionManager_AuthenticationRequested(ConnectionManager sender, object args)
+        private void ConnectionManager_AuthenticationRequired(ConnectionManager sender, object args)
         {
             RaiseAuthorizationRequired(new AuthorizationRequiredEventArgs());
+        }
+
+        private void ConnectionManager_UserConfigurationRequired(ConnectionManager sender, UserConfiguration args)
+        {
+            args.AppId = Constants.ApiId;
         }
 
         public static IMTProtoService Current { get; protected set; }
@@ -297,7 +303,7 @@ namespace Telegram.Api.Services
             {
                 if (_messageScheduler == null)
                 {
-                    _messageScheduler = new DispatcherTimer(); 
+                    _messageScheduler = new DispatcherTimer();
                     _messageScheduler.Tick += MessageScheduler_Tick;
                 }
 

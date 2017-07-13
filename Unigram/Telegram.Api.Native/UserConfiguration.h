@@ -19,14 +19,28 @@ namespace Telegram
 				InspectableClass(RuntimeClass_Telegram_Api_Native_UserConfiguration, BaseTrust);
 
 			public:
+				UserConfiguration();
+				~UserConfiguration();
+
 				//COM exported methods		
+				IFACEMETHODIMP get_AppId(_Out_ INT32* value);
+				IFACEMETHODIMP put_AppId(INT32 value);
 				IFACEMETHODIMP get_DeviceModel(_Out_ HSTRING* value);
+				IFACEMETHODIMP put_DeviceModel(_In_ HSTRING value);
 				IFACEMETHODIMP get_SystemVersion(_Out_ HSTRING* value);
+				IFACEMETHODIMP put_SystemVersion(_In_ HSTRING value);
 				IFACEMETHODIMP get_AppVersion(_Out_ HSTRING* value);
+				IFACEMETHODIMP put_AppVersion(_In_ HSTRING value);
 				IFACEMETHODIMP get_Language(_Out_ HSTRING* value);
+				IFACEMETHODIMP put_Language(_In_ HSTRING value);
 
 				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize();
+
+				inline INT32 GetAppId() const
+				{
+					return m_appId;
+				}
 
 				inline HString const& GetDeviceModel() const
 				{
@@ -51,6 +65,7 @@ namespace Telegram
 			private:
 				static HRESULT FormatVersion(UINT64 major, UINT64 minor, UINT64 build, UINT64 revision, _Out_ HString& version);
 
+				INT32 m_appId;
 				HString m_deviceModel;
 				HString m_systemVersion;
 				HString m_appVersion;

@@ -68,8 +68,8 @@ ConnectionManager::~ConnectionManager()
 
 HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount)
 {
-	HRESULT result;
-	ReturnIfFailed(result, MakeAndInitialize<UserConfiguration>(&m_userConfiguration));
+	/*HRESULT result;
+	ReturnIfFailed(result, MakeAndInitialize<UserConfiguration>(&m_userConfiguration));*/
 
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
@@ -77,6 +77,7 @@ HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 		return WSAGetLastHRESULT();
 	}
 
+	HRESULT result;
 	ReturnIfFailed(result, ThreadpoolManager::RuntimeClassInitialize(minimumThreadCount, maximumThreadCount));
 	ReturnIfFailed(result, EventObjectT::AttachToThreadpool(this));
 	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Networking_Connectivity_NetworkInformation).Get(), &m_networkInformation));
@@ -96,14 +97,24 @@ HRESULT ConnectionManager::remove_SessionCreated(EventRegistrationToken token)
 	return m_sessionCreatedEventSource.Remove(token);
 }
 
-HRESULT ConnectionManager::add_AuthenticationRequested(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, EventRegistrationToken* token)
+HRESULT ConnectionManager::add_AuthenticationRequired(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, EventRegistrationToken* token)
 {
-	return m_authenticationRequestedEventSource.Add(handler, token);
+	return m_authenticationRequiredEventSource.Add(handler, token);
 }
 
-HRESULT ConnectionManager::remove_AuthenticationRequested(EventRegistrationToken token)
+HRESULT ConnectionManager::remove_AuthenticationRequired(EventRegistrationToken token)
 {
-	return m_authenticationRequestedEventSource.Remove(token);
+	return m_authenticationRequiredEventSource.Remove(token);
+}
+
+HRESULT ConnectionManager::add_UserConfigurationRequired(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CUserConfiguration* handler, EventRegistrationToken* token)
+{
+	return m_userConfigurationRequiredEventSource.Add(handler, token);
+}
+
+HRESULT ConnectionManager::remove_UserConfigurationRequired(EventRegistrationToken token)
+{
+	return m_userConfigurationRequiredEventSource.Remove(token);
 }
 
 HRESULT ConnectionManager::add_CurrentNetworkTypeChanged(__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, EventRegistrationToken* token)
@@ -187,9 +198,6 @@ HRESULT ConnectionManager::get_IsIPv6Enabled(boolean* value)
 		return E_POINTER;
 	}
 
-	*value = false;
-	return S_OK;
-
 	auto lock = LockCriticalSection();
 
 	*value = (m_flags & ConnectionManagerFlag::UseIPv6) == ConnectionManagerFlag::UseIPv6;
@@ -209,10 +217,10 @@ HRESULT ConnectionManager::get_IsNetworkAvailable(boolean* value)
 	return S_OK;
 }
 
-HRESULT ConnectionManager::get_UserConfiguration(IUserConfiguration** value)
-{
-	return m_userConfiguration.CopyTo(value);
-}
+//HRESULT ConnectionManager::get_UserConfiguration(IUserConfiguration** value)
+//{
+//	return m_userConfiguration.CopyTo(value);
+//}
 
 HRESULT ConnectionManager::get_UserId(INT32* value)
 {
@@ -328,9 +336,9 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 		return E_POINTER;
 	}
 
+	HRESULT result;
 	INT32 requestToken;
 	ComPtr<MessageRequest> request;
-	auto requestsLock = m_requestsCriticalSection.Lock();
 
 	{
 		auto lock = LockCriticalSection();
@@ -342,14 +350,19 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 
 		requestToken = m_lastRequestToken + 1;
 
-		HRESULT result;
 		ReturnIfFailed(result, MakeAndInitialize<MessageRequest>(&request, object, requestToken, connectionType, datacenterId, onCompleted, onQuickAckReceived, flags));
 
 		m_lastRequestToken = requestToken;
 	}
 
+	OutputDebugStringFormat(L"Submitted request %d\n", requestToken);
+
+	ReturnIfFailed(result, SubmitWork([this, flags, requestToken, request]() -> void
 	{
-		m_requestsQueue.push_back(request);
+		{
+			auto requestsLock = m_requestsCriticalSection.Lock();
+			m_requestsQueue.push_back(request);
+		}
 
 		auto requestsTimer = EventObjectT::GetHandle();
 		if ((flags & RequestFlag::Immediate) == RequestFlag::Immediate)
@@ -363,7 +376,9 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 			TimeoutToFileTime(REQUEST_TIMER_TIMEOUT, timeout);
 			SetThreadpoolTimer(requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
 		}
-	}
+
+		OutputDebugStringFormat(L"Enqueued request %d\n", requestToken);
+	}));
 
 	*value = requestToken;
 	return S_OK;
@@ -844,8 +859,12 @@ HRESULT ConnectionManager::CreateTransportMessage(MessageRequest* request, INT64
 	if (requiresLayer && request->IsLayerRequired())
 	{
 		HRESULT result;
+		ComPtr<UserConfiguration> userConfiguration;
+		ReturnIfFailed(result, MakeAndInitialize<UserConfiguration>(&userConfiguration));
+		ReturnIfFailed(result, m_userConfigurationRequiredEventSource.InvokeAll(this, userConfiguration.Get()));
+
 		ComPtr<Methods::TLInitConnection> initConnectionObject;
-		ReturnIfFailed(result, MakeAndInitialize<Methods::TLInitConnection>(&initConnectionObject, m_userConfiguration.Get(), object.Get()));
+		ReturnIfFailed(result, MakeAndInitialize<Methods::TLInitConnection>(&initConnectionObject, userConfiguration.Get(), object.Get()));
 		ReturnIfFailed(result, MakeAndInitialize<Methods::TLInvokeWithLayer>(&object, initConnectionObject.Get()));
 
 		request->SetInitConnection();
@@ -880,14 +899,16 @@ HRESULT ConnectionManager::CreateTransportMessage(MessageRequest* request, INT64
 
 HRESULT ConnectionManager::ProcessRequests()
 {
-	auto currentTime = static_cast<INT32>(GetCurrentSystemTime() / 1000);
+	ProcessRequestsContext context = {};
+	context.CurrentTime = static_cast<INT32>(GetCurrentSystemTime() / 1000);
+
 	auto requestsLock = m_requestsCriticalSection.Lock();
 
 	{
 		auto requestIterator = m_runningRequests.begin();
 		while (requestIterator != m_runningRequests.end())
 		{
-			if (requestIterator->second->IsTimedOut(currentTime))
+			if (requestIterator->second->IsTimedOut(context.CurrentTime))
 			{
 				m_runningRequestCount[static_cast<UINT32>(requestIterator->second->GetConnectionType()) >> 1]--;
 				m_requestsQueue.push_back(std::move(requestIterator->second));
@@ -901,20 +922,24 @@ HRESULT ConnectionManager::ProcessRequests()
 	}
 
 	HRESULT result = S_OK;
-	std::map<UINT32, DatacenterRequestContext> datacentersContexts;
 
 	{
 		auto lock = LockCriticalSection();
 
-		if (m_datacentersExpirationTime < currentTime)
+		if (m_datacentersExpirationTime < context.CurrentTime)
 		{
 			return UpdateDatacenters();
 		}
 
+		context.CurrentDatacenterId = m_currentDatacenterId;
+		context.MovingToDatacenterId = m_movingToDatacenterId;
+	}
+
+	{
 		auto requestIterator = m_requestsQueue.begin();
 		while (requestIterator != m_requestsQueue.end())
 		{
-			BreakIfFailed(result, ProcessRequest(requestIterator->Get(), currentTime, datacentersContexts));
+			BreakIfFailed(result, ProcessRequest(requestIterator->Get(), &context));
 
 			if (result == S_OK)
 			{
@@ -928,23 +953,23 @@ HRESULT ConnectionManager::ProcessRequests()
 
 		for (auto& datacenter : m_datacenters)
 		{
-			auto datacenterContextIterator = datacentersContexts.find(datacenter.first);
-			if (datacenterContextIterator == datacentersContexts.end())
+			auto datacenterContextIterator = context.Datacenters.find(datacenter.first);
+			if (datacenterContextIterator == context.Datacenters.end())
 			{
 				ComPtr<Connection> genericConnection;
 				datacenter.second->GetGenericConnection(false, genericConnection);
 
 				if (genericConnection != nullptr && genericConnection->HasMessagesToConfirm())
 				{
-					datacentersContexts.insert(datacenterContextIterator, std::make_pair(datacenter.first, DatacenterRequestContext(datacenter.second.Get())));
+					context.Datacenters.insert(datacenterContextIterator, std::make_pair(datacenter.first, DatacenterRequestContext(datacenter.second.Get())));
 				}
 			}
 		}
 	}
 
-	if (FAILED(result) || FAILED(result = ProcessRequests(datacentersContexts)))
+	if (FAILED(result) || FAILED(result = ProcessRequests(&context)))
 	{
-		ResetRequests(datacentersContexts);
+		ResetRequests(&context);
 		return result;
 	}
 
@@ -953,14 +978,16 @@ HRESULT ConnectionManager::ProcessRequests()
 
 HRESULT ConnectionManager::ProcessRequestsForDatacenter(Datacenter* datacenter, ConnectionType connectionType)
 {
-	auto currentTime = static_cast<INT32>(GetCurrentSystemTime() / 1000);
+	ProcessRequestsContext context = {};
+	context.CurrentTime = static_cast<INT32>(GetCurrentSystemTime() / 1000);
+
 	auto requestsLock = m_requestsCriticalSection.Lock();
 
 	{
 		auto requestIterator = m_runningRequests.begin();
 		while (requestIterator != m_runningRequests.end())
 		{
-			if (requestIterator->first == datacenter->GetId() && requestIterator->second->MatchesConnection(connectionType) && requestIterator->second->IsTimedOut(currentTime))
+			if (requestIterator->first == datacenter->GetId() && requestIterator->second->MatchesConnection(connectionType) && requestIterator->second->IsTimedOut(context.CurrentTime))
 			{
 				m_runningRequestCount[static_cast<UINT32>(requestIterator->second->GetConnectionType()) >> 1]--;
 				m_requestsQueue.push_back(std::move(requestIterator->second));
@@ -973,16 +1000,20 @@ HRESULT ConnectionManager::ProcessRequestsForDatacenter(Datacenter* datacenter, 
 	}
 
 	HRESULT result = S_OK;
-	std::map<UINT32, DatacenterRequestContext> datacentersContexts;
 
 	{
 		auto lock = LockCriticalSection();
 
-		if (m_datacentersExpirationTime < currentTime)
+		if (m_datacentersExpirationTime < context.CurrentTime)
 		{
 			return UpdateDatacenters();
 		}
 
+		context.CurrentDatacenterId = m_currentDatacenterId;
+		context.MovingToDatacenterId = m_movingToDatacenterId;
+	}
+
+	{
 		auto requestIterator = m_requestsQueue.begin();
 		while (requestIterator != m_requestsQueue.end())
 		{
@@ -990,12 +1021,12 @@ HRESULT ConnectionManager::ProcessRequestsForDatacenter(Datacenter* datacenter, 
 			auto datacenterId = request->GetDatacenterId();
 			if (datacenterId == DEFAULT_DATACENTER_ID)
 			{
-				datacenterId = m_currentDatacenterId;
+				datacenterId = context.CurrentDatacenterId;
 			}
 
 			if (datacenterId == datacenter->GetId() && request->MatchesConnection(connectionType))
 			{
-				BreakIfFailed(result, ProcessRequest(request.Get(), currentTime, datacentersContexts));
+				BreakIfFailed(result, ProcessRequest(request.Get(), &context));
 				if (result == S_OK)
 				{
 					requestIterator = m_requestsQueue.erase(requestIterator);
@@ -1007,45 +1038,45 @@ HRESULT ConnectionManager::ProcessRequestsForDatacenter(Datacenter* datacenter, 
 		}
 	}
 
-	auto datacenterContextIterator = datacentersContexts.find(datacenter->GetId());
-	if (datacenterContextIterator == datacentersContexts.end())
+	auto datacenterContextIterator = context.Datacenters.find(datacenter->GetId());
+	if (datacenterContextIterator == context.Datacenters.end())
 	{
 		ComPtr<Connection> genericConnection;
 		datacenter->GetGenericConnection(false, genericConnection);
 
 		if (genericConnection != nullptr && genericConnection->HasMessagesToConfirm())
 		{
-			datacentersContexts.insert(datacenterContextIterator, std::make_pair(datacenter->GetId(), DatacenterRequestContext(datacenter)));
+			context.Datacenters.insert(datacenterContextIterator, std::make_pair(datacenter->GetId(), DatacenterRequestContext(datacenter)));
 		}
 	}
 
-	if (FAILED(result) || FAILED(result = ProcessRequests(datacentersContexts)))
+	if (FAILED(result) || FAILED(result = ProcessRequests(&context)))
 	{
-		ResetRequests(datacentersContexts);
+		ResetRequests(&context);
 		return result;
 	}
 
 	return S_OK;
 }
 
-HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, INT32 currentTime, std::map<UINT32, DatacenterRequestContext>& datacentersContexts)
+HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessRequestsContext* context)
 {
 	auto datacenterId = request->GetDatacenterId();
 	if (datacenterId == DEFAULT_DATACENTER_ID)
 	{
-		if (m_movingToDatacenterId != DEFAULT_DATACENTER_ID)
+		if (context->MovingToDatacenterId != DEFAULT_DATACENTER_ID)
 		{
 			return S_FALSE;
 		}
 
-		datacenterId = m_currentDatacenterId;
+		datacenterId = context->CurrentDatacenterId;
 	}
 
-	if (request->GetStartTime() > currentTime)
+	if (request->GetStartTime() > context->CurrentTime)
 	{
 		return S_FALSE;
 	}
-	else if (request->IsTimedOut(currentTime) && request->TryDifferentDc())
+	else if (request->IsTimedOut(context->CurrentTime) && request->TryDifferentDc())
 	{
 		std::vector<INT32> datacenterIds;
 		for (auto& datacenter : m_datacenters)
@@ -1061,13 +1092,13 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, INT32 current
 		datacenterId = datacenterIds[index % datacenterIds.size()];
 	}
 
-	auto datacenterContextIterator = datacentersContexts.find(datacenterId);
-	if (datacenterContextIterator == datacentersContexts.end())
+	auto datacenterContextIterator = context->Datacenters.find(datacenterId);
+	if (datacenterContextIterator == context->Datacenters.end())
 	{
 		ComPtr<Datacenter> datacenter;
 		GetDatacenterById(datacenterId, datacenter);
 
-		datacenterContextIterator = datacentersContexts.insert(datacenterContextIterator, std::make_pair(datacenterId, DatacenterRequestContext(datacenter.Get())));
+		datacenterContextIterator = context->Datacenters.insert(datacenterContextIterator, std::make_pair(datacenterId, DatacenterRequestContext(datacenter.Get())));
 	}
 
 	if (datacenterContextIterator->second.Datacenter == nullptr)
@@ -1091,7 +1122,7 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, INT32 current
 		return S_FALSE;
 	}
 
-	request->SetStartTime(currentTime);
+	request->SetStartTime(context->CurrentTime);
 	request->IncrementAttemptCount();
 
 	switch (request->GetConnectionType())
@@ -1144,13 +1175,13 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, INT32 current
 	}
 }
 
-HRESULT ConnectionManager::ProcessRequests(std::map<UINT32, DatacenterRequestContext>& datacentersContexts)
+HRESULT ConnectionManager::ProcessRequests(ProcessRequestsContext* context)
 {
 	HRESULT result = S_OK;
 	bool updateDatacenters = false;
 
-	auto datacenterIterator = datacentersContexts.begin();
-	while (datacenterIterator != datacentersContexts.end())
+	auto datacenterIterator = context->Datacenters.begin();
+	while (datacenterIterator != context->Datacenters.end())
 	{
 		auto& datacenterContext = datacenterIterator->second;
 
@@ -1173,25 +1204,25 @@ HRESULT ConnectionManager::ProcessRequests(std::map<UINT32, DatacenterRequestCon
 				ReturnIfFailed(result, datacenterContext.Datacenter->ImportAuthorization());
 			}
 
-			ReturnIfFailed(result, ProcessDatacenterRequests(datacenterContext));
+			ReturnIfFailed(result, ProcessDatacenterRequests(&datacenterContext));
 		}
 
-		datacenterIterator = datacentersContexts.erase(datacenterIterator);
+		datacenterIterator = context->Datacenters.erase(datacenterIterator);
 	}
 
 	return S_OK;
 }
 
-HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext const& datacenterContext)
+HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext const* datacenterContext)
 {
 	HRESULT result;
 	ComPtr<Connection> connection;
-	ReturnIfFailed(result, datacenterContext.Datacenter->GetGenericConnection(true, connection));
+	ReturnIfFailed(result, datacenterContext->Datacenter->GetGenericConnection(true, connection));
 
 	INT64 lastRpcMessageId = 0;
 	bool requiresQuickAck = false;
 
-	for (auto& request : datacenterContext.GenericRequests)
+	for (auto& request : datacenterContext->GenericRequests)
 	{
 		auto messageId = GenerateMessageId();
 		request->SetMessageContext({ messageId, connection->GenerateMessageSequenceNumber(true) });
@@ -1204,13 +1235,13 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 		requiresQuickAck |= request->RequiresQuickAck();
 	}
 
-	bool requiresLayer = !datacenterContext.Datacenter->IsConnectionInitialized();
-	auto requestCount = datacenterContext.GenericRequests.size();
+	bool requiresLayer = !datacenterContext->Datacenter->IsConnectionInitialized();
+	auto requestCount = datacenterContext->GenericRequests.size();
 	std::vector<ComPtr<TLMessage>> transportMessages(requestCount);
 
 	for (size_t i = 0; i < requestCount; i++)
 	{
-		ReturnIfFailed(result, CreateTransportMessage(datacenterContext.GenericRequests[i].Get(), lastRpcMessageId, requiresLayer, &transportMessages[i]));
+		ReturnIfFailed(result, CreateTransportMessage(datacenterContext->GenericRequests[i].Get(), lastRpcMessageId, requiresLayer, &transportMessages[i]));
 	}
 
 	ReturnIfFailed(result, connection->AddConfirmationMessage(this, transportMessages));
@@ -1247,15 +1278,15 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 		ReturnIfFailed(result, connection->SendEncryptedMessage(&messageContext, messageBody.Get(), &quickAckId));
 
 		auto& quickAckRequests = m_quickAckRequests[quickAckId];
-		quickAckRequests.insert(quickAckRequests.begin(), datacenterContext.GenericRequests.begin(), datacenterContext.GenericRequests.end());
+		quickAckRequests.insert(quickAckRequests.begin(), datacenterContext->GenericRequests.begin(), datacenterContext->GenericRequests.end());
 	}
 	else
 	{
 		ReturnIfFailed(result, connection->SendEncryptedMessage(&messageContext, messageBody.Get(), nullptr));
 	}
 
-	auto datacenterId = datacenterContext.Datacenter->GetId();
-	for (auto& request : datacenterContext.GenericRequests)
+	auto datacenterId = datacenterContext->Datacenter->GetId();
+	for (auto& request : datacenterContext->GenericRequests)
 	{
 		m_runningRequestCount[static_cast<UINT32>(request->GetConnectionType()) >> 1]++;
 		m_runningRequests.push_back(std::make_pair(datacenterId, std::move(request)));
@@ -1322,9 +1353,9 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 	METHOD_DEBUG();
 
 	ComPtr<MessageRequest> request;
-	auto requestsLock = m_requestsCriticalSection.Lock();
 
 	{
+		auto requestsLock = m_requestsCriticalSection.Lock();
 		auto requestIterator = std::find_if(m_runningRequests.begin(), m_runningRequests.end(), [&requestMessageId](auto const& request)
 		{
 			return request.second->MatchesMessage(requestMessageId);
@@ -1339,6 +1370,8 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 		m_runningRequestCount[static_cast<UINT32>(request->GetConnectionType()) >> 1]--;
 		m_runningRequests.erase(requestIterator);
 	}
+
+	OutputDebugStringFormat(L"Completed request %d\n", request->GetToken());
 
 	HRESULT result = S_OK;
 	ComPtr<ITLRPCError> rpcError;
@@ -1366,10 +1399,10 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 		{
 			request->Reset(false);
 
-			//{
-				//auto requestsLock = m_requestsCriticalSection.Lock();
-			m_requestsQueue.push_back(std::move(request));
-			//}
+			{
+				auto requestsLock = m_requestsCriticalSection.Lock();
+				m_requestsQueue.push_back(std::move(request));
+			}
 
 			FILETIME timeout = {};
 			SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
@@ -1410,7 +1443,6 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 {
 	static const std::wstring knownErrors[] = { L"NETWORK_MIGRATE_", L"PHONE_MIGRATE_", L"USER_MIGRATE_", L"MSG_WAIT_FAILED", L"SESSION_PASSWORD_NEEDED", L"AUTH_KEY_UNREGISTERED", L"FLOOD_WAIT_" };
 
-	auto lock = LockCriticalSection();
 	auto errorMessage = message.GetRawBuffer(nullptr);
 
 	{
@@ -1425,18 +1457,39 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 		OutputDebugStringFormat(L"Error %d (%s) for TLObject of type %s (0x%08X)\n", code, errorMessage, className.GetRawBuffer(nullptr), constructor);
 	}
 
-	if (code == 303)
+	switch (code)
+	{
+	case 303:
 	{
 		HRESULT result;
 		for (size_t i = 0; i < 3; i++)
 		{
 			if (wcsstr(errorMessage, knownErrors[i].c_str()) != nullptr)
 			{
+				auto lock = LockCriticalSection();
+
 				INT32 datacenterId = _wtoi(errorMessage + knownErrors[i].size());
 				ReturnIfFailed(result, MoveToDatacenter(datacenterId));
 				return S_FALSE;
 			}
 		}
+	}
+	break;
+	case 401:
+	{
+		datacenter->SetUnauthorized();
+
+		for (size_t i = 4; i < 6; i++)
+		{
+			if (wcsstr(errorMessage, knownErrors[i].c_str()) != nullptr)
+			{
+				return m_authenticationRequiredEventSource.InvokeAll(this, nullptr);
+			}
+		}
+
+		return S_OK;
+	}
+	break;
 	}
 
 	if (request->FailOnServerError())
@@ -1456,21 +1509,6 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 		}
 
 		waitTime = 1;
-	}
-	break;
-	case 401:
-	{
-		datacenter->SetUnauthorized();
-
-		for (size_t i = 4; i < 6; i++)
-		{
-			if (wcsstr(errorMessage, knownErrors[i].c_str()) != nullptr)
-			{
-				return m_authenticationRequestedEventSource.InvokeAll(this, nullptr);
-			}
-		}
-
-		return S_OK;
 	}
 	break;
 	case 420:
@@ -1503,9 +1541,9 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 	return S_FALSE;
 }
 
-void ConnectionManager::ResetRequests(std::map<UINT32, DatacenterRequestContext> const& datacentersContexts)
+void ConnectionManager::ResetRequests(ProcessRequestsContext const* context)
 {
-	for (auto& datacenter : datacentersContexts)
+	for (auto& datacenter : context->Datacenters)
 	{
 		for (auto& request : datacenter.second.GenericRequests)
 		{
@@ -2109,7 +2147,7 @@ HRESULT ConnectionManager::IsIPv6Enabled(INetworkAdapter* networkAdapter, bool* 
 		return HRESULT_FROM_WIN32(result);
 	}
 
-	auto currentAddress = addresses.get();
+	/*auto currentAddress = addresses.get();
 	while (currentAddress != nullptr)
 	{
 		if (memcmp(&currentAddress->Luid, &networkAdapterLuid, sizeof(NET_LUID)) == 0)
@@ -2119,7 +2157,7 @@ HRESULT ConnectionManager::IsIPv6Enabled(INetworkAdapter* networkAdapter, bool* 
 		}
 
 		currentAddress = currentAddress->Next;
-	}
+	}*/
 
 	*enabled = false;
 	return S_OK;
@@ -2150,7 +2188,6 @@ HRESULT ConnectionManagerStatics::get_Version(Version* value)
 
 	value->ProtocolVersion = TELEGRAM_API_NATIVE_PROTOVERSION;
 	value->Layer = TELEGRAM_API_NATIVE_LAYER;
-	value->ApiId = TELEGRAM_API_NATIVE_APIID;
 	value->SettingsVersion = TELEGRAM_API_NATIVE_SETTINGS_VERSION;
 	return S_OK;
 }
