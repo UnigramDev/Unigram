@@ -98,6 +98,7 @@ namespace Telegram
 					IFACEMETHODIMP ReadInt16(_Out_ INT16* value);
 					IFACEMETHODIMP ReadInt32(_Out_ INT32* value);
 					IFACEMETHODIMP ReadInt64(_Out_ INT64* value);
+					IFACEMETHODIMP ReadObject(_Out_ ITLObject** value);
 					IFACEMETHODIMP ReadObjectAndConstructor(UINT32 objectSize, _Out_ UINT32* constructor, _Out_ ITLObject** value);
 					IFACEMETHODIMP ReadBigEndianInt32(_Out_ INT32* value);
 					IFACEMETHODIMP ReadRawBuffer(UINT32 __valueSize, _Out_writes_(__valueSize) BYTE* value);

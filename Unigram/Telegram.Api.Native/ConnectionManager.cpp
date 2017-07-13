@@ -362,6 +362,9 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 		{
 			auto requestsLock = m_requestsCriticalSection.Lock();
 			m_requestsQueue.push_back(request);
+
+			OutputDebugStringFormat(L"Enqueued request %d\n%d running requests: %d generic, %d download and %d upload\n", 
+				requestToken, m_runningRequests.size(), m_runningRequestCount[0], m_runningRequestCount[1], m_runningRequestCount[2]);
 		}
 
 		auto requestsTimer = EventObjectT::GetHandle();
@@ -376,8 +379,6 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 			TimeoutToFileTime(REQUEST_TIMER_TIMEOUT, timeout);
 			SetThreadpoolTimer(requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
 		}
-
-		OutputDebugStringFormat(L"Enqueued request %d\n", requestToken);
 	}));
 
 	*value = requestToken;
@@ -513,7 +514,7 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 {
 	HRESULT result;
 
-#ifndef _DEBUG
+#if _DEBUG
 
 	if (m_datacenters.find(1) == m_datacenters.end())
 	{

@@ -214,7 +214,7 @@ namespace Telegram
 
 				inline bool IsTimedOut(INT32 currentTime)
 				{
-					return m_startTime > 0 && currentTime - m_startTime >= REQUEST_TIMEOUT;
+					return m_startTime > 0 && (currentTime - m_startTime) >= REQUEST_TIMEOUT;
 				}
 
 				inline ComPtr<IRequestQuickAckReceivedCallback> const& GetQuickAckReceivedCallback() const
