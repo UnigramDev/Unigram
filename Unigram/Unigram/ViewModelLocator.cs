@@ -265,11 +265,11 @@ namespace Unigram
             {
                 if (sender.ConnectionState == ConnectionState.Connected)
                 {
-                    protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? "Connecting to proxy..." : "Connecting...");
+                    protoService.SetMessageOnTime(0, null);
                 }
                 else
                 {
-                    protoService.SetMessageOnTime(0, null);
+                    protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? "Connecting to proxy..." : "Connecting...");
                 }
             }
         }
