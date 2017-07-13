@@ -308,7 +308,10 @@ namespace Unigram
         private void OnAuthorizationRequired(object sender, AuthorizationRequiredEventArgs e)
         {
             SettingsHelper.IsAuthorized = false;
-            Debug.WriteLine("!!!UNAUTHORIZED!!!");
+            SettingsHelper.UserId = 0;
+            MTProtoService.Current.CurrentUserId = 0;
+
+            Debug.WriteLine("!!! UNAUTHORIZED !!!");
 
             Execute.BeginOnUIThread(() =>
             {
