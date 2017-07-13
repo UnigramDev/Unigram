@@ -39,7 +39,7 @@ namespace Telegram.Api.Services
             };
 
             const string caption = "auth.sendCode";
-            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin | RequestFlag.TryDifferentDc | RequestFlag.EnableUnauthorized, 3);
+            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin | RequestFlag.TryDifferentDc | RequestFlag.EnableUnauthorized);
         }
 
         public void ResendCodeAsync(string phoneNumber, string phoneCodeHash, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null)
