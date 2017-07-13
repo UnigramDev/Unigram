@@ -99,7 +99,8 @@ namespace Telegram.Api.Services
         {
             var obj = new TLMessagesGetPeerDialogs { Peers = peers };
 
-            SendInformativeMessage<TLMessagesPeerDialogs>("messages.getPeerDialogs", obj, callback, faultCallback);
+            const string caption = "messages.getPeerDialogs";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetInlineBotResultsAsync(TLInputUserBase bot, TLInputPeerBase peer, TLInputGeoPointBase geoPoint, string query, string offset, Action<TLMessagesBotResults> callback, Action<TLRPCError> faultCallback = null)
@@ -844,7 +845,8 @@ namespace Telegram.Api.Services
         {
             var obj = new TLMessagesSetEncryptedTyping { Peer = peer, Typing = typing };
 
-            SendInformativeMessage("messages.setEncryptedTyping", obj, callback, faultCallback);
+            const string caption = "messages.setEncryptedTyping";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void SetTypingAsync(TLInputPeerBase peer, bool typing, Action<bool> callback, Action<TLRPCError> faultCallback = null)
@@ -852,21 +854,24 @@ namespace Telegram.Api.Services
             var action = typing ? (TLSendMessageActionBase)new TLSendMessageTypingAction() : new TLSendMessageCancelAction();
             var obj = new TLMessagesSetTyping { Peer = peer, Action = action };
 
-            SendInformativeMessage("messages.setTyping", obj, callback, faultCallback);
+            const string caption = "messages.setTyping";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void SetTypingAsync(TLInputPeerBase peer, TLSendMessageActionBase action, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesSetTyping { Peer = peer, Action = action ?? new TLSendMessageTypingAction() };
 
-            SendInformativeMessage("messages.setTyping", obj, callback, faultCallback);
+            const string caption = "messages.setTyping";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetMessagesAsync(TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetMessages { Id = id };
 
-            SendInformativeMessage("messages.getMessages", obj, callback, faultCallback);
+            const string caption = "messages.getMessages";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetDialogsAsync(int offsetDate, int offsetId, TLInputPeerBase offsetPeer, int limit, Action<TLMessagesDialogsBase> callback, Action<TLRPCError> faultCallback = null)
@@ -875,7 +880,8 @@ namespace Telegram.Api.Services
 
             //TLUtils.WriteLine(string.Format("{0} messages.getDialogs offset_date={1} offset_peer={2} offset_id={3} limit={4}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), offsetDate, offsetPeer, offsetId, limit), LogSeverity.Error);          
 
-            SendInformativeMessage<TLMessagesDialogsBase>("messages.getDialogs", obj, result =>
+            const string caption = "messages.getDialogs";
+            SendInformativeMessage<TLMessagesDialogsBase>(caption, obj, result =>
             {
                 var dialogsCache = new Dictionary<int, List<TLDialog>>();
                 foreach (var dialogBase in result.Dialogs)
@@ -977,7 +983,8 @@ namespace Telegram.Api.Services
 
             //Debug.WriteLine("UpdateItems start request elapsed=" + (timer != null? timer.Elapsed.ToString() : null));
 
-            SendInformativeMessage<TLMessagesMessagesBase>("messages.getHistory", obj,
+            const string caption = "messages.getHistory";
+            SendInformativeMessage<TLMessagesMessagesBase>(caption, obj,
                 result =>
                 {
                     //Debug.WriteLine("UpdateItems stop request elapsed=" + (timer != null ? timer.Elapsed.ToString() : null));
@@ -1076,7 +1083,8 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesGetHistory { Peer = inputPeer, AddOffset = offset, OffsetId = maxId, OffsetDate = 0, Limit = limit, MaxId = int.MaxValue, MinId = 0 };
 
             TLUtils.WriteLine(string.Format("{0} {1} messages.getHistory peer={2} offset={3} max_id={4} limit={5}", string.Empty, debugInfo, inputPeer, offset, maxId, limit), LogSeverity.Error);
-            SendInformativeMessage<TLMessagesMessagesBase>("messages.getHistory", obj,
+            const string caption = "messages.getHistory";
+            SendInformativeMessage<TLMessagesMessagesBase>(caption, obj,
                 result =>
                 {
                     var replyId = new TLVector<int>();
@@ -1163,7 +1171,8 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesSearch { Flags = 0, Peer = peer, Q = query, Filter = filter, MinDate = minDate, MaxDate = maxDate, Offset = offset, MaxId = maxId, Limit = limit };
             //obj.SetImportant();
 
-            SendInformativeMessage<TLMessagesMessagesBase>("messages.search", obj, result =>
+            const string caption = "messages.search";
+            SendInformativeMessage<TLMessagesMessagesBase>(caption, obj, result =>
             {
                 //Execute.ShowDebugMessage("messages.search result " + result.Messages.Count);
                 callback?.Invoke(result);
@@ -1176,7 +1185,8 @@ namespace Telegram.Api.Services
 
             var obj = new TLMessagesSearchGlobal { Q = query, OffsetDate = offsetDate, OffsetPeer = offsetPeer, OffsetId = offsetId, Limit = limit };
 
-            SendInformativeMessage<TLMessagesMessagesBase>("messages.searchGlobal", obj, result =>
+            const string caption = "messages.searchGlobal";
+            SendInformativeMessage<TLMessagesMessagesBase>(caption, obj, result =>
             {
                 TLUtils.WriteLine(string.Format("{0} messages.searchGlobal result={1}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), result.Messages.Count), LogSeverity.Error);
                 callback?.Invoke(result);
@@ -1282,7 +1292,8 @@ namespace Telegram.Api.Services
         {
             var obj = new TLMessagesReceivedMessages { MaxId = maxId };
 
-            SendInformativeMessage("messages.receivedMessages", obj, callback, faultCallback);
+            const string caption = "messages.receivedMessages";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void ForwardMessageAsync(TLInputPeerBase peer, int fwdMessageId, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
@@ -1431,7 +1442,8 @@ namespace Telegram.Api.Services
         {
             var obj = new TLMessagesGetChats { Id = id };
 
-            SendInformativeMessage("messages.getChats", obj, callback, faultCallback);
+            const string caption = "messages.getChats";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetFullChatAsync(int chatId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null)
@@ -1571,14 +1583,16 @@ namespace Telegram.Api.Services
         {
             var obj = new TLMessagesExportChatInvite { ChatId = chatId };
 
-            SendInformativeMessage("messages.exportChatInvite", obj, callback, faultCallback);
+            const string caption = "messages.exportChatInvite";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void CheckChatInviteAsync(string hash, Action<TLChatInviteBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesCheckChatInvite { Hash = hash };
 
-            SendInformativeMessage<TLChatInviteBase>("messages.checkChatInvite", obj,
+            const string caption = "messages.checkChatInvite";
+            SendInformativeMessage<TLChatInviteBase>(caption, obj,
                 result =>
                 {
                     if (result is TLChatInvite chatInvite)
@@ -1720,7 +1734,8 @@ namespace Telegram.Api.Services
         {
             var obj = new TLMessagesEditChatAdmin { ChatId = chatId, UserId = userId, IsAdmin = isAdmin };
 
-            SendInformativeMessage("messages.editChatAdmin", obj, callback, faultCallback);
+            const string caption = "messages.editChatAdmin";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit, Action<TLMessagesChatsBase> callback, Action<TLRPCError> faultCallback = null)
