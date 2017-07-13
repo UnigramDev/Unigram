@@ -632,7 +632,6 @@ namespace Telegram
 				[propget] HRESULT CurrentDatacenter([out][retval] Datacenter** value);
 				[propget] HRESULT IsIPv6Enabled([out][retval] boolean* value);
 				[propget] HRESULT IsNetworkAvailable([out][retval] boolean* value);
-				/*[propget] HRESULT UserConfiguration([out][retval] UserConfiguration** value);*/
 				[propget] HRESULT UserId([out][retval] INT32* value);
 				[propput] HRESULT UserId([in] INT32 value);
 				[propget] HRESULT Proxy([out][retval] ProxySettings** value);

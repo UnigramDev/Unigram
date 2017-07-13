@@ -7,13 +7,17 @@
 
 using namespace Microsoft::WRL::Wrappers;
 
+//#define ReturnIfFailed(result, method) \
+//	if(FAILED(result = method)) \
+//	{ \
+//		__debugbreak(); \
+//		return result; \
+//	}
+
 #define ReturnIfFailed(result, method) \
 	if(FAILED(result = method)) \
-	{ \
-		__debugbreak(); \
-		return result; \
-	}
-
+		return result
+	
 #define BreakIfFailed(result, method) \
 	if(FAILED(result = method)) \
 		break

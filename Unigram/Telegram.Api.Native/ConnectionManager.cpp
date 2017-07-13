@@ -68,9 +68,6 @@ ConnectionManager::~ConnectionManager()
 
 HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount)
 {
-	/*HRESULT result;
-	ReturnIfFailed(result, MakeAndInitialize<UserConfiguration>(&m_userConfiguration));*/
-
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
 	{
@@ -217,11 +214,6 @@ HRESULT ConnectionManager::get_IsNetworkAvailable(boolean* value)
 	return S_OK;
 }
 
-//HRESULT ConnectionManager::get_UserConfiguration(IUserConfiguration** value)
-//{
-//	return m_userConfiguration.CopyTo(value);
-//}
-
 HRESULT ConnectionManager::get_UserId(INT32* value)
 {
 	if (value == nullptr)
@@ -355,17 +347,17 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 		m_lastRequestToken = requestToken;
 	}
 
-	OutputDebugStringFormat(L"Submitted request %d\n", requestToken);
+	OutputDebugStringFormat(L"Submitted request %d at %llu\n", requestToken, GetCurrentMonotonicTime());
 
 	ReturnIfFailed(result, SubmitWork([this, flags, requestToken, request]() -> void
 	{
 		{
 			auto requestsLock = m_requestsCriticalSection.Lock();
 			m_requestsQueue.push_back(request);
-
-			OutputDebugStringFormat(L"Enqueued request %d\n%d running requests: %d generic, %d download and %d upload\n", 
-				requestToken, m_runningRequests.size(), m_runningRequestCount[0], m_runningRequestCount[1], m_runningRequestCount[2]);
 		}
+
+		OutputDebugStringFormat(L"Enqueued request %d\n%d running requests: %d generic, %d download and %d upload at %llu\n",
+			requestToken, m_runningRequests.size(), m_runningRequestCount[0], m_runningRequestCount[1], m_runningRequestCount[2], GetCurrentMonotonicTime());
 
 		auto requestsTimer = EventObjectT::GetHandle();
 		if ((flags & RequestFlag::Immediate) == RequestFlag::Immediate)
@@ -1234,6 +1226,8 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 		}
 
 		requiresQuickAck |= request->RequiresQuickAck();
+
+		OutputDebugStringFormat(L"Processing request %d at %llu\n", request->GetToken(), GetCurrentMonotonicTime());
 	}
 
 	bool requiresLayer = !datacenterContext->Datacenter->IsConnectionInitialized();
@@ -1351,7 +1345,7 @@ HRESULT ConnectionManager::ProcessConnectionRequest(Connection* connection, Mess
 
 HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, MessageContext const* messageContext, ITLObject* messageBody, Connection* connection)
 {
-	METHOD_DEBUG();
+	// METHOD_DEBUG();
 
 	ComPtr<MessageRequest> request;
 
@@ -1372,7 +1366,7 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 		m_runningRequests.erase(requestIterator);
 	}
 
-	OutputDebugStringFormat(L"Completed request %d\n", request->GetToken());
+	OutputDebugStringFormat(L"Completed request %d at %llu\n", request->GetToken(), GetCurrentMonotonicTime());
 
 	HRESULT result = S_OK;
 	ComPtr<ITLRPCError> rpcError;
