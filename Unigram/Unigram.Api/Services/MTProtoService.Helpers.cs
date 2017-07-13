@@ -28,6 +28,7 @@ namespace Telegram.Api.Services
         private readonly object _historyRoot = new object();
 
         public void SendInformativeMessageInternal<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null,
+            RequestFlag flags = RequestFlag.FailOnServerError | RequestFlag.WithoutLogin | RequestFlag.TryDifferentDc | RequestFlag.EnableUnauthorized,
             int? maxAttempt = null, // to send delayed items
             Action<int> attemptFailed = null,
             Action fastCallback = null) // to send delayed items
@@ -39,12 +40,16 @@ namespace Telegram.Api.Services
                 {
                     faultCallback?.Invoke(error);
                 }
+                else if (message.Object is TLUnparsedObject unparsed)
+                {
+                    callback?.Invoke(TLFactory.Read<T>(unparsed.Reader));
+                }
                 else
                 {
                     callback?.Invoke((T)(object)message.Object);
                 }
             },
-            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin | RequestFlag.TryDifferentDc | RequestFlag.EnableUnauthorized);
+            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, flags);
         }
 
         public void SendRequestAsync<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null)
@@ -53,10 +58,11 @@ namespace Telegram.Api.Services
         }
 
         private void SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null,
+            RequestFlag flags = RequestFlag.FailOnServerError | RequestFlag.WithoutLogin | RequestFlag.TryDifferentDc | RequestFlag.EnableUnauthorized,
             int? maxAttempt = null,                 // to send delayed items
             Action<int> attemptFailed = null)       // to send delayed items
         {
-            SendInformativeMessageInternal(caption, obj, callback, faultCallback, maxAttempt, attemptFailed);
+            SendInformativeMessageInternal(caption, obj, callback, faultCallback, flags, maxAttempt, attemptFailed);
         }
     }
 }
