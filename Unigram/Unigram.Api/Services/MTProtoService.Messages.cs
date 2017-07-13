@@ -1759,26 +1759,5 @@ namespace Telegram.Api.Services
                 },
                 faultCallback);
         }
-
-        public int SendingMessages
-        {
-            get
-            {
-                var result = 0;
-                lock (_historyRoot)
-                {
-                    foreach (var historyItem in _history.Values)
-                    {
-                        if (historyItem.Caption.StartsWith("messages.containerPart"))
-                        {
-                            result++;
-                            break;
-                        }
-                    }
-                }
-
-                return result;
-            }
-        }
     }
 }

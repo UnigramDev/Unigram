@@ -35,6 +35,8 @@ namespace Telegram.Api.Services
                 quick = () => fastCallback?.Invoke();
             }
 
+            Debug.WriteLine("Sending " + caption);
+
             var connectionManager = ConnectionManager.Instance;
             var messageToken = connectionManager.SendRequest(obj, (message, ex) =>
             {
@@ -51,7 +53,7 @@ namespace Telegram.Api.Services
                     callback?.Invoke((T)(object)message.Object);
                 }
             },
-            null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, flags);
+            quick, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, flags);
         }
 
         public void SendRequestAsync<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null)
