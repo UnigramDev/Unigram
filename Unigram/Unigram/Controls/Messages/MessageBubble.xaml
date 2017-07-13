@@ -16,7 +16,7 @@
     MaxWidth="{ThemeResource MessageMaxWidth}">
 
     <!-- TODO: not the right way -->
-    <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
+    <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay, FallbackValue=Collapsed}"/>
 
     <controls:SwipeListViewItem
         RightBackground="#007aff"

@@ -174,6 +174,8 @@ namespace Unigram.ViewModels
                     var messages = new List<TLMessageBase>() { messageBase };
                     if (messageBase.Id == 0 && messageBase.RandomId != 0L)
                     {
+                        await TLMessageDialog.ShowAsync("This message has no ID, so it will be deleted locally only.", "Warning", "OK");
+
                         DeleteMessagesInternal(null, messages);
                         return;
                     }
