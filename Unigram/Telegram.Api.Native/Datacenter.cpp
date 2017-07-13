@@ -636,7 +636,7 @@ HRESULT Datacenter::ImportAuthorization()
 						HRESULT result;
 						ReturnIfFailed(result, datacenter->m_connectionManager->OnDatacenterImportAuthorizationComplete(datacenter.Get()));
 
-						return datacenter->m_connectionManager->SaveDatacenterSettings(datacenter.Get());
+						return datacenter->SaveSettings();
 					}
 					else
 					{
@@ -711,7 +711,7 @@ HRESULT Datacenter::RequestFutureSalts(UINT32 count)
 			auto futureSalts = GetMessageResponseObject<TLFutureSalts>(response);
 			datacenter->MergeServerSalts(futureSalts->GetSalts());
 
-			return datacenter->m_connectionManager->SaveDatacenterSettings(datacenter.Get());
+			return datacenter->SaveSettings();
 		}
 		else
 		{
@@ -845,8 +845,14 @@ HRESULT Datacenter::OnHandshakePQResponse(Connection* connection, TLResPQ* respo
 	}
 
 	ServerPublicKey const* serverPublicKey;
-	if (!((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN && m_connectionManager->GetCDNPublicKey(m_id, response->GetServerPublicKeyFingerprints(), &serverPublicKey)) ||
-		!DatacenterCryptography::GetDatacenterPublicKey(response->GetServerPublicKeyFingerprints(), &serverPublicKey))
+	if ((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN)
+	{
+		if (!m_connectionManager->GetCDNPublicKey(m_id, response->GetServerPublicKeyFingerprints(), &serverPublicKey))
+		{
+			return E_FAIL;
+		}
+	}
+	else if (!DatacenterCryptography::GetDatacenterPublicKey(response->GetServerPublicKeyFingerprints(), &serverPublicKey))
 	{
 		return E_FAIL;
 	}
@@ -1148,7 +1154,7 @@ HRESULT Datacenter::OnHandshakeClientDHResponse(Connection* connection, TLDHGenO
 
 	ReturnIfFailed(result, m_connectionManager->OnDatacenterHandshakeComplete(this, timeDifference));
 
-	return m_connectionManager->SaveDatacenterSettings(this);
+	return SaveSettings();
 }
 
 HRESULT Datacenter::OnBadServerSaltResponse(INT64 messageId, TLBadServerSalt* response)
@@ -1169,7 +1175,7 @@ HRESULT Datacenter::OnBadServerSaltResponse(INT64 messageId, TLBadServerSalt* re
 	HRESULT result;
 	ReturnIfFailed(result, m_connectionManager->OnDatacenterBadServerSalt(this, response->GetBadMessageContext()->Id, messageId));
 
-	return m_connectionManager->SaveDatacenterSettings(this);
+	return SaveSettings();
 }
 
 HRESULT Datacenter::OnBadMessageResponse(INT64 messageId, TLBadMessage* response)
@@ -1355,37 +1361,42 @@ void Datacenter::GenerateMessageKey(BYTE const* authKey, BYTE* messageKey, BYTE*
 #endif
 }
 
-HRESULT Datacenter::SaveSettings(ITLBinaryWriterEx* writer)
+HRESULT Datacenter::SaveSettings()
 {
 	auto lock = LockCriticalSection();
 
+	std::wstring settingsFileName;
+	m_connectionManager->GetDatacenterSettingsFileName(m_id, settingsFileName);
+
 	HRESULT result;
-	ReturnIfFailed(result, writer->WriteUInt32(TELEGRAM_API_NATIVE_SETTINGS_VERSION));
-	ReturnIfFailed(result, writer->WriteInt32(m_id));
-	ReturnIfFailed(result, writer->WriteInt32(static_cast<INT32>(m_flags & (DatacenterFlag::HandshakeState |
+	ComPtr<TLFileBinaryWriter> settingsWriter;
+	ReturnIfFailed(result, MakeAndInitialize<TLFileBinaryWriter>(&settingsWriter, settingsFileName.data(), CREATE_ALWAYS));
+	ReturnIfFailed(result, settingsWriter->WriteUInt32(TELEGRAM_API_NATIVE_SETTINGS_VERSION));
+	ReturnIfFailed(result, settingsWriter->WriteInt32(m_id));
+	ReturnIfFailed(result, settingsWriter->WriteInt32(static_cast<INT32>(m_flags & (DatacenterFlag::HandshakeState |
 		DatacenterFlag::AuthorizationState | DatacenterFlag::CDN | DatacenterFlag::ConnectionInitialized))));
 
 	if (FLAGS_GET_HANDSHAKESTATE(m_flags) == HandshakeState::Authenticated)
 	{
 		auto authKeyContext = static_cast<AuthKeyContext*>(m_authenticationContext.get());
-		ReturnIfFailed(result, writer->WriteInt64(authKeyContext->AuthKeyId));
-		ReturnIfFailed(result, writer->WriteRawBuffer(sizeof(authKeyContext->AuthKey), authKeyContext->AuthKey));
+		ReturnIfFailed(result, settingsWriter->WriteInt64(authKeyContext->AuthKeyId));
+		ReturnIfFailed(result, settingsWriter->WriteRawBuffer(sizeof(authKeyContext->AuthKey), authKeyContext->AuthKey));
 	}
 
-	ReturnIfFailed(result, writer->WriteUInt32(static_cast<UINT32>(m_serverSalts.size())));
+	ReturnIfFailed(result, settingsWriter->WriteUInt32(static_cast<UINT32>(m_serverSalts.size())));
 
 	for (auto& serverSalt : m_serverSalts)
 	{
-		ReturnIfFailed(result, writer->WriteInt32(serverSalt.ValidSince));
-		ReturnIfFailed(result, writer->WriteInt32(serverSalt.ValidUntil));
-		ReturnIfFailed(result, writer->WriteInt64(serverSalt.Salt));
+		ReturnIfFailed(result, settingsWriter->WriteInt32(serverSalt.ValidSince));
+		ReturnIfFailed(result, settingsWriter->WriteInt32(serverSalt.ValidUntil));
+		ReturnIfFailed(result, settingsWriter->WriteInt64(serverSalt.Salt));
 	}
 
-	ReturnIfFailed(result, WriteSettingsEndpoints(writer, m_ipv4Endpoints, m_currentIPv4EndpointIndex));
-	ReturnIfFailed(result, WriteSettingsEndpoints(writer, m_ipv4DownloadEndpoints, m_currentIPv4DownloadEndpointIndex));
-	ReturnIfFailed(result, WriteSettingsEndpoints(writer, m_ipv6Endpoints, m_currentIPv6EndpointIndex));
+	ReturnIfFailed(result, WriteSettingsEndpoints(settingsWriter.Get(), m_ipv4Endpoints, m_currentIPv4EndpointIndex));
+	ReturnIfFailed(result, WriteSettingsEndpoints(settingsWriter.Get(), m_ipv4DownloadEndpoints, m_currentIPv4DownloadEndpointIndex));
+	ReturnIfFailed(result, WriteSettingsEndpoints(settingsWriter.Get(), m_ipv6Endpoints, m_currentIPv6EndpointIndex));
 
-	return WriteSettingsEndpoints(writer, m_ipv6DownloadEndpoints, m_currentIPv6DownloadEndpointIndex);
+	return WriteSettingsEndpoints(settingsWriter.Get(), m_ipv6DownloadEndpoints, m_currentIPv6DownloadEndpointIndex);
 }
 
 HRESULT Datacenter::ReadSettingsEndpoints(ITLBinaryReaderEx* reader, std::vector<ServerEndpoint>& endpoints, size_t* currentIndex)

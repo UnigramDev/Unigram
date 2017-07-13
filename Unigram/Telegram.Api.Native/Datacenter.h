@@ -208,7 +208,7 @@ namespace Telegram
 				void NextEndpoint(ConnectionType connectionType, bool ipv6);
 				void ResetEndpoint();
 				IFACEMETHODIMP Close();
-				HRESULT SaveSettings(_In_ ITLBinaryWriterEx* writer);
+				HRESULT SaveSettings();
 				HRESULT BeginHandshake(bool reconnect, bool reset);
 				HRESULT ImportAuthorization();
 				HRESULT RequestFutureSalts(UINT32 count);

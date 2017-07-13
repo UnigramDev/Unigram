@@ -490,7 +490,7 @@ HRESULT ConnectionManager::UpdateDatacenters()
 
 			for (auto& datacenter : m_datacenters)
 			{
-				ReturnIfFailed(result, SaveDatacenterSettings(datacenter.second.Get()));
+				ReturnIfFailed(result, datacenter.second->SaveSettings());
 			}
 
 			return SaveSettings();
@@ -809,7 +809,7 @@ HRESULT ConnectionManager::MoveToDatacenter(INT32 datacenterId)
 						datacenter->SetAuthorized();
 
 						HRESULT result;
-						ReturnIfFailed(result, SaveDatacenterSettings(datacenter.Get()));
+						ReturnIfFailed(result, datacenter->SaveSettings());
 
 						return SaveSettings();
 					}
@@ -1410,7 +1410,7 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 		auto& datacenter = connection->GetDatacenter();
 		datacenter->SetConnectionInitialized();
 
-		ReturnIfFailed(result, SaveDatacenterSettings(datacenter.Get()));
+		ReturnIfFailed(result, datacenter->SaveSettings());
 	}
 
 	auto& sendCompletedCallback = request->GetSendCompletedCallback();
@@ -1781,7 +1781,7 @@ HRESULT ConnectionManager::BoomBaby()
 
 		ComPtr<TLFileBinaryWriter> settingsWriter;
 		ReturnIfFailed(result, MakeAndInitialize<TLFileBinaryWriter>(&settingsWriter, settingsFileName.data(), CREATE_ALWAYS));
-		ReturnIfFailed(result, datacenter.second->SaveSettings(settingsWriter.Get()));
+		ReturnIfFailed(result, datacenter.second->SaveSettings());
 	}
 
 	ComPtr<Datacenter> datacenter;
@@ -2093,18 +2093,6 @@ HRESULT ConnectionManager::SaveCDNPublicKeys()
 	}
 
 	return S_OK;
-}
-
-HRESULT ConnectionManager::SaveDatacenterSettings(Datacenter* datacenter)
-{
-	std::wstring settingsFileName;
-	GetDatacenterSettingsFileName(datacenter->GetId(), settingsFileName);
-
-	HRESULT result;
-	ComPtr<TLFileBinaryWriter> settingsWriter;
-	ReturnIfFailed(result, MakeAndInitialize<TLFileBinaryWriter>(&settingsWriter, settingsFileName.data(), CREATE_ALWAYS));
-
-	return datacenter->SaveSettings(settingsWriter.Get());
 }
 
 HRESULT ConnectionManager::IsIPv6Enabled(INetworkAdapter* networkAdapter, bool* enabled)

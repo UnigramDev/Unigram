@@ -200,7 +200,6 @@ namespace Telegram
 				HRESULT SaveSettings();
 				HRESULT LoadCDNPublicKeys();
 				HRESULT SaveCDNPublicKeys();
-				HRESULT SaveDatacenterSettings(_In_ Datacenter* datacenter);
 				HRESULT AdjustCurrentTime(INT64 messageId);
 				HRESULT UpdateNetworkStatus(bool raiseEvent);
 				HRESULT MoveToDatacenter(INT32 datacenterId);
