@@ -695,7 +695,7 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 
 HRESULT Connection::OnMessageReceived(TLMemoryBinaryReader* messageReader, UINT32 messageLength)
 {
-	METHOD_DEBUG();
+	// METHOD_DEBUG();
 
 	HRESULT result;
 	if (messageLength == 4)

@@ -139,7 +139,6 @@ namespace Telegram
 				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
 				IFACEMETHODIMP get_IsIPv6Enabled(_Out_ boolean* value);
 				IFACEMETHODIMP get_IsNetworkAvailable(_Out_ boolean* value);
-				//IFACEMETHODIMP get_UserConfiguration(_Out_ IUserConfiguration** value);
 				IFACEMETHODIMP get_UserId(_Out_ INT32* value);
 				IFACEMETHODIMP put_UserId(INT32 value);
 				IFACEMETHODIMP get_Proxy(_Out_ IProxySettings** value);
@@ -201,7 +200,6 @@ namespace Telegram
 				HRESULT SaveSettings();
 				HRESULT LoadCDNPublicKeys();
 				HRESULT SaveCDNPublicKeys();
-				HRESULT SaveDatacenterSettings(_In_ Datacenter* datacenter);
 				HRESULT AdjustCurrentTime(INT64 messageId);
 				HRESULT UpdateNetworkStatus(bool raiseEvent);
 				HRESULT MoveToDatacenter(INT32 datacenterId);
@@ -269,7 +267,6 @@ namespace Telegram
 				INT64 m_lastOutgoingMessageId;
 				INT32 m_timeDifference;
 				INT32 m_userId;
-				//ComPtr<UserConfiguration> m_userConfiguration;
 				ComPtr<IProxySettings> m_proxySettings;
 				std::wstring m_settingsFolderPath;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_sessionCreatedEventSource;

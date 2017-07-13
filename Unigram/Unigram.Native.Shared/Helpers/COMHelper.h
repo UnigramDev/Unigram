@@ -7,16 +7,46 @@
 
 using namespace Microsoft::WRL::Wrappers;
 
+#if _DEBUG 
+#include "DebugHelper.h"
+
+#ifndef __STRINGIFY
+#define __STRINGIFY(x) #x
+#define _STRINGIFY(x) __STRINGIFY(x)
+#endif 
+
+#ifndef __STRINGIFY_W
+#define __STRINGIFY_W(x) L##x
+#define _STRINGIFY_W(x) __STRINGIFY_W(x)
+#endif
+
 #define ReturnIfFailed(result, method) \
 	if(FAILED(result = method)) \
 	{ \
-		__debugbreak(); \
+		OutputDebugStringFormat(_STRINGIFY_W("HRESULT 0x%08X at " __FUNCTION__  ", line " _STRINGIFY(__LINE__) ", file " _STRINGIFY(__FILE__) "\n"), result); \
 		return result; \
 	}
+
+
+#define BreakIfFailed(result, method) \
+	if(FAILED(result = method)) \
+	{ \
+		OutputDebugStringFormat(_STRINGIFY_W("HRESULT 0x%08X at " __FUNCTION__  ", line " _STRINGIFY(__LINE__) ", file " _STRINGIFY(__FILE__) "\n"), result); \
+		break; \
+	}
+
+#else
+
+#define ReturnIfFailed(result, method) \
+	if(FAILED(result = method)) \
+		return result
 
 #define BreakIfFailed(result, method) \
 	if(FAILED(result = method)) \
 		break
+
+#endif
+
 
 #define WIN32_FROM_HRESULT(result) ((result) & 0x0000FFFF)
 
