@@ -157,7 +157,7 @@ namespace Telegram.Api.Services
                 //_updatesService.AcceptEncryptionAsync = AcceptEncryptionAsync;
                 _updatesService.SendEncryptedServiceAsync = SendEncryptedServiceAsync;
                 _updatesService.SetMessageOnTimeAsync = SetMessageOnTime;
-                //_updatesService.RemoveFromQueue = RemoveFromQueue;
+                _updatesService.RemoveFromQueue = RemoveFromQueue;
                 _updatesService.UpdateChannelAsync = UpdateChannelAsync;
                 _updatesService.GetParticipantAsync = GetParticipantAsync;
                 _updatesService.GetFullChatAsync = GetFullChatAsync;

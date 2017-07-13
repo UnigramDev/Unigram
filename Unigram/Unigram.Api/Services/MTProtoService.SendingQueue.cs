@@ -49,17 +49,17 @@ namespace Telegram.Api.Services
 
         private void SendMessageAsyncInternal(TLMessagesSendMessage message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            SendAsyncInternal("messages.sendMessage", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, RequestFlag.CanCompress | RequestFlag.InvokeAfter | RequestFlag.RequiresQuickAck);
+            SendAsyncInternal("messages.sendMessage", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, /*RequestFlag.CanCompress |*/ RequestFlag.InvokeAfter | RequestFlag.RequiresQuickAck);
         }
 
         private void SendInlineBotResultAsyncInternal(TLMessagesSendInlineBotResult message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            SendAsyncInternal("messages.sendInlineBotResult", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, RequestFlag.CanCompress | RequestFlag.InvokeAfter);
+            SendAsyncInternal("messages.sendInlineBotResult", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, /*RequestFlag.CanCompress |*/ RequestFlag.InvokeAfter);
         }
 
         private void SendMediaAsyncInternal(TLMessagesSendMedia message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            SendAsyncInternal("messages.sendMedia", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, RequestFlag.CanCompress | RequestFlag.InvokeAfter);
+            SendAsyncInternal("messages.sendMedia", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, /*RequestFlag.CanCompress |*/ RequestFlag.InvokeAfter);
         }
 
         private void StartBotAsyncInternal(TLMessagesStartBot message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
@@ -69,17 +69,22 @@ namespace Telegram.Api.Services
 
         private void ForwardMessageAsyncInternal(TLMessagesForwardMessage message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            SendAsyncInternal("messages.forwardMessage", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, RequestFlag.CanCompress | RequestFlag.InvokeAfter);
+            SendAsyncInternal("messages.forwardMessage", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, /*RequestFlag.CanCompress |*/ RequestFlag.InvokeAfter);
         }
 
         private void ForwardMessagesAsyncInternal(TLMessagesForwardMessages message, Action<TLUpdatesBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
-            SendAsyncInternal("messages.forwardMessages", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, RequestFlag.CanCompress | RequestFlag.InvokeAfter);
+            SendAsyncInternal("messages.forwardMessages", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, /*RequestFlag.CanCompress |*/ RequestFlag.InvokeAfter);
         }
 
         private void SendAsyncInternal<T>(string caption, double timeout, TLObject obj, Action<T> callback, Action fastCallback, Action<TLRPCError> faultCallback, RequestFlag flags = 0)
         {
-            SendInformativeMessage<T>(caption, obj, callback, faultCallback, flags, fastCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags, fastCallback);
+        }
+
+        private void RemoveFromQueue(long id)
+        {
+
         }
     }
 }
