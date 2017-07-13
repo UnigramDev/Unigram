@@ -321,6 +321,44 @@ HRESULT TLMemoryBinaryReader::ReadInt64(INT64* value)
 	return S_OK;
 }
 
+HRESULT TLMemoryBinaryReader::ReadObject(ITLObject** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	HRESULT result;
+	UINT32 constructor;
+	ReturnIfFailed(result, ReadUInt32(&constructor));
+
+	if (constructor == 0x56730BCC)
+	{
+		*value = nullptr;
+		return S_OK;
+	}
+	else
+	{
+		ComPtr<ITLObject> object;
+		ComPtr<ITLObjectConstructorDelegate> constructorDelegate;
+		if (SUCCEEDED(result = TLObject::GetObjectConstructor(constructor, constructorDelegate)))
+		{
+			ReturnIfFailed(result, constructorDelegate->Invoke(&object));
+			ReturnIfFailed(result, object->Read(static_cast<ITLBinaryReaderEx*>(this)));
+		}
+		else
+		{
+			auto objectSize = GetUnconsumedBufferLength();
+			ReturnIfFailed(result, MakeAndInitialize<TLUnparsedObject>(&object, constructor, objectSize, this));
+
+			m_position += objectSize;
+		}
+
+		*value = object.Detach();
+		return S_OK;
+	}
+}
+
 HRESULT TLMemoryBinaryReader::ReadObjectAndConstructor(UINT32 objectSize, UINT32* constructor, ITLObject** value)
 {
 	if (constructor == nullptr || value == nullptr)

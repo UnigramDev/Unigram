@@ -9,6 +9,7 @@
 
 using namespace Microsoft::WRL;
 using ABI::Windows::Foundation::IReference;
+using ABI::Telegram::Api::Native::TL::ITLBool;
 using ABI::Telegram::Api::Native::TL::ITLRPCError;
 using ABI::Telegram::Api::Native::TL::ITLDCOption;
 using ABI::Telegram::Api::Native::TL::ITLDisabledFeature;
@@ -33,6 +34,8 @@ namespace Telegram
 				class TLCDNPublicKey;
 				class TLCDNConfig;
 				class TLRPCError;
+				class TLBoolTrue;
+				class TLBoolFalse;
 				class TLRpcReqError;
 				class TLRpcResult;
 				class TLRpcAnswerDropped;
@@ -74,6 +77,8 @@ namespace Telegram
 					MakeTLTypeTraits(TLCDNPublicKey, 0xc982eaba);
 					MakeTLTypeTraits(TLCDNConfig, 0x5725e40a);
 					MakeTLTypeTraits(TLRPCError, 0x2144ca19);
+					MakeTLTypeTraits(TLBoolTrue, 0x997275b5);
+					MakeTLTypeTraits(TLBoolFalse, 0xbc799737);
 					MakeTLTypeTraits(TLRpcReqError, 0x7ae432f5);
 					MakeTLTypeTraits(TLRpcResult, 0xf35c6d01);
 					MakeTLTypeTraits(TLRpcAnswerDropped, 0xa43ad8b7);
@@ -508,6 +513,39 @@ namespace Telegram
 				};
 
 				class TLRPCError WrlSealed : public TLRPCErrorT<TLObjectTraits::TLRPCErrorTraits>
+				{
+				};
+
+				template<typename TLObjectTraits, bool TValue>
+				class TLBoolT abstract : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, ITLBool, IReference<boolean>, TLObjectT<TLObjectTraits>>
+				{
+					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLBool, BaseTrust);
+
+				public:
+					//COM exported methods
+					IFACEMETHODIMP get_Value(_Out_ boolean* value)
+					{
+						if (value == nullptr)
+						{
+							return E_POINTER;
+						}
+
+						*value = TValue;
+						return S_OK;
+					}
+
+					//Internal methods
+					inline constexpr bool GetValue() const
+					{
+						return TValue;
+					}
+				};
+
+				class TLBoolTrue WrlSealed : public TLBoolT<TLObjectTraits::TLBoolTrueTraits, true>
+				{
+				};
+
+				class TLBoolFalse WrlSealed : public TLBoolT<TLObjectTraits::TLBoolFalseTraits, false>
 				{
 				};
 

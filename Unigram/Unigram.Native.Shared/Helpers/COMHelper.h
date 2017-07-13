@@ -9,7 +9,10 @@ using namespace Microsoft::WRL::Wrappers;
 
 #define ReturnIfFailed(result, method) \
 	if(FAILED(result = method)) \
-		return result
+	{ \
+		__debugbreak(); \
+		return result; \
+	}
 
 #define BreakIfFailed(result, method) \
 	if(FAILED(result = method)) \

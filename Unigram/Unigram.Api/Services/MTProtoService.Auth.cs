@@ -8,23 +8,23 @@ using Telegram.Api.TL.Auth.Methods;
 
 namespace Telegram.Api.Services
 {
-	public partial class MTProtoService
-	{
-	    public void LogOutAsync(Action callback)
-	    {
-	        _cacheService.ClearAsync(callback);
+    public partial class MTProtoService
+    {
+        public void LogOutAsync(Action callback)
+        {
+            _cacheService.ClearAsync(callback);
 
             //try to close session
             LogOutAsync(null, null);
-	    }
+        }
 
         public void CheckPhoneAsync(string phoneNumber, Action<TLAuthCheckedPhone> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        {
             var obj = new TLAuthCheckPhone { PhoneNumber = phoneNumber };
 
             const string caption = "auth.checkPhone";
             SendInformativeMessage(caption, obj, callback, faultCallback);
-	    }
+        }
 
         public void SendCodeAsync(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null)
         {
@@ -38,7 +38,7 @@ namespace Telegram.Api.Services
             };
 
             const string caption = "auth.sendCode";
-            SendInformativeMessage(caption, obj, callback, faultCallback, 3);
+            SendInformativeMessage(caption, obj, callback, faultCallback, Native.RequestFlag.EnableUnauthorized | Native.RequestFlag.FailOnServerError); // 3
         }
 
         public void ResendCodeAsync(string phoneNumber, string phoneCodeHash, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null)
@@ -67,7 +67,7 @@ namespace Telegram.Api.Services
         //}
 
         public void SignUpAsync(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        {
             var obj = new TLAuthSignUp { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode, FirstName = firstName, LastName = lastName };
 
             const string caption = "auth.signUp";
@@ -78,19 +78,19 @@ namespace Telegram.Api.Services
                     callback(auth);
                 },
                 faultCallback);
-	    }
+        }
 
         public void SignInAsync(string phoneNumber, string phoneCodeHash, string phoneCode, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLAuthSignIn { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode};
+            var obj = new TLAuthSignIn { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode };
 
             const string caption = "auth.signIn";
             SendInformativeMessage<TLAuthAuthorization>(caption, obj,
                 auth =>
                 {
-                    _cacheService.SyncUser(auth.User, result => { }); 
+                    _cacheService.SyncUser(auth.User, result => { });
                     callback(auth);
-                }, 
+                },
                 faultCallback);
         }
 
@@ -105,7 +105,7 @@ namespace Telegram.Api.Services
                 {
                     Logs.Log.Write(string.Format("{0} result={1}", methodName, result));
                     callback?.Invoke(result);
-                }, 
+                },
                 error =>
                 {
                     Logs.Log.Write(string.Format("{0} error={1}", methodName, error));
@@ -114,12 +114,12 @@ namespace Telegram.Api.Services
         }
 
         public void SendInvitesAsync(TLVector<string> phoneNumbers, string message, Action<bool> callback, Action<TLRPCError> faultCallback = null)
-	    {
+        {
             var obj = new TLAuthSendInvites { PhoneNumbers = phoneNumbers, Message = message };
 
             const string caption = "auth.sendInvites";
             SendInformativeMessage(caption, obj, callback, faultCallback);
-	    }
+        }
 
         public void ResetAuthorizationsAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
@@ -128,5 +128,5 @@ namespace Telegram.Api.Services
             const string caption = "auth.resetAuthorizations";
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
-	}
+    }
 }

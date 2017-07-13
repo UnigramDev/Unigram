@@ -45,6 +45,7 @@ namespace Telegram
 				runtimeclass TLBinaryWriter;
 				runtimeclass TLObjectSerializer;
 				runtimeclass TLUnparsedObject;
+				runtimeclass TLBool;
 				runtimeclass TLRPCError;
 				runtimeclass TLDCOption;
 				runtimeclass TLDisabledFeature;
@@ -225,6 +226,24 @@ namespace Telegram
 				runtimeclass TLUnparsedObject
 				{
 					[default] interface ITLUnparsedObject;
+					interface ITLObject;
+				}
+
+
+				[exclusiveto(TLBool)]
+				[uuid(26E8EE35-724F-499C-8028-D3DBD594029D)]
+				[version(API_VERSION)]
+				interface ITLBool : IInspectable
+				{
+					[propget] HRESULT Value([out][retval] boolean* value);
+				}
+
+				[marshaling_behavior(agile)]
+				[threading(both)]
+				[version(API_VERSION)]
+				runtimeclass TLBool
+				{
+					[default] interface ITLBool;
 					interface ITLObject;
 				}
 

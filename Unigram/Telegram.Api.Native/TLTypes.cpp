@@ -23,6 +23,8 @@ RegisterTLObjectConstructor(TLConfig);
 RegisterTLObjectConstructor(TLCDNPublicKey);
 RegisterTLObjectConstructor(TLCDNConfig);
 RegisterTLObjectConstructor(TLRPCError);
+//RegisterTLObjectConstructor(TLBoolTrue);
+//RegisterTLObjectConstructor(TLBoolFalse);
 RegisterTLObjectConstructor(TLRpcReqError);
 RegisterTLObjectConstructor(TLRpcResult);
 RegisterTLObjectConstructor(TLRpcAnswerDropped);
