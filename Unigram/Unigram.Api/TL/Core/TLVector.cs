@@ -63,7 +63,7 @@ namespace Telegram.Api.TL
 
             foreach (var item in notNull)
             {
-                TLFactory.Write(to, item);
+                TLFactory.Write<T>(to, item);
             }
         }
 

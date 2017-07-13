@@ -73,7 +73,7 @@ namespace Telegram.Api.TL
         public override void Write(TLBinaryWriter to)
         {
             to.WriteUInt32(0xFFFFFF0E);
-            TLFactory.Write(to, Item1);
+            TLFactory.Write<T1>(to, Item1);
         }
     }
 
@@ -102,7 +102,7 @@ namespace Telegram.Api.TL
         public override void Write(TLBinaryWriter to)
         {
             base.Write(to);
-            TLFactory.Write(to, Item2);
+            TLFactory.Write<T2>(to, Item2);
         }
     }
 
@@ -131,7 +131,7 @@ namespace Telegram.Api.TL
         public override void Write(TLBinaryWriter to)
         {
             base.Write(to);
-            TLFactory.Write(to, Item3);
+            TLFactory.Write<T3>(to, Item3);
         }
     }
 
@@ -160,7 +160,7 @@ namespace Telegram.Api.TL
         public override void Write(TLBinaryWriter to)
         {
             base.Write(to);
-            TLFactory.Write(to, Item4);
+            TLFactory.Write<T4>(to, Item4);
         }
     }
 
@@ -189,7 +189,7 @@ namespace Telegram.Api.TL
         public override void Write(TLBinaryWriter to)
         {
             base.Write(to);
-            TLFactory.Write(to, Item5);
+            TLFactory.Write<T5>(to, Item5);
         }
     }
 
@@ -218,7 +218,7 @@ namespace Telegram.Api.TL
         public override void Write(TLBinaryWriter to)
         {
             base.Write(to);
-            TLFactory.Write(to, Item6);
+            TLFactory.Write<T6>(to, Item6);
         }
     }
 
@@ -247,7 +247,7 @@ namespace Telegram.Api.TL
         public override void Write(TLBinaryWriter to)
         {
             base.Write(to);
-            TLFactory.Write(to, Item7);
+            TLFactory.Write<T7>(to, Item7);
         }
     }
 
@@ -276,7 +276,7 @@ namespace Telegram.Api.TL
         public override void Write(TLBinaryWriter to)
         {
             base.Write(to);
-            TLFactory.Write(to, Item8);
+            TLFactory.Write<T8>(to, Item8);
         }
     }
 }
