@@ -113,10 +113,10 @@ namespace Unigram.ViewModels.SignIn
             var response = await ProtoService.CheckPasswordAsync(data);
             if (response.IsSucceeded)
             {
-                ProtoService.SetInitState();
-                ProtoService.CurrentUserId = response.Result.User.Id;
                 SettingsHelper.IsAuthorized = true;
                 SettingsHelper.UserId = response.Result.User.Id;
+                ProtoService.CurrentUserId = response.Result.User.Id;
+                ProtoService.SetInitState();
 
                 // TODO: maybe ask about notifications?
 

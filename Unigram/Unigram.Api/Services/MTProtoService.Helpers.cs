@@ -53,7 +53,7 @@ namespace Telegram.Api.Services
                     callback?.Invoke((T)(object)message.Object);
                 }
             },
-            quick, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, flags);
+            quick, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, flags | RequestFlag.Immediate);
         }
 
         public void SendRequestAsync<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null)
