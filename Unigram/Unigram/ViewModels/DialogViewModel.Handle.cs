@@ -14,6 +14,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Windows.System.Profile;
+using Windows.UI.Notifications;
 
 namespace Unigram.ViewModels
 {
@@ -64,6 +65,8 @@ namespace Unigram.ViewModels
                     dialog.ReadInboxMaxId = dialog.TopMessage;
                     dialog.UnreadCount = dialog.UnreadCount - unread;
                     dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+
+                    RemoveNotifications();
                 }
             }
             else if (message.Equals("Window_Deactivated"))
@@ -668,6 +671,8 @@ namespace Unigram.ViewModels
                     ProtoService.ReadHistoryAsync(Peer, messageCommon.Id, 0);
                 }
                 //});
+
+                RemoveNotifications();
             }
         }
 
