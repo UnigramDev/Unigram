@@ -234,7 +234,7 @@ HRESULT TLInitConnection::RuntimeClassInitialize(UserConfiguration* userConfigur
 HRESULT TLInitConnection::WriteBody(ITLBinaryWriterEx* writer)
 {
 	HRESULT result;
-	ReturnIfFailed(result, writer->WriteInt32(TELEGRAM_API_NATIVE_APIID));
+	ReturnIfFailed(result, writer->WriteInt32(m_userConfiguration->GetAppId()));
 	ReturnIfFailed(result, writer->WriteString(m_userConfiguration->GetDeviceModel().Get()));
 	ReturnIfFailed(result, writer->WriteString(m_userConfiguration->GetSystemVersion().Get()));
 	ReturnIfFailed(result, writer->WriteString(m_userConfiguration->GetAppVersion().Get()));

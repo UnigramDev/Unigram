@@ -39,6 +39,7 @@ namespace Telegram
 					class TLInitConnection;
 					class TLHelpGetConfig;
 					class TLHelpGetCDNConfig;
+					class TLHelpNearestDC;
 
 
 					namespace TLObjectTraits
@@ -59,6 +60,7 @@ namespace Telegram
 						MakeTLMethodTraits(TLInitConnection, 0xc7481da6);
 						MakeTLMethodTraits(TLHelpGetConfig, 0xc4f9186b);
 						MakeTLMethodTraits(TLHelpGetCDNConfig, 0x52029342);
+						MakeTLMethodTraits(TLHelpNearestDC, 0x1FB33026);
 
 					}
 
@@ -382,6 +384,11 @@ namespace Telegram
 					};
 
 					class TLHelpGetCDNConfig WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLHelpGetCDNConfigTraits>>
+					{
+						InspectableClass(Traits::RuntimeClassName, BaseTrust);
+					};
+
+					class TLHelpNearestDC WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLObjectT<TLObjectTraits::TLHelpNearestDCTraits>>
 					{
 						InspectableClass(Traits::RuntimeClassName, BaseTrust);
 					};

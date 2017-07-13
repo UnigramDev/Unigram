@@ -10,6 +10,15 @@
 using namespace Telegram::Api::Native;
 
 
+UserConfiguration::UserConfiguration() :
+	m_appId(0)
+{
+}
+
+UserConfiguration::~UserConfiguration()
+{
+}
+
 HRESULT UserConfiguration::RuntimeClassInitialize()
 {
 	HRESULT result;
@@ -61,9 +70,31 @@ HRESULT UserConfiguration::RuntimeClassInitialize()
 	return S_OK;
 }
 
+HRESULT UserConfiguration::get_AppId(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_appId;
+	return S_OK;
+}
+
+HRESULT UserConfiguration::put_AppId(INT32 value)
+{
+	m_appId = value;
+	return S_OK;
+}
+
 HRESULT UserConfiguration::get_DeviceModel(HSTRING* value)
 {
 	return m_deviceModel.CopyTo(value);
+}
+
+HRESULT UserConfiguration::put_DeviceModel(HSTRING value)
+{
+	return m_deviceModel.Set(value);
 }
 
 HRESULT UserConfiguration::get_SystemVersion(HSTRING* value)
@@ -71,14 +102,29 @@ HRESULT UserConfiguration::get_SystemVersion(HSTRING* value)
 	return m_systemVersion.CopyTo(value);
 }
 
+HRESULT UserConfiguration::put_SystemVersion(HSTRING value)
+{
+	return m_systemVersion.Set(value);
+}
+
 HRESULT UserConfiguration::get_AppVersion(HSTRING* value)
 {
 	return m_appVersion.CopyTo(value);
 }
 
+HRESULT UserConfiguration::put_AppVersion(HSTRING value)
+{
+	return m_appVersion.Set(value);
+}
+
 HRESULT UserConfiguration::get_Language(HSTRING* value)
 {
 	return m_language.CopyTo(value);
+}
+
+HRESULT UserConfiguration::put_Language(HSTRING value)
+{
+	return m_language.Set(value);
 }
 
 HRESULT UserConfiguration::FormatVersion(UINT64 major, UINT64 minor, UINT64 build, UINT64 revision, HString& version)

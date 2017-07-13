@@ -124,8 +124,10 @@ namespace Telegram
 				//COM exported methods
 				IFACEMETHODIMP add_SessionCreated(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
 				IFACEMETHODIMP remove_SessionCreated(EventRegistrationToken token);
-				IFACEMETHODIMP add_AuthenticationRequested(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
-				IFACEMETHODIMP remove_AuthenticationRequested(EventRegistrationToken token);
+				IFACEMETHODIMP add_AuthenticationRequired(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
+				IFACEMETHODIMP remove_AuthenticationRequired(EventRegistrationToken token);
+				IFACEMETHODIMP add_UserConfigurationRequired(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CUserConfiguration* handler, _Out_ EventRegistrationToken* token);
+				IFACEMETHODIMP remove_UserConfigurationRequired(EventRegistrationToken token);
 				IFACEMETHODIMP add_CurrentNetworkTypeChanged(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
 				IFACEMETHODIMP remove_CurrentNetworkTypeChanged(EventRegistrationToken token);
 				IFACEMETHODIMP add_ConnectionStateChanged(_In_ __FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable* handler, _Out_ EventRegistrationToken* token);
@@ -137,7 +139,7 @@ namespace Telegram
 				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
 				IFACEMETHODIMP get_IsIPv6Enabled(_Out_ boolean* value);
 				IFACEMETHODIMP get_IsNetworkAvailable(_Out_ boolean* value);
-				IFACEMETHODIMP get_UserConfiguration(_Out_ IUserConfiguration** value);
+				//IFACEMETHODIMP get_UserConfiguration(_Out_ IUserConfiguration** value);
 				IFACEMETHODIMP get_UserId(_Out_ INT32* value);
 				IFACEMETHODIMP put_UserId(INT32 value);
 				IFACEMETHODIMP get_Proxy(_Out_ IProxySettings** value);
@@ -185,6 +187,14 @@ namespace Telegram
 				}
 
 			private:
+				struct ProcessRequestsContext
+				{
+					INT32 CurrentTime;
+					INT32 CurrentDatacenterId;
+					INT32 MovingToDatacenterId;
+					std::map<UINT32, DatacenterRequestContext> Datacenters;
+				};
+
 				HRESULT InitializeDefaultDatacenters();
 				HRESULT InitializeSettings();
 				HRESULT LoadSettings();
@@ -199,11 +209,11 @@ namespace Telegram
 				HRESULT CreateTransportMessage(_In_ MessageRequest* request, _Inout_ INT64& lastRpcMessageId, _Inout_ bool& requiresLayer, _Out_ TL::TLMessage** message);
 				HRESULT ProcessRequests();
 				HRESULT ProcessRequestsForDatacenter(_In_ Datacenter* datacenter, ConnectionType connectionType);
-				HRESULT ProcessRequest(_In_ MessageRequest* request, INT32 currentTime, _In_ std::map<UINT32, DatacenterRequestContext>& datacentersContexts);
-				HRESULT ProcessRequests(_In_ std::map<UINT32, DatacenterRequestContext>& datacentersContexts);
-				HRESULT ProcessDatacenterRequests(_In_ DatacenterRequestContext const& datacenterContext);
+				HRESULT ProcessRequest(_In_ MessageRequest* request, _In_ ProcessRequestsContext* context);
+				HRESULT ProcessRequests(_In_ ProcessRequestsContext* context);
+				HRESULT ProcessDatacenterRequests(_In_ DatacenterRequestContext const* datacenterContext);
 				HRESULT ProcessConnectionRequest(_In_ Connection* connection, _In_ MessageRequest* request);
-				void ResetRequests(_In_ std::map<UINT32, DatacenterRequestContext> const& datacentersContexts);
+				void ResetRequests(_In_ ProcessRequestsContext const* context);
 				void ResetRequests(std::function<bool(INT32, ComPtr<MessageRequest> const&)> selector, bool resetStartTime);
 				HRESULT CompleteMessageRequest(INT64 requestMessageId, _In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
 				HRESULT HandleRequestError(_In_ Datacenter* datacenter, _In_ MessageRequest* request, INT32 code, _In_ HString const& message);
@@ -259,11 +269,12 @@ namespace Telegram
 				INT64 m_lastOutgoingMessageId;
 				INT32 m_timeDifference;
 				INT32 m_userId;
-				ComPtr<UserConfiguration> m_userConfiguration;
+				//ComPtr<UserConfiguration> m_userConfiguration;
 				ComPtr<IProxySettings> m_proxySettings;
 				std::wstring m_settingsFolderPath;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_sessionCreatedEventSource;
-				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_authenticationRequestedEventSource;
+				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_authenticationRequiredEventSource;
+				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CUserConfiguration> m_userConfigurationRequiredEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_currentNetworkTypeChangedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_connectionStateChangedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_Telegram__CApi__CNative__CMessageResponse> m_unprocessedMessageReceivedEventSource;
