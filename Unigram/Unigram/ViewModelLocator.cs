@@ -267,6 +267,10 @@ namespace Unigram
                 {
                     protoService.SetMessageOnTime(0, null);
                 }
+                else if (sender.ConnectionState == ConnectionState.WaitingForNetwork)
+                {
+                    protoService.SetMessageOnTime(25, "Waiting for network...");
+                }
                 else
                 {
                     protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? "Connecting to proxy..." : "Connecting...");
