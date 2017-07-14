@@ -31,6 +31,7 @@ using Telegram.Api.TL;
 using System.Threading.Tasks;
 using System.Reactive.Linq;
 using Unigram.Common;
+using Unigram.Core.Services;
 
 namespace Unigram.Views
 {
@@ -192,9 +193,9 @@ namespace Unigram.Views
 
         private void NearbyList_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is TLMessageMediaVenue venue)
+            if (e.ClickedItem is LocationVenue venue)
             {
-                Media = venue;
+                Media = venue.Venue;
                 Dialog.Hide(ContentDialogBaseResult.OK);
             }
         }
