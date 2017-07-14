@@ -17,7 +17,7 @@ namespace Unigram.Core.Services
     {
         Task<Geocoordinate> GetPositionAsync();
 
-        Task<List<TLMessageMediaVenue>> GetVenuesAsync(double latitude, double longitute, string query = null);
+        Task<List<LocationVenue>> GetVenuesAsync(double latitude, double longitute, string query = null);
     }
 
     public class LocationService : ILocationService
@@ -39,7 +39,7 @@ namespace Unigram.Core.Services
             return null;
         }
 
-        public async Task<List<TLMessageMediaVenue>> GetVenuesAsync(double latitude, double longitute, string query = null)
+        public async Task<List<LocationVenue>> GetVenuesAsync(double latitude, double longitute, string query = null)
         {
             var builder = new StringBuilder("https://api.foursquare.com/v2/venues/search/?");
             if (string.IsNullOrEmpty(query) == false)
@@ -64,7 +64,7 @@ namespace Unigram.Core.Services
 
                 if (json?.response?.venues != null)
                 {
-                    var result = new List<TLMessageMediaVenue>();
+                    var result = new List<LocationVenue>();
                     foreach (var item in json.response.venues)
                     {
                         var venue = new TLMessageMediaVenue();
@@ -73,14 +73,34 @@ namespace Unigram.Core.Services
                         venue.Address = item.location.address ?? item.location.city ?? item.location.country;
                         venue.Provider = "foursquare";
                         venue.Geo = new TLGeoPoint { Lat = item.location.lat, Long = item.location.lng };
-                        result.Add(venue);
+
+                        var location = new LocationVenue();
+                        location.Venue = venue;
+
+                        if (item.categories != null && item.categories.Count > 0)
+                        {
+                            var icon = item.categories[0].icon;
+                            if (icon != null)
+                            {
+                                location.Icon = string.Format("{0}64{1}", icon.prefix, icon.suffix);
+                            }
+                        }
+
+                        result.Add(location);
                     }
 
                     return result;
                 }
             }
 
-            return new List<TLMessageMediaVenue>();
+            return new List<LocationVenue>();
         }
+    }
+
+    public class LocationVenue
+    {
+        public TLMessageMediaVenue Venue { get; set; }
+
+        public string Icon { get; set; }
     }
 }

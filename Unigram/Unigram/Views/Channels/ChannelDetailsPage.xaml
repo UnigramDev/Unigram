@@ -11,6 +11,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SuppressNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Page.Resources>
         <MenuFlyout x:Key="ParticipantMenuFlyout" Opening="MenuFlyout_Opening">
             <MenuFlyoutItem Loaded="ParticipantEdit_Loaded" Command="{x:Bind ViewModel.ParticipantEditCommand}" CommandParameter="{Binding}" Text="Edit permissions"/>

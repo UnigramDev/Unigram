@@ -206,8 +206,8 @@ namespace Unigram
                 deleteIfExists("chats.dat.temp");
                 deleteIfExists("dialogs.dat");
                 deleteIfExists("dialogs.dat.temp");
-                deleteIfExists("state.dat");
-                deleteIfExists("state.dat.temp");
+                //deleteIfExists("state.dat");
+                //deleteIfExists("state.dat.temp");
                 deleteIfExists("users.dat");
                 deleteIfExists("users.dat.temp");
 

@@ -30,6 +30,7 @@ using Unigram.Controls;
 using Telegram.Api.TL;
 using System.Threading.Tasks;
 using System.Reactive.Linq;
+using Unigram.Common;
 
 namespace Unigram.Views
 {
@@ -169,12 +170,12 @@ namespace Unigram.Views
                 }
                 else
                 {
-                    tblCurrentLocation.Text = "Getting your location...";
+                    tblCurrentLocation.Text = "Unknown location";
                 }
             }
             else
             {
-                tblCurrentLocation.Text = "Getting your location...";
+                tblCurrentLocation.Text = "Unknown location";
             }
         }
 
@@ -204,5 +205,55 @@ namespace Unigram.Views
         public string Name { get; set; }
         public string Address { get; set; }
         public Poi() { }
+    }
+
+    public class OpacityMask : Control
+    {
+        private Compositor _compositor;
+        private SpriteVisual _visual;
+
+        public OpacityMask()
+        {
+            var mask = ElementCompositionPreview.GetElementVisual(this);
+
+            _compositor = mask.Compositor;
+            _visual = _compositor.CreateSpriteVisual();
+            _visual.Size = new Vector2(32, 32);
+
+            ElementCompositionPreview.SetElementChildVisual(this, _visual);
+        }
+
+        #region Source
+
+        public Uri Source
+        {
+            get { return (Uri)GetValue(SourceProperty); }
+            set { SetValue(SourceProperty, value); }
+        }
+
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.Register("Source", typeof(Uri), typeof(OpacityMask), new PropertyMetadata(null, OnSourceChanged));
+
+        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((OpacityMask)d).OnSourceChanged((Uri)e.NewValue);
+        }
+
+        private async void OnSourceChanged(Uri newValue)
+        {
+            var surface = await ImageLoader.Instance.LoadFromUriAsync(newValue);
+            if (surface != null)
+            {
+                var mask = _compositor.CreateMaskBrush();
+                var overlay = _compositor.CreateColorBrush(Colors.Red);
+
+                mask.Mask = overlay;
+                mask.Source = surface.Brush;
+
+                _visual.Brush = mask;
+            }
+        }
+
+        #endregion
     }
 }
