@@ -769,9 +769,6 @@
     <Compile Include="Controls\ProgressShape.cs" />
     <Compile Include="Controls\ProgressVoice.cs" />
     <Compile Include="Controls\TransferButton.cs" />
-    <Compile Include="Controls\Media\ThumbnailControl.xaml.cs">
-      <DependentUpon>ThumbnailControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\ProfilePictureView.cs" />
     <Compile Include="Controls\Views\DeleteChannelMessageDialog.xaml.cs">
       <DependentUpon>DeleteChannelMessageDialog.xaml</DependentUpon>
@@ -1127,6 +1124,13 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="Assets\Noise.jpg" />
+    <Content Include="Assets\Sounds\Default.wav" />
+    <Content Include="Assets\Sounds\Sound1.wav" />
+    <Content Include="Assets\Sounds\Sound2.wav" />
+    <Content Include="Assets\Sounds\Sound3.wav" />
+    <Content Include="Assets\Sounds\Sound4.wav" />
+    <Content Include="Assets\Sounds\Sound5.wav" />
+    <Content Include="Assets\Sounds\Sound6.wav" />
     <Content Include="Assets\Webviews\injected.js" />
     <Content Include="VoiceCommands\VoiceCommands.xml" />
     <Content Include="Properties\Default.rd.xml" />
@@ -1186,10 +1190,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Items\SharedFileListViewItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Media\ThumbnailControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -50,7 +50,7 @@ namespace Unigram.Tasks
                     {
                         var text = data["QuickMessage"];
                         var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
-                        var entities = Utils.GetEntities(ref messageText);
+                        var entitiesBase = Utils.GetEntities(ref messageText);
 
                         var replyToMsgId = 0;
                         var inputPeer = default(TLInputPeerBase);
@@ -67,6 +67,12 @@ namespace Unigram.Tasks
                         {
                             inputPeer = new TLInputPeerChat { ChatId = int.Parse(data["chat_id"]) };
                             replyToMsgId = data.ContainsKey("msg_id") ? int.Parse(data["msg_id"]) : 0;
+                        }
+
+                        TLVector<TLMessageEntityBase> entities = null;
+                        if (entitiesBase != null)
+                        {
+                            entities = new TLVector<TLMessageEntityBase>(entitiesBase);
                         }
 
                         var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = replyToMsgId, Message = messageText, Entities = new TLVector<TLMessageEntityBase>(entities), IsBackground = true, RandomId = TLLong.Random() };
