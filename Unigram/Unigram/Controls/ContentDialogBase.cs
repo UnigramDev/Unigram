@@ -36,6 +36,7 @@ namespace Unigram.Controls
         private TaskCompletionSource<ContentDialogBaseResult> _callback;
         private ContentDialogBaseResult _result;
 
+        protected Border Container;
         protected Border BackgroundElement;
         private AppViewBackButtonVisibility BackButtonVisibility;
 
@@ -281,7 +282,21 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
+            Container = (Border)GetTemplateChild("Container");
             BackgroundElement = (Border)GetTemplateChild("BackgroundElement");
+
+            Container.Tapped += Outside_Tapped;
+            BackgroundElement.Tapped += Inside_Tapped;
+        }
+
+        private void Inside_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void Outside_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            Hide();
         }
 
         private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
