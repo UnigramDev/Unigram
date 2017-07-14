@@ -576,6 +576,11 @@ namespace Unigram.ViewModels.Users
                 var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = _item.ToInputPeer() }, settings);
                 if (response.IsSucceeded)
                 {
+                    if (_item == null || _full == null)
+                    {
+                        return;
+                    }
+
                     notifySettings.MuteUntil = muteUntil;
                     RaisePropertyChanged(() => AreNotificationsEnabled);
                     Full.RaisePropertyChanged(() => Full.NotifySettings);
