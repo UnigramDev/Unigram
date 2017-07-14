@@ -26,6 +26,10 @@ using LinqToVisualTree;
 using Unigram.Views;
 using Unigram.ViewModels;
 using Windows.Services.Maps;
+using Unigram.Controls;
+using Telegram.Api.TL;
+using System.Threading.Tasks;
+using System.Reactive.Linq;
 
 namespace Unigram.Views
 {
@@ -35,6 +39,10 @@ namespace Unigram.Views
 
         private MapIcon userPos;
 
+        public TLMessageMediaBase Media { get; private set; }
+
+        public ContentDialogBase Dialog { get; set; }
+
         public DialogSendLocationPage()
         {
             InitializeComponent();
@@ -42,6 +50,12 @@ namespace Unigram.Views
             DataContext = UnigramContainer.Current.ResolveType<DialogSendLocationViewModel>();
 
             Loaded += OnLoaded;
+
+            var observable = Observable.FromEventPattern<object>(mMap, "CenterChanged");
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(async x =>
+            {
+                await UpdateLocationAsync(mMap.Center);
+            });
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -130,19 +144,10 @@ namespace Unigram.Views
                 mMap.MapElements.Add(userPos);
 
                 // Get address for current location
-                var result = await MapLocationFinder.FindLocationsAtAsync(new Geopoint(new BasicGeoposition
-                {
-                    Latitude = pos.Coordinate.Latitude,
-                    Longitude = pos.Coordinate.Longitude
-                }));
-                if (result.Status == MapLocationFinderStatus.Success)
-                {
-                    string selectedAddress = result.Locations[0].Address.FormattedAddress;
-                    tblCurrentLocation.Text = selectedAddress;
-                }
+                await UpdateLocationAsync(mMap.Center);
 
                 // Other cases
-                // TO-DO When shit gets serious
+                // TODO: When shit gets serious
                 //
                 // case GeolocationAccessStatus.Denied:
                 // case GeolocationAccessStatus.Allowed:
@@ -150,9 +155,47 @@ namespace Unigram.Views
             }
         }
 
+        private async Task UpdateLocationAsync(Geopoint point)
+        {
+            tblCurrentLocation.Text = "Getting your location...";
+
+            var result = await MapLocationFinder.FindLocationsAtAsync(point);
+            if (result.Status == MapLocationFinderStatus.Success)
+            {
+                var location = result.Locations.FirstOrDefault();
+                if (location != null)
+                {
+                    tblCurrentLocation.Text = location.Address.FormattedAddress;
+                }
+                else
+                {
+                    tblCurrentLocation.Text = "Getting your location...";
+                }
+            }
+            else
+            {
+                tblCurrentLocation.Text = "Getting your location...";
+            }
+        }
+
         private void BtnLocate_Click(object sender, RoutedEventArgs e)
         {
             FindLocation();
+        }
+
+        private void BtnCurrentLocation_Click(object sender, RoutedEventArgs e)
+        {
+            Media = new TLMessageMediaGeo { Geo = new TLGeoPoint { Lat = mMap.Center.Position.Latitude, Long = mMap.Center.Position.Longitude } };
+            Dialog.Hide(ContentDialogBaseResult.OK);
+        }
+
+        private void NearbyList_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem is TLMessageMediaVenue venue)
+            {
+                Media = venue;
+                Dialog.Hide(ContentDialogBaseResult.OK);
+            }
         }
     }
 

@@ -20,7 +20,7 @@ using Telegram.Api.TL.Messages;
 
 namespace Unigram.ViewModels.Settings
 {
-    public class SettingsStickersFeaturedViewModel : UnigramViewModelBase
+    public class SettingsStickersFeaturedViewModel : UnigramViewModelBase, IHandle<FeaturedStickersDidLoadedEventArgs>
     {
         private readonly IStickersService _stickersService;
 
@@ -28,7 +28,8 @@ namespace Unigram.ViewModels.Settings
             : base(protoService, cacheService, aggregator)
         {
             _stickersService = stickersService;
-            _stickersService.FeaturedStickersDidLoaded += OnFeaturedStickersDidLoaded;
+
+            Aggregator.Subscribe(this);
 
             Items = new MvxObservableCollection<TLMessagesStickerSet>();
         }
@@ -47,7 +48,7 @@ namespace Unigram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
-        private void OnFeaturedStickersDidLoaded(object sender, FeaturedStickersDidLoadedEventArgs e)
+        public void Handle(FeaturedStickersDidLoadedEventArgs e)
         {
             ProcessStickerSets();
         }

@@ -248,7 +248,12 @@ namespace Unigram.ViewModels
 
         public async void Handle(DialogRemovedEventArgs args)
         {
-            var response = await ProtoService.GetHistoryAsync(args.Dialog.With.ToInputPeer(), args.Dialog.With.ToPeer(), true, 0, 0, int.MaxValue, 1);
+            if (args.Dialog.With == null)
+            {
+                return;
+            }
+
+            var response = await ProtoService.GetHistoryAsync(args.Dialog.ToInputPeer(), args.Dialog.Peer, true, 0, 0, int.MaxValue, 1);
             if (response.IsSucceeded && response.Result.Messages.Count > 0)
             {
                 args.Dialog.TopMessageItem = response.Result.Messages[0];

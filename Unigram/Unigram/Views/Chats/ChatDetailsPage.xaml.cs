@@ -40,7 +40,7 @@ namespace Unigram.Views.Chats
         {
             var chat = ViewModel.Item as TLChat;
             var chatFull = ViewModel.Full as TLChatFull;
-            if (chat.Photo is TLChatPhoto photo && chatFull != null && chatFull.ChatPhoto is TLPhoto)
+            if (chatFull != null && chatFull.ChatPhoto is TLPhoto && chat != null)
             {
                 var viewModel = new ChatPhotosViewModel(ViewModel.ProtoService, chatFull, chat);
                 await GalleryView.Current.ShowAsync(viewModel, () => Picture);

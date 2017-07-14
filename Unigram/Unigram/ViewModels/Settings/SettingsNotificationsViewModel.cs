@@ -179,42 +179,42 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        private bool _inAppSounds;
         public bool InAppSounds
         {
             get
             {
-                return _inAppSounds;
+                return ApplicationSettings.Current.InAppSounds;
             }
             set
             {
-                Set(ref _inAppSounds, value);
+                ApplicationSettings.Current.InAppSounds = value;
+                RaisePropertyChanged();
             }
         }
 
-        private bool _inAppVibrate;
         public bool InAppVibrate
         {
             get
             {
-                return _inAppVibrate;
+                return ApplicationSettings.Current.InAppVibrate;
             }
             set
             {
-                Set(ref _inAppVibrate, value);
+                ApplicationSettings.Current.InAppVibrate = value;
+                RaisePropertyChanged();
             }
         }
 
-        private bool _inAppPreview;
         public bool InAppPreview
         {
             get
             {
-                return _inAppPreview;
+                return ApplicationSettings.Current.InAppPreview;
             }
             set
             {
-                Set(ref _inAppPreview, value);
+                ApplicationSettings.Current.InAppPreview = value;
+                RaisePropertyChanged();
             }
         }
 

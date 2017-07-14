@@ -1564,7 +1564,6 @@
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Text="Location"
                                                 Tag="&#xE1C4;"
-                                                Visibility="Collapsed"
                                                 Command="{x:Bind ViewModel.SendLocationCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Text="Contact"

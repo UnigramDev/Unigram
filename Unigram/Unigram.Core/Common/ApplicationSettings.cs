@@ -78,6 +78,60 @@ namespace Unigram.Common
             }
         }
 
+        #region InApp
+
+        private bool? _inAppPreview;
+        public bool InAppPreview
+        {
+            get
+            {
+                if (_inAppPreview == null)
+                    _inAppPreview = GetValueOrDefault("InAppPreview", true);
+
+                return _inAppPreview ?? true;
+            }
+            set
+            {
+                _inAppPreview = value;
+                AddOrUpdateValue("InAppPreview", value);
+            }
+        }
+
+        private bool? _inAppVibrate;
+        public bool InAppVibrate
+        {
+            get
+            {
+                if (_inAppVibrate == null)
+                    _inAppVibrate = GetValueOrDefault("InAppVibrate", true);
+
+                return _inAppVibrate ?? true;
+            }
+            set
+            {
+                _inAppVibrate = value;
+                AddOrUpdateValue("InAppVibrate", value);
+            }
+        }
+
+        private bool? _inAppSounds;
+        public bool InAppSounds
+        {
+            get
+            {
+                if (_inAppSounds == null)
+                    _inAppSounds = GetValueOrDefault("InAppSounds", true);
+
+                return _inAppSounds ?? true;
+            }
+            set
+            {
+                _inAppSounds = value;
+                AddOrUpdateValue("InAppSounds", value);
+            }
+        }
+
+        #endregion
 
         private bool? _isSendByEnterEnabled;
         public bool IsSendByEnterEnabled

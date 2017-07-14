@@ -96,14 +96,6 @@ namespace Unigram.Services
         void RemoveStickersSet(TLStickerSet stickerSet, int hide, bool showSettings);
 
         List<TLDocument> LoadStickersForEmoji(string emoji);
-
-        event NeedReloadArchivedStickersEventHandler NeedReloadArchivedStickers;
-        event StickersDidLoadedEventHandler StickersDidLoaded;
-        event FeaturedStickersDidLoadedEventHandler FeaturedStickersDidLoaded;
-        event RecentsDidLoadedEventHandler RecentsDidLoaded;
-        event ArchivedStickersCountDidLoadedEventHandler ArchivedStickersCountDidLoaded;
-
-        void RaiseStickersDidLoaded(StickerType type);
     }
 
     public class StickersService : IStickersService, IHandle,
@@ -528,7 +520,7 @@ namespace Unigram.Services
                         recentStickersLoaded[type] = true;
                     }
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.recentDocumentsDidLoaded, gif, type);
-                    RecentsDidLoaded?.Invoke(this, new RecentsDidLoadedEventArgs(gif, stickerType));
+                    _aggregator.Publish(new RecentsDidLoadedEventArgs(gif, stickerType));
 
                     if (arrayList.Count == 0)
                     {
@@ -696,7 +688,7 @@ namespace Unigram.Services
                     }
 
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.recentDocumentsDidLoaded, gif, type);
-                    RecentsDidLoaded?.Invoke(this, new RecentsDidLoadedEventArgs(gif, stickerType));
+                    _aggregator.Publish(new RecentsDidLoadedEventArgs(gif, stickerType));
                 }
             }
         }
@@ -721,7 +713,7 @@ namespace Unigram.Services
 
             loadHash[type] = CalculateStickersHash(stickerSets[type]);
             //NotificationCenter.getInstance().postNotificationName(NotificationCenter.stickersDidLoaded, type);
-            StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(stickerType));
+            _aggregator.Publish(new StickersDidLoadedEventArgs(stickerType));
             LoadStickers(stickerType, false, true);
         }
 
@@ -780,7 +772,7 @@ namespace Unigram.Services
             }
             loadHash[type] = CalculateStickersHash(stickerSets[type]);
             //NotificationCenter.getInstance().postNotificationName(NotificationCenter.stickersDidLoaded, type);
-            StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(stickerType));
+            _aggregator.Publish(new StickersDidLoadedEventArgs(stickerType));
             LoadStickers(stickerType, false, true);
         }
 
@@ -798,7 +790,7 @@ namespace Unigram.Services
 
                 archivedStickersCount[type] = count;
                 //NotificationCenter.getInstance().postNotificationName(NotificationCenter.archivedStickersCountDidLoaded, new Object[] { Integer.valueOf(type) });
-                ArchivedStickersCountDidLoaded?.Invoke(this, new ArchivedStickersCountDidLoadedEventArgs(stickerType));
+                _aggregator.Publish(new ArchivedStickersCountDidLoadedEventArgs(stickerType));
                 LoadArchivedStickersCount(stickerType, false);
             }
             else
@@ -811,7 +803,7 @@ namespace Unigram.Services
                     archivedStickersCount[type] = result.Count;
                     ApplicationSettings.Current.AddOrUpdateValue("archivedStickersCount" + type, result.Count);
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.archivedStickersCountDidLoaded, new Object[] { Integer.valueOf(StickersQuery.19.this.val$type) });
-                    ArchivedStickersCountDidLoaded?.Invoke(this, new ArchivedStickersCountDidLoadedEventArgs(stickerType));
+                    _aggregator.Publish(new ArchivedStickersCountDidLoadedEventArgs(stickerType));
                 });
             }
         }
@@ -990,7 +982,7 @@ namespace Unigram.Services
                     loadFeaturedHash = hash;
                     loadFeaturedDate = date;
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.featuredStickersDidLoaded);
-                    FeaturedStickersDidLoaded?.Invoke(this, new FeaturedStickersDidLoadedEventArgs());
+                    _aggregator.Publish(new FeaturedStickersDidLoadedEventArgs());
                     //    }
                     //});
                 }
@@ -1089,7 +1081,7 @@ namespace Unigram.Services
             unreadStickerSets.Clear();
             loadFeaturedHash = CalculateFeaturedStickersHash(featuredStickerSets);
             //NotificationCenter.getInstance().postNotificationName(NotificationCenter.featuredStickersDidLoaded);
-            FeaturedStickersDidLoaded?.Invoke(this, new FeaturedStickersDidLoadedEventArgs());
+            _aggregator.Publish(new FeaturedStickersDidLoadedEventArgs());
             PutFeaturedStickersToCache(featuredStickerSets, unreadStickerSets, loadFeaturedDate, loadFeaturedHash);
             if (query)
             {
@@ -1116,7 +1108,7 @@ namespace Unigram.Services
             readingStickerSets.Remove(id);
             loadFeaturedHash = CalculateFeaturedStickersHash(featuredStickerSets);
             //NotificationCenter.getInstance().postNotificationName(NotificationCenter.featuredStickersDidLoaded);
-            FeaturedStickersDidLoaded?.Invoke(this, new FeaturedStickersDidLoadedEventArgs());
+            _aggregator.Publish(new FeaturedStickersDidLoadedEventArgs());
             PutFeaturedStickersToCache(featuredStickerSets, unreadStickerSets, loadFeaturedDate, loadFeaturedHash);
             //    }
             //}, 1000);
@@ -1455,7 +1447,7 @@ namespace Unigram.Services
                         stickersByEmoji = stickersByEmojiNew;
                     }
                     //NotificationCenter.getInstance().postNotificationName(NotificationCenter.stickersDidLoaded, type);
-                    StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(stickerType));
+                    _aggregator.Publish(new StickersDidLoadedEventArgs(stickerType));
                     //    }
                     //});
                 }
@@ -1511,7 +1503,7 @@ namespace Unigram.Services
                 loadHash[type] = CalculateStickersHash(stickerSets[type]);
                 PutStickersToCache(stickerType, stickerSets[type], loadDate[type], loadHash[type]);
                 //NotificationCenter.getInstance().postNotificationName(NotificationCenter.stickersDidLoaded, type);
-                StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(stickerType));
+                _aggregator.Publish(new StickersDidLoadedEventArgs(stickerType));
                 TLMessagesInstallStickerSet req = new TLMessagesInstallStickerSet();
                 req.StickerSet = stickerSetID;
                 req.Archived = hide == 1;
@@ -1520,7 +1512,7 @@ namespace Unigram.Services
                     if (result is TLMessagesStickerSetInstallResultArchive)
                     {
                         //NotificationCenter.getInstance().postNotificationName(NotificationCenter.needReloadArchivedStickers, type);
-                        NeedReloadArchivedStickers?.Invoke(this, new NeedReloadArchivedStickersEventArgs(stickerType));
+                        _aggregator.Publish(new NeedReloadArchivedStickersEventArgs(stickerType));
                         //if (hide != 1 && baseFragment != null && baseFragment.getParentActivity() != null)
                         //{
                         //    StickersArchiveAlert alert = new StickersArchiveAlert(baseFragment.getParentActivity(), showSettings ? baseFragment : null, ((TLRPC.TL_messages_stickerSetInstallResultArchive)response).sets);
@@ -1567,17 +1559,6 @@ namespace Unigram.Services
                     LoadStickers(stickerType, false, true);
                 });
             }
-        }
-
-        public event NeedReloadArchivedStickersEventHandler NeedReloadArchivedStickers;
-        public event StickersDidLoadedEventHandler StickersDidLoaded;
-        public event FeaturedStickersDidLoadedEventHandler FeaturedStickersDidLoaded;
-        public event RecentsDidLoadedEventHandler RecentsDidLoaded;
-        public event ArchivedStickersCountDidLoadedEventHandler ArchivedStickersCountDidLoaded;
-
-        public void RaiseStickersDidLoaded(StickerType type)
-        {
-            StickersDidLoaded?.Invoke(this, new StickersDidLoadedEventArgs(type));
         }
 
 

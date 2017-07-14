@@ -224,6 +224,11 @@ namespace Unigram.ViewModels
 
         private void ProcessBotInlineResult(ref TLMessage message, TLBotInlineResultBase resultBase, int botId)
         {
+            if (message == null || resultBase == null)
+            {
+                return;
+            }
+
             message.InlineBotResultId = resultBase.Id;
             message.InlineBotResultQueryId = resultBase.QueryId;
             message.ViaBotId = botId;
