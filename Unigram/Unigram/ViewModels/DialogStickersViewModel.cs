@@ -22,7 +22,7 @@ using Telegram.Api.TL.Messages;
 
 namespace Unigram.ViewModels
 {
-    public class DialogStickersViewModel : UnigramViewModelBase
+    public class DialogStickersViewModel : UnigramViewModelBase, IHandle<RecentsDidLoadedEventArgs>, IHandle<StickersDidLoadedEventArgs>, IHandle<FeaturedStickersDidLoadedEventArgs>
     {
         public readonly IStickersService _stickersService;
 
@@ -37,9 +37,6 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             _stickersService = stickersService;
-            _stickersService.RecentsDidLoaded += OnRecentsDidLoaded;
-            _stickersService.StickersDidLoaded += OnStickersDidLoaded;
-            _stickersService.FeaturedStickersDidLoaded += OnFeaturedStickersDidLoaded;
 
             _frequentlyUsed = new TLMessagesStickerSet
             {
@@ -49,6 +46,8 @@ namespace Unigram.ViewModels
                     ShortName = "tg/recentlyUsed"
                 }
             };
+
+            Aggregator.Subscribe(this);
 
             SavedGifs = new MvxObservableCollection<TLDocument>();
             FeaturedStickers = new MvxObservableCollection<TLFeaturedStickerSet>();
@@ -66,7 +65,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private void OnRecentsDidLoaded(object sender, RecentsDidLoadedEventArgs e)
+        public void Handle(RecentsDidLoadedEventArgs e)
         {
             if (e.IsGifs)
             {
@@ -78,7 +77,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private void OnStickersDidLoaded(object sender, StickersDidLoadedEventArgs e)
+        public void Handle(StickersDidLoadedEventArgs e)
         {
             Debug.WriteLine("StickersDidLoaded");
 
@@ -88,7 +87,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private void OnFeaturedStickersDidLoaded(object sender, FeaturedStickersDidLoadedEventArgs e)
+        public void Handle(FeaturedStickersDidLoadedEventArgs e)
         {
             ProcessFeaturedStickers();
         }

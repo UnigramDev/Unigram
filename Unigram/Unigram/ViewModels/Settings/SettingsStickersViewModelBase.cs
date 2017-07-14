@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public abstract class SettingsStickersViewModelBase : UnigramViewModelBase
+    public abstract class SettingsStickersViewModelBase : UnigramViewModelBase, IHandle<StickersDidLoadedEventArgs>, IHandle<FeaturedStickersDidLoadedEventArgs>, IHandle<ArchivedStickersCountDidLoadedEventArgs>
     {
         private readonly IStickersService _stickersService;
         private readonly StickerType _type;
@@ -30,9 +30,8 @@ namespace Unigram.ViewModels.Settings
         {
             _type = type;
             _stickersService = stickersService;
-            _stickersService.StickersDidLoaded += OnStickersDidLoaded;
-            _stickersService.FeaturedStickersDidLoaded += OnFeaturedStickersDidLoaded;
-            _stickersService.ArchivedStickersCountDidLoaded += OnArchivedStickersCountDidLoaded;
+
+            Aggregator.Subscribe(this);
 
             Items = new MvxObservableCollection<TLMessagesStickerSet>();
         }
@@ -49,11 +48,11 @@ namespace Unigram.ViewModels.Settings
                     if (_type == StickerType.Image)
                     {
                         var featured = _stickersService.CheckFeaturedStickers();
-                        if (featured) OnFeaturedStickersDidLoaded(null, null);
+                        if (featured) Handle(null as FeaturedStickersDidLoadedEventArgs);
                     }
 
                     if (stickers) ProcessStickerSets(_type);
-                    OnArchivedStickersCountDidLoaded(null, null);
+                    Handle(null as ArchivedStickersCountDidLoadedEventArgs);
                 });
             }
 
@@ -71,13 +70,13 @@ namespace Unigram.ViewModels.Settings
                 var order = new TLVector<long>(stickers.Select(x => x.Set.Id));
 
                 ProtoService.ReorderStickerSetsAsync(_type == StickerType.Mask, order, null);
-                _stickersService.RaiseStickersDidLoaded(_type);
+                Aggregator.Publish(new StickersDidLoadedEventArgs(_type));
             }
 
             return Task.CompletedTask;
         }
 
-        private void OnStickersDidLoaded(object sender, StickersDidLoadedEventArgs e)
+        public void Handle(StickersDidLoadedEventArgs e)
         {
             if (e.Type == _type)
             {
@@ -85,7 +84,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        private void OnFeaturedStickersDidLoaded(object sender, FeaturedStickersDidLoadedEventArgs e)
+        public void Handle(FeaturedStickersDidLoadedEventArgs e)
         {
             Execute.BeginOnUIThread(() =>
             {
@@ -93,7 +92,7 @@ namespace Unigram.ViewModels.Settings
             });
         }
 
-        private void OnArchivedStickersCountDidLoaded(object sender, ArchivedStickersCountDidLoadedEventArgs e)
+        public void Handle(ArchivedStickersCountDidLoadedEventArgs e)
         {
             Execute.BeginOnUIThread(() =>
             {
