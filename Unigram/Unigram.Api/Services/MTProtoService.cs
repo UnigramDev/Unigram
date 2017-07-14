@@ -167,7 +167,7 @@ namespace Telegram.Api.Services
 
             var connectionManager = ConnectionManager.Instance;
             //connectionManager.CurrentNetworkTypeChanged += ConnectionManager_CurrentNetworkTypeChanged;
-            //connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
+            connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
             connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;
             connectionManager.AuthenticationRequired += ConnectionManager_AuthenticationRequired;
             connectionManager.UserConfigurationRequired += ConnectionManager_UserConfigurationRequired;
@@ -182,7 +182,10 @@ namespace Telegram.Api.Services
 
         private void ConnectionManager_ConnectionStateChanged(ConnectionManager sender, object args)
         {
-            throw new NotImplementedException();
+            if (sender.ConnectionState == ConnectionState.Connected)
+            {
+                _updatesService.LoadStateAndUpdate(() => Debug.WriteLine("State updated"));
+            }
         }
 
         private void ConnectionManager_UnprocessedMessageReceived(ConnectionManager sender, MessageResponse args)
