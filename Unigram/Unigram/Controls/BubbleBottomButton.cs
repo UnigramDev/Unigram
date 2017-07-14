@@ -69,6 +69,11 @@ namespace Unigram.Controls
                 {
                     StartCommand?.Execute(null);
                 }
+
+                if (user.IsDeleted)
+                {
+                    DeleteAndExitCommand?.Execute(null);
+                }
             }
         }
 
@@ -288,18 +293,11 @@ namespace Unigram.Controls
                     return false;
                 }
 
-                // TODO: check if blocked
-                // WARNING: this is absolutely the wrong way
-                //var response = await MTProtoService.Current.GetFullUserAsync(new TLInputUser { UserId = user.Id, AccessHash = user.AccessHash ?? 0 });
-                //if (response.IsSucceeded)
-                //{
-                //    var blocked = response.Result.IsBlocked;
-                //    if (blocked)
-                //    {
-                //        Content = "Unblock";
-                //        return Visibility.Visible;
-                //    }
-                //}
+                if (user.IsDeleted)
+                {
+                    Content = "Delete this chat";
+                    return false;
+                }
             }
 
             return true;

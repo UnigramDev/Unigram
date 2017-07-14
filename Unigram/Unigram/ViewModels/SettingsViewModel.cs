@@ -167,8 +167,14 @@ namespace Unigram.ViewModels
         public RelayCommand DeleteAccountCommand => new RelayCommand(DeleteAccountExecute);
         private async void DeleteAccountExecute()
         {
+            var config = InMemoryCacheService.Current.GetConfig();
+            if (config == null)
+            {
+                return;
+            }
+
             // THIS CODE WILL RUN ONLY IF FIRST CONFIGURED SERVER IP IS TEST SERVER
-            if (Telegram.Api.Constants.FirstServerIpAddress.Equals("149.154.167.40"))
+            if (config.TestMode)
             {
                 var dialog = new InputDialog();
                 var confirm = await dialog.ShowQueuedAsync();
