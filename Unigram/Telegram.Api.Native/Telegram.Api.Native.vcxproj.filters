@@ -108,6 +108,7 @@
       <Filter>Threading</Filter>
     </ClInclude>
     <ClInclude Include="UserConfiguration.h" />
+    <ClInclude Include="DebugCriticalSection.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

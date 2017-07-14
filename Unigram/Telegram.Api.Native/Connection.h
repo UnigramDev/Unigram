@@ -100,7 +100,7 @@ namespace Telegram
 				InspectableClass(RuntimeClass_Telegram_Api_Native_Connection, BaseTrust);
 
 			public:
-				Connection(_In_ Datacenter* datacenter, ConnectionType type);
+				Connection();
 				~Connection();
 
 				//COM exported methods
@@ -109,6 +109,9 @@ namespace Telegram
 				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
 				IFACEMETHODIMP get_SessionId(_Out_ INT64* value);
 				IFACEMETHODIMP get_IsConnected(_Out_ boolean* value);
+
+				//Internal methods
+				STDMETHODIMP RuntimeClassInitialize(_In_ Datacenter* datacenter, ConnectionType type);
 
 				inline ComPtr<Datacenter> const& GetDatacenter() const
 				{

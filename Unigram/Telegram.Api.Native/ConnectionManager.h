@@ -217,6 +217,7 @@ namespace Telegram
 				HRESULT HandleRequestError(_In_ Datacenter* datacenter, _In_ MessageRequest* request, INT32 code, _In_ HString const& message);
 				HRESULT OnUnprocessedMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
 				HRESULT OnNetworkStatusChanged(_In_ IInspectable* sender);
+				HRESULT OnConnectionOpening(_In_ Connection* connection);
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionQuickAckReceived(_In_ Connection* connection, INT32 ack);
 				HRESULT OnConnectionClosed(_In_ Connection* connection);

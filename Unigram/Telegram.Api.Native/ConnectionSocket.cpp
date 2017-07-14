@@ -33,6 +33,17 @@ ConnectionSocket::~ConnectionSocket()
 {
 }
 
+HRESULT ConnectionSocket::RuntimeClassInitialize()
+{
+	m_socketEvent.Attach(WSACreateEvent());
+	if (!m_socketEvent.IsValid())
+	{
+		return WSAGetLastHRESULT();
+	}
+
+	return S_OK;
+}
+
 void ConnectionSocket::SetTimeout(UINT32 timeoutMs)
 {
 	TimeoutToFileTime(timeoutMs, m_timeout);
@@ -76,18 +87,6 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, Se
 
 	m_sendBuffer.resize(SOCKET_SEND_BUFFER_SIZE);
 	m_receiveBuffer = std::make_unique<BYTE[]>(SOCKET_RECEIVE_BUFFER_SIZE);
-
-	/*m_socketConnectedEvent.Attach(CreateEvent(nullptr, TRUE, FALSE, nullptr));
-	if (!m_socketConnectedEvent.IsValid())
-	{
-		return GetLastHRESULT();
-	}*/
-
-	m_socketEvent.Attach(WSACreateEvent());
-	if (!m_socketEvent.IsValid())
-	{
-		return WSAGetLastHRESULT();
-	}
 
 	if ((m_socket = socket(socketAddress.ss_family, SOCK_STREAM, 0)) == INVALID_SOCKET)
 	{
@@ -207,10 +206,10 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 
 	m_socket = INVALID_SOCKET;
 
-	WSASetEvent(m_socketEvent.Get());
+	//WSASetEvent(m_socketEvent.Get());
 	DetachFromThreadpool(flags & SOCKET_CLOSE_JOINTHREAD);
 
-	m_socketEvent.Close();
+	//m_socketEvent.Close();
 	m_sendBuffer = {};
 	m_receiveBuffer.reset();
 
