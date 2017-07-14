@@ -207,7 +207,8 @@ namespace Telegram
 				HRESULT ReplaceEndpoints(_In_ std::vector<ServerEndpoint> const& endpoints, ConnectionType connectionType, bool ipv6);
 				void NextEndpoint(ConnectionType connectionType, bool ipv6);
 				void ResetEndpoint();
-				IFACEMETHODIMP Close();
+				void ResetConnections();
+				IFACEMETHODIMP Close();	
 				HRESULT SaveSettings();
 				HRESULT BeginHandshake(bool reconnect, bool reset);
 				HRESULT ImportAuthorization();

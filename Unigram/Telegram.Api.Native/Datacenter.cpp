@@ -240,6 +240,42 @@ HRESULT Datacenter::Close()
 	return S_OK;
 }
 
+void Datacenter::ResetConnections()
+{
+	std::vector<ComPtr<Connection>> connectionsToClose;
+
+	{
+		if (m_genericConnection != nullptr)
+		{
+			connectionsToClose.push_back(m_genericConnection);
+			m_genericConnection.Reset();
+		}
+
+		for (size_t i = 0; i < DOWNLOAD_CONNECTIONS_COUNT; i++)
+		{
+			if (m_downloadConnections[i] != nullptr)
+			{
+				connectionsToClose.push_back(m_downloadConnections[i]);
+				m_downloadConnections[i].Reset();
+			}
+		}
+
+		for (size_t i = 0; i < UPLOAD_CONNECTIONS_COUNT; i++)
+		{
+			if (m_uploadConnections[i] != nullptr)
+			{
+				connectionsToClose.push_back(m_uploadConnections[i]);
+				m_uploadConnections[i].Reset();
+			}
+		}
+	}
+
+	for (auto& connection : connectionsToClose)
+	{
+		connection->Close();
+	}
+}
+
 void Datacenter::RecreateSessions()
 {
 	auto lock = LockCriticalSection();
@@ -491,7 +527,8 @@ HRESULT Datacenter::GetGenericConnection(boolean create, ComPtr<Connection>& val
 
 	if (m_genericConnection == nullptr && create)
 	{
-		m_genericConnection = Make<Connection>(this, ConnectionType::Generic);
+		HRESULT result;
+		ReturnIfFailed(result, MakeAndInitialize<Connection>(&m_genericConnection, this, ConnectionType::Generic));
 	}
 
 	value = m_genericConnection;
@@ -514,7 +551,8 @@ HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, ComPtr<C
 
 	if (m_downloadConnections[index] == nullptr && create)
 	{
-		m_downloadConnections[index] = Make<Connection>(this, ConnectionType::Download);
+		HRESULT result;
+		ReturnIfFailed(result, MakeAndInitialize<Connection>(&m_downloadConnections[index], this, ConnectionType::Download));
 	}
 
 	value = m_downloadConnections[index];
@@ -537,7 +575,8 @@ HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, ComPtr<Con
 
 	if (m_uploadConnections[index] == nullptr && create)
 	{
-		m_uploadConnections[index] = Make<Connection>(this, ConnectionType::Upload);
+		HRESULT result;
+		ReturnIfFailed(result, MakeAndInitialize<Connection>(&m_uploadConnections[index], this, ConnectionType::Upload));
 	}
 
 	value = m_uploadConnections[index];

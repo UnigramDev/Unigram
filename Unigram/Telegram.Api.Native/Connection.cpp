@@ -35,9 +35,8 @@ using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
 
 
-Connection::Connection(Datacenter* datacenter, ConnectionType type) :
-	m_type(type),
-	m_datacenter(datacenter),
+Connection::Connection() :
+	m_type(ConnectionType::Generic),
 	m_flags(ConnectionFlag::None),
 	m_failedConnectionCount(0)
 {
@@ -45,6 +44,18 @@ Connection::Connection(Datacenter* datacenter, ConnectionType type) :
 
 Connection::~Connection()
 {
+}
+
+HRESULT Connection::RuntimeClassInitialize(Datacenter* datacenter, ConnectionType type)
+{
+	if (datacenter == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	m_type = type;
+	m_datacenter = datacenter;
+	return ConnectionSocket::RuntimeClassInitialize();
 }
 
 HRESULT Connection::get_Datacenter(IDatacenter** value)
@@ -181,7 +192,12 @@ HRESULT Connection::Connect(bool ipv6)
 	}
 
 	m_flags = FLAGS_SET_CURRENTNETWORKTYPE(m_flags, currentNetworkType) | static_cast<ConnectionFlag>(ConnectionState::Connecting);
-	return S_OK;
+
+	ComPtr<Connection> connection = this;
+	return connectionManager->SubmitWork([connection, connectionManager]()-> void
+	{
+		connectionManager->OnConnectionOpening(connection.Get());
+	});
 }
 
 HRESULT Connection::Reconnect()
@@ -591,12 +607,16 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 	ComPtr<IBuffer> packetBuffer;
 	if (m_partialPacketBuffer == nullptr)
 	{
+		OutputDebugStringFormat(L"Datacenter %d, Connection %d, new packet of %d bytes received", m_datacenter->GetId(), (int)m_type, length);
+
 		ReturnIfFailed(result, MakeAndInitialize<NativeBufferWrapper>(&packetBuffer, buffer, length));
 
 		ConnectionCryptography::DecryptBuffer(buffer, buffer, length);
 	}
 	else
 	{
+		OutputDebugStringFormat(L"Datacenter %d, Connection %d, next packet part of %d bytes received, already have %d bytes", m_datacenter->GetId(), (int)m_type, length, m_partialPacketBuffer->GetCapacity());
+
 		auto partialPacketLength = m_partialPacketBuffer->GetCapacity();
 		ReturnIfFailed(result, m_partialPacketBuffer->Merge(buffer, length));
 
@@ -649,20 +669,25 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 
 		if (packetLength > packetReader->GetUnconsumedBufferLength())
 		{
+			OutputDebugString(L", partial, waiting for next part\n");
 			result = E_NOT_SUFFICIENT_BUFFER;
 			break;
 		}
 
 		if (packetLength % 4 != 0 || packetLength > CONNECTION_MAX_PACKET_LENGTH || FAILED(OnMessageReceived(packetReader.Get(), packetLength)))
 		{
+			__debugbreak();
 			return Reconnect();
 		}
 
 		if (FAILED(packetReader->put_Position(packetPosition + (firstByte == 0x7f ? 4 : 1) + packetLength)))
 		{
+			OutputDebugString(L", partial, waiting for next part\n");
 			result = E_NOT_SUFFICIENT_BUFFER;
 			break;
 		}
+
+		OutputDebugString(L"\n");
 	}
 
 	if (result == E_NOT_SUFFICIENT_BUFFER)
@@ -705,6 +730,7 @@ HRESULT Connection::OnMessageReceived(TLMemoryBinaryReader* messageReader, UINT3
 
 		I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle message error");
 
+		OutputDebugStringFormat(L"Connection error %d\n", errorCode);
 		return E_FAIL;
 	}
 
