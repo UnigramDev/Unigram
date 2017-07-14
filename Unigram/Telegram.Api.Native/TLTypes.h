@@ -874,7 +874,7 @@ namespace Telegram
 					//Internal methods
 					STDMETHODIMP HandleResponse(_In_ MessageContext const* messageContext, _In_::Telegram::Api::Native::Connection* connection);
 					STDMETHODIMP RuntimeClassInitialize(_In_ ITLObject* object);
-					STDMETHODIMP RuntimeClassInitialize(_In_ NativeBuffer* rawData);
+					STDMETHODIMP RuntimeClassInitialize(_In_ NativeBuffer* packedData);
 
 					inline ComPtr<NativeBuffer> const& GetPackedData() const
 					{

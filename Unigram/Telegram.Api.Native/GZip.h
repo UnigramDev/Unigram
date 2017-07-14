@@ -42,16 +42,23 @@ namespace Telegram
 					stream.next_out = compressedBuffer->GetBuffer();
 
 					zlibResult = deflate(&stream, Z_FINISH);
-					if (zlibResult != Z_OK &&  zlibResult != Z_STREAM_END)
+					if (zlibResult != Z_OK && zlibResult != Z_STREAM_END)
 					{
 						result = E_FAIL;
 						break;
 					}
 
-					BreakIfFailed(result, compressedBuffer->Resize(stream.total_out));
+					if (stream.total_out >= inputBufferLength - 4)
+					{
+						result = S_FALSE;
+					}
+					else
+					{
+						result = compressedBuffer->Resize(stream.total_out);
+					}
 				} while (false);
 
-				if (SUCCEEDED(result))
+				if (result == S_OK)
 				{
 					*outputBuffer = compressedBuffer.Detach();
 				}

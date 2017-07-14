@@ -998,14 +998,16 @@ HRESULT TLGZipPacked::RuntimeClassInitialize(ITLObject* object)
 	return GZipCompressBuffer(writer->GetBuffer(), objectSize, &m_packedData);
 }
 
-HRESULT TLGZipPacked::RuntimeClassInitialize(NativeBuffer* rawData)
+HRESULT TLGZipPacked::RuntimeClassInitialize(NativeBuffer* packedData)
 {
-	if (rawData == nullptr)
+	if (packedData == nullptr)
 	{
 		return E_INVALIDARG;
 	}
 
-	return GZipCompressBuffer(rawData->GetBuffer(), rawData->GetCapacity(), &m_packedData);
+	m_packedData = packedData;
+	return S_OK;
+	//return GZipCompressBuffer(rawData->GetBuffer(), rawData->GetCapacity(), &m_packedData);
 }
 
 HRESULT TLGZipPacked::HandleResponse(MessageContext const* messageContext, Connection* connection)

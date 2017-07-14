@@ -23,6 +23,7 @@ namespace Telegram
 					InspectableClassStatic(RuntimeClass_Telegram_Api_Native_TL_TLObjectSerializer, BaseTrust);
 
 				public:
+					//COM exported methods
 					IFACEMETHODIMP Serialize(_In_ ITLObject* object, _Out_ IBuffer** value);
 					IFACEMETHODIMP Deserialize(_In_ IBuffer* buffer, _Out_ ITLObject** value);
 					IFACEMETHODIMP GetObjectSize(_In_ ITLObject* object, _Out_ UINT32* value);

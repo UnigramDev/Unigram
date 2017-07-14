@@ -9,6 +9,7 @@
 #include "MessageError.h"
 #include "TLTypes.h"
 #include "TLMethods.h"
+#include "GZip.h"
 #include "UserConfiguration.h"
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
@@ -881,10 +882,20 @@ HRESULT ConnectionManager::CreateTransportMessage(MessageRequest* request, INT64
 	if (request->CanCompress())
 	{
 		HRESULT result;
-		ComPtr<ITLObject> gzipPacked;
-		ReturnIfFailed(result, MakeAndInitialize<TLGZipPacked>(&gzipPacked, object.Get()));
+		UINT32 objectSize;
+		ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(object.Get(), &objectSize));
 
-		object.Swap(gzipPacked);
+		ComPtr<TLMemoryBinaryWriter> writer;
+		ReturnIfFailed(result, MakeAndInitialize<TLMemoryBinaryWriter>(&writer, objectSize));
+		ReturnIfFailed(result, writer->WriteObject(object.Get()));
+
+		ComPtr<NativeBuffer> gzipBuffer;
+		ReturnIfFailed(result, GZipCompressBuffer(writer->GetBuffer(), objectSize, &gzipBuffer));
+
+		if (result == S_OK)
+		{
+			ReturnIfFailed(result, MakeAndInitialize<TLGZipPacked>(&object, gzipBuffer.Get()));
+		}
 	}
 
 	return MakeAndInitialize<TLMessage>(message, request->GetMessageContext(), object.Get());
@@ -1449,7 +1460,8 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 		UINT32 constructor;
 		obejct->get_Constructor(&constructor);
 
-		OutputDebugStringFormat(L"Error %d (%s) for TLObject of type %s (0x%08X)\n", code, errorMessage, className.GetRawBuffer(nullptr), constructor);
+		OutputDebugStringFormat(L"Error %d (%s) for TLObject of type %s (0x%08X), request %d\n",
+			code, errorMessage, className.GetRawBuffer(nullptr), constructor, request->GetToken());
 	}
 
 	switch (code)
