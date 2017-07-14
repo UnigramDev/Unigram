@@ -19,7 +19,46 @@ namespace Unigram.ViewModels.Channels
         {
         }
 
-        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        private TLChannel _channel;
+        public TLChannel Channel
+        {
+            get
+            {
+                return _channel;
+            }
+            set
+            {
+                Set(ref _channel, value);
+            }
+        }
+
+        private TLChannelParticipantBanned _item;
+        public TLChannelParticipantBanned Item
+        {
+            get
+            {
+                return _item;
+            }
+            set
+            {
+                Set(ref _item, value);
+            }
+        }
+
+        private TLUserFull _full;
+        public TLUserFull Full
+        {
+            get
+            {
+                return _full;
+            }
+            set
+            {
+                Set(ref _full, value);
+            }
+        }
+
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var buffer = parameter as byte[];
             if (buffer != null)
@@ -81,35 +120,25 @@ namespace Unigram.ViewModels.Channels
                     IsSendMedia = _item.BannedRights.IsSendMedia;
                     IsSendMessages = _item.BannedRights.IsSendMessages;
                     IsViewMessages = _item.BannedRights.IsViewMessages;
+
+                    var user = tuple.Item2.User;
+                    if (user == null)
+                    {
+                        return;
+                    }
+
+                    var full = CacheService.GetFullUser(user.Id);
+                    if (full == null)
+                    {
+                        var response = await ProtoService.GetFullUserAsync(user.ToInputUser());
+                        if (response.IsSucceeded)
+                        {
+                            full = response.Result;
+                        }
+                    }
+
+                    Full = full;
                 }
-            }
-
-            return Task.CompletedTask;
-        }
-
-        private TLChannel _channel;
-        public TLChannel Channel
-        {
-            get
-            {
-                return _channel;
-            }
-            set
-            {
-                Set(ref _channel, value);
-            }
-        }
-
-        private TLChannelParticipantBanned _item;
-        public TLChannelParticipantBanned Item
-        {
-            get
-            {
-                return _item;
-            }
-            set
-            {
-                Set(ref _item, value);
             }
         }
 

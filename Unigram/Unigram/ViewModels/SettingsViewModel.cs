@@ -54,14 +54,32 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
                 if (response.IsSucceeded)
                 {
-                    var user = response.Result.FirstOrDefault() as TLUser;
-                    if (user != null)
+                    var result = response.Result.FirstOrDefault() as TLUser;
+                    if (result != null)
                     {
-                        Self = user;
-                        SettingsHelper.UserId = user.Id;
+                        Self = result;
+                        SettingsHelper.UserId = result.Id;
                     }
                 }
             }
+
+            var user = Self;
+            if (user == null)
+            {
+                return;
+            }
+
+            var full = CacheService.GetFullUser(user.Id);
+            if (full == null)
+            {
+                var response = await ProtoService.GetFullUserAsync(user.ToInputUser());
+                if (response.IsSucceeded)
+                {
+                    full = response.Result;
+                }
+            }
+
+            Full = full;
         }
 
         private TLUser _self;
@@ -74,6 +92,19 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _self, value);
+            }
+        }
+
+        private TLUserFull _full;
+        public TLUserFull Full
+        {
+            get
+            {
+                return _full;
+            }
+            set
+            {
+                Set(ref _full, value);
             }
         }
 

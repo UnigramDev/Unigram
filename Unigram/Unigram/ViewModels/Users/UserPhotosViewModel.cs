@@ -25,11 +25,16 @@ namespace Unigram.ViewModels.Users
     {
         private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
 
-        public UserPhotosViewModel(TLUser user, IMTProtoService protoService)
+        public UserPhotosViewModel(IMTProtoService protoService, TLUserFull userFull, TLUser user)
             : base(protoService, null, null)
         {
-            Items = new MvxObservableCollection<GalleryItem>();
-            Initialize(user);
+            //Items = new MvxObservableCollection<GalleryItem>();
+            //Initialize(user);
+
+            Items = new MvxObservableCollection<GalleryItem> { new GalleryPhotoItem(userFull.ProfilePhoto as TLPhoto, user) };
+            SelectedItem = Items[0];
+            FirstItem = Items[0];
+            //Initialize();
         }
 
         private async void Initialize(TLUser user)

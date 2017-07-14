@@ -38,9 +38,10 @@ namespace Unigram.Views.Users
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
             var user = ViewModel.Item as TLUser;
-            if (user.HasPhoto && user.Photo is TLUserProfilePhoto photo)
+            var userFull = ViewModel.Full as TLUserFull;
+            if (userFull != null && userFull.ProfilePhoto is TLPhoto && user != null)
             {
-                var viewModel = new UserPhotosViewModel(user, ViewModel.ProtoService);
+                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, userFull, user);
                 await GalleryView.Current.ShowAsync(viewModel, () => Picture);
             }
         }
