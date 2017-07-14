@@ -16,7 +16,7 @@
     </Page.Transitions>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ListView x:Name="NearbyList" ItemsSource="{Binding Items}">
+        <ListView x:Name="NearbyList" ItemsSource="{Binding Items}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="NearbyList_ItemClick">
             <ListView.Header>
                 <StackPanel>
                     <Grid x:Name="MapPresenter" Background="Red">
@@ -54,6 +54,12 @@
                                 </Button.Content>
                             </Button>
                         </StackPanel>
+
+                        <Border Width="20" Height="20" CornerRadius="10" Background="#54000000" IsHitTestVisible="False">
+                            <Border CornerRadius="10" Margin="1" Background="White">
+                                <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
+                            </Border>
+                        </Border>
                     </Grid>
 
                     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -61,10 +67,12 @@
                                 BorderThickness="0,1,0,0">
                         <!-- Current Location -->
                         <Button x:Name="btnCurrentLocation"
+                                Click="BtnCurrentLocation_Click"
                                 Background="Transparent"
                                 Padding="0"
                                 HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Stretch">
+                                HorizontalContentAlignment="Stretch"
+                                Style="{StaticResource EmptyButtonStyle}">
                             <Button.Content>
                                 <StackPanel Height="48" Orientation="Horizontal" Margin="0,8">
                                     <Border Height="40" Width="40" CornerRadius="36" Margin="12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">

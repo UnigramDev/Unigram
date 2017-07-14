@@ -26,6 +26,7 @@ namespace Unigram.ViewModels
             _locationService = foursquareService;
 
             Items = new ObservableCollection<TLMessageMediaVenue>();
+            OnNavigatedToAsync(null, NavigationMode.New, null);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -34,7 +35,7 @@ namespace Unigram.ViewModels
 
             Location = location;
 
-            var venues = await _locationService.GetVenuesAsync(location.Latitude, location.Longitude);
+            var venues = await _locationService.GetVenuesAsync(location.Point.Position.Latitude, location.Point.Position.Longitude);
 
             Items.Clear();
             Items.AddRange(venues);
