@@ -9,12 +9,6 @@
       xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
       mc:Ignorable="d">
 
-    <Page.Transitions>
-        <TransitionCollection>
-            <EdgeUIThemeTransition Edge="Right"/>
-        </TransitionCollection>
-    </Page.Transitions>
-
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView x:Name="NearbyList" ItemsSource="{Binding Items}" SelectionMode="None" IsItemClickEnabled="True" ItemClick="NearbyList_ItemClick">
             <ListView.Header>
