@@ -544,6 +544,16 @@ namespace Unigram.ViewModels
 
         private async Task SendPhotoAsync(StorageFile file, string caption)
         {
+            var originalProps = await file.Properties.GetImagePropertiesAsync();
+
+            var imageWidth = originalProps.Width;
+            var imageHeight = originalProps.Height;
+            if (imageWidth >= 20 * imageHeight || imageHeight >= 20 * imageWidth)
+            {
+                await SendFileAsync(file, caption);
+                return;
+            }
+
             var fileLocation = new TLFileLocation
             {
                 VolumeId = TLLong.Random(),
