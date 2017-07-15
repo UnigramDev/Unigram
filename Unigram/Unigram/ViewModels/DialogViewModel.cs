@@ -596,9 +596,18 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var already = Messages.FirstOrDefault(x => x.Id == maxId);
+            if (already != null)
+            {
+                ListField.ScrollIntoView(already);
+                return;
+            }
+
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
             IsLoading = true;
+            IsLastSliceLoaded = false;
+            IsFirstSliceLoaded = false;
             UpdatingScrollMode = UpdatingScrollMode.ForceKeepItemsInView;
 
             Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
