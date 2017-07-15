@@ -11,7 +11,7 @@
 
 #include "MethodDebug.h"
 
-#if _DEBUG
+#if FALSE && _DEBUG
 #define NEXT_ENDPOINT_CONNECTION_TIMEOUT INFINITE
 #define ACTIVE_CONNECTION_TIMEOUT INFINITE
 #define GENERIC_CONNECTION_TIMEOUT INFINITE
@@ -48,14 +48,14 @@ Connection::~Connection()
 
 HRESULT Connection::RuntimeClassInitialize(Datacenter* datacenter, ConnectionType type)
 {
-	if (datacenter == nullptr)
+	/*if (datacenter == nullptr)
 	{
 		return E_INVALIDARG;
-	}
+	}*/
 
 	m_type = type;
 	m_datacenter = datacenter;
-	return ConnectionSocket::RuntimeClassInitialize();
+	return S_OK;
 }
 
 HRESULT Connection::get_Datacenter(IDatacenter** value)
@@ -537,6 +537,8 @@ HRESULT Connection::OnMsgNewDetailedInfoResponse(TLMsgNewDetailedInfo* response)
 
 HRESULT Connection::OnSocketConnected()
 {
+	OutputDebugStringFormat(L"Datacenter %d, Connection %d, connection opened\n", m_datacenter->GetId(), (int)m_type);
+
 	m_flags |= static_cast<ConnectionFlag>(ConnectionState::Connected);
 	m_failedConnectionCount = 0;
 
@@ -553,8 +555,10 @@ HRESULT Connection::OnSocketConnected()
 
 HRESULT Connection::OnSocketDisconnected(int wsaError)
 {
+	OutputDebugStringFormat(L"Datacenter %d, Connection %d, connection closed\n", m_datacenter->GetId(), (int)m_type);
+
 	auto connectionState = FLAGS_GET_CONNECTIONSTATE(m_flags);
-	m_flags &= ~ConnectionFlag::ConnectionState;
+	m_flags &= ~(ConnectionFlag::ConnectionState | ConnectionFlag::CryptographyInitialized);
 	m_partialPacketBuffer.Reset();
 
 	HRESULT result;

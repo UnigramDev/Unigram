@@ -647,8 +647,6 @@ namespace Telegram
 				HRESULT CancelRequest([in] INT32 requestToken,[in] boolean notifyServer,[out][retval] boolean* value);
 				HRESULT UpdateDatacenters();
 				HRESULT Reset();
-
-				HRESULT BoomBaby();
 			}
 
 			[static(IConnectionManagerStatics, API_VERSION)]

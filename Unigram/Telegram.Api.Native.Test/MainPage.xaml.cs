@@ -80,8 +80,6 @@ namespace Telegram.Api.Native.Test
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            ConnectionManager.Instance.BoomBaby();
-
             var connections = ConnectionManager.Instance.Datacenters.SelectMany(d => d.Connections).ToArray();
 
             //ConnectionManager.Instance.SendRequest(new TLHelpInviteText(), (message5, ex5) =>
@@ -142,7 +140,6 @@ namespace Telegram.Api.Native.Test
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            ConnectionManager.Instance.BoomBaby();
         }
 
         private void Button_Click_4(object sender, RoutedEventArgs e)

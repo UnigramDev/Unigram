@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <wrl\wrappers\corewrappers.h>
+#include <wrl.h>
 #include "Helpers\DebugHelper.h"
 
 namespace Microsoft

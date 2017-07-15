@@ -47,6 +47,11 @@ Datacenter::~Datacenter()
 
 HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager, INT32 id, bool isCdn)
 {
+	/*if (connectionManager == nullptr)
+	{
+		return E_INVALIDARG;
+	}*/
+
 	if (isCdn)
 	{
 		m_flags |= DatacenterFlag::CDN;
@@ -59,6 +64,11 @@ HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager,
 
 HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager, ITLBinaryReaderEx* reader)
 {
+	/*if (connectionManager == nullptr || reader == nullptr)
+	{
+		return E_INVALIDARG;
+	}*/
+
 	m_connectionManager = connectionManager;
 
 	HRESULT result;

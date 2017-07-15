@@ -154,8 +154,6 @@ namespace Telegram
 				IFACEMETHODIMP UpdateDatacenters();
 				IFACEMETHODIMP Reset();
 
-				IFACEMETHODIMP BoomBaby();
-
 				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize(UINT32 minimumThreadCount = MIN_THREAD_COUNT, UINT32 maximumThreadCount = MAX_THREAD_COUNT);
 				INT32 GetCurrentTime();

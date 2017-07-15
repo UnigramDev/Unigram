@@ -28,7 +28,6 @@ namespace Telegram
 
 			protected:
 				void SetTimeout(UINT32 timeout);
-				HRESULT RuntimeClassInitialize();
 				HRESULT Close();		
 				HRESULT ConnectSocket(_In_ ConnectionManager* connectionManager, _In_ ServerEndpoint const* endpoint, bool ipv6);
 				HRESULT DisconnectSocket(bool immediate);
