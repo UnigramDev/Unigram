@@ -75,7 +75,7 @@ namespace Unigram.Tasks
                             entities = new TLVector<TLMessageEntityBase>(entitiesBase);
                         }
 
-                        var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = replyToMsgId, Message = messageText, Entities = new TLVector<TLMessageEntityBase>(entities), IsBackground = true, RandomId = TLLong.Random() };
+                        var obj = new TLMessagesSendMessage { Peer = inputPeer, ReplyToMsgId = replyToMsgId, Message = messageText, Entities = entities, IsBackground = true, RandomId = TLLong.Random() };
 
                         protoService.SendInformativeMessageInternal<TLUpdatesBase>("messages.sendMessage", obj, result =>
                         {
