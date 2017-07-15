@@ -261,3 +261,4 @@ _Pvt_Extensions
 /Unigram/Unigram/Themes/CustomTheme.xaml
 /Unigram/Unigram/Themes/Themes.zip
 /Unigram/Telegram.Api.Native.Test/Assets/GIFs
+/Unigram/Telegram.Api/Constants.Secret.cs

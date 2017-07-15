@@ -1653,7 +1653,7 @@
       <Project>{6a7d27d0-36e8-4364-ac69-740b75ee653c}</Project>
       <Name>Telegram.Api.Native</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Unigram.Api\Unigram.Api.csproj">
+    <ProjectReference Include="..\Telegram.Api\Telegram.Api.csproj">
       <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
       <Name>Unigram.Api</Name>
     </ProjectReference>
