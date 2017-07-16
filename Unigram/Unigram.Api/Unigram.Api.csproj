@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Telegram.Api</RootNamespace>
-    <AssemblyName>Telegram.Api</AssemblyName>
+    <AssemblyName>Unigram.Api</AssemblyName>
     <DefaultLanguage>en</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
@@ -1220,7 +1220,7 @@
     <Compile Include="Transport\TcpTransportResult.cs" />
     <Compile Include="Transport\TcpTransportWinRT.cs" />
     <Compile Include="Transport\TransportService.cs" />
-    <EmbeddedResource Include="Properties\Telegram.Api.rd.xml" />
+    <EmbeddedResource Include="Properties\Unigram.Api.rd.xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
