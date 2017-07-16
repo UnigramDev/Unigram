@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <Windows.Storage.h>
+#include <Windows.UI.Xaml.h>
 #include "ConnectionManager.h"
 #include "Datacenter.h"
 #include "DatacenterCryptography.h"
@@ -32,6 +33,7 @@
 #define DATACENTER_EXPIRATION_TIME 60 * 60
 
 using namespace ABI::Windows::Storage;
+using namespace ABI::Windows::UI::Xaml;
 using namespace ABI::Windows::Networking::Connectivity;
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
@@ -50,12 +52,27 @@ ConnectionManager::ConnectionManager() :
 	m_lastOutgoingMessageId(0),
 	m_userId(0)
 {
+	ZeroMemory(m_eventTokens, sizeof(m_eventTokens));
 	ZeroMemory(m_runningRequestCount, sizeof(m_runningRequestCount));
 }
 
 ConnectionManager::~ConnectionManager()
 {
-	m_networkInformation->remove_NetworkStatusChanged(m_networkChangedEventToken);
+	ComPtr<INetworkInformationStatics> networkInformation;
+	if (SUCCEEDED(Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Networking_Connectivity_NetworkInformation).Get(), &networkInformation)))
+	{
+		networkInformation->remove_NetworkStatusChanged(m_eventTokens[0]);
+	}
+
+	ComPtr<IApplicationStatics> applicationStatics;
+	if (SUCCEEDED(Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_UI_Xaml_Application).Get(), &applicationStatics)))
+	{
+		ComPtr<IApplication> application;
+		if (SUCCEEDED(applicationStatics->get_Current(&application)))
+		{
+			application->remove_Resuming(m_eventTokens[1]);
+		}
+	}
 
 	for (auto& datacenter : m_datacenters)
 	{
@@ -78,9 +95,18 @@ HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 	HRESULT result;
 	ReturnIfFailed(result, ThreadpoolManager::RuntimeClassInitialize(minimumThreadCount, maximumThreadCount));
 	ReturnIfFailed(result, EventObjectT::AttachToThreadpool(this));
-	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Networking_Connectivity_NetworkInformation).Get(), &m_networkInformation));
-	ReturnIfFailed(result, m_networkInformation->add_NetworkStatusChanged(Callback<INetworkStatusChangedEventHandler>(this, &ConnectionManager::OnNetworkStatusChanged).Get(), &m_networkChangedEventToken));
-	ReturnIfFailed(result, UpdateNetworkStatus(false));
+
+	ComPtr<IApplicationStatics> applicationStatics;
+	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_UI_Xaml_Application).Get(), &applicationStatics));
+
+	ComPtr<IApplication> application;
+	ReturnIfFailed(result, applicationStatics->get_Current(&application));
+	ReturnIfFailed(result, application->add_Resuming(Callback<__FIEventHandler_1_IInspectable>(this, &ConnectionManager::OnApplicationResuming).Get(), &m_eventTokens[1]));
+
+	ComPtr<INetworkInformationStatics> networkInformation;
+	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Networking_Connectivity_NetworkInformation).Get(), &networkInformation));
+	ReturnIfFailed(result, networkInformation->add_NetworkStatusChanged(Callback<INetworkStatusChangedEventHandler>(this, &ConnectionManager::OnNetworkStatusChanged).Get(), &m_eventTokens[0]));
+	ReturnIfFailed(result, UpdateNetworkStatus(networkInformation.Get(), false));
 
 	return InitializeSettings();
 }
@@ -585,11 +611,11 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 	return S_OK;
 }
 
-HRESULT ConnectionManager::UpdateNetworkStatus(bool raiseEvent)
+HRESULT ConnectionManager::UpdateNetworkStatus(INetworkInformationStatics* networkInformation, bool raiseEvent)
 {
 	HRESULT result;
 	ComPtr<IConnectionProfile> connectionProfile;
-	ReturnIfFailed(result, m_networkInformation->GetInternetConnectionProfile(&connectionProfile));
+	ReturnIfFailed(result, networkInformation->GetInternetConnectionProfile(&connectionProfile));
 
 	ConnectionNeworkType currentNetworkType;
 	if (connectionProfile == nullptr)
@@ -1634,22 +1660,26 @@ HRESULT ConnectionManager::OnUnprocessedMessageResponse(MessageContext const* me
 HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
 {
 	HRESULT result;
+	ComPtr<INetworkInformationStatics> networkInformation;
+	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Networking_Connectivity_NetworkInformation).Get(), &networkInformation));
+
 	bool processRequestQueue;
 
 	{
 		auto lock = LockCriticalSection();
 
-		if ((result = UpdateNetworkStatus(true)) == S_OK && FLAGS_GET_NETWORKTYPE(m_flags) != ConnectionNeworkType::None)
+		if ((result = UpdateNetworkStatus(networkInformation.Get(), true)) == S_OK && FLAGS_GET_NETWORKTYPE(m_flags) != ConnectionNeworkType::None)
 		{
-			processRequestQueue = true;
-		}
-		else
-		{
+#pragma message ("That should not be needed")
 			for (auto& datacenter : m_datacenters)
 			{
 				datacenter.second->ResetConnections();
 			}
 
+			processRequestQueue = true;
+		}
+		else
+		{
 			processRequestQueue = false;
 		}
 	}
@@ -1669,6 +1699,15 @@ HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
 	}
 
 	return result;
+}
+
+HRESULT ConnectionManager::OnApplicationResuming(IInspectable* sender, IInspectable* args)
+{
+	auto requestsLock = m_requestsCriticalSection.Lock();
+
+	FILETIME timeout = {};
+	SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
+	return S_OK;
 }
 
 HRESULT ConnectionManager::OnConnectionOpening(Connection* connection)
@@ -1727,7 +1766,6 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 	if (connection->GetType() == ConnectionType::Generic)
 	{
 		auto lock = LockCriticalSection();
-		//auto datacenter = connection->GetDatacenter();
 
 		if (datacenter->GetId() == m_currentDatacenterId)
 		{

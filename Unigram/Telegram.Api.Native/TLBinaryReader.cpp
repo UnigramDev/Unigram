@@ -155,6 +155,32 @@ HRESULT TLBinaryReader::ReadBuffer(BYTE* buffer, UINT32 length)
 	return S_OK;
 }
 
+HRESULT TLBinaryReader::ReadVector(UINT32* __valueSize, ITLObject*** value)
+{
+	if (__valueSize == nullptr || value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	HRESULT result;
+	std::vector<ComPtr<ITLObject>> vector;
+	ReturnIfFailed(result, ReadTLObjectVector<ITLObject>(static_cast<ITLBinaryReaderEx*>(this), vector));
+
+	auto count = vector.size();
+	if ((*value = reinterpret_cast<ITLObject**>(CoTaskMemAlloc(sizeof(ITLObject*) * count))) == nullptr)
+	{
+		return E_OUTOFMEMORY;
+	}
+
+	for (size_t i = 0; i < count; i++)
+	{
+		(*value)[i] = vector[i].Detach();
+	}
+
+	*__valueSize = static_cast<UINT32>(count);
+	return S_OK;
+}
+
 
 TLMemoryBinaryReader::TLMemoryBinaryReader() :
 	m_buffer(nullptr),

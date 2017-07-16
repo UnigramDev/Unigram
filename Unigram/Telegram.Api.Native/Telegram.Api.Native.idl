@@ -1,4 +1,5 @@
 import "Windows.Foundation.idl";
+import "Windows.Storage.idl";
 import "Windows.Storage.Streams.idl";
 
 #define API_VERSION 1.0
@@ -136,6 +137,7 @@ namespace Telegram
 					HRESULT ReadDouble([out][retval] double* value);
 					HRESULT ReadFloat([out][retval] float* value);
 					HRESULT ReadObject([out][retval] ITLObject** value);
+					HRESULT ReadVector([out] UINT32* __valueSize, [out][retval][size_is(, *__valueSize)] ITLObject*** value);
 				}
 
 				[marshaling_behavior(agile)]
@@ -169,6 +171,7 @@ namespace Telegram
 					HRESULT WriteDouble([in] double value);
 					HRESULT WriteFloat([in] float value);
 					HRESULT WriteObject([in] ITLObject* value);
+					HRESULT WriteVector([in] UINT32 __valueSize, [in][size_is(__valueSize)] ITLObject** value);
 				}
 
 				[marshaling_behavior(agile)]
@@ -191,6 +194,10 @@ namespace Telegram
 				{
 					HRESULT Serialize([in]ITLObject* object,[out][retval]Windows.Storage.Streams.IBuffer** value);
 					HRESULT Deserialize([in] Windows.Storage.Streams.IBuffer* buffer,[out][retval] ITLObject** value);
+					[overload("CreateReader"), default_overload] HRESULT CreateReaderFromBuffer([in] Windows.Storage.Streams.IBuffer* buffer, [out][retval] TLBinaryReader** value);
+					[overload("CreateReader")] HRESULT CreateReaderFromFile([in] Windows.Storage.StorageFile* file, [out][retval] TLBinaryReader** value);
+					[overload("CreateWriter"), default_overload] HRESULT CreateWriterFromBuffer([in] Windows.Storage.Streams.IBuffer* buffer, [out][retval] TLBinaryWriter** value);
+					[overload("CreateWriter")] HRESULT CreateWriterFromFile([in] Windows.Storage.StorageFile* file, [out][retval] TLBinaryWriter** value);
 					HRESULT GetObjectSize([in]ITLObject* object,[out][retval] UINT32* value);
 					HRESULT RegisterObjectConstructor([in] UINT32 constructor,[in] TLObjectConstructorDelegate* constructorDelegate);
 				}

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <memory>
+#include "TLObject.h"
 #include "TLBinaryWriter.h"
 #include "NativeBuffer.h"
 #include "Helpers\COMHelper.h"
@@ -87,6 +88,25 @@ HRESULT TLBinaryWriter::WriteString(LPCWCHAR buffer, UINT32 length)
 	WideCharToMultiByte(CP_UTF8, 0, buffer, length, mbString.get(), mbLength, nullptr, nullptr);
 
 	return WriteBuffer(reinterpret_cast<BYTE*>(mbString.get()), mbLength);
+}
+
+HRESULT TLBinaryWriter::WriteVector(UINT32 __valueSize, ITLObject** value)
+{
+	if (value == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	HRESULT result;
+	ReturnIfFailed(result, WriteUInt32(TLVECTOR_CONSTRUCTOR));
+	ReturnIfFailed(result, WriteUInt32(__valueSize));
+
+	for (UINT32 i = 0; i < __valueSize; i++)
+	{
+		ReturnIfFailed(result, WriteObject(value[i]));
+	}
+
+	return S_OK;
 }
 
 
@@ -645,6 +665,18 @@ HRESULT TLObjectSizeCalculator::WriteObject(ITLObject* value)
 		m_position += sizeof(UINT32);
 		return value->Write(static_cast<ITLBinaryWriterEx*>(this));
 	}
+}
+
+HRESULT TLObjectSizeCalculator::WriteVector(UINT32 __valueSize, ITLObject** value)
+{
+	m_position += 2 * sizeof(UINT32);
+
+	for (UINT32 i = 0; i < __valueSize; i++)
+	{
+		WriteObject(value[i]);
+	}
+
+	return S_OK;
 }
 
 HRESULT TLObjectSizeCalculator::WriteRawBuffer(UINT32 __valueSize, BYTE* value)

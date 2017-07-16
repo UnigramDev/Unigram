@@ -75,6 +75,7 @@ namespace Telegram
 					IFACEMETHODIMP WriteFloat(float value);
 					IFACEMETHODIMP WriteObject(_In_ ITLObject* value);
 					IFACEMETHODIMP WriteWString(_In_ std::wstring const& string);
+					IFACEMETHODIMP WriteVector(UINT32 __valueSize, _In_reads_(__valueSize) ITLObject** value);
 
 					//Internal methods
 					inline static UINT32 GetByteArrayLength(UINT32 length)
@@ -224,6 +225,7 @@ namespace Telegram
 					IFACEMETHODIMP WriteDouble(double value);
 					IFACEMETHODIMP WriteFloat(float value);
 					IFACEMETHODIMP WriteObject(_In_ ITLObject* value);
+					IFACEMETHODIMP WriteVector(UINT32 __valueSize, _In_reads_(__valueSize) ITLObject** value);
 					IFACEMETHODIMP WriteRawBuffer(UINT32 __valueSize, _In_reads_(__valueSize) BYTE* value);
 					IFACEMETHODIMP WriteBigEndianInt32(INT32 value);
 					IFACEMETHODIMP WriteWString(_In_ std::wstring const& string);

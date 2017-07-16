@@ -71,6 +71,8 @@ namespace Telegram.Api.Native.Test
                     break;
                 case TLRPCError tlRPCError:
                     break;
+                case TLUnparsedObject tlUnparsedObject:
+                    break;
             }
         }
 

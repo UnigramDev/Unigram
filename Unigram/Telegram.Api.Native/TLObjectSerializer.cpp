@@ -5,6 +5,7 @@
 #include "NativeBuffer.h"
 #include "Helpers\COMHelper.h"
 
+using namespace ABI::Windows::Storage;
 using namespace Telegram::Api::Native::TL;
 
 ActivatableStaticOnlyFactory(TLObjectSerializerStatics);
@@ -46,23 +47,80 @@ HRESULT TLObjectSerializerStatics::Deserialize(IBuffer* buffer, ITLObject** valu
 	return binaryReader->ReadObject(value);
 }
 
-//HRESULT TLObjectSerializerStatics::Deserialize(UINT32 __bufferSize, BYTE* buffer, ITLBinaryReader** value)
-//{
-//	if (buffer == nullptr)
-//	{
-//		return E_INVALIDARG;
-//	}
-//
-//	if (value == nullptr)
-//	{
-//		return E_POINTER;
-//	}
-//
-//	auto binaryWriter = Make<TLBinaryReader>(buffer, __bufferSize);
-//
-//	*value = static_cast<ITLBinaryReaderEx*>(binaryWriter.Detach());
-//	return S_OK;
-//}
+HRESULT TLObjectSerializerStatics::CreateReaderFromBuffer(IBuffer* buffer, ITLBinaryReader** value)
+{
+	if (buffer == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	return MakeAndInitialize<TLMemoryBinaryReader>(value, buffer);
+}
+
+HRESULT TLObjectSerializerStatics::CreateReaderFromFile(IStorageFile* file, ITLBinaryReader** value)
+{
+	if (file == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	HRESULT result;
+	ComPtr<IStorageItem> storageItem;
+	ReturnIfFailed(result, file->QueryInterface(IID_PPV_ARGS(&storageItem)));
+
+	HString fileName;
+	ReturnIfFailed(result, storageItem->get_Path(fileName.GetAddressOf()));
+
+	return MakeAndInitialize<TLFileBinaryReader>(value, fileName.GetRawBuffer(nullptr), OPEN_EXISTING);
+}
+
+HRESULT TLObjectSerializerStatics::CreateWriterFromBuffer(IBuffer* buffer, ITLBinaryWriter** value)
+{
+	if (buffer == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	return MakeAndInitialize<TLMemoryBinaryWriter>(value, buffer);
+}
+
+HRESULT TLObjectSerializerStatics::CreateWriterFromFile(IStorageFile* file, ITLBinaryWriter** value)
+{
+	if (file == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	HRESULT result;
+	ComPtr<IStorageItem> storageItem;
+	ReturnIfFailed(result, file->QueryInterface(IID_PPV_ARGS(&storageItem)));
+
+	HString fileName;
+	ReturnIfFailed(result, storageItem->get_Path(fileName.GetAddressOf()));
+
+	return MakeAndInitialize<TLFileBinaryWriter>(value, fileName.GetRawBuffer(nullptr), OPEN_EXISTING);
+}
+
 
 HRESULT TLObjectSerializerStatics::GetObjectSize(ITLObject* object, UINT32* value)
 {

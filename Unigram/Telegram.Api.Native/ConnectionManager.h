@@ -19,7 +19,7 @@
 #define TELEGRAM_API_NATIVE_SETTINGS_VERSION 1
 
 using namespace Microsoft::WRL;
-using namespace Microsoft::WRL::Wrappers;
+using namespace Microsoft::WRL::Wrappers; 
 using ABI::Windows::Networking::Connectivity::INetworkInformationStatics;
 using ABI::Windows::Networking::Connectivity::INetworkAdapter;
 using ABI::Telegram::Api::Native::IConnectionManager;
@@ -199,7 +199,7 @@ namespace Telegram
 				HRESULT LoadCDNPublicKeys();
 				HRESULT SaveCDNPublicKeys();
 				HRESULT AdjustCurrentTime(INT64 messageId);
-				HRESULT UpdateNetworkStatus(bool raiseEvent);
+				HRESULT UpdateNetworkStatus(_In_ INetworkInformationStatics* networkInformation, bool raiseEvent);
 				HRESULT MoveToDatacenter(INT32 datacenterId);
 				HRESULT UpdateCDNPublicKeys();
 				HRESULT CreateTransportMessage(_In_ MessageRequest* request, _Inout_ INT64& lastRpcMessageId, _Inout_ bool& requiresLayer, _Out_ TL::TLMessage** message);
@@ -215,6 +215,7 @@ namespace Telegram
 				HRESULT HandleRequestError(_In_ Datacenter* datacenter, _In_ MessageRequest* request, INT32 code, _In_ HString const& message);
 				HRESULT OnUnprocessedMessageResponse(_In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
 				HRESULT OnNetworkStatusChanged(_In_ IInspectable* sender);
+				HRESULT OnApplicationResuming(_In_ IInspectable* sender, _In_ IInspectable* args);
 				HRESULT OnConnectionOpening(_In_ Connection* connection);
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionQuickAckReceived(_In_ Connection* connection, INT32 ack);
@@ -249,8 +250,7 @@ namespace Telegram
 
 				static HRESULT IsIPv6Enabled(_In_ INetworkAdapter* networkAdapter, _Out_ bool* enabled);
 
-				ComPtr<INetworkInformationStatics> m_networkInformation;
-				EventRegistrationToken m_networkChangedEventToken;
+				EventRegistrationToken m_eventTokens[2];
 				ConnectionManagerFlag m_flags;
 				INT32 m_currentDatacenterId;
 				INT32 m_movingToDatacenterId;

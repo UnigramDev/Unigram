@@ -80,6 +80,7 @@ namespace Telegram
 					IFACEMETHODIMP ReadObject(_Out_ ITLObject** value);
 					IFACEMETHODIMP ReadWString(_Out_ std::wstring& string);
 					IFACEMETHODIMP ReadBuffer(_Out_writes_(length) BYTE* buffer, UINT32 length);
+					IFACEMETHODIMP ReadVector(_Out_ UINT32* __valueSize, _Out_writes_(*__valueSize) ITLObject*** value);
 				};
 
 				class TLMemoryBinaryReader WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, TLBinaryReader>
