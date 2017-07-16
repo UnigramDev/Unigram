@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram", "Unigram\Unigram.
 		{EB3AE2EA-6985-4281-8ABE-5DACE0DF528D} = {EB3AE2EA-6985-4281-8ABE-5DACE0DF528D}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram.Api", "Telegram.Api\Telegram.Api.csproj", "{B1979F0B-11E6-4759-A54D-853B13139AA0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram.Api", "Unigram.Api\Telegram.Api.csproj", "{B1979F0B-11E6-4759-A54D-853B13139AA0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram.Core", "Unigram.Core\Unigram.Core.csproj", "{580D2885-8129-499E-9FFD-39FF1B586F18}"
 EndProject
