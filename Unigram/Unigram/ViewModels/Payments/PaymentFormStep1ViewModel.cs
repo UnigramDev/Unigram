@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -26,25 +28,27 @@ namespace Unigram.ViewModels.Payments
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var buffer = parameter as byte[];
-            if (buffer != null)
+            if (buffer == null)
             {
-                //using (var from = new TLBinaryReader(buffer))
-                //{
-                //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm>(from);
+                return Task.CompletedTask;
+            }
 
-                //    Message = tuple.Item1;
-                //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                //    PaymentForm = tuple.Item2;
+            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            {
+                var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm>(from);
 
-                //    var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
-                //    if (info.ShippingAddress == null)
-                //    {
-                //        info.ShippingAddress = new TLPostAddress();
-                //    }
+                Message = tuple.Item1;
+                Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+                PaymentForm = tuple.Item2;
 
-                //    Info = info;
-                //    SelectedCountry = Country.Countries.FirstOrDefault(x => x.Code.Equals(info.ShippingAddress.CountryIso2, StringComparison.OrdinalIgnoreCase));
-                //}
+                var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
+                if (info.ShippingAddress == null)
+                {
+                    info.ShippingAddress = new TLPostAddress();
+                }
+
+                Info = info;
+                SelectedCountry = Country.Countries.FirstOrDefault(x => x.Code.Equals(info.ShippingAddress.CountryIso2, StringComparison.OrdinalIgnoreCase));
             }
 
             return Task.CompletedTask;

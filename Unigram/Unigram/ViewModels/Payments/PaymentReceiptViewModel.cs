@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -16,7 +18,7 @@ namespace Unigram.ViewModels.Payments
     {
         private TLMessage _message;
 
-        public PaymentReceiptViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public PaymentReceiptViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
         }
@@ -24,17 +26,19 @@ namespace Unigram.ViewModels.Payments
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var buffer = parameter as byte[];
-            if (buffer != null)
+            if (buffer == null)
             {
-                //using (var from = new TLBinaryReader(buffer))
-                //{
-                //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentReceipt>(from);
+                return Task.CompletedTask;
+            }
 
-                //    _message = tuple.Item1;
-                //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                //    Receipt = tuple.Item2;
-                //    Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
-                //}
+            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            {
+                var tuple = new TLTuple<TLMessage, TLPaymentsPaymentReceipt>(from);
+
+                _message = tuple.Item1;
+                Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+                Receipt = tuple.Item2;
+                Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
             }
 
             return Task.CompletedTask;

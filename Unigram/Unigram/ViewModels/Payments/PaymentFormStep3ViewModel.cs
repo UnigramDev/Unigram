@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -27,7 +29,7 @@ namespace Unigram.ViewModels.Payments
 
         private string _publishableKey;
 
-        public PaymentFormStep3ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public PaymentFormStep3ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
         }
@@ -35,48 +37,50 @@ namespace Unigram.ViewModels.Payments
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var buffer = parameter as byte[];
-            if (buffer != null)
+            if (buffer == null)
             {
-                //using (var from = new TLBinaryReader(buffer))
+                return Task.CompletedTask;
+            }
+
+            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            {
+                var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
+
+                Message = tuple.Item1;
+                Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+                PaymentForm = tuple.Item2;
+
+                _info = tuple.Item3;
+                _requestedInfo = tuple.Item4;
+                _shipping = tuple.Item5;
+
+                if (_paymentForm.HasNativeProvider && _paymentForm.HasNativeParams && _paymentForm.NativeProvider.Equals("stripe"))
+                {
+                    IsNativeUsed = true;
+                    SelectedCountry = null;
+
+                    var json = JsonObject.Parse(_paymentForm.NativeParams.Data);
+
+                    NeedCountry = json.GetNamedBoolean("need_country", false);
+                    NeedZip = json.GetNamedBoolean("need_zip", false);
+                    NeedCardholderName = json.GetNamedBoolean("need_cardholder_name", false);
+
+                    _publishableKey = json.GetNamedString("publishable_key", string.Empty);
+                }
+                else
+                {
+                    IsNativeUsed = false;
+                    RaisePropertyChanged("Navigate");
+                }
+
+                //var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
+                //if (info.ShippingAddress == null)
                 //{
-                //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
-
-                //    Message = tuple.Item1;
-                //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                //    PaymentForm = tuple.Item2;
-
-                //    _info = tuple.Item3;
-                //    _requestedInfo = tuple.Item4;
-                //    _shipping = tuple.Item5;
-
-                //    if (_paymentForm.HasNativeProvider && _paymentForm.HasNativeParams && _paymentForm.NativeProvider.Equals("stripe"))
-                //    {
-                //        IsNativeUsed = true;
-                //        SelectedCountry = null;
-
-                //        var json = JsonObject.Parse(_paymentForm.NativeParams.Data);
-
-                //        NeedCountry = json.GetNamedBoolean("need_country", false);
-                //        NeedZip = json.GetNamedBoolean("need_zip", false);
-                //        NeedCardholderName = json.GetNamedBoolean("need_cardholder_name", false);
-
-                //        _publishableKey = json.GetNamedString("publishable_key", string.Empty);
-                //    }
-                //    else
-                //    {
-                //        IsNativeUsed = false;
-                //        RaisePropertyChanged("Navigate");
-                //    }
-
-                //    //var info = PaymentForm.HasSavedInfo ? PaymentForm.SavedInfo : new TLPaymentRequestedInfo();
-                //    //if (info.ShippingAddress == null)
-                //    //{
-                //    //    info.ShippingAddress = new TLPostAddress();
-                //    //}
-
-                //    //Info = info;
-                //    //SelectedCountry = null;
+                //    info.ShippingAddress = new TLPostAddress();
                 //}
+
+                //Info = info;
+                //SelectedCountry = null;
             }
 
             return Task.CompletedTask;

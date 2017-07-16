@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Native.TL;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
@@ -24,7 +26,7 @@ namespace Unigram.ViewModels.Payments
         private TLPaymentsValidatedRequestedInfo _requestedInfo;
         private TLShippingOption _shipping;
 
-        public PaymentFormStep4ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
+        public PaymentFormStep4ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
         }
@@ -32,28 +34,30 @@ namespace Unigram.ViewModels.Payments
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var buffer = parameter as byte[];
-            if (buffer != null)
+            if (buffer == null)
             {
-                //using (var from = new TLBinaryReader(buffer))
-                //{
-                //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
+                return Task.CompletedTask;
+            }
 
-                //    Message = tuple.Item1;
-                //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                //    PaymentForm = tuple.Item2;
+            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            {
+                var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption>(from);
 
-                //    // TODO: real hint
-                //    PasswordHint = "Password";
+                Message = tuple.Item1;
+                Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+                PaymentForm = tuple.Item2;
 
-                //    if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
-                //    {
-                //        CredentialsTitle = savedCard.Title;
-                //    }
+                // TODO: real hint
+                PasswordHint = "Password";
 
-                //    _info = tuple.Item3;
-                //    _requestedInfo = tuple.Item4;
-                //    _shipping = tuple.Item5;
-                //}
+                if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard)
+                {
+                    CredentialsTitle = savedCard.Title;
+                }
+
+                _info = tuple.Item3;
+                _requestedInfo = tuple.Item4;
+                _shipping = tuple.Item5;
             }
 
             return Task.CompletedTask;

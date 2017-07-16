@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
@@ -32,46 +33,48 @@ namespace Unigram.ViewModels.Payments
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var buffer = parameter as byte[];
-            if (buffer != null)
+            if (buffer == null)
             {
-                //using (var from = new TLBinaryReader(buffer))
-                //{
-                //    var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption, string, string, bool>(from);
+                return Task.CompletedTask;
+            }
 
-                //    Message = tuple.Item1;
-                //    Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
-                //    PaymentForm = tuple.Item2;
-                //    Info = tuple.Item3;
-                //    Shipping = tuple.Item5;
-                //    CredentialsTitle = string.IsNullOrEmpty(tuple.Item6) ? null : tuple.Item6;
-                //    Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
-                //    Provider = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.ProviderId) as TLUser;
+            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            {
+                var tuple = new TLTuple<TLMessage, TLPaymentsPaymentForm, TLPaymentRequestedInfo, TLPaymentsValidatedRequestedInfo, TLShippingOption, string, string, bool>(from);
 
-                //    if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard && _credentialsTitle == null)
-                //    {
-                //        CredentialsTitle = savedCard.Title;
-                //    }
+                Message = tuple.Item1;
+                Invoice = tuple.Item1.Media as TLMessageMediaInvoice;
+                PaymentForm = tuple.Item2;
+                Info = tuple.Item3;
+                Shipping = tuple.Item5;
+                CredentialsTitle = string.IsNullOrEmpty(tuple.Item6) ? null : tuple.Item6;
+                Bot = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.BotId) as TLUser;
+                Provider = tuple.Item2.Users.FirstOrDefault(x => x.Id == tuple.Item2.ProviderId) as TLUser;
 
-                //    var amount = 0L;
-                //    foreach (var price in _paymentForm.Invoice.Prices)
-                //    {
-                //        amount += price.Amount;
-                //    }
+                if (_paymentForm.HasSavedCredentials && _paymentForm.SavedCredentials is TLPaymentSavedCredentialsCard savedCard && _credentialsTitle == null)
+                {
+                    CredentialsTitle = savedCard.Title;
+                }
 
-                //    if (_shipping != null)
-                //    {
-                //        foreach (var price in _shipping.Prices)
-                //        {
-                //            amount += price.Amount;
-                //        }
-                //    }
+                var amount = 0L;
+                foreach (var price in _paymentForm.Invoice.Prices)
+                {
+                    amount += price.Amount;
+                }
 
-                //    TotalAmount = amount;
+                if (_shipping != null)
+                {
+                    foreach (var price in _shipping.Prices)
+                    {
+                        amount += price.Amount;
+                    }
+                }
 
-                //    _requestedInfo = tuple.Item4;
-                //    _credentials = tuple.Item7;
-                //    _save = tuple.Item8;
-                //}
+                TotalAmount = amount;
+
+                _requestedInfo = tuple.Item4;
+                _credentials = tuple.Item7;
+                _save = tuple.Item8;
             }
 
             return Task.CompletedTask;
@@ -159,7 +162,7 @@ namespace Unigram.ViewModels.Payments
         public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(string .Format("Neither Telegram, nor {0} will have access to your credit card information. Credit card details will be handled only by the payment system, {1}.\n\nPayments will go directly to the developer of {0}. Telegram cannot provide any guarantees, so proceed at your own risk. In case of problems, please contact the developer of {0} or your bank.", _bot.FullName, _provider.FullName), "Transaction review", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(string.Format("Neither Telegram, nor {0} will have access to your credit card information. Credit card details will be handled only by the payment system, {1}.\n\nPayments will go directly to the developer of {0}. Telegram cannot provide any guarantees, so proceed at your own risk. In case of problems, please contact the developer of {0} or your bank.", _bot.FullName, _provider.FullName), "Transaction review", "OK", "Cancel");
             //var confirm = await TLMessageDialog.ShowAsync(string.Format("Do you really want to transfer {0} to the {1} bot for {2}?", BindConvert.Current.FormatAmount(_totalAmount, _paymentForm.Invoice.Currency), _bot.FullName, _invoice.Title), "Transaction review", "OK", "Cancel");
             if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
             {

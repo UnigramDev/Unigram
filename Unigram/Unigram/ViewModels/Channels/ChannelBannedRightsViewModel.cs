@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
@@ -62,84 +63,86 @@ namespace Unigram.ViewModels.Channels
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var buffer = parameter as byte[];
-            if (buffer != null)
+            if (buffer == null)
             {
-                //using (var from = new TLBinaryReader(buffer))
-                //{
-                //    var tuple = new TLTuple<TLPeerChannel, TLChannelParticipantBase>(from);
-                //    if (tuple.Item2 is TLChannelParticipant participant)
-                //    {
-                //        IsBannedAlready = false;
+                return;
+            }
 
-                //        tuple.Item2 = new TLChannelParticipantBanned
-                //        {
-                //            UserId = participant.UserId,
-                //            Date = participant.Date,
-                //            BannedRights = new TLChannelBannedRights
-                //            {
-                //                IsViewMessages = true,
-                //                IsSendMessages = false,
-                //                IsSendMedia = false,
-                //                IsSendStickers = false,
-                //                IsSendGifs = false,
-                //                IsSendGames = false,
-                //                IsSendInline = false,
-                //                IsEmbedLinks = false
-                //            }
-                //        };
-                //    }
-                //    else if (tuple.Item2 is TLChannelParticipantAdmin admin)
-                //    {
-                //        IsBannedAlready = false;
+            using (var from = TLObjectSerializer.CreateReader(buffer.AsBuffer()))
+            {
+                var tuple = new TLTuple<TLPeerChannel, TLChannelParticipantBase>(from);
+                if (tuple.Item2 is TLChannelParticipant participant)
+                {
+                    IsBannedAlready = false;
 
-                //        tuple.Item2 = new TLChannelParticipantBanned
-                //        {
-                //            UserId = admin.UserId,
-                //            Date = admin.Date,
-                //            BannedRights = new TLChannelBannedRights
-                //            {
-                //                IsViewMessages = true,
-                //                IsSendMessages = false,
-                //                IsSendMedia = false,
-                //                IsSendStickers = false,
-                //                IsSendGifs = false,
-                //                IsSendGames = false,
-                //                IsSendInline = false,
-                //                IsEmbedLinks = false
-                //            }
-                //        };
-                //    }
+                    tuple.Item2 = new TLChannelParticipantBanned
+                    {
+                        UserId = participant.UserId,
+                        Date = participant.Date,
+                        BannedRights = new TLChannelBannedRights
+                        {
+                            IsViewMessages = true,
+                            IsSendMessages = false,
+                            IsSendMedia = false,
+                            IsSendStickers = false,
+                            IsSendGifs = false,
+                            IsSendGames = false,
+                            IsSendInline = false,
+                            IsEmbedLinks = false
+                        }
+                    };
+                }
+                else if (tuple.Item2 is TLChannelParticipantAdmin admin)
+                {
+                    IsBannedAlready = false;
 
-                //    Channel = CacheService.GetChat(tuple.Item1.ChannelId) as TLChannel;
-                //    Item = tuple.Item2 as TLChannelParticipantBanned;
+                    tuple.Item2 = new TLChannelParticipantBanned
+                    {
+                        UserId = admin.UserId,
+                        Date = admin.Date,
+                        BannedRights = new TLChannelBannedRights
+                        {
+                            IsViewMessages = true,
+                            IsSendMessages = false,
+                            IsSendMedia = false,
+                            IsSendStickers = false,
+                            IsSendGifs = false,
+                            IsSendGames = false,
+                            IsSendInline = false,
+                            IsEmbedLinks = false
+                        }
+                    };
+                }
 
-                //    IsEmbedLinks = _item.BannedRights.IsEmbedLinks;
-                //    IsSendInline = _item.BannedRights.IsSendInline;
-                //    IsSendGames = _item.BannedRights.IsSendGames;
-                //    IsSendGifs = _item.BannedRights.IsSendGifs;
-                //    IsSendStickers = _item.BannedRights.IsSendStickers;
-                //    IsSendMedia = _item.BannedRights.IsSendMedia;
-                //    IsSendMessages = _item.BannedRights.IsSendMessages;
-                //    IsViewMessages = _item.BannedRights.IsViewMessages;
+                Channel = CacheService.GetChat(tuple.Item1.ChannelId) as TLChannel;
+                Item = tuple.Item2 as TLChannelParticipantBanned;
 
-                //    var user = tuple.Item2.User;
-                //    if (user == null)
-                //    {
-                //        return;
-                //    }
+                IsEmbedLinks = _item.BannedRights.IsEmbedLinks;
+                IsSendInline = _item.BannedRights.IsSendInline;
+                IsSendGames = _item.BannedRights.IsSendGames;
+                IsSendGifs = _item.BannedRights.IsSendGifs;
+                IsSendStickers = _item.BannedRights.IsSendStickers;
+                IsSendMedia = _item.BannedRights.IsSendMedia;
+                IsSendMessages = _item.BannedRights.IsSendMessages;
+                IsViewMessages = _item.BannedRights.IsViewMessages;
 
-                //    var full = CacheService.GetFullUser(user.Id);
-                //    if (full == null)
-                //    {
-                //        var response = await ProtoService.GetFullUserAsync(user.ToInputUser());
-                //        if (response.IsSucceeded)
-                //        {
-                //            full = response.Result;
-                //        }
-                //    }
+                var user = tuple.Item2.User;
+                if (user == null)
+                {
+                    return;
+                }
 
-                //    Full = full;
-                //}
+                var full = CacheService.GetFullUser(user.Id);
+                if (full == null)
+                {
+                    var response = await ProtoService.GetFullUserAsync(user.ToInputUser());
+                    if (response.IsSucceeded)
+                    {
+                        full = response.Result;
+                    }
+                }
+
+                Full = full;
             }
         }
 

@@ -9,6 +9,8 @@ namespace Telegram.Api.TL
 {
     public class TLTuple : TLObject
     {
+        public override TLType TypeId => (TLType)0xFFFFFF0E;
+
         public static TLTuple<T1> Create<T1>(T1 item1)
         {
             return new TLTuple<T1>(item1);
@@ -72,7 +74,6 @@ namespace Telegram.Api.TL
 
         public override void Write(TLBinaryWriter to)
         {
-            to.WriteUInt32(0xFFFFFF0E);
             TLFactory.Write<T1>(to, Item1);
         }
     }
