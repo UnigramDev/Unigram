@@ -196,8 +196,10 @@ namespace Telegram
 					HRESULT Deserialize([in] Windows.Storage.Streams.IBuffer* buffer,[out][retval] ITLObject** value);
 					[overload("CreateReader"), default_overload] HRESULT CreateReaderFromBuffer([in] Windows.Storage.Streams.IBuffer* buffer, [out][retval] TLBinaryReader** value);
 					[overload("CreateReader")] HRESULT CreateReaderFromFile([in] Windows.Storage.StorageFile* file, [out][retval] TLBinaryReader** value);
+					[overload("CreateReader")] HRESULT CreateReaderFromFileName([in] HSTRING fileName, [out][retval] TLBinaryReader** value);
 					[overload("CreateWriter"), default_overload] HRESULT CreateWriterFromBuffer([in] Windows.Storage.Streams.IBuffer* buffer, [out][retval] TLBinaryWriter** value);
 					[overload("CreateWriter")] HRESULT CreateWriterFromFile([in] Windows.Storage.StorageFile* file, [out][retval] TLBinaryWriter** value);
+					[overload("CreateWriter")] HRESULT CreateWriterFromFileName([in] HSTRING fileName, [out][retval] TLBinaryWriter** value);
 					HRESULT GetObjectSize([in]ITLObject* object,[out][retval] UINT32* value);
 					HRESULT RegisterObjectConstructor([in] UINT32 constructor,[in] TLObjectConstructorDelegate* constructorDelegate);
 				}

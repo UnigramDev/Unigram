@@ -84,6 +84,21 @@ HRESULT TLObjectSerializerStatics::CreateReaderFromFile(IStorageFile* file, ITLB
 	return MakeAndInitialize<TLFileBinaryReader>(value, fileName.GetRawBuffer(nullptr), OPEN_EXISTING);
 }
 
+HRESULT TLObjectSerializerStatics::CreateReaderFromFileName(HSTRING fileName, ITLBinaryReader** value)
+{
+	if (fileName == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	return MakeAndInitialize<TLFileBinaryReader>(value, WindowsGetStringRawBuffer(fileName, nullptr), OPEN_EXISTING);
+}
+
 HRESULT TLObjectSerializerStatics::CreateWriterFromBuffer(IBuffer* buffer, ITLBinaryWriter** value)
 {
 	if (buffer == nullptr)
@@ -119,6 +134,21 @@ HRESULT TLObjectSerializerStatics::CreateWriterFromFile(IStorageFile* file, ITLB
 	ReturnIfFailed(result, storageItem->get_Path(fileName.GetAddressOf()));
 
 	return MakeAndInitialize<TLFileBinaryWriter>(value, fileName.GetRawBuffer(nullptr), OPEN_EXISTING);
+}
+
+HRESULT TLObjectSerializerStatics::CreateWriterFromFileName(HSTRING fileName, ITLBinaryWriter** value)
+{
+	if (fileName == nullptr)
+	{
+		return E_INVALIDARG;
+	}
+
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	return MakeAndInitialize<TLFileBinaryWriter>(value, WindowsGetStringRawBuffer(fileName, nullptr), CREATE_ALWAYS);
 }
 
 
