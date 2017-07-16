@@ -763,7 +763,7 @@ HRESULT ConnectionManager::MoveToDatacenter(INT32 datacenterId)
 
 	OutputDebugStringFormat(L"Moving datacenter from %d to %d\n", m_currentDatacenterId, datacenterId);
 
-	ResetRequests([this](auto datacenterId, auto const& request) -> boolean
+	ResetRequests([this](auto datacenterId, auto const& request) -> bool
 	{
 		return datacenterId == m_currentDatacenterId;
 	}, true);
@@ -775,7 +775,7 @@ HRESULT ConnectionManager::MoveToDatacenter(INT32 datacenterId)
 
 		datacenterIterator->second->RecreateSessions();
 
-		ResetRequests([this](auto datacenterId, auto const& request) -> boolean
+		ResetRequests([this](auto datacenterId, auto const& request) -> bool
 		{
 			return datacenterId == m_currentDatacenterId;
 		}, true);
@@ -801,7 +801,7 @@ HRESULT ConnectionManager::MoveToDatacenter(INT32 datacenterId)
 			{
 				datacenter->RecreateSessions();
 
-				ResetRequests([this](auto datacenterId, auto const& request) -> boolean
+				ResetRequests([this](auto datacenterId, auto const& request) -> bool
 				{
 					return datacenterId == m_movingToDatacenterId;
 				}, true);
@@ -1160,6 +1160,10 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 			return S_FALSE;
 		}
 
+		/*HRESULT result;
+		ComPtr<Connection> connection;
+		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetGenericConnection(true, connection));*/
+
 		datacenterContextIterator->second.GenericRequests.push_back(request);
 		return S_OK;
 	}
@@ -1316,6 +1320,8 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 	auto datacenterId = datacenterContext->Datacenter->GetId();
 	for (auto& request : datacenterContext->GenericRequests)
 	{
+		OutputDebugStringFormat(L"Sending request %d at %llu\n", request->GetToken(), GetCurrentMonotonicTime());
+
 		m_runningRequestCount[static_cast<UINT32>(request->GetConnectionType()) >> 1]++;
 		m_runningRequests.push_back(std::make_pair(datacenterId, std::move(request)));
 	}
@@ -1635,15 +1641,15 @@ HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
 
 		if ((result = UpdateNetworkStatus(true)) == S_OK && FLAGS_GET_NETWORKTYPE(m_flags) != ConnectionNeworkType::None)
 		{
+			processRequestQueue = true;
+		}
+		else
+		{
 			for (auto& datacenter : m_datacenters)
 			{
 				datacenter.second->ResetConnections();
 			}
 
-			processRequestQueue = true;
-		}
-		else
-		{
 			processRequestQueue = false;
 		}
 	}
@@ -1652,6 +1658,11 @@ HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
 	{
 #pragma message ("Potential deadlock")
 		auto requestsLock = m_requestsCriticalSection.Lock();
+
+		ResetRequests([](auto datacenterId, auto const& request) -> bool
+		{
+			return true;
+		}, true);
 
 		FILETIME timeout = {};
 		SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
@@ -1706,10 +1717,17 @@ HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
 
 HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
 {
+	auto datacenter = connection->GetDatacenter();
+
+	ResetRequests([datacenter, connection](auto datacenterId, auto const& request) -> bool
+	{
+		return datacenterId == datacenter->GetId() && request->MatchesConnection(connection->GetType());
+	}, true);
+
 	if (connection->GetType() == ConnectionType::Generic)
 	{
 		auto lock = LockCriticalSection();
-		auto datacenter = connection->GetDatacenter();
+		//auto datacenter = connection->GetDatacenter();
 
 		if (datacenter->GetId() == m_currentDatacenterId)
 		{
@@ -1749,7 +1767,7 @@ HRESULT ConnectionManager::OnDatacenterHandshakeComplete(Datacenter* datacenter,
 
 			datacenter->RecreateSessions();
 
-			ResetRequests([datacenter](INT32 datacenterId, auto& request) -> boolean
+			ResetRequests([datacenter](INT32 datacenterId, auto& request) -> bool
 			{
 				return datacenterId == datacenter->GetId();
 			}, true);
@@ -1769,7 +1787,7 @@ HRESULT ConnectionManager::OnDatacenterBadServerSalt(Datacenter* datacenter, INT
 	HRESULT result;
 	ReturnIfFailed(result, AdjustCurrentTime(responseMessageId));
 
-	ResetRequests([datacenter](auto datacenterId, auto const& request) -> boolean
+	ResetRequests([datacenter](auto datacenterId, auto const& request) -> bool
 	{
 		return datacenterId == datacenter->GetId();
 	}, true);
@@ -1789,7 +1807,7 @@ HRESULT ConnectionManager::OnDatacenterBadMessage(Datacenter* datacenter, INT64 
 	HRESULT result;
 	ReturnIfFailed(result, AdjustCurrentTime(responseMessageId));
 
-	ResetRequests([datacenter](auto datacenterId, auto const& request) -> boolean
+	ResetRequests([datacenter](auto datacenterId, auto const& request) -> bool
 	{
 		return datacenterId == datacenter->GetId();
 	}, true);
@@ -1830,7 +1848,7 @@ HRESULT ConnectionManager::OnConnectionSessionCreated(Connection* connection, IN
 {
 	auto datacenter = connection->GetDatacenter();
 
-	ResetRequests([datacenter, connection, firstMessageId](auto datacenterId, auto const& request) -> boolean
+	ResetRequests([datacenter, connection, firstMessageId](auto datacenterId, auto const& request) -> bool
 	{
 		return datacenterId == datacenter->GetId() && request->MatchesConnection(connection->GetType()) && request->GetMessageContext()->Id < firstMessageId;
 	}, true);
@@ -1850,30 +1868,6 @@ HRESULT ConnectionManager::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG
 	SetThreadpoolTimer(EventObjectT::GetHandle(), nullptr, 0, 0);
 
 	return ProcessRequests();
-}
-
-HRESULT ConnectionManager::BoomBaby()
-{
-	auto lock = LockCriticalSection();
-
-	HRESULT result;
-	ReturnIfFailed(result, SaveSettings());
-
-	for (auto& datacenter : m_datacenters)
-	{
-		std::wstring settingsFileName;
-		GetDatacenterSettingsFileName(datacenter.first, settingsFileName);
-
-		ComPtr<TLFileBinaryWriter> settingsWriter;
-		ReturnIfFailed(result, MakeAndInitialize<TLFileBinaryWriter>(&settingsWriter, settingsFileName.data(), CREATE_ALWAYS));
-		ReturnIfFailed(result, datacenter.second->SaveSettings());
-	}
-
-	ComPtr<Datacenter> datacenter;
-	GetDatacenterById(m_currentDatacenterId, datacenter);
-	/*ReturnIfFailed(result, datacenter->RequestFutureSalts(10));*/
-
-	return datacenter->SendPing();
 }
 
 bool ConnectionManager::GetDatacenterById(UINT32 id, ComPtr<Datacenter>& datacenter)

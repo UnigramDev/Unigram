@@ -33,17 +33,6 @@ ConnectionSocket::~ConnectionSocket()
 {
 }
 
-HRESULT ConnectionSocket::RuntimeClassInitialize()
-{
-	m_socketEvent.Attach(WSACreateEvent());
-	if (!m_socketEvent.IsValid())
-	{
-		return WSAGetLastHRESULT();
-	}
-
-	return S_OK;
-}
-
 void ConnectionSocket::SetTimeout(UINT32 timeoutMs)
 {
 	TimeoutToFileTime(timeoutMs, m_timeout);
@@ -104,6 +93,12 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, Se
 		return result;
 	}
 
+	m_socketEvent.Attach(WSACreateEvent());
+	if (!m_socketEvent.IsValid())
+	{
+		return WSAGetLastHRESULT();
+	}
+
 	SetThreadpoolWait(EventObjectT::GetHandle(), m_socketEvent.Get(), &m_timeout);
 
 	if (WSAEventSelect(m_socket, m_socketEvent.Get(), FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE) == SOCKET_ERROR)
@@ -157,27 +152,60 @@ HRESULT ConnectionSocket::SendData(BYTE const* buffer, UINT32 length)
 		return E_NOT_VALID_STATE;
 	}
 
-	int bytesSent = send(m_socket, reinterpret_cast<const char*>(buffer), length, 0);
-	if (bytesSent == SOCKET_ERROR)
+	int sentBytes;
+	auto remainingBytes = m_sendBuffer.size();
+	if (remainingBytes > 0)
 	{
-		auto wsaLastError = WSAGetLastError();
-		if (wsaLastError == WSAENOTCONN)
+		auto availableBytes = remainingBytes + length;
+		m_sendBuffer.resize(availableBytes);
+
+		CopyMemory(m_sendBuffer.data() + remainingBytes, buffer, length);
+
+		while (availableBytes > 0)
 		{
-			bytesSent = 0;
-		}
-		else if (wsaLastError != WSAEWOULDBLOCK)
-		{
-			return HRESULT_FROM_WIN32(wsaLastError);
+			if ((sentBytes = send(m_socket, reinterpret_cast<const char*>(m_sendBuffer.data()), static_cast<int>(availableBytes), 0)) == SOCKET_ERROR)
+			{
+				auto wsaLastError = WSAGetLastError();
+				if (wsaLastError == WSAENOTCONN)
+				{
+					return S_FALSE;
+				}
+				else if (wsaLastError != WSAEWOULDBLOCK)
+				{
+					return HRESULT_FROM_WIN32(wsaLastError);
+				}
+			}
+
+			availableBytes -= sentBytes;
+			MoveMemory(m_sendBuffer.data(), m_sendBuffer.data() + sentBytes, availableBytes);
+
+			m_sendBuffer.resize(availableBytes);
 		}
 	}
-
-	if (static_cast<UINT32>(bytesSent) < length)
+	else
 	{
-		auto remainingSize = length - bytesSent;
-		auto availableSize = m_sendBuffer.size();
+		if ((sentBytes = send(m_socket, reinterpret_cast<const char*>(buffer), length, 0)) == SOCKET_ERROR)
+		{
+			auto wsaLastError = WSAGetLastError();
+			if (wsaLastError == WSAENOTCONN)
+			{
+				sentBytes = 0;
+			}
+			else if (wsaLastError != WSAEWOULDBLOCK)
+			{
+				return HRESULT_FROM_WIN32(wsaLastError);
+			}
+		}
 
-		m_sendBuffer.resize(availableSize + remainingSize);
-		CopyMemory(m_sendBuffer.data() + availableSize, buffer, remainingSize);
+		if (static_cast<UINT32>(sentBytes) < length)
+		{
+			auto availableBytes = length - sentBytes;
+			m_sendBuffer.resize(remainingBytes + availableBytes);
+
+			CopyMemory(m_sendBuffer.data() + remainingBytes, buffer, availableBytes);
+
+			return S_FALSE;
+		}
 	}
 
 	return S_OK;
@@ -209,7 +237,7 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 	//WSASetEvent(m_socketEvent.Get());
 	DetachFromThreadpool(flags & SOCKET_CLOSE_JOINTHREAD);
 
-	//m_socketEvent.Close();
+	m_socketEvent.Close();
 	m_sendBuffer = {};
 	m_receiveBuffer.reset();
 
@@ -268,10 +296,10 @@ HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG_
 			BreakIfError(wsaLastError, networkEvents.iErrorCode[FD_WRITE_BIT]);
 
 			auto availableBytes = m_sendBuffer.size();
-			if (availableBytes > 0)
+			while (availableBytes > 0)
 			{
 				int sentBytes;
-				if ((sentBytes = send(m_socket, reinterpret_cast<char*>(m_sendBuffer.data()), static_cast<int>(availableBytes), 0)) == SOCKET_ERROR)
+				if ((sentBytes = send(m_socket, reinterpret_cast<const char*>(m_sendBuffer.data()), static_cast<int>(availableBytes), 0)) == SOCKET_ERROR)
 				{
 					if ((wsaLastError = WSAGetLastError()) != WSAEWOULDBLOCK)
 					{
@@ -279,10 +307,10 @@ HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG_
 					}
 				}
 
-				auto remainingBytes = availableBytes - sentBytes;
-				MoveMemory(m_sendBuffer.data(), m_sendBuffer.data() + sentBytes, remainingBytes);
+				availableBytes -= sentBytes;
+				MoveMemory(m_sendBuffer.data(), m_sendBuffer.data() + sentBytes, availableBytes);
 
-				m_sendBuffer.resize(remainingBytes);
+				m_sendBuffer.resize(availableBytes);
 			}
 		}
 
