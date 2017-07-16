@@ -831,20 +831,26 @@ namespace Unigram.Services
 
                     if (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
                     {
-                        //var data = Sqlite3.sqlite3_column_blob(statement, 0);
-                        //if (data != null)
-                        //{
-                        //    newStickerArray = TLFactory.From<TLVector<TLMessagesStickerSet>>(data).ToList();
-                        //}
+                        var data = Sqlite3.sqlite3_column_blob(statement, 0);
+                        if (data != null)
+                        {
+                            using (var from = TLObjectSerializer.CreateReader(data.AsBuffer()))
+                            {
+                                newStickerArray = TLFactory.Read<TLVector<TLMessagesStickerSet>>(from).ToList();
+                            }
+                        }
 
-                        //var data2 = Sqlite3.sqlite3_column_blob(statement, 1);
-                        //if (data2 != null)
-                        //{
-                        //    unread = TLFactory.From<TLVector<long>>(data2).ToList();
-                        //}
+                        var data2 = Sqlite3.sqlite3_column_blob(statement, 1);
+                        if (data2 != null)
+                        {
+                            using (var from = TLObjectSerializer.CreateReader(data.AsBuffer()))
+                            {
+                                unread = TLFactory.Read<TLVector<long>>(from).ToList();
+                            }
+                        }
 
-                        //date = Sqlite3.sqlite3_column_int(statement, 2);
-                        //hash = CalculateFeaturedStickersHash(newStickerArray);
+                        date = Sqlite3.sqlite3_column_int(statement, 2);
+                        hash = CalculateFeaturedStickersHash(newStickerArray);
                     }
 
                     Sqlite3.sqlite3_finalize(statement);
@@ -1136,13 +1142,17 @@ namespace Unigram.Services
 
                     if (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
                     {
-                        //var data = Sqlite3.sqlite3_column_blob(statement, 0);
-                        //if (data != null)
-                        //{
-                        //    newStickerArray = TLFactory.From<TLVector<TLMessagesStickerSet>>(data).ToList();
-                        //}
-                        //date = Sqlite3.sqlite3_column_int(statement, 1);
-                        //hash = CalculateStickersHash(newStickerArray);
+                        var data = Sqlite3.sqlite3_column_blob(statement, 0);
+                        if (data != null)
+                        {
+                            using (var from = TLObjectSerializer.CreateReader(data.AsBuffer()))
+                            {
+                                newStickerArray = TLFactory.Read<TLVector<TLMessagesStickerSet>>(from).ToList();
+                            }
+                        }
+
+                        date = Sqlite3.sqlite3_column_int(statement, 1);
+                        hash = CalculateStickersHash(newStickerArray);
                     }
 
                     Sqlite3.sqlite3_finalize(statement);
