@@ -54,7 +54,7 @@ namespace Telegram
 			namespace TL
 			{
 
-				class TLBinaryReader abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryReaderEx>, IClosable>
+				class TLBinaryReader abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryReaderEx>, ITLBinaryReader, IClosable>
 				{
 				public:
 					virtual HRESULT STDMETHODCALLTYPE get_Position(_Out_ UINT32* value) = 0;
