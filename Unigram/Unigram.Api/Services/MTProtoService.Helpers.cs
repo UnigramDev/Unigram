@@ -42,8 +42,7 @@ namespace Telegram.Api.Services
 
             Debug.WriteLine("Sending " + caption);
 
-            var connectionManager = ConnectionManager.Instance;
-            return connectionManager.SendRequest(obj, (message, ex) =>
+            return _connectionManager.SendRequest(obj, (message, ex) =>
             {
                 if (message.Object is TLRPCError error)
                 {
