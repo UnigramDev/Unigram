@@ -168,12 +168,12 @@ namespace Unigram
             if (active)
             {
                 var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-                protoService.UpdateStatusAsync(false, null);
+                protoService.RaiseSendStatus(false);
             }
             else
             {
                 var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-                protoService.UpdateStatusAsync(true, null);
+                protoService.RaiseSendStatus(true);
             }
         }
 
