@@ -34,6 +34,8 @@ using Windows::Foundation::Collections::VectorView;
 Datacenter::Datacenter() :
 	m_id(0),
 	m_flags(DatacenterFlag::None),
+	m_nextDownloadConnectionIndex(0),
+	m_nextUploadConnectionIndex(0),
 	m_currentIPv4EndpointIndex(0),
 	m_currentIPv4DownloadEndpointIndex(0),
 	m_currentIPv6EndpointIndex(0),
@@ -80,8 +82,15 @@ HRESULT Datacenter::RuntimeClassInitialize(ConnectionManager* connectionManager,
 		return E_FAIL;
 	}
 
+	UINT32 layer;
+	ReturnIfFailed(result, reader->ReadUInt32(&layer));
 	ReturnIfFailed(result, reader->ReadInt32(&m_id));
 	ReturnIfFailed(result, reader->ReadInt32(reinterpret_cast<INT32*>(&m_flags)));
+
+	if (layer != TELEGRAM_API_NATIVE_LAYER)
+	{
+		m_flags &= ~DatacenterFlag::ConnectionInitialized;
+	}
 
 	if (FLAGS_GET_HANDSHAKESTATE(m_flags) == HandshakeState::Authenticated)
 	{
@@ -278,6 +287,9 @@ void Datacenter::ResetConnections()
 				m_uploadConnections[i].Reset();
 			}
 		}
+
+		m_nextDownloadConnectionIndex = 0;
+		m_nextUploadConnectionIndex = 0;
 	}
 
 	for (auto& connection : connectionsToClose)
@@ -545,13 +557,8 @@ HRESULT Datacenter::GetGenericConnection(boolean create, ComPtr<Connection>& val
 	return S_OK;
 }
 
-HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, ComPtr<Connection>& value)
+HRESULT Datacenter::GetDownloadConnection(boolean create, ComPtr<Connection>& value)
 {
-	if (index >= DOWNLOAD_CONNECTIONS_COUNT)
-	{
-		return E_BOUNDS;
-	}
-
 	auto lock = LockCriticalSection();
 
 	if ((m_flags & DatacenterFlag::Closed) == DatacenterFlag::Closed)
@@ -559,23 +566,24 @@ HRESULT Datacenter::GetDownloadConnection(UINT32 index, boolean create, ComPtr<C
 		return RO_E_CLOSED;
 	}
 
-	if (m_downloadConnections[index] == nullptr && create)
+	auto& connection = m_downloadConnections[m_nextDownloadConnectionIndex];
+	if (create)
 	{
-		HRESULT result;
-		ReturnIfFailed(result, MakeAndInitialize<Connection>(&m_downloadConnections[index], this, ConnectionType::Download));
+		if (connection == nullptr)
+		{
+			HRESULT result;
+			ReturnIfFailed(result, MakeAndInitialize<Connection>(&connection, this, ConnectionType::Download));
+		}
+
+		m_nextDownloadConnectionIndex = (m_nextDownloadConnectionIndex + 1) % DOWNLOAD_CONNECTIONS_COUNT;
 	}
 
-	value = m_downloadConnections[index];
+	value = connection;
 	return S_OK;
 }
 
-HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, ComPtr<Connection>& value)
+HRESULT Datacenter::GetUploadConnection(boolean create, ComPtr<Connection>& value)
 {
-	if (index >= UPLOAD_CONNECTIONS_COUNT)
-	{
-		return E_BOUNDS;
-	}
-
 	auto lock = LockCriticalSection();
 
 	if ((m_flags & DatacenterFlag::Closed) == DatacenterFlag::Closed)
@@ -583,13 +591,19 @@ HRESULT Datacenter::GetUploadConnection(UINT32 index, boolean create, ComPtr<Con
 		return RO_E_CLOSED;
 	}
 
-	if (m_uploadConnections[index] == nullptr && create)
+	auto& connection = m_downloadConnections[m_nextUploadConnectionIndex];
+	if (create)
 	{
-		HRESULT result;
-		ReturnIfFailed(result, MakeAndInitialize<Connection>(&m_uploadConnections[index], this, ConnectionType::Upload));
+		if (connection == nullptr)
+		{
+			HRESULT result;
+			ReturnIfFailed(result, MakeAndInitialize<Connection>(&connection, this, ConnectionType::Upload));
+		}
+
+		m_nextUploadConnectionIndex = (m_nextUploadConnectionIndex + 1) % DOWNLOAD_CONNECTIONS_COUNT;
 	}
 
-	value = m_uploadConnections[index];
+	value = connection;
 	return S_OK;
 }
 
@@ -1421,6 +1435,7 @@ HRESULT Datacenter::SaveSettings()
 	ComPtr<TLFileBinaryWriter> settingsWriter;
 	ReturnIfFailed(result, MakeAndInitialize<TLFileBinaryWriter>(&settingsWriter, settingsFileName.data(), CREATE_ALWAYS));
 	ReturnIfFailed(result, settingsWriter->WriteUInt32(TELEGRAM_API_NATIVE_SETTINGS_VERSION));
+	ReturnIfFailed(result, settingsWriter->WriteUInt32(TELEGRAM_API_NATIVE_LAYER));
 	ReturnIfFailed(result, settingsWriter->WriteInt32(m_id));
 	ReturnIfFailed(result, settingsWriter->WriteInt32(static_cast<INT32>(m_flags & (DatacenterFlag::HandshakeState |
 		DatacenterFlag::AuthorizationState | DatacenterFlag::CDN | DatacenterFlag::ConnectionInitialized))));

@@ -118,8 +118,8 @@ namespace Telegram
 				STDMETHODIMP RuntimeClassInitialize(_In_ ConnectionManager* connectionManager, INT32 id, bool isCdn);
 				STDMETHODIMP RuntimeClassInitialize(_In_ ConnectionManager* connectionManager, _In_ ITLBinaryReaderEx* reader);
 				HRESULT GetGenericConnection(boolean create, _Out_  ComPtr<Connection>& value);
-				HRESULT GetDownloadConnection(UINT32 index, boolean create, _Out_ ComPtr<Connection>& value);
-				HRESULT GetUploadConnection(UINT32 index, boolean create, _Out_  ComPtr<Connection>& value);
+				HRESULT GetDownloadConnection(boolean create, _Out_ ComPtr<Connection>& value);
+				HRESULT GetUploadConnection(boolean create, _Out_  ComPtr<Connection>& value);
 
 				inline INT32 GetId() const
 				{
@@ -208,7 +208,7 @@ namespace Telegram
 				void NextEndpoint(ConnectionType connectionType, bool ipv6);
 				void ResetEndpoint();
 				void ResetConnections();
-				IFACEMETHODIMP Close();	
+				IFACEMETHODIMP Close();
 				HRESULT SaveSettings();
 				HRESULT BeginHandshake(bool reconnect, bool reset);
 				HRESULT ImportAuthorization();
@@ -289,6 +289,8 @@ namespace Telegram
 				size_t m_currentIPv6EndpointIndex;
 				size_t m_currentIPv6DownloadEndpointIndex;
 				std::vector<ServerSalt> m_serverSalts;
+				BYTE m_nextDownloadConnectionIndex;
+				BYTE m_nextUploadConnectionIndex;
 				ComPtr<ConnectionManager> m_connectionManager;
 				ComPtr<Connection> m_genericConnection;
 				ComPtr<Connection> m_downloadConnections[DOWNLOAD_CONNECTIONS_COUNT];

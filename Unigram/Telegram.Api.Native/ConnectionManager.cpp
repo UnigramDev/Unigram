@@ -1201,11 +1201,9 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 			return S_FALSE;
 		}
 
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement Download connection selection");
-
 		HRESULT result;
 		ComPtr<Connection> connection;
-		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetDownloadConnection(0, true, connection));
+		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetDownloadConnection(true, connection));
 
 		return ProcessConnectionRequest(connection.Get(), request);
 	}
@@ -1217,11 +1215,9 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 			return S_FALSE;
 		}
 
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("Implement Upload connection selection");
-
 		HRESULT result;
 		ComPtr<Connection> connection;
-		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetUploadConnection(0, true, connection));
+		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetUploadConnection(true, connection));
 
 		return ProcessConnectionRequest(connection.Get(), request);
 	}
