@@ -12,10 +12,10 @@ using namespace Telegram::Api::Native::TL;
 HRESULT MessageRequest::RuntimeClassInitialize(ITLObject* object, INT32 token, ConnectionType connectionType, INT32 datacenterId, ISendRequestCompletedCallback* sendCompletedCallback,
 	IRequestQuickAckReceivedCallback* quickAckReceivedCallback, RequestFlag flags)
 {
-	if (object == nullptr)
+	/*if (object == nullptr)
 	{
 		return E_INVALIDARG;
-	}
+	}*/
 
 	m_object = object;
 	m_token = token;

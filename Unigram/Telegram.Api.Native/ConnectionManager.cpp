@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <Windows.Storage.h>
 #include <Windows.UI.Xaml.h>
+#include <iphlpapi.h>
 #include "ConnectionManager.h"
 #include "Datacenter.h"
 #include "DatacenterCryptography.h"
@@ -15,7 +16,6 @@
 #include "TLBinaryReader.h"
 #include "TLBinaryWriter.h"
 #include "NativeBuffer.h"
-#include "NetworkExtensions.h"
 #include "Collections.h"
 #include "Helpers\COMHelper.h"
 
@@ -34,6 +34,7 @@
 
 using namespace ABI::Windows::Storage;
 using namespace ABI::Windows::UI::Xaml;
+using namespace ABI::Windows::Networking;
 using namespace ABI::Windows::Networking::Connectivity;
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
@@ -662,7 +663,7 @@ HRESULT ConnectionManager::UpdateNetworkStatus(INetworkInformationStatics* netwo
 		}
 
 		bool ipv6Enabled;
-		ReturnIfFailed(result, IsIPv6Enabled(networkAdapter.Get(), &ipv6Enabled));
+		ReturnIfFailed(result, IsIPv6Enabled(networkInformation, networkAdapter.Get(), &ipv6Enabled));
 
 		if (ipv6Enabled)
 		{
@@ -2208,61 +2209,60 @@ HRESULT ConnectionManager::SaveCDNPublicKeys()
 	return S_OK;
 }
 
-HRESULT ConnectionManager::IsIPv6Enabled(INetworkAdapter* networkAdapter, bool* enabled)
+HRESULT ConnectionManager::IsIPv6Enabled(INetworkInformationStatics* networkInformation, INetworkAdapter* networkAdapter, bool* enabled)
 {
 	HRESULT result;
-	GUID networkAdapterId;
-	ReturnIfFailed(result, networkAdapter->get_NetworkAdapterId(&networkAdapterId));
+	GUID adapterId;
+	ReturnIfFailed(result, networkAdapter->get_NetworkAdapterId(&adapterId));
 
-	ULONG error;
-	NET_LUID networkAdapterLuid;
-	if ((error = ConvertInterfaceGuidToLuid(&networkAdapterId, &networkAdapterLuid)) != NO_ERROR)
-	{
-		return HRESULT_FROM_WIN32(result);
-	}
+	ComPtr<__FIVectorView_1_Windows__CNetworking__CHostName> hostNames;
+	ReturnIfFailed(result, networkInformation->GetHostNames(&hostNames));
 
-	struct addresses_deleter
+	UINT32 count;
+	ReturnIfFailed(result, hostNames->get_Size(&count));
+
+	for (UINT32 i = 0; i < count; i++)
 	{
-		void operator()(void* x)
+		ComPtr<IHostName> hostName;
+		ReturnIfFailed(result, hostNames->GetAt(i, &hostName));
+
+		HostNameType type;
+		ReturnIfFailed(result, hostName->get_Type(&type));
+
+		if (type == HostNameType::HostNameType_Ipv6)
 		{
-			NATIVEBUFFER_FREE(x);
+			ComPtr<IIPInformation> ipInformation;
+			ReturnIfFailed(result, hostName->get_IPInformation(&ipInformation));
+
+			ComPtr<INetworkAdapter> ipNetworkAdapter;
+			ReturnIfFailed(result, ipInformation->get_NetworkAdapter(&ipNetworkAdapter));
+
+			GUID ipAdapterId;
+			ReturnIfFailed(result, ipNetworkAdapter->get_NetworkAdapterId(&ipAdapterId));
+
+			if (IsEqualGUID(adapterId, ipAdapterId))
+			{
+				*enabled = true;
+				return S_OK;
+			}
 		}
-	};
-
-	ULONG bufferSize = 15000;
-	std::unique_ptr<IP_ADAPTER_ADDRESSES, addresses_deleter> addresses;
-
-	do
-	{
-		addresses = std::unique_ptr<IP_ADAPTER_ADDRESSES, addresses_deleter>(reinterpret_cast<IP_ADAPTER_ADDRESSES*>(NATIVEBUFFER_ALLOC(bufferSize)));
-		error = GetAdaptersAddresses(AF_INET6, GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST | GAA_FLAG_SKIP_DNS_SERVER | GAA_FLAG_SKIP_FRIENDLY_NAME, nullptr, addresses.get(), &bufferSize);
-	} while (error == ERROR_BUFFER_OVERFLOW);
-
-	if (error != NO_ERROR)
-	{
-		return HRESULT_FROM_WIN32(result);
 	}
-
-	/*auto currentAddress = addresses.get();
-	while (currentAddress != nullptr)
-	{
-		if (memcmp(&currentAddress->Luid, &networkAdapterLuid, sizeof(NET_LUID)) == 0)
-		{
-			*enabled = true;
-			return S_OK;
-		}
-
-		currentAddress = currentAddress->Next;
-	}*/
 
 	*enabled = false;
 	return S_OK;
 }
 
 
+ComPtr<IConnectionManager> ConnectionManagerStatics::s_instance = nullptr;
+
 HRESULT ConnectionManagerStatics::RuntimeClassInitialize()
 {
-	return MakeAndInitialize<ConnectionManager>(&m_instance);
+	if (s_instance == nullptr)
+	{
+		return MakeAndInitialize<ConnectionManager>(&s_instance);
+	}
+
+	return S_OK;
 }
 
 HRESULT ConnectionManagerStatics::get_Instance(IConnectionManager** value)
@@ -2272,7 +2272,7 @@ HRESULT ConnectionManagerStatics::get_Instance(IConnectionManager** value)
 		return E_POINTER;
 	}
 
-	return m_instance.CopyTo(value);
+	return s_instance.CopyTo(value);
 }
 
 HRESULT ConnectionManagerStatics::get_Version(Version* value)

@@ -248,7 +248,7 @@ namespace Telegram
 					fileName.resize(swprintf_s(&fileName[0], MAX_PATH, L"%s\\DC_%d.dat", m_settingsFolderPath.data(), datacenterId));
 				}
 
-				static HRESULT IsIPv6Enabled(_In_ INetworkAdapter* networkAdapter, _Out_ bool* enabled);
+				static HRESULT IsIPv6Enabled(_In_ INetworkInformationStatics* networkInformation, _In_ INetworkAdapter* networkAdapter, _Out_ bool* enabled);
 
 				EventRegistrationToken m_eventTokens[2];
 				ConnectionManagerFlag m_flags;
@@ -291,7 +291,7 @@ namespace Telegram
 				STDMETHODIMP RuntimeClassInitialize();
 
 			private:
-				ComPtr<IConnectionManager> m_instance;
+				static ComPtr<IConnectionManager> s_instance;
 			};
 
 		}
