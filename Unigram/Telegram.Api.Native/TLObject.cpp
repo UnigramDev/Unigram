@@ -115,6 +115,11 @@ HRESULT TLUnparsedObject::RuntimeClassInitialize(UINT32 constructor, UINT32 obje
 		return E_INVALIDARG;
 	}
 
+	if (objectSizeWithoutConstructor > reader->GetUnconsumedBufferLength())
+	{
+		return E_BOUNDS;
+	}
+
 	HRESULT result;
 	ReturnIfFailed(result, MakeAndInitialize<TLMemoryBinaryReader>(&m_reader, objectSizeWithoutConstructor));
 

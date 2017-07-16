@@ -175,6 +175,11 @@ HRESULT TLMemoryBinaryWriter::get_Position(UINT32* value)
 		return E_POINTER;
 	}
 
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	*value = m_position;
 	return S_OK;
 }
@@ -186,10 +191,10 @@ HRESULT TLMemoryBinaryWriter::put_Position(UINT32 value)
 		return E_BOUNDS;
 	}
 
-	/*if (value > m_position)
+	if (m_underlyingBuffer == nullptr)
 	{
-		ZeroMemory(m_buffer + m_position, value - m_position);
-	}*/
+		return RO_E_CLOSED;
+	}
 
 	m_position = value;
 	return S_OK;
@@ -202,12 +207,22 @@ HRESULT TLMemoryBinaryWriter::get_UnstoredBufferLength(UINT32* value)
 		return E_POINTER;
 	}
 
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	*value = m_capacity - m_position;
 	return S_OK;
 }
 
 HRESULT TLMemoryBinaryWriter::WriteByte(BYTE value)
 {
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (m_position + sizeof(BYTE) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
@@ -219,6 +234,11 @@ HRESULT TLMemoryBinaryWriter::WriteByte(BYTE value)
 
 HRESULT TLMemoryBinaryWriter::WriteInt16(INT16 value)
 {
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (m_position + sizeof(INT16) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
@@ -231,6 +251,11 @@ HRESULT TLMemoryBinaryWriter::WriteInt16(INT16 value)
 
 HRESULT TLMemoryBinaryWriter::WriteInt32(INT32 value)
 {
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (m_position + sizeof(INT32) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
@@ -246,6 +271,11 @@ HRESULT TLMemoryBinaryWriter::WriteInt32(INT32 value)
 
 HRESULT TLMemoryBinaryWriter::WriteInt64(INT64 value)
 {
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (m_position + sizeof(INT64) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
@@ -270,6 +300,11 @@ HRESULT TLMemoryBinaryWriter::WriteRawBuffer(UINT32 __valueSize, BYTE* value)
 		return E_INVALIDARG;
 	}
 
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (m_position + __valueSize > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
@@ -283,6 +318,11 @@ HRESULT TLMemoryBinaryWriter::WriteRawBuffer(UINT32 __valueSize, BYTE* value)
 
 HRESULT TLMemoryBinaryWriter::WriteBigEndianInt32(INT32 value)
 {
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (m_position + sizeof(INT32) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
@@ -298,6 +338,11 @@ HRESULT TLMemoryBinaryWriter::WriteBigEndianInt32(INT32 value)
 
 HRESULT TLMemoryBinaryWriter::WriteBuffer(BYTE const* buffer, UINT32 length)
 {
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	UINT32 padding;
 
 	if (length < 254)
@@ -337,17 +382,16 @@ HRESULT TLMemoryBinaryWriter::WriteBuffer(BYTE const* buffer, UINT32 length)
 	CopyMemory(m_buffer + m_position, buffer, length);
 
 	m_position += length + padding;
-
-	/*m_position += length;
-
-	ZeroMemory(m_buffer + m_position, padding);
-
-	m_position += padding;*/
 	return S_OK;
 }
 
 HRESULT TLMemoryBinaryWriter::SeekCurrent(INT32 bytes)
 {
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (m_position + bytes > m_capacity)
 	{
 		return E_BOUNDS;
@@ -359,7 +403,21 @@ HRESULT TLMemoryBinaryWriter::SeekCurrent(INT32 bytes)
 
 HRESULT TLMemoryBinaryWriter::Reset()
 {
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	m_position = 0;
+	return S_OK;
+}
+
+HRESULT TLMemoryBinaryWriter::Close()
+{
+	m_position = 0;
+	m_capacity = 0;
+	m_buffer = nullptr;
+	m_underlyingBuffer.Reset();
 	return S_OK;
 }
 
@@ -377,6 +435,11 @@ HRESULT TLFileBinaryWriter::RuntimeClassInitialize(LPCWSTR fileName, DWORD creat
 
 HRESULT TLFileBinaryWriter::get_Position(UINT32* value)
 {
+	if (!m_file.IsValid())
+	{
+		return RO_E_CLOSED;
+	}
+
 	LARGE_INTEGER position;
 	if (!SetFilePointerEx(m_file.Get(), { 0 }, &position, FILE_CURRENT))
 	{
@@ -389,6 +452,11 @@ HRESULT TLFileBinaryWriter::get_Position(UINT32* value)
 
 HRESULT TLFileBinaryWriter::put_Position(UINT32 value)
 {
+	if (!m_file.IsValid())
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (!SetFilePointerEx(m_file.Get(), { value }, nullptr, FILE_BEGIN))
 	{
 		return GetLastHRESULT();
@@ -402,6 +470,11 @@ HRESULT TLFileBinaryWriter::get_UnstoredBufferLength(UINT32* value)
 	if (value == nullptr)
 	{
 		return E_POINTER;
+	}
+
+	if (!m_file.IsValid())
+	{
+		return RO_E_CLOSED;
 	}
 
 	*value = UINT32_MAX;
@@ -450,6 +523,11 @@ HRESULT TLFileBinaryWriter::WriteInt64(INT64 value)
 
 HRESULT TLFileBinaryWriter::WriteRawBuffer(UINT32 __valueSize, BYTE* value)
 {
+	if (!m_file.IsValid())
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (!WriteFile(m_file.Get(), value, __valueSize, nullptr, nullptr))
 	{
 		return GetLastHRESULT();
@@ -513,11 +591,22 @@ HRESULT TLFileBinaryWriter::WriteBuffer(BYTE const* buffer, UINT32 length)
 
 HRESULT TLFileBinaryWriter::Reset()
 {
+	if (!m_file.IsValid())
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (!SetFilePointerEx(m_file.Get(), { 0 }, nullptr, FILE_BEGIN))
 	{
 		return GetLastHRESULT();
 	}
 
+	return S_OK;
+}
+
+HRESULT TLFileBinaryWriter::Close()
+{
+	m_file.Close();
 	return S_OK;
 }
 
@@ -704,6 +793,13 @@ HRESULT TLObjectSizeCalculator::WriteBuffer(BYTE const* buffer, UINT32 length)
 }
 
 HRESULT TLObjectSizeCalculator::Reset()
+{
+	m_position = 0;
+	m_length = 0;
+	return S_OK;
+}
+
+HRESULT TLObjectSizeCalculator::Close()
 {
 	m_position = 0;
 	m_length = 0;

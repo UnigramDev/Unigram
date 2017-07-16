@@ -11,6 +11,7 @@ using namespace Microsoft::WRL::Wrappers;
 using ABI::Telegram::Api::Native::TL::ITLBinaryWriter;
 using ABI::Telegram::Api::Native::TL::ITLObject;
 using ABI::Windows::Storage::Streams::IBuffer;
+using ABI::Windows::Foundation::IClosable;
 
 namespace ABI
 {
@@ -50,7 +51,7 @@ namespace Telegram
 			namespace TL
 			{
 
-				class TLBinaryWriter abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryWriterEx>, ITLBinaryWriter>
+				class TLBinaryWriter abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryWriterEx>, ITLBinaryWriter, IClosable>
 				{
 				public:
 					//COM exported methods
@@ -65,6 +66,7 @@ namespace Telegram
 					virtual HRESULT STDMETHODCALLTYPE WriteBigEndianInt32(INT32 value) = 0;
 					virtual HRESULT STDMETHODCALLTYPE WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length) = 0;
 					virtual HRESULT STDMETHODCALLTYPE Reset() = 0;
+					virtual HRESULT STDMETHODCALLTYPE Close() = 0;
 					IFACEMETHODIMP WriteUInt16(UINT16 value);
 					IFACEMETHODIMP WriteUInt32(UINT32 value);
 					IFACEMETHODIMP WriteUInt64(UINT64 value);
@@ -126,6 +128,7 @@ namespace Telegram
 					IFACEMETHODIMP WriteBigEndianInt32(INT32 value);
 					IFACEMETHODIMP WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length);
 					IFACEMETHODIMP Reset();
+					IFACEMETHODIMP Close();
 
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(_In_ IBuffer* underlyingBuffer);
@@ -192,6 +195,7 @@ namespace Telegram
 					IFACEMETHODIMP WriteBigEndianInt32(INT32 value);
 					IFACEMETHODIMP WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length);
 					IFACEMETHODIMP Reset();
+					IFACEMETHODIMP Close();
 
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(_In_ LPCWSTR fileName, DWORD creationDisposition);
@@ -200,7 +204,7 @@ namespace Telegram
 					FileHandle m_file;
 				};
 
-				class TLObjectSizeCalculator WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryWriterEx>>
+				class TLObjectSizeCalculator WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryWriterEx>, ITLBinaryWriter, IClosable>
 				{
 					InspectableClass(RuntimeClass_Telegram_Api_Native_TL_TLBinaryWriter, BaseTrust);
 
@@ -231,6 +235,7 @@ namespace Telegram
 					IFACEMETHODIMP WriteWString(_In_ std::wstring const& string);
 					IFACEMETHODIMP WriteBuffer(_In_reads_(length) BYTE const* buffer, UINT32 length);
 					IFACEMETHODIMP Reset();
+					IFACEMETHODIMP Close();
 
 					//Internal methods
 					HRESULT get_TotalLength(_Out_  UINT32* value);

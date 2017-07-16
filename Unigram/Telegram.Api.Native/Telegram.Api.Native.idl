@@ -118,7 +118,7 @@ namespace Telegram
 				[exclusiveto(TLBinaryReader)]
 				[uuid(7F865F69-62F1-4BC9-AD8C-717D0D8DD7F8)]
 				[version(API_VERSION)]
-				interface ITLBinaryReader : IInspectable
+				interface ITLBinaryReader : IInspectable requires Windows.Foundation.IClosable
 				{
 					[propget] HRESULT Position([out][retval] UINT32* value);
 					[propput] HRESULT Position([in] UINT32 value);
@@ -152,7 +152,7 @@ namespace Telegram
 				[exclusiveto(TLBinaryWriter)]
 				[uuid(732B4B01-0603-4ADB-8F29-24096FCDF7C6)]
 				[version(API_VERSION)]
-				interface ITLBinaryWriter : IInspectable
+				interface ITLBinaryWriter : IInspectable requires Windows.Foundation.IClosable
 				{
 					[propget] HRESULT Position([out][retval] UINT32* value);
 					[propput] HRESULT Position([in] UINT32 value);

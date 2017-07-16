@@ -247,6 +247,11 @@ HRESULT TLMemoryBinaryReader::get_Position(UINT32* value)
 		return E_POINTER;
 	}
 
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	*value = m_position;
 	return S_OK;
 }
@@ -256,6 +261,11 @@ HRESULT TLMemoryBinaryReader::put_Position(UINT32 value)
 	if (value > m_capacity)
 	{
 		return E_BOUNDS;
+	}
+
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
 	}
 
 	m_position = value;
@@ -269,6 +279,11 @@ HRESULT TLMemoryBinaryReader::get_UnconsumedBufferLength(UINT32* value)
 		return E_POINTER;
 	}
 
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	*value = m_capacity - m_position;
 	return S_OK;
 }
@@ -278,6 +293,11 @@ HRESULT TLMemoryBinaryReader::ReadByte(BYTE* value)
 	if (value == nullptr)
 	{
 		return E_POINTER;
+	}
+
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
 	}
 
 	if (m_position + sizeof(BYTE) > m_capacity)
@@ -294,6 +314,11 @@ HRESULT TLMemoryBinaryReader::ReadInt16(INT16* value)
 	if (value == nullptr)
 	{
 		return E_POINTER;
+	}
+
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
 	}
 
 	if (m_position + sizeof(INT16) > m_capacity)
@@ -314,6 +339,11 @@ HRESULT TLMemoryBinaryReader::ReadInt32(INT32* value)
 		return E_POINTER;
 	}
 
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (m_position + sizeof(INT32) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
@@ -331,6 +361,11 @@ HRESULT TLMemoryBinaryReader::ReadInt64(INT64* value)
 	if (value == nullptr)
 	{
 		return E_POINTER;
+	}
+
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
 	}
 
 	if (m_position + sizeof(INT64) > m_capacity)
@@ -392,9 +427,9 @@ HRESULT TLMemoryBinaryReader::ReadObjectAndConstructor(UINT32 objectSize, UINT32
 		return E_POINTER;
 	}
 
-	if (m_position + objectSize > m_capacity)
+	if (m_underlyingBuffer == nullptr)
 	{
-		return E_BOUNDS;
+		return RO_E_CLOSED;
 	}
 
 	HRESULT result;
@@ -438,6 +473,11 @@ HRESULT TLMemoryBinaryReader::ReadBigEndianInt32(INT32* value)
 		return E_POINTER;
 	}
 
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (m_position + sizeof(INT32) > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
@@ -457,6 +497,11 @@ HRESULT TLMemoryBinaryReader::ReadRawBuffer(UINT32 __valueSize, BYTE* value)
 		return E_INVALIDARG;
 	}
 
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (m_position + __valueSize > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
@@ -470,12 +515,31 @@ HRESULT TLMemoryBinaryReader::ReadRawBuffer(UINT32 __valueSize, BYTE* value)
 
 HRESULT TLMemoryBinaryReader::Reset()
 {
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	m_position = 0;
+	return S_OK;
+}
+
+HRESULT TLMemoryBinaryReader::Close()
+{
+	m_position = 0;
+	m_capacity = 0;
+	m_buffer = nullptr;
+	m_underlyingBuffer.Reset();
 	return S_OK;
 }
 
 HRESULT TLMemoryBinaryReader::ReadBuffer2(BYTE const** buffer, UINT32* length)
 {
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (m_position + 1 > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
@@ -517,6 +581,11 @@ HRESULT TLMemoryBinaryReader::ReadBuffer2(BYTE const** buffer, UINT32* length)
 
 HRESULT TLMemoryBinaryReader::ReadRawBuffer2(BYTE const** buffer, UINT32 length)
 {
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (m_position + length > m_capacity)
 	{
 		return E_NOT_SUFFICIENT_BUFFER;
@@ -530,6 +599,11 @@ HRESULT TLMemoryBinaryReader::ReadRawBuffer2(BYTE const** buffer, UINT32 length)
 
 HRESULT TLMemoryBinaryReader::SeekCurrent(INT32 bytes)
 {
+	if (m_underlyingBuffer == nullptr)
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (m_position + bytes > m_capacity)
 	{
 		return E_BOUNDS;
@@ -553,6 +627,11 @@ HRESULT TLFileBinaryReader::RuntimeClassInitialize(LPCWSTR fileName, DWORD creat
 
 HRESULT TLFileBinaryReader::get_Position(UINT32* value)
 {
+	if (!m_file.IsValid())
+	{
+		return RO_E_CLOSED;
+	}
+
 	LARGE_INTEGER position;
 	if (!SetFilePointerEx(m_file.Get(), { 0 }, &position, FILE_CURRENT))
 	{
@@ -565,6 +644,11 @@ HRESULT TLFileBinaryReader::get_Position(UINT32* value)
 
 HRESULT TLFileBinaryReader::put_Position(UINT32 value)
 {
+	if (!m_file.IsValid())
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (!SetFilePointerEx(m_file.Get(), { value }, nullptr, FILE_BEGIN))
 	{
 		return GetLastHRESULT();
@@ -578,6 +662,11 @@ HRESULT TLFileBinaryReader::get_UnconsumedBufferLength(UINT32* value)
 	if (value == nullptr)
 	{
 		return E_POINTER;
+	}
+
+	if (!m_file.IsValid())
+	{
+		return RO_E_CLOSED;
 	}
 
 	LARGE_INTEGER position;
@@ -715,6 +804,11 @@ HRESULT TLFileBinaryReader::ReadBigEndianInt32(INT32* value)
 
 HRESULT TLFileBinaryReader::ReadRawBuffer(UINT32 __valueSize, BYTE* value)
 {
+	if (!m_file.IsValid())
+	{
+		return RO_E_CLOSED;
+	}
+
 	DWORD bytesRead;
 	if (!ReadFile(m_file.Get(), value, __valueSize, &bytesRead, nullptr))
 	{
@@ -731,12 +825,24 @@ HRESULT TLFileBinaryReader::ReadRawBuffer(UINT32 __valueSize, BYTE* value)
 
 HRESULT TLFileBinaryReader::Reset()
 {
+	if (!m_file.IsValid())
+	{
+		return RO_E_CLOSED;
+	}
+
 	if (!SetFilePointerEx(m_file.Get(), { 0 }, nullptr, FILE_BEGIN))
 	{
 		return GetLastHRESULT();
 	}
 
 	m_buffer.clear();
+	return S_OK;
+}
+
+HRESULT TLFileBinaryReader::Close()
+{
+	m_buffer.clear();
+	m_file.Close();
 	return S_OK;
 }
 

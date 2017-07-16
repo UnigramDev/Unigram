@@ -11,6 +11,7 @@ using namespace Microsoft::WRL::Wrappers;
 using ABI::Telegram::Api::Native::TL::ITLBinaryReader;
 using ABI::Telegram::Api::Native::TL::ITLObject;
 using ABI::Windows::Storage::Streams::IBuffer;
+using ABI::Windows::Foundation::IClosable;
 
 namespace ABI
 {
@@ -53,7 +54,7 @@ namespace Telegram
 			namespace TL
 			{
 
-				class TLBinaryReader abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryReaderEx>, ITLBinaryReader>
+				class TLBinaryReader abstract : public Implements<RuntimeClassFlags<WinRtClassicComMix>, CloakedIid<ITLBinaryReaderEx>, IClosable>
 				{
 				public:
 					virtual HRESULT STDMETHODCALLTYPE get_Position(_Out_ UINT32* value) = 0;
@@ -69,6 +70,7 @@ namespace Telegram
 					virtual HRESULT STDMETHODCALLTYPE ReadBuffer2(_Out_ BYTE const** buffer, _Out_ UINT32* length) = 0;
 					virtual HRESULT STDMETHODCALLTYPE ReadRawBuffer2(_Out_ BYTE const** buffer, UINT32 length) = 0;
 					virtual HRESULT STDMETHODCALLTYPE Reset() = 0;
+					virtual HRESULT STDMETHODCALLTYPE Close() = 0;
 					IFACEMETHODIMP ReadUInt16(_Out_ UINT16* value);
 					IFACEMETHODIMP ReadUInt32(_Out_ UINT32* value);
 					IFACEMETHODIMP ReadUInt64(_Out_ UINT64* value);
@@ -106,6 +108,7 @@ namespace Telegram
 					IFACEMETHODIMP ReadBuffer2(_Out_ BYTE const** buffer, _Out_ UINT32* length);
 					IFACEMETHODIMP ReadRawBuffer2(_Out_ BYTE const** buffer, UINT32 length);
 					IFACEMETHODIMP Reset();
+					IFACEMETHODIMP Close();
 
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(_In_ IBuffer* underlyingBuffer);
@@ -174,6 +177,7 @@ namespace Telegram
 					IFACEMETHODIMP ReadBuffer2(_Out_ BYTE const** buffer, _Out_ UINT32* length);
 					IFACEMETHODIMP ReadRawBuffer2(_Out_ BYTE const** buffer, UINT32 length);
 					IFACEMETHODIMP Reset();
+					IFACEMETHODIMP Close();
 
 					//Internal methods
 					STDMETHODIMP RuntimeClassInitialize(_In_ LPCWSTR fileName, DWORD creationDisposition);

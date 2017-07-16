@@ -25,6 +25,7 @@ using Telegram.Api.TL.Upload.Methods;
 using Telegram.Api.TL.Messages.Methods;
 using Telegram.Api.TL.Messages;
 using Telegram.Api.TL.Upload;
+using Windows.Storage;
 
 // Il modello di elemento Pagina vuota è documentato all'indirizzo https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x410
 
@@ -140,8 +141,15 @@ namespace Telegram.Api.Native.Test
           null, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, RequestFlag.WithoutLogin | RequestFlag.EnableUnauthorized);
         }
 
-        private void Button_Click_3(object sender, RoutedEventArgs e)
+        private async void Button_Click_3(object sender, RoutedEventArgs e)
         {
+            var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("TestFile.bin", CreationCollisionOption.OpenIfExists);
+            using (var writer = TLObjectSerializer.CreateWriter(file))
+            {
+
+            }
+
+            GC.Collect();
         }
 
         private void Button_Click_4(object sender, RoutedEventArgs e)
