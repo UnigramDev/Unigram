@@ -59,11 +59,11 @@ namespace Telegram.Api.Services
         {
             get
             {
-                return ConnectionManager.Instance.UserId;
+                return _connectionManager.UserId;
             }
             set
             {
-                ConnectionManager.Instance.UserId = value;
+                _connectionManager.UserId = value;
             }
         }
 
@@ -75,7 +75,7 @@ namespace Telegram.Api.Services
             }
         }
 
-        public long ClientTicksDelta { get { return ConnectionManager.Instance.TimeDifference; } }
+        public long ClientTicksDelta { get { return _connectionManager.TimeDifference; } }
 
         //private bool _isInitialized;
 
@@ -114,6 +114,7 @@ namespace Telegram.Api.Services
         private readonly IConnectionService _connectionService;
         private readonly IDeviceInfoService _deviceInfo;
         private readonly IStatsService _statsService;
+        private readonly ConnectionManager _connectionManager;
 
         private Timer _deviceLockedTimer;
         private Timer _checkTransportTimer;
@@ -121,6 +122,13 @@ namespace Telegram.Api.Services
         public MTProtoService(IDeviceInfoService deviceInfo, IUpdatesService updatesService, ICacheService cacheService, IConnectionService connectionService, IStatsService statsService)
         {
             var isBackground = deviceInfo != null && deviceInfo.IsBackground;
+
+            _connectionManager = ConnectionManager.Instance;
+            //_connectionManager.CurrentNetworkTypeChanged += ConnectionManager_CurrentNetworkTypeChanged;
+            _connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
+            _connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;
+            _connectionManager.AuthenticationRequired += ConnectionManager_AuthenticationRequired;
+            _connectionManager.UserConfigurationRequired += ConnectionManager_UserConfigurationRequired;
 
             CurrentUserId = SettingsHelper.UserId;
 
@@ -165,13 +173,6 @@ namespace Telegram.Api.Services
                 _updatesService.GetChannelMessagesAsync = GetMessagesAsync;
             }
 
-            var connectionManager = ConnectionManager.Instance;
-            //connectionManager.CurrentNetworkTypeChanged += ConnectionManager_CurrentNetworkTypeChanged;
-            connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
-            connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;
-            connectionManager.AuthenticationRequired += ConnectionManager_AuthenticationRequired;
-            connectionManager.UserConfigurationRequired += ConnectionManager_UserConfigurationRequired;
-
             Current = this;
         }
 
@@ -184,7 +185,10 @@ namespace Telegram.Api.Services
         {
             if (sender.ConnectionState == ConnectionState.Connected)
             {
-                _updatesService.LoadStateAndUpdate(() => Debug.WriteLine("State updated"));
+                if (SettingsHelper.IsAuthorized)
+                {
+                    _updatesService.LoadStateAndUpdate(() => Debug.WriteLine("State updated"));
+                }
             }
         }
 

@@ -29,8 +29,7 @@ namespace Telegram.Api.Services
 
             var flags = RequestFlag.ForceDownload | RequestFlag.FailOnServerError;
 
-            var connectionManager = ConnectionManager.Instance;
-            var messageToken = connectionManager.SendRequest(obj, (message, ex) =>
+            var messageToken = _connectionManager.SendRequest(obj, (message, ex) =>
             {
                 if (message.Object is TLRPCError error)
                 {
@@ -56,8 +55,7 @@ namespace Telegram.Api.Services
 
             var flags = RequestFlag.ForceDownload | RequestFlag.FailOnServerError;
 
-            var connectionManager = ConnectionManager.Instance;
-            var messageToken = connectionManager.SendRequest(obj, (message, ex) =>
+            var messageToken = _connectionManager.SendRequest(obj, (message, ex) =>
             {
                 if (message.Object is TLRPCError error)
                 {
@@ -85,8 +83,7 @@ namespace Telegram.Api.Services
                 flags |= RequestFlag.EnableUnauthorized;
             }
 
-            var connectionManager = ConnectionManager.Instance;
-            var messageToken = connectionManager.SendRequest(obj, (message, ex) =>
+            var messageToken = _connectionManager.SendRequest(obj, (message, ex) =>
             {
                 if (message.Object is TLRPCError error)
                 {
