@@ -165,16 +165,16 @@ namespace Unigram
             var aggregator = UnigramContainer.Current.ResolveType<ITelegramEventAggregator>();
             aggregator.Publish(active ? "Window_Activated" : "Window_Deactivated");
 
-            //if (active)
-            //{
-            //    var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-            //    protoService.UpdateStatusAsync(false, null);
-            //}
-            //else
-            //{
-            //    var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-            //    protoService.UpdateStatusAsync(true, null);
-            //}
+            if (active)
+            {
+                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+                protoService.RaiseSendStatus(false);
+            }
+            else
+            {
+                var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+                protoService.RaiseSendStatus(true);
+            }
         }
 
         /////// <summary>

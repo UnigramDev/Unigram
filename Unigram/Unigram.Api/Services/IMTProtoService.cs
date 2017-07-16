@@ -31,7 +31,7 @@ namespace Telegram.Api.Services
         NetworkType NetworkType { get; }
 
         // To remove multiple UpdateStatusAsync calls, it's prefer to invoke this method instead
-        void RaiseSendStatus(SendStatusEventArgs e);
+        void RaiseSendStatus(bool offline);
 
         int CurrentUserId { get; set; }
 
