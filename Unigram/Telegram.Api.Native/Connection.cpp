@@ -23,10 +23,10 @@
 #define UPLOAD_CONNECTION_TIMEOUT 25000
 #endif
 
-#define FLAGS_GET_CURRENTNETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>(flags & ConnectionFlag::CurrentNeworkType) >> 4)
-#define FLAGS_SET_CURRENTNETWORKTYPE(flags, networkType) (flags & ~ConnectionFlag::CurrentNeworkType) | static_cast<ConnectionFlag>(static_cast<int>(networkType) << 4)
+#define FLAGS_GET_CURRENTNETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>((flags) & ConnectionFlag::CurrentNeworkType) >> 4)
+#define FLAGS_SET_CURRENTNETWORKTYPE(flags, networkType) ((flags) & ~ConnectionFlag::CurrentNeworkType) | static_cast<ConnectionFlag>(static_cast<int>(networkType) << 4)
 #define FLAGS_GET_CONNECTIONSTATE(flags) static_cast<ConnectionState>(static_cast<int>(flags & ConnectionFlag::ConnectionState))
-#define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) (flags & ~ConnectionFlag::ConnectionState) | static_cast<ConnectionFlag>(static_cast<int>(connectionState))
+#define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) ((flags) & ~ConnectionFlag::ConnectionState) | static_cast<ConnectionFlag>(static_cast<int>(connectionState))
 #define CONNECTION_RECONNECTION_TIMEOUT 1000
 #define CONNECTION_MAX_ATTEMPTS 5
 #define CONNECTION_MAX_PACKET_LENGTH 2 * 1024 * 1024

@@ -19,7 +19,7 @@
 #define TELEGRAM_API_NATIVE_SETTINGS_VERSION 1
 
 using namespace Microsoft::WRL;
-using namespace Microsoft::WRL::Wrappers; 
+using namespace Microsoft::WRL::Wrappers;
 using ABI::Windows::Networking::Connectivity::INetworkInformationStatics;
 using ABI::Windows::Networking::Connectivity::INetworkAdapter;
 using ABI::Telegram::Api::Native::IConnectionManager;
@@ -30,6 +30,7 @@ using ABI::Telegram::Api::Native::Version;
 using ABI::Telegram::Api::Native::ConnectionState;
 using ABI::Telegram::Api::Native::ConnectionNeworkType;
 using ABI::Telegram::Api::Native::ConnectionType;
+using ABI::Telegram::Api::Native::BackendType;
 using ABI::Telegram::Api::Native::ISendRequestCompletedCallback;
 using ABI::Telegram::Api::Native::IRequestQuickAckReceivedCallback;
 using ABI::Telegram::Api::Native::IDatacenter;
@@ -74,8 +75,9 @@ namespace Telegram
 				ConnectionState = 0x3,
 				NetworkType = 0xC,
 				UseIPv6 = 0x10,
-				UpdatingDatacenters = 0x20,
-				UpdatingCDNPublicKeys = 0x40
+				UseTestBackend = 0x20,
+				UpdatingDatacenters = 0x40,
+				UpdatingCDNPublicKeys = 0x80
 			};
 
 		}
@@ -137,6 +139,7 @@ namespace Telegram
 				IFACEMETHODIMP get_CurrentDatacenter(_Out_ IDatacenter** value);
 				IFACEMETHODIMP get_ConnectionState(_Out_ ConnectionState* value);
 				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
+				IFACEMETHODIMP get_CurrentBackendType(_Out_ BackendType* value);
 				IFACEMETHODIMP get_IsIPv6Enabled(_Out_ boolean* value);
 				IFACEMETHODIMP get_IsNetworkAvailable(_Out_ boolean* value);
 				IFACEMETHODIMP get_UserId(_Out_ INT32* value);
@@ -153,6 +156,7 @@ namespace Telegram
 				IFACEMETHODIMP CancelRequest(INT32 requestToken, boolean notifyServer, _Out_ boolean* value);
 				IFACEMETHODIMP UpdateDatacenters();
 				IFACEMETHODIMP Reset();
+				IFACEMETHODIMP SwitchBackend();
 
 				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize(UINT32 minimumThreadCount = MIN_THREAD_COUNT, UINT32 maximumThreadCount = MAX_THREAD_COUNT);

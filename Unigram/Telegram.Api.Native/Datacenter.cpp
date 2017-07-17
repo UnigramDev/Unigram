@@ -21,10 +21,10 @@
 
 #define ENCRYPT_KEY_IV_PARAM 0
 #define DECRYPT_KEY_IV_PARAM 8
-#define FLAGS_GET_HANDSHAKESTATE(flags) static_cast<HandshakeState>(flags & DatacenterFlag::HandshakeState)
-#define FLAGS_SET_HANDSHAKESTATE(flags, handshakeState) (flags & ~DatacenterFlag::HandshakeState) | static_cast<DatacenterFlag>(handshakeState)
-#define FLAGS_GET_AUTHORIZATIONSTATE(flags) static_cast<AuthorizationState>(flags & DatacenterFlag::AuthorizationState)
-#define FLAGS_SET_AUTHORIZATIONSTATE(flags, authorizationState) (flags & ~DatacenterFlag::AuthorizationState) | static_cast<DatacenterFlag>(authorizationState)
+#define FLAGS_GET_HANDSHAKESTATE(flags) static_cast<HandshakeState>((flags) & DatacenterFlag::HandshakeState)
+#define FLAGS_SET_HANDSHAKESTATE(flags, handshakeState) ((flags) & ~DatacenterFlag::HandshakeState) | static_cast<DatacenterFlag>(handshakeState)
+#define FLAGS_GET_AUTHORIZATIONSTATE(flags) static_cast<AuthorizationState>((flags) & DatacenterFlag::AuthorizationState)
+#define FLAGS_SET_AUTHORIZATIONSTATE(flags, authorizationState) ((flags) & ~DatacenterFlag::AuthorizationState) | static_cast<DatacenterFlag>(authorizationState)
 
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;

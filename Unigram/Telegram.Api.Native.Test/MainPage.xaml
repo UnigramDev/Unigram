@@ -9,7 +9,7 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button Content="GC.Collect()" Click="Button_Click"  />
+            <Button Content="Switch backend" Click="Button_Click"  />
             <Button Content="SendCode" Click="Button_Click_1" />
             <Button Content="GetProfilePic" Click="Button_Click_4" />
             <Button Content="GetConfig" Click="Button_Click_2" />
