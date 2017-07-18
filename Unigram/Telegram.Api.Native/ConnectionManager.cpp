@@ -21,10 +21,10 @@
 
 #include "MethodDebug.h"
 
-#define FLAGS_GET_CONNECTIONSTATE(flags) static_cast<ConnectionState>(flags & ConnectionManagerFlag::ConnectionState)
-#define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) (flags & ~ConnectionManagerFlag::ConnectionState) | static_cast<ConnectionManagerFlag>(connectionState)
+#define FLAGS_GET_CONNECTIONSTATE(flags) static_cast<ConnectionState>((flags) & ConnectionManagerFlag::ConnectionState)
+#define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) ((flags) & ~ConnectionManagerFlag::ConnectionState) | static_cast<ConnectionManagerFlag>(connectionState)
 #define FLAGS_GET_NETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>(flags & ConnectionManagerFlag::NetworkType) >> 2)
-#define FLAGS_SET_NETWORKTYPE(flags, networkType) (flags & ~ConnectionManagerFlag::NetworkType) | static_cast<ConnectionManagerFlag>(static_cast<int>(networkType) << 2)
+#define FLAGS_SET_NETWORKTYPE(flags, networkType) ((flags) & ~ConnectionManagerFlag::NetworkType) | static_cast<ConnectionManagerFlag>(static_cast<int>(networkType) << 2)
 #define REQUEST_TIMER_TIMEOUT 1000
 #define REQUEST_TIMER_WINDOW 0
 #define RUNNING_GENERIC_REQUESTS_MAX_COUNT 60
@@ -213,6 +213,19 @@ HRESULT ConnectionManager::get_CurrentDatacenter(IDatacenter** value)
 		*value = datacenter.Detach();
 	}
 
+	return S_OK;
+}
+
+HRESULT ConnectionManager::get_CurrentBackendType(BackendType* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	auto lock = LockCriticalSection();
+
+	*value = static_cast<BackendType>(static_cast<int>(m_flags & ConnectionManagerFlag::UseTestBackend) >> 5);
 	return S_OK;
 }
 
@@ -544,67 +557,66 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 {
 	HRESULT result;
 
-#ifndef _DEBUG
-
-	if (m_datacenters.find(1) == m_datacenters.end())
+	if ((m_flags &  ConnectionManagerFlag::UseTestBackend) == ConnectionManagerFlag::UseTestBackend)
 	{
-		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[1], this, 1, false));
-		ReturnIfFailed(result, m_datacenters[1]->AddEndpoint({ L"149.154.175.40", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, m_datacenters[1]->AddEndpoint({ L"2001:b28:f23d:f001:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
-	}
+		if (m_datacenters.find(1) == m_datacenters.end())
+		{
+			ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[1], this, 1, false));
+			ReturnIfFailed(result, m_datacenters[1]->AddEndpoint({ L"149.154.175.40", 443 }, ConnectionType::Generic, false));
+			ReturnIfFailed(result, m_datacenters[1]->AddEndpoint({ L"2001:b28:f23d:f001:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
+		}
 
-	if (m_datacenters.find(2) == m_datacenters.end())
+		if (m_datacenters.find(2) == m_datacenters.end())
+		{
+			ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[2], this, 2, false));
+			ReturnIfFailed(result, m_datacenters[2]->AddEndpoint({ L"149.154.167.40", 443 }, ConnectionType::Generic, false));
+			ReturnIfFailed(result, m_datacenters[2]->AddEndpoint({ L"2001:67c:4e8:f002:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
+		}
+
+		if (m_datacenters.find(3) == m_datacenters.end())
+		{
+			ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[3], this, 3, false));
+			ReturnIfFailed(result, m_datacenters[3]->AddEndpoint({ L"149.154.175.117", 443 }, ConnectionType::Generic, false));
+			ReturnIfFailed(result, m_datacenters[3]->AddEndpoint({ L"2001:b28:f23d:f003:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
+		}
+	}
+	else
 	{
-		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[2], this, 2, false));
-		ReturnIfFailed(result, m_datacenters[2]->AddEndpoint({ L"149.154.167.40", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, m_datacenters[2]->AddEndpoint({ L"2001:67c:4e8:f002:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
+		if (m_datacenters.find(1) == m_datacenters.end())
+		{
+			ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[1], this, 1, false));
+			ReturnIfFailed(result, m_datacenters[1]->AddEndpoint({ L"149.154.175.50", 443 }, ConnectionType::Generic, false));
+			ReturnIfFailed(result, m_datacenters[1]->AddEndpoint({ L"2001:b28:f23d:f001:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
+		}
+
+		if (m_datacenters.find(2) == m_datacenters.end())
+		{
+			ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[2], this, 2, false));
+			ReturnIfFailed(result, m_datacenters[2]->AddEndpoint({ L"149.154.167.51", 443 }, ConnectionType::Generic, false));
+			ReturnIfFailed(result, m_datacenters[2]->AddEndpoint({ L"2001:67c:4e8:f002:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
+		}
+
+		if (m_datacenters.find(3) == m_datacenters.end())
+		{
+			ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[3], this, 3, false));
+			ReturnIfFailed(result, m_datacenters[3]->AddEndpoint({ L"149.154.175.100", 443 }, ConnectionType::Generic, false));
+			ReturnIfFailed(result, m_datacenters[3]->AddEndpoint({ L"2001:b28:f23d:f003:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
+		}
+
+		if (m_datacenters.find(4) == m_datacenters.end())
+		{
+			ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[4], this, 4, false));
+			ReturnIfFailed(result, m_datacenters[4]->AddEndpoint({ L"149.154.167.91", 443 }, ConnectionType::Generic, false));
+			ReturnIfFailed(result, m_datacenters[4]->AddEndpoint({ L"2001:67c:4e8:f004:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
+		}
+
+		if (m_datacenters.find(5) == m_datacenters.end())
+		{
+			ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[5], this, 5, false));
+			ReturnIfFailed(result, m_datacenters[5]->AddEndpoint({ L"149.154.171.5", 443 }, ConnectionType::Generic, false));
+			ReturnIfFailed(result, m_datacenters[5]->AddEndpoint({ L"2001:b28:f23f:f005:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
+		}
 	}
-
-	if (m_datacenters.find(3) == m_datacenters.end())
-	{
-		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[3], this, 3, false));
-		ReturnIfFailed(result, m_datacenters[3]->AddEndpoint({ L"149.154.175.117", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, m_datacenters[3]->AddEndpoint({ L"2001:b28:f23d:f003:0000:0000:0000:000e", 443 }, ConnectionType::Generic, true));
-	}
-
-#else
-
-	if (m_datacenters.find(1) == m_datacenters.end())
-	{
-		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[1], this, 1, false));
-		ReturnIfFailed(result, m_datacenters[1]->AddEndpoint({ L"149.154.175.50", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, m_datacenters[1]->AddEndpoint({ L"2001:b28:f23d:f001:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
-	}
-
-	if (m_datacenters.find(2) == m_datacenters.end())
-	{
-		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[2], this, 2, false));
-		ReturnIfFailed(result, m_datacenters[2]->AddEndpoint({ L"149.154.167.51", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, m_datacenters[2]->AddEndpoint({ L"2001:67c:4e8:f002:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
-	}
-
-	if (m_datacenters.find(3) == m_datacenters.end())
-	{
-		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[3], this, 3, false));
-		ReturnIfFailed(result, m_datacenters[3]->AddEndpoint({ L"149.154.175.100", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, m_datacenters[3]->AddEndpoint({ L"2001:b28:f23d:f003:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
-	}
-
-	if (m_datacenters.find(4) == m_datacenters.end())
-	{
-		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[4], this, 4, false));
-		ReturnIfFailed(result, m_datacenters[4]->AddEndpoint({ L"149.154.167.91", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, m_datacenters[4]->AddEndpoint({ L"2001:67c:4e8:f004:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
-	}
-
-	if (m_datacenters.find(5) == m_datacenters.end())
-	{
-		ReturnIfFailed(result, MakeAndInitialize<Datacenter>(&m_datacenters[5], this, 5, false));
-		ReturnIfFailed(result, m_datacenters[5]->AddEndpoint({ L"149.154.171.5", 443 }, ConnectionType::Generic, false));
-		ReturnIfFailed(result, m_datacenters[5]->AddEndpoint({ L"2001:b28:f23f:f005:0000:0000:0000:000a", 443 }, ConnectionType::Generic, true));
-	}
-
-#endif
 
 	m_currentDatacenterId = 2;
 	m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
@@ -703,6 +715,7 @@ HRESULT ConnectionManager::Reset()
 	}
 
 	m_userId = 0;
+	m_flags = FLAGS_SET_CONNECTIONSTATE(m_flags & (ConnectionManagerFlag::NetworkType | ConnectionManagerFlag::UseIPv6 | ConnectionManagerFlag::UseTestBackend), ConnectionState::Connecting);
 	m_datacenters.clear();
 	m_cdnPublicKeys.clear();
 	m_requestsQueue.clear();
@@ -716,6 +729,15 @@ HRESULT ConnectionManager::Reset()
 	ReturnIfFailed(result, InitializeDefaultDatacenters());
 
 	return SaveSettings();
+}
+
+HRESULT ConnectionManager::SwitchBackend()
+{
+	auto lock = LockCriticalSection();
+
+	m_flags ^= ConnectionManagerFlag::UseTestBackend;
+
+	return Reset();
 }
 
 HRESULT ConnectionManager::UpdateCDNPublicKeys()
@@ -2035,6 +2057,9 @@ HRESULT ConnectionManager::LoadSettings()
 		return E_FAIL;
 	}
 
+	INT32 flags;
+	ReturnIfFailed(result, settingsReader->ReadInt32(&flags));
+
 	INT32 currentDatacenterId;
 	ReturnIfFailed(result, settingsReader->ReadInt32(&currentDatacenterId));
 
@@ -2084,6 +2109,7 @@ HRESULT ConnectionManager::LoadSettings()
 
 	//auto lock = LockCriticalSection();
 
+	m_flags = (m_flags & ~ConnectionManagerFlag::UseTestBackend) | (static_cast<ConnectionManagerFlag>(m_flags) & ConnectionManagerFlag::UseTestBackend);
 	m_currentDatacenterId = currentDatacenterId;
 	m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
 	m_datacentersExpirationTime = datacentersExpirationTime;
@@ -2114,6 +2140,7 @@ HRESULT ConnectionManager::SaveSettings()
 	ComPtr<TLFileBinaryWriter> settingsWriter;
 	ReturnIfFailed(result, MakeAndInitialize<TLFileBinaryWriter>(&settingsWriter, settingsFileName.data(), CREATE_ALWAYS));
 	ReturnIfFailed(result, settingsWriter->WriteUInt32(TELEGRAM_API_NATIVE_SETTINGS_VERSION));
+	ReturnIfFailed(result, settingsWriter->WriteInt32(static_cast<INT32>(m_flags & ConnectionManagerFlag::UseTestBackend)));
 	ReturnIfFailed(result, settingsWriter->WriteInt32(m_currentDatacenterId));
 	ReturnIfFailed(result, settingsWriter->WriteInt32(m_datacentersExpirationTime));
 	ReturnIfFailed(result, settingsWriter->WriteInt32(m_timeDifference));

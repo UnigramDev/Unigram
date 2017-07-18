@@ -84,6 +84,7 @@ namespace Telegram.Api.Native.Test
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var connections = ConnectionManager.Instance.Datacenters.SelectMany(d => d.Connections).ToArray();
+            ConnectionManager.Instance.SwitchBackend();
 
             //ConnectionManager.Instance.SendRequest(new TLHelpInviteText(), (message5, ex5) =>
             //{

@@ -14,6 +14,7 @@ namespace Telegram
 			typedef enum ConnectionType ConnectionType;
 			typedef enum ConnectionNeworkType ConnectionNeworkType;
 			typedef enum ConnectionState ConnectionState;
+			typedef enum BackendType BackendType;
 			typedef enum RequestFlag RequestFlag;
 
 			typedef struct Version Version;
@@ -421,6 +422,13 @@ namespace Telegram
 			};
 
 			[version(API_VERSION)]
+			enum BackendType
+			{
+				Default = 0,
+				Test = 1
+			};
+
+			[version(API_VERSION)]
 			enum ConnectionState
 			{
 				Connecting = 1,
@@ -639,6 +647,7 @@ namespace Telegram
 				[propget] HRESULT ConnectionState([out][retval] ConnectionState* value);
 				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
 				[propget] HRESULT CurrentDatacenter([out][retval] Datacenter** value);
+				[propget] HRESULT CurrentBackendType([out][retval] BackendType* value);
 				[propget] HRESULT IsIPv6Enabled([out][retval] boolean* value);
 				[propget] HRESULT IsNetworkAvailable([out][retval] boolean* value);
 				[propget] HRESULT UserId([out][retval] INT32* value);
@@ -656,6 +665,7 @@ namespace Telegram
 				HRESULT CancelRequest([in] INT32 requestToken,[in] boolean notifyServer,[out][retval] boolean* value);
 				HRESULT UpdateDatacenters();
 				HRESULT Reset();
+				HRESULT SwitchBackend();
 			}
 
 			[static(IConnectionManagerStatics, API_VERSION)]
