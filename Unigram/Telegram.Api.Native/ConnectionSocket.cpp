@@ -99,7 +99,7 @@ HRESULT ConnectionSocket::ConnectSocket(ConnectionManager* connectionManager, Se
 		return WSAGetLastHRESULT();
 	}
 
-	SetThreadpoolWait(EventObjectT::GetHandle(), m_socketEvent.Get(), &m_timeout);
+	SetThreadpoolWait(ThreadpoolObjectT::GetHandle(), m_socketEvent.Get(), &m_timeout);
 
 	if (WSAEventSelect(m_socket, m_socketEvent.Get(), FD_CONNECT | FD_READ | FD_WRITE | FD_CLOSE) == SOCKET_ERROR)
 	{
@@ -235,7 +235,13 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 	m_socket = INVALID_SOCKET;
 
 	//WSASetEvent(m_socketEvent.Get());
-	DetachFromThreadpool(flags & SOCKET_CLOSE_JOINTHREAD);
+
+	if (flags & SOCKET_CLOSE_JOINTHREAD)
+	{
+		WaitForCallback(true);
+	}
+
+	DetachFromThreadpool();
 
 	m_socketEvent.Close();
 	m_sendBuffer = {};
@@ -249,7 +255,7 @@ HRESULT ConnectionSocket::CloseSocket(int wsaError, BYTE flags)
 	return S_OK;
 }
 
-HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG_PTR waitResult)
+HRESULT ConnectionSocket::OnCallback(PTP_CALLBACK_INSTANCE instance, ULONG_PTR waitResult)
 {
 	auto lock = LockCriticalSection();
 
@@ -336,7 +342,7 @@ HRESULT ConnectionSocket::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG_
 			}
 		}
 
-		SetThreadpoolWait(EventObjectT::GetHandle(), m_socketEvent.Get(), &m_timeout);
+		SetThreadpoolWait(ThreadpoolObjectT::GetHandle(), m_socketEvent.Get(), &m_timeout);
 		return S_OK;
 	} while (false);
 

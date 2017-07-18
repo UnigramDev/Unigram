@@ -19,14 +19,14 @@ namespace Telegram
 
 			class MultiThreadObject
 			{
-			protected:
-
+			public:
 #if DEBUG_CRITICAL_SECTION
 				typedef Microsoft::WRL::Wrappers::DebugCriticalSection CriticalSection;
 #else
 				typedef Microsoft::WRL::Wrappers::CriticalSection CriticalSection;
 #endif
 
+			protected:
 				inline CriticalSection::SyncLock LockCriticalSection()
 				{
 					return m_criticalSection.Lock();
@@ -35,6 +35,11 @@ namespace Telegram
 				inline CriticalSection::SyncLock TryLockCriticalSection()
 				{
 					return m_criticalSection.TryLock();
+				}
+
+				inline CriticalSection* GetCriticalSection()
+				{
+					return &m_criticalSection;
 				}
 
 			private:

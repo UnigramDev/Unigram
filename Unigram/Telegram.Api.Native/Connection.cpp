@@ -194,9 +194,9 @@ HRESULT Connection::Connect(bool ipv6)
 	m_flags = FLAGS_SET_CURRENTNETWORKTYPE(m_flags, currentNetworkType) | static_cast<ConnectionFlag>(ConnectionState::Connecting);
 
 	ComPtr<Connection> connection = this;
-	return connectionManager->SubmitWork([connection, connectionManager]()-> void
+	return connectionManager->SubmitWork([connection, connectionManager]()-> HRESULT
 	{
-		connectionManager->OnConnectionOpening(connection.Get());
+		return connectionManager->OnConnectionOpening(connection.Get());
 	});
 }
 
@@ -547,9 +547,9 @@ HRESULT Connection::OnSocketConnected()
 
 	ComPtr<Connection> connection = this;
 	auto& connectionManager = m_datacenter->GetConnectionManager();
-	return connectionManager->SubmitWork([connection, connectionManager]()-> void
+	return connectionManager->SubmitWork([connection, connectionManager]()-> HRESULT
 	{
-		connectionManager->OnConnectionOpened(connection.Get());
+		return connectionManager->OnConnectionOpened(connection.Get());
 	});
 }
 
@@ -568,9 +568,9 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 
 	{
 		ComPtr<Connection> connection = this;
-		ReturnIfFailed(result, connectionManager->SubmitWork([connection, connectionManager]()-> void
+		ReturnIfFailed(result, connectionManager->SubmitWork([connection, connectionManager]()-> HRESULT
 		{
-			connectionManager->OnConnectionClosed(connection.Get());
+			return connectionManager->OnConnectionClosed(connection.Get());
 		}));
 	}
 
@@ -650,9 +650,9 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 			BreakIfFailed(result, packetReader->ReadBigEndianInt32(&ackId));
 
 			ComPtr<Connection> connection = this;
-			BreakIfFailed(result, connectionManager->SubmitWork([connection, connectionManager, ackId]()-> void
+			BreakIfFailed(result, connectionManager->SubmitWork([connection, connectionManager, ackId]()-> HRESULT
 			{
-				connectionManager->OnConnectionQuickAckReceived(connection.Get(), ackId & ~(1 << 31));
+				return connectionManager->OnConnectionQuickAckReceived(connection.Get(), ackId & ~(1 << 31));
 			}));
 			continue;
 		}
@@ -784,8 +784,8 @@ HRESULT Connection::OnMessageReceived(TLMemoryBinaryReader* messageReader, UINT3
 
 	ComPtr<Connection> connection = this;
 	auto& connectionManager = m_datacenter->GetConnectionManager();
-	return connectionManager->SubmitWork([messageContext, messageObject, connection]()-> void
+	return connectionManager->SubmitWork([messageContext, messageObject, connection]()-> HRESULT
 	{
-		connection->HandleMessageResponse(&messageContext, messageObject.Get());
+		return connection->HandleMessageResponse(&messageContext, messageObject.Get());
 	});
 }

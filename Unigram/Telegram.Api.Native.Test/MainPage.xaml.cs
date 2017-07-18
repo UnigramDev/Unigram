@@ -45,9 +45,14 @@ namespace Telegram.Api.Native.Test
             connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
             connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;
             connectionManager.AuthenticationRequired += ConnectionManager_AuthenticationRequired;
-
+            connectionManager.UserConfigurationRequired += ConnectionManager_UserConfigurationRequired;
 
             TLTestObject.Register();
+        }
+
+        private void ConnectionManager_UserConfigurationRequired(ConnectionManager sender, UserConfiguration args)
+        {
+            args.AppId = Constants.ApiId;
         }
 
         private void ConnectionManager_AuthenticationRequired(ConnectionManager sender, object args)

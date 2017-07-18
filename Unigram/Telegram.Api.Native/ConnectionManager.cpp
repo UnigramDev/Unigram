@@ -31,6 +31,7 @@
 #define RUNNING_DOWNLOAD_REQUESTS_MAX_COUNT 5
 #define RUNNING_UPLOAD_REQUESTS_MAX_COUNT 5
 #define DATACENTER_EXPIRATION_TIME 60 * 60
+#define PING_TIMER_TIMEOUT 20000
 
 using namespace ABI::Windows::Storage;
 using namespace ABI::Windows::UI::Xaml;
@@ -95,7 +96,7 @@ HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 
 	HRESULT result;
 	ReturnIfFailed(result, ThreadpoolManager::RuntimeClassInitialize(minimumThreadCount, maximumThreadCount));
-	ReturnIfFailed(result, EventObjectT::AttachToThreadpool(this));
+	ReturnIfFailed(result, ThreadpoolObjectT::AttachToThreadpool(this));
 
 	ComPtr<IApplicationStatics> applicationStatics;
 	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_UI_Xaml_Application).Get(), &applicationStatics));
@@ -392,7 +393,7 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 
 #pragma message("Potential deadlock")
 
-	ReturnIfFailed(result, SubmitWork([this, flags, requestToken, request]() -> void
+	ReturnIfFailed(result, SubmitWork([this, flags, requestToken, request]() -> HRESULT
 	{
 		//{
 		auto requestsLock = m_requestsCriticalSection.Lock();
@@ -402,7 +403,7 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 		OutputDebugStringFormat(L"Enqueued request %d, %d running requests: %d generic, %d download and %d upload at %llu\n",
 			requestToken, m_runningRequests.size(), m_runningRequestCount[0], m_runningRequestCount[1], m_runningRequestCount[2], GetCurrentMonotonicTime());
 
-		auto requestsTimer = EventObjectT::GetHandle();
+		auto requestsTimer = ThreadpoolObjectT::GetHandle();
 		if ((flags & RequestFlag::Immediate) == RequestFlag::Immediate)
 		{
 			FILETIME timeout = {};
@@ -414,6 +415,8 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 			TimeoutToFileTime(REQUEST_TIMER_TIMEOUT, timeout);
 			SetThreadpoolTimer(requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
 		}
+
+		return S_OK;
 	}));
 
 	*value = requestToken;
@@ -547,7 +550,7 @@ HRESULT ConnectionManager::UpdateDatacenters()
 			auto requestsLock = m_requestsCriticalSection.Lock();
 
 			FILETIME timeout = {};
-			SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
+			SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
 		}
 
 	}).Get(), nullptr, m_currentDatacenterId, ConnectionType::Generic, RequestFlag::EnableUnauthorized | RequestFlag::WithoutLogin | RequestFlag::TryDifferentDc, &requestToken);
@@ -725,7 +728,7 @@ HRESULT ConnectionManager::Reset()
 	ZeroMemory(m_runningRequestCount, sizeof(m_runningRequestCount));
 
 	HRESULT result;
-	ReturnIfFailed(result, EventObjectT::AttachToThreadpool(this));
+	ReturnIfFailed(result, ThreadpoolObjectT::AttachToThreadpool(this));
 	ReturnIfFailed(result, InitializeDefaultDatacenters());
 
 	return SaveSettings();
@@ -780,7 +783,7 @@ HRESULT ConnectionManager::UpdateCDNPublicKeys()
 				auto requestsLock = m_requestsCriticalSection.Lock();
 
 				FILETIME timeout = {};
-				SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
+				SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
 			}
 
 			return SaveCDNPublicKeys();
@@ -1486,7 +1489,7 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 			//}
 
 			FILETIME timeout = {};
-			SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
+			SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
 			return S_OK;
 		}
 	}
@@ -1714,7 +1717,7 @@ HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
 		}, true);
 
 		FILETIME timeout = {};
-		SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
+		SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
 	}
 
 	return result;
@@ -1725,7 +1728,7 @@ HRESULT ConnectionManager::OnApplicationResuming(IInspectable* sender, IInspecta
 	auto requestsLock = m_requestsCriticalSection.Lock();
 
 	FILETIME timeout = {};
-	SetThreadpoolTimer(EventObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
+	SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
 	return S_OK;
 }
 
@@ -1920,9 +1923,9 @@ HRESULT ConnectionManager::OnConnectionSessionCreated(Connection* connection, IN
 	return S_OK;
 }
 
-HRESULT ConnectionManager::OnEvent(PTP_CALLBACK_INSTANCE callbackInstance, ULONG_PTR param)
+HRESULT ConnectionManager::OnCallback(PTP_CALLBACK_INSTANCE instance, ULONG_PTR param)
 {
-	SetThreadpoolTimer(EventObjectT::GetHandle(), nullptr, 0, 0);
+	SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), nullptr, 0, 0);
 
 	return ProcessRequests();
 }

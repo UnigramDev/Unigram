@@ -298,7 +298,7 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="MethodDebug.h" />
     <ClInclude Include="UserConfiguration.h" />
     <ClInclude Include="ProxySettings.h" />
-    <ClInclude Include="EventObject.h" />
+    <ClInclude Include="ThreadpoolObject.h" />
     <ClInclude Include="GZip.h" />
     <ClInclude Include="NativeBuffer.h" />
     <ClInclude Include="Reference.h" />
@@ -315,7 +315,6 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClInclude Include="Wrappers\WSAEvent.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ConnectionSocket.h" />
-    <ClInclude Include="Timer.h" />
     <ClInclude Include="TLBinaryReader.h" />
     <ClInclude Include="TLBinaryWriter.h" />
   </ItemGroup>
@@ -342,7 +341,6 @@ rmdir "$(OutDir)Metadata" /s /q</Command>
     <ClCompile Include="MessageRequest.cpp" />
     <ClCompile Include="ProxySettings.cpp" />
     <ClCompile Include="ThreadpoolManager.cpp" />
-    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TLBinaryReader.cpp" />
     <ClCompile Include="TLBinaryWriter.cpp" />
     <ClCompile Include="TLObject.cpp" />

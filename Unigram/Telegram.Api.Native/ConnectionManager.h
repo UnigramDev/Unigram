@@ -6,7 +6,7 @@
 #include <list>
 #include <wrl.h>
 #include <Windows.Networking.Connectivity.h>
-#include "EventObject.h"
+#include "ThreadpoolObject.h"
 #include "DatacenterServer.h"
 #include "Telegram.Api.Native.h"
 
@@ -110,7 +110,7 @@ namespace Telegram
 			class MessageRequest;
 			class UserConfiguration;
 
-			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager>, public virtual ThreadpoolManager, public virtual EventObjectT<EventTraits::TimerTraits>
+			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager>, public virtual ThreadpoolManager, protected virtual Details::ThreadpoolObjectT<ThreadpoolTraits::TimerTraits, true>
 			{
 				friend class Datacenter;
 				friend class Connection;
@@ -232,7 +232,7 @@ namespace Telegram
 				bool GetDatacenterById(UINT32 id, _Out_ ComPtr<Datacenter>& datacenter);
 				bool GetRequestByMessageId(INT64 messageId, _Out_ ComPtr<MessageRequest>& request);
 				bool GetCDNPublicKey(INT32 datacenterId, _In_ std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
-				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _In_ ULONG_PTR param) override;
+				virtual HRESULT OnCallback(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _In_ ULONG_PTR param) override;
 
 				inline bool IsCurrentDatacenter(INT32 datacenterId)
 				{

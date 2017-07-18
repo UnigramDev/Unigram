@@ -3,8 +3,6 @@
 #include <wrl.h>
 #include <windows.foundation.h>
 #include "Telegram.Api.Native.h"
-#include "EventObject.h"
-#include "Timer.h"
 #include "ConnectionSession.h"
 #include "ConnectionSocket.h"
 #include "ConnectionCryptography.h"
@@ -87,7 +85,7 @@ namespace Telegram
 			struct MessageContext;
 
 			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, CloakedIid<IClosable>>,
-				public virtual EventObjectT<EventTraits::WaitTraits>, public ConnectionSession, public ConnectionSocket, public ConnectionCryptography
+				public virtual MultiThreadObject, protected ConnectionSession, protected ConnectionSocket, protected ConnectionCryptography
 			{
 				friend class Datacenter;
 				friend class ConnectionManager;

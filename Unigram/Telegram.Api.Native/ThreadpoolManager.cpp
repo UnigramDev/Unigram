@@ -1,7 +1,7 @@
 #include "pch.h"
 #include <memory>
 #include "ThreadpoolManager.h"
-#include "EventObject.h"
+#include "ThreadpoolObject.h"
 #include "Helpers\COMHelper.h"
 
 using namespace Telegram::Api::Native;
@@ -64,39 +64,19 @@ HRESULT ThreadpoolManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 	}
 
 	SetThreadpoolCallbackPool(&m_threadpoolEnvironment, m_threadpool);
-	SetThreadpoolCallbackCleanupGroup(&m_threadpoolEnvironment, m_threadpoolCleanupGroup, ThreadpoolManager::GroupCancelCallback);
+	SetThreadpoolCallbackCleanupGroup(&m_threadpoolEnvironment, m_threadpoolCleanupGroup, ThreadpoolManager::GroupCleanupCallback);
 
 	return S_OK;
 }
 
-void ThreadpoolManager::CloseAllObjects(bool wait)
+void ThreadpoolManager::CloseAllObjects(bool cancelPendingCallbacks)
 {
-	CloseThreadpoolCleanupGroupMembers(m_threadpoolCleanupGroup, wait, nullptr);
+	CloseThreadpoolCleanupGroupMembers(m_threadpoolCleanupGroup, cancelPendingCallbacks, nullptr);
 }
 
-HRESULT ThreadpoolManager::AttachEventObject(EventObject* object)
+HRESULT ThreadpoolManager::SubmitWork(ThreadpoolWorkCallback const& workHandler)
 {
-	if (object == nullptr)
-	{
-		return E_INVALIDARG;
-	}
-
-	return object->AttachToThreadpool(this);
-}
-
-HRESULT ThreadpoolManager::DetachEventObject(EventObject* object, bool waitCallback)
-{
-	if (object == nullptr)
-	{
-		return E_INVALIDARG;
-	}
-
-	return object->DetachFromThreadpool(waitCallback);
-}
-
-HRESULT ThreadpoolManager::SubmitWork(std::function<void()> const& workHandler)
-{
-	auto workContext = std::make_unique<WorkContext>(workHandler);
+	std::unique_ptr<ThreadpoolWork> workContext(new ThreadpoolWork(workHandler));
 	auto workHandle = CreateThreadpoolWork(ThreadpoolManager::WorkCallback, workContext.get(), &m_threadpoolEnvironment);
 	if (workHandle == nullptr)
 	{
@@ -113,11 +93,13 @@ void ThreadpoolManager::WorkCallback(PTP_CALLBACK_INSTANCE instance, PVOID conte
 {
 	CloseThreadpoolWork(work);
 
-	auto workHandler = std::unique_ptr<WorkContext>(reinterpret_cast<WorkContext*>(context));
+	auto workHandler = reinterpret_cast<ThreadpoolWork*>(context);
 	workHandler->Invoke();
+
+	delete workHandler;
 }
 
-void ThreadpoolManager::GroupCancelCallback(PVOID objectContext, PVOID cleanupContext)
+void ThreadpoolManager::GroupCleanupCallback(PVOID objectContext, PVOID cleanupContext)
 {
-	reinterpret_cast<ThreadpoolObject*>(objectContext)->OnGroupCancel();
+	reinterpret_cast<ThreadpoolObject*>(objectContext)->OnGroupCleanupCallback();
 }

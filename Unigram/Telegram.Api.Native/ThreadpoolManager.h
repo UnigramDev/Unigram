@@ -11,32 +11,32 @@ namespace Telegram
 	{
 		namespace Native
 		{
-
-			class ThreadpoolObject abstract
+			namespace Details
 			{
-				friend class ThreadpoolManager;
 
-			protected:
-				virtual void OnGroupCancel() = 0;
-			};
+				template<typename EventTraits, bool ownsHandle>
+				class ThreadpoolObjectT;
 
+			}
+
+			
 			class ThreadpoolManager abstract : public virtual MultiThreadObject
 			{
-				friend class EventObject;
-				template<typename EventTraits>
-				friend class EventObjectT;
+				template<typename EventTraits, bool ownsHandle>
+				friend class Details::ThreadpoolObjectT;
+				friend class ThreadpoolWork;
 
 			public:
+				typedef std::function<HRESULT()> ThreadpoolWorkCallback;
+
 				ThreadpoolManager();
 				~ThreadpoolManager();
 
-				HRESULT AttachEventObject(_In_ EventObject* object);
-				HRESULT DetachEventObject(_In_ EventObject* object, bool waitCallback);
-				HRESULT SubmitWork(_In_ std::function<void()> const& work);
+				HRESULT SubmitWork(_In_ ThreadpoolWorkCallback const& work);
 
 			protected:
 				HRESULT RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount);
-				void CloseAllObjects(bool wait);
+				void CloseAllObjects(bool cancelPendingCallbacks);
 
 				inline PTP_CALLBACK_ENVIRON GetEnvironment()
 				{
@@ -44,31 +44,8 @@ namespace Telegram
 				}
 
 			private:
-				class WorkContext : public ThreadpoolObject
-				{
-				public:
-					WorkContext(std::function<void()> const& work) :
-						m_work(work)
-					{
-					}
-
-					inline void Invoke()
-					{
-						m_work();
-					}
-
-				protected:
-					virtual void OnGroupCancel() override
-					{
-						delete this;
-					}
-
-				private:
-					const std::function<void()> m_work;
-				};
-
 				static void NTAPI WorkCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ PTP_WORK work);
-				static void NTAPI GroupCancelCallback(_Inout_opt_ PVOID objectContext, _Inout_opt_ PVOID cleanupContext);
+				static void NTAPI GroupCleanupCallback(_Inout_opt_ PVOID objectContext, _Inout_opt_ PVOID cleanupContext);
 
 				TP_CALLBACK_ENVIRON m_threadpoolEnvironment;
 				PTP_POOL m_threadpool;

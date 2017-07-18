@@ -4,7 +4,7 @@
 #include <string>
 #include <Winsock2.h>
 #include <wrl.h>
-#include "EventObject.h"
+#include "ThreadpoolObject.h"
 #include "Wrappers\WSAEvent.h"
 
 using namespace Microsoft::WRL;
@@ -20,7 +20,7 @@ namespace Telegram
 			struct ServerEndpoint;
 			class ConnectionManager;
 
-			class ConnectionSocket abstract : virtual EventObjectT<EventTraits::WaitTraits>
+			class ConnectionSocket abstract : protected virtual Details::ThreadpoolObjectT<ThreadpoolTraits::WaitTraits, true>
 			{
 			public:
 				ConnectionSocket();
@@ -28,7 +28,7 @@ namespace Telegram
 
 			protected:
 				void SetTimeout(UINT32 timeout);
-				HRESULT Close();		
+				HRESULT Close();
 				HRESULT ConnectSocket(_In_ ConnectionManager* connectionManager, _In_ ServerEndpoint const* endpoint, bool ipv6);
 				HRESULT DisconnectSocket(bool immediate);
 				HRESULT SendData(_In_reads_(length) BYTE const* buffer, UINT32 length);
@@ -38,7 +38,7 @@ namespace Telegram
 				virtual HRESULT OnSocketDisconnected(int wsaError) = 0;
 
 			private:
-				virtual HRESULT OnEvent(_In_ PTP_CALLBACK_INSTANCE callbackInstance, ULONG_PTR waitResult) override;
+				virtual HRESULT OnCallback(_In_ PTP_CALLBACK_INSTANCE instance, ULONG_PTR waitResult) override;
 				HRESULT CloseSocket(int wsaError, BYTE flags);
 				HRESULT GetLastErrorAndCloseSocket(BYTE flags);
 
