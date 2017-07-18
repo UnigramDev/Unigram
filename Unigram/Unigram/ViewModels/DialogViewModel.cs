@@ -1808,7 +1808,7 @@ namespace Unigram.ViewModels
                             }
                         }
                     }
-                    else if (fwdMessage.ToId is TLPeerUser peerUser && peerUser.UserId == SettingsHelper.UserId)
+                    else if (fwdMessage.FromId == SettingsHelper.UserId && fwdMessage.ToId is TLPeerUser peerUser && peerUser.UserId == SettingsHelper.UserId)
                     {
 
                     }
