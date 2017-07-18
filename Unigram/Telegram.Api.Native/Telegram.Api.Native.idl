@@ -648,6 +648,7 @@ namespace Telegram
 				[propget] HRESULT CurrentNetworkType([out][retval] ConnectionNeworkType* value);
 				[propget] HRESULT CurrentDatacenter([out][retval] Datacenter** value);
 				[propget] HRESULT CurrentBackendType([out][retval] BackendType* value);
+				[propget] HRESULT CurrentRoundTripTime([out][retval] Windows.Foundation.TimeSpan* value);
 				[propget] HRESULT IsIPv6Enabled([out][retval] boolean* value);
 				[propget] HRESULT IsNetworkAvailable([out][retval] boolean* value);
 				[propget] HRESULT UserId([out][retval] INT32* value);

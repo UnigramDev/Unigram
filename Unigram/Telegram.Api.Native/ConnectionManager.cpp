@@ -25,13 +25,13 @@
 #define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) ((flags) & ~ConnectionManagerFlag::ConnectionState) | static_cast<ConnectionManagerFlag>(connectionState)
 #define FLAGS_GET_NETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>(flags & ConnectionManagerFlag::NetworkType) >> 2)
 #define FLAGS_SET_NETWORKTYPE(flags, networkType) ((flags) & ~ConnectionManagerFlag::NetworkType) | static_cast<ConnectionManagerFlag>(static_cast<int>(networkType) << 2)
-#define REQUEST_TIMER_TIMEOUT 1000
-#define REQUEST_TIMER_WINDOW 0
 #define RUNNING_GENERIC_REQUESTS_MAX_COUNT 60
 #define RUNNING_DOWNLOAD_REQUESTS_MAX_COUNT 5
 #define RUNNING_UPLOAD_REQUESTS_MAX_COUNT 5
 #define DATACENTER_EXPIRATION_TIME 60 * 60
+#define REQUEST_TIMER_TIMEOUT 1000
 #define PING_TIMER_TIMEOUT 20000
+#define PING_DISCONNECT_DELAY 35
 
 using namespace ABI::Windows::Storage;
 using namespace ABI::Windows::UI::Xaml;
@@ -49,10 +49,13 @@ ConnectionManager::ConnectionManager() :
 	m_currentDatacenterId(0),
 	m_movingToDatacenterId(0),
 	m_datacentersExpirationTime(0),
+	m_currentRoundTripTime(0),
 	m_timeDifference(0),
 	m_lastRequestToken(0),
 	m_lastOutgoingMessageId(0),
-	m_userId(0)
+	m_userId(0),
+	m_requestsScheduledWork(std::bind(&ConnectionManager::ProcessRequests, this)),
+	m_pingPeriodicWork(std::bind(&ConnectionManager::SendPing, this, DEFAULT_DATACENTER_ID))
 {
 	ZeroMemory(m_eventTokens, sizeof(m_eventTokens));
 	ZeroMemory(m_runningRequestCount, sizeof(m_runningRequestCount));
@@ -96,7 +99,8 @@ HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 
 	HRESULT result;
 	ReturnIfFailed(result, ThreadpoolManager::RuntimeClassInitialize(minimumThreadCount, maximumThreadCount));
-	ReturnIfFailed(result, ThreadpoolObjectT::AttachToThreadpool(this));
+	ReturnIfFailed(result, m_requestsScheduledWork.AttachToThreadpool(this));
+	ReturnIfFailed(result, m_pingPeriodicWork.AttachToThreadpool(this));
 
 	ComPtr<IApplicationStatics> applicationStatics;
 	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_UI_Xaml_Application).Get(), &applicationStatics));
@@ -227,6 +231,19 @@ HRESULT ConnectionManager::get_CurrentBackendType(BackendType* value)
 	auto lock = LockCriticalSection();
 
 	*value = static_cast<BackendType>(static_cast<int>(m_flags & ConnectionManagerFlag::UseTestBackend) >> 5);
+	return S_OK;
+}
+
+HRESULT ConnectionManager::get_CurrentRoundTripTime(TimeSpan* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	auto lock = LockCriticalSection();
+
+	*value = { m_currentRoundTripTime * 10000LL };
 	return S_OK;
 }
 
@@ -395,28 +412,22 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 
 	ReturnIfFailed(result, SubmitWork([this, flags, requestToken, request]() -> HRESULT
 	{
-		//{
-		auto requestsLock = m_requestsCriticalSection.Lock();
-		m_requestsQueue.push_back(request);
-		//}
+		{
+			auto requestsLock = m_requestsCriticalSection.Lock();
+			m_requestsQueue.push_back(request);
+		}
 
 		OutputDebugStringFormat(L"Enqueued request %d, %d running requests: %d generic, %d download and %d upload at %llu\n",
 			requestToken, m_runningRequests.size(), m_runningRequestCount[0], m_runningRequestCount[1], m_runningRequestCount[2], GetCurrentMonotonicTime());
 
-		auto requestsTimer = ThreadpoolObjectT::GetHandle();
 		if ((flags & RequestFlag::Immediate) == RequestFlag::Immediate)
 		{
-			FILETIME timeout = {};
-			SetThreadpoolTimer(requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
+			return m_requestsScheduledWork.ExecuteNow();
 		}
-		else if (!IsThreadpoolTimerSet(requestsTimer))
+		else
 		{
-			FILETIME timeout;
-			TimeoutToFileTime(REQUEST_TIMER_TIMEOUT, timeout);
-			SetThreadpoolTimer(requestsTimer, &timeout, 0, REQUEST_TIMER_WINDOW);
+			return m_requestsScheduledWork.TrySchedule(REQUEST_TIMER_TIMEOUT);
 		}
-
-		return S_OK;
 	}));
 
 	*value = requestToken;
@@ -470,6 +481,33 @@ HRESULT ConnectionManager::CancelRequest(INT32 requestToken, boolean notifyServe
 
 	*value = false;
 	return S_OK;
+}
+
+HRESULT ConnectionManager::SendPing(INT32 datacenterId)
+{
+	ComPtr<Connection> connection;
+
+	{
+		auto lock = LockCriticalSection();
+
+		if (datacenterId == DEFAULT_DATACENTER_ID)
+		{
+			datacenterId = m_currentDatacenterId;
+		}
+
+		ComPtr<Datacenter> datacenter;
+		if (!GetDatacenterById(datacenterId, datacenter))
+		{
+			return E_INVALIDARG;
+		}
+
+		HRESULT result;
+		ReturnIfFailed(result, datacenter->GetGenericConnection(true, connection));
+	}
+
+	MessageContext messageContext = { GenerateMessageId(), connection->GenerateMessageSequenceNumber(false) };
+	auto pingDelayDisconnect = Make<Methods::TLPingDelayDisconnect>(ConnectionManager::GetCurrentMonotonicTime(), PING_DISCONNECT_DELAY);
+	return connection->SendEncryptedMessage(&messageContext, pingDelayDisconnect.Get(), nullptr);
 }
 
 HRESULT ConnectionManager::UpdateDatacenters()
@@ -530,6 +568,7 @@ HRESULT ConnectionManager::UpdateDatacenters()
 
 				m_datacentersExpirationTime = config->GetExpires() - m_timeDifference;
 
+				ReturnIfFailed(result, m_requestsScheduledWork.ExecuteNow());
 				ReturnIfFailed(result, m_unprocessedMessageReceivedEventSource.InvokeAll(this, response));
 
 				for (auto& datacenter : m_datacenters)
@@ -545,13 +584,13 @@ HRESULT ConnectionManager::UpdateDatacenters()
 			}
 		}
 
-		{
+		/*{
 #pragma message ("Potential deadlock")
 			auto requestsLock = m_requestsCriticalSection.Lock();
 
 			FILETIME timeout = {};
 			SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
-		}
+		}*/
 
 	}).Get(), nullptr, m_currentDatacenterId, ConnectionType::Generic, RequestFlag::EnableUnauthorized | RequestFlag::WithoutLogin | RequestFlag::TryDifferentDc, &requestToken);
 }
@@ -623,7 +662,7 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 
 	m_currentDatacenterId = 2;
 	m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
-	m_datacentersExpirationTime = static_cast<INT32>(GetCurrentSystemTime() / 1000) + DATACENTER_EXPIRATION_TIME;
+	m_datacentersExpirationTime = static_cast<INT32>(ConnectionManager::GetCurrentSystemTime() / 1000) + DATACENTER_EXPIRATION_TIME;
 	return S_OK;
 }
 
@@ -718,6 +757,7 @@ HRESULT ConnectionManager::Reset()
 	}
 
 	m_userId = 0;
+	m_currentRoundTripTime = 0;
 	m_flags = FLAGS_SET_CONNECTIONSTATE(m_flags & (ConnectionManagerFlag::NetworkType | ConnectionManagerFlag::UseIPv6 | ConnectionManagerFlag::UseTestBackend), ConnectionState::Connecting);
 	m_datacenters.clear();
 	m_cdnPublicKeys.clear();
@@ -728,7 +768,9 @@ HRESULT ConnectionManager::Reset()
 	ZeroMemory(m_runningRequestCount, sizeof(m_runningRequestCount));
 
 	HRESULT result;
-	ReturnIfFailed(result, ThreadpoolObjectT::AttachToThreadpool(this));
+	ReturnIfFailed(result, m_requestsScheduledWork.AttachToThreadpool(this));
+	ReturnIfFailed(result, m_pingPeriodicWork.AttachToThreadpool(this));
+
 	ReturnIfFailed(result, InitializeDefaultDatacenters());
 
 	return SaveSettings();
@@ -779,12 +821,15 @@ HRESULT ConnectionManager::UpdateCDNPublicKeys()
 				publicKey->second.Fingerprint = DatacenterCryptography::ComputePublickKeyFingerprint(publicKey->second.Key.Get());
 			}
 
-			{
+			/*{
 				auto requestsLock = m_requestsCriticalSection.Lock();
 
 				FILETIME timeout = {};
 				SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
-			}
+			}*/
+
+			HRESULT result;
+			ReturnIfFailed(result, m_requestsScheduledWork.ExecuteNow());
 
 			return SaveCDNPublicKeys();
 		}
@@ -978,7 +1023,7 @@ HRESULT ConnectionManager::CreateTransportMessage(MessageRequest* request, INT64
 HRESULT ConnectionManager::ProcessRequests()
 {
 	ProcessRequestsContext context = {};
-	context.CurrentTime = static_cast<INT32>(GetCurrentSystemTime() / 1000);
+	context.CurrentTime = static_cast<INT32>(ConnectionManager::GetCurrentSystemTime() / 1000);
 
 	auto requestsLock = m_requestsCriticalSection.Lock();
 
@@ -1045,9 +1090,9 @@ HRESULT ConnectionManager::ProcessRequests()
 		}
 	}
 
-	if (FAILED(result) || FAILED(result = ProcessRequests(&context)))
+	if (FAILED(result) || FAILED(result = ProcessContextRequests(&context)))
 	{
-		ResetRequests(&context);
+		ResetContextRequests(&context);
 		return result;
 	}
 
@@ -1057,7 +1102,7 @@ HRESULT ConnectionManager::ProcessRequests()
 HRESULT ConnectionManager::ProcessRequestsForDatacenter(Datacenter* datacenter, ConnectionType connectionType)
 {
 	ProcessRequestsContext context = {};
-	context.CurrentTime = static_cast<INT32>(GetCurrentSystemTime() / 1000);
+	context.CurrentTime = static_cast<INT32>(ConnectionManager::GetCurrentSystemTime() / 1000);
 
 	auto requestsLock = m_requestsCriticalSection.Lock();
 
@@ -1128,9 +1173,9 @@ HRESULT ConnectionManager::ProcessRequestsForDatacenter(Datacenter* datacenter, 
 		}
 	}
 
-	if (FAILED(result) || FAILED(result = ProcessRequests(&context)))
+	if (FAILED(result) || FAILED(result = ProcessContextRequests(&context)))
 	{
-		ResetRequests(&context);
+		ResetContextRequests(&context);
 		return result;
 	}
 
@@ -1253,7 +1298,7 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 	}
 }
 
-HRESULT ConnectionManager::ProcessRequests(ProcessRequestsContext* context)
+HRESULT ConnectionManager::ProcessContextRequests(ProcessRequestsContext* context)
 {
 	HRESULT result = S_OK;
 	bool updateDatacenters = false;
@@ -1482,15 +1527,13 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 		{
 			request->Reset(false);
 
-			//{
+			{
 #pragma message ("Potential deadlock")
-			auto requestsLock = m_requestsCriticalSection.Lock();
-			m_requestsQueue.push_back(std::move(request));
-			//}
+				auto requestsLock = m_requestsCriticalSection.Lock();
+				m_requestsQueue.push_back(std::move(request));
+			}
 
-			FILETIME timeout = {};
-			SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
-			return S_OK;
+			return m_requestsScheduledWork.ExecuteNow();
 		}
 	}
 
@@ -1622,11 +1665,11 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 	break;
 	}
 
-	request->SetStartTime(static_cast<INT32>(GetCurrentSystemTime() / 1000) + waitTime);
+	request->SetStartTime(static_cast<INT32>(ConnectionManager::GetCurrentSystemTime() / 1000) + waitTime);
 	return S_FALSE;
 }
 
-void ConnectionManager::ResetRequests(ProcessRequestsContext const* context)
+void ConnectionManager::ResetContextRequests(ProcessRequestsContext const* context)
 {
 	for (auto& datacenter : context->Datacenters)
 	{
@@ -1664,10 +1707,10 @@ HRESULT ConnectionManager::AdjustCurrentTime(INT64 messageId)
 {
 	auto lock = LockCriticalSection();
 
-	INT64 currentTime = GetCurrentSystemTime();
+	INT64 currentTime = ConnectionManager::GetCurrentSystemTime();
 	INT64 messageTime = static_cast<INT64>((messageId / 4294967296.0) * 1000.0);
 
-	m_timeDifference = static_cast<INT32>((messageTime - currentTime) / 1000LL); // -currentPingTime / 2);
+	m_timeDifference = static_cast<INT32>((messageTime - currentTime - (m_currentRoundTripTime / 2)) / 1000LL);
 	m_lastOutgoingMessageId = 0;
 
 	return SaveSettings();
@@ -1716,8 +1759,7 @@ HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
 			return true;
 		}, true);
 
-		FILETIME timeout = {};
-		SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
+		return m_requestsScheduledWork.ExecuteNow();
 	}
 
 	return result;
@@ -1725,11 +1767,7 @@ HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
 
 HRESULT ConnectionManager::OnApplicationResuming(IInspectable* sender, IInspectable* args)
 {
-	auto requestsLock = m_requestsCriticalSection.Lock();
-
-	FILETIME timeout = {};
-	SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
-	return S_OK;
+	return m_requestsScheduledWork.ExecuteNow();
 }
 
 HRESULT ConnectionManager::OnConnectionOpening(Connection* connection)
@@ -1764,6 +1802,7 @@ HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
 			m_flags = FLAGS_SET_CONNECTIONSTATE(m_flags, ConnectionState::Connected);
 
 			HRESULT result;
+			ReturnIfFailed(result, m_pingPeriodicWork.SetPeriod(PING_TIMER_TIMEOUT));
 			ReturnIfFailed(result, m_connectionStateChangedEventSource.InvokeAll(this, nullptr));
 		}
 	}
@@ -1923,11 +1962,16 @@ HRESULT ConnectionManager::OnConnectionSessionCreated(Connection* connection, IN
 	return S_OK;
 }
 
-HRESULT ConnectionManager::OnCallback(PTP_CALLBACK_INSTANCE instance, ULONG_PTR param)
+HRESULT ConnectionManager::OnDatacenterPongReceived(Datacenter* datacenter, INT64 pingStartTime)
 {
-	SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), nullptr, 0, 0);
+	auto lock = LockCriticalSection();
 
-	return ProcessRequests();
+	if (datacenter->GetId() == m_currentDatacenterId)
+	{
+		m_currentRoundTripTime = ConnectionManager::GetCurrentMonotonicTime() - pingStartTime;
+	}
+
+	return S_OK;
 }
 
 bool ConnectionManager::GetDatacenterById(UINT32 id, ComPtr<Datacenter>& datacenter)
@@ -1983,7 +2027,7 @@ bool ConnectionManager::GetCDNPublicKey(INT32 datacenterId, std::vector<INT64> c
 INT64 ConnectionManager::GenerateMessageId()
 {
 	auto lock = LockCriticalSection();
-	auto messageId = static_cast<INT64>(((static_cast<double>(GetCurrentSystemTime()) + static_cast<double>(m_timeDifference) * 1000) * 4294967296.0) / 1000.0);
+	auto messageId = static_cast<INT64>(((static_cast<double>(ConnectionManager::GetCurrentSystemTime()) + static_cast<double>(m_timeDifference) * 1000) * 4294967296.0) / 1000.0);
 	if (messageId <= m_lastOutgoingMessageId)
 	{
 		messageId = m_lastOutgoingMessageId + 1;
@@ -2001,7 +2045,7 @@ INT64 ConnectionManager::GenerateMessageId()
 INT32 ConnectionManager::GetCurrentTime()
 {
 	auto lock = LockCriticalSection();
-	return static_cast<INT32>(GetCurrentSystemTime() / 1000) + m_timeDifference;
+	return static_cast<INT32>(ConnectionManager::GetCurrentSystemTime() / 1000) + m_timeDifference;
 }
 
 HRESULT ConnectionManager::InitializeSettings()

@@ -1138,7 +1138,12 @@ TLPong::~TLPong()
 
 HRESULT TLPong::HandleResponse(MessageContext const* messageContext, Connection* connection)
 {
-	return TLObject::CompleteRequest(m_messageId, messageContext, this, connection);
+	auto& datacenter = connection->GetDatacenter();
+	auto& connectionManager = datacenter->GetConnectionManager();
+
+	return connectionManager->OnDatacenterPongReceived(datacenter.Get(), m_pingId);
+
+	//return TLObject::CompleteRequest(m_messageId, messageContext, this, connection);
 }
 
 HRESULT TLPong::ReadBody(ITLBinaryReaderEx* reader)

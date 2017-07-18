@@ -296,7 +296,7 @@ namespace Telegram
 					return handle != nullptr && IsThreadpoolTimerSet(handle);
 				}
 
-				inline HRESULT Schedule(UINT32 timeoutMs, UINT32 periodMs)
+				inline HRESULT Schedule(UINT32 timeoutMs)
 				{
 					auto lock = LockCriticalSection();
 
@@ -308,7 +308,43 @@ namespace Telegram
 
 					FILETIME timeout;
 					TimeoutToFileTime(timeoutMs, timeout);
-					SetThreadpoolTimer(handle, &timeout, periodMs, THREADPOOL_TIMER_WINDOW);
+					SetThreadpoolTimer(handle, &timeout, 0, THREADPOOL_TIMER_WINDOW);
+					return S_OK;
+				}
+
+				inline HRESULT TrySchedule(UINT32 timeoutMs)
+				{
+					auto lock = LockCriticalSection();
+
+					auto handle = ThreadpoolObjectT::GetHandle();
+					if (handle == nullptr)
+					{
+						return E_NOT_VALID_STATE;
+					}
+
+					if (IsThreadpoolTimerSet(handle))
+					{
+						return S_FALSE;
+					}
+
+					FILETIME timeout;
+					TimeoutToFileTime(timeoutMs, timeout);
+					SetThreadpoolTimer(handle, &timeout, 0, THREADPOOL_TIMER_WINDOW);
+					return S_OK;
+				}
+
+				inline HRESULT ExecuteNow()
+				{
+					auto lock = LockCriticalSection();
+
+					auto handle = ThreadpoolObjectT::GetHandle();
+					if (handle == nullptr)
+					{
+						return E_NOT_VALID_STATE;
+					}
+
+					FILETIME timeout = {};
+					SetThreadpoolTimer(handle, &timeout, 0, THREADPOOL_TIMER_WINDOW);
 					return S_OK;
 				}
 
@@ -316,6 +352,43 @@ namespace Telegram
 				virtual HRESULT OnCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _In_ ULONG_PTR parameter) override final
 				{
 					SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), nullptr, 0, 0);
+					return m_workCallback();
+				}
+
+				const ThreadpoolManager::ThreadpoolWorkCallback m_workCallback;
+			};
+
+			class ThreadpoolPeriodicWork : public Details::ThreadpoolObjectT<ThreadpoolTraits::TimerTraits, true>
+			{
+			public:
+				ThreadpoolPeriodicWork(_In_ ThreadpoolManager::ThreadpoolWorkCallback const& workCallback) :
+					m_workCallback(workCallback)
+				{
+				}
+
+				~ThreadpoolPeriodicWork()
+				{
+				}
+
+				inline HRESULT SetPeriod(UINT32 periodMs)
+				{
+					auto lock = LockCriticalSection();
+
+					auto handle = ThreadpoolObjectT::GetHandle();
+					if (handle == nullptr)
+					{
+						return E_NOT_VALID_STATE;
+					}
+
+					FILETIME timeout;
+					TimeoutToFileTime(periodMs, timeout);
+					SetThreadpoolTimer(handle, &timeout, periodMs, THREADPOOL_TIMER_WINDOW);
+					return S_OK;
+				}
+
+			private:
+				virtual HRESULT OnCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _In_ ULONG_PTR parameter) override final
+				{
 					return m_workCallback();
 				}
 
@@ -369,7 +442,7 @@ namespace Telegram
 					return S_OK;
 				}
 
-				inline HRESULT Invoke()
+				inline HRESULT Execute()
 				{
 					return m_workCallback();
 				}

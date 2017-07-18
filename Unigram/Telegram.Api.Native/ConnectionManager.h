@@ -17,9 +17,11 @@
 #define TELEGRAM_API_NATIVE_LAYER 68
 #define TELEGRAM_API_NATIVE_APIID 6
 #define TELEGRAM_API_NATIVE_SETTINGS_VERSION 1
+#define MILLISECONDS_TO_UNIX_EPOCH 11644473600000LL
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
+using ABI::Windows::Foundation::TimeSpan;
 using ABI::Windows::Networking::Connectivity::INetworkInformationStatics;
 using ABI::Windows::Networking::Connectivity::INetworkAdapter;
 using ABI::Telegram::Api::Native::IConnectionManager;
@@ -101,6 +103,7 @@ namespace Telegram
 				class TLMessage;
 				class TLUnparsedObject;
 				class TLConfig;
+				class TLPong;
 
 			}
 
@@ -110,12 +113,13 @@ namespace Telegram
 			class MessageRequest;
 			class UserConfiguration;
 
-			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager>, public virtual ThreadpoolManager, protected virtual Details::ThreadpoolObjectT<ThreadpoolTraits::TimerTraits, true>
+			class ConnectionManager WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnectionManager>, public ThreadpoolManager
 			{
 				friend class Datacenter;
 				friend class Connection;
 				friend class TL::TLObject;
 				friend class TL::TLUnparsedObject;
+				friend class TL::TLPong;
 
 				InspectableClass(RuntimeClass_Telegram_Api_Native_ConnectionManager, BaseTrust);
 
@@ -140,6 +144,7 @@ namespace Telegram
 				IFACEMETHODIMP get_ConnectionState(_Out_ ConnectionState* value);
 				IFACEMETHODIMP get_CurrentNetworkType(_Out_ ConnectionNeworkType* value);
 				IFACEMETHODIMP get_CurrentBackendType(_Out_ BackendType* value);
+				IFACEMETHODIMP get_CurrentRoundTripTime(_Out_ TimeSpan* value);
 				IFACEMETHODIMP get_IsIPv6Enabled(_Out_ boolean* value);
 				IFACEMETHODIMP get_IsNetworkAvailable(_Out_ boolean* value);
 				IFACEMETHODIMP get_UserId(_Out_ INT32* value);
@@ -179,7 +184,7 @@ namespace Telegram
 					FILETIME time;
 					GetSystemTimePreciseAsFileTime(&time);
 
-					return ((static_cast<UINT64>(time.dwHighDateTime) << 32) | static_cast<UINT64>(time.dwLowDateTime)) / 1000000ULL;
+					return ((static_cast<UINT64>(time.dwHighDateTime) << 32) | static_cast<UINT64>(time.dwLowDateTime)) / 10000ULL - MILLISECONDS_TO_UNIX_EPOCH;
 				}
 
 				inline static UINT64 GetCurrentMonotonicTime()
@@ -202,6 +207,7 @@ namespace Telegram
 				HRESULT SaveSettings();
 				HRESULT LoadCDNPublicKeys();
 				HRESULT SaveCDNPublicKeys();
+				HRESULT SendPing(INT32 datacenterId);
 				HRESULT AdjustCurrentTime(INT64 messageId);
 				HRESULT UpdateNetworkStatus(_In_ INetworkInformationStatics* networkInformation, bool raiseEvent);
 				HRESULT MoveToDatacenter(INT32 datacenterId);
@@ -210,10 +216,10 @@ namespace Telegram
 				HRESULT ProcessRequests();
 				HRESULT ProcessRequestsForDatacenter(_In_ Datacenter* datacenter, ConnectionType connectionType);
 				HRESULT ProcessRequest(_In_ MessageRequest* request, _In_ ProcessRequestsContext* context);
-				HRESULT ProcessRequests(_In_ ProcessRequestsContext* context);
+				HRESULT ProcessContextRequests(_In_ ProcessRequestsContext* context);
 				HRESULT ProcessDatacenterRequests(_In_ DatacenterRequestContext const* datacenterContext);
 				HRESULT ProcessConnectionRequest(_In_ Connection* connection, _In_ MessageRequest* request);
-				void ResetRequests(_In_ ProcessRequestsContext const* context);
+				void ResetContextRequests(_In_ ProcessRequestsContext const* context);
 				void ResetRequests(std::function<bool(INT32, ComPtr<MessageRequest> const&)> selector, bool resetStartTime);
 				HRESULT CompleteMessageRequest(INT64 requestMessageId, _In_ MessageContext const* messageContext, _In_ ITLObject* messageBody, _In_ Connection* connection);
 				HRESULT HandleRequestError(_In_ Datacenter* datacenter, _In_ MessageRequest* request, INT32 code, _In_ HString const& message);
@@ -228,11 +234,11 @@ namespace Telegram
 				HRESULT OnDatacenterImportAuthorizationComplete(_In_ Datacenter* datacenter);
 				HRESULT OnDatacenterBadServerSalt(_In_ Datacenter* datacenter, INT64 requestMessageId, INT64 responseMessageId);
 				HRESULT OnDatacenterBadMessage(_In_ Datacenter* datacenter, INT64 requestMessageId, INT64 responseMessageId);
+				HRESULT OnDatacenterPongReceived(_In_ Datacenter* datacenter, INT64 pingStartTime);
 				HRESULT OnConnectionSessionCreated(_In_ Connection* connection, INT64 firstMessageId);
 				bool GetDatacenterById(UINT32 id, _Out_ ComPtr<Datacenter>& datacenter);
 				bool GetRequestByMessageId(INT64 messageId, _Out_ ComPtr<MessageRequest>& request);
 				bool GetCDNPublicKey(INT32 datacenterId, _In_ std::vector<INT64> const& fingerprints, _Out_ ServerPublicKey const** publicKey);
-				virtual HRESULT OnCallback(_In_ PTP_CALLBACK_INSTANCE callbackInstance, _In_ ULONG_PTR param) override;
 
 				inline bool IsCurrentDatacenter(INT32 datacenterId)
 				{
@@ -259,8 +265,11 @@ namespace Telegram
 				INT32 m_currentDatacenterId;
 				INT32 m_movingToDatacenterId;
 				INT32 m_datacentersExpirationTime;
+				INT64 m_currentRoundTripTime;
 				std::map<INT32, ComPtr<Datacenter>> m_datacenters;
 				std::map<INT32, ServerPublicKey> m_cdnPublicKeys;
+				ThreadpoolScheduledWork m_requestsScheduledWork;
+				ThreadpoolPeriodicWork m_pingPeriodicWork;
 				CriticalSection m_requestsCriticalSection;
 				std::list<ComPtr<MessageRequest>> m_requestsQueue;
 				std::list<std::pair<INT32, ComPtr<MessageRequest>>> m_runningRequests;

@@ -94,7 +94,7 @@ void ThreadpoolManager::WorkCallback(PTP_CALLBACK_INSTANCE instance, PVOID conte
 	CloseThreadpoolWork(work);
 
 	auto workHandler = reinterpret_cast<ThreadpoolWork*>(context);
-	workHandler->Invoke();
+	workHandler->Execute();
 
 	delete workHandler;
 }
