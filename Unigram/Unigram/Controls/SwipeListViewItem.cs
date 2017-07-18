@@ -10,11 +10,14 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.Foundation;
+using Telegram.Api.TL;
 
 namespace Unigram.Controls
 {
     public class SwipeListViewItem : ContentControl
     {
+        public TLMessage ViewModel => DataContext as TLMessage;
+
         private TranslateTransform ContentDragTransform;
         private TranslateTransform LeftTransform;
         private TranslateTransform RightTransform;
@@ -54,6 +57,8 @@ namespace Unigram.Controls
         /// </summary>
         public void ResetSwipe()
         {
+            Clip = null;
+
             if (DragBackground != null)
             {
                 DragBackground.Background = null;
@@ -64,6 +69,13 @@ namespace Unigram.Controls
                 LeftTransform.X = -(LeftContainer.ActualWidth + 20);
                 RightTransform.X = (RightContainer.ActualWidth + 20);
             }
+        }
+
+        protected override void OnContentChanged(object oldContent, object newContent)
+        {
+            ResetSwipe();
+
+            base.OnContentChanged(oldContent, newContent);
         }
 
         private SwipeListDirection _direction = SwipeListDirection.None;
@@ -90,6 +102,22 @@ namespace Unigram.Controls
                 return;
             }
 #endif
+            var cancel = false;
+
+            var channel = ViewModel.Parent as TLChannel;
+            if (channel != null)
+            {
+                if (channel.IsBroadcast)
+                {
+                    cancel = !(channel.IsCreator || channel.HasAdminRights);
+                }
+            }
+
+            if (cancel)
+            {
+                e.Complete();
+                return;
+            }
 
             var delta = e.Delta.Translation;
             var cumulative = e.Cumulative.Translation;
