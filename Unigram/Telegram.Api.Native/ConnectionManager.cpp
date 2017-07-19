@@ -1049,7 +1049,7 @@ HRESULT ConnectionManager::ProcessRequests()
 	{
 		auto lock = LockCriticalSection();
 
-		if (m_datacentersExpirationTime < context.CurrentTime)
+		if (m_datacentersExpirationTime < context.CurrentTime && (m_flags & ConnectionManagerFlag::UpdatingDatacenters) != ConnectionManagerFlag::UpdatingDatacenters)
 		{
 			return UpdateDatacenters();
 		}
@@ -1127,7 +1127,7 @@ HRESULT ConnectionManager::ProcessRequestsForDatacenter(Datacenter* datacenter, 
 	{
 		auto lock = LockCriticalSection();
 
-		if (m_datacentersExpirationTime < context.CurrentTime)
+		if (m_datacentersExpirationTime < context.CurrentTime && (m_flags & ConnectionManagerFlag::UpdatingDatacenters) != ConnectionManagerFlag::UpdatingDatacenters)
 		{
 			return UpdateDatacenters();
 		}
@@ -1815,7 +1815,7 @@ HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
 	return S_OK;
 }
 
-HRESULT ConnectionManager::OnConnectionClosed(Connection* connection)
+HRESULT ConnectionManager::OnConnectionClosed(Connection* connection, int wsaError)
 {
 	auto datacenter = connection->GetDatacenter();
 

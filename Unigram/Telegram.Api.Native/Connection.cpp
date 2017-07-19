@@ -146,7 +146,7 @@ HRESULT Connection::Connect(bool ipv6)
 	auto& connectionManager = m_datacenter->GetConnectionManager();
 	if (!connectionManager->IsNetworkAvailable())
 	{
-		connectionManager->OnConnectionClosed(this);
+		connectionManager->OnConnectionClosed(this, ERROR_NO_NETWORK);
 
 		return HRESULT_FROM_WIN32(ERROR_NO_NETWORK);
 	}
@@ -568,9 +568,9 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 
 	{
 		ComPtr<Connection> connection = this;
-		ReturnIfFailed(result, connectionManager->SubmitWork([connection, connectionManager]()-> HRESULT
+		ReturnIfFailed(result, connectionManager->SubmitWork([connection, connectionManager, wsaError]()-> HRESULT
 		{
-			return connectionManager->OnConnectionClosed(connection.Get());
+			return connectionManager->OnConnectionClosed(connection.Get(), wsaError);
 		}));
 	}
 
