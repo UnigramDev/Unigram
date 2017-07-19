@@ -268,8 +268,9 @@ namespace Telegram
 				INT64 m_currentRoundTripTime;
 				std::map<INT32, ComPtr<Datacenter>> m_datacenters;
 				std::map<INT32, ServerPublicKey> m_cdnPublicKeys;
-				ThreadpoolScheduledWork m_requestsScheduledWork;
-				ThreadpoolPeriodicWork m_pingPeriodicWork;
+				ThreadpoolScheduledWork m_processRequestsWork;
+				ThreadpoolScheduledWork m_updateDatacentersWork;
+				ThreadpoolPeriodicWork m_sendPingWork;
 				CriticalSection m_requestsCriticalSection;
 				std::list<ComPtr<MessageRequest>> m_requestsQueue;
 				std::list<std::pair<INT32, ComPtr<MessageRequest>>> m_runningRequests;

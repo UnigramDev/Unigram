@@ -41,6 +41,10 @@ namespace Telegram.Api.Native.Test
             this.InitializeComponent();
 
             var connectionManager = ConnectionManager.Instance;
+
+            if (connectionManager.CurrentBackendType == BackendType.Default)
+                connectionManager.SwitchBackend();
+
             connectionManager.CurrentNetworkTypeChanged += Instance_CurrentNetworkTypeChanged;
             connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
             connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;

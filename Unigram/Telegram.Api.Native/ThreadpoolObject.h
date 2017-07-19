@@ -15,10 +15,10 @@ namespace Telegram
 		{
 
 
-			inline void TimeoutToFileTime(UINT32 timeoutMs, _Out_ FILETIME& filetime)
+			inline void TimeoutToFileTime(INT32 timeoutMs, _Out_ FILETIME& filetime)
 			{
 				ULARGE_INTEGER timeout;
-				timeout.QuadPart = timeoutMs * -10000LL;
+				timeout.QuadPart = timeoutMs * 10000LL;
 
 				filetime.dwHighDateTime = timeout.HighPart;
 				filetime.dwLowDateTime = timeout.LowPart;
@@ -296,7 +296,7 @@ namespace Telegram
 					return handle != nullptr && IsThreadpoolTimerSet(handle);
 				}
 
-				inline HRESULT Schedule(UINT32 timeoutMs)
+				inline HRESULT Schedule(INT32 timeoutMs)
 				{
 					auto lock = LockCriticalSection();
 
@@ -312,7 +312,7 @@ namespace Telegram
 					return S_OK;
 				}
 
-				inline HRESULT TrySchedule(UINT32 timeoutMs)
+				inline HRESULT TrySchedule(INT32 timeoutMs)
 				{
 					auto lock = LockCriticalSection();
 
@@ -351,6 +351,12 @@ namespace Telegram
 			private:
 				virtual HRESULT OnCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _In_ ULONG_PTR parameter) override final
 				{
+					/*{
+						auto lock = LockCriticalSection();
+
+						SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), nullptr, 0, 0);
+					}*/
+					
 					SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), nullptr, 0, 0);
 					return m_workCallback();
 				}
@@ -381,7 +387,7 @@ namespace Telegram
 					}
 
 					FILETIME timeout;
-					TimeoutToFileTime(periodMs, timeout);
+					TimeoutToFileTime(-static_cast<INT32>(periodMs), timeout);
 					SetThreadpoolTimer(handle, &timeout, periodMs, THREADPOOL_TIMER_WINDOW);
 					return S_OK;
 				}

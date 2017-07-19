@@ -29,8 +29,8 @@
 #define RUNNING_DOWNLOAD_REQUESTS_MAX_COUNT 5
 #define RUNNING_UPLOAD_REQUESTS_MAX_COUNT 5
 #define DATACENTER_EXPIRATION_TIME 60 * 60
-#define REQUEST_TIMER_TIMEOUT 1000
-#define PING_TIMER_TIMEOUT 20000
+#define REQUEST_TIMER_TIMEOUT -1000
+#define PING_TIMER_PERIOD 20000
 #define PING_DISCONNECT_DELAY 35
 
 using namespace ABI::Windows::Storage;
@@ -54,8 +54,9 @@ ConnectionManager::ConnectionManager() :
 	m_lastRequestToken(0),
 	m_lastOutgoingMessageId(0),
 	m_userId(0),
-	m_requestsScheduledWork(std::bind(&ConnectionManager::ProcessRequests, this)),
-	m_pingPeriodicWork(std::bind(&ConnectionManager::SendPing, this, DEFAULT_DATACENTER_ID))
+	m_processRequestsWork(std::bind(&ConnectionManager::ProcessRequests, this)),
+	m_updateDatacentersWork(std::bind(&ConnectionManager::UpdateDatacenters, this)),
+	m_sendPingWork(std::bind(&ConnectionManager::SendPing, this, DEFAULT_DATACENTER_ID))
 {
 	ZeroMemory(m_eventTokens, sizeof(m_eventTokens));
 	ZeroMemory(m_runningRequestCount, sizeof(m_runningRequestCount));
@@ -99,8 +100,9 @@ HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 
 	HRESULT result;
 	ReturnIfFailed(result, ThreadpoolManager::RuntimeClassInitialize(minimumThreadCount, maximumThreadCount));
-	ReturnIfFailed(result, m_requestsScheduledWork.AttachToThreadpool(this));
-	ReturnIfFailed(result, m_pingPeriodicWork.AttachToThreadpool(this));
+	ReturnIfFailed(result, m_processRequestsWork.AttachToThreadpool(this));
+	ReturnIfFailed(result, m_updateDatacentersWork.AttachToThreadpool(this));
+	ReturnIfFailed(result, m_sendPingWork.AttachToThreadpool(this));
 
 	ComPtr<IApplicationStatics> applicationStatics;
 	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_UI_Xaml_Application).Get(), &applicationStatics));
@@ -422,11 +424,11 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 
 		if ((flags & RequestFlag::Immediate) == RequestFlag::Immediate)
 		{
-			return m_requestsScheduledWork.ExecuteNow();
+			return m_processRequestsWork.ExecuteNow();
 		}
 		else
 		{
-			return m_requestsScheduledWork.TrySchedule(REQUEST_TIMER_TIMEOUT);
+			return m_processRequestsWork.TrySchedule(REQUEST_TIMER_TIMEOUT);
 		}
 	}));
 
@@ -568,7 +570,8 @@ HRESULT ConnectionManager::UpdateDatacenters()
 
 				m_datacentersExpirationTime = config->GetExpires() - m_timeDifference;
 
-				ReturnIfFailed(result, m_requestsScheduledWork.ExecuteNow());
+				ReturnIfFailed(result, m_processRequestsWork.ExecuteNow());
+				ReturnIfFailed(result, m_updateDatacentersWork.Schedule(m_datacentersExpirationTime * 1000 + MILLISECONDS_TO_UNIX_EPOCH));
 				ReturnIfFailed(result, m_unprocessedMessageReceivedEventSource.InvokeAll(this, response));
 
 				for (auto& datacenter : m_datacenters)
@@ -663,7 +666,8 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 	m_currentDatacenterId = 2;
 	m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
 	m_datacentersExpirationTime = static_cast<INT32>(ConnectionManager::GetCurrentSystemTime() / 1000) + DATACENTER_EXPIRATION_TIME;
-	return S_OK;
+
+	return m_updateDatacentersWork.Schedule(m_datacentersExpirationTime * 1000 + MILLISECONDS_TO_UNIX_EPOCH);
 }
 
 HRESULT ConnectionManager::UpdateNetworkStatus(INetworkInformationStatics* networkInformation, bool raiseEvent)
@@ -768,9 +772,9 @@ HRESULT ConnectionManager::Reset()
 	ZeroMemory(m_runningRequestCount, sizeof(m_runningRequestCount));
 
 	HRESULT result;
-	ReturnIfFailed(result, m_requestsScheduledWork.AttachToThreadpool(this));
-	ReturnIfFailed(result, m_pingPeriodicWork.AttachToThreadpool(this));
-
+	ReturnIfFailed(result, m_processRequestsWork.AttachToThreadpool(this));
+	ReturnIfFailed(result, m_updateDatacentersWork.AttachToThreadpool(this));
+	ReturnIfFailed(result, m_sendPingWork.AttachToThreadpool(this));
 	ReturnIfFailed(result, InitializeDefaultDatacenters());
 
 	return SaveSettings();
@@ -829,7 +833,7 @@ HRESULT ConnectionManager::UpdateCDNPublicKeys()
 			}*/
 
 			HRESULT result;
-			ReturnIfFailed(result, m_requestsScheduledWork.ExecuteNow());
+			ReturnIfFailed(result, m_processRequestsWork.ExecuteNow());
 
 			return SaveCDNPublicKeys();
 		}
@@ -1049,10 +1053,10 @@ HRESULT ConnectionManager::ProcessRequests()
 	{
 		auto lock = LockCriticalSection();
 
-		if (m_datacentersExpirationTime < context.CurrentTime && (m_flags & ConnectionManagerFlag::UpdatingDatacenters) != ConnectionManagerFlag::UpdatingDatacenters)
-		{
-			return UpdateDatacenters();
-		}
+		//if (m_datacentersExpirationTime < context.CurrentTime && (m_flags & ConnectionManagerFlag::UpdatingDatacenters) != ConnectionManagerFlag::UpdatingDatacenters)
+		//{
+		//	return UpdateDatacenters();
+		//}
 
 		context.CurrentDatacenterId = m_currentDatacenterId;
 		context.MovingToDatacenterId = m_movingToDatacenterId;
@@ -1127,10 +1131,10 @@ HRESULT ConnectionManager::ProcessRequestsForDatacenter(Datacenter* datacenter, 
 	{
 		auto lock = LockCriticalSection();
 
-		if (m_datacentersExpirationTime < context.CurrentTime && (m_flags & ConnectionManagerFlag::UpdatingDatacenters) != ConnectionManagerFlag::UpdatingDatacenters)
+		/*if (m_datacentersExpirationTime < context.CurrentTime && (m_flags & ConnectionManagerFlag::UpdatingDatacenters) != ConnectionManagerFlag::UpdatingDatacenters)
 		{
 			return UpdateDatacenters();
-		}
+		}*/
 
 		context.CurrentDatacenterId = m_currentDatacenterId;
 		context.MovingToDatacenterId = m_movingToDatacenterId;
@@ -1533,7 +1537,7 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 				m_requestsQueue.push_back(std::move(request));
 			}
 
-			return m_requestsScheduledWork.ExecuteNow();
+			return m_processRequestsWork.ExecuteNow();
 		}
 	}
 
@@ -1759,7 +1763,7 @@ HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
 			return true;
 		}, true);
 
-		return m_requestsScheduledWork.ExecuteNow();
+		return m_processRequestsWork.ExecuteNow();
 	}
 
 	return result;
@@ -1767,7 +1771,7 @@ HRESULT ConnectionManager::OnNetworkStatusChanged(IInspectable* sender)
 
 HRESULT ConnectionManager::OnApplicationResuming(IInspectable* sender, IInspectable* args)
 {
-	return m_requestsScheduledWork.ExecuteNow();
+	return m_processRequestsWork.ExecuteNow();
 }
 
 HRESULT ConnectionManager::OnConnectionOpening(Connection* connection)
@@ -1802,7 +1806,7 @@ HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
 			m_flags = FLAGS_SET_CONNECTIONSTATE(m_flags, ConnectionState::Connected);
 
 			HRESULT result;
-			ReturnIfFailed(result, m_pingPeriodicWork.SetPeriod(PING_TIMER_TIMEOUT));
+			ReturnIfFailed(result, m_sendPingWork.SetPeriod(PING_TIMER_PERIOD));
 			ReturnIfFailed(result, m_connectionStateChangedEventSource.InvokeAll(this, nullptr));
 		}
 	}

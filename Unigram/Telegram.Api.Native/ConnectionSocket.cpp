@@ -26,14 +26,14 @@ using namespace Telegram::Api::Native;
 ConnectionSocket::ConnectionSocket() :
 	m_socket(INVALID_SOCKET)
 {
-	TimeoutToFileTime(15000, m_timeout);
+	TimeoutToFileTime(-15000, m_timeout);
 }
 
 ConnectionSocket::~ConnectionSocket()
 {
 }
 
-void ConnectionSocket::SetTimeout(UINT32 timeoutMs)
+void ConnectionSocket::SetTimeout(INT32 timeoutMs)
 {
 	TimeoutToFileTime(timeoutMs, m_timeout);
 }
