@@ -487,6 +487,8 @@ HRESULT ConnectionManager::CancelRequest(INT32 requestToken, boolean notifyServe
 
 HRESULT ConnectionManager::SendPing(INT32 datacenterId)
 {
+	OutputDebugString(L"Sending ping\n");
+
 	ComPtr<Connection> connection;
 
 	{
@@ -1801,13 +1803,17 @@ HRESULT ConnectionManager::OnConnectionOpened(Connection* connection)
 	{
 		auto lock = LockCriticalSection();
 
-		if (datacenter->GetId() == m_currentDatacenterId && FLAGS_GET_CONNECTIONSTATE(m_flags) != ConnectionState::Connected)
+		if (datacenter->GetId() == m_currentDatacenterId)
 		{
-			m_flags = FLAGS_SET_CONNECTIONSTATE(m_flags, ConnectionState::Connected);
-
 			HRESULT result;
 			ReturnIfFailed(result, m_sendPingWork.SetPeriod(PING_TIMER_PERIOD));
-			ReturnIfFailed(result, m_connectionStateChangedEventSource.InvokeAll(this, nullptr));
+
+			if (FLAGS_GET_CONNECTIONSTATE(m_flags) != ConnectionState::Connected)
+			{
+				m_flags = FLAGS_SET_CONNECTIONSTATE(m_flags, ConnectionState::Connected);
+
+				ReturnIfFailed(result, m_connectionStateChangedEventSource.InvokeAll(this, nullptr));
+			}
 		}
 	}
 
@@ -1834,7 +1840,13 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection, int wsaErr
 
 		if (datacenter->GetId() == m_currentDatacenterId)
 		{
-			if (static_cast<ConnectionNeworkType>(m_flags & ConnectionManagerFlag::NetworkType) == ConnectionNeworkType::None)
+			if (wsaError == NOERROR || wsaError == WSAENETUNREACH || wsaError == WSAECONNABORTED)
+			{
+				HRESULT result;
+				ReturnIfFailed(result, m_sendPingWork.Cancel());
+			}
+
+			if (static_cast<ConnectionNeworkType>(m_flags & ConnectionManagerFlag::NetworkType) == ConnectionNeworkType::None) // FLAGS_GET_NETWORKTYPE(m_flags) == ConnectionNeworkType::None //0 is 0 even without shifting
 			{
 				if (FLAGS_GET_CONNECTIONSTATE(m_flags) != ConnectionState::WaitingForNetwork)
 				{
