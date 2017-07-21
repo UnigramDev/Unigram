@@ -17,7 +17,7 @@
 #define TELEGRAM_API_NATIVE_LAYER 68
 #define TELEGRAM_API_NATIVE_APIID 6
 #define TELEGRAM_API_NATIVE_SETTINGS_VERSION 1
-#define MILLISECONDS_TO_UNIX_EPOCH 11644473600000LL
+#define MILLISECONDS_TO_UNIX_EPOCH 11644473600000
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
@@ -149,8 +149,8 @@ namespace Telegram
 				IFACEMETHODIMP get_IsNetworkAvailable(_Out_ boolean* value);
 				IFACEMETHODIMP get_UserId(_Out_ INT32* value);
 				IFACEMETHODIMP put_UserId(INT32 value);
-				IFACEMETHODIMP get_Proxy(_Out_ IProxySettings** value);
-				IFACEMETHODIMP put_Proxy(_In_ IProxySettings* value);
+				IFACEMETHODIMP get_ProxySettings(_Out_ IProxySettings** value);
+				IFACEMETHODIMP put_ProxySettings(_In_ IProxySettings* value);
 				IFACEMETHODIMP get_TimeDifference(_Out_ INT32* value);
 				IFACEMETHODIMP get_Datacenters(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CDatacenter** value);
 				IFACEMETHODIMP SendRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived, ConnectionType connectionType, _Out_ INT32* value);

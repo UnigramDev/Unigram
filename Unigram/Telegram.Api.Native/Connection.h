@@ -12,6 +12,7 @@ using namespace Microsoft::WRL::Wrappers;
 using ABI::Telegram::Api::Native::IConnection;
 using ABI::Windows::Foundation::IClosable;
 using ABI::Telegram::Api::Native::IDatacenter;
+using ABI::Telegram::Api::Native::IProxySettings;
 using ABI::Telegram::Api::Native::ConnectionNeworkType;
 using ABI::Telegram::Api::Native::ConnectionType;
 using ABI::Telegram::Api::Native::TL::ITLObject;
@@ -46,11 +47,18 @@ namespace Telegram
 			{
 				None = 0,
 				ConnectionState = 0xF,
-				CurrentNeworkType = 0x70,
+				ProxyHandshakeState = 0x1F0,
+				CurrentNeworkType = 0x600,
+				IPv6 = 0x800,
+				CryptographyInitialized = 0x1000,
+				TryingNextEndpoint = 0x2000,
+				Closed = 0x4000
+
+				/*CurrentNeworkType = 0x70,
 				IPv6 = 0x80,
 				CryptographyInitialized = 0x100,
 				TryingNextEndpoint = 0x200,
-				Closed = 0x400
+				Closed = 0x400*/
 			};
 
 		}
@@ -83,6 +91,7 @@ namespace Telegram
 			class Datacenter;
 			class NativeBuffer;
 			struct MessageContext;
+			struct ServerEndpoint;
 
 			class Connection WrlSealed : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IConnection, CloakedIid<IClosable>>,
 				public virtual MultiThreadObject, protected ConnectionSession, protected ConnectionSocket, protected ConnectionCryptography
@@ -127,6 +136,12 @@ namespace Telegram
 					return static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) > ConnectionState::Disconnected;
 				}
 
+				inline bool IsHandshaking()
+				{
+					auto lock = LockCriticalSection();
+					return static_cast<ProxyHandshakeState>(m_flags & ConnectionFlag::ProxyHandshakeState) != ProxyHandshakeState::None;
+				}
+
 			private:
 				enum class ConnectionState
 				{
@@ -135,6 +150,16 @@ namespace Telegram
 					Reconnecting = 0x3,
 					Connected = 0x7,
 					DataReceived = 0xF
+				};
+
+				enum class ProxyHandshakeState
+				{
+					None = 0x0,
+					SendingGreeting = 0x1 << 4,
+					Authenticating = 0x3 << 4,
+					RequestingConnection = 0x7 << 4,
+					D = 0xF << 4,
+					E = 0x1F << 4
 				};
 
 				IFACEMETHODIMP Close();
@@ -149,9 +174,12 @@ namespace Telegram
 				HRESULT OnMsgDetailedInfoResponse(_In_ TL::TLMsgDetailedInfo* response);
 				HRESULT OnMsgNewDetailedInfoResponse(_In_ TL::TLMsgNewDetailedInfo* response);
 				HRESULT OnMessageReceived(_In_ TL::TLMemoryBinaryReader* messageReader, UINT32 messageLength);
+				HRESULT OnProxyHandshakeData(_In_reads_(length) BYTE* buffer, UINT32 length);
 				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE* buffer, UINT32 length) override;
 				virtual HRESULT OnSocketDisconnected(int wsaError) override;
+
+				static HRESULT GetProxyEndpoint(_In_ IProxySettings* proxySettings, _Out_ ServerEndpoint* endpoint);
 
 				ConnectionType m_type;
 				ConnectionFlag m_flags;

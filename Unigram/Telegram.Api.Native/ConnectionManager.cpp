@@ -305,7 +305,7 @@ HRESULT ConnectionManager::put_UserId(INT32 value)
 	return S_OK;
 }
 
-HRESULT ConnectionManager::get_Proxy(IProxySettings** value)
+HRESULT ConnectionManager::get_ProxySettings(IProxySettings** value)
 {
 	if (value == nullptr)
 	{
@@ -317,10 +317,8 @@ HRESULT ConnectionManager::get_Proxy(IProxySettings** value)
 	return m_proxySettings.CopyTo(value);
 }
 
-HRESULT ConnectionManager::put_Proxy(IProxySettings* value)
+HRESULT ConnectionManager::put_ProxySettings(IProxySettings* value)
 {
-	return E_NOTIMPL;
-
 	auto lock = LockCriticalSection();
 
 	m_proxySettings = value;
@@ -1265,7 +1263,15 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 
 		/*HRESULT result;
 		ComPtr<Connection> connection;
-		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetGenericConnection(true, connection));*/
+		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetGenericConnection(true, connection));
+
+		if (!connection->IsConnected())
+		{
+			return S_FALSE;
+		}
+
+		request->SetStartTime(context->CurrentTime);
+		request->IncrementAttemptCount();*/
 
 		datacenterContextIterator->second.GenericRequests.push_back(request);
 		return S_OK;
@@ -1282,6 +1288,14 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 		ComPtr<Connection> connection;
 		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetDownloadConnection(true, connection));
 
+		/*if (!connection->IsConnected())
+		{
+			return S_FALSE;
+		}
+
+		request->SetStartTime(context->CurrentTime);
+		request->IncrementAttemptCount();*/
+
 		return ProcessConnectionRequest(connection.Get(), request);
 	}
 	break;
@@ -1295,6 +1309,14 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 		HRESULT result;
 		ComPtr<Connection> connection;
 		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetUploadConnection(true, connection));
+
+		/*if (!connection->IsConnected())
+		{
+			return S_FALSE;
+		}
+
+		request->SetStartTime(context->CurrentTime);
+		request->IncrementAttemptCount();*/
 
 		return ProcessConnectionRequest(connection.Get(), request);
 	}
@@ -1840,7 +1862,7 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection, int wsaErr
 
 		if (datacenter->GetId() == m_currentDatacenterId)
 		{
-			if (wsaError == NOERROR || wsaError == WSAENETUNREACH || wsaError == WSAECONNABORTED)
+			if (wsaError == NO_ERROR || wsaError == WSAENETUNREACH || wsaError == WSAECONNABORTED)
 			{
 				HRESULT result;
 				ReturnIfFailed(result, m_sendPingWork.Cancel());
