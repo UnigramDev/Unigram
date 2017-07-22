@@ -77,9 +77,9 @@ namespace Telegram.Api.Services
             SendAsyncInternal("messages.forwardMessages", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, RequestFlag.CanCompress | RequestFlag.InvokeAfter);
         }
 
-        private void SendAsyncInternal<T>(string caption, double timeout, TLObject obj, Action<T> callback, Action fastCallback, Action<TLRPCError> faultCallback, RequestFlag flags = 0)
+        private void SendAsyncInternal<T>(string caption, double timeout, TLObject obj, Action<T> callback, Action fastCallback, Action<TLRPCError> faultCallback, RequestFlag flags = RequestFlag.None)
         {
-            SendInformativeMessage(caption, obj, callback, faultCallback, flags, fastCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback, fastCallback, flags);
         }
 
         private void RemoveFromQueue(long id)

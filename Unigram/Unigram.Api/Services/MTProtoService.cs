@@ -162,7 +162,7 @@ namespace Telegram.Api.Services
                 SendInformativeMessage<TLNearestDC>("help.getNearestDc", new TLHelpGetNearestDC(), result =>
                 {
                     RaiseGotUserCountry(result.Country);
-                }, null, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
+                }, null, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
             }
 
             Current = this;
