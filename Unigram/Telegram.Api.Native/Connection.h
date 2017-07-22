@@ -47,12 +47,12 @@ namespace Telegram
 			{
 				None = 0,
 				ConnectionState = 0xF,
-				ProxyHandshakeState = 0x1F0,
-				CurrentNeworkType = 0x600,
-				IPv6 = 0x800,
-				CryptographyInitialized = 0x1000,
-				TryingNextEndpoint = 0x2000,
-				Closed = 0x4000
+				ProxyHandshakeState = 0xF0,
+				CurrentNeworkType = 0x300,
+				IPv6 = 0x400,
+				CryptographyInitialized = 0x800,
+				TryingNextEndpoint = 0x1000,
+				Closed = 0x2000
 
 				/*CurrentNeworkType = 0x70,
 				IPv6 = 0x80,
@@ -159,7 +159,6 @@ namespace Telegram
 					SendingGreeting = 0x3 << 4,
 					Authenticating = 0x7 << 4,
 					RequestingConnection = 0xF << 4,
-					SendingAddress = 0x1F << 4
 				};
 
 				IFACEMETHODIMP Close();
@@ -175,9 +174,10 @@ namespace Telegram
 				HRESULT OnMsgDetailedInfoResponse(_In_ TL::TLMsgDetailedInfo* response);
 				HRESULT OnMsgNewDetailedInfoResponse(_In_ TL::TLMsgNewDetailedInfo* response);
 				HRESULT OnMessageReceived(_In_ TL::TLMemoryBinaryReader* messageReader, UINT32 messageLength);
-				HRESULT OnProxyHandshakeData(_In_reads_(length) BYTE* buffer, UINT32 length);
+				HRESULT OnProxyHandshakeDataReceived(_In_reads_(length) BYTE* buffer, UINT32 length);
+
 				virtual HRESULT OnSocketConnected() override;
-				virtual HRESULT OnDataReceived(_In_reads_(length) BYTE* buffer, UINT32 length) override;
+				virtual HRESULT OnSocketDataReceived(_In_reads_(length) BYTE* buffer, UINT32 length) override;
 				virtual HRESULT OnSocketDisconnected(int wsaError) override;
 
 				static HRESULT GetProxyEndpoint(_In_ IProxySettings* proxySettings, _Out_ ServerEndpoint* endpoint);
