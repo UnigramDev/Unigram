@@ -41,6 +41,11 @@ namespace Telegram.Api.Native.Test
             this.InitializeComponent();
 
             var connectionManager = ConnectionManager.Instance;
+            connectionManager.ProxySettings = new ProxySettings("127.0.0.1", 1080, "frayxrulez", "frayxrulez");
+
+            if (connectionManager.CurrentBackendType == BackendType.Default)
+                connectionManager.SwitchBackend();
+
             connectionManager.CurrentNetworkTypeChanged += Instance_CurrentNetworkTypeChanged;
             connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
             connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;

@@ -4,7 +4,7 @@
 
 using namespace Telegram::Api::Native;
 
-ActivatableStaticOnlyFactory(ProxySettingsStatics);
+ActivatableClassWithFactory(ProxySettings, ProxySettingsFactory);
 
 
 HRESULT ProxyCredentials::get_UserName(HSTRING* value)
@@ -94,12 +94,12 @@ HRESULT ProxySettings::RuntimeClassInitialize(HSTRING host, UINT32 port, IProxyC
 }
 
 
-HRESULT ProxySettingsStatics::Create(HSTRING host, UINT32 port, IProxySettings** value)
+HRESULT ProxySettingsFactory::CreateInstance(HSTRING host, UINT32 port, IProxySettings** value)
 {
 	return MakeAndInitialize<ProxySettings>(value, host, port, nullptr);
 }
 
-HRESULT ProxySettingsStatics::CreateWithCredentials(HSTRING host, UINT32 port, HSTRING userName, HSTRING password, IProxySettings** value)
+HRESULT ProxySettingsFactory::CreateInstanceWithCredentials(HSTRING host, UINT32 port, HSTRING userName, HSTRING password, IProxySettings** value)
 {
 	HRESULT result;
 	ComPtr<ProxyCredentials> credentials;

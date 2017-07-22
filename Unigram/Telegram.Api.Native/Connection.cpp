@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <Ws2tcpip.h>
 #include "Connection.h"
 #include "Datacenter.h"
 #include "NativeBuffer.h"
@@ -8,6 +9,7 @@
 #include "TLObject.h"
 #include "TLTypes.h"
 #include "ConnectionManager.h"
+#include "Helpers\StringHelper.h"
 
 #include "MethodDebug.h"
 
@@ -17,20 +19,27 @@
 #define GENERIC_CONNECTION_TIMEOUT INFINITE
 #define UPLOAD_CONNECTION_TIMEOUT INFINITE
 #else
-#define NEXT_ENDPOINT_CONNECTION_TIMEOUT 8000
-#define ACTIVE_CONNECTION_TIMEOUT 25000
-#define GENERIC_CONNECTION_TIMEOUT 15000
-#define UPLOAD_CONNECTION_TIMEOUT 25000
+#define NEXT_ENDPOINT_CONNECTION_TIMEOUT -8000
+#define ACTIVE_CONNECTION_TIMEOUT -25000
+#define GENERIC_CONNECTION_TIMEOUT -15000
+#define UPLOAD_CONNECTION_TIMEOUT -25000
 #endif
 
-#define FLAGS_GET_CURRENTNETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>((flags) & ConnectionFlag::CurrentNeworkType) >> 4)
-#define FLAGS_SET_CURRENTNETWORKTYPE(flags, networkType) ((flags) & ~ConnectionFlag::CurrentNeworkType) | static_cast<ConnectionFlag>(static_cast<int>(networkType) << 4)
+
 #define FLAGS_GET_CONNECTIONSTATE(flags) static_cast<ConnectionState>(static_cast<int>(flags & ConnectionFlag::ConnectionState))
 #define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) ((flags) & ~ConnectionFlag::ConnectionState) | static_cast<ConnectionFlag>(static_cast<int>(connectionState))
-#define CONNECTION_RECONNECTION_TIMEOUT 1000
+#define FLAGS_GET_PROXYHANDSHAKESTATE(flags) static_cast<ProxyHandshakeState>((flags) & ConnectionFlag::ProxyHandshakeState)
+#define FLAGS_SET_PROXYHANDSHAKESTATE(flags, proxyHandshakeState) ((flags) & ~ConnectionFlag::ProxyHandshakeState) | static_cast<ConnectionFlag>(proxyHandshakeState)
+#define FLAGS_GET_CURRENTNETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>((flags) & ConnectionFlag::CurrentNeworkType) >> 9)
+#define FLAGS_SET_CURRENTNETWORKTYPE(flags, networkType) ((flags) & ~ConnectionFlag::CurrentNeworkType) | static_cast<ConnectionFlag>(static_cast<int>(networkType) << 9)
+
+//#define FLAGS_GET_CURRENTNETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>((flags) & ConnectionFlag::CurrentNeworkType) >> 4)
+//#define FLAGS_SET_CURRENTNETWORKTYPE(flags, networkType) ((flags) & ~ConnectionFlag::CurrentNeworkType) | static_cast<ConnectionFlag>(static_cast<int>(networkType) << 4)
+
 #define CONNECTION_MAX_ATTEMPTS 5
 #define CONNECTION_MAX_PACKET_LENGTH 2 * 1024 * 1024
 
+using ABI::Telegram::Api::Native::IProxyCredentials;
 using namespace Telegram::Api::Native;
 using namespace Telegram::Api::Native::TL;
 
@@ -138,7 +147,7 @@ HRESULT Connection::Connect(bool ipv6)
 {
 	auto lock = LockCriticalSection();
 
-	if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) > ConnectionState::Disconnected)
+	if (FLAGS_GET_CONNECTIONSTATE(m_flags) > ConnectionState::Disconnected)
 	{
 		return S_FALSE;
 	}
@@ -181,7 +190,44 @@ HRESULT Connection::Connect(bool ipv6)
 		}
 	}
 
+	ComPtr<IProxySettings> proxySettings;
+	ReturnIfFailed(result, connectionManager->get_ProxySettings(&proxySettings));
+
+	//if (proxySettings == nullptr)
+	//{
 	ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), endpoint, ipv6));
+	//}
+	/*else
+	{
+		ServerEndpoint proxyEndpoint;
+		ReturnIfFailed(result, GetProxyEndpoint(proxySettings.Get(), &proxyEndpoint));
+		ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), &proxyEndpoint, ipv6));
+
+		ComPtr<IProxyCredentials> proxyCredentials;
+		ReturnIfFailed(result, proxySettings->get_Credentials(&proxyCredentials));
+
+		m_flags = FLAGS_SET_PROXYHANDSHAKESTATE(m_flags, ProxyHandshakeState::SendingGreeting);
+
+		if (proxyCredentials == nullptr)
+		{
+			BYTE buffer[3];
+			buffer[0] = 0x05;
+			buffer[1] = 0x01;
+			buffer[2] = 0x00;
+
+			ReturnIfFailed(result, ConnectionSocket::SendData(buffer, 3));
+		}
+		else
+		{
+			BYTE buffer[4];
+			buffer[0] = 0x05;
+			buffer[1] = 0x02;
+			buffer[2] = 0x00;
+			buffer[3] = 0x02;
+
+			ReturnIfFailed(result, ConnectionSocket::SendData(buffer, 4));
+		}
+	}*/
 
 	ConnectionNeworkType currentNetworkType;
 	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&currentNetworkType));
@@ -337,13 +383,18 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 
 	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, encryptedMessageLength);
 
-	if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) < ConnectionState::Connecting)
+	if (FLAGS_GET_CONNECTIONSTATE(m_flags) < ConnectionState::Connecting)
 	{
 		boolean ipv6;
 		auto& connectionManager = m_datacenter->GetConnectionManager();
 		ReturnIfFailed(result, connectionManager->get_IsIPv6Enabled(&ipv6));
 		ReturnIfFailed(result, Connect(ipv6));
 	}
+
+	/*if (FLAGS_GET_PROXYHANDSHAKESTATE(m_flags) != ProxyHandshakeState::None)
+	{
+		return S_FALSE;
+	}*/
 
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
 }
@@ -398,12 +449,17 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, bool reportAc
 
 	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, messageLength);
 
-	if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) < ConnectionState::Connecting)
+	if (FLAGS_GET_CONNECTIONSTATE(m_flags) < ConnectionState::Connecting)
 	{
 		boolean ipv6;
 		ReturnIfFailed(result, connectionManager->get_IsIPv6Enabled(&ipv6));
 		ReturnIfFailed(result, Connect(ipv6));
 	}
+
+	/*if (FLAGS_GET_PROXYHANDSHAKESTATE(m_flags) != ProxyHandshakeState::None)
+	{
+		return S_FALSE;
+	}*/
 
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
 }
@@ -537,6 +593,11 @@ HRESULT Connection::OnMsgNewDetailedInfoResponse(TLMsgNewDetailedInfo* response)
 
 HRESULT Connection::OnSocketConnected()
 {
+	/*if (FLAGS_GET_PROXYHANDSHAKESTATE(m_flags) != ProxyHandshakeState::None)
+	{
+		return S_OK;
+	}*/
+
 	OutputDebugStringFormat(L"Datacenter %d, Connection %d, connection opened\n", m_datacenter->GetId(), (int)m_type);
 
 	m_flags |= static_cast<ConnectionFlag>(ConnectionState::Connected);
@@ -601,7 +662,12 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 
 HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 {
-	if (static_cast<ConnectionState>(m_flags & ConnectionFlag::ConnectionState) != ConnectionState::DataReceived)
+	if (FLAGS_GET_PROXYHANDSHAKESTATE(m_flags) != ProxyHandshakeState::None)
+	{
+		return OnProxyHandshakeData(buffer, length);
+	}
+
+	if (FLAGS_GET_CONNECTIONSTATE(m_flags) != ConnectionState::DataReceived)
 	{
 		ConnectionSocket::SetTimeout(ACTIVE_CONNECTION_TIMEOUT);
 		m_flags = (m_flags & ~ConnectionFlag::TryingNextEndpoint) | static_cast<ConnectionFlag>(ConnectionState::DataReceived);
@@ -788,4 +854,169 @@ HRESULT Connection::OnMessageReceived(TLMemoryBinaryReader* messageReader, UINT3
 	{
 		return connection->HandleMessageResponse(&messageContext, messageObject.Get());
 	});
+}
+
+HRESULT Connection::OnProxyHandshakeData(BYTE* buffer, UINT32 length)
+{
+	auto handshakeState = FLAGS_GET_PROXYHANDSHAKESTATE(m_flags);
+	if (handshakeState == ProxyHandshakeState::SendingGreeting)
+	{
+		if (length != 2 || buffer[0] != 0x5)
+		{
+			return E_PROTOCOL_VERSION_NOT_SUPPORTED;
+		}
+
+		switch (buffer[1])
+		{
+		case 0x00:
+			m_flags = FLAGS_SET_PROXYHANDSHAKESTATE(m_flags, ProxyHandshakeState::None);
+			break;
+		case 0x02:
+		{
+			auto& connectionManager = m_datacenter->GetConnectionManager();
+
+			HRESULT result;
+			ComPtr<IProxySettings> proxySettings;
+			ReturnIfFailed(result, connectionManager->get_ProxySettings(&proxySettings));
+
+			ComPtr<IProxyCredentials> proxyCredentials;
+			ReturnIfFailed(result, proxySettings->get_Credentials(&proxyCredentials));
+
+			HString userName;
+			ReturnIfFailed(result, proxyCredentials->get_UserName(userName.GetAddressOf()));
+
+			HString password;
+			ReturnIfFailed(result, proxyCredentials->get_Password(password.GetAddressOf()));
+
+			std::string mbUserName;
+			WideCharToMultiByte(userName, mbUserName);
+
+			std::string mbPassword;
+			WideCharToMultiByte(password, mbPassword);
+
+			std::vector<BYTE> buffer(3 + mbUserName.size() + mbPassword.size());
+			buffer[0] = 0x1;
+			buffer[1] = static_cast<BYTE>(mbUserName.size());
+			CopyMemory(buffer.data() + 2, mbUserName.data(), mbUserName.size());
+
+			buffer[2 + mbUserName.size()] = static_cast<BYTE>(mbPassword.size());
+			CopyMemory(buffer.data() + 3 + mbUserName.size(), mbPassword.data(), mbPassword.size());
+
+			ReturnIfFailed(result, ConnectionSocket::SendData(buffer.data(), static_cast<UINT32>(buffer.size())));
+
+			m_flags = FLAGS_SET_PROXYHANDSHAKESTATE(m_flags, ProxyHandshakeState::Authenticating);
+		}
+		break;
+		case 0xff:
+			return E_FAIL;
+		};
+	}
+	else if (handshakeState == ProxyHandshakeState::Authenticating)
+	{
+		if (length != 2 || buffer[1] != 0x0)
+		{
+			return E_INVALID_PROTOCOL_FORMAT;
+		}
+
+		HRESULT result;
+		ServerEndpoint* endpoint;
+		bool ipv6 = (m_flags &ConnectionFlag::IPv6) == ConnectionFlag::IPv6;
+		ReturnIfFailed(result, m_datacenter->GetCurrentEndpoint(m_type, ipv6, &endpoint));
+
+		if (ipv6)
+		{
+			BYTE buffer[22];
+			buffer[0] = 0x05;
+			buffer[1] = 0x01;
+			buffer[2] = 0x00;
+			buffer[3] = 0x04;
+
+			if (InetPton(AF_INET6, endpoint->Address.c_str(), buffer + 4) != 1)
+			{
+				return WSAGetLastHRESULT();
+			}
+
+			buffer[20] = (endpoint->Port >> 8) & 0xff;
+			buffer[21] = endpoint->Port & 0xff;
+
+			ReturnIfFailed(result, ConnectionSocket::SendData(buffer, 22));
+		}
+		else
+		{
+			BYTE buffer[10];
+			buffer[0] = 0x05;
+			buffer[1] = 0x01;
+			buffer[2] = 0x00;
+			buffer[3] = 0x01;
+
+			if (InetPton(AF_INET, endpoint->Address.c_str(), buffer + 4) != 1)
+			{
+				return WSAGetLastHRESULT();
+			}
+
+			buffer[8] = (endpoint->Port >> 8) & 0xff;
+			buffer[9] = endpoint->Port & 0xff;
+
+			ReturnIfFailed(result, ConnectionSocket::SendData(buffer, 10));
+		}
+
+		m_flags = FLAGS_SET_PROXYHANDSHAKESTATE(m_flags, ProxyHandshakeState::D);
+	}
+	else if (handshakeState == ProxyHandshakeState::D)
+	{
+		if (length < 2 || buffer[1] != 0x0)
+		{
+			return E_INVALID_PROTOCOL_FORMAT;
+		}
+
+		m_flags = FLAGS_SET_PROXYHANDSHAKESTATE(m_flags, ProxyHandshakeState::None);
+
+		return OnSocketConnected();
+	}
+	else
+	{
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
+HRESULT Connection::GetProxyEndpoint(IProxySettings* proxySettings, ServerEndpoint* endpoint)
+{
+	HRESULT result;
+	HString hostName;
+	ReturnIfFailed(result, proxySettings->get_Host(hostName.GetAddressOf()));
+
+	UINT32 hostNameBufferLength;
+	auto hostNameBuffer = hostName.GetRawBuffer(&hostNameBufferLength);
+
+	IN_ADDR socketAddress;
+	if (InetPton(AF_INET, hostNameBuffer, &socketAddress) == 1)
+	{
+		endpoint->Address = std::wstring(hostNameBuffer, hostNameBufferLength);
+	}
+	else
+	{
+		int wsaError;
+		ADDRINFOW* addressInfo;
+		if ((wsaError = GetAddrInfo(hostNameBuffer, nullptr, nullptr, &addressInfo)) != NO_ERROR)
+		{
+			return HRESULT_FROM_WIN32(wsaError);
+		}
+
+		WCHAR ipBuffer[15];
+		DWORD ipBufferLength = 15;
+		if (WSAAddressToString(addressInfo->ai_addr, static_cast<DWORD>(addressInfo->ai_addrlen), nullptr, ipBuffer, &ipBufferLength) == SOCKET_ERROR)
+		{
+			FreeAddrInfo(addressInfo);
+
+			return WSAGetLastHRESULT();
+		}
+
+		endpoint->Address = std::wstring(ipBuffer, ipBufferLength);
+
+		FreeAddrInfo(addressInfo);
+	}
+
+	return proxySettings->get_Port(&endpoint->Port);
 }
