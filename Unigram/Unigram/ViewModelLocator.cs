@@ -312,6 +312,9 @@ namespace Unigram
             SettingsHelper.ChannelUri = null;
             MTProtoService.Current.CurrentUserId = 0;
 
+            ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
+            ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
+
             Debug.WriteLine("!!! UNAUTHORIZED !!!");
 
             Execute.BeginOnUIThread(() =>
