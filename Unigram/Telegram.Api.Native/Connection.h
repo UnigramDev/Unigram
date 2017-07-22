@@ -155,14 +155,15 @@ namespace Telegram
 				enum class ProxyHandshakeState
 				{
 					None = 0x0,
-					SendingGreeting = 0x1 << 4,
-					Authenticating = 0x3 << 4,
-					RequestingConnection = 0x7 << 4,
-					D = 0xF << 4,
-					E = 0x1F << 4
+					Connecting = 0x1 << 4,
+					SendingGreeting = 0x3 << 4,
+					Authenticating = 0x7 << 4,
+					RequestingConnection = 0xF << 4,
+					SendingAddress = 0x1F << 4
 				};
 
 				IFACEMETHODIMP Close();
+				HRESULT EnsureConnected();
 				HRESULT Connect(bool ipv6);
 				HRESULT Reconnect();
 				HRESULT CreateMessagePacket(UINT32 messageLength, bool reportAck, _Out_ ComPtr<TL::TLMemoryBinaryWriter>& writer, _Out_ BYTE** messageBuffer);

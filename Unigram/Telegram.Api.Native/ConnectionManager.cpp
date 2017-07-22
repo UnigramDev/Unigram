@@ -325,7 +325,10 @@ HRESULT ConnectionManager::put_ProxySettings(IProxySettings* value)
 
 	if (value == nullptr)
 	{
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle Proxy changes");
+		for (auto& datacenter : m_datacenters)
+		{
+			datacenter.second->ResetConnections();
+		}
 	}
 
 	return S_OK;
@@ -487,7 +490,7 @@ HRESULT ConnectionManager::SendPing(INT32 datacenterId)
 {
 	OutputDebugString(L"Sending ping\n");
 
-	ComPtr<Connection> connection;
+	ComPtr<Datacenter> datacenter;
 
 	{
 		auto lock = LockCriticalSection();
@@ -497,14 +500,19 @@ HRESULT ConnectionManager::SendPing(INT32 datacenterId)
 			datacenterId = m_currentDatacenterId;
 		}
 
-		ComPtr<Datacenter> datacenter;
 		if (!GetDatacenterById(datacenterId, datacenter))
 		{
 			return E_INVALIDARG;
 		}
+	}
 
-		HRESULT result;
-		ReturnIfFailed(result, datacenter->GetGenericConnection(true, connection));
+	HRESULT result;
+	ComPtr<Connection> connection;
+	ReturnIfFailed(result, datacenter->GetGenericConnection(true, connection));
+
+	if ((result = connection->EnsureConnected()) != S_OK)
+	{
+		return result;
 	}
 
 	MessageContext messageContext = { GenerateMessageId(), connection->GenerateMessageSequenceNumber(false) };
@@ -571,7 +579,7 @@ HRESULT ConnectionManager::UpdateDatacenters()
 				m_datacentersExpirationTime = config->GetExpires() - m_timeDifference;
 
 				ReturnIfFailed(result, m_processRequestsWork.ExecuteNow());
-				ReturnIfFailed(result, m_updateDatacentersWork.Schedule(m_datacentersExpirationTime * 1000 + MILLISECONDS_TO_UNIX_EPOCH));
+				ReturnIfFailed(result, m_updateDatacentersWork.Schedule(m_datacentersExpirationTime * 1000LL + MILLISECONDS_TO_UNIX_EPOCH));
 				ReturnIfFailed(result, m_unprocessedMessageReceivedEventSource.InvokeAll(this, response));
 
 				for (auto& datacenter : m_datacenters)
@@ -667,7 +675,7 @@ HRESULT ConnectionManager::InitializeDefaultDatacenters()
 	m_movingToDatacenterId = DEFAULT_DATACENTER_ID;
 	m_datacentersExpirationTime = static_cast<INT32>(ConnectionManager::GetCurrentSystemTime() / 1000) + DATACENTER_EXPIRATION_TIME;
 
-	return m_updateDatacentersWork.Schedule(m_datacentersExpirationTime * 1000 + MILLISECONDS_TO_UNIX_EPOCH);
+	return m_updateDatacentersWork.Schedule(m_datacentersExpirationTime * 1000LL + MILLISECONDS_TO_UNIX_EPOCH);
 }
 
 HRESULT ConnectionManager::UpdateNetworkStatus(INetworkInformationStatics* networkInformation, bool raiseEvent)
@@ -1084,7 +1092,7 @@ HRESULT ConnectionManager::ProcessRequests()
 			if (datacenterContextIterator == context.Datacenters.end())
 			{
 				ComPtr<Connection> genericConnection;
-				datacenter.second->GetGenericConnection(false, genericConnection);
+				ReturnIfFailed(result, datacenter.second->GetGenericConnection(false, genericConnection));
 
 				if (genericConnection != nullptr && genericConnection->HasMessagesToConfirm())
 				{
@@ -1169,7 +1177,7 @@ HRESULT ConnectionManager::ProcessRequestsForDatacenter(Datacenter* datacenter, 
 	if (datacenterContextIterator == context.Datacenters.end())
 	{
 		ComPtr<Connection> genericConnection;
-		datacenter->GetGenericConnection(false, genericConnection);
+		ReturnIfFailed(result, datacenter->GetGenericConnection(false, genericConnection));
 
 		if (genericConnection != nullptr && genericConnection->HasMessagesToConfirm())
 		{
@@ -1249,9 +1257,9 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 		return S_FALSE;
 	}
 
-	request->SetStartTime(context->CurrentTime);
+	/*request->SetStartTime(context->CurrentTime);
 	request->IncrementAttemptCount();
-
+*/
 	switch (request->GetConnectionType())
 	{
 	case ConnectionType::Generic:
@@ -1261,17 +1269,17 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 			return S_FALSE;
 		}
 
-		/*HRESULT result;
+		HRESULT result;
 		ComPtr<Connection> connection;
 		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetGenericConnection(true, connection));
 
-		if (!connection->IsConnected())
+		if ((result = connection->EnsureConnected()) != S_OK)
 		{
-			return S_FALSE;
+			return result;
 		}
 
 		request->SetStartTime(context->CurrentTime);
-		request->IncrementAttemptCount();*/
+		request->IncrementAttemptCount();
 
 		datacenterContextIterator->second.GenericRequests.push_back(request);
 		return S_OK;
@@ -1288,13 +1296,13 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 		ComPtr<Connection> connection;
 		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetDownloadConnection(true, connection));
 
-		/*if (!connection->IsConnected())
+		if ((result = connection->EnsureConnected()) != S_OK)
 		{
-			return S_FALSE;
+			return result;
 		}
 
 		request->SetStartTime(context->CurrentTime);
-		request->IncrementAttemptCount();*/
+		request->IncrementAttemptCount();
 
 		return ProcessConnectionRequest(connection.Get(), request);
 	}
@@ -1310,13 +1318,13 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 		ComPtr<Connection> connection;
 		ReturnIfFailed(result, datacenterContextIterator->second.Datacenter->GetUploadConnection(true, connection));
 
-		/*if (!connection->IsConnected())
+		if ((result = connection->EnsureConnected()) != S_OK)
 		{
-			return S_FALSE;
+			return result;
 		}
 
 		request->SetStartTime(context->CurrentTime);
-		request->IncrementAttemptCount();*/
+		request->IncrementAttemptCount();
 
 		return ProcessConnectionRequest(connection.Get(), request);
 	}
@@ -1355,7 +1363,10 @@ HRESULT ConnectionManager::ProcessContextRequests(ProcessRequestsContext* contex
 				ReturnIfFailed(result, datacenterContext.Datacenter->ImportAuthorization());
 			}
 
-			ReturnIfFailed(result, ProcessDatacenterRequests(&datacenterContext));
+			if (!datacenterContext.GenericRequests.empty())
+			{
+				ReturnIfFailed(result, ProcessDatacenterRequests(&datacenterContext));
+			}
 		}
 
 		datacenterIterator = context->Datacenters.erase(datacenterIterator);
@@ -1368,7 +1379,8 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 {
 	HRESULT result;
 	ComPtr<Connection> connection;
-	ReturnIfFailed(result, datacenterContext->Datacenter->GetGenericConnection(true, connection));
+	ReturnIfFailed(result, datacenterContext->Datacenter->GetGenericConnection(false, connection));
+	//ReturnIfFailed(result, datacenterContext->Datacenter->GetGenericConnection(true, connection));
 
 	INT64 lastRpcMessageId = 0;
 	bool requiresQuickAck = false;

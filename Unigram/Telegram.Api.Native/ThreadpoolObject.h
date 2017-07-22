@@ -14,14 +14,13 @@ namespace Telegram
 		namespace Native
 		{
 
-
 			inline void TimeoutToFileTime(INT64 timeoutMs, _Out_ FILETIME& filetime)
 			{
-				LARGE_INTEGER timeout;
+				ULARGE_INTEGER timeout;
 				timeout.QuadPart = timeoutMs * 10000LL;
 
-				filetime.dwHighDateTime = static_cast<DWORD>(timeout.HighPart);
-				filetime.dwLowDateTime = static_cast<DWORD>(timeout.LowPart);
+				filetime.dwHighDateTime = timeout.HighPart;
+				filetime.dwLowDateTime = timeout.LowPart;
 			}
 
 
