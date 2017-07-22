@@ -100,7 +100,6 @@ namespace Telegram.Api.TL
         public static TLMessage GetShortMessage(int id, int fromId, TLPeerBase toId, int date, string message)
         {
 
-#if LAYER_40
             var m = new TLMessage
             {
                 Id = id,
@@ -115,18 +114,6 @@ namespace Telegram.Api.TL
 
             if (m.FromId > 0) m.HasFromId = true;
             if (m.Media != null) m.HasMedia = true;
-#else
-            var m = new TLMessage
-            {
-                Id = id,
-                FromId = fromId,
-                ToId = toId,
-                Out = false,
-                _date = date,
-                Message = message,
-                _media = new TLMessageMediaEmpty()
-            };
-#endif
             return m;
         }
 
@@ -142,7 +129,6 @@ namespace Telegram.Api.TL
             long randomId,
             int? replyToMsgId)
         {
-#if LAYER_40
             var m = new TLMessage
             {
                 FromId = fromId,
@@ -159,21 +145,6 @@ namespace Telegram.Api.TL
             if (m.FromId != null) m.HasFromId = true;
             if (m.Media != null) m.HasMedia = true;
             if (m.ReplyToMsgId != null) m.HasReplyToMsgId = true;
-#else
-            var m = new TLMessage
-            {
-                FromId = fromId,
-                ToId = toId,
-                _status = status,
-                Out = outFlag,
-                Unread = unreadFlag,
-                _date = date,
-                Message = message,
-                _media = media,
-                RandomId = randomId,
-                ReplyToMsgId = replyToMsgId
-            };
-#endif
 
             return m;
         }
