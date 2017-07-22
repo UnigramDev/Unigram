@@ -321,10 +321,10 @@ HRESULT ConnectionManager::put_ProxySettings(IProxySettings* value)
 {
 	auto lock = LockCriticalSection();
 
-	m_proxySettings = value;
-
-	if (value == nullptr)
+	if (m_proxySettings.Get() != value)
 	{
+		m_proxySettings = value;
+
 		for (auto& datacenter : m_datacenters)
 		{
 			datacenter.second->ResetConnections();

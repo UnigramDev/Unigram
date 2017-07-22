@@ -26,8 +26,8 @@
 #endif
 
 
-#define FLAGS_GET_CONNECTIONSTATE(flags) static_cast<ConnectionState>(static_cast<int>(flags & ConnectionFlag::ConnectionState))
-#define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) ((flags) & ~ConnectionFlag::ConnectionState) | static_cast<ConnectionFlag>(static_cast<int>(connectionState))
+#define FLAGS_GET_CONNECTIONSTATE(flags) static_cast<ConnectionState>((flags) & ConnectionFlag::ConnectionState)
+#define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) ((flags) & ~ConnectionFlag::ConnectionState) | static_cast<ConnectionFlag>(connectionState)
 #define FLAGS_GET_PROXYHANDSHAKESTATE(flags) static_cast<ProxyHandshakeState>((flags) & ConnectionFlag::ProxyHandshakeState)
 #define FLAGS_SET_PROXYHANDSHAKESTATE(flags, proxyHandshakeState) ((flags) & ~ConnectionFlag::ProxyHandshakeState) | static_cast<ConnectionFlag>(proxyHandshakeState)
 #define FLAGS_GET_CURRENTNETWORKTYPE(flags) static_cast<ConnectionNeworkType>(static_cast<int>((flags) & ConnectionFlag::CurrentNeworkType) >> 9)
@@ -236,7 +236,6 @@ HRESULT Connection::Connect(bool ipv6)
 
 	ConnectionNeworkType currentNetworkType;
 	connectionManager->get_CurrentNetworkType(&currentNetworkType);
-
 	//ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&currentNetworkType));
 
 	if (ipv6)
@@ -613,6 +612,8 @@ HRESULT Connection::OnSocketConnected()
 {
 	if (FLAGS_GET_PROXYHANDSHAKESTATE(m_flags) != ProxyHandshakeState::None)
 	{
+		OutputDebugString(L"OnProxyHandshakeData: SendingGreeting\n");
+
 		auto& connectionManager = m_datacenter->GetConnectionManager();
 
 		HRESULT result;
@@ -911,6 +912,8 @@ HRESULT Connection::OnProxyHandshakeData(BYTE* buffer, UINT32 length)
 	auto handshakeState = FLAGS_GET_PROXYHANDSHAKESTATE(m_flags);
 	if (handshakeState == ProxyHandshakeState::SendingGreeting)
 	{
+		OutputDebugString(L"OnProxyHandshakeData: SendingGreeting\n");
+
 		if (length != 2 || buffer[0] != 0x5)
 		{
 			return E_PROTOCOL_VERSION_NOT_SUPPORTED;
@@ -975,6 +978,8 @@ HRESULT Connection::OnProxyHandshakeData(BYTE* buffer, UINT32 length)
 	}
 	else if (handshakeState == ProxyHandshakeState::Authenticating)
 	{
+		OutputDebugString(L"OnProxyHandshakeData: Authenticating\n");
+
 		if (length != 2 || buffer[1] != 0x0)
 		{
 			return E_INVALID_PROTOCOL_FORMAT;
@@ -1026,6 +1031,8 @@ HRESULT Connection::OnProxyHandshakeData(BYTE* buffer, UINT32 length)
 	}
 	else if (handshakeState == ProxyHandshakeState::SendingAddress)
 	{
+		OutputDebugString(L"OnProxyHandshakeData: SendingAddress\n");
+
 		if (length < 2 || buffer[1] != 0x0)
 		{
 			return E_INVALID_PROTOCOL_FORMAT;

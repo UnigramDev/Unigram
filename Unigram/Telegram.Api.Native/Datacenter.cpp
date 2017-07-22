@@ -898,11 +898,14 @@ HRESULT Datacenter::GetEndpointsForConnectionType(ConnectionType connectionType,
 
 HRESULT Datacenter::OnConnectionOpened(Connection* connection)
 {
-	auto lock = LockCriticalSection();
-
-	if (connection->GetType() == ConnectionType::Generic && FLAGS_GET_HANDSHAKESTATE(m_flags) == HandshakeState::None)
+	if (connection->GetType() == ConnectionType::Generic)
 	{
-		return BeginHandshake(false, true);
+		auto lock = LockCriticalSection();
+
+		if (FLAGS_GET_HANDSHAKESTATE(m_flags) == HandshakeState::None)
+		{
+			return BeginHandshake(false, true);
+		}
 	}
 
 	return S_OK;
@@ -914,7 +917,7 @@ HRESULT Datacenter::OnConnectionClosed(Connection* connection)
 	{
 		auto lock = LockCriticalSection();
 
-		if (static_cast<HandshakeState>(m_flags & DatacenterFlag::HandshakeState) != HandshakeState::Authenticated)
+		if (FLAGS_GET_HANDSHAKESTATE(m_flags) != HandshakeState::Authenticated)
 		{
 			m_authenticationContext.reset();
 			m_flags &= ~DatacenterFlag::HandshakeState;
@@ -1514,7 +1517,7 @@ HRESULT Datacenter::ReadSettingsEndpoints(ITLBinaryReaderEx* reader, std::vector
 #else
 	return reader->ReadUInt32(currentIndex);
 #endif
-	}
+}
 
 HRESULT Datacenter::WriteSettingsEndpoints(ITLBinaryWriterEx* writer, std::vector<ServerEndpoint> const& endpoints, size_t currentIndex)
 {
@@ -1532,7 +1535,7 @@ HRESULT Datacenter::WriteSettingsEndpoints(ITLBinaryWriterEx* writer, std::vecto
 #else
 	return writer->WriteUInt32(currentIndex);
 #endif
-	}
+}
 
 HRESULT Datacenter::SendAckRequest(Connection* connection, INT64 messageId)
 {
