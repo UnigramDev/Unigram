@@ -37,6 +37,22 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Download, RequestFlag.ForceDownload | RequestFlag.FailOnServerError, false);
         }
 
+        public void GetCdnFileAsync(int dcId, byte[] fileToken, int offset, int limit, Action<TLUploadCdnFileBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLUploadGetCdnFile { FileToken = fileToken, Offset = offset, Limit = limit };
+
+            const string caption = "upload.getCdnFile";
+            SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Download, RequestFlag.ForceDownload | RequestFlag.FailOnServerError, false);
+        }
+
+        public void ReuploadCdnFileAsync(int dcId, byte[] fileToken, byte[] requestToken, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLUploadReuploadCdnFile { FileToken = fileToken, RequestToken = requestToken };
+
+            const string caption = "upload.reuploadCdnFile";
+            SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Generic, RequestFlag.FailOnServerError, true);
+        }
+
         public void SendRequestAsync<T>(string caption, TLObject obj, int dcId, bool cdn, Action<T> callback, Action<TLRPCError> faultCallback = null)
         {
             Debug.WriteLine("Sending " + caption);

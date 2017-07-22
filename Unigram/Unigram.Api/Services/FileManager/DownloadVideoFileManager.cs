@@ -307,12 +307,7 @@ namespace Telegram.Api.Services.FileManager
             TLRPCError outError = null;
             var outIsCanceled = false;
 
-            var req = new TLUploadGetCdnFile();
-            req.FileToken = redirect.FileToken;
-            req.Limit = limit;
-            req.Offset = offset;
-
-            _protoService.SendRequestAsync<TLUploadCdnFileBase>("upload.getCdnFile", req, redirect.DCId, true, callback =>
+            _protoService.GetCdnFileAsync(redirect.DCId, redirect.FileToken, offset, limit, callback =>
             {
                 if (callback is TLUploadCdnFile file)
                 {
@@ -386,11 +381,7 @@ namespace Telegram.Api.Services.FileManager
             TLRPCError outError = null;
             var outIsCanceled = false;
 
-            var req = new TLUploadReuploadCdnFile();
-            req.FileToken = redirect.FileToken;
-            req.RequestToken = requestToken;
-
-            _protoService.SendRequestAsync<bool>("upload.reuploadCdnFile", req, dcId, false, callback =>
+            _protoService.ReuploadCdnFileAsync(dcId, redirect.FileToken, requestToken, callback =>
             {
                 if (callback)
                 {
