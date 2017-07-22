@@ -93,7 +93,7 @@ namespace Telegram.Api.Services
                 {
                     _cacheService.SyncContacts(result, callback);
                 },
-                faultCallback, RequestFlag.FailOnServerError | RequestFlag.CanCompress);
+                faultCallback, flags: RequestFlag.FailOnServerError | RequestFlag.CanCompress);
         }
 
         public void DeleteContactAsync(TLInputUserBase id, Action<TLContactsLink> callback, Action<TLRPCError> faultCallback = null)
@@ -150,7 +150,7 @@ namespace Telegram.Api.Services
             var obj = new TLContactsSearch { Q = q, Limit = limit };
 
             const string caption = "contacts.search";
-            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
         }
     }
 }

@@ -25,52 +25,32 @@ namespace Telegram.Api.Services
         {
             var obj = new TLUploadGetFile { Location = location, Offset = offset, Limit = limit };
 
-            Debug.WriteLine("Sending " + "upload.getFile");
-
-            var flags = RequestFlag.ForceDownload | RequestFlag.FailOnServerError;
-
-            var messageToken = _connectionManager.SendRequest(obj, (message, ex) =>
-            {
-                if (message.Object is TLRPCError error)
-                {
-                    faultCallback?.Invoke(error);
-                }
-                else if (message.Object is TLUnparsedObject unparsed)
-                {
-                    callback?.Invoke(TLFactory.Read<TLUploadFileBase>(unparsed.Reader, unparsed.Constructor));
-                }
-                else
-                {
-                    callback?.Invoke((TLUploadFileBase)(object)message.Object);
-                }
-            },
-            null, dcId, ConnectionType.Download, flags);
+            const string caption = "upload.getFile";
+            SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Download, RequestFlag.ForceDownload | RequestFlag.FailOnServerError, false);
         }
 
         public void GetWebFileAsync(int dcId, TLInputWebFileLocation location, int offset, int limit, Action<TLUploadWebFile> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUploadGetWebFile { Location = location, Offset = offset, Limit = limit };
 
-            Debug.WriteLine("Sending " + "upload.getWebFile");
+            const string caption = "upload.getWebFile";
+            SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Download, RequestFlag.ForceDownload | RequestFlag.FailOnServerError, false);
+        }
 
-            var flags = RequestFlag.ForceDownload | RequestFlag.FailOnServerError;
+        public void GetCdnFileAsync(int dcId, byte[] fileToken, int offset, int limit, Action<TLUploadCdnFileBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLUploadGetCdnFile { FileToken = fileToken, Offset = offset, Limit = limit };
 
-            var messageToken = _connectionManager.SendRequest(obj, (message, ex) =>
-            {
-                if (message.Object is TLRPCError error)
-                {
-                    faultCallback?.Invoke(error);
-                }
-                else if (message.Object is TLUnparsedObject unparsed)
-                {
-                    callback?.Invoke(TLFactory.Read<TLUploadWebFile>(unparsed.Reader, unparsed.Constructor));
-                }
-                else
-                {
-                    callback?.Invoke((TLUploadWebFile)(object)message.Object);
-                }
-            },
-            null, dcId, ConnectionType.Download, flags);
+            const string caption = "upload.getCdnFile";
+            SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Download, RequestFlag.ForceDownload | RequestFlag.FailOnServerError, false);
+        }
+
+        public void ReuploadCdnFileAsync(int dcId, byte[] fileToken, byte[] requestToken, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLUploadReuploadCdnFile { FileToken = fileToken, RequestToken = requestToken };
+
+            const string caption = "upload.reuploadCdnFile";
+            SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Generic, RequestFlag.FailOnServerError, true);
         }
 
         public void SendRequestAsync<T>(string caption, TLObject obj, int dcId, bool cdn, Action<T> callback, Action<TLRPCError> faultCallback = null)

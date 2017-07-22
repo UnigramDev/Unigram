@@ -1,32 +1,18 @@
 ﻿//#define DEBUG_UPDATEDCOPTIONS
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reactive.Linq;
-using System.Text;
 using System.Threading;
 using Telegram.Api.Services.DeviceInfo;
-#if WIN_RT
 using Windows.UI.Xaml;
-#elif WINDOWS_PHONE
-using System.Windows.Threading;
-using Microsoft.Devices;
-#endif
-using Telegram.Api.Extensions;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.Connection;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
-using Telegram.Logs;
-using Environment = System.Environment;
-using Telegram.Api.TL.Messages.Methods;
-using Telegram.Api.TL.Auth.Methods;
-using Telegram.Api.TL.Upload.Methods;
-using Telegram.Api.TL.Messages;
 using Telegram.Api.Native.TL;
 using Telegram.Api.Native;
+using Telegram.Api.TL.Help.Methods;
 
 namespace Telegram.Api.Services
 {
@@ -41,6 +27,7 @@ namespace Telegram.Api.Services
 
         protected void RaiseGotUserCountry(string country)
         {
+            _country = country;
             GotUserCountry?.Invoke(this, new CountryEventArgs { Country = country });
         }
 
@@ -49,11 +36,8 @@ namespace Telegram.Api.Services
             _updatesService.SetInitState();
         }
 
-        public string Country
-        {
-            //get { return _config?.Country; }
-            get { return "IT"; }
-        }
+        private string _country;
+        public string Country => _country;
 
         public int CurrentUserId
         {
@@ -171,6 +155,14 @@ namespace Telegram.Api.Services
                 _updatesService.GetFullChatAsync = GetFullChatAsync;
                 _updatesService.GetFullUserAsync = GetFullUserAsync;
                 _updatesService.GetChannelMessagesAsync = GetMessagesAsync;
+            }
+
+            if (!SettingsHelper.IsAuthorized)
+            {
+                SendInformativeMessage<TLNearestDC>("help.getNearestDc", new TLHelpGetNearestDC(), result =>
+                {
+                    RaiseGotUserCountry(result.Country);
+                }, null, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
             }
 
             Current = this;

@@ -33,7 +33,7 @@ namespace Telegram.Api.Services
                     result.Users = tuple.Item1;
                     callback?.Invoke(result);
                 });
-            }, faultCallback, RequestFlag.FailOnServerError);
+            }, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void GetPaymentReceiptAsync(int msgId, Action<TLPaymentsPaymentReceipt> callback, Action<TLRPCError> faultCallback = null)
@@ -48,7 +48,7 @@ namespace Telegram.Api.Services
                     result.Users = tuple.Item1;
                     callback?.Invoke(result);
                 });
-            }, faultCallback, RequestFlag.FailOnServerError);
+            }, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void GetSavedInfoAsync(Action<TLPaymentsSavedInfo> callback, Action<TLRPCError> faultCallback = null)
@@ -82,7 +82,7 @@ namespace Telegram.Api.Services
 
                     callback?.Invoke(result);
                 },
-                faultCallback, RequestFlag.FailOnServerError);
+                faultCallback, flags: RequestFlag.FailOnServerError);
         }
         
         public void ValidateRequestedInfoAsync(int msgId, TLPaymentRequestedInfo info, bool save, Action<TLPaymentsValidatedRequestedInfo> callback, Action<TLRPCError> faultCallback = null)
@@ -90,7 +90,7 @@ namespace Telegram.Api.Services
             var obj = new TLPaymentsValidateRequestedInfo { IsSave = save, MsgId = msgId, Info = info };
 
             const string caption = "payments.validateRequestedInfo";
-            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
         }
     }
 }

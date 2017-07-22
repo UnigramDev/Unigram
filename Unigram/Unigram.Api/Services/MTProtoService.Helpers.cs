@@ -27,12 +27,17 @@ namespace Telegram.Api.Services
 
         private readonly object _historyRoot = new object();
 
-        public void SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null, RequestFlag flags = 0, Action fastCallback = null)
+        //public void SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null, RequestFlag flags = RequestFlag.None, bool immediate = true)
+        //{
+        //    SendInformativeMessage(caption, obj, callback, faultCallback, null, flags, immediate);
+        //}
+
+        public void SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null, Action fastCallback = null, RequestFlag flags = RequestFlag.None, bool immediate = true)
         {
-            SendInformativeMessage(caption, obj, callback, faultCallback, fastCallback, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, flags | RequestFlag.Immediate);
+            SendInformativeMessage(caption, obj, callback, faultCallback, fastCallback, ConnectionManager.DefaultDatacenterId, ConnectionType.Generic, flags, immediate);
         }
 
-        public int SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback, Action fastCallback, int datacenterId, ConnectionType connectionType, RequestFlag flags)
+        public int SendInformativeMessage<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback, Action fastCallback, int datacenterId, ConnectionType connectionType, RequestFlag flags, bool immediate)
         {
             RequestQuickAckReceivedCallback quick = null;
             if (fastCallback != null)
@@ -57,7 +62,7 @@ namespace Telegram.Api.Services
                     callback?.Invoke((T)(object)message.Object);
                 }
             },
-            quick, datacenterId, ConnectionType.Generic, flags);
+            quick, datacenterId, ConnectionType.Generic, flags | (immediate ? RequestFlag.Immediate : RequestFlag.None));
         }
 
         public void SendRequestAsync<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null)

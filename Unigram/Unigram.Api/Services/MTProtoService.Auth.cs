@@ -39,7 +39,7 @@ namespace Telegram.Api.Services
             };
 
             const string caption = "auth.sendCode";
-            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin | RequestFlag.TryDifferentDc | RequestFlag.EnableUnauthorized);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin | RequestFlag.TryDifferentDc | RequestFlag.EnableUnauthorized);
         }
 
         public void ResendCodeAsync(string phoneNumber, string phoneCodeHash, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null)
@@ -47,7 +47,7 @@ namespace Telegram.Api.Services
             var obj = new TLAuthResendCode { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
             const string caption = "auth.resendCode";
-            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
         }
 
         public void CancelCodeAsync(string phoneNumber, string phoneCodeHash, Action<bool> callback, Action<TLRPCError> faultCallback = null)
@@ -55,7 +55,7 @@ namespace Telegram.Api.Services
             var obj = new TLAuthCancelCode { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
             const string caption = "auth.cancelCode";
-            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
         }
 
         // Fela: DEPRECATED
@@ -78,7 +78,7 @@ namespace Telegram.Api.Services
                     _cacheService.SyncUser(auth.User, result => { });
                     callback(auth);
                 },
-                faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
+                faultCallback, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
 	    }
 
         public void SignInAsync(string phoneNumber, string phoneCodeHash, string phoneCode, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
@@ -92,7 +92,7 @@ namespace Telegram.Api.Services
                     _cacheService.SyncUser(auth.User, result => { }); 
                     callback(auth);
                 }, 
-                faultCallback, RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
+                faultCallback, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
         }
 
         public void LogOutAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null)

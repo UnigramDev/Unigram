@@ -52,7 +52,7 @@ namespace Telegram.Api.Services
             var obj = new TLHelpGetInviteText();
 
             const string caption = "help.getInviteText";
-            SendInformativeMessage(caption, obj, callback, faultCallback, RequestFlag.FailOnServerError);
+            SendInformativeMessage(caption, obj, callback, faultCallback, flags: RequestFlag.FailOnServerError);
         }
 
         public void GetSupportAsync(Action<TLHelpSupport> callback, Action<TLRPCError> faultCallback = null)

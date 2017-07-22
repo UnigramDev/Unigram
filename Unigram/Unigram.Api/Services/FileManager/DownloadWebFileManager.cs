@@ -43,14 +43,14 @@ namespace Telegram.Api.Services.FileManager
         private readonly List<DownloadableItem> _items = new List<DownloadableItem>();
 
         private readonly ITelegramEventAggregator _eventAggregator;
-        private readonly IMTProtoService _mtProtoService;
+        private readonly IMTProtoService _protoService;
         private readonly IStatsService _statsService;
         private readonly DataType _dataType = DataType.Files;
 
         public DownloadWebFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService, IStatsService statsService)
         {
             _eventAggregator = eventAggregator;
-            _mtProtoService = mtProtoService;
+            _protoService = mtProtoService;
             _statsService = statsService;
 
             var timer = Stopwatch.StartNew();
@@ -190,7 +190,7 @@ namespace Telegram.Api.Services.FileManager
                         Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
                     }
 
-                    _statsService.IncrementReceivedItemsCount(_mtProtoService.NetworkType, _dataType, 1);
+                    _statsService.IncrementReceivedItemsCount(_protoService.NetworkType, _dataType, 1);
                 }
                 else
                 {
@@ -216,13 +216,13 @@ namespace Telegram.Api.Services.FileManager
             var manualResetEvent = new ManualResetEvent(false);
             TLUploadWebFile result = null;
 
-            _mtProtoService.GetWebFileAsync(dcId, location, offset, limit,
+            _protoService.GetWebFileAsync(dcId, location, offset, limit,
                 file =>
                 {
                     result = file;
                     manualResetEvent.Set();
 
-                    _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
+                    _statsService.IncrementReceivedBytesCount(_protoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
                 },
                 error =>
                 {

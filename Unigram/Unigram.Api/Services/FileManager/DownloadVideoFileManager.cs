@@ -46,14 +46,14 @@ namespace Telegram.Api.Services.FileManager
         private readonly List<DownloadableItem> _items = new List<DownloadableItem>();
 
         private readonly ITelegramEventAggregator _eventAggregator;
-        private readonly IMTProtoService _mtProtoService;
+        private readonly IMTProtoService _protoService;
         private readonly IStatsService _statsService;
         private readonly DataType _dataType = DataType.Videos;
 
         public DownloadVideoFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService, IStatsService statsService)
         {
             _eventAggregator = eventAggregator;
-            _mtProtoService = mtProtoService;
+            _protoService = mtProtoService;
             _statsService = statsService;
 
             var timer = Stopwatch.StartNew();
@@ -219,7 +219,7 @@ namespace Telegram.Api.Services.FileManager
                         Execute.BeginOnThreadPool(() => _eventAggregator.Publish(part.ParentItem));
                     }
 
-                    _statsService.IncrementReceivedItemsCount(_mtProtoService.NetworkType, _dataType, 1);
+                    _statsService.IncrementReceivedItemsCount(_protoService.NetworkType, _dataType, 1);
                 }
                 else
                 {
@@ -259,7 +259,7 @@ namespace Telegram.Api.Services.FileManager
             TLUploadFileBase result = null;
             TLRPCError outError = null;
             var outIsCanceled = false;
-            _mtProtoService.GetFileAsync(dcId, location, offset, limit,
+            _protoService.GetFileAsync(dcId, location, offset, limit,
                 callback =>
                 {
                     result = callback;
@@ -267,7 +267,7 @@ namespace Telegram.Api.Services.FileManager
 
                     if (callback is TLUploadFile file)
                     {
-                        _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
+                        _statsService.IncrementReceivedBytesCount(_protoService.NetworkType, _dataType, 4 + 4 + file.Bytes.Length + 4);
                     }
                 },
                 error =>
@@ -307,12 +307,7 @@ namespace Telegram.Api.Services.FileManager
             TLRPCError outError = null;
             var outIsCanceled = false;
 
-            var req = new TLUploadGetCdnFile();
-            req.FileToken = redirect.FileToken;
-            req.Limit = limit;
-            req.Offset = offset;
-
-            _mtProtoService.SendRequestAsync<TLUploadCdnFileBase>("upload.getCdnFile", req, redirect.DCId, true, callback =>
+            _protoService.GetCdnFileAsync(redirect.DCId, redirect.FileToken, offset, limit, callback =>
             {
                 if (callback is TLUploadCdnFile file)
                 {
@@ -332,7 +327,7 @@ namespace Telegram.Api.Services.FileManager
                     result = new TLUploadFile { Bytes = bytes };
                     manualResetEvent.Set();
 
-                    _statsService.IncrementReceivedBytesCount(_mtProtoService.NetworkType, _dataType, file.Bytes.Length + 4);
+                    _statsService.IncrementReceivedBytesCount(_protoService.NetworkType, _dataType, file.Bytes.Length + 4);
                 }
                 else if (callback is TLUploadCdnFileReuploadNeeded reupload)
                 {
@@ -386,11 +381,7 @@ namespace Telegram.Api.Services.FileManager
             TLRPCError outError = null;
             var outIsCanceled = false;
 
-            var req = new TLUploadReuploadCdnFile();
-            req.FileToken = redirect.FileToken;
-            req.RequestToken = requestToken;
-
-            _mtProtoService.SendRequestAsync<bool>("upload.reuploadCdnFile", req, dcId, false, callback =>
+            _protoService.ReuploadCdnFileAsync(dcId, redirect.FileToken, requestToken, callback =>
             {
                 if (callback)
                 {
