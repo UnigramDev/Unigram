@@ -636,10 +636,35 @@ HRESULT Datacenter::BeginHandshake(bool reconnect, bool reset)
 
 	genericConnection->RecreateSession();
 
+	if (genericConnection->IsConnected())
+	{
+		if (reconnect)
+		{
+			ReturnIfFailed(result, genericConnection->Reconnect());
+
+			return S_FALSE;
+		}
+	}
+	else
+	{
+		/*boolean ipv6;
+		ReturnIfFailed(result, m_connectionManager->get_IsIPv6Enabled(&ipv6));
+		ReturnIfFailed(result, genericConnection->Connect(ipv6));*/
+
+		boolean ipv6;
+		m_connectionManager->get_IsIPv6Enabled(&ipv6);
+
+		ReturnIfFailed(result, genericConnection->Connect(ipv6));
+
+		return S_FALSE;
+	}
+
+	/*genericConnection->RecreateSession();
+
 	if (reconnect && genericConnection->IsConnected())
 	{
 		ReturnIfFailed(result, genericConnection->Reconnect());
-	}
+	}*/
 
 	auto handshakeContext = std::make_unique<HandshakeContext>();
 	RAND_bytes(handshakeContext->Nonce, sizeof(TLInt128));
@@ -723,28 +748,28 @@ HRESULT Datacenter::ImportAuthorization()
 	return S_OK;
 }
 
-HRESULT Datacenter::SendPing()
-{
-	HRESULT result;
-	ComPtr<Connection> genericConnection;
-	ReturnIfFailed(result, GetGenericConnection(true, genericConnection));
-
-	auto ping = Make<Methods::TLPing>(ConnectionManager::GetCurrentMonotonicTime());
-
-	INT32 requestToken;
-	return m_connectionManager->SendRequestWithFlags(ping.Get(), Callback<ISendRequestCompletedCallback>([](IMessageResponse* response, IMessageError* error) -> HRESULT
-	{
-		if (error == nullptr)
-		{
-			auto pong = GetMessageResponseObject<TLPong>(response);
-			auto pindDelay = static_cast<UINT32>(ConnectionManager::GetCurrentMonotonicTime() - static_cast<UINT64>(pong->GetPingId()));
-
-			OutputDebugStringFormat(L"Pong after %dms\n", pindDelay);
-		}
-
-		return S_OK;
-	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::Immediate, &requestToken);
-}
+//HRESULT Datacenter::SendPing()
+//{
+//	HRESULT result;
+//	ComPtr<Connection> genericConnection;
+//	ReturnIfFailed(result, GetGenericConnection(true, genericConnection));
+//
+//	auto ping = Make<Methods::TLPing>(ConnectionManager::GetCurrentMonotonicTime());
+//
+//	INT32 requestToken;
+//	return m_connectionManager->SendRequestWithFlags(ping.Get(), Callback<ISendRequestCompletedCallback>([](IMessageResponse* response, IMessageError* error) -> HRESULT
+//	{
+//		if (error == nullptr)
+//		{
+//			auto pong = GetMessageResponseObject<TLPong>(response);
+//			auto pindDelay = static_cast<UINT32>(ConnectionManager::GetCurrentMonotonicTime() - static_cast<UINT64>(pong->GetPingId()));
+//
+//			OutputDebugStringFormat(L"Pong after %dms\n", pindDelay);
+//		}
+//
+//		return S_OK;
+//	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::Immediate, &requestToken);
+//}
 
 HRESULT Datacenter::RequestFutureSalts(UINT32 count)
 {
@@ -873,6 +898,13 @@ HRESULT Datacenter::GetEndpointsForConnectionType(ConnectionType connectionType,
 
 HRESULT Datacenter::OnConnectionOpened(Connection* connection)
 {
+	auto lock = LockCriticalSection();
+
+	if (connection->GetType() == ConnectionType::Generic && FLAGS_GET_HANDSHAKESTATE(m_flags) == HandshakeState::None)
+	{
+		return BeginHandshake(false, true);
+	}
+
 	return S_OK;
 }
 
@@ -1482,7 +1514,7 @@ HRESULT Datacenter::ReadSettingsEndpoints(ITLBinaryReaderEx* reader, std::vector
 #else
 	return reader->ReadUInt32(currentIndex);
 #endif
-}
+	}
 
 HRESULT Datacenter::WriteSettingsEndpoints(ITLBinaryWriterEx* writer, std::vector<ServerEndpoint> const& endpoints, size_t currentIndex)
 {
@@ -1500,7 +1532,7 @@ HRESULT Datacenter::WriteSettingsEndpoints(ITLBinaryWriterEx* writer, std::vecto
 #else
 	return writer->WriteUInt32(currentIndex);
 #endif
-}
+	}
 
 HRESULT Datacenter::SendAckRequest(Connection* connection, INT64 messageId)
 {

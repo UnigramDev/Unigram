@@ -143,6 +143,33 @@ HRESULT Connection::Close()
 	return S_OK;
 }
 
+HRESULT Connection::EnsureConnected()
+{
+	auto lock = LockCriticalSection();
+
+	switch (FLAGS_GET_CONNECTIONSTATE(m_flags))
+	{
+	case ConnectionState::Connecting:
+	case ConnectionState::Reconnecting:
+		return S_FALSE;
+	case ConnectionState::Connected:
+	case ConnectionState::DataReceived:
+		return S_OK;
+	default:
+		/*HRESULT result;
+		boolean ipv6;
+		ReturnIfFailed(result, m_datacenter->GetConnectionManager()->get_IsIPv6Enabled(&ipv6));*/
+
+		boolean ipv6;
+		m_datacenter->GetConnectionManager()->get_IsIPv6Enabled(&ipv6);
+
+		HRESULT result;
+		ReturnIfFailed(result, Connect(ipv6));
+
+		return S_FALSE;
+	}
+}
+
 HRESULT Connection::Connect(bool ipv6)
 {
 	auto lock = LockCriticalSection();
@@ -191,46 +218,26 @@ HRESULT Connection::Connect(bool ipv6)
 	}
 
 	ComPtr<IProxySettings> proxySettings;
-	ReturnIfFailed(result, connectionManager->get_ProxySettings(&proxySettings));
+	connectionManager->get_ProxySettings(&proxySettings);
+	//ReturnIfFailed(result, connectionManager->get_ProxySettings(&proxySettings));
 
-	//if (proxySettings == nullptr)
-	//{
-	ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), endpoint, ipv6));
-	//}
-	/*else
+	if (proxySettings == nullptr)
+	{
+		ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), endpoint, ipv6));
+	}
+	else
 	{
 		ServerEndpoint proxyEndpoint;
 		ReturnIfFailed(result, GetProxyEndpoint(proxySettings.Get(), &proxyEndpoint));
 		ReturnIfFailed(result, ConnectionSocket::ConnectSocket(connectionManager.Get(), &proxyEndpoint, ipv6));
 
-		ComPtr<IProxyCredentials> proxyCredentials;
-		ReturnIfFailed(result, proxySettings->get_Credentials(&proxyCredentials));
-
-		m_flags = FLAGS_SET_PROXYHANDSHAKESTATE(m_flags, ProxyHandshakeState::SendingGreeting);
-
-		if (proxyCredentials == nullptr)
-		{
-			BYTE buffer[3];
-			buffer[0] = 0x05;
-			buffer[1] = 0x01;
-			buffer[2] = 0x00;
-
-			ReturnIfFailed(result, ConnectionSocket::SendData(buffer, 3));
-		}
-		else
-		{
-			BYTE buffer[4];
-			buffer[0] = 0x05;
-			buffer[1] = 0x02;
-			buffer[2] = 0x00;
-			buffer[3] = 0x02;
-
-			ReturnIfFailed(result, ConnectionSocket::SendData(buffer, 4));
-		}
-	}*/
+		m_flags = FLAGS_SET_PROXYHANDSHAKESTATE(m_flags, ProxyHandshakeState::Connecting);
+	}
 
 	ConnectionNeworkType currentNetworkType;
-	ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&currentNetworkType));
+	connectionManager->get_CurrentNetworkType(&currentNetworkType);
+
+	//ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&currentNetworkType));
 
 	if (ipv6)
 	{
@@ -336,6 +343,13 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 		return E_INVALIDARG;
 	}*/
 
+	auto lock = LockCriticalSection();
+
+	if (FLAGS_GET_CONNECTIONSTATE(m_flags) < ConnectionState::Connected)
+	{
+		return S_FALSE;
+	}
+
 	HRESULT result;
 	UINT32 messageBodySize;
 	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(messageBody, &messageBodySize));
@@ -359,7 +373,7 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 
 	UINT32 encryptedMessageLength = 24 + messageLength + padding;
 
-	auto lock = LockCriticalSection();
+	//auto lock = LockCriticalSection();
 
 	BYTE* packetBufferBytes;
 	ComPtr<TLMemoryBinaryWriter> packetWriter;
@@ -383,17 +397,12 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 
 	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, encryptedMessageLength);
 
-	if (FLAGS_GET_CONNECTIONSTATE(m_flags) < ConnectionState::Connecting)
+	/*if (FLAGS_GET_CONNECTIONSTATE(m_flags) < ConnectionState::Connecting)
 	{
 		boolean ipv6;
 		auto& connectionManager = m_datacenter->GetConnectionManager();
 		ReturnIfFailed(result, connectionManager->get_IsIPv6Enabled(&ipv6));
 		ReturnIfFailed(result, Connect(ipv6));
-	}
-
-	/*if (FLAGS_GET_PROXYHANDSHAKESTATE(m_flags) != ProxyHandshakeState::None)
-	{
-		return S_FALSE;
 	}*/
 
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
@@ -401,6 +410,13 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 
 HRESULT Connection::SendEncryptedMessageWithConfirmation(MessageContext const* messageContext, ITLObject* messageBody, INT32* quickAckId)
 {
+	auto lock = LockCriticalSection();
+
+	if (FLAGS_GET_CONNECTIONSTATE(m_flags) < ConnectionState::Connected)
+	{
+		return S_FALSE;
+	}
+
 	if (HasMessagesToConfirm())
 	{
 		auto& connectionManager = m_datacenter->GetConnectionManager();
@@ -408,7 +424,7 @@ HRESULT Connection::SendEncryptedMessageWithConfirmation(MessageContext const* m
 		HRESULT result;
 		ComPtr<TLMessage> transportMessages[2];
 		ReturnIfFailed(result, MakeAndInitialize<TLMessage>(&transportMessages[0], messageContext, messageBody));
-		ReturnIfFailed(result, CreateConfirmationMessage(connectionManager.Get(), &transportMessages[1]));
+		ReturnIfFailed(result, ConnectionSession::CreateConfirmationMessage(connectionManager.Get(), &transportMessages[1]));
 
 		auto msgContainer = Make<TLMsgContainer>();
 		auto& messages = msgContainer->GetMessages();
@@ -430,13 +446,20 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, bool reportAc
 		return E_INVALIDARG;
 	}*/
 
+	auto lock = LockCriticalSection();
+
+	if (FLAGS_GET_CONNECTIONSTATE(m_flags) < ConnectionState::Connected)
+	{
+		return S_FALSE;
+	}
+
 	HRESULT result;
 	UINT32 messageBodySize;
 	ReturnIfFailed(result, TLObjectSizeCalculator::GetSize(messageBody, &messageBodySize));
 
 	UINT32 messageLength = 2 * sizeof(INT64) + sizeof(INT32) + messageBodySize;
 
-	auto lock = LockCriticalSection();
+	//auto lock = LockCriticalSection();
 	auto& connectionManager = m_datacenter->GetConnectionManager();
 
 	BYTE* packetBufferBytes;
@@ -449,16 +472,11 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, bool reportAc
 
 	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, messageLength);
 
-	if (FLAGS_GET_CONNECTIONSTATE(m_flags) < ConnectionState::Connecting)
+	/*if (FLAGS_GET_CONNECTIONSTATE(m_flags) < ConnectionState::Connecting)
 	{
 		boolean ipv6;
 		ReturnIfFailed(result, connectionManager->get_IsIPv6Enabled(&ipv6));
 		ReturnIfFailed(result, Connect(ipv6));
-	}
-
-	/*if (FLAGS_GET_PROXYHANDSHAKESTATE(m_flags) != ProxyHandshakeState::None)
-	{
-		return S_FALSE;
 	}*/
 
 	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
@@ -593,10 +611,42 @@ HRESULT Connection::OnMsgNewDetailedInfoResponse(TLMsgNewDetailedInfo* response)
 
 HRESULT Connection::OnSocketConnected()
 {
-	/*if (FLAGS_GET_PROXYHANDSHAKESTATE(m_flags) != ProxyHandshakeState::None)
+	if (FLAGS_GET_PROXYHANDSHAKESTATE(m_flags) != ProxyHandshakeState::None)
 	{
+		auto& connectionManager = m_datacenter->GetConnectionManager();
+
+		HRESULT result;
+		ComPtr<IProxySettings> proxySettings;
+		connectionManager->get_ProxySettings(&proxySettings);
+		//ReturnIfFailed(result, connectionManager->get_ProxySettings(&proxySettings));
+
+		ComPtr<IProxyCredentials> proxyCredentials;
+		proxySettings->get_Credentials(&proxyCredentials);
+		//ReturnIfFailed(result, proxySettings->get_Credentials(&proxyCredentials));
+
+		if (proxyCredentials == nullptr)
+		{
+			BYTE buffer[3];
+			buffer[0] = 0x05;
+			buffer[1] = 0x01;
+			buffer[2] = 0x00;
+
+			ReturnIfFailed(result, ConnectionSocket::SendData(buffer, 3));
+		}
+		else
+		{
+			BYTE buffer[4];
+			buffer[0] = 0x05;
+			buffer[1] = 0x02;
+			buffer[2] = 0x00;
+			buffer[3] = 0x02;
+
+			ReturnIfFailed(result, ConnectionSocket::SendData(buffer, 4));
+		}
+
+		m_flags = FLAGS_SET_PROXYHANDSHAKESTATE(m_flags, ProxyHandshakeState::SendingGreeting);
 		return S_OK;
-	}*/
+	}
 
 	OutputDebugStringFormat(L"Datacenter %d, Connection %d, connection opened\n", m_datacenter->GetId(), (int)m_type);
 
@@ -619,7 +669,7 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 	OutputDebugStringFormat(L"Datacenter %d, Connection %d, connection closed\n", m_datacenter->GetId(), (int)m_type);
 
 	auto connectionState = FLAGS_GET_CONNECTIONSTATE(m_flags);
-	m_flags &= ~(ConnectionFlag::ConnectionState | ConnectionFlag::CryptographyInitialized);
+	m_flags &= ~(ConnectionFlag::ConnectionState | ConnectionFlag::ProxyHandshakeState | ConnectionFlag::CryptographyInitialized);
 	m_partialPacketBuffer.Reset();
 
 	HRESULT result;
@@ -877,10 +927,22 @@ HRESULT Connection::OnProxyHandshakeData(BYTE* buffer, UINT32 length)
 
 			HRESULT result;
 			ComPtr<IProxySettings> proxySettings;
-			ReturnIfFailed(result, connectionManager->get_ProxySettings(&proxySettings));
+			connectionManager->get_ProxySettings(&proxySettings);
+			//ReturnIfFailed(result, connectionManager->get_ProxySettings(&proxySettings));
+
+			if (proxySettings == nullptr)
+			{
+				return E_INVALID_PROTOCOL_OPERATION;
+			}
 
 			ComPtr<IProxyCredentials> proxyCredentials;
-			ReturnIfFailed(result, proxySettings->get_Credentials(&proxyCredentials));
+			proxySettings->get_Credentials(&proxyCredentials);
+			//ReturnIfFailed(result, proxySettings->get_Credentials(&proxyCredentials));
+
+			if (proxyCredentials == nullptr)
+			{
+				return E_INVALID_PROTOCOL_OPERATION;
+			}
 
 			HString userName;
 			ReturnIfFailed(result, proxyCredentials->get_UserName(userName.GetAddressOf()));
@@ -960,9 +1022,9 @@ HRESULT Connection::OnProxyHandshakeData(BYTE* buffer, UINT32 length)
 			ReturnIfFailed(result, ConnectionSocket::SendData(buffer, 10));
 		}
 
-		m_flags = FLAGS_SET_PROXYHANDSHAKESTATE(m_flags, ProxyHandshakeState::D);
+		m_flags = FLAGS_SET_PROXYHANDSHAKESTATE(m_flags, ProxyHandshakeState::SendingAddress);
 	}
-	else if (handshakeState == ProxyHandshakeState::D)
+	else if (handshakeState == ProxyHandshakeState::SendingAddress)
 	{
 		if (length < 2 || buffer[1] != 0x0)
 		{
