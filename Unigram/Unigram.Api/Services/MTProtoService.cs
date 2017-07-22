@@ -165,6 +165,7 @@ namespace Telegram.Api.Services
                 }, null, flags: RequestFlag.FailOnServerError | RequestFlag.WithoutLogin);
             }
 
+            ToggleProxy();
             Current = this;
         }
 
