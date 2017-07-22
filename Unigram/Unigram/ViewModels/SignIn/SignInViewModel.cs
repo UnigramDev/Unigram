@@ -196,7 +196,7 @@ namespace Unigram.ViewModels.SignIn
                 SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
                 SettingsHelper.IsCallsProxyEnabled = dialog.IsCallsProxyEnabled;
 
-                if (enabled != SettingsHelper.IsProxyEnabled)
+                if (SettingsHelper.IsProxyEnabled || SettingsHelper.IsProxyEnabled != enabled)
                 {
                     UnigramContainer.Current.ResolveType<IMTProtoService>().ToggleProxy();
                 }
