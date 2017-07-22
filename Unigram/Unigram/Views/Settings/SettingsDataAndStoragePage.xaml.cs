@@ -64,7 +64,7 @@ namespace Unigram.Views.Settings
                 SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
                 SettingsHelper.IsCallsProxyEnabled = dialog.IsCallsProxyEnabled;
 
-                if (enabled != SettingsHelper.IsProxyEnabled)
+                if (SettingsHelper.IsProxyEnabled || SettingsHelper.IsProxyEnabled != enabled)
                 {
                     UnigramContainer.Current.ResolveType<ITransportService>().Close();
                     UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
