@@ -20,7 +20,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>BCF3F68C8F50DE819284C634BE7D5030F61E2216</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
@@ -97,6 +97,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Behaviors\AspectRatioBehavior.cs" />
+    <Compile Include="Common\AdminLogHelper.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\Dialogs\OutputTypingManager.cs" />
     <Compile Include="Common\ImageLoader\ContentDrawer.cs" />
@@ -113,10 +114,15 @@
     <Compile Include="Controls\GroupedGridView.cs" />
     <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
+    <Compile Include="Controls\ItemSwipeEventArgs.cs" />
+    <Compile Include="Controls\ItemSwipeEventHandler.cs" />
     <Compile Include="Controls\Items\SharedLinkListViewItem.xaml.cs">
       <DependentUpon>SharedLinkListViewItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\HistoryCallMessageControlBase.cs" />
+    <Compile Include="Controls\Messages\EditedMessageBubble.xaml.cs">
+      <DependentUpon>EditedMessageBubble.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />
@@ -146,6 +152,15 @@
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
     <Compile Include="Controls\PrivacyRadioButton.cs" />
+    <Compile Include="Controls\SwipeListBehavior.cs" />
+    <Compile Include="Controls\SwipeListDirection.cs" />
+    <Compile Include="Controls\SwipeListViewItem.cs" />
+    <Compile Include="Controls\Views\CalendarView.xaml.cs">
+      <DependentUpon>CalendarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\ChannelAdminLogFilterContentView.xaml.cs">
+      <DependentUpon>ChannelAdminLogFilterContentView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\EditUserNameView.xaml.cs">
       <DependentUpon>EditUserNameView.xaml</DependentUpon>
     </Compile>
@@ -182,12 +197,16 @@
     <Compile Include="Controls\Views\ShareView.xaml.cs">
       <DependentUpon>ShareView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\ChannelAdminLogFilterView.xaml.cs">
+      <DependentUpon>ChannelAdminLogFilterView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\StickerSetView.xaml.cs">
       <DependentUpon>StickerSetView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\UsersSelectionView.xaml.cs">
       <DependentUpon>UsersSelectionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\WebPageButton.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
     <Compile Include="Controls\ZoomableGridView.cs" />
     <Compile Include="Controls\ZoomableGridViewItem.cs" />
@@ -207,6 +226,7 @@
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
+    <Compile Include="Selectors\AdminLogTemplateSelector.cs" />
     <Compile Include="Selectors\GalleryTemplateSelector.cs" />
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
@@ -217,16 +237,22 @@
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelAdminLogFilterViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelAdminLogViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelAdminRightsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelAdminsViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelBannedRightsViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelKickedViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelDetailsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelEditTypeViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelEditViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelManageViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelParticipantsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelParticipantsViewModelBase.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep1ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
-    <Compile Include="ViewModels\Channels\ChannelKickedViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelBannedViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
@@ -273,11 +299,17 @@
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
+    <Compile Include="Views\Channels\ChannelAdminLogPage.xaml.cs">
+      <DependentUpon>ChannelAdminLogPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Channels\ChannelAdminRightsPage.xaml.cs">
       <DependentUpon>ChannelAdminRightsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Channels\ChannelAdminsPage.xaml.cs">
       <DependentUpon>ChannelAdminsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Channels\ChannelKickedPage.xaml.cs">
+      <DependentUpon>ChannelKickedPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Channels\ChannelBannedRightsPage.xaml.cs">
       <DependentUpon>ChannelBannedRightsPage.xaml</DependentUpon>
@@ -291,8 +323,11 @@
     <Compile Include="Views\Channels\ChannelEditTypePage.xaml.cs">
       <DependentUpon>ChannelEditTypePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Channels\ChannelKickedPage.xaml.cs">
-      <DependentUpon>ChannelKickedPage.xaml</DependentUpon>
+    <Compile Include="Views\Channels\ChannelBannedPage.xaml.cs">
+      <DependentUpon>ChannelBannedPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Channels\ChannelManagePage.xaml.cs">
+      <DependentUpon>ChannelManagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Channels\ChannelParticipantsPage.xaml.cs">
       <DependentUpon>ChannelParticipantsPage.xaml</DependentUpon>
@@ -734,9 +769,6 @@
     <Compile Include="Controls\ProgressShape.cs" />
     <Compile Include="Controls\ProgressVoice.cs" />
     <Compile Include="Controls\TransferButton.cs" />
-    <Compile Include="Controls\Media\ThumbnailControl.xaml.cs">
-      <DependentUpon>ThumbnailControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\ProfilePictureView.cs" />
     <Compile Include="Controls\Views\DeleteChannelMessageDialog.xaml.cs">
       <DependentUpon>DeleteChannelMessageDialog.xaml</DependentUpon>
@@ -1092,6 +1124,13 @@
       <SubType>Designer</SubType>
     </None>
     <Content Include="Assets\Noise.jpg" />
+    <Content Include="Assets\Sounds\Default.wav" />
+    <Content Include="Assets\Sounds\Sound1.wav" />
+    <Content Include="Assets\Sounds\Sound2.wav" />
+    <Content Include="Assets\Sounds\Sound3.wav" />
+    <Content Include="Assets\Sounds\Sound4.wav" />
+    <Content Include="Assets\Sounds\Sound5.wav" />
+    <Content Include="Assets\Sounds\Sound6.wav" />
     <Content Include="Assets\Webviews\injected.js" />
     <Content Include="VoiceCommands\VoiceCommands.xml" />
     <Content Include="Properties\Default.rd.xml" />
@@ -1126,6 +1165,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Messages\EditedMessageBubble.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Views\CalendarView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\ChannelAdminLogFilterContentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\InlineBotResultsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1139,10 +1190,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Items\SharedFileListViewItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Media\ThumbnailControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1242,6 +1289,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\ChannelAdminLogFilterView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Views\StickerSetView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1290,9 +1341,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Channels\ChannelAdminLogPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Channels\ChannelAdminRightsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Channels\ChannelKickedPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Channels\ChannelBannedRightsPage.xaml">
       <SubType>Designer</SubType>
@@ -1303,6 +1362,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Channels\ChannelEditTypePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Channels\ChannelManagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1330,7 +1393,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Channels\ChannelKickedPage.xaml">
+    <Page Include="Views\Channels\ChannelBannedPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1569,7 +1632,7 @@
       <Version>2.0.0</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>10.0.2</Version>
+      <Version>10.0.3</Version>
     </PackageReference>
     <PackageReference Include="System.Reactive">
       <Version>3.1.1</Version>
@@ -1578,7 +1641,7 @@
       <Version>3.12.2.2</Version>
     </PackageReference>
     <PackageReference Include="Win2D.Uwp">
-      <Version>1.20.0</Version>
+      <Version>1.21.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -1586,7 +1649,7 @@
       <Project>{88803693-7606-484b-9d2f-4bb789d57c29}</Project>
       <Name>libtgvoip</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Unigram.Api\Unigram.Api.csproj">
+    <ProjectReference Include="..\Unigram.Api\Telegram.Api.csproj">
       <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
       <Name>Unigram.Api</Name>
     </ProjectReference>

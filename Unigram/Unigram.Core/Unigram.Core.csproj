@@ -165,7 +165,7 @@
       <Version>5.3.3</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>10.0.2</Version>
+      <Version>10.0.3</Version>
     </PackageReference>
     <PackageReference Include="Template10">
       <Version>1.1.12</Version>
@@ -175,7 +175,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Unigram.Api\Unigram.Api.csproj">
+    <ProjectReference Include="..\Unigram.Api\Telegram.Api.csproj">
       <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
       <Name>Unigram.Api</Name>
     </ProjectReference>

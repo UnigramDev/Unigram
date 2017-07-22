@@ -148,19 +148,20 @@ namespace Unigram.ViewModels
 
                     if (dialog.BanUser)
                     {
-                        var response = await ProtoService.KickFromChannelAsync(channel, message.From.ToInputUser(), true);
-                        if (response.IsSucceeded)
-                        {
-                            var updates = response.Result as TLUpdates;
-                            if (updates != null)
-                            {
-                                var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
-                                if (newChannelMessageUpdate != null)
-                                {
-                                    Aggregator.Publish(newChannelMessageUpdate.Message);
-                                }
-                            }
-                        }
+                        // TODO: layer 68
+                        //var response = await ProtoService.KickFromChannelAsync(channel, message.From.ToInputUser(), true);
+                        //if (response.IsSucceeded)
+                        //{
+                        //    var updates = response.Result as TLUpdates;
+                        //    if (updates != null)
+                        //    {
+                        //        var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
+                        //        if (newChannelMessageUpdate != null)
+                        //        {
+                        //            Aggregator.Publish(newChannelMessageUpdate.Message);
+                        //        }
+                        //    }
+                        //}
                     }
 
                     if (dialog.ReportSpam)
@@ -332,7 +333,7 @@ namespace Unigram.ViewModels
                     return false;
                 }
 
-                if (!messageCommon.IsOut && !channel.IsCreator && !channel.IsEditor)
+                if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
                 {
                     return false;
                 }

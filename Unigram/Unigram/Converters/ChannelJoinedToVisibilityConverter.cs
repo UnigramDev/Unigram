@@ -17,10 +17,10 @@ namespace Unigram.Converters
             {
                 if (parameter != null)
                 {
-                    return !channel.IsLeft && !channel.IsKicked ? Visibility.Collapsed : Visibility.Visible;
+                    return !channel.IsLeft && !channel.HasBannedRights ? Visibility.Collapsed : Visibility.Visible;
                 }
 
-                return !channel.IsLeft && !channel.IsKicked ? Visibility.Visible : Visibility.Collapsed;
+                return !channel.IsLeft && !channel.HasBannedRights ? Visibility.Visible : Visibility.Collapsed;
             }
 
             return Visibility.Collapsed;

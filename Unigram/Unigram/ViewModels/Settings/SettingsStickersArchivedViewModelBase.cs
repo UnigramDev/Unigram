@@ -16,7 +16,7 @@ using Unigram.Services;
 
 namespace Unigram.ViewModels.Settings
 {
-    public abstract class SettingsStickersArchivedViewModelBase : UnigramViewModelBase
+    public abstract class SettingsStickersArchivedViewModelBase : UnigramViewModelBase, IHandle<NeedReloadArchivedStickersEventArgs>
     {
         private readonly IStickersService _stickersService;
         private readonly StickerType _type;
@@ -26,12 +26,13 @@ namespace Unigram.ViewModels.Settings
         {
             _type = type;
             _stickersService = stickersService;
-            _stickersService.NeedReloadArchivedStickers += OnNeedReloadArchivedStickers;
+
+            aggregator.Subscribe(this);
 
             Items = new ItemsCollection(protoService, type);
         }
 
-        private void OnNeedReloadArchivedStickers(object sender, NeedReloadArchivedStickersEventArgs e)
+        public void Handle(NeedReloadArchivedStickersEventArgs e)
         {
             if (e.Type == _type)
             {

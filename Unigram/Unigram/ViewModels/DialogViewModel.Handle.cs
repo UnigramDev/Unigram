@@ -14,6 +14,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Windows.System.Profile;
+using Windows.UI.Notifications;
 
 namespace Unigram.ViewModels
 {
@@ -25,6 +26,7 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateUserStatus>,
         IHandle<TLUpdateDraftMessage>,
         IHandle<TLUpdateContactLink>,
+        IHandle<TLUpdateChannel>,
         IHandle<MessagesRemovedEventArgs>,
         IHandle<DialogRemovedEventArgs>,
         IHandle<UpdateCompletedEventArgs>,
@@ -63,6 +65,8 @@ namespace Unigram.ViewModels
                     dialog.ReadInboxMaxId = dialog.TopMessage;
                     dialog.UnreadCount = dialog.UnreadCount - unread;
                     dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+
+                    RemoveNotifications();
                 }
             }
             else if (message.Equals("Window_Deactivated"))
@@ -667,6 +671,8 @@ namespace Unigram.ViewModels
                     ProtoService.ReadHistoryAsync(Peer, messageCommon.Id, 0);
                 }
                 //});
+
+                RemoveNotifications();
             }
         }
 
@@ -701,6 +707,22 @@ namespace Unigram.ViewModels
 
                 CacheService.Commit();
             });
+        }
+
+        public void Handle(TLUpdateChannel update)
+        {
+            if (With is TLChannel channel && channel.Id == update.ChannelId)
+            {
+                RaisePropertyChanged(() => With);
+                RaisePropertyChanged(() => Full);
+                RaisePropertyChanged(() => WithChannel);
+                RaisePropertyChanged(() => FullChannel);
+
+                if (channel.HasBannedRights && channel.BannedRights.IsSendMessages)
+                {
+                    Execute.BeginOnUIThread(() => SetText(null));
+                }
+            }
         }
     }
 }

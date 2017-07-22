@@ -10,10 +10,14 @@ namespace Telegram.Api.TL
 		{
 			PhoneCallsEnabled = (1 << 1),
 			TmpSessions = (1 << 0),
+			SuggestedLangCode = (1 << 2),
+			LangPackVersion = (1 << 2),
 		}
 
 		public bool IsPhoneCallsEnabled { get { return Flags.HasFlag(Flag.PhoneCallsEnabled); } set { Flags = value ? (Flags | Flag.PhoneCallsEnabled) : (Flags & ~Flag.PhoneCallsEnabled); } }
 		public bool HasTmpSessions { get { return Flags.HasFlag(Flag.TmpSessions); } set { Flags = value ? (Flags | Flag.TmpSessions) : (Flags & ~Flag.TmpSessions); } }
+		public bool HasSuggestedLangCode { get { return Flags.HasFlag(Flag.SuggestedLangCode); } set { Flags = value ? (Flags | Flag.SuggestedLangCode) : (Flags & ~Flag.SuggestedLangCode); } }
+		public bool HasLangPackVersion { get { return Flags.HasFlag(Flag.LangPackVersion); } set { Flags = value ? (Flags | Flag.LangPackVersion) : (Flags & ~Flag.LangPackVersion); } }
 
 		public Flag Flags { get; set; }
 		public Int32 Date { get; set; }
@@ -44,6 +48,8 @@ namespace Telegram.Api.TL
 		public Int32 CallConnectTimeoutMs { get; set; }
 		public Int32 CallPacketTimeoutMs { get; set; }
 		public String MeUrlPrefix { get; set; }
+		public String SuggestedLangCode { get; set; }
+		public Int32? LangPackVersion { get; set; }
 		public TLVector<TLDisabledFeature> DisabledFeatures { get; set; }
 
 		public TLConfig() { }
@@ -85,6 +91,8 @@ namespace Telegram.Api.TL
 			CallConnectTimeoutMs = from.ReadInt32();
 			CallPacketTimeoutMs = from.ReadInt32();
 			MeUrlPrefix = from.ReadString();
+			if (HasSuggestedLangCode) SuggestedLangCode = from.ReadString();
+			if (HasLangPackVersion) LangPackVersion = from.ReadInt32();
 			DisabledFeatures = TLFactory.Read<TLVector<TLDisabledFeature>>(from);
 		}
 
@@ -92,7 +100,7 @@ namespace Telegram.Api.TL
 		{
 			UpdateFlags();
 
-			to.Write(0xCB601684);
+			to.Write(0x7FEEC888);
 			to.Write((Int32)Flags);
 			to.Write(Date);
 			to.Write(Expires);
@@ -122,12 +130,16 @@ namespace Telegram.Api.TL
 			to.Write(CallConnectTimeoutMs);
 			to.Write(CallPacketTimeoutMs);
 			to.Write(MeUrlPrefix);
+			if (HasSuggestedLangCode) to.Write(SuggestedLangCode);
+			if (HasLangPackVersion) to.Write(LangPackVersion.Value);
 			to.WriteObject(DisabledFeatures);
 		}
 
 		private void UpdateFlags()
 		{
 			HasTmpSessions = TmpSessions != null;
+			HasSuggestedLangCode = SuggestedLangCode != null;
+			HasLangPackVersion = LangPackVersion != null;
 		}
 	}
 }

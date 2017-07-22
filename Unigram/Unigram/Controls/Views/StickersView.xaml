@@ -377,7 +377,7 @@
                 </ListView.ItemContainerTransitions>
             </ListView>
 
-            <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.Row="2"/>
+            <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.Row="2"/>
         </Grid>
     </Grid>
 </UserControl>

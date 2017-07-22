@@ -64,10 +64,14 @@
                             Style="{ThemeResource TextBlockButtonStyle}"
                             Command="{x:Bind ViewModel.UsefulFaqCommand}"/>
                 <Button Content="Unigram Website"
-                            Padding="0,6,0,12"
+                            Padding="0,6"
                             Style="{ThemeResource TextBlockButtonStyle}"
                             Command="{x:Bind ViewModel.UsefulWebsiteCommand}"/>
-
+                <Button Content="Changelog"
+                            Padding="0,6,0,12"
+                            Style="{ThemeResource TextBlockButtonStyle}"
+                            Command="{x:Bind ViewModel.UsefulChangelogCommand}"/>
+                
                 <!-- Support -->
                 <TextBlock Margin="0,12,0,6"
                                Text="Support"

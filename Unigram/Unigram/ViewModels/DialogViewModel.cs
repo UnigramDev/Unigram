@@ -55,6 +55,7 @@ using Telegram.Api.Services.Cache.EventArgs;
 using Windows.Foundation.Metadata;
 using Windows.UI.Text;
 using Telegram.Api.TL.Messages;
+using Windows.UI.Notifications;
 
 namespace Unigram.ViewModels
 {
@@ -373,7 +374,7 @@ namespace Unigram.ViewModels
 
             if (With is TLChannel channel)
             {
-                if (channel.IsBroadcast && !(channel.IsCreator || channel.IsEditor || channel.IsModerator))
+                if (channel.IsBroadcast && !(channel.IsCreator || channel.HasAdminRights))
                 {
                     return;
                 }
@@ -622,9 +623,18 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var already = Messages.FirstOrDefault(x => x.Id == maxId);
+            if (already != null)
+            {
+                ListField.ScrollIntoView(already);
+                return;
+            }
+
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
             IsLoading = true;
+            IsLastSliceLoaded = false;
+            IsFirstSliceLoaded = false;
             UpdatingScrollMode = UpdatingScrollMode.ForceKeepItemsInView;
 
             Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
@@ -951,6 +961,20 @@ namespace Unigram.ViewModels
             //}
             var dialog = _currentDialog;
 
+            //for (int i = 0; i < 200;)
+            //{
+            //    var request = new TLMessagesSendMessage { Peer = _peer, Message = "Message " + i, RandomId = TLLong.Random() };
+            //    var response = await ProtoService.SendRequestAsync<TLUpdatesBase>("messages.sendMessage", request);
+            //    if (response.IsSucceeded)
+            //    {
+            //        i++;
+            //    }
+            //    else
+            //    {
+            //        await Task.Delay(500);
+            //    }
+            //}
+
             if (messageId.HasValue)
             {
                 LoadMessageSliceAsync(null, messageId.Value);
@@ -1025,7 +1049,7 @@ namespace Unigram.ViewModels
                 if (full != null)
                 {
                     Full = full;
-                    IsPhoneCallsAvailable = full.IsPhoneCallsAvailable && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
+                    IsPhoneCallsAvailable = full.IsPhoneCallsAvailable && !user.IsSelf && ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
 
                     if (user.IsBot && full.HasBotInfo)
                     {
@@ -1195,6 +1219,8 @@ namespace Unigram.ViewModels
                 dialog.ReadInboxMaxId = dialog.TopMessage;
                 dialog.UnreadCount = dialog.UnreadCount - unread;
                 dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+
+                RemoveNotifications();
             }
 
             LastSeen = await GetSubtitle();
@@ -1325,6 +1351,28 @@ namespace Unigram.ViewModels
             return null;
         }
 
+        private void RemoveNotifications()
+        {
+            var group = string.Empty;
+            if (_peer is TLInputPeerUser peerUser)
+            {
+                group = "u" + peerUser.UserId;
+            }
+            else if (_peer is TLInputPeerChannel peerChannel)
+            {
+                group = "c" + peerChannel.ChannelId;
+            }
+            else if (_peer is TLInputPeerChat peerChat)
+            {
+                group = "c" + peerChat.ChatId;
+            }
+
+            Execute.BeginOnThreadPool(() =>
+            {
+                ToastNotificationManager.History.RemoveGroup(group, "App");
+            });
+        }
+
         public void SaveDraft()
         {
             if (_editedMessage != null)
@@ -1344,7 +1392,7 @@ namespace Unigram.ViewModels
 
             if (With is TLChannel channel)
             {
-                if (channel.IsBroadcast && (!channel.IsCreator || !channel.IsEditor || !channel.IsModerator))
+                if (channel.IsBroadcast && (!channel.IsCreator || !channel.HasAdminRights))
                 {
                     return;
                 }
@@ -1760,7 +1808,7 @@ namespace Unigram.ViewModels
                             }
                         }
                     }
-                    else if (fwdMessage.ToId is TLPeerUser peerUser && peerUser.UserId == SettingsHelper.UserId)
+                    else if (fwdMessage.FromId == SettingsHelper.UserId && fwdMessage.ToId is TLPeerUser peerUser && peerUser.UserId == SettingsHelper.UserId)
                     {
 
                     }
@@ -2264,7 +2312,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (channel.IsCreator || channel.IsEditor || channel.IsModerator)
+            if (channel.IsCreator || channel.HasAdminRights && channel.AdminRights.IsPinMessages)
             {
                 var confirm = await TLMessageDialog.ShowAsync("Would you like to unpin this message?", "Unigram", "Yes", "No");
                 if (confirm == ContentDialogResult.Primary)

@@ -54,13 +54,32 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
                 if (response.IsSucceeded)
                 {
-                    var user = response.Result.FirstOrDefault() as TLUser;
-                    if (user != null)
+                    var result = response.Result.FirstOrDefault() as TLUser;
+                    if (result != null)
                     {
-                        Self = user;
+                        Self = result;
+                        SettingsHelper.UserId = result.Id;
                     }
                 }
             }
+
+            var user = Self;
+            if (user == null)
+            {
+                return;
+            }
+
+            var full = CacheService.GetFullUser(user.Id);
+            if (full == null)
+            {
+                var response = await ProtoService.GetFullUserAsync(user.ToInputUser());
+                if (response.IsSucceeded)
+                {
+                    full = response.Result;
+                }
+            }
+
+            Full = full;
         }
 
         private TLUser _self;
@@ -73,6 +92,19 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _self, value);
+            }
+        }
+
+        private TLUserFull _full;
+        public TLUserFull Full
+        {
+            get
+            {
+                return _full;
+            }
+            set
+            {
+                Set(ref _full, value);
             }
         }
 
@@ -166,8 +198,14 @@ namespace Unigram.ViewModels
         public RelayCommand DeleteAccountCommand => new RelayCommand(DeleteAccountExecute);
         private async void DeleteAccountExecute()
         {
+            var config = InMemoryCacheService.Current.GetConfig();
+            if (config == null)
+            {
+                return;
+            }
+
             // THIS CODE WILL RUN ONLY IF FIRST CONFIGURED SERVER IP IS TEST SERVER
-            if (Telegram.Api.Constants.FirstServerIpAddress.Equals("149.154.167.40"))
+            if (config.TestMode)
             {
                 var dialog = new InputDialog();
                 var confirm = await dialog.ShowQueuedAsync();

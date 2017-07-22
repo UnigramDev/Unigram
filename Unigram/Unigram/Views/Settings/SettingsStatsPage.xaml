@@ -119,7 +119,7 @@
                         </selectors:StatsDataTemplateSelector>
                     </ItemsControl.ItemTemplateSelector>
                 </ItemsControl>
-                <StackPanel Padding="12,8,12,24">
+                <StackPanel Padding="12,8,12,72">
                     <HyperlinkButton Command="{x:Bind ViewModel.SelectedItem.ResetCommand, Mode=OneWay}" Content="Reset Statistics" Foreground="Red"/>
                     <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
                         <Run Text="Network usage since"/>

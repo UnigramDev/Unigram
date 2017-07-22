@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,25 +11,27 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
+using Unigram.Common;
 using Unigram.Core.Common;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
 {
-    public abstract class SettingsStickersViewModelBase : UnigramViewModelBase
+    public abstract class SettingsStickersViewModelBase : UnigramViewModelBase, IHandle<StickersDidLoadedEventArgs>, IHandle<FeaturedStickersDidLoadedEventArgs>, IHandle<ArchivedStickersCountDidLoadedEventArgs>
     {
         private readonly IStickersService _stickersService;
         private readonly StickerType _type;
+
+        private bool _needReorder;
 
         public SettingsStickersViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IStickersService stickersService, StickerType type)
             : base(protoService, cacheService, aggregator)
         {
             _type = type;
             _stickersService = stickersService;
-            _stickersService.StickersDidLoaded += OnStickersDidLoaded;
-            _stickersService.FeaturedStickersDidLoaded += OnFeaturedStickersDidLoaded;
-            _stickersService.ArchivedStickersCountDidLoaded += OnArchivedStickersCountDidLoaded;
+
+            Aggregator.Subscribe(this);
 
             Items = new MvxObservableCollection<TLMessagesStickerSet>();
         }
@@ -45,18 +48,35 @@ namespace Unigram.ViewModels.Settings
                     if (_type == StickerType.Image)
                     {
                         var featured = _stickersService.CheckFeaturedStickers();
-                        if (featured) OnFeaturedStickersDidLoaded(null, null);
+                        if (featured) Handle(null as FeaturedStickersDidLoadedEventArgs);
                     }
 
                     if (stickers) ProcessStickerSets(_type);
-                    OnArchivedStickersCountDidLoaded(null, null);
+                    Handle(null as ArchivedStickersCountDidLoadedEventArgs);
                 });
             }
 
             return Task.CompletedTask;
         }
 
-        private void OnStickersDidLoaded(object sender, StickersDidLoadedEventArgs e)
+        public override Task OnNavigatedFromAsync(IDictionary<string, object> pageState, bool suspending)
+        {
+            if (_needReorder)
+            {
+                _needReorder = false;
+                _stickersService.CalculateNewHash(_type);
+
+                var stickers = _stickersService.GetStickerSets(_type);
+                var order = new TLVector<long>(stickers.Select(x => x.Set.Id));
+
+                ProtoService.ReorderStickerSetsAsync(_type == StickerType.Mask, order, null);
+                Aggregator.Publish(new StickersDidLoadedEventArgs(_type));
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public void Handle(StickersDidLoadedEventArgs e)
         {
             if (e.Type == _type)
             {
@@ -64,7 +84,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        private void OnFeaturedStickersDidLoaded(object sender, FeaturedStickersDidLoadedEventArgs e)
+        public void Handle(FeaturedStickersDidLoadedEventArgs e)
         {
             Execute.BeginOnUIThread(() =>
             {
@@ -72,7 +92,7 @@ namespace Unigram.ViewModels.Settings
             });
         }
 
-        private void OnArchivedStickersCountDidLoaded(object sender, ArchivedStickersCountDidLoadedEventArgs e)
+        public void Handle(ArchivedStickersCountDidLoadedEventArgs e)
         {
             Execute.BeginOnUIThread(() =>
             {
@@ -116,5 +136,20 @@ namespace Unigram.ViewModels.Settings
         }
 
         public MvxObservableCollection<TLMessagesStickerSet> Items { get; private set; }
+
+        public RelayCommand<TLMessagesStickerSet> ReorderCommand => new RelayCommand<TLMessagesStickerSet>(ReorderExecute);
+        private void ReorderExecute(TLMessagesStickerSet set)
+        {
+            var stickers = _stickersService.GetStickerSets(_type);
+            var index = Items.IndexOf(set);
+            var old = stickers.IndexOf(set);
+            if (old != index)
+            {
+                stickers.Remove(set);
+                stickers.Insert(index, set);
+
+                _needReorder = true;
+            }
+        }
     }
 }

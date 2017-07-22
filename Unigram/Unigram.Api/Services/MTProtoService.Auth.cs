@@ -22,7 +22,8 @@ namespace Telegram.Api.Services
 	    {
             var obj = new TLAuthCheckPhone { PhoneNumber = phoneNumber };
 
-            SendInformativeMessage("auth.checkPhone", obj, callback, faultCallback);
+            const string caption = "auth.checkPhone";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
 	    }
 
         public void SendCodeAsync(string phoneNumber, bool? currentNumber, Action<TLAuthSentCode> callback, Action<int> attemptFailed = null, Action<TLRPCError> faultCallback = null)
@@ -36,21 +37,24 @@ namespace Telegram.Api.Services
                 ApiHash = Constants.ApiHash
             };
 
-            SendInformativeMessage("auth.sendCode", obj, callback, faultCallback, 3);
+            const string caption = "auth.sendCode";
+            SendInformativeMessage(caption, obj, callback, faultCallback, 3);
         }
 
         public void ResendCodeAsync(string phoneNumber, string phoneCodeHash, Action<TLAuthSentCode> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthResendCode { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
-            SendInformativeMessage("auth.resendCode", obj, callback, faultCallback);
+            const string caption = "auth.resendCode";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void CancelCodeAsync(string phoneNumber, string phoneCodeHash, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLAuthCancelCode { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
-            SendInformativeMessage("auth.cancelCode", obj, callback, faultCallback);
+            const string caption = "auth.cancelCode";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         // Fela: DEPRECATED
@@ -58,14 +62,16 @@ namespace Telegram.Api.Services
         //{
         //    var obj = new TLSendCall { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash };
 
-        //    SendInformativeMessage("auth.sendCall", obj, callback, faultCallback);
+        //    const string caption = "auth.sendCall";
+        //    SendInformativeMessage(caption, obj, callback, faultCallback);
         //}
 
         public void SignUpAsync(string phoneNumber, string phoneCodeHash, string phoneCode, string firstName, string lastName, Action<TLAuthAuthorization> callback, Action<TLRPCError> faultCallback = null)
 	    {
             var obj = new TLAuthSignUp { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode, FirstName = firstName, LastName = lastName };
 
-            SendInformativeMessage<TLAuthAuthorization>("auth.signUp", obj,
+            const string caption = "auth.signUp";
+            SendInformativeMessage<TLAuthAuthorization>(caption, obj,
                 auth =>
                 {
                     _cacheService.SyncUser(auth.User, result => { });
@@ -78,7 +84,8 @@ namespace Telegram.Api.Services
         {
             var obj = new TLAuthSignIn { PhoneNumber = phoneNumber, PhoneCodeHash = phoneCodeHash, PhoneCode = phoneCode};
 
-            SendInformativeMessage<TLAuthAuthorization>("auth.signIn", obj,
+            const string caption = "auth.signIn";
+            SendInformativeMessage<TLAuthAuthorization>(caption, obj,
                 auth =>
                 {
                     _cacheService.SyncUser(auth.User, result => { }); 
@@ -115,7 +122,8 @@ namespace Telegram.Api.Services
 	    {
             var obj = new TLAuthSendInvites { PhoneNumbers = phoneNumbers, Message = message };
 
-            SendInformativeMessage("auth.sendInvites", obj, callback, faultCallback);
+            const string caption = "auth.sendInvites";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
 	    }
 
 	    public void ExportAuthorizationAsync(int dcId, Action<TLAuthExportedAuthorization> callback, Action<TLRPCError> faultCallback = null)
@@ -143,7 +151,8 @@ namespace Telegram.Api.Services
         {
             var obj = new TLAuthResetAuthorizations();
 
-            SendInformativeMessage("auth.resetAuthorizations", obj, callback, faultCallback);
+            const string caption = "auth.resetAuthorizations";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 	}
 }

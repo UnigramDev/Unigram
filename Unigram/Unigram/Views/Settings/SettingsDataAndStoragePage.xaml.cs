@@ -50,6 +50,7 @@ namespace Unigram.Views.Settings
             dialog.Username = SettingsHelper.ProxyUsername;
             dialog.Password = SettingsHelper.ProxyPassword;
             dialog.IsProxyEnabled = SettingsHelper.IsProxyEnabled;
+            dialog.IsCallsProxyEnabled = SettingsHelper.IsCallsProxyEnabled;
 
             var enabled = SettingsHelper.IsProxyEnabled == true;
 
@@ -57,10 +58,11 @@ namespace Unigram.Views.Settings
             if (confirm == ContentDialogResult.Primary)
             {
                 SettingsHelper.ProxyServer = dialog.Server;
-                SettingsHelper.ProxyPort = int.Parse(dialog.Port);
+                SettingsHelper.ProxyPort = int.Parse(dialog.Port ?? "1080");
                 SettingsHelper.ProxyUsername = dialog.Username;
                 SettingsHelper.ProxyPassword = dialog.Password;
                 SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;
+                SettingsHelper.IsCallsProxyEnabled = dialog.IsCallsProxyEnabled;
 
                 if (enabled != SettingsHelper.IsProxyEnabled)
                 {

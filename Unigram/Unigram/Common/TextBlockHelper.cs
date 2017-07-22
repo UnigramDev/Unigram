@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Auth;
+using Unigram.Strings;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -42,7 +43,7 @@ namespace Unigram.Common
             switch (type)
             {
                 case TLAuthSentCodeTypeApp appType:
-                    sender.Inlines.Add(new Run { Text = "We've sent the code the " });
+                    sender.Inlines.Add(new Run { Text = "We've sent the code to the " });
                     sender.Inlines.Add(new Run { Text = "Telegram", FontWeight = FontWeights.SemiBold });
                     sender.Inlines.Add(new Run { Text = " app on your other device." });
                     break;
@@ -188,6 +189,52 @@ namespace Unigram.Common
                 sender.Inlines.Add(new Run { Text = markdown.Substring(previousNext + 2, markdown.Length - (previousNext + 2)) });
             }
         }
+        #endregion
+
+        #region Edited
+
+        public static TLMessage GetEdited(DependencyObject obj)
+        {
+            return (TLMessage)obj.GetValue(EditedProperty);
+        }
+
+        public static void SetEdited(DependencyObject obj, TLMessage value)
+        {
+            obj.SetValue(EditedProperty, value);
+        }
+
+        public static readonly DependencyProperty EditedProperty =
+            DependencyProperty.RegisterAttached("Edited", typeof(TLMessage), typeof(TextBlockHelper), new PropertyMetadata(null, OnEditedChanged));
+
+        private static void OnEditedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as TextBlock;
+            var newMessage = e.NewValue as TLMessage;
+            var oldMessage = newMessage.Reply as TLMessage;
+
+            var siteName = sender.Inlines[0] as Run;
+            var description = sender.Inlines[2] as Run;
+
+            if (newMessage.Media == null || (newMessage.Media is TLMessageMediaEmpty) || (newMessage.Media is TLMessageMediaWebPage) || !string.IsNullOrEmpty(newMessage.Message))
+            {
+                siteName.Text = AppResources.EventLogOriginalMessages;
+                description.Text = oldMessage.Message;
+            }
+            else if (oldMessage.Media is ITLMessageMediaCaption captionMedia)
+            {
+                siteName.Text = AppResources.EventLogOriginalCaption;
+
+                if (string.IsNullOrEmpty(captionMedia.Caption))
+                {
+                    description.Text = AppResources.EventLogOriginalCaptionEmpty;
+                }
+                else
+                {
+                    description.Text = captionMedia.Caption;
+                }
+            }
+        }
+
         #endregion
     }
 }

@@ -10,14 +10,17 @@ namespace Telegram.Api.TL
 		{
 			Broadcast = (1 << 5),
 			MegaGroup = (1 << 8),
+			UntilDate = (1 << 16),
 		}
 
 		public bool IsBroadcast { get { return Flags.HasFlag(Flag.Broadcast); } set { Flags = value ? (Flags | Flag.Broadcast) : (Flags & ~Flag.Broadcast); } }
 		public bool IsMegaGroup { get { return Flags.HasFlag(Flag.MegaGroup); } set { Flags = value ? (Flags | Flag.MegaGroup) : (Flags & ~Flag.MegaGroup); } }
+		public bool HasUntilDate { get { return Flags.HasFlag(Flag.UntilDate); } set { Flags = value ? (Flags | Flag.UntilDate) : (Flags & ~Flag.UntilDate); } }
 
 		public Flag Flags { get; set; }
 		public Int64 AccessHash { get; set; }
 		public String Title { get; set; }
+		public Int32? UntilDate { get; set; }
 
 		public TLChannelForbidden() { }
 		public TLChannelForbidden(TLBinaryReader from)
@@ -33,15 +36,24 @@ namespace Telegram.Api.TL
 			Id = from.ReadInt32();
 			AccessHash = from.ReadInt64();
 			Title = from.ReadString();
+			if (HasUntilDate) UntilDate = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x8537784F);
+			UpdateFlags();
+
+			to.Write(0x289DA732);
 			to.Write((Int32)Flags);
 			to.Write(Id);
 			to.Write(AccessHash);
 			to.Write(Title);
+			if (HasUntilDate) to.Write(UntilDate.Value);
+		}
+
+		private void UpdateFlags()
+		{
+			HasUntilDate = UntilDate != null;
 		}
 	}
 }

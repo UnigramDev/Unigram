@@ -21,6 +21,7 @@ using Windows.Media.Transcoding;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
 {
@@ -544,6 +545,16 @@ namespace Unigram.ViewModels
 
         private async Task SendPhotoAsync(StorageFile file, string caption)
         {
+            var originalProps = await file.Properties.GetImagePropertiesAsync();
+
+            var imageWidth = originalProps.Width;
+            var imageHeight = originalProps.Height;
+            if (imageWidth >= 20 * imageHeight || imageHeight >= 20 * imageWidth)
+            {
+                await SendFileAsync(file, caption);
+                return;
+            }
+
             var fileLocation = new TLFileLocation
             {
                 VolumeId = TLLong.Random(),
@@ -876,9 +887,29 @@ namespace Unigram.ViewModels
         }
 
         public RelayCommand SendLocationCommand => new RelayCommand(SendLocationExecute);
-        private void SendLocationExecute()
+        private async void SendLocationExecute()
         {
-            NavigationService.Navigate(typeof(DialogSendLocationPage));
+            var page = new DialogSendLocationPage();
+
+            var dialog = new ContentDialogBase();
+            dialog.Content = page;
+
+            page.Dialog = dialog;
+
+            var confirm = await dialog.ShowAsync();
+            if (confirm == ContentDialogBaseResult.OK)
+            {
+                if (page.Media is TLMessageMediaVenue venue)
+                {
+                    await SendGeoPointAsync(venue);
+                }
+                else if (page.Media is TLMessageMediaGeo geo && geo.Geo is TLGeoPoint geoPoint)
+                {
+                    await SendGeoPointAsync(geoPoint.Lat, geoPoint.Long);
+                }
+            }
+
+            //NavigationService.Navigate(typeof(DialogSendLocationPage));
         }
 
         public Task<bool> SendGeoPointAsync(double latitude, double longitude)
@@ -916,6 +947,40 @@ namespace Unigram.ViewModels
                         Long = longitude
                     }
                 };
+
+                var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                if (result.IsSucceeded)
+                {
+                    tsc.SetResult(true);
+                }
+                else
+                {
+                    tsc.SetResult(false);
+                }
+            });
+
+            return tsc.Task;
+        }
+
+        public Task<bool> SendGeoPointAsync(TLMessageMediaVenue media)
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var inputMedia = media.ToInputMedia();
 
                 var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
                 if (result.IsSucceeded)

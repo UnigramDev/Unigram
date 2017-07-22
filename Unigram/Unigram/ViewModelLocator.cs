@@ -119,6 +119,11 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<DialogViewModel>();
             container.ContainerBuilder.RegisterType<DialogStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<UserDetailsViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelManageViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelAdminLogViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelAdminLogFilterViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelAdminRightsViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelBannedRightsViewModel>();
             container.ContainerBuilder.RegisterType<UserCommonChatsViewModel>();
             container.ContainerBuilder.RegisterType<ChatDetailsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChatInviteViewModel>();// .SingleInstance();
@@ -127,6 +132,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<ChannelEditViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelEditTypeViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelAdminsViewModel>();// .SingleInstance();
+            container.ContainerBuilder.RegisterType<ChannelBannedViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelKickedViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelParticipantsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
@@ -187,10 +193,10 @@ namespace Unigram
                 }
             }
 
-            if (SettingsHelper.SupportedLayer < 66)
+            if (SettingsHelper.SupportedLayer < 68)
             {
                 deleteIfExists("database.sqlite");
-                SettingsHelper.SupportedLayer = 66;
+                SettingsHelper.SupportedLayer = 68;
                 ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
                 ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
             }
@@ -207,8 +213,8 @@ namespace Unigram
                 deleteIfExists("chats.dat.temp");
                 deleteIfExists("dialogs.dat");
                 deleteIfExists("dialogs.dat.temp");
-                deleteIfExists("state.dat");
-                deleteIfExists("state.dat.temp");
+                //deleteIfExists("state.dat");
+                //deleteIfExists("state.dat.temp");
                 deleteIfExists("users.dat");
                 deleteIfExists("users.dat.temp");
 
@@ -302,7 +308,10 @@ namespace Unigram
         private void OnAuthorizationRequired(object sender, AuthorizationRequiredEventArgs e)
         {
             SettingsHelper.IsAuthorized = false;
-            Debug.WriteLine("!!!UNAUTHORIZED!!!");
+            SettingsHelper.UserId = 0;
+            MTProtoService.Current.CurrentUserId = 0;
+
+            Debug.WriteLine("!!! UNAUTHORIZED !!!");
 
             Execute.BeginOnUIThread(() =>
             {

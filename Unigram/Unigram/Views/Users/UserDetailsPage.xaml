@@ -7,8 +7,15 @@
     xmlns:common="using:Unigram.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    SizeChanged="OnSizeChanged"
     mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SuppressNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -104,11 +111,11 @@
                         <TextBlock Text="{x:Bind ViewModel.Item.Phone, Converter={StaticResource PhoneNumberFormatConverter}}"/>
                     </controls:HyperButton>
 
-                    <controls:HyperButton Tag="About"
-                                          Visibility="{Binding AboutVisibility}"
-                                          Style="{StaticResource SubtitleButtonStyle}">
-                        <TextBlock common:MessageHelper.Text="{x:Bind ViewModel.Full.About, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}"/>
-                    </controls:HyperButton>
+                    <StackPanel Visibility="{x:Bind ViewModel.Full.About, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                        <TextBlock Text="About" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
+                        <TextBlock common:MessageHelper.Text="{x:Bind ViewModel.Full.About, Mode=OneWay}" IsTextSelectionEnabled="True" Padding="12,0,12,12" Style="{StaticResource BodyTextBlockStyle}"/>
+                        <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" Height="1" Margin="12,0,0,0"/>
+                    </StackPanel>
 
                     <controls:HyperButton Tag="Username"
                                           Visibility="{Binding Item.Username, Converter={StaticResource NullToVisibilityConverter}}"

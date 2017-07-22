@@ -91,7 +91,7 @@ namespace Unigram.Views
                 _webpageId = webpage.Id;
 
                 var photos = new List<TLPhotoBase>(webpage.CachedPage.Photos);
-                var documents = new List<TLDocumentBase>(webpage.CachedPage.Videos);
+                var documents = new List<TLDocumentBase>(webpage.CachedPage.Documents);
 
                 if (webpage.HasPhoto)
                 {
@@ -109,8 +109,20 @@ namespace Unigram.Views
 
                     if (element != null)
                     {
-                        element.Margin = new Thickness(padding, spacing, padding, 0);
-                        ScrollingHost.Items.Add(element);
+                        if (block is TLPageBlockChannel && previousBlock is TLPageBlockCover)
+                        {
+                            if (previousElement is StackPanel stack && element is Button)
+                            {
+                                element.Style = Resources["CoverChannelBlockStyle"] as Style;
+                                element.Margin = new Thickness(padding, -40, padding, 0);
+                                stack.Children.Insert(1, element);
+                            }
+                        }
+                        else
+                        {
+                            element.Margin = new Thickness(padding, spacing, padding, 0);
+                            ScrollingHost.Items.Add(element);
+                        }
                     }
 
                     previousBlock = block;
@@ -128,7 +140,7 @@ namespace Unigram.Views
                         if (newpage != null && newpage.HasCachedPage)
                         {
                             photos = new List<TLPhotoBase>(newpage.CachedPage.Photos);
-                            documents = new List<TLDocumentBase>(newpage.CachedPage.Videos);
+                            documents = new List<TLDocumentBase>(newpage.CachedPage.Documents);
 
                             if (webpage.HasPhoto)
                             {

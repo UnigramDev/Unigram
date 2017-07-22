@@ -3,13 +3,20 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Unigram.Controls.Views"
       xmlns:controls="using:Unigram.Controls"
+      xmlns:behaviors="using:Unigram.Behaviors"
       xmlns:tl="using:Telegram.Api.TL"
+      xmlns:i="using:Microsoft.Xaml.Interactivity"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
       d:DesignHeight="300"
       d:DesignWidth="400"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid.Resources>
+        <CollectionViewSource x:Name="SearchResults" Source="{Binding Search}" IsSourceGrouped="True"/>
+    </Grid.Resources>
+    
     <Grid.RowDefinitions>
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
@@ -22,22 +29,23 @@
         </Grid.ColumnDefinitions>
         <StackPanel VerticalAlignment="Center" Margin="12,0">
             <TextBlock Text="{x:Bind ViewModel.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
-            <TextBlock Visibility="{x:Bind ConvertMaximum(ViewModel.Maximum)}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
+            <TextBlock Visibility="{x:Bind ConvertMaximum(ViewModel.Maximum, x:True)}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}">
                 <Run Text="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}"/><Run Text="/"/><Run Text="{x:Bind ViewModel.Maximum}"/>
             </TextBlock>
         </StackPanel>
-        <controls:GlyphButton Command="{x:Bind ViewModel.SendCommand}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE10B;" Grid.Column="1"/>
+        <controls:GlyphButton Command="{x:Bind ViewModel.SendCommand}" Visibility="{x:Bind ConvertMaximum(ViewModel.Maximum, x:False)}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE10B;" Grid.Column="1"/>
         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
     </Grid>
 
-    <Border Background="{ThemeResource CommandBarOverflowPresenterBackground}" MinHeight="48" Grid.Row="1">
+    <Grid Background="{ThemeResource CommandBarOverflowPresenterBackground}" MinHeight="48" Grid.Row="1">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       MaxHeight="76">
-            <controls:TagsTextBox ItemsSource="{x:Bind ViewModel.SelectedItems}" VerticalAlignment="Stretch" PlaceholderText="Search" Margin="0,8" SizeChanged="TagsTextBox_SizeChanged"/>
+            <controls:TagsTextBox x:Name="SearchField" Text="{Binding SearchQuery, Mode=TwoWay}" TextChanged="SearchField_TextChanged" ItemsSource="{x:Bind ViewModel.SelectedItems}" VerticalAlignment="Stretch" PlaceholderText="Search" Margin="0,8" SizeChanged="TagsTextBox_SizeChanged"/>
         </ScrollViewer>
-    </Border>
+        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
+    </Grid>
 
     <ListView x:Name="List"
               ItemsSource="{x:Bind ViewModel.Items}"
@@ -76,4 +84,91 @@
             </DataTemplate>
         </ListView.ItemTemplate>
     </ListView>
+
+    <ListView x:Name="SearchList"
+              Visibility="Collapsed"
+              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              ItemsSource="{x:Bind SearchResults.View}"
+              SelectionMode="{x:Bind ViewModel.SelectionMode}"
+              SelectionChanged="ListView_SelectionChanged"
+              IsItemClickEnabled="True"
+              ItemClick="ListView_ItemClick"
+              Grid.Row="2">
+        <ListView.ItemTemplate>
+            <DataTemplate x:DataType="tl:TLUser">
+                <Grid Margin="0,4,0,8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                    <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                    <TextBlock Text="{x:Bind Username}"
+                               VerticalAlignment="Top"
+                               Style="{StaticResource CaptionTextBlockStyle}"
+                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                               TextTrimming="CharacterEllipsis"
+                               TextWrapping="NoWrap"
+                               Grid.Column="1"
+                               Grid.Row="1"
+                               MaxLines="1">
+                        <i:Interaction.Behaviors>
+                            <behaviors:UsernameHighlightBehavior SearchString="{Binding ElementName=SearchList, Path=DataContext.SearchQuery}" HighlightBrush="{ThemeResource TelegramDialogLabelFromBrush}"/>
+                        </i:Interaction.Behaviors>
+                    </TextBlock>
+                </Grid>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+        <ListView.ItemContainerStyle>
+            <Style TargetType="ListViewItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            </Style>
+        </ListView.ItemContainerStyle>
+        <ListView.GroupStyle>
+            <GroupStyle>
+                <GroupStyle.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Key}" Style="{StaticResource BaseTextBlockStyle}"/>
+                    </DataTemplate>
+                </GroupStyle.HeaderTemplate>
+                <GroupStyle.HeaderContainerStyle>
+                    <Style TargetType="ListViewHeaderItem">
+                        <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                        <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                        <Setter Property="Margin" Value="0,0,0,0"/>
+                        <Setter Property="Padding" Value="12,8,12,9"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Top" />
+                        <Setter Property="MinHeight" Value="0"/>
+                        <Setter Property="UseSystemFocusVisuals" Value="True" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewHeaderItem">
+                                    <Border Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            Visibility="{Binding Content.Key, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}">
+                                        <ContentPresenter x:Name="ContentPresenter"
+                                                          Margin="{TemplateBinding Padding}"
+                                                          Content="{TemplateBinding Content}"
+                                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </GroupStyle.HeaderContainerStyle>
+            </GroupStyle>
+        </ListView.GroupStyle>
+    </ListView>
+
 </Grid>

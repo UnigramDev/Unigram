@@ -16,9 +16,26 @@
     MaxWidth="{ThemeResource MessageMaxWidth}">
 
     <!-- TODO: not the right way -->
-    <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
+    <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay, FallbackValue=Collapsed}"/>
 
-    <ContentControl HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Style="{ThemeResource MessageBubbleStyle}">
+    <controls:SwipeListViewItem
+        RightBackground="#007aff"
+        RightBehavior="Collapse"
+        LeftBehavior="Disabled"
+        ItemSwipe="SwipeListViewItem_ItemSwipe"
+        HorizontalContentAlignment="Stretch"
+        VerticalContentAlignment="Stretch"
+        Style="{ThemeResource MessageBubbleStyle}">
+        <controls:SwipeListViewItem.LeftContentTemplate>
+            <DataTemplate/>
+        </controls:SwipeListViewItem.LeftContentTemplate>
+        <controls:SwipeListViewItem.RightContentTemplate>
+            <DataTemplate>
+                <Border VerticalAlignment="Center">
+                    <FontIcon Glyph="&#xE248;" Foreground="White" Margin="12,0"/>
+                </Border>
+            </DataTemplate>
+        </controls:SwipeListViewItem.RightContentTemplate>
         <UserControl x:Name="LayoutRoot">
             <Grid x:Name="ContentPanel"
                   Padding="{ThemeResource MessageContentPadding}"
@@ -89,7 +106,7 @@
                     Grid.Row="4"/>
             </Grid>
         </UserControl>
-    </ContentControl>
+    </controls:SwipeListViewItem>
 
     <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2"/>
 

@@ -1,0 +1,28 @@
+﻿<Page
+    x:Class="Unigram.Views.Channels.ChannelManagePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Views.Channels"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:PageHeader Text="Manage Group"/>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Grid.Row="1">
+            <StackPanel>                <controls:HyperButton Content="Recent Actions"
+                                      Command="{x:Bind ViewModel.AdminLogCommand}"
+                                      Style="{StaticResource HyperButtonStyle}"
+                                      Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
