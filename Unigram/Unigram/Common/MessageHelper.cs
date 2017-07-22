@@ -168,18 +168,18 @@ namespace Unigram.Common
                             bot = message.From.IsBot;
                         }
 
-                        if (message.HasEditDate && !message.HasViaBotId && !bot && message.ReplyMarkup?.TypeId != TLType.ReplyInlineMarkup)
+                        if (message.HasEditDate && !message.HasViaBotId && !bot && !(message.ReplyMarkup is TLReplyInlineMarkup))
                         {
                             placeholder = "edited" + placeholder;
                         }
 
                         if (message.HasViews)
                         {
-                            placeholder = "WS" + (message.Views ?? 0) + placeholder;
+                            placeholder = "WS  " + (message.Views ?? 0) + placeholder;
 
                             if (message.HasFromId && message.From != null)
                             {
-                                placeholder = (message.From.FullName ?? string.Empty) + placeholder;
+                                placeholder = (message.From.FullName + "  " ?? string.Empty) + placeholder;
                             }
                         }
 
