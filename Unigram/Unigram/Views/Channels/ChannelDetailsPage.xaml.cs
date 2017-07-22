@@ -82,6 +82,11 @@ namespace Unigram.Views.Channels
             }
         }
 
+        private Visibility ConvertBooleans(int? first, bool second, bool third)
+        {
+            return first.HasValue && first > 0 && second && third ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         #region Context menu
 
         private void MenuFlyout_Opening(object sender, object e)
@@ -147,7 +152,7 @@ namespace Unigram.Views.Channels
                 return;
             }
 
-            if ((channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsBanUsers)) && !(participant is TLChannelParticipantBanned))
+            if ((channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsBanUsers)) && ((participant is TLChannelParticipantAdmin admin && admin.IsCanEdit) || (!(participant is TLChannelParticipantBanned) && !(participant is TLChannelParticipantAdmin))))
             {
                 element.Visibility = participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
             }
