@@ -309,6 +309,7 @@ namespace Unigram
         {
             SettingsHelper.IsAuthorized = false;
             SettingsHelper.UserId = 0;
+            SettingsHelper.ChannelUri = null;
             MTProtoService.Current.CurrentUserId = 0;
 
             Debug.WriteLine("!!! UNAUTHORIZED !!!");
