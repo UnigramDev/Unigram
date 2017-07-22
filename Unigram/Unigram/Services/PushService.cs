@@ -61,6 +61,7 @@ namespace Unigram.Core.Services
                 }
                 catch (Exception ex)
                 {
+                    _alreadyRegistered = false;
                     Debugger.Break();
                 }
             }
