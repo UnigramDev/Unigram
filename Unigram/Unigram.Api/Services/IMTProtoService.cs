@@ -48,6 +48,8 @@ namespace Telegram.Api.Services
         void SaveConfig();
         TLConfig LoadConfig();
 
+        void ToggleProxy();
+
         void GetStateAsync(Action<TLUpdatesState> callback, Action<TLRPCError> faultCallback = null);
         void GetDifferenceAsync(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null);
         void GetDifferenceWithoutUpdatesAsync(int pts, int date, int qts, Action<TLUpdatesDifferenceBase> callback, Action<TLRPCError> faultCallback = null);

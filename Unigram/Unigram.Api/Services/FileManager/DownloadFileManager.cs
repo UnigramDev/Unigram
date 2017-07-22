@@ -355,7 +355,7 @@ namespace Telegram.Api.Services.FileManager
             TLRPCError outError = null;
             var outIsCanceled = false;
 
-            _protoService.ReuploadCdnFileAsync(dcId, redirect.FileToken, requestToken, callback =>
+            _protoService.ReuploadCdnFileAsync(redirect.DCId, redirect.FileToken, requestToken, callback =>
             {
                 if (callback)
                 {

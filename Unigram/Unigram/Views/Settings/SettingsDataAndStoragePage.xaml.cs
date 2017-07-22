@@ -53,9 +53,7 @@ namespace Unigram.Views.Settings
 
                 if (enabled != SettingsHelper.IsProxyEnabled)
                 {
-                    // TODO: 10/07/2017
-                    //UnigramContainer.Current.ResolveType<ITransportService>().Close();
-                    //UnigramContainer.Current.ResolveType<IMTProtoService>().PingAsync(TLLong.Random(), null);
+                    UnigramContainer.Current.ResolveType<IMTProtoService>().ToggleProxy();
                 }
             }
         }

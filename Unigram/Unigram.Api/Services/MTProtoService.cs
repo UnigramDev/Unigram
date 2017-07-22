@@ -168,6 +168,30 @@ namespace Telegram.Api.Services
             Current = this;
         }
 
+        public void ToggleProxy()
+        {
+            if (SettingsHelper.IsProxyEnabled)
+            {
+                var server = SettingsHelper.ProxyServer;
+                var port = (uint)SettingsHelper.ProxyPort;
+                var username = SettingsHelper.ProxyUsername;
+                var password = SettingsHelper.ProxyPassword;
+
+                if (username == null || password == null)
+                {
+                    _connectionManager.ProxySettings = new ProxySettings(server, port);
+                }
+                else
+                {
+                    _connectionManager.ProxySettings = new ProxySettings(server, port, username, password);
+                }
+            }
+            else
+            {
+                _connectionManager.ProxySettings = null;
+            }
+        }
+
         private void ConnectionManager_CurrentNetworkTypeChanged(ConnectionManager sender, object args)
         {
             throw new NotImplementedException();
