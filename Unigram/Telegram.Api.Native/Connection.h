@@ -174,7 +174,11 @@ namespace Telegram
 				HRESULT OnMsgDetailedInfoResponse(_In_ TL::TLMsgDetailedInfo* response);
 				HRESULT OnMsgNewDetailedInfoResponse(_In_ TL::TLMsgNewDetailedInfo* response);
 				HRESULT OnMessageReceived(_In_ TL::TLMemoryBinaryReader* messageReader, UINT32 messageLength);
-				HRESULT OnProxyHandshakeDataReceived(_In_reads_(length) BYTE* buffer, UINT32 length);
+				HRESULT OnDataReceived(_In_reads_(length) BYTE* buffer, UINT32 length);
+				HRESULT OnProxyConnected();
+				HRESULT OnProxyGreetingResponse(_In_reads_(length) BYTE* buffer, UINT32 length);
+				HRESULT OnProxyAuthenticationResponse(_In_reads_(length) BYTE* buffer, UINT32 length);
+				HRESULT OnProxyConnectionRequestResponse(_In_reads_(length) BYTE* buffer, UINT32 length);
 
 				virtual HRESULT OnSocketConnected() override;
 				virtual HRESULT OnSocketDataReceived(_In_reads_(length) BYTE* buffer, UINT32 length) override;
