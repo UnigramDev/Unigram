@@ -1215,7 +1215,6 @@ namespace Unigram.ViewModels
                     if (response.IsSucceeded)
                     {
                         offset = response.Result.Offset;
-                        await new TLMessageDialog(offset.ToString(), "Offset").ShowQueuedAsync();
                     }
                     else
                     {

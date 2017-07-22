@@ -18,8 +18,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
-            <StackPanel>
-                <controls:HyperButton Content="Recent Actions"
+            <StackPanel>                <controls:HyperButton Content="Recent Actions"
                                       Command="{x:Bind ViewModel.AdminLogCommand}"
                                       Style="{StaticResource HyperButtonStyle}"
                                       Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>

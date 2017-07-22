@@ -372,15 +372,17 @@ namespace Unigram.ViewModels
 
                                 if (ApplicationSettings.Current.InAppSounds)
                                 {
-                                    if (_notificationPlayer == null)
-                                    {
-                                        _notificationPlayer = new MediaPlayer();
-                                        _notificationPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Sounds/Default.wav"));
-                                    }
+                                    //if (_notificationPlayer == null)
+                                    //{
+                                    //    _notificationPlayer = new MediaPlayer();
+                                    //    _notificationPlayer.Source = MediaSource.CreateFromUri(new Uri("ms-appx:///Assets/Sounds/Default.wav"));
+                                    //}
 
-                                    _notificationPlayer.Pause();
-                                    _notificationPlayer.PlaybackSession.Position = TimeSpan.Zero;
-                                    _notificationPlayer.Play();
+                                    //_notificationPlayer.Pause();
+                                    //_notificationPlayer.PlaybackSession.Position = TimeSpan.Zero;
+                                    //_notificationPlayer.Play();
+
+
 
                                     //string text = "Sounds/Default.wav";
                                     //if (toId is TLPeerChat && !string.IsNullOrEmpty(s.GroupSound))

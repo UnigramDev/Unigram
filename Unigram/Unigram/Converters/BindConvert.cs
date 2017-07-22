@@ -42,13 +42,13 @@ namespace Unigram.Converters
 
         private BindConvert()
         {
-            var region = new GeographicRegion();
-            var code = region.CodeTwoLetter;
+            //var region = new GeographicRegion();
+            //var code = region.CodeTwoLetter;
 
-            ShortDate = new DateTimeFormatter("shortdate", new[] { code });
-            ShortTime = new DateTimeFormatter("shorttime", new[] { code });
-            LongDate = new DateTimeFormatter("longdate", new[] { code });
-            LongTime = new DateTimeFormatter("longtime", new[] { code });
+            ShortDate = new DateTimeFormatter("shortdate", GlobalizationPreferences.Languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
+            ShortTime = new DateTimeFormatter("shorttime", GlobalizationPreferences.Languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
+            LongDate = new DateTimeFormatter("longdate", GlobalizationPreferences.Languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
+            LongTime = new DateTimeFormatter("longtime", GlobalizationPreferences.Languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
 
             PlaceholderColors = new List<SolidColorBrush>();
 
@@ -179,7 +179,7 @@ namespace Unigram.Converters
 
             if (_currencyCache.TryGetValue(currency, out CurrencyFormatter formatter) == false)
             {
-                formatter = new CurrencyFormatter(currency, Windows.System.UserProfile.GlobalizationPreferences.Languages, Windows.System.UserProfile.GlobalizationPreferences.HomeGeographicRegion);
+                formatter = new CurrencyFormatter(currency, GlobalizationPreferences.Languages, GlobalizationPreferences.HomeGeographicRegion);
                 _currencyCache[currency] = formatter;
             }
 
@@ -293,9 +293,6 @@ namespace Unigram.Converters
             var utc0SecsInt = utc0SecsLong / 4294967296.0;
             var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
 
-            var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
-            var shortTimePattern = Utils.GetShortTimePattern(ref cultureInfo);
-
             //Today
             if (dateTime.Date == System.DateTime.Now.Date)
             {
@@ -308,10 +305,10 @@ namespace Unigram.Converters
             {
                 if (_formatterCache.TryGetValue("dayofweek.abbreviated", out DateTimeFormatter formatter) == false)
                 {
-                    var region = new GeographicRegion();
-                    var code = region.CodeTwoLetter;
+                    //var region = new GeographicRegion();
+                    //var code = region.CodeTwoLetter;
 
-                    formatter = new DateTimeFormatter("dayofweek.abbreviated", new[] { code });
+                    formatter = new DateTimeFormatter("dayofweek.abbreviated", GlobalizationPreferences.Languages, GlobalizationPreferences.HomeGeographicRegion, GlobalizationPreferences.Calendars.FirstOrDefault(), GlobalizationPreferences.Clocks.FirstOrDefault());
                     _formatterCache["dayofweek.abbreviated"] = formatter;
                 }
 

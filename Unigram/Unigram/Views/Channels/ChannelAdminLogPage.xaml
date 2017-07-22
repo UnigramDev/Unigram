@@ -85,7 +85,7 @@
             <controls:ProfilePictureView Source="{x:Bind ViewModel.Item.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
 
             <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
-                <TextBlock Text="{x:Bind ViewModel.Item.DisplayName, Mode=OneWay}"
+                <TextBlock Text="{x:Bind ViewModel.Item.Title, Mode=OneWay}"
                            Style="{StaticResource BaseTextBlockStyle}"
                            TextTrimming="CharacterEllipsis"
                            TextWrapping="NoWrap"
@@ -95,7 +95,7 @@
                            Text="All events"/>
             </StackPanel>
 
-            <controls:GlyphButton Glyph="&#xE11A;" Grid.Column="2"/>
+            <!--<controls:GlyphButton Glyph="&#xE11A;" Grid.Column="2"/>-->
 
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
         </Grid>
@@ -307,7 +307,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Click="Settings_Click" Content="FILTER" Style="{StaticResource SendButtonStyle}" Grid.ColumnSpan="2"/>
+            <!--<Button Click="Settings_Click" Content="FILTER" Style="{StaticResource SendButtonStyle}" Grid.ColumnSpan="2"/>-->
             <controls:GlyphButton Click="Help_Click" Glyph="&#xE11B;" Foreground="{ThemeResource TelegramForegroundAccentBrush}" Grid.Column="1"/>
 
             <Border BorderThickness="0,1,0,0" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
