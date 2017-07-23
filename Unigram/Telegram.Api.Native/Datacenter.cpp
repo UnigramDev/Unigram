@@ -722,7 +722,7 @@ HRESULT Datacenter::ImportAuthorization()
 						datacenter->m_flags |= static_cast<DatacenterFlag>(AuthorizationState::Authorized);
 
 						HRESULT result;
-						ReturnIfFailed(result, datacenter->m_connectionManager->OnDatacenterImportAuthorizationComplete(datacenter.Get()));
+						ReturnIfFailed(result, datacenter->m_connectionManager->OnDatacenterImportAuthorizationCompleted(datacenter.Get()));
 
 						return datacenter->SaveSettings();
 					}
@@ -898,11 +898,14 @@ HRESULT Datacenter::GetEndpointsForConnectionType(ConnectionType connectionType,
 
 HRESULT Datacenter::OnConnectionOpened(Connection* connection)
 {
-	auto lock = LockCriticalSection();
-
-	if (connection->GetType() == ConnectionType::Generic && FLAGS_GET_HANDSHAKESTATE(m_flags) == HandshakeState::None)
+	if (connection->GetType() == ConnectionType::Generic)
 	{
-		return BeginHandshake(false, true);
+		auto lock = LockCriticalSection();
+
+		if (FLAGS_GET_HANDSHAKESTATE(m_flags) == HandshakeState::None)
+		{
+			return BeginHandshake(false, true);
+		}
 	}
 
 	return S_OK;
@@ -914,7 +917,7 @@ HRESULT Datacenter::OnConnectionClosed(Connection* connection)
 	{
 		auto lock = LockCriticalSection();
 
-		if (static_cast<HandshakeState>(m_flags & DatacenterFlag::HandshakeState) != HandshakeState::Authenticated)
+		if (FLAGS_GET_HANDSHAKESTATE(m_flags) != HandshakeState::Authenticated)
 		{
 			m_authenticationContext.reset();
 			m_flags &= ~DatacenterFlag::HandshakeState;
@@ -1247,7 +1250,7 @@ HRESULT Datacenter::OnHandshakeClientDHResponse(Connection* connection, TLDHGenO
 		m_flags |= static_cast<DatacenterFlag>(HandshakeState::Authenticated);
 	}
 
-	ReturnIfFailed(result, m_connectionManager->OnDatacenterHandshakeComplete(this, timeDifference));
+	ReturnIfFailed(result, m_connectionManager->OnDatacenterHandshakeCompleted(this, timeDifference));
 
 	return SaveSettings();
 }
@@ -1514,7 +1517,7 @@ HRESULT Datacenter::ReadSettingsEndpoints(ITLBinaryReaderEx* reader, std::vector
 #else
 	return reader->ReadUInt32(currentIndex);
 #endif
-	}
+}
 
 HRESULT Datacenter::WriteSettingsEndpoints(ITLBinaryWriterEx* writer, std::vector<ServerEndpoint> const& endpoints, size_t currentIndex)
 {
@@ -1532,7 +1535,7 @@ HRESULT Datacenter::WriteSettingsEndpoints(ITLBinaryWriterEx* writer, std::vecto
 #else
 	return writer->WriteUInt32(currentIndex);
 #endif
-	}
+}
 
 HRESULT Datacenter::SendAckRequest(Connection* connection, INT64 messageId)
 {

@@ -328,7 +328,7 @@ HRESULT ConnectionSocket::OnCallback(PTP_CALLBACK_INSTANCE instance, ULONG_PTR w
 			int receivedBytes;
 			while ((receivedBytes = recv(m_socket, reinterpret_cast<char*>(m_receiveBuffer.get()), SOCKET_RECEIVE_BUFFER_SIZE, 0)) > 0)
 			{
-				if (FAILED(result = OnDataReceived(m_receiveBuffer.get(), receivedBytes)))
+				if (FAILED(result = OnSocketDataReceived(m_receiveBuffer.get(), receivedBytes)))
 				{
 					CloseSocket(WIN32_FROM_HRESULT(result), SOCKET_CLOSE_RAISEEVENT);
 

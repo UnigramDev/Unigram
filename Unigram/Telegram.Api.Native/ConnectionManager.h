@@ -230,8 +230,8 @@ namespace Telegram
 				HRESULT OnConnectionOpened(_In_ Connection* connection);
 				HRESULT OnConnectionQuickAckReceived(_In_ Connection* connection, INT32 ack);
 				HRESULT OnConnectionClosed(_In_ Connection* connection, int wsaError);
-				HRESULT OnDatacenterHandshakeComplete(_In_ Datacenter* datacenter, INT32 timeDifference);
-				HRESULT OnDatacenterImportAuthorizationComplete(_In_ Datacenter* datacenter);
+				HRESULT OnDatacenterHandshakeCompleted(_In_ Datacenter* datacenter, INT32 timeDifference);
+				HRESULT OnDatacenterImportAuthorizationCompleted(_In_ Datacenter* datacenter);
 				HRESULT OnDatacenterBadServerSalt(_In_ Datacenter* datacenter, INT64 requestMessageId, INT64 responseMessageId);
 				HRESULT OnDatacenterBadMessage(_In_ Datacenter* datacenter, INT64 requestMessageId, INT64 responseMessageId);
 				HRESULT OnDatacenterPongReceived(_In_ Datacenter* datacenter, INT64 pingStartTime);

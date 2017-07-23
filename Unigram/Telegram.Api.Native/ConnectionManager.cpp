@@ -30,6 +30,7 @@
 #define RUNNING_UPLOAD_REQUESTS_MAX_COUNT 5
 #define DATACENTER_EXPIRATION_TIME 60 * 60
 #define REQUEST_TIMER_TIMEOUT -1000
+#define REQUEST_ATTEMPTS_MAX_COUNT 10
 #define PING_TIMER_PERIOD 20000
 #define PING_DISCONNECT_DELAY 35
 
@@ -321,10 +322,10 @@ HRESULT ConnectionManager::put_ProxySettings(IProxySettings* value)
 {
 	auto lock = LockCriticalSection();
 
-	m_proxySettings = value;
-
-	if (value == nullptr)
+	if (m_proxySettings.Get() != value)
 	{
+		m_proxySettings = value;
+
 		for (auto& datacenter : m_datacenters)
 		{
 			datacenter.second->ResetConnections();
@@ -1061,11 +1062,6 @@ HRESULT ConnectionManager::ProcessRequests()
 	{
 		auto lock = LockCriticalSection();
 
-		//if (m_datacentersExpirationTime < context.CurrentTime && (m_flags & ConnectionManagerFlag::UpdatingDatacenters) != ConnectionManagerFlag::UpdatingDatacenters)
-		//{
-		//	return UpdateDatacenters();
-		//}
-
 		context.CurrentDatacenterId = m_currentDatacenterId;
 		context.MovingToDatacenterId = m_movingToDatacenterId;
 	}
@@ -1092,11 +1088,16 @@ HRESULT ConnectionManager::ProcessRequests()
 			if (datacenterContextIterator == context.Datacenters.end())
 			{
 				ComPtr<Connection> genericConnection;
-				ReturnIfFailed(result, datacenter.second->GetGenericConnection(false, genericConnection));
+				BreakIfFailed(result, datacenter.second->GetGenericConnection(false, genericConnection));
 
 				if (genericConnection != nullptr && genericConnection->HasMessagesToConfirm())
 				{
-					context.Datacenters.insert(datacenterContextIterator, std::make_pair(datacenter.first, DatacenterRequestContext(datacenter.second.Get())));
+					BreakIfFailed(result, genericConnection->EnsureConnected());
+
+					if (result == S_OK)
+					{
+						context.Datacenters.insert(datacenterContextIterator, std::make_pair(datacenter.first, DatacenterRequestContext(datacenter.second.Get())));
+					}
 				}
 			}
 		}
@@ -1139,11 +1140,6 @@ HRESULT ConnectionManager::ProcessRequestsForDatacenter(Datacenter* datacenter, 
 	{
 		auto lock = LockCriticalSection();
 
-		/*if (m_datacentersExpirationTime < context.CurrentTime && (m_flags & ConnectionManagerFlag::UpdatingDatacenters) != ConnectionManagerFlag::UpdatingDatacenters)
-		{
-			return UpdateDatacenters();
-		}*/
-
 		context.CurrentDatacenterId = m_currentDatacenterId;
 		context.MovingToDatacenterId = m_movingToDatacenterId;
 	}
@@ -1173,17 +1169,25 @@ HRESULT ConnectionManager::ProcessRequestsForDatacenter(Datacenter* datacenter, 
 		}
 	}
 
-	auto datacenterContextIterator = context.Datacenters.find(datacenter->GetId());
-	if (datacenterContextIterator == context.Datacenters.end())
+	do
 	{
-		ComPtr<Connection> genericConnection;
-		ReturnIfFailed(result, datacenter->GetGenericConnection(false, genericConnection));
-
-		if (genericConnection != nullptr && genericConnection->HasMessagesToConfirm())
+		auto datacenterContextIterator = context.Datacenters.find(datacenter->GetId());
+		if (datacenterContextIterator == context.Datacenters.end())
 		{
-			context.Datacenters.insert(datacenterContextIterator, std::make_pair(datacenter->GetId(), DatacenterRequestContext(datacenter)));
+			ComPtr<Connection> genericConnection;
+			BreakIfFailed(result, datacenter->GetGenericConnection(false, genericConnection));
+
+			if (genericConnection != nullptr && genericConnection->HasMessagesToConfirm())
+			{
+				BreakIfFailed(result, genericConnection->EnsureConnected());
+
+				if (result == S_OK)
+				{
+					context.Datacenters.insert(datacenterContextIterator, std::make_pair(datacenter->GetId(), DatacenterRequestContext(datacenter)));
+				}
+			}
 		}
-	}
+	} while (false);
 
 	if (FAILED(result) || FAILED(result = ProcessContextRequests(&context)))
 	{
@@ -1363,10 +1367,7 @@ HRESULT ConnectionManager::ProcessContextRequests(ProcessRequestsContext* contex
 				ReturnIfFailed(result, datacenterContext.Datacenter->ImportAuthorization());
 			}
 
-			if (!datacenterContext.GenericRequests.empty())
-			{
-				ReturnIfFailed(result, ProcessDatacenterRequests(&datacenterContext));
-			}
+			ReturnIfFailed(result, ProcessDatacenterRequests(&datacenterContext));
 		}
 
 		datacenterIterator = context->Datacenters.erase(datacenterIterator);
@@ -1517,8 +1518,6 @@ HRESULT ConnectionManager::ProcessConnectionRequest(Connection* connection, Mess
 
 HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, MessageContext const* messageContext, ITLObject* messageBody, Connection* connection)
 {
-	// METHOD_DEBUG();
-
 	ComPtr<MessageRequest> request;
 
 	{
@@ -1660,7 +1659,7 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 	break;
 	}
 
-	if (request->FailOnServerError())
+	if (request->FailOnServerError() || request->GetAttemptCount() > REQUEST_ATTEMPTS_MAX_COUNT)
 	{
 		return S_OK;
 	}
@@ -1902,7 +1901,7 @@ HRESULT ConnectionManager::OnConnectionClosed(Connection* connection, int wsaErr
 	return S_OK;
 }
 
-HRESULT ConnectionManager::OnDatacenterHandshakeComplete(Datacenter* datacenter, INT32 timeDifference)
+HRESULT ConnectionManager::OnDatacenterHandshakeCompleted(Datacenter* datacenter, INT32 timeDifference)
 {
 	{
 		auto lock = LockCriticalSection();
@@ -1926,7 +1925,7 @@ HRESULT ConnectionManager::OnDatacenterHandshakeComplete(Datacenter* datacenter,
 	return ProcessRequestsForDatacenter(datacenter, ConnectionType::Generic | ConnectionType::Download | ConnectionType::Upload);
 }
 
-HRESULT ConnectionManager::OnDatacenterImportAuthorizationComplete(Datacenter* datacenter)
+HRESULT ConnectionManager::OnDatacenterImportAuthorizationCompleted(Datacenter* datacenter)
 {
 	return ProcessRequestsForDatacenter(datacenter, ConnectionType::Generic | ConnectionType::Download | ConnectionType::Upload);
 }
