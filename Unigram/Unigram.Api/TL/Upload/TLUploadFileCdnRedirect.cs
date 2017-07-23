@@ -10,6 +10,7 @@ namespace Telegram.Api.TL.Upload
 		public Byte[] FileToken { get; set; }
 		public Byte[] EncryptionKey { get; set; }
 		public Byte[] EncryptionIV { get; set; }
+		public TLVector<TLCdnFileHash> CdnFileHashes { get; set; }
 
 		public TLUploadFileCdnRedirect() { }
 		public TLUploadFileCdnRedirect(TLBinaryReader from)
@@ -25,6 +26,7 @@ namespace Telegram.Api.TL.Upload
 			FileToken = from.ReadByteArray();
 			EncryptionKey = from.ReadByteArray();
 			EncryptionIV = from.ReadByteArray();
+			CdnFileHashes = TLFactory.Read<TLVector<TLCdnFileHash>>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
@@ -33,6 +35,7 @@ namespace Telegram.Api.TL.Upload
 			to.WriteByteArray(FileToken);
 			to.WriteByteArray(EncryptionKey);
 			to.WriteByteArray(EncryptionIV);
+			to.WriteObject(CdnFileHashes);
 		}
 	}
 }

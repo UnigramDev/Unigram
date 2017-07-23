@@ -11,6 +11,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Phone.Methods;
+using Telegram.Api.TL.LangPack.Methods;
 using Telegram.Api.TL.Contacts.Methods;
 using Unigram.Collections;
 using Unigram.Common;
@@ -50,6 +51,8 @@ namespace Unigram.ViewModels
 
         private readonly ConcurrentDictionary<int, InputTypingManager> _typingManagers;
         private readonly ConcurrentDictionary<int, InputTypingManager> _chatTypingManagers;
+
+        public bool Refresh { get; set; }
 
         public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPushService pushService, IVibrationService vibrationService, IContactsService contactsService, DialogsViewModel dialogs)
             : base(protoService, cacheService, aggregator)
@@ -154,6 +157,13 @@ namespace Unigram.ViewModels
             //Execute.BeginOnUIThread(() => Dialogs.LoadFirstSlice());
             //Execute.BeginOnUIThread(() => Contacts.getTLContacts());
             //Execute.BeginOnUIThread(() => Contacts.GetSelfAsync());
+
+            if (Refresh)
+            {
+                Refresh = false;
+                Dialogs.Items.Clear();
+                Execute.BeginOnThreadPool(() => Dialogs.LoadFirstSlice());
+            }
 
             //ProtoService.GetTopPeersAsync(TLContactsGetTopPeers.Flag.BotsInline, 0, 0, 0, result =>
             //{

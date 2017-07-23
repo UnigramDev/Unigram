@@ -53,9 +53,9 @@ namespace Unigram.Controls.Messages
                 number = Convert.ShortNumber(views ?? 0);
                 number += "   ";
 
-                if (message.IsPost && message.HasFromId && message.From != null)
+                if (message.IsPost && message.HasPostAuthor && message.PostAuthor != null)
                 {
-                    number += $"{message.From.FullName}, ";
+                    number += $"{message.PostAuthor}, ";
                 }
             }
             else

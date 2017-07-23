@@ -18,7 +18,7 @@
     <!-- TODO: not the right way -->
     <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay, FallbackValue=Collapsed}"/>
 
-    <controls:SwipeListViewItem
+    <!--<controls:SwipeListViewItem
         RightBackground="#007aff"
         RightBehavior="Collapse"
         LeftBehavior="Disabled"
@@ -35,7 +35,8 @@
                     <FontIcon Glyph="&#xE248;" Foreground="White" Margin="12,0"/>
                 </Border>
             </DataTemplate>
-        </controls:SwipeListViewItem.RightContentTemplate>
+        </controls:SwipeListViewItem.RightContentTemplate>-->
+    <ContentControl HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Style="{ThemeResource MessageBubbleStyle}">
         <UserControl x:Name="LayoutRoot">
             <Grid x:Name="ContentPanel"
                   Padding="{ThemeResource MessageContentPadding}"
@@ -106,7 +107,7 @@
                     Grid.Row="4"/>
             </Grid>
         </UserControl>
-    </controls:SwipeListViewItem>
+    </ContentControl>
 
     <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2"/>
 

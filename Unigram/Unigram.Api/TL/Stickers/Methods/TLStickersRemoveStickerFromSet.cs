@@ -6,7 +6,7 @@ namespace Telegram.Api.TL.Stickers.Methods
 {
 	/// <summary>
 	/// RCP method stickers.removeStickerFromSet.
-	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesStickerSet"/>
 	/// </summary>
 	public partial class TLStickersRemoveStickerFromSet : TLObject
 	{

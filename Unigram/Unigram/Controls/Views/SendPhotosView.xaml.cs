@@ -49,6 +49,14 @@ namespace Unigram.Controls.Views
             InitializeComponent();
             DataContext = this;
 
+            var seconds = new int[29];
+            for (int i = 0; i < seconds.Length; i++)
+            {
+                seconds[i] = i;
+            }
+
+            TTLSeconds.ItemsSource = seconds;
+
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
         }
@@ -156,5 +164,10 @@ namespace Unigram.Controls.Views
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        private void TTLSeconds_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            VisualStateManager.GoToState(TTLSeconds, TTLSeconds.SelectedIndex == 0 ? "Unselected" : "Selected", false);
+        }
     }
 }

@@ -197,6 +197,12 @@
     <SolidColorBrush x:Key="TelegramDialogVerifiedForegroundBrush" Color="{ThemeResource SystemAccentColor}"/>
     <SolidColorBrush x:Key="TelegramDialogVerifiedBackgroundBrush" Color="#FFFFFF"/>
 
+    <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
+
+    <Style TargetType="controls:TransferButton">
+        <Setter Property="FontFamily" Value="{ThemeResource TelegramThemeFontFamily}" />
+    </Style>
+    
     <Style x:Name="MediaTransferButtonStyle" TargetType="controls:TransferButton">
         <Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}" />
         <Setter Property="Foreground" Value="#FFFFFF" />
@@ -207,7 +213,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        <Setter Property="FontFamily" Value="{ThemeResource TelegramThemeFontFamily}" />
         <Setter Property="Glyph" Value="&#xE700;" />
         <Setter Property="Height" Value="Auto" />
         <Setter Property="Width" Value="Auto" />

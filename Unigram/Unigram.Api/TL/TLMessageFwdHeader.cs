@@ -12,17 +12,20 @@ namespace Telegram.Api.TL
 			FromId = (1 << 0),
 			ChannelId = (1 << 1),
 			ChannelPost = (1 << 2),
+			PostAuthor = (1 << 3),
 		}
 
 		public bool HasFromId { get { return Flags.HasFlag(Flag.FromId); } set { Flags = value ? (Flags | Flag.FromId) : (Flags & ~Flag.FromId); } }
 		public bool HasChannelId { get { return Flags.HasFlag(Flag.ChannelId); } set { Flags = value ? (Flags | Flag.ChannelId) : (Flags & ~Flag.ChannelId); } }
 		public bool HasChannelPost { get { return Flags.HasFlag(Flag.ChannelPost); } set { Flags = value ? (Flags | Flag.ChannelPost) : (Flags & ~Flag.ChannelPost); } }
+		public bool HasPostAuthor { get { return Flags.HasFlag(Flag.PostAuthor); } set { Flags = value ? (Flags | Flag.PostAuthor) : (Flags & ~Flag.PostAuthor); } }
 
 		public Flag Flags { get; set; }
 		public Int32? FromId { get; set; }
 		public Int32 Date { get; set; }
 		public Int32? ChannelId { get; set; }
 		public Int32? ChannelPost { get; set; }
+		public String PostAuthor { get; set; }
 
 		public TLMessageFwdHeader() { }
 		public TLMessageFwdHeader(TLBinaryReader from)
@@ -39,6 +42,7 @@ namespace Telegram.Api.TL
 			Date = from.ReadInt32();
 			if (HasChannelId) ChannelId = from.ReadInt32();
 			if (HasChannelPost) ChannelPost = from.ReadInt32();
+			if (HasPostAuthor) PostAuthor = from.ReadString();
 		}
 
 		public override void Write(TLBinaryWriter to)
@@ -50,6 +54,7 @@ namespace Telegram.Api.TL
 			to.WriteInt32(Date);
 			if (HasChannelId) to.WriteInt32(ChannelId.Value);
 			if (HasChannelPost) to.WriteInt32(ChannelPost.Value);
+			if (HasPostAuthor) to.WriteString(PostAuthor ?? string.Empty);
 		}
 
 		private void UpdateFlags()
@@ -57,6 +62,7 @@ namespace Telegram.Api.TL
 			HasFromId = FromId != null;
 			HasChannelId = ChannelId != null;
 			HasChannelPost = ChannelPost != null;
+			HasPostAuthor = PostAuthor != null;
 		}
 	}
 }

@@ -182,6 +182,11 @@ namespace Unigram.Controls.Messages
                     if (channel != null)
                     {
                         name = channel.DisplayName;
+
+                        if (message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                        {
+                            name += $" ({message.FwdFrom.PostAuthor})";
+                        }
                     }
 
                     var user = message.FwdFromUser;
@@ -323,15 +328,30 @@ namespace Unigram.Controls.Messages
             }
 
             var sumWidth = 0.0;
+            var fixedSize = false;
 
             object constraint = null;
             if (ViewModel?.Media is TLMessageMediaPhoto photoMedia)
             {
-                constraint = photoMedia.Photo;
+                if (photoMedia.HasTTLSeconds)
+                {
+                    fixedSize = true;
+                }
+                else
+                {
+                    constraint = photoMedia.Photo;
+                }
             }
             else if (ViewModel?.Media is TLMessageMediaDocument documentMedia)
             {
-                constraint = documentMedia.Document;
+                if (documentMedia.HasTTLSeconds)
+                {
+                    fixedSize = true;
+                }
+                else
+                {
+                    constraint = documentMedia.Document;
+                }
             }
             else if (ViewModel?.Media is TLMessageMediaInvoice invoiceMedia)
             {
@@ -372,6 +392,14 @@ namespace Unigram.Controls.Messages
             var photo = constraint as TLPhoto;
             if (photo != null)
             {
+                if (fixedSize)
+                {
+                    width = 240;
+                    height = 240;
+
+                    goto Calculate;
+                }
+
                 //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
                 var photoSize = photo.Sizes.OfType<TLPhotoSize>().OrderByDescending(x => x.W).FirstOrDefault();
                 if (photoSize != null)
@@ -385,6 +413,14 @@ namespace Unigram.Controls.Messages
 
             if (constraint is TLDocument document)
             {
+                if (fixedSize)
+                {
+                    width = 240;
+                    height = 240;
+
+                    goto Calculate;
+                }
+
                 constraint = document.Attributes;
             }
 

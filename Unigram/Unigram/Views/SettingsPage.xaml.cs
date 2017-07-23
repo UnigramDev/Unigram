@@ -83,6 +83,31 @@ namespace Unigram.Views
             await MasterDetail.NavigationService.NavigateModalAsync(typeof(EditYourNameView));
         }
 
+        private async void About_Click(object sender, RoutedEventArgs e)
+        {
+            var full = ViewModel.Full as TLUserFull;
+            if (full == null)
+            {
+                return;
+            }
+
+            var dialog = new EditYourAboutView();
+            dialog.About = full.About;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var about = dialog.About;
+
+                var response = await ViewModel.ProtoService.UpdateProfileAsync(null, null, about);
+                if (response.IsSucceeded)
+                {
+                    ViewModel.Full.About = about;
+                    ViewModel.Full.RaisePropertyChanged(() => ViewModel.Full.About);
+                }
+            }
+        }
+
         private void Privacy_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyAndSecurityPage));

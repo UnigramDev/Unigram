@@ -73,6 +73,25 @@ namespace Telegram.Api.TL
             State = message.State;
         }
 
+        #region Service
+
+        public bool IsService()
+        {
+            var message = this as TLMessage;
+            if (message != null && message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
+            {
+                return true;
+            }
+            else if (message != null && message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds && (documentMedia.Document is TLDocumentEmpty || !documentMedia.HasDocument))
+            {
+                return true;
+            }
+
+            return this is TLMessageService;
+        }
+
+        #endregion
+
         public virtual bool ShowFrom
         {
             get
@@ -244,8 +263,9 @@ namespace Telegram.Api.TL
 
     public partial class TLMessage
     {
+
         #region Game
-        
+
         public bool IsGame()
         {
             return Media is TLMessageMediaGame;
@@ -253,7 +273,7 @@ namespace Telegram.Api.TL
 
         #endregion
 
-        #region IsPhoto
+        #region Photo
 
         public bool IsPhoto()
         {

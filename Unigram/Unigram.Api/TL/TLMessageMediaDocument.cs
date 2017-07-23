@@ -4,10 +4,24 @@ using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLMessageMediaDocument : TLMessageMediaBase, ITLMessageMediaCaption 
+	public partial class TLMessageMediaDocument : TLMessageMediaBase 
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			Document = (1 << 0),
+			Caption = (1 << 1),
+			TTLSeconds = (1 << 2),
+		}
+
+		public bool HasDocument { get { return Flags.HasFlag(Flag.Document); } set { Flags = value ? (Flags | Flag.Document) : (Flags & ~Flag.Document); } }
+		public bool HasCaption { get { return Flags.HasFlag(Flag.Caption); } set { Flags = value ? (Flags | Flag.Caption) : (Flags & ~Flag.Caption); } }
+		public bool HasTTLSeconds { get { return Flags.HasFlag(Flag.TTLSeconds); } set { Flags = value ? (Flags | Flag.TTLSeconds) : (Flags & ~Flag.TTLSeconds); } }
+
+		public Flag Flags { get; set; }
 		public TLDocumentBase Document { get; set; }
 		public String Caption { get; set; }
+		public Int32? TTLSeconds { get; set; }
 
 		public TLMessageMediaDocument() { }
 		public TLMessageMediaDocument(TLBinaryReader from)
@@ -19,14 +33,27 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from)
 		{
-			Document = TLFactory.Read<TLDocumentBase>(from);
-			Caption = from.ReadString();
+			Flags = (Flag)from.ReadInt32();
+			if (HasDocument) Document = TLFactory.Read<TLDocumentBase>(from);
+			if (HasCaption) Caption = from.ReadString();
+			if (HasTTLSeconds) TTLSeconds = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.WriteObject(Document);
-			to.WriteString(Caption ?? string.Empty);
+			UpdateFlags();
+
+			to.WriteInt32((Int32)Flags);
+			if (HasDocument) to.WriteObject(Document);
+			if (HasCaption) to.WriteString(Caption ?? string.Empty);
+			if (HasTTLSeconds) to.WriteInt32(TTLSeconds.Value);
+		}
+
+		private void UpdateFlags()
+		{
+			HasDocument = Document != null;
+			HasCaption = Caption != null;
+			HasTTLSeconds = TTLSeconds != null;
 		}
 	}
 }

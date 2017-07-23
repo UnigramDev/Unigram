@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Telegram.Api.TL
 {
-    public partial class TLMessageMediaDocument
+    public partial class TLMessageMediaDocument : ITLMessageMediaCaption
     {
     }
 }
