@@ -71,15 +71,74 @@
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
-                                Constraint="{Binding Media.Photo}"
+                                Constraint="{Binding Media}"
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
                                 Click="Photo_Click"/>
 
             <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaSecretPhotoTemplate">
+        <Grid x:Name="MediaControl"
+              Background="Black"
+              MinWidth="{ThemeResource TelegramMediaMinWidth}"
+              MinHeight="{ThemeResource TelegramMediaMinHeight}">
+            <controls:ImageView Source="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
+                                Constraint="{Binding Media}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                                Stretch="UniformToFill"
+                                Click="Photo_Click">
+                <!--<controls:ImageView.Template>
+                    <ControlTemplate TargetType="controls:ImageView">
+                        <Rectangle x:Name="Holder">
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="{TemplateBinding Source}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </ControlTemplate>
+                </controls:ImageView.Template>-->
+            </controls:ImageView>
+            
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
+                <TextBlock Text="{Binding Media.TTLSeconds}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+            </Border>
+
+            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaSecretVideoTemplate">
+        <Grid x:Name="MediaControl"
+              Background="Black"
+              MinWidth="{ThemeResource TelegramMediaMinWidth}"
+              MinHeight="{ThemeResource TelegramMediaMinHeight}">
+            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                Constraint="{Binding Media}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                                Stretch="UniformToFill">
+                <!--<controls:ImageView.Template>
+                    <ControlTemplate TargetType="controls:ImageView">
+                        <Rectangle x:Name="Holder">
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="{TemplateBinding Source}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </ControlTemplate>
+                </controls:ImageView.Template>-->
+            </controls:ImageView>
+
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
+                <TextBlock Text="{Binding Media.TTLSeconds}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+            </Border>
+
+            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
         </Grid>
     </DataTemplate>
 
@@ -409,6 +468,8 @@
                                      VideoTemplate="{StaticResource MediaVideoTemplate}"
                                      VenueTemplate="{StaticResource MediaVenueTemplate}"
                                      StickerTemplate="{StaticResource MediaStickerTemplate}"
+                                     SecretPhotoTemplate="{StaticResource MediaSecretPhotoTemplate}"
+                                     SecretVideoTemplate="{StaticResource MediaSecretVideoTemplate}"
                                      WebPageTemplate="{StaticResource WebPageMediaTemplate}"
                                      WebPageDocumentTemplate="{StaticResource WebPageDocumentMediaTemplate}"
                                      WebPagePhotoTemplate="{StaticResource WebPagePhotoMediaTemplate}"

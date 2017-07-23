@@ -28,6 +28,8 @@ namespace Unigram.Selectors
         public DataTemplate VenueTemplate { get; set; }
         public DataTemplate VideoTemplate { get; set; }
         public DataTemplate StickerTemplate { get; set; }
+        public DataTemplate SecretPhotoTemplate { get; set; }
+        public DataTemplate SecretVideoTemplate { get; set; }
         public DataTemplate WebPageDocumentTemplate { get; set; }
         public DataTemplate WebPagePendingTemplate { get; set; }
         public DataTemplate WebPagePhotoTemplate { get; set; }
@@ -57,8 +59,13 @@ namespace Unigram.Selectors
             {
                 return ContactTemplate;
             }
-            else if (item is TLMessageMediaPhoto)
+            else if (item is TLMessageMediaPhoto photoMedia)
             {
+                if (photoMedia.HasTTLSeconds)
+                {
+                    return SecretPhotoTemplate;
+                }
+
                 return PhotoTemplate;
             }
             else if (item is TLMessageMediaGame)
@@ -86,6 +93,11 @@ namespace Unigram.Selectors
             {
                 if (item is TLMessageMediaDocument documentMedia)
                 {
+                    if (documentMedia.HasTTLSeconds)
+                    {
+                        return SecretVideoTemplate;
+                    }
+
                     item = documentMedia.Document;
                 }
                 

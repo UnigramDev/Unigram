@@ -257,9 +257,27 @@ namespace Unigram.Common
                 return;
             }
 
-            var paragraph = new Paragraph();
-            paragraph.Inlines.Add(new Run { Text = AppResources.MessageActionEmpty });
-            sender.Blocks.Add(paragraph);
+            var message = newValue as TLMessage;
+            if (message != null && message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
+            {
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add(new Run { Text = "Photo has expired" });
+                sender.Blocks.Add(paragraph);
+                return;
+            }
+            else if (message != null && message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds && (documentMedia.Document is TLDocumentEmpty || !documentMedia.HasDocument))
+            {
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add(new Run { Text = "Video has expired" });
+                sender.Blocks.Add(paragraph);
+                return;
+            }
+
+            {
+                var paragraph = new Paragraph();
+                paragraph.Inlines.Add(new Run { Text = AppResources.MessageActionEmpty });
+                sender.Blocks.Add(paragraph);
+            }
         }
 
         public static string Convert(TLMessageService serviceMessage)

@@ -97,6 +97,19 @@ namespace Unigram.Controls
         }
         #endregion
 
+        #region Stretch
+
+        public Stretch Stretch
+        {
+            get { return (Stretch)GetValue(StretchProperty); }
+            set { SetValue(StretchProperty, value); }
+        }
+
+        public static readonly DependencyProperty StretchProperty =
+            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(ImageView), new PropertyMetadata(Stretch.Uniform));
+
+        #endregion
+
         protected override Size MeasureOverride(Size availableSize)
         {
             if (Constraint == null)
@@ -122,12 +135,32 @@ namespace Unigram.Controls
 
             if (constraint is TLMessageMediaPhoto photoMedia)
             {
-                constraint = photoMedia.Photo;
+                if (photoMedia.HasTTLSeconds)
+                {
+                    width = 240;
+                    height = 240;
+
+                    goto Calculate;
+                }
+                else
+                {
+                    constraint = photoMedia.Photo;
+                }
             }
 
             if (constraint is TLMessageMediaDocument documentMedia)
             {
-                constraint = documentMedia.Document;
+                if (documentMedia.HasTTLSeconds)
+                {
+                    width = 240;
+                    height = 240;
+
+                    goto Calculate;
+                }
+                else
+                {
+                    constraint = documentMedia.Document;
+                }
             }
 
             if (constraint is TLPhoto photo)

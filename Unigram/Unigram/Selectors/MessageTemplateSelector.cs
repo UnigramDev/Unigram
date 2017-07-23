@@ -84,6 +84,15 @@ namespace Unigram.Selectors
                 return EmptyMessageTemplate;
             }
 
+            if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
+            {
+                return ServiceMessageTemplate;
+            }
+            else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds && (documentMedia.Document is TLDocumentEmpty || !documentMedia.HasDocument))
+            {
+                return ServiceMessageTemplate;
+            }
+
             if (message.IsSticker())
             {
                 if (message.IsOut && !message.IsPost)

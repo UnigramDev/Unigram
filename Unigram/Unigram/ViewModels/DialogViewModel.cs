@@ -2638,6 +2638,7 @@ namespace Unigram.ViewModels
 
                     attach = !isPreviousPost &&
                              !(previous is TLMessageService && !(((TLMessageService)previous).Action is TLMessageActionPhoneCall)) &&
+                             !(previous.IsService()) &&
                              !(previous is TLMessageEmpty) &&
                              previous.FromId == item.FromId &&
                              item.Date - previous.Date < 900;
@@ -2647,7 +2648,7 @@ namespace Unigram.ViewModels
 
                 if (previous != null)
                 {
-                    previous.IsLast = item.IsFirst || item is TLMessageService;
+                    previous.IsLast = item.IsFirst || item.IsService();
                 }
             }
             else
