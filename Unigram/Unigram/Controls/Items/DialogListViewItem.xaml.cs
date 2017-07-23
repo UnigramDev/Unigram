@@ -260,6 +260,11 @@ namespace Unigram.Controls.Items
                     }
                     else if (message.Media is TLMessageMediaDocument documentMedia)
                     {
+                        if (documentMedia.HasTTLSeconds && (documentMedia.Document is TLDocumentEmpty || !documentMedia.HasDocument))
+                        {
+                            return result + "Video has expired";
+                        }
+
                         var caption = string.Empty;
                         if (!string.IsNullOrEmpty(documentMedia.Caption))
                         {
@@ -348,6 +353,11 @@ namespace Unigram.Controls.Items
                     }
                     else if (message.Media is TLMessageMediaPhoto photoMedia)
                     {
+                        if (photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
+                        {
+                            return result + "Photo has expired";
+                        }
+
                         if (string.IsNullOrEmpty(photoMedia.Caption))
                         {
                             return result + "Photo";
