@@ -285,8 +285,14 @@
   <data name="MESSAGE_PHOTO" xml:space="preserve">
     <value>hat dir ein Bild gesendet</value>
   </data>
+  <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
+    <value>hat dir ein selbstzerstörendes Bild gesendet</value>
+  </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
     <value>hat dir eine Videonachricht gesendet</value>
+  </data>
+  <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
+    <value>hat ein Bildschirmfoto gemacht!</value>
   </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
     <value>hat dir einen {1}Sticker gesendet</value>
@@ -296,6 +302,9 @@
   </data>
   <data name="MESSAGE_VIDEO" xml:space="preserve">
     <value>hat dir ein Video gesendet</value>
+  </data>
+  <data name="MESSAGE_VIDEO_SECRET" xml:space="preserve">
+    <value>hat dir ein selbstzerstörendes Video gesendet</value>
   </data>
   <data name="PHONE_CALL_MISSED" xml:space="preserve">
     <value>Anruf in Abwesenheit</value>
