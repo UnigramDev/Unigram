@@ -103,7 +103,7 @@ namespace Unigram.Views
                 if (response.IsSucceeded)
                 {
                     ViewModel.Full.About = about;
-                    ViewModel.Full.RaisePropertyChanged(() => about);
+                    ViewModel.Full.RaisePropertyChanged(() => ViewModel.Full.About);
                 }
             }
         }
