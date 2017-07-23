@@ -112,7 +112,8 @@
                     </controls:HyperButton>
 
                     <StackPanel Visibility="{x:Bind ViewModel.Full.About, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                        <TextBlock Text="About" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
+                        <TextBlock Text="About" Visibility="{x:Bind ViewModel.Item.IsBot, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
+                        <TextBlock Text="Bio" Visibility="{x:Bind ViewModel.Item.IsBot, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
                         <TextBlock common:MessageHelper.Text="{x:Bind ViewModel.Full.About, Mode=OneWay}" IsTextSelectionEnabled="True" Padding="12,0,12,12" Style="{StaticResource BodyTextBlockStyle}"/>
                         <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" Height="1" Margin="12,0,0,0"/>
                     </StackPanel>

@@ -16,7 +16,7 @@ namespace Unigram.Converters
                 return parameter == null ? "None" : null;
             }
 
-            return $"@{value}";
+            return parameter != null ? $"@{value}" : value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

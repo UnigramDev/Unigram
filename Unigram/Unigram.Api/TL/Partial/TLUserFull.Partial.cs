@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
 
 namespace Telegram.Api.TL
 {
-    public partial class TLUserFull
+    public partial class TLUserFull : INotifyPropertyChanged
     {
         public void Update(TLUserFull userFull)
         {
@@ -23,5 +25,11 @@ namespace Telegram.Api.TL
 
         //    return User;
         //}
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public override void RaisePropertyChanged(string propertyName)
+        {
+            Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
+        }
     }
 }

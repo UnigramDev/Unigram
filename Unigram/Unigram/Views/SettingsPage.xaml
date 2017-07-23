@@ -57,11 +57,14 @@
                                           Content="{x:Bind ViewModel.Self.Phone, Mode=OneWay, Converter={StaticResource PhoneNumberFormatConverter}}"
                                           Style="{StaticResource SubtitleButtonStyle}"
                                           Click="Phone_Click"/>
-
                     <controls:HyperButton Tag="Username"
-                                          Content="{x:Bind ViewModel.Self.Username, Mode=OneWay, Converter={StaticResource UsernameConverter}}"
+                                          Content="{x:Bind ViewModel.Self.Username, Mode=OneWay, Converter={StaticResource UsernameConverter}, ConverterParameter=@}"
                                           Style="{StaticResource SubtitleButtonStyle}"
                                           Click="Username_Click"/>
+                    <controls:HyperButton Tag="Bio"
+                                          Content="{x:Bind ViewModel.Full.About, Mode=OneWay, Converter={StaticResource UsernameConverter}}"
+                                          Style="{StaticResource SubtitleButtonStyle}"
+                                          Click="About_Click"/>
                 </local:TableStackPanel>
 
                 <local:TableStackPanel x:Name="SwitchGroup1"
