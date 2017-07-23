@@ -58,7 +58,7 @@
                                           Style="{StaticResource SubtitleButtonStyle}"
                                           Click="Phone_Click"/>
                     <controls:HyperButton Tag="Username"
-                                          Content="{x:Bind ViewModel.Self.Username, Mode=OneWay, Converter={StaticResource UsernameConverter}, ConverterParameter=@}"
+                                          Content="{x:Bind ViewModel.Self.Username, Mode=OneWay, Converter={StaticResource UsernameConverter}, ConverterParameter=username}"
                                           Style="{StaticResource SubtitleButtonStyle}"
                                           Click="Username_Click"/>
                     <controls:HyperButton Tag="Bio"
