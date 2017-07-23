@@ -28,17 +28,6 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
@@ -46,17 +35,6 @@
     <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP;WIN_RT</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
-    <PlatformTarget>ARM</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
-    <PlatformTarget>ARM</PlatformTarget>
-    <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
     <PlatformTarget>ARM</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
@@ -69,6 +47,28 @@
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <PlatformTarget>ARM</PlatformTarget>
+    <OutputPath>bin\ARM\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
@@ -261,6 +261,11 @@
     <Compile Include="TL\Core\TLInt.cs" />
     <Compile Include="TL\Core\TLMessageActionUnreadMessages.cs" />
     <Compile Include="TL\Core\TLTuple.cs" />
+    <Compile Include="TL\Core\TLMessageActionAdminLogEvent.cs" />
+    <Compile Include="TL\Core\TLMessageActionBotInfo.cs" />
+    <Compile Include="TL\Core\TLPhoneCallState.cs" />
+    <Compile Include="TL\Core\TLMessageActionDate.cs" />
+    <Compile Include="TL\Core\TLMessagesContainer.cs" />
     <Compile Include="TL\Help\Methods\TLHelpGetAppChangelog.cs" />
     <Compile Include="TL\Help\Methods\TLHelpGetAppUpdate.cs" />
     <Compile Include="TL\Help\Methods\TLHelpGetCdnConfig.cs" />
@@ -281,11 +286,6 @@
     <Compile Include="TL\LangPack\Methods\TLLangPackGetLangPack.cs" />
     <Compile Include="TL\LangPack\Methods\TLLangPackGetLanguages.cs" />
     <Compile Include="TL\LangPack\Methods\TLLangPackGetStrings.cs" />
-    <Compile Include="TL\Local\TLMessageActionAdminLogEvent.cs" />
-    <Compile Include="TL\Local\TLMessageActionBotInfo.cs" />
-    <Compile Include="TL\Local\TLPhoneCallState.cs" />
-    <Compile Include="TL\Local\TLMessageActionDate.cs" />
-    <Compile Include="TL\Local\TLMessagesContainer.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesAcceptEncryption.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesAddChatUser.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesCheckChatInvite.cs" />
@@ -359,6 +359,7 @@
     <Compile Include="TL\Messages\Methods\TLMessagesSendInlineBotResult.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSendMedia.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSendMessage.cs" />
+    <Compile Include="TL\Messages\Methods\TLMessagesSendScreenshotNotification.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSetBotCallbackAnswer.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSetBotPrecheckoutResults.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesSetBotShippingResults.cs" />
@@ -613,6 +614,7 @@
     <Compile Include="TL\TLBotInlineResult.cs" />
     <Compile Include="TL\TLBotInlineResultBase.cs" />
     <Compile Include="TL\TLCdnConfig.cs" />
+    <Compile Include="TL\TLCdnFileHash.cs" />
     <Compile Include="TL\TLCdnPublicKey.cs" />
     <Compile Include="TL\TLChannel.cs" />
     <Compile Include="TL\TLChannelAdminLogEvent.cs" />
@@ -800,7 +802,6 @@
     <Compile Include="TL\TLInputMediaPhotoExternal.cs" />
     <Compile Include="TL\TLInputMediaUploadedDocument.cs" />
     <Compile Include="TL\TLInputMediaUploadedPhoto.cs" />
-    <Compile Include="TL\TLInputMediaUploadedThumbDocument.cs" />
     <Compile Include="TL\TLInputMediaVenue.cs" />
     <Compile Include="TL\TLInputMessageEntityMentionName.cs" />
     <Compile Include="TL\TLInputMessagesFilterChatPhotos.cs" />
@@ -907,6 +908,7 @@
     <Compile Include="TL\TLMessageActionPaymentSentMe.cs" />
     <Compile Include="TL\TLMessageActionPhoneCall.cs" />
     <Compile Include="TL\TLMessageActionPinMessage.cs" />
+    <Compile Include="TL\TLMessageActionScreenshotTaken.cs" />
     <Compile Include="TL\TLMessageBase.cs" />
     <Compile Include="TL\TLMessageCommonBase.cs" />
     <Compile Include="TL\TLMessageEmpty.cs" />
@@ -1018,6 +1020,7 @@
     <Compile Include="TL\TLPhotoSizeBase.cs" />
     <Compile Include="TL\TLPhotoSizeEmpty.cs" />
     <Compile Include="TL\TLPong.cs" />
+    <Compile Include="TL\TLPopularContact.cs" />
     <Compile Include="TL\TLPostAddress.cs" />
     <Compile Include="TL\TLPQInnerData.cs" />
     <Compile Include="TL\TLPrivacyKeyBase.cs" />
@@ -1198,6 +1201,7 @@
     <Compile Include="TL\Updates\TLUpdatesDifferenceTooLong.cs" />
     <Compile Include="TL\Updates\TLUpdatesState.cs" />
     <Compile Include="TL\Upload\Methods\TLUploadGetCdnFile.cs" />
+    <Compile Include="TL\Upload\Methods\TLUploadGetCdnFileHashes.cs" />
     <Compile Include="TL\Upload\Methods\TLUploadGetFile.cs" />
     <Compile Include="TL\Upload\Methods\TLUploadGetWebFile.cs" />
     <Compile Include="TL\Upload\Methods\TLUploadReuploadCdnFile.cs" />

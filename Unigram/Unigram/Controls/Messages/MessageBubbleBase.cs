@@ -182,6 +182,11 @@ namespace Unigram.Controls.Messages
                     if (channel != null)
                     {
                         name = channel.DisplayName;
+
+                        if (message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                        {
+                            name += $" ({message.FwdFrom.PostAuthor})";
+                        }
                     }
 
                     var user = message.FwdFromUser;

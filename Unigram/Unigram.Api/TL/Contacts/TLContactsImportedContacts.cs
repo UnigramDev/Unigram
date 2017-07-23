@@ -6,6 +6,7 @@ namespace Telegram.Api.TL.Contacts
 	public partial class TLContactsImportedContacts : TLObject 
 	{
 		public TLVector<TLImportedContact> Imported { get; set; }
+		public TLVector<TLPopularContact> PopularInvites { get; set; }
 		public TLVector<Int64> RetryContacts { get; set; }
 		public TLVector<TLUserBase> Users { get; set; }
 
@@ -20,14 +21,16 @@ namespace Telegram.Api.TL.Contacts
 		public override void Read(TLBinaryReader from)
 		{
 			Imported = TLFactory.Read<TLVector<TLImportedContact>>(from);
+			PopularInvites = TLFactory.Read<TLVector<TLPopularContact>>(from);
 			RetryContacts = TLFactory.Read<TLVector<Int64>>(from);
 			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0xAD524315);
+			to.Write(0x77D01C3B);
 			to.WriteObject(Imported);
+			to.WriteObject(PopularInvites);
 			to.WriteObject(RetryContacts);
 			to.WriteObject(Users);
 		}

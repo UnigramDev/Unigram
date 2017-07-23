@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Stickers.Methods
 {
 	/// <summary>
 	/// RCP method stickers.removeStickerFromSet.
-	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesStickerSet"/>
 	/// </summary>
 	public partial class TLStickersRemoveStickerFromSet : TLObject
 	{
@@ -26,7 +26,7 @@ namespace Telegram.Api.TL.Stickers.Methods
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x4255934);
+			to.Write(0xF7760F51);
 			to.WriteObject(Sticker);
 		}
 	}

@@ -10,6 +10,7 @@ namespace Telegram.Api.TL
 		{
 			Creator = (1 << 0),
 			Left = (1 << 2),
+			Editor = (1 << 3),
 			Broadcast = (1 << 5),
 			Verified = (1 << 7),
 			MegaGroup = (1 << 8),
@@ -26,6 +27,7 @@ namespace Telegram.Api.TL
 
 		public bool IsCreator { get { return Flags.HasFlag(Flag.Creator); } set { Flags = value ? (Flags | Flag.Creator) : (Flags & ~Flag.Creator); } }
 		public bool IsLeft { get { return Flags.HasFlag(Flag.Left); } set { Flags = value ? (Flags | Flag.Left) : (Flags & ~Flag.Left); } }
+		public bool IsEditor { get { return Flags.HasFlag(Flag.Editor); } set { Flags = value ? (Flags | Flag.Editor) : (Flags & ~Flag.Editor); } }
 		public bool IsBroadcast { get { return Flags.HasFlag(Flag.Broadcast); } set { Flags = value ? (Flags | Flag.Broadcast) : (Flags & ~Flag.Broadcast); } }
 		public bool IsVerified { get { return Flags.HasFlag(Flag.Verified); } set { Flags = value ? (Flags | Flag.Verified) : (Flags & ~Flag.Verified); } }
 		public bool IsMegaGroup { get { return Flags.HasFlag(Flag.MegaGroup); } set { Flags = value ? (Flags | Flag.MegaGroup) : (Flags & ~Flag.MegaGroup); } }

@@ -9,14 +9,17 @@ namespace Telegram.Api.TL
 		public enum Flag : Int32
 		{
 			Stickers = (1 << 0),
+			TTLSeconds = (1 << 1),
 		}
 
 		public bool HasStickers { get { return Flags.HasFlag(Flag.Stickers); } set { Flags = value ? (Flags | Flag.Stickers) : (Flags & ~Flag.Stickers); } }
+		public bool HasTTLSeconds { get { return Flags.HasFlag(Flag.TTLSeconds); } set { Flags = value ? (Flags | Flag.TTLSeconds) : (Flags & ~Flag.TTLSeconds); } }
 
 		public Flag Flags { get; set; }
 		public TLInputFileBase File { get; set; }
 		public String Caption { get; set; }
 		public TLVector<TLInputDocumentBase> Stickers { get; set; }
+		public Int32? TTLSeconds { get; set; }
 
 		public TLInputMediaUploadedPhoto() { }
 		public TLInputMediaUploadedPhoto(TLBinaryReader from)
@@ -32,22 +35,25 @@ namespace Telegram.Api.TL
 			File = TLFactory.Read<TLInputFileBase>(from);
 			Caption = from.ReadString();
 			if (HasStickers) Stickers = TLFactory.Read<TLVector<TLInputDocumentBase>>(from);
+			if (HasTTLSeconds) TTLSeconds = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
-			to.Write(0x630C9AF1);
+			to.Write(0x2F37E231);
 			to.Write((Int32)Flags);
 			to.WriteObject(File);
 			to.Write(Caption);
 			if (HasStickers) to.WriteObject(Stickers);
+			if (HasTTLSeconds) to.Write(TTLSeconds.Value);
 		}
 
 		private void UpdateFlags()
 		{
 			HasStickers = Stickers != null;
+			HasTTLSeconds = TTLSeconds != null;
 		}
 	}
 }

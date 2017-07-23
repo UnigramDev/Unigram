@@ -125,6 +125,15 @@ namespace Unigram.Common
 
                 return ReplaceLinks(message, AppResources.MessageActionUserLeftGroup, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
             });
+            _actionsCache.Add(typeof(TLMessageActionScreenshotTaken), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            {
+                if (fromUserId == SettingsHelper.UserId)
+                {
+                    return ReplaceLinks(message, AppResources.MessageActionYouScreenshotMessages);
+                }
+
+                return ReplaceLinks(message, AppResources.MessageActionScreenshotMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+            });
             //_actionsCache.Add(typeof(TLMessageActionUnreadMessages), (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => AppResources.UnreadMessages.ToLowerInvariant());
             //_actionsCache.Add(typeof(TLMessageActionContactRegistered), delegate (TLMessageBase message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks)
             //{

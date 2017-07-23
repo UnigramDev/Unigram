@@ -4,33 +4,33 @@ using System;
 namespace Telegram.Api.TL.Upload.Methods
 {
 	/// <summary>
-	/// RCP method upload.reuploadCdnFile.
+	/// RCP method upload.getCdnFileHashes.
 	/// Returns <see cref="Telegram.Api.TL.TLVector<TLCdnFileHash>"/>
 	/// </summary>
-	public partial class TLUploadReuploadCdnFile : TLObject
+	public partial class TLUploadGetCdnFileHashes : TLObject
 	{
 		public Byte[] FileToken { get; set; }
-		public Byte[] RequestToken { get; set; }
+		public Int32 Offset { get; set; }
 
-		public TLUploadReuploadCdnFile() { }
-		public TLUploadReuploadCdnFile(TLBinaryReader from)
+		public TLUploadGetCdnFileHashes() { }
+		public TLUploadGetCdnFileHashes(TLBinaryReader from)
 		{
 			Read(from);
 		}
 
-		public override TLType TypeId { get { return TLType.UploadReuploadCdnFile; } }
+		public override TLType TypeId { get { return TLType.UploadGetCdnFileHashes; } }
 
 		public override void Read(TLBinaryReader from)
 		{
 			FileToken = from.ReadByteArray();
-			RequestToken = from.ReadByteArray();
+			Offset = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x1AF91C09);
+			to.Write(0xF715C87B);
 			to.WriteByteArray(FileToken);
-			to.WriteByteArray(RequestToken);
+			to.Write(Offset);
 		}
 	}
 }

@@ -302,7 +302,7 @@ namespace Unigram.ViewModels
                     var thumbUpload = await _uploadDocumentManager.UploadFileAsync(thumbFileId, desiredName);
                     if (thumbUpload != null)
                     {
-                        var inputMedia = new TLInputMediaUploadedThumbDocument
+                        var inputMedia = new TLInputMediaUploadedDocument
                         {
                             File = upload.ToInputFile(),
                             Thumb = thumbUpload.ToInputFile(),
@@ -448,7 +448,7 @@ namespace Unigram.ViewModels
                     var thumbUpload = await _uploadDocumentManager.UploadFileAsync(thumbFileId, desiredName);
                     if (thumbUpload != null)
                     {
-                        var inputMedia = new TLInputMediaUploadedThumbDocument
+                        var inputMedia = new TLInputMediaUploadedDocument
                         {
                             File = upload.ToInputFile(),
                             Thumb = thumbUpload.ToInputFile(),
@@ -736,7 +736,7 @@ namespace Unigram.ViewModels
                     var thumbUpload = await _uploadDocumentManager.UploadFileAsync(thumbFileId, desiredName);
                     if (thumbUpload != null)
                     {
-                        var inputMedia = new TLInputMediaUploadedThumbDocument
+                        var inputMedia = new TLInputMediaUploadedDocument
                         {
                             File = upload.ToInputFile(),
                             Thumb = thumbUpload.ToInputFile(),

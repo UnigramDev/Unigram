@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Stickers.Methods
 {
 	/// <summary>
 	/// RCP method stickers.changeStickerPosition.
-	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
+	/// Returns <see cref="Telegram.Api.TL.TLMessagesStickerSet"/>
 	/// </summary>
 	public partial class TLStickersChangeStickerPosition : TLObject
 	{
@@ -28,7 +28,7 @@ namespace Telegram.Api.TL.Stickers.Methods
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x4ED705CA);
+			to.Write(0xFFB6D4CA);
 			to.WriteObject(Sticker);
 			to.Write(Position);
 		}

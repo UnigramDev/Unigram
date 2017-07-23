@@ -8,17 +8,23 @@ namespace Telegram.Api.TL
 		[Flags]
 		public enum Flag : Int32
 		{
+			Thumb = (1 << 2),
 			Stickers = (1 << 0),
+			TTLSeconds = (1 << 1),
 		}
 
+		public bool HasThumb { get { return Flags.HasFlag(Flag.Thumb); } set { Flags = value ? (Flags | Flag.Thumb) : (Flags & ~Flag.Thumb); } }
 		public bool HasStickers { get { return Flags.HasFlag(Flag.Stickers); } set { Flags = value ? (Flags | Flag.Stickers) : (Flags & ~Flag.Stickers); } }
+		public bool HasTTLSeconds { get { return Flags.HasFlag(Flag.TTLSeconds); } set { Flags = value ? (Flags | Flag.TTLSeconds) : (Flags & ~Flag.TTLSeconds); } }
 
 		public Flag Flags { get; set; }
 		public TLInputFileBase File { get; set; }
+		public TLInputFileBase Thumb { get; set; }
 		public String MimeType { get; set; }
 		public TLVector<TLDocumentAttributeBase> Attributes { get; set; }
 		public String Caption { get; set; }
 		public TLVector<TLInputDocumentBase> Stickers { get; set; }
+		public Int32? TTLSeconds { get; set; }
 
 		public TLInputMediaUploadedDocument() { }
 		public TLInputMediaUploadedDocument(TLBinaryReader from)
@@ -32,28 +38,34 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			File = TLFactory.Read<TLInputFileBase>(from);
+			if (HasThumb) Thumb = TLFactory.Read<TLInputFileBase>(from);
 			MimeType = from.ReadString();
 			Attributes = TLFactory.Read<TLVector<TLDocumentAttributeBase>>(from);
 			Caption = from.ReadString();
 			if (HasStickers) Stickers = TLFactory.Read<TLVector<TLInputDocumentBase>>(from);
+			if (HasTTLSeconds) TTLSeconds = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
-			to.Write(0xD070F1E9);
+			to.Write(0xE39621FD);
 			to.Write((Int32)Flags);
 			to.WriteObject(File);
+			if (HasThumb) to.WriteObject(Thumb);
 			to.Write(MimeType);
 			to.WriteObject(Attributes);
 			to.Write(Caption);
 			if (HasStickers) to.WriteObject(Stickers);
+			if (HasTTLSeconds) to.Write(TTLSeconds.Value);
 		}
 
 		private void UpdateFlags()
 		{
+			HasThumb = Thumb != null;
 			HasStickers = Stickers != null;
+			HasTTLSeconds = TTLSeconds != null;
 		}
 	}
 }

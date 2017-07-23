@@ -291,6 +291,9 @@
   <data name="MESSAGE_PHOTO" xml:space="preserve">
     <value>sent you a photo</value>
   </data>
+  <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
+    <value>sent you a self-destructing photo</value>
+  </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
     <value>sent you a video message</value>
   </data>
@@ -302,6 +305,9 @@
   </data>
   <data name="MESSAGE_VIDEO" xml:space="preserve">
     <value>sent you a video</value>
+  </data>
+  <data name="MESSAGE_VIDEO_SECRET" xml:space="preserve">
+    <value>sent you a self-destructing video</value>
   </data>
   <data name="PHONE_CALL_MISSED" xml:space="preserve">
     <value>Missed call</value>
