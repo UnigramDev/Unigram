@@ -90,8 +90,7 @@
                                 Constraint="{Binding Media}"
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
-                                Stretch="UniformToFill"
-                                Click="Photo_Click">
+                                Stretch="UniformToFill">
                 <!--<controls:ImageView.Template>
                     <ControlTemplate TargetType="controls:ImageView">
                         <Rectangle x:Name="Holder">
@@ -102,7 +101,9 @@
                     </ControlTemplate>
                 </controls:ImageView.Template>-->
             </controls:ImageView>
-            
+
+            <controls:BackDrop BlurAmount="20"/>
+
             <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
                 <TextBlock Text="{Binding Media.TTLSeconds}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
             </Border>
@@ -132,6 +133,8 @@
                     </ControlTemplate>
                 </controls:ImageView.Template>-->
             </controls:ImageView>
+
+            <controls:BackDrop BlurAmount="20"/>
 
             <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
                 <TextBlock Text="{Binding Media.TTLSeconds}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>

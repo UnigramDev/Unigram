@@ -605,6 +605,8 @@ namespace Unigram.ViewModels
                 Photo = photo,
                 Caption = caption,
                 TTLSeconds = ttlSeconds,
+                HasPhoto = true,
+                HasCaption = caption != null,
                 HasTTLSeconds = ttlSeconds.HasValue
             };
 

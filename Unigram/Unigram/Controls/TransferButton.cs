@@ -20,7 +20,6 @@ namespace Unigram.Controls
     {
         public TransferButton()
         {
-            FontFamily = new Windows.UI.Xaml.Media.FontFamily("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram");
             Click += OnClick;
         }
 
