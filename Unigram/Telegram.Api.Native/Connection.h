@@ -155,7 +155,7 @@ namespace Telegram
 				enum class ProxyHandshakeState
 				{
 					None = 0x0,
-					Connecting = 0x1 << 4,
+					Initializing = 0x1 << 4,
 					SendingGreeting = 0x3 << 4,
 					Authenticating = 0x7 << 4,
 					RequestingConnection = 0xF << 4,

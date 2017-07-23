@@ -722,7 +722,7 @@ HRESULT Datacenter::ImportAuthorization()
 						datacenter->m_flags |= static_cast<DatacenterFlag>(AuthorizationState::Authorized);
 
 						HRESULT result;
-						ReturnIfFailed(result, datacenter->m_connectionManager->OnDatacenterImportAuthorizationComplete(datacenter.Get()));
+						ReturnIfFailed(result, datacenter->m_connectionManager->OnDatacenterImportAuthorizationCompleted(datacenter.Get()));
 
 						return datacenter->SaveSettings();
 					}
@@ -1250,7 +1250,7 @@ HRESULT Datacenter::OnHandshakeClientDHResponse(Connection* connection, TLDHGenO
 		m_flags |= static_cast<DatacenterFlag>(HandshakeState::Authenticated);
 	}
 
-	ReturnIfFailed(result, m_connectionManager->OnDatacenterHandshakeComplete(this, timeDifference));
+	ReturnIfFailed(result, m_connectionManager->OnDatacenterHandshakeCompleted(this, timeDifference));
 
 	return SaveSettings();
 }
