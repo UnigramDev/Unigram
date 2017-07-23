@@ -297,6 +297,9 @@
   <data name="MESSAGE_ROUND" xml:space="preserve">
     <value>sent you a video message</value>
   </data>
+  <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
+    <value>took a screenshot!</value>
+  </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
     <value>sent you a {1}sticker</value>
   </data>
