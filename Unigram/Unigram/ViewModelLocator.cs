@@ -183,20 +183,24 @@ namespace Unigram
             Task.Run(() => LoadStateAndUpdate());
         }
 
-        private void InitializeLayer()
+        private void DeleteIfExists(string path)
         {
-            void deleteIfExists(string path)
+            try
             {
                 if (File.Exists(FileUtils.GetFileName(path)))
                 {
                     File.Delete(FileUtils.GetFileName(path));
                 }
             }
+            catch { }
+        }
 
-            if (SettingsHelper.SupportedLayer < 68)
+        private void InitializeLayer()
+        {
+            if (SettingsHelper.SupportedLayer < 69 || !SettingsHelper.IsAuthorized)
             {
-                deleteIfExists("database.sqlite");
-                SettingsHelper.SupportedLayer = 68;
+                DeleteIfExists("database.sqlite");
+                SettingsHelper.SupportedLayer = 69;
                 ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
                 ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
             }
@@ -207,22 +211,22 @@ namespace Unigram
                 //SettingsHelper.SupportedLayer = Constants.SupportedLayer;
                 //SettingsHelper.DatabaseVersion = Constants.DatabaseVersion;
 
-                deleteIfExists("action_queue.dat");
-                deleteIfExists("action_queue.dat.temp");
-                deleteIfExists("chats.dat");
-                deleteIfExists("chats.dat.temp");
-                deleteIfExists("dialogs.dat");
-                deleteIfExists("dialogs.dat.temp");
+                DeleteIfExists("action_queue.dat");
+                DeleteIfExists("action_queue.dat.temp");
+                DeleteIfExists("chats.dat");
+                DeleteIfExists("chats.dat.temp");
+                DeleteIfExists("dialogs.dat");
+                DeleteIfExists("dialogs.dat.temp");
                 //deleteIfExists("state.dat");
                 //deleteIfExists("state.dat.temp");
-                deleteIfExists("users.dat");
-                deleteIfExists("users.dat.temp");
+                DeleteIfExists("users.dat");
+                DeleteIfExists("users.dat.temp");
 
-                deleteIfExists("temp_chats.dat");
-                deleteIfExists("temp_dialogs.dat");
-                deleteIfExists("temp_difference.dat");
-                deleteIfExists("temp_state.dat");
-                deleteIfExists("temp_users.dat");
+                DeleteIfExists("temp_chats.dat");
+                DeleteIfExists("temp_dialogs.dat");
+                DeleteIfExists("temp_difference.dat");
+                DeleteIfExists("temp_state.dat");
+                DeleteIfExists("temp_users.dat");
             }
         }
 
@@ -307,6 +311,8 @@ namespace Unigram
 
         private void OnAuthorizationRequired(object sender, AuthorizationRequiredEventArgs e)
         {
+            DeleteIfExists("database.sqlite");
+
             SettingsHelper.IsAuthorized = false;
             SettingsHelper.UserId = 0;
             SettingsHelper.ChannelUri = null;
