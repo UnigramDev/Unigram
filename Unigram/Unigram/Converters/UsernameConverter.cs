@@ -13,7 +13,7 @@ namespace Unigram.Converters
         {
             if (string.IsNullOrEmpty((string)value))
             {
-                return parameter == null ? "None" : null;
+                return parameter == null || (parameter != null && parameter.Equals("username")) ? "None" : null;
             }
 
             return parameter != null ? $"@{value}" : value;
