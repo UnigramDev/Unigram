@@ -272,7 +272,6 @@ namespace Telegram.Api.TL
             TLObjectSerializer.RegisterObjectConstructor(0x20212CA8, () => new TLPhotosPhoto());
             TLObjectSerializer.RegisterObjectConstructor(0x96A18D5, () => new TLUploadFile());
             TLObjectSerializer.RegisterObjectConstructor(0xEA52FE5A, () => new TLUploadFileCdnRedirect());
-            TLObjectSerializer.RegisterObjectConstructor(0x7FEEC888, () => new TLConfig());
             TLObjectSerializer.RegisterObjectConstructor(0x8E1A1775, () => new TLNearestDC());
             TLObjectSerializer.RegisterObjectConstructor(0x8987F311, () => new TLHelpAppUpdate());
             TLObjectSerializer.RegisterObjectConstructor(0xC45A6536, () => new TLHelpNoAppUpdate());

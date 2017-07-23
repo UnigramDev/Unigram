@@ -513,7 +513,6 @@ namespace Telegram.Api.TL
 				case TLType.PhotosPhoto: return (T)(Object)new TLPhotosPhoto(from);
 				case TLType.UploadFile: return (T)(Object)new TLUploadFile(from);
 				case TLType.UploadFileCdnRedirect: return (T)(Object)new TLUploadFileCdnRedirect(from);
-				case TLType.Config: return (T)(Object)new TLConfig(from);
 				case TLType.NearestDC: return (T)(Object)new TLNearestDC(from);
 				case TLType.HelpAppUpdate: return (T)(Object)new TLHelpAppUpdate(from);
 				case TLType.HelpNoAppUpdate: return (T)(Object)new TLHelpNoAppUpdate(from);
@@ -835,9 +834,6 @@ namespace Telegram.Api.TL
 				case TLType.CdnFileHash: return (T)(Object)new TLCdnFileHash(from);
 				case TLType.Message: return (T)(Object)new TLMessage(from);
 				case TLType.MessageService: return (T)(Object)new TLMessageService(from);
-				case TLType.RPCResult: return (T)(Object)new TLRPCResult(from);
-				case TLType.MsgContainer: return (T)(Object)new TLMsgContainer(from);
-				case TLType.GzipPacked: return (T)(Object)new TLGzipPacked(from);
 				case TLType.Null: return (T)(Object)null;
 				default: throw new InvalidOperationException();
 			}

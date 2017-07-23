@@ -580,7 +580,6 @@
     <Compile Include="TL\TLChatPhoto.cs" />
     <Compile Include="TL\TLChatPhotoBase.cs" />
     <Compile Include="TL\TLChatPhotoEmpty.cs" />
-    <Compile Include="TL\TLConfig.cs" />
     <Compile Include="TL\TLContact.cs" />
     <Compile Include="TL\TLContactBlocked.cs" />
     <Compile Include="TL\TLContactLinkBase.cs" />
