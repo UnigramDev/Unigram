@@ -134,7 +134,7 @@ namespace Unigram.ViewModels
 
                 var chat = With as TLChat;
 
-                if (message != null && (message.IsOut || (chat != null && (chat.IsCreator || chat.IsAdmin)))  && message.ToId.Id != SettingsHelper.UserId && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
+                if (message != null && (message.IsOut || (chat != null && (chat.IsCreator || chat.IsAdmin))) && message.ToId.Id != SettingsHelper.UserId && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
                 {
                     var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
                     var config = CacheService.GetConfig();
@@ -439,7 +439,24 @@ namespace Unigram.ViewModels
         #region Multiple Forward
 
         private RelayCommand _messagesForwardCommand;
-        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(x => x is TLMessage)));
+        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(x =>
+        {
+            if (x is TLMessage message)
+            {
+                if (message.Media is TLMessageMediaPhoto photoMedia)
+                {
+                    return !photoMedia.HasTTLSeconds;
+                }
+                else if (message.Media is TLMessageMediaDocument documentMedia)
+                {
+                    return !documentMedia.HasTTLSeconds;
+                }
+
+                return true;
+            }
+
+            return false;
+        })));
 
         private async void MessagesForwardExecute()
         {

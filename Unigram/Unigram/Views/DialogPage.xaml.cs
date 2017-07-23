@@ -770,10 +770,16 @@ namespace Unigram.Views
             var element = sender as MenuFlyoutItem;
             if (element != null)
             {
-                var messageCommon = element.DataContext as TLMessageCommonBase;
-                if (messageCommon != null)
+                var message = element.DataContext as TLMessage;
+                if (message != null && message.Media is TLMessageMediaPhoto photoMedia)
                 {
-
+                    element.Visibility = photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                    return;
+                }
+                else if (message != null && message.Media is TLMessageMediaDocument documentMedia)
+                {
+                    element.Visibility = documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                    return;
                 }
 
                 element.Visibility = Visibility.Visible;
@@ -852,13 +858,15 @@ namespace Unigram.Views
             if (element != null)
             {
                 var message = element.DataContext as TLMessage;
-                if (message != null)
+                if (message != null && message.Media is TLMessageMediaPhoto photoMedia)
                 {
-                    if (message.Media is TLMessageMediaDocument || message.Media is TLMessageMediaPhoto)
-                    {
-                        Visibility = Visibility.Visible;
-                        return;
-                    }
+                    element.Visibility = photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                    return;
+                }
+                else if (message != null && message.Media is TLMessageMediaDocument documentMedia)
+                {
+                    element.Visibility = documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                    return;
                 }
 
                 element.Visibility = Visibility.Collapsed;
