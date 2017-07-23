@@ -217,8 +217,8 @@ namespace Unigram
                 DeleteIfExists("chats.dat.temp");
                 DeleteIfExists("dialogs.dat");
                 DeleteIfExists("dialogs.dat.temp");
-                //deleteIfExists("state.dat");
-                //deleteIfExists("state.dat.temp");
+                DeleteIfExists("state.dat");
+                DeleteIfExists("state.dat.temp");
                 DeleteIfExists("users.dat");
                 DeleteIfExists("users.dat.temp");
 
@@ -329,6 +329,12 @@ namespace Unigram
                 if (type.Name.StartsWith("SignIn") || type.Name.StartsWith("SignUp")) { }
                 else
                 {
+                    try
+                    {
+                        UnigramContainer.Current.ResolveType<MainViewModel>().Refresh = true;
+                    }
+                    catch { }
+
                     App.Current.NavigationService.Navigate(typeof(SignInWelcomePage));
                     App.Current.NavigationService.Frame.BackStack.Clear();
                 }

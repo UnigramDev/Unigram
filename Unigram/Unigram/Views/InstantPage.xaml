@@ -172,6 +172,9 @@
                     <Button Command="{x:Bind ViewModel.FeedbackCommand}" Content="Leave feedback about this preview" HorizontalContentAlignment="Center" VerticalAlignment="Center" Padding="8,6" Style="{StaticResource EmptyButtonStyle}"/>
                 </Border>
             </ListView.Footer>
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection/>
+            </ListView.ItemContainerTransitions>
         </ListView>
 
         <!--<ScrollViewer x:Name="ScrollingHost"

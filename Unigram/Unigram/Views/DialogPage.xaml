@@ -1424,6 +1424,9 @@
                         <Image x:Phase="3" Margin="2,8" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="60" Height="60"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection/>
+                </ListView.ItemContainerTransitions>
             </ListView>
             <ListView x:Name="ListBotCommands"
                       ItemsSource="{x:Bind ViewModel.BotCommands, Mode=OneWay}"
@@ -1451,6 +1454,9 @@
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection/>
+                </ListView.ItemContainerTransitions>
             </ListView>
             <ListView x:Name="ListUsernameHints"
                       ItemsSource="{x:Bind ViewModel.UsernameHints, Mode=OneWay}"
@@ -1478,6 +1484,9 @@
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection/>
+                </ListView.ItemContainerTransitions>
             </ListView>
         </Grid>
 
