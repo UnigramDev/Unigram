@@ -227,6 +227,7 @@
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
     <Compile Include="Converters\MessageToShareConverter.cs" />
+    <Compile Include="Converters\MessageTTLConverter.cs" />
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
@@ -765,7 +766,6 @@
     <Content Include="Assets\Emojis\2753.png" />
     <Content Include="Assets\Emojis\2757.png" />
     <Content Include="Assets\Fonts\Telegram.ttf" />
-    <Content Include="Assets\Fonts\PhtoMDL2.2.08.ttf" />
     <Compile Include="Common\Language.cs" />
     <Compile Include="Controls\BubbleBottomButton.cs" />
     <Compile Include="Controls\DialogsListView.cs" />
@@ -1041,6 +1041,8 @@
       <LastGenOutput>Resources.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </PRIResource>
+    <Content Include="Assets\Fonts\CamMDL2.ttf" />
+    <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>

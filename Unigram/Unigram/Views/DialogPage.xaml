@@ -1565,11 +1565,11 @@
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Tag="&#xEB9F;"
                                                 Text="Photo or video"
-                                                Command="{Binding SendPhotoCommand}"/>
+                                                Command="{x:Bind ViewModel.SendPhotoCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Text="File"
                                                 Tag="&#xE160;"
-                                                Command="{Binding SendFileCommand}"/>
+                                                Command="{x:Bind ViewModel.SendFileCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Text="Location"
                                                 Tag="&#xE1C4;"

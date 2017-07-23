@@ -47,6 +47,19 @@ namespace Unigram.Core.Models
             }
         }
 
+        protected int? _ttlSeconds;
+        public int? TTLSeconds
+        {
+            get
+            {
+                return _ttlSeconds;
+            }
+            set
+            {
+                Set(ref _ttlSeconds, value);
+            }
+        }
+
         private async void LoadThumbnail()
         {
             try

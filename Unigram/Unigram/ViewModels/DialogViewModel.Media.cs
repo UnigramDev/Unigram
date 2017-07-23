@@ -513,7 +513,7 @@ namespace Unigram.ViewModels
                     {
                         if (storage is StoragePhoto)
                         {
-                            await SendPhotoAsync(storage.File, storage.Caption);
+                            await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
                         }
                     }
                 }
@@ -537,13 +537,13 @@ namespace Unigram.ViewModels
                 {
                     foreach (var storage in dialog.Items)
                     {
-                        await SendPhotoAsync(storage.File, storage.Caption);
+                        await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
                     }
                 }
             }
         }
 
-        private async Task SendPhotoAsync(StorageFile file, string caption)
+        private async Task SendPhotoAsync(StorageFile file, string caption, int? ttlSeconds = null)
         {
             var originalProps = await file.Properties.GetImagePropertiesAsync();
 
@@ -597,13 +597,15 @@ namespace Unigram.ViewModels
                 Id = 0,
                 AccessHash = 0,
                 Date = date,
-                Sizes = new TLVector<TLPhotoSizeBase> { photoSize }
+                Sizes = new TLVector<TLPhotoSizeBase> { photoSize },
             };
 
             var media = new TLMessageMediaPhoto
             {
                 Photo = photo,
-                Caption = caption
+                Caption = caption,
+                TTLSeconds = ttlSeconds,
+                HasTTLSeconds = ttlSeconds.HasValue
             };
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
@@ -625,8 +627,9 @@ namespace Unigram.ViewModels
                 {
                     var inputMedia = new TLInputMediaUploadedPhoto
                     {
+                        File = upload.ToInputFile(),
                         Caption = media.Caption,
-                        File = upload.ToInputFile()
+                        TTLSeconds = ttlSeconds
                     };
 
                     var response = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
