@@ -181,6 +181,10 @@ namespace Unigram.Common
                             {
                                 placeholder = (message.From.FullName + "  " ?? string.Empty) + placeholder;
                             }
+                            else if (message.HasPostAuthor && message.PostAuthor != null)
+                            {
+                                placeholder = (message.PostAuthor + "  " ?? string.Empty) + placeholder;
+                            }
                         }
 
                         paragraph.Inlines.Add(new Run { Text = "\u200E" + placeholder, Foreground = null, FontSize = 12 });

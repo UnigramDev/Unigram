@@ -505,7 +505,7 @@ namespace Unigram.ViewModels
 
             if (storages != null && storages.Count > 0)
             {
-                var dialog = new SendPhotosView { Items = storages, SelectedItem = storages[0] };
+                var dialog = new SendPhotosView { Items = storages, SelectedItem = storages[0], IsTTLEnabled = _peer is TLInputPeerUser };
                 var dialogResult = await dialog.ShowAsync();
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
@@ -531,7 +531,7 @@ namespace Unigram.ViewModels
 
             if (storages != null && storages.Count > 0)
             {
-                var dialog = new SendPhotosView { Items = storages, SelectedItem = storages[0] };
+                var dialog = new SendPhotosView { Items = storages, SelectedItem = storages[0], IsTTLEnabled = _peer is TLInputPeerUser };
                 var dialogResult = await dialog.ShowAsync();
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {

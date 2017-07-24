@@ -18,12 +18,35 @@ namespace Unigram.Converters
             }
             else if (seconds >= 1 && seconds < 21)
             {
-                return parameter == null ? (object)seconds : BindConvert.Current.FormatTTLString(seconds ?? 0);
+                return parameter == null ? (object)seconds : GetString(seconds ?? 0, parameter);
             }
             else
             {
-                return parameter == null ? (object)(((seconds ?? 0) / 5) + 16) : BindConvert.Current.FormatTTLString(((seconds ?? 0) - 16) * 5);
+                return parameter == null ? (object)(((seconds ?? 0) / 5) + 16) : GetString(seconds ?? 0, parameter);
             }
+        }
+
+        private string GetString(int seconds, object parameter)
+        {
+            var param = parameter as string;
+            if (param.Equals("short"))
+            {
+                //if (seconds >= 1 && seconds < 21)
+                //{
+                //    return seconds.ToString();
+                //}
+
+                //return ((seconds / 5) + 16).ToString();
+
+                return seconds.ToString();
+            }
+
+            if (seconds >= 1 && seconds < 21)
+            {
+                return BindConvert.Current.FormatTTLString(seconds);
+            }
+
+            return BindConvert.Current.FormatTTLString((seconds - 16) * 5);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

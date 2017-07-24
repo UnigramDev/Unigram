@@ -35,14 +35,16 @@ using Windows.UI;
 using Microsoft.Graphics.Canvas.Effects;
 using Windows.UI.ViewManagement;
 using Windows.System.Display;
+using Telegram.Api.Services.Cache.EventArgs;
+using Telegram.Api.Aggregator;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class GalleryView : ContentDialogBase
+    public sealed partial class GallerySecretView : ContentDialogBase, IHandle<MessageExpiredEventArgs>
     {
-        public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
+        public GallerySecretViewModel ViewModel => DataContext as GallerySecretViewModel;
 
         public BindConvert Convert => BindConvert.Current;
 
@@ -59,7 +61,7 @@ namespace Unigram.Controls.Views
         //private Visual _topBarVisual;
         //private Visual _botBarVisual;
 
-        private GalleryView()
+        private GallerySecretView()
         {
             InitializeComponent();
 
@@ -129,6 +131,19 @@ namespace Unigram.Controls.Views
                 ElementCompositionPreview.SetImplicitShowAnimation(Layer, layerShowAnimation);
                 ElementCompositionPreview.SetImplicitHideAnimation(Layer, layerHideAnimation);
             }
+
+            TelegramEventAggregator.Instance.Subscribe(this);
+        }
+
+        public void Handle(MessageExpiredEventArgs args)
+        {
+            Execute.BeginOnUIThread(() =>
+            {
+                if (ViewModel?.SelectedItem is GalleryMessageItem messageItem && messageItem.Message == args.Message)
+                {
+                    OnBackRequestedOverride(this, new HandledEventArgs());
+                }
+            });
         }
 
         private async void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
@@ -157,40 +172,24 @@ namespace Unigram.Controls.Views
             });
         }
 
-        private static GalleryView _current;
-        public static GalleryView Current
+        private static GallerySecretView _current;
+        public static GallerySecretView Current
         {
             get
             {
                 //return new GalleryView();
 
                 if (_current == null)
-                    _current = new GalleryView();
+                    _current = new GallerySecretView();
 
                 return _current;
             }
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing)
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GallerySecretViewModel parameter, Func<FrameworkElement> closing)
         {
             _closing = closing;
 
-            //EventHandler handler = null;
-            //handler = new EventHandler((s, args) =>
-            //{
-            //    DataContext = null;
-            //    Bindings.StopTracking();
-
-            //    Closing -= handler;
-            //    closing?.Invoke(this, args);
-            //});
-
-            //Closing += handler;
-            return ShowAsync(parameter);
-        }
-
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GalleryViewModelBase parameter)
-        {
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
 
             DataContext = parameter;
@@ -227,42 +226,27 @@ namespace Unigram.Controls.Views
         {
             Dispose();
 
-            if (ViewModel.SelectedItem == ViewModel.FirstItem)
+            //Flip.Opacity = 0;
+            Surface.Visibility = Visibility.Visible;
+
+            Layer.Visibility = Visibility.Collapsed;
+            TopBar.Visibility = Visibility.Collapsed;
+            BotBar.Visibility = Visibility.Collapsed;
+
+            var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
+            if (animation != null && _closing != null)
             {
-                //Flip.Opacity = 0;
-                Surface.Visibility = Visibility.Visible;
-
-                Layer.Visibility = Visibility.Collapsed;
-                TopBar.Visibility = Visibility.Collapsed;
-                BotBar.Visibility = Visibility.Collapsed;
-
-                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
-                if (animation != null && _closing != null)
+                var element = _closing();
+                if (element.ActualWidth > 0)
                 {
-                    var element = _closing();
-                    if (element.ActualWidth > 0)
-                    {
-                        animation.TryStart(element);
-                    }
+                    animation.TryStart(element);
                 }
-
-                DataContext = null;
-                Bindings.StopTracking();
-
-                Hide();
             }
-            else
-            {
-                //Flip.Opacity = 0;
-                Layer.Visibility = Visibility.Collapsed;
-                TopBar.Visibility = Visibility.Collapsed;
-                BotBar.Visibility = Visibility.Collapsed;
 
-                DataContext = null;
-                Bindings.StopTracking();
+            DataContext = null;
+            Bindings.StopTracking();
 
-                Hide();
-            }
+            Hide();
 
             e.Handled = true;
         }
@@ -391,8 +375,15 @@ namespace Unigram.Controls.Views
             BotBar.Visibility = BotBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = false;
+        }
+
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = true;
+
             DataContext = null;
             Bindings.StopTracking();
         }

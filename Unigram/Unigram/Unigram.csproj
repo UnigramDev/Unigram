@@ -18,9 +18,9 @@
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>Unigram_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>BCF3F68C8F50DE819284C634BE7D5030F61E2216</PackageCertificateThumbprint>
     <!--<BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>-->
   </PropertyGroup>
@@ -168,6 +168,9 @@
     <Compile Include="Controls\Views\EditYourAboutView.xaml.cs">
       <DependentUpon>EditYourAboutView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\GallerySecretView.xaml.cs">
+      <DependentUpon>GallerySecretView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\PhoneCallRatingView.xaml.cs">
       <DependentUpon>PhoneCallRatingView.xaml</DependentUpon>
     </Compile>
@@ -191,6 +194,9 @@
     </Compile>
     <Compile Include="Controls\Views\RoundVideoView.xaml.cs">
       <DependentUpon>RoundVideoView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\SelectTTLSecondsView.xaml.cs">
+      <DependentUpon>SelectTTLSecondsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\SettingsDownloadView.xaml.cs">
       <DependentUpon>SettingsDownloadView.xaml</DependentUpon>
@@ -265,6 +271,7 @@
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
     <Compile Include="ViewModels\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Media.cs" />
+    <Compile Include="ViewModels\GallerySecretViewModel.cs" />
     <Compile Include="ViewModels\InstantGalleryViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep1ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormStep2ViewModel.cs" />
@@ -1187,6 +1194,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\GallerySecretView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Views\InlineBotResultsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1280,6 +1291,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\RoundVideoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\SelectTTLSecondsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
