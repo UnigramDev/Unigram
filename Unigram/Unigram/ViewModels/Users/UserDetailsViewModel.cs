@@ -96,6 +96,10 @@ namespace Unigram.ViewModels.Users
                         full = response.Result;
                     }
                 }
+                else
+                {
+                    ProtoService.GetFullUserAsync(user.ToInputUser(), null);
+                }
 
                 if (full != null)
                 {

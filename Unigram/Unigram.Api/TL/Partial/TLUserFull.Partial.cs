@@ -13,6 +13,21 @@ namespace Telegram.Api.TL
         public void Update(TLUserFull userFull)
         {
             // TODO: update
+            User = userFull.User;
+            About = userFull.About;
+            Link = userFull.Link;
+            ProfilePhoto = userFull.ProfilePhoto;
+            NotifySettings = userFull.NotifySettings;
+            BotInfo = userFull.BotInfo;
+            CommonChatsCount = userFull.CommonChatsCount;
+
+            RaisePropertyChanged(() => User);
+            RaisePropertyChanged(() => About);
+            RaisePropertyChanged(() => Link);
+            RaisePropertyChanged(() => ProfilePhoto);
+            RaisePropertyChanged(() => NotifySettings);
+            RaisePropertyChanged(() => BotInfo);
+            RaisePropertyChanged(() => CommonChatsCount);
         }
 
         //public TLUserBase ToUser()
