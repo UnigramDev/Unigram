@@ -29,7 +29,7 @@ namespace Unigram.ViewModels
         public GallerySecretViewModel(TLInputPeerBase peer, TLMessage message, IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            SelectedItem = new GalleryMessageItem(message);
+            SelectedItem = new GallerySecretMessageItem(message);
 
             if (message.IsMediaUnread && !message.IsOut)
             {
@@ -45,8 +45,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        protected GalleryItem _firstItem;
-        public GalleryItem SelectedItem
+        protected GallerySecretMessageItem _firstItem;
+        public GallerySecretMessageItem SelectedItem
         {
             get
             {
@@ -80,6 +80,14 @@ namespace Unigram.ViewModels
                     }
                 }
             }
+        }
+    }
+
+    public class GallerySecretMessageItem : GalleryMessageItem
+    {
+        public GallerySecretMessageItem(TLMessage message)
+            : base(message)
+        {
         }
     }
 }

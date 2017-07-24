@@ -50,6 +50,9 @@ namespace Unigram.Controls.Views
 
         private Func<FrameworkElement> _closing;
 
+        private bool _playedOnce;
+        private bool _destructed;
+
         private DisplayRequest _request;
         private MediaPlayerElement _mediaPlayer;
         private MediaPlayerSurface _mediaSurface;
@@ -69,11 +72,12 @@ namespace Unigram.Controls.Views
             TopBar.Visibility = Visibility.Collapsed;
             BotBar.Visibility = Visibility.Collapsed;
 
-            _mediaPlayer = new MediaPlayerElement { Style = Resources["yolo"] as Style };
-            _mediaPlayer.AreTransportControlsEnabled = true;
-            _mediaPlayer.TransportControls = Transport;
+            _mediaPlayer = new MediaPlayerElement();
+            _mediaPlayer.AutoPlay = true;
             _mediaPlayer.SetMediaPlayer(new MediaPlayer());
             _mediaPlayer.MediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+            _mediaPlayer.MediaPlayer.MediaEnded += OnMediaEnded;
+            _mediaPlayer.MediaPlayer.IsLoopingEnabled = true;
 
             _layerVisual = ElementCompositionPreview.GetElementVisual(Layer);
             //_topBarVisual = ElementCompositionPreview.GetElementVisual(TopBar);
@@ -135,8 +139,27 @@ namespace Unigram.Controls.Views
             TelegramEventAggregator.Instance.Subscribe(this);
         }
 
+        private void OnMediaEnded(MediaPlayer sender, object args)
+        {
+            _playedOnce = true;
+
+            Execute.BeginOnUIThread(() =>
+            {
+                if (_destructed)
+                {
+                    OnBackRequestedOverride(this, new HandledEventArgs());
+                }
+            });
+        }
+
         public void Handle(MessageExpiredEventArgs args)
         {
+            if (!_playedOnce)
+            {
+                _destructed = true;
+                return;
+            }
+
             Execute.BeginOnUIThread(() =>
             {
                 if (ViewModel?.SelectedItem is GalleryMessageItem messageItem && messageItem.Message == args.Message)
