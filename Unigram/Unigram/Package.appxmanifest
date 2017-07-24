@@ -72,7 +72,8 @@
             <uap:DisplayName>Unigram</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>
-        <uap:Extension Category="windows.shareTarget">
+        <!-- Share Target temporaraily disabled -->
+        <!--<uap:Extension Category="windows.shareTarget">
           <uap:ShareTarget>
             <uap:SupportedFileTypes>
               <uap:SupportsAnyFileType />
@@ -82,7 +83,7 @@
             <uap:DataFormat>StorageItems</uap:DataFormat>
             <uap:DataFormat>Bitmap</uap:DataFormat>
           </uap:ShareTarget>
-        </uap:Extension>
+        </uap:Extension>-->
         <uap3:Extension Category="windows.appUriHandler">
           <uap3:AppUriHandler>
             <uap3:Host Name="t.me" />
