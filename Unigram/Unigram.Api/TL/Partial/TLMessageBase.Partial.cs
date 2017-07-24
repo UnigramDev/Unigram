@@ -355,8 +355,9 @@ namespace Telegram.Api.TL
 
         public bool IsVideo()
         {
+            // TODO: 24/07/2017, warning: || documentMedia.HasTTLSeconds
             var documentMedia = Media as TLMessageMediaDocument;
-            return documentMedia != null && IsVideo(documentMedia.Document);
+            return documentMedia != null && (IsVideo(documentMedia.Document) || documentMedia.HasTTLSeconds);
         }
 
         public static bool IsVideo(TLDocumentBase documentBase)

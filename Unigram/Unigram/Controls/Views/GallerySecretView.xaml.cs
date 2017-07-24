@@ -50,15 +50,11 @@ namespace Unigram.Controls.Views
 
         private Func<FrameworkElement> _closing;
 
+        private TimeSpan _lastPosition;
         private bool _playedOnce;
         private bool _destructed;
 
         private DisplayRequest _request;
-        private MediaPlayerElement _mediaPlayer;
-        private MediaPlayerSurface _mediaSurface;
-
-        private FrameworkElement _surface;
-        private SpriteVisual _surfaceVisual;
 
         private Visual _layerVisual;
         //private Visual _topBarVisual;
@@ -72,11 +68,11 @@ namespace Unigram.Controls.Views
             TopBar.Visibility = Visibility.Collapsed;
             BotBar.Visibility = Visibility.Collapsed;
 
-            _mediaPlayer = new MediaPlayerElement();
+            //_mediaPlayer = new MediaPlayerElement();
             _mediaPlayer.AutoPlay = true;
             _mediaPlayer.SetMediaPlayer(new MediaPlayer());
             _mediaPlayer.MediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
-            _mediaPlayer.MediaPlayer.MediaEnded += OnMediaEnded;
+            _mediaPlayer.MediaPlayer.PlaybackSession.PositionChanged += OnPositionChanged;
             _mediaPlayer.MediaPlayer.IsLoopingEnabled = true;
 
             _layerVisual = ElementCompositionPreview.GetElementVisual(Layer);
@@ -139,9 +135,13 @@ namespace Unigram.Controls.Views
             TelegramEventAggregator.Instance.Subscribe(this);
         }
 
-        private void OnMediaEnded(MediaPlayer sender, object args)
+        private void OnPositionChanged(MediaPlaybackSession sender, object args)
         {
-            _playedOnce = true;
+            if (!_playedOnce)
+            {
+                _playedOnce = sender.Position < _lastPosition;
+                _lastPosition = sender.Position;
+            }
 
             Execute.BeginOnUIThread(() =>
             {
@@ -290,12 +290,16 @@ namespace Unigram.Controls.Views
                     {
                         //Flip.Opacity = 1;
                         //Surface.Visibility = Visibility.Collapsed;
+
+                        Download_Click(Surface, null);
                     };
                 }
                 else
                 {
                     //Flip.Opacity = 1;
                     //Surface.Visibility = Visibility.Collapsed;
+
+                    Download_Click(Surface, null);
                 }
             }
         }
@@ -308,7 +312,7 @@ namespace Unigram.Controls.Views
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
-            var border = sender as TransferButton;
+            var border = sender as FrameworkElement;
             var item = border.DataContext as GalleryItem;
             if (item == null)
             {
@@ -319,49 +323,18 @@ namespace Unigram.Controls.Views
             {
                 Play(item);
             }
+            else
+            {
+                _playedOnce = true;
+            }
         }
 
         private void Play(GalleryItem item)
         {
             try
             {
-                var parent = Surface;
-
-                //var container = Flip.ContainerFromItem(item) as ContentControl;
-                //if (container != null && container.ContentTemplateRoot is Grid parent)
-                {
-                    //_surface = parent.FindName("Surface") as ImageView;
-                    _surface = parent;
-
-                    _mediaPlayer.MediaPlayer.SetSurfaceSize(new Size(_surface.ActualWidth, _surface.ActualHeight));
-
-                    var swapchain = _mediaPlayer.MediaPlayer.GetSurface(_layerVisual.Compositor);
-                    var brush = _layerVisual.Compositor.CreateSurfaceBrush(swapchain.CompositionSurface);
-                    var size = new Vector2((float)_surface.ActualWidth, (float)_surface.ActualHeight);
-
-                    //var mask = Unigram.Common.ImageLoader.Instance.LoadCircle(240, Colors.White).Brush;
-                    //var graphicsEffect = new AlphaMaskEffect
-                    //{
-                    //    Source = new CompositionEffectSourceParameter("image"),
-                    //    AlphaMask = new CompositionEffectSourceParameter("mask")
-                    //};
-
-                    //var effectFactory = _layerVisual.Compositor.CreateEffectFactory(graphicsEffect);
-                    //var effectBrush = effectFactory.CreateBrush();
-                    //effectBrush.SetSourceParameter("image", brush);
-                    //effectBrush.SetSourceParameter("mask", mask);
-
-                    _surfaceVisual = _layerVisual.Compositor.CreateSpriteVisual();
-                    _surfaceVisual.Size = size;
-                    _surfaceVisual.Brush = brush;
-
-                    ElementCompositionPreview.SetElementChildVisual(_surface, _surfaceVisual);
-
-                    _mediaSurface = swapchain;
-                    _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
-                    _mediaPlayer.MediaPlayer.IsLoopingEnabled = item.IsLoop;
-                    _mediaPlayer.MediaPlayer.Play();
-                }
+                _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
+                _mediaPlayer.MediaPlayer.Play();
             }
             catch { }
         }
@@ -373,18 +346,6 @@ namespace Unigram.Controls.Views
 
         private void Dispose()
         {
-            if (_surface != null)
-            {
-                ElementCompositionPreview.SetElementChildVisual(_surface, null);
-                _surface = null;
-            }
-
-            if (_surfaceVisual != null)
-            {
-                _surfaceVisual.Brush = null;
-                _surfaceVisual = null;
-            }
-
             if (_mediaPlayer?.Source != null)
             {
                 _mediaPlayer.MediaPlayer.Pause();
@@ -414,6 +375,11 @@ namespace Unigram.Controls.Views
         private void Download_Click(object sender, object e)
         {
 
+        }
+
+        private void Surface_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            _mediaPlayer.MediaPlayer.SetSurfaceSize(e.NewSize);
         }
     }
 }

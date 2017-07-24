@@ -12,5 +12,6 @@ namespace Telegram.Api.TL
         Boolean HasTTLSeconds { get; set; }
 
         Int64? DestructDate { get; set; }
+        Int32? DestructIn { get; set; }
     }
 }
