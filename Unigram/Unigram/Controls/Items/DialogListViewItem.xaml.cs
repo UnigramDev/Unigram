@@ -345,7 +345,7 @@ namespace Unigram.Controls.Items
                     }
                     else if (message.Media is TLMessageMediaGeo)
                     {
-                        return result + "GeoPoint";
+                        return result + "Location";
                     }
                     else if (message.Media is TLMessageMediaVenue)
                     {
