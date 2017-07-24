@@ -27,6 +27,11 @@ namespace Unigram.Selectors
             var message = item as TLMessage;
             if (message != null)
             {
+                if (message.IsService())
+                {
+                    return ServiceStyle;
+                }
+
                 //if (message.IsOut)
                 //{
                 //    return MessageStyle;

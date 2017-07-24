@@ -20,6 +20,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Updates;
 using Telegram.Api.Native.TL;
+using Telegram.Api.Services.Cache.EventArgs;
 
 namespace Telegram.Api.Services.Updates
 {
@@ -1345,8 +1346,30 @@ namespace Telegram.Api.Services.Updates
                         //    message.Media.NotListened = false;
                         //    message.Media.RaisePropertyChanged(() => message.Media.NotListened);
                         //}
+
+                        // Self destruct if needed
+                        if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
+                        {
+                            photoMedia.Photo = null;
+                            photoMedia.Caption = null;
+                            photoMedia.HasPhoto = false;
+                            photoMedia.HasCaption = false;
+
+                            Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                        }
+                        else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
+                        {
+                            documentMedia.Document = null;
+                            documentMedia.Caption = null;
+                            documentMedia.HasDocument = false;
+                            documentMedia.HasCaption = false;
+
+                            Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                        }
                     }
                 });
+
+                //Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updatedReadMessagesContents));
 
                 return true;
             }
@@ -1619,51 +1642,52 @@ namespace Telegram.Api.Services.Updates
                 return true;
             }
 
-            var updateReadMessages = update as TLUpdateReadMessagesContents;
-            if (updateReadMessages != null)
-            {
-                var dialogs = new Dictionary<int, TLDialog>();
-                var messages = new List<TLMessageCommonBase>(updateReadMessages.Messages.Count);
-                foreach (var readMessageId in updateReadMessages.Messages)
-                {
-                    var message = _cacheService.GetMessage(readMessageId) as TLMessageCommonBase;
-                    if (message != null)
-                    {
-                        messages.Add(message);
+            // TODO: 24/07/2017 removed?
+            //var updateReadMessages = update as TLUpdateReadMessagesContents;
+            //if (updateReadMessages != null)
+            //{
+            //    var dialogs = new Dictionary<int, TLDialog>();
+            //    var messages = new List<TLMessageCommonBase>(updateReadMessages.Messages.Count);
+            //    foreach (var readMessageId in updateReadMessages.Messages)
+            //    {
+            //        var message = _cacheService.GetMessage(readMessageId) as TLMessageCommonBase;
+            //        if (message != null)
+            //        {
+            //            messages.Add(message);
 
-                        var dialog = _cacheService.GetDialog(message);
-                        if (dialog != null && dialog.UnreadCount > 0)
-                        {
-                            dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1);
-                            var topMessage = dialog.TopMessageItem;
-                            if (topMessage != null && topMessage.Id == readMessageId)
-                            {
-                                dialogs[dialog.ReadInboxMaxId] = dialog;
-                            }
-                        }
-                    }
-                }
+            //            var dialog = _cacheService.GetDialog(message);
+            //            if (dialog != null && dialog.UnreadCount > 0)
+            //            {
+            //                dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1);
+            //                var topMessage = dialog.TopMessageItem;
+            //                if (topMessage != null && topMessage.Id == readMessageId)
+            //                {
+            //                    dialogs[dialog.ReadInboxMaxId] = dialog;
+            //                }
+            //            }
+            //        }
+            //    }
 
-                Execute.BeginOnUIThread(() =>
-                {
-                    foreach (var message in messages)
-                    {
-                        message.SetUnread(false);
-                    }
+            //    Execute.BeginOnUIThread(() =>
+            //    {
+            //        foreach (var message in messages)
+            //        {
+            //            message.SetUnread(false);
+            //        }
 
-                    foreach (var dialogBase in dialogs.Values)
-                    {
-                        var dialog = dialogBase as TLDialog;
-                        if (dialog == null) continue;
+            //        foreach (var dialogBase in dialogs.Values)
+            //        {
+            //            var dialog = dialogBase as TLDialog;
+            //            if (dialog == null) continue;
 
-                        dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
-                        dialog.RaisePropertyChanged(() => dialog.Self);
-                        dialog.RaisePropertyChanged(() => dialog.UnreadCount);
-                    }
-                });
+            //            dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
+            //            dialog.RaisePropertyChanged(() => dialog.Self);
+            //            dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+            //        }
+            //    });
 
-                return true;
-            }
+            //    return true;
+            //}
 
             var deleteMessages = update as TLUpdateDeleteMessages;
             if (deleteMessages != null)

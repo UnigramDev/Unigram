@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class BadgeButton : Button
+    public class BadgeButton : GlyphButton
     {
         public BadgeButton()
         {

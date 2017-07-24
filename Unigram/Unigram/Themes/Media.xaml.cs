@@ -33,6 +33,8 @@ using Unigram.Common;
 using Telegram.Api.Services;
 using Unigram.Views.Users;
 using Unigram.ViewModels.Users;
+using Telegram.Api.Services.Cache;
+using Telegram.Api.Aggregator;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -112,6 +114,11 @@ namespace Unigram.Themes
             Download(sender, e);
         }
 
+        private void SecretDownload_Click(object sender, TransferCompletedEventArgs e)
+        {
+            SecretDownload(sender, e);
+        }
+
         public static async void Download(object sender, TransferCompletedEventArgs e)
         {
             var element = sender as FrameworkElement;
@@ -145,6 +152,27 @@ namespace Unigram.Themes
                 {
                     var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(e.FileName));
                     await Launcher.LaunchFileAsync(file);
+                }
+            }
+        }
+
+        public static async void SecretDownload(object sender, TransferCompletedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+
+            if (message != null)
+            {
+                var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
+                if (media == null)
+                {
+                    media = element;
+                }
+
+                if (message.Parent != null)
+                {
+                    var viewModel = new GallerySecretViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current, InMemoryCacheService.Current, TelegramEventAggregator.Instance);
+                    await GallerySecretView.Current.ShowAsync(viewModel, () => media);
                 }
             }
         }

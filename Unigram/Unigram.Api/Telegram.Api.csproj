@@ -252,6 +252,7 @@
     <Compile Include="TL\Core\ITLDialogWith.cs" />
     <Compile Include="TL\Core\ITLInputPeer.cs" />
     <Compile Include="TL\Core\ITLMessageMediaCaption.cs" />
+    <Compile Include="TL\Core\ITLMessageMediaDestruct.cs" />
     <Compile Include="TL\Core\ITLMultiChannelPts.cs" />
     <Compile Include="TL\Core\ITLRandomId.cs" />
     <Compile Include="TL\Core\ITLReadMaxId.cs" />

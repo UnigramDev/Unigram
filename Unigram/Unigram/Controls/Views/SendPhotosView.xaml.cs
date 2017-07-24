@@ -44,18 +44,37 @@ namespace Unigram.Controls.Views
             }
         }
 
+        private bool _isTtlEnabled;
+        public bool IsTTLEnabled
+        {
+            get
+            {
+                return _isTtlEnabled;
+            }
+            set
+            {
+                if (_isTtlEnabled != value)
+                {
+                    _isTtlEnabled = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsTTLEnabled"));
+                }
+            }
+        }
+
         public SendPhotosView()
         {
             InitializeComponent();
             DataContext = this;
 
-            var seconds = new int[29];
-            for (int i = 0; i < seconds.Length; i++)
-            {
-                seconds[i] = i;
-            }
+            //var seconds = new int[29];
+            //for (int i = 0; i < seconds.Length; i++)
+            //{
+            //    seconds[i] = i;
+            //}
 
-            TTLSeconds.ItemsSource = seconds;
+            //TTLSeconds.ItemsSource = seconds;
+
+            TTLSeconds.RegisterPropertyChangedCallback(GlyphButton.GlyphProperty, OnSecondsChanged);
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -167,7 +186,35 @@ namespace Unigram.Controls.Views
 
         private void TTLSeconds_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            VisualStateManager.GoToState(TTLSeconds, TTLSeconds.SelectedIndex == 0 ? "Unselected" : "Selected", false);
+            //VisualStateManager.GoToState(TTLSeconds, TTLSeconds.SelectedIndex == 0 ? "Unselected" : "Selected", false);
+        }
+
+        private void OnSecondsChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            VisualStateManager.GoToState(TTLSeconds, SelectedItem.TTLSeconds == null ? "Unselected" : "Selected", false);
+            //VisualStateManager.GoToState(this, SelectedItem.TTLSeconds == null ? "Unselected" : "Selected", false);
+
+            // TODO: WRONG!!!
+            if (SelectedItem.TTLSeconds == null)
+            {
+                TTLSeconds.ClearValue(Button.ForegroundProperty);
+            }
+            else
+            {
+                TTLSeconds.Foreground = LayoutRoot.Resources["SystemControlForegroundAccentBrush"] as SolidColorBrush;
+            }
+        }
+
+        private async void TTLSeconds_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SelectTTLSecondsView();
+            dialog.TTLSeconds = SelectedItem.TTLSeconds;
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary)
+            {
+                SelectedItem.TTLSeconds = dialog.TTLSeconds;
+            }
         }
     }
 }
