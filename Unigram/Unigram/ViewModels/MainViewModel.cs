@@ -41,10 +41,18 @@ using Telegram.Logs;
 using Template10.Common;
 using Windows.Media.Playback;
 using Windows.Media.Core;
+using System.Threading;
+using Telegram.Api.Services.Cache.EventArgs;
 
 namespace Unigram.ViewModels
 {
-    public class MainViewModel : UnigramViewModelBase, IHandle<TLUpdatePhoneCall>, IHandle<TLUpdateUserTyping>, IHandle<TLUpdateChatUserTyping>, IHandle<UpdatingEventArgs>, IHandle<TLMessageCommonBase>
+    public class MainViewModel : UnigramViewModelBase,
+        IHandle<TLUpdatePhoneCall>,
+        IHandle<TLUpdateUserTyping>,
+        IHandle<TLUpdateChatUserTyping>,
+        IHandle<UpdatingEventArgs>,
+        IHandle<TLMessageCommonBase>,
+        IHandle<TLUpdateReadMessagesContents>
     {
         private readonly IPushService _pushService;
         private readonly IVibrationService _vibrationService;
@@ -69,7 +77,125 @@ namespace Unigram.ViewModels
             Contacts = new ContactsViewModel(protoService, cacheService, aggregator, contactsService);
             Calls = new CallsViewModel(protoService, cacheService, aggregator);
 
+            _selfDestructTimer = new YoloTimer(CheckSelfDestructMessages, this);
+            _selfDestructItems = new List<TLMessage>();
+
             aggregator.Subscribe(this);
+        }
+
+        private YoloTimer _selfDestructTimer;
+        private List<TLMessage> _selfDestructItems;
+
+        public void Handle(TLUpdateReadMessagesContents update)
+        {
+            var messages = new List<TLMessage>(update.Messages.Count);
+            foreach (var readMessageId in update.Messages)
+            {
+                var message = CacheService.GetMessage(readMessageId) as TLMessage;
+                if (message != null && (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds) || (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds))
+                {
+                    messages.Add(message);
+                }
+            }
+
+            Execute.BeginOnUIThread(() =>
+            {
+                foreach (var message in messages)
+                {
+                    var destructIn = 0;
+                    if (message.Media is TLMessageMediaPhoto photoMedia)
+                    {
+                        destructIn = photoMedia.TTLSeconds ?? 0;
+                        photoMedia.DestructDate = Utils.CurrentTimestamp + (destructIn * 1000);
+                    }
+                    else if (message.Media is TLMessageMediaDocument documentMedia)
+                    {
+                        destructIn = documentMedia.TTLSeconds ?? 0;
+                        documentMedia.DestructDate = Utils.CurrentTimestamp + (destructIn * 1000);
+                    }
+
+                    SelfDestructIn(message, destructIn);
+                }
+            });
+        }
+
+        void SelfDestructIn(TLMessage item, int delay)
+        {
+            _selfDestructItems.Add(item);
+
+            if (!_selfDestructTimer.IsActive || _selfDestructTimer.RemainingTime.TotalSeconds > delay)
+            {
+                _selfDestructTimer.CallOnce(delay);
+            }
+        }
+
+        void CheckSelfDestructMessages(object state)
+        {
+            var now = Utils.CurrentTimestamp;
+            var nextDestructIn = 0;
+            for (int i = 0; i < _selfDestructItems.Count; i++)
+            {
+                var item = _selfDestructItems[i];
+
+                var destructIn = 0;
+                if (item.Media is ITLMessageMediaDestruct destructMedia)
+                {
+                    if (destructMedia.DestructDate <= now)
+                    {
+                        destructIn = (int)((now - destructMedia.DestructDate ?? 0) / 1000);
+                    }
+                    else
+                    {
+                        destructIn = 0;
+                    }
+                }
+
+                if (destructIn > 0)
+                {
+                    if (nextDestructIn > 0)
+                    {
+                        if (nextDestructIn > destructIn)
+                        {
+                            nextDestructIn = destructIn;
+                        }
+                    }
+                    else
+                    {
+                        nextDestructIn = destructIn;
+                    }
+                }
+                else
+                {
+                    PublishExpiredMessage(item);
+                    _selfDestructItems.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            if (nextDestructIn > 0)
+            {
+                _selfDestructTimer.CallOnce(nextDestructIn);
+            }
+        }
+
+        void PublishExpiredMessage(TLMessage message)
+        {
+            if (message.Media is TLMessageMediaPhoto photoMedia)
+            {
+                photoMedia.Photo = null;
+                photoMedia.Caption = null;
+                photoMedia.HasPhoto = false;
+                photoMedia.HasCaption = false;
+            }
+            else if (message.Media is TLMessageMediaDocument documentMedia)
+            {
+                documentMedia.Document = null;
+                documentMedia.Caption = null;
+                documentMedia.HasDocument = false;
+                documentMedia.HasCaption = false;
+            }
+
+            Aggregator.Publish(new MessageExpiredEventArgs(message));
         }
 
         public void Handle(UpdatingEventArgs e)
@@ -658,5 +784,51 @@ namespace Unigram.ViewModels
         public ContactsViewModel Contacts { get; private set; }
 
         public CallsViewModel Calls { get; private set; }
+    }
+
+    public class YoloTimer
+    {
+        private Timer _timer;
+        private TimerCallback _callback;
+        private DateTime? _start;
+
+        public YoloTimer(TimerCallback callback, object state)
+        {
+            _callback = callback;
+            _timer = new Timer(OnCallback, state, Timeout.Infinite, Timeout.Infinite);
+        }
+
+        private void OnCallback(object state)
+        {
+            _start = null;
+            _callback(state);
+        }
+
+        public void CallOnce(int seconds)
+        {
+            _start = DateTime.Now;
+            _timer.Change(seconds * 1000, Timeout.Infinite);
+        }
+
+        public bool IsActive
+        {
+            get
+            {
+                return _start.HasValue;
+            }
+        }
+
+        public TimeSpan RemainingTime
+        {
+            get
+            {
+                if (_start.HasValue)
+                {
+                    return DateTime.Now - _start.Value;
+                }
+
+                return TimeSpan.Zero;
+            }
+        }
     }
 }

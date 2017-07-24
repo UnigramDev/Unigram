@@ -2722,6 +2722,33 @@ namespace Unigram.ViewModels
         //        return Groups.FirstOrDefault(x => x.FirstIndex >= index && x.LastIndex <= index);
         //    }
         //}
+
+        //public override event NotifyCollectionChangedEventHandler CollectionChanged;
+
+        public void RaiseCollectionChanged(NotifyCollectionChangedEventArgs args)
+        {
+            if (args.Action == NotifyCollectionChangedAction.Move)
+            {
+                var index = args.NewStartingIndex;
+                var item = args.NewItems[0] as TLMessageBase;
+
+                var previous = index > 0 ? this[index - 1] : null;
+                var next = index < Count - 1 ? this[index + 1] : null;
+
+                if (args.NewStartingIndex != args.OldStartingIndex)
+                {
+                    UpdateSeparatorOnInsert(item, next, index);
+                    UpdateSeparatorOnInsert(previous, item, index - 1);
+                }
+
+                UpdateAttach(next, item, index + 1);
+                UpdateAttach(item, previous, index);
+
+            }
+
+            OnCollectionChanged(args);
+            //CollectionChanged?.Invoke(this, args);
+        }
     }
 
     //public class MessageGroup : ObservableCollection<TLMessageBase>

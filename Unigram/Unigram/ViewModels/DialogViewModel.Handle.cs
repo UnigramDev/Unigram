@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -28,6 +29,7 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateContactLink>,
         IHandle<TLUpdateChannel>,
         IHandle<MessagesRemovedEventArgs>,
+        IHandle<MessageExpiredEventArgs>,
         IHandle<DialogRemovedEventArgs>,
         IHandle<UpdateCompletedEventArgs>,
         IHandle<ChannelUpdateCompletedEventArgs>,
@@ -420,6 +422,41 @@ namespace Unigram.ViewModels
                     message.RaisePropertyChanged(() => message.ReplyMarkup);
                     message.RaisePropertyChanged(() => message.Self);
                     message.RaisePropertyChanged(() => message.SelfBase);
+                });
+            }
+        }
+
+        public void Handle(MessageExpiredEventArgs update)
+        {
+            var message = update.Message as TLMessage;
+            if (message == null)
+            {
+                return;
+            }
+
+            var flag = false;
+
+            var userBase = With as TLUserBase;
+            var chatBase = With as TLChatBase;
+            if (userBase != null && message.ToId is TLPeerUser && !message.IsOut && userBase.Id == message.FromId.Value)
+            {
+                flag = true;
+            }
+            else if (userBase != null && message.ToId is TLPeerUser && message.IsOut && userBase.Id == message.ToId.Id)
+            {
+                flag = true;
+            }
+            else if (chatBase != null && message.ToId is TLPeerChat && chatBase.Id == message.ToId.Id)
+            {
+                flag = true;
+            }
+
+            if (flag)
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    var index = Messages.IndexOf(message);
+                    Messages.RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, message, index, index));
                 });
             }
         }

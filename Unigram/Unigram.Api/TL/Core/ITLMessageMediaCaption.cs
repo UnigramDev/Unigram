@@ -9,5 +9,6 @@ namespace Telegram.Api.TL
     public interface ITLMessageMediaCaption
     {
         String Caption { get; set; }
+        //Boolean HasCaption { get; set; }
     }
 }
