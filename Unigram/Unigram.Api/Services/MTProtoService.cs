@@ -100,6 +100,8 @@ namespace Telegram.Api.Services
         private readonly IStatsService _statsService;
         private readonly ConnectionManager _connectionManager;
 
+        private bool _connectionLost;
+
         private Timer _deviceLockedTimer;
         private Timer _checkTransportTimer;
 
@@ -108,7 +110,7 @@ namespace Telegram.Api.Services
             var isBackground = deviceInfo != null && deviceInfo.IsBackground;
 
             _connectionManager = ConnectionManager.Instance;
-            //_connectionManager.CurrentNetworkTypeChanged += ConnectionManager_CurrentNetworkTypeChanged;
+            _connectionManager.CurrentNetworkTypeChanged += ConnectionManager_CurrentNetworkTypeChanged;
             _connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
             _connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;
             _connectionManager.AuthenticationRequired += ConnectionManager_AuthenticationRequired;
@@ -195,15 +197,19 @@ namespace Telegram.Api.Services
 
         private void ConnectionManager_CurrentNetworkTypeChanged(ConnectionManager sender, object args)
         {
-            throw new NotImplementedException();
+            if (sender.CurrentNetworkType == ConnectionNeworkType.None)
+            {
+                _connectionLost = true;
+            }
         }
 
         private void ConnectionManager_ConnectionStateChanged(ConnectionManager sender, object args)
         {
-            if (sender.ConnectionState == ConnectionState.Connected)
+            if (sender.ConnectionState == ConnectionState.Connected && _connectionLost)
             {
                 if (SettingsHelper.IsAuthorized)
                 {
+                    _connectionLost = false;
                     _updatesService.LoadStateAndUpdate(() => Debug.WriteLine("State updated"));
                 }
             }

@@ -258,8 +258,30 @@ namespace Unigram
             //transportService.TransportConnected -= OnTransportConnected;
             //transportService.TransportConnected += OnTransportConnected;
 
+            ConnectionManager.Instance.CurrentNetworkTypeChanged -= OnConnectionNetworkTypeChanged;
+            ConnectionManager.Instance.CurrentNetworkTypeChanged += OnConnectionNetworkTypeChanged;
             ConnectionManager.Instance.ConnectionStateChanged -= OnConnectionStateChanged;
             ConnectionManager.Instance.ConnectionStateChanged += OnConnectionStateChanged;
+        }
+
+        private void OnConnectionNetworkTypeChanged(ConnectionManager sender, object args)
+        {
+            var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
+            if (protoService != null)
+            {
+                if (sender.ConnectionState == ConnectionState.Connected)
+                {
+                    protoService.SetMessageOnTime(0, null);
+                }
+                else if (sender.ConnectionState == ConnectionState.WaitingForNetwork || sender.CurrentNetworkType == ConnectionNeworkType.None)
+                {
+                    protoService.SetMessageOnTime(25, "Waiting for network...");
+                }
+                else
+                {
+                    protoService.SetMessageOnTime(25, SettingsHelper.IsProxyEnabled ? "Connecting to proxy..." : "Connecting...");
+                }
+            }
         }
 
         private void OnConnectionStateChanged(ConnectionManager sender, object args)
