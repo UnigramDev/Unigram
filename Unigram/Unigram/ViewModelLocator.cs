@@ -200,10 +200,11 @@ namespace Unigram
             if (SettingsHelper.SupportedLayer < 69 || !SettingsHelper.IsAuthorized)
             {
                 DeleteIfExists("database.sqlite");
-                SettingsHelper.SupportedLayer = 69;
                 ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
                 ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
             }
+
+            SettingsHelper.SupportedLayer = Telegram.Api.Constants.SupportedLayer;
 
             //if (SettingsHelper.SupportedLayer != Constants.SupportedLayer ||
             //    SettingsHelper.DatabaseVersion != Constants.DatabaseVersion)
