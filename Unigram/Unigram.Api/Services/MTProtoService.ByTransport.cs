@@ -45,7 +45,7 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Download, RequestFlag.ForceDownload | RequestFlag.FailOnServerError, false);
         }
 
-        public void ReuploadCdnFileAsync(int dcId, byte[] fileToken, byte[] requestToken, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        public void ReuploadCdnFileAsync(int dcId, byte[] fileToken, byte[] requestToken, Action<TLVector<TLCdnFileHash>> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLUploadReuploadCdnFile { FileToken = fileToken, RequestToken = requestToken };
 

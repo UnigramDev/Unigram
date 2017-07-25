@@ -232,6 +232,7 @@
     <Compile Include="Converters\ChannelTypeToStringConverter.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
+    <Compile Include="Converters\MessageShortTTLConverter.cs" />
     <Compile Include="Converters\MessageToShareConverter.cs" />
     <Compile Include="Converters\MessageTTLConverter.cs" />
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />

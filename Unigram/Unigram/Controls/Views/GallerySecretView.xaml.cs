@@ -381,5 +381,26 @@ namespace Unigram.Controls.Views
         {
             _mediaPlayer.MediaPlayer.SetSurfaceSize(e.NewSize);
         }
+
+
+
+
+
+
+        private string ConvertTitle(TLMessage message)
+        {
+            return message.IsPhoto() ? "Secret Photo" : "Secret Video";
+        }
+
+        private string ConvertUnread(TLMessage message)
+        {
+            var user = message.Parent as TLUser;
+            if (user == null)
+            {
+                return string.Empty;
+            }
+
+            return message.IsPhoto() ? $"{user.FirstName} hasn't opened this photo yet" : $"{user.FirstName} hasn't opened this video yet";
+        }
     }
 }

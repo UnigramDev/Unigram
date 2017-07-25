@@ -174,10 +174,17 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
+    <Style x:Key="MessageBubbleStyle" TargetType="ContentControl"/>
+    <Style x:Key="MessageBubbleOutStyle" TargetType="ContentControl"/>
 
     <x:Double x:Key="MessageMaxWidth">432</x:Double>
     <Thickness x:Key="MessageContentPadding">8,4,10,6</Thickness>
     <Thickness x:Key="MessageContentMargin">0,2,0,0</Thickness>
+
+    <CornerRadius x:Key="MessageCornerRadius">0</CornerRadius>
+    <CornerRadius x:Key="MessageCornerRadiusOut">0</CornerRadius>
+    <CornerRadius x:Key="MessageServiceCornerRadius">14</CornerRadius>
+    <CornerRadius x:Key="MessageOverlayCornerRadius">12</CornerRadius>
 
     <HorizontalAlignment x:Key="MessageHorizontalAlignment">Left</HorizontalAlignment>
     <HorizontalAlignment x:Key="MessageHorizontalAlignmentOut">Right</HorizontalAlignment>

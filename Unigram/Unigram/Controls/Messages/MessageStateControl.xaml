@@ -9,6 +9,7 @@
     d:DesignHeight="24"
     d:DesignWidth="400"
     Background="Transparent"
+    CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
     Foreground="{ThemeResource MessageSubtleLabelBrush}"
     VerticalAlignment="Bottom"
     HorizontalAlignment="Right"
