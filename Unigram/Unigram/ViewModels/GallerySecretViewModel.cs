@@ -37,8 +37,6 @@ namespace Unigram.ViewModels
                 aggregator.Publish(new TLUpdateReadMessagesContents { Messages = vector });
                 ProtoService.ReadMessageContentsAsync(vector, result =>
                 {
-                    // TODO: start UI timeout
-
                     message.IsMediaUnread = false;
                     message.RaisePropertyChanged(() => message.IsMediaUnread);
                 });
@@ -55,30 +53,6 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _firstItem, value);
-            }
-        }
-
-        public RelayCommand StickersCommand => new RelayCommand(StickersExecute);
-        private async void StickersExecute()
-        {
-            if (_firstItem != null && _firstItem.HasStickers)
-            {
-                var inputStickered = _firstItem.ToInputStickeredMedia();
-                if (inputStickered != null)
-                {
-                    var response = await ProtoService.GetAttachedStickersAsync(inputStickered);
-                    if (response.IsSucceeded)
-                    {
-                        if (response.Result.Count > 1)
-                        {
-                            await AttachedStickersView.Current.ShowAsync(response.Result);
-                        }
-                        else if (response.Result.Count > 0)
-                        {
-                            await StickerSetView.Current.ShowAsync(response.Result[0]);
-                        }
-                    }
-                }
             }
         }
     }

@@ -3,13 +3,6 @@
                     xmlns:local="using:Unigram.Common"
                     xmlns:controls="using:Unigram.Controls">
 
-    <Style x:Key="MessageBubbleStyle" TargetType="ContentControl"/>
-    <Style x:Key="MessageBubbleOutStyle" TargetType="ContentControl"/>
-
-    <CornerRadius x:Key="MessageCornerRadius">0</CornerRadius>
-    <CornerRadius x:Key="MessageCornerRadiusOut">0</CornerRadius>
-    <CornerRadius x:Key="MessageServiceCornerRadius">14</CornerRadius>
-
     <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
         <Setter Property="Padding" Value="12,8,12,12"/>
         <Setter Property="BorderThickness" Value="0,0,0,1"/>
@@ -28,6 +21,24 @@
                             <ImageBrush ImageSource="{Binding Source, RelativeSource={RelativeSource Mode=TemplatedParent}}" AlignmentY="Center" AlignmentX="Center" Stretch="UniformToFill"/>
                         </Ellipse.Fill>
                     </Ellipse>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TimeoutProgressBarRingStyle" TargetType="controls:ProgressBarRing">
+        <Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="#FFFFFFFF"/>
+        <Setter Property="Minimum" Value="0"/>
+        <Setter Property="Maximum" Value="1"/>
+        <Setter Property="Width" Value="48"/>
+        <Setter Property="Height" Value="48"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ProgressBarRing">
+                    <Grid Background="{TemplateBinding Background}" CornerRadius="24">
+                        <controls:ProgressBarRingSlice x:Name="Indicator" CacheMode="BitmapCache" Stroke="{TemplateBinding Foreground}" StrokeThickness="22" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" InnerRadius="0" Radius="22" StartAngle="0" EndAngle="0"/>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

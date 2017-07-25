@@ -92,7 +92,7 @@ namespace Unigram.ViewModels
             foreach (var readMessageId in update.Messages)
             {
                 var message = CacheService.GetMessage(readMessageId) as TLMessage;
-                if (message != null && (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds) || (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds))
+                if (message != null && (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds && photoMedia.DestructDate == null) || (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds && documentMedia.DestructDate == null))
                 {
                     messages.Add(message);
                 }
@@ -106,12 +106,12 @@ namespace Unigram.ViewModels
                     if (message.Media is TLMessageMediaPhoto photoMedia)
                     {
                         destructIn = photoMedia.TTLSeconds ?? 0;
-                        photoMedia.DestructDate = Utils.CurrentTimestamp + (destructIn * 1000);
+                        photoMedia.DestructDate = DateTime.Now.AddSeconds(destructIn);
                     }
                     else if (message.Media is TLMessageMediaDocument documentMedia)
                     {
                         destructIn = documentMedia.TTLSeconds ?? 0;
-                        documentMedia.DestructDate = Utils.CurrentTimestamp + (destructIn * 1000);
+                        documentMedia.DestructDate = DateTime.Now.AddSeconds(destructIn);
                     }
 
                     SelfDestructIn(message, destructIn);
@@ -125,13 +125,14 @@ namespace Unigram.ViewModels
 
             if (!_selfDestructTimer.IsActive || _selfDestructTimer.RemainingTime.TotalSeconds > delay)
             {
-                _selfDestructTimer.CallOnce(delay);
+                //_selfDestructTimer.CallOnce(delay);
+                _selfDestructTimer.CallOnce(1);
             }
         }
 
         void CheckSelfDestructMessages(object state)
         {
-            var now = Utils.CurrentTimestamp;
+            var now = DateTime.Now;
             var nextDestructIn = 0;
             for (int i = 0; i < _selfDestructItems.Count; i++)
             {
@@ -140,14 +141,26 @@ namespace Unigram.ViewModels
                 var destructIn = 0;
                 if (item.Media is ITLMessageMediaDestruct destructMedia)
                 {
-                    if (destructMedia.DestructDate <= now)
+                    //if (destructMedia.DestructDate <= now)
+                    //{
+                    //    //destructIn = (int)((now - destructMedia.DestructDate ?? 0) / 1000);
+                    //    destructIn = (int)(now - destructMedia.DestructDate.Value).TotalSeconds;
+                    //}
+                    //else
+                    //{
+                    //    destructIn = 0;
+                    //}
+                    if (destructMedia.DestructDate > now)
                     {
-                        destructIn = (int)((now - destructMedia.DestructDate ?? 0) / 1000);
+                        //destructIn = (int)((now - destructMedia.DestructDate ?? 0) / 1000);
+                        destructIn = (int)Math.Ceiling((destructMedia.DestructDate.Value - now).TotalSeconds);
                     }
                     else
                     {
                         destructIn = 0;
                     }
+
+                    Execute.BeginOnUIThread(() => destructMedia.DestructIn = destructIn);
                 }
 
                 if (destructIn > 0)
@@ -174,7 +187,8 @@ namespace Unigram.ViewModels
 
             if (nextDestructIn > 0)
             {
-                _selfDestructTimer.CallOnce(nextDestructIn);
+                //_selfDestructTimer.CallOnce(nextDestructIn);
+                _selfDestructTimer.CallOnce(1);
             }
         }
 

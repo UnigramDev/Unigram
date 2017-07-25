@@ -29,40 +29,47 @@ namespace Unigram.Controls
             Indicator = (ProgressBarRingSlice)GetTemplateChild("Indicator");
             Rotation = (RotateTransform)GetTemplateChild("Rotation");
 
-            _foreverStoryboard = new Storyboard();
-            _foreverStoryboard.RepeatBehavior = RepeatBehavior.Forever;
-            var rotationAnimation = new DoubleAnimation();
-            rotationAnimation.From = 0;
-            rotationAnimation.To = 360;
-            rotationAnimation.Duration = TimeSpan.FromSeconds(3.0);
-
-            Storyboard.SetTarget(rotationAnimation, Rotation);
-            Storyboard.SetTargetProperty(rotationAnimation, "(RotateTransform.Angle)");
-
-            _foreverStoryboard.Children.Add(rotationAnimation);
-            _foreverStoryboard.Completed += OnForeverStoryboardCompleted;
-
-            _angleStoryboard = new Storyboard();
-            var angleAnimation = new DoubleAnimation();
-            angleAnimation.Duration = TimeSpan.FromSeconds(0.25);
-            angleAnimation.EnableDependentAnimation = true;
-
-            Storyboard.SetTarget(angleAnimation, Indicator);
-            Storyboard.SetTargetProperty(angleAnimation, "EndAngle");
-
-            _angleStoryboard.Children.Add(angleAnimation);
-            _angleStoryboard.Completed += OnAngleStoryboardCompleted;
-
-            Loaded += (s, args) =>
+            if (Rotation != null)
             {
+                _foreverStoryboard = new Storyboard();
                 _foreverStoryboard.RepeatBehavior = RepeatBehavior.Forever;
-                _foreverStoryboard.Begin();
-            };
-            Unloaded += (s, args) =>
+                var rotationAnimation = new DoubleAnimation();
+                rotationAnimation.From = 0;
+                rotationAnimation.To = 360;
+                rotationAnimation.Duration = TimeSpan.FromSeconds(3.0);
+
+                Storyboard.SetTarget(rotationAnimation, Rotation);
+                Storyboard.SetTargetProperty(rotationAnimation, "(RotateTransform.Angle)");
+
+                _foreverStoryboard.Children.Add(rotationAnimation);
+                _foreverStoryboard.Completed += OnForeverStoryboardCompleted;
+
+                _angleStoryboard = new Storyboard();
+                var angleAnimation = new DoubleAnimation();
+                angleAnimation.Duration = TimeSpan.FromSeconds(0.25);
+                angleAnimation.EnableDependentAnimation = true;
+
+                Storyboard.SetTarget(angleAnimation, Indicator);
+                Storyboard.SetTargetProperty(angleAnimation, "EndAngle");
+
+                _angleStoryboard.Children.Add(angleAnimation);
+                _angleStoryboard.Completed += OnAngleStoryboardCompleted;
+
+                Loaded += (s, args) =>
+                {
+                    _foreverStoryboard.RepeatBehavior = RepeatBehavior.Forever;
+                    _foreverStoryboard.Begin();
+                };
+                Unloaded += (s, args) =>
+                {
+                    _foreverStoryboard.RepeatBehavior = new RepeatBehavior(1);
+                    _foreverStoryboard.Stop();
+                };
+            }
+            else
             {
-                _foreverStoryboard.RepeatBehavior = new RepeatBehavior(1);
-                _foreverStoryboard.Stop();
-            };
+                Indicator.EndAngle = 359;
+            }
 
             OnValueChanged(0, Value);
         }
@@ -81,8 +88,13 @@ namespace Unigram.Controls
 
         protected override void OnValueChanged(double oldValue, double newValue)
         {
-            if (_foreverStoryboard == null)
+            //if (_foreverStoryboard == null)
+            //    return;
+
+            if (Indicator == null)
+            {
                 return;
+            }
 
             double value;
             //if (oldValue > 0.0 && oldValue < 1.0 && newValue == 0.0)
@@ -101,7 +113,7 @@ namespace Unigram.Controls
                     value = 359.0;
                 }
             }
-            if (value != Indicator.EndAngle)
+            if (value != (Rotation == null ? Indicator.StartAngle : Indicator.EndAngle))
             {
                 if (value > 0.0 && value < 359.0)
                 {
@@ -118,7 +130,14 @@ namespace Unigram.Controls
                 //    return;
                 //}
 
-                Indicator.EndAngle = value;
+                if (Rotation == null)
+                {
+                    Indicator.StartAngle = 360 - value;
+                }
+                else
+                {
+                    Indicator.EndAngle = value;
+                }
 
                 if (Value >= 1.0 || Value <= 0.0)
                 {
