@@ -1011,7 +1011,7 @@
                         <Setter Target="Show.MaxWidth" Value="376"/>
                         <Setter Target="Hide.Width" Value="*"/>
                         <!--<Setter Target="BackgroundElement.BorderThickness" Value="1"/>
-                        <Setter Target="BackgroundElement.Margin" Value="8"/>-->
+                             <Setter Target="BackgroundElement.Margin" Value="8"/>-->
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -1363,8 +1363,8 @@
             </StackPanel>
 
             <!--<Border Visibility="{x:Bind (Visibility)ViewModel.IsEmpty, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="18">
-                <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Background="{ThemeResource MessageServiceBackgroundBrush}" Style="{StaticResource SkypeProgressRingStyle}"/>
-            </Border>-->
+                 <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Background="{ThemeResource MessageServiceBackgroundBrush}" Style="{StaticResource SkypeProgressRingStyle}"/>
+                 </Border>-->
 
             <StackPanel>
                 <Grid x:Name="PinnedMessage"
@@ -1425,36 +1425,45 @@
             </Border>
 
             <views:InlineBotResultsView ItemClick="InlineBotResults_ItemClick" VerticalAlignment="Bottom"/>
-            <ListView ItemsSource="{x:Bind ViewModel.StickerPack, Mode=OneWay}"
-                      Visibility="{x:Bind ViewModel.StickerPack, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                      AllowFocusOnInteraction="False"
-                      IsItemClickEnabled="True"
-                      ItemClick="Stickers_ItemClick"
-                      SelectionMode="None"
-                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                      ScrollViewer.VerticalScrollMode="Disabled"
-                      ScrollViewer.IsVerticalRailEnabled="False"
-                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                      ScrollViewer.HorizontalScrollMode="Auto"
-                      ScrollViewer.IsHorizontalRailEnabled="True"
-                      VerticalAlignment="Bottom"
-                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                      BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                      BorderThickness="0,1,0,0">
-                <ListView.ItemsPanel>
+            <controls:ZoomableGridView
+                ItemsSource="{x:Bind ViewModel.StickerPack, Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.StickerPack, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                AllowFocusOnInteraction="False"
+                IsItemClickEnabled="True"
+                ItemClick="Stickers_ItemClick"
+                SelectionMode="None"
+                ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                ScrollViewer.VerticalScrollMode="Disabled"
+                ScrollViewer.IsVerticalRailEnabled="False"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                ScrollViewer.HorizontalScrollMode="Auto"
+                ScrollViewer.IsHorizontalRailEnabled="True"
+                VerticalAlignment="Bottom"
+                Padding="8,0"
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                Style="{StaticResource ZoomableListViewStyle}"
+                BorderThickness="0,1,0,0">
+                <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsStackPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemTemplate>
+                </GridView.ItemsPanel>
+                <GridView.ItemTemplate>
                     <DataTemplate x:DataType="tl:TLDocument">
-                        <Image x:Phase="3" Margin="2,8" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="60" Height="60"/>
+                        <Image x:Phase="3" Margin="4,8" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="60" Height="60"/>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.ItemContainerTransitions>
+                </GridView.ItemTemplate>
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem" BasedOn="{StaticResource ZoomableListViewItemStyle}">
+                        <Setter Property="MinWidth" Value="0"/>
+                        <Setter Property="Padding" Value="0"/>
+                    </Style>
+                </GridView.ItemContainerStyle>
+                <GridView.ItemContainerTransitions>
                     <TransitionCollection/>
-                </ListView.ItemContainerTransitions>
-            </ListView>
+                </GridView.ItemContainerTransitions>
+            </controls:ZoomableGridView>
             <ListView x:Name="ListBotCommands"
                       ItemsSource="{x:Bind ViewModel.BotCommands, Mode=OneWay}"
                       Visibility="{x:Bind ViewModel.BotCommands, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
