@@ -192,10 +192,10 @@ namespace Unigram.Views
                 var paragraph = new Paragraph();
                 paragraph.Inlines.Add(new Run { Text = DateTimeToFormatConverter.ConvertDayGrouping(date) });
 
-                DateHeader.DataContext = message0;
-                DateHeader.Visibility = Visibility.Visible;
-                DateHeaderLabel.Blocks.Clear();
-                DateHeaderLabel.Blocks.Add(paragraph);
+                //DateHeader.DataContext = message0;
+                //DateHeader.Visibility = Visibility.Visible;
+                //DateHeaderLabel.Blocks.Clear();
+                //DateHeaderLabel.Blocks.Add(paragraph);
             }
             else
             {

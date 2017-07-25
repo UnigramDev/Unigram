@@ -14,6 +14,5 @@ namespace Telegram.Api.TL
 
         DateTime? DestructDate { get; set; }
         Int32? DestructIn { get; set; }
-        Double DestructProgress { get; }
     }
 }

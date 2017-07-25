@@ -697,6 +697,7 @@ namespace Telegram.Api.Services.Updates
                 }
             }
 
+            ProcessNewMessageUpdate(message);
             MTProtoService.ProcessSelfMessage(message);
 
             _cacheService.SyncMessage(message,
@@ -760,6 +761,8 @@ namespace Telegram.Api.Services.Updates
                     }
                 }
             }
+
+            ProcessNewMessageUpdate(message);
 
             _cacheService.SyncMessage(message,
                 cachedMessage =>
@@ -2219,6 +2222,17 @@ namespace Telegram.Api.Services.Updates
             if (message != null && message.IsOut)
             {
 
+            }
+            else if (message != null && !message.IsOut && message.FromId.HasValue)
+            {
+                if (message.ToId is TLPeerUser)
+                {
+                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new TLUpdateUserTyping { UserId = message.FromId.Value, Action = new TLSendMessageCancelAction() }));
+                }
+                else if (message.ToId is TLPeerChat || message.ToId is TLPeerChannel)
+                {
+                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new TLUpdateChatUserTyping { ChatId = message.ToId.Id, UserId = message.FromId.Value, Action = new TLSendMessageCancelAction() }));
+                }
             }
 
             var serviceMessage = messageBase as TLMessageService;

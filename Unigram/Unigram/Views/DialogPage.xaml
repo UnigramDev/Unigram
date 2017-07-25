@@ -996,6 +996,25 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0"/>
+                    </VisualState.StateTriggers>
+                </VisualState>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="500"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Show.Width" Value="376*"/>
+                        <Setter Target="Show.MaxWidth" Value="376"/>
+                        <Setter Target="Hide.Width" Value="*"/>
+                        <!--<Setter Target="BackgroundElement.BorderThickness" Value="1"/>
+                        <Setter Target="BackgroundElement.Margin" Value="8"/>-->
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -1004,6 +1023,14 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
         </Grid.RowDefinitions>
+        <Grid Padding="0,0,0,4" VerticalAlignment="Bottom" Grid.RowSpan="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="Show"/>
+                <ColumnDefinition x:Name="Hide" Width="0"/>
+            </Grid.ColumnDefinitions>
+            <Border x:Name="FlyoutArea" MinHeight="{ThemeResource AppBarThemeCompactHeight}"/>
+        </Grid>
+
         <Grid x:Name="Header"
               Background="{ThemeResource TelegramBackgroundTitlebarBrush}"
               Height="{ThemeResource AppBarThemeCompactHeight}">
@@ -1503,7 +1530,7 @@
         <Grid x:Name="KeyboardItems" Grid.Row="4">
             <views:StickersView x:Name="StickersPanel" AllowFocusOnInteraction="False" Visibility="Collapsed" MaxHeight="360" MinHeight="260"/>
         </Grid>
-
+        
         <!-- Input pane -->
         <ContentControl x:Name="TextArea"
                         HorizontalContentAlignment="Stretch"

@@ -163,10 +163,28 @@ namespace Unigram.Themes
 
             if (message != null)
             {
+                if (message.IsMediaUnread && !message.IsOut)
+                {
+                    var vector = new TLVector<int> { message.Id };
+                    TelegramEventAggregator.Instance.Publish(new TLUpdateReadMessagesContents { Messages = vector });
+
+                    MTProtoService.Current.ReadMessageContentsAsync(vector, result =>
+                    {
+                        message.IsMediaUnread = false;
+                        message.RaisePropertyChanged(() => message.IsMediaUnread);
+                    });
+                }
+
                 var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
                 if (media == null)
                 {
                     media = element;
+                }
+
+                if (media is Grid grid)
+                {
+                    // TODO: WARNING!!!
+                    media = grid.Children[1] as FrameworkElement;
                 }
 
                 if (message.Parent != null)

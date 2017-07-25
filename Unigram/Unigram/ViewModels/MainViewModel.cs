@@ -107,11 +107,13 @@ namespace Unigram.ViewModels
                     {
                         destructIn = photoMedia.TTLSeconds ?? 0;
                         photoMedia.DestructDate = DateTime.Now.AddSeconds(destructIn);
+                        photoMedia.DestructIn--;
                     }
                     else if (message.Media is TLMessageMediaDocument documentMedia)
                     {
                         destructIn = documentMedia.TTLSeconds ?? 0;
                         documentMedia.DestructDate = DateTime.Now.AddSeconds(destructIn);
+                        documentMedia.DestructIn--;
                     }
 
                     SelfDestructIn(message, destructIn);
@@ -160,7 +162,7 @@ namespace Unigram.ViewModels
                         destructIn = 0;
                     }
 
-                    Execute.BeginOnUIThread(() => destructMedia.DestructIn = destructIn);
+                    Execute.BeginOnUIThread(() => destructMedia.DestructIn = Math.Max(0, destructIn - 1));
                 }
 
                 if (destructIn > 0)
@@ -200,6 +202,9 @@ namespace Unigram.ViewModels
                 photoMedia.Caption = null;
                 photoMedia.HasPhoto = false;
                 photoMedia.HasCaption = false;
+
+                photoMedia.DestructDate = null;
+                photoMedia.DestructIn = null;
             }
             else if (message.Media is TLMessageMediaDocument documentMedia)
             {
@@ -207,6 +212,9 @@ namespace Unigram.ViewModels
                 documentMedia.Caption = null;
                 documentMedia.HasDocument = false;
                 documentMedia.HasCaption = false;
+
+                documentMedia.DestructDate = null;
+                documentMedia.DestructIn = null;
             }
 
             Aggregator.Publish(new MessageExpiredEventArgs(message));

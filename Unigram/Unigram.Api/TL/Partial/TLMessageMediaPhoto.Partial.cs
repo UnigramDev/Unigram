@@ -8,7 +8,22 @@ namespace Telegram.Api.TL
 {
     public partial class TLMessageMediaPhoto : ITLMessageMediaCaption, ITLMessageMediaDestruct
     {
-        public DateTime? DestructDate { get; set; }
+        private DateTime? _destructDate;
+        public DateTime? DestructDate
+        {
+            get
+            {
+                return _destructDate;
+            }
+            set
+            {
+                if (_destructDate != value)
+                {
+                    _destructDate = value;
+                    RaisePropertyChanged(() => DestructDate);
+                }
+            }
+        }
 
         private Int32? _destructIn;
         public Int32? DestructIn
@@ -23,16 +38,7 @@ namespace Telegram.Api.TL
                 {
                     _destructIn = value;
                     RaisePropertyChanged(() => DestructIn);
-                    RaisePropertyChanged(() => DestructProgress);
                 }
-            }
-        }
-
-        public Double DestructProgress
-        {
-            get
-            {
-                return (double)(DestructIn ?? 0) / (double)(TTLSeconds ?? 0);
             }
         }
     }

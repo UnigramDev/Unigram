@@ -11,15 +11,6 @@
 
     <Application.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />
-                <!--<ResourceDictionary Source="ms-appx:///Themes/Brand.xaml"/>-->
-                <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
-                <themes:Messages/>
-                <themes:Media/>
-                <common:Theme/>
-            </ResourceDictionary.MergedDictionaries>
-
             <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
                 <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseHighBrush}"/>
             </Style>
@@ -143,6 +134,14 @@
                 <Setter Property="MaxLines" Value="1"/>
             </Style>
             
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />
+                <!--<ResourceDictionary Source="ms-appx:///Themes/Brand.xaml"/>-->
+                <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
+                <themes:Messages/>
+                <themes:Media/>
+                <common:Theme/>
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
 

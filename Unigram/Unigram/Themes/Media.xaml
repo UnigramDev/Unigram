@@ -81,7 +81,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="MediaSecretPhotoTemplate">
+    <DataTemplate x:Key="MediaSecretPhotoTemplate" x:DataType="tl:TLMessage">
         <Grid x:Name="MediaControl"
               Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
@@ -96,13 +96,15 @@
                 </controls:ImageView.Template>
             </controls:ImageView>
 
-            <Rectangle>
-                <Rectangle.Fill>
-                    <ImageBrush ImageSource="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                </Rectangle.Fill>
-            </Rectangle>
+            <Grid x:Name="InnerMedia">
+                <Rectangle>
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                    </Rectangle.Fill>
+                </Rectangle>
 
-            <controls:BackDrop BlurAmount="20"/>
+                <controls:BackDrop BlurAmount="20"/>
+            </Grid>
 
             <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
                 <TextBlock Text="{Binding Media.DestructIn, Converter={StaticResource MessageShortTTLConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
@@ -110,11 +112,12 @@
 
             <controls:TransferButton Completed="SecretDownload_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
-            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.DestructProgress}" IsHitTestVisible="False" Style="{StaticResource TimeoutProgressBarRingStyle}"/>
+            <!--<controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.DestructProgress}" IsHitTestVisible="False" Style="{StaticResource TimeoutProgressBarRingStyle}"/>-->
+            <controls:SelfDestructTimer Background="Transparent" Foreground="White" Value="{x:Bind Media.(tl:ITLMessageMediaDestruct.DestructDate), Mode=OneWay}" Maximum="{x:Bind Media.(tl:ITLMessageMediaDestruct.TTLSeconds)}" IsHitTestVisible="False"/>
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="MediaSecretVideoTemplate">
+    <DataTemplate x:Key="MediaSecretVideoTemplate" x:DataType="tl:TLMessage">
         <Grid x:Name="MediaControl"
               Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
@@ -128,14 +131,16 @@
                     <ControlTemplate TargetType="controls:ImageView"/>
                 </controls:ImageView.Template>
             </controls:ImageView>
-            
-            <Rectangle>
-                <Rectangle.Fill>
-                    <ImageBrush ImageSource="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                </Rectangle.Fill>
-            </Rectangle>
 
-            <controls:BackDrop BlurAmount="20"/>
+            <Grid x:Name="InnerMedia">
+                <Rectangle>
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+
+                <controls:BackDrop BlurAmount="20"/>
+            </Grid>
 
             <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
                 <TextBlock Text="{Binding Media.DestructIn, Converter={StaticResource MessageShortTTLConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
@@ -144,6 +149,8 @@
             <controls:TransferButton Completed="SecretDownload_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.DestructProgress}" IsHitTestVisible="False" Style="{StaticResource TimeoutProgressBarRingStyle}"/>
+            <!--<controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.DestructProgress}" IsHitTestVisible="False" Style="{StaticResource TimeoutProgressBarRingStyle}"/>-->
+            <controls:SelfDestructTimer Background="Transparent" Foreground="White" Value="{x:Bind Media.(tl:ITLMessageMediaDestruct.DestructDate), Mode=OneWay}" Maximum="{x:Bind Media.(tl:ITLMessageMediaDestruct.TTLSeconds)}" IsHitTestVisible="False"/>
         </Grid>
     </DataTemplate>
 
