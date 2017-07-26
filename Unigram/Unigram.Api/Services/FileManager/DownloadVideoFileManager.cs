@@ -383,7 +383,7 @@ namespace Telegram.Api.Services.FileManager
 
             _protoService.ReuploadCdnFileAsync(dcId, redirect.FileToken, requestToken, callback =>
             {
-                if (callback)
+                if (callback != null)
                 {
                     result = GetCdnFile(redirect, dcId, location, offset, limit, out outError, out outIsCanceled);
                     while (result == null)
