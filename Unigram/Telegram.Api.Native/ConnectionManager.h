@@ -28,6 +28,7 @@ using ABI::Telegram::Api::Native::IConnectionManagerStatics;
 using ABI::Telegram::Api::Native::IUserConfiguration;
 using ABI::Telegram::Api::Native::IProxySettings;
 using ABI::Telegram::Api::Native::Version;
+using ABI::Telegram::Api::Native::ConnectionNetworkStatistics;
 using ABI::Telegram::Api::Native::ConnectionState;
 using ABI::Telegram::Api::Native::ConnectionNeworkType;
 using ABI::Telegram::Api::Native::ConnectionType;
@@ -161,6 +162,7 @@ namespace Telegram
 				IFACEMETHODIMP UpdateDatacenters();
 				IFACEMETHODIMP Reset();
 				IFACEMETHODIMP SwitchBackend();
+				IFACEMETHODIMP GetConnectionStatistics(ConnectionType connectionType, _Out_ ConnectionNetworkStatistics* value);
 
 				//Internal methods
 				STDMETHODIMP RuntimeClassInitialize(UINT32 minimumThreadCount = MIN_THREAD_COUNT, UINT32 maximumThreadCount = MAX_THREAD_COUNT);
@@ -257,6 +259,18 @@ namespace Telegram
 					fileName.resize(swprintf_s(&fileName[0], MAX_PATH, L"%s\\DC_%d.dat", m_settingsFolderPath.data(), datacenterId));
 				}
 
+				inline void IncrementConnectionSentBytes(ConnectionType connectionType, UINT32 sentBytes)
+				{
+					auto lock = LockCriticalSection();
+					m_connectionsStatistics[static_cast<UINT32>(connectionType) << 1].TotalBytesSent += sentBytes;
+				}
+
+				inline void IncrementConnectionReceivedBytes(ConnectionType connectionType, UINT32 receivedBytes)
+				{
+					auto lock = LockCriticalSection();
+					m_connectionsStatistics[static_cast<UINT32>(connectionType) << 1].TotalBytesReceived += receivedBytes;
+				}
+
 				static HRESULT IsIPv6Enabled(_In_ INetworkInformationStatics* networkInformation, _In_ INetworkAdapter* networkAdapter, _Out_ bool* enabled);
 
 				EventRegistrationToken m_eventTokens[2];
@@ -275,6 +289,7 @@ namespace Telegram
 				std::list<std::pair<INT32, ComPtr<MessageRequest>>> m_runningRequests;
 				std::map<INT32, std::vector<ComPtr<MessageRequest>>> m_quickAckRequests;
 				UINT32 m_runningRequestCount[3];
+				ConnectionNetworkStatistics m_connectionsStatistics[3];
 				INT32 m_lastRequestToken;
 				INT64 m_lastOutgoingMessageId;
 				INT32 m_timeDifference;

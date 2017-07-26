@@ -41,7 +41,7 @@ namespace Telegram.Api.Native.Test
             this.InitializeComponent();
 
             var connectionManager = ConnectionManager.Instance;
-            connectionManager.ProxySettings = new ProxySettings("127.0.0.1", 1080, "frayxrulez", "frayxrulez");
+            //connectionManager.ProxySettings = new ProxySettings("127.0.0.1", 1080, "frayxrulez", "frayxrulez");
 
             if (connectionManager.CurrentBackendType == BackendType.Default)
                 connectionManager.SwitchBackend();
@@ -94,7 +94,9 @@ namespace Telegram.Api.Native.Test
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             var connections = ConnectionManager.Instance.Datacenters.SelectMany(d => d.Connections).ToArray();
-            ConnectionManager.Instance.SwitchBackend();
+            //ConnectionManager.Instance.SwitchBackend();
+
+            var statistics = ConnectionManager.Instance.GetConnectionStatistics(ConnectionType.Generic);
 
             //ConnectionManager.Instance.SendRequest(new TLHelpInviteText(), (message5, ex5) =>
             //{

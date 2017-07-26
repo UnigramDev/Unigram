@@ -18,6 +18,7 @@ namespace Telegram
 			typedef enum RequestFlag RequestFlag;
 
 			typedef struct Version Version;
+			typedef struct ConnectionNetworkStatistics ConnectionNetworkStatistics;
 
 			interface IUserConfiguration;
 
@@ -405,6 +406,14 @@ namespace Telegram
 
 
 			[version(API_VERSION)]
+			struct ConnectionNetworkStatistics
+			{
+				UINT64 TotalBytesSent;
+				UINT64 TotalBytesReceived;
+			};
+
+
+			[version(API_VERSION)]
 			enum ConnectionType
 			{
 				Generic = 1,
@@ -668,6 +677,7 @@ namespace Telegram
 				HRESULT UpdateDatacenters();
 				HRESULT Reset();
 				HRESULT SwitchBackend();
+				HRESULT GetConnectionStatistics([in] ConnectionType connectionType,[out][retval] ConnectionNetworkStatistics* value);
 			}
 
 			[static(IConnectionManagerStatics, API_VERSION)]

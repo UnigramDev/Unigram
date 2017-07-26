@@ -378,10 +378,8 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 	ReturnIfFailed(result, packetWriter->SeekCurrent(24));
 	ReturnIfFailed(result, packetWriter->WriteInt64(m_datacenter->GetServerSalt()));
 	ReturnIfFailed(result, packetWriter->WriteInt64(GetSessionId()));
-
 	ReturnIfFailed(result, packetWriter->WriteInt64(messageContext->Id));
 	ReturnIfFailed(result, packetWriter->WriteUInt32(messageContext->SequenceNumber));
-
 	ReturnIfFailed(result, packetWriter->WriteUInt32(messageBodySize));
 	ReturnIfFailed(result, packetWriter->WriteObject(messageBody));
 
@@ -394,7 +392,13 @@ HRESULT Connection::SendEncryptedMessage(MessageContext const* messageContext, I
 
 	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, encryptedMessageLength);
 
-	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
+	if (SUCCEEDED(result = ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity())))
+	{
+		auto& connectionManager = m_datacenter->GetConnectionManager();
+		connectionManager->IncrementConnectionSentBytes(m_type, packetWriter->GetCapacity());
+	}
+
+	return result;
 }
 
 HRESULT Connection::SendEncryptedMessageWithConfirmation(MessageContext const* messageContext, ITLObject* messageBody, INT32* quickAckId)
@@ -460,7 +464,13 @@ HRESULT Connection::SendUnencryptedMessage(ITLObject* messageBody, bool reportAc
 
 	ConnectionCryptography::EncryptBuffer(packetBufferBytes, packetBufferBytes, messageLength);
 
-	return ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity());
+	if (SUCCEEDED(result = ConnectionSocket::SendData(packetWriter->GetBuffer(), packetWriter->GetCapacity())))
+	{
+		auto& connectionManager = m_datacenter->GetConnectionManager();
+		connectionManager->IncrementConnectionSentBytes(m_type, packetWriter->GetCapacity());
+	}
+
+	return result;
 }
 
 HRESULT Connection::HandleMessageResponse(MessageContext const* messageContext, ITLObject* messageBody)
@@ -661,6 +671,11 @@ HRESULT Connection::OnSocketDisconnected(int wsaError)
 
 HRESULT Connection::OnSocketDataReceived(BYTE* buffer, UINT32 length)
 {
+	{
+		auto& connectionManager = m_datacenter->GetConnectionManager();
+		connectionManager->IncrementConnectionReceivedBytes(m_type, length);
+	}
+
 	switch (FLAGS_GET_PROXYHANDSHAKESTATE(m_flags))
 	{
 	case ProxyHandshakeState::SendingGreeting:
