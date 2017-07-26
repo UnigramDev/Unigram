@@ -71,15 +71,86 @@
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
             <controls:ImageView Source="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
-                                Constraint="{Binding Media.Photo}"
+                                Constraint="{Binding Media}"
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
                                 Click="Photo_Click"/>
 
             <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaSecretPhotoTemplate" x:DataType="tl:TLMessage">
+        <Grid x:Name="MediaControl"
+              Background="Black"
+              MinWidth="{ThemeResource TelegramMediaMinWidth}"
+              MinHeight="{ThemeResource TelegramMediaMinHeight}">
+            <!-- ImageView is used to calculate the right size for the image -->
+            <controls:ImageView Constraint="{Binding Media}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                                Stretch="UniformToFill">
+                <controls:ImageView.Template>
+                    <ControlTemplate TargetType="controls:ImageView"/>
+                </controls:ImageView.Template>
+            </controls:ImageView>
+
+            <Grid x:Name="InnerMedia">
+                <Rectangle>
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+
+                <controls:BackDrop BlurAmount="20"/>
+            </Grid>
+
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                <TextBlock Text="{Binding Media.DestructIn, Converter={StaticResource MessageShortTTLConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+            </Border>
+
+            <controls:TransferButton Completed="SecretDownload_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
+            <!--<controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.DestructProgress}" IsHitTestVisible="False" Style="{StaticResource TimeoutProgressBarRingStyle}"/>-->
+            <controls:SelfDestructTimer Background="Transparent" Foreground="White" Value="{x:Bind Media.(tl:ITLMessageMediaDestruct.DestructDate), Mode=OneWay}" Maximum="{x:Bind Media.(tl:ITLMessageMediaDestruct.TTLSeconds)}" IsHitTestVisible="False"/>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaSecretVideoTemplate" x:DataType="tl:TLMessage">
+        <Grid x:Name="MediaControl"
+              Background="Black"
+              MinWidth="{ThemeResource TelegramMediaMinWidth}"
+              MinHeight="{ThemeResource TelegramMediaMinHeight}">
+            <!-- ImageView is used to calculate the right size for the image -->
+            <controls:ImageView Constraint="{Binding Media}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
+                                Stretch="UniformToFill">
+                <controls:ImageView.Template>
+                    <ControlTemplate TargetType="controls:ImageView"/>
+                </controls:ImageView.Template>
+            </controls:ImageView>
+
+            <Grid x:Name="InnerMedia">
+                <Rectangle>
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+
+                <controls:BackDrop BlurAmount="20"/>
+            </Grid>
+
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                <TextBlock Text="{Binding Media.DestructIn, Converter={StaticResource MessageShortTTLConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+            </Border>
+
+            <controls:TransferButton Completed="SecretDownload_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
+            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.DestructProgress}" IsHitTestVisible="False" Style="{StaticResource TimeoutProgressBarRingStyle}"/>
+            <!--<controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.DestructProgress}" IsHitTestVisible="False" Style="{StaticResource TimeoutProgressBarRingStyle}"/>-->
+            <controls:SelfDestructTimer Background="Transparent" Foreground="White" Value="{x:Bind Media.(tl:ITLMessageMediaDestruct.DestructDate), Mode=OneWay}" Maximum="{x:Bind Media.(tl:ITLMessageMediaDestruct.TTLSeconds)}" IsHitTestVisible="False"/>
         </Grid>
     </DataTemplate>
 
@@ -93,8 +164,8 @@
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
-                <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
             </Border>
 
             <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
@@ -111,7 +182,7 @@
                                 MaxHeight="{ThemeResource TelegramLightMediaMaxHeight}"
                                 Style="{StaticResource RoundImageViewStyle}"/>
 
-            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
                 <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
             </Border>
 
@@ -233,14 +304,14 @@
     <DataTemplate x:Key="WebPageMediaTemplate">
         <StackPanel Margin="0,8,0,6">
             <Border BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0">
-                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" Margin="0,0,0,2">
+                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" Margin="0,0,0,2" Style="{StaticResource CaptionRichTextBlockStyle}">
                     <RichTextBlock.Resources>
                         <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
                     </RichTextBlock.Resources>
                 </RichTextBlock>
             </Border>
 
-            <Button Click="InstantView_Click" Style="{StaticResource InstantViewButtonStyle}" Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <controls:WebPageButton Click="InstantView_Click" WebPage="{Binding Media.WebPage}" Style="{StaticResource InstantViewButtonStyle}"/>
         </StackPanel>
     </DataTemplate>
 
@@ -248,36 +319,36 @@
         <StackPanel Margin="0,8,0,6">
             <Grid BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="48"/>
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="48"/>
                 </Grid.ColumnDefinitions>
 
-                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" OverflowContentTarget="{Binding ElementName=OverflowArea}" MaxLines="3" TextTrimming="CharacterEllipsis" Margin="0,0,8,0">
+                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" OverflowContentTarget="{Binding ElementName=OverflowArea}" MaxLines="3" TextTrimming="CharacterEllipsis" Margin="0,0,8,0" Style="{StaticResource CaptionRichTextBlockStyle}">
                     <RichTextBlock.Resources>
                         <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
                     </RichTextBlock.Resources>
                 </RichTextBlock>
 
-                <Border Width="60" Height="60" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Grid.Column="1">
+                <Border Width="48" Height="48" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Grid.Column="1">
                     <Image Source="{Binding Media, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
 
                 <RichTextBlockOverflow x:Name="OverflowArea" MaxLines="3" Grid.ColumnSpan="2" Grid.Row="1"/>
             </Grid>
 
-            <Button Click="InstantView_Click" Style="{StaticResource InstantViewButtonStyle}" Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <controls:WebPageButton Click="InstantView_Click" WebPage="{Binding Media.WebPage}" Style="{StaticResource InstantViewButtonStyle}"/>
         </StackPanel>
     </DataTemplate>
 
     <DataTemplate x:Key="WebPagePhotoMediaTemplate">
         <StackPanel Margin="0,8,0,6">
             <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0">
-                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" MaxLines="6" TextTrimming="CharacterEllipsis" Margin="0,0,0,8">
+                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" MaxLines="6" TextTrimming="CharacterEllipsis" Margin="0,0,0,8" Style="{StaticResource CaptionRichTextBlockStyle}">
                     <RichTextBlock.Resources>
                         <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
                     </RichTextBlock.Resources>
@@ -301,14 +372,14 @@
                 </Grid>
             </StackPanel>
 
-            <Button Click="InstantView_Click" Style="{StaticResource InstantViewButtonStyle}" Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <controls:WebPageButton Click="InstantView_Click" WebPage="{Binding Media.WebPage}" Style="{StaticResource InstantViewButtonStyle}"/>
         </StackPanel>
     </DataTemplate>
 
     <DataTemplate x:Key="WebPageDocumentMediaTemplate">
         <StackPanel Margin="0,8,0,6">
             <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Padding="8,0,0,0">
-                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" MaxLines="6" TextTrimming="CharacterEllipsis" Margin="0,0,0,8">
+                <RichTextBlock common:TextBlockHelper.WebPage="{Binding Media.WebPage}" MaxLines="6" TextTrimming="CharacterEllipsis" Margin="0,0,0,8" Style="{StaticResource CaptionRichTextBlockStyle}">
                     <RichTextBlock.Resources>
                         <StaticResource x:Key="MessageHeaderForegroundBrush" ResourceKey="MessageHeaderForegroundBrush2"/>
                     </RichTextBlock.Resources>
@@ -318,15 +389,15 @@
                                 ContentTemplateSelector="{StaticResource MediaTemplateSelector}"/>
             </StackPanel>
 
-            <Button Click="InstantView_Click" Style="{StaticResource InstantViewButtonStyle}" Visibility="{Binding Media.WebPage.HasCachedPage, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            <controls:WebPageButton Click="InstantView_Click" WebPage="{Binding Media.WebPage}" Style="{StaticResource InstantViewButtonStyle}"/>
         </StackPanel>
     </DataTemplate>
 
     <DataTemplate x:Key="MediaGameTemplate" x:DataType="tl:TLMessage">
         <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}" BorderThickness="2,0,0,0" Margin="0,8,0,6" Padding="8,0,0,0">
             <StackPanel Margin="0,0,0,8">
-                <TextBlock Text="{Binding Media.Game.Title}" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource BaseTextBlockStyle}"/>
-                <TextBlock common:MessageHelper.Message="{x:Bind Self, Mode=OneWay}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource MessageForegroundBrush}" Tag="Game">
+                <TextBlock Text="{Binding Media.Game.Title}" MaxLines="1" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource MessageHeaderForegroundBrush}" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
+                <TextBlock common:MessageHelper.Message="{x:Bind Self, Mode=OneWay}" Foreground="{ThemeResource MessageForegroundBrush}" Tag="Game" Style="{StaticResource CaptionTextBlockStyle}">
                     <TextBlock.Resources>
                         <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
                     </TextBlock.Resources>
@@ -342,8 +413,8 @@
                                     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                     MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-                <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,2,8,4" Margin="4">
-                    <TextBlock Text="GAME" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,4" Margin="4">
+                    <TextBlock Text="GAME" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
                 </Border>
             </Grid>
         </StackPanel>
@@ -409,6 +480,8 @@
                                      VideoTemplate="{StaticResource MediaVideoTemplate}"
                                      VenueTemplate="{StaticResource MediaVenueTemplate}"
                                      StickerTemplate="{StaticResource MediaStickerTemplate}"
+                                     SecretPhotoTemplate="{StaticResource MediaSecretPhotoTemplate}"
+                                     SecretVideoTemplate="{StaticResource MediaSecretVideoTemplate}"
                                      WebPageTemplate="{StaticResource WebPageMediaTemplate}"
                                      WebPageDocumentTemplate="{StaticResource WebPageDocumentMediaTemplate}"
                                      WebPagePhotoTemplate="{StaticResource WebPagePhotoMediaTemplate}"

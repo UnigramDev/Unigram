@@ -15,6 +15,11 @@ namespace Telegram.Api
 
             return result;
         }
+
+        public static string Substr(this string source, int startIndex, int endIndex)
+        {
+            return source.Substring(startIndex, endIndex - startIndex);
+        }
     }
     //    public static void NullableToStream(this TLObject obj, Stream output)
     //    {

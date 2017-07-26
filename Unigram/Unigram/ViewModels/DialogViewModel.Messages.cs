@@ -102,19 +102,20 @@ namespace Unigram.ViewModels
 
                     if (dialog.BanUser)
                     {
-                        var response = await ProtoService.KickFromChannelAsync(channel, message.From.ToInputUser(), true);
-                        if (response.IsSucceeded)
-                        {
-                            var updates = response.Result as TLUpdates;
-                            if (updates != null)
-                            {
-                                var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
-                                if (newChannelMessageUpdate != null)
-                                {
-                                    Aggregator.Publish(newChannelMessageUpdate.Message);
-                                }
-                            }
-                        }
+                        // TODO: layer 68
+                        //var response = await ProtoService.KickFromChannelAsync(channel, message.From.ToInputUser(), true);
+                        //if (response.IsSucceeded)
+                        //{
+                        //    var updates = response.Result as TLUpdates;
+                        //    if (updates != null)
+                        //    {
+                        //        var newChannelMessageUpdate = updates.Updates.OfType<TLUpdateNewChannelMessage>().FirstOrDefault();
+                        //        if (newChannelMessageUpdate != null)
+                        //        {
+                        //            Aggregator.Publish(newChannelMessageUpdate.Message);
+                        //        }
+                        //    }
+                        //}
                     }
 
                     if (dialog.ReportSpam)
@@ -133,7 +134,7 @@ namespace Unigram.ViewModels
 
                 var chat = With as TLChat;
 
-                if (message != null && (message.IsOut || (chat != null && (chat.IsCreator || chat.IsAdmin)))  && message.ToId.Id != SettingsHelper.UserId && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
+                if (message != null && (message.IsOut || (chat != null && (chat.IsCreator || chat.IsAdmin))) && message.ToId.Id != SettingsHelper.UserId && (Peer is TLInputPeerUser || Peer is TLInputPeerChat))
                 {
                     var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
                     var config = CacheService.GetConfig();
@@ -173,6 +174,8 @@ namespace Unigram.ViewModels
                     var messages = new List<TLMessageBase>() { messageBase };
                     if (messageBase.Id == 0 && messageBase.RandomId != 0L)
                     {
+                        await TLMessageDialog.ShowAsync("This message has no ID, so it will be deleted locally only.", "Warning", "OK");
+
                         DeleteMessagesInternal(null, messages);
                         return;
                     }
@@ -295,7 +298,7 @@ namespace Unigram.ViewModels
                     return false;
                 }
 
-                if (!messageCommon.IsOut && !channel.IsCreator && !channel.IsEditor)
+                if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
                 {
                     return false;
                 }
@@ -436,7 +439,24 @@ namespace Unigram.ViewModels
         #region Multiple Forward
 
         private RelayCommand _messagesForwardCommand;
-        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(x => x is TLMessage)));
+        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(x =>
+        {
+            if (x is TLMessage message)
+            {
+                if (message.Media is TLMessageMediaPhoto photoMedia)
+                {
+                    return !photoMedia.HasTTLSeconds;
+                }
+                else if (message.Media is TLMessageMediaDocument documentMedia)
+                {
+                    return !documentMedia.HasTTLSeconds;
+                }
+
+                return true;
+            }
+
+            return false;
+        })));
 
         private async void MessagesForwardExecute()
         {
@@ -525,7 +545,21 @@ namespace Unigram.ViewModels
                     var config = CacheService.GetConfig();
                     if (config != null)
                     {
-                        link = $"{config.MeUrlPrefix}{link}";
+                        var linkPrefix = config.MeUrlPrefix;
+                        if (linkPrefix.EndsWith("/"))
+                        {
+                            linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
+                        }
+                        if (linkPrefix.StartsWith("https://"))
+                        {
+                            linkPrefix = linkPrefix.Substring(8);
+                        }
+                        else if (linkPrefix.StartsWith("http://"))
+                        {
+                            linkPrefix = linkPrefix.Substring(7);
+                        }
+
+                        link = $"https://{linkPrefix}/{link}";
                     }
                     else
                     {
@@ -856,10 +890,15 @@ namespace Unigram.ViewModels
 
             }
 
+            if (_replyMarkupMessage != null && _replyMarkupMessage.Id > message.Id)
+            {
+                return;
+            }
+
             //this.SuppressOpenCommandsKeyboard = (message != null && message.ReplyMarkup != null && suppressOpenKeyboard);
 
             _replyMarkupMessage = message;
-            ReplyMarkup = message?.ReplyMarkup;
+            ReplyMarkup = message.ReplyMarkup;
         }
 
         //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand => new RelayCommand<TLKeyboardButtonBase>(KeyboardButtonExecute);
@@ -1068,6 +1107,23 @@ namespace Unigram.ViewModels
             if (messageCommon != null && messageCommon.ReplyToMsgId.HasValue)
             {
                 await LoadMessageSliceAsync(messageCommon.Id, messageCommon.ReplyToMsgId.Value);
+            }
+        }
+
+        #endregion
+
+        #region Sticker info
+
+        public RelayCommand<TLMessage> MessageStickerPackInfoCommand => new RelayCommand<TLMessage>(MessageStickerPackInfoExecute);
+        private async void MessageStickerPackInfoExecute(TLMessage message)
+        {
+            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                var stickerAttribute = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                if (stickerAttribute != null && stickerAttribute.StickerSet.TypeId != TLType.InputStickerSetEmpty)
+                {
+                    await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet);
+                }
             }
         }
 

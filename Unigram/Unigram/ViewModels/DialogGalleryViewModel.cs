@@ -108,7 +108,7 @@ namespace Unigram.ViewModels
 
     public class GalleryMessageItem : GalleryItem
     {
-        private readonly TLMessage _message;
+        protected readonly TLMessage _message;
 
         public GalleryMessageItem(TLMessage message)
         {

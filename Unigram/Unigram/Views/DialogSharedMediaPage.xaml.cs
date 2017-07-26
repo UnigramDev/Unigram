@@ -36,6 +36,11 @@ namespace Unigram.Views
             DataContext = UnigramContainer.Current.ResolveType<DialogSharedMediaViewModel>();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
+
+            //ScrollingMedia.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+            //ScrollingFiles.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+            //ScrollingLinks.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+            //ScrollingMusic.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -95,6 +100,11 @@ namespace Unigram.Views
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
         {
+            //ScrollingMedia.IsItemClickEnabled = ViewModel.SelectionMode == ListViewSelectionMode.None;
+            //ScrollingFiles.IsItemClickEnabled = ViewModel.SelectionMode == ListViewSelectionMode.None;
+            //ScrollingLinks.IsItemClickEnabled = ViewModel.SelectionMode == ListViewSelectionMode.None;
+            //ScrollingMusic.IsItemClickEnabled = ViewModel.SelectionMode == ListViewSelectionMode.None;
+
             if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
                 ManagePanel.Visibility = Visibility.Collapsed;
@@ -178,7 +188,7 @@ namespace Unigram.Views
                             element.Visibility = Visibility.Collapsed;
                         }
 
-                        if (!messageCommon.IsOut && !channel.IsCreator && !channel.IsEditor)
+                        if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
                         {
                             element.Visibility = Visibility.Collapsed;
                         }

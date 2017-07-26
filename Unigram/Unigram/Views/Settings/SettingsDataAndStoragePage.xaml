@@ -94,7 +94,7 @@
                       VerticalScrollMode="Auto"
                       Grid.Row="1">
 
-            <StackPanel Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Grid.Row="1">
+            <StackPanel Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Padding="0,0,0,72" Grid.Row="1">
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                     <TextBlock Text="AUTOMATIC MEDIA DOWNLOAD" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                     <controls:BadgeButton

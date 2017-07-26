@@ -145,9 +145,14 @@ namespace Unigram.Views
 
         private void TextField_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (StickersPanel.Visibility == Visibility.Visible)
+            if (StickersPanel.Visibility == Visibility.Visible && TextField.FocusState == FocusState.Unfocused)
             {
                 StickersPanel.Visibility = Visibility.Collapsed;
+
+                if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                {
+                    TextField.Focus(FocusState.Keyboard);
+                }
             }
         }
 
@@ -286,10 +291,29 @@ namespace Unigram.Views
 
         private void Dispatcher_AcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs args)
         {
-            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased && ViewModel.SelectionMode != ListViewSelectionMode.None)
+            if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased)
             {
-                ViewModel.SelectionMode = ListViewSelectionMode.None;
-                args.Handled = true;
+                if (StickersPanel.Visibility == Visibility.Visible)
+                {
+                    StickersPanel.Visibility = Visibility.Collapsed;
+                    args.Handled = true;
+                }
+
+                if (ViewModel.SelectionMode != ListViewSelectionMode.None)
+                {
+                    ViewModel.SelectionMode = ListViewSelectionMode.None;
+                    args.Handled = true;
+                }
+
+                if (args.Handled)
+                {
+                    Focus(FocusState.Programmatic);
+
+                    if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                    {
+                        TextField.Focus(FocusState.Keyboard);
+                    }
+                }
             }
         }
 
@@ -305,6 +329,16 @@ namespace Unigram.Views
             {
                 ViewModel.SelectionMode = ListViewSelectionMode.None;
                 args.Handled = true;
+            }
+
+            if (args.Handled)
+            {
+                Focus(FocusState.Programmatic);
+
+                if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+                {
+                    TextField.Focus(FocusState.Keyboard);
+                }
             }
         }
 
@@ -368,6 +402,13 @@ namespace Unigram.Views
 
         private async void Attach_Click(object sender, RoutedEventArgs e)
         {
+            var channel = ViewModel.With as TLChannel;
+            if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendMedia)
+            {
+                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting media content here.", "Warning", "OK");
+                return;
+            }
+
             var pane = InputPane.GetForCurrentView();
             if (pane.OccludedRect != Rect.Empty)
             {
@@ -389,7 +430,8 @@ namespace Unigram.Views
                 //    flyout.LightDismissOverlayMode = LightDismissOverlayMode.Auto;
                 //}
 
-                flyout.ShowAt(ButtonAttach, new Point(8, -8));
+                //flyout.ShowAt(ButtonAttach, new Point(4, -4));
+                flyout.ShowAt(FlyoutArea);
             }
         }
 
@@ -546,21 +588,32 @@ namespace Unigram.Views
             ViewModel.KeyboardButtonExecute(e.Button, null);
         }
 
-        private void Stickers_Click(object sender, RoutedEventArgs e)
+        private async void Stickers_Click(object sender, RoutedEventArgs e)
         {
+            var channel = ViewModel.With as TLChannel;
+            if (channel != null && channel.HasBannedRights && (channel.BannedRights.IsSendStickers || channel.BannedRights.IsSendGifs))
+            {
+                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting stickers here.", "Warning", "OK");
+                return;
+            }
+
             if (StickersPanel.Visibility == Visibility.Collapsed)
             {
-                StickersPanel.Visibility = Visibility.Visible;
-                TextField.PreventKeyboardDisplayOnProgrammaticFocus = true;
+                Focus(FocusState.Programmatic);
                 TextField.Focus(FocusState.Programmatic);
+
                 InputPane.GetForCurrentView().TryHide();
+
+                StickersPanel.Visibility = Visibility.Visible;
 
                 ViewModel.OpenStickersCommand.Execute(null);
             }
             else
             {
+                Focus(FocusState.Programmatic);
+                TextField.Focus(FocusState.Keyboard);
+
                 StickersPanel.Visibility = Visibility.Collapsed;
-                InputPane.GetForCurrentView().TryShow();
             }
         }
 
@@ -619,7 +672,7 @@ namespace Unigram.Views
                     {
                         if (channel.IsBroadcast)
                         {
-                            element.Visibility = channel.IsCreator || channel.IsEditor ? Visibility.Visible : Visibility.Collapsed;
+                            element.Visibility = channel.IsCreator || channel.HasAdminRights ? Visibility.Visible : Visibility.Collapsed;
                             return;
                         }
                     }
@@ -638,7 +691,7 @@ namespace Unigram.Views
                 if (messageCommon != null)
                 {
                     var channel = messageCommon.Parent as TLChannel;
-                    if (channel != null && (channel.IsEditor || channel.IsCreator) && !channel.IsBroadcast)
+                    if (channel != null && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPinMessages)) && !channel.IsBroadcast)
                     {
                         if (messageCommon.ToId is TLPeerChannel)
                         {
@@ -667,7 +720,7 @@ namespace Unigram.Views
                         element.Visibility = Visibility.Visible;
                         return;
                     }
-                    else if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || channel.IsEditor))) && (message.Media is ITLMessageMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
+                    else if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsEditMessages)))) && (message.Media is ITLMessageMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
                     {
                         var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
                         var config = ViewModel.CacheService.GetConfig();
@@ -704,7 +757,7 @@ namespace Unigram.Views
                             element.Visibility = Visibility.Collapsed;
                         }
 
-                        if (!messageCommon.IsOut && !channel.IsCreator && !channel.IsEditor)
+                        if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
                         {
                             element.Visibility = Visibility.Collapsed;
                         }
@@ -718,10 +771,16 @@ namespace Unigram.Views
             var element = sender as MenuFlyoutItem;
             if (element != null)
             {
-                var messageCommon = element.DataContext as TLMessageCommonBase;
-                if (messageCommon != null)
+                var message = element.DataContext as TLMessage;
+                if (message != null && message.Media is TLMessageMediaPhoto photoMedia)
                 {
-
+                    element.Visibility = photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                    return;
+                }
+                else if (message != null && message.Media is TLMessageMediaDocument documentMedia)
+                {
+                    element.Visibility = documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                    return;
                 }
 
                 element.Visibility = Visibility.Visible;
@@ -763,13 +822,11 @@ namespace Unigram.Views
                 if (messageCommon != null)
                 {
                     var channel = messageCommon.Parent as TLChannel;
-                    if (channel != null)
+                    if (channel != null && channel.HasUsername)
                     {
-                        if (channel.IsBroadcast && channel.HasUsername)
-                        {
-                            element.Visibility = Visibility.Visible;
-                            return;
-                        }
+                        element.Text = channel.IsBroadcast ? "Copy post link" : "Copy message link";
+                        element.Visibility = Visibility.Visible;
+                        return;
                     }
                 }
 
@@ -802,13 +859,15 @@ namespace Unigram.Views
             if (element != null)
             {
                 var message = element.DataContext as TLMessage;
-                if (message != null)
+                if (message != null && message.Media is TLMessageMediaPhoto photoMedia)
                 {
-                    if (message.Media is TLMessageMediaDocument || message.Media is TLMessageMediaPhoto)
-                    {
-                        Visibility = Visibility.Visible;
-                        return;
-                    }
+                    element.Visibility = photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                    return;
+                }
+                else if (message != null && message.Media is TLMessageMediaDocument documentMedia)
+                {
+                    element.Visibility = documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                    return;
                 }
 
                 element.Visibility = Visibility.Collapsed;
@@ -860,8 +919,15 @@ namespace Unigram.Views
             Media.Download(sender, e);
         }
 
-        private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
+        private async void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
+            var channel = ViewModel.With as TLChannel;
+            if (channel != null && channel.HasBannedRights && (channel.BannedRights.IsSendStickers || channel.BannedRights.IsSendGifs))
+            {
+                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting stickers here.", "Warning", "OK");
+                return;
+            }
+
             ViewModel.SendStickerCommand.Execute(e.ClickedItem);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
@@ -1168,6 +1234,24 @@ namespace Unigram.Views
             if (button.DataContext is TLMessage message)
             {
                 ViewModel.MessageShareCommand.Execute(message);
+            }
+        }
+
+        private async void Date_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as FrameworkElement;
+            if (button.DataContext is TLMessageCommonBase message)
+            {
+                var dialog = new Controls.Views.CalendarView();
+                dialog.MaxDate = DateTimeOffset.Now.Date;
+                dialog.SelectedDates.Add(BindConvert.Current.DateTime(message.Date));
+
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
+                {
+                    var offset = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, dialog.SelectedDates.FirstOrDefault().Date);
+                    await ViewModel.LoadDateSliceAsync(offset);
+                }
             }
         }
     }

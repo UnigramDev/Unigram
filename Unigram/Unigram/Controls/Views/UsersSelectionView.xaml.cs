@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
 using Unigram.ViewModels;
@@ -32,6 +33,18 @@ namespace Unigram.Controls.Views
             }
 
             InitializeComponent();
+
+            var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(x =>
+            {
+                if (string.IsNullOrWhiteSpace(SearchField.Text))
+                {
+                    ViewModel.Search.Clear();
+                    return;
+                }
+
+                ViewModel.SearchAsync(SearchField.Text);
+            });
         }
 
         public void Attach()
@@ -41,6 +54,11 @@ namespace Unigram.Controls.Views
 
         private void SelectedItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                return;
+            }
+
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
                 foreach (var item in e.NewItems)
@@ -59,6 +77,11 @@ namespace Unigram.Controls.Views
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                return;
+            }
+
             if (e.AddedItems != null)
             {
                 foreach (var item in e.AddedItems)
@@ -80,9 +103,15 @@ namespace Unigram.Controls.Views
         {
             if (ViewModel.SelectionMode == ListViewSelectionMode.None)
             {
+                ViewModel.SelectedItems.Clear();
                 ViewModel.SelectedItems.Add(e.ClickedItem as TLUser);
                 ViewModel.SendCommand.Execute();
             }
+        }
+
+        private void SearchField_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            SearchList.Visibility = string.IsNullOrEmpty(SearchField.Text) ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void TagsTextBox_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -92,9 +121,9 @@ namespace Unigram.Controls.Views
 
         #region Binding
 
-        private Visibility ConvertMaximum(int maximum)
+        private Visibility ConvertMaximum(int maximum, bool infinite)
         {
-            return maximum == int.MaxValue ? Visibility.Collapsed : Visibility.Visible;
+            return (maximum == int.MaxValue && infinite) || maximum == 1 ? Visibility.Collapsed : Visibility.Visible;
         }
 
         #endregion

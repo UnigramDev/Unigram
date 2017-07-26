@@ -46,6 +46,18 @@ namespace Unigram.Controls.Views
             }
         }
 
+        public bool IsCallsProxyEnabled
+        {
+            get
+            {
+                return FieldCalls.IsChecked == true;
+            }
+            set
+            {
+                FieldCalls.IsChecked = value;
+            }
+        }
+
         public string Server
         {
             get
@@ -98,14 +110,14 @@ namespace Unigram.Controls.Views
         {
             if (IsProxyEnabled)
             {
-                if (string.IsNullOrEmpty(Server) || !IPAddress.TryParse(Server, out IPAddress server))
+                if (string.IsNullOrEmpty(FieldServer.Text) /* || !IPAddress.TryParse(Server, out IPAddress server)*/)
                 {
                     VisualUtilities.ShakeView(FieldServer);
                     args.Cancel = true;
                     return;
                 }
 
-                if (string.IsNullOrEmpty(Port) || !int.TryParse(Port, out int port))
+                if (string.IsNullOrEmpty(FieldPort.Text) || !int.TryParse(FieldPort.Text, out int port))
                 {
                     VisualUtilities.ShakeView(FieldPort);
                     args.Cancel = true;
@@ -161,8 +173,13 @@ namespace Unigram.Controls.Views
             var title = "Proxy Settings";
             var link = new Uri($"https://{linkPrefix}/socks?{string.Join("&", builder)}");
 
-            Hide();
             await ShareView.Current.ShowAsync(link, title);
+        }
+
+        private void Enable_Toggled(object sender, RoutedEventArgs e)
+        {
+            FieldCalls.IsEnabled = FieldEnabled.IsChecked == true;
+            FieldCalls.IsChecked = false;
         }
     }
 }

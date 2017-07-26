@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Telegram.Api.TL.Messages;
+using System.Diagnostics;
 
 namespace Unigram.Views.Settings
 {
@@ -56,6 +57,14 @@ namespace Unigram.Views.Settings
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             await StickerSetView.Current.ShowAsync((TLMessagesStickerSet)e.ClickedItem);
+        }
+
+        private void ListView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+        {
+            if (args.DropResult == Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move)
+            {
+                ViewModel.ReorderCommand.Execute(args.Items.FirstOrDefault());
+            }
         }
     }
 }

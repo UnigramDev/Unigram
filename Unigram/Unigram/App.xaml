@@ -11,17 +11,13 @@
 
     <Application.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />
-                <!--<ResourceDictionary Source="ms-appx:///Themes/Brand.xaml"/>-->
-                <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
-                <themes:Messages/>
-                <themes:Media/>
-                <common:Theme/>
-            </ResourceDictionary.MergedDictionaries>
-
             <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
                 <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseHighBrush}"/>
+            </Style>
+
+            <Style x:Key="CaptionRichTextBlockStyle" TargetType="RichTextBlock" BasedOn="{StaticResource BaseRichTextBlockStyle}">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="FontWeight" Value="Normal" />
             </Style>
 
             <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
@@ -47,6 +43,8 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:MessageShortTTLConverter x:Key="MessageShortTTLConverter"/>
+            <converters:MessageTTLConverter x:Key="MessageTTLConverter"/>
             <converters:MessageToShareConverter x:Key="MessageToShareConverter"/>
             <converters:EnumToBooleanConverter x:Key="EnumToBooleanConverter"/>
             <converters:PrivacyRuleToUsersConverter x:Key="PrivacyRuleToUsersConverter"/>
@@ -136,6 +134,14 @@
                 <Setter Property="MaxLines" Value="1"/>
             </Style>
             
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />
+                <!--<ResourceDictionary Source="ms-appx:///Themes/Brand.xaml"/>-->
+                <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
+                <themes:Messages/>
+                <themes:Media/>
+                <common:Theme/>
+            </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
 

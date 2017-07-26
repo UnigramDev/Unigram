@@ -21,6 +21,7 @@ using Windows.Media.Transcoding;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
+using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
 {
@@ -301,7 +302,7 @@ namespace Unigram.ViewModels
                     var thumbUpload = await _uploadDocumentManager.UploadFileAsync(thumbFileId, desiredName);
                     if (thumbUpload != null)
                     {
-                        var inputMedia = new TLInputMediaUploadedThumbDocument
+                        var inputMedia = new TLInputMediaUploadedDocument
                         {
                             File = upload.ToInputFile(),
                             Thumb = thumbUpload.ToInputFile(),
@@ -447,7 +448,7 @@ namespace Unigram.ViewModels
                     var thumbUpload = await _uploadDocumentManager.UploadFileAsync(thumbFileId, desiredName);
                     if (thumbUpload != null)
                     {
-                        var inputMedia = new TLInputMediaUploadedThumbDocument
+                        var inputMedia = new TLInputMediaUploadedDocument
                         {
                             File = upload.ToInputFile(),
                             Thumb = thumbUpload.ToInputFile(),
@@ -504,7 +505,7 @@ namespace Unigram.ViewModels
 
             if (storages != null && storages.Count > 0)
             {
-                var dialog = new SendPhotosView { Items = storages, SelectedItem = storages[0] };
+                var dialog = new SendPhotosView { Items = storages, SelectedItem = storages[0], IsTTLEnabled = _peer is TLInputPeerUser };
                 var dialogResult = await dialog.ShowAsync();
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
@@ -512,7 +513,7 @@ namespace Unigram.ViewModels
                     {
                         if (storage is StoragePhoto)
                         {
-                            await SendPhotoAsync(storage.File, storage.Caption);
+                            await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
                         }
                     }
                 }
@@ -530,20 +531,30 @@ namespace Unigram.ViewModels
 
             if (storages != null && storages.Count > 0)
             {
-                var dialog = new SendPhotosView { Items = storages, SelectedItem = storages[0] };
+                var dialog = new SendPhotosView { Items = storages, SelectedItem = storages[0], IsTTLEnabled = _peer is TLInputPeerUser };
                 var dialogResult = await dialog.ShowAsync();
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
                     foreach (var storage in dialog.Items)
                     {
-                        await SendPhotoAsync(storage.File, storage.Caption);
+                        await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
                     }
                 }
             }
         }
 
-        private async Task SendPhotoAsync(StorageFile file, string caption)
+        private async Task SendPhotoAsync(StorageFile file, string caption, int? ttlSeconds = null)
         {
+            var originalProps = await file.Properties.GetImagePropertiesAsync();
+
+            var imageWidth = originalProps.Width;
+            var imageHeight = originalProps.Height;
+            if (imageWidth >= 20 * imageHeight || imageHeight >= 20 * imageWidth)
+            {
+                await SendFileAsync(file, caption);
+                return;
+            }
+
             var fileLocation = new TLFileLocation
             {
                 VolumeId = TLLong.Random(),
@@ -586,13 +597,17 @@ namespace Unigram.ViewModels
                 Id = 0,
                 AccessHash = 0,
                 Date = date,
-                Sizes = new TLVector<TLPhotoSizeBase> { photoSize }
+                Sizes = new TLVector<TLPhotoSizeBase> { photoSize },
             };
 
             var media = new TLMessageMediaPhoto
             {
                 Photo = photo,
-                Caption = caption
+                Caption = caption,
+                TTLSeconds = ttlSeconds,
+                HasPhoto = true,
+                HasCaption = caption != null,
+                HasTTLSeconds = ttlSeconds.HasValue
             };
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
@@ -614,8 +629,9 @@ namespace Unigram.ViewModels
                 {
                     var inputMedia = new TLInputMediaUploadedPhoto
                     {
+                        File = upload.ToInputFile(),
                         Caption = media.Caption,
-                        File = upload.ToInputFile()
+                        TTLSeconds = ttlSeconds
                     };
 
                     var response = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
@@ -725,7 +741,7 @@ namespace Unigram.ViewModels
                     var thumbUpload = await _uploadDocumentManager.UploadFileAsync(thumbFileId, desiredName);
                     if (thumbUpload != null)
                     {
-                        var inputMedia = new TLInputMediaUploadedThumbDocument
+                        var inputMedia = new TLInputMediaUploadedDocument
                         {
                             File = upload.ToInputFile(),
                             Thumb = thumbUpload.ToInputFile(),
@@ -876,9 +892,29 @@ namespace Unigram.ViewModels
         }
 
         public RelayCommand SendLocationCommand => new RelayCommand(SendLocationExecute);
-        private void SendLocationExecute()
+        private async void SendLocationExecute()
         {
-            NavigationService.Navigate(typeof(DialogSendLocationPage));
+            var page = new DialogSendLocationPage();
+
+            var dialog = new ContentDialogBase();
+            dialog.Content = page;
+
+            page.Dialog = dialog;
+
+            var confirm = await dialog.ShowAsync();
+            if (confirm == ContentDialogBaseResult.OK)
+            {
+                if (page.Media is TLMessageMediaVenue venue)
+                {
+                    await SendGeoPointAsync(venue);
+                }
+                else if (page.Media is TLMessageMediaGeo geo && geo.Geo is TLGeoPoint geoPoint)
+                {
+                    await SendGeoPointAsync(geoPoint.Lat, geoPoint.Long);
+                }
+            }
+
+            //NavigationService.Navigate(typeof(DialogSendLocationPage));
         }
 
         public Task<bool> SendGeoPointAsync(double latitude, double longitude)
@@ -916,6 +952,40 @@ namespace Unigram.ViewModels
                         Long = longitude
                     }
                 };
+
+                var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                if (result.IsSucceeded)
+                {
+                    tsc.SetResult(true);
+                }
+                else
+                {
+                    tsc.SetResult(false);
+                }
+            });
+
+            return tsc.Task;
+        }
+
+        public Task<bool> SendGeoPointAsync(TLMessageMediaVenue media)
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var inputMedia = media.ToInputMedia();
 
                 var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
                 if (result.IsSucceeded)

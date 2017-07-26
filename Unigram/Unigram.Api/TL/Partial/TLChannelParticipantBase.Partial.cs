@@ -16,6 +16,7 @@ namespace Telegram.Api.TL
             {
                 if (_user == null)
                     _user = InMemoryCacheService.Current.GetUser(UserId) as TLUser;
+
                 return _user;
             }
         }
@@ -36,11 +37,41 @@ namespace Telegram.Api.TL
         //    }
         //}
 
-        public bool IsEditor
+        public bool IsAdmin
         {
             get
             {
-                return this is TLChannelParticipantEditor || IsCreator;
+                return this is TLChannelParticipantAdmin || IsCreator;
+            }
+        }
+    }
+
+    public partial class TLChannelParticipantAdmin
+    {
+        private TLUser _promotedByUser;
+        public TLUser PromotedByUser
+        {
+            get
+            {
+                if (_promotedByUser == null)
+                    _promotedByUser = InMemoryCacheService.Current.GetUser(PromotedBy) as TLUser;
+
+                return _promotedByUser;
+            }
+        }
+    }
+
+    public partial class TLChannelParticipantBanned
+    {
+        private TLUser _kickedByUser;
+        public TLUser KickedByUser
+        {
+            get
+            {
+                if (_kickedByUser == null)
+                    _kickedByUser = InMemoryCacheService.Current.GetUser(KickedBy) as TLUser;
+
+                return _kickedByUser;
             }
         }
     }

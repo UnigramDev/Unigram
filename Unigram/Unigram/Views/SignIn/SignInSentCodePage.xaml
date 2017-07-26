@@ -43,28 +43,29 @@
 
             <controls:UpdateTextBox x:Name="PrimaryInput"
                                     Text="{Binding PhoneCode, Mode=TwoWay}"
-                                    Margin="0,12,0,8"
+                                    Margin="0,12,0,4"
                                     InputScope="Digits"
                                     IsTextPredictionEnabled="False"
                                     Header="Enter your code:"
                                     PlaceholderText="Your code"
                                     Grid.Row="3"/>
 
-            <HyperlinkButton Command="{x:Bind ViewModel.ResendCommand}"
-                             Visibility="{x:Bind (Visibility)ViewModel.SentCode.HasNextType}"
-                             Content="Haven't received the code?"
-                             Grid.Row="4"/>
-
-            <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="5"/>
+            <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Background="Transparent" Grid.Row="4"/>
 
             <Button x:Name="NextButton"
                     Command="{x:Bind ViewModel.SendCommand}"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                    Foreground="White"
                     HorizontalAlignment="Stretch"
                     Content="Next"
-                    Margin="0,8,0,0"
-                    Grid.Row="6"
+                    Margin="0,4,0,8"
+                    Grid.Row="5"
                     Visibility="Collapsed"/>
+
+            <HyperlinkButton Command="{x:Bind ViewModel.ResendCommand}"
+                             Visibility="{x:Bind (Visibility)ViewModel.SentCode.HasNextType}"
+                             Content="Haven't received the code?"
+                             Grid.Row="6"/>
         </Grid>
 
         <VisualStateManager.VisualStateGroups>

@@ -175,5 +175,13 @@ namespace Unigram.Controls.Messages
         }
 
         #endregion
+
+        private void SwipeListViewItem_ItemSwipe(object sender, ItemSwipeEventArgs e)
+        {
+            if (e.Direction == SwipeListDirection.Right)
+            {
+                Context.MessageReplyCommand.Execute(ViewModel);
+            }
+        }
     }
 }

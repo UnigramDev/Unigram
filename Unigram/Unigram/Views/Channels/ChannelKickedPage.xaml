@@ -14,7 +14,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Blacklist"/>
+        <controls:PageHeader Text="Banned Users"/>
 
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Participants}"

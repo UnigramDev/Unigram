@@ -171,7 +171,7 @@
                 </Grid.ColumnDefinitions>
                 <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
                     <!--<controls:TransferButton Transferable="{x:Bind Document}" IsTransferring="{x:Bind Document.IsTransferring, Mode=OneWay}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
-                    <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{x:Bind Document.Progress, Mode=OneWay}" IsHitTestVisible="False"/>-->
+                         <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{x:Bind Document.Progress, Mode=OneWay}" IsHitTestVisible="False"/>-->
                 </Grid>
                 <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
                     <TextBlock Text="{x:Bind Title}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
@@ -212,17 +212,17 @@
             VenueResultTemplate="{StaticResource VenueResultTemplate}"/>
 
         <!--<selectors:InlineBotResultTemplateSelector
-                x:Key="InlineBotResultTemplateSelector"
-                ResultTemplate="{StaticResource ResultTemplate}"
-                PhotoTemplate="{StaticResource PhotoTemplate}"
-                PhotoResultTemplate="{StaticResource PhotoResultTemplate}"
-                GifTemplate="{StaticResource GifTemplate}"
-                GifResultTemplate="{StaticResource GifResultTemplate}"
-                GeoResultTemplate="{StaticResource GeoResultTemplate}"
-                VenueResultTemplate="{StaticResource VenueResultTemplate}"
-                ContactResultTemplate="{StaticResource ContactResultTemplate}"
-                StickerResultTemplate="{StaticResource StickerResultTemplate}"
-                AudioResultTemplate="{StaticResource AudioResultTemplate}"/>-->
+             x:Key="InlineBotResultTemplateSelector"
+             ResultTemplate="{StaticResource ResultTemplate}"
+             PhotoTemplate="{StaticResource PhotoTemplate}"
+             PhotoResultTemplate="{StaticResource PhotoResultTemplate}"
+             GifTemplate="{StaticResource GifTemplate}"
+             GifResultTemplate="{StaticResource GifResultTemplate}"
+             GeoResultTemplate="{StaticResource GeoResultTemplate}"
+             VenueResultTemplate="{StaticResource VenueResultTemplate}"
+             ContactResultTemplate="{StaticResource ContactResultTemplate}"
+             StickerResultTemplate="{StaticResource StickerResultTemplate}"
+             AudioResultTemplate="{StaticResource AudioResultTemplate}"/>-->
     </UserControl.Resources>
 
     <Grid>
@@ -257,50 +257,56 @@
               BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
               BorderThickness="0,1,0,0"
               Visibility="{Binding InlineBotResultsVisibility}">
-              <!--Visibility="{Binding InlineBotResults.Results.Count, Converter={StaticResource BooleanToVisibilityConverter}}"-->
+            <!--Visibility="{Binding InlineBotResults.Results.Count, Converter={StaticResource BooleanToVisibilityConverter}}"-->
             <!--<Grid.Visibility>
-                <Binding Path="InlineBotResults.Results.Count" Converter="{StaticResource BooleanToVisibilityConverter}">
-                    <Binding.TargetNullValue>
-                        <Visibility>Collapsed</Visibility>
-                    </Binding.TargetNullValue>
-                    <Binding.FallbackValue>
-                        <Visibility>Collapsed</Visibility>
-                    </Binding.FallbackValue>
-                </Binding>
-            </Grid.Visibility>-->
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Button Command="{x:Bind ViewModel.SwitchCommand}"
-                    CommandParameter="{x:Bind ViewModel.InlineBotResults.SwitchPM, Mode=OneWay}"
-                    Content="{x:Bind ViewModel.InlineBotResults.SwitchPM.Text, Mode=OneWay}"
-                    Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPM, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                    HorizontalAlignment="Stretch"/>
-            <controls:OrientableListView ItemsSource="{x:Bind ViewModel.InlineBotResults.Results, Mode=OneWay}"
-                                         IsHorizontal="{x:Bind ViewModel.InlineBotResults.IsGallery, Mode=OneWay}"
-                                         ItemTemplateSelector="{StaticResource InlineBotResultTemplateSelector}"
-                                         ItemClick="ListView_ItemClick"
-                                         IsItemClickEnabled="True"
-                                         SelectionMode="None"
-                                         Grid.Row="1">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                        <Setter Property="Margin" Value="0"/>
-                        <Setter Property="Padding" Value="0"/>
-                        <Setter Property="MinWidth" Value="0"/>
-                        <Setter Property="MinHeight" Value="0"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.Header>
-                    <Border Width="4" Height="4"/>
-                </ListView.Header>
-                <ListView.Footer>
-                    <Border Width="4" Height="4"/>
-                </ListView.Footer>
-            </controls:OrientableListView>
+                 <Binding Path="InlineBotResults.Results.Count" Converter="{StaticResource BooleanToVisibilityConverter}">
+                 <Binding.TargetNullValue>
+                 <Visibility>Collapsed</Visibility>
+                 </Binding.TargetNullValue>
+                 <Binding.FallbackValue>
+                 <Visibility>Collapsed</Visibility>
+                 </Binding.FallbackValue>
+                 </Binding>
+                 </Grid.Visibility>-->
+            <Grid Visibility="{x:Bind ConvertBannedRights(ViewModel.With, x:True), Mode=OneWay}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Button Command="{x:Bind ViewModel.SwitchCommand}"
+                        CommandParameter="{x:Bind ViewModel.InlineBotResults.SwitchPM, Mode=OneWay}"
+                        Content="{x:Bind ViewModel.InlineBotResults.SwitchPM.Text, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPM, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                        HorizontalAlignment="Stretch"/>
+                <controls:OrientableListView ItemsSource="{x:Bind ViewModel.InlineBotResults.Results, Mode=OneWay}"
+                                             IsHorizontal="{x:Bind ViewModel.InlineBotResults.IsGallery, Mode=OneWay}"
+                                             ItemTemplateSelector="{StaticResource InlineBotResultTemplateSelector}"
+                                             ItemClick="ListView_ItemClick"
+                                             IsItemClickEnabled="True"
+                                             SelectionMode="None"
+                                             Grid.Row="1">
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem" BasedOn="{StaticResource ZoomableListViewItemStyle}">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="MinWidth" Value="0"/>
+                            <Setter Property="MinHeight" Value="0"/>
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                    <GridView.Header>
+                        <Border Width="4" Height="4"/>
+                    </GridView.Header>
+                    <GridView.Footer>
+                        <Border Width="4" Height="4"/>
+                    </GridView.Footer>
+                </controls:OrientableListView>
+            </Grid>
+
+            <Border Visibility="{x:Bind ConvertBannedRights(ViewModel.With, x:False), Mode=OneWay}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <TextBlock Text="The admins of this group restricted you from posting inline content here." VerticalAlignment="Center" TextAlignment="Center" Margin="12" Foreground="{ThemeResource ButtonForegroundDisabled}" Style="{StaticResource BodyTextBlockStyle}"/>
+            </Border>
         </Grid>
     </Grid>
 </UserControl>

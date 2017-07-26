@@ -10,11 +10,29 @@
                     <ScrollViewer>
                         <ContentPresenter />
                     </ScrollViewer>
-                </ControlTemplate>
+				</ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-    
+	
+    <Style TargetType="local:OrientableListView" BasedOn="{StaticResource ZoomableListViewStyle}"/>
+
+    <Style TargetType="local:SelfDestructTimer">
+        <Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
+        <Setter Property="Foreground" Value="#FFFFFFFF"/>
+        <Setter Property="Width" Value="48"/>
+        <Setter Property="Height" Value="48"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SelfDestructTimer">
+                    <Grid Background="{TemplateBinding Background}" CornerRadius="24">
+                        <local:ProgressBarRingSlice x:Name="Indicator" CacheMode="BitmapCache" Stroke="{TemplateBinding Foreground}" StrokeThickness="22" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" InnerRadius="0" Radius="22" StartAngle="0" EndAngle="0"/>
+                    </Grid>
+				</ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:RatingBar">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Padding" Value="2,8"/>
@@ -32,7 +50,62 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <Style TargetType="local:SwipeListViewItem">
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
+        <Setter Property="TabNavigation" Value="Local"/>
+        <Setter Property="IsHoldingEnabled" Value="False"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Top"/>
+        <Setter Property="LeftBackground" Value="#007aff"/>
+        <Setter Property="RightBackground" Value="#ff3b30"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SwipeListViewItem">
+                    <Grid>
+                        <Grid x:Name="DragBackground">
+                            <Grid.Clip>
+                                <RectangleGeometry x:Name="DragClip" Rect="0,0,0,0">
+                                    <RectangleGeometry.Transform>
+                                        <TranslateTransform x:Name="DragClipTransform"/>
+                                    </RectangleGeometry.Transform>
+                                </RectangleGeometry>
+                            </Grid.Clip>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border x:Name="LeftContainer">
+                                <ContentControl Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding LeftContentTemplate}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" RenderTransformOrigin="0.5,0.5">
+                                    <ContentControl.RenderTransform>
+                                        <TranslateTransform x:Name="LeftTransform"/>
+                                    </ContentControl.RenderTransform>
+                                </ContentControl>
+                            </Border>
+
+                            <Border x:Name="RightContainer" Grid.Column="2">
+                                <ContentControl Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding RightContentTemplate}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" RenderTransformOrigin="0.5,0.5">
+                                    <ContentControl.RenderTransform>
+                                        <TranslateTransform x:Name="RightTransform"/>
+                                    </ContentControl.RenderTransform>
+                                </ContentControl>
+                            </Border>
+                        </Grid>
+                        <ContentPresenter x:Name="DragContainer" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Background="Transparent" ManipulationMode="System,TranslateX">
+                            <ContentPresenter.RenderTransform>
+                                <TranslateTransform x:Name="ContentDragTransform"/>
+                            </ContentPresenter.RenderTransform>
+                        </ContentPresenter>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:ImageCropper">
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
@@ -241,14 +314,14 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <ContentPresenter x:Name="ContentPresenter"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Content="{TemplateBinding Content}"
-                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            Padding="{TemplateBinding Padding}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            AutomationProperties.AccessibilityView="Raw" />
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Padding="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          AutomationProperties.AccessibilityView="Raw" />
 
                         <ContentControl Content="{TemplateBinding Badge}" Visibility="{TemplateBinding BadgeVisibility}" Height="32" Padding="0,6,4,6" Margin="0,-6,8,-6" Grid.Column="1">
                             <ContentControl.ContentTransitions>
@@ -287,7 +360,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ImageView">
-                    <Image x:Name="Holder" Source="{TemplateBinding Source}" Stretch="Uniform"/>
+                    <Image x:Name="Holder" Source="{TemplateBinding Source}" Stretch="{TemplateBinding Stretch}"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -298,7 +371,7 @@
         <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
         <Setter Property="BorderThickness" Value="0,1,0,0"/>
-        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Padding" Value="0,0,0,2"/>
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="VerticalAlignment" Value="Stretch"/>
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
@@ -324,6 +397,13 @@
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonForegroundDisabled}"/>
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -397,11 +477,11 @@
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
                                         <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightChromeAltLowBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBackgroundPointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>-->
+                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightChromeAltLowBrush}" />
+                                             </ObjectAnimationUsingKeyFrames>
+                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="Background">
+                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBackgroundPointerOver}" />
+                                             </ObjectAnimationUsingKeyFrames>-->
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContentPresenter" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlPlaceholderForegroundPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -422,8 +502,8 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlPlaceholderForegroundPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBorderBrushFocused}" />
-                                        </ObjectAnimationUsingKeyFrames>-->
+                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBorderBrushFocused}" />
+                                             </ObjectAnimationUsingKeyFrames>-->
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -1003,8 +1083,8 @@
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
                                         <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>-->
+                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                             </ObjectAnimationUsingKeyFrames>-->
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="UncheckedContentPresenter">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="White"/>
                                         </ObjectAnimationUsingKeyFrames>
@@ -1052,8 +1132,8 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                                         </ObjectAnimationUsingKeyFrames>
                                         <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>-->
+                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                             </ObjectAnimationUsingKeyFrames>-->
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="CheckedContentPresenter">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="White"/>
                                         </ObjectAnimationUsingKeyFrames>

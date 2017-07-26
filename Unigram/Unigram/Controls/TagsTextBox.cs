@@ -19,6 +19,8 @@ namespace Unigram.Controls
         private TagsTextBoxFooter InputPlaceholder;
         private TagsWrapPanel ItemsWrapPanel;
 
+        public event TextChangedEventHandler TextChanged;
+
         public TagsTextBox()
         {
             DefaultStyleKey = typeof(TagsTextBox);
@@ -77,6 +79,8 @@ namespace Unigram.Controls
         internal void Initialize(TagsTextBoxFooter inline)
         {
             InputPlaceholder = inline;
+            InputPlaceholder.TextChanged += OnTextChanged;
+
             ItemsWrapPanel = (TagsWrapPanel)ItemsPanelRoot;
 
             InputPlaceholder.KeyDown += OnKeyDown;
@@ -90,15 +94,24 @@ namespace Unigram.Controls
             bindCanShow.Path = new PropertyPath("CanShowPlaceholder");
             bindCanShow.Source = this;
 
-            var bindText = new Binding();
-            bindText.Path = new PropertyPath("Text");
-            bindText.Source = InputPlaceholder;
-            bindText.Mode = BindingMode.TwoWay;
+            //var bindText = new Binding();
+            //bindText.Path = new PropertyPath("Text");
+            //bindText.Source = InputPlaceholder;
+            //bindText.Mode = BindingMode.TwoWay;
 
             InputPlaceholder.SetBinding(TextBox.PlaceholderTextProperty, bindPlaceholder);
             InputPlaceholder.SetBinding(TagsTextBoxFooter.CanShowPlaceholderProperty, bindCanShow);
 
-            SetBinding(TextProperty, bindText);
+            //SetBinding(TextProperty, bindText);
+        }
+
+        private void OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            Text = InputPlaceholder.Text;
+            TextChanged?.Invoke(this, e);
+
+            //InputPlaceholder.GetBindingExpression(TextProperty)?.UpdateSource();
+            //GetBindingExpression(TextProperty)?.UpdateSource();
         }
 
         private void OnWrapLayoutUpdated(object sender, object e)

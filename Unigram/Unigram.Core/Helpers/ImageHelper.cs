@@ -52,7 +52,8 @@ namespace Unigram.Core.Helpers
                         transform = new BitmapTransform
                         {
                             ScaledWidth = width,
-                            ScaledHeight = height
+                            ScaledHeight = height,
+                            InterpolationMode = BitmapInterpolationMode.Linear
                         };
                     }
                     else
@@ -99,7 +100,8 @@ namespace Unigram.Core.Helpers
                         transform = new BitmapTransform
                         {
                             ScaledWidth = width,
-                            ScaledHeight = height
+                            ScaledHeight = height,
+                            InterpolationMode = BitmapInterpolationMode.Linear
                         };
                     }
                     else

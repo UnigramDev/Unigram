@@ -188,13 +188,13 @@ namespace Telegram.Api.Services
             _connectionService.Initialize(this);
             _connectionService.ConnectionLost += OnConnectionLost;
 
-            var sendStatusEvents = Observable.FromEventPattern<EventHandler<SendStatusEventArgs>, SendStatusEventArgs>(
+            var sendStatusEvents = Observable.FromEventPattern<EventHandler<bool>, bool>(
                 keh => { SendStatus += keh; },
                 keh => { SendStatus -= keh; });
 
             _statusSubscription = sendStatusEvents
                 .Throttle(TimeSpan.FromSeconds(Constants.UpdateStatusInterval))
-                .Subscribe(e => UpdateStatusAsync(e.EventArgs.Offline, result => { }));
+                .Subscribe(e => UpdateStatusAsync(e.EventArgs, result => { }));
 
             _cacheService = cacheService;
 
@@ -2347,9 +2347,8 @@ namespace Telegram.Api.Services
 
         private readonly IDisposable _statusSubscription;
 
-        public event EventHandler<SendStatusEventArgs> SendStatus;
-
-        public void RaiseSendStatus(SendStatusEventArgs e)
+        public event EventHandler<bool> SendStatus;
+        public void RaiseSendStatus(bool e)
         {
             SendStatus?.Invoke(this, e);
         }

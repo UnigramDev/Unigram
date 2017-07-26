@@ -1,0 +1,125 @@
+﻿<controls:ContentDialogBase
+    x:Class="Unigram.Controls.Views.ChannelAdminLogFilterView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls.Views"
+    xmlns:behaviors="using:Unigram.Behaviors"
+    xmlns:common="using:Unigram.Common"
+    xmlns:selectors="using:Unigram.Selectors"
+    xmlns:controls="using:Unigram.Controls"
+    xmlns:viewModels="using:Unigram.ViewModels.Channels"
+    xmlns:messages="using:Telegram.Api.TL.Messages"
+    xmlns:tl="using:Telegram.Api.TL"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    VerticalAlignment="Stretch"
+    Background="Transparent"
+    mc:Ignorable="d">
+
+    <controls:ContentDialogBase.Resources>
+        <CollectionViewSource x:Name="ViewSource" Source="{x:Bind ViewModel.GroupedItems}" ItemsPath="GroupedItems" IsSourceGrouped="True"/>
+    </controls:ContentDialogBase.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Border x:Name="BackgroundPanel"/>
+
+        <ListView
+            x:Name="List"
+            ItemsSource="{x:Bind ViewSource.View}"
+            SelectionMode="None"
+            Loaded="GridView_Loaded"
+            SizeChanged="List_SizeChanged">
+            <ListView.Header>
+                <Border x:Name="Header" Background="Transparent" Tapped="LightDismiss_Tapped"/>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:ChannelAdminLogFilterViewModel">
+                    <local:ChannelAdminLogFilterContentView DataContext="{x:Bind}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Footer>
+                <Border Height="12"/>
+            </ListView.Footer>
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate x:DataType="viewModels:ChannelAdminLogFilterViewModel">
+                            <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                                  Height="{ThemeResource AppBarThemeCompactHeight}" 
+                                  Loaded="GroupHeader_Loaded"
+                                  VerticalAlignment="Bottom">
+                                <Border x:Name="LineAccent" BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
+                                <Border x:Name="LineTop" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
+                                <TextBlock Text="Filter" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Margin="12,0" Grid.Column="1"/>
+                            </Grid>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                    <GroupStyle.HeaderContainerStyle>
+                        <Style TargetType="ListViewHeaderItem">
+                            <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
+                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                            <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                            <Setter Property="Margin" Value="0,0,0,0"/>
+                            <Setter Property="Padding" Value="0,0,0,0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment" Value="Top" />
+                            <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="UseSystemFocusVisuals" Value="True" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewHeaderItem">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}">
+                                            <ContentPresenter x:Name="ContentPresenter"
+                                                              Margin="{TemplateBinding Padding}"
+                                                              Content="{TemplateBinding Content}"
+                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.HeaderContainerStyle>
+                </GroupStyle>
+            </ListView.GroupStyle>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Margin" Value="0"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection/>
+            </ListView.ItemContainerTransitions>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
+
+        <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <!--<ColumnDefinition Width="3*"/>
+                     <ColumnDefinition Width="2*"/>-->
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Border x:Name="LineBottom" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+
+            <Button Content="Save" HorizontalAlignment="Stretch" Margin="12,8,4,8"/>
+            <Button Click="Close_Click" Content="Close" HorizontalAlignment="Stretch" Margin="4,8,12,8" Padding="24,4,24,4" Grid.Column="1"/>
+        </Grid>
+    </Grid>
+</controls:ContentDialogBase>

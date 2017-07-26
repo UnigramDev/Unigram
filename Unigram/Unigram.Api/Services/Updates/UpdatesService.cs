@@ -19,6 +19,7 @@ using Telegram.Api.Extensions;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Updates;
+using Telegram.Api.Services.Cache.EventArgs;
 
 namespace Telegram.Api.Services.Updates
 {
@@ -696,6 +697,7 @@ namespace Telegram.Api.Services.Updates
                 }
             }
 
+            ProcessNewMessageUpdate(message);
             MTProtoService.ProcessSelfMessage(message);
 
             _cacheService.SyncMessage(message,
@@ -759,6 +761,8 @@ namespace Telegram.Api.Services.Updates
                     }
                 }
             }
+
+            ProcessNewMessageUpdate(message);
 
             _cacheService.SyncMessage(message,
                 cachedMessage =>
@@ -1024,7 +1028,8 @@ namespace Telegram.Api.Services.Updates
                                 var inviter = result2.Participant as ITLChannelInviter;
                                 var inviterId = inviter != null ? inviter.InviterId.ToString() : "unknown";
                                 var date = inviter != null ? inviter.Date.ToString() : "unknown";
-                                Execute.ShowDebugMessage(string.Format("updateChannel [channel_id={0} creator={1} kicked={2} left={3} editor={4} moderator={5} broadcast={6} public={7} verified={8} inviter=[id={9} date={10}]]", channel.Id, channel.IsCreator, channel.IsKicked, channel.IsLeft, channel.IsEditor, channel.IsModerator, channel.IsBroadcast, "channel.IsPublic", channel.IsVerified, inviterId, date));
+                                //TODO: layer 68
+                                //Execute.ShowDebugMessage(string.Format("updateChannel [channel_id={0} creator={1} kicked={2} left={3} editor={4} moderator={5} broadcast={6} public={7} verified={8} inviter=[id={9} date={10}]]", channel.Id, channel.IsCreator, channel.IsKicked, channel.IsLeft, channel.IsEditor, channel.IsModerator, channel.IsBroadcast, "channel.IsPublic", channel.IsVerified, inviterId, date));
 
                                 Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updateChannel));
                             },
@@ -1343,8 +1348,30 @@ namespace Telegram.Api.Services.Updates
                         //    message.Media.NotListened = false;
                         //    message.Media.RaisePropertyChanged(() => message.Media.NotListened);
                         //}
+
+                        // Self destruct if needed
+                        if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
+                        {
+                            photoMedia.Photo = null;
+                            photoMedia.Caption = null;
+                            photoMedia.HasPhoto = false;
+                            photoMedia.HasCaption = false;
+
+                            Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                        }
+                        else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
+                        {
+                            documentMedia.Document = null;
+                            documentMedia.Caption = null;
+                            documentMedia.HasDocument = false;
+                            documentMedia.HasCaption = false;
+
+                            Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                        }
                     }
                 });
+
+                //Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updatedReadMessagesContents));
 
                 return true;
             }
@@ -1617,51 +1644,52 @@ namespace Telegram.Api.Services.Updates
                 return true;
             }
 
-            var updateReadMessages = update as TLUpdateReadMessagesContents;
-            if (updateReadMessages != null)
-            {
-                var dialogs = new Dictionary<int, TLDialog>();
-                var messages = new List<TLMessageCommonBase>(updateReadMessages.Messages.Count);
-                foreach (var readMessageId in updateReadMessages.Messages)
-                {
-                    var message = _cacheService.GetMessage(readMessageId) as TLMessageCommonBase;
-                    if (message != null)
-                    {
-                        messages.Add(message);
+            // TODO: 24/07/2017 removed?
+            //var updateReadMessages = update as TLUpdateReadMessagesContents;
+            //if (updateReadMessages != null)
+            //{
+            //    var dialogs = new Dictionary<int, TLDialog>();
+            //    var messages = new List<TLMessageCommonBase>(updateReadMessages.Messages.Count);
+            //    foreach (var readMessageId in updateReadMessages.Messages)
+            //    {
+            //        var message = _cacheService.GetMessage(readMessageId) as TLMessageCommonBase;
+            //        if (message != null)
+            //        {
+            //            messages.Add(message);
 
-                        var dialog = _cacheService.GetDialog(message);
-                        if (dialog != null && dialog.UnreadCount > 0)
-                        {
-                            dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1);
-                            var topMessage = dialog.TopMessageItem;
-                            if (topMessage != null && topMessage.Id == readMessageId)
-                            {
-                                dialogs[dialog.ReadInboxMaxId] = dialog;
-                            }
-                        }
-                    }
-                }
+            //            var dialog = _cacheService.GetDialog(message);
+            //            if (dialog != null && dialog.UnreadCount > 0)
+            //            {
+            //                dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1);
+            //                var topMessage = dialog.TopMessageItem;
+            //                if (topMessage != null && topMessage.Id == readMessageId)
+            //                {
+            //                    dialogs[dialog.ReadInboxMaxId] = dialog;
+            //                }
+            //            }
+            //        }
+            //    }
 
-                Execute.BeginOnUIThread(() =>
-                {
-                    foreach (var message in messages)
-                    {
-                        message.SetUnread(false);
-                    }
+            //    Execute.BeginOnUIThread(() =>
+            //    {
+            //        foreach (var message in messages)
+            //        {
+            //            message.SetUnread(false);
+            //        }
 
-                    foreach (var dialogBase in dialogs.Values)
-                    {
-                        var dialog = dialogBase as TLDialog;
-                        if (dialog == null) continue;
+            //        foreach (var dialogBase in dialogs.Values)
+            //        {
+            //            var dialog = dialogBase as TLDialog;
+            //            if (dialog == null) continue;
 
-                        dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
-                        dialog.RaisePropertyChanged(() => dialog.Self);
-                        dialog.RaisePropertyChanged(() => dialog.UnreadCount);
-                    }
-                });
+            //            dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
+            //            dialog.RaisePropertyChanged(() => dialog.Self);
+            //            dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+            //        }
+            //    });
 
-                return true;
-            }
+            //    return true;
+            //}
 
             var deleteMessages = update as TLUpdateDeleteMessages;
             if (deleteMessages != null)
@@ -2194,6 +2222,17 @@ namespace Telegram.Api.Services.Updates
             if (message != null && message.IsOut)
             {
 
+            }
+            else if (message != null && !message.IsOut && message.FromId.HasValue)
+            {
+                if (message.ToId is TLPeerUser)
+                {
+                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new TLUpdateUserTyping { UserId = message.FromId.Value, Action = new TLSendMessageCancelAction() }));
+                }
+                else if (message.ToId is TLPeerChat || message.ToId is TLPeerChannel)
+                {
+                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new TLUpdateChatUserTyping { ChatId = message.ToId.Id, UserId = message.FromId.Value, Action = new TLSendMessageCancelAction() }));
+                }
             }
 
             var serviceMessage = messageBase as TLMessageService;

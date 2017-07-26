@@ -363,9 +363,9 @@ namespace Telegram.Api.Services.FileManager
             req.FileToken = redirect.FileToken;
             req.RequestToken = requestToken;
 
-            _mtProtoService.SendRequestAsync<bool>("upload.reuploadCdnFile", req, location.DCId, false, callback =>
+            _mtProtoService.SendRequestAsync<TLVector<TLCdnFileHash>>("upload.reuploadCdnFile", req, location.DCId, false, callback =>
             {
-                if (callback)
+                if (callback != null && callback.Count > 0)
                 {
                     result = GetCdnFile(redirect, location, offset, limit, out outError, out outIsCanceled);
                     while (result == null)

@@ -33,6 +33,7 @@ namespace Unigram.Selectors
         public DataTemplate ServiceMessageTemplate { get; set; }
         public DataTemplate ServiceMessagePhotoTemplate { get; set; }
         public DataTemplate ServiceMessageLocalTemplate { get; set; }
+        public DataTemplate ServiceMessageDateTemplate { get; set; }
 
         public MessageTemplateSelector()
         {
@@ -60,7 +61,7 @@ namespace Unigram.Selectors
             }
             else if (serviceMessage.Action is TLMessageActionDate)
             {
-                return ServiceMessageLocalTemplate;
+                return ServiceMessageDateTemplate;
             }
             else if (serviceMessage.Action is TLMessageActionUnreadMessages)
             {
@@ -81,6 +82,15 @@ namespace Unigram.Selectors
             if (message == null)
             {
                 return EmptyMessageTemplate;
+            }
+
+            if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
+            {
+                return ServiceMessageTemplate;
+            }
+            else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds && (documentMedia.Document is TLDocumentEmpty || !documentMedia.HasDocument))
+            {
+                return ServiceMessageTemplate;
             }
 
             if (message.IsSticker())

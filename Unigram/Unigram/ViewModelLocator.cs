@@ -119,6 +119,11 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<DialogViewModel>();
             container.ContainerBuilder.RegisterType<DialogStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<UserDetailsViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelManageViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelAdminLogViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelAdminLogFilterViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelAdminRightsViewModel>();
+            container.ContainerBuilder.RegisterType<ChannelBannedRightsViewModel>();
             container.ContainerBuilder.RegisterType<UserCommonChatsViewModel>();
             container.ContainerBuilder.RegisterType<ChatDetailsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChatInviteViewModel>();// .SingleInstance();
@@ -127,6 +132,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<ChannelEditViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelEditTypeViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelAdminsViewModel>();// .SingleInstance();
+            container.ContainerBuilder.RegisterType<ChannelBannedViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelKickedViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChannelParticipantsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSharedMediaViewModel>(); // .SingleInstance();
@@ -177,23 +183,28 @@ namespace Unigram
             Task.Run(() => LoadStateAndUpdate());
         }
 
-        private void InitializeLayer()
+        private void DeleteIfExists(string path)
         {
-            void deleteIfExists(string path)
+            try
             {
                 if (File.Exists(FileUtils.GetFileName(path)))
                 {
                     File.Delete(FileUtils.GetFileName(path));
                 }
             }
+            catch { }
+        }
 
-            if (SettingsHelper.SupportedLayer < 66)
+        private void InitializeLayer()
+        {
+            if (SettingsHelper.SupportedLayer < 69 || !SettingsHelper.IsAuthorized)
             {
-                deleteIfExists("database.sqlite");
-                SettingsHelper.SupportedLayer = 66;
+                DeleteIfExists("database.sqlite");
                 ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
                 ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
             }
+
+            SettingsHelper.SupportedLayer = Telegram.Api.Constants.SupportedLayer;
 
             //if (SettingsHelper.SupportedLayer != Constants.SupportedLayer ||
             //    SettingsHelper.DatabaseVersion != Constants.DatabaseVersion)
@@ -201,22 +212,22 @@ namespace Unigram
                 //SettingsHelper.SupportedLayer = Constants.SupportedLayer;
                 //SettingsHelper.DatabaseVersion = Constants.DatabaseVersion;
 
-                deleteIfExists("action_queue.dat");
-                deleteIfExists("action_queue.dat.temp");
-                deleteIfExists("chats.dat");
-                deleteIfExists("chats.dat.temp");
-                deleteIfExists("dialogs.dat");
-                deleteIfExists("dialogs.dat.temp");
-                deleteIfExists("state.dat");
-                deleteIfExists("state.dat.temp");
-                deleteIfExists("users.dat");
-                deleteIfExists("users.dat.temp");
+                DeleteIfExists("action_queue.dat");
+                DeleteIfExists("action_queue.dat.temp");
+                DeleteIfExists("chats.dat");
+                DeleteIfExists("chats.dat.temp");
+                DeleteIfExists("dialogs.dat");
+                DeleteIfExists("dialogs.dat.temp");
+                DeleteIfExists("state.dat");
+                DeleteIfExists("state.dat.temp");
+                DeleteIfExists("users.dat");
+                DeleteIfExists("users.dat.temp");
 
-                deleteIfExists("temp_chats.dat");
-                deleteIfExists("temp_dialogs.dat");
-                deleteIfExists("temp_difference.dat");
-                deleteIfExists("temp_state.dat");
-                deleteIfExists("temp_users.dat");
+                DeleteIfExists("temp_chats.dat");
+                DeleteIfExists("temp_dialogs.dat");
+                DeleteIfExists("temp_difference.dat");
+                DeleteIfExists("temp_state.dat");
+                DeleteIfExists("temp_users.dat");
             }
         }
 
@@ -301,8 +312,17 @@ namespace Unigram
 
         private void OnAuthorizationRequired(object sender, AuthorizationRequiredEventArgs e)
         {
+            DeleteIfExists("database.sqlite");
+
             SettingsHelper.IsAuthorized = false;
-            Debug.WriteLine("!!!UNAUTHORIZED!!!");
+            SettingsHelper.UserId = 0;
+            SettingsHelper.ChannelUri = null;
+            MTProtoService.Current.CurrentUserId = 0;
+
+            ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
+            ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
+
+            Debug.WriteLine("!!! UNAUTHORIZED !!!");
 
             Execute.BeginOnUIThread(() =>
             {
@@ -310,6 +330,12 @@ namespace Unigram
                 if (type.Name.StartsWith("SignIn") || type.Name.StartsWith("SignUp")) { }
                 else
                 {
+                    try
+                    {
+                        UnigramContainer.Current.ResolveType<MainViewModel>().Refresh = true;
+                    }
+                    catch { }
+
                     App.Current.NavigationService.Navigate(typeof(SignInWelcomePage));
                     App.Current.NavigationService.Frame.BackStack.Clear();
                 }

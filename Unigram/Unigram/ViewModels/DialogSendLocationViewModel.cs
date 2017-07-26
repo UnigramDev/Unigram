@@ -25,22 +25,28 @@ namespace Unigram.ViewModels
         {
             _locationService = foursquareService;
 
-            Items = new ObservableCollection<TLMessageMediaVenue>();
+            Items = new ObservableCollection<LocationVenue>();
+            OnNavigatedToAsync(null, NavigationMode.New, null);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var location = await _locationService.GetPositionAsync();
+            if (location == null)
+            {
+                Location = null;
+                return;
+            }
 
             Location = location;
 
-            var venues = await _locationService.GetVenuesAsync(location.Latitude, location.Longitude);
+            var venues = await _locationService.GetVenuesAsync(location.Point.Position.Latitude, location.Point.Position.Longitude);
 
             Items.Clear();
             Items.AddRange(venues);
         }
 
-        public ObservableCollection<TLMessageMediaVenue> Items { get; private set; }
+        public ObservableCollection<LocationVenue> Items { get; private set; }
 
         private Geocoordinate _location;
         public Geocoordinate Location

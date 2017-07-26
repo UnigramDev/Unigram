@@ -99,11 +99,11 @@
         <Border Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
                 Height="{ThemeResource AppBarThemeCompactHeight}"/>
 
-        <Border Background="White" Grid.Row="1">
+        <Border Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Grid.Row="1">
             <!-- Black panel needed for the SwapChainPanel -->
-            <Border Width="200" Height="200" Background="Black">
+            <Border Width="200" Height="200" Background="Transparent">
                 <!-- Logo placeholder -->
-                <Grid Background="White">
+                <Grid Background="Transparent">
                     <!--<Ellipse Height="148"
                              Width="148"
                              Fill="{ThemeResource SystemControlBackgroundAccentBrush}"

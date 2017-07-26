@@ -30,21 +30,9 @@ namespace Unigram.Views.Channels
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is TLChannelParticipantBase participant && participant.User != null)
+            if (e.ClickedItem is TLChannelParticipantAdmin participant && participant.User != null)
             {
-                // TODO: Layer 68
-                //if (participant is TLChannelParticipantAdmin)
-                //{
-                //    ViewModel.NavigationService.Navigate(typeof(ChannelAdminRightsPage), TLTuple.Create(ViewModel.Item.ToPeer(), participant.User.ToPeer()));
-                //}
-                //else if (participant is TLChannelParticipantBanned)
-                //{
-                //    ViewModel.NavigationService.Navigate(typeof(ChannelBannedRightsPage), TLTuple.Create(ViewModel.Item.ToPeer(), participant.User.ToPeer()));
-                //}
-                //else
-                {
-                    ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), participant.User.ToPeer());
-                }
+                ViewModel.NavigationService.Navigate(typeof(ChannelAdminRightsPage), TLTuple.Create(ViewModel.Item.ToPeer(), participant));
             }
         }
     }

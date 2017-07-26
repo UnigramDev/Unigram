@@ -15,9 +15,9 @@ namespace Telegram.Api
         public const int FirstServerDCId = 2; // from 1, 2, 3, 4, 5
         public const int FirstServerPort = 443;
 
-        public const int DatabaseVersion = 5;
+        public const int DatabaseVersion = 6;
 
-        public const int SupportedLayer = 66;
+        public const int SupportedLayer = 70;
 
         public const int CallsMaxLayer = 65;
         public const int CallsMinLayer = 65;

@@ -5,7 +5,7 @@ namespace Telegram.Api.TL.Upload.Methods
 {
 	/// <summary>
 	/// RCP method upload.reuploadCdnFile.
-	/// Returns <see cref="Telegram.Api.TL.TLBool"/>
+	/// Returns <see cref="Telegram.Api.TL.TLVector<TLCdnFileHash>"/>
 	/// </summary>
 	public partial class TLUploadReuploadCdnFile : TLObject
 	{
@@ -28,7 +28,7 @@ namespace Telegram.Api.TL.Upload.Methods
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x2E7A2020);
+			to.Write(0x1AF91C09);
 			to.WriteByteArray(FileToken);
 			to.WriteByteArray(RequestToken);
 		}

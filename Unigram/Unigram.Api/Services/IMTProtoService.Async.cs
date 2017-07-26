@@ -23,6 +23,8 @@ namespace Telegram.Api.Services
 {
     public partial interface IMTProtoService
     {
+        Task<MTProtoResponse<TLChannelsAdminLogResults>> GetAdminLogAsync(TLInputChannelBase inputChannel, string query, TLChannelAdminLogEventsFilter filter, TLVector<TLInputUserBase> admins, long maxId, long minId, int limit);
+
         Task<MTProtoResponse<T>> SendRequestAsync<T>(string caption, TLObject obj);
 
         Task<MTProtoResponse<bool>> ClearSavedInfoAsync(bool info, bool credentials);
@@ -67,7 +69,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLAccountPasswordSettings>> GetPasswordSettingsAsync(byte[] currentPasswordHash);
         Task<MTProtoResponse<TLMessagesAffectedHistory>> DeleteUserHistoryAsync(TLChannel channel, TLInputUserBase userId);
         Task<MTProtoResponse<TLExportedMessageLink>> ExportMessageLinkAsync(TLInputChannelBase channel, int id);
-        Task<MTProtoResponse<TLUpdatesBase>> EditAdminAsync(TLChannel channel, TLInputUserBase userId, TLChannelParticipantRoleBase role);
+        Task<MTProtoResponse<TLUpdatesBase>> EditAdminAsync(TLChannel channel, TLInputUserBase userId, TLChannelAdminRights rights);
         Task<MTProtoResponse<TLPeerSettings>> GetPeerSettingsAsync(TLInputPeerBase peer);
         Task<MTProtoResponse<TLMessagesStickerSet>> GetStickerSetAsync(TLInputStickerSetBase stickerset);
         Task<MTProtoResponse<bool>> SaveGifAsync(TLInputDocumentBase id, bool unsave);
@@ -140,7 +142,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLAccountPasswordBase>> GetPasswordAsync();
         Task<MTProtoResponse<TLUpdatesBase>> UpdatePinnedMessageAsync(bool silent, TLInputChannelBase channel, int id);
         Task<MTProtoResponse<TLUpdatesBase>> EditPhotoAsync(TLChannel channel, TLInputChatPhotoBase photo);
-        Task<MTProtoResponse<TLUpdatesBase>> KickFromChannelAsync(TLChannel channel, TLInputUserBase userId, bool kicked);
+        Task<MTProtoResponse<TLUpdatesBase>> EditBannedAsync(TLChannel channel, TLInputUserBase userId, TLChannelBannedRights rights);
         Task<MTProtoResponse<TLMessage>> SendMessageAsync(TLMessage message, Action fastCallback);
         Task<MTProtoResponse<TLPong>> PingAsync(long pingId);
         Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit);

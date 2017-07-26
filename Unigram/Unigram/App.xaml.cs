@@ -46,6 +46,7 @@ using Telegram.Api.Aggregator;
 using Unigram.Controls;
 using Unigram.Views.Users;
 using System.Linq;
+using Telegram.Logs;
 
 namespace Unigram
 {
@@ -58,6 +59,8 @@ namespace Unigram
         public static AppServiceConnection Connection { get; private set; }
 
         public static AppInMemoryState InMemoryState { get; } = new AppInMemoryState();
+
+        private readonly UISettings _uiSettings = new UISettings();
 
         public static event TypedEventHandler<CoreDispatcher, AcceleratorKeyEventArgs> AcceleratorKeyActivated;
 
@@ -81,6 +84,8 @@ namespace Unigram
         public App()
         {
             InitializeComponent();
+
+            _uiSettings.ColorValuesChanged += ColorValuesChanged;
 
             m_mediaExtensionManager = new MediaExtensionManager();
             m_mediaExtensionManager.RegisterByteStreamHandler("Unigram.Native.OpusByteStreamHandler", ".ogg", "audio/ogg");
@@ -132,25 +137,27 @@ namespace Unigram
             IsVisible = e.Visible;
             //HandleActivated(e.Visible);
 
-            if (e.Visible)
-            {
-                Locator.LoadStateAndUpdate();
-            }
-            else
-            {
-                var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-                if (cacheService != null)
-                {
-                    cacheService.TryCommit();
-                }
+            //if (e.Visible)
+            //{
+            //    Log.Write("Window_VisibilityChanged");
 
-                var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-                if (updatesService != null)
-                {
-                    updatesService.SaveState();
-                    updatesService.CancelUpdating();
-                }
-            }
+            //    Task.Run(() => Locator.LoadStateAndUpdate());
+            //}
+            //else
+            //{
+            //    var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
+            //    if (cacheService != null)
+            //    {
+            //        cacheService.TryCommit();
+            //    }
+
+            //    var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
+            //    if (updatesService != null)
+            //    {
+            //        updatesService.SaveState();
+            //        updatesService.CancelUpdating();
+            //    }
+            //}
         }
 
         private void HandleActivated(bool active)
@@ -160,22 +167,13 @@ namespace Unigram
 
             if (active)
             {
-                //Locator.LoadStateAndUpdate();
-
                 var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-                protoService.UpdateStatusAsync(false, null);
+                protoService.RaiseSendStatus(false);
             }
             else
             {
-                //var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
-                //cacheService.TryCommit();
-
-                //var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
-                //updatesService.SaveState();
-                //updatesService.CancelUpdating();
-
                 var protoService = UnigramContainer.Current.ResolveType<IMTProtoService>();
-                protoService.UpdateStatusAsync(true, null);
+                protoService.RaiseSendStatus(true);
             }
         }
 
@@ -224,6 +222,24 @@ namespace Unigram
         {
             Execute.Initialize();
             Locator.Configure();
+
+            if (Window.Current != null)
+            {
+                Window.Current.Activated -= Window_Activated;
+                Window.Current.Activated += Window_Activated;
+                Window.Current.VisibilityChanged -= Window_VisibilityChanged;
+                Window.Current.VisibilityChanged += Window_VisibilityChanged;
+                Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
+                Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
+
+                UpdateBars();
+                ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+
+                Theme.Current.Update();
+                App.RaiseThemeChanged();
+            }
+
             return base.OnInitializeAsync(args);
         }
 
@@ -320,8 +336,7 @@ namespace Unigram
             Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -= Dispatcher_AcceleratorKeyActivated;
             Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
-            ShowStatusBar();
-            ColourTitleBar();
+            UpdateBars();
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
@@ -383,6 +398,8 @@ namespace Unigram
 
         public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
+            Log.Write("OnResuming");
+
             var updatesService = UnigramContainer.Current.ResolveType<IUpdatesService>();
             updatesService.LoadStateAndUpdate(() => { });
 
@@ -395,6 +412,8 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
+            Log.Write("OnSuspendingAsync");
+
             var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
             if (cacheService != null)
             {
@@ -411,78 +430,73 @@ namespace Unigram
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }
 
-        // Methods
-        private void ShowStatusBar()
+        private void ColorValuesChanged(UISettings sender, object args)
         {
-            // Show StatusBar on Win10 Mobile, in theme of the pass
-            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
-            {
-                var statusBar = StatusBar.GetForCurrentView();
-
-                var bgcolor = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
-
-                // Background
-                statusBar.BackgroundColor = bgcolor.Color;
-                statusBar.BackgroundOpacity = 1;
-
-                // Branding colour
-                //statusBar.BackgroundColor = Color.FromArgb(255, 54, 173, 225);
-                //statusBar.ForegroundColor = Colors.White;
-                //statusBar.BackgroundOpacity = 1;
-            }
+            Execute.BeginOnUIThread(() => UpdateBars());
         }
 
-        private void ColourTitleBar()
+        /// <summary>
+        /// Update the Title and Status Bars colors.
+        /// </summary>
+        private void UpdateBars()
         {
+            Color Background;
+            Color Foreground;
+            Color ButtonHover;
+            Color ButtonPressed;
+
+            var SelectedBackground = _uiSettings.GetColorValue(UIColorType.Background);
+
+            // Apply buttons feedback based on Light or Dark theme
+            if (SelectedBackground == Colors.Black)
+            {
+                Background = Color.FromArgb(255, 31, 31, 31);
+                Foreground = Colors.White;
+                ButtonHover = Color.FromArgb(255, 53, 53, 53);
+                ButtonPressed = Color.FromArgb(255, 76, 76, 76);
+            }
+            else
+            {
+                Background = Color.FromArgb(255, 230, 230, 230);
+                Foreground = Colors.Black;
+                ButtonHover = Color.FromArgb(255, 207, 207, 207);
+                ButtonPressed = Color.FromArgb(255, 184, 184, 184);
+            }
+
+            // Desktop Title Bar
             try
             {
-                //Window.Current.Activated -= Window_Activated;
-                //Window.Current.Activated += Window_Activated;
-
-                // Changes to the titlebar (colour, and such)
+                var titleBar = ApplicationView.GetForCurrentView().TitleBar;
                 CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
 
-                var titlebar = ApplicationView.GetForCurrentView().TitleBar;
-                var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
-                var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
+                // Background
+                titleBar.BackgroundColor = Background;
+                titleBar.InactiveBackgroundColor = Background;
 
-                titlebar.BackgroundColor = backgroundBrush.Color;
-                titlebar.ForegroundColor = foregroundBrush.Color;
-                titlebar.ButtonBackgroundColor = backgroundBrush.Color;
-                titlebar.ButtonForegroundColor = foregroundBrush.Color;
+                // Foreground
+                titleBar.ForegroundColor = Foreground;
+                titleBar.ButtonForegroundColor = Foreground;
 
-                //// Accent Color
-                //var accentBrush = Application.Current.Resources["SystemControlHighlightAccentBrush"] as SolidColorBrush;
-                //var titleBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
-                //var subtitleBrush = Application.Current.Resources["TelegramBackgroundSubtitleBarBrush"] as SolidColorBrush;
+                // Buttons
+                titleBar.ButtonBackgroundColor = Background;
+                titleBar.ButtonInactiveBackgroundColor = Background;
 
-                //// Foreground
-                //titlebar.ButtonForegroundColor = Colors.White;
-                //titlebar.ButtonHoverForegroundColor = Colors.White;
-                //titlebar.ButtonInactiveForegroundColor = Colors.LightGray;
-                //titlebar.ButtonPressedForegroundColor = Colors.White;
-                //titlebar.ForegroundColor = Colors.White;
-                //titlebar.InactiveForegroundColor = Colors.LightGray;
-
-                //// Background
-                //titlebar.BackgroundColor = titleBrush.Color;
-                //titlebar.ButtonBackgroundColor = titleBrush.Color;
-
-                //titlebar.InactiveBackgroundColor = subtitleBrush.Color;
-                //titlebar.ButtonInactiveBackgroundColor = subtitleBrush.Color;
-
-                //titlebar.ButtonHoverBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.06f);
-                //titlebar.ButtonPressedBackgroundColor = Helpers.ColorsHelper.ChangeShade(titleBrush.Color, -0.09f);
-
-                //// Branding colours
-                ////titlebar.BackgroundColor = Color.FromArgb(255, 54, 173, 225);
-                ////titlebar.ButtonBackgroundColor = Color.FromArgb(255, 54, 173, 225);
-                ////titlebar.ButtonHoverBackgroundColor = Color.FromArgb(255, 69, 179, 227);
-                ////titlebar.ButtonPressedBackgroundColor = Color.FromArgb(255, 84, 185, 229);
+                // Buttons feedback
+                titleBar.ButtonPressedBackgroundColor = ButtonPressed;
+                titleBar.ButtonHoverBackgroundColor = ButtonHover;
             }
-            catch (Exception ex)
+            catch
             {
                 Debug.WriteLine("Device does not have a Titlebar");
+            }
+
+            // Mobile Status Bar
+            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                var statusBar = StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = Background;
+                statusBar.ForegroundColor = Foreground;
+                statusBar.BackgroundOpacity = 1;
             }
         }
 

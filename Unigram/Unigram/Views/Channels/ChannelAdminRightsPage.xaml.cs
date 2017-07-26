@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.TL;
+using Unigram.Controls.Views;
+using Unigram.ViewModels.Channels;
+using Unigram.ViewModels.Users;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -22,9 +26,23 @@ namespace Unigram.Views.Channels
     /// </summary>
     public sealed partial class ChannelAdminRightsPage : Page
     {
+        public ChannelAdminRightsViewModel ViewModel => DataContext as ChannelAdminRightsViewModel;
+
         public ChannelAdminRightsPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+            DataContext = UnigramContainer.Current.ResolveType<ChannelAdminRightsViewModel>();
+        }
+
+        private async void Photo_Click(object sender, RoutedEventArgs e)
+        {
+            var user = ViewModel.Item.User as TLUser;
+            var userFull = ViewModel.Full as TLUserFull;
+            if (userFull != null && userFull.ProfilePhoto is TLPhoto && user != null)
+            {
+                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, userFull, user);
+                await GalleryView.Current.ShowAsync(viewModel, () => Picture);
+            }
         }
     }
 }

@@ -50,7 +50,7 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.InAppPreview, Mode=TwoWay}" Content="In-App Preview"/>
                 </StackPanel>
 
-                <StackPanel Padding="12,8,12,24">
+                <StackPanel Padding="12,8,12,72">
                     <HyperlinkButton Command="{x:Bind ViewModel.ResetCommand}" Content="Reset All Notifications" Foreground="Red"/>
                     <TextBlock Text="Undo all custom notification settings for all your contacts and groups." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>

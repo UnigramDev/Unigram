@@ -5,8 +5,18 @@ namespace Telegram.Api.TL
 {
 	public partial class TLInputMediaDocument : TLInputMediaBase, ITLMessageMediaCaption 
 	{
+		[Flags]
+		public enum Flag : Int32
+		{
+			TTLSeconds = (1 << 0),
+		}
+
+		public bool HasTTLSeconds { get { return Flags.HasFlag(Flag.TTLSeconds); } set { Flags = value ? (Flags | Flag.TTLSeconds) : (Flags & ~Flag.TTLSeconds); } }
+
+		public Flag Flags { get; set; }
 		public TLInputDocumentBase Id { get; set; }
 		public String Caption { get; set; }
+		public Int32? TTLSeconds { get; set; }
 
 		public TLInputMediaDocument() { }
 		public TLInputMediaDocument(TLBinaryReader from)
@@ -18,15 +28,26 @@ namespace Telegram.Api.TL
 
 		public override void Read(TLBinaryReader from)
 		{
+			Flags = (Flag)from.ReadInt32();
 			Id = TLFactory.Read<TLInputDocumentBase>(from);
 			Caption = from.ReadString();
+			if (HasTTLSeconds) TTLSeconds = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.Write(0x1A77F29C);
+			UpdateFlags();
+
+			to.Write(0x5ACB668E);
+			to.Write((Int32)Flags);
 			to.WriteObject(Id);
 			to.Write(Caption);
+			if (HasTTLSeconds) to.Write(TTLSeconds.Value);
+		}
+
+		private void UpdateFlags()
+		{
+			HasTTLSeconds = TTLSeconds != null;
 		}
 	}
 }

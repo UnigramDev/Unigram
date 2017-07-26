@@ -73,6 +73,7 @@ namespace Unigram.Views
 
             var show = false;
             var date = DateTime.Now;
+            var message0 = default(TLMessageCommonBase);
 
             if (index0 > -1 && index1 > -1 /*&& (index0 != _lastIndex0 || index1 != _lastIndex1)*/)
             {
@@ -82,7 +83,7 @@ namespace Unigram.Views
                     var item0 = lvDialogs.ItemFromContainer(container0);
                     if (item0 != null)
                     {
-                        var message0 = item0 as TLMessageCommonBase;
+                        message0 = item0 as TLMessageCommonBase;
                         var date0 = BindConvert.Current.DateTime(message0.Date);
 
                         var service0 = message0 as TLMessageService;
@@ -189,11 +190,12 @@ namespace Unigram.Views
             if (show)
             {
                 var paragraph = new Paragraph();
-                paragraph.Inlines.Add(new Run { Text = new DateTimeFormatter("day month").Format(date) });
+                paragraph.Inlines.Add(new Run { Text = DateTimeToFormatConverter.ConvertDayGrouping(date) });
 
-                DateHeader.Visibility = Visibility.Visible;
-                DateHeaderLabel.Blocks.Clear();
-                DateHeaderLabel.Blocks.Add(paragraph);
+                //DateHeader.DataContext = message0;
+                //DateHeader.Visibility = Visibility.Visible;
+                //DateHeaderLabel.Blocks.Clear();
+                //DateHeaderLabel.Blocks.Add(paragraph);
             }
             else
             {

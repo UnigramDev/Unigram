@@ -182,6 +182,11 @@ namespace Unigram.Controls.Messages
                     if (channel != null)
                     {
                         name = channel.DisplayName;
+
+                        if (message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                        {
+                            name += $" ({message.FwdFrom.PostAuthor})";
+                        }
                     }
 
                     var user = message.FwdFromUser;
@@ -323,28 +328,43 @@ namespace Unigram.Controls.Messages
             }
 
             var sumWidth = 0.0;
+            var fixedSize = false;
 
             object constraint = null;
             if (ViewModel?.Media is TLMessageMediaPhoto photoMedia)
             {
-                constraint = photoMedia.Photo;
+                if (photoMedia.HasTTLSeconds)
+                {
+                    fixedSize = true;
+                }
+                else
+                {
+                    constraint = photoMedia.Photo;
+                }
             }
             else if (ViewModel?.Media is TLMessageMediaDocument documentMedia)
             {
-                constraint = documentMedia.Document;
+                if (documentMedia.HasTTLSeconds)
+                {
+                    fixedSize = true;
+                }
+                else
+                {
+                    constraint = documentMedia.Document;
+                }
             }
             else if (ViewModel?.Media is TLMessageMediaInvoice invoiceMedia)
             {
                 constraint = invoiceMedia.Photo;
             }
-            else if (ViewModel?.Media is TLMessageMediaWebPage webPageMedia)
-            {
-                if (webPageMedia.WebPage is TLWebPage webPage && MediaTemplateSelector.IsWebPagePhotoTemplate(webPage))
-                {
-                    sumWidth = 8 + 10 + 10;
-                    constraint = webPage.Photo;
-                }
-            }
+            //else if (ViewModel?.Media is TLMessageMediaWebPage webPageMedia)
+            //{
+            //    if (webPageMedia.WebPage is TLWebPage webPage && MediaTemplateSelector.IsWebPagePhotoTemplate(webPage))
+            //    {
+            //        sumWidth = 8 + 10 + 10;
+            //        constraint = webPage.Photo;
+            //    }
+            //}
             else if (ViewModel?.Media is TLMessageMediaGeo || ViewModel?.Media is TLMessageMediaVenue)
             {
                 constraint = ViewModel?.Media;
@@ -372,6 +392,14 @@ namespace Unigram.Controls.Messages
             var photo = constraint as TLPhoto;
             if (photo != null)
             {
+                if (fixedSize)
+                {
+                    width = 240;
+                    height = 240;
+
+                    goto Calculate;
+                }
+
                 //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
                 var photoSize = photo.Sizes.OfType<TLPhotoSize>().OrderByDescending(x => x.W).FirstOrDefault();
                 if (photoSize != null)
@@ -385,6 +413,14 @@ namespace Unigram.Controls.Messages
 
             if (constraint is TLDocument document)
             {
+                if (fixedSize)
+                {
+                    width = 240;
+                    height = 240;
+
+                    goto Calculate;
+                }
+
                 constraint = document.Attributes;
             }
 
@@ -465,15 +501,15 @@ namespace Unigram.Controls.Messages
                     return true;
                 }
             }
-            else if (media.TypeId == TLType.MessageMediaWebPage && width)
-            {
-                var webPageMedia = media as TLMessageMediaWebPage;
-                var webPage = webPageMedia.WebPage as TLWebPage;
-                if (webPage != null && MediaTemplateSelector.IsWebPagePhotoTemplate(webPage))
-                {
-                    return true;
-                }
-            }
+            //else if (media.TypeId == TLType.MessageMediaWebPage && width)
+            //{
+            //    var webPageMedia = media as TLMessageMediaWebPage;
+            //    var webPage = webPageMedia.WebPage as TLWebPage;
+            //    if (webPage != null && MediaTemplateSelector.IsWebPagePhotoTemplate(webPage))
+            //    {
+            //        return true;
+            //    }
+            //}
 
             return false;
         }

@@ -285,8 +285,14 @@
   <data name="MESSAGE_PHOTO" xml:space="preserve">
     <value>te envió una foto</value>
   </data>
+  <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
+    <value>te envió una foto con autodestrucción</value>
+  </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
     <value>te envió un mensaje de vídeo</value>
+  </data>
+  <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
+    <value>¡hizo una captura de pantalla!</value>
   </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
     <value>te envió un {1}sticker</value>
@@ -296,6 +302,9 @@
   </data>
   <data name="MESSAGE_VIDEO" xml:space="preserve">
     <value>te envió un vídeo</value>
+  </data>
+  <data name="MESSAGE_VIDEO_SECRET" xml:space="preserve">
+    <value>te envió un vídeo con autodestrucción</value>
   </data>
   <data name="PHONE_CALL_MISSED" xml:space="preserve">
     <value>Llamada perdida</value>

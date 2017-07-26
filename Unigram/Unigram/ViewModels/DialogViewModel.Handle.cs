@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -14,6 +15,7 @@ using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Windows.System.Profile;
+using Windows.UI.Notifications;
 
 namespace Unigram.ViewModels
 {
@@ -25,7 +27,9 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateUserStatus>,
         IHandle<TLUpdateDraftMessage>,
         IHandle<TLUpdateContactLink>,
+        IHandle<TLUpdateChannel>,
         IHandle<MessagesRemovedEventArgs>,
+        IHandle<MessageExpiredEventArgs>,
         IHandle<DialogRemovedEventArgs>,
         IHandle<UpdateCompletedEventArgs>,
         IHandle<ChannelUpdateCompletedEventArgs>,
@@ -63,6 +67,8 @@ namespace Unigram.ViewModels
                     dialog.ReadInboxMaxId = dialog.TopMessage;
                     dialog.UnreadCount = dialog.UnreadCount - unread;
                     dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+
+                    RemoveNotifications();
                 }
             }
             else if (message.Equals("Window_Deactivated"))
@@ -420,6 +426,41 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void Handle(MessageExpiredEventArgs update)
+        {
+            var message = update.Message as TLMessage;
+            if (message == null)
+            {
+                return;
+            }
+
+            var flag = false;
+
+            var userBase = With as TLUserBase;
+            var chatBase = With as TLChatBase;
+            if (userBase != null && message.ToId is TLPeerUser && !message.IsOut && userBase.Id == message.FromId.Value)
+            {
+                flag = true;
+            }
+            else if (userBase != null && message.ToId is TLPeerUser && message.IsOut && userBase.Id == message.ToId.Id)
+            {
+                flag = true;
+            }
+            else if (chatBase != null && message.ToId is TLPeerChat && chatBase.Id == message.ToId.Id)
+            {
+                flag = true;
+            }
+
+            if (flag)
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    var index = Messages.IndexOf(message);
+                    Messages.RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, message, index, index));
+                });
+            }
+        }
+
         public void Handle(TLUpdateChannelPinnedMessage update)
         {
             var channel = With as TLChannel;
@@ -667,6 +708,8 @@ namespace Unigram.ViewModels
                     ProtoService.ReadHistoryAsync(Peer, messageCommon.Id, 0);
                 }
                 //});
+
+                RemoveNotifications();
             }
         }
 
@@ -701,6 +744,22 @@ namespace Unigram.ViewModels
 
                 CacheService.Commit();
             });
+        }
+
+        public void Handle(TLUpdateChannel update)
+        {
+            if (With is TLChannel channel && channel.Id == update.ChannelId)
+            {
+                RaisePropertyChanged(() => With);
+                RaisePropertyChanged(() => Full);
+                RaisePropertyChanged(() => WithChannel);
+                RaisePropertyChanged(() => FullChannel);
+
+                if (channel.HasBannedRights && channel.BannedRights.IsSendMessages)
+                {
+                    Execute.BeginOnUIThread(() => SetText(null));
+                }
+            }
         }
     }
 }

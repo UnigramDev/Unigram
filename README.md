@@ -1,7 +1,23 @@
-# Unigram
-The Telegram client for the Windows 10 platform, built by the community for the community.
+<p align="center">
+  <a href="http://unigram.me">
+    <img src="https://github.com/UnigramDev/Unigram/blob/develop/Unigram/Unigram/Assets/Logos/Placeholder/Placeholder-2.png?raw=true" width=80 height=80>
+  </a>
 
-**[Explore Unigram »](http://unigram.me)**
+  <h3 align="center">Unigram</h3>
+
+  <p align="center">
+    The Telegram client for the Windows 10 platform, built by the community for the community.
+    <br>
+    <br>
+    <a href="https://www.microsoft.com/store/apps/9n97zckpd60q">Download</a>
+    &middot;
+    <a href="http://unigram.me">Website</a>
+    &middot;
+    <a href="https://t.me/joinchat/AAAAAD851oqVwhp9oy9WbQ">Insiders Group</a>
+  </p>
+</p>
+
+<br>
 
 ## Build instructions
 1. First, check that you have the [necessary tools](#requirements) installed.
@@ -59,6 +75,9 @@ Have a bug or a feature request? Please first read the [issue guidelines](https:
 
 ## Contributing
 Please read through our [contributing guidelines](https://github.com/UnigramDev/Unigram/blob/develop/CONTRIBUTING.md). Included are directions for opening issues, bug and feature requests, and notes on pull requests.
+
+## Changelog
+See the [Releases section of our GitHub project](https://github.com/UnigramDev/Unigram/releases) for changelogs for each release version of Unigram. Release announcement posts on the official [Unigram News channel](https://t.me/unigram) contain summaries of the most noteworthy changes made in each release.
 
 ## Community
 Get updates on Unigram's development and chat with the project maintainers and community members.

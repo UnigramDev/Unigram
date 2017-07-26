@@ -13,10 +13,10 @@ namespace Unigram.Converters
         {
             if (string.IsNullOrEmpty((string)value))
             {
-                return parameter == null ? "None" : null;
+                return parameter == null || (parameter != null && parameter.Equals("username")) ? "None" : null;
             }
 
-            return $"@{value}";
+            return parameter != null ? $"@{value}" : value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

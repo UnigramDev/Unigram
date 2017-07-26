@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
 {
-    public class ChannelDetailsViewModel : ChannelParticipantsViewModelBase, IHandle<TLUpdateNotifySettings>
+    public class ChannelDetailsViewModel : ChannelParticipantsViewModelBase, IHandle<TLUpdateChannel>, IHandle<TLUpdateNotifySettings>
     {
         private readonly IUploadFileManager _uploadFileManager;
 
@@ -100,7 +100,23 @@ namespace Unigram.ViewModels.Channels
         {
             get
             {
-                return _item != null && (_item.IsCreator || _item.IsEditor || _item.IsModerator);
+                return _item != null && (_item.IsCreator || (_item.HasAdminRights && _item.AdminRights.IsChangeInfo));
+            }
+        }
+
+        public bool IsAdminLog
+        {
+            get
+            {
+                return _item != null && (_item.IsCreator || _item.HasAdminRights);
+            }
+        }
+
+        public bool IsInviteUsers
+        {
+            get
+            {
+                return _item != null && (_item.IsCreator || (_item.HasAdminRights && _item.AdminRights.IsInviteUsers));
             }
         }
 
@@ -150,9 +166,28 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public void Handle(TLUpdateNotifySettings message)
+        public void Handle(TLUpdateChannel update)
         {
-            var notifyPeer = message.Peer as TLNotifyPeer;
+            if (_item == null)
+            {
+                return;
+            }
+
+            if (_item.Id == update.ChannelId)
+            {
+                RaisePropertyChanged(() => Item);
+                RaisePropertyChanged(() => Full);
+                RaisePropertyChanged(() => AreNotificationsEnabled);
+
+                RaisePropertyChanged(() => IsInviteUsers);
+                RaisePropertyChanged(() => IsEditEnabled);
+                RaisePropertyChanged(() => IsAdminLog);
+            }
+        }
+
+        public void Handle(TLUpdateNotifySettings update)
+        {
+            var notifyPeer = update.Peer as TLNotifyPeer;
             if (notifyPeer != null)
             {
                 var peer = notifyPeer.Peer;
@@ -160,7 +195,7 @@ namespace Unigram.ViewModels.Channels
                 {
                     Execute.BeginOnUIThread(() =>
                     {
-                        Full.NotifySettings = message.NotifySettings;
+                        Full.NotifySettings = update.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);
                         RaisePropertyChanged(() => AreNotificationsEnabled);
 
@@ -179,37 +214,90 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand EditCommand => new RelayCommand(EditExecute);
         private void EditExecute()
         {
+            if (_item == null)
+            {
+                return;
+            }
+
             NavigationService.Navigate(typeof(ChannelEditPage), _item.ToPeer());
+            //NavigationService.Navigate(typeof(ChannelManagePage), _item.ToPeer());
         }
 
         public RelayCommand InviteCommand => new RelayCommand(InviteExecute);
         private void InviteExecute()
         {
+            if (_item == null)
+            {
+                return;
+            }
+
             NavigationService.Navigate(typeof(ChatInvitePage), _item.ToPeer());
         }
 
         public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
         private void MediaExecute()
         {
+            if (_item == null)
+            {
+                return;
+            }
+
             NavigationService.Navigate(typeof(DialogSharedMediaPage), _item.ToInputPeer());
         }
 
         public RelayCommand AdminsCommand => new RelayCommand(AdminsExecute);
         private void AdminsExecute()
         {
+            if (_item == null)
+            {
+                return;
+            }
+
             NavigationService.Navigate(typeof(ChannelAdminsPage), _item.ToPeer());
+        }
+
+        public RelayCommand BannedCommand => new RelayCommand(BannedExecute);
+        private void BannedExecute()
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(ChannelBannedPage), _item.ToPeer());
         }
 
         public RelayCommand KickedCommand => new RelayCommand(KickedExecute);
         private void KickedExecute()
         {
+            if (_item == null)
+            {
+                return;
+            }
+
             NavigationService.Navigate(typeof(ChannelKickedPage), _item.ToPeer());
         }
 
         public RelayCommand ParticipantsCommand => new RelayCommand(ParticipantsExecute);
         private void ParticipantsExecute()
         {
+            if (_item == null)
+            {
+                return;
+            }
+
             NavigationService.Navigate(typeof(ChannelParticipantsPage), _item.ToPeer());
+        }
+
+        public RelayCommand AdminLogCommand => new RelayCommand(AdminLogExecute);
+        private void AdminLogExecute()
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(ChannelAdminLogPage), _item.ToPeer());
         }
 
         public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
@@ -252,6 +340,50 @@ namespace Unigram.ViewModels.Channels
                 }
             }
         }
+
+        #region Context menu
+
+        public RelayCommand<TLChannelParticipantBase> ParticipantEditCommand => new RelayCommand<TLChannelParticipantBase>(ParticipantEditExecute);
+        private void ParticipantEditExecute(TLChannelParticipantBase participant)
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            if (participant is TLChannelParticipantAdmin)
+            {
+                NavigationService.Navigate(typeof(ChannelAdminRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+            }
+            else if (participant is TLChannelParticipantBanned)
+            {
+                NavigationService.Navigate(typeof(ChannelBannedRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+            }
+        }
+
+        public RelayCommand<TLChannelParticipantBase> ParticipantPromoteCommand => new RelayCommand<TLChannelParticipantBase>(ParticipantPromoteExecute);
+        private void ParticipantPromoteExecute(TLChannelParticipantBase participant)
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(ChannelAdminRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+        }
+
+        public RelayCommand<TLChannelParticipantBase> ParticipantRestrictCommand => new RelayCommand<TLChannelParticipantBase>(ParticipantRestrictExecute);
+        private void ParticipantRestrictExecute(TLChannelParticipantBase participant)
+        {
+            if (_item == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(ChannelBannedRightsPage), TLTuple.Create(_item.ToPeer(), participant));
+        }
+
+        #endregion
     }
 
     public class TLChannelParticipantBaseComparer : IComparer<TLChannelParticipantBase>

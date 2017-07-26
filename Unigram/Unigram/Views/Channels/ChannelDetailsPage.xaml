@@ -10,12 +10,33 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SuppressNavigationTransitionInfo/>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Page.Resources>
+        <MenuFlyout x:Key="ParticipantMenuFlyout" Opening="MenuFlyout_Opening">
+            <MenuFlyoutItem Loaded="ParticipantEdit_Loaded" Command="{x:Bind ViewModel.ParticipantEditCommand}" CommandParameter="{Binding}" Text="Edit permissions"/>
+            <MenuFlyoutItem Loaded="ParticipantPromote_Loaded" Command="{x:Bind ViewModel.ParticipantPromoteCommand}" CommandParameter="{Binding}" Text="Promote"/>
+            <MenuFlyoutItem Loaded="ParticipantRestrict_Loaded" Command="{x:Bind ViewModel.ParticipantRestrictCommand}" CommandParameter="{Binding}" Text="Restrict"/>
+        </MenuFlyout>
+    </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+        <!--<controls:ButtonPageHeader
+            Text="Info"
+            Glyph="&#xE115;"
+            Command="{x:Bind ViewModel.EditCommand}"
+            CommandVisibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"/>-->
         <controls:ButtonPageHeader
             Text="Info"
             Glyph="&#xE104;"
@@ -69,11 +90,11 @@
                                            BorderThickness="0,0,0,1"
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
-                        <controls:HyperButton Tag="About"
-                                              Visibility="{x:Bind ViewModel.Full.About, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                                              Style="{StaticResource SubtitleButtonStyle}">
-                            <TextBlock common:MessageHelper.Text="{x:Bind ViewModel.Full.About, Mode=OneWay}" Style="{StaticResource BodyTextBlockStyle}"/>
-                        </controls:HyperButton>
+                        <StackPanel Visibility="{x:Bind ViewModel.Full.About, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                            <TextBlock Text="About" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="12,11,0,0"/>
+                            <TextBlock common:MessageHelper.Text="{x:Bind ViewModel.Full.About, Mode=OneWay}" IsTextSelectionEnabled="True" Padding="12,0,12,12" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" Height="1" Margin="12,0,0,0"/>
+                        </StackPanel>
 
                         <controls:HyperButton Tag="Username"
                                               Content="{x:Bind ViewModel.Item.Username, Mode=OneWay, Converter={StaticResource UsernameConverter}}"
@@ -103,6 +124,7 @@
 
                         <controls:HyperButton Content="Add members"
                                               Command="{x:Bind ViewModel.InviteCommand}"
+                                              Visibility="{x:Bind ViewModel.IsInviteUsers, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               Style="{StaticResource HyperButtonStyle}"
                                               Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
                     </local:TableStackPanel>
@@ -112,20 +134,30 @@
                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                            Margin="0,24,0,18">
+                        <controls:HyperButton Content="Recent Actions"
+                                              Command="{x:Bind ViewModel.AdminLogCommand}"
+                                              Visibility="{x:Bind ViewModel.IsAdminLog, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                              Style="{StaticResource HyperButtonStyle}"
+                                              Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"/>
                         <controls:BadgeButton Content="Admins"
                                               Command="{x:Bind ViewModel.AdminsCommand}"
                                               Badge="{x:Bind ViewModel.Full.AdminsCount, Mode=OneWay}"
-                                              Visibility="{x:Bind ViewModel.Full.HasAdminsCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                              Visibility="{x:Bind ConvertBooleans(ViewModel.Full.AdminsCount, ViewModel.IsAdminLog, x:True), Mode=OneWay, FallbackValue=Collapsed}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
-                        <controls:BadgeButton Content="Blacklist"
+                        <controls:BadgeButton Content="Restricted Users"
+                                              Command="{x:Bind ViewModel.BannedCommand}"
+                                              Badge="{x:Bind ViewModel.Full.BannedCount, Mode=OneWay}"
+                                              Visibility="{x:Bind ConvertBooleans(ViewModel.Full.BannedCount, ViewModel.IsAdminLog, x:True), Mode=OneWay, FallbackValue=Collapsed}"
+                                              Style="{StaticResource BadgeButtonStyle}"/>
+                        <controls:BadgeButton Content="Banned Users"
                                               Command="{x:Bind ViewModel.KickedCommand}"
                                               Badge="{x:Bind ViewModel.Full.KickedCount, Mode=OneWay}"
-                                              Visibility="{x:Bind ViewModel.Full.HasKickedCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                              Visibility="{x:Bind ConvertBooleans(ViewModel.Full.KickedCount, ViewModel.IsAdminLog, x:True), Mode=OneWay, FallbackValue=Collapsed}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
                         <controls:BadgeButton Content="Members"
                                               Command="{x:Bind ViewModel.ParticipantsCommand}"
                                               Badge="{x:Bind ViewModel.Full.ParticipantsCount, Mode=OneWay}"
-                                              Visibility="{x:Bind ViewModel.Full.HasParticipantsCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                              Visibility="{x:Bind ConvertBooleans(ViewModel.Full.ParticipantsCount, ViewModel.IsAdminLog, ViewModel.Item.IsBroadcast), Mode=OneWay, FallbackValue=Collapsed}"
                                               Style="{StaticResource BadgeButtonStyle}"/>
                     </local:TableStackPanel>
 
@@ -133,7 +165,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:TLChannelParticipantBase">
-                    <Grid Margin="0,6">
+                    <Grid Padding="0,6" Background="Transparent" ContextFlyout="{StaticResource ParticipantMenuFlyout}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -160,7 +192,7 @@
                         <TextBlock Text="admin"
                                    Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                   Visibility="{x:Bind (Visibility)IsEditor}"
+                                   Visibility="{x:Bind (Visibility)IsAdmin}"
                                    Grid.Column="2"
                                    Grid.RowSpan="2"/>
                     </Grid>

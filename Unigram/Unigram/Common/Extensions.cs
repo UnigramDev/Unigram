@@ -48,8 +48,7 @@ namespace Unigram.Common
 
         public static bool IsLike(this string source, string query, StringComparison comp)
         {
-            source = Unidecoder.Unidecode(source);
-            return query.Split(' ').All(x =>
+            var result = query.Split(' ').All(x =>
             {
                 var index = source.IndexOf(x, comp);
                 if (index > -1)
@@ -59,11 +58,18 @@ namespace Unigram.Common
 
                 return false;
             });
-        }
 
-        public static string Substr(this string source, int startIndex, int endIndex)
-        {
-            return source.Substring(startIndex, endIndex - startIndex);
+            source = Unidecoder.Unidecode(source);
+            return result || query.Split(' ').All(x =>
+            {
+                var index = source.IndexOf(x, comp);
+                if (index > -1)
+                {
+                    return index == 0 || char.IsSeparator(source[index - 1]) || !char.IsLetterOrDigit(source[index - 1]);
+                }
+
+                return false;
+            });
         }
 
         public static string TrimEnd(this string input, string suffixToRemove)

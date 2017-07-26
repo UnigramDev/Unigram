@@ -49,7 +49,8 @@ namespace Unigram.Controls
 
         private void UpdateView(double width)
         {
-            Library.MaxWidth = width < 500 ? width - 16 : 360;
+            //Library.MaxWidth = width < 500 ? width - 16 - 2 : 360;
+            Library.MaxWidth = width < 500 ? width - 16 - 2 : 360;
             Library.MinWidth = Library.MaxWidth;
         }
 
