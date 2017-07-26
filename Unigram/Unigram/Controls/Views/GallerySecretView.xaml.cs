@@ -154,9 +154,10 @@ namespace Unigram.Controls.Views
 
         public void Handle(MessageExpiredEventArgs args)
         {
+            _destructed = true;
+
             if (!_playedOnce)
             {
-                _destructed = true;
                 return;
             }
 
@@ -211,6 +212,10 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(GallerySecretViewModel parameter, Func<FrameworkElement> closing)
         {
+            _destructed = false;
+            _playedOnce = false;
+            _lastPosition = TimeSpan.Zero;
+
             _closing = closing;
 
             ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
@@ -249,9 +254,6 @@ namespace Unigram.Controls.Views
         {
             Dispose();
 
-            //Flip.Opacity = 0;
-            Surface.Visibility = Visibility.Visible;
-
             Layer.Visibility = Visibility.Collapsed;
             TopBar.Visibility = Visibility.Collapsed;
             BotBar.Visibility = Visibility.Collapsed;
@@ -259,11 +261,7 @@ namespace Unigram.Controls.Views
             var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
             if (animation != null && _closing != null)
             {
-                var element = _closing();
-                if (element.ActualWidth > 0)
-                {
-                    animation.TryStart(element);
-                }
+                animation.TryStart(_destructed ? Window.Current.Content : _closing());
             }
 
             DataContext = null;
@@ -361,12 +359,16 @@ namespace Unigram.Controls.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+#if !DEBUG
             ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = false;
+#endif
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+#if !DEBUG
             ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = true;
+#endif
 
             DataContext = null;
             Bindings.StopTracking();

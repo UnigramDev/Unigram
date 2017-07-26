@@ -430,7 +430,8 @@ namespace Unigram.Views
                 //    flyout.LightDismissOverlayMode = LightDismissOverlayMode.Auto;
                 //}
 
-                flyout.ShowAt(ButtonAttach, new Point(8, -8));
+                //flyout.ShowAt(ButtonAttach, new Point(4, -4));
+                flyout.ShowAt(FlyoutArea);
             }
         }
 

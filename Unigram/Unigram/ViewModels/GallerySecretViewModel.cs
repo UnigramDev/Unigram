@@ -30,17 +30,6 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             SelectedItem = new GallerySecretMessageItem(message);
-
-            if (message.IsMediaUnread && !message.IsOut)
-            {
-                var vector = new TLVector<int> { message.Id };
-                aggregator.Publish(new TLUpdateReadMessagesContents { Messages = vector });
-                ProtoService.ReadMessageContentsAsync(vector, result =>
-                {
-                    message.IsMediaUnread = false;
-                    message.RaisePropertyChanged(() => message.IsMediaUnread);
-                });
-            }
         }
 
         protected GallerySecretMessageItem _firstItem;
