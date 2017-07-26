@@ -192,7 +192,9 @@ IAsyncAction^ AnimatedImageSourceRenderer::SetSourceAsync(Windows::Foundation::U
 			HRESULT result;
 			ComPtr<ReadFramesAsyncOperation> asyncOperation;
 			if (FAILED(result = MakeAndInitialize<ReadFramesAsyncOperation>(&asyncOperation, m_maximumSize, uri)))
+			{
 				return task_from_exception<void>(Exception::CreateException(result));
+			}
 
 			return Initialize(asyncOperation);
 		}
@@ -245,6 +247,7 @@ IAsyncAction^ AnimatedImageSourceRenderer::SetSourceAsync(Windows::Media::Core::
 
 task<void> AnimatedImageSourceRenderer::Reset()
 {
+	auto lock = m_criticalSection.Lock();
 
 	m_frameIndex = -1;
 	m_size = {};
@@ -273,19 +276,19 @@ task<void> AnimatedImageSourceRenderer::Reset()
 
 task<void> AnimatedImageSourceRenderer::Initialize(ComPtr<ReadFramesAsyncOperation>& asyncOperation)
 {
+	auto lock = m_criticalSection.Lock();
 	auto uiThreadContext = task_continuation_context::use_current();
 
 	m_cancellationTokenSource.cancel();
 	m_cancellationTokenSource = concurrency::cancellation_token_source();
 
-	auto cancellationToken = m_cancellationTokenSource.get_token();
-	return asyncOperation->Start(cancellationToken)
-		.then([=](task<ComPtr<FramesCacheStore>> task)
+	auto& cancellationToken = m_cancellationTokenSource.get_token();
+	return asyncOperation->Start(cancellationToken).then([asyncOperation, this](task<ComPtr<FramesCacheStore>> task)
 	{
-		auto lock = m_criticalSection.Lock();
-
 		if (task.is_done())
 		{
+			auto lock = m_criticalSection.Lock();
+
 			m_framesCacheStore = task.get();
 			m_size = asyncOperation->GetFrameSize();
 			m_frameIndex = 0;
