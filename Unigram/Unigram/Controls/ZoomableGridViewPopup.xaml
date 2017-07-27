@@ -13,7 +13,9 @@
     Background="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}"
     IsHitTestVisible="False"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Loaded="OnLoaded"
+    Unloaded="OnUnloaded">
 
     <ContentControl x:Name="PopupContent" HorizontalContentAlignment="Center" VerticalContentAlignment="Center">
         <ContentControl.ContentTemplate>
