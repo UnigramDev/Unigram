@@ -134,9 +134,16 @@ namespace Unigram.Views
         //    }
         //}
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             OnStateChanged(null, null);
+
+            if (ApplicationSettings.Current.Version < ApplicationSettings.CurrentVersion)
+            {
+                await TLMessageDialog.ShowAsync(ApplicationSettings.CurrentChangelog, "What's new", "OK");
+            }
+
+            ApplicationSettings.Current.Version = ApplicationSettings.CurrentVersion;
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)

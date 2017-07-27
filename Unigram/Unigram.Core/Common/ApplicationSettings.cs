@@ -133,6 +133,30 @@ namespace Unigram.Common
 
         #endregion
 
+        #region App version
+
+        public const int CurrentVersion = 055460;
+        public const string CurrentChangelog = "- Send self-destructing photos and videos to any one-on-one chats (use the clock icon in the media picker to set a timer).\r\n- Add a bio to your profile(in Settings) so that people in large group chats know who you are.\r\n- Download media from large public channels faster thanks to the new encrypted CDNs.";
+
+        private int? _appVersion;
+        public int Version
+        {
+            get
+            {
+                if (_appVersion == null)
+                    _appVersion = GetValueOrDefault("AppVersion", 0);
+
+                return _appVersion ?? 0;
+            }
+            set
+            {
+                _appVersion = value;
+                AddOrUpdateValue("AppVersion", value);
+            }
+        }
+
+        #endregion
+
         private bool? _isSendByEnterEnabled;
         public bool IsSendByEnterEnabled
         {

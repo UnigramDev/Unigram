@@ -20,11 +20,28 @@ using Windows.Security.Cryptography;
 
 namespace Telegram.Api.Services.FileManager
 {
+    public interface IDownloadManager
+    {
+        IAsyncOperationWithProgress<DownloadableItem, double> DownloadFileAsync(string fileName, int dcId, TLInputDocumentFileLocation file, int fileSize);
+
+        void DownloadFile(string fileName, int dcId, TLInputDocumentFileLocation file, TLObject owner, int fileSize);
+
+        void CancelDownloadFile(TLDocument document);
+    }
+
+    public interface IDownloadVideoFileManager : IDownloadManager
+    {
+    }
+
+    public interface IDownloadAudioFileManager : IDownloadManager
+    {
+    }
+
     public interface IDownloadDocumentFileManager : IDownloadManager
     {
     }
 
-    public class DownloadDocumentFileManager : IDownloadDocumentFileManager
+    public class DownloadDocumentFileManager : IDownloadDocumentFileManager, IDownloadVideoFileManager, IDownloadAudioFileManager
     {
         private readonly object _randomRoot = new object();
 
@@ -39,13 +56,14 @@ namespace Telegram.Api.Services.FileManager
         private readonly ITelegramEventAggregator _eventAggregator;
         private readonly IMTProtoService _protoService;
         private readonly IStatsService _statsService;
-        private readonly DataType _dataType = DataType.Files;
+        private readonly DataType _dataType;
 
-        public DownloadDocumentFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService, IStatsService statsService)
+        public DownloadDocumentFileManager(ITelegramEventAggregator eventAggregator, IMTProtoService mtProtoService, IStatsService statsService, DataType dataType)
         {
             _eventAggregator = eventAggregator;
             _protoService = mtProtoService;
             _statsService = statsService;
+            _dataType = dataType;
 
             var timer = Stopwatch.StartNew();
             for (int i = 0; i < Constants.BigFileDownloadersCount; i++)
@@ -302,20 +320,7 @@ namespace Telegram.Api.Services.FileManager
             {
                 if (callback is TLUploadCdnFile file)
                 {
-                    var iv = redirect.EncryptionIV;
-                    var counter = offset / 16;
-                    iv[15] = (byte)(counter & 0xFF);
-                    iv[14] = (byte)((counter >> 8) & 0xFF);
-                    iv[13] = (byte)((counter >> 16) & 0xFF);
-                    iv[12] = (byte)((counter >> 24) & 0xFF);
-
-                    var key = CryptographicBuffer.CreateFromByteArray(redirect.EncryptionKey);
-
-                    var ecount_buf = new byte[0];
-                    var num = 0u;
-                    var bytes = Utils.AES_ctr128_encrypt(file.Bytes, key, ref iv, ref ecount_buf, ref num);
-
-                    result = new TLUploadFile { Bytes = bytes };
+                    result = new TLUploadFile { Bytes = file.Bytes };
                     manualResetEvent.Set();
 
                     _statsService.IncrementReceivedBytesCount(_protoService.NetworkType, _dataType, file.Bytes.Length + 4);
@@ -596,7 +601,8 @@ namespace Telegram.Api.Services.FileManager
         {
             //var chunkSize = Constants.DownloadChunkSize;
 
-            var chunkSize = size > 1024 * 1024 ? 1024 * 128 : 1024 * 32;
+            //var chunkSize = size > 1024 * 1024 ? 1024 * 128 : 1024 * 32;
+            var chunkSize = 1024 * 128;
             var parts = new List<DownloadablePart>();
             var partsCount = size / chunkSize + (size % chunkSize > 0 ? 1 : 0);
 

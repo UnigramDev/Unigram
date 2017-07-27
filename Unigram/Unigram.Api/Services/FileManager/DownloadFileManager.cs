@@ -188,7 +188,27 @@ namespace Telegram.Api.Services.FileManager
                     byte[] bytes = { };
                     foreach (var p in part.ParentItem.Parts)
                     {
-                        bytes = TLUtils.Combine(bytes, p.File.Bytes);
+                        var partBytes = p.File.Bytes;
+
+                        var redirect = part.ParentItem.CdnRedirect;
+                        if (redirect != null)
+                        {
+                            var iv = redirect.EncryptionIV;
+                            var counter = p.Offset / 16;
+                            iv[15] = (byte)(counter & 0xFF);
+                            iv[14] = (byte)((counter >> 8) & 0xFF);
+                            iv[13] = (byte)((counter >> 16) & 0xFF);
+                            iv[12] = (byte)((counter >> 24) & 0xFF);
+
+                            var key = CryptographicBuffer.CreateFromByteArray(redirect.EncryptionKey);
+
+                            var ecount_buf = new byte[0];
+                            var num = 0u;
+                            partBytes = Utils.AES_ctr128_encrypt(partBytes, key, ref iv, ref ecount_buf, ref num);
+                            redirect.EncryptionIV = iv;
+                        }
+
+                        bytes = TLUtils.Combine(bytes, partBytes);
                     }
                     //part.ParentItem.Location.Buffer = bytes;
                     var fileName = String.Format("{0}_{1}_{2}.jpg",
@@ -285,20 +305,7 @@ namespace Telegram.Api.Services.FileManager
             {
                 if (callback is TLUploadCdnFile file)
                 {
-                    var iv = redirect.EncryptionIV;
-                    var counter = offset / 16;
-                    iv[15] = (byte)(counter & 0xFF);
-                    iv[14] = (byte)((counter >> 8) & 0xFF);
-                    iv[13] = (byte)((counter >> 16) & 0xFF);
-                    iv[12] = (byte)((counter >> 24) & 0xFF);
-
-                    var key = CryptographicBuffer.CreateFromByteArray(redirect.EncryptionKey);
-
-                    var ecount_buf = new byte[0];
-                    var num = 0u;
-                    var bytes = Utils.AES_ctr128_encrypt(file.Bytes, key, ref iv, ref ecount_buf, ref num);
-
-                    result = new TLUploadFile { Bytes = bytes };
+                    result = new TLUploadFile { Bytes = file.Bytes };
                     manualResetEvent.Set();
 
                     _statsService.IncrementReceivedBytesCount(_protoService.NetworkType, _dataType, file.Bytes.Length + 4);
@@ -517,7 +524,8 @@ namespace Telegram.Api.Services.FileManager
         {
             //var chunkSize = Constants.DownloadChunkSize;
 
-            var chunkSize = size > 1024 * 1024 ? 1024 * 128 : 1024 * 32;
+            //var chunkSize = size > 1024 * 1024 ? 1024 * 128 : 1024 * 32;
+            var chunkSize = 1024 * 128;
             var parts = new List<DownloadablePart>();
             var partsCount = size / chunkSize + 1;
             for (var i = 0; i < partsCount; i++)

@@ -194,7 +194,7 @@ namespace Unigram.Controls
             // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
             // we have to handle the pasting operation manually to allow plaintext only.
             var package = Clipboard.GetContent();
-            /*if (package.Contains(StandardDataFormats.Text) && package.Contains("Rich Text Format"))
+            if (package.Contains(StandardDataFormats.Text) && package.Contains("Rich Text Format"))
             {
                 e.Handled = true;
 
@@ -219,8 +219,7 @@ namespace Unigram.Controls
             {
                 e.Handled = true;
             }
-            else*/
-            if (package.Contains(StandardDataFormats.Bitmap))
+            else if (package.Contains(StandardDataFormats.Bitmap))
             {
                 e.Handled = true;
 

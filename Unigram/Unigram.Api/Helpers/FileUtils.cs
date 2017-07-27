@@ -16,6 +16,7 @@ using Telegram.Api.Services.FileManager.EventArgs;
 using Windows.Storage.FileProperties;
 using Windows.Graphics.Imaging;
 using Windows.ApplicationModel;
+using Windows.Security.Cryptography;
 using Telegram.Api.Native.TL;
 using System.Runtime.InteropServices.WindowsRuntime;
 
@@ -138,22 +139,37 @@ namespace Telegram.Api.Helpers
         {
             using (var part1 = File.Open(GetTempFileName(fileName), FileMode.OpenOrCreate, FileAccess.Write))
             {
-                using (IEnumerator<DownloadablePart> enumerator = parts.GetEnumerator())
+                foreach (var part in parts)
                 {
-                    while (enumerator.MoveNext())
+                    string text = getPartName.Invoke(part);
+                    using (var part2 = File.Open(GetTempFileName("parts\\" + text), FileMode.OpenOrCreate, FileAccess.Read))
                     {
-                        DownloadablePart current = enumerator.Current;
-                        string text = getPartName.Invoke(current);
-                        using (var part2 = File.Open(GetTempFileName("parts\\" + text), FileMode.OpenOrCreate, FileAccess.Read))
+                        byte[] array = new byte[part2.Length];
+                        part2.Read(array, 0, array.Length);
+
+                        var redirect = part.ParentItem.CdnRedirect;
+                        if (redirect != null)
                         {
-                            byte[] array = new byte[part2.Length];
-                            part2.Read(array, 0, array.Length);
-                            part1.Position = part1.Length;
-                            part1.Write(array, 0, array.Length);
+                            var iv = redirect.EncryptionIV;
+                            var counter = part.Offset / 16;
+                            iv[15] = (byte)(counter & 0xFF);
+                            iv[14] = (byte)((counter >> 8) & 0xFF);
+                            iv[13] = (byte)((counter >> 16) & 0xFF);
+                            iv[12] = (byte)((counter >> 24) & 0xFF);
+
+                            var key = CryptographicBuffer.CreateFromByteArray(redirect.EncryptionKey);
+
+                            var ecount_buf = new byte[0];
+                            var num = 0u;
+                            array = Utils.AES_ctr128_encrypt(array, key, ref iv, ref ecount_buf, ref num);
+                            redirect.EncryptionIV = iv;
                         }
 
-                        File.Delete(GetTempFileName("parts\\" + text));
+                        part1.Position = part1.Length;
+                        part1.Write(array, 0, array.Length);
                     }
+
+                    File.Delete(GetTempFileName("parts\\" + text));
                 }
             }
         }
