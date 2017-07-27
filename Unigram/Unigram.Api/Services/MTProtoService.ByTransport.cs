@@ -26,7 +26,7 @@ namespace Telegram.Api.Services
             var obj = new TLUploadGetFile { Location = location, Offset = offset, Limit = limit };
 
             const string caption = "upload.getFile";
-            SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Download, RequestFlag.ForceDownload | RequestFlag.FailOnServerError, false);
+            SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Download, RequestFlag.ForceDownload | RequestFlag.FailOnServerError, true);
         }
 
         public void GetWebFileAsync(int dcId, TLInputWebFileLocation location, int offset, int limit, Action<TLUploadWebFile> callback, Action<TLRPCError> faultCallback = null)
@@ -34,7 +34,7 @@ namespace Telegram.Api.Services
             var obj = new TLUploadGetWebFile { Location = location, Offset = offset, Limit = limit };
 
             const string caption = "upload.getWebFile";
-            SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Download, RequestFlag.ForceDownload | RequestFlag.FailOnServerError, false);
+            SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Download, RequestFlag.ForceDownload | RequestFlag.FailOnServerError, true);
         }
 
         public void GetCdnFileAsync(int dcId, byte[] fileToken, int offset, int limit, Action<TLUploadCdnFileBase> callback, Action<TLRPCError> faultCallback = null)
@@ -42,7 +42,7 @@ namespace Telegram.Api.Services
             var obj = new TLUploadGetCdnFile { FileToken = fileToken, Offset = offset, Limit = limit };
 
             const string caption = "upload.getCdnFile";
-            SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Download, RequestFlag.ForceDownload | RequestFlag.FailOnServerError, false);
+            SendInformativeMessage(caption, obj, callback, faultCallback, null, dcId, ConnectionType.Download, RequestFlag.ForceDownload | RequestFlag.FailOnServerError, true);
         }
 
         public void ReuploadCdnFileAsync(int dcId, byte[] fileToken, byte[] requestToken, Action<TLVector<TLCdnFileHash>> callback, Action<TLRPCError> faultCallback = null)
