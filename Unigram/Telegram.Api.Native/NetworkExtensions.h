@@ -1,6 +1,7 @@
 #pragma once
 #include <winsock2.h>
 #include <iphlpapi.h>
+#include <IPTypes.h>
 
 #ifndef NDIS_IF_MAX_STRING_SIZE
 #define NDIS_IF_MAX_STRING_SIZE 256 
@@ -87,3 +88,4 @@ VOID WINAPI InitializeIpInterfaceEntry(_Inout_ PMIB_IPINTERFACE_ROW Row);
 DWORD WINAPI GetBestInterfaceEx(_In_  struct sockaddr* pDestAddr, _Out_ PDWORD pdwBestIfIndex);
 DWORD WINAPI GetPerAdapterInfo(_In_ ULONG IfIndex, _Out_ PIP_PER_ADAPTER_INFO pPerAdapterInfo, _In_ PULONG pOutBufLen);
 ULONG WINAPI GetAdaptersAddresses(_In_ ULONG Family, _In_ ULONG Flags, _In_ PVOID Reserved, _Inout_ PIP_ADAPTER_ADDRESSES AdapterAddresses, _Inout_ PULONG SizePointer);
+ULONG WINAPI GetTcpTable2( _Out_writes_bytes_opt_(*SizePointer) PMIB_TCPTABLE2 TcpTable, _Inout_ PULONG SizePointer, _In_ BOOL Order);

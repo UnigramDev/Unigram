@@ -61,6 +61,7 @@ ConnectionManager::ConnectionManager() :
 {
 	ZeroMemory(m_eventTokens, sizeof(m_eventTokens));
 	ZeroMemory(m_runningRequestCount, sizeof(m_runningRequestCount));
+	ZeroMemory(m_connectionsStatistics, sizeof(m_connectionsStatistics));
 }
 
 ConnectionManager::~ConnectionManager()
@@ -796,6 +797,24 @@ HRESULT ConnectionManager::SwitchBackend()
 	m_flags ^= ConnectionManagerFlag::UseTestBackend;
 
 	return Reset();
+}
+
+HRESULT ConnectionManager::GetConnectionStatistics(ConnectionType connectionType, ConnectionNetworkStatistics* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	if (connectionType != ConnectionType::Generic && connectionType != ConnectionType::Download && connectionType != ConnectionType::Upload)
+	{
+		return E_INVALIDARG;
+	}
+
+	auto lock = LockCriticalSection();
+
+	*value = m_connectionsStatistics[static_cast<UINT32>(connectionType) << 1];
+	return S_OK;
 }
 
 HRESULT ConnectionManager::UpdateCDNPublicKeys()

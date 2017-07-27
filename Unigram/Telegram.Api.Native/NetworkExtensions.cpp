@@ -84,3 +84,11 @@ ULONG WINAPI GetAdaptersAddresses(ULONG Family, ULONG Flags, PVOID Reserved, PIP
 
 	return procGetAdaptersAddresses(Family, Flags, Reserved, AdapterAddresses, SizePointer);
 }
+
+ULONG WINAPI GetTcpTable2(_Out_writes_bytes_opt_(*SizePointer) PMIB_TCPTABLE2 TcpTable, _Inout_ PULONG SizePointer, _In_ BOOL Order)
+{
+	typedef ULONG(WINAPI *pGetTcpTable2)(_In_ PMIB_TCPTABLE2, _Inout_ PULONG, _In_ BOOL);
+	static const auto procGetTcpTable2 = s_iphlpapi.GetMethod<pGetTcpTable2>("GetTcpTable2");
+
+	return procGetTcpTable2(TcpTable, SizePointer, Order);
+}
