@@ -183,6 +183,15 @@ namespace Unigram.Controls
                     RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, resize ? GridUnitType.Auto : GridUnitType.Star) });
                     Children.Add(panel);
                 }
+
+                if (Children.Count > 0 && !inline)
+                {
+                    Padding = new Thickness(0, 0, 0, 4);
+                }
+                else if (!inline)
+                {
+                    Padding = new Thickness();
+                }
             }
         }
 
