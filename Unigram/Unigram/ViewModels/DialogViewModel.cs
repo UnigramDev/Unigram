@@ -77,6 +77,14 @@ namespace Unigram.ViewModels
 
             _stickers = stickers;
 
+            _informativeTimer = new DispatcherTimer();
+            _informativeTimer.Interval = TimeSpan.FromSeconds(5);
+            _informativeTimer.Tick += (s, args) =>
+            {
+                _informativeTimer.Stop();
+                InformativeMessage = null;
+            };
+
             Messages = new MessageCollection();
             Messages.CollectionChanged += (s, args) => IsEmpty = Messages.Count == 0;
 
@@ -247,6 +255,8 @@ namespace Unigram.ViewModels
             }
         }
 
+        private DispatcherTimer _informativeTimer;
+
         private TLMessageBase _informativeMessage;
         public TLMessageBase InformativeMessage
         {
@@ -256,6 +266,12 @@ namespace Unigram.ViewModels
             }
             set
             {
+                if (value != null)
+                {
+                    _informativeTimer.Stop();
+                    _informativeTimer.Start();
+                }
+
                 Set(ref _informativeMessage, value);
             }
         }
