@@ -453,7 +453,7 @@ namespace Telegram.Api.Services.FileManager
             req.FileToken = redirect.FileToken;
             req.Offset = offset;
 
-            _mtProtoService.SendRequestAsync<TLVector<TLCdnFileHash>>("upload.getCdnFileHashes", req, location.DCId, true, callback =>
+            _protoService.SendRequestAsync<TLVector<TLCdnFileHash>>("upload.getCdnFileHashes", req, location.DCId, true, callback =>
             {
                 result = callback;
                 manualResetEvent.Set();
