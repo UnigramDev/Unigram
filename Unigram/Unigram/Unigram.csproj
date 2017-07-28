@@ -217,6 +217,9 @@
     <Compile Include="Controls\Views\UsersSelectionView.xaml.cs">
       <DependentUpon>UsersSelectionView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\WebPageView.xaml.cs">
+      <DependentUpon>WebPageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\WebPageButton.cs" />
     <Compile Include="Controls\WrapPanel.cs" />
     <Compile Include="Controls\ZoomableGridView.cs" />
@@ -1329,6 +1332,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\UsersSelectionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\WebPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

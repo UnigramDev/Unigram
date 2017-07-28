@@ -99,8 +99,12 @@ namespace Unigram.Themes
         {
             var image = sender as ImageView;
             var item = image.Constraint as TLPhoto;
-
-            if (item != null)
+            var message = image.DataContext as TLMessage;
+            if (message != null && message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage && webPage.HasEmbedUrl)
+            {
+                await WebPageView.Current.ShowAsync(webPage);
+            }
+            else if (item != null)
             {
                 //ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
 

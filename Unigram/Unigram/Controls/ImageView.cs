@@ -163,6 +163,11 @@ namespace Unigram.Controls
                 }
             }
 
+            if (constraint is TLMessageMediaWebPage webPageMedia)
+            {
+                constraint = webPageMedia.WebPage;
+            }
+
             if (constraint is TLPhoto photo)
             {
                 //var photoSize = photo.Sizes.OrderByDescending(x => x.W).FirstOrDefault();
@@ -185,6 +190,14 @@ namespace Unigram.Controls
             if (constraint is TLWebDocument webDocument)
             {
                 constraint = webDocument.Attributes;
+            }
+
+            if (constraint is TLWebPage webPage)
+            {
+                width = webPage.EmbedWidth ?? 320;
+                height = webPage.EmbedHeight ?? 240;
+
+                goto Calculate;
             }
 
             if (constraint is TLVector<TLDocumentAttributeBase> attributes)
