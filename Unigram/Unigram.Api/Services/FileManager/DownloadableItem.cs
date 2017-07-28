@@ -41,6 +41,7 @@ namespace Telegram.Api.Services.FileManager
         public int FileSize { get; set; }
 
         public TLUploadFileCdnRedirect CdnRedirect { get; set; }
+        public Dictionary<int, TLCdnFileHash> CdnHashes { get; set; }
 
         #region Http
 

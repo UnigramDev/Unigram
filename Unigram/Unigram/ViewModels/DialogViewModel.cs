@@ -273,6 +273,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private TLMessageBase _informativeMessage;
+        public TLMessageBase InformativeMessage
+        {
+            get
+            {
+                return _informativeMessage;
+            }
+            set
+            {
+                Set(ref _informativeMessage, value);
+            }
+        }
+
         private bool _isReportSpam;
         public bool IsReportSpam
         {

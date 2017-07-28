@@ -309,15 +309,15 @@ namespace Unigram.Controls.Items
                                 {
                                     if (audioAttribute.HasPerformer && audioAttribute.HasTitle)
                                     {
-                                        return $"{result}{audioAttribute.Performer} - {audioAttribute.Title}";
+                                        return $"{result}{audioAttribute.Performer} - {audioAttribute.Title}" + caption;
                                     }
                                     else if (audioAttribute.HasPerformer && !audioAttribute.HasTitle)
                                     {
-                                        return $"{result}{audioAttribute.Performer} - Unknown Track";
+                                        return $"{result}{audioAttribute.Performer} - Unknown Track" + caption;
                                     }
                                     else if (audioAttribute.HasTitle && !audioAttribute.HasPerformer)
                                     {
-                                        return $"{result}{audioAttribute.Title}";
+                                        return $"{result}{audioAttribute.Title}" + caption;
                                     }
                                 }
                             }

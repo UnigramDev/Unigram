@@ -48,5 +48,13 @@ namespace Telegram.Api.Services
             const string caption = "upload.reuploadCdnFile";
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
+
+        public void GetCdnFileHashesAsync(byte[] fileToken, int offset, Action<TLVector<TLCdnFileHash>> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLUploadGetCdnFileHashes { FileToken = fileToken, Offset = offset };
+
+            const string caption = "upload.getCdnFileHashes";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
     }
 }
