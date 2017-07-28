@@ -1013,8 +1013,17 @@ namespace Unigram.ViewModels
                         }
                         else
                         {
-                            // TODO:
-                            await new TLMessageDialog(response.Result.Message).ShowQueuedAsync();
+                            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+                            var bot = GetBot(message);
+                            if (bot == null)
+                            {
+                                // TODO:
+                                await new TLMessageDialog(response.Result.Message).ShowQueuedAsync();
+                                return;
+                            }
+
+                            InformativeMessage = TLUtils.GetShortMessage(0, bot.Id, Peer.ToPeer(), date, response.Result.Message);
                         }
                     }
                     else if (response.Result.HasUrl && response.Result.IsHasUrl /* ??? */)
