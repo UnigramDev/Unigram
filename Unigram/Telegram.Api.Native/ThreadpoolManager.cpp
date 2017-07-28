@@ -77,26 +77,19 @@ void ThreadpoolManager::CloseAllObjects(bool cancelPendingCallbacks)
 HRESULT ThreadpoolManager::SubmitWork(ThreadpoolWorkCallback const& workHandler)
 {
 	std::unique_ptr<ThreadpoolWork> workContext(new ThreadpoolWork(workHandler));
-	auto workHandle = CreateThreadpoolWork(ThreadpoolManager::WorkCallback, workContext.get(), &m_threadpoolEnvironment);
-	if (workHandle == nullptr)
+	if (!TrySubmitThreadpoolCallback(ThreadpoolManager::WorkCallback, workContext.get(), &m_threadpoolEnvironment))
 	{
 		return GetLastHRESULT();
 	}
-
-	SubmitThreadpoolWork(workHandle);
 
 	workContext.release();
 	return S_OK;
 }
 
-void ThreadpoolManager::WorkCallback(PTP_CALLBACK_INSTANCE instance, PVOID context, PTP_WORK work)
+void ThreadpoolManager::WorkCallback(PTP_CALLBACK_INSTANCE instance, PVOID context)
 {
-	CloseThreadpoolWork(work);
-
-	auto workHandler = reinterpret_cast<ThreadpoolWork*>(context);
+	std::unique_ptr<ThreadpoolWork> workHandler(reinterpret_cast<ThreadpoolWork*>(context));
 	workHandler->Execute();
-
-	delete workHandler;
 }
 
 void ThreadpoolManager::GroupCleanupCallback(PVOID objectContext, PVOID cleanupContext)

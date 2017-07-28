@@ -44,7 +44,7 @@ namespace Telegram
 				}
 
 			private:
-				static void NTAPI WorkCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context, _Inout_ PTP_WORK work);
+				static void NTAPI WorkCallback(_Inout_ PTP_CALLBACK_INSTANCE instance, _Inout_opt_ PVOID context);
 				static void NTAPI GroupCleanupCallback(_Inout_opt_ PVOID objectContext, _Inout_opt_ PVOID cleanupContext);
 
 				TP_CALLBACK_ENVIRON m_threadpoolEnvironment;
