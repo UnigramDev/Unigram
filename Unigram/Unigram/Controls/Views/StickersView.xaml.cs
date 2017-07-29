@@ -102,7 +102,8 @@ namespace Unigram.Controls.Views
         {
             if (e.ClickedItem is TLMessagesStickerSet set && set.Cover != null)
             {
-                Stickers.ScrollIntoView(set.Cover);
+                //Stickers.ScrollIntoView(set.Cover, ScrollIntoViewAlignment.Leading);
+                Stickers.ScrollIntoView(e.ClickedItem, ScrollIntoViewAlignment.Leading);
             }
         }
 
