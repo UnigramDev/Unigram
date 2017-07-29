@@ -605,6 +605,7 @@ namespace Unigram.Views
                 InputPane.GetForCurrentView().TryHide();
 
                 StickersPanel.Visibility = Visibility.Visible;
+                StickersPanel.Refresh();
 
                 ViewModel.OpenStickersCommand.Execute(null);
             }
