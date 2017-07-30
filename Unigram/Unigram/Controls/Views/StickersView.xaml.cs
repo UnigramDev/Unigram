@@ -18,6 +18,7 @@ using LinqToVisualTree;
 using Unigram.Common;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
+using System.Threading.Tasks;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -64,6 +65,7 @@ namespace Unigram.Controls.Views
             {
                 // Syncronizes GridView with the toolbar ListView
                 scrollingHost.ViewChanged += ScrollingHost_ViewChanged;
+                ScrollingHost_ViewChanged(null, null);
             }
         }
 
@@ -72,6 +74,10 @@ namespace Unigram.Controls.Views
             if (Pivot.SelectedIndex != 2)
             {
                 Toolbar.SelectedItem = null;
+            }
+            else
+            {
+                ScrollingHost_ViewChanged(null, null);
             }
 
             //if (Pivot.SelectedIndex == 0)
@@ -102,8 +108,17 @@ namespace Unigram.Controls.Views
         {
             if (e.ClickedItem is TLMessagesStickerSet set && set.Cover != null)
             {
-                Stickers.ScrollIntoView(set.Cover);
+                //Stickers.ScrollIntoView(set.Cover, ScrollIntoViewAlignment.Leading);
+                Stickers.ScrollIntoView(e.ClickedItem, ScrollIntoViewAlignment.Leading);
             }
+        }
+
+        public async void Refresh()
+        {
+            // TODO: memes
+
+            await Task.Delay(100);
+            Pivot_SelectionChanged(null, null);
         }
 
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)

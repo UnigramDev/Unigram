@@ -53,6 +53,7 @@ using Unigram.Themes;
 using Windows.UI.Xaml.Media.Animation;
 using Template10.Common;
 using Template10.Services.NavigationService;
+using Unigram.Core.Helpers;
 
 namespace Unigram.Views
 {
@@ -61,6 +62,8 @@ namespace Unigram.Views
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
         public BindConvert Convert => BindConvert.Current;
+
+        private double _lastKnownKeyboardHeight = 260;
 
         private DispatcherTimer _elapsedTimer;
         private Visual _messageVisual;
@@ -87,6 +90,7 @@ namespace Unigram.Views
             TextField.LostFocus += TextField_LostFocus;
 
             lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+            StickersPanel.RegisterPropertyChangedCallback(FrameworkElement.VisibilityProperty, StickersPanel_VisibilityChanged);
 
             _messageVisual = ElementCompositionPreview.GetElementVisual(TextField);
             _ellipseVisual = ElementCompositionPreview.GetElementVisual(Ellipse);
@@ -147,7 +151,7 @@ namespace Unigram.Views
         {
             if (StickersPanel.Visibility == Visibility.Visible && TextField.FocusState == FocusState.Unfocused)
             {
-                StickersPanel.Visibility = Visibility.Collapsed;
+                Collapse_Click(StickersPanel, null);
 
                 if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
                 {
@@ -281,6 +285,8 @@ namespace Unigram.Views
             StickersPanel.Height = args.OccludedRect.Height;
             ReplyMarkupPanel.MaxHeight = args.OccludedRect.Height;
             //ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
+
+            _lastKnownKeyboardHeight = Math.Max(260, args.OccludedRect.Height);
         }
 
         private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -295,7 +301,7 @@ namespace Unigram.Views
             {
                 if (StickersPanel.Visibility == Visibility.Visible)
                 {
-                    StickersPanel.Visibility = Visibility.Collapsed;
+                    Collapse_Click(null, null);
                     args.Handled = true;
                 }
 
@@ -321,7 +327,7 @@ namespace Unigram.Views
         {
             if (StickersPanel.Visibility == Visibility.Visible)
             {
-                StickersPanel.Visibility = Visibility.Collapsed;
+                Collapse_Click(null, null);
                 args.Handled = true;
             }
 
@@ -605,6 +611,7 @@ namespace Unigram.Views
                 InputPane.GetForCurrentView().TryHide();
 
                 StickersPanel.Visibility = Visibility.Visible;
+                StickersPanel.Refresh();
 
                 ViewModel.OpenStickersCommand.Execute(null);
             }
@@ -613,7 +620,7 @@ namespace Unigram.Views
                 Focus(FocusState.Programmatic);
                 TextField.Focus(FocusState.Keyboard);
 
-                StickersPanel.Visibility = Visibility.Collapsed;
+                Collapse_Click(StickersPanel, null);
             }
         }
 
@@ -1252,6 +1259,112 @@ namespace Unigram.Views
                     var offset = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, dialog.SelectedDates.FirstOrDefault().Date);
                     await ViewModel.LoadDateSliceAsync(offset);
                 }
+            }
+        }
+
+        private void Expand_Click(object sender, RoutedEventArgs e)
+        {
+            if (HeaderOverlay.Visibility == Visibility.Visible)
+            {
+                StickersPanel.MinHeight = 260;
+                StickersPanel.MaxHeight = 360;
+                StickersPanel.Height = _lastKnownKeyboardHeight;
+                ButtonExpand.Glyph = "\uE010";
+
+                HeaderOverlay.Visibility = Visibility.Collapsed;
+                UnmaskTitleAndStatusBar();
+            }
+            else
+            {
+                StickersPanel.MinHeight = ActualHeight - 48 * 2;
+                StickersPanel.MaxHeight = ActualHeight - 48 * 2;
+                StickersPanel.Height = double.NaN;
+                ButtonExpand.Glyph = "\uE011";
+
+                HeaderOverlay.Visibility = Visibility.Visible;
+                MaskTitleAndStatusBar();
+            }
+        }
+
+        private void Collapse_Click(object sender, RoutedEventArgs e)
+        {
+            StickersPanel.MinHeight = 260;
+            StickersPanel.MaxHeight = 360;
+            StickersPanel.Height = _lastKnownKeyboardHeight;
+            ButtonExpand.Glyph = "\uE010";
+
+            HeaderOverlay.Visibility = Visibility.Collapsed;
+            UnmaskTitleAndStatusBar();
+
+            if (HeaderOverlay.Visibility == Visibility.Visible && sender == null)
+            {
+            }
+            else
+            {
+                StickersPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void StickersPanel_VisibilityChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (StickersPanel.Visibility == Visibility.Collapsed)
+            {
+                HeaderOverlay.Visibility = Visibility.Collapsed;
+                UnmaskTitleAndStatusBar();
+            }
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (HeaderOverlay.Visibility == Visibility.Visible)
+            {
+                StickersPanel.MinHeight = e.NewSize.Height - 48 * 2;
+                StickersPanel.MaxHeight = e.NewSize.Height - 48 * 2;
+            }
+        }
+
+        private void MaskTitleAndStatusBar()
+        {
+            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
+            var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+            var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
+            var overlayBrush = new SolidColorBrush(Color.FromArgb(0x99, 0x00, 0x00, 0x00));
+
+            if (overlayBrush != null)
+            {
+                var maskBackground = ColorsHelper.AlphaBlend(backgroundBrush.Color, overlayBrush.Color);
+                var maskForeground = ColorsHelper.AlphaBlend(foregroundBrush.Color, overlayBrush.Color);
+
+                titlebar.BackgroundColor = maskBackground;
+                titlebar.ForegroundColor = maskForeground;
+                titlebar.ButtonBackgroundColor = maskBackground;
+                titlebar.ButtonForegroundColor = maskForeground;
+
+                if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+                {
+                    var statusBar = StatusBar.GetForCurrentView();
+                    statusBar.BackgroundColor = maskBackground;
+                    statusBar.ForegroundColor = maskForeground;
+                }
+            }
+        }
+
+        private void UnmaskTitleAndStatusBar()
+        {
+            var titlebar = ApplicationView.GetForCurrentView().TitleBar;
+            var backgroundBrush = Application.Current.Resources["TelegramBackgroundTitlebarBrush"] as SolidColorBrush;
+            var foregroundBrush = Application.Current.Resources["SystemControlForegroundBaseHighBrush"] as SolidColorBrush;
+
+            titlebar.BackgroundColor = backgroundBrush.Color;
+            titlebar.ForegroundColor = foregroundBrush.Color;
+            titlebar.ButtonBackgroundColor = backgroundBrush.Color;
+            titlebar.ButtonForegroundColor = foregroundBrush.Color;
+
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                var statusBar = StatusBar.GetForCurrentView();
+                statusBar.BackgroundColor = backgroundBrush.Color;
+                statusBar.ForegroundColor = foregroundBrush.Color;
             }
         }
     }

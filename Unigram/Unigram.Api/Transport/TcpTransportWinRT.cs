@@ -143,7 +143,7 @@ namespace Telegram.Api.Transport
                     if (response[1] == 0x02)
                     {
                         var username = _proxyUsername ?? string.Empty;
-                        var password = _proxyUsername ?? string.Empty;
+                        var password = _proxyPassword ?? string.Empty;
 
                         _dataWriter.WriteByte(0x01); // version
                         _dataWriter.WriteByte((byte)username.Length);

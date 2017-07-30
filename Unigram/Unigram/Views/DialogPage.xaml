@@ -16,7 +16,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Loaded="OnLoaded"
-    Unloaded="OnUnloaded">
+    Unloaded="OnUnloaded"
+    SizeChanged="OnSizeChanged">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -985,6 +986,12 @@
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="StickersPanel.Height" Value="300"/>
+                        <Setter Target="StickersPanel.MinHeight" Value="260"/>
+                        <Setter Target="StickersPanel.MaxHeight" Value="360"/>
+                        <Setter Target="StickersPanel.Margin" Value="0"/>
+                    </VisualState.Setters>
                 </VisualState>
                 <VisualState>
                     <VisualState.StateTriggers>
@@ -993,6 +1000,9 @@
                     <VisualState.Setters>
                         <Setter Target="KeyboardItems.(Grid.Row)" Value="2"/>
                         <Setter Target="KeyboardItems.VerticalAlignment" Value="Bottom"/>
+                        <Setter Target="StickersPanel.Height" Value="Auto"/>
+                        <Setter Target="StickersPanel.Margin" Value="0,48,0,0"/>
+                        <Setter Target="btnExpand.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -1183,6 +1193,10 @@
 
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
         </Grid>
+
+        <Border Visibility="{x:Bind StickersPanel.Visibility, Mode=OneWay}" IsHitTestVisible="False">
+            <Border x:Name="HeaderOverlay" Background="#99000000" Visibility="Collapsed"/>
+        </Border>
 
         <Grid x:Name="Messages" Grid.Row="2">
             <controls:BubbleListView x:Name="lvDialogs"
@@ -1548,7 +1562,7 @@
         </ScrollViewer>
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">
-            <views:StickersView x:Name="StickersPanel" AllowFocusOnInteraction="False" Visibility="Collapsed" MaxHeight="360" MinHeight="260"/>
+            <views:StickersView x:Name="StickersPanel" AllowFocusOnInteraction="False" Visibility="Collapsed" Height="300" MaxHeight="360" MinHeight="260"/>
         </Grid>
         
         <!-- Input pane -->
@@ -1750,6 +1764,20 @@
                                           Canvas.ZIndex="1001"/>
                 </Grid>
 
+                <Border x:Name="btnExpand"
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                        HorizontalAlignment="Right"
+                        Grid.Column="3"
+                        Grid.Row="1">
+                    <controls:GlyphButton x:Name="ButtonExpand"
+                                          Visibility="{x:Bind StickersPanel.Visibility, Mode=OneWay}"
+                                          VerticalAlignment="Bottom"
+                                          Click="Expand_Click"
+                                          Glyph="&#xE010;"
+                                          AllowFocusOnInteraction="False"
+                                          Padding="0,2,0,0"/>
+                </Border>
+                
                 <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                         Visibility="{Binding ReplyInfo, Converter={StaticResource EditToVisibilityConverter}}"
                         HorizontalAlignment="Right"
