@@ -110,6 +110,7 @@ namespace Telegram.Api.Services
             var isBackground = deviceInfo != null && deviceInfo.IsBackground;
 
             _connectionManager = ConnectionManager.Instance;
+            _connectionManager.Logger = new Logs.Log();
             _connectionManager.CurrentNetworkTypeChanged += ConnectionManager_CurrentNetworkTypeChanged;
             _connectionManager.ConnectionStateChanged += ConnectionManager_ConnectionStateChanged;
             _connectionManager.UnprocessedMessageReceived += ConnectionManager_UnprocessedMessageReceived;
