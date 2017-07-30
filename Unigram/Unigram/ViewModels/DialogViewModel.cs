@@ -1641,6 +1641,21 @@ namespace Unigram.ViewModels
             }
 
             var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
+            if (messageText.Equals("/tg_logs", StringComparison.OrdinalIgnoreCase))
+            {
+                var item = await FileUtils.TryGetItemAsync("Logs");
+                if (item is StorageFolder folder)
+                {
+                    var files = await folder.GetFilesAsync();
+                    foreach (var file in files)
+                    {
+                        await SendFileAsync(file);
+                    }
+                }
+
+                return;
+            }
+
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), null);
 

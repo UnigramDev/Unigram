@@ -227,7 +227,7 @@ namespace Unigram.ViewModels
             if (value is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
             {
                 var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
-                var file = await FileUtils.TryGetTempFileAsync(fileName);
+                var file = await FileUtils.TryGetTempItemAsync(fileName);
                 if (file != null)
                 {
                     var options = new LauncherOptions();
@@ -239,7 +239,7 @@ namespace Unigram.ViewModels
             else if (value is TLDocument document)
             {
                 var fileName = document.GetFileName();
-                var file = await FileUtils.TryGetTempFileAsync(fileName);
+                var file = await FileUtils.TryGetTempItemAsync(fileName);
                 if (file != null)
                 {
                     var options = new LauncherOptions();
