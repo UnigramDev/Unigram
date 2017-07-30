@@ -250,6 +250,7 @@
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\PushService.cs" />
+    <Compile Include="Triggers\UserInteractionTrigger.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />
     <Compile Include="ViewModels\CallsViewModel.cs" />
