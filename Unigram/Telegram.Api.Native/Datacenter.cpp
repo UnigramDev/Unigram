@@ -622,13 +622,10 @@ HRESULT Datacenter::BeginHandshake(bool reconnect, bool reset)
 	}
 
 	HRESULT result;
-	if ((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN)
+	if ((m_flags & DatacenterFlag::CDN) == DatacenterFlag::CDN && !m_connectionManager->HasCDNPublicKey(m_id))
 	{
-		if (!m_connectionManager->HasCDNPublicKey(m_id))
-		{
-			ReturnIfFailed(result, m_connectionManager->UpdateCDNPublicKeys());
-			return S_FALSE;
-		}
+		ReturnIfFailed(result, m_connectionManager->UpdateCDNPublicKeys());
+		return S_FALSE;
 	}
 
 	ComPtr<Connection> genericConnection;
@@ -647,10 +644,6 @@ HRESULT Datacenter::BeginHandshake(bool reconnect, bool reset)
 	}
 	else
 	{
-		/*boolean ipv6;
-		ReturnIfFailed(result, m_connectionManager->get_IsIPv6Enabled(&ipv6));
-		ReturnIfFailed(result, genericConnection->Connect(ipv6));*/
-
 		boolean ipv6;
 		m_connectionManager->get_IsIPv6Enabled(&ipv6);
 
@@ -747,29 +740,6 @@ HRESULT Datacenter::ImportAuthorization()
 
 	return S_OK;
 }
-
-//HRESULT Datacenter::SendPing()
-//{
-//	HRESULT result;
-//	ComPtr<Connection> genericConnection;
-//	ReturnIfFailed(result, GetGenericConnection(true, genericConnection));
-//
-//	auto ping = Make<Methods::TLPing>(ConnectionManager::GetCurrentMonotonicTime());
-//
-//	INT32 requestToken;
-//	return m_connectionManager->SendRequestWithFlags(ping.Get(), Callback<ISendRequestCompletedCallback>([](IMessageResponse* response, IMessageError* error) -> HRESULT
-//	{
-//		if (error == nullptr)
-//		{
-//			auto pong = GetMessageResponseObject<TLPong>(response);
-//			auto pindDelay = static_cast<UINT32>(ConnectionManager::GetCurrentMonotonicTime() - static_cast<UINT64>(pong->GetPingId()));
-//
-//			OutputDebugStringFormat(L"Pong after %dms\n", pindDelay);
-//		}
-//
-//		return S_OK;
-//	}).Get(), nullptr, m_id, ConnectionType::Generic, RequestFlag::Immediate, &requestToken);
-//}
 
 HRESULT Datacenter::RequestFutureSalts(UINT32 count)
 {

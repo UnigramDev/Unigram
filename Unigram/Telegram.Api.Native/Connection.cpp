@@ -156,10 +156,6 @@ HRESULT Connection::EnsureConnected()
 	case ConnectionState::DataReceived:
 		return S_OK;
 	default:
-		/*HRESULT result;
-		boolean ipv6;
-		ReturnIfFailed(result, m_datacenter->GetConnectionManager()->get_IsIPv6Enabled(&ipv6));*/
-
 		boolean ipv6;
 		m_datacenter->GetConnectionManager()->get_IsIPv6Enabled(&ipv6);
 
@@ -219,7 +215,6 @@ HRESULT Connection::Connect(bool ipv6)
 
 	ComPtr<IProxySettings> proxySettings;
 	connectionManager->get_ProxySettings(&proxySettings);
-	//ReturnIfFailed(result, connectionManager->get_ProxySettings(&proxySettings));
 
 	if (proxySettings == nullptr)
 	{
@@ -236,7 +231,6 @@ HRESULT Connection::Connect(bool ipv6)
 
 	ConnectionNeworkType currentNetworkType;
 	connectionManager->get_CurrentNetworkType(&currentNetworkType);
-	//ReturnIfFailed(result, connectionManager->get_CurrentNetworkType(&currentNetworkType));
 
 	if (ipv6)
 	{
@@ -607,8 +601,6 @@ HRESULT Connection::OnSocketConnected()
 		return OnProxyConnected();
 	}
 
-	OutputDebugStringFormat(L"Datacenter %d, Connection %d, connection opened\n", m_datacenter->GetId(), (int)m_type);
-
 	m_flags |= static_cast<ConnectionFlag>(ConnectionState::Connected);
 	m_failedConnectionCount = 0;
 
@@ -625,8 +617,6 @@ HRESULT Connection::OnSocketConnected()
 
 HRESULT Connection::OnSocketDisconnected(int wsaError)
 {
-	OutputDebugStringFormat(L"Datacenter %d, Connection %d, connection closed\n", m_datacenter->GetId(), (int)m_type);
-
 	auto connectionState = FLAGS_GET_CONNECTIONSTATE(m_flags);
 	m_flags &= ~(ConnectionFlag::ConnectionState | ConnectionFlag::ProxyHandshakeState | ConnectionFlag::CryptographyInitialized);
 	m_partialPacketBuffer.Reset();
@@ -697,9 +687,7 @@ HRESULT Connection::OnMessageReceived(TLMemoryBinaryReader* messageReader, UINT3
 		INT32 errorCode;
 		ReturnIfFailed(result, messageReader->ReadInt32(&errorCode));
 
-		I_WANT_TO_DIE_IS_THE_NEW_TODO("Handle message error");
-
-		OutputDebugStringFormat(L"Connection error %d\n", errorCode);
+#pragma message ("Log error")
 		return E_FAIL;
 	}
 
@@ -757,8 +745,6 @@ HRESULT Connection::OnMessageReceived(TLMemoryBinaryReader* messageReader, UINT3
 
 HRESULT Connection::OnProxyConnected()
 {
-	OutputDebugString(L"OnProxyHandshakeData: SendingGreeting\n");
-
 	auto& connectionManager = m_datacenter->GetConnectionManager();
 
 	HRESULT result;
@@ -796,8 +782,6 @@ HRESULT Connection::OnProxyConnected()
 
 HRESULT Connection::OnProxyGreetingResponse(BYTE* buffer, UINT32 length)
 {
-	OutputDebugString(L"OnProxyHandshakeData: Authenticating\n");
-
 	if (length != 2 || buffer[0] != 0x5)
 	{
 		return E_PROTOCOL_VERSION_NOT_SUPPORTED;
@@ -865,8 +849,6 @@ HRESULT Connection::OnProxyGreetingResponse(BYTE* buffer, UINT32 length)
 
 HRESULT Connection::OnProxyAuthenticationResponse(BYTE* buffer, UINT32 length)
 {
-	OutputDebugString(L"OnProxyHandshakeData: RequestingConnection\n");
-
 	if (length != 2 || buffer[1] != 0x0)
 	{
 		return E_INVALID_PROTOCOL_FORMAT;
@@ -920,8 +902,6 @@ HRESULT Connection::OnProxyAuthenticationResponse(BYTE* buffer, UINT32 length)
 
 HRESULT Connection::OnProxyConnectionRequestResponse(BYTE* buffer, UINT32 length)
 {
-	OutputDebugString(L"OnProxyHandshakeData: SendingAddress\n");
-
 	if (length < 2 || buffer[1] != 0x0)
 	{
 		return E_INVALID_PROTOCOL_FORMAT;
@@ -943,16 +923,12 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 	ComPtr<IBuffer> packetBuffer;
 	if (m_partialPacketBuffer == nullptr)
 	{
-		OutputDebugStringFormat(L"Datacenter %d, Connection %d, new packet of %d bytes received", m_datacenter->GetId(), (int)m_type, length);
-
 		ReturnIfFailed(result, MakeAndInitialize<NativeBufferWrapper>(&packetBuffer, buffer, length));
 
 		ConnectionCryptography::DecryptBuffer(buffer, buffer, length);
 	}
 	else
 	{
-		OutputDebugStringFormat(L"Datacenter %d, Connection %d, next packet part of %d bytes received, already have %d bytes", m_datacenter->GetId(), (int)m_type, length, m_partialPacketBuffer->GetCapacity());
-
 		auto partialPacketLength = m_partialPacketBuffer->GetCapacity();
 		ReturnIfFailed(result, m_partialPacketBuffer->Merge(buffer, length));
 
@@ -1005,7 +981,6 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 
 		if (packetLength > packetReader->GetUnconsumedBufferLength())
 		{
-			OutputDebugString(L", partial, waiting for next part\n");
 			result = E_NOT_SUFFICIENT_BUFFER;
 			break;
 		}
@@ -1017,12 +992,9 @@ HRESULT Connection::OnDataReceived(BYTE* buffer, UINT32 length)
 
 		if (FAILED(packetReader->put_Position(packetPosition + (firstByte == 0x7f ? 4 : 1) + packetLength)))
 		{
-			OutputDebugString(L", partial, waiting for next part\n");
 			result = E_NOT_SUFFICIENT_BUFFER;
 			break;
 		}
-
-		OutputDebugString(L"\n");
 	}
 
 	if (result == E_NOT_SUFFICIENT_BUFFER)

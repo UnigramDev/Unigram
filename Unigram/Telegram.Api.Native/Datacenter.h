@@ -213,7 +213,6 @@ namespace Telegram
 				HRESULT BeginHandshake(bool reconnect, bool reset);
 				HRESULT ImportAuthorization();
 				HRESULT RequestFutureSalts(UINT32 count);
-				//HRESULT SendPing();
 				HRESULT GetCurrentEndpoint(ConnectionType connectionType, bool ipv6, _Out_ ServerEndpoint** endpoint);
 				INT64 GetServerSalt();
 				HRESULT OnConnectionOpened(_In_ Connection* connection);

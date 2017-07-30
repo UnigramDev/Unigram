@@ -29,7 +29,9 @@ namespace Telegram
 
 			class NativeBuffer : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IBuffer, IBufferByteAccess>
 			{
-				InspectableClass(L"Telegram.Api.Native.NativeBuffer", BaseTrust);
+				//InspectableClass(L"Telegram.Api.Native.NativeBuffer", BaseTrust);
+				InspectableClass(L"Windows.Storage.Streams.Buffer", BaseTrust);
+				
 
 			public:
 				NativeBuffer() :
@@ -167,7 +169,8 @@ namespace Telegram
 
 			class MappedFileBuffer : public RuntimeClass<RuntimeClassFlags<WinRtClassicComMix>, IBuffer, IBufferByteAccess>
 			{
-				InspectableClass(L"Telegram.Api.Native.MappedFileBuffer", BaseTrust);
+				//InspectableClass(L"Telegram.Api.Native.MappedFileBuffer", BaseTrust);
+				InspectableClass(L"Windows.Storage.Streams.Buffer", BaseTrust);
 
 			public:
 				MappedFileBuffer() :
@@ -254,7 +257,8 @@ namespace Telegram
 			{
 				friend class NativeBuffer;
 
-				InspectableClass(L"Telegram.Api.Native.NativeBufferWrapper", BaseTrust);
+				//InspectableClass(L"Telegram.Api.Native.NativeBufferWrapper", BaseTrust);
+				InspectableClass(L"Windows.Storage.Streams.Buffer", BaseTrust);
 
 			public:
 				NativeBufferWrapper() :

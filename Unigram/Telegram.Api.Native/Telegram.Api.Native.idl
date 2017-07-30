@@ -57,6 +57,15 @@ namespace Telegram
 				delegate TLObjectConstructorDelegate;
 
 			}
+
+			namespace Diagnostics
+			{
+
+				typedef enum LogLevel LogLevel;
+
+				interface ILogger;
+
+			}
 		}
 	}
 }
@@ -395,6 +404,28 @@ namespace Telegram
 
 			}
 
+			namespace Diagnostics
+			{
+
+				[version(API_VERSION)]
+				enum LogLevel
+				{
+					Critical = 1,
+					Error = 2,
+					Warning = 3,
+					Information = 4
+				};
+
+
+				[uuid(2736B8C6-7A1C-48C2-8A87-ABC9D783124D)]
+				[version(API_VERSION)]
+				interface ILogger : IInspectable
+				{
+					HRESULT Log([in]LogLevel logLevel, [in]HSTRING message);
+				}
+
+			}
+
 
 			[version(API_VERSION)]
 			struct Version
@@ -667,6 +698,8 @@ namespace Telegram
 				[propput] HRESULT ProxySettings([in] ProxySettings* value);
 				[propget] HRESULT TimeDifference([out][retval] INT32* value);
 				[propget] HRESULT Datacenters([out][retval] Windows.Foundation.Collections.IVectorView<Datacenter*>** value);
+				[propget] HRESULT Logger([out][retval] Telegram.Api.Native.Diagnostics.ILogger** value);
+				[propput] HRESULT Logger([in] Telegram.Api.Native.Diagnostics.ILogger* value);
 				[overload("SendRequest")] HRESULT SendRequest([in] Telegram.Api.Native.TL.ITLObject* obj,[in] SendRequestCompletedCallback* onCompleted,[in] RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,
 					[in] ConnectionType connectionType,[out][retval] INT32* value);
 				[overload("SendRequest")] HRESULT SendRequestWithDatacenter([in] Telegram.Api.Native.TL.ITLObject* obj, [in] SendRequestCompletedCallback* onCompleted, [in] RequestQuickAckReceivedCallback* onQuickAckReceivedCallback,

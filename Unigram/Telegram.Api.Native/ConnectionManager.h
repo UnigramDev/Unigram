@@ -20,6 +20,7 @@
 
 using namespace Microsoft::WRL;
 using namespace Microsoft::WRL::Wrappers;
+using namespace ABI::Telegram::Api::Native::Diagnostics;
 using ABI::Windows::Foundation::TimeSpan;
 using ABI::Windows::Networking::Connectivity::INetworkInformationStatics;
 using ABI::Windows::Networking::Connectivity::INetworkAdapter;
@@ -153,6 +154,8 @@ namespace Telegram
 				IFACEMETHODIMP put_ProxySettings(_In_ IProxySettings* value);
 				IFACEMETHODIMP get_TimeDifference(_Out_ INT32* value);
 				IFACEMETHODIMP get_Datacenters(_Out_ __FIVectorView_1_Telegram__CApi__CNative__CDatacenter** value);
+				IFACEMETHODIMP get_Logger(_Out_ ILogger** value);
+				IFACEMETHODIMP put_Logger(_In_ ILogger* value);
 				IFACEMETHODIMP SendRequest(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived, ConnectionType connectionType, _Out_ INT32* value);
 				IFACEMETHODIMP SendRequestWithDatacenter(_In_ ITLObject* object, _In_ ISendRequestCompletedCallback* onCompleted, _In_ IRequestQuickAckReceivedCallback* onQuickAckReceived,
 					INT32 datacenterId, ConnectionType connectionType, _Out_ INT32* value);
@@ -191,6 +194,44 @@ namespace Telegram
 				inline static UINT64 GetCurrentMonotonicTime()
 				{
 					return GetTickCount64();
+				}
+
+				template<unsigned int sizeDest>
+				inline HRESULT Log(LogLevel logLevel, wchar_t const (&message)[sizeDest])
+				{
+					auto lock = LockCriticalSection();
+
+					if (m_logger == nullptr)
+					{
+						return S_OK;
+					}
+
+					return m_logger->Log(logLevel, HString::MakeReference(message).Get());
+				}
+
+				inline HRESULT LogFormat(LogLevel logLevel, LPCWSTR pwhFormat, ...)
+				{
+					auto lock = LockCriticalSection();
+
+					if (m_logger == nullptr)
+					{
+						return S_OK;
+					}
+
+					va_list args;
+					va_start(args, pwhFormat);
+
+					WCHAR buffer[1024];
+					auto length = vswprintf_s(buffer, 1024, pwhFormat, args);
+
+					va_end(args);
+
+					if (length < 0)
+					{
+						return E_INVALIDARG;
+					}
+
+					return m_logger->Log(logLevel, HString::MakeReference<1024>(buffer, static_cast<UINT32>(length)).Get());
 				}
 
 			private:
@@ -295,6 +336,7 @@ namespace Telegram
 				INT32 m_timeDifference;
 				INT32 m_userId;
 				ComPtr<IProxySettings> m_proxySettings;
+				ComPtr<ILogger> m_logger;
 				std::wstring m_settingsFolderPath;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_sessionCreatedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_authenticationRequiredEventSource;
