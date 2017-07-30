@@ -14,7 +14,7 @@
             <Setter Property="Foreground" Value="{ThemeResource RadioButtonForeground}" />
             <Setter Property="BorderBrush" Value="{ThemeResource RadioButtonBorderBrush}" />
             <Setter Property="Padding" Value="8,6,0,0" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Left" />
             <Setter Property="VerticalContentAlignment" Value="Top" />
@@ -23,6 +23,7 @@
             <Setter Property="MinWidth" Value="120" />
             <Setter Property="UseSystemFocusVisuals" Value="True" />
             <Setter Property="FocusVisualMargin" Value="-7,-3,-7,-3" />
+            <Setter Property="Width" Value="Auto" />
             <Setter Property="Height" Value="Auto" />
             <Setter Property="Template">
                 <Setter.Value>

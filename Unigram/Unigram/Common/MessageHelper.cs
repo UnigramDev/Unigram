@@ -1008,7 +1008,14 @@ namespace Unigram.Common
                     }
                     else
                     {
-                        service.NavigateToDialog(user, accessToken: accessToken);
+                        if (user.IsBot)
+                        {
+                            service.NavigateToDialog(user, accessToken: accessToken);
+                        }
+                        else
+                        {
+                            service.Navigate(typeof(UserDetailsPage), user.ToPeer());
+                        }
                     }
 
                     //if (user.IsBot)
@@ -1051,7 +1058,14 @@ namespace Unigram.Common
                             }
                             else
                             {
-                                service.NavigateToDialog(user, accessToken: accessToken);
+                                if (user.IsBot)
+                                {
+                                    service.NavigateToDialog(user, accessToken: accessToken);
+                                }
+                                else
+                                {
+                                    service.Navigate(typeof(UserDetailsPage), peerUser);
+                                }
                             }
 
 

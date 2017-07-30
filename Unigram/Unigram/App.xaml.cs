@@ -452,16 +452,17 @@ namespace Unigram
             Color buttonPressed;
 
             var current = _uiSettings.GetColorValue(UIColorType.Background);
+            var theme = ApplicationSettings.Current.RequestedTheme;
 
             // Apply buttons feedback based on Light or Dark theme
-            if (current == Colors.Black || ApplicationSettings.Current.RequestedTheme == ElementTheme.Dark)
+            if (current == Colors.Black || ApplicationSettings.Current.CurrentTheme == ElementTheme.Dark)
             {
                 background = Color.FromArgb(255, 31, 31, 31);
                 foreground = Colors.White;
                 buttonHover = Color.FromArgb(255, 53, 53, 53);
                 buttonPressed = Color.FromArgb(255, 76, 76, 76);
             }
-            else if (current == Colors.White || ApplicationSettings.Current.RequestedTheme == ElementTheme.Light)
+            else if (current == Colors.White || ApplicationSettings.Current.CurrentTheme == ElementTheme.Light)
             {
                 background = Color.FromArgb(255, 230, 230, 230);
                 foreground = Colors.Black;
