@@ -2337,6 +2337,9 @@ HRESULT ConnectionManager::SaveCDNPublicKeys()
 
 HRESULT ConnectionManager::IsIPv6Enabled(INetworkInformationStatics* networkInformation, INetworkAdapter* networkAdapter, bool* enabled)
 {
+	*enabled = false;
+	return S_OK;
+
 	HRESULT result;
 	GUID adapterId;
 	ReturnIfFailed(result, networkAdapter->get_NetworkAdapterId(&adapterId));
