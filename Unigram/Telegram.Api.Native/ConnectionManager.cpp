@@ -368,6 +368,26 @@ HRESULT ConnectionManager::get_Datacenters(__FIVectorView_1_Telegram__CApi__CNat
 	return S_OK;
 }
 
+HRESULT ConnectionManager::get_Logger(ILogger** value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	auto lock = LockCriticalSection();
+
+	return m_logger.CopyTo(value);
+}
+
+HRESULT ConnectionManager::put_Logger(ILogger* value)
+{
+	auto lock = LockCriticalSection();
+
+	m_logger = value;
+	return S_OK;
+}
+
 HRESULT ConnectionManager::SendRequest(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived, ConnectionType connectionType, INT32* value)
 {
 	return SendRequestWithFlags(object, onCompleted, onQuickAckReceived, DEFAULT_DATACENTER_ID, connectionType, RequestFlag::None, value);
@@ -411,7 +431,6 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 		m_lastRequestToken = requestToken;
 	}
 
-	OutputDebugStringFormat(L"Submitted request %d at %llu\n", requestToken, GetCurrentMonotonicTime());
 
 #pragma message("Potential deadlock")
 
@@ -421,9 +440,6 @@ HRESULT ConnectionManager::SendRequestWithFlags(ITLObject* object, ISendRequestC
 			auto requestsLock = m_requestsCriticalSection.Lock();
 			m_requestsQueue.push_back(request);
 		}
-
-		OutputDebugStringFormat(L"Enqueued request %d, %d running requests: %d generic, %d download and %d upload at %llu\n",
-			requestToken, m_runningRequests.size(), m_runningRequestCount[0], m_runningRequestCount[1], m_runningRequestCount[2], GetCurrentMonotonicTime());
 
 		if ((flags & RequestFlag::Immediate) == RequestFlag::Immediate)
 		{
@@ -490,8 +506,6 @@ HRESULT ConnectionManager::CancelRequest(INT32 requestToken, boolean notifyServe
 
 HRESULT ConnectionManager::SendPing(INT32 datacenterId)
 {
-	OutputDebugString(L"Sending ping\n");
-
 	ComPtr<Datacenter> datacenter;
 
 	{
@@ -596,15 +610,6 @@ HRESULT ConnectionManager::UpdateDatacenters()
 				return S_OK;
 			}
 		}
-
-		/*{
-#pragma message ("Potential deadlock")
-			auto requestsLock = m_requestsCriticalSection.Lock();
-
-			FILETIME timeout = {};
-			SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
-		}*/
-
 	}).Get(), nullptr, m_currentDatacenterId, ConnectionType::Generic, RequestFlag::EnableUnauthorized | RequestFlag::WithoutLogin | RequestFlag::TryDifferentDc, &requestToken);
 }
 
@@ -853,13 +858,6 @@ HRESULT ConnectionManager::UpdateCDNPublicKeys()
 				publicKey->second.Fingerprint = DatacenterCryptography::ComputePublickKeyFingerprint(publicKey->second.Key.Get());
 			}
 
-			/*{
-				auto requestsLock = m_requestsCriticalSection.Lock();
-
-				FILETIME timeout = {};
-				SetThreadpoolTimer(ThreadpoolObjectT::GetHandle(), &timeout, 0, REQUEST_TIMER_WINDOW);
-			}*/
-
 			HRESULT result;
 			ReturnIfFailed(result, m_processRequestsWork.ExecuteNow());
 
@@ -889,8 +887,6 @@ HRESULT ConnectionManager::MoveToDatacenter(INT32 datacenterId)
 	{
 		return E_INVALIDARG;
 	}
-
-	OutputDebugStringFormat(L"Moving datacenter from %d to %d\n", m_currentDatacenterId, datacenterId);
 
 	ResetRequests([this](auto datacenterId, auto const& request) -> bool
 	{
@@ -1280,9 +1276,6 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 		return S_FALSE;
 	}
 
-	/*request->SetStartTime(context->CurrentTime);
-	request->IncrementAttemptCount();
-*/
 	switch (request->GetConnectionType())
 	{
 	case ConnectionType::Generic:
@@ -1400,7 +1393,6 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 	HRESULT result;
 	ComPtr<Connection> connection;
 	ReturnIfFailed(result, datacenterContext->Datacenter->GetGenericConnection(false, connection));
-	//ReturnIfFailed(result, datacenterContext->Datacenter->GetGenericConnection(true, connection));
 
 	INT64 lastRpcMessageId = 0;
 	bool requiresQuickAck = false;
@@ -1416,8 +1408,6 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 		}
 
 		requiresQuickAck |= request->RequiresQuickAck();
-
-		OutputDebugStringFormat(L"Processing request %d at %llu\n", request->GetToken(), GetCurrentMonotonicTime());
 	}
 
 	bool requiresLayer = !datacenterContext->Datacenter->IsConnectionInitialized();
@@ -1473,8 +1463,6 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 	auto datacenterId = datacenterContext->Datacenter->GetId();
 	for (auto& request : datacenterContext->GenericRequests)
 	{
-		OutputDebugStringFormat(L"Sending request %d at %llu\n", request->GetToken(), GetCurrentMonotonicTime());
-
 		m_runningRequestCount[static_cast<UINT32>(request->GetConnectionType()) >> 1]++;
 		m_runningRequests.push_back(std::make_pair(datacenterId, std::move(request)));
 	}
@@ -1554,9 +1542,6 @@ HRESULT ConnectionManager::CompleteMessageRequest(INT64 requestMessageId, Messag
 		request = requestIterator->second;
 		m_runningRequestCount[static_cast<UINT32>(request->GetConnectionType()) >> 1]--;
 		m_runningRequests.erase(requestIterator);
-
-		OutputDebugStringFormat(L"Completed request %d, running requests: %d generic, %d download and %d upload at %llu\n",
-			request->GetToken(), m_runningRequests.size(), m_runningRequestCount[0], m_runningRequestCount[1], m_runningRequestCount[2], GetCurrentMonotonicTime());
 	}
 
 	HRESULT result = S_OK;
@@ -1639,8 +1624,7 @@ HRESULT ConnectionManager::HandleRequestError(Datacenter* datacenter, MessageReq
 		UINT32 constructor;
 		obejct->get_Constructor(&constructor);
 
-		OutputDebugStringFormat(L"Error %d (%s) for TLObject of type %s (0x%08X), request %d\n",
-			code, errorMessage, className.GetRawBuffer(nullptr), constructor, request->GetToken());
+#pragma message ("Log error")
 	}
 
 	switch (code)
