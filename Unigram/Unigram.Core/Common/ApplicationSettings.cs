@@ -8,6 +8,7 @@ using Telegram.Api.TL;
 using Unigram.Core.Services;
 using Telegram.Api.Services;
 using Telegram.Api.TL.Account;
+using Windows.UI.Xaml;
 
 namespace Unigram.Common
 {
@@ -156,6 +157,35 @@ namespace Unigram.Common
         }
 
         #endregion
+
+        private ElementTheme _currentTheme;
+        public ElementTheme CurrentTheme
+        {
+            get
+            {
+                return _currentTheme;
+            }
+        }
+
+        private ElementTheme? _requestedTheme;
+        public ElementTheme RequestedTheme
+        {
+            get
+            {
+                if (_requestedTheme == null)
+                {
+                    _requestedTheme = (ElementTheme)GetValueOrDefault("RequestedTheme", (int)ElementTheme.Default);
+                    _currentTheme = _requestedTheme ?? ElementTheme.Default;
+                }
+
+                return _requestedTheme ?? ElementTheme.Default;
+            }
+            set
+            {
+                _requestedTheme = value;
+                AddOrUpdateValue("RequestedTheme", (int)value);
+            }
+        }
 
         private bool? _isSendByEnterEnabled;
         public bool IsSendByEnterEnabled

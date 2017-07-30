@@ -11,6 +11,7 @@ using Telegram.Api.TL;
 using Telegram.Api.TL.Contacts;
 using Unigram.Common;
 using Unigram.Core.Services;
+using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels.Settings
 {
@@ -60,6 +61,28 @@ namespace Unigram.ViewModels.Settings
             {
                 ApplicationSettings.Current.IsContactsSyncEnabled = value;
                 RaisePropertyChanged();
+            }
+        }
+
+        public int RequestedTheme
+        {
+            get
+            {
+                return (int)ApplicationSettings.Current.RequestedTheme;
+            }
+            set
+            {
+                ApplicationSettings.Current.RequestedTheme = (ElementTheme)value;
+                RaisePropertyChanged();
+                RaisePropertyChanged(() => IsThemeChanged);
+            }
+        }
+
+        public bool IsThemeChanged
+        {
+            get
+            {
+                return ApplicationSettings.Current.CurrentTheme != ApplicationSettings.Current.RequestedTheme;
             }
         }
 

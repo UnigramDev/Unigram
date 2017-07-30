@@ -60,7 +60,7 @@ namespace Unigram
 
         public static AppInMemoryState InMemoryState { get; } = new AppInMemoryState();
 
-        private readonly UISettings _uiSettings = new UISettings();
+        private readonly UISettings _uiSettings;
 
         public static event TypedEventHandler<CoreDispatcher, AcceleratorKeyEventArgs> AcceleratorKeyActivated;
 
@@ -83,8 +83,14 @@ namespace Unigram
         /// </summary>
         public App()
         {
+            if (ApplicationSettings.Current.RequestedTheme != ElementTheme.Default)
+            {
+                RequestedTheme = ApplicationSettings.Current.RequestedTheme == ElementTheme.Dark ? ApplicationTheme.Dark : ApplicationTheme.Light;
+            }
+
             InitializeComponent();
 
+            _uiSettings = new UISettings();
             _uiSettings.ColorValuesChanged += ColorValuesChanged;
 
             m_mediaExtensionManager = new MediaExtensionManager();
@@ -440,27 +446,27 @@ namespace Unigram
         /// </summary>
         private void UpdateBars()
         {
-            Color Background;
-            Color Foreground;
-            Color ButtonHover;
-            Color ButtonPressed;
+            Color background;
+            Color foreground;
+            Color buttonHover;
+            Color buttonPressed;
 
-            var SelectedBackground = _uiSettings.GetColorValue(UIColorType.Background);
+            var current = _uiSettings.GetColorValue(UIColorType.Background);
 
             // Apply buttons feedback based on Light or Dark theme
-            if (SelectedBackground == Colors.Black)
+            if (current == Colors.Black || ApplicationSettings.Current.RequestedTheme == ElementTheme.Dark)
             {
-                Background = Color.FromArgb(255, 31, 31, 31);
-                Foreground = Colors.White;
-                ButtonHover = Color.FromArgb(255, 53, 53, 53);
-                ButtonPressed = Color.FromArgb(255, 76, 76, 76);
+                background = Color.FromArgb(255, 31, 31, 31);
+                foreground = Colors.White;
+                buttonHover = Color.FromArgb(255, 53, 53, 53);
+                buttonPressed = Color.FromArgb(255, 76, 76, 76);
             }
-            else
+            else if (current == Colors.White || ApplicationSettings.Current.RequestedTheme == ElementTheme.Light)
             {
-                Background = Color.FromArgb(255, 230, 230, 230);
-                Foreground = Colors.Black;
-                ButtonHover = Color.FromArgb(255, 207, 207, 207);
-                ButtonPressed = Color.FromArgb(255, 184, 184, 184);
+                background = Color.FromArgb(255, 230, 230, 230);
+                foreground = Colors.Black;
+                buttonHover = Color.FromArgb(255, 207, 207, 207);
+                buttonPressed = Color.FromArgb(255, 184, 184, 184);
             }
 
             // Desktop Title Bar
@@ -470,20 +476,20 @@ namespace Unigram
                 CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
 
                 // Background
-                titleBar.BackgroundColor = Background;
-                titleBar.InactiveBackgroundColor = Background;
+                titleBar.BackgroundColor = background;
+                titleBar.InactiveBackgroundColor = background;
 
                 // Foreground
-                titleBar.ForegroundColor = Foreground;
-                titleBar.ButtonForegroundColor = Foreground;
+                titleBar.ForegroundColor = foreground;
+                titleBar.ButtonForegroundColor = foreground;
 
                 // Buttons
-                titleBar.ButtonBackgroundColor = Background;
-                titleBar.ButtonInactiveBackgroundColor = Background;
+                titleBar.ButtonBackgroundColor = background;
+                titleBar.ButtonInactiveBackgroundColor = background;
 
                 // Buttons feedback
-                titleBar.ButtonPressedBackgroundColor = ButtonPressed;
-                titleBar.ButtonHoverBackgroundColor = ButtonHover;
+                titleBar.ButtonPressedBackgroundColor = buttonPressed;
+                titleBar.ButtonHoverBackgroundColor = buttonHover;
             }
             catch
             {
@@ -491,11 +497,11 @@ namespace Unigram
             }
 
             // Mobile Status Bar
-            if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
                 var statusBar = StatusBar.GetForCurrentView();
-                statusBar.BackgroundColor = Background;
-                statusBar.ForegroundColor = Foreground;
+                statusBar.BackgroundColor = background;
+                statusBar.ForegroundColor = foreground;
                 statusBar.BackgroundOpacity = 1;
             }
         }
