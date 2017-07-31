@@ -35,6 +35,7 @@ using Unigram.Core;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Telegram.Api.TL.Channels;
+using Unigram.Native;
 
 namespace Unigram.Controls
 {
@@ -567,6 +568,16 @@ namespace Unigram.Controls
                         ViewModel.UsernameHints = null;
                     }
 
+                    var emojis = SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string emojisText);
+                    if (emojis && emojisText.Length > 0)
+                    {
+                        ViewModel.EmojiSuggestions = EmojiSuggestion.GetSuggestions(emojisText);
+                    }
+                    else
+                    {
+                        ViewModel.EmojiSuggestions = null;
+                    }
+
                     if (text.Length > 0 && text[0] == '/')
                     {
                         var commands = SearchByCommands(text, out string searchText);
@@ -680,6 +691,50 @@ namespace Unigram.Controls
             searchText = string.Empty;
 
             var c = '/';
+            var flag = true;
+            var index = -1;
+            var i = text.Length - 1;
+
+            while (i >= 0)
+            {
+                if (text[i] == c)
+                {
+                    if (i == 0 || text[i - 1] == ' ')
+                    {
+                        index = i;
+                        break;
+                    }
+                    flag = false;
+                    break;
+                }
+                else
+                {
+                    if (!MessageHelper.IsValidCommandSymbol(text[i]))
+                    {
+                        flag = false;
+                        break;
+                    }
+                    i--;
+                }
+            }
+            if (flag)
+            {
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                searchText = text.Substring(index).TrimStart(c);
+            }
+
+            return flag;
+        }
+
+        public static bool SearchByEmoji(string text, out string searchText)
+        {
+            searchText = string.Empty;
+
+            var c = ':';
             var flag = true;
             var index = -1;
             var i = text.Length - 1;

@@ -7,6 +7,7 @@
     xmlns:common="using:Unigram.Common"
     xmlns:views="using:Unigram.Controls.Views"
     xmlns:messages="using:Unigram.Controls.Messages"
+    xmlns:native="using:Unigram.Native"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:viewmodels="using:Unigram.ViewModels"
     xmlns:vm="using:Unigram.ViewModels"
@@ -1542,6 +1543,36 @@
                                 <Run Text="{x:Bind FullName}" FontWeight="SemiBold" />
                                 <Run Text="{x:Bind Username, Converter={StaticResource UsernameConverter}, ConverterParameter=none}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
                             </TextBlock>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection/>
+                </ListView.ItemContainerTransitions>
+            </ListView>
+            <ListView x:Name="ListEmojiSuggestions"
+                      ItemsSource="{x:Bind ViewModel.EmojiSuggestions, Mode=OneWay}"
+                      Visibility="{x:Bind ViewModel.EmojiSuggestions, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                      BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                      BorderThickness="0,1,0,0"
+                      AllowFocusOnInteraction="False"
+                      IsItemClickEnabled="True"
+                      ItemClick="EmojiSuggestions_ItemClick"
+                      VerticalAlignment="Bottom"
+                      MaxHeight="154">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="native:EmojiSuggestion">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <!--<controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>-->
+                            <Border Width="32" Height="32" Margin="0,0,12,0">
+                                <TextBlock Text="{x:Bind Emoji}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{x:Bind Label}" VerticalAlignment="Center" Grid.Column="1"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>

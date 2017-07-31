@@ -54,6 +54,7 @@ using Windows.UI.Xaml.Media.Animation;
 using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Core.Helpers;
+using Unigram.Native;
 
 namespace Unigram.Views
 {
@@ -1208,6 +1209,27 @@ namespace Unigram.Views
                 TextField.Document.SetDefaultCharacterFormat(format);
 
                 ViewModel.UsernameHints = null;
+            }
+        }
+
+        private void EmojiSuggestions_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            TextField.Document.GetText(TextGetOptions.None, out string hidden);
+            TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
+
+            var emoji = e.ClickedItem as EmojiSuggestion;
+            if (emoji != null && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string query))
+            {
+                var insert = emoji.Emoji;
+                var start = TextField.Document.Selection.StartPosition - 1 - query.Length + insert.Length;
+                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - query.Length, TextField.Document.Selection.StartPosition);
+                range.SetText(TextSetOptions.None, insert);
+
+                //TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
+                //TextField.Document.Selection.StartPosition = start + 1;
+                TextField.Document.Selection.StartPosition = start;
+
+                ViewModel.EmojiSuggestions = null;
             }
         }
 
