@@ -56,6 +56,7 @@ using Windows.Foundation.Metadata;
 using Windows.UI.Text;
 using Telegram.Api.TL.Messages;
 using Windows.UI.Notifications;
+using Unigram.Native;
 
 namespace Unigram.ViewModels
 {
@@ -1319,6 +1320,19 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _usernameHints, value);
+            }
+        }
+
+        private EmojiSuggestion[] _emojiSuggestions;
+        public EmojiSuggestion[] EmojiSuggestions
+        {
+            get
+            {
+                return _emojiSuggestions;
+            }
+            set
+            {
+                Set(ref _emojiSuggestions, value);
             }
         }
 
