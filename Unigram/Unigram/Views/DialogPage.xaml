@@ -1490,36 +1490,6 @@
                     <TransitionCollection/>
                 </GridView.ItemContainerTransitions>
             </controls:ZoomableGridView>
-            <ListView x:Name="ListBotCommands"
-                      ItemsSource="{x:Bind ViewModel.BotCommands, Mode=OneWay}"
-                      Visibility="{x:Bind ViewModel.BotCommands, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                      BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                      BorderThickness="0,1,0,0"
-                      AllowFocusOnInteraction="False"
-                      IsItemClickEnabled="True"
-                      ItemClick="BotCommands_ItemClick"
-                      VerticalAlignment="Bottom"
-                      MaxHeight="154">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="viewmodels:TLUserCommand">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <controls:ProfilePictureView Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
-                            <TextBlock VerticalAlignment="Center" Grid.Column="1">
-                                <Run Text="/" FontWeight="SemiBold" /><Run Text="{x:Bind Item.Command}" FontWeight="SemiBold" />
-                                <Run Text="{x:Bind Item.Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                            </TextBlock>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.ItemContainerTransitions>
-                    <TransitionCollection/>
-                </ListView.ItemContainerTransitions>
-            </ListView>
             <ListView x:Name="ListAutocomplete"
                       ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
                       Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
@@ -1639,7 +1609,6 @@
                         Background="Transparent"
                         Reply="{Binding Reply}"
                         Autocomplete="{x:Bind ListAutocomplete}"
-                        BotCommands="{x:Bind ListBotCommands}"
                         AcceptsReturn="False"
                         PlaceholderText="Type your message..."
                         BorderThickness="0"

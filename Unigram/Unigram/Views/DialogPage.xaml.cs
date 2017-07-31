@@ -1153,23 +1153,6 @@ namespace Unigram.Views
             visual.StopAnimation("Offset.Y");
         }
 
-        private void BotCommands_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            var item = e.ClickedItem as TLUserCommand;
-            if (item != null)
-            {
-                var command = $"/{item.Item.Command}";
-                if (item.User.HasUsername && (ViewModel.With is TLChannel || ViewModel.With is TLChat))
-                {
-                    command += $"@{item.User.Username}";
-                }
-
-                TextField.SetText(null, null);
-                ViewModel.SendCommand.Execute(command);
-                ViewModel.BotCommands = null;
-            }
-        }
-
         private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
             TextField.Document.GetText(TextGetOptions.None, out string hidden);
@@ -1208,6 +1191,18 @@ namespace Unigram.Views
                 TextField.Document.SetDefaultCharacterFormat(format);
 
                 ViewModel.Autocomplete = null;
+            }
+            else if (e.ClickedItem is TLUserCommand command)
+            {
+                var insert = $"/{command.Item.Command}";
+                if (command.User.HasUsername && (ViewModel.With is TLChannel || ViewModel.With is TLChat))
+                {
+                    insert += $"@{command.User.Username}";
+                }
+
+                TextField.SetText(null, null);
+                ViewModel.SendCommand.Execute(insert);
+                ViewModel.BotCommands = null;
             }
             else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
             {

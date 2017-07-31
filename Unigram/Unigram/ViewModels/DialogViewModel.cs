@@ -1083,12 +1083,12 @@ namespace Unigram.ViewModels
 
                     if (user.IsBot && full.HasBotInfo)
                     {
-                        UnfilteredBotCommands = full.BotInfo.Commands.Select(x => new TLUserCommand { User = user, Item = x }).ToList();
-                        HasBotCommands = UnfilteredBotCommands.Count > 0;
+                        BotCommands = full.BotInfo.Commands.Select(x => new TLUserCommand { User = user, Item = x }).ToList();
+                        HasBotCommands = BotCommands.Count > 0;
                     }
                     else
                     {
-                        UnfilteredBotCommands = null;
+                        BotCommands = null;
                         HasBotCommands = false;
                     }
                 }
@@ -1126,12 +1126,12 @@ namespace Unigram.ViewModels
                             }
                         }
 
-                        UnfilteredBotCommands = commands;
-                        HasBotCommands = UnfilteredBotCommands.Count > 0;
+                        BotCommands = commands;
+                        HasBotCommands = BotCommands.Count > 0;
                     }
                     else
                     {
-                        UnfilteredBotCommands = null;
+                        BotCommands = null;
                         HasBotCommands = false;
                     }
 
@@ -1203,8 +1203,8 @@ namespace Unigram.ViewModels
                         }
                     }
 
-                    UnfilteredBotCommands = commands;
-                    HasBotCommands = UnfilteredBotCommands.Count > 0;
+                    BotCommands = commands;
+                    HasBotCommands = BotCommands.Count > 0;
                 }
                 //    participantCount = chatDetails.Result.Users.Count;
                 //    if (participantCount < 200)
@@ -1322,8 +1322,6 @@ namespace Unigram.ViewModels
                 Set(ref _autocomplete, value);
             }
         }
-
-        public List<TLUserCommand> UnfilteredBotCommands { get; private set; }
 
         private bool _hasBotCommands;
         public bool HasBotCommands
