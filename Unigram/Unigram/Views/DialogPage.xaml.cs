@@ -1212,13 +1212,12 @@ namespace Unigram.Views
             }
         }
 
-        private void EmojiSuggestions_ItemClick(object sender, ItemClickEventArgs e)
+        private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
             TextField.Document.GetText(TextGetOptions.None, out string hidden);
             TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
 
-            var emoji = e.ClickedItem as EmojiSuggestion;
-            if (emoji != null && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string query))
+            if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string query))
             {
                 var insert = emoji.Emoji;
                 var start = TextField.Document.Selection.StartPosition - 1 - query.Length + insert.Length;
@@ -1229,7 +1228,7 @@ namespace Unigram.Views
                 //TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.Selection.StartPosition = start;
 
-                ViewModel.EmojiSuggestions = null;
+                ViewModel.Autocomplete = null;
             }
         }
 

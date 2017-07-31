@@ -571,11 +571,11 @@ namespace Unigram.Controls
                     var emojis = SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string emojisText);
                     if (emojis && emojisText.Length > 0)
                     {
-                        ViewModel.EmojiSuggestions = EmojiSuggestion.GetSuggestions(emojisText);
+                        ViewModel.Autocomplete = EmojiSuggestion.GetSuggestions(emojisText);
                     }
                     else
                     {
-                        ViewModel.EmojiSuggestions = null;
+                        ViewModel.Autocomplete = null;
                     }
 
                     if (text.Length > 0 && text[0] == '/')
@@ -583,15 +583,7 @@ namespace Unigram.Controls
                         var commands = SearchByCommands(text, out string searchText);
                         if (commands)
                         {
-                            var result = GetCommands(searchText.ToLower());
-                            if (result != null && ViewModel.BotCommands != null && ViewModel.BotCommands.SequenceEqual(result))
-                            {
-
-                            }
-                            else
-                            {
-                                ViewModel.BotCommands = result;
-                            }
+                            ViewModel.BotCommands = GetCommands(searchText.ToLower());
                         }
                         else
                         {
@@ -606,12 +598,12 @@ namespace Unigram.Controls
             }
         }
 
-        private List<Tuple<TLUser, TLBotCommand>> GetCommands(string command)
+        private List<TLUserCommand> GetCommands(string command)
         {
             var all = ViewModel.UnfilteredBotCommands;
             if (all != null)
             {
-                var results = all.Where(x => x.Item2.Command.ToLower().StartsWith(command)).ToList();
+                var results = all.Where(x => x.Item.Command.ToLower().StartsWith(command)).ToList();
                 if (results.Count > 0)
                 {
                     return results;

@@ -1502,16 +1502,16 @@
                       VerticalAlignment="Bottom"
                       MaxHeight="154">
                 <ListView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="viewmodels:TLUserCommand">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <controls:ProfilePictureView Source="{Binding Item1.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                            <controls:ProfilePictureView Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
                             <TextBlock VerticalAlignment="Center" Grid.Column="1">
-                                <Run Text="/" FontWeight="SemiBold" /><Run Text="{Binding Item2.Command}" FontWeight="SemiBold" />
-                                <Run Text="{Binding Item2.Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                <Run Text="/" FontWeight="SemiBold" /><Run Text="{x:Bind Item.Command}" FontWeight="SemiBold" />
+                                <Run Text="{x:Bind Item.Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
                             </TextBlock>
                         </Grid>
                     </DataTemplate>
@@ -1550,32 +1550,65 @@
                     <TransitionCollection/>
                 </ListView.ItemContainerTransitions>
             </ListView>
-            <ListView x:Name="ListEmojiSuggestions"
-                      ItemsSource="{x:Bind ViewModel.EmojiSuggestions, Mode=OneWay}"
-                      Visibility="{x:Bind ViewModel.EmojiSuggestions, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+            <ListView x:Name="ListAutocomplete"
+                      ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
+                      Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                       BorderThickness="0,1,0,0"
                       AllowFocusOnInteraction="False"
                       IsItemClickEnabled="True"
-                      ItemClick="EmojiSuggestions_ItemClick"
+                      ItemClick="Autocomplete_ItemClick"
                       VerticalAlignment="Bottom"
                       MaxHeight="154">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="native:EmojiSuggestion">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <!--<controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>-->
-                            <Border Width="32" Height="32" Margin="0,0,12,0">
-                                <TextBlock Text="{x:Bind Emoji}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <TextBlock Text="{x:Bind Label}" VerticalAlignment="Center" Grid.Column="1"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
+                <ListView.ItemTemplateSelector>
+                    <selectors:AutocompleteTemplateSelector>
+                        <selectors:AutocompleteTemplateSelector.MentionTemplate>
+                            <DataTemplate x:DataType="models:TLUser">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                                    <TextBlock VerticalAlignment="Center" Grid.Column="1">
+                                        <Run Text="{x:Bind FullName}" FontWeight="SemiBold" />
+                                        <Run Text="{x:Bind Username, Converter={StaticResource UsernameConverter}, ConverterParameter=none}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                    </TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </selectors:AutocompleteTemplateSelector.MentionTemplate>
+                        <selectors:AutocompleteTemplateSelector.CommandTemplate>
+                            <DataTemplate x:DataType="viewmodels:TLUserCommand">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <controls:ProfilePictureView Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                                    <TextBlock VerticalAlignment="Center" Grid.Column="1">
+                                        <Run Text="/" FontWeight="SemiBold" /><Run Text="{x:Bind Item.Command}" FontWeight="SemiBold" />
+                                        <Run Text="{x:Bind Item.Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                    </TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </selectors:AutocompleteTemplateSelector.CommandTemplate>
+                        <selectors:AutocompleteTemplateSelector.EmojiTemplate>
+                            <DataTemplate x:DataType="native:EmojiSuggestion">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="32" Height="32" Margin="0,0,12,0">
+                                        <TextBlock Text="{x:Bind Emoji}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="{x:Bind Label}" VerticalAlignment="Center" Grid.Column="1"/>
+                                </Grid>
+                            </DataTemplate>
+                        </selectors:AutocompleteTemplateSelector.EmojiTemplate>
+                    </selectors:AutocompleteTemplateSelector>
+                </ListView.ItemTemplateSelector>
                 <ListView.ItemContainerTransitions>
                     <TransitionCollection/>
                 </ListView.ItemContainerTransitions>

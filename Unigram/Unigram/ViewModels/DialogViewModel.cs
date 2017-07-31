@@ -1083,7 +1083,7 @@ namespace Unigram.ViewModels
 
                     if (user.IsBot && full.HasBotInfo)
                     {
-                        UnfilteredBotCommands = full.BotInfo.Commands.Select(x => Tuple.Create(user, x)).ToList();
+                        UnfilteredBotCommands = full.BotInfo.Commands.Select(x => new TLUserCommand { User = user, Item = x }).ToList();
                         HasBotCommands = UnfilteredBotCommands.Count > 0;
                     }
                     else
@@ -1115,14 +1115,14 @@ namespace Unigram.ViewModels
 
                     if (channel.IsMegaGroup)
                     {
-                        var commands = new List<Tuple<TLUser, TLBotCommand>>();
+                        var commands = new List<TLUserCommand>();
 
                         foreach (var info in full.BotInfo)
                         {
                             var bot = CacheService.GetUser(info.UserId) as TLUser;
                             if (bot != null)
                             {
-                                commands.AddRange(info.Commands.Select(x => Tuple.Create(bot, x)));
+                                commands.AddRange(info.Commands.Select(x => new TLUserCommand { User = bot, Item = x }));
                             }
                         }
 
@@ -1192,14 +1192,14 @@ namespace Unigram.ViewModels
                 {
                     Full = full;
 
-                    var commands = new List<Tuple<TLUser, TLBotCommand>>();
+                    var commands = new List<TLUserCommand>();
 
                     foreach (var info in full.BotInfo)
                     {
                         var bot = CacheService.GetUser(info.UserId) as TLUser;
                         if (bot != null)
                         {
-                            commands.AddRange(info.Commands.Select(x => Tuple.Create(bot, x)));
+                            commands.AddRange(info.Commands.Select(x => new TLUserCommand { User = bot, Item = x }));
                         }
                     }
 
@@ -1323,20 +1323,20 @@ namespace Unigram.ViewModels
             }
         }
 
-        private EmojiSuggestion[] _emojiSuggestions;
-        public EmojiSuggestion[] EmojiSuggestions
+        private IEnumerable _autocomplete;
+        public IEnumerable Autocomplete
         {
             get
             {
-                return _emojiSuggestions;
+                return _autocomplete;
             }
             set
             {
-                Set(ref _emojiSuggestions, value);
+                Set(ref _autocomplete, value);
             }
         }
 
-        public List<Tuple<TLUser, TLBotCommand>> UnfilteredBotCommands { get; private set; }
+        public List<TLUserCommand> UnfilteredBotCommands { get; private set; }
 
         private bool _hasBotCommands;
         public bool HasBotCommands
@@ -1351,8 +1351,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private List<Tuple<TLUser, TLBotCommand>> _botCommands;
-        public List<Tuple<TLUser, TLBotCommand>> BotCommands
+        private List<TLUserCommand> _botCommands;
+        public List<TLUserCommand> BotCommands
         {
             get
             {
@@ -2875,4 +2875,10 @@ namespace Unigram.ViewModels
     //        base.RemoveItem(index);
     //    }
     //}
+
+    public class TLUserCommand
+    {
+        public TLUser User { get; set; }
+        public TLBotCommand Item { get; set; }
+    }
 }
