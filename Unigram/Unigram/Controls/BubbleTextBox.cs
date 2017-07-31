@@ -317,13 +317,13 @@ namespace Unigram.Controls
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
                 var key = Window.Current.CoreWindow.GetKeyState(VirtualKey.Enter);
 
-                if (UsernameHints != null && ViewModel.UsernameHints != null)
+                if (Autocomplete != null && ViewModel.Autocomplete != null)
                 {
                     var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
                     if (send || args.VirtualKey == VirtualKey.Tab)
                     {
                         AcceptsReturn = false;
-                        var container = UsernameHints.ContainerFromIndex(Math.Max(0, UsernameHints.SelectedIndex)) as ListViewItem;
+                        var container = Autocomplete.ContainerFromIndex(Math.Max(0, Autocomplete.SelectedIndex)) as ListViewItem;
                         if (container != null)
                         {
                             var peer = new ListViewItemAutomationPeer(container);
@@ -391,7 +391,7 @@ namespace Unigram.Controls
             }
         }
 
-        public ListView UsernameHints { get; set; }
+        public ListView Autocomplete { get; set; }
 
         public ListView BotCommands { get; set; }
 
@@ -432,16 +432,16 @@ namespace Unigram.Controls
                 }
                 else if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
                 {
-                    if (UsernameHints != null && ViewModel.UsernameHints != null)
+                    if (Autocomplete != null && ViewModel.Autocomplete != null)
                     {
-                        UsernameHints.SelectionMode = ListViewSelectionMode.Single;
+                        Autocomplete.SelectionMode = ListViewSelectionMode.Single;
 
                         var index = e.Key == VirtualKey.Up ? -1 : 1;
-                        var next = UsernameHints.SelectedIndex + index;
-                        if (next >= 0 && next < ViewModel.UsernameHints.Count)
+                        var next = Autocomplete.SelectedIndex + index;
+                        if (next >= 0 && next < ViewModel.Autocomplete.Count)
                         {
-                            UsernameHints.SelectedIndex = next;
-                            UsernameHints.ScrollIntoView(UsernameHints.SelectedItem);
+                            Autocomplete.SelectedIndex = next;
+                            Autocomplete.ScrollIntoView(Autocomplete.SelectedItem);
                         }
 
                         e.Handled = true;
@@ -558,20 +558,13 @@ namespace Unigram.Controls
                 {
                     ViewModel.StickerPack = null;
 
-                    var usernames = SearchByUsernames(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string usernamesText);
-                    if (usernames)
+                    if (SearchByUsername(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string username))
                     {
-                        ViewModel.UsernameHints = GetUsernames(usernamesText.ToLower(), text.StartsWith('@' + usernamesText));
+                        ViewModel.Autocomplete = GetUsernames(username.ToLower(), text.StartsWith('@' + username));
                     }
-                    else
+                    else if (SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
                     {
-                        ViewModel.UsernameHints = null;
-                    }
-
-                    var emojis = SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string emojisText);
-                    if (emojis && emojisText.Length > 0)
-                    {
-                        ViewModel.Autocomplete = EmojiSuggestion.GetSuggestions(emojisText);
+                        ViewModel.Autocomplete = EmojiSuggestion.GetSuggestions(replacement);
                     }
                     else
                     {
@@ -873,7 +866,7 @@ namespace Unigram.Controls
 
         #region Username
 
-        public static bool SearchByUsernames(string text, out string searchText)
+        public static bool SearchByUsername(string text, out string searchText)
         {
             searchText = string.Empty;
 

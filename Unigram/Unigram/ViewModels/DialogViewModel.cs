@@ -1310,21 +1310,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private List<TLUser> _usernameHints;
-        public List<TLUser> UsernameHints
-        {
-            get
-            {
-                return _usernameHints;
-            }
-            set
-            {
-                Set(ref _usernameHints, value);
-            }
-        }
-
-        private IEnumerable _autocomplete;
-        public IEnumerable Autocomplete
+        private ICollection _autocomplete;
+        public ICollection Autocomplete
         {
             get
             {

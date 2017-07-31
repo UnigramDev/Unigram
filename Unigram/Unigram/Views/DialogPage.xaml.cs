@@ -1155,13 +1155,13 @@ namespace Unigram.Views
 
         private void BotCommands_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var item = e.ClickedItem as Tuple<TLUser, TLBotCommand>;
+            var item = e.ClickedItem as TLUserCommand;
             if (item != null)
             {
-                var command = $"/{item.Item2.Command}";
-                if (ViewModel.With is TLChannel || ViewModel.With is TLChat && item.Item1.HasUsername)
+                var command = $"/{item.Item.Command}";
+                if (item.User.HasUsername && (ViewModel.With is TLChannel || ViewModel.With is TLChat))
                 {
-                    command += $"@{item.Item1.Username}";
+                    command += $"@{item.User.Username}";
                 }
 
                 TextField.SetText(null, null);
@@ -1170,13 +1170,12 @@ namespace Unigram.Views
             }
         }
 
-        private void UsernameHints_ItemClick(object sender, ItemClickEventArgs e)
+        private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
             TextField.Document.GetText(TextGetOptions.None, out string hidden);
             TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
 
-            var user = e.ClickedItem as TLUser;
-            if (user != null && BubbleTextBox.SearchByUsernames(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string query))
+            if (e.ClickedItem is TLUser user && BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string username))
             {
                 var insert = string.Empty;
                 var adjust = 0;
@@ -1192,8 +1191,8 @@ namespace Unigram.Views
                 }
 
                 var format = TextField.Document.GetDefaultCharacterFormat();
-                var start = TextField.Document.Selection.StartPosition - query.Length - adjust + insert.Length;
-                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - query.Length - adjust, TextField.Document.Selection.StartPosition);
+                var start = TextField.Document.Selection.StartPosition - username.Length - adjust + insert.Length;
+                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - username.Length - adjust, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
                 if (user.HasUsername == false)
@@ -1208,20 +1207,13 @@ namespace Unigram.Views
                 TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.SetDefaultCharacterFormat(format);
 
-                ViewModel.UsernameHints = null;
+                ViewModel.Autocomplete = null;
             }
-        }
-
-        private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            TextField.Document.GetText(TextGetOptions.None, out string hidden);
-            TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
-
-            if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string query))
+            else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
             {
                 var insert = emoji.Emoji;
-                var start = TextField.Document.Selection.StartPosition - 1 - query.Length + insert.Length;
-                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - query.Length, TextField.Document.Selection.StartPosition);
+                var start = TextField.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;
+                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - replacement.Length, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
                 //TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
