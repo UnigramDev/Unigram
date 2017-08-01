@@ -55,6 +55,7 @@ using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Core.Helpers;
 using Unigram.Native;
+using LinqToVisualTree;
 
 namespace Unigram.Views
 {
@@ -72,6 +73,10 @@ namespace Unigram.Views
         private Visual _elapsedVisual;
         private Visual _slideVisual;
         private Visual _rootVisual;
+
+        private Visual _autocompleteLayer;
+        private InsetClip _autocompleteInset;
+
         private Compositor _compositor;
 
         public DialogPage()
@@ -1341,6 +1346,18 @@ namespace Unigram.Views
             }
         }
 
+        private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var height = e.NewSize.Height;
+            var padding = ActualHeight - 48 * 2 - Math.Min(154, ListAutocomplete.Items.Count * 44);
+
+            //ListAutocomplete.Padding = new Thickness(0, padding, 0, 0);
+            AutocompleteHeader.Margin = new Thickness(0, padding, 0, -height);
+            AutocompleteHeader.Height = height;
+
+            Debug.WriteLine("Autocomplete size changed");
+        }
+
         private void MaskTitleAndStatusBar()
         {
             var titlebar = ApplicationView.GetForCurrentView().TitleBar;
@@ -1384,6 +1401,62 @@ namespace Unigram.Views
                 statusBar.BackgroundColor = backgroundBrush.Color;
                 statusBar.ForegroundColor = foregroundBrush.Color;
             }
+        }
+
+        private void Autocomplete_Loaded(object sender, RoutedEventArgs e)
+        {
+            var padding = ActualHeight - 48 * 2 - 152;
+
+            var boh = ListAutocomplete.Descendants().FirstOrDefault();
+
+            _autocompleteLayer = ElementCompositionPreview.GetElementVisual(ListAutocomplete);
+            _autocompleteLayer.Clip = _autocompleteInset = _compositor.CreateInsetClip(0, (float)padding, 0, 0);
+
+            var scroll = ListAutocomplete.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+            if (scroll != null)
+            {
+                //_scrollingHost = scroll;
+                //_scrollingHost.ChangeView(null, 0, null, true);
+                //scroll.ViewChanged += Scroll_ViewChanged;
+                //Scroll_ViewChanged(scroll, null);
+
+                //var brush = App.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
+                var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroll);
+
+                //if (_backgroundVisual == null)
+                //{
+                //    _backgroundVisual = ElementCompositionPreview.GetElementVisual(BackgroundPanel).Compositor.CreateSpriteVisual();
+                //    ElementCompositionPreview.SetElementChildVisual(BackgroundPanel, _backgroundVisual);
+                //}
+
+                //_backgroundVisual.Brush = _backgroundVisual.Compositor.CreateColorBrush(brush.Color);
+                //_backgroundVisual.Size = new System.Numerics.Vector2((float)BackgroundPanel.ActualWidth, (float)BackgroundPanel.ActualHeight);
+                //_backgroundVisual.Clip = _backgroundVisual.Compositor.CreateInsetClip();
+
+                //_expression = _expression ?? _backgroundVisual.Compositor.CreateExpressionAnimation("Max(Maximum, Scrolling.Translation.Y)");
+                //_expression.SetReferenceParameter("Scrolling", props);
+                //_expression.SetScalarParameter("Maximum", -(float)BackgroundPanel.Margin.Top + 1);
+                //_backgroundVisual.StopAnimation("Offset.Y");
+                //_backgroundVisual.StartAnimation("Offset.Y", _expression);
+
+
+                ExpressionAnimation _expressionClip = null;
+                //_expressionClip = _expressionClip ?? _compositor.CreateExpressionAnimation("Min(0, Maximum - Scrolling.Translation.Y)");
+                _expressionClip = _expressionClip ?? _compositor.CreateExpressionAnimation("Scrolling.Translation.Y");
+                _expressionClip.SetReferenceParameter("Scrolling", props);
+                _expressionClip.SetScalarParameter("Maximum", -(float)padding);
+                _autocompleteLayer.Clip.StopAnimation("Offset.Y");
+                _autocompleteLayer.Clip.StartAnimation("Offset.Y", _expressionClip);
+            }
+
+            //var panel = List.ItemsPanelRoot as ItemsWrapGrid;
+            //if (panel != null)
+            //{
+            //    panel.SizeChanged += (s, args) =>
+            //    {
+            //        Scroll_ViewChanged(scroll, null);
+            //    };
+            //}
         }
     }
 
