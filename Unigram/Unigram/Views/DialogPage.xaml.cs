@@ -90,6 +90,8 @@ namespace Unigram.Views
 
             TextField.LostFocus += TextField_LostFocus;
 
+            StickersPanel.StickerClick = Stickers_ItemClick;
+
             lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
             StickersPanel.RegisterPropertyChangedCallback(FrameworkElement.VisibilityProperty, StickersPanel_VisibilityChanged);
 
@@ -939,6 +941,7 @@ namespace Unigram.Views
             ViewModel.SendStickerCommand.Execute(e.ClickedItem);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
+            Collapse_Click(null, new RoutedEventArgs());
         }
 
         private async void StickerSet_Click(object sender, RoutedEventArgs e)
@@ -1296,19 +1299,26 @@ namespace Unigram.Views
 
         private void Collapse_Click(object sender, RoutedEventArgs e)
         {
-            StickersPanel.MinHeight = 260;
-            StickersPanel.MaxHeight = 360;
-            StickersPanel.Height = _lastKnownKeyboardHeight;
-            ButtonExpand.Glyph = "\uE010";
-
-            HeaderOverlay.Visibility = Visibility.Collapsed;
-            UnmaskTitleAndStatusBar();
-
-            if (HeaderOverlay.Visibility == Visibility.Visible && sender == null)
+            if ((HeaderOverlay.Visibility == Visibility.Visible && sender == null) || e != null)
             {
+                StickersPanel.MinHeight = 260;
+                StickersPanel.MaxHeight = 360;
+                StickersPanel.Height = _lastKnownKeyboardHeight;
+                ButtonExpand.Glyph = "\uE010";
+
+                HeaderOverlay.Visibility = Visibility.Collapsed;
+                UnmaskTitleAndStatusBar();
             }
             else
             {
+                StickersPanel.MinHeight = 260;
+                StickersPanel.MaxHeight = 360;
+                StickersPanel.Height = _lastKnownKeyboardHeight;
+                ButtonExpand.Glyph = "\uE010";
+
+                HeaderOverlay.Visibility = Visibility.Collapsed;
+                UnmaskTitleAndStatusBar();
+
                 StickersPanel.Visibility = Visibility.Collapsed;
             }
         }
