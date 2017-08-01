@@ -35,6 +35,7 @@ using Unigram.Core;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Telegram.Api.TL.Channels;
+using Unigram.Native;
 
 namespace Unigram.Controls
 {
@@ -316,35 +317,13 @@ namespace Unigram.Controls
                 var shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
                 var key = Window.Current.CoreWindow.GetKeyState(VirtualKey.Enter);
 
-                if (UsernameHints != null && ViewModel.UsernameHints != null)
+                if (Autocomplete != null && ViewModel.Autocomplete != null)
                 {
                     var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
                     if (send || args.VirtualKey == VirtualKey.Tab)
                     {
                         AcceptsReturn = false;
-                        var container = UsernameHints.ContainerFromIndex(Math.Max(0, UsernameHints.SelectedIndex)) as ListViewItem;
-                        if (container != null)
-                        {
-                            var peer = new ListViewItemAutomationPeer(container);
-                            var invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-                            invokeProv.Invoke();
-                        }
-                    }
-                    else
-                    {
-                        AcceptsReturn = true;
-                    }
-
-                    return;
-                }
-
-                if (BotCommands != null && ViewModel.BotCommands != null)
-                {
-                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                    if (send || args.VirtualKey == VirtualKey.Tab)
-                    {
-                        AcceptsReturn = false;
-                        var container = BotCommands.ContainerFromIndex(Math.Max(0, BotCommands.SelectedIndex)) as ListViewItem;
+                        var container = Autocomplete.ContainerFromIndex(Math.Max(0, Autocomplete.SelectedIndex)) as ListViewItem;
                         if (container != null)
                         {
                             var peer = new ListViewItemAutomationPeer(container);
@@ -390,9 +369,7 @@ namespace Unigram.Controls
             }
         }
 
-        public ListView UsernameHints { get; set; }
-
-        public ListView BotCommands { get; set; }
+        public ListView Autocomplete { get; set; }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
@@ -431,30 +408,16 @@ namespace Unigram.Controls
                 }
                 else if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
                 {
-                    if (UsernameHints != null && ViewModel.UsernameHints != null)
+                    if (Autocomplete != null && ViewModel.Autocomplete != null)
                     {
-                        UsernameHints.SelectionMode = ListViewSelectionMode.Single;
+                        Autocomplete.SelectionMode = ListViewSelectionMode.Single;
 
                         var index = e.Key == VirtualKey.Up ? -1 : 1;
-                        var next = UsernameHints.SelectedIndex + index;
-                        if (next >= 0 && next < ViewModel.UsernameHints.Count)
+                        var next = Autocomplete.SelectedIndex + index;
+                        if (next >= 0 && next < ViewModel.Autocomplete.Count)
                         {
-                            UsernameHints.SelectedIndex = next;
-                            UsernameHints.ScrollIntoView(UsernameHints.SelectedItem);
-                        }
-
-                        e.Handled = true;
-                    }
-                    else if (BotCommands != null && ViewModel.BotCommands != null)
-                    {
-                        BotCommands.SelectionMode = ListViewSelectionMode.Single;
-
-                        var index = e.Key == VirtualKey.Up ? -1 : 1;
-                        var next = BotCommands.SelectedIndex + index;
-                        if (next >= 0 && next < ViewModel.BotCommands.Count)
-                        {
-                            BotCommands.SelectedIndex = next;
-                            BotCommands.ScrollIntoView(BotCommands.SelectedItem);
+                            Autocomplete.SelectedIndex = next;
+                            Autocomplete.ScrollIntoView(Autocomplete.SelectedItem);
                         }
 
                         e.Handled = true;
@@ -530,11 +493,11 @@ namespace Unigram.Controls
         {
             //var text = Text.Substring(0, Math.Max(Document.Selection.StartPosition, Document.Selection.EndPosition));
             var text = Text;
-            var command = string.Empty;
-            var inline = SearchInlineBotResults(text, out command);
+            var query = string.Empty;
+            var inline = SearchInlineBotResults(text, out query);
             if (inline && fast)
             {
-                ViewModel.GetInlineBotResults(command);
+                ViewModel.GetInlineBotResults(query);
             }
             else if (!inline)
             {
@@ -557,50 +520,32 @@ namespace Unigram.Controls
                 {
                     ViewModel.StickerPack = null;
 
-                    var usernames = SearchByUsernames(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string usernamesText);
-                    if (usernames)
+                    if (SearchByUsername(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string username))
                     {
-                        ViewModel.UsernameHints = GetUsernames(usernamesText.ToLower(), text.StartsWith('@' + usernamesText));
+                        ViewModel.Autocomplete = GetUsernames(username.ToLower(), text.StartsWith('@' + username));
+                    }
+                    else if (SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
+                    {
+                        ViewModel.Autocomplete = EmojiSuggestion.GetSuggestions(replacement);
+                    }
+                    else if (text.Length > 0 && text[0] == '/' && SearchByCommands(text, out string command))
+                    {
+                        ViewModel.Autocomplete = GetCommands(command.ToLower());
                     }
                     else
                     {
-                        ViewModel.UsernameHints = null;
-                    }
-
-                    if (text.Length > 0 && text[0] == '/')
-                    {
-                        var commands = SearchByCommands(text, out string searchText);
-                        if (commands)
-                        {
-                            var result = GetCommands(searchText.ToLower());
-                            if (result != null && ViewModel.BotCommands != null && ViewModel.BotCommands.SequenceEqual(result))
-                            {
-
-                            }
-                            else
-                            {
-                                ViewModel.BotCommands = result;
-                            }
-                        }
-                        else
-                        {
-                            ViewModel.BotCommands = null;
-                        }
-                    }
-                    else
-                    {
-                        ViewModel.BotCommands = null;
+                        ViewModel.Autocomplete = null;
                     }
                 }
             }
         }
 
-        private List<Tuple<TLUser, TLBotCommand>> GetCommands(string command)
+        private List<TLUserCommand> GetCommands(string command)
         {
-            var all = ViewModel.UnfilteredBotCommands;
+            var all = ViewModel.BotCommands;
             if (all != null)
             {
-                var results = all.Where(x => x.Item2.Command.ToLower().StartsWith(command)).ToList();
+                var results = all.Where(x => x.Item.Command.ToLower().StartsWith(command, StringComparison.OrdinalIgnoreCase)).ToList();
                 if (results.Count > 0)
                 {
                     return results;
@@ -680,6 +625,50 @@ namespace Unigram.Controls
             searchText = string.Empty;
 
             var c = '/';
+            var flag = true;
+            var index = -1;
+            var i = text.Length - 1;
+
+            while (i >= 0)
+            {
+                if (text[i] == c)
+                {
+                    if (i == 0 || text[i - 1] == ' ')
+                    {
+                        index = i;
+                        break;
+                    }
+                    flag = false;
+                    break;
+                }
+                else
+                {
+                    if (!MessageHelper.IsValidCommandSymbol(text[i]))
+                    {
+                        flag = false;
+                        break;
+                    }
+                    i--;
+                }
+            }
+            if (flag)
+            {
+                if (index == -1)
+                {
+                    return false;
+                }
+
+                searchText = text.Substring(index).TrimStart(c);
+            }
+
+            return flag;
+        }
+
+        public static bool SearchByEmoji(string text, out string searchText)
+        {
+            searchText = string.Empty;
+
+            var c = ':';
             var flag = true;
             var index = -1;
             var i = text.Length - 1;
@@ -826,7 +815,7 @@ namespace Unigram.Controls
 
         #region Username
 
-        public static bool SearchByUsernames(string text, out string searchText)
+        public static bool SearchByUsername(string text, out string searchText)
         {
             searchText = string.Empty;
 

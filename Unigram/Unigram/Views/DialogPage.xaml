@@ -7,6 +7,7 @@
     xmlns:common="using:Unigram.Common"
     xmlns:views="using:Unigram.Controls.Views"
     xmlns:messages="using:Unigram.Controls.Messages"
+    xmlns:native="using:Unigram.Native"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:viewmodels="using:Unigram.ViewModels"
     xmlns:vm="using:Unigram.ViewModels"
@@ -52,6 +53,68 @@
                                           ContentTransitions="{TemplateBinding ContentTransitions}"
                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="AutocompleteListViewStyle" TargetType="ListView">
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="TabNavigation" Value="Once" />
+            <Setter Property="IsSwipeEnabled" Value="True" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+            <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False" />
+            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled" />
+            <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="True" />
+            <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
+            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
+            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True" />
+            <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <Setter Property="ItemContainerTransitions">
+                <Setter.Value>
+                    <TransitionCollection>
+                        <AddDeleteThemeTransition />
+                        <ContentThemeTransition />
+                        <ReorderThemeTransition />
+                        <EntranceThemeTransition IsStaggeringEnabled="False" />
+                    </TransitionCollection>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListView">
+                        <ScrollViewer x:Name="ScrollViewer"
+                                      TabNavigation="{TemplateBinding TabNavigation}"
+                                      HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                      HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                      IsHorizontalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsHorizontalScrollChainingEnabled}"
+                                      VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                      VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                      IsVerticalScrollChainingEnabled="{TemplateBinding ScrollViewer.IsVerticalScrollChainingEnabled}"
+                                      IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                      IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                      ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
+                                      IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                      BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
+                                      AutomationProperties.AccessibilityView="Raw">
+                            <Border BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" Margin="{TemplateBinding Padding}">
+                                <ItemsPresenter Header="{TemplateBinding Header}"
+                                                HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                                                HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                                                Footer="{TemplateBinding Footer}"
+                                                FooterTemplate="{TemplateBinding FooterTemplate}"
+                                                FooterTransitions="{TemplateBinding FooterTransitions}" />
+                            </Border>
+                        </ScrollViewer>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -1489,62 +1552,71 @@
                     <TransitionCollection/>
                 </GridView.ItemContainerTransitions>
             </controls:ZoomableGridView>
-            <ListView x:Name="ListBotCommands"
-                      ItemsSource="{x:Bind ViewModel.BotCommands, Mode=OneWay}"
-                      Visibility="{x:Bind ViewModel.BotCommands, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                      BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                      BorderThickness="0,1,0,0"
+            <ListView x:Name="ListAutocomplete"
+                      ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
+                      Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                       AllowFocusOnInteraction="False"
                       IsItemClickEnabled="True"
-                      ItemClick="BotCommands_ItemClick"
-                      VerticalAlignment="Bottom"
-                      MaxHeight="154">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <controls:ProfilePictureView Source="{Binding Item1.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
-                            <TextBlock VerticalAlignment="Center" Grid.Column="1">
-                                <Run Text="/" FontWeight="SemiBold" /><Run Text="{Binding Item2.Command}" FontWeight="SemiBold" />
-                                <Run Text="{Binding Item2.Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                            </TextBlock>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.ItemContainerTransitions>
-                    <TransitionCollection/>
-                </ListView.ItemContainerTransitions>
-            </ListView>
-            <ListView x:Name="ListUsernameHints"
-                      ItemsSource="{x:Bind ViewModel.UsernameHints, Mode=OneWay}"
-                      Visibility="{x:Bind ViewModel.UsernameHints, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                      BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                      BorderThickness="0,1,0,0"
-                      AllowFocusOnInteraction="False"
-                      IsItemClickEnabled="True"
-                      ItemClick="UsernameHints_ItemClick"
-                      VerticalAlignment="Bottom"
-                      MaxHeight="154">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:TLUser">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
-                            <TextBlock VerticalAlignment="Center" Grid.Column="1">
-                                <Run Text="{x:Bind FullName}" FontWeight="SemiBold" />
-                                <Run Text="{x:Bind Username, Converter={StaticResource UsernameConverter}, ConverterParameter=none}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                            </TextBlock>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
+                      ItemClick="Autocomplete_ItemClick">
+                <ListView.Header>
+                    <Border x:Name="AutocompleteHeader"
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                        <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Top" Height="1"/>
+                    </Border>
+                </ListView.Header>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel SizeChanged="Autocomplete_SizeChanged"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplateSelector>
+                    <selectors:AutocompleteTemplateSelector>
+                        <selectors:AutocompleteTemplateSelector.MentionTemplate>
+                            <DataTemplate x:DataType="models:TLUser">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                                    <TextBlock VerticalAlignment="Center" Grid.Column="1">
+                                        <Run Text="{x:Bind FullName}" FontWeight="SemiBold" />
+                                        <Run Text="{x:Bind Username, Converter={StaticResource UsernameConverter}, ConverterParameter=none}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                    </TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </selectors:AutocompleteTemplateSelector.MentionTemplate>
+                        <selectors:AutocompleteTemplateSelector.CommandTemplate>
+                            <DataTemplate x:DataType="viewmodels:TLUserCommand">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <controls:ProfilePictureView Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
+                                    <TextBlock VerticalAlignment="Center" Grid.Column="1">
+                                        <Run Text="/" FontWeight="SemiBold" /><Run Text="{x:Bind Item.Command}" FontWeight="SemiBold" />
+                                        <Run Text="{x:Bind Item.Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                                    </TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </selectors:AutocompleteTemplateSelector.CommandTemplate>
+                        <selectors:AutocompleteTemplateSelector.EmojiTemplate>
+                            <DataTemplate x:DataType="native:EmojiSuggestion">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="32" Height="32" Margin="0,0,12,0">
+                                        <TextBlock Text="{x:Bind Emoji}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <TextBlock Text="{x:Bind Label}" VerticalAlignment="Center" Grid.Column="1"/>
+                                </Grid>
+                            </DataTemplate>
+                        </selectors:AutocompleteTemplateSelector.EmojiTemplate>
+                    </selectors:AutocompleteTemplateSelector>
+                </ListView.ItemTemplateSelector>
                 <ListView.ItemContainerTransitions>
                     <TransitionCollection/>
                 </ListView.ItemContainerTransitions>
@@ -1604,8 +1676,7 @@
                         x:Name="TextField"
                         Background="Transparent"
                         Reply="{Binding Reply}"
-                        UsernameHints="{x:Bind ListUsernameHints}"
-                        BotCommands="{x:Bind ListBotCommands}"
+                        Autocomplete="{x:Bind ListAutocomplete}"
                         AcceptsReturn="False"
                         PlaceholderText="Type your message..."
                         BorderThickness="0"

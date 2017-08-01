@@ -131,7 +131,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task SendFileAsync(StorageFile file, string caption)
+        private async Task SendFileAsync(StorageFile file, string caption = null)
         {
             if (_peer == null)
             {

@@ -30,6 +30,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using System.Collections.Specialized;
+using Unigram.Native;
+using System.Collections;
 
 namespace Unigram.ViewModels
 {
@@ -1056,12 +1058,12 @@ namespace Unigram.ViewModels
 
                     if (user.IsBot && full.HasBotInfo)
                     {
-                        UnfilteredBotCommands = full.BotInfo.Commands.Select(x => Tuple.Create(user, x)).ToList();
-                        HasBotCommands = UnfilteredBotCommands.Count > 0;
+                        BotCommands = full.BotInfo.Commands.Select(x => new TLUserCommand { User = user, Item = x }).ToList();
+                        HasBotCommands = BotCommands.Count > 0;
                     }
                     else
                     {
-                        UnfilteredBotCommands = null;
+                        BotCommands = null;
                         HasBotCommands = false;
                     }
                 }
@@ -1088,23 +1090,23 @@ namespace Unigram.ViewModels
 
                     if (channel.IsMegaGroup)
                     {
-                        var commands = new List<Tuple<TLUser, TLBotCommand>>();
+                        var commands = new List<TLUserCommand>();
 
                         foreach (var info in full.BotInfo)
                         {
                             var bot = CacheService.GetUser(info.UserId) as TLUser;
                             if (bot != null)
                             {
-                                commands.AddRange(info.Commands.Select(x => Tuple.Create(bot, x)));
+                                commands.AddRange(info.Commands.Select(x => new TLUserCommand { User = bot, Item = x }));
                             }
                         }
 
-                        UnfilteredBotCommands = commands;
-                        HasBotCommands = UnfilteredBotCommands.Count > 0;
+                        BotCommands = commands;
+                        HasBotCommands = BotCommands.Count > 0;
                     }
                     else
                     {
-                        UnfilteredBotCommands = null;
+                        BotCommands = null;
                         HasBotCommands = false;
                     }
 
@@ -1165,19 +1167,19 @@ namespace Unigram.ViewModels
                 {
                     Full = full;
 
-                    var commands = new List<Tuple<TLUser, TLBotCommand>>();
+                    var commands = new List<TLUserCommand>();
 
                     foreach (var info in full.BotInfo)
                     {
                         var bot = CacheService.GetUser(info.UserId) as TLUser;
                         if (bot != null)
                         {
-                            commands.AddRange(info.Commands.Select(x => Tuple.Create(bot, x)));
+                            commands.AddRange(info.Commands.Select(x => new TLUserCommand { User = bot, Item = x }));
                         }
                     }
 
-                    UnfilteredBotCommands = commands;
-                    HasBotCommands = UnfilteredBotCommands.Count > 0;
+                    BotCommands = commands;
+                    HasBotCommands = BotCommands.Count > 0;
                 }
                 //    participantCount = chatDetails.Result.Users.Count;
                 //    if (participantCount < 200)
@@ -1283,20 +1285,18 @@ namespace Unigram.ViewModels
             }
         }
 
-        private List<TLUser> _usernameHints;
-        public List<TLUser> UsernameHints
+        private ICollection _autocomplete;
+        public ICollection Autocomplete
         {
             get
             {
-                return _usernameHints;
+                return _autocomplete;
             }
             set
             {
-                Set(ref _usernameHints, value);
+                Set(ref _autocomplete, value);
             }
         }
-
-        public List<Tuple<TLUser, TLBotCommand>> UnfilteredBotCommands { get; private set; }
 
         private bool _hasBotCommands;
         public bool HasBotCommands
@@ -1311,8 +1311,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private List<Tuple<TLUser, TLBotCommand>> _botCommands;
-        public List<Tuple<TLUser, TLBotCommand>> BotCommands
+        private List<TLUserCommand> _botCommands;
+        public List<TLUserCommand> BotCommands
         {
             get
             {
@@ -1615,6 +1615,21 @@ namespace Unigram.ViewModels
             }
 
             var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
+            if (messageText.Equals("/tg_logs", StringComparison.OrdinalIgnoreCase))
+            {
+                var item = await FileUtils.TryGetItemAsync("Logs");
+                if (item is StorageFolder folder)
+                {
+                    var files = await folder.GetFilesAsync();
+                    foreach (var file in files)
+                    {
+                        await SendFileAsync(file);
+                    }
+                }
+
+                return;
+            }
+
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), null);
 
@@ -2820,4 +2835,10 @@ namespace Unigram.ViewModels
     //        base.RemoveItem(index);
     //    }
     //}
+
+    public class TLUserCommand
+    {
+        public TLUser User { get; set; }
+        public TLBotCommand Item { get; set; }
+    }
 }

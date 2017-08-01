@@ -54,6 +54,8 @@ using Windows.UI.Xaml.Media.Animation;
 using Template10.Common;
 using Template10.Services.NavigationService;
 using Unigram.Core.Helpers;
+using Unigram.Native;
+using LinqToVisualTree;
 
 namespace Unigram.Views
 {
@@ -71,6 +73,10 @@ namespace Unigram.Views
         private Visual _elapsedVisual;
         private Visual _slideVisual;
         private Visual _rootVisual;
+
+        private Visual _autocompleteLayer;
+        private InsetClip _autocompleteInset;
+
         private Compositor _compositor;
 
         public DialogPage()
@@ -88,6 +94,8 @@ namespace Unigram.Views
             ViewModel.PropertyChanged += OnPropertyChanged;
 
             TextField.LostFocus += TextField_LostFocus;
+
+            StickersPanel.StickerClick = Stickers_ItemClick;
 
             lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
             StickersPanel.RegisterPropertyChangedCallback(FrameworkElement.VisibilityProperty, StickersPanel_VisibilityChanged);
@@ -938,6 +946,7 @@ namespace Unigram.Views
             ViewModel.SendStickerCommand.Execute(e.ClickedItem);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
+            Collapse_Click(null, new RoutedEventArgs());
         }
 
         private async void StickerSet_Click(object sender, RoutedEventArgs e)
@@ -1152,30 +1161,12 @@ namespace Unigram.Views
             visual.StopAnimation("Offset.Y");
         }
 
-        private void BotCommands_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            var item = e.ClickedItem as Tuple<TLUser, TLBotCommand>;
-            if (item != null)
-            {
-                var command = $"/{item.Item2.Command}";
-                if (ViewModel.With is TLChannel || ViewModel.With is TLChat && item.Item1.HasUsername)
-                {
-                    command += $"@{item.Item1.Username}";
-                }
-
-                TextField.SetText(null, null);
-                ViewModel.SendCommand.Execute(command);
-                ViewModel.BotCommands = null;
-            }
-        }
-
-        private void UsernameHints_ItemClick(object sender, ItemClickEventArgs e)
+        private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
             TextField.Document.GetText(TextGetOptions.None, out string hidden);
             TextField.Document.GetText(TextGetOptions.NoHidden, out string text);
 
-            var user = e.ClickedItem as TLUser;
-            if (user != null && BubbleTextBox.SearchByUsernames(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string query))
+            if (e.ClickedItem is TLUser user && BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string username))
             {
                 var insert = string.Empty;
                 var adjust = 0;
@@ -1191,8 +1182,8 @@ namespace Unigram.Views
                 }
 
                 var format = TextField.Document.GetDefaultCharacterFormat();
-                var start = TextField.Document.Selection.StartPosition - query.Length - adjust + insert.Length;
-                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - query.Length - adjust, TextField.Document.Selection.StartPosition);
+                var start = TextField.Document.Selection.StartPosition - username.Length - adjust + insert.Length;
+                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - username.Length - adjust, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
 
                 if (user.HasUsername == false)
@@ -1207,7 +1198,32 @@ namespace Unigram.Views
                 TextField.Document.Selection.StartPosition = start + 1;
                 TextField.Document.SetDefaultCharacterFormat(format);
 
-                ViewModel.UsernameHints = null;
+                ViewModel.Autocomplete = null;
+            }
+            else if (e.ClickedItem is TLUserCommand command)
+            {
+                var insert = $"/{command.Item.Command}";
+                if (command.User.HasUsername && (ViewModel.With is TLChannel || ViewModel.With is TLChat))
+                {
+                    insert += $"@{command.User.Username}";
+                }
+
+                TextField.SetText(null, null);
+                ViewModel.SendCommand.Execute(insert);
+                ViewModel.BotCommands = null;
+            }
+            else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
+            {
+                var insert = emoji.Emoji;
+                var start = TextField.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;
+                var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - replacement.Length, TextField.Document.Selection.StartPosition);
+                range.SetText(TextSetOptions.None, insert);
+
+                //TextField.Document.GetRange(start, start).SetText(TextSetOptions.None, " ");
+                //TextField.Document.Selection.StartPosition = start + 1;
+                TextField.Document.Selection.StartPosition = start;
+
+                ViewModel.Autocomplete = null;
             }
         }
 
@@ -1288,19 +1304,26 @@ namespace Unigram.Views
 
         private void Collapse_Click(object sender, RoutedEventArgs e)
         {
-            StickersPanel.MinHeight = 260;
-            StickersPanel.MaxHeight = 360;
-            StickersPanel.Height = _lastKnownKeyboardHeight;
-            ButtonExpand.Glyph = "\uE010";
-
-            HeaderOverlay.Visibility = Visibility.Collapsed;
-            UnmaskTitleAndStatusBar();
-
-            if (HeaderOverlay.Visibility == Visibility.Visible && sender == null)
+            if ((HeaderOverlay.Visibility == Visibility.Visible && sender == null) || e != null)
             {
+                StickersPanel.MinHeight = 260;
+                StickersPanel.MaxHeight = 360;
+                StickersPanel.Height = _lastKnownKeyboardHeight;
+                ButtonExpand.Glyph = "\uE010";
+
+                HeaderOverlay.Visibility = Visibility.Collapsed;
+                UnmaskTitleAndStatusBar();
             }
             else
             {
+                StickersPanel.MinHeight = 260;
+                StickersPanel.MaxHeight = 360;
+                StickersPanel.Height = _lastKnownKeyboardHeight;
+                ButtonExpand.Glyph = "\uE010";
+
+                HeaderOverlay.Visibility = Visibility.Collapsed;
+                UnmaskTitleAndStatusBar();
+
                 StickersPanel.Visibility = Visibility.Collapsed;
             }
         }
@@ -1321,6 +1344,18 @@ namespace Unigram.Views
                 StickersPanel.MinHeight = e.NewSize.Height - 48 * 2;
                 StickersPanel.MaxHeight = e.NewSize.Height - 48 * 2;
             }
+        }
+
+        private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var height = e.NewSize.Height;
+            var padding = ActualHeight - 48 * 2 - Math.Min(154, ListAutocomplete.Items.Count * 44);
+
+            //ListAutocomplete.Padding = new Thickness(0, padding, 0, 0);
+            AutocompleteHeader.Margin = new Thickness(0, padding, 0, -height);
+            AutocompleteHeader.Height = height;
+
+            Debug.WriteLine("Autocomplete size changed");
         }
 
         private void MaskTitleAndStatusBar()
@@ -1366,6 +1401,62 @@ namespace Unigram.Views
                 statusBar.BackgroundColor = backgroundBrush.Color;
                 statusBar.ForegroundColor = foregroundBrush.Color;
             }
+        }
+
+        private void Autocomplete_Loaded(object sender, RoutedEventArgs e)
+        {
+            var padding = ActualHeight - 48 * 2 - 152;
+
+            var boh = ListAutocomplete.Descendants().FirstOrDefault();
+
+            _autocompleteLayer = ElementCompositionPreview.GetElementVisual(ListAutocomplete);
+            _autocompleteLayer.Clip = _autocompleteInset = _compositor.CreateInsetClip(0, (float)padding, 0, 0);
+
+            var scroll = ListAutocomplete.Descendants<ScrollViewer>().FirstOrDefault() as ScrollViewer;
+            if (scroll != null)
+            {
+                //_scrollingHost = scroll;
+                //_scrollingHost.ChangeView(null, 0, null, true);
+                //scroll.ViewChanged += Scroll_ViewChanged;
+                //Scroll_ViewChanged(scroll, null);
+
+                //var brush = App.Current.Resources["SystemControlBackgroundChromeMediumLowBrush"] as SolidColorBrush;
+                var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroll);
+
+                //if (_backgroundVisual == null)
+                //{
+                //    _backgroundVisual = ElementCompositionPreview.GetElementVisual(BackgroundPanel).Compositor.CreateSpriteVisual();
+                //    ElementCompositionPreview.SetElementChildVisual(BackgroundPanel, _backgroundVisual);
+                //}
+
+                //_backgroundVisual.Brush = _backgroundVisual.Compositor.CreateColorBrush(brush.Color);
+                //_backgroundVisual.Size = new System.Numerics.Vector2((float)BackgroundPanel.ActualWidth, (float)BackgroundPanel.ActualHeight);
+                //_backgroundVisual.Clip = _backgroundVisual.Compositor.CreateInsetClip();
+
+                //_expression = _expression ?? _backgroundVisual.Compositor.CreateExpressionAnimation("Max(Maximum, Scrolling.Translation.Y)");
+                //_expression.SetReferenceParameter("Scrolling", props);
+                //_expression.SetScalarParameter("Maximum", -(float)BackgroundPanel.Margin.Top + 1);
+                //_backgroundVisual.StopAnimation("Offset.Y");
+                //_backgroundVisual.StartAnimation("Offset.Y", _expression);
+
+
+                ExpressionAnimation _expressionClip = null;
+                //_expressionClip = _expressionClip ?? _compositor.CreateExpressionAnimation("Min(0, Maximum - Scrolling.Translation.Y)");
+                _expressionClip = _expressionClip ?? _compositor.CreateExpressionAnimation("Scrolling.Translation.Y");
+                _expressionClip.SetReferenceParameter("Scrolling", props);
+                _expressionClip.SetScalarParameter("Maximum", -(float)padding);
+                _autocompleteLayer.Clip.StopAnimation("Offset.Y");
+                _autocompleteLayer.Clip.StartAnimation("Offset.Y", _expressionClip);
+            }
+
+            //var panel = List.ItemsPanelRoot as ItemsWrapGrid;
+            //if (panel != null)
+            //{
+            //    panel.SizeChanged += (s, args) =>
+            //    {
+            //        Scroll_ViewChanged(scroll, null);
+            //    };
+            //}
         }
     }
 

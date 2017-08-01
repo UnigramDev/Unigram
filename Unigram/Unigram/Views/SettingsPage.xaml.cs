@@ -177,7 +177,7 @@ namespace Unigram.Views
         {
             if (Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
             {
-                var remove = await FileUtils.TryGetTempFileAsync("theme.xaml");
+                var remove = await FileUtils.TryGetTempItemAsync("theme.xaml");
                 if (remove != null)
                 {
                     await remove.DeleteAsync();

@@ -28,6 +28,8 @@ namespace Unigram.Controls.Views
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
+        public ItemClickEventHandler StickerClick { get; set; }
+
         public StickersView()
         {
             InitializeComponent();
@@ -45,7 +47,7 @@ namespace Unigram.Controls.Views
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.SendStickerCommand.Execute(e.ClickedItem);
+            StickerClick?.Invoke(sender, e);
 
             if (Window.Current.Bounds.Width >= 500)
             {
