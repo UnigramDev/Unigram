@@ -136,8 +136,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 055460;
-        public const string CurrentChangelog = "- Send self-destructing photos and videos to any one-on-one chats (use the clock icon in the media picker to set a timer).\r\n- Add a bio to your profile(in Settings) so that people in large group chats know who you are.\r\n- Download media from large public channels faster thanks to the new encrypted CDNs.";
+        public const int CurrentVersion = 055560;
+        public const string CurrentChangelog = "- Autocompletion for emoji. Start typing ':' to get suggestions.\r\n- When choosing a sticker, tap the \"up\" button in the sticker panel to expand it to full screen.\r\n- Switch between dark and light theme from General settings\r\n- Open YouTube videos and other embed urls in the app by tapping on the thumbnail preview";
 
         private int? _appVersion;
         public int Version
