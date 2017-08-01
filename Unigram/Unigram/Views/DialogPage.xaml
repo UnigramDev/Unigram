@@ -1560,9 +1560,9 @@
                       ItemClick="Autocomplete_ItemClick">
                 <ListView.Header>
                     <Border x:Name="AutocompleteHeader"
-                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                            BorderThickness="0,1,0,0"/>
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                        <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Top" Height="1"/>
+                    </Border>
                 </ListView.Header>
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
