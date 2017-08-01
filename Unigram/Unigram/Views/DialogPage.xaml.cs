@@ -96,6 +96,7 @@ namespace Unigram.Views
             TextField.LostFocus += TextField_LostFocus;
 
             StickersPanel.StickerClick = Stickers_ItemClick;
+            StickersPanel.GifClick = Gifs_ItemClick;
 
             lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
             StickersPanel.RegisterPropertyChangedCallback(FrameworkElement.VisibilityProperty, StickersPanel_VisibilityChanged);
@@ -161,10 +162,7 @@ namespace Unigram.Views
             {
                 Collapse_Click(StickersPanel, null);
 
-                if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
-                {
-                    TextField.Focus(FocusState.Keyboard);
-                }
+                TextField.FocusMaybe(FocusState.Keyboard);
             }
         }
 
@@ -272,10 +270,7 @@ namespace Unigram.Views
             _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
             lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
 
-            if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
-            {
-                TextField.Focus(FocusState.Keyboard);
-            }
+            TextField.FocusMaybe(FocusState.Keyboard);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -322,11 +317,7 @@ namespace Unigram.Views
                 if (args.Handled)
                 {
                     Focus(FocusState.Programmatic);
-
-                    if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
-                    {
-                        TextField.Focus(FocusState.Keyboard);
-                    }
+                    TextField.FocusMaybe(FocusState.Keyboard);
                 }
             }
         }
@@ -348,11 +339,7 @@ namespace Unigram.Views
             if (args.Handled)
             {
                 Focus(FocusState.Programmatic);
-
-                if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
-                {
-                    TextField.Focus(FocusState.Keyboard);
-                }
+                TextField.FocusMaybe(FocusState.Keyboard);
             }
         }
 
@@ -610,6 +597,8 @@ namespace Unigram.Views
                 await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting stickers here.", "Warning", "OK");
                 return;
             }
+
+            VisualStateManager.GoToState(this, Window.Current.Bounds.Width < 500 ? "NarrowState" : "FilledState", false);
 
             if (StickersPanel.Visibility == Visibility.Collapsed)
             {
@@ -937,7 +926,7 @@ namespace Unigram.Views
         private async void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
             var channel = ViewModel.With as TLChannel;
-            if (channel != null && channel.HasBannedRights && (channel.BannedRights.IsSendStickers || channel.BannedRights.IsSendGifs))
+            if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendStickers)
             {
                 await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting stickers here.", "Warning", "OK");
                 return;
@@ -947,6 +936,25 @@ namespace Unigram.Views
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());
+
+            TextField.FocusMaybe(FocusState.Keyboard);
+        }
+
+        private async void Gifs_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var channel = ViewModel.With as TLChannel;
+            if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendGifs)
+            {
+                await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting GIFs here.", "Warning", "OK");
+                return;
+            }
+
+            ViewModel.SendGifCommand.Execute(e.ClickedItem);
+            ViewModel.StickerPack = null;
+            TextField.SetText(null, null);
+            Collapse_Click(null, new RoutedEventArgs());
+
+            TextField.FocusMaybe(FocusState.Keyboard);
         }
 
         private async void StickerSet_Click(object sender, RoutedEventArgs e)

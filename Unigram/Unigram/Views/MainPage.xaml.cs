@@ -73,7 +73,7 @@ namespace Unigram.Views
             searchInit();
 
             InputPane.GetForCurrentView().Showing += (s, args) => args.EnsuredFocusedElementInView = true;
-        }      
+        }
 
         public void OnBackRequested(HandledEventArgs args)
         {
@@ -176,172 +176,15 @@ namespace Unigram.Views
             ViewModel.Calls.NavigationService = MasterDetail.NavigationService;
             SettingsView.ViewModel.NavigationService = MasterDetail.NavigationService;
 
-            if (e.Parameter is string)
+            if (e.Parameter is string && SerializationService.Json.Deserialize((string)e.Parameter) is string parameter)
             {
-                if (SerializationService.Json.Deserialize((string)e.Parameter) is string parameter)
+                if (Uri.TryCreate(parameter, UriKind.Absolute, out Uri scheme))
                 {
-                    if (Uri.TryCreate(parameter, UriKind.Absolute, out Uri scheme))
-                    {
-                        if (MessageHelper.IsTelegramUrl(scheme))
-                        {
-                            MessageHelper.HandleTelegramUrl(parameter);
-                        }
-                        else if (scheme.Scheme.Equals("ms-ipmessaging"))
-                        {
-                            var query = scheme.Query.ParseQueryString();
-                            if (query.TryGetValue("ContactRemoteIds", out string remote) && int.TryParse(remote.Substring(1), out int from_id))
-                            {
-                                var user = ViewModel.CacheService.GetUser(from_id);
-                                if (user != null)
-                                {
-                                    MasterDetail.NavigationService.NavigateToDialog(user);
-                                }
-                            }
-                        }
-                        else if (scheme.Scheme.Equals("ms-contact-profile"))
-                        {
-                            var query = scheme.Query.ParseQueryString();
-                            if (query.TryGetValue("ContactRemoteIds", out string remote) && int.TryParse(remote.Substring(1), out int from_id))
-                            {
-                                var user = ViewModel.CacheService.GetUser(from_id);
-                                if (user != null)
-                                {
-                                    MasterDetail.NavigationService.Navigate(typeof(UserDetailsPage), user.ToPeer());
-                                }
-                            }
-                        }
-                        else
-                        {
-                            string username = null;
-                            string group = null;
-                            string sticker = null;
-                            string botUser = null;
-                            string botChat = null;
-                            string message = null;
-                            string phone = null;
-                            string game = null;
-                            string phoneHash = null;
-                            string post = null;
-                            string server = null;
-                            string port = null;
-                            string user = null;
-                            string pass = null;
-                            bool hasUrl = false;
-
-                            var query = scheme.Query.ParseQueryString();
-                            if (scheme.AbsoluteUri.StartsWith("tg:resolve") || scheme.AbsoluteUri.StartsWith("tg://resolve"))
-                            {
-                                username = query.GetParameter("domain");
-                                botUser = query.GetParameter("start");
-                                botChat = query.GetParameter("startgroup");
-                                game = query.GetParameter("game");
-                                post = query.GetParameter("post");
-                            }
-                            else if (scheme.AbsoluteUri.StartsWith("tg:join") || scheme.AbsoluteUri.StartsWith("tg://join"))
-                            {
-                                group = query.GetParameter("invite");
-                            }
-                            else if (scheme.AbsoluteUri.StartsWith("tg:addstickers") || scheme.AbsoluteUri.StartsWith("tg://addstickers"))
-                            {
-                                sticker = query.GetParameter("set");
-                            }
-                            else if (scheme.AbsoluteUri.StartsWith("tg:msg") || scheme.AbsoluteUri.StartsWith("tg://msg") || scheme.AbsoluteUri.StartsWith("tg://share") || scheme.AbsoluteUri.StartsWith("tg:share"))
-                            {
-                                message = query.GetParameter("url");
-                                if (message == null)
-                                {
-                                    message = "";
-                                }
-                                if (query.GetParameter("text") != null)
-                                {
-                                    if (message.Length > 0)
-                                    {
-                                        hasUrl = true;
-                                        message += "\n";
-                                    }
-                                    message += query.GetParameter("text");
-                                }
-                                if (message.Length > 4096 * 4)
-                                {
-                                    message = message.Substring(0, 4096 * 4);
-                                }
-                                while (message.EndsWith("\n"))
-                                {
-                                    message = message.Substring(0, message.Length - 1);
-                                }
-                            }
-                            else if (scheme.AbsoluteUri.StartsWith("tg:confirmphone") || scheme.AbsoluteUri.StartsWith("tg://confirmphone"))
-                            {
-                                phone = query.GetParameter("phone");
-                                phoneHash = query.GetParameter("hash");
-                            }
-                            else if (scheme.AbsoluteUri.StartsWith("tg:socks") || scheme.AbsoluteUri.StartsWith("tg://socks"))
-                            {
-                                server = query.GetParameter("server");
-                                port = query.GetParameter("port");
-                                user = query.GetParameter("user");
-                                pass = query.GetParameter("pass");
-                            }
-
-                            if (message != null && message.StartsWith("@"))
-                            {
-                                message = " " + message;
-                            }
-
-                            if (phone != null || phoneHash != null)
-                            {
-                                MessageHelper.NavigateToConfirmPhone(ViewModel.ProtoService, phone, phoneHash);
-                            }
-                            if (server != null && int.TryParse(port, out int portCode))
-                            {
-                                MessageHelper.NavigateToSocks(server, portCode, user, pass);
-                            }
-                            else if (group != null)
-                            {
-                                MessageHelper.NavigateToInviteLink(group);
-                            }
-                            else if (sticker != null)
-                            {
-                                MessageHelper.NavigateToStickerSet(sticker);
-                            }
-                            else if (username != null)
-                            {
-                                MessageHelper.NavigateToUsername(ViewModel.ProtoService, username, botUser ?? botChat, post, game);
-                            }
-                            else if (message != null)
-                            {
-                                MessageHelper.NavigateToShare(message, hasUrl);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var data = Toast.SplitArguments(parameter);
-                        if (data.ContainsKey("from_id") && int.TryParse(data["from_id"], out int from_id))
-                        {
-                            var user = ViewModel.CacheService.GetUser(from_id);
-                            if (user != null)
-                            {
-                                MasterDetail.NavigationService.NavigateToDialog(user);
-                            }
-                        }
-                        else if (data.ContainsKey("chat_id") && int.TryParse(data["chat_id"], out int chat_id))
-                        {
-                            var chat = ViewModel.CacheService.GetChat(chat_id);
-                            if (chat != null)
-                            {
-                                MasterDetail.NavigationService.NavigateToDialog(chat);
-                            }
-                        }
-                        else if (data.ContainsKey("channel_id") && int.TryParse(data["channel_id"], out int channel_id))
-                        {
-                            var channel = ViewModel.CacheService.GetChat(channel_id);
-                            if (channel != null)
-                            {
-                                MasterDetail.NavigationService.NavigateToDialog(channel);
-                            }
-                        }
-                    }
+                    Activate(scheme);
+                }
+                else
+                {
+                    Activate(parameter);
                 }
             }
 
@@ -359,6 +202,170 @@ namespace Unigram.Views
             //}
 
             await SettingsView.ViewModel.OnNavigatedToAsync(null, e.NavigationMode, null);
+        }
+
+        public void Activate(string parameter)
+        {
+            var data = Toast.SplitArguments(parameter);
+            if (data.ContainsKey("from_id") && int.TryParse(data["from_id"], out int from_id))
+            {
+                var user = ViewModel.CacheService.GetUser(from_id);
+                if (user != null)
+                {
+                    MasterDetail.NavigationService.NavigateToDialog(user);
+                }
+            }
+            else if (data.ContainsKey("chat_id") && int.TryParse(data["chat_id"], out int chat_id))
+            {
+                var chat = ViewModel.CacheService.GetChat(chat_id);
+                if (chat != null)
+                {
+                    MasterDetail.NavigationService.NavigateToDialog(chat);
+                }
+            }
+            else if (data.ContainsKey("channel_id") && int.TryParse(data["channel_id"], out int channel_id))
+            {
+                var channel = ViewModel.CacheService.GetChat(channel_id);
+                if (channel != null)
+                {
+                    MasterDetail.NavigationService.NavigateToDialog(channel);
+                }
+            }
+        }
+
+        public void Activate(Uri scheme)
+        {
+            if (MessageHelper.IsTelegramUrl(scheme))
+            {
+                MessageHelper.HandleTelegramUrl(scheme.ToString());
+            }
+            else if (scheme.Scheme.Equals("ms-ipmessaging"))
+            {
+                var query = scheme.Query.ParseQueryString();
+                if (query.TryGetValue("ContactRemoteIds", out string remote) && int.TryParse(remote.Substring(1), out int from_id))
+                {
+                    var user = ViewModel.CacheService.GetUser(from_id);
+                    if (user != null)
+                    {
+                        MasterDetail.NavigationService.NavigateToDialog(user);
+                    }
+                }
+            }
+            else if (scheme.Scheme.Equals("ms-contact-profile"))
+            {
+                var query = scheme.Query.ParseQueryString();
+                if (query.TryGetValue("ContactRemoteIds", out string remote) && int.TryParse(remote.Substring(1), out int from_id))
+                {
+                    var user = ViewModel.CacheService.GetUser(from_id);
+                    if (user != null)
+                    {
+                        MasterDetail.NavigationService.Navigate(typeof(UserDetailsPage), user.ToPeer());
+                    }
+                }
+            }
+            else
+            {
+                string username = null;
+                string group = null;
+                string sticker = null;
+                string botUser = null;
+                string botChat = null;
+                string message = null;
+                string phone = null;
+                string game = null;
+                string phoneHash = null;
+                string post = null;
+                string server = null;
+                string port = null;
+                string user = null;
+                string pass = null;
+                bool hasUrl = false;
+
+                var query = scheme.Query.ParseQueryString();
+                if (scheme.AbsoluteUri.StartsWith("tg:resolve") || scheme.AbsoluteUri.StartsWith("tg://resolve"))
+                {
+                    username = query.GetParameter("domain");
+                    botUser = query.GetParameter("start");
+                    botChat = query.GetParameter("startgroup");
+                    game = query.GetParameter("game");
+                    post = query.GetParameter("post");
+                }
+                else if (scheme.AbsoluteUri.StartsWith("tg:join") || scheme.AbsoluteUri.StartsWith("tg://join"))
+                {
+                    group = query.GetParameter("invite");
+                }
+                else if (scheme.AbsoluteUri.StartsWith("tg:addstickers") || scheme.AbsoluteUri.StartsWith("tg://addstickers"))
+                {
+                    sticker = query.GetParameter("set");
+                }
+                else if (scheme.AbsoluteUri.StartsWith("tg:msg") || scheme.AbsoluteUri.StartsWith("tg://msg") || scheme.AbsoluteUri.StartsWith("tg://share") || scheme.AbsoluteUri.StartsWith("tg:share"))
+                {
+                    message = query.GetParameter("url");
+                    if (message == null)
+                    {
+                        message = "";
+                    }
+                    if (query.GetParameter("text") != null)
+                    {
+                        if (message.Length > 0)
+                        {
+                            hasUrl = true;
+                            message += "\n";
+                        }
+                        message += query.GetParameter("text");
+                    }
+                    if (message.Length > 4096 * 4)
+                    {
+                        message = message.Substring(0, 4096 * 4);
+                    }
+                    while (message.EndsWith("\n"))
+                    {
+                        message = message.Substring(0, message.Length - 1);
+                    }
+                }
+                else if (scheme.AbsoluteUri.StartsWith("tg:confirmphone") || scheme.AbsoluteUri.StartsWith("tg://confirmphone"))
+                {
+                    phone = query.GetParameter("phone");
+                    phoneHash = query.GetParameter("hash");
+                }
+                else if (scheme.AbsoluteUri.StartsWith("tg:socks") || scheme.AbsoluteUri.StartsWith("tg://socks"))
+                {
+                    server = query.GetParameter("server");
+                    port = query.GetParameter("port");
+                    user = query.GetParameter("user");
+                    pass = query.GetParameter("pass");
+                }
+
+                if (message != null && message.StartsWith("@"))
+                {
+                    message = " " + message;
+                }
+
+                if (phone != null || phoneHash != null)
+                {
+                    MessageHelper.NavigateToConfirmPhone(ViewModel.ProtoService, phone, phoneHash);
+                }
+                if (server != null && int.TryParse(port, out int portCode))
+                {
+                    MessageHelper.NavigateToSocks(server, portCode, user, pass);
+                }
+                else if (group != null)
+                {
+                    MessageHelper.NavigateToInviteLink(group);
+                }
+                else if (sticker != null)
+                {
+                    MessageHelper.NavigateToStickerSet(sticker);
+                }
+                else if (username != null)
+                {
+                    MessageHelper.NavigateToUsername(ViewModel.ProtoService, username, botUser ?? botChat, post, game);
+                }
+                else if (message != null)
+                {
+                    MessageHelper.NavigateToShare(message, hasUrl);
+                }
+            }
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e)

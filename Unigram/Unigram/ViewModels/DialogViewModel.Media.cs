@@ -21,6 +21,7 @@ using Windows.Media.Transcoding;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Unigram.ViewModels
@@ -507,6 +508,9 @@ namespace Unigram.ViewModels
             {
                 var dialog = new SendPhotosView { Items = storages, SelectedItem = storages[0], IsTTLEnabled = _peer is TLInputPeerUser };
                 var dialogResult = await dialog.ShowAsync();
+
+                TextField.FocusMaybe(FocusState.Keyboard);
+
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
                     foreach (var storage in dialog.Items)
@@ -533,6 +537,9 @@ namespace Unigram.ViewModels
             {
                 var dialog = new SendPhotosView { Items = storages, SelectedItem = storages[0], IsTTLEnabled = _peer is TLInputPeerUser };
                 var dialogResult = await dialog.ShowAsync();
+
+                TextField.FocusMaybe(FocusState.Keyboard);
+
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
                     foreach (var storage in dialog.Items)

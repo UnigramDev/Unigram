@@ -320,14 +320,28 @@ namespace Unigram
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
                 {
-                    NavigationService.Navigate(typeof(MainPage), protocol.Uri.ToString());
+                    if (NavigationService.Frame.Content is MainPage page)
+                    {
+                        page.Activate(protocol.Uri);
+                    }
+                    else
+                    {
+                        NavigationService.Navigate(typeof(MainPage), protocol.Uri.ToString());
+                    }
                 }
                 else
                 {
                     var activate = args as ToastNotificationActivatedEventArgs;
                     var launch = activate?.Argument ?? null;
 
-                    NavigationService.Navigate(typeof(MainPage), launch);
+                    if (NavigationService.Frame.Content is MainPage page)
+                    {
+                        page.Activate(launch);
+                    }
+                    else
+                    {
+                        NavigationService.Navigate(typeof(MainPage), launch);
+                    }
                 }
             }
             else

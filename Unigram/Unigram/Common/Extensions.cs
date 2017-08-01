@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Unigram.Core.Unidecode;
 using Windows.Foundation;
 using Windows.UI.Popups;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 
@@ -129,6 +131,14 @@ namespace Unigram.Common
             }
 
             return GetHyperlink(parent.ElementStart.Parent as TextElement);
+        }
+
+        public static void FocusMaybe(this RichEditBox textBox, FocusState focusState)
+        {
+            if (UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
+            {
+                textBox.Focus(focusState);
+            }
         }
     }
 }

@@ -1045,7 +1045,7 @@
           Drop="gridMain_Drop">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
-                <VisualState>
+                <VisualState x:Name="NarrowState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
@@ -1056,14 +1056,16 @@
                         <Setter Target="StickersPanel.Margin" Value="0"/>
                     </VisualState.Setters>
                 </VisualState>
-                <VisualState>
+                <VisualState x:Name="FilledState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="500"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="KeyboardItems.(Grid.Row)" Value="2"/>
-                        <Setter Target="KeyboardItems.VerticalAlignment" Value="Bottom"/>
+                        <!--<Setter Target="KeyboardItems.VerticalAlignment" Value="Bottom"/>-->
                         <Setter Target="StickersPanel.Height" Value="Auto"/>
+                        <Setter Target="StickersPanel.MinHeight" Value="0"/>
+                        <Setter Target="StickersPanel.MaxHeight" Value="3600"/>
                         <Setter Target="StickersPanel.Margin" Value="0,48,0,0"/>
                         <Setter Target="btnExpand.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
@@ -1634,7 +1636,7 @@
         </ScrollViewer>
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">
-            <views:StickersView x:Name="StickersPanel" AllowFocusOnInteraction="False" Visibility="Collapsed" Height="300" MaxHeight="360" MinHeight="260"/>
+            <views:StickersView x:Name="StickersPanel" AllowFocusOnInteraction="False" Visibility="Collapsed" Height="260" MaxHeight="360" MinHeight="260"/>
         </Grid>
         
         <!-- Input pane -->
@@ -1711,7 +1713,6 @@
                                                 Visibility="Collapsed"
                                                 Tag="&#xE136;"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                Visibility="Visible"
                                                 IsEnabled="True"
                                                 Text="¯\_(ツ)_/¯"
                                                 Tag="&#xE8BD;"

@@ -41,6 +41,10 @@
                         <Setter Target="Hide.Width" Value="*"/>
                         <Setter Target="BackgroundElement.BorderThickness" Value="1"/>
                         <Setter Target="BackgroundElement.Margin" Value="8"/>
+
+                        <Setter Target="ShowRow.Height" Value="736*"/>
+                        <Setter Target="ShowRow.MaxHeight" Value="736"/>
+                        <Setter Target="HideRow.Height" Value="*"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -49,13 +53,18 @@
             <ColumnDefinition x:Name="Hide" Width="0"/>
             <ColumnDefinition x:Name="Show"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="HideRow" Height="0"/>
+            <RowDefinition x:Name="ShowRow"/>
+        </Grid.RowDefinitions>
 
         <Grid x:Name="BackgroundElement"
               Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
               MinHeight="{ThemeResource AppBarThemeCompactHeight}"
               BorderBrush="{ThemeResource TelegramBackgroundAccentBrush}"
               BorderThickness="0,1,0,0"
-              Grid.Column="1">
+              Grid.Column="1"
+              Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
