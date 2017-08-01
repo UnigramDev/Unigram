@@ -1214,6 +1214,26 @@ namespace Unigram.ViewModels
             var confirm = await TLMessageDialog.ShowAsync(message, "Delete", "Delete", "Cancel");
             if (confirm == ContentDialogResult.Primary)
             {
+                if (dialog.With is TLChat chat && !justClear)
+                {
+                    if (chat.IsLeft || chat.HasMigratedTo)
+                    {
+                        goto Skip;
+                    }
+
+                    var response = await ProtoService.DeleteChatUserAsync(chat.Id, new TLInputUserSelf());
+                    if (response.IsSucceeded)
+                    {
+
+                    }
+                    else
+                    {
+                        await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                        return;
+                    }
+                }
+
+                Skip:
                 var peer = dialog.ToInputPeer();
                 var offset = 0;
 
