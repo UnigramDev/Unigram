@@ -1349,7 +1349,7 @@ namespace Unigram.Views
         private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             var height = e.NewSize.Height;
-            var padding = ActualHeight - 48 * 2 - Math.Min(154, ListAutocomplete.Items.Count * 44);
+            var padding = ListAutocomplete.ActualHeight - 48 * 2 - Math.Min(154, ListAutocomplete.Items.Count * 44);
 
             //ListAutocomplete.Padding = new Thickness(0, padding, 0, 0);
             AutocompleteHeader.Margin = new Thickness(0, padding, 0, -height);
