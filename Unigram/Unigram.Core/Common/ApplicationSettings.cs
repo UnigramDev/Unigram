@@ -158,12 +158,15 @@ namespace Unigram.Common
 
         #endregion
 
-        private ElementTheme _currentTheme;
+        private ElementTheme? _currentTheme;
         public ElementTheme CurrentTheme
         {
             get
             {
-                return _currentTheme;
+                if (_currentTheme == null)
+                    _currentTheme = RequestedTheme;
+
+                return _currentTheme ?? ElementTheme.Default;
             }
         }
 
@@ -175,7 +178,7 @@ namespace Unigram.Common
                 if (_requestedTheme == null)
                 {
                     _requestedTheme = (ElementTheme)GetValueOrDefault("RequestedTheme", (int)ElementTheme.Default);
-                    _currentTheme = _requestedTheme ?? ElementTheme.Default;
+                    _currentTheme = _requestedTheme;
                 }
 
                 return _requestedTheme ?? ElementTheme.Default;

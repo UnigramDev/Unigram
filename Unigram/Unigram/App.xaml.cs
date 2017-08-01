@@ -466,7 +466,6 @@ namespace Unigram
             Color buttonPressed;
 
             var current = _uiSettings.GetColorValue(UIColorType.Background);
-            var theme = ApplicationSettings.Current.RequestedTheme;
 
             // Apply buttons feedback based on Light or Dark theme
             if (current == Colors.Black || ApplicationSettings.Current.CurrentTheme == ElementTheme.Dark)
