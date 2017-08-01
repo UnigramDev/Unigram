@@ -79,6 +79,14 @@ namespace Unigram.ViewModels
             }
         }
 
+        public MvxObservableCollection<TLDialog> Static
+        {
+            get
+            {
+                return new MvxObservableCollection<TLDialog>(Items);
+            }
+        }
+
         public async void LoadFirstSlice()
         {
             var test = CacheService.GetDialogs();
