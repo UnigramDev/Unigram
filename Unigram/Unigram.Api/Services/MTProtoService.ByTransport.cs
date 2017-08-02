@@ -972,12 +972,34 @@ namespace Telegram.Api.Services
                 {
                     transport.DCId = dcId;
                     transport.AuthKey = dcOption.AuthKey;
-                    //transport.IsAuthorized = (_activeTransport != null && _activeTransport.DCId == dcOption.Id.Value) || dcOption.IsAuthorized;
+                    //transport.IsAuthorized = (_activeTransport != null && _activeTransport.DCId == dcOption.Id.Value) || dcOption.IsAuthorized;   
                     transport.Salt = dcOption.Salt;
                     transport.SessionId = TLLong.Random();
                     transport.SequenceNumber = 0;
                     transport.ClientTicksDelta = dcOption.ClientTicksDelta;
                     transport.PacketReceived += OnPacketReceivedByTransport;
+                }
+                else
+                {
+                    var random = TLLong.Random();
+                    if (random % 2 == 1)
+                    {
+                        if (dcOption.IsAuthorized)
+                        {
+                            transport = _transportService.GetFileTransport2(dcOption.IpAddress, dcOption.Port, Type, out isCreated);
+                            if (isCreated)
+                            {
+                                transport.DCId = dcId;
+                                transport.AuthKey = dcOption.AuthKey;
+                                transport.IsAuthorized = true;
+                                transport.Salt = dcOption.Salt;
+                                transport.SessionId = TLLong.Random();
+                                transport.SequenceNumber = 0;
+                                transport.ClientTicksDelta = dcOption.ClientTicksDelta;
+                                transport.PacketReceived += OnPacketReceivedByTransport;
+                            }
+                        }
+                    }
                 }
             }
 
