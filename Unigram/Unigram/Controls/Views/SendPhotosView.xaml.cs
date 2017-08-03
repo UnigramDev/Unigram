@@ -259,7 +259,7 @@ namespace Unigram.Controls.Views
             }
             else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(CaptionInput.SelectionStart, text.Length)), out string replacement))
             {
-                var insert = emoji.Emoji;
+                var insert = $"{emoji.Emoji} ";
                 var start = CaptionInput.SelectionStart - 1 - replacement.Length;
                 var part1 = text.Substring(0, start);
                 var part2 = text.Substring(start + 1 + replacement.Length);

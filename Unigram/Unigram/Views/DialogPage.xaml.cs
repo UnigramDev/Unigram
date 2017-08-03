@@ -1222,7 +1222,7 @@ namespace Unigram.Views
             }
             else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
             {
-                var insert = emoji.Emoji;
+                var insert = $"{emoji.Emoji} ";
                 var start = TextField.Document.Selection.StartPosition - 1 - replacement.Length + insert.Length;
                 var range = TextField.Document.GetRange(TextField.Document.Selection.StartPosition - 1 - replacement.Length, TextField.Document.Selection.StartPosition);
                 range.SetText(TextSetOptions.None, insert);
