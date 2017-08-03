@@ -201,12 +201,46 @@
             </ListView>
         </Grid>
 
+        <ListView x:Name="ListAutocomplete"
+                  ItemsSource="{x:Bind Autocomplete, Mode=OneWay}"
+                  Visibility="{x:Bind Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                  ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                  AllowFocusOnInteraction="False"
+                  IsItemClickEnabled="True"
+                  ItemClick="Autocomplete_ItemClick"
+                  Grid.RowSpan="2">
+            <ListView.Header>
+                <Border x:Name="AutocompleteHeader"
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                    <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Top" Height="1"/>
+                </Border>
+            </ListView.Header>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel SizeChanged="Autocomplete_SizeChanged"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection/>
+            </ListView.ItemContainerTransitions>
+        </ListView>
+
         <Grid x:Name="Caption" Background="#AA000000" Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <controls:UpdateTextBox x:Name="CaptionInput" KeyDown="TextBox_KeyDown" Text="{Binding SelectedItem.Caption, Mode=TwoWay}" MaxLength="200" InputScope="Chat" PlaceholderText="Add a caption..." Margin="12,8,0,8"/>
+            <controls:CaptionTextBox
+                x:Name="CaptionInput"
+                KeyDown="TextBox_KeyDown"
+                View="{x:Bind}"
+                Autocomplete="{x:Bind ListAutocomplete}"
+                DataContext="{x:Bind ViewModel}"
+                Text="{Binding SelectedItem.Caption, Mode=TwoWay}"
+                MaxLength="200"
+                InputScope="Chat"
+                PlaceholderText="Add a caption..."
+                Margin="12,8,0,8"/>
             <controls:GlyphButton x:Name="Remove" Click="Remove_Click" Glyph="&#xE107;" Grid.Column="1"/>
         </Grid>
 
