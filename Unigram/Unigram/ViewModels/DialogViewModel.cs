@@ -247,6 +247,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private DialogSearchViewModel _search;
+        public DialogSearchViewModel Search
+        {
+            get
+            {
+                return _search;
+            }
+            set
+            {
+                Set(ref _search, value);
+            }
+        }
+
         private string _accessToken;
         public string AccessToken
         {
@@ -2563,6 +2576,16 @@ namespace Unigram.ViewModels
             }
 
             return null;
+        }
+
+        #endregion
+
+        #region Search
+
+        public RelayCommand SearchCommand => new RelayCommand(SearchExecute);
+        private void SearchExecute()
+        {
+            Search = new DialogSearchViewModel(ProtoService, CacheService, Aggregator, this);
         }
 
         #endregion

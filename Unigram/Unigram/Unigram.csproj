@@ -113,6 +113,9 @@
     <Compile Include="Common\VoIPConnection.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\DialogBackgroundPresenter.cs" />
+    <Compile Include="Controls\DialogSearchToolBar.xaml.cs">
+      <DependentUpon>DialogSearchToolBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\GroupedGridView.cs" />
     <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
@@ -128,9 +131,6 @@
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />
-    <Compile Include="Controls\DebugToolbar.xaml.cs">
-      <DependentUpon>DebugToolbar.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\DialogBackground.xaml.cs">
       <DependentUpon>DialogBackground.xaml</DependentUpon>
     </Compile>
@@ -154,6 +154,7 @@
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
     <Compile Include="Controls\PrivacyRadioButton.cs" />
+    <Compile Include="Controls\SearchDialogTextBox.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
     <Compile Include="Controls\SwipeListBehavior.cs" />
     <Compile Include="Controls\SwipeListDirection.cs" />
@@ -277,6 +278,7 @@
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep1ViewModel.cs" />
     <Compile Include="ViewModels\Chats\CreateChatStep2ViewModel.cs" />
+    <Compile Include="ViewModels\DialogSearchViewModel.cs" />
     <Compile Include="ViewModels\DialogStickersViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Media.cs" />
     <Compile Include="ViewModels\GallerySecretViewModel.cs" />
@@ -1170,15 +1172,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\DebugToolbar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\DialogBackground.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\DialogSearchBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\DialogSearchToolBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

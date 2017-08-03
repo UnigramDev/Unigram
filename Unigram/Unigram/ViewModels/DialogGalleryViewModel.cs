@@ -51,22 +51,25 @@ namespace Unigram.ViewModels
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var result = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
-                if (result.IsSucceeded)
+                var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
+                if (response.IsSucceeded)
                 {
-                    if (result.Result is TLMessagesMessagesSlice)
+                    if (response.Result is TLMessagesMessagesSlice slice)
                     {
-                        var slice = result.Result as TLMessagesMessagesSlice;
                         TotalItems = slice.Count;
+                    }
+                    else if (response.Result is TLMessagesChannelMessages channelMessages)
+                    {
+                        TotalItems = channelMessages.Count;
                     }
                     else
                     {
-                        TotalItems = result.Result.Messages.Count + Items.Count;
+                        TotalItems = response.Result.Messages.Count + Items.Count;
                     }
 
                     //Items.Clear();
 
-                    foreach (var photo in result.Result.Messages)
+                    foreach (var photo in response.Result.Messages)
                     {
                         if (photo is TLMessage message && (message.Media is TLMessageMediaPhoto media || message.IsVideo() || message.IsRoundVideo() || message.IsGif()))
                         {

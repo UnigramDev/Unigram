@@ -42,10 +42,13 @@ namespace Unigram.ViewModels.Chats
                 {
                     if (response.Result.Messages.Count > 0)
                     {
-                        if (response.Result is TLMessagesMessagesSlice)
+                        if (response.Result is TLMessagesMessagesSlice slice)
                         {
-                            var slice = response.Result as TLMessagesMessagesSlice;
                             TotalItems = slice.Count;
+                        }
+                        else if (response.Result is TLMessagesChannelMessages channelMessages)
+                        {
+                            TotalItems = channelMessages.Count;
                         }
                         else
                         {

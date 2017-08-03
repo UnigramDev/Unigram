@@ -14,15 +14,15 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
+// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Unigram.Controls
 {
-    public sealed partial class DialogSearchBar : UserControl
+    public sealed partial class DialogSearchToolBar : UserControl
     {
         public DialogSearchViewModel ViewModel => DataContext as DialogSearchViewModel;
 
-        public DialogSearchBar()
+        public DialogSearchToolBar()
         {
             this.InitializeComponent();
         }

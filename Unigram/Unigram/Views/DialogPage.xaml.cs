@@ -302,6 +302,12 @@ namespace Unigram.Views
         {
             if (args.VirtualKey == VirtualKey.Escape && !args.KeyStatus.IsKeyReleased)
             {
+                if (ViewModel.Search != null)
+                {
+                    ViewModel.Search = null;
+                    args.Handled = true;
+                }
+
                 if (StickersPanel.Visibility == Visibility.Visible)
                 {
                     Collapse_Click(null, null);
@@ -324,6 +330,12 @@ namespace Unigram.Views
 
         public void OnBackRequested(HandledEventArgs args)
         {
+            if (ViewModel.Search != null)
+            {
+                ViewModel.Search = null;
+                args.Handled = true;
+            }
+
             if (StickersPanel.Visibility == Visibility.Visible)
             {
                 Collapse_Click(null, null);
