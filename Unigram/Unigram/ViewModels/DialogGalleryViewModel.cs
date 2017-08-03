@@ -51,7 +51,7 @@ namespace Unigram.ViewModels
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var result = await ProtoService.SearchAsync(_peer, string.Empty, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
+                var result = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterPhotoVideo(), 0, 0, 0, _lastMaxId, 15);
                 if (result.IsSucceeded)
                 {
                     if (result.Result is TLMessagesMessagesSlice)

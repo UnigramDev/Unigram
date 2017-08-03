@@ -41,7 +41,7 @@ namespace Unigram.ViewModels
 
             public override async Task<IList<TLCallGroup>> LoadDataAsync()
             {
-                var response = await _protoService.SearchAsync(new TLInputPeerEmpty(), null, new TLInputMessagesFilterPhoneCalls(), 0, 0, 0, _lastMaxId, 50);
+                var response = await _protoService.SearchAsync(new TLInputPeerEmpty(), null, null, new TLInputMessagesFilterPhoneCalls(), 0, 0, 0, _lastMaxId, 50);
                 if (response.IsSucceeded)
                 {
                     if (response.Result.Messages.Count > 0)

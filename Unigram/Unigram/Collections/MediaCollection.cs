@@ -52,7 +52,7 @@ namespace Unigram.Collections
         {
             try
             {
-                var response = await _protoService.SearchAsync(_peer, _query, _filter, 0, 0, 0, _lastMaxId, 50);
+                var response = await _protoService.SearchAsync(_peer, _query, null, _filter, 0, 0, 0, _lastMaxId, 50);
                 if (response.IsSucceeded)
                 {
                     if (response.Result.Messages.Count > 0)
