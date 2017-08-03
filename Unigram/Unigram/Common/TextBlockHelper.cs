@@ -165,7 +165,6 @@ namespace Unigram.Common
             sender.Inlines.Clear();
 
             var previous = 0;
-            var previousNext = 0;
             var index = markdown.IndexOf("**");
             var next = index > -1 ? markdown.IndexOf("**", index + 2) : -1;
 
@@ -178,15 +177,14 @@ namespace Unigram.Common
 
                 sender.Inlines.Add(new Run { Text = markdown.Substring(index + 2, next - index - 2), FontWeight = FontWeights.SemiBold });
 
-                previous = index;
-                previousNext = next;
+                previous = next + 2;
                 index = markdown.IndexOf("**", next + 2);
                 next = index > -1 ? markdown.IndexOf("**", index + 2) : -1;
             }
 
-            if (markdown.Length - (previousNext + 2) > 0)
+            if (markdown.Length - previous > 0)
             {
-                sender.Inlines.Add(new Run { Text = markdown.Substring(previousNext + 2, markdown.Length - (previousNext + 2)) });
+                sender.Inlines.Add(new Run { Text = markdown.Substring(previous, markdown.Length - previous) });
             }
         }
         #endregion
