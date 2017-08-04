@@ -346,7 +346,7 @@ namespace Unigram
             }
             else
             {
-                NavigationService.Navigate(typeof(SignInWelcomePage));
+                NavigationService.Navigate(typeof(IntroPage));
             }
 
             Window.Current.Activated -= Window_Activated;
