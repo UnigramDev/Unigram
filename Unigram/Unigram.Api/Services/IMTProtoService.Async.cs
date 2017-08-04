@@ -187,7 +187,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLContactsResolvedPeer>> ResolveUsernameAsync(string username);
         Task<MTProtoResponse<TLAccountDaysTTL>> GetAccountTTLAsync();
         Task<MTProtoResponse<TLUploadFileBase>> GetFileAsync(TLInputFileLocationBase location, int offset, int limit);
-        Task<MTProtoResponse<TLMessagesMessagesBase>> SearchAsync(TLInputPeerBase peer, string query, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit);
+        Task<MTProtoResponse<TLMessagesMessagesBase>> SearchAsync(TLInputPeerBase peer, string query, TLInputUserBase from, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit);
         Task<MTProtoResponse<bool>> DeleteAccountAsync(string reason);
         Task<MTProtoResponse<TLUpdatesChannelDifferenceBase>> GetChannelDifferenceAsync(TLInputChannelBase inputChannel, TLChannelMessagesFilterBase filter, int pts, int limit);
         Task<MTProtoResponse<TLUpdatesBase>> LeaveChannelAsync(TLChannel channel);

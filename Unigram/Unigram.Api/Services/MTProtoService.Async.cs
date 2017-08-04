@@ -2272,10 +2272,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLMessagesMessagesBase>> SearchAsync(TLInputPeerBase peer, string query, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit)
+        public Task<MTProtoResponse<TLMessagesMessagesBase>> SearchAsync(TLInputPeerBase peer, string query, TLInputUserBase from, TLMessagesFilterBase filter, int minDate, int maxDate, int offset, int maxId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
-            SearchAsync(peer, query, filter, minDate, maxDate, offset, maxId, limit, (callback) =>
+            SearchAsync(peer, query, from, filter, minDate, maxDate, offset, maxId, limit, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(callback));
             }, (faultCallback) =>

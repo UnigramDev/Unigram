@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -19,6 +20,8 @@ namespace Unigram.Controls
 {
     public sealed partial class DialogSearchBar : UserControl
     {
+        public DialogSearchViewModel ViewModel => DataContext as DialogSearchViewModel;
+
         public DialogSearchBar()
         {
             this.InitializeComponent();

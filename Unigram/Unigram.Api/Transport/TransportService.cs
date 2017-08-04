@@ -18,6 +18,7 @@ namespace Telegram.Api.Transport
         private readonly Dictionary<string, ITransport> _cache = new Dictionary<string, ITransport>();
 
         private readonly Dictionary<string, ITransport> _fileCache = new Dictionary<string, ITransport>();
+        private readonly Dictionary<string, ITransport> _fileCache2 = new Dictionary<string, ITransport>();
 
         public ITransport GetFileTransport(string host, int port, TransportType type, out bool isCreated)
         {
@@ -52,6 +53,47 @@ namespace Telegram.Api.Transport
                 TLUtils.WritePerformance(string.Format("  TCP: New file transport {0}:{1}", host, port));
 
                 _fileCache.Add(key, transport);
+                isCreated = true;
+
+                Debug.WriteLine("  TCP: New transport {0}:{1}", host, port);
+                return transport;
+                //trasport.SetAddress(host, port, () => callback(trasport));
+            }
+        }
+
+        public ITransport GetFileTransport2(string host, int port, TransportType type, out bool isCreated)
+        {
+            var key = string.Format("{0} {1} {2}", host, port, type);
+            if (_fileCache2.ContainsKey(key))
+            {
+                isCreated = false;
+                return _fileCache2[key];
+            }
+
+#if WINDOWS_PHONE
+            if (type == TransportType.Http)
+            {
+                var transport = new HttpTransport(host);
+
+                _fileCache2.Add(key, transport);
+                isCreated = true;
+                return transport;
+                //transport.SetAddress(host, port, () => callback(transport));
+            }
+#endif
+            else
+            {
+                var transport =
+#if WIN_RT
+                    new TcpTransportWinRT(host, port, SettingsHelper.IsProxyEnabled, SettingsHelper.ProxyServer, SettingsHelper.ProxyPort, SettingsHelper.ProxyUsername, SettingsHelper.ProxyPassword);
+#else
+                    new TcpTransport(host, port);
+#endif
+                transport.Additional = true;
+                transport.ConnectionLost += OnConnectionLost;
+                TLUtils.WritePerformance(string.Format("  TCP: New file transport {0}:{1}", host, port));
+
+                _fileCache2.Add(key, transport);
                 isCreated = true;
 
                 Debug.WriteLine("  TCP: New transport {0}:{1}", host, port);

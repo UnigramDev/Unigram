@@ -681,7 +681,16 @@ namespace Unigram.Common
                                 }
                             }
 
-                            await Launcher.LaunchUriAsync(uri);
+                            //if (navigation.Contains("@"))
+                            //{
+                            //    await Launcher.LaunchUriAsync(new Uri($"mailto:{navigation}"));
+                            //}
+                            //else
+                            try
+                            {
+                                await Launcher.LaunchUriAsync(uri);
+                            }
+                            catch { }
                         }
                     }
                 }

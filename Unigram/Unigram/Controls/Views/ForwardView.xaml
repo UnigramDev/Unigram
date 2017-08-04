@@ -17,7 +17,7 @@
     mc:Ignorable="d">
 
     <controls:ContentDialogBase.Resources>
-        <CollectionViewSource x:Name="ViewSource" Source="{x:Bind ViewModel.GroupedItems}" ItemsPath="Dialogs.Items" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="ViewSource" Source="{x:Bind ViewModel.GroupedItems, Mode=OneWay}" ItemsPath="Dialogs.Static" IsSourceGrouped="True"/>
 
         <Style TargetType="GridViewItem" x:Key="GridViewItemExpandedStyle">
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />

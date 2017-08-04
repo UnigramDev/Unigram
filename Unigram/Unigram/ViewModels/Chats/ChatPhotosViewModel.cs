@@ -37,15 +37,18 @@ namespace Unigram.ViewModels.Chats
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var response = await ProtoService.SearchAsync(_peer, string.Empty, new TLInputMessagesFilterChatPhotos(), 0, 0, 0, _lastMaxId, 15);
+                var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterChatPhotos(), 0, 0, 0, _lastMaxId, 15);
                 if (response.IsSucceeded)
                 {
                     if (response.Result.Messages.Count > 0)
                     {
-                        if (response.Result is TLMessagesMessagesSlice)
+                        if (response.Result is TLMessagesMessagesSlice slice)
                         {
-                            var slice = response.Result as TLMessagesMessagesSlice;
                             TotalItems = slice.Count;
+                        }
+                        else if (response.Result is TLMessagesChannelMessages channelMessages)
+                        {
+                            TotalItems = channelMessages.Count;
                         }
                         else
                         {
@@ -87,7 +90,7 @@ namespace Unigram.ViewModels.Chats
             {
                 using (await _loadMoreLock.WaitAsync())
                 {
-                    var response = await ProtoService.SearchAsync(_peer, string.Empty, new TLInputMessagesFilterChatPhotos(), 0, 0, 0, _lastMaxId, 15);
+                    var response = await ProtoService.SearchAsync(_peer, string.Empty, null, new TLInputMessagesFilterChatPhotos(), 0, 0, 0, _lastMaxId, 15);
                     if (response.IsSucceeded)
                     {
                         foreach (var photo in response.Result.Messages)

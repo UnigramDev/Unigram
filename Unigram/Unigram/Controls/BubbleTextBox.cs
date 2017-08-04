@@ -524,11 +524,11 @@ namespace Unigram.Controls
                     {
                         ViewModel.Autocomplete = GetUsernames(username.ToLower(), text.StartsWith('@' + username));
                     }
-                    else if (SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
+                    else if (SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0 && ApplicationSettings.Current.IsReplaceEmojiEnabled)
                     {
                         ViewModel.Autocomplete = EmojiSuggestion.GetSuggestions(replacement);
                     }
-                    else if (text.Length > 0 && text[0] == '/' && SearchByCommands(text, out string command))
+                    else if (text.Length > 0 && text[0] == '/' && SearchByCommand(text, out string command))
                     {
                         ViewModel.Autocomplete = GetCommands(command.ToLower());
                     }
@@ -620,7 +620,7 @@ namespace Unigram.Controls
             return null;
         }
 
-        private static bool SearchByCommands(string text, out string searchText)
+        public static bool SearchByCommand(string text, out string searchText)
         {
             searchText = string.Empty;
 

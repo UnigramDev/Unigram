@@ -320,19 +320,33 @@ namespace Unigram
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
                 {
-                    NavigationService.Navigate(typeof(MainPage), protocol.Uri.ToString());
+                    if (NavigationService.Frame.Content is MainPage page)
+                    {
+                        page.Activate(protocol.Uri);
+                    }
+                    else
+                    {
+                        NavigationService.Navigate(typeof(MainPage), protocol.Uri.ToString());
+                    }
                 }
                 else
                 {
                     var activate = args as ToastNotificationActivatedEventArgs;
                     var launch = activate?.Argument ?? null;
 
-                    NavigationService.Navigate(typeof(MainPage), launch);
+                    if (NavigationService.Frame.Content is MainPage page)
+                    {
+                        page.Activate(launch);
+                    }
+                    else
+                    {
+                        NavigationService.Navigate(typeof(MainPage), launch);
+                    }
                 }
             }
             else
             {
-                NavigationService.Navigate(typeof(SignInWelcomePage));
+                NavigationService.Navigate(typeof(IntroPage));
             }
 
             Window.Current.Activated -= Window_Activated;
@@ -455,7 +469,6 @@ namespace Unigram
             Color buttonPressed;
 
             var current = _uiSettings.GetColorValue(UIColorType.Background);
-            var theme = ApplicationSettings.Current.RequestedTheme;
 
             // Apply buttons feedback based on Light or Dark theme
             if (current == Colors.Black || ApplicationSettings.Current.CurrentTheme == ElementTheme.Dark)

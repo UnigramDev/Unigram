@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Telegram.Api.TL
 {
-    public interface ITLMultiChannelPts : ITLMultiPts
+    public interface ITLMultiChannelPts
     {
+        int Pts { get; set; }
+
+        int PtsCount { get; set; }
     }
 }

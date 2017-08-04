@@ -1045,7 +1045,7 @@
           Drop="gridMain_Drop">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
-                <VisualState>
+                <VisualState x:Name="NarrowState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="0"/>
                     </VisualState.StateTriggers>
@@ -1056,14 +1056,16 @@
                         <Setter Target="StickersPanel.Margin" Value="0"/>
                     </VisualState.Setters>
                 </VisualState>
-                <VisualState>
+                <VisualState x:Name="FilledState">
                     <VisualState.StateTriggers>
                         <AdaptiveTrigger MinWindowWidth="500"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="KeyboardItems.(Grid.Row)" Value="2"/>
-                        <Setter Target="KeyboardItems.VerticalAlignment" Value="Bottom"/>
+                        <!--<Setter Target="KeyboardItems.VerticalAlignment" Value="Bottom"/>-->
                         <Setter Target="StickersPanel.Height" Value="Auto"/>
+                        <Setter Target="StickersPanel.MinHeight" Value="0"/>
+                        <Setter Target="StickersPanel.MaxHeight" Value="3600"/>
                         <Setter Target="StickersPanel.Margin" Value="0,48,0,0"/>
                         <Setter Target="btnExpand.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
@@ -1175,9 +1177,13 @@
                     <Button.Flyout>
                         <MenuFlyout>
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            Command="{x:Bind ViewModel.SearchCommand}"
+                                            Text="Search"
+                                            Tag="&#xE11A;"/>
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                             Click="Manage_Click"
-                                            Tag="&#xE133;"
                                             Text="Manage"
+                                            Tag="&#xE133;"
                                             MinWidth="120"/>
 
                             <MenuFlyoutItem Text="Share my contact"
@@ -1187,21 +1193,8 @@
                                             Command="{x:Bind ViewModel.AddContactCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.IsAddContactAvailable, Mode=OneWay}"/>
                             
-                            <!-- Manually hidden -->
-                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                            x:Name="cbtnReportSpam"
-                                            Visibility="Collapsed"
-                                            IsEnabled="False"
-                                            Tag="&#xE1DE;"
-                                            Text="Report spam" />
-                            <!-- Manually hidden -->
-                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                            x:Name="cbtnSearch"
-                                            Visibility="Collapsed"
-                                            IsEnabled="False"
-                                            Tag="&#xE11A;"
-                                            Text="Search" />
-                            <!-- Manually hidden -->
+
+                            
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                             x:Name="cbtnPinToStart"
                                             Visibility="Collapsed"
@@ -1256,6 +1249,12 @@
 
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
         </Grid>
+
+        <controls:DialogSearchToolBar
+            DataContext="{x:Bind ViewModel.Search, Mode=OneWay}"
+            Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+            Grid.RowSpan="3"
+            Canvas.ZIndex="100000"/>
 
         <Border Visibility="{x:Bind StickersPanel.Visibility, Mode=OneWay}" IsHitTestVisible="False">
             <Border x:Name="HeaderOverlay" Background="#99000000" Visibility="Collapsed"/>
@@ -1512,115 +1511,70 @@
                 <controls:GlyphButton Command="{Binding PreviousSliceCommand}" FontSize="16" Width="36" Height="36" Glyph="&#xE74B;" CornerRadius="24"/>
             </Border>
 
-            <views:InlineBotResultsView ItemClick="InlineBotResults_ItemClick" VerticalAlignment="Bottom"/>
-            <controls:ZoomableGridView
-                ItemsSource="{x:Bind ViewModel.StickerPack, Mode=OneWay}"
-                Visibility="{x:Bind ViewModel.StickerPack, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                AllowFocusOnInteraction="False"
-                IsItemClickEnabled="True"
-                ItemClick="Stickers_ItemClick"
-                SelectionMode="None"
-                ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                ScrollViewer.VerticalScrollMode="Disabled"
-                ScrollViewer.IsVerticalRailEnabled="False"
-                ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                ScrollViewer.HorizontalScrollMode="Auto"
-                ScrollViewer.IsHorizontalRailEnabled="True"
-                VerticalAlignment="Bottom"
-                Padding="8,0"
-                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                Style="{StaticResource ZoomableListViewStyle}"
-                BorderThickness="0,1,0,0">
-                <GridView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </GridView.ItemsPanel>
-                <GridView.ItemTemplate>
-                    <DataTemplate x:DataType="tl:TLDocument">
-                        <Image x:Phase="3" Margin="4,8" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="60" Height="60"/>
-                    </DataTemplate>
-                </GridView.ItemTemplate>
-                <GridView.ItemContainerStyle>
-                    <Style TargetType="GridViewItem" BasedOn="{StaticResource ZoomableListViewItemStyle}">
-                        <Setter Property="MinWidth" Value="0"/>
-                        <Setter Property="Padding" Value="0"/>
-                    </Style>
-                </GridView.ItemContainerStyle>
-                <GridView.ItemContainerTransitions>
-                    <TransitionCollection/>
-                </GridView.ItemContainerTransitions>
-            </controls:ZoomableGridView>
-            <ListView x:Name="ListAutocomplete"
-                      ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
-                      Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                      AllowFocusOnInteraction="False"
-                      IsItemClickEnabled="True"
-                      ItemClick="Autocomplete_ItemClick">
-                <ListView.Header>
-                    <Border x:Name="AutocompleteHeader"
-                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                        <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Top" Height="1"/>
-                    </Border>
-                </ListView.Header>
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel SizeChanged="Autocomplete_SizeChanged"/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemTemplateSelector>
-                    <selectors:AutocompleteTemplateSelector>
-                        <selectors:AutocompleteTemplateSelector.MentionTemplate>
-                            <DataTemplate x:DataType="models:TLUser">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
-                                    <TextBlock VerticalAlignment="Center" Grid.Column="1">
-                                        <Run Text="{x:Bind FullName}" FontWeight="SemiBold" />
-                                        <Run Text="{x:Bind Username, Converter={StaticResource UsernameConverter}, ConverterParameter=none}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                                    </TextBlock>
-                                </Grid>
-                            </DataTemplate>
-                        </selectors:AutocompleteTemplateSelector.MentionTemplate>
-                        <selectors:AutocompleteTemplateSelector.CommandTemplate>
-                            <DataTemplate x:DataType="viewmodels:TLUserCommand">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <controls:ProfilePictureView Source="{x:Bind User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="32" Height="32" Margin="0,0,12,0" Grid.RowSpan="2"/>
-                                    <TextBlock VerticalAlignment="Center" Grid.Column="1">
-                                        <Run Text="/" FontWeight="SemiBold" /><Run Text="{x:Bind Item.Command}" FontWeight="SemiBold" />
-                                        <Run Text="{x:Bind Item.Description}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                                    </TextBlock>
-                                </Grid>
-                            </DataTemplate>
-                        </selectors:AutocompleteTemplateSelector.CommandTemplate>
-                        <selectors:AutocompleteTemplateSelector.EmojiTemplate>
-                            <DataTemplate x:DataType="native:EmojiSuggestion">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <Border Width="32" Height="32" Margin="0,0,12,0">
-                                        <TextBlock Text="{x:Bind Emoji}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <TextBlock Text="{x:Bind Label}" VerticalAlignment="Center" Grid.Column="1"/>
-                                </Grid>
-                            </DataTemplate>
-                        </selectors:AutocompleteTemplateSelector.EmojiTemplate>
-                    </selectors:AutocompleteTemplateSelector>
-                </ListView.ItemTemplateSelector>
-                <ListView.ItemContainerTransitions>
-                    <TransitionCollection/>
-                </ListView.ItemContainerTransitions>
-            </ListView>
+            <Grid Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}">
+                <views:InlineBotResultsView ItemClick="InlineBotResults_ItemClick" VerticalAlignment="Bottom"/>
+                <controls:ZoomableGridView
+                    ItemsSource="{x:Bind ViewModel.StickerPack, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.StickerPack, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                    AllowFocusOnInteraction="False"
+                    IsItemClickEnabled="True"
+                    ItemClick="Stickers_ItemClick"
+                    SelectionMode="None"
+                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                    ScrollViewer.VerticalScrollMode="Disabled"
+                    ScrollViewer.IsVerticalRailEnabled="False"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollMode="Auto"
+                    ScrollViewer.IsHorizontalRailEnabled="True"
+                    VerticalAlignment="Bottom"
+                    Padding="8,0"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    Style="{StaticResource ZoomableListViewStyle}"
+                    BorderThickness="0,1,0,0">
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="tl:TLDocument">
+                            <Image x:Phase="3" Margin="4,8" Source="{x:Bind Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" Width="60" Height="60"/>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem" BasedOn="{StaticResource ZoomableListViewItemStyle}">
+                            <Setter Property="MinWidth" Value="0"/>
+                            <Setter Property="Padding" Value="0"/>
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection/>
+                    </GridView.ItemContainerTransitions>
+                </controls:ZoomableGridView>
+                <ListView x:Name="ListAutocomplete"
+                          ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
+                          Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                          ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                          AllowFocusOnInteraction="False"
+                          IsItemClickEnabled="True"
+                          ItemClick="Autocomplete_ItemClick">
+                    <ListView.Header>
+                        <Border x:Name="AutocompleteHeader"
+                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                            <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Top" Height="1"/>
+                        </Border>
+                    </ListView.Header>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel SizeChanged="Autocomplete_SizeChanged"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemContainerTransitions>
+                        <TransitionCollection/>
+                    </ListView.ItemContainerTransitions>
+                </ListView>
+            </Grid>
         </Grid>
 
         <ScrollViewer x:Name="ReplyMarkupPanel"
@@ -1634,11 +1588,12 @@
         </ScrollViewer>
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">
-            <views:StickersView x:Name="StickersPanel" AllowFocusOnInteraction="False" Visibility="Collapsed" Height="300" MaxHeight="360" MinHeight="260"/>
+            <views:StickersView x:Name="StickersPanel" AllowFocusOnInteraction="False" Visibility="Collapsed" Height="260" MaxHeight="360" MinHeight="260"/>
         </Grid>
         
         <!-- Input pane -->
         <ContentControl x:Name="TextArea"
+                        Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}"
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
                         Grid.Row="3">
@@ -1711,7 +1666,6 @@
                                                 Visibility="Collapsed"
                                                 Tag="&#xE136;"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                Visibility="Visible"
                                                 IsEnabled="True"
                                                 Text="¯\_(ツ)_/¯"
                                                 Tag="&#xE8BD;"
@@ -1893,5 +1847,10 @@
                 </DataTemplate>
             </Button.ContentTemplate>
         </controls:BubbleBottomButton>
+
+        <controls:DialogSearchBar
+            DataContext="{x:Bind ViewModel.Search, Mode=OneWay}"
+            Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+            Grid.Row="3"/>
     </Grid>
 </Page>

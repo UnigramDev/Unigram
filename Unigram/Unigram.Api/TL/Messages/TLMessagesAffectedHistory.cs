@@ -4,7 +4,7 @@ using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.TL.Messages
 {
-	public partial class TLMessagesAffectedHistory : TLObject, ITLMultiPts 
+	public partial class TLMessagesAffectedHistory : TLObject 
 	{
 		public Int32 Pts { get; set; }
 		public Int32 PtsCount { get; set; }

@@ -4,7 +4,7 @@ using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLUpdateShortMessage : TLUpdatesBase, ITLMultiPts 
+	public partial class TLUpdateShortMessage : TLUpdatesBase 
 	{
 		[Flags]
 		public enum Flag : Int32

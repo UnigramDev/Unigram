@@ -43,6 +43,8 @@ namespace Unigram.Controls.Views
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            Bindings.Update();
+
             if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested"))
             {
                 DataTransferManager.GetForCurrentView().ShareProvidersRequested -= OnShareProvidersRequested;

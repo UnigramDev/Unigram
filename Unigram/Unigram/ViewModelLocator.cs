@@ -95,7 +95,7 @@ namespace Unigram
             }
 
             // ViewModels
-            container.ContainerBuilder.RegisterType<SignInWelcomeViewModel>();
+            container.ContainerBuilder.RegisterType<IntroViewModel>();
             container.ContainerBuilder.RegisterType<SignInViewModel>();
             container.ContainerBuilder.RegisterType<SignUpViewModel>();
             container.ContainerBuilder.RegisterType<SignInSentCodeViewModel>();
@@ -374,7 +374,7 @@ namespace Unigram
                     }
                     catch { }
 
-                    App.Current.NavigationService.Navigate(typeof(SignInWelcomePage));
+                    App.Current.NavigationService.Navigate(typeof(IntroPage));
                     App.Current.NavigationService.Frame.BackStack.Clear();
                 }
             });

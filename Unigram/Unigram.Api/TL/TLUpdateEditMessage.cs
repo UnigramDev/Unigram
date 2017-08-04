@@ -4,7 +4,7 @@ using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLUpdateEditMessage : TLUpdateBase, ITLMultiPts 
+	public partial class TLUpdateEditMessage : TLUpdateBase 
 	{
 		public TLMessageBase Message { get; set; }
 		public Int32 Pts { get; set; }

@@ -222,6 +222,19 @@ namespace Unigram.ViewModels
             }
         }
 
+        private DialogSearchViewModel _search;
+        public DialogSearchViewModel Search
+        {
+            get
+            {
+                return _search;
+            }
+            set
+            {
+                Set(ref _search, value);
+            }
+        }
+
         private string _accessToken;
         public string AccessToken
         {
@@ -2538,6 +2551,35 @@ namespace Unigram.ViewModels
             }
 
             return null;
+        }
+
+        #endregion
+
+        #region Search
+
+        public RelayCommand SearchCommand => new RelayCommand(SearchExecute);
+        private void SearchExecute()
+        {
+            Search = new DialogSearchViewModel(ProtoService, CacheService, Aggregator, this);
+        }
+
+        #endregion
+
+        #region Jump to date
+
+        public RelayCommand JumpDateCommand => new RelayCommand(JumpDateExecute);
+        private async void JumpDateExecute()
+        {
+            var dialog = new Controls.Views.CalendarView();
+            dialog.MaxDate = DateTimeOffset.Now.Date;
+            //dialog.SelectedDates.Add(BindConvert.Current.DateTime(message.Date));
+
+            var confirm = await dialog.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary && dialog.SelectedDates.Count > 0)
+            {
+                var offset = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, dialog.SelectedDates.FirstOrDefault().Date);
+                await LoadDateSliceAsync(offset);
+            }
         }
 
         #endregion

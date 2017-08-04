@@ -4,7 +4,7 @@ using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLUpdateWebPage : TLUpdateBase, ITLMultiPts 
+	public partial class TLUpdateWebPage : TLUpdateBase 
 	{
 		public TLWebPageBase WebPage { get; set; }
 		public Int32 Pts { get; set; }

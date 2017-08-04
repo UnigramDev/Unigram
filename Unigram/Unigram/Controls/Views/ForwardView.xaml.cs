@@ -36,6 +36,13 @@ namespace Unigram.Controls.Views
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<ForwardViewModel>();
+
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Bindings.Update();
         }
 
         private static ForwardView _current;

@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Models;
+using Unigram.Native;
+using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage.Pickers;
@@ -25,6 +30,8 @@ namespace Unigram.Controls.Views
 {
     public sealed partial class SendPhotosView : ContentDialogBase, INotifyPropertyChanged
     {
+        public DialogViewModel ViewModel { get; set; }
+
         public ObservableCollection<StorageMedia> Items { get; set; }
 
         private StorageMedia _selectedItem;
@@ -57,6 +64,23 @@ namespace Unigram.Controls.Views
                 {
                     _isTtlEnabled = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsTTLEnabled"));
+                }
+            }
+        }
+
+        private ICollection _autocomplete;
+        public ICollection Autocomplete
+        {
+            get
+            {
+                return _autocomplete;
+            }
+            set
+            {
+                if (_autocomplete != value)
+                {
+                    _autocomplete = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Autocomplete"));
                 }
             }
         }
@@ -215,6 +239,48 @@ namespace Unigram.Controls.Views
             {
                 SelectedItem.TTLSeconds = dialog.TTLSeconds;
             }
+        }
+
+        private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var text = CaptionInput.Text.ToString();
+
+            if (e.ClickedItem is TLUser user && BubbleTextBox.SearchByUsername(text.Substring(0, Math.Min(CaptionInput.SelectionStart, text.Length)), out string username))
+            {
+                var insert = $"@{user.Username} ";
+                var start = CaptionInput.SelectionStart - 1 - username.Length;
+                var part1 = text.Substring(0, start);
+                var part2 = text.Substring(start + 1 + username.Length);
+
+                CaptionInput.Text = part1 + insert + part2;
+                CaptionInput.SelectionStart = start + insert.Length;
+
+                Autocomplete = null;
+            }
+            else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(CaptionInput.SelectionStart, text.Length)), out string replacement))
+            {
+                var insert = $"{emoji.Emoji} ";
+                var start = CaptionInput.SelectionStart - 1 - replacement.Length;
+                var part1 = text.Substring(0, start);
+                var part2 = text.Substring(start + 1 + replacement.Length);
+
+                CaptionInput.Text = part1 + insert + part2;
+                CaptionInput.SelectionStart = start + insert.Length;
+
+                Autocomplete = null;
+            }
+        }
+
+        private void Autocomplete_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var height = e.NewSize.Height;
+            var padding = ListAutocomplete.ActualHeight - Math.Min(154, ListAutocomplete.Items.Count * 44);
+
+            //ListAutocomplete.Padding = new Thickness(0, padding, 0, 0);
+            AutocompleteHeader.Margin = new Thickness(0, padding, 0, -height);
+            AutocompleteHeader.Height = height;
+
+            Debug.WriteLine("Autocomplete size changed");
         }
     }
 }

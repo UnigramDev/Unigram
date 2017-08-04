@@ -14,7 +14,7 @@ namespace Telegram.Api.TL
         }
     }
 
-    public partial class TLUpdateNewMessage
+    public partial class TLUpdateNewMessage : ITLMultiPts
     {
         public override IList<int> GetPts()
         {
@@ -70,7 +70,7 @@ namespace Telegram.Api.TL
     //    }
     //}
 
-    public partial class TLUpdateReadMessagesContents
+    public partial class TLUpdateReadMessagesContents : ITLMultiPts
     {
         public override IList<int> GetPts()
         {
@@ -78,19 +78,29 @@ namespace Telegram.Api.TL
         }
     }
 
-    public partial class TLUpdateReadHistoryInbox
+    public partial class TLUpdateReadHistoryInbox : ITLMultiPts
     {
         public override IList<int> GetPts()
         {
             return TLUtils.GetPtsRange(Pts, PtsCount);
         }
+
+        public override string ToString()
+        {
+            return string.Format("TLUpdateReadHistoryInbox peer={0} max_id={1} pts={2} pts_count={3}", Peer, MaxId, Pts, PtsCount);
+        }
     }
 
-    public partial class TLUpdateReadHistoryOutbox
+    public partial class TLUpdateReadHistoryOutbox : ITLMultiPts
     {
         public override IList<int> GetPts()
         {
             return TLUtils.GetPtsRange(Pts, PtsCount);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("TLUpdateReadHistoryOutbox peer={0} max_id={1} pts={2} pts_count={3}", Peer, MaxId, Pts, PtsCount);
         }
     }
 
@@ -102,7 +112,7 @@ namespace Telegram.Api.TL
         }
     }
 
-    public partial class TLUpdateDeleteMessages
+    public partial class TLUpdateDeleteMessages : ITLMultiPts
     {
         public override IList<int> GetPts()
         {
@@ -246,7 +256,7 @@ namespace Telegram.Api.TL
         }
     }
 
-    public partial class TLUpdateWebPage
+    public partial class TLUpdateWebPage : ITLMultiPts
     {
         public override IList<int> GetPts()
         {
@@ -259,6 +269,14 @@ namespace Telegram.Api.TL
         public override IList<int> GetPts()
         {
             return new List<int>();
+        }
+    }
+
+    public partial class TLUpdateEditMessage : ITLMultiPts
+    {
+        public override IList<int> GetPts()
+        {
+            return TLUtils.GetPtsRange(Pts, PtsCount);
         }
     }
 
@@ -291,6 +309,15 @@ namespace Telegram.Api.TL
         public override IList<int> GetPts()
         {
             return new List<int>();
+        }
+    }
+
+
+    public partial class TLUpdateChannelWebPage : ITLMultiChannelPts
+    {
+        public override IList<int> GetPts()
+        {
+            return new List<int>(); //TLUtils.GetPtsRange(Pts, PtsCount);
         }
     }
 
