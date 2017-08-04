@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLUpdateDeleteChannelMessages : TLUpdateBase, ITLMultiPts 
+	public partial class TLUpdateDeleteChannelMessages : TLUpdateBase 
 	{
 		public Int32 ChannelId { get; set; }
 		public TLVector<Int32> Messages { get; set; }

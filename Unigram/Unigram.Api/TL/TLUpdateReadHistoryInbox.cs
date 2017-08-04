@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLUpdateReadHistoryInbox : TLUpdateBase, ITLMultiPts 
+	public partial class TLUpdateReadHistoryInbox : TLUpdateBase 
 	{
 		public TLPeerBase Peer { get; set; }
 		public Int32 MaxId { get; set; }

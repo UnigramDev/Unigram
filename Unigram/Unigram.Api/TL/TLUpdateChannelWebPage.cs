@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLUpdateChannelWebPage : TLUpdateBase, ITLMultiPts 
+	public partial class TLUpdateChannelWebPage : TLUpdateBase 
 	{
 		public Int32 ChannelId { get; set; }
 		public TLWebPageBase WebPage { get; set; }

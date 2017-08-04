@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL.Messages
 {
-	public partial class TLMessagesAffectedMessages : TLObject, ITLMultiPts 
+	public partial class TLMessagesAffectedMessages : TLObject 
 	{
 		public Int32 Pts { get; set; }
 		public Int32 PtsCount { get; set; }

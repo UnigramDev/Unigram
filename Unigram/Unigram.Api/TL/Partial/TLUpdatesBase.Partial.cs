@@ -26,7 +26,7 @@ namespace Telegram.Api.TL
         }
     }
 
-    public partial class TLUpdateShortSentMessage
+    public partial class TLUpdateShortSentMessage : ITLMultiPts
     {
         public override IList<int> GetSeq()
         {
@@ -39,7 +39,7 @@ namespace Telegram.Api.TL
         }
     }
 
-    public partial class TLUpdateShortMessage
+    public partial class TLUpdateShortMessage : ITLMultiPts
     {
         public bool IsUnread { get; set; } = true;
 
@@ -54,7 +54,7 @@ namespace Telegram.Api.TL
         }
     }
 
-    public partial class TLUpdateShortChatMessage
+    public partial class TLUpdateShortChatMessage : ITLMultiPts
     {
         public bool IsUnread { get; set; } = true;
 

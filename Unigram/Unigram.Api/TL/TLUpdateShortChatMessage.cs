@@ -3,7 +3,7 @@ using System;
 
 namespace Telegram.Api.TL
 {
-	public partial class TLUpdateShortChatMessage : TLUpdatesBase, ITLMultiPts 
+	public partial class TLUpdateShortChatMessage : TLUpdatesBase 
 	{
 		[Flags]
 		public enum Flag : Int32
