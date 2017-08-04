@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,6 +29,32 @@ namespace Unigram.ViewModels
             get
             {
                 return _dialog;
+            }
+        }
+
+        private bool _isFiltering;
+        public bool IsFiltering
+        {
+            get
+            {
+                return _isFiltering;
+            }
+            set
+            {
+                Set(ref _isFiltering, value);
+            }
+        }
+
+        private ICollection _autocomplete;
+        public ICollection Autocomplete
+        {
+            get
+            {
+                return _autocomplete;
+            }
+            set
+            {
+                Set(ref _autocomplete, value);
             }
         }
 
@@ -145,9 +172,17 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        public RelayCommand SearchCommand => new RelayCommand(SearchExecute);
-        private async void SearchExecute()
+        public RelayCommand FilterCommand => new RelayCommand(FilterExecute);
+        private void FilterExecute()
         {
+            IsFiltering = true;
+        }
+
+        public RelayCommand<string> SearchCommand => new RelayCommand<string>(SearchExecute);
+        private async void SearchExecute(string query)
+        {
+            Query = query;
+
             var response = await ProtoService.SearchAsync(_dialog.Peer, _query, _from?.ToInputUser(), null, 0, 0, 0, 0, 100);
             if (response.IsSucceeded)
             {

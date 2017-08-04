@@ -1177,14 +1177,14 @@
                     <Button.Flyout>
                         <MenuFlyout>
                             <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                            Command="{x:Bind ViewModel.SearchCommand}"
+                                            Text="Search"
+                                            Tag="&#xE11A;"/>
+                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                             Click="Manage_Click"
                                             Text="Manage"
                                             Tag="&#xE133;"
                                             MinWidth="120"/>
-                            <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                            Command="{x:Bind ViewModel.SearchCommand}"
-                                            Text="Search"
-                                            Tag="&#xE11A;"/>
 
                             <MenuFlyoutItem Text="Share my contact"
                                             Command="{x:Bind ViewModel.ShareContactCommand}"
@@ -1252,7 +1252,9 @@
 
         <controls:DialogSearchToolBar
             DataContext="{x:Bind ViewModel.Search, Mode=OneWay}"
-            Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"/>
+            Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+            Grid.RowSpan="3"
+            Canvas.ZIndex="100000"/>
 
         <Border Visibility="{x:Bind StickersPanel.Visibility, Mode=OneWay}" IsHitTestVisible="False">
             <Border x:Name="HeaderOverlay" Background="#99000000" Visibility="Collapsed"/>
