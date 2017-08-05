@@ -5,12 +5,15 @@
     xmlns:local="using:Unigram.Controls.Media"
     xmlns:controls="using:Unigram.Controls"
     xmlns:common="using:Unigram.Common"
+    xmlns:converters="using:Unigram.Converters"
     xmlns:selectors="using:Unigram.Selectors"
     xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:messages="using:Unigram.Controls.Messages"
     mc:Ignorable="d">
+
+    <converters:VenueToStaticImageConverter x:Key="VenueToStaticImageConverter"/>
 
     <DataTemplate x:Key="MediaMusicTemplate">
         <Grid MinWidth="220">
