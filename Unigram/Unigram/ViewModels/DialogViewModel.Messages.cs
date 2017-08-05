@@ -35,7 +35,12 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessageBase> MessageReplyCommand => new RelayCommand<TLMessageBase>(MessageReplyExecute);
         private void MessageReplyExecute(TLMessageBase message)
         {
-            if (message == null) return;
+            Search = null;
+
+            if (message == null)
+            {
+                return;
+            }
 
             var serviceMessage = message as TLMessageService;
             if (serviceMessage != null)
@@ -479,6 +484,8 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessageBase> MessageSelectCommand => new RelayCommand<TLMessageBase>(MessageSelectExecute);
         private void MessageSelectExecute(TLMessageBase message)
         {
+            Search = null;
+
             var messageCommon = message as TLMessageCommonBase;
             if (messageCommon == null)
             {
@@ -590,6 +597,13 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessage> MessageEditCommand => new RelayCommand<TLMessage>(MessageEditExecute);
         private async void MessageEditExecute(TLMessage message)
         {
+            Search = null;
+
+            if (message == null)
+            {
+                return;
+            }
+
             var response = await ProtoService.GetMessageEditDataAsync(Peer, message.Id);
             if (response.IsSucceeded)
             {

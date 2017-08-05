@@ -48,5 +48,10 @@ namespace Unigram.Controls
                 scrollingHost.ChangeView(null, scrollingHost.ScrollableHeight, null, true);
             }
         }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Dialog.Search = null;
+        }
     }
 }
