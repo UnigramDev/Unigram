@@ -289,34 +289,35 @@ namespace Unigram
                         var full = await store.GetContactAsync(contact.Contact.Id);
                         if (full == null)
                         {
-                            goto Navigate;
-                        }
-
-                        var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
-
-                        var first = annotations.FirstOrDefault();
-                        if (first == null)
-                        {
-                            goto Navigate;
-                        }
-
-                        var remote = first.RemoteId;
-                        if (int.TryParse(remote.Substring(1), out int userId))
-                        {
-                            NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = userId });
+                            NavigationService.Navigate(typeof(MainPage));
                         }
                         else
                         {
-                            goto Navigate;
+                            var annotations = await annotationStore.FindAnnotationsForContactAsync(full);
+
+                            var first = annotations.FirstOrDefault();
+                            if (first == null)
+                            {
+                                NavigationService.Navigate(typeof(MainPage));
+                            }
+                            else
+                            {
+                                var remote = first.RemoteId;
+                                if (int.TryParse(remote.Substring(1), out int userId))
+                                {
+                                    NavigationService.Navigate(typeof(DialogPage), new TLPeerUser { UserId = userId });
+                                }
+                                else
+                                {
+                                    NavigationService.Navigate(typeof(MainPage));
+                                }
+                            }
                         }
                     }
                     else
                     {
                         NavigationService.Navigate(typeof(MainPage));
                     }
-
-                    Navigate:
-                    NavigationService.Navigate(typeof(MainPage));
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
                 {
