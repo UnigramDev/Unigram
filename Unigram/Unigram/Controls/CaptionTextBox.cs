@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Unigram.Controls
 {
-    public class CaptionTextBox : UpdateTextBox
+    public class CaptionTextBox : TextBox
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -27,6 +27,7 @@ namespace Unigram.Controls
 
         public CaptionTextBox()
         {
+            TextChanged += OnTextChanged;
             SelectionChanged += OnSelectionChanged;
 
             Loaded += OnLoaded;
@@ -130,6 +131,11 @@ namespace Unigram.Controls
             {
                 base.OnKeyDown(e);
             }
+        }
+
+        private void OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            View.SelectedItem.Caption = Text.ToString();
         }
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)

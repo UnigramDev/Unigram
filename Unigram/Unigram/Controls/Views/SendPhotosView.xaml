@@ -236,7 +236,6 @@
                 View="{x:Bind}"
                 Autocomplete="{x:Bind ListAutocomplete}"
                 DataContext="{x:Bind ViewModel}"
-                Text="{Binding SelectedItem.Caption, Mode=TwoWay}"
                 MaxLength="200"
                 InputScope="Chat"
                 PlaceholderText="Add a caption..."

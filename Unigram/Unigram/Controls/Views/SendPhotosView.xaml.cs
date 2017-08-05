@@ -48,6 +48,11 @@ namespace Unigram.Controls.Views
                     _selectedItem = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
                 }
+
+                if (_selectedItem != null)
+                {
+                    CaptionInput.Text = _selectedItem.Caption ?? string.Empty;
+                }
             }
         }
 
