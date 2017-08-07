@@ -432,6 +432,7 @@
     <Compile Include="TL\Methods\TLRPCDropAnswer.cs" />
     <Compile Include="TL\Methods\TLSetClientDHParams.cs" />
     <Compile Include="TL\Partial\TLAuthorization.Partial.cs" />
+    <Compile Include="TL\Partial\TLBadServerSalt.Partial.cs" />
     <Compile Include="TL\Partial\TLBotInlineResultBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelAdminLogEvent.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelFull.Partial.cs" />
@@ -470,6 +471,7 @@
     <Compile Include="TL\Partial\TLUpdateBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdatesBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdatesDifferenceBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLUpdatesState.Partial.cs" />
     <Compile Include="TL\Partial\TLUser.Partial.cs" />
     <Compile Include="TL\Partial\TLUserBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUserFull.Partial.cs" />

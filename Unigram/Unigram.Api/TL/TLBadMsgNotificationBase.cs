@@ -6,7 +6,7 @@ namespace Telegram.Api.TL
 	public abstract partial class TLBadMsgNotificationBase : TLObject
 	{
 		public Int64 BadMsgId { get; set; }
-		public Int32 BadMsgSeqno { get; set; }
+		public Int32 BadMsgSeqNo { get; set; }
 		public Int32 ErrorCode { get; set; }
 	}
 }

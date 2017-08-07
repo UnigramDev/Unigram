@@ -3577,11 +3577,11 @@ namespace Telegram.Api.Services.Cache
             {
                 var prefix = _config.MeUrlPrefix ?? "https://t.me/";
 
-                Execute.BeginOnUIThread(() =>
-                {
-                    Windows.UI.Xaml.Application.Current.Resources["MeUrlPrefix"] = prefix;
-                    Windows.UI.Xaml.Application.Current.Resources["MeUrlPrefixShort"] = prefix.TrimStart("https://");
-                });
+                //Execute.BeginOnUIThread(() =>
+                //{
+                //    Windows.UI.Xaml.Application.Current.Resources["MeUrlPrefix"] = prefix;
+                //    Windows.UI.Xaml.Application.Current.Resources["MeUrlPrefixShort"] = prefix.TrimStart("https://");
+                //});
             }
 #endif
         }

@@ -16,7 +16,7 @@ namespace Telegram.Api.TL
 		public override void Read(TLBinaryReader from)
 		{
 			BadMsgId = from.ReadInt64();
-			BadMsgSeqno = from.ReadInt32();
+			BadMsgSeqNo = from.ReadInt32();
 			ErrorCode = from.ReadInt32();
 		}
 
@@ -24,7 +24,7 @@ namespace Telegram.Api.TL
 		{
 			to.Write(0xA7EFF811);
 			to.Write(BadMsgId);
-			to.Write(BadMsgSeqno);
+			to.Write(BadMsgSeqNo);
 			to.Write(ErrorCode);
 		}
 	}

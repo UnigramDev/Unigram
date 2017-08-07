@@ -270,6 +270,11 @@ namespace Telegram.Api.TL
         {
             return new List<int>();
         }
+
+        public override string ToString()
+        {
+            return Logs.Log.Format("TLUpdateChannelTooLong channel_id={0} pts={1} flags={2}", ChannelId, Pts, Flags);
+        }
     }
 
     public partial class TLUpdateEditMessage : ITLMultiPts
