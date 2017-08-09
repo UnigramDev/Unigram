@@ -1663,8 +1663,8 @@
                                                 Command="{x:Bind ViewModel.SendLocationCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Text="Contact"
-                                                Visibility="Collapsed"
-                                                Tag="&#xE136;"/>
+                                                Tag="&#xE136;"
+                                                Command="{x:Bind ViewModel.SendContactCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 IsEnabled="True"
                                                 Text="¯\_(ツ)_/¯"
