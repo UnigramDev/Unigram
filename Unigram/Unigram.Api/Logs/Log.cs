@@ -103,6 +103,16 @@ namespace Telegram.Logs
             });
         }
 
+        public static string Format(string format, params object[] args)
+        {
+            for (int i = 0; i < args.Length; i++)
+            {
+                args[i] = args[i] ?? "null";
+            }
+
+            return string.Format(format, args);
+        }
+
         #region ILogger
 
         void ILogger.Log(LogLevel logLevel, string message)

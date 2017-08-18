@@ -485,7 +485,7 @@
     <value>banned {0}</value>
   </data>
   <data name="EventLogChannelUnrestricted" xml:space="preserve">
-    <value>unbanned {1}</value>
+    <value>unbanned {0}</value>
   </data>
   <data name="EventLogDeletedMessages" xml:space="preserve">
     <value>{0} deleted this message:</value>

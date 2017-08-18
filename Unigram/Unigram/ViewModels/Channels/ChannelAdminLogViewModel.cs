@@ -541,10 +541,13 @@ namespace Unigram.ViewModels.Channels
                                 {
                                     AppendChange(n.IsBanUsers, AppResources.EventLogPromotedBanUsers);
                                 }
-                                if (o.IsInviteUsers != n.IsInviteUsers)
-                                {
-                                    AppendChange(n.IsInviteUsers, AppResources.EventLogPromotedAddUsers);
-                                }
+                            }
+                            if (o.IsInviteUsers != n.IsInviteUsers)
+                            {
+                                AppendChange(n.IsInviteUsers, AppResources.EventLogPromotedAddUsers);
+                            }
+                            if (_channel.IsMegaGroup)
+                            {
                                 if (o.IsPinMessages != n.IsPinMessages)
                                 {
                                     AppendChange(n.IsPinMessages, AppResources.EventLogPromotedPinMessages);

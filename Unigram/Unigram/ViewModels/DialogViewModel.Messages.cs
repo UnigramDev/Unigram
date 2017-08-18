@@ -35,7 +35,12 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessageBase> MessageReplyCommand => new RelayCommand<TLMessageBase>(MessageReplyExecute);
         private void MessageReplyExecute(TLMessageBase message)
         {
-            if (message == null) return;
+            Search = null;
+
+            if (message == null)
+            {
+                return;
+            }
 
             var serviceMessage = message as TLMessageService;
             if (serviceMessage != null)
@@ -298,10 +303,12 @@ namespace Unigram.ViewModels
                     return false;
                 }
 
-                if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
+                if (messageCommon.IsOut || channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsDeleteMessages))
                 {
-                    return false;
+                    return true;
                 }
+
+                return false;
             }
 
             return true;
@@ -479,6 +486,8 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessageBase> MessageSelectCommand => new RelayCommand<TLMessageBase>(MessageSelectExecute);
         private void MessageSelectExecute(TLMessageBase message)
         {
+            Search = null;
+
             var messageCommon = message as TLMessageCommonBase;
             if (messageCommon == null)
             {
@@ -590,6 +599,13 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessage> MessageEditCommand => new RelayCommand<TLMessage>(MessageEditExecute);
         private async void MessageEditExecute(TLMessage message)
         {
+            Search = null;
+
+            if (message == null)
+            {
+                return;
+            }
+
             var response = await ProtoService.GetMessageEditDataAsync(Peer, message.Id);
             if (response.IsSucceeded)
             {
@@ -1003,7 +1019,7 @@ namespace Unigram.ViewModels
             else if (button is TLKeyboardButtonCallback callbackButton)
             {
                 var response = await ProtoService.GetBotCallbackAnswerAsync(Peer, message.Id, callbackButton.Data, false);
-                if (response.IsSucceeded && response.Result.HasMessage)
+                if (response.IsSucceeded)
                 {
                     if (response.Result.HasMessage)
                     {
@@ -1042,15 +1058,15 @@ namespace Unigram.ViewModels
                             }
                             else
                             {
-                                var dialog = new TLMessageDialog(response.Result.Url, "Open this link?");
-                                dialog.PrimaryButtonText = "OK";
-                                dialog.SecondaryButtonText = "Cancel";
+                                //var dialog = new TLMessageDialog(response.Result.Url, "Open this link?");
+                                //dialog.PrimaryButtonText = "OK";
+                                //dialog.SecondaryButtonText = "Cancel";
 
-                                var result = await dialog.ShowQueuedAsync();
-                                if (result != ContentDialogResult.Primary)
-                                {
-                                    return;
-                                }
+                                //var result = await dialog.ShowQueuedAsync();
+                                //if (result != ContentDialogResult.Primary)
+                                //{
+                                //    return;
+                                //}
 
                                 await Launcher.LaunchUriAsync(uri);
                             }

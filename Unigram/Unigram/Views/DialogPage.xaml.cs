@@ -290,6 +290,8 @@ namespace Unigram.Views
             //ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
 
             _lastKnownKeyboardHeight = Math.Max(260, args.OccludedRect.Height);
+
+            Collapse_Click(null, null);
         }
 
         private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)

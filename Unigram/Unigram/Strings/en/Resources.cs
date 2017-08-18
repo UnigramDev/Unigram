@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 07/06/2017 10:59:42
+// 	Generated: 08/07/2017 10:50:30
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -1392,7 +1392,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "unbanned {1}"
+        /// Localized resource similar to "unbanned {0}"
         /// </summary>
         public static string EventLogChannelUnrestricted
         {
