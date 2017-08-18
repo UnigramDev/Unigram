@@ -16,6 +16,7 @@ using Unigram.Converters;
 using Unigram.Services;
 using Windows.System.Profile;
 using Windows.UI.Notifications;
+using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels
 {
@@ -70,6 +71,8 @@ namespace Unigram.ViewModels
 
                     RemoveNotifications();
                 }
+
+                TextField.FocusMaybe(FocusState.Keyboard);
             }
             else if (message.Equals("Window_Deactivated"))
             {
