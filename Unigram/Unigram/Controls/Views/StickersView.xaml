@@ -70,8 +70,8 @@
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Pivot x:Name="Pivot" SelectedIndex="2" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
-                <PivotItem Margin="0,-48,0,0">
+            <Pivot x:Name="Pivot" SelectedIndex="2" Style="{StaticResource HeaderlessPivotStyle}" SelectionChanged="Pivot_SelectionChanged" Grid.Row="1">
+                <PivotItem>
                     <controls:ZoomableGridView
                         x:Name="GifsView"
                         ItemsSource="{x:Bind ViewModel.Stickers.SavedGifs}"
@@ -113,7 +113,7 @@
                              </GridView.ItemsPanel>-->
                     </controls:ZoomableGridView>
                 </PivotItem>
-                <PivotItem Margin="0,-48,0,0">
+                <PivotItem>
                     <controls:ZoomableGridView
                         x:Name="FeaturedView"
                         ItemsSource="{x:Bind FeaturedSource.View}"
@@ -215,7 +215,7 @@
                         </GridView.ItemsPanel>
                     </controls:ZoomableGridView>
                 </PivotItem>
-                <PivotItem Margin="0,-48,0,0">
+                <PivotItem>
                     <SemanticZoom>
                         <SemanticZoom.ZoomedInView>
                             <controls:ZoomableGridView
@@ -352,6 +352,13 @@
                                 </Border>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.RecentsTemplate>
+                        <selectors:StickerSetTemplateSelector.FavedTemplate>
+                            <DataTemplate x:DataType="messages:TLMessagesStickerSet">
+                                <Border ToolTipService.ToolTip="{x:Bind Set.Title}" Background="Transparent">
+                                    <FontIcon Glyph="&#xE208;" Margin="0,0,0,2"/>
+                                </Border>
+                            </DataTemplate>
+                        </selectors:StickerSetTemplateSelector.FavedTemplate>
                     </selectors:StickerSetTemplateSelector>
                 </ListView.ItemTemplateSelector>
                 <ListView.Header>
