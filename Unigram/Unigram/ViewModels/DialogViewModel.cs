@@ -1630,55 +1630,15 @@ namespace Unigram.ViewModels
             var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n').Trim();
             if (messageText.Equals("/tg_logs", StringComparison.OrdinalIgnoreCase))
             {
-                var yolo = await ProtoService.GetParticipantsAsync(((TLChannel)With).ToInputChannel(), null, 0, 200);
-                if (yolo.IsSucceeded)
+                var item = await FileUtils.TryGetItemAsync("Logs");
+                if (item is StorageFolder folder)
                 {
-                    var partics = yolo.Result.Participants.ToDictionary(x => x.UserId, x => x.User);
-
-                    var offset = 0;
-                    var maxId = int.MaxValue;
-
-                    while (maxId > 0)
+                    var files = await folder.GetFilesAsync();
+                    foreach (var file in files)
                     {
-                        var msgs = await ProtoService.GetHistoryAsync(_peer, _peer.ToPeer(), true, offset, 0, maxId, 200);
-                        if (msgs.IsSucceeded)
-                        {
-                            foreach (var item in msgs.Result.Messages)
-                            {
-                                if (item is TLMessageService)
-                                {
-                                    maxId = item.Id;
-                                    continue;
-                                }
-
-                                partics.Remove(item.FromId ?? 0);
-                                maxId = item.Id;
-                            }
-                        }
-                        else if (msgs.Error.ErrorMessage.StartsWith("FLOOD_WAIT_"))
-                        {
-                            await Task.Delay(int.Parse(msgs.Error.ErrorMessage.Replace("FLOOD_WAIT_", "")) * 1000);
-                            //break;
-                        }
-                    }
-
-                    Debugger.Break();
-
-                    foreach (var user in partics)
-                    {
-                        await ProtoService.EditBannedAsync(With as TLChannel, user.Value.ToInputUser(), new TLChannelBannedRights { Flags = TLChannelBannedRights.Flag.EmbedLinks | TLChannelBannedRights.Flag.SendGames | TLChannelBannedRights.Flag.SendGifs | TLChannelBannedRights.Flag.SendInline | TLChannelBannedRights.Flag.SendMedia | TLChannelBannedRights.Flag.SendMessages | TLChannelBannedRights.Flag.SendStickers | TLChannelBannedRights.Flag.ViewMessages });
+                        await SendFileAsync(file);
                     }
                 }
-
-                //var item = await FileUtils.TryGetItemAsync("Logs");
-                //if (item is StorageFolder folder)
-                //{
-                //    var files = await folder.GetFilesAsync();
-                //    foreach (var file in files)
-                //    {
-                //        await SendFileAsync(file);
-                //    }
-                //}
 
                 return;
             }
@@ -1909,6 +1869,8 @@ namespace Unigram.ViewModels
 
         private TLMessageBase InsertSendingMessage(TLMessage message, bool useReplyMarkup = false)
         {
+            CheckChannelMessage(message);
+
             if (_currentDialog != null && _peer != null && _currentDialog.Draft is TLDraftMessage)
             {
                 var draft = new TLDraftMessageEmpty();
@@ -2107,6 +2069,34 @@ namespace Unigram.ViewModels
             }
 
             return result;
+        }
+
+        private void CheckChannelMessage(TLMessage message)
+        {
+            if (With is TLChannel channel && channel.IsBroadcast)
+            {
+                //if (channel.IsSilent)
+                //{
+                //    message.IsSilent = true;
+                //}
+
+                var self = CacheService.GetUser(SettingsHelper.UserId) as TLUser;
+
+                if (channel.IsSignatures && self != null)
+                {
+                    message.PostAuthor = self.FullName;
+                    message.HasPostAuthor = true;
+                }
+
+                message.FromId = null;
+                message.HasFromId = false;
+
+                message.Views = 1;
+                message.HasViews = true;
+
+                message.IsOut = false;
+                message.IsPost = true;
+            }
         }
 
         #region Join channel

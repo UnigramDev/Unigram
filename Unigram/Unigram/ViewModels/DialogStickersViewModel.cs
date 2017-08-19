@@ -27,6 +27,7 @@ namespace Unigram.ViewModels
         public readonly IStickersService _stickersService;
 
         private TLMessagesStickerSet _frequentlyUsed;
+        private TLMessagesStickerSet _favedStickers;
 
         private bool _recentGifs;
         private bool _recentStickers;
@@ -44,6 +45,15 @@ namespace Unigram.ViewModels
                 {
                     Title = "Frequently used",
                     ShortName = "tg/recentlyUsed"
+                }
+            };
+
+            _favedStickers = new TLMessagesStickerSet
+            {
+                Set = new TLStickerSet
+                {
+                    Title = "Favorite stickers",
+                    ShortName = "tg/favedStickers"
                 }
             };
 

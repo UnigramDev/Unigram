@@ -13,13 +13,23 @@ namespace Unigram.Selectors
     public class StickerSetTemplateSelector : DataTemplateSelector
     {
         public DataTemplate RecentsTemplate { get; set; }
+        public DataTemplate FavedTemplate { get; set; }
         public DataTemplate ItemTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
             if (item is TLMessagesStickerSet stickerSet)
             {
-                return stickerSet.Set.ShortName.Equals("tg/recentlyUsed") ? RecentsTemplate : ItemTemplate;
+                if (stickerSet.Set.ShortName.Equals("tg/recentlyUsed"))
+                {
+                    return RecentsTemplate;
+                }
+                else if (stickerSet.Set.ShortName.Equals("tg/favedStickers"))
+                {
+                    return FavedTemplate;
+                }
+
+                return ItemTemplate;
             }
 
             return base.SelectTemplateCore(item, container);
