@@ -422,7 +422,6 @@
     <Compile Include="TL\Methods\TLInvokeWithLayer.cs" />
     <Compile Include="TL\Methods\TLInvokeWithoutUpdates.cs" />
     <Compile Include="TL\Partial\TLAuthorization.Partial.cs" />
-    <Compile Include="TL\Partial\TLBadServerSalt.Partial.cs" />
     <Compile Include="TL\Partial\TLBotInlineResultBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelAdminLogEvent.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelFull.Partial.cs" />
