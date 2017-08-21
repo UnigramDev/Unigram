@@ -157,16 +157,16 @@ namespace Unigram.ViewModels
 
         public DialogStickersViewModel Stickers { get { return _stickers; } }
 
-        private TLDialog _currentDialog;
+        private TLDialog _dialog;
         public TLDialog Dialog
         {
             get
             {
-                return _currentDialog;
+                return _dialog;
             }
             set
             {
-                Set(ref _currentDialog, value);
+                Set(ref _dialog, value);
             }
         }
 
@@ -653,8 +653,8 @@ namespace Unigram.ViewModels
             {
                 Messages.Clear();
 
-                var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
-                var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
+                var maxId = _dialog?.UnreadCount > 0 ? _dialog.ReadInboxMaxId : int.MaxValue;
+                var offset = _dialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
                 await LoadFirstSliceAsync(maxId, offset);
             }
         }
@@ -768,7 +768,7 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = _currentDialog?.UnreadCount > 0 ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.ForceKeepLastItemInView;
+            UpdatingScrollMode = _dialog?.UnreadCount > 0 ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.ForceKeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadFirstSliceAsync");
 
@@ -1002,7 +1002,7 @@ namespace Unigram.ViewModels
             //{
             //    messageId = storage;
             //}
-            var dialog = _currentDialog;
+            var dialog = _dialog;
 
             //for (int i = 0; i < 200;)
             //{
@@ -1024,8 +1024,8 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
-                var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
+                var maxId = _dialog?.UnreadCount > 0 ? _dialog.ReadInboxMaxId : int.MaxValue;
+                var offset = _dialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
 
                 LoadFirstSliceAsync(maxId, offset);
             }
@@ -1457,7 +1457,7 @@ namespace Unigram.ViewModels
             {
                 draft = new TLDraftMessage { Message = messageText, Date = date, ReplyToMsgId = reply };
             }
-            else if (_currentDialog != null && _currentDialog.HasDraft && _currentDialog.Draft is TLDraftMessage)
+            else if (_dialog != null && _dialog.HasDraft && _dialog.Draft is TLDraftMessage)
             {
                 draft = new TLDraftMessageEmpty();
             }
@@ -1466,10 +1466,10 @@ namespace Unigram.ViewModels
             {
                 ProtoService.SaveDraftAsync(Peer, draft, result =>
                 {
-                    if (_currentDialog != null)
+                    if (_dialog != null)
                     {
-                        _currentDialog.Draft = draft;
-                        _currentDialog.HasDraft = draft != null;
+                        _dialog.Draft = draft;
+                        _dialog.HasDraft = draft != null;
                     }
 
                     Aggregator.Publish(new TLUpdateDraftMessage { Peer = Peer.ToPeer(), Draft = draft });
@@ -1897,13 +1897,13 @@ namespace Unigram.ViewModels
         {
             CheckChannelMessage(message);
 
-            if (_currentDialog != null && _peer != null && _currentDialog.Draft is TLDraftMessage)
+            if (_dialog != null && _peer != null && _dialog.Draft is TLDraftMessage)
             {
                 var draft = new TLDraftMessageEmpty();
                 var peer = _peer.ToPeer();
 
-                _currentDialog.Draft = draft;
-                _currentDialog.HasDraft = draft != null;
+                _dialog.Draft = draft;
+                _dialog.HasDraft = draft != null;
 
                 Aggregator.Publish(new TLUpdateDraftMessage { Peer = peer, Draft = draft });
             }
@@ -2150,12 +2150,12 @@ namespace Unigram.ViewModels
                         {
                             Messages.Add(newChannelMessage.Message);
 
-                            if (_currentDialog == null)
+                            if (_dialog == null)
                             {
-                                _currentDialog = CacheService.GetDialog(channel.ToPeer());
+                                _dialog = CacheService.GetDialog(channel.ToPeer());
                             }
 
-                            Aggregator.Publish(new TopMessageUpdatedEventArgs(this._currentDialog, newChannelMessage.Message));
+                            Aggregator.Publish(new TopMessageUpdatedEventArgs(this._dialog, newChannelMessage.Message));
                         }
                         else
                         {
@@ -2195,9 +2195,9 @@ namespace Unigram.ViewModels
         private async void ToggleMuteExecute()
         {
             var channel = With as TLChannel;
-            if (channel != null && _currentDialog != null)
+            if (channel != null && _dialog != null)
             {
-                var notifySettings = _currentDialog.NotifySettings as TLPeerNotifySettings;
+                var notifySettings = _dialog.NotifySettings as TLPeerNotifySettings;
                 if (notifySettings != null)
                 {
                     var muteUntil = notifySettings.MuteUntil == int.MaxValue ? 0 : int.MaxValue;
@@ -2213,19 +2213,19 @@ namespace Unigram.ViewModels
                     if (response.IsSucceeded)
                     {
                         notifySettings.MuteUntil = muteUntil;
-                        channel.RaisePropertyChanged(() => _currentDialog.NotifySettings);
+                        channel.RaisePropertyChanged(() => _dialog.NotifySettings);
 
                         var dialog = CacheService.GetDialog(Peer.ToPeer());
                         if (dialog != null)
                         {
-                            dialog.NotifySettings = _currentDialog.NotifySettings;
+                            dialog.NotifySettings = _dialog.NotifySettings;
                             dialog.RaisePropertyChanged(() => dialog.NotifySettings);
                             dialog.RaisePropertyChanged(() => dialog.Self);
 
                             var chatFull = CacheService.GetFullChat(channel.Id);
                             if (chatFull != null)
                             {
-                                chatFull.NotifySettings = _currentDialog.NotifySettings;
+                                chatFull.NotifySettings = _dialog.NotifySettings;
                                 chatFull.RaisePropertyChanged(() => chatFull.NotifySettings);
                             }
 
@@ -2252,9 +2252,9 @@ namespace Unigram.ViewModels
         private async void ToggleSilentExecute()
         {
             var channel = With as TLChannel;
-            if (channel != null && _currentDialog != null)
+            if (channel != null && _dialog != null)
             {
-                var notifySettings = _currentDialog.NotifySettings as TLPeerNotifySettings;
+                var notifySettings = _dialog.NotifySettings as TLPeerNotifySettings;
                 if (notifySettings != null)
                 {
                     var silent = !notifySettings.IsSilent;
@@ -2270,12 +2270,12 @@ namespace Unigram.ViewModels
                     if (response.IsSucceeded)
                     {
                         notifySettings.IsSilent = silent;
-                        channel.RaisePropertyChanged(() => _currentDialog.NotifySettings);
+                        channel.RaisePropertyChanged(() => _dialog.NotifySettings);
 
                         var dialog = CacheService.GetDialog(Peer.ToPeer());
                         if (dialog != null)
                         {
-                            dialog.NotifySettings = _currentDialog.NotifySettings;
+                            dialog.NotifySettings = _dialog.NotifySettings;
                             dialog.RaisePropertyChanged(() => dialog.NotifySettings);
                             dialog.RaisePropertyChanged(() => dialog.IsMuted);
                             dialog.RaisePropertyChanged(() => dialog.Self);
@@ -2283,7 +2283,7 @@ namespace Unigram.ViewModels
                             var chatFull = CacheService.GetFullChat(channel.Id);
                             if (chatFull != null)
                             {
-                                chatFull.NotifySettings = _currentDialog.NotifySettings;
+                                chatFull.NotifySettings = _dialog.NotifySettings;
                                 chatFull.RaisePropertyChanged(() => chatFull.NotifySettings);
                             }
 
@@ -2347,9 +2347,9 @@ namespace Unigram.ViewModels
         public RelayCommand DialogDeleteCommand => new RelayCommand(DialogDeleteExecute);
         private void DialogDeleteExecute()
         {
-            if (_currentDialog != null)
+            if (_dialog != null)
             {
-                UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.DialogDeleteCommand.Execute(_currentDialog);
+                UnigramContainer.Current.ResolveType<MainViewModel>().Dialogs.DialogDeleteCommand.Execute(_dialog);
             }
         }
 

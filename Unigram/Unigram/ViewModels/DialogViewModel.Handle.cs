@@ -46,7 +46,7 @@ namespace Unigram.ViewModels
                 }
 
                 var participant = _with;
-                var dialog = _currentDialog;
+                var dialog = _dialog;
                 if (dialog != null && Messages.Count > 0)
                 {
                     var unread = dialog.UnreadCount;
@@ -152,8 +152,8 @@ namespace Unigram.ViewModels
                 IsFirstSliceLoaded = false;
                 IsLastSliceLoaded = false;
 
-                var maxId = _currentDialog?.UnreadCount > 0 ? _currentDialog.ReadInboxMaxId : int.MaxValue;
-                var offset = _currentDialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
+                var maxId = _dialog?.UnreadCount > 0 ? _dialog.ReadInboxMaxId : int.MaxValue;
+                var offset = _dialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
                 await LoadFirstSliceAsync(maxId, offset);
             });
         }
@@ -692,9 +692,9 @@ namespace Unigram.ViewModels
                 //    {
                 //        return;
                 //    }
-                _currentDialog = (_currentDialog ?? CacheService.GetDialog(Peer.ToPeer()));
+                _dialog = (_dialog ?? CacheService.GetDialog(Peer.ToPeer()));
 
-                var dialog = _currentDialog;
+                var dialog = _dialog;
                 if (dialog != null)
                 {
                     var topMessage = dialog.TopMessageItem as TLMessageCommonBase;
@@ -734,16 +734,16 @@ namespace Unigram.ViewModels
                     topMessage.SetUnread(false);
                 }
 
-                _currentDialog.UnreadCount = getUnreadCount.Invoke(_currentDialog);
-                _currentDialog.RaisePropertyChanged(() => _currentDialog.UnreadCount);
+                _dialog.UnreadCount = getUnreadCount.Invoke(_dialog);
+                _dialog.RaisePropertyChanged(() => _dialog.UnreadCount);
 
-                var dialog = _currentDialog as TLDialog;
+                var dialog = _dialog as TLDialog;
                 if (dialog != null)
                 {
                     dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
                 }
 
-                _currentDialog.RaisePropertyChanged(() => _currentDialog.Self);
+                _dialog.RaisePropertyChanged(() => _dialog.Self);
 
                 CacheService.Commit();
             });

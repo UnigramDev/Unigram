@@ -839,7 +839,7 @@ namespace Unigram.ViewModels
                             if (newChannelMessageUpdate != null)
                             {
                                 Handle(newChannelMessageUpdate.Message as TLMessageCommonBase);
-                                Aggregator.Publish(new TopMessageUpdatedEventArgs(_currentDialog, newChannelMessageUpdate.Message));
+                                Aggregator.Publish(new TopMessageUpdatedEventArgs(_dialog, newChannelMessageUpdate.Message));
                             }
                         }
 
