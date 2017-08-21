@@ -340,7 +340,15 @@ namespace Unigram.Views
 
             if (StickersPanel.Visibility == Visibility.Visible)
             {
-                Collapse_Click(null, null);
+                if (StickersPanel.ToggleActiveView())
+                {
+
+                }
+                else
+                {
+                    Collapse_Click(null, null);
+                }
+
                 args.Handled = true;
             }
 
