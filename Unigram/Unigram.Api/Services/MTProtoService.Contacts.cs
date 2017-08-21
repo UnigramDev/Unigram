@@ -73,7 +73,7 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
-        public void GetContactsAsync(string hash, Action<TLContactsContactsBase> callback, Action<TLRPCError> faultCallback = null)
+        public void GetContactsAsync(int hash, Action<TLContactsContactsBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsGetContacts { Hash = hash };
 
@@ -81,9 +81,9 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLContactsContactsBase>(caption, obj, result => _cacheService.SyncContacts(result, callback), faultCallback);
         }
 
-        public void ImportContactsAsync(TLVector<TLInputContactBase> contacts, bool replace, Action<TLContactsImportedContacts> callback, Action<TLRPCError> faultCallback = null)
+        public void ImportContactsAsync(TLVector<TLInputContactBase> contacts, Action<TLContactsImportedContacts> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLContactsImportContacts { Contacts = contacts, Replace = replace };
+            var obj = new TLContactsImportContacts { Contacts = contacts };
 
             const string caption = "contacts.importContacts";
             SendInformativeMessage<TLContactsImportedContacts>(caption, obj, result => _cacheService.SyncContacts(result, callback), faultCallback);

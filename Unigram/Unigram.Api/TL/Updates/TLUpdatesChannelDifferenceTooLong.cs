@@ -20,6 +20,7 @@ namespace Telegram.Api.TL.Updates
 		public Int32 ReadInboxMaxId { get; set; }
 		public Int32 ReadOutboxMaxId { get; set; }
 		public Int32 UnreadCount { get; set; }
+		public Int32 UnreadMentionsCount { get; set; }
 		public TLVector<TLMessageBase> Messages { get; set; }
 		public TLVector<TLChatBase> Chats { get; set; }
 		public TLVector<TLUserBase> Users { get; set; }
@@ -41,6 +42,7 @@ namespace Telegram.Api.TL.Updates
 			ReadInboxMaxId = from.ReadInt32();
 			ReadOutboxMaxId = from.ReadInt32();
 			UnreadCount = from.ReadInt32();
+			UnreadMentionsCount = from.ReadInt32();
 			Messages = TLFactory.Read<TLVector<TLMessageBase>>(from);
 			Chats = TLFactory.Read<TLVector<TLChatBase>>(from);
 			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
@@ -50,7 +52,7 @@ namespace Telegram.Api.TL.Updates
 		{
 			UpdateFlags();
 
-			to.Write(0x410DEE07);
+			to.Write(0x6A9D7B35);
 			to.Write((Int32)Flags);
 			to.Write(Pts);
 			if (HasTimeout) to.Write(Timeout.Value);
@@ -58,6 +60,7 @@ namespace Telegram.Api.TL.Updates
 			to.Write(ReadInboxMaxId);
 			to.Write(ReadOutboxMaxId);
 			to.Write(UnreadCount);
+			to.Write(UnreadMentionsCount);
 			to.WriteObject(Messages);
 			to.WriteObject(Chats);
 			to.WriteObject(Users);

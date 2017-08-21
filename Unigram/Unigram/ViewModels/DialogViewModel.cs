@@ -2508,7 +2508,7 @@ namespace Unigram.ViewModels
                     Phone = user.Phone
                 };
 
-                var response = await ProtoService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact }, false);
+                var response = await ProtoService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact });
                 if (response.IsSucceeded)
                 {
                     if (response.Result.Users.Count > 0)

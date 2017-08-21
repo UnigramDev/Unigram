@@ -90,7 +90,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<bool>> UpdateNotifySettingsAsync(TLInputNotifyPeerBase peer, TLInputPeerNotifySettings settings);
         Task<MTProtoResponse<TLUploadFileBase>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit);
         Task<MTProtoResponse<TLUserBase>> UpdateProfileAsync(string firstName, string lastName, string about);
-        Task<MTProtoResponse<TLContactsImportedContacts>> ImportContactsAsync(TLVector<TLInputContactBase> contacts, bool replace);
+        Task<MTProtoResponse<TLContactsImportedContacts>> ImportContactsAsync(TLVector<TLInputContactBase> contacts);
         Task<MTProtoResponse<bool>> SetTypingAsync(TLInputPeerBase peer, bool typing);
         Task<MTProtoResponse<bool>> RegisterDeviceAsync(int tokenType, string token);
         Task<MTProtoResponse<bool>> LogOutAsync();
@@ -114,7 +114,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLUserProfilePhotoBase>> UpdateProfilePhotoAsync(TLInputPhotoBase id);
         Task<MTProtoResponse<TLVector<long>>> DeletePhotosAsync(TLVector<TLInputPhotoBase> id);
         Task<MTProtoResponse<TLContactsBlockedBase>> GetBlockedAsync(int offset, int limit);
-        Task<MTProtoResponse<TLContactsContactsBase>> GetContactsAsync(string hash);
+        Task<MTProtoResponse<TLContactsContactsBase>> GetContactsAsync(int hash);
         Task<MTProtoResponse<TLUserFull>> GetFullUserAsync(TLInputUserBase id);
         Task<MTProtoResponse<TLUpdatesDifferenceBase>> GetDifferenceAsync(int pts, int date, int qts);
         Task<MTProtoResponse<TLAuthAuthorization>> CheckPasswordAsync(byte[] passwordHash);

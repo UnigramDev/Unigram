@@ -650,7 +650,7 @@ namespace Unigram.ViewModels.Users
                     Phone = _item.Phone
                 };
 
-                var response = await ProtoService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact }, false);
+                var response = await ProtoService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact });
                 if (response.IsSucceeded)
                 {
                     _item.RaisePropertyChanged(() => _item.FullName);

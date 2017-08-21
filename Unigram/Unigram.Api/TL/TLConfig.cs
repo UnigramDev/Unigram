@@ -8,14 +8,14 @@ namespace Telegram.Api.TL
 		[Flags]
 		public enum Flag : Int32
 		{
-			PhoneCallsEnabled = (1 << 1),
 			TmpSessions = (1 << 0),
+			PhoneCallsEnabled = (1 << 1),
 			SuggestedLangCode = (1 << 2),
 			LangPackVersion = (1 << 2),
 		}
 
-		public bool IsPhoneCallsEnabled { get { return Flags.HasFlag(Flag.PhoneCallsEnabled); } set { Flags = value ? (Flags | Flag.PhoneCallsEnabled) : (Flags & ~Flag.PhoneCallsEnabled); } }
 		public bool HasTmpSessions { get { return Flags.HasFlag(Flag.TmpSessions); } set { Flags = value ? (Flags | Flag.TmpSessions) : (Flags & ~Flag.TmpSessions); } }
+		public bool IsPhoneCallsEnabled { get { return Flags.HasFlag(Flag.PhoneCallsEnabled); } set { Flags = value ? (Flags | Flag.PhoneCallsEnabled) : (Flags & ~Flag.PhoneCallsEnabled); } }
 		public bool HasSuggestedLangCode { get { return Flags.HasFlag(Flag.SuggestedLangCode); } set { Flags = value ? (Flags | Flag.SuggestedLangCode) : (Flags & ~Flag.SuggestedLangCode); } }
 		public bool HasLangPackVersion { get { return Flags.HasFlag(Flag.LangPackVersion); } set { Flags = value ? (Flags | Flag.LangPackVersion) : (Flags & ~Flag.LangPackVersion); } }
 
@@ -41,6 +41,7 @@ namespace Telegram.Api.TL
 		public Int32 EditTimeLimit { get; set; }
 		public Int32 RatingEDecay { get; set; }
 		public Int32 StickersRecentLimit { get; set; }
+		public Int32 StickersFavedLimit { get; set; }
 		public Int32? TmpSessions { get; set; }
 		public Int32 PinnedDialogsCountMax { get; set; }
 		public Int32 CallReceiveTimeoutMs { get; set; }
@@ -84,6 +85,7 @@ namespace Telegram.Api.TL
 			EditTimeLimit = from.ReadInt32();
 			RatingEDecay = from.ReadInt32();
 			StickersRecentLimit = from.ReadInt32();
+			StickersFavedLimit = from.ReadInt32();
 			if (HasTmpSessions) TmpSessions = from.ReadInt32();
 			PinnedDialogsCountMax = from.ReadInt32();
 			CallReceiveTimeoutMs = from.ReadInt32();
@@ -100,7 +102,7 @@ namespace Telegram.Api.TL
 		{
 			UpdateFlags();
 
-			to.Write(0x7FEEC888);
+			to.Write(0x8DF376A4);
 			to.Write((Int32)Flags);
 			to.Write(Date);
 			to.Write(Expires);
@@ -123,6 +125,7 @@ namespace Telegram.Api.TL
 			to.Write(EditTimeLimit);
 			to.Write(RatingEDecay);
 			to.Write(StickersRecentLimit);
+			to.Write(StickersFavedLimit);
 			if (HasTmpSessions) to.Write(TmpSessions.Value);
 			to.Write(PinnedDialogsCountMax);
 			to.Write(CallReceiveTimeoutMs);

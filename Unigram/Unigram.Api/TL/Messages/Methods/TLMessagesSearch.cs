@@ -24,9 +24,11 @@ namespace Telegram.Api.TL.Messages.Methods
 		public TLMessagesFilterBase Filter { get; set; }
 		public Int32 MinDate { get; set; }
 		public Int32 MaxDate { get; set; }
-		public Int32 Offset { get; set; }
-		public Int32 MaxId { get; set; }
+		public Int32 OffsetId { get; set; }
+		public Int32 AddOffset { get; set; }
 		public Int32 Limit { get; set; }
+		public Int32 MaxId { get; set; }
+		public Int32 MinId { get; set; }
 
 		public TLMessagesSearch() { }
 		public TLMessagesSearch(TLBinaryReader from)
@@ -45,16 +47,18 @@ namespace Telegram.Api.TL.Messages.Methods
 			Filter = TLFactory.Read<TLMessagesFilterBase>(from);
 			MinDate = from.ReadInt32();
 			MaxDate = from.ReadInt32();
-			Offset = from.ReadInt32();
-			MaxId = from.ReadInt32();
+			OffsetId = from.ReadInt32();
+			AddOffset = from.ReadInt32();
 			Limit = from.ReadInt32();
+			MaxId = from.ReadInt32();
+			MinId = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
-			to.Write(0xF288A275);
+			to.Write(0x039E9EA0);
 			to.Write((Int32)Flags);
 			to.WriteObject(Peer);
 			to.Write(Q);
@@ -62,9 +66,11 @@ namespace Telegram.Api.TL.Messages.Methods
 			to.WriteObject(Filter);
 			to.Write(MinDate);
 			to.Write(MaxDate);
-			to.Write(Offset);
-			to.Write(MaxId);
+			to.Write(OffsetId);
+			to.Write(AddOffset);
 			to.Write(Limit);
+			to.Write(MaxId);
+			to.Write(MinId);
 		}
 
 		private void UpdateFlags()

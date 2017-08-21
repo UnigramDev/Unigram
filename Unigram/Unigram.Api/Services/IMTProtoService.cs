@@ -99,8 +99,8 @@ namespace Telegram.Api.Services
         void SetTypingAsync(TLInputPeerBase peer, bool typing, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SetTypingAsync(TLInputPeerBase peer, TLSendMessageActionBase action, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
-        void GetContactsAsync(string hash, Action<TLContactsContactsBase> callback, Action<TLRPCError> faultCallback = null);
-        void ImportContactsAsync(TLVector<TLInputContactBase> contacts, bool replace, Action<TLContactsImportedContacts> callback, Action<TLRPCError> faultCallback = null);
+        void GetContactsAsync(int hash, Action<TLContactsContactsBase> callback, Action<TLRPCError> faultCallback = null);
+        void ImportContactsAsync(TLVector<TLInputContactBase> contacts, Action<TLContactsImportedContacts> callback, Action<TLRPCError> faultCallback = null);
 
         void BlockAsync(TLInputUserBase id, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void UnblockAsync(TLInputUserBase id, Action<bool> callback, Action<TLRPCError> faultCallback = null); 

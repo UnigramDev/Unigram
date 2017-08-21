@@ -1168,7 +1168,7 @@ namespace Telegram.Api.Services
             //TLUtils.WriteLine(string.Format("{0} messages.search query={1} offset={2} limit={3}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), query, offset, limit), LogSeverity.Error);
             //Execute.ShowDebugMessage("messages.search filter=" + filter);
 
-            var obj = new TLMessagesSearch { Flags = 0, Peer = peer, Q = query, FromId = from, Filter = filter, MinDate = minDate, MaxDate = maxDate, Offset = offset, MaxId = maxId, Limit = limit };
+            var obj = new TLMessagesSearch { Flags = 0, Peer = peer, Q = query, FromId = from, Filter = filter, MinDate = minDate, MaxDate = maxDate, AddOffset = offset, MaxId = maxId, Limit = limit };
             //obj.SetImportant();
 
             const string caption = "messages.search";

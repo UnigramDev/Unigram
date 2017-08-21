@@ -914,10 +914,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLContactsImportedContacts>> ImportContactsAsync(TLVector<TLInputContactBase> contacts, bool replace)
+        public Task<MTProtoResponse<TLContactsImportedContacts>> ImportContactsAsync(TLVector<TLInputContactBase> contacts)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsImportedContacts>>();
-            ImportContactsAsync(contacts, replace, (callback) =>
+            ImportContactsAsync(contacts, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLContactsImportedContacts>(callback));
             }, (faultCallback) =>
@@ -1250,7 +1250,7 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLContactsContactsBase>> GetContactsAsync(string hash)
+        public Task<MTProtoResponse<TLContactsContactsBase>> GetContactsAsync(int hash)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLContactsContactsBase>>();
             GetContactsAsync(hash, (callback) =>

@@ -10,6 +10,7 @@ namespace Telegram.Api.TL
 		{
 			CanViewParticipants = (1 << 3),
 			CanSetUsername = (1 << 6),
+			CanSetStickers = (1 << 7),
 			ParticipantsCount = (1 << 0),
 			AdminsCount = (1 << 1),
 			KickedCount = (1 << 2),
@@ -17,10 +18,12 @@ namespace Telegram.Api.TL
 			MigratedFromChatId = (1 << 4),
 			MigratedFromMaxId = (1 << 4),
 			PinnedMsgId = (1 << 5),
+			StickerSet = (1 << 8),
 		}
 
 		public bool IsCanViewParticipants { get { return Flags.HasFlag(Flag.CanViewParticipants); } set { Flags = value ? (Flags | Flag.CanViewParticipants) : (Flags & ~Flag.CanViewParticipants); } }
 		public bool IsCanSetUsername { get { return Flags.HasFlag(Flag.CanSetUsername); } set { Flags = value ? (Flags | Flag.CanSetUsername) : (Flags & ~Flag.CanSetUsername); } }
+		public bool IsCanSetStickers { get { return Flags.HasFlag(Flag.CanSetStickers); } set { Flags = value ? (Flags | Flag.CanSetStickers) : (Flags & ~Flag.CanSetStickers); } }
 		public bool HasParticipantsCount { get { return Flags.HasFlag(Flag.ParticipantsCount); } set { Flags = value ? (Flags | Flag.ParticipantsCount) : (Flags & ~Flag.ParticipantsCount); } }
 		public bool HasAdminsCount { get { return Flags.HasFlag(Flag.AdminsCount); } set { Flags = value ? (Flags | Flag.AdminsCount) : (Flags & ~Flag.AdminsCount); } }
 		public bool HasKickedCount { get { return Flags.HasFlag(Flag.KickedCount); } set { Flags = value ? (Flags | Flag.KickedCount) : (Flags & ~Flag.KickedCount); } }
@@ -28,6 +31,7 @@ namespace Telegram.Api.TL
 		public bool HasMigratedFromChatId { get { return Flags.HasFlag(Flag.MigratedFromChatId); } set { Flags = value ? (Flags | Flag.MigratedFromChatId) : (Flags & ~Flag.MigratedFromChatId); } }
 		public bool HasMigratedFromMaxId { get { return Flags.HasFlag(Flag.MigratedFromMaxId); } set { Flags = value ? (Flags | Flag.MigratedFromMaxId) : (Flags & ~Flag.MigratedFromMaxId); } }
 		public bool HasPinnedMsgId { get { return Flags.HasFlag(Flag.PinnedMsgId); } set { Flags = value ? (Flags | Flag.PinnedMsgId) : (Flags & ~Flag.PinnedMsgId); } }
+		public bool HasStickerSet { get { return Flags.HasFlag(Flag.StickerSet); } set { Flags = value ? (Flags | Flag.StickerSet) : (Flags & ~Flag.StickerSet); } }
 
 		public Flag Flags { get; set; }
 		public String About { get; set; }
@@ -41,6 +45,7 @@ namespace Telegram.Api.TL
 		public Int32? MigratedFromChatId { get; set; }
 		public Int32? MigratedFromMaxId { get; set; }
 		public Int32? PinnedMsgId { get; set; }
+		public TLStickerSet StickerSet { get; set; }
 
 		public TLChannelFull() { }
 		public TLChannelFull(TLBinaryReader from)
@@ -69,13 +74,14 @@ namespace Telegram.Api.TL
 			if (HasMigratedFromChatId) MigratedFromChatId = from.ReadInt32();
 			if (HasMigratedFromMaxId) MigratedFromMaxId = from.ReadInt32();
 			if (HasPinnedMsgId) PinnedMsgId = from.ReadInt32();
+			if (HasStickerSet) StickerSet = TLFactory.Read<TLStickerSet>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
-			to.Write(0x95CB5F57);
+			to.Write(0x17F45FCF);
 			to.Write((Int32)Flags);
 			to.Write(Id);
 			to.Write(About);
@@ -93,6 +99,7 @@ namespace Telegram.Api.TL
 			if (HasMigratedFromChatId) to.Write(MigratedFromChatId.Value);
 			if (HasMigratedFromMaxId) to.Write(MigratedFromMaxId.Value);
 			if (HasPinnedMsgId) to.Write(PinnedMsgId.Value);
+			if (HasStickerSet) to.WriteObject(StickerSet);
 		}
 
 		private void UpdateFlags()
@@ -104,6 +111,7 @@ namespace Telegram.Api.TL
 			HasMigratedFromChatId = MigratedFromChatId != null;
 			HasMigratedFromMaxId = MigratedFromMaxId != null;
 			HasPinnedMsgId = PinnedMsgId != null;
+			HasStickerSet = StickerSet != null;
 		}
 	}
 }
