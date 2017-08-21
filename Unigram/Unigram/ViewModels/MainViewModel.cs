@@ -316,15 +316,6 @@ namespace Unigram.ViewModels
             //Execute.BeginOnUIThread(() => Contacts.getTLContacts());
             //Execute.BeginOnUIThread(() => Contacts.GetSelfAsync());
 
-            ProtoService.SendRequestAsync<string>("help.getScheme", new TLHelpGetScheme(), result =>
-            {
-                Debugger.Break();
-            },
-            fault =>
-            {
-                Debugger.Break();
-            });
-
             if (Refresh)
             {
                 Refresh = false;
