@@ -92,7 +92,7 @@ namespace Unigram.ViewModels
         public int participantCount = 0;
         public int online = 0;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService, DialogStickersViewModel stickers)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService)
             : base(protoService, cacheService, aggregator)
         {
             _uploadFileManager = uploadFileManager;
@@ -102,7 +102,7 @@ namespace Unigram.ViewModels
             _stickersService = stickersService;
             _locationService = locationService;
 
-            _stickers = stickers;
+            _stickers = new DialogStickersViewModel(protoService, cacheService, aggregator, stickersService);
 
             _informativeTimer = new DispatcherTimer();
             _informativeTimer.Interval = TimeSpan.FromSeconds(5);
@@ -1141,46 +1141,47 @@ namespace Unigram.ViewModels
 
                         BotCommands = commands;
                         HasBotCommands = BotCommands.Count > 0;
+
+                        Stickers.SyncGroup(full);
+
+                        if (full.HasPinnedMsgId)
+                        {
+                            var update = true;
+
+                            var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
+                            if (appData.Values.TryGetValue("Pinned" + channel.Id, out object pinnedObj))
+                            {
+                                var pinnedId = (int)pinnedObj;
+                                if (pinnedId == full.PinnedMsgId)
+                                {
+                                    update = false;
+                                }
+                            }
+
+                            var pinned = CacheService.GetMessage(full.PinnedMsgId, channel.Id);
+                            if (pinned == null && update)
+                            {
+                                var y = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int>() { full.PinnedMsgId ?? 0 });
+                                if (y.IsSucceeded)
+                                {
+                                    pinned = y.Result.Messages.FirstOrDefault();
+                                }
+                            }
+
+                            if (pinned != null && update)
+                            {
+                                PinnedMessage = pinned;
+                            }
+                            else
+                            {
+                                PinnedMessage = null;
+                            }
+                        }
                     }
                     else
                     {
                         BotCommands = null;
                         HasBotCommands = false;
-                    }
-
-                    var channelFull = full as TLChannelFull;
-                    if (channelFull.HasPinnedMsgId)
-                    {
-                        var update = true;
-
-                        var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
-                        if (appData.Values.TryGetValue("Pinned" + channel.Id, out object pinnedObj))
-                        {
-                            var pinnedId = (int)pinnedObj;
-                            if (pinnedId == channelFull.PinnedMsgId)
-                            {
-                                update = false;
-                            }
-                        }
-
-                        var pinned = CacheService.GetMessage(channelFull.PinnedMsgId, channel.Id);
-                        if (pinned == null && update)
-                        {
-                            var y = await ProtoService.GetMessagesAsync(channel.ToInputChannel(), new TLVector<int>() { channelFull.PinnedMsgId ?? 0 });
-                            if (y.IsSucceeded)
-                            {
-                                pinned = y.Result.Messages.FirstOrDefault();
-                            }
-                        }
-
-                        if (pinned != null && update)
-                        {
-                            PinnedMessage = pinned;
-                        }
-                        else
-                        {
-                            PinnedMessage = null;
-                        }
                     }
                 }
 
