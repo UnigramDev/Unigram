@@ -96,6 +96,7 @@ namespace Unigram.Services
         IHandle<TLUpdateNewStickerSet>,
         IHandle<TLUpdateSavedGifs>,
         IHandle<TLUpdateRecentStickers>,
+        IHandle<TLUpdateFavedStickers>,
         IHandle<TLUpdateReadFeaturedStickers>
     {
         private List<TLMessagesStickerSet>[] stickerSets = new[] { new List<TLMessagesStickerSet>(), new List<TLMessagesStickerSet>() };
@@ -170,6 +171,12 @@ namespace Unigram.Services
         public void Handle(TLUpdateRecentStickers update)
         {
             ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
+            ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTimeMask", 0L);
+        }
+
+        public void Handle(TLUpdateFavedStickers update)
+        {
+            ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTimeFavs", 0L);
         }
 
         public void Handle(TLUpdateReadFeaturedStickers update)
@@ -752,9 +759,17 @@ namespace Unigram.Services
                         {
                             ApplicationSettings.Current.AddOrUpdateValue("lastGifLoadTime", 0L);
                         }
-                        else
+                        else if (type == 0)
                         {
                             ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", 0L);
+                        }
+                        else if (type == 1)
+                        {
+                            ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTimeMask", 0L);
+                        }
+                        else
+                        {
+                            ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTimeFavs", 0L);
                         }
                     }
 
@@ -777,7 +792,6 @@ namespace Unigram.Services
                     else if (type == 0)
                     {
                         lastLoadTime = ApplicationSettings.Current.GetValueOrDefault<long>("lastStickersLoadTime", 0);
-
                     }
                     else if (type == 1)
                     {
@@ -905,7 +919,7 @@ namespace Unigram.Services
                     Statement statement;
                     CreateDatabase.Open(out database);
 
-                    DatabaseContext.Current.Execute(database, "CREATE TABLE IF NOT EXISTS `web_recent_v3`(`Id` bigint primary key not null, `AccessHash` bigint, `Date` int, `MimeType` text, `Size` int, `Thumb` string, `DCId` int, `Version` int, `Attributes` string, `MetaType` int, `MetaDate` int)");
+                    DatabaseContext.Current.Execute(database, "CREATE TABLE IF NOT EXISTS `web_recent_v3`(`Id` bigint primary key not null, `AccessHash` bigint, `Date` int, `MimeType` text, `Size` int, `Thumb` string, `DCId` int, `Version` int, `Attributes` string, `MetaType` int, `MetaDate` int, PRIMARY KEY (Id, MetaType))");
                     DatabaseContext.Current.Execute(database, "BEGIN IMMEDIATE TRANSACTION");
                     Sqlite3.sqlite3_prepare_v2(database, "INSERT OR REPLACE INTO `web_recent_v3` (Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,MetaType,MetaDate) VALUES(?,?,?,?,?,?,?,?,?,?,?)", out statement);
 

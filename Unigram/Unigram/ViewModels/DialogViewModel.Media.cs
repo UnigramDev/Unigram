@@ -33,7 +33,7 @@ namespace Unigram.ViewModels
         public void SendStickerExecute(TLDocument document)
         {
             SendDocument(document, null);
-            Stickers.StickersService.AddRecentSticker(StickerType.Image, document, (int)(Utils.CurrentTimestamp / 1000));
+            Stickers.StickersService.AddRecentSticker(StickerType.Image, document, (int)(Utils.CurrentTimestamp / 1000), false);
         }
 
         public RelayCommand<TLDocument> SendGifCommand => new RelayCommand<TLDocument>(SendGifExecute);

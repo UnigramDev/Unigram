@@ -26,11 +26,12 @@ namespace Unigram.ViewModels
     {
         public readonly IStickersService _stickersService;
 
-        private TLMessagesStickerSet _frequentlyUsed;
-        private TLMessagesStickerSet _favedStickers;
+        private TLMessagesStickerSet _recentGroup;
+        private TLMessagesStickerSet _favedGroup;
 
         private bool _recentGifs;
         private bool _recentStickers;
+        private bool _favedStickers;
         private bool _featured;
         private bool _stickers;
 
@@ -39,7 +40,7 @@ namespace Unigram.ViewModels
         {
             _stickersService = stickersService;
 
-            _frequentlyUsed = new TLMessagesStickerSet
+            _recentGroup = new TLMessagesStickerSet
             {
                 Set = new TLStickerSet
                 {
@@ -48,7 +49,7 @@ namespace Unigram.ViewModels
                 }
             };
 
-            _favedStickers = new TLMessagesStickerSet
+            _favedGroup = new TLMessagesStickerSet
             {
                 Set = new TLStickerSet
                 {
@@ -85,6 +86,10 @@ namespace Unigram.ViewModels
             {
                 ProcessRecentStickers();
             }
+            else if (e.Type == StickerType.Fave)
+            {
+                ProcessFavedStickers();
+            }
         }
 
         public void Handle(StickersDidLoadedEventArgs e)
@@ -113,19 +118,39 @@ namespace Unigram.ViewModels
 
         private void ProcessRecentStickers()
         {
-            var recent = _stickersService.GetRecentStickers(StickerType.Image);
+            var items = _stickersService.GetRecentStickers(StickerType.Image);
             Execute.BeginOnUIThread(() =>
             {
-                _frequentlyUsed.Documents = new TLVector<TLDocumentBase>(recent);
+                _recentGroup.Documents = new TLVector<TLDocumentBase>(items);
 
-                if (SavedStickers.Count > 0 && SavedStickers[0].Set.ShortName.Equals("tg/recentlyUsed"))
+                var already = SavedStickers.Take(2).FirstOrDefault(x => x.Set.ShortName.Equals("tg/recentlyUsed"));
+                if (already != null)
+                {
+                    SavedStickers.Remove(already);
+                }
+
+                if (_recentGroup.Documents.Count > 0)
+                {
+                    SavedStickers.Insert(1, _recentGroup);
+                }
+            });
+        }
+
+        private void ProcessFavedStickers()
+        {
+            var items = _stickersService.GetRecentStickers(StickerType.Fave);
+            Execute.BeginOnUIThread(() =>
+            {
+                _favedGroup.Documents = new TLVector<TLDocumentBase>(items);
+
+                if (SavedStickers.Count > 0 && SavedStickers[0].Set.ShortName.Equals("tg/favedStickers"))
                 {
                     SavedStickers.RemoveAt(0);
                 }
 
-                if (_frequentlyUsed.Documents.Count > 0)
+                if (_favedGroup.Documents.Count > 0)
                 {
-                    SavedStickers.Insert(0, _frequentlyUsed);
+                    SavedStickers.Insert(0, _favedGroup);
                 }
             });
         }
@@ -138,9 +163,13 @@ namespace Unigram.ViewModels
             {
                 SavedStickers.ReplaceWith(stickers);
 
-                if (_frequentlyUsed.Documents.Count > 0)
+                if (_favedGroup.Documents.Count > 0)
                 {
-                    SavedStickers.Insert(0, _frequentlyUsed);
+                    SavedStickers.Insert(0, _favedGroup);
+                }
+                if (_recentGroup.Documents.Count > 0)
+                {
+                    SavedStickers.Insert(1, _recentGroup);
                 }
             });
         }
@@ -173,10 +202,12 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnThreadPool(() =>
             {
-                _stickersService.LoadRecents(StickerType.Image, false, true);
+                _stickersService.LoadRecents(StickerType.Fave, false, true, false);
+                _stickersService.LoadRecents(StickerType.Image, false, true, false);
                 var stickers = _stickersService.CheckStickers(StickerType.Image);
                 var featured = _stickersService.CheckFeaturedStickers();
 
+                ProcessFavedStickers();
                 ProcessRecentStickers();
                 if (stickers && !_stickers) ProcessStickers();
                 if (featured && !_featured) ProcessFeaturedStickers();
@@ -289,7 +320,7 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnThreadPool(() =>
             {
-                _stickersService.LoadRecents(StickerType.Image, true, true);
+                _stickersService.LoadRecents(StickerType.Image, true, true, false);
 
                 ProcessRecentGifs();
 
