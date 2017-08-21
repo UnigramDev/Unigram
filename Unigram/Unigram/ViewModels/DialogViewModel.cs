@@ -642,6 +642,76 @@ namespace Unigram.ViewModels
             IsLoading = false;
         }
 
+        public RelayCommand NextMentionCommand => new RelayCommand(NextMentionExecute);
+        private async void NextMentionExecute()
+        {
+            var dialog = _dialog;
+            if (dialog == null)
+            {
+                return;
+            }
+
+            var req = new TLMessagesSearch();
+            req.Peer = _peer;
+            req.Limit = 1;
+            req.AddOffset = dialog.UnreadMentionsCount - 1;
+            req.Filter = new TLInputMessagesFilterMyMentionsUnread();
+
+            var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
+            if (response.IsSucceeded)
+            {
+                //if (error != null || res.messages.isEmpty())
+                //{
+                //    ChatActivity.this.newMentionsCount = 0;
+                //    ChatActivity.this.showMentiondownButton(false, true);
+                //    return;
+                //}
+                //ChatActivity.this.newMentionsCount = ChatActivity.this.newMentionsCount - 1;
+                //if (ChatActivity.this.newMentionsCount <= 0) {
+                //    ChatActivity.this.newMentionsCount = 0;
+                //    ChatActivity.this.showMentiondownButton(false, true);
+                //} else {
+                //    ChatActivity.this.mentiondownButtonCounter.setText(String.format("%d", new Object[] { Integer.valueOf(ChatActivity.this.newMentionsCount) }));
+                //}
+                //int id = ((Message)res.messages.get(0)).id;
+                //ChatActivity.this.scrollToMessageId(id, 0, true, 0, false);
+                //MessagesController instance = MessagesController.getInstance();
+                //if (ChatObject.isChannel(ChatActivity.this.currentChat))
+                //{
+                //    i = ChatActivity.this.currentChat.id;
+                //}
+                //instance.markMentionMessageAsRead(id, i, ChatActivity.this.dialog_id);
+
+                if (response.Result.Messages.IsEmpty())
+                {
+                    dialog.UnreadMentionsCount = 0;
+                    dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+                    return;
+                }
+
+                dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount - 1, 0);
+                dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+
+                var message = response.Result.Messages.FirstOrDefault();
+                if (message == null)
+                {
+                    return;
+                }
+
+                // DO NOT AWAIT
+                LoadMessageSliceAsync(null, message.Id);
+
+                if (With is TLChannel channel)
+                {
+                    await ProtoService.ReadMessageContentsAsync(channel.ToInputChannel(), new TLVector<int> { message.Id });
+                }
+                else
+                {
+                    await ProtoService.ReadMessageContentsAsync(new TLVector<int> { message.Id });
+                }
+            }
+        }
+
         public RelayCommand PreviousSliceCommand => new RelayCommand(PreviousSliceExecute);
         private async void PreviousSliceExecute()
         {

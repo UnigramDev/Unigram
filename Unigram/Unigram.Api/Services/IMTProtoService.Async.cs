@@ -52,6 +52,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLAuthSentCode>> SendCodeAsync(string phoneNumber, bool? currentNumber, Action<int> attemptFailed = null);
         Task<MTProtoResponse<TLMessagesRecentStickersBase>> GetRecentStickersAsync(bool attached, int hash);
         Task<MTProtoResponse<TLMessagesAffectedMessages>> ReadMessageContentsAsync(TLVector<int> id);
+        Task<MTProtoResponse<bool>> ReadMessageContentsAsync(TLInputChannelBase inputChannel, TLVector<int> id);
         Task<MTProtoResponse<TLUpdatesBase>> JoinChannelAsync(TLChannel channel);
         Task<MTProtoResponse<TLMessagesBotCallbackAnswer>> GetBotCallbackAnswerAsync(TLInputPeerBase peer, int messageId, byte[] data, bool game);
         Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLVector<int> id, bool revoke);

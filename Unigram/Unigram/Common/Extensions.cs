@@ -140,5 +140,10 @@ namespace Unigram.Common
                 textBox.Focus(focusState);
             }
         }
+
+        public static bool IsEmpty<T>(this IList<T> list)
+        {
+            return list.Count == 0;
+        }
     }
 }
