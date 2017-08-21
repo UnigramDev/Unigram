@@ -56,6 +56,7 @@ namespace Telegram.Api.TL
 
             Peer = dialog.Peer;
             UnreadCount = dialog.UnreadCount;
+            UnreadMentionsCount = dialog.UnreadMentionsCount;
 
             //если последнее сообщение отправляется и имеет дату больше, то не меняем
             if (TopMessageItem == null && (TopMessageItem == null || TopMessageItem.Date > dialog.TopMessageItem.Date))
