@@ -28,27 +28,23 @@ namespace Unigram.Services
         void Cleanup();
 
         bool CheckStickers(StickerType stickerType);
-
         bool CheckArchivedStickersCount(StickerType stickerType);
-
         bool CheckFeaturedStickers();
 
         List<TLDocument> GetRecentStickers(StickerType stickerType);
-
         List<TLDocument> GetRecentStickersNoCopy(StickerType stickerType);
 
-        void AddRecentSticker(StickerType stickerType, TLDocument document, int date);
+        void AddRecentSticker(StickerType stickerType, TLDocument document, int date, bool remove);
 
         List<TLDocument> GetRecentGifs();
-
         void AddRecentGif(TLDocument document, int date);
-
         void RemoveRecentGif(TLDocument document);
 
         bool IsLoadingStickers(StickerType stickerType);
 
-        TLMessagesStickerSet GetStickerSetByName(string name);
+        TLMessagesStickerSet GetGroupStickerSetById(TLStickerSet stickerSet);
 
+        TLMessagesStickerSet GetStickerSetByName(string name);
         TLMessagesStickerSet GetStickerSetById(long id);
 
         Dictionary<string, List<TLDocument>> GetAllStickers();
@@ -62,14 +58,12 @@ namespace Unigram.Services
         List<long> GetUnreadStickerSets();
 
         bool IsStickerPackInstalled(long id);
-
         bool IsStickerPackUnread(long id);
-
         bool IsStickerPackInstalled(string name);
 
         List<string> GetEmojiForSticker(long id);
 
-        void LoadRecents(StickerType stickerType, bool gif, bool cache);
+        void LoadRecents(StickerType stickerType, bool gif, bool cache, bool force);
 
         void ReorderStickers(StickerType stickerType, IList<long> order);
 
@@ -96,9 +90,9 @@ namespace Unigram.Services
         List<TLDocument> LoadStickersForEmoji(string emoji);
     }
 
-    public class StickersService : IStickersService, IHandle, 
-        IHandle<TLUpdateStickerSets>, 
-        IHandle<TLUpdateStickerSetsOrder>, 
+    public class StickersService : IStickersService, IHandle,
+        IHandle<TLUpdateStickerSets>,
+        IHandle<TLUpdateStickerSetsOrder>,
         IHandle<TLUpdateNewStickerSet>,
         IHandle<TLUpdateSavedGifs>,
         IHandle<TLUpdateRecentStickers>,
@@ -107,6 +101,7 @@ namespace Unigram.Services
         private List<TLMessagesStickerSet>[] stickerSets = new[] { new List<TLMessagesStickerSet>(), new List<TLMessagesStickerSet>() };
         private Dictionary<long, TLMessagesStickerSet> stickerSetsById = new Dictionary<long, TLMessagesStickerSet>();
         private Dictionary<string, TLMessagesStickerSet> stickerSetsByName = new Dictionary<string, TLMessagesStickerSet>();
+        private Dictionary<long, TLMessagesStickerSet> groupStickerSets = new Dictionary<long, TLMessagesStickerSet>();
         private bool[] loadingStickers = new bool[2];
         private bool[] stickersLoaded = new bool[2];
         private int[] archivedStickersCount = new int[2];
@@ -116,9 +111,9 @@ namespace Unigram.Services
         private Dictionary<long, List<String>> stickersByEmoji = new Dictionary<long, List<String>>();
         private Dictionary<string, List<TLDocument>> allStickers = new Dictionary<string, List<TLDocument>>();
 
-        private List<TLDocument>[] recentStickers = new[] { new List<TLDocument>(), new List<TLDocument>() };
-        private bool[] loadingRecentStickers = new bool[2];
-        private bool[] recentStickersLoaded = new bool[2];
+        private List<TLDocument>[] recentStickers = new[] { new List<TLDocument>(), new List<TLDocument>(), new List<TLDocument>() };
+        private bool[] loadingRecentStickers = new bool[3];
+        private bool[] recentStickersLoaded = new bool[3];
 
         private List<TLDocument> recentGifs = new List<TLDocument>();
         private bool loadingRecentGifs;
@@ -181,22 +176,27 @@ namespace Unigram.Services
         {
             MarkFeaturedStickersAsRead(false);
         }
-        
+
         #endregion
 
         public void Cleanup()
         {
+            for (int i = 0; i < 3; i++)
+            {
+                recentStickers[i].Clear();
+                loadingRecentStickers[i] = false;
+                recentStickersLoaded[i] = false;
+            }
+
             for (int i = 0; i < 2; i++)
             {
                 loadHash[i] = 0;
                 loadDate[i] = 0;
                 stickerSets[i].Clear();
-                recentStickers[i].Clear();
                 loadingStickers[i] = false;
                 stickersLoaded[i] = false;
-                loadingRecentStickers[i] = false;
-                recentStickersLoaded[i] = false;
             }
+
             loadFeaturedDate = 0;
             loadFeaturedHash = 0;
             allStickers.Clear();
@@ -259,42 +259,105 @@ namespace Unigram.Services
             return recentStickers[type];
         }
 
-        public void AddRecentSticker(StickerType stickerType, TLDocument document, int date)
+        public void AddRecentSticker(StickerType stickerType, TLDocument document, int date, bool remove)
         {
+            int maxCount;
+
             var type = (int)stickerType;
-            bool found = false;
+            var found = false;
             for (int i = 0; i < recentStickers[type].Count; i++)
             {
                 TLDocument image = recentStickers[type][i];
                 if (image.Id == document.Id)
                 {
                     recentStickers[type].RemoveAt(i);
-                    recentStickers[type].Insert(0, image);
+
+                    if (!remove)
+                    {
+                        recentStickers[type].Insert(0, image);
+                    }
+
                     found = true;
                 }
             }
-            if (!found)
+
+            if (!(found || remove))
             {
                 recentStickers[type].Insert(0, document);
             }
+
+            if (type == 2)
+            {
+                _protoService.FaveStickerAsync(document.ToInputDocument(), remove, result => { });
+                maxCount = _cacheService.Config.StickersFavedLimit;
+            }
+            else
+            {
+                maxCount = _cacheService.Config.StickersRecentLimit;
+            }
+
             if (recentStickers[type].Count > _cacheService.Config.StickersRecentLimit)
             {
-                TLDocument old = recentStickers[type][recentStickers[type].Count - 1];
-                recentStickers[type].RemoveAt(recentStickers[type].Count - 1);
+                TLDocument old;
+                if (remove)
+                {
+                    old = document;
+                }
+                else
+                {
+                    old = recentStickers[type][recentStickers[type].Count - 1];
+                    recentStickers[type].RemoveAt(recentStickers[type].Count - 1);
+                }
+
                 try
                 {
+                    int cacheType;
+                    if (type == 0)
+                    {
+                        cacheType = 3;
+                    }
+                    else if (type == 1)
+                    {
+                        cacheType = 4;
+                    }
+                    else
+                    {
+                        cacheType = 5;
+                    }
+
                     Database database;
                     CreateDatabase.Open(out database);
-                    DatabaseContext.Current.Execute(database, "DELETE FROM web_recent_v3 WHERE Id = " + old.Id);
+                    DatabaseContext.Current.Execute(database, "DELETE FROM web_recent_v3 WHERE Id = '" + old.Id + "' AND MetaType = " + cacheType);
                 }
                 catch (Exception e)
                 {
                     //FileLog.e("tmessages", e);
                 }
             }
-            List<TLDocument> arrayList = new List<TLDocument>();
-            arrayList.Add(document);
-            ProcessLoadedRecentDocuments(stickerType, arrayList, false, date);
+
+            if (!remove)
+            {
+                List<TLDocument> arrayList = new List<TLDocument>();
+                arrayList.Add(document);
+                ProcessLoadedRecentDocuments(stickerType, arrayList, false, date);
+            }
+
+            _aggregator.Publish(new RecentsDidLoadedEventArgs(false, stickerType));
+            //NotificationCenter.getInstance().postNotificationName(NotificationCenter.recentDocumentsDidLoaded, Boolean.valueOf(false), Integer.valueOf(type));
+        }
+
+        public bool IsStickerInFavorites(TLDocument document)
+        {
+            for (int i = 0; i < recentStickers[2].Count; i++)
+            {
+                var d = recentStickers[2][i];
+                if (d.Id == document.Id && d.DCId == document.DCId)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public List<TLDocument> GetRecentGifs()
@@ -311,7 +374,7 @@ namespace Unigram.Services
             {
                 Database database;
                 CreateDatabase.Open(out database);
-                DatabaseContext.Current.Execute(database, "DELETE FROM web_recent_v3 WHERE Id = " + document.Id);
+                DatabaseContext.Current.Execute(database, "DELETE FROM web_recent_v3 WHERE Id = '" + document.Id + "' AND MetaType = 2");
             }
             catch (Exception e)
             {
@@ -345,7 +408,7 @@ namespace Unigram.Services
                 {
                     Database database;
                     CreateDatabase.Open(out database);
-                    DatabaseContext.Current.Execute(database, "DELETE FROM web_recent_v3 WHERE Id = " + old.Id);
+                    DatabaseContext.Current.Execute(database, "DELETE FROM web_recent_v3 WHERE Id = '" + old.Id + "' AND MetaType = 2");
                 }
                 catch (Exception e)
                 {
@@ -447,7 +510,152 @@ namespace Unigram.Services
             return (int)acc;
         }
 
-        public void LoadRecents(StickerType stickerType, bool gif, bool cache)
+        public TLMessagesStickerSet GetGroupStickerSetById(TLStickerSet stickerSet)
+        {
+            if (!stickerSetsById.TryGetValue(stickerSet.Id, out TLMessagesStickerSet set))
+            {
+                if (!groupStickerSets.TryGetValue(stickerSet.Id, out set))
+                {
+                    LoadGroupStickerSet(stickerSet, true);
+                }
+                else if (set.Set.Hash != stickerSet.Hash)
+                {
+                    LoadGroupStickerSet(stickerSet, false);
+                }
+            }
+
+            return set;
+        }
+
+        private void LoadGroupStickerSet(TLStickerSet stickerSet, bool cache)
+        {
+            if (cache)
+            {
+                //try
+                //{
+                //    TL_messages_stickerSet set;
+                //    SQLiteCursor cursor = MessagesStorage.getInstance().getDatabase().queryFinalized("SELECT document FROM web_recent_v3 WHERE id = 's_" + stickerSet.id + "'", new Object[0]);
+                //    if (!cursor.next() || cursor.isNull(0))
+                //    {
+                //        set = null;
+                //    }
+                //    else
+                //    {
+                //        NativeByteBuffer data = cursor.byteBufferValue(0);
+                //        if (data != null)
+                //        {
+                //            set = TL_messages_stickerSet.TLdeserialize(data, data.readInt32(false), false);
+                //            data.reuse();
+                //        }
+                //        else
+                //        {
+                //            set = null;
+                //        }
+                //    }
+                //    cursor.dispose();
+                //    if (set == null || set.set.hash != stickerSet.hash)
+                //    {
+                //        StickersQuery.loadGroupStickerSet(stickerSet, false);
+                //    }
+                //    if (set != null)
+                //    {
+                //        StickersQuery.groupStickerSets.put(Long.valueOf(set.set.id), set);
+                //        NotificationCenter.getInstance().postNotificationName(NotificationCenter.groupStickersDidLoaded, Long.valueOf(set.set.id));
+                //    }
+                //}
+                //catch (Throwable e)
+                //{
+                //    FileLog.m12e(e);
+                //}
+
+                TLMessagesStickerSet set;
+
+                Database database;
+                Statement statement;
+                CreateDatabase.Open(out database);
+                try
+                {
+                    Sqlite3.sqlite3_prepare_v2(database, "SELECT data, FROM group_stickers_v2 WHERE id = " + stickerSet.Id, out statement);
+
+                    if (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
+                    {
+                        var data = Sqlite3.sqlite3_column_blob(statement, 0);
+                        if (data != null)
+                        {
+                            set = TLFactory.From<TLMessagesStickerSet>(data);
+                        }
+                        else
+                        {
+                            set = null;
+                        }
+                    }
+                    else
+                    {
+                        set = null;
+                    }
+
+                    Sqlite3.sqlite3_finalize(statement);
+
+                    if (set == null || set.Set.Hash != stickerSet.Hash)
+                    {
+                        LoadGroupStickerSet(stickerSet, false);
+                    }
+
+                    if (set != null)
+                    {
+                        groupStickerSets[set.Set.Id] = set;
+                        _aggregator.Publish(new GroupStickersDidLoadedEventArgs(set.Set.Id));
+                    }
+                }
+                catch (Exception e)
+                {
+                    //FileLog.e("tmessages", e);
+                }
+                finally
+                {
+                    //Sqlite3.sqlite3_close(database);
+                }
+
+                return;
+            }
+
+            _protoService.GetStickerSetAsync(new TLInputStickerSetID { Id = stickerSet.Id, AccessHash = stickerSet.AccessHash }, result =>
+            {
+                try
+                {
+                    Database database;
+                    Statement statement;
+                    CreateDatabase.Open(out database);
+                    DatabaseContext.Current.Execute(database, "CREATE TABLE IF NOT EXISTS group_stickers_v2(id BIGINT PRIMARY KEY, data BLOB);");
+
+                    Sqlite3.sqlite3_prepare_v2(database, "REPLACE INTO group_stickers_v2 VALUES(?, ?, ?, ?)", out statement);
+
+                    using (var data = new MemoryStream())
+                    {
+                        using (var to = new TLBinaryWriter(data))
+                        {
+                            result.Write(to);
+                        }
+
+                        Sqlite3.sqlite3_reset(statement);
+                        Sqlite3.sqlite3_bind_int64(statement, 1, result.Set.Id);
+                        Sqlite3.sqlite3_bind_blob(statement, 2, data.ToArray(), -1);
+                        Sqlite3.sqlite3_step(statement);
+                    }
+
+                    Sqlite3.sqlite3_finalize(statement);
+                }
+                catch (Exception e)
+                {
+                    //FileLog.e("tmessages", e);
+                }
+
+                groupStickerSets[result.Set.Id] = result;
+                _aggregator.Publish(new GroupStickersDidLoadedEventArgs(result.Set.Id));
+            });
+        }
+
+        public void LoadRecents(StickerType stickerType, bool gif, bool cache, bool force)
         {
             var type = (int)stickerType;
             if (gif)
@@ -484,7 +692,25 @@ namespace Unigram.Services
 
                     List<TLDocument> arrayList = new List<TLDocument>();
 
-                    Sqlite3.sqlite3_prepare_v2(database, "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,MetaType,MetaDate FROM web_recent_v3 WHERE MetaType = " + (gif ? 2 : (stickerType == StickerType.Image ? 3 : 4)) + " ORDER BY MetaDate DESC", out statement);
+                    int cacheType;
+                    if (gif)
+                    {
+                        cacheType = 2;
+                    }
+                    else if (type == 0)
+                    {
+                        cacheType = 3;
+                    }
+                    else if (type == 1)
+                    {
+                        cacheType = 4;
+                    }
+                    else
+                    {
+                        cacheType = 5;
+                    }
+
+                    Sqlite3.sqlite3_prepare_v2(database, "SELECT Id,AccessHash,Date,MimeType,Size,Thumb,DCId,Version,Attributes,MetaType,MetaDate FROM web_recent_v3 WHERE MetaType = " + cacheType + " ORDER BY MetaDate DESC", out statement);
 
                     var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
                     while (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
@@ -532,7 +758,7 @@ namespace Unigram.Services
                         }
                     }
 
-                    LoadRecents(stickerType, gif, false);
+                    LoadRecents(stickerType, gif, false, false);
                 }
                 catch (Exception e)
                 {
@@ -541,19 +767,42 @@ namespace Unigram.Services
             }
             else
             {
-                long lastLoadTime;
-                if (gif)
+                if (!force)
                 {
-                    lastLoadTime = ApplicationSettings.Current.GetValueOrDefault<long>("lastGifLoadTime", 0);
+                    long lastLoadTime;
+                    if (gif)
+                    {
+                        lastLoadTime = ApplicationSettings.Current.GetValueOrDefault<long>("lastGifLoadTime", 0);
+                    }
+                    else if (type == 0)
+                    {
+                        lastLoadTime = ApplicationSettings.Current.GetValueOrDefault<long>("lastStickersLoadTime", 0);
+
+                    }
+                    else if (type == 1)
+                    {
+                        lastLoadTime = ApplicationSettings.Current.GetValueOrDefault<long>("lastStickersLoadTimeMask", 0);
+                    }
+                    else
+                    {
+                        lastLoadTime = ApplicationSettings.Current.GetValueOrDefault<long>("lastStickersLoadTimeFavs", 0);
+                    }
+                    if (Math.Abs(Utils.CurrentTimestamp - lastLoadTime) < 60 * 60 * 1000)
+                    {
+
+                        if (gif)
+                        {
+                            loadingRecentGifs = false;
+                            return;
+                        }
+                        else
+                        {
+                            loadingRecentStickers[type] = false;
+                            return;
+                        }
+                    }
                 }
-                else
-                {
-                    lastLoadTime = ApplicationSettings.Current.GetValueOrDefault<long>("lastStickersLoadTime", 0);
-                }
-                if (Math.Abs(Utils.CurrentTimestamp - lastLoadTime) < 60 * 60 * 1000)
-                {
-                    return;
-                }
+
                 if (gif)
                 {
                     var hash = CalculateDocumentsHash(recentGifs);
@@ -571,19 +820,36 @@ namespace Unigram.Services
                 }
                 else
                 {
-                    var hash = CalculateDocumentsHash(recentStickers[type]);
-                    var attached = stickerType == StickerType.Mask;
-                    _protoService.GetRecentStickersAsync(attached, hash, result =>
+                    if (stickerType == StickerType.Fave)
                     {
-                        List<TLDocument> arrayList = null;
-                        if (result is TLMessagesRecentStickers)
+                        var hash = CalculateDocumentsHash(recentStickers[type]);
+                        _protoService.GetFavedStickersAsync(hash, result =>
                         {
-                            TLMessagesRecentStickers res = (TLMessagesRecentStickers)result;
-                            arrayList = res.Stickers.OfType<TLDocument>().ToList();
-                        }
+                            List<TLDocument> arrayList = null;
+                            if (result is TLMessagesFavedStickers res)
+                            {
+                                arrayList = res.Stickers.OfType<TLDocument>().ToList();
+                            }
 
-                        ProcessLoadedRecentDocuments(stickerType, arrayList, gif, 0);
-                    });
+                            ProcessLoadedRecentDocuments(stickerType, arrayList, gif, 0);
+                        });
+                    }
+                    else
+                    {
+                        var hash = CalculateDocumentsHash(recentStickers[type]);
+                        var attached = stickerType == StickerType.Mask;
+                        _protoService.GetRecentStickersAsync(attached, hash, result =>
+                        {
+                            List<TLDocument> arrayList = null;
+                            if (result is TLMessagesRecentStickers res)
+                            {
+                                arrayList = res.Stickers.OfType<TLDocument>().ToList();
+                            }
+
+                            ProcessLoadedRecentDocuments(stickerType, arrayList, gif, 0);
+                        });
+                    }
+
                 }
             }
         }
@@ -597,9 +863,40 @@ namespace Unigram.Services
                 {
                     var settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
 
+                    int maxCount;
+                    int cacheType;
+
+                    if (gif)
+                    {
+                        maxCount = _cacheService.Config.SavedGifsLimit;
+                    }
+                    else if (type == 2)
+                    {
+                        maxCount = _cacheService.Config.StickersFavedLimit;
+                    }
+                    else
+                    {
+                        maxCount = _cacheService.Config.StickersRecentLimit;
+                    }
+
+                    if (gif)
+                    {
+                        cacheType = 2;
+                    }
+                    else if (type == 0)
+                    {
+                        cacheType = 3;
+                    }
+                    else if (type == 1)
+                    {
+                        cacheType = 4;
+                    }
+                    else
+                    {
+                        cacheType = 5;
+                    }
                     //SQLiteDatabase database = MessagesStorage.getInstance().getDatabase();
                     //int maxCount = gif ? MessagesController.getInstance().maxRecentGifsCount : MessagesController.getInstance().maxRecentStickersCount;
-                    int maxCount = gif ? _cacheService.Config.SavedGifsLimit : _cacheService.Config.StickersRecentLimit;
                     //database.beginTransaction();
                     //SQLitePreparedStatement state = database.executeFast("REPLACE INTO web_recent_v3 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -635,7 +932,7 @@ namespace Unigram.Services
                         Sqlite3.sqlite3_bind_int(statement, 7, document.DCId);
                         Sqlite3.sqlite3_bind_int(statement, 8, document.Version);
                         Sqlite3.sqlite3_bind_text(statement, 9, attributes, -1);
-                        Sqlite3.sqlite3_bind_int(statement, 10, gif ? 2 : (stickerType == StickerType.Image ? 3 : 4));
+                        Sqlite3.sqlite3_bind_int(statement, 10, cacheType);
                         Sqlite3.sqlite3_bind_int(statement, 11, date != 0 ? date : count - i);
                         Sqlite3.sqlite3_step(statement);
                     }
@@ -648,7 +945,7 @@ namespace Unigram.Services
                         DatabaseContext.Current.Execute(database, "BEGIN IMMEDIATE TRANSACTION");
                         for (int i = maxCount; i < documents.Count; i++)
                         {
-                            DatabaseContext.Current.Execute(database, "DELETE FROM web_recent_v3 WHERE Id = " + documents[i].Id);
+                            DatabaseContext.Current.Execute(database, "DELETE FROM web_recent_v3 WHERE Id = '" + documents[i].Id + "' AND MetaType = " + cacheType);
                         }
                         DatabaseContext.Current.Execute(database, "COMMIT TRANSACTION");
                     }
@@ -671,7 +968,18 @@ namespace Unigram.Services
                 {
                     loadingRecentStickers[type] = false;
                     recentStickersLoaded[type] = true;
-                    ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", Utils.CurrentTimestamp);
+                    if (type == 0)
+                    {
+                        ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTime", Utils.CurrentTimestamp);
+                    }
+                    else if (type == 1)
+                    {
+                        ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTimeMask", Utils.CurrentTimestamp);
+                    }
+                    else
+                    {
+                        ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTimeFavs", Utils.CurrentTimestamp);
+                    }
                 }
 
                 if (documents != null)
@@ -1692,7 +2000,8 @@ namespace Unigram.Services
     public enum StickerType : int
     {
         Image = 0,
-        Mask = 1
+        Mask = 1,
+        Fave = 2
     }
 
     public delegate void NeedReloadArchivedStickersEventHandler(object sender, NeedReloadArchivedStickersEventArgs e);
@@ -1747,6 +2056,17 @@ namespace Unigram.Services
         public ArchivedStickersCountDidLoadedEventArgs(StickerType type)
         {
             Type = type;
+        }
+    }
+
+    public delegate void GroupStickersDidLoadedEventHandler(object sender, GroupStickersDidLoadedEventArgs e);
+    public class GroupStickersDidLoadedEventArgs : EventArgs
+    {
+        public long Id { get; private set; }
+
+        public GroupStickersDidLoadedEventArgs(long id)
+        {
+            Id = id;
         }
     }
 }

@@ -19,6 +19,14 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
+        public void FaveStickerAsync(TLInputDocumentBase id, bool unfave, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesFaveSticker { Id = id, Unfave = unfave };
+
+            const string caption = "messages.faveSticker";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
         public void GetAttachedStickersAsync(TLInputStickeredMediaBase media, Action<TLVector<TLStickerSetCoveredBase>> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetAttachedStickers { Media = media };
@@ -29,13 +37,17 @@ namespace Telegram.Api.Services
 
         public void GetRecentStickersAsync(bool attached, int hash, Action<TLMessagesRecentStickersBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesGetRecentStickers { Hash = hash };
-            if (attached)
-            {
-                obj.IsAttached = true;
-            }
+            var obj = new TLMessagesGetRecentStickers { Hash = hash, IsAttached = attached };
 
             const string caption = "messages.getRecentStickers";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void GetFavedStickersAsync( int hash, Action<TLMessagesFavedStickersBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetFavedStickers { Hash = hash };
+
+            const string caption = "messages.getFavedStickers";
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
