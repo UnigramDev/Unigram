@@ -273,6 +273,7 @@
     <Compile Include="ViewModels\Channels\CreateChannelStep2ViewModel.cs" />
     <Compile Include="ViewModels\Channels\CreateChannelStep3ViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelBannedViewModel.cs" />
+    <Compile Include="ViewModels\Channels\ChannelEditStickerSetViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatInviteViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
@@ -353,6 +354,9 @@
     </Compile>
     <Compile Include="Views\Channels\ChannelParticipantsPage.xaml.cs">
       <DependentUpon>ChannelParticipantsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Channels\ChannelEditStickerSetPage.xaml.cs">
+      <DependentUpon>ChannelEditStickerSetPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Channels\CreateChannelStep2Page.xaml.cs">
       <DependentUpon>CreateChannelStep2Page.xaml</DependentUpon>
@@ -1405,6 +1409,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Channels\ChannelManagePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Channels\ChannelEditStickerSetPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

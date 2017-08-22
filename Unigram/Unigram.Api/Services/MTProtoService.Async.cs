@@ -368,6 +368,20 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<bool>> SetStickersAsync(TLInputChannelBase inputChannel, TLInputStickerSetBase stickerset)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
+            SetStickersAsync(inputChannel, stickerset, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> ReadMessageContentsAsync(TLInputChannelBase inputChannel, TLVector<int> id)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();

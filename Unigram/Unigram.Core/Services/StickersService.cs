@@ -103,7 +103,7 @@ namespace Unigram.Services
     {
         private List<TLMessagesStickerSet>[] stickerSets = new[] { new List<TLMessagesStickerSet>(), new List<TLMessagesStickerSet>() };
         private Dictionary<long, TLMessagesStickerSet> stickerSetsById = new Dictionary<long, TLMessagesStickerSet>();
-        private Dictionary<string, TLMessagesStickerSet> stickerSetsByName = new Dictionary<string, TLMessagesStickerSet>();
+        private Dictionary<string, TLMessagesStickerSet> stickerSetsByName = new Dictionary<string, TLMessagesStickerSet>(StringComparer.OrdinalIgnoreCase);
         private Dictionary<long, TLMessagesStickerSet> groupStickerSets = new Dictionary<long, TLMessagesStickerSet>();
         private bool[] loadingStickers = new bool[2];
         private bool[] stickersLoaded = new bool[2];
@@ -437,12 +437,14 @@ namespace Unigram.Services
 
         public TLMessagesStickerSet GetStickerSetByName(string name)
         {
-            return stickerSetsByName[name];
+            stickerSetsByName.TryGetValue(name, out TLMessagesStickerSet set);
+            return set;
         }
 
         public TLMessagesStickerSet GetStickerSetById(long id)
         {
-            return stickerSetsById[id];
+            stickerSetsById.TryGetValue(id, out TLMessagesStickerSet set);
+            return set;
         }
 
         public Dictionary<string, List<TLDocument>> GetAllStickers()
@@ -521,6 +523,11 @@ namespace Unigram.Services
 
         public TLMessagesStickerSet GetGroupStickerSetById(TLStickerSet stickerSet)
         {
+            if (stickerSet == null)
+            {
+                return null;
+            }
+
             if (!stickerSetsById.TryGetValue(stickerSet.Id, out TLMessagesStickerSet set))
             {
                 if (!groupStickerSets.TryGetValue(stickerSet.Id, out set))

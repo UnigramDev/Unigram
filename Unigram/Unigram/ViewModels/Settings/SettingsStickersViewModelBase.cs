@@ -38,7 +38,7 @@ namespace Unigram.ViewModels.Settings
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            if (mode == NavigationMode.New)
+            if (mode == NavigationMode.New || mode == NavigationMode.Forward)
             {
                 Execute.BeginOnThreadPool(() =>
                 {

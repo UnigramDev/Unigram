@@ -13,6 +13,14 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
+        public void SetStickersAsync(TLInputChannelBase inputChannel, TLInputStickerSetBase stickerset, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLChannelsSetStickers { Channel = inputChannel, StickerSet = stickerset };
+
+            const string caption = "channels.setStickers";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
         public void ReadMessageContentsAsync(TLInputChannelBase inputChannel, TLVector<int> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsReadMessageContents { Channel = inputChannel, Id = id };

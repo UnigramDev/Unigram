@@ -47,6 +47,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<bool>> SaveCallDebugAsync(TLInputPhoneCall peer, TLDataJSON debug);
         Task<MTProtoResponse<TLUpdatesBase>> SetCallRatingAsync(TLInputPhoneCall peer, int rating, string comment);
 
+        Task<MTProtoResponse<bool>> SetStickersAsync(TLInputChannelBase inputChannel, TLInputStickerSetBase stickerset);
         Task<MTProtoResponse<TLMessagesChatsBase>> GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit);
         Task<MTProtoResponse<TLMessagesChatsBase>> GetAdminedPublicChannelsAsync();
         Task<MTProtoResponse<TLAuthSentCode>> SendCodeAsync(string phoneNumber, bool? currentNumber, Action<int> attemptFailed = null);
