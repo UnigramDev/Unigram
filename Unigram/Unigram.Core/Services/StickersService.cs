@@ -57,6 +57,8 @@ namespace Unigram.Services
 
         List<long> GetUnreadStickerSets();
 
+        bool IsStickerInFavorites(TLDocument document);
+
         bool IsStickerPackInstalled(long id);
         bool IsStickerPackUnread(long id);
         bool IsStickerPackInstalled(string name);

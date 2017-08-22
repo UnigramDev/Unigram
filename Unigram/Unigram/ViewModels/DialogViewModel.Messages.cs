@@ -16,6 +16,7 @@ using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Native;
+using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Payments;
 using Windows.ApplicationModel.DataTransfer;
@@ -1149,6 +1150,32 @@ namespace Unigram.ViewModels
                 {
                     await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet);
                 }
+            }
+        }
+
+        #endregion
+
+        #region Fave sticker
+
+        public RelayCommand<TLMessage> MessageFaveStickerCommand => new RelayCommand<TLMessage>(MessageFaveStickerExecute);
+        private void MessageFaveStickerExecute(TLMessage message)
+        {
+            if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                _stickersService.AddRecentSticker(StickerType.Fave, document, (int)(Utils.CurrentTimestamp / 1000), false);
+            }
+        }
+
+        #endregion
+
+        #region Unfave sticker
+
+        public RelayCommand<TLMessage> MessageUnfaveStickerCommand => new RelayCommand<TLMessage>(MessageUnfaveStickerExecute);
+        private void MessageUnfaveStickerExecute(TLMessage message)
+        {
+            if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                _stickersService.AddRecentSticker(StickerType.Fave, document, (int)(Utils.CurrentTimestamp / 1000), true);
             }
         }
 

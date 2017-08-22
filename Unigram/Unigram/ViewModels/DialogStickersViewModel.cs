@@ -19,6 +19,7 @@ using Unigram.Core.Common;
 using Template10.Mvvm;
 using System.ComponentModel;
 using Telegram.Api.TL.Messages;
+using System.Collections.Specialized;
 
 namespace Unigram.ViewModels
 {
@@ -609,6 +610,10 @@ namespace Unigram.ViewModels
                     }
 
                     base.InsertItem(index, item);
+                }
+                else
+                {
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, item, index, index));
                 }
             }
             else
