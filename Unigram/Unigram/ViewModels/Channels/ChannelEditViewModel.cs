@@ -153,6 +153,12 @@ namespace Unigram.ViewModels.Channels
             NavigationService.Navigate(typeof(ChannelEditTypePage), _item.ToPeer());
         }
 
+        public RelayCommand EditStickerSetCommand => new RelayCommand(EditStickerSetExecute);
+        private void EditStickerSetExecute()
+        {
+            NavigationService.Navigate(typeof(ChannelEditStickerSetPage), _item.ToPeer());
+        }
+
         public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
             base.RaisePropertyChanged(propertyName);

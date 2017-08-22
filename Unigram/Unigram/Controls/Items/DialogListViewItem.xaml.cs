@@ -70,6 +70,7 @@ namespace Unigram.Controls.Items
                 UpdateTimeLabel();
                 //UpdateStateIcon();
                 UpdateUnreadCount();
+                UpdateUnreadMentionsCount();
                 UpdatePicture();
                 UpdateChannelType();
             }
@@ -84,6 +85,7 @@ namespace Unigram.Controls.Items
                 UpdateTimeLabel();
                 //UpdateStateIcon();
                 UpdateUnreadCount();
+                UpdateUnreadMentionsCount();
             }
             else if (e.PropertyName == "TopMessageItem")
             {
@@ -92,10 +94,15 @@ namespace Unigram.Controls.Items
                 UpdateTimeLabel();
                 //UpdateStateIcon();
                 UpdateUnreadCount();
+                UpdateUnreadMentionsCount();
             }
             else if (e.PropertyName == "UnreadCount")
             {
                 UpdateUnreadCount();
+            }
+            else if (e.PropertyName == "UnreadMentionsCount")
+            {
+                UpdateUnreadMentionsCount();
             }
             else if (e.PropertyName == "With")
             {
@@ -483,6 +490,11 @@ namespace Unigram.Controls.Items
             {
                 TimeLabel.Text = string.Empty;
             }
+        }
+
+        private void UpdateUnreadMentionsCount()
+        {
+            UnreadMentionsLabel.Visibility = ViewModel?.UnreadMentionsCount > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateUnreadCount()

@@ -7,6 +7,7 @@ using System.Threading;
 using Telegram.Api.Extensions;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Channels.Methods;
 using Telegram.Api.TL.Methods;
 using Telegram.Api.TL.Messages.Methods;
 using Telegram.Api.TL.Messages;
@@ -32,7 +33,12 @@ namespace Telegram.Api.Services
             SendAsyncInternal("messages.readMessageContents", int.MaxValue, message, callback, fastCallback, faultCallback);
         }
 
-        private void SendEncryptedAsyncInternal(TLMessagesSendEncrypted message, Action<TLMessagesSentEncryptedMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback)
+        private void ReadMessageContentsAsyncInternal(TLChannelsReadMessageContents message, Action<bool> callback, Action fastCallback, Action<TLRPCError> faultCallback)
+        {
+            SendAsyncInternal("channels.readMessageContents", int.MaxValue, message, callback, fastCallback, faultCallback, RequestFlag.InvokeAfter);
+        }
+
+        private void SendEncryptedAsyncInternal(TLMessagesSendEncrypted message, Action<TLMessagesSentEncryptedMessage> callback, Action fastCallback, Action<TLRPCError> faultCallback) 
         {
             SendAsyncInternal("messages.sendEncrypted", Constants.MessageSendingInterval, message, callback, fastCallback, faultCallback, RequestFlag.InvokeAfter);
         }

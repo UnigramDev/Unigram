@@ -526,6 +526,11 @@ namespace Telegram.Api.Services.Cache
                             if (isUnread && dialog.TopMessageItem != null && dialog.TopMessageItem.Id < commonMessage.Id)
                             {
                                 dialogBase.UnreadCount = dialogBase.UnreadCount + 1;
+
+                                if (commonMessage.IsMentioned && dialog.With is TLChannel channelItem && channelItem.IsMegaGroup)
+                                {
+                                    dialogBase.UnreadMentionsCount = dialogBase.UnreadMentionsCount + 1;
+                                }
                             }
 
                             if (dialog.TopMessageItem != null)
@@ -608,6 +613,7 @@ namespace Telegram.Api.Services.Cache
                                 TopMessageRandomId = commonMessage.RandomId,
                                 TopMessageItem = commonMessage,
                                 UnreadCount = isUnread ? 1 : 0,
+                                UnreadMentionsCount = isUnread && commonMessage.IsMentioned && with is TLChannel channelItem && channelItem.IsMegaGroup ? 1 : 0,
                                 ReadInboxMaxId = 0,
                                 ReadOutboxMaxId = 0,
 
@@ -626,6 +632,7 @@ namespace Telegram.Api.Services.Cache
                                 TopMessageRandomId = commonMessage.RandomId,
                                 TopMessageItem = commonMessage,
                                 UnreadCount = isUnread ? 1 : 0,
+                                UnreadMentionsCount = isUnread && commonMessage.IsMentioned && with is TLChannel channelItem && channelItem.IsMegaGroup ? 1 : 0,
                                 ReadInboxMaxId = 0,
                                 ReadOutboxMaxId = 0
                             };
@@ -1293,6 +1300,11 @@ namespace Telegram.Api.Services.Cache
                             if (commonMessage != null && !commonMessage.IsOut && commonMessage.IsUnread)
                             {
                                 dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1);
+
+                                if (commonMessage.IsMentioned && dialog.With is TLChannel channelItem && channelItem.IsMegaGroup)
+                                {
+                                    dialog.UnreadMentionsCount = Math.Max(0, dialog.UnreadMentionsCount - 1);
+                                }
                             }
                         }
 
@@ -1384,6 +1396,11 @@ namespace Telegram.Api.Services.Cache
                             if (commonMessage != null && !commonMessage.IsOut && commonMessage.IsUnread)
                             {
                                 dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1);
+
+                                if (commonMessage.IsMentioned && dialog.With is TLChannel channelItem && channelItem.IsMegaGroup)
+                                {
+                                    dialog.UnreadMentionsCount = Math.Max(0, dialog.UnreadMentionsCount - 1);
+                                }
                             }
                         }
 
@@ -1452,6 +1469,11 @@ namespace Telegram.Api.Services.Cache
                                 if (!commonMessage.IsOut && commonMessage.IsUnread)
                                 {
                                     dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1);
+
+                                    if (commonMessage.IsMentioned && dialog.With is TLChannel channelItem && channelItem.IsMegaGroup)
+                                    {
+                                        dialog.UnreadMentionsCount = Math.Max(0, dialog.UnreadMentionsCount - 1);
+                                    }
                                 }
                                 dialog.TopMessageItem = dialog.Messages[0];
                                 dialog.TopMessage = dialog.Messages[0].Id;
@@ -1644,6 +1666,7 @@ namespace Telegram.Api.Services.Cache
                     }
 
                     dialog.UnreadCount = 0;
+                    dialog.UnreadMentionsCount = 0;
 
                     if (dialog.Messages.Count == 0)
                     {

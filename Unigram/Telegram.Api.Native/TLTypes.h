@@ -73,7 +73,7 @@ namespace Telegram
 
 					MakeTLTypeTraits(TLDCOption, 0x5d8c6cc);
 					MakeTLTypeTraits(TLDisabledFeature, 0xae636f24);
-					MakeTLTypeTraits(TLConfig, 0x7feec888);
+					MakeTLTypeTraits(TLConfig, 0x8df376a4);
 					MakeTLTypeTraits(TLCDNPublicKey, 0xc982eaba);
 					MakeTLTypeTraits(TLCDNConfig, 0x5725e40a);
 					MakeTLTypeTraits(TLRPCError, 0x2144ca19);
@@ -219,6 +219,7 @@ namespace Telegram
 					IFACEMETHODIMP get_EditTimeLimit(_Out_ INT32* value);
 					IFACEMETHODIMP get_RatingEDecay(_Out_ INT32* value);
 					IFACEMETHODIMP get_StickersRecentLimit(_Out_ INT32* value);
+					IFACEMETHODIMP get_StickersFavedLimit(_Out_ INT32* value);
 					IFACEMETHODIMP get_TmpSessions(_Out_ __FIReference_1_int** value);
 					IFACEMETHODIMP get_PinnedDialogsCountMax(_Out_ INT32* value);
 					IFACEMETHODIMP get_CallReceiveTimeoutMs(_Out_ INT32* value);
@@ -340,6 +341,11 @@ namespace Telegram
 						return m_stickersRecentLimit;
 					}
 
+					inline INT32 GetStickersFavedLimit() const
+					{
+						return m_stickersFavedLimit;
+					}
+
 					inline INT32 GetTmpSessions() const
 					{
 						return m_tmpSessions;
@@ -417,6 +423,7 @@ namespace Telegram
 					INT32 m_editTimeLimit;
 					INT32 m_ratingEDecay;
 					INT32 m_stickersRecentLimit;
+					INT32 m_stickersFavedLimit;
 					INT32 m_tmpSessions;
 					INT32 m_pinnedDialogsCountMax;
 					INT32 m_callReceiveTimeoutMs;

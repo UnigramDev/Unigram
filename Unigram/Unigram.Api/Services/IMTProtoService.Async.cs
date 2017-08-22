@@ -47,11 +47,13 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<bool>> SaveCallDebugAsync(TLInputPhoneCall peer, TLDataJSON debug);
         Task<MTProtoResponse<TLUpdatesBase>> SetCallRatingAsync(TLInputPhoneCall peer, int rating, string comment);
 
+        Task<MTProtoResponse<bool>> SetStickersAsync(TLInputChannelBase inputChannel, TLInputStickerSetBase stickerset);
         Task<MTProtoResponse<TLMessagesChatsBase>> GetCommonChatsAsync(TLInputUserBase id, int maxId, int limit);
         Task<MTProtoResponse<TLMessagesChatsBase>> GetAdminedPublicChannelsAsync();
         Task<MTProtoResponse<TLAuthSentCode>> SendCodeAsync(string phoneNumber, bool? currentNumber, Action<int> attemptFailed = null);
         Task<MTProtoResponse<TLMessagesRecentStickersBase>> GetRecentStickersAsync(bool attached, int hash);
         Task<MTProtoResponse<TLMessagesAffectedMessages>> ReadMessageContentsAsync(TLVector<int> id);
+        Task<MTProtoResponse<bool>> ReadMessageContentsAsync(TLInputChannelBase inputChannel, TLVector<int> id);
         Task<MTProtoResponse<TLUpdatesBase>> JoinChannelAsync(TLChannel channel);
         Task<MTProtoResponse<TLMessagesBotCallbackAnswer>> GetBotCallbackAnswerAsync(TLInputPeerBase peer, int messageId, byte[] data, bool game);
         Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLVector<int> id, bool revoke);
@@ -90,7 +92,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<bool>> UpdateNotifySettingsAsync(TLInputNotifyPeerBase peer, TLInputPeerNotifySettings settings);
         Task<MTProtoResponse<TLUploadFileBase>> GetFileAsync(int dcId, TLInputFileLocationBase location, int offset, int limit);
         Task<MTProtoResponse<TLUserBase>> UpdateProfileAsync(string firstName, string lastName, string about);
-        Task<MTProtoResponse<TLContactsImportedContacts>> ImportContactsAsync(TLVector<TLInputContactBase> contacts, bool replace);
+        Task<MTProtoResponse<TLContactsImportedContacts>> ImportContactsAsync(TLVector<TLInputContactBase> contacts);
         Task<MTProtoResponse<bool>> SetTypingAsync(TLInputPeerBase peer, bool typing);
         Task<MTProtoResponse<bool>> RegisterDeviceAsync(int tokenType, string token);
         Task<MTProtoResponse<bool>> LogOutAsync();
@@ -114,7 +116,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLUserProfilePhotoBase>> UpdateProfilePhotoAsync(TLInputPhotoBase id);
         Task<MTProtoResponse<TLVector<long>>> DeletePhotosAsync(TLVector<TLInputPhotoBase> id);
         Task<MTProtoResponse<TLContactsBlockedBase>> GetBlockedAsync(int offset, int limit);
-        Task<MTProtoResponse<TLContactsContactsBase>> GetContactsAsync(string hash);
+        Task<MTProtoResponse<TLContactsContactsBase>> GetContactsAsync(int hash);
         Task<MTProtoResponse<TLUserFull>> GetFullUserAsync(TLInputUserBase id);
         Task<MTProtoResponse<TLUpdatesDifferenceBase>> GetDifferenceAsync(int pts, int date, int qts);
         Task<MTProtoResponse<TLAuthAuthorization>> CheckPasswordAsync(byte[] passwordHash);

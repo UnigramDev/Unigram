@@ -87,8 +87,8 @@ namespace Telegram.Api.Services
         void SetTypingAsync(TLInputPeerBase peer, bool typing, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void SetTypingAsync(TLInputPeerBase peer, TLSendMessageActionBase action, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
-        void GetContactsAsync(string hash, Action<TLContactsContactsBase> callback, Action<TLRPCError> faultCallback = null);
-        void ImportContactsAsync(TLVector<TLInputContactBase> contacts, bool replace, Action<TLContactsImportedContacts> callback, Action<TLRPCError> faultCallback = null);
+        void GetContactsAsync(int hash, Action<TLContactsContactsBase> callback, Action<TLRPCError> faultCallback = null);
+        void ImportContactsAsync(TLVector<TLInputContactBase> contacts, Action<TLContactsImportedContacts> callback, Action<TLRPCError> faultCallback = null);
 
         void BlockAsync(TLInputUserBase id, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void UnblockAsync(TLInputUserBase id, Action<bool> callback, Action<TLRPCError> faultCallback = null); 
@@ -157,6 +157,8 @@ namespace Telegram.Api.Services
         void GetMessagesAsync(TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
 
         // messages
+        void FaveStickerAsync(TLInputDocumentBase id, bool unfave, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void GetFavedStickersAsync(int hash, Action<TLMessagesFavedStickersBase> callback, Action<TLRPCError> faultCallback = null);
         void GetFeaturedStickersAsync(int hash, Action<TLMessagesFeaturedStickersBase> callback, Action<TLRPCError> faultCallback = null);
         void GetArchivedStickersAsync(long offsetId, int limit, bool masks, Action<TLMessagesArchivedStickers> callback, Action<TLRPCError> faultCallback = null);
         void ReadFeaturedStickersAsync(TLVector<long> id, Action<bool> callback, Action<TLRPCError> faultCallback = null);
@@ -205,6 +207,8 @@ namespace Telegram.Api.Services
         void ResetTopPeerRatingAsync(TLTopPeerCategoryBase category, TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
         // channels
+        void SetStickersAsync(TLInputChannelBase inputChannel, TLInputStickerSetBase stickerset, Action<bool> callback, Action<TLRPCError> faultCallback = null);
+        void ReadMessageContentsAsync(TLInputChannelBase inputChannel, TLVector<int> id, Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void GetChannelHistoryAsync(string debugInfo, TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int maxId, int limit, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void GetMessagesAsync(TLInputChannelBase inputChannel, TLVector<int> id, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null);
         void UpdateChannelAsync(int? channelId, Action<TLMessagesChatFull> callback, Action<TLRPCError> faultCallback = null);

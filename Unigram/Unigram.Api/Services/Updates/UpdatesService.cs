@@ -1505,6 +1505,7 @@ namespace Telegram.Api.Services.Updates
                         dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
                         dialog.RaisePropertyChanged(() => dialog.Self);
                         dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+                        dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
                     });
                 }
 
@@ -1569,6 +1570,7 @@ namespace Telegram.Api.Services.Updates
                             dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
                             dialog.RaisePropertyChanged(() => dialog.Self);
                             dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+                            dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
                         });
                     }
                 }
@@ -1636,6 +1638,7 @@ namespace Telegram.Api.Services.Updates
                             dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
                             dialog.RaisePropertyChanged(() => dialog.Self);
                             dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+                            dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
                         });
                     }
                 }

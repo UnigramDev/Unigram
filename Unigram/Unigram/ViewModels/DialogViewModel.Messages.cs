@@ -16,6 +16,7 @@ using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Native;
+using Unigram.Services;
 using Unigram.Views;
 using Unigram.Views.Payments;
 using Windows.ApplicationModel.DataTransfer;
@@ -839,7 +840,7 @@ namespace Unigram.ViewModels
                             if (newChannelMessageUpdate != null)
                             {
                                 Handle(newChannelMessageUpdate.Message as TLMessageCommonBase);
-                                Aggregator.Publish(new TopMessageUpdatedEventArgs(_currentDialog, newChannelMessageUpdate.Message));
+                                Aggregator.Publish(new TopMessageUpdatedEventArgs(_dialog, newChannelMessageUpdate.Message));
                             }
                         }
 
@@ -856,6 +857,13 @@ namespace Unigram.ViewModels
         private TLMessage _replyMarkupMessage;
         private TLReplyMarkupBase _replyMarkup;
         private TLMessage _editedMessage;
+        public TLMessage EditedMessage
+        {
+            get
+            {
+                return _editedMessage;
+            }
+        }
 
         public TLReplyMarkupBase ReplyMarkup
         {
@@ -1149,6 +1157,32 @@ namespace Unigram.ViewModels
                 {
                     await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet);
                 }
+            }
+        }
+
+        #endregion
+
+        #region Fave sticker
+
+        public RelayCommand<TLMessage> MessageFaveStickerCommand => new RelayCommand<TLMessage>(MessageFaveStickerExecute);
+        private void MessageFaveStickerExecute(TLMessage message)
+        {
+            if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                _stickersService.AddRecentSticker(StickerType.Fave, document, (int)(Utils.CurrentTimestamp / 1000), false);
+            }
+        }
+
+        #endregion
+
+        #region Unfave sticker
+
+        public RelayCommand<TLMessage> MessageUnfaveStickerCommand => new RelayCommand<TLMessage>(MessageUnfaveStickerExecute);
+        private void MessageUnfaveStickerExecute(TLMessage message)
+        {
+            if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                _stickersService.AddRecentSticker(StickerType.Fave, document, (int)(Utils.CurrentTimestamp / 1000), true);
             }
         }
 

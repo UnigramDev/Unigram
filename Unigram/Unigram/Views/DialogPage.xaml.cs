@@ -340,7 +340,15 @@ namespace Unigram.Views
 
             if (StickersPanel.Visibility == Visibility.Visible)
             {
-                Collapse_Click(null, null);
+                if (StickersPanel.ToggleActiveView())
+                {
+
+                }
+                else
+                {
+                    Collapse_Click(null, null);
+                }
+
                 args.Handled = true;
             }
 
@@ -810,8 +818,7 @@ namespace Unigram.Views
             var element = sender as MenuFlyoutItem;
             if (element != null)
             {
-                var message = element.DataContext as TLMessage;
-                if (message != null)
+                if (element.DataContext is TLMessage message)
                 {
                     if (!string.IsNullOrEmpty(message.Message))
                     {
@@ -819,8 +826,7 @@ namespace Unigram.Views
                         return;
                     }
 
-                    var mediaCaption = message.Media as ITLMessageMediaCaption;
-                    if (mediaCaption != null && !string.IsNullOrEmpty(mediaCaption.Caption))
+                    if (message.Media is ITLMessageMediaCaption mediaCaption && !string.IsNullOrEmpty(mediaCaption.Caption))
                     {
                         element.Visibility = Visibility.Visible;
                         return;
@@ -836,11 +842,9 @@ namespace Unigram.Views
             var element = sender as MenuFlyoutItem;
             if (element != null)
             {
-                var messageCommon = element.DataContext as TLMessageCommonBase;
-                if (messageCommon != null)
+                if (element.DataContext is TLMessageCommonBase messageCommon)
                 {
-                    var channel = messageCommon.Parent as TLChannel;
-                    if (channel != null && channel.HasUsername)
+                    if (messageCommon.Parent is TLChannel channel && channel.HasUsername)
                     {
                         element.Text = channel.IsBroadcast ? "Copy post link" : "Copy message link";
                         element.Visibility = Visibility.Visible;
@@ -869,6 +873,30 @@ namespace Unigram.Views
         private void MessageSaveSticker_Loaded(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void MessageFaveSticker_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                {
+                    element.Visibility = ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Collapsed : Visibility.Visible;
+                }
+            }
+        }
+
+        private void MessageUnfaveSticker_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                {
+                    element.Visibility = ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
         }
 
         private void MessageSaveMedia_Loaded(object sender, RoutedEventArgs e)

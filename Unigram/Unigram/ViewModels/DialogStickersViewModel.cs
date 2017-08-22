@@ -19,18 +19,21 @@ using Unigram.Core.Common;
 using Template10.Mvvm;
 using System.ComponentModel;
 using Telegram.Api.TL.Messages;
+using System.Collections.Specialized;
 
 namespace Unigram.ViewModels
 {
-    public class DialogStickersViewModel : UnigramViewModelBase, IHandle<RecentsDidLoadedEventArgs>, IHandle<StickersDidLoadedEventArgs>, IHandle<FeaturedStickersDidLoadedEventArgs>
+    public class DialogStickersViewModel : UnigramViewModelBase, IHandle<RecentsDidLoadedEventArgs>, IHandle<StickersDidLoadedEventArgs>, IHandle<FeaturedStickersDidLoadedEventArgs>, IHandle<GroupStickersDidLoadedEventArgs>
     {
         public readonly IStickersService _stickersService;
 
-        private TLMessagesStickerSet _frequentlyUsed;
-        private TLMessagesStickerSet _favedStickers;
+        private TLMessagesStickerSet _recentSet;
+        private TLMessagesStickerSet _favedSet;
+        private TLMessagesStickerSet _groupSet;
 
         private bool _recentGifs;
         private bool _recentStickers;
+        private bool _favedStickers;
         private bool _featured;
         private bool _stickers;
 
@@ -39,7 +42,16 @@ namespace Unigram.ViewModels
         {
             _stickersService = stickersService;
 
-            _frequentlyUsed = new TLMessagesStickerSet
+            _favedSet = new TLMessagesStickerSet
+            {
+                Set = new TLStickerSet
+                {
+                    Title = "Favorites",
+                    ShortName = "tg/favedStickers"
+                }
+            };
+
+            _recentSet = new TLMessagesStickerSet
             {
                 Set = new TLStickerSet
                 {
@@ -48,20 +60,20 @@ namespace Unigram.ViewModels
                 }
             };
 
-            _favedStickers = new TLMessagesStickerSet
+            _groupSet = new TLMessagesStickerSet
             {
                 Set = new TLStickerSet
                 {
-                    Title = "Favorite stickers",
-                    ShortName = "tg/favedStickers"
-                }
+                    Title = "Group stickers",
+                    ShortName = "tg/groupStickers",
+                },
             };
 
             Aggregator.Subscribe(this);
 
             SavedGifs = new MvxObservableCollection<TLDocument>();
             FeaturedStickers = new MvxObservableCollection<TLFeaturedStickerSet>();
-            SavedStickers = new MvxObservableCollection<TLMessagesStickerSet>();
+            SavedStickers = new StickerSetCollection();
 
             SyncStickers();
             SyncGifs();
@@ -85,6 +97,10 @@ namespace Unigram.ViewModels
             {
                 ProcessRecentStickers();
             }
+            else if (e.Type == StickerType.Fave)
+            {
+                ProcessFavedStickers();
+            }
         }
 
         public void Handle(StickersDidLoadedEventArgs e)
@@ -102,6 +118,15 @@ namespace Unigram.ViewModels
             ProcessFeaturedStickers();
         }
 
+        public void Handle(GroupStickersDidLoadedEventArgs e)
+        {
+            var full = CacheService.GetFullChat((int)_groupSet.Set.Id) as TLChannelFull;
+            if (full != null)
+            {
+                SyncGroup(full);
+            }
+        }
+
         private void ProcessRecentGifs()
         {
             var recent = _stickersService.GetRecentGifs();
@@ -113,19 +138,36 @@ namespace Unigram.ViewModels
 
         private void ProcessRecentStickers()
         {
-            var recent = _stickersService.GetRecentStickers(StickerType.Image);
+            var items = _stickersService.GetRecentStickers(StickerType.Image);
             Execute.BeginOnUIThread(() =>
             {
-                _frequentlyUsed.Documents = new TLVector<TLDocumentBase>(recent);
+                _recentSet.Documents = new TLVector<TLDocumentBase>(items);
 
-                if (SavedStickers.Count > 0 && SavedStickers[0].Set.ShortName.Equals("tg/recentlyUsed"))
+                if (_recentSet.Documents.Count > 0)
                 {
-                    SavedStickers.RemoveAt(0);
+                    SavedStickers.Add(_recentSet);
                 }
-
-                if (_frequentlyUsed.Documents.Count > 0)
+                else
                 {
-                    SavedStickers.Insert(0, _frequentlyUsed);
+                    SavedStickers.Remove(_recentSet);
+                }
+            });
+        }
+
+        private void ProcessFavedStickers()
+        {
+            var items = _stickersService.GetRecentStickers(StickerType.Fave);
+            Execute.BeginOnUIThread(() =>
+            {
+                _favedSet.Documents = new TLVector<TLDocumentBase>(items);
+
+                if (_favedSet.Documents.Count > 0)
+                {
+                    SavedStickers.Add(_favedSet);
+                }
+                else
+                {
+                    SavedStickers.Remove(_favedSet);
                 }
             });
         }
@@ -138,10 +180,32 @@ namespace Unigram.ViewModels
             {
                 SavedStickers.ReplaceWith(stickers);
 
-                if (_frequentlyUsed.Documents.Count > 0)
-                {
-                    SavedStickers.Insert(0, _frequentlyUsed);
-                }
+                //if (_groupSet.Documents != null && _groupSet.Documents.Count > 0)
+                //{
+                //    SavedStickers.Add(_groupSet);
+                //}
+                //else
+                //{
+                //    SavedStickers.Remove(_groupSet);
+                //}
+
+                //if (_recentSet.Documents != null && _recentSet.Documents.Count > 0)
+                //{
+                //    SavedStickers.Add(_recentSet);
+                //}
+                //else
+                //{
+                //    SavedStickers.Remove(_recentSet);
+                //}
+
+                //if (_favedSet.Documents != null && _favedSet.Documents.Count > 0)
+                //{
+                //    SavedStickers.Add(_favedSet);
+                //}
+                //else
+                //{
+                //    SavedStickers.Remove(_favedSet);
+                //}
             });
         }
 
@@ -167,16 +231,49 @@ namespace Unigram.ViewModels
 
         public MvxObservableCollection<TLFeaturedStickerSet> FeaturedStickers { get; private set; }
 
-        public MvxObservableCollection<TLMessagesStickerSet> SavedStickers { get; private set; }
+        public StickerSetCollection SavedStickers { get; private set; }
+
+        public void SyncGroup(TLChannelFull channelFull)
+        {
+            SavedStickers.Remove(_groupSet);
+
+            if (channelFull.HasStickerSet)
+            {
+                _groupSet.Set.Id = channelFull.Id;
+
+                Execute.BeginOnThreadPool(() =>
+                {
+                    var result = _stickersService.GetGroupStickerSetById(channelFull.StickerSet);
+                    if (result != null)
+                    {
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            _groupSet.Documents = new TLVector<TLDocumentBase>(result.Documents);
+
+                            if (_groupSet.Documents != null && _groupSet.Documents.Count > 0)
+                            {
+                                SavedStickers.Add(_groupSet);
+                            }
+                            else
+                            {
+                                SavedStickers.Remove(_groupSet);
+                            }
+                        });
+                    }
+                });
+            }
+        }
 
         public void SyncStickers()
         {
             Execute.BeginOnThreadPool(() =>
             {
-                _stickersService.LoadRecents(StickerType.Image, false, true);
+                _stickersService.LoadRecents(StickerType.Fave, false, true, false);
+                _stickersService.LoadRecents(StickerType.Image, false, true, false);
                 var stickers = _stickersService.CheckStickers(StickerType.Image);
                 var featured = _stickersService.CheckFeaturedStickers();
 
+                ProcessFavedStickers();
                 ProcessRecentStickers();
                 if (stickers && !_stickers) ProcessStickers();
                 if (featured && !_featured) ProcessFeaturedStickers();
@@ -289,7 +386,7 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnThreadPool(() =>
             {
-                _stickersService.LoadRecents(StickerType.Image, true, true);
+                _stickersService.LoadRecents(StickerType.Image, true, true, false);
 
                 ProcessRecentGifs();
 
@@ -470,6 +567,58 @@ namespace Unigram.ViewModels
             get
             {
                 return _isUnread ? "\u2022" : string.Empty;
+            }
+        }
+    }
+
+    public class StickerSetCollection : MvxObservableCollection<TLMessagesStickerSet>
+    {
+        private readonly Dictionary<string, int> _indexer = new Dictionary<string, int>
+        {
+            { "tg/favedStickers", 0 },
+            { "tg/recentlyUsed", 1 },
+            { "tg/groupStickers", 2 }
+        };
+
+        private readonly Dictionary<int, string> _mapper = new Dictionary<int, string>
+        {
+            { 0, "tg/favedStickers" },
+            { 1, "tg/recentlyUsed" },
+            { 2, "tg/groupStickers" }
+        };
+
+        protected override void InsertItem(int index, TLMessagesStickerSet item)
+        {
+            if (_indexer.TryGetValue(item.Set.ShortName, out int want))
+            {
+                index = 0;
+
+                for (int i = 0; i < 3; i++)
+                {
+                    if (Count > i && _mapper[i] == this[i].Set.ShortName && i < want)
+                    {
+                        index++;
+                    }
+                }
+
+                var already = IndexOf(item);
+                if (already != index)
+                {
+                    if (already > -1)
+                    {
+                        base.RemoveItem(already);
+                    }
+
+                    base.InsertItem(index, item);
+                }
+                else
+                {
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, item, index, index));
+                }
+            }
+            else
+            {
+                base.InsertItem(index, item);
             }
         }
     }

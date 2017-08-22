@@ -141,6 +141,17 @@ namespace Unigram.Controls.Views
                 }
             }
         }
+
+        public bool ToggleActiveView()
+        {
+            if (Pivot.SelectedIndex == 2 && !SemanticStickers.IsZoomedInViewActive && SemanticStickers.CanChangeViews)
+            {
+                SemanticStickers.ToggleActiveView();
+                return true;
+            }
+
+            return false;
+        }
     }
 
     public class ItemsTestPanel : Panel

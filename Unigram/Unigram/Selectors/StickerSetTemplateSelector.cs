@@ -12,6 +12,7 @@ namespace Unigram.Selectors
 {
     public class StickerSetTemplateSelector : DataTemplateSelector
     {
+        public DataTemplate GroupTemplate { get; set; }
         public DataTemplate RecentsTemplate { get; set; }
         public DataTemplate FavedTemplate { get; set; }
         public DataTemplate ItemTemplate { get; set; }
@@ -27,6 +28,10 @@ namespace Unigram.Selectors
                 else if (stickerSet.Set.ShortName.Equals("tg/favedStickers"))
                 {
                     return FavedTemplate;
+                }
+                else if (stickerSet.Set.ShortName.Equals("tg/groupStickers"))
+                {
+                    return GroupTemplate;
                 }
 
                 return ItemTemplate;

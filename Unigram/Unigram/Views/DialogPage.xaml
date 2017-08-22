@@ -208,6 +208,8 @@
             <MenuFlyoutItem Loaded="MessageSelect_Loaded" Command="{x:Bind ViewModel.MessageSelectCommand}" CommandParameter="{Binding}" Text="Select message"/>
             <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
             <!--<MenuFlyoutItem Loaded="MessageStickerPackInfo_Loaded" Command="{x:Bind ViewModel.MessageStickerPackInfoCommand}" CommandParameter="{Binding}" Text="Sticker pack info"/>-->
+            <MenuFlyoutItem Loaded="MessageFaveSticker_Loaded" Command="{x:Bind ViewModel.MessageFaveStickerCommand}" CommandParameter="{Binding}" Text="Add to Favorites"/>
+            <MenuFlyoutItem Loaded="MessageUnfaveSticker_Loaded" Command="{x:Bind ViewModel.MessageUnfaveStickerCommand}" CommandParameter="{Binding}" Text="Delete from Favorites"/>
             <MenuFlyoutItem Loaded="MessageStickerPackInfo_Loaded" Click="StickerSet_Click" Text="Sticker pack info"/>
             <MenuFlyoutItem Loaded="MessageSaveSticker_Loaded" Command="{x:Bind ViewModel.MessageSaveStickerCommand}" CommandParameter="{Binding}" Text="Save sticker as..."/>
         </MenuFlyout>
@@ -1496,20 +1498,61 @@
                 </controls:SimpleButton>
             </StackPanel>
 
-            <Border x:Name="Arrow"
-                    Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                    Visibility="Collapsed"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    BorderThickness="1"
-                    CornerRadius="24"
-                    Margin="12"
-                    Height="38"
-                    Width="38"
-                    Grid.ColumnSpan="2">
-                <controls:GlyphButton Command="{Binding PreviousSliceCommand}" FontSize="16" Width="36" Height="36" Glyph="&#xE74B;" CornerRadius="24"/>
-            </Border>
+            <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,6">
+                <StackPanel Visibility="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
+                    <Border  Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                             MinWidth="20"
+                             Height="20"
+                             CornerRadius="10"
+                             HorizontalAlignment="Center"
+                             Margin="0,0,0,-12"
+                             Canvas.ZIndex="1">
+                        <TextBlock Text="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay}"
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                   TextAlignment="Center"
+                                   Margin="4,2,4,0"/>
+                    </Border>
+                    <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            Visibility="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            BorderThickness="1"
+                            CornerRadius="24"
+                            Margin="12,6"
+                            Height="38"
+                            Width="38"
+                            Grid.ColumnSpan="2">
+                        <controls:GlyphButton Command="{x:Bind ViewModel.NextMentionCommand}" FontFamily="{ThemeResource ContentControlThemeFontFamily}" FontSize="20" Width="36" Height="36" Glyph="@" CornerRadius="24" Padding="0,0,0,4"/>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel x:Name="Arrow" Visibility="Collapsed">
+                    <Border  Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                             Visibility="Collapsed"
+                             MinWidth="20"
+                             Height="20"
+                             CornerRadius="10"
+                             HorizontalAlignment="Center"
+                             Margin="0,6,0,-12"
+                             Canvas.ZIndex="1">
+                        <TextBlock Text="{x:Bind ViewModel.Dialog.UnreadCount, Mode=OneWay}"
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                                   TextAlignment="Center"
+                                   Margin="4,2,4,0"/>
+                    </Border>
+                    <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            BorderThickness="1"
+                            CornerRadius="24"
+                            Margin="12,6"
+                            Height="38"
+                            Width="38"
+                            Grid.ColumnSpan="2">
+                        <controls:GlyphButton Command="{x:Bind ViewModel.PreviousSliceCommand}" FontSize="16" Width="36" Height="36" Glyph="&#xE74B;" CornerRadius="24"/>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
 
             <Grid Visibility="{x:Bind ViewModel.Search, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}">
                 <views:InlineBotResultsView ItemClick="InlineBotResults_ItemClick" VerticalAlignment="Bottom"/>

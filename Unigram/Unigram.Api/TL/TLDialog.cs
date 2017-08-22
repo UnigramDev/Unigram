@@ -24,6 +24,7 @@ namespace Telegram.Api.TL
 		public Int32 ReadInboxMaxId { get; set; }
 		public Int32 ReadOutboxMaxId { get; set; }
 		public Int32 UnreadCount { get; set; }
+		public Int32 UnreadMentionsCount { get; set; }
 		public TLPeerNotifySettingsBase NotifySettings { get; set; }
 		public Int32? Pts { get; set; }
 		public TLDraftMessageBase Draft { get; set; }
@@ -44,6 +45,7 @@ namespace Telegram.Api.TL
 			ReadInboxMaxId = from.ReadInt32();
 			ReadOutboxMaxId = from.ReadInt32();
 			UnreadCount = from.ReadInt32();
+			UnreadMentionsCount = from.ReadInt32();
 			NotifySettings = TLFactory.Read<TLPeerNotifySettingsBase>(from);
 			if (HasPts) Pts = from.ReadInt32();
 			if (HasDraft) Draft = TLFactory.Read<TLDraftMessageBase>(from);
@@ -59,6 +61,7 @@ namespace Telegram.Api.TL
 			to.WriteInt32(ReadInboxMaxId);
 			to.WriteInt32(ReadOutboxMaxId);
 			to.WriteInt32(UnreadCount);
+			to.WriteInt32(UnreadMentionsCount);
 			to.WriteObject(NotifySettings);
 			if (HasPts) to.WriteInt32(Pts.Value);
 			if (HasDraft) to.WriteObject(Draft);

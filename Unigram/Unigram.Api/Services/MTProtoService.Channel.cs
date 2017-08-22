@@ -15,6 +15,22 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
+        public void SetStickersAsync(TLInputChannelBase inputChannel, TLInputStickerSetBase stickerset, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLChannelsSetStickers { Channel = inputChannel, StickerSet = stickerset };
+
+            const string caption = "channels.setStickers";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void ReadMessageContentsAsync(TLInputChannelBase inputChannel, TLVector<int> id, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLChannelsReadMessageContents { Channel = inputChannel, Id = id };
+
+            const string caption = "channels.readMessageContents";
+            ReadMessageContentsAsyncInternal(obj, callback, () => { }, faultCallback);
+        }
+
         public void GetAdminLogAsync(TLInputChannelBase inputChannel, string query, TLChannelAdminLogEventsFilter filter, TLVector<TLInputUserBase> admins, long maxId, long minId, int limit, Action<TLChannelsAdminLogResults> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsGetAdminLog { Channel = inputChannel, Q = query, EventsFilter = filter, Admins = admins, MaxId = maxId, MinId = minId, Limit = limit };

@@ -178,8 +178,26 @@
                     VerticalAlignment="Top"
                     HorizontalAlignment="Right"
                     Margin="8,2,0,0"
-                    Grid.Column="2">
+                    Grid.ColumnSpan="2"
+                    Grid.Column="1">
                 <FontIcon Glyph="&#xE840;" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <Border x:Name="UnreadMentionsLabel"
+                  Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                  MinWidth="20"
+                  Height="20"
+                  CornerRadius="10"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Right"
+                  Margin="8,1,0,0"
+                    Visibility="Collapsed"
+                  Grid.Column="1">
+                <TextBlock x:Name="UnreadMentionsBadge"
+                           Text="@"
+                           Style="{ThemeResource CaptionTextBlockStyle}"
+                           Foreground="{ThemeResource TelegramDialogUnreadLabelBrush}"
+                           TextAlignment="Center"
+                           Margin="4,1,4,0"/>
             </Border>
             <Grid x:Name="UnreadLabel"
                   MinWidth="20"

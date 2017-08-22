@@ -25,10 +25,16 @@ namespace Unigram.Controls
 
         protected override void OnApplyTemplate()
         {
-            var button = GetTemplateChild("CleanButton") as Button;
-            if (button != null)
+            var clean = GetTemplateChild("CleanButton") as Button;
+            if (clean != null)
             {
-                button.Click += Clean_Click;
+                clean.Click += Clean_Click;
+            }
+
+            var search = GetTemplateChild("SearchButton") as Button;
+            if (search != null)
+            {
+                search.Click += Search_Click;
             }
 
             base.OnApplyTemplate();
@@ -37,6 +43,11 @@ namespace Unigram.Controls
         private void Clean_Click(object sender, RoutedEventArgs e)
         {
             Text = string.Empty;
+            Focus(FocusState.Keyboard);
+        }
+
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
             Focus(FocusState.Keyboard);
         }
 

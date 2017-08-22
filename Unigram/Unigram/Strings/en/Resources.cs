@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 08/07/2017 10:50:30
+// 	Generated: 08/21/2017 22:52:12
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2347,6 +2347,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("EventLogInvited");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} changed group {1}"
+        /// </summary>
+        public static string EventLogChangedStickersSet
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogChangedStickersSet");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} removed sticker set"
+        /// </summary>
+        public static string EventLogRemovedStickersSet
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRemovedStickersSet");
             }
         }
     }

@@ -216,7 +216,7 @@
                     </controls:ZoomableGridView>
                 </PivotItem>
                 <PivotItem>
-                    <SemanticZoom>
+                    <SemanticZoom x:Name="SemanticStickers">
                         <SemanticZoom.ZoomedInView>
                             <controls:ZoomableGridView
                                 x:Name="Stickers"
@@ -342,9 +342,14 @@
                     <selectors:StickerSetTemplateSelector>
                         <selectors:StickerSetTemplateSelector.ItemTemplate>
                             <DataTemplate x:DataType="messages:TLMessagesStickerSet">
-                                <Image Margin="4" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}"/>
+                                <Image Margin="6" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}"/>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.ItemTemplate>
+                        <selectors:StickerSetTemplateSelector.GroupTemplate>
+                            <DataTemplate x:DataType="messages:TLMessagesStickerSet">
+                                <controls:ProfilePictureView Margin="6" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}" IsHitTestVisible="False"/>
+                            </DataTemplate>
+                        </selectors:StickerSetTemplateSelector.GroupTemplate>
                         <selectors:StickerSetTemplateSelector.RecentsTemplate>
                             <DataTemplate x:DataType="messages:TLMessagesStickerSet">
                                 <Border ToolTipService.ToolTip="{x:Bind Set.Title}" Background="Transparent">

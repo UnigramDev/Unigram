@@ -381,6 +381,7 @@ namespace Telegram
 					[propget] HRESULT EditTimeLimit([out][retval] INT32* value);
 					[propget] HRESULT RatingEDecay([out][retval] INT32* value);
 					[propget] HRESULT StickersRecentLimit([out][retval] INT32* value);
+					[propget] HRESULT StickersFavedLimit([out][retval] INT32* value);
 					[propget] HRESULT TmpSessions([out][retval] Windows.Foundation.IReference<INT32>** value);
 					[propget] HRESULT PinnedDialogsCountMax([out][retval] INT32* value);
 					[propget] HRESULT CallReceiveTimeoutMs([out][retval] INT32* value);

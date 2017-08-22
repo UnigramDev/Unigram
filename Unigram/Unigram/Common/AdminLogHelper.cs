@@ -8,6 +8,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Common;
+using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Strings;
 using Unigram.Views;
@@ -96,6 +97,27 @@ namespace Unigram.Common
                 {
                     return ReplaceLinks(message, empty ? AppResources.EventLogRemovedChannelPhoto : AppResources.EventLogEditedChannelPhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
+            });
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangeStickerSet), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
+            {
+                var changeStickerSetAction = action as TLChannelAdminLogEventActionChangeStickerSet;
+
+                var newStickerset = changeStickerSetAction.NewStickerSet;
+                var oldStickerset = changeStickerSetAction.PrevStickerSet;
+                if (newStickerset == null || newStickerset is TLInputStickerSetEmpty)
+                {
+                    return ReplaceLinks(message, AppResources.EventLogRemovedStickersSet, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                }
+                else if (newStickerset is TLInputStickerSetShortName shortName)
+                {
+                    return ReplaceLinks(message, AppResources.EventLogChangedStickersSet, new[] { fromUserFullName, "sticker set" }, new[] { "tg-user://" + fromUserId, "tg-stickers://" + shortName.ShortName }, useActiveLinks);
+                }
+                else if (newStickerset is TLInputStickerSetID id)
+                {
+                    return ReplaceLinks(message, AppResources.EventLogChangedStickersSet, new[] { fromUserFullName, "sticker set" }, new[] { "tg-user://" + fromUserId, "tg-stickers://" + id.Id + "?" + id.AccessHash }, useActiveLinks);
+                }
+
+                return ReplaceLinks(message, AppResources.EventLogChangedStickersSet, new[] { fromUserFullName, "sticker set" }, new[] { "tg-user://" + fromUserId, "tg-bold://" }, useActiveLinks);
             });
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionToggleInvites), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
             {
@@ -351,7 +373,7 @@ namespace Unigram.Common
             return paragraph;
         }
 
-        private static void Hyperlink_Navigate(TLMessageCommonBase message, string currentId)
+        private static async void Hyperlink_Navigate(TLMessageCommonBase message, string currentId)
         {
             if (currentId.StartsWith("tg-user://"))
             {
@@ -368,6 +390,22 @@ namespace Unigram.Common
                 {
                     dialogPage.ViewModel.MessageOpenReplyCommand.Execute(message);
                 }
+            }
+            else if (currentId.StartsWith("tg-stickers://"))
+            {
+                var split = currentId.Replace("tg-stickers://", string.Empty).Split('?');
+
+                TLInputStickerSetBase input;
+                if (split.Length > 1)
+                {
+                    input = new TLInputStickerSetID { Id = long.Parse(split[0]), AccessHash = long.Parse(split[1]) };
+                }
+                else
+                {
+                    input = new TLInputStickerSetShortName { ShortName = split[0] };
+                }
+
+                await StickerSetView.Current.ShowAsync(input);
             }
         }
     }

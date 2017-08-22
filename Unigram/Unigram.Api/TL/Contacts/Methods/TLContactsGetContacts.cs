@@ -10,7 +10,7 @@ namespace Telegram.Api.TL.Contacts.Methods
 	/// </summary>
 	public partial class TLContactsGetContacts : TLObject
 	{
-		public String Hash { get; set; }
+		public Int32 Hash { get; set; }
 
 		public TLContactsGetContacts() { }
 		public TLContactsGetContacts(TLBinaryReader from)
@@ -22,12 +22,12 @@ namespace Telegram.Api.TL.Contacts.Methods
 
 		public override void Read(TLBinaryReader from)
 		{
-			Hash = from.ReadString();
+			Hash = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
-			to.WriteString(Hash ?? string.Empty);
+			to.WriteInt32(Hash);
 		}
 	}
 }

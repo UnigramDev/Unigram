@@ -111,6 +111,7 @@ namespace Unigram.ViewModels.Channels
             public override async Task<IList<TLMessageBase>> LoadDataAsync()
             {
                 _viewModel.IsLoading = true;
+                _hasMore = false;
 
                 var maxId = Count > 0 ? _minEventId : 0;
 
@@ -557,6 +558,10 @@ namespace Unigram.ViewModels.Channels
                             message.Message = builder.ToString();
 
                             result.Insert(0, message);
+                        }
+                        else if (item.Action is TLChannelAdminLogEventActionChangeStickerSet changeStickerSet)
+                        {
+                            result.Insert(0, GetServiceMessage(item));
                         }
                     }
 

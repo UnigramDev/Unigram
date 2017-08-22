@@ -74,11 +74,13 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var input = string.Join(",", contacts.Select(x => x.Id).Union(new[] { SettingsHelper.UserId }).OrderBy(x => x));
-            var hash = Utils.ComputeMD5(input);
-            var hex = BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
+            //var input = string.Join(",", contacts.Select(x => x.Id).Union(new[] { SettingsHelper.UserId }).OrderBy(x => x));
+            //var hash = Utils.ComputeMD5(input);
+            //var hex = BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
 
-            var response = await ProtoService.GetContactsAsync(hex);
+            var hash = CalculateContactsHash(contacts);
+
+            var response = await ProtoService.GetContactsAsync(hash);
             if (response.IsSucceeded && response.Result is TLContactsContacts)
             {
                 var result = response.Result as TLContactsContacts;
@@ -108,6 +110,31 @@ namespace Unigram.ViewModels
                     }
                 }
             }
+        }
+
+        private int CalculateContactsHash(List<TLUserBase> arrayList)
+        {
+            if (arrayList == null)
+            {
+                return 0;
+            }
+
+            long acc = 0;
+            for (int i = 0; i < arrayList.Count; i++)
+            {
+                var user = arrayList[i];
+                if (user == null)
+                {
+                    continue;
+                }
+
+                int high_id = (int)(user.Id >> 32);
+                int lower_id = (int)user.Id;
+                acc = ((acc * 20261) + 0x80000000L + high_id) % 0x80000000L;
+                acc = ((acc * 20261) + 0x80000000L + lower_id) % 0x80000000L;
+            }
+
+            return (int)acc;
         }
 
         public SortedObservableCollection<TLUser> Items { get; private set; }

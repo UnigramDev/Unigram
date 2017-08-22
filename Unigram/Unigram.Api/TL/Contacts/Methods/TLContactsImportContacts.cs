@@ -11,7 +11,6 @@ namespace Telegram.Api.TL.Contacts.Methods
 	public partial class TLContactsImportContacts : TLObject
 	{
 		public TLVector<TLInputContactBase> Contacts { get; set; }
-		public Boolean Replace { get; set; }
 
 		public TLContactsImportContacts() { }
 		public TLContactsImportContacts(TLBinaryReader from)
@@ -24,13 +23,11 @@ namespace Telegram.Api.TL.Contacts.Methods
 		public override void Read(TLBinaryReader from)
 		{
 			Contacts = TLFactory.Read<TLVector<TLInputContactBase>>(from);
-			Replace = from.ReadBoolean();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			to.WriteObject(Contacts);
-			to.WriteBoolean(Replace);
 		}
 	}
 }

@@ -21,6 +21,14 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
+        public void FaveStickerAsync(TLInputDocumentBase id, bool unfave, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesFaveSticker { Id = id, Unfave = unfave };
+
+            const string caption = "messages.faveSticker";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
         public void GetAttachedStickersAsync(TLInputStickeredMediaBase media, Action<TLVector<TLStickerSetCoveredBase>> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetAttachedStickers { Media = media };
@@ -31,9 +39,17 @@ namespace Telegram.Api.Services
 
         public void GetRecentStickersAsync(bool attached, int hash, Action<TLMessagesRecentStickersBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesGetRecentStickers { IsAttached = attached, Hash = hash };
+            var obj = new TLMessagesGetRecentStickers { Hash = hash, IsAttached = attached };
 
             const string caption = "messages.getRecentStickers";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
+        public void GetFavedStickersAsync( int hash, Action<TLMessagesFavedStickersBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetFavedStickers { Hash = hash };
+
+            const string caption = "messages.getFavedStickers";
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
@@ -1162,7 +1178,7 @@ namespace Telegram.Api.Services
             //TLUtils.WriteLine(string.Format("{0} messages.search query={1} offset={2} limit={3}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), query, offset, limit), LogSeverity.Error);
             //Execute.ShowDebugMessage("messages.search filter=" + filter);
 
-            var obj = new TLMessagesSearch { Flags = 0, Peer = peer, Q = query, FromId = from, Filter = filter, MinDate = minDate, MaxDate = maxDate, Offset = offset, MaxId = maxId, Limit = limit };
+            var obj = new TLMessagesSearch { Flags = 0, Peer = peer, Q = query, FromId = from, Filter = filter, MinDate = minDate, MaxDate = maxDate, AddOffset = offset, MaxId = maxId, Limit = limit };
             //obj.SetImportant();
 
             const string caption = "messages.search";

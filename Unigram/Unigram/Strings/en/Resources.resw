@@ -747,4 +747,10 @@ Duration: {1}</value>
   <data name="EventLogInvited" xml:space="preserve">
     <value>invited {0}</value>
   </data>
+  <data name="EventLogChangedStickersSet" xml:space="preserve">
+    <value>{0} changed group {1}</value>
+  </data>
+  <data name="EventLogRemovedStickersSet" xml:space="preserve">
+    <value>{0} removed sticker set</value>
+  </data>
 </root>

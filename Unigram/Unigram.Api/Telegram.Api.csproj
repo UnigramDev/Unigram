@@ -210,7 +210,9 @@
     <Compile Include="TL\Channels\Methods\TLChannelsJoinChannel.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsLeaveChannel.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsReadHistory.cs" />
+    <Compile Include="TL\Channels\Methods\TLChannelsReadMessageContents.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsReportSpam.cs" />
+    <Compile Include="TL\Channels\Methods\TLChannelsSetStickers.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsToggleInvites.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsToggleSignatures.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsUpdatePinnedMessage.cs" />
@@ -228,6 +230,7 @@
     <Compile Include="TL\Contacts\Methods\TLContactsGetTopPeers.cs" />
     <Compile Include="TL\Contacts\Methods\TLContactsImportCard.cs" />
     <Compile Include="TL\Contacts\Methods\TLContactsImportContacts.cs" />
+    <Compile Include="TL\Contacts\Methods\TLContactsResetSaved.cs" />
     <Compile Include="TL\Contacts\Methods\TLContactsResetTopPeerRating.cs" />
     <Compile Include="TL\Contacts\Methods\TLContactsResolveUsername.cs" />
     <Compile Include="TL\Contacts\Methods\TLContactsSearch.cs" />
@@ -299,6 +302,7 @@
     <Compile Include="TL\Messages\Methods\TLMessagesEditInlineBotMessage.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesEditMessage.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesExportChatInvite.cs" />
+    <Compile Include="TL\Messages\Methods\TLMessagesFaveSticker.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesForwardMessage.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesForwardMessages.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetAllChats.cs" />
@@ -312,6 +316,7 @@
     <Compile Include="TL\Messages\Methods\TLMessagesGetDHConfig.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetDialogs.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetDocumentByHash.cs" />
+    <Compile Include="TL\Messages\Methods\TLMessagesGetFavedStickers.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetFeaturedStickers.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetFullChat.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetGameHighScores.cs" />
@@ -328,6 +333,7 @@
     <Compile Include="TL\Messages\Methods\TLMessagesGetRecentStickers.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetSavedGifs.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetStickerSet.cs" />
+    <Compile Include="TL\Messages\Methods\TLMessagesGetUnreadMentions.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetWebPage.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetWebPagePreview.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesHideReportSpam.cs" />
@@ -390,6 +396,9 @@
     <Compile Include="TL\Messages\TLMessagesDialogs.cs" />
     <Compile Include="TL\Messages\TLMessagesDialogsBase.cs" />
     <Compile Include="TL\Messages\TLMessagesDialogsSlice.cs" />
+    <Compile Include="TL\Messages\TLMessagesFavedStickers.cs" />
+    <Compile Include="TL\Messages\TLMessagesFavedStickersBase.cs" />
+    <Compile Include="TL\Messages\TLMessagesFavedStickersNotModified.cs" />
     <Compile Include="TL\Messages\TLMessagesFeaturedStickers.cs" />
     <Compile Include="TL\Messages\TLMessagesFeaturedStickersBase.cs" />
     <Compile Include="TL\Messages\TLMessagesFeaturedStickersNotModified.cs" />
@@ -526,6 +535,7 @@
     <Compile Include="TL\TLChannelAdminLogEventActionBase.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionChangeAbout.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionChangePhoto.cs" />
+    <Compile Include="TL\TLChannelAdminLogEventActionChangeStickerSet.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionChangeTitle.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionChangeUsername.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionDeleteMessage.cs" />
@@ -696,6 +706,8 @@
     <Compile Include="TL\TLInputMessagesFilterEmpty.cs" />
     <Compile Include="TL\TLInputMessagesFilterGif.cs" />
     <Compile Include="TL\TLInputMessagesFilterMusic.cs" />
+    <Compile Include="TL\TLInputMessagesFilterMyMentions.cs" />
+    <Compile Include="TL\TLInputMessagesFilterMyMentionsUnread.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhoneCalls.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhotos.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhotoVideo.cs" />
@@ -968,6 +980,7 @@
     <Compile Include="TL\TLUpdateChannel.cs" />
     <Compile Include="TL\TLUpdateChannelMessageViews.cs" />
     <Compile Include="TL\TLUpdateChannelPinnedMessage.cs" />
+    <Compile Include="TL\TLUpdateChannelReadMessagesContents.cs" />
     <Compile Include="TL\TLUpdateChannelTooLong.cs" />
     <Compile Include="TL\TLUpdateChannelWebPage.cs" />
     <Compile Include="TL\TLUpdateChatAdmins.cs" />
@@ -979,6 +992,7 @@
     <Compile Include="TL\TLUpdateConfig.cs" />
     <Compile Include="TL\TLUpdateContactLink.cs" />
     <Compile Include="TL\TLUpdateContactRegistered.cs" />
+    <Compile Include="TL\TLUpdateContactsReset.cs" />
     <Compile Include="TL\TLUpdateDCOptions.cs" />
     <Compile Include="TL\TLUpdateDeleteChannelMessages.cs" />
     <Compile Include="TL\TLUpdateDeleteMessages.cs" />
@@ -989,6 +1003,7 @@
     <Compile Include="TL\TLUpdateEncryptedChatTyping.cs" />
     <Compile Include="TL\TLUpdateEncryptedMessagesRead.cs" />
     <Compile Include="TL\TLUpdateEncryption.cs" />
+    <Compile Include="TL\TLUpdateFavedStickers.cs" />
     <Compile Include="TL\TLUpdateInlineBotCallbackQuery.cs" />
     <Compile Include="TL\TLUpdateLangPack.cs" />
     <Compile Include="TL\TLUpdateLangPackTooLong.cs" />
