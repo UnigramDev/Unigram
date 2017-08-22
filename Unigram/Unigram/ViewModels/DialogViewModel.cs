@@ -660,28 +660,6 @@ namespace Unigram.ViewModels
             var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
             if (response.IsSucceeded)
             {
-                //if (error != null || res.messages.isEmpty())
-                //{
-                //    ChatActivity.this.newMentionsCount = 0;
-                //    ChatActivity.this.showMentiondownButton(false, true);
-                //    return;
-                //}
-                //ChatActivity.this.newMentionsCount = ChatActivity.this.newMentionsCount - 1;
-                //if (ChatActivity.this.newMentionsCount <= 0) {
-                //    ChatActivity.this.newMentionsCount = 0;
-                //    ChatActivity.this.showMentiondownButton(false, true);
-                //} else {
-                //    ChatActivity.this.mentiondownButtonCounter.setText(String.format("%d", new Object[] { Integer.valueOf(ChatActivity.this.newMentionsCount) }));
-                //}
-                //int id = ((Message)res.messages.get(0)).id;
-                //ChatActivity.this.scrollToMessageId(id, 0, true, 0, false);
-                //MessagesController instance = MessagesController.getInstance();
-                //if (ChatObject.isChannel(ChatActivity.this.currentChat))
-                //{
-                //    i = ChatActivity.this.currentChat.id;
-                //}
-                //instance.markMentionMessageAsRead(id, i, ChatActivity.this.dialog_id);
-
                 if (response.Result.Messages.IsEmpty())
                 {
                     dialog.UnreadMentionsCount = 0;
