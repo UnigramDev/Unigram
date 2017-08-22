@@ -857,6 +857,13 @@ namespace Unigram.ViewModels
         private TLMessage _replyMarkupMessage;
         private TLReplyMarkupBase _replyMarkup;
         private TLMessage _editedMessage;
+        public TLMessage EditedMessage
+        {
+            get
+            {
+                return _editedMessage;
+            }
+        }
 
         public TLReplyMarkupBase ReplyMarkup
         {

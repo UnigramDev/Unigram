@@ -507,7 +507,7 @@ namespace Unigram.Controls
 
                 if (fast)
                 {
-                    if (text.Trim().Length <= 14 && !string.IsNullOrWhiteSpace(text))
+                    if (text.Trim().Length <= 14 && !string.IsNullOrWhiteSpace(text) && ViewModel.EditedMessage == null)
                     {
                         ViewModel.StickerPack = ViewModel.Stickers.StickersService.LoadStickersForEmoji(text.Trim());
                     }
