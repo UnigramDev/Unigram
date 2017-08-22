@@ -2485,12 +2485,19 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to unblock this contact?", "Telegram", "OK", "Cancel");
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
             var result = await ProtoService.UnblockAsync(user.ToInputUser());
             if (result.IsSucceeded)
             {
                 if (Full is TLUserFull full)
                 {
                     full.IsBlocked = false;
+                    full.RaisePropertyChanged(() => full.IsBlocked);
                 }
 
                 RaisePropertyChanged(() => With);
