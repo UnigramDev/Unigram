@@ -1526,7 +1526,7 @@
                     </Border>
                 </StackPanel>
 
-                <StackPanel x:Name="Arrow">
+                <StackPanel x:Name="Arrow" Visibility="Collapsed">
                     <Border  Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
                              Visibility="Collapsed"
                              MinWidth="20"
@@ -1543,7 +1543,6 @@
                     </Border>
                     <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
                             BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                            Visibility="Collapsed"
                             BorderThickness="1"
                             CornerRadius="24"
                             Margin="12,6"

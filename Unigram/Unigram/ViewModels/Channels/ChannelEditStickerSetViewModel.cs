@@ -86,9 +86,9 @@ namespace Unigram.ViewModels.Channels
                 Set(ref _selectedItem, value);
                 Set(() => ShortName, ref _shortName, value?.Set.ShortName);
 
-                if (value != null && value.Set.IsInstalled)
+                if (value != null && _stickersService.IsStickerPackInstalled(value.Set.Id))
                 {
-                    ListSelectedItem = value;
+                    ListSelectedItem = Items.FirstOrDefault(x => x.Set.Id == value.Set.Id) ?? value;
                 }
                 else
                 {
@@ -175,6 +175,7 @@ namespace Unigram.ViewModels.Channels
             Execute.BeginOnUIThread(() =>
             {
                 Items.ReplaceWith(stickers);
+                SelectedItem = null;
                 SelectedItem = _stickersService.GetGroupStickerSetById(_full?.StickerSet);
             });
         }

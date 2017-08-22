@@ -178,7 +178,8 @@
                     VerticalAlignment="Top"
                     HorizontalAlignment="Right"
                     Margin="8,2,0,0"
-                    Grid.Column="2">
+                    Grid.ColumnSpan="2"
+                    Grid.Column="1">
                 <FontIcon Glyph="&#xE840;" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Border>
             <Border x:Name="UnreadMentionsLabel"
