@@ -107,11 +107,14 @@ HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UIN
 	ReturnIfFailed(result, m_sendPingWork.AttachToThreadpool(this));
 
 	ComPtr<IApplicationStatics> applicationStatics;
-	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_UI_Xaml_Application).Get(), &applicationStatics));
-
-	ComPtr<IApplication> application;
-	ReturnIfFailed(result, applicationStatics->get_Current(&application));
-	ReturnIfFailed(result, application->add_Resuming(Callback<__FIEventHandler_1_IInspectable>(this, &ConnectionManager::OnApplicationResuming).Get(), &m_eventTokens[1]));
+	if (SUCCEEDED(Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_UI_Xaml_Application).Get(), &applicationStatics)))
+	{
+		ComPtr<IApplication> application;
+		if (SUCCEEDED(applicationStatics->get_Current(&application)))
+		{
+			ReturnIfFailed(result, application->add_Resuming(Callback<__FIEventHandler_1_IInspectable>(this, &ConnectionManager::OnApplicationResuming).Get(), &m_eventTokens[1]));
+		}
+	}
 
 	ComPtr<INetworkInformationStatics> networkInformation;
 	ReturnIfFailed(result, Windows::Foundation::GetActivationFactory(HStringReference(RuntimeClass_Windows_Networking_Connectivity_NetworkInformation).Get(), &networkInformation));
