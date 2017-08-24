@@ -651,13 +651,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var req = new TLMessagesSearch();
-            req.Peer = _peer;
-            req.Limit = 1;
-            req.AddOffset = dialog.UnreadMentionsCount - 1;
-            req.Filter = new TLInputMessagesFilterMyMentionsUnread();
-
-            var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
+            var response = await ProtoService.GetUnreadMentionsAsync(_peer, 0, dialog.UnreadMentionsCount - 1, 1, 0, 0);
             if (response.IsSucceeded)
             {
                 if (response.Result.Messages.IsEmpty())

@@ -762,6 +762,11 @@ namespace Unigram.ViewModels
                 {
                     Execute.BeginOnUIThread(() => SetText(null));
                 }
+
+                if (Full is TLChannelFull channelFull)
+                {
+                    _stickers.SyncGroup(channelFull);
+                }
             }
         }
     }
