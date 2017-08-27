@@ -654,15 +654,21 @@ namespace Unigram.ViewModels
             var response = await ProtoService.GetUnreadMentionsAsync(_peer, 0, dialog.UnreadMentionsCount - 1, 1, 0, 0);
             if (response.IsSucceeded)
             {
-                if (response.Result.Messages.IsEmpty())
+                var count = 0;
+                if (response.Result is TLMessagesChannelMessages channelMessages)
                 {
-                    dialog.UnreadMentionsCount = 0;
-                    dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
-                    return;
+                    count = channelMessages.Count;
                 }
 
-                dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount - 1, 0);
+                dialog.UnreadMentionsCount = count;
                 dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+
+                //if (response.Result.Messages.IsEmpty())
+                //{
+                //    dialog.UnreadMentionsCount = 0;
+                //    dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+                //    return;
+                //}
 
                 var message = response.Result.Messages.FirstOrDefault();
                 if (message == null)
