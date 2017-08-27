@@ -867,7 +867,21 @@ namespace Unigram.Views
 
         private void MessageStickerPackInfo_Loaded(object sender, RoutedEventArgs e)
         {
-
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                {
+                    if (document.StickerSet is TLInputStickerSetID setId)
+                    {
+                        element.Visibility = ViewModel.Stickers.StickersService.IsStickerPackInstalled(setId.Id) ? Visibility.Collapsed : Visibility.Visible;
+                    }
+                    else
+                    {
+                        element.Visibility = Visibility.Collapsed;
+                    }
+                }
+            }
         }
 
         private void MessageSaveSticker_Loaded(object sender, RoutedEventArgs e)
