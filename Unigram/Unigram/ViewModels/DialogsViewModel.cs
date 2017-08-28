@@ -544,18 +544,27 @@ namespace Unigram.ViewModels
             });
         }
 
-        public void Handle(TLUpdateServiceNotification serviceNotification)
+        public void Handle(TLUpdateServiceNotification update)
         {
-            if (serviceNotification.IsPopup)
+            if (update.IsPopup)
             {
                 Execute.BeginOnUIThread(async () =>
                 {
-                    await TLMessageDialog.ShowAsync(serviceNotification.Message, "Telegram", "OK");
+                    await TLMessageDialog.ShowAsync(update.Message, "Telegram", "OK");
                 });
             }
             else
             {
-                Debugger.Break();
+                var user = CacheService.GetUser(777000);
+                if (user == null)
+                {
+                    return;
+                }
+
+                var message = GetServiceMessage(777000, update.Message, update.Media, update.Entities, update.InboxDate);
+                CacheService.SyncMessage(message, (m) => { });
+
+                //Debugger.Break();
             }
 
             //if (serviceNotification.Popup)
@@ -574,6 +583,27 @@ namespace Unigram.ViewModels
             //this.CacheService.SyncMessage(serviceMessage, delegate (TLMessageBase m)
             //{
             //});
+        }
+
+        private TLMessageBase GetServiceMessage(int fromId, string text, TLMessageMediaBase media, TLVector<TLMessageEntityBase> entities, int? date = null)
+        {
+            var message = TLUtils.GetMessage(
+                fromId, 
+                new TLPeerUser { UserId = SettingsHelper.UserId }, 
+                TLMessageState.Confirmed,
+                false,
+                true,
+                date ?? TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now),
+                text,
+                media,
+                TLLong.Random(),
+                null);
+
+            message.Id = 0;
+            message.Entities = entities;
+            message.HasEntities = entities != null;
+
+            return message;
         }
 
         //public void Handle(TLUpdateNewAuthorization update)
