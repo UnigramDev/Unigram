@@ -9,6 +9,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Template10.Services.NavigationService;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Selectors;
@@ -33,29 +34,45 @@ namespace Unigram.Controls.Messages
 
         public BindConvert Convert => BindConvert.Current;
 
-        private DialogViewModel _context;
-        public DialogViewModel Context
+        private UnigramViewModelBase _contextBase;
+        public UnigramViewModelBase ContextBase
         {
             get
             {
-                if (_context == null)
+                if (_contextBase == null)
                 {
+                    //var parent = VisualTreeHelper.GetParent(this);
+                    //while (parent as BubbleListViewItem == null && parent != null)
+                    //{
+                    //    parent = VisualTreeHelper.GetParent(parent);
+                    //}
+
+                    //var item = parent as BubbleListViewItem;
+                    //if (item != null)
+                    //{
+                    //    _contextBase = item.Owner.DataContext as DialogViewModel;
+                    //}
+
                     var parent = VisualTreeHelper.GetParent(this);
-                    while (parent as BubbleListViewItem == null)
+                    while (parent as ListView == null && parent != null)
                     {
                         parent = VisualTreeHelper.GetParent(parent);
                     }
 
-                    var item = parent as BubbleListViewItem;
+                    var item = parent as ListView;
                     if (item != null)
                     {
-                        _context = item.Owner.DataContext as DialogViewModel;
+                        _contextBase = item.DataContext as UnigramViewModelBase;
                     }
                 }
 
-                return _context;
+                return _contextBase;
             }
         }
+
+        public INavigationService NavigationService => ContextBase?.NavigationService;
+
+        public DialogViewModel Context => ContextBase as DialogViewModel;
 
         protected TLMessage _oldValue;
 
@@ -242,11 +259,11 @@ namespace Unigram.Controls.Messages
         {
             if (message.IsPost)
             {
-                Context.NavigationService.Navigate(typeof(ChatDetailsPage), new TLPeerChannel { ChannelId = message.ToId.Id });
+                NavigationService?.Navigate(typeof(ChatDetailsPage), new TLPeerChannel { ChannelId = message.ToId.Id });
             }
             else if (message.From != null)
             {
-                Context.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.From.Id });
+                NavigationService?.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.From.Id });
             }
         }
 
@@ -256,41 +273,38 @@ namespace Unigram.Controls.Messages
             {
                 if (message.FwdFrom.HasChannelPost)
                 {
-                    Context.NavigationService.NavigateToDialog(message.FwdFromChannel, message.FwdFrom.ChannelPost);
+                    NavigationService?.NavigateToDialog(message.FwdFromChannel, message.FwdFrom.ChannelPost);
                 }
                 else
                 {
-                    Context.NavigationService.NavigateToDialog(message.FwdFromChannel);
+                    NavigationService?.NavigateToDialog(message.FwdFromChannel);
                 }
             }
             else if (message.FwdFromUser != null)
             {
-                Context.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFromUser.Id });
+                NavigationService?.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFromUser.Id });
             }
         }
 
         private void ViaBot_Click(TLMessage message)
         {
-            Context.SetText($"@{message.ViaBot.Username} ", focus: true);
-            Context.ResolveInlineBot(message.ViaBot.Username);
+            Context?.SetText($"@{message.ViaBot.Username} ", focus: true);
+            Context?.ResolveInlineBot(message.ViaBot.Username);
         }
 
         protected void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
         {
-            Context.KeyboardButtonExecute(e.Button, ViewModel);
+            Context?.KeyboardButtonExecute(e.Button, ViewModel);
         }
 
         protected void Reply_Click(object sender, RoutedEventArgs e)
         {
-            Context.MessageOpenReplyCommand.Execute(ViewModel);
+            Context?.MessageOpenReplyCommand.Execute(ViewModel);
         }
 
         protected void Share_Click(object sender, RoutedEventArgs e)
         {
-            if (Context != null)
-            {
-                Context.MessageShareCommand.Execute(ViewModel);
-            }
+            Context?.MessageShareCommand.Execute(ViewModel);
         }
 
         protected void MessageControl_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
