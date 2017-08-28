@@ -1377,6 +1377,70 @@ namespace Telegram.Api.Services.Updates
                 return true;
             }
 
+            var updateChannelReadMessagesContents = update as TLUpdateChannelReadMessagesContents;
+            if (updateChannelReadMessagesContents != null)
+            {
+                var channel = _cacheService.GetChat(updateChannelReadMessagesContents.ChannelId) as TLChannel;
+                var dialog = _cacheService.GetDialog(new TLPeerChannel { ChannelId = updateChannelReadMessagesContents.ChannelId });
+
+                var messages = new List<TLMessage>(updateChannelReadMessagesContents.Messages.Count);
+                var messagesId = new TLVector<int>(updateChannelReadMessagesContents.Messages.Count);
+
+                foreach (var readMessageId in updateChannelReadMessagesContents.Messages)
+                {
+                    var message = _cacheService.GetMessage(readMessageId, updateChannelReadMessagesContents.ChannelId) as TLMessage;
+                    if (message != null)
+                    {
+                        messages.Add(message);
+                    }
+                    else
+                    {
+                        messagesId.Add(readMessageId);
+                    }
+                }
+
+                Execute.BeginOnUIThread(() =>
+                {
+                    foreach (var message in messages)
+                    {
+                        message.IsMediaUnread = false;
+                        message.RaisePropertyChanged(() => message.IsMediaUnread);
+
+                        if (message.IsMentioned && dialog != null && channel != null && channel.IsMegaGroup)
+                        {
+                            dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount, 0);
+                            dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+                        }
+                    }
+                });
+
+                if (messagesId.Count > 0)
+                {
+                    GetChannelMessagesAsync(channel.ToInputChannel(), messagesId, result =>
+                    {
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            foreach (var message in result.Messages.OfType<TLMessage>())
+                            {
+                                message.IsMediaUnread = false;
+                                message.RaisePropertyChanged(() => message.IsMediaUnread);
+
+                                if (message.IsMentioned && dialog != null && channel != null && channel.IsMegaGroup)
+                                {
+                                    dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount, 0);
+                                    dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+                                }
+                            }
+                        });
+
+                        _cacheService.AddMessagesToContext(result, (m) => { });
+                    },
+                    fault =>
+                    {
+                    });
+                }
+            }
+
             var updateChannelMessageViews = update as TLUpdateChannelMessageViews;
             if (updateChannelMessageViews != null)
             {
