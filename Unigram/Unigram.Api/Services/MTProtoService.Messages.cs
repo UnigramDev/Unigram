@@ -21,6 +21,14 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
+        public void GetUnreadMentionsAsync(TLInputPeerBase inputPeer, int offsetId, int addOffset, int limit, int maxId, int minId, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesGetUnreadMentions { Peer = inputPeer, OffsetId = offsetId, AddOffset = addOffset, Limit = limit, MaxId = maxId, MinId = minId };
+
+            const string caption = "messages.getUnreadMentions";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
         public void FaveStickerAsync(TLInputDocumentBase id, bool unfave, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesFaveSticker { Id = id, Unfave = unfave };

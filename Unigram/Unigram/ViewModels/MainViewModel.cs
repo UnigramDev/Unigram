@@ -43,6 +43,7 @@ using Windows.Media.Playback;
 using Windows.Media.Core;
 using System.Threading;
 using Telegram.Api.Services.Cache.EventArgs;
+using Telegram.Api.TL.Help.Methods;
 
 namespace Unigram.ViewModels
 {
@@ -54,6 +55,7 @@ namespace Unigram.ViewModels
         IHandle<TLMessageCommonBase>,
         IHandle<TLUpdateReadMessagesContents>
     {
+        private readonly IUpdatesService _updatesService;
         private readonly IPushService _pushService;
         private readonly IVibrationService _vibrationService;
 
@@ -62,9 +64,10 @@ namespace Unigram.ViewModels
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IPushService pushService, IVibrationService vibrationService, IContactsService contactsService, DialogsViewModel dialogs)
+        public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUpdatesService updatesService, IPushService pushService, IVibrationService vibrationService, IContactsService contactsService, DialogsViewModel dialogs)
             : base(protoService, cacheService, aggregator)
         {
+            _updatesService = updatesService;
             _pushService = pushService;
             _vibrationService = vibrationService;
 
@@ -305,6 +308,15 @@ namespace Unigram.ViewModels
             //Execute.BeginOnUIThread(() => Dialogs.LoadFirstSlice());
             //Execute.BeginOnUIThread(() => Contacts.getTLContacts());
             //Execute.BeginOnUIThread(() => Contacts.GetSelfAsync());
+
+            //ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.2.1" }, result =>
+            //{
+            //    _updatesService.ProcessUpdates(result, true);
+            //},
+            //fault =>
+            //{
+            //    Debugger.Break();
+            //});
 
             if (Refresh)
             {

@@ -626,24 +626,24 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var req = new TLMessagesSearch();
-            req.Peer = _peer;
-            req.Limit = 1;
-            req.AddOffset = dialog.UnreadMentionsCount - 1;
-            req.Filter = new TLInputMessagesFilterMyMentionsUnread();
-
-            var response = await ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.search", req);
+            var response = await ProtoService.GetUnreadMentionsAsync(_peer, 0, dialog.UnreadMentionsCount - 1, 1, 0, 0);
             if (response.IsSucceeded)
             {
-                if (response.Result.Messages.IsEmpty())
+                var count = 0;
+                if (response.Result is TLMessagesChannelMessages channelMessages)
                 {
-                    dialog.UnreadMentionsCount = 0;
-                    dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
-                    return;
+                    count = channelMessages.Count;
                 }
 
-                dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount - 1, 0);
+                dialog.UnreadMentionsCount = count;
                 dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+
+                //if (response.Result.Messages.IsEmpty())
+                //{
+                //    dialog.UnreadMentionsCount = 0;
+                //    dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+                //    return;
+                //}
 
                 var message = response.Result.Messages.FirstOrDefault();
                 if (message == null)
@@ -1050,7 +1050,17 @@ namespace Unigram.ViewModels
                 var maxId = _dialog?.UnreadCount > 0 ? _dialog.ReadInboxMaxId : int.MaxValue;
                 var offset = _dialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
 
-                LoadFirstSliceAsync(maxId, offset);
+                //if (maxId == int.MaxValue)
+                //{
+                //    var history = CacheService.GetHistory(_peer.ToPeer(), maxId);
+
+                //    UpdatingScrollMode = UpdatingScrollMode.ForceKeepLastItemInView;
+                //    Messages.AddRange(history);
+                //}
+                //else
+                {
+                    LoadFirstSliceAsync(maxId, offset);
+                }
             }
 
             if (App.InMemoryState.ForwardMessages != null)
@@ -2460,12 +2470,19 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to unblock this contact?", "Telegram", "OK", "Cancel");
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
             var result = await ProtoService.UnblockAsync(user.ToInputUser());
             if (result.IsSucceeded)
             {
                 if (Full is TLUserFull full)
                 {
                     full.IsBlocked = false;
+                    full.RaisePropertyChanged(() => full.IsBlocked);
                 }
 
                 RaisePropertyChanged(() => With);

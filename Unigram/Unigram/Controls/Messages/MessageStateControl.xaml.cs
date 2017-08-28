@@ -115,8 +115,14 @@ namespace Unigram.Controls.Messages
 
                 if (message.HasEditDate && !message.HasViaBotId && !bot && message.ReplyMarkup?.TypeId != TLType.ReplyInlineMarkup)
                 {
-                    var edit = Convert.DateTime(ViewModel.EditDate.Value);
+                    var edit = Convert.DateTime(message.EditDate.Value);
                     text += $"\r\nEdited: {Convert.LongDate.Format(edit)} {Convert.LongTime.Format(edit)}";
+                }
+
+                if (message.HasFwdFrom && message.FwdFrom != null)
+                {
+                    var original = Convert.DateTime(message.FwdFrom.Date);
+                    text += $"\r\nOriginal: {Convert.LongDate.Format(original)} {Convert.LongTime.Format(original)}";
                 }
 
                 tooltip.Content = text;

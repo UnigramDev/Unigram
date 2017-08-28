@@ -232,11 +232,28 @@
                                 </common:FluidGridView.Triggers>
                                 <GridView.GroupStyle>
                                     <GroupStyle>
-                                        <GroupStyle.HeaderTemplate>
-                                            <DataTemplate x:DataType="messages:TLMessagesStickerSet">
-                                                <TextBlock Text="{x:Bind Set.Title}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                                            </DataTemplate>
-                                        </GroupStyle.HeaderTemplate>
+                                        <GroupStyle.HeaderTemplateSelector>
+                                            <selectors:StickerSetTemplateSelector>
+                                                <selectors:StickerSetTemplateSelector.ItemTemplate>
+                                                    <DataTemplate x:DataType="messages:TLMessagesStickerSet">
+                                                        <TextBlock Text="{x:Bind Set.Title}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                                    </DataTemplate>
+                                                </selectors:StickerSetTemplateSelector.ItemTemplate>
+                                                <selectors:StickerSetTemplateSelector.GroupTemplate>
+                                                    <DataTemplate x:DataType="messages:TLMessagesStickerSet">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Text="{x:Bind Set.Title}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+
+                                                            <!--<controls:GlyphButton Glyph="&#xE115;" FontSize="16" Height="32" Margin="0,-8,-12,-8" Grid.Column="1"/>-->
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </selectors:StickerSetTemplateSelector.GroupTemplate>
+                                            </selectors:StickerSetTemplateSelector>
+                                        </GroupStyle.HeaderTemplateSelector>
                                         <GroupStyle.HeaderContainerStyle>
                                             <Style TargetType="GridViewHeaderItem">
                                                 <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />

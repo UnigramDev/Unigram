@@ -23,15 +23,15 @@ namespace Unigram.Selectors
             {
                 if (stickerSet.Set.ShortName.Equals("tg/recentlyUsed"))
                 {
-                    return RecentsTemplate;
+                    return RecentsTemplate ?? ItemTemplate;
                 }
                 else if (stickerSet.Set.ShortName.Equals("tg/favedStickers"))
                 {
-                    return FavedTemplate;
+                    return FavedTemplate ?? ItemTemplate;
                 }
                 else if (stickerSet.Set.ShortName.Equals("tg/groupStickers"))
                 {
-                    return GroupTemplate;
+                    return GroupTemplate ?? ItemTemplate;
                 }
 
                 return ItemTemplate;

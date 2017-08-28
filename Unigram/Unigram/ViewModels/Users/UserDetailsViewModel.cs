@@ -280,9 +280,14 @@ namespace Unigram.ViewModels.Users
         public RelayCommand BlockCommand => new RelayCommand(BlockExecute);
         private async void BlockExecute()
         {
-            var user = Item as TLUser;
-            if (user != null)
+            if (Item is TLUser user)
             {
+                var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to block this contact?", "Telegram", "OK", "Cancel");
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
                 var result = await ProtoService.BlockAsync(user.ToInputUser());
                 if (result.IsSucceeded && result.Result)
                 {
@@ -295,9 +300,14 @@ namespace Unigram.ViewModels.Users
         public RelayCommand UnblockCommand => new RelayCommand(UnblockExecute);
         private async void UnblockExecute()
         {
-            var user = Item as TLUser;
-            if (user != null)
+            if (Item is TLUser user)
             {
+                var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to unblock this contact?", "Telegram", "OK", "Cancel");
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
                 var result = await ProtoService.UnblockAsync(user.ToInputUser());
                 if (result.IsSucceeded && result.Result)
                 {

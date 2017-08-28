@@ -24,6 +24,20 @@ namespace Telegram.Api.Services
     public partial class MTProtoService
     {
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLMessagesMessagesBase>> GetUnreadMentionsAsync(TLInputPeerBase inputPeer, int offsetId, int addOffset, int limit, int maxId, int minId)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
+            GetUnreadMentionsAsync(inputPeer, offsetId, addOffset, limit, maxId, minId, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesMessagesBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLChannelsAdminLogResults>> GetAdminLogAsync(TLInputChannelBase inputChannel, string query, TLChannelAdminLogEventsFilter filter, TLVector<TLInputUserBase> admins, long maxId, long minId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLChannelsAdminLogResults>>();
