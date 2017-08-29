@@ -142,6 +142,7 @@ namespace Unigram.ViewModels
             Execute.BeginOnUIThread(() =>
             {
                 _recentSet.Documents = new TLVector<TLDocumentBase>(items);
+                CheckDocuments();
 
                 if (_recentSet.Documents.Count > 0)
                 {
@@ -160,6 +161,7 @@ namespace Unigram.ViewModels
             Execute.BeginOnUIThread(() =>
             {
                 _favedSet.Documents = new TLVector<TLDocumentBase>(items);
+                CheckDocuments();
 
                 if (_favedSet.Documents.Count > 0)
                 {
@@ -225,6 +227,25 @@ namespace Unigram.ViewModels
                     Covers = new TLVector<TLDocumentBase>(set.Documents.Take(Math.Min(set.Documents.Count, 5)))
                 }));
             });
+        }
+
+        private void CheckDocuments()
+        {
+            int previousCount = _recentSet.Documents?.Count ?? 0;
+            int previousCount2 = _favedSet.Documents?.Count ?? 0;
+            for (int i = 0; i < previousCount2; i++)
+            {
+                var favSticker = _favedSet.Documents[i] as TLDocument;
+                for (int j = 0; j < previousCount; j++)
+                {
+                    var recSticker = _recentSet.Documents[j] as TLDocument;
+                    if (recSticker.DCId == favSticker.DCId && recSticker.Id == favSticker.Id)
+                    {
+                        _recentSet.Documents.Remove(recSticker);
+                        break;
+                    }
+                }
+            }
         }
 
         public MvxObservableCollection<TLDocument> SavedGifs { get; private set; }
