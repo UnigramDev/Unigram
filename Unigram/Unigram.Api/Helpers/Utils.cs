@@ -643,6 +643,8 @@ namespace Telegram.Api.Helpers
 
         public static string CurrentUICulture()
         {
+            //return "en";
+
             return Windows.Globalization.Language.CurrentInputMethodLanguageTag;
         }
 

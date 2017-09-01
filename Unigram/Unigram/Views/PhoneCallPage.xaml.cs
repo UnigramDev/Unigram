@@ -31,6 +31,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -243,10 +244,10 @@ namespace Unigram.Views
 
         public void SetSignalBars(int count)
         {
-            Signal1.Fill = Resources[count >= 1 ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
-            Signal2.Fill = Resources[count >= 2 ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
-            Signal3.Fill = Resources[count >= 3 ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
-            Signal4.Fill = Resources[count >= 4 ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
+            for (int i = 1; i < 5; i++)
+            {
+                ((Rectangle)FindName($"SignalBar{i}")).Fill = Resources[count >= i ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
+            }
         }
 
         private string StateToLabel(TLPhoneCallState state)

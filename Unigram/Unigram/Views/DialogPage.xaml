@@ -1694,7 +1694,7 @@
                             <MenuFlyout Placement="Top">
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Tag="&#xEB9F;"
-                                                Text="Photo or video"
+                                                Text="Photo or Video"
                                                 Command="{x:Bind ViewModel.SendPhotoCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Text="File"
