@@ -198,6 +198,7 @@ namespace Unigram.Views
 
                 if (tuple.Item1 == TLPhoneCallState.Established)
                 {
+                    SignalBarsLabel.Visibility = Visibility.Visible;
                     StartUpdatingCallDuration();
 
                     if (_emojis != null)
@@ -238,6 +239,14 @@ namespace Unigram.Views
             {
                 _emojis = tuple.Item4.Split(' ');
             }
+        }
+
+        public void SetSignalBars(int count)
+        {
+            Signal1.Visibility = count >= 1 ? Visibility.Visible : Visibility.Collapsed;
+            Signal2.Visibility = count >= 2 ? Visibility.Visible : Visibility.Collapsed;
+            Signal3.Visibility = count >= 3 ? Visibility.Visible : Visibility.Collapsed;
+            Signal4.Visibility = count >= 4 ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private string StateToLabel(TLPhoneCallState state)

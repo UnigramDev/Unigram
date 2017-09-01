@@ -231,6 +231,21 @@ namespace Unigram.Common
                             }
                         }
                     }
+                    else if (caption.Equals("voip.signalBars") && req is byte[] data2)
+                    {
+                        using (var from = new TLBinaryReader(data2))
+                        {
+                            var tuple = new TLTuple<int>(from);
+
+                            if (_phoneView != null)
+                            {
+                                await _phoneView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                                {
+                                    _phoneView.SetSignalBars(tuple.Item1);
+                                });
+                            }
+                        }
+                    }
                     else if (caption.Equals("voip.setCallRating") && req is TLInputPhoneCall peer)
                     {
                         Execute.BeginOnUIThread(async () =>
