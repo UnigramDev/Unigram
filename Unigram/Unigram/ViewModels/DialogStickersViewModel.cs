@@ -177,6 +177,7 @@ namespace Unigram.ViewModels
         private void ProcessStickers()
         {
             _stickers = true;
+
             var stickers = _stickersService.GetStickerSets(StickerType.Image);
             Execute.BeginOnUIThread(() =>
             {
@@ -231,12 +232,15 @@ namespace Unigram.ViewModels
 
         private void CheckDocuments()
         {
-            int previousCount = _recentSet.Documents?.Count ?? 0;
-            int previousCount2 = _favedSet.Documents?.Count ?? 0;
-            for (int i = 0; i < previousCount2; i++)
+            if (_recentSet.Documents == null || _favedSet.Documents == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _favedSet.Documents.Count; i++)
             {
                 var favSticker = _favedSet.Documents[i] as TLDocument;
-                for (int j = 0; j < previousCount; j++)
+                for (int j = 0; j < _recentSet.Documents.Count; j++)
                 {
                     var recSticker = _recentSet.Documents[j] as TLDocument;
                     if (recSticker.DCId == favSticker.DCId && recSticker.Id == favSticker.Id)
