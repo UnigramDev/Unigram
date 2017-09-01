@@ -174,7 +174,7 @@ namespace Unigram.Controls.Views
                 {
                     if (Path.GetExtension(file.Name).Equals(".mp4"))
                     {
-                        //Items.Add(new StorageVideo(file));
+                        Items.Add(new StorageVideo(file));
                     }
                     else
                     {

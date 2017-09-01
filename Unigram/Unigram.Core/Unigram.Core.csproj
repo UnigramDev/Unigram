@@ -108,6 +108,7 @@
     <Compile Include="Models\FoursquareRootObject.cs" />
     <Compile Include="Models\StorageMedia.cs" />
     <Compile Include="Models\StoragePhoto.cs" />
+    <Compile Include="Models\StorageVideo.cs" />
     <Compile Include="Notifications\LiveTile.cs" />
     <Compile Include="Notifications\Toast.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

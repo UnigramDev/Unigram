@@ -336,7 +336,7 @@ namespace Unigram.ViewModels
             });
         }
 
-        public async Task SendVideoAsync(StorageFile file, string caption, bool round, VideoTransformEffectDefinition transform = null, MediaEncodingProfile profile = null)
+        public async Task SendVideoAsync(StorageFile file, string caption, bool round, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
         {
             if (_peer == null)
             {
@@ -421,13 +421,16 @@ namespace Unigram.ViewModels
             var previousMessage = InsertSendingMessage(message);
             CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
             {
-                if (transform != null && profile != null)
+                if (profile != null)
                 {
                     await fileCache.RenameAsync(fileName + ".temp.mp4");
                     var fileResult = await FileUtils.CreateTempFileAsync(fileName);
 
                     var transcoder = new MediaTranscoder();
-                    transcoder.AddVideoEffect(transform.ActivatableClassId, true, transform.Properties);
+                    if (transform != null)
+                    {
+                        transcoder.AddVideoEffect(transform.ActivatableClassId, true, transform.Properties);
+                    }
 
                     var prepare = await transcoder.PrepareFileTranscodeAsync(fileCache, fileResult, profile);
                     await prepare.TranscodeAsync().AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }, 0, 200.0));
@@ -516,9 +519,20 @@ namespace Unigram.ViewModels
                 {
                     foreach (var storage in dialog.Items)
                     {
-                        if (storage is StoragePhoto)
+                        if (storage is StoragePhoto photo)
                         {
                             await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
+                        }
+                        else if (storage is StorageVideo video)
+                        {
+                            MediaEncodingProfile profile = null;
+                            if (video.IsMuted)
+                            {
+                                profile = await MediaEncodingProfile.CreateFromFileAsync(storage.File);
+                                profile.Audio = null;
+                            }
+
+                            await SendVideoAsync(storage.File, storage.Caption, false, profile);
                         }
                     }
                 }
@@ -545,7 +559,21 @@ namespace Unigram.ViewModels
                 {
                     foreach (var storage in dialog.Items)
                     {
-                        await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
+                        if (storage is StoragePhoto photo)
+                        {
+                            await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
+                        }
+                        else if (storage is StorageVideo video)
+                        {
+                            MediaEncodingProfile profile = null;
+                            if (video.IsMuted)
+                            {
+                                profile = await MediaEncodingProfile.CreateFromFileAsync(storage.File);
+                                profile.Audio = null;
+                            }
+
+                            await SendVideoAsync(storage.File, storage.Caption, false, profile);
+                        }
                     }
                 }
             }

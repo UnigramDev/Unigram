@@ -60,6 +60,9 @@ namespace Unigram.Core.Models
             }
         }
 
+        public bool IsPhoto => this is StoragePhoto;
+        public bool IsVideo => this is StorageVideo;
+
         private async void LoadThumbnail()
         {
             try
