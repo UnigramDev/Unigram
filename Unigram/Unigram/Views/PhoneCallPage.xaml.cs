@@ -246,7 +246,7 @@ namespace Unigram.Views
         {
             for (int i = 1; i < 5; i++)
             {
-                ((Rectangle)FindName($"SignalBar{i}")).Fill = Resources[count >= i ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
+                ((Rectangle)FindName($"Signal{i}")).Fill = Resources[count >= i ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
             }
         }
 

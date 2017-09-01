@@ -64,7 +64,7 @@ namespace Unigram.ViewModels
             //var hash = Utils.ComputeMD5(input);
             //var hex = BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
 
-            var hash = CalculateContactsHash(contacts.ToList());
+            var hash = CalculateContactsHash(0, contacts.ToList());
 
             var response = await ProtoService.GetContactsAsync(hash);
             if (response.IsSucceeded)
@@ -96,26 +96,21 @@ namespace Unigram.ViewModels
             Aggregator.Subscribe(this);
         }
 
-        private int CalculateContactsHash(List<TLUserBase> arrayList)
+        public static int CalculateContactsHash(int savedCount, IList<TLUserBase> contacts)
         {
-            if (arrayList == null)
+            if (contacts == null)
             {
                 return 0;
             }
 
             long acc = 0;
-            for (int i = 0; i < arrayList.Count; i++)
-            {
-                var user = arrayList[i];
-                if (user == null)
-                {
-                    continue;
-                }
+            acc = ((acc * 20261) + 0x80000000L + savedCount) % 0x80000000L;
 
-                int high_id = (int)(user.Id >> 32);
-                int lower_id = (int)user.Id;
-                acc = ((acc * 20261) + 0x80000000L + high_id) % 0x80000000L;
-                acc = ((acc * 20261) + 0x80000000L + lower_id) % 0x80000000L;
+            foreach (var contact in contacts)
+            {
+                if (contact == null) continue;
+
+                acc = ((acc * 20261) + 0x80000000L + contact.Id) % 0x80000000L;
             }
 
             return (int)acc;
