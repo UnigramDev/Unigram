@@ -243,10 +243,10 @@ namespace Unigram.Views
 
         public void SetSignalBars(int count)
         {
-            Signal1.Visibility = count >= 1 ? Visibility.Visible : Visibility.Collapsed;
-            Signal2.Visibility = count >= 2 ? Visibility.Visible : Visibility.Collapsed;
-            Signal3.Visibility = count >= 3 ? Visibility.Visible : Visibility.Collapsed;
-            Signal4.Visibility = count >= 4 ? Visibility.Visible : Visibility.Collapsed;
+            Signal1.Fill = Resources[count >= 1 ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
+            Signal2.Fill = Resources[count >= 2 ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
+            Signal3.Fill = Resources[count >= 3 ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
+            Signal4.Fill = Resources[count >= 4 ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
         }
 
         private string StateToLabel(TLPhoneCallState state)
