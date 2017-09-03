@@ -113,6 +113,7 @@ namespace Unigram.Views
                         if (item != null && item is TLMessageCommonBase commonMessage && !commonMessage.IsOut && commonMessage.IsMentioned && commonMessage.IsMediaUnread && channel.IsMegaGroup)
                         {
                             commonMessage.IsMediaUnread = false;
+                            commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
 
                             if (dialog != null)
                             {
