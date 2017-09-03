@@ -685,6 +685,7 @@ namespace Unigram.ViewModels
                 }
 
                 commonMessage.IsMediaUnread = false;
+                commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
 
                 // DO NOT AWAIT
                 LoadMessageSliceAsync(null, commonMessage.Id);
