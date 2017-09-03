@@ -24,6 +24,7 @@ using Windows.Foundation.Metadata;
 using Windows.UI;
 using Template10.Utils;
 using Telegram.Api.TL.Messages;
+using Telegram.Api.Services.Cache;
 
 namespace Unigram.Controls.Views
 {
@@ -322,6 +323,34 @@ namespace Unigram.Controls.Views
                 ItemClick.Invoke(this, e);
                 Hide(ContentDialogBaseResult.OK);
             }
+        }
+
+        private async void Share_Click(object sender, RoutedEventArgs e)
+        {
+            var config = InMemoryCacheService.Current.GetConfig();
+            if (config == null)
+            {
+                return;
+            }
+
+            var linkPrefix = config.MeUrlPrefix;
+            if (linkPrefix.EndsWith("/"))
+            {
+                linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
+            }
+            if (linkPrefix.StartsWith("https://"))
+            {
+                linkPrefix = linkPrefix.Substring(8);
+            }
+            else if (linkPrefix.StartsWith("http://"))
+            {
+                linkPrefix = linkPrefix.Substring(7);
+            }
+
+            var title = ViewModel.StickerSet.Title;
+            var link = new Uri($"https://{linkPrefix}/addstickers/{ViewModel.StickerSet.ShortName}");
+
+            await ShareView.Current.ShowAsync(link, title);
         }
     }
 }
