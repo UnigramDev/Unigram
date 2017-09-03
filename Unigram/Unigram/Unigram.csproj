@@ -159,6 +159,9 @@
     <Compile Include="Controls\SwipeListBehavior.cs" />
     <Compile Include="Controls\SwipeListDirection.cs" />
     <Compile Include="Controls\SwipeListViewItem.cs" />
+    <Compile Include="Controls\VideoTimelineControl.xaml.cs">
+      <DependentUpon>VideoTimelineControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\CalendarView.xaml.cs">
       <DependentUpon>CalendarView.xaml</DependentUpon>
     </Compile>
@@ -236,6 +239,7 @@
     <Compile Include="Converters\ChannelJoinedToVisibilityConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
     <Compile Include="Converters\ChannelTypeToStringConverter.cs" />
+    <Compile Include="Converters\CompressionToGlyphConverter.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
     <Compile Include="Converters\MessageShortTTLConverter.cs" />
@@ -372,6 +376,9 @@
     </Compile>
     <Compile Include="Views\Chats\CreateChatStep2Page.xaml.cs">
       <DependentUpon>CreateChatStep2Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\InvitePage.xaml.cs">
+      <DependentUpon>InvitePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Payments\PaymentFormStep1Page.xaml.cs">
       <DependentUpon>PaymentFormStep1Page.xaml</DependentUpon>
@@ -1196,6 +1203,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\VideoTimelineControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Views\CalendarView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1485,6 +1496,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\GamePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\InvitePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

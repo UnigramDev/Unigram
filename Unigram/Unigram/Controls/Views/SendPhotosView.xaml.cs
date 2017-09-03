@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
+using Template10.Common;
 using Unigram.Common;
 using Unigram.Core.Models;
 using Unigram.Native;
@@ -90,6 +91,56 @@ namespace Unigram.Controls.Views
             }
         }
 
+        #region Editing
+
+        public bool IsEditing
+        {
+            get
+            {
+                return _isEditingCompression;
+            }
+        }
+
+        private bool _isEditingCompression;
+        public bool IsEditingCompression
+        {
+            get
+            {
+                return _isEditingCompression;
+            }
+            set
+            {
+                if (_isEditingCompression != value)
+                {
+                    _isEditingCompression = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsEditingCompression"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsEditing"));
+                }
+            }
+        }
+
+        #endregion
+
+        #region Binding
+
+        private string ConvertAccept(bool editing)
+        {
+            return editing ? "\uE10B" : "\uE725";
+        }
+
+        private string ConvertCompression(StorageMedia media, double compression)
+        {
+            var value = (int)compression;
+            if (media is StorageVideo video)
+            {
+                return video.ToString(value);
+            }
+
+            return null;
+        }
+
+        #endregion
+
         public SendPhotosView()
         {
             InitializeComponent();
@@ -109,6 +160,20 @@ namespace Unigram.Controls.Views
             Unloaded += OnUnloaded;
         }
 
+        protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
+        {
+            if (IsEditingCompression)
+            {
+                e.Handled = true;
+                IsEditingCompression = false;
+            }
+            else
+            {
+                e.Handled = true;
+                Hide(ContentDialogBaseResult.None);
+            }
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
@@ -118,6 +183,8 @@ namespace Unigram.Controls.Views
             {
                 CaptionInput.Focus(FocusState.Keyboard);
             }
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -138,11 +205,25 @@ namespace Unigram.Controls.Views
 
         private void Accept_Click(object sender, RoutedEventArgs e)
         {
+            if (IsEditingCompression && SelectedItem is StorageVideo video)
+            {
+                video.Compression = (int)CompressionValue.Value;
+
+                IsEditingCompression = false;
+                return;
+            }
+
             Hide(ContentDialogBaseResult.OK);
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
+            if (IsEditingCompression && SelectedItem is StorageVideo video)
+            {
+                IsEditingCompression = false;
+                return;
+            }
+
             Hide(ContentDialogBaseResult.Cancel);
         }
 
@@ -172,43 +253,16 @@ namespace Unigram.Controls.Views
             {
                 foreach (var file in files)
                 {
-                    if (Path.GetExtension(file.Name).Equals(".mp4"))
+                    if (file.ContentType.Equals("video/mp4"))
                     {
-                        //Items.Add(new StorageVideo(file));
+                        Items.Add(await StorageVideo.CreateAsync(file, true));
                     }
                     else
                     {
-                        Items.Add(new StoragePhoto(file));
+                        Items.Add(new StoragePhoto(file) { IsSelected = true });
                     }
                 }
             }
-
-            Remove.IsEnabled = Items.Count > 1;
-        }
-
-        private void Remove_Click(object sender, RoutedEventArgs e)
-        {
-            if (SelectedItem != null && Items.Count > 1)
-            {
-                var index = Items.IndexOf(SelectedItem);
-                var next = index > 0 ? Items[index - 1] : null;
-                var previous = index < Items.Count - 1 ? Items[index + 1] : null;
-
-                var item = Items[index];
-
-                if (next != null)
-                {
-                    SelectedItem = next;
-                }
-                else
-                {
-                    SelectedItem = previous;
-                }
-
-                Items.Remove(item);
-            }
-
-            Remove.IsEnabled = Items.Count > 1;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -286,6 +340,16 @@ namespace Unigram.Controls.Views
             AutocompleteHeader.Height = height;
 
             Debug.WriteLine("Autocomplete size changed");
+        }
+
+        private void Compress_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedItem is StorageVideo video)
+            {
+                IsEditingCompression = true;
+                CompressionValue.Maximum = video.MaxCompression - 1;
+                CompressionValue.Value = video.Compression;
+            }
         }
     }
 }

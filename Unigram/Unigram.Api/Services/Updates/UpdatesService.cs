@@ -1383,12 +1383,12 @@ namespace Telegram.Api.Services.Updates
                 var channel = _cacheService.GetChat(updateChannelReadMessagesContents.ChannelId) as TLChannel;
                 var dialog = _cacheService.GetDialog(new TLPeerChannel { ChannelId = updateChannelReadMessagesContents.ChannelId });
 
-                var messages = new List<TLMessage>(updateChannelReadMessagesContents.Messages.Count);
+                var messages = new List<TLMessageCommonBase>(updateChannelReadMessagesContents.Messages.Count);
                 var messagesId = new TLVector<int>(updateChannelReadMessagesContents.Messages.Count);
 
                 foreach (var readMessageId in updateChannelReadMessagesContents.Messages)
                 {
-                    var message = _cacheService.GetMessage(readMessageId, updateChannelReadMessagesContents.ChannelId) as TLMessage;
+                    var message = _cacheService.GetMessage(readMessageId, updateChannelReadMessagesContents.ChannelId) as TLMessageCommonBase;
                     if (message != null)
                     {
                         messages.Add(message);
@@ -1408,7 +1408,7 @@ namespace Telegram.Api.Services.Updates
 
                         if (message.IsMentioned && dialog != null && channel != null && channel.IsMegaGroup)
                         {
-                            dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount, 0);
+                            dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount - 1, 0);
                             dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
                         }
                     }
@@ -1420,14 +1420,14 @@ namespace Telegram.Api.Services.Updates
                     {
                         Execute.BeginOnUIThread(() =>
                         {
-                            foreach (var message in result.Messages.OfType<TLMessage>())
+                            foreach (var message in result.Messages.OfType<TLMessageCommonBase>())
                             {
                                 message.IsMediaUnread = false;
                                 message.RaisePropertyChanged(() => message.IsMediaUnread);
 
                                 if (message.IsMentioned && dialog != null && channel != null && channel.IsMegaGroup)
                                 {
-                                    dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount, 0);
+                                    dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount - 1, 0);
                                     dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
                                 }
                             }

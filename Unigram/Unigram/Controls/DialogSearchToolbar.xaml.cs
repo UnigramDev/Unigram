@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Unigram.ViewModels;
 using Windows.UI.Xaml;
@@ -16,6 +17,17 @@ namespace Unigram.Controls
         public DialogSearchToolBar()
         {
             this.InitializeComponent();
+
+            RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
+        }
+
+        private async void OnVisibilityChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (Visibility == Visibility.Visible)
+            {
+                await Task.Delay(100);
+                CaptionInput.Focus(FocusState.Keyboard);
+            }
         }
 
         private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)

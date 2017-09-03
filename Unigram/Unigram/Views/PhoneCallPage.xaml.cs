@@ -31,6 +31,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -198,6 +199,7 @@ namespace Unigram.Views
 
                 if (tuple.Item1 == TLPhoneCallState.Established)
                 {
+                    SignalBarsLabel.Visibility = Visibility.Visible;
                     StartUpdatingCallDuration();
 
                     if (_emojis != null)
@@ -237,6 +239,14 @@ namespace Unigram.Views
             if (tuple.Item4.Length > 0)
             {
                 _emojis = tuple.Item4.Split(' ');
+            }
+        }
+
+        public void SetSignalBars(int count)
+        {
+            for (int i = 1; i < 5; i++)
+            {
+                ((Rectangle)FindName($"Signal{i}")).Fill = Resources[count >= i ? "SignalBarForegroundBrush" : "SignalBarForegroundDisabledBrush"] as SolidColorBrush;
             }
         }
 

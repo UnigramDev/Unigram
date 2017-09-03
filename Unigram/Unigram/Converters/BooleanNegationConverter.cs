@@ -11,6 +11,11 @@ namespace Unigram.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
+            if (value is int)
+            {
+                value = System.Convert.ToBoolean(value);
+            }
+
             return !(value is bool && (bool)value);
         }
 

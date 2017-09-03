@@ -43,6 +43,7 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:CompressionToGlyphConverter x:Key="CompressionToGlyphConverter"/>
             <converters:MessageShortTTLConverter x:Key="MessageShortTTLConverter"/>
             <converters:MessageTTLConverter x:Key="MessageTTLConverter"/>
             <converters:MessageToShareConverter x:Key="MessageToShareConverter"/>
@@ -135,9 +136,9 @@
             </Style>
             
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
                 <ResourceDictionary Source="ms-appx:///Common/CommonStyles.xaml" />
                 <!--<ResourceDictionary Source="ms-appx:///Themes/Brand.xaml"/>-->
-                <ResourceDictionary Source="ms-appx:///Themes/Accent.xaml"/>
                 <themes:Messages/>
                 <themes:Media/>
                 <common:Theme/>

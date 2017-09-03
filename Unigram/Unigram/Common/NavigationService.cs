@@ -103,6 +103,13 @@ namespace Unigram.Common
             }
         }
 
+        public static void RemoveLast(this INavigationService service)
+        {
+            if (service.CanGoBack)
+            {
+                service.Frame.BackStack.RemoveAt(service.Frame.BackStackDepth - 1);
+            }
+        }
 
         public static async void NavigateToDialog(this INavigationService service, ITLDialogWith with, int? message = null, string accessToken = null)
         {

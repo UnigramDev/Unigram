@@ -136,8 +136,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 055560;
-        public const string CurrentChangelog = "- Autocompletion for emoji. Start typing ':' to get suggestions.\r\n- When choosing a sticker, tap the \"up\" button in the sticker panel to expand it to full screen.\r\n- Switch between dark and light theme from General settings\r\n- Open YouTube videos and other embed urls in the app by tapping on the thumbnail preview";
+        public const int CurrentVersion = 066060;
+        public const string CurrentChangelog = "- Groups with unread mentions and replies to you are now marked with an '@' badge in the chats list.\r\n- Navigate new mentions and replies to you in a group using the new '@' button.\r\n- Tap on any sticker to add it your Favorite Stickers and quickly access it from the redesigned sticker panel.\r\n\r\n- Check signal strength when on a Telegram call using the new indicator.\r\n- Add an official sticker set for your group which all members will be able to use without adding while chatting in your group (100+ member groups only).\r\n\r\n- Search through messages of a particular user in any group. To do this, tap '...' in the top right corner when in a group > Search > tap the new 'Search by member' icon in the bottom right corner.\r\n- While searching, select a user to browse all of her messages in the group or add a keyword to narrow down search results.";
 
         private int? _appVersion;
         public int Version

@@ -60,6 +60,22 @@ namespace Unigram.Core.Models
             }
         }
 
+        protected bool _isSelected;
+        public bool IsSelected
+        {
+            get
+            {
+                return _isSelected;
+            }
+            set
+            {
+                Set(ref _isSelected, value);
+            }
+        }
+
+        public bool IsPhoto => this is StoragePhoto;
+        public bool IsVideo => this is StorageVideo;
+
         private async void LoadThumbnail()
         {
             try

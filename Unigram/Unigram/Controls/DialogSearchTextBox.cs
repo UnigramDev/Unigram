@@ -238,9 +238,15 @@ namespace Unigram.Controls
 
         #endregion
 
-        private void UpdateState(TLUser from, bool searching)
+        private void UpdateState(TLUser from, bool filtering)
         {
-            VisualStateManager.GoToState(this, from != null || searching ? "FromState" : "BaseState", false);
+            VisualStateManager.GoToState(this, from != null || filtering ? "FromState" : "BaseState", false);
+
+            if (filtering)
+            {
+                Focus(FocusState.Keyboard);
+                View.Autocomplete = GetUsernames(string.Empty);
+            }
         }
     }
 }

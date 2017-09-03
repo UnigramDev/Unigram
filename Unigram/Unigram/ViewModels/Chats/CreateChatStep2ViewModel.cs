@@ -70,6 +70,8 @@ namespace Unigram.ViewModels.Chats
                         if (chat != null)
                         {
                             NavigationService.NavigateToDialog(chat);
+                            NavigationService.RemoveLast();
+                            NavigationService.RemoveLast();
                         }
                     }
                 }

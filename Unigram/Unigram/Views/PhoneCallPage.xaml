@@ -14,6 +14,9 @@
     SizeChanged="OnSizeChanged">
 
     <Page.Resources>
+        <SolidColorBrush x:Key="SignalBarForegroundBrush" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="SignalBarForegroundDisabledBrush" Color="#99FFFFFF"/>
+
         <Style TargetType="controls:GlyphToggleButton">
             <Setter Property="Background" Value="{ThemeResource ToggleButtonBackground}" />
             <Setter Property="Foreground" Value="{ThemeResource ToggleButtonForeground}" />
@@ -190,16 +193,42 @@
             <TextBlock x:Name="FromLabel" Tapped="DebugString_Tapped" TextAlignment="Center" Style="{StaticResource SubheaderTextBlockStyle}" VerticalAlignment="Bottom"/>
             <TextBlock x:Name="DurationLabel" Opacity="0" Text="00:00" TextAlignment="Center" Style="{StaticResource BodyTextBlockStyle}" Grid.Row="1"/>
 
-            <ContentControl x:Name="StateLabel" HorizontalContentAlignment="Center" Grid.Row="1">
-                <ContentControl.ContentTransitions>
-                    <TransitionCollection>
-                        <EntranceThemeTransition/>
-                    </TransitionCollection>
-                </ContentControl.ContentTransitions>
-                <ContentControl.Clip>
-                    <RectangleGeometry Rect="0,0,320,32"/>
-                </ContentControl.Clip>
-            </ContentControl>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid x:Name="SignalBarsLabel" Visibility="Collapsed" Width="16" Height="12" HorizontalAlignment="Right" Margin="0,1,12,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle x:Name="Signal1" Fill="{StaticResource SignalBarForegroundBrush}" RadiusX="1" RadiusY="1" Margin="0,0,1,0" Grid.Column="0" Grid.Row="3" Grid.RowSpan="1"/>
+                    <Rectangle x:Name="Signal2" Fill="{StaticResource SignalBarForegroundBrush}" RadiusX="1" RadiusY="1" Margin="0,0,1,0" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2"/>
+                    <Rectangle x:Name="Signal3" Fill="{StaticResource SignalBarForegroundBrush}" RadiusX="1" RadiusY="1" Margin="0,0,1,0" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3"/>
+                    <Rectangle x:Name="Signal4" Fill="{StaticResource SignalBarForegroundBrush}" RadiusX="1" RadiusY="1" Margin="0,0,1,0" Grid.Column="3" Grid.Row="0" Grid.RowSpan="4"/>
+                </Grid>
+                
+                <ContentControl x:Name="StateLabel" HorizontalContentAlignment="Center" Grid.Column="1">
+                    <ContentControl.ContentTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition/>
+                        </TransitionCollection>
+                    </ContentControl.ContentTransitions>
+                    <ContentControl.Clip>
+                        <RectangleGeometry Rect="0,0,320,32"/>
+                    </ContentControl.Clip>
+                </ContentControl>
+            </Grid>
         </Grid>
 
         <Border x:Name="SmallEmojiLabel" Background="Transparent" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0">

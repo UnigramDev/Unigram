@@ -8,12 +8,143 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="300"
-    d:DesignWidth="400"
+    d:DesignHeight="640"
+    d:DesignWidth="360"
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch">
 
     <controls:ContentDialogBase.Resources>
+        <SolidColorBrush x:Key="SliderInlineTickBarFill" Color="Purple"/>
+
+        <Style x:Name="MuteToggleButtonStyle" TargetType="controls:GlyphToggleButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Width" Value="36" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:GlyphToggleButton">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="18">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="UncheckedContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="UncheckedContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="UncheckedContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Checked">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="UncheckedContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="CheckedContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="CheckedPointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="UncheckedContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="CheckedContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="CheckedContentPresenter">
+                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}"/>
+                                                 </ObjectAnimationUsingKeyFrames>-->
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="CheckedPressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="UncheckedContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="CheckedContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="CheckedContentPresenter">
+                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightBaseMediumBrush}"/>
+                                                 </ObjectAnimationUsingKeyFrames>-->
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="CheckedDisabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="UncheckedContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="CheckedContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="CheckedContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <TextBlock
+                                x:Name="CheckedContentPresenter"
+                                Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="{TemplateBinding CheckedGlyph}"
+                                Visibility="Collapsed"/>
+                            <TextBlock
+                                x:Name="UncheckedContentPresenter"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Text="{TemplateBinding UncheckedGlyph}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
         <Style x:Name="SelfDestructButtonStyle" TargetType="controls:GlyphButton">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -136,111 +267,149 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition x:Name="KeyboardPlaceholder" Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <FlipView x:Name="Flip"
-                  ItemsSource="{x:Bind Items}"
-                  SelectedItem="{x:Bind SelectedItem, Mode=TwoWay}"
-                  Grid.RowSpan="4"
-                  Grid.ColumnSpan="2">
-            <FlipView.ItemTemplate>
-                <DataTemplate>
-                    <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" StretchDirection="DownOnly">
-                        <Image Source="{Binding Preview}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
-                    </Viewbox>
-                </DataTemplate>
-            </FlipView.ItemTemplate>
-        </FlipView>
-
-        <Grid HorizontalAlignment="Left" Grid.ColumnSpan="2" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <ListView x:Name="List"
-                      ItemsSource="{x:Bind Items}"
-                      SelectedItem="{x:Bind SelectedItem, Mode=TwoWay}"
-                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                      ScrollViewer.HorizontalScrollMode="Auto"
-                      ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                      ScrollViewer.VerticalScrollMode="Disabled"
-                      Padding="10">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="MinWidth" Value="0"/>
-                        <Setter Property="MinHeight" Value="0"/>
-                        <Setter Property="Margin" Value="0,0,8,0"/>
-                        <Setter Property="Padding" Value="0"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:StoragePhoto">
-                        <Grid Margin="2" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                            <Image Source="{x:Bind Thumbnail, Mode=OneWay}" Width="48" Height="48"/>
-                            <Border BorderBrush="#26000000" BorderThickness="1"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.Footer>
-                    <Grid Margin="2" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                        <controls:GlyphButton Click="More_Click" Glyph="&#xE109;"/>
-                        <Border BorderBrush="#26000000" BorderThickness="1"/>
-                    </Grid>
-                </ListView.Footer>
-            </ListView>
-        </Grid>
-
-        <ListView x:Name="ListAutocomplete"
-                  ItemsSource="{x:Bind Autocomplete, Mode=OneWay}"
-                  Visibility="{x:Bind Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                  ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
-                  AllowFocusOnInteraction="False"
-                  IsItemClickEnabled="True"
-                  ItemClick="Autocomplete_ItemClick"
-                  Grid.RowSpan="2">
-            <ListView.Header>
-                <Border x:Name="AutocompleteHeader"
-                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                    <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Top" Height="1"/>
-                </Border>
-            </ListView.Header>
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsStackPanel SizeChanged="Autocomplete_SizeChanged"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection/>
-            </ListView.ItemContainerTransitions>
-        </ListView>
-
-        <Grid x:Name="Caption" Background="#AA000000" Grid.Row="2">
+        <Grid Visibility="{x:Bind IsEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" Grid.RowSpan="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <controls:CaptionTextBox
-                x:Name="CaptionInput"
-                KeyDown="TextBox_KeyDown"
-                View="{x:Bind}"
-                Autocomplete="{x:Bind ListAutocomplete}"
-                DataContext="{x:Bind ViewModel}"
-                MaxLength="200"
-                InputScope="Chat"
-                PlaceholderText="Add a caption..."
-                Margin="12,8,0,8"/>
-            <controls:GlyphButton x:Name="Remove" Click="Remove_Click" Glyph="&#xE107;" Grid.Column="1"/>
+            <FlipView x:Name="Flip"
+                      ItemsSource="{x:Bind Items}"
+                      SelectedItem="{x:Bind SelectedItem, Mode=TwoWay}"
+                      Background="Transparent"
+                      Grid.RowSpan="4"
+                      Grid.ColumnSpan="2">
+                <FlipView.ItemTemplate>
+                    <DataTemplate>
+                        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" StretchDirection="DownOnly">
+                            <Image Source="{Binding Preview}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
+                        </Viewbox>
+                    </DataTemplate>
+                </FlipView.ItemTemplate>
+            </FlipView>
+
+            <Border Visibility="{x:Bind SelectedItem.IsVideo, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#99000000" CornerRadius="18" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="12" Grid.Row="1">
+                <controls:GlyphToggleButton UncheckedGlyph="&#xE15D;"
+                                            CheckedGlyph="&#xE198;"
+                                            IsChecked="{Binding SelectedItem.IsMuted, Mode=TwoWay}"
+                                            Style="{StaticResource MuteToggleButtonStyle}"/>
+            </Border>
+
+            <Grid Background="#AA000000" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="48"/>
+                </Grid.ColumnDefinitions>
+                <ListView x:Name="List"
+                          ItemsSource="{x:Bind Items}"
+                          SelectedItem="{x:Bind SelectedItem, Mode=TwoWay}"
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          ScrollViewer.HorizontalScrollMode="Auto"
+                          ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                          ScrollViewer.VerticalScrollMode="Disabled"
+                          Padding="2">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="MinWidth" Value="0"/>
+                            <Setter Property="MinHeight" Value="0"/>
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="Padding" Value="2"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:StorageMedia">
+                            <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                <Image Source="{x:Bind Thumbnail, Mode=OneWay}" Width="40" Height="40"/>
+                                <Border BorderBrush="#26000000" BorderThickness="1"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.Footer>
+                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="40" Height="40">
+                            <controls:GlyphButton Click="More_Click" Glyph="&#xE109;" Width="40" Height="40"/>
+                            <Border BorderBrush="#26000000" BorderThickness="1"/>
+                        </Grid>
+                    </ListView.Footer>
+                </ListView>
+                <CheckBox IsChecked="{x:Bind SelectedItem.IsSelected, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0" Style="{StaticResource OnlyCheckBoxStyle}" Grid.Column="1"/>
+            </Grid>
+
+            <ListView x:Name="ListAutocomplete"
+                      ItemsSource="{x:Bind Autocomplete, Mode=OneWay}"
+                      Visibility="{x:Bind Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                      ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                      AllowFocusOnInteraction="False"
+                      IsItemClickEnabled="True"
+                      ItemClick="Autocomplete_ItemClick"
+                      Grid.RowSpan="2">
+                <ListView.Header>
+                    <Border x:Name="AutocompleteHeader"
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                        <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Top" Height="1"/>
+                    </Border>
+                </ListView.Header>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsStackPanel SizeChanged="Autocomplete_SizeChanged"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection/>
+                </ListView.ItemContainerTransitions>
+            </ListView>
+
+            <Grid x:Name="CaptionPanel" Background="#AA000000" Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <controls:VideoTimelineControl x:DeferLoadStrategy="Lazy" x:Name="Yes" File="{x:Bind SelectedItem.File, Mode=OneWay}" Grid.ColumnSpan="2"/>
+
+                <controls:CaptionTextBox
+                    x:Name="CaptionInput"
+                    KeyDown="TextBox_KeyDown"
+                    View="{x:Bind}"
+                    Autocomplete="{x:Bind ListAutocomplete}"
+                    DataContext="{x:Bind ViewModel}"
+                    MaxLength="200"
+                    InputScope="Chat"
+                    PlaceholderText="Add a caption..."
+                    Margin="12,8,0,8"
+                    Grid.Row="1"/>
+            </Grid>
+        </Grid>
+
+        <Grid x:Name="CompressionPanel" Visibility="{x:Bind IsEditingCompression, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#AA000000" Grid.Row="2">
+            <Slider x:Name="CompressionValue"
+                    ThumbToolTipValueConverter="{StaticResource CompressionToGlyphConverter}"
+                    TickFrequency="1"
+                    Margin="12,12,12,0">
+                <Slider.Header>
+                    <TextBlock>
+                        <Run Text="Quality:"/>
+                        <Run Text="{x:Bind CompressionValue.Value, Mode=OneWay, Converter={StaticResource CompressionToGlyphConverter}, ConverterParameter=invert}" Foreground="{ThemeResource TelegramBackgroundAccentBrush}"/>
+                    </TextBlock>
+                </Slider.Header>
+            </Slider>
         </Grid>
 
         <Grid x:Name="Commands" Background="#FF1F1F1F" Grid.Row="3">
@@ -248,43 +417,42 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <controls:GlyphButton Click="Cancel_Click" Glyph="&#xE10A;"/>
 
-            <controls:GlyphButton Glyph="&#xE7A8;" IsEnabled="False" Grid.Column="2"/>
-            <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="3"/>
-            <controls:GlyphButton Glyph="&#xE614;" IsEnabled="False" FontFamily="{ThemeResource TelegramThemeFontFamily}" Grid.Column="4"/>
-            <controls:GlyphButton
-                x:Name="TTLSeconds"
-                Click="TTLSeconds_Click"
-                Glyph="{x:Bind SelectedItem.TTLSeconds, Mode=OneWay}"
-                Visibility="{x:Bind IsTTLEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                FontFamily="{ThemeResource TelegramThemeFontFamily}"
-                Style="{StaticResource SelfDestructButtonStyle}"
-                Grid.Column="5"/>
+            <Grid Visibility="{x:Bind IsEditingCompression, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.Column="1">
+                <TextBlock Text="{x:Bind ConvertCompression(SelectedItem, CompressionValue.Value), Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center"/>
+            </Grid>
 
-            <!--<ComboBox x:Name="TTLSeconds"
-                 Visibility="{x:Bind IsTTLEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                 PlaceholderText="{x:Bind SelectedItem.TTLSeconds, Mode=OneWay, Converter={StaticResource MessageTTLConverter}, ConverterParameter=short}"
-                 SelectedItem="{x:Bind SelectedItem.TTLSeconds, Mode=TwoWay, Converter={StaticResource MessageTTLConverter}}"
-                 Style="{StaticResource GlyphComboBoxStyle}"
-                 SelectionChanged="TTLSeconds_SelectionChanged"
-                 Grid.Column="5">
-                 <ComboBox.ItemTemplate>
-                 <DataTemplate>
-                 <TextBlock Text="{Binding Converter={StaticResource MessageTTLConverter}, ConverterParameter=string}"/>
-                 </DataTemplate>
-                 </ComboBox.ItemTemplate>
-                 </ComboBox>-->
+            <Grid Visibility="{x:Bind IsEditing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" HorizontalAlignment="Center" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <controls:GlyphButton Glyph="&#xE7A8;" IsEnabled="False"/>
+                <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="1"/>
+                <controls:GlyphButton Click="Compress_Click"
+                                      Glyph="{Binding SelectedItem.Compression, Mode=OneWay, Converter={StaticResource CompressionToGlyphConverter}}"
+                                      Visibility="{x:Bind SelectedItem.IsVideo, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                      IsEnabled="{Binding SelectedItem.CanCompress, Mode=OneWay}"
+                                      FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                      Grid.Column="2"/>
+                <controls:GlyphButton Visibility="{x:Bind SelectedItem.IsPhoto, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Glyph="&#xE614;" IsEnabled="False" FontFamily="{ThemeResource TelegramThemeFontFamily}" Grid.Column="2"/>
+                <controls:GlyphButton
+                    x:Name="TTLSeconds"
+                    Click="TTLSeconds_Click"
+                    Glyph="{x:Bind SelectedItem.TTLSeconds, Mode=OneWay}"
+                    Visibility="{x:Bind IsTTLEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                    Style="{StaticResource SelfDestructButtonStyle}"
+                    Grid.Column="3"/>
+            </Grid>
 
             <controls:GlyphButton Click="Accept_Click"
-                                  Glyph="&#xE725;"
+                                  Glyph="{x:Bind ConvertAccept(IsEditing), Mode=OneWay}"
                                   AllowFocusOnInteraction="False"
                                   Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
                                   HorizontalAlignment="Right"

@@ -36,6 +36,7 @@ using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Telegram.Api.TL.Channels;
 using Unigram.Native;
+using System.Collections.ObjectModel;
 
 namespace Unigram.Controls
 {
@@ -236,7 +237,7 @@ namespace Unigram.Controls
                     await FileIO.WriteBytesAsync(cache, buffer);
                 }
 
-                ViewModel.SendPhotoCommand.Execute(new StoragePhoto(cache));
+                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { new StoragePhoto(cache) { IsSelected = true } });
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
             {

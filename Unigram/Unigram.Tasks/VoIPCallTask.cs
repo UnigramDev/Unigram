@@ -471,6 +471,17 @@ namespace Unigram.Tasks
             await UpdateStateAsync((TLPhoneCallState)newState);
         }
 
+        public async void OnSignalBarsChanged(int count)
+        {
+            if (_connection != null)
+            {
+                VoIPCallTask.Log("Mediator initialized", "Informing foreground about signal bars");
+
+                var data = TLTuple.Create(count);
+                await _connection.SendMessageAsync(new ValueSet { { "caption", "voip.signalBars" }, { "request", TLSerializationService.Current.Serialize(data) } });
+            }
+        }
+
         private async Task UpdateCallAsync()
         {
             if (_connection != null)
