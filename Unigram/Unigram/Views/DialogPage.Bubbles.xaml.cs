@@ -77,27 +77,56 @@ namespace Unigram.Views
 
             if (index0 > -1 && index1 > -1 /*&& (index0 != _lastIndex0 || index1 != _lastIndex1)*/)
             {
-                var container0 = lvDialogs.ContainerFromIndex(index0);
-                if (container0 != null)
+                //var container0 = lvDialogs.ContainerFromIndex(index0);
+                //if (container0 != null)
+                //{
+                //    var item0 = lvDialogs.ItemFromContainer(container0);
+                //    if (item0 != null)
+                //    {
+                //        message0 = item0 as TLMessageCommonBase;
+                //        var date0 = BindConvert.Current.DateTime(message0.Date);
+
+                //        var service0 = message0 as TLMessageService;
+                //        if (service0 != null)
+                //        {
+                //            show = !(service0.Action is TLMessageActionDate);
+                //        }
+                //        else
+                //        {
+                //            show = true;
+                //        }
+
+                //        date = date0.Date;
+                //    }
+                //}
+
+                var messageIds = new TLVector<int>();
+                var dialog = ViewModel.Dialog;
+                var channel = ViewModel.With as TLChannel;
+
+                for (int i = index0; i <= index1; i++)
                 {
-                    var item0 = lvDialogs.ItemFromContainer(container0);
-                    if (item0 != null)
+                    var container = lvDialogs.ContainerFromIndex(i);
+                    if (container != null)
                     {
-                        message0 = item0 as TLMessageCommonBase;
-                        var date0 = BindConvert.Current.DateTime(message0.Date);
-
-                        var service0 = message0 as TLMessageService;
-                        if (service0 != null)
+                        var item = lvDialogs.ItemFromContainer(container);
+                        if (item != null && item is TLMessageCommonBase commonMessage && !commonMessage.IsOut && commonMessage.IsMentioned && commonMessage.IsMediaUnread && channel.IsMegaGroup)
                         {
-                            show = !(service0.Action is TLMessageActionDate);
-                        }
-                        else
-                        {
-                            show = true;
-                        }
+                            commonMessage.IsMediaUnread = false;
 
-                        date = date0.Date;
+                            if (dialog != null)
+                            {
+                                dialog.UnreadMentionsCount = Math.Max(0, dialog.UnreadMentionsCount - 1);
+                            }
+
+                            messageIds.Add(commonMessage.Id);
+                        }
                     }
+                }
+
+                if (messageIds.Count > 0)
+                {
+                    ViewModel.ProtoService.ReadMessageContentsAsync(channel.ToInputChannel(), messageIds, null);
                 }
 
                 #region OLD
