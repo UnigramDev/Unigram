@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="Unigram.Controls.VideoTimelineControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid x:Name="LayoutRoot" Background="Transparent" MaxWidth="480">
+        <Border BorderBrush="Black" Background="Black" BorderThickness="12,4,12,4" Margin="0" Width="480" Height="56">
+            <StackPanel x:Name="Photos" IsHitTestVisible="False" Orientation="Horizontal" VerticalAlignment="Center"/>
+        </Border>
+
+        <Border Background="Black" Opacity="0.5" Height="56" CacheMode="BitmapCache">
+            <Border.RenderTransform>
+                <TranslateTransform x:Name="LeftOpacityBorderTransform" X="-468"/>
+            </Border.RenderTransform>
+        </Border>
+
+        <Border Background="Black" Opacity="0.5" Height="56" CacheMode="BitmapCache">
+            <Border.RenderTransform>
+                <TranslateTransform x:Name="RightOpacityBorderTransform" X="468"/>
+            </Border.RenderTransform>
+        </Border>
+
+        <Grid HorizontalAlignment="Center" CacheMode="BitmapCache">
+            <Grid.RenderTransform>
+                <TranslateTransform x:Name="LeftTransform" X="-234"/>
+            </Grid.RenderTransform>
+            <Border x:Name="Left" IsHitTestVisible="False" Width="60" Height="104" Margin="0,-24" Background="Transparent" 
+                    ManipulationStarted="Slider_OnManipulationStarted"
+                    ManipulationDelta="Left_OnManipulationDelta"
+                    ManipulationCompleted="Slider_OnManipulationCompleted"
+                    ManipulationMode="TranslateX">
+            </Border>
+            <Border Background="{ThemeResource TelegramBackgroundAccentBrush}" CornerRadius="4,0,0,4" Width="12" Height="56" IsHitTestVisible="False">
+                <Border Background="#FFFFFF" Width="4" Height="24" IsHitTestVisible="False"/>
+            </Border>
+        </Grid>
+
+        <Grid HorizontalAlignment="Center" CacheMode="BitmapCache">
+            <Grid.RenderTransform>
+                <TranslateTransform x:Name="RightTransform" X="234"/>
+            </Grid.RenderTransform>
+            <Border x:Name="Right" IsHitTestVisible="False" Width="60" Height="104" Margin="0,-24" Background="Transparent" 
+                    ManipulationStarted="Slider_OnManipulationStarted"
+                    ManipulationDelta="Right_OnManipulationDelta"
+                    ManipulationCompleted="Slider_OnManipulationCompleted"
+                    ManipulationMode="TranslateX">
+            </Border>
+            <Border Background="{ThemeResource TelegramBackgroundAccentBrush}" CornerRadius="0,4,4,0" Width="12" Height="56" IsHitTestVisible="False">
+                <Border Background="#FFFFFF" Width="4" Height="24" IsHitTestVisible="False"/>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

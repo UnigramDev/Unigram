@@ -43,6 +43,7 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:CompressionToGlyphConverter x:Key="CompressionToGlyphConverter"/>
             <converters:MessageShortTTLConverter x:Key="MessageShortTTLConverter"/>
             <converters:MessageTTLConverter x:Key="MessageTTLConverter"/>
             <converters:MessageToShareConverter x:Key="MessageToShareConverter"/>

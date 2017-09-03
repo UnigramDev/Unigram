@@ -81,6 +81,14 @@ namespace Unigram.ViewModels
             }
         }
 
+        public MediaLibraryCollection MediaLibrary
+        {
+            get
+            {
+                return App.Current.Resources["MediaLibrary"] as MediaLibraryCollection;
+            }
+        }
+
         private readonly DialogStickersViewModel _stickers;
         private readonly IStickersService _stickersService;
         private readonly ILocationService _locationService;

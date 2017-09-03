@@ -84,6 +84,7 @@
                 <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                     <Image Source="{Binding Thumbnail}" Width="64" Height="64"/>
                     <Border BorderBrush="#26000000" BorderThickness="1"/>
+                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" HorizontalAlignment="Right" VerticalAlignment="Top" RequestedTheme="Dark" Style="{StaticResource OnlyCheckBoxStyle}"/>
                 </Grid>
             </DataTemplate>
         </ListView.ItemTemplate>

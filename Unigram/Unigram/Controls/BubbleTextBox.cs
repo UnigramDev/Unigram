@@ -236,7 +236,7 @@ namespace Unigram.Controls
                     await FileIO.WriteBytesAsync(cache, buffer);
                 }
 
-                ViewModel.SendPhotoCommand.Execute(new StoragePhoto(cache));
+                ViewModel.SendMediaCommand.Execute(new StoragePhoto(cache) { IsSelected = true });
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
             {

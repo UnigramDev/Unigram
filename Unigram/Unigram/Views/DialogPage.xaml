@@ -1694,24 +1694,26 @@
                             <MenuFlyout Placement="Top">
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Tag="&#xEB9F;"
-                                                Text="Photo or Video"
-                                                Command="{x:Bind ViewModel.SendPhotoCommand}"/>
+                                                Text="{x:Bind ConvertSelectedCount(ViewModel.MediaLibrary.SelectedCount, x:True), Mode=OneWay}"
+                                                Command="{x:Bind ViewModel.SendMediaCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                Text="File"
+                                                Text="{x:Bind ConvertSelectedCount(ViewModel.MediaLibrary.SelectedCount, x:False), Mode=OneWay}"
                                                 Tag="&#xE160;"
                                                 Command="{x:Bind ViewModel.SendFileCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Text="Location"
                                                 Tag="&#xE1C4;"
+                                                IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                                 Command="{x:Bind ViewModel.SendLocationCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Text="Contact"
-                                                Tag="&#xE136;"
+                                                Tag="&#xE187;"
+                                                IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                                 Command="{x:Bind ViewModel.SendContactCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                IsEnabled="True"
                                                 Text="¯\_(ツ)_/¯"
                                                 Tag="&#xE8BD;"
+                                                IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                                 Click="{x:Bind SendShrug}"/>
                                 <MenuFlyout.MenuFlyoutPresenterStyle>
                                     <Style TargetType="MenuFlyoutPresenter">
