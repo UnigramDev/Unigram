@@ -14,15 +14,11 @@
     </Page.Transitions>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-
-        <!-- Titlebar -->
-        <controls:PageHeader Grid.Row="0"
-                             Text="About"/>
+        <controls:PageHeader Text="About"/>
 
         <ScrollViewer VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
