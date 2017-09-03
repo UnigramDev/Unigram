@@ -670,22 +670,20 @@ namespace Unigram.ViewModels
                 //    return;
                 //}
 
-                var message = response.Result.Messages.FirstOrDefault();
-                if (message == null)
+                var commonMessage = response.Result.Messages.FirstOrDefault() as TLMessageCommonBase;
+                if (commonMessage == null)
                 {
                     return;
                 }
 
+                commonMessage.IsMediaUnread = false;
+
                 // DO NOT AWAIT
-                LoadMessageSliceAsync(null, message.Id);
+                LoadMessageSliceAsync(null, commonMessage.Id);
 
                 if (With is TLChannel channel)
                 {
-                    await ProtoService.ReadMessageContentsAsync(channel.ToInputChannel(), new TLVector<int> { message.Id });
-                }
-                else
-                {
-                    await ProtoService.ReadMessageContentsAsync(new TLVector<int> { message.Id });
+                    await ProtoService.ReadMessageContentsAsync(channel.ToInputChannel(), new TLVector<int> { commonMessage.Id });
                 }
             }
         }

@@ -1301,7 +1301,7 @@ namespace Telegram.Api.Services.Cache
                             {
                                 dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1);
 
-                                if (commonMessage.IsMentioned && dialog.With is TLChannel channelItem && channelItem.IsMegaGroup)
+                                if (commonMessage.IsMentioned && commonMessage.IsMediaUnread && dialog.With is TLChannel channelItem && channelItem.IsMegaGroup)
                                 {
                                     dialog.UnreadMentionsCount = Math.Max(0, dialog.UnreadMentionsCount - 1);
                                 }
@@ -1397,7 +1397,7 @@ namespace Telegram.Api.Services.Cache
                             {
                                 dialog.UnreadCount = Math.Max(0, dialog.UnreadCount - 1);
 
-                                if (commonMessage.IsMentioned && dialog.With is TLChannel channelItem && channelItem.IsMegaGroup)
+                                if (commonMessage.IsMentioned && commonMessage.IsMediaUnread && dialog.With is TLChannel channelItem && channelItem.IsMegaGroup)
                                 {
                                     dialog.UnreadMentionsCount = Math.Max(0, dialog.UnreadMentionsCount - 1);
                                 }
