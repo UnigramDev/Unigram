@@ -214,11 +214,11 @@ namespace Unigram.ViewModels
             {
                 for (int j = 0; j < messages.Count; j++)
                 {
-                    if (_editedMessage != null && _editedMessage.Id == messages[j].Id)
+                    if (EditedMessage?.Id == messages[j].Id)
                     {
                         ClearReplyCommand.Execute();
                     }
-                    else if (ReplyInfo != null && ReplyInfo.ReplyToMsgId == messages[j].Id)
+                    else if (ReplyInfo?.ReplyToMsgId == messages[j].Id)
                     {
                         ClearReplyCommand.Execute();
                     }
@@ -642,8 +642,6 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            _editedMessage = message;
-
             var config = CacheService.GetConfig();
             var editUntil = (config != null) ? (message.Date + config.EditTimeLimit + 300) : 0;
             if (message.FromId != null && message.ToId is TLPeerUser && message.FromId.Value == message.ToId.Id)
@@ -653,7 +651,7 @@ namespace Unigram.ViewModels
 
             Reply = new TLMessagesContainter
             {
-                EditMessage = _editedMessage,
+                EditMessage = message,
                 EditUntil = editUntil,
                 // TODO: setup original content
                 PreviousMessage = new TLMessage
@@ -856,12 +854,17 @@ namespace Unigram.ViewModels
 
         private TLMessage _replyMarkupMessage;
         private TLReplyMarkupBase _replyMarkup;
-        private TLMessage _editedMessage;
+
         public TLMessage EditedMessage
         {
             get
             {
-                return _editedMessage;
+                if (Reply is TLMessagesContainter container)
+                {
+                    return container.EditMessage;
+                }
+
+                return null;
             }
         }
 

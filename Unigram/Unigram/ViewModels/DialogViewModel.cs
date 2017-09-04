@@ -1486,12 +1486,12 @@ namespace Unigram.ViewModels
 
         public void SaveDraft()
         {
-            if (_editedMessage != null)
+            if (_currentInlineBot != null)
             {
                 return;
             }
 
-            if (_currentInlineBot != null)
+            if (EditedMessage != null)
             {
                 return;
             }
@@ -1689,7 +1689,6 @@ namespace Unigram.ViewModels
         {
             if (Reply is TLMessagesContainter container && container.EditMessage != null)
             {
-                _editedMessage = null;
                 SetText(null);
                 //Aggregator.Publish(new EditMessageEventArgs(container.PreviousMessage, container.PreviousMessage.Message));
             }
@@ -1766,6 +1765,7 @@ namespace Unigram.ViewModels
                         var edit = await ProtoService.EditMessageAsync(Peer, container.EditMessage.Id, message.Message, message.Entities, null, false);
                         if (edit.IsSucceeded)
                         {
+                            CacheService.SyncEditedMessage(container.EditMessage, true, true, cachedMessage => { });
                         }
                         else
                         {
