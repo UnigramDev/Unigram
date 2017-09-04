@@ -57,6 +57,7 @@ using Windows.UI.Text;
 using Telegram.Api.TL.Messages;
 using Windows.UI.Notifications;
 using Unigram.Native;
+using Unigram.Views.Channels;
 
 namespace Unigram.ViewModels
 {
@@ -2468,7 +2469,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (channel.IsCreator || channel.HasAdminRights && channel.AdminRights.IsPinMessages)
+            if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPinMessages))
             {
                 var confirm = await TLMessageDialog.ShowAsync("Would you like to unpin this message?", "Unigram", "Yes", "No");
                 if (confirm == ContentDialogResult.Primary)
@@ -2711,6 +2712,35 @@ namespace Unigram.ViewModels
             {
                 var offset = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, dialog.SelectedDates.FirstOrDefault().Date);
                 await LoadDateSliceAsync(offset);
+            }
+        }
+
+        #endregion
+
+        #region Group stickers
+
+        public RelayCommand GroupStickersCommand => new RelayCommand(GroupStickersExecute);
+        private void GroupStickersExecute()
+        {
+            var channel = With as TLChannel;
+            if (channel == null)
+            {
+                return;
+            }
+
+            var channelFull = Full as TLChannelFull;
+            if (channelFull == null)
+            {
+                return;
+            }
+
+            if ((channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsChangeInfo)) && channelFull.IsCanSetStickers)
+            {
+                NavigationService.Navigate(typeof(ChannelEditStickerSetPage), channel.ToPeer());
+            }
+            else
+            {
+                Stickers.HideGroup(channelFull);
             }
         }
 

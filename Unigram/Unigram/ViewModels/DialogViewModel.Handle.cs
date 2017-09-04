@@ -179,11 +179,11 @@ namespace Unigram.ViewModels
                 {
                     foreach (var message in args.Messages)
                     {
-                        if (_editedMessage != null && _editedMessage.Id == message.Id)
+                        if (EditedMessage?.Id == message.Id)
                         {
                             ClearReplyCommand.Execute();
                         }
-                        else if (ReplyInfo != null && ReplyInfo.ReplyToMsgId == message.Id)
+                        else if (ReplyInfo?.ReplyToMsgId == message.Id)
                         {
                             ClearReplyCommand.Execute();
                         }

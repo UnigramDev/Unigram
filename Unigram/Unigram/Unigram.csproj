@@ -112,6 +112,7 @@
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\VoIPConnection.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
+    <Compile Include="Controls\ChannelStickersButton.cs" />
     <Compile Include="Controls\DialogBackgroundPresenter.cs" />
     <Compile Include="Controls\DialogSearchToolBar.xaml.cs">
       <DependentUpon>DialogSearchToolBar.xaml</DependentUpon>

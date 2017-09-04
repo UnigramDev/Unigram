@@ -20,6 +20,7 @@ using Template10.Mvvm;
 using System.ComponentModel;
 using Telegram.Api.TL.Messages;
 using System.Collections.Specialized;
+using Windows.Storage;
 
 namespace Unigram.ViewModels
 {
@@ -29,7 +30,7 @@ namespace Unigram.ViewModels
 
         private TLMessagesStickerSet _recentSet;
         private TLMessagesStickerSet _favedSet;
-        private TLMessagesStickerSet _groupSet;
+        private TLChannelStickerSet _groupSet;
 
         private bool _recentGifs;
         private bool _recentStickers;
@@ -60,7 +61,7 @@ namespace Unigram.ViewModels
                 }
             };
 
-            _groupSet = new TLMessagesStickerSet
+            _groupSet = new TLChannelStickerSet
             {
                 Set = new TLStickerSet
                 {
@@ -120,10 +121,9 @@ namespace Unigram.ViewModels
 
         public void Handle(GroupStickersDidLoadedEventArgs e)
         {
-            var full = CacheService.GetFullChat((int)_groupSet.Set.Id) as TLChannelFull;
-            if (full != null)
+            if (_groupSet.Full?.StickerSet?.Id == e.Id)
             {
-                SyncGroup(full);
+                SyncGroup(_groupSet.Full);
             }
         }
 
@@ -262,9 +262,22 @@ namespace Unigram.ViewModels
         {
             SavedStickers.Remove(_groupSet);
 
-            if (channelFull.HasStickerSet)
+            var update = true;
+
+            var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
+            if (appData.Values.TryGetValue("Stickers" + channelFull.Id, out object stickersObj))
             {
-                _groupSet.Set.Id = channelFull.Id;
+                var stickersId = (long)stickersObj;
+                if (stickersId == channelFull.StickerSet?.Id)
+                {
+                    update = false;
+                }
+            }
+
+            if (channelFull.HasStickerSet && update)
+            {
+                _groupSet.With = CacheService.GetChat(channelFull.Id) as TLChannel;
+                _groupSet.Full = channelFull;
 
                 Execute.BeginOnThreadPool(() =>
                 {
@@ -287,6 +300,14 @@ namespace Unigram.ViewModels
                     }
                 });
             }
+        }
+
+        public void HideGroup(TLChannelFull channelFull)
+        {
+            var appData = ApplicationData.Current.LocalSettings.CreateContainer("Channels", ApplicationDataCreateDisposition.Always);
+            appData.Values["Stickers" + channelFull.Id] = channelFull.StickerSet?.Id ?? 0;
+
+            SavedStickers.Remove(_groupSet);
         }
 
         public void SyncStickers()
@@ -539,6 +560,12 @@ namespace Unigram.ViewModels
                 Set(ref _featuredUnreadCount, value);
             }
         }
+    }
+
+    public class TLChannelStickerSet : TLMessagesStickerSet
+    {
+        public TLChannel With { get; set; }
+        public TLChannelFull Full { get; set; }
     }
 
     public class TLFeaturedStickerSet : INotifyPropertyChanged

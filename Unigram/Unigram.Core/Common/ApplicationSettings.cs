@@ -16,13 +16,9 @@ namespace Unigram.Common
     {
         private readonly ApplicationDataContainer isolatedStore;
 
-        public ApplicationSettings()
+        public ApplicationSettings(ApplicationDataContainer container = null)
         {
-            try
-            {
-                isolatedStore = ApplicationData.Current.LocalSettings;
-            }
-            catch { }
+            isolatedStore = container ?? ApplicationData.Current.LocalSettings;
         }
 
         public bool AddOrUpdateValue(string key, Object value)

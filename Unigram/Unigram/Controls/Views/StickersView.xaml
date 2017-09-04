@@ -216,8 +216,8 @@
                     </controls:ZoomableGridView>
                 </PivotItem>
                 <PivotItem>
-                    <SemanticZoom x:Name="SemanticStickers">
-                        <SemanticZoom.ZoomedInView>
+                    <!--<SemanticZoom x:Name="SemanticStickers">
+                        <SemanticZoom.ZoomedInView>-->
                             <controls:ZoomableGridView
                                 x:Name="Stickers"
                                 ItemsSource="{x:Bind StickersSource.View}"
@@ -240,7 +240,7 @@
                                                     </DataTemplate>
                                                 </selectors:StickerSetTemplateSelector.ItemTemplate>
                                                 <selectors:StickerSetTemplateSelector.GroupTemplate>
-                                                    <DataTemplate x:DataType="messages:TLMessagesStickerSet">
+                                                    <DataTemplate x:DataType="viewModels:TLChannelStickerSet">
                                                         <Grid>
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition/>
@@ -248,7 +248,7 @@
                                                             </Grid.ColumnDefinitions>
                                                             <TextBlock Text="{x:Bind Set.Title}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
 
-                                                            <!--<controls:GlyphButton Glyph="&#xE115;" FontSize="16" Height="32" Margin="0,-8,-12,-8" Grid.Column="1"/>-->
+                                                            <controls:ChannelStickersButton Click="GroupStickers_Click" StickerSet="{x:Bind}" Glyph="&#xE115;" FontSize="16" Height="32" Margin="0,-8,-12,-8" Grid.Column="1"/>
                                                         </Grid>
                                                     </DataTemplate>
                                                 </selectors:StickerSetTemplateSelector.GroupTemplate>
@@ -312,18 +312,17 @@
                                     </ItemsPanelTemplate>
                                 </GridView.ItemsPanel>
                             </controls:ZoomableGridView>
-                        </SemanticZoom.ZoomedInView>
+                        <!--</SemanticZoom.ZoomedInView>
                         <SemanticZoom.ZoomedOutView>
                             <ListView ItemsSource="{x:Bind StickersSource.View.CollectionGroups}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="wuxdata:ICollectionViewGroup">
                                         <TextBlock Text="{x:Bind Group.(messages:TLMessagesStickerSet.Set).Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-                                        <!--<TextBlock Text="{Binding Group.Set.Title}" Style="{StaticResource BaseTextBlockStyle}"/>-->
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
                         </SemanticZoom.ZoomedOutView>
-                    </SemanticZoom>
+                    </SemanticZoom>-->
                 </PivotItem>
             </Pivot>
             <ListView x:Name="Toolbar"
@@ -363,8 +362,8 @@
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.ItemTemplate>
                         <selectors:StickerSetTemplateSelector.GroupTemplate>
-                            <DataTemplate x:DataType="messages:TLMessagesStickerSet">
-                                <controls:ProfilePictureView Margin="6" Source="{x:Bind Cover, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}" IsHitTestVisible="False"/>
+                            <DataTemplate x:DataType="viewModels:TLChannelStickerSet">
+                                <controls:ProfilePictureView Margin="6" Source="{x:Bind With, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}" ToolTipService.ToolTip="{x:Bind Set.Title}" IsHitTestVisible="False"/>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.GroupTemplate>
                         <selectors:StickerSetTemplateSelector.RecentsTemplate>
