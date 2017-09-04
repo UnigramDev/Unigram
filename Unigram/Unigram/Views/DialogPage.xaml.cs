@@ -87,7 +87,7 @@ namespace Unigram.Views
             //NavigationCacheMode = NavigationCacheMode.Required;
 
             ViewModel.TextField = TextField;
-            ViewModel.ListField = lvDialogs;
+            ViewModel.ListField = Messages;
 
             CheckMessageBoxEmpty();
 
@@ -98,7 +98,7 @@ namespace Unigram.Views
             StickersPanel.StickerClick = Stickers_ItemClick;
             StickersPanel.GifClick = Gifs_ItemClick;
 
-            lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+            Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
             StickersPanel.RegisterPropertyChangedCallback(FrameworkElement.VisibilityProperty, StickersPanel_VisibilityChanged);
 
             _messageVisual = ElementCompositionPreview.GetElementVisual(TextField);
@@ -194,11 +194,11 @@ namespace Unigram.Views
         {
             //if (_panel != null && ViewModel.With != null)
             //{
-            //    var container = lvDialogs.ContainerFromIndex(_panel.FirstVisibleIndex);
+            //    var container = Messages.ContainerFromIndex(_panel.FirstVisibleIndex);
             //    if (container != null)
             //    {
             //        var peer = ViewModel.With.ToPeer();
-            //        var item = lvDialogs.ItemFromContainer(container) as TLMessageBase;
+            //        var item = Messages.ItemFromContainer(container) as TLMessageBase;
 
             //        ApplicationSettings.Current.AddOrUpdateValue(TLSerializationService.Current.Serialize(peer), item?.Id ?? -1);
             //    }
@@ -227,7 +227,7 @@ namespace Unigram.Views
             }
             else if (e.PropertyName.Equals("SelectedItems"))
             {
-                lvDialogs.SelectedItems.AddRange(ViewModel.SelectedMessages);
+                Messages.SelectedItems.AddRange(ViewModel.SelectedItems);
             }
         }
 
@@ -267,8 +267,8 @@ namespace Unigram.Views
 
             App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
-            _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
-            lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
+            _panel = (ItemsStackPanel)Messages.ItemsPanelRoot;
+            Messages.ScrollingHost.ViewChanged += OnViewChanged;
 
             TextField.FocusMaybe(FocusState.Keyboard);
         }
@@ -688,7 +688,7 @@ namespace Unigram.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.SelectedMessages = new List<TLMessageCommonBase>(lvDialogs.SelectedItems.Cast<TLMessageCommonBase>());
+            ViewModel.SelectedItems = new List<TLMessageCommonBase>(Messages.SelectedItems.Cast<TLMessageCommonBase>());
         }
 
         #region Context menu

@@ -48,7 +48,7 @@ namespace Unigram.Views
 
         private async void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (lvDialogs.ScrollingHost.ScrollableHeight - lvDialogs.ScrollingHost.VerticalOffset < 120)
+            if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 120)
             {
                 if (ViewModel.IsFirstSliceLoaded)
                 {
@@ -105,10 +105,10 @@ namespace Unigram.Views
 
                 for (int i = index0; i <= index1; i++)
                 {
-                    var container = lvDialogs.ContainerFromIndex(i);
+                    var container = Messages.ContainerFromIndex(i);
                     if (container != null)
                     {
-                        var item = lvDialogs.ItemFromContainer(container);
+                        var item = Messages.ItemFromContainer(container);
                         if (item != null && item is TLMessageCommonBase commonMessage && !commonMessage.IsOut && commonMessage.IsMentioned && commonMessage.IsMediaUnread)
                         {
                             commonMessage.IsMediaUnread = false;

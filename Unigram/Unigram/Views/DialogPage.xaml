@@ -1262,9 +1262,9 @@
             <Border x:Name="HeaderOverlay" Background="#99000000" Visibility="Collapsed"/>
         </Border>
 
-        <Grid x:Name="Messages" Grid.Row="2">
-            <controls:BubbleListView x:Name="lvDialogs"
-                                     ItemsSource="{x:Bind ViewModel.Messages}"
+        <Grid Grid.Row="2">
+            <controls:BubbleListView x:Name="Messages"
+                                     ItemsSource="{x:Bind ViewModel.Items}"
                                      ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
                                      ItemContainerTransitions="{x:Null}"
                                      ShowsScrollingPlaceholders="False"
@@ -1674,7 +1674,7 @@
                         x:Name="TextField"
                         Background="Transparent"
                         Reply="{Binding Reply}"
-                        Messages="{x:Bind lvDialogs}"
+                        Messages="{x:Bind Messages}"
                         Autocomplete="{x:Bind ListAutocomplete}"
                         AcceptsReturn="False"
                         PlaceholderText="Type your message..."

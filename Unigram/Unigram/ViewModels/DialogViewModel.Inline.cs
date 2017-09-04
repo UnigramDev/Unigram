@@ -173,7 +173,7 @@ namespace Unigram.ViewModels
             var previousMessage = InsertSendingMessage(message, false);
             //this.IsEmptyDialog = (base.Items.get_Count() == 0 && this.LazyItems.get_Count() == 0);
             var user = With as TLUser;
-            if (user != null && user.IsBot && Messages.Count == 1)
+            if (user != null && user.IsBot && Items.Count == 1)
             {
                 RaisePropertyChanged(() => With);
             }
