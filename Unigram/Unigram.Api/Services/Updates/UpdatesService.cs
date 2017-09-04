@@ -45,6 +45,7 @@ namespace Telegram.Api.Services.Updates
         public GetFullChatAction GetFullChatAsync { get; set; }
         public GetFullUserAction GetFullUserAsync { get; set; }
         public GetChannelMessagesAction GetChannelMessagesAsync { get; set; }
+        public GetMessagesAction GetMessagesAsync { get; set; }
 
         private readonly Timer _lostSeqTimer;
 
@@ -1324,52 +1325,109 @@ namespace Telegram.Api.Services.Updates
             var updatedReadMessagesContents = update as TLUpdateReadMessagesContents;
             if (updatedReadMessagesContents != null)
             {
-                var messages = new List<TLMessage>(updatedReadMessagesContents.Messages.Count);
+                var messages = new List<TLMessageCommonBase>(updatedReadMessagesContents.Messages.Count);
+                var messagesId = new TLVector<int>(updatedReadMessagesContents.Messages.Count);
+
                 foreach (var readMessageId in updatedReadMessagesContents.Messages)
                 {
-                    var message = _cacheService.GetMessage(readMessageId) as TLMessage;
-                    if (message != null)
+                    var commonMessage = _cacheService.GetMessage(readMessageId) as TLMessageCommonBase;
+                    if (commonMessage != null)
                     {
-                        messages.Add(message);
+                        messages.Add(commonMessage);
+                    }
+                    else
+                    {
+                        messagesId.Add(readMessageId);
                     }
                 }
 
                 Execute.BeginOnUIThread(() =>
                 {
-                    foreach (var message in messages)
+                    foreach (var commonMessage in messages)
                     {
-                        message.IsMediaUnread = false;
-                        message.RaisePropertyChanged(() => message.IsMediaUnread);
+                        commonMessage.IsMediaUnread = false;
+                        commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
 
-                        // TODO: Verify
-                        //message.SetListened();
-                        //if (message.Media != null)
-                        //{
-                        //    message.Media.NotListened = false;
-                        //    message.Media.RaisePropertyChanged(() => message.Media.NotListened);
-                        //}
+                        var dialog = _cacheService.GetDialog(commonMessage);
+
+                        if (commonMessage.IsMentioned && dialog != null)
+                        {
+                            dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount - 1, 0);
+                            dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+                        }
 
                         // Self destruct if needed
-                        if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
+                        if (commonMessage is TLMessage message)
                         {
-                            photoMedia.Photo = null;
-                            photoMedia.Caption = null;
-                            photoMedia.HasPhoto = false;
-                            photoMedia.HasCaption = false;
+                            if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
+                            {
+                                photoMedia.Photo = null;
+                                photoMedia.Caption = null;
+                                photoMedia.HasPhoto = false;
+                                photoMedia.HasCaption = false;
 
-                            Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
-                        }
-                        else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
-                        {
-                            documentMedia.Document = null;
-                            documentMedia.Caption = null;
-                            documentMedia.HasDocument = false;
-                            documentMedia.HasCaption = false;
+                                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                            }
+                            else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
+                            {
+                                documentMedia.Document = null;
+                                documentMedia.Caption = null;
+                                documentMedia.HasDocument = false;
+                                documentMedia.HasCaption = false;
 
-                            Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                            }
                         }
                     }
                 });
+
+                if (messagesId.Count > 0)
+                {
+                    GetMessagesAsync(messagesId, result =>
+                    {
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            foreach (var commonMessage in result.Messages.OfType<TLMessageCommonBase>())
+                            {
+                                commonMessage.IsMediaUnread = false;
+                                commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
+
+                                var dialog = _cacheService.GetDialog(commonMessage);
+
+                                if (commonMessage.IsMentioned && dialog != null)
+                                {
+                                    dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount - 1, 0);
+                                    dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+                                }
+
+                                // Self destruct if needed
+                                if (commonMessage is TLMessage message)
+                                {
+                                    if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
+                                    {
+                                        photoMedia.Photo = null;
+                                        photoMedia.Caption = null;
+                                        photoMedia.HasPhoto = false;
+                                        photoMedia.HasCaption = false;
+
+                                        Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                                    }
+                                    else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
+                                    {
+                                        documentMedia.Document = null;
+                                        documentMedia.Caption = null;
+                                        documentMedia.HasDocument = false;
+                                        documentMedia.HasCaption = false;
+
+                                        Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                                    }
+                                }
+                            }
+                        });
+
+                        _cacheService.AddMessagesToContext(result, (m) => { });
+                    });
+                }
 
                 //Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updatedReadMessagesContents));
 
@@ -1387,10 +1445,10 @@ namespace Telegram.Api.Services.Updates
 
                 foreach (var readMessageId in updateChannelReadMessagesContents.Messages)
                 {
-                    var message = _cacheService.GetMessage(readMessageId, updateChannelReadMessagesContents.ChannelId) as TLMessageCommonBase;
-                    if (message != null)
+                    var commonMessage = _cacheService.GetMessage(readMessageId, updateChannelReadMessagesContents.ChannelId) as TLMessageCommonBase;
+                    if (commonMessage != null)
                     {
-                        messages.Add(message);
+                        messages.Add(commonMessage);
                     }
                     else
                     {
@@ -1405,7 +1463,7 @@ namespace Telegram.Api.Services.Updates
                         message.IsMediaUnread = false;
                         message.RaisePropertyChanged(() => message.IsMediaUnread);
 
-                        if (message.IsMentioned && dialog != null && channel != null && channel.IsMegaGroup)
+                        if (message.IsMentioned && dialog != null)
                         {
                             dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount - 1, 0);
                             dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
@@ -1424,7 +1482,7 @@ namespace Telegram.Api.Services.Updates
                                 message.IsMediaUnread = false;
                                 message.RaisePropertyChanged(() => message.IsMediaUnread);
 
-                                if (message.IsMentioned && dialog != null && channel != null && channel.IsMegaGroup)
+                                if (message.IsMentioned && dialog != null)
                                 {
                                     dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount - 1, 0);
                                     dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
@@ -1433,9 +1491,6 @@ namespace Telegram.Api.Services.Updates
                         });
 
                         _cacheService.AddMessagesToContext(result, (m) => { });
-                    },
-                    fault =>
-                    {
                     });
                 }
             }

@@ -694,6 +694,10 @@ namespace Unigram.ViewModels
                 {
                     await ProtoService.ReadMessageContentsAsync(channel.ToInputChannel(), new TLVector<int> { commonMessage.Id });
                 }
+                else
+                {
+                    await ProtoService.ReadMessageContentsAsync(new TLVector<int> { commonMessage.Id });
+                }
             }
         }
 

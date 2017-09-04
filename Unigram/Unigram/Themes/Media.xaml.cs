@@ -170,13 +170,24 @@ namespace Unigram.Themes
                 if (message.IsMediaUnread && !message.IsOut)
                 {
                     var vector = new TLVector<int> { message.Id };
-                    TelegramEventAggregator.Instance.Publish(new TLUpdateReadMessagesContents { Messages = vector });
-
-                    MTProtoService.Current.ReadMessageContentsAsync(vector, result =>
+                    if (message.Parent is TLChannel channel)
                     {
-                        message.IsMediaUnread = false;
-                        message.RaisePropertyChanged(() => message.IsMediaUnread);
-                    });
+                        TelegramEventAggregator.Instance.Publish(new TLUpdateChannelReadMessagesContents { ChannelId = channel.Id, Messages = vector });
+                        MTProtoService.Current.ReadMessageContentsAsync(channel.ToInputChannel(), vector, result =>
+                        {
+                            message.IsMediaUnread = false;
+                            message.RaisePropertyChanged(() => message.IsMediaUnread);
+                        });
+                    }
+                    else
+                    {
+                        TelegramEventAggregator.Instance.Publish(new TLUpdateReadMessagesContents { Messages = vector });
+                        MTProtoService.Current.ReadMessageContentsAsync(vector, result =>
+                        {
+                            message.IsMediaUnread = false;
+                            message.RaisePropertyChanged(() => message.IsMediaUnread);
+                        });
+                    }
                 }
 
                 var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
