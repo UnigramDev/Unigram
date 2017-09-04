@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Common;
 using Windows.System.Display;
 using Telegram.Api.Services;
+using Telegram.Api.Aggregator;
 
 namespace Unigram.Controls.Media
 {
@@ -222,11 +223,25 @@ namespace Unigram.Controls.Media
 
                         if (message.IsMediaUnread && !message.IsOut)
                         {
-                            MTProtoService.Current.ReadMessageContentsAsync(new TLVector<int> { message.Id }, affected =>
+                            var vector = new TLVector<int> { message.Id };
+                            if (message.Parent is TLChannel channel)
                             {
-                                message.IsMediaUnread = false;
-                                message.RaisePropertyChanged(() => message.IsMediaUnread);
-                            });
+                                TelegramEventAggregator.Instance.Publish(new TLUpdateChannelReadMessagesContents { ChannelId = channel.Id, Messages = vector });
+                                MTProtoService.Current.ReadMessageContentsAsync(channel.ToInputChannel(), vector, affected =>
+                                {
+                                    message.IsMediaUnread = false;
+                                    message.RaisePropertyChanged(() => message.IsMediaUnread);
+                                });
+                            }
+                            else
+                            {
+                                TelegramEventAggregator.Instance.Publish(new TLUpdateReadMessagesContents { Messages = vector });
+                                MTProtoService.Current.ReadMessageContentsAsync(vector, affected =>
+                                {
+                                    message.IsMediaUnread = false;
+                                    message.RaisePropertyChanged(() => message.IsMediaUnread);
+                                });
+                            }
                         }
 
                         var settings = new AudioGraphSettings(AudioRenderCategory.Media);
