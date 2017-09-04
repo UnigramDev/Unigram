@@ -111,6 +111,14 @@ namespace Unigram.Common
             }
         }
 
+        public static void RemoveLastIf(this INavigationService service, Type type)
+        {
+            if (service.CanGoBack && service.Frame.BackStack[service.Frame.BackStackDepth - 1].SourcePageType == type)
+            {
+                service.Frame.BackStack.RemoveAt(service.Frame.BackStackDepth - 1);
+            }
+        }
+
         public static async void NavigateToDialog(this INavigationService service, ITLDialogWith with, int? message = null, string accessToken = null)
         {
             if (with == null)

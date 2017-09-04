@@ -112,6 +112,7 @@ namespace Unigram.Views
                 {
                     DialogsListView.SelectedIndex = index;
                     Navigate(DialogsListView.SelectedItem);
+                    MasterDetail.NavigationService.RemoveLastIf(typeof(DialogPage));
                 }
             }
             else if (message.Equals("Search"))

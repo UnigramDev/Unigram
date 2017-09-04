@@ -312,13 +312,27 @@ namespace Unigram.Views
 
                 if (StickersPanel.Visibility == Visibility.Visible)
                 {
-                    Collapse_Click(null, null);
+                    if (StickersPanel.ToggleActiveView())
+                    {
+
+                    }
+                    else
+                    {
+                        Collapse_Click(null, null);
+                    }
+
                     args.Handled = true;
                 }
 
                 if (ViewModel.SelectionMode != ListViewSelectionMode.None)
                 {
                     ViewModel.SelectionMode = ListViewSelectionMode.None;
+                    args.Handled = true;
+                }
+
+                if (ViewModel.EditedMessage != null)
+                {
+                    ViewModel.ClearReplyCommand.Execute(null);
                     args.Handled = true;
                 }
 
@@ -355,6 +369,12 @@ namespace Unigram.Views
             if (ViewModel.SelectionMode != ListViewSelectionMode.None)
             {
                 ViewModel.SelectionMode = ListViewSelectionMode.None;
+                args.Handled = true;
+            }
+
+            if (ViewModel.EditedMessage != null)
+            {
+                ViewModel.ClearReplyCommand.Execute(null);
                 args.Handled = true;
             }
 

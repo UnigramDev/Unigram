@@ -1674,6 +1674,7 @@
                         x:Name="TextField"
                         Background="Transparent"
                         Reply="{Binding Reply}"
+                        Messages="{x:Bind lvDialogs}"
                         Autocomplete="{x:Bind ListAutocomplete}"
                         AcceptsReturn="False"
                         PlaceholderText="Type your message..."
