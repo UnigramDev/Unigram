@@ -367,6 +367,8 @@ namespace Telegram.Api.Services.Updates
                     var difference = diff as TLUpdatesDifference;
                     if (difference != null)
                     {
+                        difference.ProcessReading();
+
                         //Logs.Log.Write("UpdatesService.Publish UpdatingEventArgs");
                         Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new UpdatingEventArgs()));
 
@@ -3946,6 +3948,8 @@ namespace Telegram.Api.Services.Updates
                     var diff = differenceBase as TLUpdatesDifference;
                     if (diff != null)
                     {
+                        diff.ProcessReading();
+
                         var resetEvent = new ManualResetEvent(false);
 
                         lock (_clientSeqLock)
@@ -3995,6 +3999,8 @@ namespace Telegram.Api.Services.Updates
                 var differenceSlice = differenceBase as TLUpdatesDifference;
                 if (differenceSlice != null)
                 {
+                    differenceSlice.ProcessReading();
+
                     var updates = differenceSlice.OtherUpdates;
                     for (var i = 0; i < updates.Count; i++)
                     {
@@ -4019,6 +4025,8 @@ namespace Telegram.Api.Services.Updates
                 var differenceSlice = differenceBase as TLUpdatesDifference;
                 if (differenceSlice != null)
                 {
+                    differenceSlice.ProcessReading();
+
                     var updates = differenceSlice.OtherUpdates;
                     for (var i = 0; i < updates.Count; i++)
                     {

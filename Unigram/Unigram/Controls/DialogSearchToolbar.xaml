@@ -226,7 +226,7 @@
                 InputScope="Search"
                 Margin="12,8,0,8"/>
 
-            <controls:GlyphButton Click="Cancel_Click" Glyph="&#xE106;" FontSize="16" Grid.Column="1"/>
+            <controls:GlyphButton Click="Cancel_Click" Glyph="&#xE10A;" Grid.Column="1"/>
 
             <Border BorderThickness="0,0,0,1" VerticalAlignment="Bottom" IsHitTestVisible="False" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" Grid.ColumnSpan="5"/>
         </Grid>

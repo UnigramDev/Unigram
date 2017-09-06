@@ -388,7 +388,7 @@
                     </StackPanel>
                 </Button>
 
-                <controls:GlyphButton Click="Manage_Click" Glyph="&#xE106;" FontSize="16" Grid.Column="3"/>
+                <controls:GlyphButton Click="Manage_Click" Glyph="&#xE10A;" Grid.Column="3"/>
             </Grid>
         </controls:ContentPageHeader>
     </Grid>

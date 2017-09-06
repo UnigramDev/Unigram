@@ -150,7 +150,7 @@
                                                     Command="{x:Bind SettingsView.ViewModel.LogoutCommand}"
                                                     Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                     Text="Logout"
-                                                    Tag="&#xE106;"/>
+                                                    Tag="&#xE10A;"/>
 
                                     <MenuFlyoutSeparator x:Name="FlyoutSeperator"/>
                                     <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
