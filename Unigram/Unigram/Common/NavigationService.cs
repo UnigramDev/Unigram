@@ -103,6 +103,14 @@ namespace Unigram.Common
             }
         }
 
+        public static void RemoveSkip(this INavigationService service, int count)
+        {
+            while (service.Frame.BackStackDepth > count)
+            {
+                service.Frame.BackStack.RemoveAt(count);
+            }
+        }
+
         public static void RemoveLast(this INavigationService service)
         {
             if (service.CanGoBack)
