@@ -161,6 +161,7 @@
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
+    <Compile Include="Controls\SwipeSplitView.cs" />
     <Compile Include="Controls\SwipeListBehavior.cs" />
     <Compile Include="Controls\SwipeListDirection.cs" />
     <Compile Include="Controls\SwipeListViewItem.cs" />
