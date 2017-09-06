@@ -921,9 +921,13 @@ namespace Unigram.Views
             var element = sender as MenuFlyoutItem;
             if (element != null)
             {
-                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
                 {
                     element.Visibility = ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else
+                {
+                    element.Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -933,9 +937,13 @@ namespace Unigram.Views
             var element = sender as MenuFlyoutItem;
             if (element != null)
             {
-                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
                 {
                     element.Visibility = ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Visible : Visibility.Collapsed;
+                }
+                else
+                {
+                    element.Visibility = Visibility.Collapsed;
                 }
             }
         }
