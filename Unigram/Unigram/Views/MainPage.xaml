@@ -199,53 +199,17 @@
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Grid.Row="1">
         <controls:NavigationView ItemClick="NavigationView_ItemClick">
             <controls:NavigationView.MenuItems>
-                <controls:NavigationViewItem x:Name="NavigationNewChat" Content="New Group">
-                    <controls:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE125;"/>
-                    </controls:NavigationViewItem.Icon>
-                </controls:NavigationViewItem>
-                <!--<fluent:NavigationMenuItem Text="New Secret Chat">
-                             <fluent:NavigationMenuItem.Icon>
-                             <FontIcon Glyph="&#xE125;"/>
-                             </fluent:NavigationMenuItem.Icon>
-                             </fluent:NavigationMenuItem>-->
-                <controls:NavigationViewItem x:Name="NavigationNewChannel" Content="New Channel">
-                    <controls:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE789;"/>
-                    </controls:NavigationViewItem.Icon>
-                </controls:NavigationViewItem>
+                <controls:NavigationViewItem x:Name="NavigationNewChat" Content="New Group" Glyph="&#xE125;" />
+                <!--<controls:NavigationViewItem Text="New Secret Chat" Glyph="&#xE125;" />-->
+                <controls:NavigationViewItem x:Name="NavigationNewChannel" Content="New Channel" Glyph="&#xE789;" />
                 <controls:NavigationViewItemSeparator/>
 
-                <controls:NavigationViewItem x:Name="NavigationChats" Content="Chats" IsSelected="True">
-                    <controls:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8BD;"/>
-                    </controls:NavigationViewItem.Icon>
-                </controls:NavigationViewItem>
-                <controls:NavigationViewItem x:Name="NavigationContacts" Content="Contacts">
-                    <controls:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8D4;"/>
-                    </controls:NavigationViewItem.Icon>
-                </controls:NavigationViewItem>
-                <controls:NavigationViewItem x:Name="NavigationCalls" Content="Calls">
-                    <controls:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE717;"/>
-                    </controls:NavigationViewItem.Icon>
-                </controls:NavigationViewItem>
-                <!--<fluent:NavigationMenuItem Text="Invite Friends">
-                         <fluent:NavigationMenuItem.Icon>
-                         <FontIcon Glyph="&#xE789;"/>
-                         </fluent:NavigationMenuItem.Icon>
-                         </fluent:NavigationMenuItem>-->
-                <controls:NavigationViewItem x:Name="NavigationSettings" Content="Settings">
-                    <controls:NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE115;"/>
-                    </controls:NavigationViewItem.Icon>
-                </controls:NavigationViewItem>
-                <!--<fluent:NavigationMenuItem Text="Telegram FAQ">
-                         <fluent:NavigationMenuItem.Icon>
-                         <FontIcon Glyph="&#xE897;"/>
-                         </fluent:NavigationMenuItem.Icon>
-                         </fluent:NavigationMenuItem>-->
+                <controls:NavigationViewItem x:Name="NavigationChats" Content="Chats" IsChecked="True" Glyph="&#xE8BD;" />
+                <controls:NavigationViewItem x:Name="NavigationContacts" Content="Contacts" Glyph="&#xE8D4;" />
+                <controls:NavigationViewItem x:Name="NavigationCalls" Content="Calls" Glyph="&#xE717;" />
+                <!--<controls:NavigationViewItem Text="Invite Friends" Glyph="&#xE789;" />-->
+                <controls:NavigationViewItem x:Name="NavigationSettings" Content="Settings" Glyph="&#xE115;" />
+                <!--<controls:NavigationViewItem Text="Telegram FAQ" Glyph="&#xE897;" />-->
             </controls:NavigationView.MenuItems>
             <!--<controls:NavigationView.PaneFooter>
                 <controls:NavigationViewItem Content="{x:Bind ViewModel.Contacts.Self.FullName, Mode=OneWay}" Tag="{x:Bind ViewModel.Contacts.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Style="{StaticResource ImageNavigationMenuItemStyle}"/>

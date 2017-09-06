@@ -15,6 +15,13 @@ namespace Unigram.Controls
             DefaultStyleKey = typeof(NavigationViewItem);
         }
 
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            VisualStateManager.GoToState(this, IsChecked ? "Checked" : "Unchecked", false);
+        }
+
         #region Glyph
 
         public string Glyph
@@ -28,16 +35,21 @@ namespace Unigram.Controls
 
         #endregion
 
-        #region Icon
+        #region IsChecked
 
-        public IconElement Icon
+        public bool IsChecked
         {
-            get { return (IconElement)GetValue(IconProperty); }
-            set { SetValue(IconProperty, value); }
+            get { return (bool)GetValue(IsCheckedProperty); }
+            set { SetValue(IsCheckedProperty, value); }
         }
 
-        public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register("Icon", typeof(IconElement), typeof(NavigationViewItem), new PropertyMetadata(null));
+        public static readonly DependencyProperty IsCheckedProperty =
+            DependencyProperty.Register("IsChecked", typeof(bool), typeof(NavigationViewItem), new PropertyMetadata(false, OnIsCheckedChanged));
+
+        private static void OnIsCheckedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            VisualStateManager.GoToState((NavigationViewItem)d, (bool)e.NewValue ? "Checked" : "Unchecked", false);
+        }
 
         #endregion
     }

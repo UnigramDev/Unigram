@@ -44,11 +44,9 @@ namespace Unigram.Controls
 
         private void Host_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var item = MenuItemsHost.ContainerFromItem(e.ClickedItem) as NavigationViewItem;
+            var item = MenuItems.FirstOrDefault(x => (string)x.Content == (string)e.ClickedItem) as NavigationViewItem;
             if (item != null)
             {
-                item.IsSelected = true;
-
                 ItemClick?.Invoke(this, new NavigationViewItemClickEventArgs(item));
                 IsPaneOpen = false;
             }

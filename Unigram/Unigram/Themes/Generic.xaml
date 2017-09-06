@@ -130,7 +130,7 @@
                                         <ListView x:Name="MenuItemsHost" Grid.Row="3" Margin="0,0,0,20" SelectionMode="Single" IsItemClickEnabled="True"/>
 
                                         <Border x:Name="FooterContentBorder" Grid.Row="4" Child="{TemplateBinding PaneFooter}"/>
-                                        <local:NavigationViewItem x:Name="SettingsNavPaneItem" Grid.Row="5" Icon="Setting" />
+                                        <local:NavigationViewItem x:Name="SettingsNavPaneItem" Glyph="&#xE115;" Grid.Row="5" />
                                     </Grid.Children>
                                 </Grid>
                             </SplitView.Pane>
@@ -212,6 +212,14 @@
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckedStates">
+                                <VisualState x:Name="Unchecked"/>
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="SelectionIndicator.Opacity" Value="1"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
                             <Rectangle x:Name="SelectionIndicator" Width="6" Height="24" Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}" Opacity="0" />
@@ -221,7 +229,9 @@
                                 <ColumnDefinition x:Name="IconColumn" Width="48" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Viewbox x:Name="IconBox" Margin="16,12" Child="{TemplateBinding Icon}"/>
+                            <Viewbox x:Name="IconBox" Margin="16,12">
+                                <FontIcon Glyph="{TemplateBinding Glyph}"/>
+                            </Viewbox>
                             <ContentPresenter x:Name="ContentPresenter"
                                               Grid.Column="1"
                                               ContentTransitions="{TemplateBinding ContentTransitions}"

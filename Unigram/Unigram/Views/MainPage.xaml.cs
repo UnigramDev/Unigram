@@ -806,6 +806,11 @@ namespace Unigram.Views
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            NavigationChats.IsChecked = rpMasterTitlebar.SelectedIndex == 0;
+            NavigationContacts.IsChecked = rpMasterTitlebar.SelectedIndex == 1;
+            NavigationCalls.IsChecked = rpMasterTitlebar.SelectedIndex == 2;
+            NavigationSettings.IsChecked = rpMasterTitlebar.SelectedIndex == 3;
+
             SearchDialogs.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
             SearchContacts.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
             ButtonOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
