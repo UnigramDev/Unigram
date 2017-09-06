@@ -892,7 +892,7 @@ namespace Unigram.Views
             }
         }
 
-        private void MessageStickerPackInfo_Loaded(object sender, RoutedEventArgs e)
+        private void MessageAddSticker_Loaded(object sender, RoutedEventArgs e)
         {
             var element = sender as MenuFlyoutItem;
             if (element != null)

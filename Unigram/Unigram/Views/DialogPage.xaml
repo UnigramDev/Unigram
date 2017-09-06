@@ -207,10 +207,10 @@
             <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
             <MenuFlyoutItem Loaded="MessageSelect_Loaded" Command="{x:Bind ViewModel.MessageSelectCommand}" CommandParameter="{Binding}" Text="Select message"/>
             <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
-            <!--<MenuFlyoutItem Loaded="MessageStickerPackInfo_Loaded" Command="{x:Bind ViewModel.MessageStickerPackInfoCommand}" CommandParameter="{Binding}" Text="Sticker pack info"/>-->
-            <MenuFlyoutItem Loaded="MessageStickerPackInfo_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>
+            <MenuFlyoutItem Loaded="MessageAddSticker_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>
             <MenuFlyoutItem Loaded="MessageFaveSticker_Loaded" Command="{x:Bind ViewModel.MessageFaveStickerCommand}" CommandParameter="{Binding}" Text="Add to Favorites"/>
             <MenuFlyoutItem Loaded="MessageUnfaveSticker_Loaded" Command="{x:Bind ViewModel.MessageUnfaveStickerCommand}" CommandParameter="{Binding}" Text="Delete from Favorites"/>
+            <!--<MenuFlyoutItem Loaded="MessageStickerPackInfo_Loaded" Command="{x:Bind ViewModel.MessageStickerPackInfoCommand}" CommandParameter="{Binding}" Text="Sticker pack info"/>-->
             <MenuFlyoutItem Loaded="MessageSaveSticker_Loaded" Command="{x:Bind ViewModel.MessageSaveStickerCommand}" CommandParameter="{Binding}" Text="Save sticker as..."/>
         </MenuFlyout>
 
