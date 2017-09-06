@@ -472,7 +472,7 @@
                 </StackPanel>
 
                 <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Column="1" Grid.Row="1">
-                    <controls:StickerView
+                    <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
@@ -499,7 +499,7 @@
                 <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
-                    <controls:StickerView
+                    <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
@@ -562,7 +562,7 @@
                     <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                     <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
-                        <controls:StickerView
+                        <controls:ImageView
                             Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                             MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
