@@ -196,7 +196,7 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty PanAreaThresholdProperty =
-            DependencyProperty.Register(nameof(PanAreaThreshold), typeof(double), typeof(SwipeSplitView), new PropertyMetadata(36d));
+            DependencyProperty.Register(nameof(PanAreaThreshold), typeof(double), typeof(SwipeSplitView), new PropertyMetadata(12d));
 
         #endregion
 

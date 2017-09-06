@@ -211,9 +211,12 @@
                 <controls:NavigationViewItem x:Name="NavigationSettings" Content="Settings" Glyph="&#xE115;" />
                 <!--<controls:NavigationViewItem Text="Telegram FAQ" Glyph="&#xE897;" />-->
             </controls:NavigationView.MenuItems>
-            <!--<controls:NavigationView.PaneFooter>
-                <controls:NavigationViewItem Content="{x:Bind ViewModel.Contacts.Self.FullName, Mode=OneWay}" Tag="{x:Bind ViewModel.Contacts.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Style="{StaticResource ImageNavigationMenuItemStyle}"/>
-            </controls:NavigationView.PaneFooter>-->
+            <controls:NavigationView.PaneFooter>
+                <StackPanel>
+                    <controls:NavigationViewItem Content="About" Glyph="&#xE946;"/>
+                    <!--<controls:NavigationViewItem Content="{x:Bind ViewModel.Contacts.Self.FullName, Mode=OneWay}" Tag="{x:Bind ViewModel.Contacts.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Style="{StaticResource ImageNavigationMenuItemStyle}"/>-->
+                </StackPanel>
+            </controls:NavigationView.PaneFooter>
 
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <Grid.RowDefinitions>
