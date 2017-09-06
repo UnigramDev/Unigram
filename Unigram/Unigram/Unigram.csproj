@@ -129,6 +129,10 @@
     <Compile Include="Controls\Messages\EditedMessageBubble.xaml.cs">
       <DependentUpon>EditedMessageBubble.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\NavigationView.cs" />
+    <Compile Include="Controls\NavigationViewItem.cs" />
+    <Compile Include="Controls\NavigationViewItemBase.cs" />
+    <Compile Include="Controls\NavigationViewItemSeparator.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />
