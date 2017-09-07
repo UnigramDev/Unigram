@@ -188,6 +188,7 @@ namespace Telegram.Api.Services.Updates
             }
 #if LOG_CLIENTSEQ
             TLUtils.WriteLine(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} ptsList={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", "null", _pts != null ? _pts.ToString() : "null", ptsList.Count > 0 ? string.Join(", ", ptsList) : "null"), LogSeverity.Error);
+            Logs.Log.Write(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} ptsList={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", "null", _pts != null ? _pts.ToString() : "null", ptsList.Count > 0 ? string.Join(", ", ptsList) : "null"));
 #endif
             UpdateLostPts(ptsList);
         }
@@ -215,6 +216,7 @@ namespace Telegram.Api.Services.Updates
         {
 #if LOG_CLIENTSEQ
             TLUtils.WriteLine(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} newPts={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", seq, _pts != null ? _pts.ToString() : "null", pts), LogSeverity.Error);
+            Logs.Log.Write(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} newPts={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", seq, _pts != null ? _pts.ToString() : "null", pts));
             //TLUtils.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture) + " " + caption + " clientSeq=" + ClientSeq + " newSeq=" + seq + " pts=" + pts, LogSeverity.Error);
 #endif
             if (seq != null)
@@ -4053,6 +4055,8 @@ namespace Telegram.Api.Services.Updates
 
         public void SaveState()
         {
+            Logs.Log.Write(string.Format("UpdatesService.SaveState date={0} pts={1} qts={2} seq={3} unread_count={4}", _date?.ToString() ?? "null", _pts?.ToString() ?? "null", _qts?.ToString() ?? "null", ClientSeq?.ToString() ?? "null", _unreadCount?.ToString() ?? "null"));
+
             TLUtils.WritePerformance("<<Saving current state");
             TLUtils.SaveObjectToMTProtoFile(_stateRoot, Constants.StateFileName, new TLUpdatesState { Date = _date ?? -1, Pts = _pts ?? -1, Qts = _qts ?? -1, Seq = ClientSeq ?? -1, UnreadCount = _unreadCount ?? -1 });
         }
