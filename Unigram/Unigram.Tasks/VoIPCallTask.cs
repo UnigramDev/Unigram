@@ -123,7 +123,7 @@ namespace Unigram.Tasks
 
     }
 
-    internal class VoIPCallMediator : IHandle<TLUpdatePhoneCall>, IHandle, IDisposable, IStateCallback
+    internal class VoIPCallMediator : IHandle<TLUpdatePhoneCall>, IHandle, IDisposable
     {
         private readonly Queue<TLUpdatePhoneCall> _queue = new Queue<TLUpdatePhoneCall>();
 
@@ -424,7 +424,9 @@ namespace Unigram.Tasks
                             _controller.SetProxy(ProxyProtocol.None, string.Empty, 0, string.Empty, string.Empty);
                         }
 
-                        _controller.SetStateCallback(this);
+                        _controller.CallStateChanged += OnCallStateChanged;
+                        _controller.SignalBarsChanged += OnSignalBarsChanged;
+
                         _controller.SetEncryptionKey(auth_key, _outgoing);
 
                         var connection = call.Connection;
@@ -463,7 +465,7 @@ namespace Unigram.Tasks
             }
         }
 
-        public async void OnCallStateChanged(CallState newState)
+        public async void OnCallStateChanged(VoIPControllerWrapper sender, CallState newState)
         {
             if (newState == CallState.Failed)
             {
@@ -473,7 +475,7 @@ namespace Unigram.Tasks
             await UpdateStateAsync((TLPhoneCallState)newState);
         }
 
-        public async void OnSignalBarsChanged(int count)
+        public async void OnSignalBarsChanged(VoIPControllerWrapper sender, int count)
         {
             if (_connection != null)
             {
