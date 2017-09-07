@@ -30,7 +30,7 @@ namespace Unigram.Views.Settings
             DataContext = UnigramContainer.Current.ResolveType<SettingsUsernameViewModel>();
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(x =>
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {
                 if (ViewModel.UpdateIsValid(Username.Text))
                 {
