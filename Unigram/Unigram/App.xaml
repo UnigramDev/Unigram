@@ -11,6 +11,99 @@
 
     <Application.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <Color x:Key="SystemChromeMediumHighColor">#FF323232</Color>
+
+                    <StaticResource x:Key="NavigationViewItemBackgroundSelectedPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundSelectedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundSelectedPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundSelectedDisabled" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundCheckedPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundCheckedDisabled" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrush" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundSelectedPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundSelectedPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushSelected" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundSelected" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushCheckedPressed" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushPointerOver" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushCheckedPointerOver" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
+                    <StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
+                    <StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundChecked" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundCheckedPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundSelected" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundChecked" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushPressed" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushChecked" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushCheckedDisabled" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushSelectedPointerOver" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushSelectedPressed" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushSelectedDisabled" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewSelectionIndicatorForeground" ResourceKey="SystemControlForegroundAccentBrush" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="SystemChromeMediumHighColor">#FFE6E6E6</Color>
+
+                    <StaticResource x:Key="NavigationViewItemBackgroundSelectedPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundSelectedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundCheckedDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundSelectedPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundSelectedDisabled" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundCheckedPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundCheckedDisabled" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrush" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundSelectedPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundSelectedPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushSelected" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundSelected" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushCheckedPressed" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushPointerOver" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushCheckedPointerOver" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewDefaultPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
+                    <StaticResource x:Key="NavigationViewExpandedPaneBackground" ResourceKey="SystemChromeMediumHighColor" />
+                    <StaticResource x:Key="NavigationViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundDisabled" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundChecked" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundCheckedPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+                    <StaticResource x:Key="NavigationViewItemBackgroundSelected" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundChecked" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundCheckedPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemForegroundCheckedPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushPressed" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushDisabled" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushChecked" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushCheckedDisabled" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushSelectedPointerOver" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushSelectedPressed" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewItemBorderBrushSelectedDisabled" ResourceKey="SystemControlTransparentBrush" />
+                    <StaticResource x:Key="NavigationViewSelectionIndicatorForeground" ResourceKey="SystemControlForegroundAccentBrush" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+            
+            <x:Double x:Key="PaneToggleButtonSize">48</x:Double>
+            <Thickness x:Key="NavigationViewToggleBorderThickness">1</Thickness>
+            <Thickness x:Key="NavigationViewItemBorderThickness">2,1</Thickness>
+
             <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}">
                 <Setter Property="Foreground" Value="{ThemeResource SystemControlPageTextBaseHighBrush}"/>
             </Style>

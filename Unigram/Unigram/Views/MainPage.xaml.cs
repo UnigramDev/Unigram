@@ -548,15 +548,10 @@ namespace Unigram.Views
             }
         }
 
-        private void cbtnMasterAbout_Click(object sender, RoutedEventArgs e)
+        private void About_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.IsPaneOpen = false;
             MasterDetail.NavigationService.Navigate(typeof(AboutPage));
-        }
-
-        private void cbtnMasterSearch_Click(object sender, RoutedEventArgs e)
-        {
-            //PLEASE REMOVE THE BELOW LINE ONCE THE CHATPAGE HAS BEEN IMPLEMENTED
-            MasterDetail.NavigationService.Navigate(typeof(DialogSharedMediaPage));
         }
 
         private void searchInit()
