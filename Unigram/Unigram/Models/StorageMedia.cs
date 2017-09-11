@@ -11,7 +11,7 @@ using Windows.Storage.FileProperties;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Core.Models
+namespace Unigram.Models
 {
     public class StorageMedia : BindableBase
     {
@@ -104,6 +104,12 @@ namespace Unigram.Core.Models
             item._thumbnail = _thumbnail;
 
             return item;
+        }
+
+        public virtual void Reset()
+        {
+            IsSelected = false;
+            Caption = null;
         }
     }
 }

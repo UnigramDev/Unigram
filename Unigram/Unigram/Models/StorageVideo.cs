@@ -10,7 +10,7 @@ using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.UI.Xaml.Media;
 
-namespace Unigram.Core.Models
+namespace Unigram.Models
 {
     public class StorageVideo : StorageMedia
     {
@@ -150,6 +150,12 @@ namespace Unigram.Core.Models
             item._preview = _preview;
 
             return item;
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+            LoadPreview();
         }
 
         private int originalWidth;

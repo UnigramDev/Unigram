@@ -13,6 +13,7 @@ using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Core.Helpers;
 using Unigram.Core.Models;
+using Unigram.Models;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.ApplicationModel.Contacts;

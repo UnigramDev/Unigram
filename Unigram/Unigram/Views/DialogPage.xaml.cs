@@ -56,6 +56,7 @@ using Template10.Services.NavigationService;
 using Unigram.Core.Helpers;
 using Unigram.Native;
 using LinqToVisualTree;
+using Unigram.Models;
 
 namespace Unigram.Views
 {
@@ -463,8 +464,7 @@ namespace Unigram.Views
 
             foreach (var item in ViewModel.MediaLibrary)
             {
-                item.Caption = null;
-                item.IsSelected = false;
+                item.Reset();
             }
 
             if (FlyoutBase.GetAttachedFlyout(ButtonAttach) is MenuFlyout flyout)

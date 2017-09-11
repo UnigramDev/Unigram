@@ -38,6 +38,7 @@ using Telegram.Api.TL.Channels;
 using Unigram.Native;
 using System.Collections.ObjectModel;
 using Windows.UI.Xaml.Automation;
+using Unigram.Models;
 
 namespace Unigram.Controls
 {

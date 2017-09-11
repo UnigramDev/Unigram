@@ -11,6 +11,7 @@ using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Common;
 using Unigram.Core.Models;
+using Unigram.Models;
 using Unigram.Native;
 using Unigram.ViewModels;
 using Windows.Foundation;
