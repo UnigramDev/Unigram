@@ -272,6 +272,9 @@ namespace Unigram.ViewModels
         {
             if (message is TLMessage)
             {
+                Search = null;
+                SelectionMode = ListViewSelectionMode.None;
+
                 await ForwardView.Current.ShowAsync(new List<TLMessage> { message as TLMessage });
 
                 //App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
@@ -471,6 +474,7 @@ namespace Unigram.ViewModels
             var messages = SelectedItems.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
             {
+                Search = null;
                 SelectionMode = ListViewSelectionMode.None;
 
                 await ForwardView.Current.ShowAsync(messages);
