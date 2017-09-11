@@ -265,6 +265,7 @@
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
+    <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\PushService.cs" />
     <Compile Include="Triggers\DeviceFamilyTrigger.cs" />

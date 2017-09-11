@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unigram.Converters;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -54,6 +55,22 @@ namespace Unigram.Models
                     LoadPreview();
 
                 return _preview;
+            }
+        }
+
+        public string Duration
+        {
+            get
+            {
+                var duration = Properties.Duration;
+                if (duration.TotalHours >= 1)
+                {
+                    return duration.ToString("h\\:mm\\:ss");
+                }
+                else
+                {
+                    return duration.ToString("mm\\:ss");
+                }
             }
         }
 
@@ -293,7 +310,7 @@ namespace Unigram.Models
             String videoDimension = string.Format("{0}x{1}", width, height);
             int minutes = (int)(estimatedDuration / 1000 / 60);
             int seconds = (int)Math.Ceiling(estimatedDuration / 1000d) - minutes * 60;
-            String videoTimeSize = string.Format("{0}:{1:D2}, ~{2}", minutes, seconds, FormatFileSize(estimatedSize));
+            String videoTimeSize = string.Format("{0}:{1:D2}, ~{2}", minutes, seconds, FileSizeConverter.Convert(estimatedSize));
             return string.Format("{0}, {1}", videoDimension, videoTimeSize);
         }
 
@@ -337,24 +354,5 @@ namespace Unigram.Models
                 }
             }
         }
-
-        private string FormatFileSize(long bytesCount)
-        {
-            if (bytesCount < 1024L)
-            {
-                return string.Format("{0} B", bytesCount);
-            }
-            if (bytesCount < 1048576L)
-            {
-                return string.Format("{0} KB", ((double)bytesCount / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
-            }
-            if (bytesCount < 1073741824L)
-            {
-                return string.Format("{0} MB", ((double)bytesCount / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
-            }
-
-            return string.Format("{0} GB", ((double)bytesCount / 1024.0 / 1024.0 / 1024.0).ToString("0.0", CultureInfo.InvariantCulture));
-        }
-
     }
 }
