@@ -121,7 +121,7 @@
     </Style>
 
     <Style x:Name="OnlyCheckBoxStyle" TargetType="CheckBox">
-        <Setter Property="Background" Value="{ThemeResource CheckBoxBackgroundUnchecked}" />
+        <Setter Property="Background" Value="#26000000" />
         <Setter Property="Foreground" Value="{ThemeResource CheckBoxForegroundUnchecked}" />
         <Setter Property="BorderBrush" Value="{ThemeResource CheckBoxBorderBrushUnchecked}" />
         <Setter Property="Padding" Value="8,4,4,8" />
@@ -139,7 +139,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
                     <Grid x:Name="RootGrid"
-                              Background="{TemplateBinding Background}"
+                              Background="Transparent"
                               BorderBrush="{TemplateBinding BorderBrush}"
                               BorderThickness="{TemplateBinding BorderThickness}"
                               Padding="{TemplateBinding Padding}">
@@ -431,6 +431,9 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        <Rectangle Fill="{TemplateBinding Background}"
+                                   Height="16"
+                                   Width="16"/>
                         <Rectangle x:Name="NormalRectangle"
                                            Fill="{ThemeResource CheckBoxCheckBackgroundFillUnchecked}"
                                            Stroke="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
