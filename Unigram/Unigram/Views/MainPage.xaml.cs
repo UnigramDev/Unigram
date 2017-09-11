@@ -605,19 +605,19 @@ namespace Unigram.Views
         {
             if (SearchDialogs.Text != "")
             {
-                DialogsSearchListView.Visibility = Visibility.Visible;
+                DialogsPanel.Visibility = Visibility.Collapsed;
             }
             else
             {
                 //  lvMasterChats.Visibility = Visibility.Visible;
-                DialogsSearchListView.Visibility = Visibility.Collapsed;
+                DialogsPanel.Visibility = Visibility.Visible;
                 // lvMasterChats.ItemsSource = ViewModel.Dialogs;
             }
         }
 
         private void txtSearch_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (DialogsSearchListView.Visibility == Visibility.Collapsed)
+            if (DialogsPanel.Visibility == Visibility.Visible)
             {
                 return;
             }

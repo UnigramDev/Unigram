@@ -288,49 +288,7 @@
                              <controls:TabHeaderStyle Glyph="&#xE15F;"/>
                              </PivotItem.Header>-->
                         <Grid>
-                            <Grid Canvas.ZIndex="-1" Grid.Row="1">
-                                <controls:ScrollViewerBackground
-                                    Visibility="{x:Bind (Visibility)ViewModel.Dialogs.IsFirstPinned, Mode=OneWay}"
-                                    Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                                    ScrollingHost="{x:Bind DialogsListView}"
-                                    VerticalAlignment="Top"/>
-                                <controls:DialogsListView x:Name="DialogsListView"
-                                                          ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
-                                                          IsItemClickEnabled="True"
-                                                          SelectionMode="None"
-                                                          ItemClick="ListView_ItemClick"
-                                                          SelectionChanged="ListView_SelectionChanged">
-                                    <!--CanDragItems="True" 
-                                         AllowDrop="True"-->
-                                    <ListView.ItemContainerStyleSelector>
-                                        <selectors:DialogStyleSelector>
-                                            <selectors:DialogStyleSelector.DialogStyle>
-                                                <Style TargetType="ListViewItem">
-                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                                    <Setter Property="Padding" Value="0"/>
-                                                </Style>
-                                            </selectors:DialogStyleSelector.DialogStyle>
-                                            <selectors:DialogStyleSelector.PinnedStyle>
-                                                <Style TargetType="ListViewItem">
-                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                                    <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
-                                                    <Setter Property="Padding" Value="0"/>
-                                                </Style>
-                                            </selectors:DialogStyleSelector.PinnedStyle>
-                                        </selectors:DialogStyleSelector>
-                                    </ListView.ItemContainerStyleSelector>
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <items:DialogListViewItem ContextFlyout="{StaticResource DialogMenuFlyout}"/>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                    <ListView.Footer>
-                                        <Border Height="6"/>
-                                    </ListView.Footer>
-                                </controls:DialogsListView>
-                            </Grid>
                             <ListView x:Name="DialogsSearchListView"
-                                      Visibility="Collapsed"
                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                       ItemsSource="{Binding Source={StaticResource SearchResults}}"
                                       IsItemClickEnabled="True"
@@ -497,6 +455,47 @@
                                     </GroupStyle>
                                 </ListView.GroupStyle>
                             </ListView>
+                            <Grid x:Name="DialogsPanel">
+                                <controls:ScrollViewerBackground
+                                    Visibility="{x:Bind (Visibility)ViewModel.Dialogs.IsFirstPinned, Mode=OneWay}"
+                                    Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                                    ScrollingHost="{x:Bind DialogsListView}"
+                                    VerticalAlignment="Top"/>
+                                <controls:DialogsListView x:Name="DialogsListView"
+                                                          ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
+                                                          IsItemClickEnabled="True"
+                                                          SelectionMode="None"
+                                                          ItemClick="ListView_ItemClick"
+                                                          SelectionChanged="ListView_SelectionChanged">
+                                    <!--CanDragItems="True" 
+                                         AllowDrop="True"-->
+                                    <ListView.ItemContainerStyleSelector>
+                                        <selectors:DialogStyleSelector>
+                                            <selectors:DialogStyleSelector.DialogStyle>
+                                                <Style TargetType="ListViewItem">
+                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                    <Setter Property="Padding" Value="0"/>
+                                                </Style>
+                                            </selectors:DialogStyleSelector.DialogStyle>
+                                            <selectors:DialogStyleSelector.PinnedStyle>
+                                                <Style TargetType="ListViewItem">
+                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                    <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                                    <Setter Property="Padding" Value="0"/>
+                                                </Style>
+                                            </selectors:DialogStyleSelector.PinnedStyle>
+                                        </selectors:DialogStyleSelector>
+                                    </ListView.ItemContainerStyleSelector>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <items:DialogListViewItem ContextFlyout="{StaticResource DialogMenuFlyout}"/>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.Footer>
+                                        <Border Height="6"/>
+                                    </ListView.Footer>
+                                </controls:DialogsListView>
+                            </Grid>
                         </Grid>
                     </PivotItem>
                     <PivotItem Loaded="PivotItem_Loaded" Header="Contacts">
