@@ -1140,16 +1140,16 @@
                                            MaxLines="1"/>
                                 <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
                                     <TextBlock x:Name="tblDialogStatus"
-                                               Visibility="{x:Bind ViewModel.With.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                               Visibility="{x:Bind ViewModel.Dialog.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                                Style="{StaticResource CaptionTextBlockStyle}"
                                                Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}" />
-                                    <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.With.IsTyping, Mode=OneWay}">
+                                    <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.Dialog.IsTyping, Mode=OneWay}">
                                         <!--<ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0,0,4,2" Style="{StaticResource UploadProgressRingStyle}"/>-->
-                                        <TextBlock Text="{x:Bind ViewModel.With.TypingSubtitle, Mode=OneWay}"
+                                        <TextBlock Text="{x:Bind ViewModel.Dialog.TypingSubtitle, Mode=OneWay}"
                                                    Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
                                                    Style="{StaticResource CaptionTextBlockStyle}"/>
-                                        <ProgressRing IsActive="{x:Bind ViewModel.With.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
+                                        <ProgressRing IsActive="{x:Bind ViewModel.Dialog.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>

@@ -233,67 +233,88 @@ namespace Unigram.ViewModels
         public void Handle(TLUpdateUserTyping update)
         {
             var user = CacheService.GetUser(update.UserId) as TLUser;
-            if (user != null && !user.IsSelf)
+            if (user == null)
             {
-                _typingManagers.TryGetValue(update.UserId, out InputTypingManager typingManager);
-                if (typingManager == null)
-                {
-                    typingManager = new InputTypingManager(users =>
-                    {
-                        user.TypingSubtitle = DialogViewModel.GetTypingString(user.ToPeer(), users, CacheService.GetUser, null);
-                        user.IsTyping = true;
-                    },
-                    () =>
-                    {
-                        user.TypingSubtitle = null;
-                        user.IsTyping = false;
-                    });
-
-                    _typingManagers[update.UserId] = typingManager;
-                }
-
-                var action = update.Action;
-                if (action is TLSendMessageCancelAction)
-                {
-                    typingManager.RemoveTypingUser(update.UserId);
-                    return;
-                }
-
-                typingManager.AddTypingUser(update.UserId, action);
+                return;
             }
+
+            if (user.IsSelf)
+            {
+                return;
+            }
+
+            var dialog = CacheService.GetDialog(user.ToPeer());
+            if (dialog == null)
+            {
+                return;
+            }
+
+            _typingManagers.TryGetValue(update.UserId, out InputTypingManager typingManager);
+            if (typingManager == null)
+            {
+                typingManager = new InputTypingManager(users =>
+                {
+                    dialog.TypingSubtitle = DialogViewModel.GetTypingString(user.ToPeer(), users, CacheService.GetUser, null);
+                    dialog.IsTyping = true;
+                },
+                () =>
+                {
+                    dialog.TypingSubtitle = null;
+                    dialog.IsTyping = false;
+                });
+
+                _typingManagers[update.UserId] = typingManager;
+            }
+
+            var action = update.Action;
+            if (action is TLSendMessageCancelAction)
+            {
+                typingManager.RemoveTypingUser(update.UserId);
+                return;
+            }
+
+            typingManager.AddTypingUser(update.UserId, action);
         }
 
         public void Handle(TLUpdateChatUserTyping update)
         {
-            var chatBase = CacheService.GetChat(update.ChatId) as TLChatBase;
-            if (chatBase != null)
+            var chat = CacheService.GetChat(update.ChatId) as TLChatBase;
+            if (chat == null)
             {
-                _typingManagers.TryGetValue(update.ChatId, out InputTypingManager typingManager);
-                if (typingManager == null)
-                {
-                    typingManager = new InputTypingManager(users =>
-                    {
-                        chatBase.TypingSubtitle = DialogViewModel.GetTypingString(chatBase.ToPeer(), users, CacheService.GetUser, null);
-                        chatBase.IsTyping = true;
-                    },
-                    () =>
-                    {
-                        chatBase.TypingSubtitle = null;
-                        chatBase.IsTyping = false;
-                    });
-
-                    _typingManagers[update.ChatId] = typingManager;
-                }
-
-                var action = update.Action;
-                if (action is TLSendMessageCancelAction)
-                {
-                    typingManager.RemoveTypingUser(update.UserId);
-                    return;
-                }
-
-                typingManager.AddTypingUser(update.UserId, action);
+                return;
             }
+
+            var dialog = CacheService.GetDialog(chat.ToPeer());
+            if (dialog == null)
+            {
+                return;
+            }
+
+            _typingManagers.TryGetValue(update.ChatId, out InputTypingManager typingManager);
+            if (typingManager == null)
+            {
+                typingManager = new InputTypingManager(users =>
+                {
+                    dialog.TypingSubtitle = DialogViewModel.GetTypingString(chat.ToPeer(), users, CacheService.GetUser, null);
+                    dialog.IsTyping = true;
+                },
+                () =>
+                {
+                    dialog.TypingSubtitle = null;
+                    dialog.IsTyping = false;
+                });
+
+                _typingManagers[update.ChatId] = typingManager;
+            }
+
+            var action = update.Action;
+            if (action is TLSendMessageCancelAction)
+            {
+                typingManager.RemoveTypingUser(update.UserId);
+                return;
+            }
+
+            typingManager.AddTypingUser(update.UserId, action);
         }
 
         #endregion
