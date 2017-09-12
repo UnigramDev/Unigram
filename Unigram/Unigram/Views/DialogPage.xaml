@@ -207,10 +207,10 @@
             <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
             <MenuFlyoutItem Loaded="MessageSelect_Loaded" Command="{x:Bind ViewModel.MessageSelectCommand}" CommandParameter="{Binding}" Text="Select message"/>
             <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
-            <!--<MenuFlyoutItem Loaded="MessageStickerPackInfo_Loaded" Command="{x:Bind ViewModel.MessageStickerPackInfoCommand}" CommandParameter="{Binding}" Text="Sticker pack info"/>-->
-            <MenuFlyoutItem Loaded="MessageStickerPackInfo_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>
+            <MenuFlyoutItem Loaded="MessageAddSticker_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>
             <MenuFlyoutItem Loaded="MessageFaveSticker_Loaded" Command="{x:Bind ViewModel.MessageFaveStickerCommand}" CommandParameter="{Binding}" Text="Add to Favorites"/>
             <MenuFlyoutItem Loaded="MessageUnfaveSticker_Loaded" Command="{x:Bind ViewModel.MessageUnfaveStickerCommand}" CommandParameter="{Binding}" Text="Delete from Favorites"/>
+            <!--<MenuFlyoutItem Loaded="MessageStickerPackInfo_Loaded" Command="{x:Bind ViewModel.MessageStickerPackInfoCommand}" CommandParameter="{Binding}" Text="Sticker pack info"/>-->
             <MenuFlyoutItem Loaded="MessageSaveSticker_Loaded" Command="{x:Bind ViewModel.MessageSaveStickerCommand}" CommandParameter="{Binding}" Text="Save sticker as..."/>
         </MenuFlyout>
 
@@ -242,11 +242,7 @@
                             Padding="8,0,8,6"
                             Margin="0,0,4,4"
                             Grid.Row="1">
-                    <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                        <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
-                            <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
-                        </Hyperlink>
-                    </TextBlock>
+                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                     <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
                         <messages:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
@@ -270,7 +266,7 @@
                     <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                     <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
 
-                    <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                    <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
                         <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
                         <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
                     </StackPanel>
@@ -306,7 +302,7 @@
                     <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                     <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
 
-                    <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                    <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
                         <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
                         <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
                     </StackPanel>
@@ -323,11 +319,7 @@
                             Margin="4,0,0,4"
                             Grid.Column="1"
                             Grid.Row="1">
-                    <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                        <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
-                            <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
-                        </Hyperlink>
-                    </TextBlock>
+                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                     <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
                         <messages:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
@@ -389,7 +381,7 @@
                         <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                         <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
 
-                        <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                        <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
                             <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
                             <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
                         </StackPanel>
@@ -406,11 +398,7 @@
                                 Margin="4,0,0,4"
                                 Grid.Column="1"
                                 Grid.Row="1">
-                        <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                            <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
-                                <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
-                            </Hyperlink>
-                        </TextBlock>
+                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                         <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
                             <messages:MessageReference.Resources>
                                 <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
@@ -456,11 +444,7 @@
                             Padding="8,0,8,6"
                             Margin="0,0,4,4"
                             Grid.Row="1">
-                    <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                        <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
-                            <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
-                        </Hyperlink>
-                    </TextBlock>
+                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                     <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
                         <messages:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
@@ -472,7 +456,7 @@
                 </StackPanel>
 
                 <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Column="1" Grid.Row="1">
-                    <controls:StickerView
+                    <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
@@ -499,7 +483,7 @@
                 <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
-                    <controls:StickerView
+                    <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                         MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
@@ -519,11 +503,7 @@
                             Margin="4,0,0,4"
                             Grid.Column="1"
                             Grid.Row="1">
-                    <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                        <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
-                            <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
-                        </Hyperlink>
-                    </TextBlock>
+                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                     <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
                         <messages:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
@@ -562,7 +542,7 @@
                     <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                     <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
-                        <controls:StickerView
+                        <controls:ImageView
                             Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
                             MaxWidth="{StaticResource TelegramLightMediaMaxWidth}"
@@ -582,11 +562,7 @@
                                 Margin="4,0,0,4"
                                 Grid.Column="1"
                                 Grid.Row="1">
-                        <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                            <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
-                                <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
-                            </Hyperlink>
-                        </TextBlock>
+                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                         <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
                             <messages:MessageReference.Resources>
                                 <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
@@ -1140,16 +1116,16 @@
                                            MaxLines="1"/>
                                 <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
                                     <TextBlock x:Name="tblDialogStatus"
-                                               Visibility="{x:Bind ViewModel.With.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                               Visibility="{x:Bind ViewModel.Dialog.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                                                Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                                Style="{StaticResource CaptionTextBlockStyle}"
                                                Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}" />
-                                    <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.With.IsTyping, Mode=OneWay}">
+                                    <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.Dialog.IsTyping, Mode=OneWay}">
                                         <!--<ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0,0,4,2" Style="{StaticResource UploadProgressRingStyle}"/>-->
-                                        <TextBlock Text="{x:Bind ViewModel.With.TypingSubtitle, Mode=OneWay}"
+                                        <TextBlock Text="{x:Bind ViewModel.Dialog.TypingSubtitle, Mode=OneWay}"
                                                    Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
                                                    Style="{StaticResource CaptionTextBlockStyle}"/>
-                                        <ProgressRing IsActive="{x:Bind ViewModel.With.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
+                                        <ProgressRing IsActive="{x:Bind ViewModel.Dialog.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
                                     </StackPanel>
                                 </Grid>
                             </StackPanel>
@@ -1218,7 +1194,7 @@
                 <Button Command="{Binding MessagesForwardCommand}" Margin="12,0,4,0" Style="{StaticResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Forward" VerticalAlignment="Center"/>
-                        <ContentControl Content="{Binding SelectedMessages.Count}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                        <ContentControl Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
                             <ContentControl.ContentTransitions>
                                 <TransitionCollection>
                                     <EntranceThemeTransition/>
@@ -1233,7 +1209,7 @@
                 <Button Command="{Binding MessagesDeleteCommand}" Margin="4,0,12,0" Style="{StaticResource AccentButtonStyle}" Grid.Column="1">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Delete" VerticalAlignment="Center"/>
-                        <ContentControl Content="{Binding SelectedMessages.Count}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                        <ContentControl Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
                             <ContentControl.ContentTransitions>
                                 <TransitionCollection>
                                     <EntranceThemeTransition/>
@@ -1246,7 +1222,7 @@
                     </StackPanel>
                 </Button>
 
-                <controls:GlyphButton Click="Manage_Click" Glyph="&#xE106;" FontSize="16" Grid.Column="3"/>
+                <controls:GlyphButton Click="Manage_Click" Glyph="&#xE10A;" Grid.Column="3"/>
             </Grid>
 
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
@@ -1262,9 +1238,9 @@
             <Border x:Name="HeaderOverlay" Background="#99000000" Visibility="Collapsed"/>
         </Border>
 
-        <Grid x:Name="Messages" Grid.Row="2">
-            <controls:BubbleListView x:Name="lvDialogs"
-                                     ItemsSource="{x:Bind ViewModel.Messages}"
+        <Grid Grid.Row="2">
+            <controls:BubbleListView x:Name="Messages"
+                                     ItemsSource="{x:Bind ViewModel.Items}"
                                      ItemTemplateSelector="{StaticResource MessageTemplateSelector}"
                                      ItemContainerTransitions="{x:Null}"
                                      ShowsScrollingPlaceholders="False"
@@ -1460,7 +1436,7 @@
                             <messages:MessageReference Click="Reply_Click" Title="Pinned message" Message="{x:Bind ViewModel.PinnedMessage.SelfBase, Mode=OneWay}" VerticalAlignment="Stretch" Margin="0" Padding="12,6" IsHitTestVisible="False"/>
                         </Button>
 
-                        <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE106;" FontSize="12" Grid.Column="1"/>
+                        <controls:GlyphButton Command="{x:Bind ViewModel.UnpinMessageCommand}" Glyph="&#xE10A;" FontSize="16" Grid.Column="1"/>
 
                         <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" VerticalAlignment="Bottom" Grid.ColumnSpan="2"/>
                     </Grid>
@@ -1486,7 +1462,7 @@
                         <TextBlock Text="Report spam" Foreground="{ThemeResource SystemControlHighlightAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </Button>
 
-                    <controls:GlyphButton Command="{x:Bind ViewModel.HideReportSpamCommand}" Glyph="&#xE106;" FontSize="12" Height="32" Grid.Column="1"/>
+                    <controls:GlyphButton Command="{x:Bind ViewModel.HideReportSpamCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
 
                     <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                 </Grid>
@@ -1666,7 +1642,7 @@
                     <messages:MessageReference Message="{Binding ReplyInfo}" Click="Reply_Click" VerticalAlignment="Stretch" VerticalContentAlignment="Center" Margin="-10,0,0,0" BorderBrush="Transparent" Grid.Column="1"/>
                     <FontIcon Glyph="{Binding ReplyInfo, Converter={StaticResource ReplyInfoToGlyphConverter}}" Foreground="#0e7acd"/>
 
-                    <controls:GlyphButton Command="{Binding ClearReplyCommand}" AllowFocusOnInteraction="False" Glyph="&#xE106;" FontSize="16" Grid.Column="2"/>
+                    <controls:GlyphButton Command="{Binding ClearReplyCommand}" AllowFocusOnInteraction="False" Glyph="&#xE10A;" Grid.Column="2"/>
                 </Grid>
 
                 <Grid Grid.ColumnSpan="2" Grid.Row="1">
@@ -1674,6 +1650,7 @@
                         x:Name="TextField"
                         Background="Transparent"
                         Reply="{Binding Reply}"
+                        Messages="{x:Bind Messages}"
                         Autocomplete="{x:Bind ListAutocomplete}"
                         AcceptsReturn="False"
                         PlaceholderText="Type your message..."

@@ -933,6 +933,12 @@ namespace Unigram.ViewModels
 
         public async void SearchSync(string query)
         {
+            if (string.IsNullOrEmpty(query))
+            {
+                Search.Clear();
+                return;
+            }
+
             var local = await SearchLocalAsync(query.TrimStart('@'));
 
             if (query.Equals(_searchQuery))
@@ -944,6 +950,12 @@ namespace Unigram.ViewModels
 
         public async Task SearchAsync(string query)
         {
+            if (string.IsNullOrEmpty(query))
+            {
+                Search.Clear();
+                return;
+            }
+
             var global = await SearchGlobalAsync(query);
             var messages = await SearchMessagesAsync(query);
 

@@ -36,6 +36,120 @@ namespace Unigram.Common
 {
     public class MessageHelper
     {
+        #region IsFirst
+
+        public static TLMessageBase GetHeader(DependencyObject obj)
+        {
+            return (TLMessageBase)obj.GetValue(HeaderProperty);
+        }
+
+        public static void SetHeader(DependencyObject obj, TLMessageBase value)
+        {
+            obj.SetValue(HeaderProperty, value);
+        }
+
+        public static readonly DependencyProperty HeaderProperty =
+            DependencyProperty.RegisterAttached("Header", typeof(TLMessageBase), typeof(MessageHelper), new PropertyMetadata(false, OnHeaderChanged));
+
+        private static void OnHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var paragraph = d as TextBlock;
+
+            var message = e.NewValue as TLMessage;
+            if (message != null)
+            {
+                //if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+                //{
+                //    var hyperlink = new Hyperlink();
+                //    hyperlink.Inlines.Add(new Run { Text = message.From?.FullName ?? string.Empty, Foreground = BindConvert.Current.Bubble(message.FromId ?? 0) });
+                //    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                //    hyperlink.Foreground = paragraph.Foreground;
+                //    //hyperlink.Click += (s, args) => From_Click(message);
+
+                //    paragraph.Inlines.Add(hyperlink);
+                //}
+                //else if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+                //{
+                //    var hyperlink = new Hyperlink();
+                //    hyperlink.Inlines.Add(new Run { Text = message.Parent?.DisplayName ?? string.Empty, Foreground = BindConvert.Current.Bubble(message.ToId.Id) });
+                //    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                //    hyperlink.Foreground = paragraph.Foreground;
+                //    //hyperlink.Click += (s, args) => From_Click(message);
+
+                //    paragraph.Inlines.Add(hyperlink);
+                //}
+
+                if (message.HasFwdFrom)
+                {
+                    if (paragraph.Inlines.Count > 0)
+                        paragraph.Inlines.Add(new LineBreak());
+
+                    paragraph.Inlines.Add(new Run { Text = "Forwarded from " });
+
+                    var name = string.Empty;
+
+                    var channel = message.FwdFromChannel;
+                    if (channel != null)
+                    {
+                        name = channel.DisplayName;
+
+                        if (message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                        {
+                            name += $" ({message.FwdFrom.PostAuthor})";
+                        }
+                    }
+
+                    var user = message.FwdFromUser;
+                    if (user != null)
+                    {
+                        if (name.Length > 0)
+                        {
+                            name += $" ({user.FullName})";
+                        }
+                        else
+                        {
+                            name = user.FullName;
+                        }
+                    }
+
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = name });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = paragraph.Foreground;
+                    //hyperlink.Click += (s, args) => FwdFrom_Click(message);
+
+                    paragraph.Inlines.Add(hyperlink);
+                }
+
+                if (message.HasViaBotId && message.ViaBot != null && !message.ViaBot.IsDeleted && message.ViaBot.HasUsername)
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @") + message.ViaBot.Username });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = paragraph.Foreground;
+                    //hyperlink.Click += (s, args) => ViaBot_Click(message);
+
+                    paragraph.Inlines.Add(hyperlink);
+                }
+
+                if (paragraph.Inlines.Count > 0)
+                {
+                    paragraph.Inlines.Add(new Run { Text = " " });
+                    paragraph.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    paragraph.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                paragraph.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        #endregion
+
         #region Message
 
         public static TLMessage GetMessage(DependencyObject obj)

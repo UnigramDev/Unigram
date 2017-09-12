@@ -48,7 +48,7 @@ namespace Unigram.Views
 
         private async void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (lvDialogs.ScrollingHost.ScrollableHeight - lvDialogs.ScrollingHost.VerticalOffset < 120)
+            if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 120)
             {
                 if (ViewModel.IsFirstSliceLoaded)
                 {
@@ -102,15 +102,14 @@ namespace Unigram.Views
 
                 var messageIds = new TLVector<int>();
                 var dialog = ViewModel.Dialog;
-                var channel = ViewModel.With as TLChannel;
 
                 for (int i = index0; i <= index1; i++)
                 {
-                    var container = lvDialogs.ContainerFromIndex(i);
+                    var container = Messages.ContainerFromIndex(i);
                     if (container != null)
                     {
-                        var item = lvDialogs.ItemFromContainer(container);
-                        if (item != null && item is TLMessageCommonBase commonMessage && !commonMessage.IsOut && commonMessage.IsMentioned && commonMessage.IsMediaUnread && channel.IsMegaGroup)
+                        var item = Messages.ItemFromContainer(container);
+                        if (item != null && item is TLMessageCommonBase commonMessage && !commonMessage.IsOut && commonMessage.IsMentioned && commonMessage.IsMediaUnread)
                         {
                             commonMessage.IsMediaUnread = false;
                             commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
@@ -118,6 +117,7 @@ namespace Unigram.Views
                             if (dialog != null)
                             {
                                 dialog.UnreadMentionsCount = Math.Max(0, dialog.UnreadMentionsCount - 1);
+                                dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
                             }
 
                             messageIds.Add(commonMessage.Id);
@@ -127,7 +127,14 @@ namespace Unigram.Views
 
                 if (messageIds.Count > 0)
                 {
-                    ViewModel.ProtoService.ReadMessageContentsAsync(channel.ToInputChannel(), messageIds, null);
+                    if (ViewModel.With is TLChannel channel)
+                    {
+                        ViewModel.ProtoService.ReadMessageContentsAsync(channel.ToInputChannel(), messageIds, null);
+                    }
+                    else
+                    {
+                        ViewModel.ProtoService.ReadMessageContentsAsync(messageIds, null);
+                    }
                 }
 
                 #region OLD

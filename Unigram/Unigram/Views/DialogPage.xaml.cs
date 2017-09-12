@@ -56,6 +56,7 @@ using Template10.Services.NavigationService;
 using Unigram.Core.Helpers;
 using Unigram.Native;
 using LinqToVisualTree;
+using Unigram.Models;
 
 namespace Unigram.Views
 {
@@ -87,7 +88,7 @@ namespace Unigram.Views
             //NavigationCacheMode = NavigationCacheMode.Required;
 
             ViewModel.TextField = TextField;
-            ViewModel.ListField = lvDialogs;
+            ViewModel.ListField = Messages;
 
             CheckMessageBoxEmpty();
 
@@ -98,7 +99,7 @@ namespace Unigram.Views
             StickersPanel.StickerClick = Stickers_ItemClick;
             StickersPanel.GifClick = Gifs_ItemClick;
 
-            lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+            Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
             StickersPanel.RegisterPropertyChangedCallback(FrameworkElement.VisibilityProperty, StickersPanel_VisibilityChanged);
 
             _messageVisual = ElementCompositionPreview.GetElementVisual(TextField);
@@ -194,11 +195,11 @@ namespace Unigram.Views
         {
             //if (_panel != null && ViewModel.With != null)
             //{
-            //    var container = lvDialogs.ContainerFromIndex(_panel.FirstVisibleIndex);
+            //    var container = Messages.ContainerFromIndex(_panel.FirstVisibleIndex);
             //    if (container != null)
             //    {
             //        var peer = ViewModel.With.ToPeer();
-            //        var item = lvDialogs.ItemFromContainer(container) as TLMessageBase;
+            //        var item = Messages.ItemFromContainer(container) as TLMessageBase;
 
             //        ApplicationSettings.Current.AddOrUpdateValue(TLSerializationService.Current.Serialize(peer), item?.Id ?? -1);
             //    }
@@ -227,7 +228,7 @@ namespace Unigram.Views
             }
             else if (e.PropertyName.Equals("SelectedItems"))
             {
-                lvDialogs.SelectedItems.AddRange(ViewModel.SelectedMessages);
+                Messages.SelectedItems.AddRange(ViewModel.SelectedItems);
             }
         }
 
@@ -267,8 +268,8 @@ namespace Unigram.Views
 
             App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
-            _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
-            lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
+            _panel = (ItemsStackPanel)Messages.ItemsPanelRoot;
+            Messages.ScrollingHost.ViewChanged += OnViewChanged;
 
             TextField.FocusMaybe(FocusState.Keyboard);
         }
@@ -312,13 +313,27 @@ namespace Unigram.Views
 
                 if (StickersPanel.Visibility == Visibility.Visible)
                 {
-                    Collapse_Click(null, null);
+                    if (StickersPanel.ToggleActiveView())
+                    {
+
+                    }
+                    else
+                    {
+                        Collapse_Click(null, null);
+                    }
+
                     args.Handled = true;
                 }
 
                 if (ViewModel.SelectionMode != ListViewSelectionMode.None)
                 {
                     ViewModel.SelectionMode = ListViewSelectionMode.None;
+                    args.Handled = true;
+                }
+
+                if (ViewModel.EditedMessage != null)
+                {
+                    ViewModel.ClearReplyCommand.Execute(null);
                     args.Handled = true;
                 }
 
@@ -355,6 +370,12 @@ namespace Unigram.Views
             if (ViewModel.SelectionMode != ListViewSelectionMode.None)
             {
                 ViewModel.SelectionMode = ListViewSelectionMode.None;
+                args.Handled = true;
+            }
+
+            if (ViewModel.EditedMessage != null)
+            {
+                ViewModel.ClearReplyCommand.Execute(null);
                 args.Handled = true;
             }
 
@@ -443,8 +464,7 @@ namespace Unigram.Views
 
             foreach (var item in ViewModel.MediaLibrary)
             {
-                item.Caption = null;
-                item.IsSelected = false;
+                item.Reset();
             }
 
             if (FlyoutBase.GetAttachedFlyout(ButtonAttach) is MenuFlyout flyout)
@@ -668,7 +688,7 @@ namespace Unigram.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.SelectedMessages = new List<TLMessageCommonBase>(lvDialogs.SelectedItems.Cast<TLMessageCommonBase>());
+            ViewModel.SelectedItems = new List<TLMessageCommonBase>(Messages.SelectedItems.Cast<TLMessageCommonBase>());
         }
 
         #region Context menu
@@ -872,7 +892,7 @@ namespace Unigram.Views
             }
         }
 
-        private void MessageStickerPackInfo_Loaded(object sender, RoutedEventArgs e)
+        private void MessageAddSticker_Loaded(object sender, RoutedEventArgs e)
         {
             var element = sender as MenuFlyoutItem;
             if (element != null)
@@ -901,9 +921,13 @@ namespace Unigram.Views
             var element = sender as MenuFlyoutItem;
             if (element != null)
             {
-                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
                 {
                     element.Visibility = ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else
+                {
+                    element.Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -913,9 +937,13 @@ namespace Unigram.Views
             var element = sender as MenuFlyoutItem;
             if (element != null)
             {
-                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
                 {
                     element.Visibility = ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Visible : Visibility.Collapsed;
+                }
+                else
+                {
+                    element.Visibility = Visibility.Collapsed;
                 }
             }
         }

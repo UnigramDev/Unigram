@@ -360,7 +360,16 @@ namespace Unigram.Common
                     Phase = phase;
 
                     //Image.UriSource = FileUtils.GetTempFileUri(fileName);
-                    _bitmapImage.SetSource(WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName))));
+                    var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
+                    if (decoded != null)
+                    {
+                        _bitmapImage.SetSource(decoded);
+                    }
+                    else
+                    {
+                        _bitmapImage.UriSource = FileUtils.GetTempFileUri(fileName);
+                    }
+
                     return true;
                 }
             }
@@ -378,7 +387,15 @@ namespace Unigram.Common
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
                     //Image.UriSource = FileUtils.GetTempFileUri(fileName);
-                    _bitmapImage.SetSource(WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName))));
+                    var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
+                    if (decoded != null)
+                    {
+                        _bitmapImage.SetSource(decoded);
+                    }
+                    else
+                    {
+                        _bitmapImage.UriSource = FileUtils.GetTempFileUri(fileName);
+                    }
                 }
                 else
                 {
@@ -397,7 +414,15 @@ namespace Unigram.Common
                                 }
 
                                 //Image.UriSource = FileUtils.GetTempFileUri(fileName);
-                                _bitmapImage.SetSource(WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName))));
+                                var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
+                                if (decoded != null)
+                                {
+                                    _bitmapImage.SetSource(decoded);
+                                }
+                                else
+                                {
+                                    _bitmapImage.UriSource = FileUtils.GetTempFileUri(fileName);
+                                }
                             });
                         }
                     });

@@ -46,6 +46,7 @@ namespace Telegram.Api.Services.Updates
         public GetFullChatAction GetFullChatAsync { get; set; }
         public GetFullUserAction GetFullUserAsync { get; set; }
         public GetChannelMessagesAction GetChannelMessagesAsync { get; set; }
+        public GetMessagesAction GetMessagesAsync { get; set; }
 
         private readonly Timer _lostSeqTimer;
 
@@ -188,6 +189,7 @@ namespace Telegram.Api.Services.Updates
             }
 #if LOG_CLIENTSEQ
             TLUtils.WriteLine(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} ptsList={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", "null", _pts != null ? _pts.ToString() : "null", ptsList.Count > 0 ? string.Join(", ", ptsList) : "null"), LogSeverity.Error);
+            Logs.Log.Write(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} ptsList={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", "null", _pts != null ? _pts.ToString() : "null", ptsList.Count > 0 ? string.Join(", ", ptsList) : "null"));
 #endif
             UpdateLostPts(ptsList);
         }
@@ -215,6 +217,7 @@ namespace Telegram.Api.Services.Updates
         {
 #if LOG_CLIENTSEQ
             TLUtils.WriteLine(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} newPts={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", seq, _pts != null ? _pts.ToString() : "null", pts), LogSeverity.Error);
+            Logs.Log.Write(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} newPts={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", seq, _pts != null ? _pts.ToString() : "null", pts));
             //TLUtils.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture) + " " + caption + " clientSeq=" + ClientSeq + " newSeq=" + seq + " pts=" + pts, LogSeverity.Error);
 #endif
             if (seq != null)
@@ -367,6 +370,8 @@ namespace Telegram.Api.Services.Updates
                     var difference = diff as TLUpdatesDifference;
                     if (difference != null)
                     {
+                        difference.ProcessReading();
+
                         //Logs.Log.Write("UpdatesService.Publish UpdatingEventArgs");
                         Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new UpdatingEventArgs()));
 
@@ -1325,52 +1330,109 @@ namespace Telegram.Api.Services.Updates
             var updatedReadMessagesContents = update as TLUpdateReadMessagesContents;
             if (updatedReadMessagesContents != null)
             {
-                var messages = new List<TLMessage>(updatedReadMessagesContents.Messages.Count);
+                var messages = new List<TLMessageCommonBase>(updatedReadMessagesContents.Messages.Count);
+                var messagesId = new TLVector<int>(updatedReadMessagesContents.Messages.Count);
+
                 foreach (var readMessageId in updatedReadMessagesContents.Messages)
                 {
-                    var message = _cacheService.GetMessage(readMessageId) as TLMessage;
-                    if (message != null)
+                    var commonMessage = _cacheService.GetMessage(readMessageId) as TLMessageCommonBase;
+                    if (commonMessage != null)
                     {
-                        messages.Add(message);
+                        messages.Add(commonMessage);
+                    }
+                    else
+                    {
+                        messagesId.Add(readMessageId);
                     }
                 }
 
                 Execute.BeginOnUIThread(() =>
                 {
-                    foreach (var message in messages)
+                    foreach (var commonMessage in messages)
                     {
-                        message.IsMediaUnread = false;
-                        message.RaisePropertyChanged(() => message.IsMediaUnread);
+                        commonMessage.IsMediaUnread = false;
+                        commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
 
-                        // TODO: Verify
-                        //message.SetListened();
-                        //if (message.Media != null)
-                        //{
-                        //    message.Media.NotListened = false;
-                        //    message.Media.RaisePropertyChanged(() => message.Media.NotListened);
-                        //}
+                        var dialog = _cacheService.GetDialog(commonMessage);
+
+                        if (commonMessage.IsMentioned && dialog != null)
+                        {
+                            dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount - 1, 0);
+                            dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+                        }
 
                         // Self destruct if needed
-                        if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
+                        if (commonMessage is TLMessage message)
                         {
-                            photoMedia.Photo = null;
-                            photoMedia.Caption = null;
-                            photoMedia.HasPhoto = false;
-                            photoMedia.HasCaption = false;
+                            if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
+                            {
+                                photoMedia.Photo = null;
+                                photoMedia.Caption = null;
+                                photoMedia.HasPhoto = false;
+                                photoMedia.HasCaption = false;
 
-                            Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
-                        }
-                        else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
-                        {
-                            documentMedia.Document = null;
-                            documentMedia.Caption = null;
-                            documentMedia.HasDocument = false;
-                            documentMedia.HasCaption = false;
+                                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                            }
+                            else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
+                            {
+                                documentMedia.Document = null;
+                                documentMedia.Caption = null;
+                                documentMedia.HasDocument = false;
+                                documentMedia.HasCaption = false;
 
-                            Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                            }
                         }
                     }
                 });
+
+                if (messagesId.Count > 0)
+                {
+                    GetMessagesAsync(messagesId, result =>
+                    {
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            foreach (var commonMessage in result.Messages.OfType<TLMessageCommonBase>())
+                            {
+                                commonMessage.IsMediaUnread = false;
+                                commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
+
+                                var dialog = _cacheService.GetDialog(commonMessage);
+
+                                if (commonMessage.IsMentioned && dialog != null)
+                                {
+                                    dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount - 1, 0);
+                                    dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+                                }
+
+                                // Self destruct if needed
+                                if (commonMessage is TLMessage message)
+                                {
+                                    if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
+                                    {
+                                        photoMedia.Photo = null;
+                                        photoMedia.Caption = null;
+                                        photoMedia.HasPhoto = false;
+                                        photoMedia.HasCaption = false;
+
+                                        Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                                    }
+                                    else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
+                                    {
+                                        documentMedia.Document = null;
+                                        documentMedia.Caption = null;
+                                        documentMedia.HasDocument = false;
+                                        documentMedia.HasCaption = false;
+
+                                        Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new MessageExpiredEventArgs(message)));
+                                    }
+                                }
+                            }
+                        });
+
+                        _cacheService.AddMessagesToContext(result, (m) => { });
+                    });
+                }
 
                 //Execute.BeginOnThreadPool(() => _eventAggregator.Publish(updatedReadMessagesContents));
 
@@ -1388,10 +1450,10 @@ namespace Telegram.Api.Services.Updates
 
                 foreach (var readMessageId in updateChannelReadMessagesContents.Messages)
                 {
-                    var message = _cacheService.GetMessage(readMessageId, updateChannelReadMessagesContents.ChannelId) as TLMessageCommonBase;
-                    if (message != null)
+                    var commonMessage = _cacheService.GetMessage(readMessageId, updateChannelReadMessagesContents.ChannelId) as TLMessageCommonBase;
+                    if (commonMessage != null)
                     {
-                        messages.Add(message);
+                        messages.Add(commonMessage);
                     }
                     else
                     {
@@ -1406,7 +1468,7 @@ namespace Telegram.Api.Services.Updates
                         message.IsMediaUnread = false;
                         message.RaisePropertyChanged(() => message.IsMediaUnread);
 
-                        if (message.IsMentioned && dialog != null && channel != null && channel.IsMegaGroup)
+                        if (message.IsMentioned && dialog != null)
                         {
                             dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount - 1, 0);
                             dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
@@ -1425,7 +1487,7 @@ namespace Telegram.Api.Services.Updates
                                 message.IsMediaUnread = false;
                                 message.RaisePropertyChanged(() => message.IsMediaUnread);
 
-                                if (message.IsMentioned && dialog != null && channel != null && channel.IsMegaGroup)
+                                if (message.IsMentioned && dialog != null)
                                 {
                                     dialog.UnreadMentionsCount = Math.Max(dialog.UnreadMentionsCount - 1, 0);
                                     dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
@@ -1434,9 +1496,6 @@ namespace Telegram.Api.Services.Updates
                         });
 
                         _cacheService.AddMessagesToContext(result, (m) => { });
-                    },
-                    fault =>
-                    {
                     });
                 }
             }
@@ -3892,6 +3951,8 @@ namespace Telegram.Api.Services.Updates
                     var diff = differenceBase as TLUpdatesDifference;
                     if (diff != null)
                     {
+                        diff.ProcessReading();
+
                         var resetEvent = new ManualResetEvent(false);
 
                         lock (_clientSeqLock)
@@ -3941,6 +4002,8 @@ namespace Telegram.Api.Services.Updates
                 var differenceSlice = differenceBase as TLUpdatesDifference;
                 if (differenceSlice != null)
                 {
+                    differenceSlice.ProcessReading();
+
                     var updates = differenceSlice.OtherUpdates;
                     for (var i = 0; i < updates.Count; i++)
                     {
@@ -3965,6 +4028,8 @@ namespace Telegram.Api.Services.Updates
                 var differenceSlice = differenceBase as TLUpdatesDifference;
                 if (differenceSlice != null)
                 {
+                    differenceSlice.ProcessReading();
+
                     var updates = differenceSlice.OtherUpdates;
                     for (var i = 0; i < updates.Count; i++)
                     {
@@ -3991,6 +4056,8 @@ namespace Telegram.Api.Services.Updates
 
         public void SaveState()
         {
+            Logs.Log.Write(string.Format("UpdatesService.SaveState date={0} pts={1} qts={2} seq={3} unread_count={4}", _date?.ToString() ?? "null", _pts?.ToString() ?? "null", _qts?.ToString() ?? "null", ClientSeq?.ToString() ?? "null", _unreadCount?.ToString() ?? "null"));
+
             TLUtils.WritePerformance("<<Saving current state");
             TLUtils.SaveObjectToMTProtoFile(_stateRoot, Constants.StateFileName, new TLUpdatesState { Date = _date ?? -1, Pts = _pts ?? -1, Qts = _qts ?? -1, Seq = ClientSeq ?? -1, UnreadCount = _unreadCount ?? -1 });
         }

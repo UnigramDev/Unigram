@@ -77,7 +77,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async void GetInlineBotResults(string text)
+        public async void GetInlineBotResults(string query)
         {
             if (CurrentInlineBot == null)
             {
@@ -85,7 +85,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            Debug.WriteLine($"@{CurrentInlineBot.Username}: {CurrentInlineBot.BotInlinePlaceholder}, {text}");
+            if (query != null)
+            {
+                query = query.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n').Trim();
+            }
+
+            Debug.WriteLine($"@{CurrentInlineBot.Username}: {CurrentInlineBot.BotInlinePlaceholder}, {query}");
 
             // TODO: cache
 
@@ -95,7 +100,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var response = await ProtoService.GetInlineBotResultsAsync(CurrentInlineBot.ToInputUser(), Peer, null, text, string.Empty);
+                var response = await ProtoService.GetInlineBotResultsAsync(CurrentInlineBot.ToInputUser(), Peer, null, query, string.Empty);
                 if (response.IsSucceeded)
                 {
                     foreach (var item in response.Result.Results)
@@ -173,7 +178,7 @@ namespace Unigram.ViewModels
             var previousMessage = InsertSendingMessage(message, false);
             //this.IsEmptyDialog = (base.Items.get_Count() == 0 && this.LazyItems.get_Count() == 0);
             var user = With as TLUser;
-            if (user != null && user.IsBot && Messages.Count == 1)
+            if (user != null && user.IsBot && Items.Count == 1)
             {
                 RaisePropertyChanged(() => With);
             }

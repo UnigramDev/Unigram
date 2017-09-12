@@ -14,10 +14,10 @@ namespace Telegram.Api.TL.Messages
             get
             {
                 // TODO: maybe a bit dirty
-                if (Set.ShortName.Equals("tg/groupStickers"))
-                {
-                    return InMemoryCacheService.Current.GetChat((int)Set.Id);
-                }
+                //if (Set.ShortName.Equals("tg/groupStickers"))
+                //{
+                //    return InMemoryCacheService.Current.GetChat((int)Set.Id);
+                //}
 
                 if (Documents != null && Documents.Count > 0)
                 {

@@ -47,7 +47,7 @@ namespace Unigram.ViewModels
 
                 var participant = _with;
                 var dialog = _dialog;
-                if (dialog != null && Messages.Count > 0)
+                if (dialog != null && Items.Count > 0)
                 {
                     var unread = dialog.UnreadCount;
                     if (Peer is TLInputPeerChannel && participant is TLChannel channel)
@@ -148,7 +148,7 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnUIThread(async () =>
             {
-                Messages.Clear();
+                Items.Clear();
                 IsFirstSliceLoaded = false;
                 IsLastSliceLoaded = false;
 
@@ -164,8 +164,8 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    Messages.Clear();
-                    SelectedMessages.Clear();
+                    Items.Clear();
+                    SelectedItems.Clear();
                     SelectionMode = Windows.UI.Xaml.Controls.ListViewSelectionMode.None;
                 });
             }
@@ -179,24 +179,24 @@ namespace Unigram.ViewModels
                 {
                     foreach (var message in args.Messages)
                     {
-                        if (_editedMessage != null && _editedMessage.Id == message.Id)
+                        if (EditedMessage?.Id == message.Id)
                         {
                             ClearReplyCommand.Execute();
                         }
-                        else if (ReplyInfo != null && ReplyInfo.ReplyToMsgId == message.Id)
+                        else if (ReplyInfo?.ReplyToMsgId == message.Id)
                         {
                             ClearReplyCommand.Execute();
                         }
 
-                        var removed = Messages.Remove(message);
+                        var removed = Items.Remove(message);
                         if (removed == false)
                         {
                             // Check if this is really needed
 
-                            var already = Messages.FirstOrDefault(x => x.Id == message.Id);
+                            var already = Items.FirstOrDefault(x => x.Id == message.Id);
                             if (already != null)
                             {
-                                Messages.Remove(already);
+                                Items.Remove(already);
                             }
                         }
                     }
@@ -354,7 +354,7 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    var already = Messages.FirstOrDefault(x => x.Id == update.Message.Id) as TLMessage;
+                    var already = Items.FirstOrDefault(x => x.Id == update.Message.Id) as TLMessage;
                     if (already == null)
                     {
                         return;
@@ -406,7 +406,7 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    var already = Messages.FirstOrDefault(x => x.Id == update.Message.Id) as TLMessage;
+                    var already = Items.FirstOrDefault(x => x.Id == update.Message.Id) as TLMessage;
                     if (already == null)
                     {
                         return;
@@ -458,8 +458,8 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    var index = Messages.IndexOf(message);
-                    Messages.RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, message, index, index));
+                    var index = Items.IndexOf(message);
+                    Items.RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, message, index, index));
                 });
             }
         }
@@ -580,7 +580,7 @@ namespace Unigram.ViewModels
 
             Execute.BeginOnUIThread(() =>
             {
-                var index = InsertMessageInOrder(Messages, messageCommon);
+                var index = InsertMessageInOrder(Items, messageCommon);
                 if (index != -1)
                 {
                     var message = messageCommon as TLMessage;
@@ -720,9 +720,9 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnUIThread(delegate
             {
-                for (int i = 0; i < Messages.Count; i++)
+                for (int i = 0; i < Items.Count; i++)
                 {
-                    var messageCommon = Messages[i] as TLMessageCommonBase;
+                    var messageCommon = Items[i] as TLMessageCommonBase;
                     if (messageCommon != null && !messageCommon.IsOut && messageCommon.IsUnread)
                     {
                         messageCommon.SetUnread(false);

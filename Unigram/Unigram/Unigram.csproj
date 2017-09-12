@@ -112,6 +112,7 @@
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\VoIPConnection.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />
+    <Compile Include="Controls\ChannelStickersButton.cs" />
     <Compile Include="Controls\DialogBackgroundPresenter.cs" />
     <Compile Include="Controls\DialogSearchToolBar.xaml.cs">
       <DependentUpon>DialogSearchToolBar.xaml</DependentUpon>
@@ -128,6 +129,10 @@
     <Compile Include="Controls\Messages\EditedMessageBubble.xaml.cs">
       <DependentUpon>EditedMessageBubble.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\NavigationView.cs" />
+    <Compile Include="Controls\NavigationViewItem.cs" />
+    <Compile Include="Controls\NavigationViewItemBase.cs" />
+    <Compile Include="Controls\NavigationViewItemSeparator.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />
@@ -156,6 +161,7 @@
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
+    <Compile Include="Controls\SwipeSplitView.cs" />
     <Compile Include="Controls\SwipeListBehavior.cs" />
     <Compile Include="Controls\SwipeListDirection.cs" />
     <Compile Include="Controls\SwipeListViewItem.cs" />
@@ -248,6 +254,10 @@
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
+    <Compile Include="Models\Country.cs" />
+    <Compile Include="Models\StorageMedia.cs" />
+    <Compile Include="Models\StoragePhoto.cs" />
+    <Compile Include="Models\StorageVideo.cs" />
     <Compile Include="Selectors\AdminLogTemplateSelector.cs" />
     <Compile Include="Selectors\AutocompleteTemplateSelector.cs" />
     <Compile Include="Selectors\GalleryTemplateSelector.cs" />
@@ -255,8 +265,10 @@
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetItemTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
+    <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\PushService.cs" />
+    <Compile Include="Triggers\DeviceFamilyTrigger.cs" />
     <Compile Include="Triggers\UserInteractionTrigger.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AttachedStickersViewModel.cs" />

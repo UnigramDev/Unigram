@@ -158,6 +158,7 @@ namespace Telegram.Api.Services
                 _updatesService.GetFullChatAsync = GetFullChatAsync;
                 _updatesService.GetFullUserAsync = GetFullUserAsync;
                 _updatesService.GetChannelMessagesAsync = GetMessagesAsync;
+                _updatesService.GetMessagesAsync = GetMessagesAsync;
             }
 
             if (!SettingsHelper.IsAuthorized)

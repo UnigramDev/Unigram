@@ -628,7 +628,11 @@ namespace Telegram.Api.TL
 
         public void RaisePropertyChanged<TProperty>(Expression<Func<TProperty>> property)
         {
-            RaisePropertyChanged(GetMemberInfo(property).Name);
+            try
+            {
+                RaisePropertyChanged(GetMemberInfo(property).Name);
+            }
+            catch { }
         }
 
         private MemberInfo GetMemberInfo(Expression expression)

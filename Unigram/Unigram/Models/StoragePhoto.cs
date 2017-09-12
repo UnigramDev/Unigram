@@ -11,7 +11,7 @@ using Windows.Storage.FileProperties;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace Unigram.Core.Models
+namespace Unigram.Models
 {
     public class StoragePhoto : StorageMedia
     {

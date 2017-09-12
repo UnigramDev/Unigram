@@ -8,6 +8,8 @@ namespace Unigram
 {
     public static class Constants
     {
+        public const int TypingTimeout = 30;
+
         public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4" };
         public static readonly string[] PhotoTypes = new[] { ".jpg", ".jpeg", ".png", ".gif" };
 

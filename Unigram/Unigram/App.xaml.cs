@@ -436,8 +436,6 @@ namespace Unigram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
         {
-            Log.Write("OnSuspendingAsync");
-
             var cacheService = UnigramContainer.Current.ResolveType<ICacheService>();
             if (cacheService != null)
             {
@@ -450,6 +448,8 @@ namespace Unigram
                 updatesService.SaveState();
                 updatesService.CancelUpdating();
             }
+
+            Log.Write("OnSuspendingAsync");
 
             return base.OnSuspendingAsync(s, e, prelaunchActivated);
         }

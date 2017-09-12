@@ -112,6 +112,7 @@ namespace Unigram.Views
                 {
                     DialogsListView.SelectedIndex = index;
                     Navigate(DialogsListView.SelectedItem);
+                    MasterDetail.NavigationService.RemoveLastIf(typeof(DialogPage));
                 }
             }
             else if (message.Equals("Search"))
@@ -547,21 +548,16 @@ namespace Unigram.Views
             }
         }
 
-        private void cbtnMasterAbout_Click(object sender, RoutedEventArgs e)
+        private void About_Click(object sender, RoutedEventArgs e)
         {
+            Navigation.IsPaneOpen = false;
             MasterDetail.NavigationService.Navigate(typeof(AboutPage));
-        }
-
-        private void cbtnMasterSearch_Click(object sender, RoutedEventArgs e)
-        {
-            //PLEASE REMOVE THE BELOW LINE ONCE THE CHATPAGE HAS BEEN IMPLEMENTED
-            MasterDetail.NavigationService.Navigate(typeof(DialogSharedMediaPage));
         }
 
         private void searchInit()
         {
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchDialogs, "TextChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(x =>
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {
                 if (string.IsNullOrWhiteSpace(SearchDialogs.Text))
                 {
@@ -609,19 +605,19 @@ namespace Unigram.Views
         {
             if (SearchDialogs.Text != "")
             {
-                DialogsSearchListView.Visibility = Visibility.Visible;
+                DialogsPanel.Visibility = Visibility.Collapsed;
             }
             else
             {
                 //  lvMasterChats.Visibility = Visibility.Visible;
-                DialogsSearchListView.Visibility = Visibility.Collapsed;
+                DialogsPanel.Visibility = Visibility.Visible;
                 // lvMasterChats.ItemsSource = ViewModel.Dialogs;
             }
         }
 
         private void txtSearch_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (DialogsSearchListView.Visibility == Visibility.Collapsed)
+            if (DialogsPanel.Visibility == Visibility.Visible)
             {
                 return;
             }
@@ -805,9 +801,47 @@ namespace Unigram.Views
 
         private void Pivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            NewChatItem.Visibility = NewChannelItem.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
-            EditNameItem.Visibility = LogoutItem.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
-            FlyoutSeperator.Visibility = (rpMasterTitlebar.SelectedIndex == 1 || rpMasterTitlebar.SelectedIndex == 2) ? Visibility.Collapsed : Visibility.Visible;
+            NavigationChats.IsChecked = rpMasterTitlebar.SelectedIndex == 0;
+            NavigationContacts.IsChecked = rpMasterTitlebar.SelectedIndex == 1;
+            NavigationCalls.IsChecked = rpMasterTitlebar.SelectedIndex == 2;
+            NavigationSettings.IsChecked = rpMasterTitlebar.SelectedIndex == 3;
+
+            SearchDialogs.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+            SearchContacts.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
+            ButtonOptions.Visibility = rpMasterTitlebar.SelectedIndex == 3 ? Visibility.Visible : Visibility.Collapsed;
+            DefaultHeader.Visibility = rpMasterTitlebar.SelectedIndex == 0 || rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void NavigationView_ItemClick(object sender, NavigationViewItemClickEventArgs args)
+        {
+            if (args.ClickedItem == NavigationNewChat)
+            {
+                MasterDetail.NavigationService.Navigate(typeof(CreateChatStep1Page));
+            }
+            else if (args.ClickedItem == NavigationNewChannel)
+            {
+                MasterDetail.NavigationService.Navigate(typeof(CreateChannelStep1Page));
+            }
+            else if (args.ClickedItem == NavigationChats)
+            {
+                rpMasterTitlebar.SelectedIndex = 0;
+            }
+            else if (args.ClickedItem == NavigationContacts)
+            {
+                rpMasterTitlebar.SelectedIndex = 1;
+            }
+            else if (args.ClickedItem == NavigationCalls)
+            {
+                rpMasterTitlebar.SelectedIndex = 2;
+            }
+            else if (args.ClickedItem == NavigationSettings)
+            {
+                rpMasterTitlebar.SelectedIndex = 3;
+            }
+            else if (args.ClickedItem == NavigationOfficialChannel)
+            {
+                MessageHelper.NavigateToUsername(ViewModel.ProtoService, "unigram", null, null, null);
+            }
         }
     }
 }

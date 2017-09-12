@@ -150,7 +150,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBlock x:Name="BriefInfo"
-                       Visibility="{x:Bind ViewModel.With.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                       Visibility="{x:Bind ViewModel.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
                        Style="{ThemeResource BodyTextBlockStyle}"
                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                        TextTrimming="CharacterEllipsis"
@@ -162,12 +162,12 @@
                 <Run x:Name="FromLabel" Foreground="{ThemeResource TelegramDialogLabelFromBrush}"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
             </TextBlock>
 
-            <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.With.IsTyping, Mode=OneWay}">
+            <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}">
                 <!--<ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0,0,4,2" Style="{StaticResource UploadProgressRingStyle}"/>-->
-                <TextBlock Text="{x:Bind ViewModel.With.TypingSubtitle, Mode=OneWay}"
+                <TextBlock Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
                            Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
                            Style="{StaticResource BodyTextBlockStyle}"/>
-                <ProgressRing IsActive="{x:Bind ViewModel.With.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
+                <ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
             </StackPanel>
 
 
