@@ -242,11 +242,7 @@
                             Padding="8,0,8,6"
                             Margin="0,0,4,4"
                             Grid.Row="1">
-                    <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                        <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
-                            <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
-                        </Hyperlink>
-                    </TextBlock>
+                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                     <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
                         <messages:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
@@ -323,11 +319,7 @@
                             Margin="4,0,0,4"
                             Grid.Column="1"
                             Grid.Row="1">
-                    <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                        <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
-                            <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
-                        </Hyperlink>
-                    </TextBlock>
+                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                     <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
                         <messages:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
@@ -406,11 +398,7 @@
                                 Margin="4,0,0,4"
                                 Grid.Column="1"
                                 Grid.Row="1">
-                        <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                            <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
-                                <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
-                            </Hyperlink>
-                        </TextBlock>
+                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                         <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
                             <messages:MessageReference.Resources>
                                 <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
@@ -456,11 +444,7 @@
                             Padding="8,0,8,6"
                             Margin="0,0,4,4"
                             Grid.Row="1">
-                    <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                        <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
-                            <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
-                        </Hyperlink>
-                    </TextBlock>
+                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                     <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
                         <messages:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
@@ -519,11 +503,7 @@
                             Margin="4,0,0,4"
                             Grid.Column="1"
                             Grid.Row="1">
-                    <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                        <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
-                            <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
-                        </Hyperlink>
-                    </TextBlock>
+                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                     <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
                         <messages:MessageReference.Resources>
                             <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>
@@ -582,11 +562,7 @@
                                 Margin="4,0,0,4"
                                 Grid.Column="1"
                                 Grid.Row="1">
-                        <TextBlock Visibility="{x:Bind (Visibility)HasViaBotId}" Margin="0,4,0,0" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                            <Hyperlink UnderlineStyle="None" Foreground="#FFFFFF">
-                                <Run Text="via @"/><Run Text="{x:Bind ViaBot.Username}"/>
-                            </Hyperlink>
-                        </TextBlock>
+                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                         <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click" Visibility="{x:Bind ReplyVisibility}" Margin="0,6,0,0">
                             <messages:MessageReference.Resources>
                                 <SolidColorBrush x:Key="MessageHeaderBorderBrush" Color="#FFFFFF"/>

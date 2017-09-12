@@ -603,7 +603,7 @@ namespace Telegram.Api.TL
         {
             get
             {
-                return ReplyVisibility == Visibility.Visible || HasViaBotId ? Visibility.Visible : Visibility.Collapsed;
+                return ReplyVisibility == Visibility.Visible || HasViaBotId || HasFwdFrom ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
