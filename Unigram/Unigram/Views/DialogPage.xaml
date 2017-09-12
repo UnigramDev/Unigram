@@ -266,7 +266,7 @@
                     <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                     <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
 
-                    <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                    <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
                         <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
                         <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
                     </StackPanel>
@@ -302,7 +302,7 @@
                     <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                     <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
 
-                    <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                    <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
                         <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
                         <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
                     </StackPanel>
@@ -381,7 +381,7 @@
                         <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                         <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
 
-                        <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                        <StackPanel Orientation="Horizontal" Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
                             <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
                             <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
                         </StackPanel>
