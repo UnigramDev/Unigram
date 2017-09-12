@@ -25,7 +25,7 @@
               ScrollViewer.VerticalScrollBarVisibility="Disabled"
               ScrollViewer.VerticalScrollMode="Disabled"
               MaxWidth="{ThemeResource MenuFlyoutMaxWidth}"
-              Height="88"
+              Height="96"
               Padding="12">
         <ListView.ItemsPanel>
             <ItemsPanelTemplate>
@@ -77,7 +77,7 @@
         </ListView.ItemContainerStyle>
         <ListView.Header>
             <Grid x:Name="Camera" Visibility="{Binding HardwareService.IsVideoAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" RequestedTheme="Dark" Margin="0,0,12,0">
-                <local:GlyphButton Click="Camera_Click" Glyph="&#xE114;" Width="64" Height="64"/>
+                <local:GlyphButton Click="Camera_Click" Glyph="&#xE114;" Width="72" Height="72"/>
                 <Border BorderBrush="#26000000" BorderThickness="1"/>
             </Grid>
         </ListView.Header>
@@ -85,7 +85,7 @@
             <selectors:StorageMediaTemplateSelector>
                 <selectors:StorageMediaTemplateSelector.PhotoTemplate>
                     <DataTemplate x:DataType="models:StoragePhoto">
-                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="64" Height="64">
+                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="72" Height="72">
                             <Image Source="{x:Bind Thumbnail, Mode=OneWay}"/>
                             <Border BorderBrush="#26000000" BorderThickness="1"/>
                             <CheckBox IsChecked="{x:Bind IsSelected, Mode=TwoWay}" HorizontalAlignment="Right" VerticalAlignment="Top" RequestedTheme="Dark" Style="{StaticResource OnlyCheckBoxStyle}"/>
@@ -94,7 +94,7 @@
                 </selectors:StorageMediaTemplateSelector.PhotoTemplate>
                 <selectors:StorageMediaTemplateSelector.VideoTemplate>
                     <DataTemplate x:DataType="models:StorageVideo">
-                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="64" Height="64">
+                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="72" Height="72">
                             <Image Source="{x:Bind Thumbnail, Mode=OneWay}"/>
                             
                             <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" Padding="4,4,8,4">
