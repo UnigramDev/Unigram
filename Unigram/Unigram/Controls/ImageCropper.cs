@@ -423,7 +423,7 @@ namespace Unigram.Controls
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
                 var transform = ComputeScalingTransformForSourceImage(decoder);
 
-                var software = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+                var software = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
                 source = new SoftwareBitmapSource();
                 await source.SetBitmapAsync(software);
 
