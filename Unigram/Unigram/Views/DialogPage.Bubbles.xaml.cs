@@ -75,30 +75,30 @@ namespace Unigram.Views
             var date = DateTime.Now;
             var message0 = default(TLMessageCommonBase);
 
-            if (index0 > -1 && index1 > -1 /*&& (index0 != _lastIndex0 || index1 != _lastIndex1)*/)
+            if (index0 > -1 && index1 > -1 /*&& (index0 != _lastIndex0 || index1 != _lastIndex1)*/ && !e.IsIntermediate)
             {
-                //var container0 = lvDialogs.ContainerFromIndex(index0);
-                //if (container0 != null)
-                //{
-                //    var item0 = lvDialogs.ItemFromContainer(container0);
-                //    if (item0 != null)
-                //    {
-                //        message0 = item0 as TLMessageCommonBase;
-                //        var date0 = BindConvert.Current.DateTime(message0.Date);
+                var container0 = Messages.ContainerFromIndex(index0);
+                if (container0 != null)
+                {
+                    var item0 = Messages.ItemFromContainer(container0);
+                    if (item0 != null)
+                    {
+                        message0 = item0 as TLMessageCommonBase;
+                        var date0 = BindConvert.Current.DateTime(message0.Date);
 
-                //        var service0 = message0 as TLMessageService;
-                //        if (service0 != null)
-                //        {
-                //            show = !(service0.Action is TLMessageActionDate);
-                //        }
-                //        else
-                //        {
-                //            show = true;
-                //        }
+                        var service0 = message0 as TLMessageService;
+                        if (service0 != null)
+                        {
+                            show = !(service0.Action is TLMessageActionDate);
+                        }
+                        else
+                        {
+                            show = true;
+                        }
 
-                //        date = date0.Date;
-                //    }
-                //}
+                        date = date0.Date;
+                    }
+                }
 
                 var messageIds = new TLVector<int>();
                 var dialog = ViewModel.Dialog;
@@ -109,18 +109,27 @@ namespace Unigram.Views
                     if (container != null)
                     {
                         var item = Messages.ItemFromContainer(container);
-                        if (item != null && item is TLMessageCommonBase commonMessage && !commonMessage.IsOut && commonMessage.IsMentioned && commonMessage.IsMediaUnread)
+                        if (item != null && item is TLMessageCommonBase commonMessage && !commonMessage.IsOut)
                         {
-                            commonMessage.IsMediaUnread = false;
-                            commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
+                            //if (commonMessage.IsUnread)
+                            //{
+                            //    Debug.WriteLine($"Messager {commonMessage.Id} is unread.");
+                            //    ViewModel.MarkAsRead(commonMessage);
+                            //}
 
-                            if (dialog != null)
+                            if (commonMessage.IsMentioned && commonMessage.IsMediaUnread)
                             {
-                                dialog.UnreadMentionsCount = Math.Max(0, dialog.UnreadMentionsCount - 1);
-                                dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
-                            }
+                                commonMessage.IsMediaUnread = false;
+                                commonMessage.RaisePropertyChanged(() => commonMessage.IsMediaUnread);
 
-                            messageIds.Add(commonMessage.Id);
+                                if (dialog != null)
+                                {
+                                    dialog.UnreadMentionsCount = Math.Max(0, dialog.UnreadMentionsCount - 1);
+                                    dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+                                }
+
+                                messageIds.Add(commonMessage.Id);
+                            }
                         }
                     }
                 }
