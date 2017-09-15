@@ -799,20 +799,28 @@
 
     <Style TargetType="local:ButtonPageHeader">
         <Setter Property="Background" Value="{ThemeResource TelegramBackgroundTitlebarBrush}"/>
-        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ButtonPageHeader">
-                    <Grid Background="{TemplateBinding Background}" Height="{ThemeResource AppBarThemeCompactHeight}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{TemplateBinding Text}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-                        <local:GlyphButton Glyph="{TemplateBinding Glyph}" Command="{TemplateBinding Command}" CommandParameter="{TemplateBinding CommandParameter}" Visibility="{TemplateBinding CommandVisibility}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
-                        <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-                        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
-                    </Grid>
+                    <StackPanel>
+                        <Grid Background="{TemplateBinding Background}" Height="{ThemeResource AppBarThemeCompactHeight}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{TemplateBinding Text}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                            <local:GlyphButton Glyph="{TemplateBinding Glyph}" Command="{TemplateBinding Command}" CommandParameter="{TemplateBinding CommandParameter}" Visibility="{TemplateBinding CommandVisibility}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
+                            <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                        </Grid>
+
+                        <Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
+                            <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
+                                <TextBlock Text="Return to call" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            </Button>
+                            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
+                        </Grid>
+                    </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -820,15 +828,23 @@
 
     <Style TargetType="local:ContentPageHeader">
         <Setter Property="Background" Value="{ThemeResource TelegramBackgroundTitlebarBrush}"/>
-        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentPageHeader">
-                    <Grid Background="{TemplateBinding Background}" Height="{ThemeResource AppBarThemeCompactHeight}">
-                        <ContentPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-                        <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
-                        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-                    </Grid>
+                    <StackPanel>
+                        <Grid Background="{TemplateBinding Background}" Height="{ThemeResource AppBarThemeCompactHeight}">
+                            <ContentPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+                            <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
+                            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
+                        </Grid>
+                        
+                        <Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
+                            <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
+                                <TextBlock Text="Return to call" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            </Button>
+                            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
+                        </Grid>
+                    </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -836,15 +852,23 @@
 
     <Style TargetType="local:PageHeader">
         <Setter Property="Background" Value="{ThemeResource TelegramBackgroundTitlebarBrush}"/>
-        <Setter Property="Height" Value="{ThemeResource AppBarThemeCompactHeight}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:PageHeader">
-                    <Grid Background="{TemplateBinding Background}" Height="{ThemeResource AppBarThemeCompactHeight}">
-                        <TextBlock Text="{TemplateBinding Text}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
-                        <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
-                        <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-                    </Grid>
+                    <StackPanel>
+                        <Grid Background="{TemplateBinding Background}" Height="{ThemeResource AppBarThemeCompactHeight}">
+                            <TextBlock Text="{TemplateBinding Text}" Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center" Margin="12,0"/>
+                            <ProgressBar IsIndeterminate="{TemplateBinding IsLoading}" Background="Transparent" VerticalAlignment="Bottom" IsHitTestVisible="False"/>
+                            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
+                        </Grid>
+
+                        <Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
+                            <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
+                                <TextBlock Text="Return to call" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            </Button>
+                            <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
+                        </Grid>
+                    </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
