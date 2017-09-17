@@ -228,7 +228,7 @@ namespace Unigram.ViewModels.Chats
                 return;
             }
 
-            var warning = await TLMessageDialog.ShowAsync("This action is irreversible. It is not possible to downgrade a supergroup to a regular group.", "Warning", "OK", "Cancel");
+            var warning = await TLMessageDialog.ShowAsync("This action is irreversible. Downgrading a supergroup to a regular group is impossible.", "Warning", "OK", "Cancel");
             if (warning != ContentDialogResult.Primary)
             {
                 return;

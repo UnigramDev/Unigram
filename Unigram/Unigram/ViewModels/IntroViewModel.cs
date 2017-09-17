@@ -22,12 +22,12 @@ namespace Unigram.ViewModels
 
             // TODO: put them in a separate file?
             // TODO: localization
-            Items.Add(new IntroPage { Title = "Unigram", Text = "**Unigram** is a Universal Telegram app built by the Windows community, for the Windows community" });
-            Items.Add(new IntroPage { Title = "Fast", Text = "**Telegram** delivers messages faster\nthan any other application." });
-            Items.Add(new IntroPage { Title = "Free", Text = "**Telegram** is free forever. No ads.\nNo subscription fees." });
-            Items.Add(new IntroPage { Title = "Powerful", Text = "**Telegram** has no limits on\nthe size of your media and chats." });
-            Items.Add(new IntroPage { Title = "Secure", Text = "**Telegram** keeps your messages\nsafe from hacker attacks." });
-            Items.Add(new IntroPage { Title = "Cloud-Based", Text = "**Telegram** lets you access your\nmessages from multiple devices." });
+            Items.Add(new IntroPage { Title = "Unigram", Text = "**Unigram** is a Telegram client for the Universal Windows Platform, developed by the Windows community, for the Windows community." });
+            Items.Add(new IntroPage { Title = "Fast", Text = "**Unigram** delivers messages faster\nthan any other application." });
+            Items.Add(new IntroPage { Title = "Free", Text = "**Unigram** is free forever. No ads.\nNo subscription fees." });
+            Items.Add(new IntroPage { Title = "Powerful", Text = "**Unigram** has no limits on\nthe size of your media and chats." });
+            Items.Add(new IntroPage { Title = "Secure", Text = "**Unigram** keeps your messages\nsafe from hacker attacks." });
+            Items.Add(new IntroPage { Title = "Cloud-Based", Text = "**Unigram** lets you access your\nmessages from multiple devices." });
             SelectedItem = Items[0];
         }
 
