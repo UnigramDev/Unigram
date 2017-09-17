@@ -115,7 +115,7 @@
                                Text="Special thanks"
                                FontSize="20"
                                Style="{StaticResource SubtitleTextBlockStyle}" />
-                <TextBlock Text="We want to especially thank these people for their help and knowledge while building Unigram:"
+                <TextBlock Text="We especially want to thank these people for their help and knowledge while building Unigram:"
                                FontSize="14"
                                TextWrapping="Wrap"
                                Margin="0,0,0,6"/>
