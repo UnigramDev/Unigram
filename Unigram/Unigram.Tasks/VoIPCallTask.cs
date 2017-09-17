@@ -161,7 +161,7 @@ namespace Unigram.Tasks
             }
             else
             {
-                VoIPCallTask.Log("Mediator initialized", "Disconnetting app service");
+                VoIPCallTask.Log("Mediator initialized", "Disconnecting app service");
 
                 if (_connection != null)
                 {
