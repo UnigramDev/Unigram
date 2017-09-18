@@ -45,7 +45,7 @@
                     </TextBlock>
                 </Grid>
 
-                <TextBlock Text="Thank you for using Unigram! We wouldn't have been able to get this far without all help of the community."
+                <TextBlock Text="Thank you for using Unigram! We wouldn't have gotten this far without help from the community."
                            TextWrapping="Wrap"
                            FontSize="14"
                            Margin="0,0,0,16"/>
