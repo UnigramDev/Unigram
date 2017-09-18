@@ -34,7 +34,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock x:Name="TitleLabel" Text="Your name" Style="{ThemeResource TitleTextBlockStyle}"/>
-            <TextBlock Text="Set up your first and last name"
+            <TextBlock Text="Tell us your first and last name"
                        Style="{StaticResource BodyTextBlockStyle}"
                        Padding="0,8,0,16"
                        Grid.Row="1"/>
