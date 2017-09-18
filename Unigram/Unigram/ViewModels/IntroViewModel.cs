@@ -22,7 +22,7 @@ namespace Unigram.ViewModels
 
             // TODO: put them in a separate file?
             // TODO: localization
-            Items.Add(new IntroPage { Title = "Unigram", Text = "**Unigram** is a Telegram client for the Universal Windows Platform, developed by the Windows community, for the Windows community." });
+            Items.Add(new IntroPage { Title = "Unigram", Text = "**Unigram** is an open-source Telegram client for the Universal Windows Platform, developed by the community, for the community." });
             Items.Add(new IntroPage { Title = "Fast", Text = "**Unigram** delivers messages faster\nthan any other application." });
             Items.Add(new IntroPage { Title = "Free", Text = "**Unigram** is free forever. No ads.\nNo subscription fees." });
             Items.Add(new IntroPage { Title = "Powerful", Text = "**Unigram** has no limits on\nthe size of your media and chats." });
