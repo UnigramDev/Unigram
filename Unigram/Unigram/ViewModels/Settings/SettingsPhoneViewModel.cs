@@ -139,7 +139,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (PhoneCode == null || PhoneNumber == null)
             {
-                await new TLMessageDialog("Please enter your phone number.").ShowQueuedAsync();
+                await new TLMessageDialog("Please enter your phone number to continue.").ShowQueuedAsync();
                 return;
             }
 
