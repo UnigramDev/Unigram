@@ -145,7 +145,7 @@ namespace Unigram.ViewModels
         public RelayCommand AskCommand => new RelayCommand(AskExecute);
         private async void AskExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync("Plase note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlase take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.", "Telegram", "FAQ", "OK");
+            var confirm = await TLMessageDialog.ShowAsync("Plase note that Telegram Support is provided by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlase take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.", "Telegram", "FAQ", "OK");
             if (confirm == ContentDialogResult.Primary)
             {
                 await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
@@ -184,7 +184,7 @@ namespace Unigram.ViewModels
                 CacheService.ClearAsync();
                 CacheService.ClearConfigImportAsync();
 
-                await TLMessageDialog.ShowAsync("The app will be closed. Relaunch it to login again.", "Unigram", "OK");
+                await TLMessageDialog.ShowAsync("Unigram will be closed. Relaunch it to login again.", "Unigram", "OK");
                 App.Current.Exit();
             }
             else
