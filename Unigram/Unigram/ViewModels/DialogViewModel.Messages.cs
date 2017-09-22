@@ -147,7 +147,7 @@ namespace Unigram.ViewModels
                     if (config != null && message.Date + config.EditTimeLimit > date)
                     {
                         var user = With as TLUser;
-                        if (user != null)
+                        if (user != null && !user.IsBot)
                         {
                             dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
                         }
@@ -395,7 +395,7 @@ namespace Unigram.ViewModels
                     if (config != null && minDate + config.EditTimeLimit > date && maxDate + config.EditTimeLimit > date)
                     {
                         var user = With as TLUser;
-                        if (user != null)
+                        if (user != null && !user.IsBot)
                         {
                             dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
                         }
