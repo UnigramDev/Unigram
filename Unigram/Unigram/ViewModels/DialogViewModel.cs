@@ -2599,10 +2599,15 @@ namespace Unigram.ViewModels
                         });
                     }
 
-                    user.RaisePropertyChanged(() => user.FullName);
+                    user.RaisePropertyChanged(() => user.HasFirstName);
+                    user.RaisePropertyChanged(() => user.HasLastName);
                     user.RaisePropertyChanged(() => user.FirstName);
                     user.RaisePropertyChanged(() => user.LastName);
+                    user.RaisePropertyChanged(() => user.FullName);
                     user.RaisePropertyChanged(() => user.DisplayName);
+
+                    user.RaisePropertyChanged(() => user.HasPhone);
+                    user.RaisePropertyChanged(() => user.Phone);
 
                     var dialog = CacheService.GetDialog(user.ToPeer());
                     if (dialog != null)

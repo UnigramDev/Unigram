@@ -54,8 +54,18 @@
                     <Button.Flyout>
                         <MenuFlyout>
                             <MenuFlyoutItem
-                                Text="Edit name"
-                                Command="{x:Bind ViewModel.EditNameCommand}"
+                                Text="Add to contacts"
+                                Command="{x:Bind ViewModel.AddCommand}"
+                                Visibility="{x:Bind (Visibility)ViewModel.IsAddEnabled, Mode=OneWay}"
+                                MinWidth="120"/>
+                            <MenuFlyoutItem
+                                Text="Edit"
+                                Command="{x:Bind ViewModel.EditCommand}"
+                                Visibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"
+                                MinWidth="120"/>
+                            <MenuFlyoutItem
+                                Text="Delete"
+                                Command="{x:Bind ViewModel.DeleteCommand}"
                                 Visibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"
                                 MinWidth="120"/>
                         </MenuFlyout>
@@ -137,10 +147,10 @@
                                           Command="{Binding SendMessageCommand}"
                                           Style="{StaticResource HyperButtonStyle}"/>
 
-                    <controls:HyperButton Content="Add contact"
+                    <!--<controls:HyperButton Content="Add contact"
                                           Command="{Binding AddContactCommand}"
                                           Visibility="{Binding AddContactVisibility}"
-                                          Style="{StaticResource HyperButtonStyle}"/>
+                                          Style="{StaticResource HyperButtonStyle}"/>-->
 
                     <controls:HyperButton Content="Add to group"
                                           Visibility="{Binding AddToGroupVisibility}"
