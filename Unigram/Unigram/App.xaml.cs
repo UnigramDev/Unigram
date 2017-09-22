@@ -47,6 +47,7 @@ using Unigram.Controls;
 using Unigram.Views.Users;
 using System.Linq;
 using Telegram.Logs;
+using Windows.Media.Playback;
 
 namespace Unigram
 {
@@ -71,6 +72,8 @@ namespace Unigram
                 return Resources["Locator"] as ViewModelLocator;
             }
         }
+
+        public static MediaPlayer Playback { get; } = new MediaPlayer();
 
         private BackgroundTaskDeferral appServiceDeferral = null;
 

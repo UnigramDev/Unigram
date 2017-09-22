@@ -285,6 +285,7 @@ namespace Unigram.Controls.Media
             else if (_state == PlaybackState.Playing)
             {
                 _graph?.Stop();
+                _timer?.Stop();
                 _state = PlaybackState.Paused;
                 UpdateGlyph();
 
