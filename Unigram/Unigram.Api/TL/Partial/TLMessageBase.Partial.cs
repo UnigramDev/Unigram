@@ -100,27 +100,30 @@ namespace Telegram.Api.TL
                 {
                     return false;
                 }
+
                 if (this is TLMessageCommonBase messageCommon && messageCommon.IsOut)
                 {
                     return true;
                 }
+
                 if (FromId == null || FromId.Value <= 0)
                 {
                     return false;
                 }
+
                 if (ToId is TLPeerChat)
                 {
                     return true;
                 }
+
                 if (ToId is TLPeerChannel)
                 {
-                    var instance = InMemoryCacheService.Current;
-                    var channel = instance.GetChat(ToId.Id) as TLChannel;
-                    if (channel != null && channel.IsMegaGroup)
+                    if (Parent is TLChannel channel && channel.IsMegaGroup)
                     {
                         return true;
                     }
                 }
+
                 return false;
             }
         }
