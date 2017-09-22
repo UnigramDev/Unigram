@@ -1510,7 +1510,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var messageText = GetText().Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
+            var messageText = GetText().Format();
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             var reply = new int?();
 
@@ -1722,7 +1722,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n').Trim();
+            var messageText = text.Format();
             if (messageText.Equals("/tg_logs", StringComparison.OrdinalIgnoreCase))
             {
                 var item = await FileUtils.TryGetItemAsync("Logs");

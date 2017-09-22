@@ -114,12 +114,15 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand SendCommand => new RelayCommand(SendExecute);
         private async void SendExecute()
         {
-            if (_item != null && _full != null && !string.Equals(_about, _full.About))
+            var about = _about.Format();
+            var title = _title.Trim();
+
+            if (_item != null && _full != null && !string.Equals(about, _full.About))
             {
-                var response = await ProtoService.EditAboutAsync(_item, _about);
+                var response = await ProtoService.EditAboutAsync(_item, about);
                 if (response.IsSucceeded)
                 {
-                    _full.About = _about;
+                    _full.About = about;
                     _full.RaisePropertyChanged(() => _full.About);
                 }
                 else
@@ -129,12 +132,12 @@ namespace Unigram.ViewModels.Channels
                 }
             }
 
-            if (_item != null && !string.Equals(_title, _item.Title))
+            if (_item != null && !string.Equals(title, _item.Title))
             {
-                var response = await ProtoService.EditTitleAsync(_item, _title);
+                var response = await ProtoService.EditTitleAsync(_item, title);
                 if (response.IsSucceeded)
                 {
-                    _item.Title = _title;
+                    _item.Title = title;
                     _item.RaisePropertyChanged(() => _item.Title);
                 }
                 else
