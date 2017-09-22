@@ -99,17 +99,17 @@ namespace Unigram.ViewModels
 
                 foreach (var item in test)
                 {
-                    if (item.IsPinned)
-                    {
-                        item.PinnedIndex = pinnedIndex++;
-                    }
-
                     if (item.With is TLChat chat && chat.HasMigratedTo)
                     {
                         continue;
                     }
                     else
                     {
+                        if (item.IsPinned)
+                        {
+                            item.PinnedIndex = pinnedIndex++;
+                        }
+
                         items.Add(item);
                     }
                 }
@@ -191,17 +191,17 @@ namespace Unigram.ViewModels
 
                 foreach (var item in response.Result.Dialogs)
                 {
-                    if (item.IsPinned)
-                    {
-                        item.PinnedIndex = pinnedIndex++;
-                    }
-
                     if (item.With is TLChat chat && chat.HasMigratedTo)
                     {
                         continue;
                     }
                     else
                     {
+                        if (item.IsPinned)
+                        {
+                            item.PinnedIndex = pinnedIndex++;
+                        }
+
                         items.Add(item);
                     }
                 }
@@ -997,7 +997,7 @@ namespace Unigram.ViewModels
                     var chat = dialog.With as TLChat;
                     if (chat != null)
                     {
-                        return (chat.Title.IsLike(query, StringComparison.OrdinalIgnoreCase));
+                        return (!chat.HasMigratedTo && chat.Title.IsLike(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     return false;

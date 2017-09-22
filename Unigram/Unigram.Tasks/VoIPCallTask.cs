@@ -50,7 +50,7 @@ namespace Unigram.Tasks
             {
                 if (_mediator == null)
                 {
-                    VoIPCallTask.Log("Mediator doesn't exists", "Creating mediator");
+                    VoIPCallTask.Log("Mediator doesn't exist", "Creating mediator");
 
                     _mediator = new VoIPCallMediator();
                     _mediator.Initialize(VoIPServiceTask.Connection);
@@ -160,7 +160,7 @@ namespace Unigram.Tasks
             }
             else
             {
-                VoIPCallTask.Log("Mediator initialized", "Disconnetting app service");
+                VoIPCallTask.Log("Mediator initialized", "Disconnecting app service");
 
                 if (_connection != null)
                 {

@@ -1485,7 +1485,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            var messageText = GetText().Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
+            var messageText = GetText().Format();
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             var reply = new int?();
 
@@ -1697,7 +1697,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n').Trim();
+            if (With is TLChannel check && check.IsBroadcast && !(check.IsCreator || (check.HasAdminRights && check.AdminRights.IsPostMessages)))
+            {
+                return;
+            }
+
+            var messageText = text.Format();
             if (messageText.Equals("/tg_logs", StringComparison.OrdinalIgnoreCase))
             {
                 var item = await FileUtils.TryGetItemAsync("Logs");
@@ -2574,10 +2579,15 @@ namespace Unigram.ViewModels
                         });
                     }
 
-                    user.RaisePropertyChanged(() => user.FullName);
+                    user.RaisePropertyChanged(() => user.HasFirstName);
+                    user.RaisePropertyChanged(() => user.HasLastName);
                     user.RaisePropertyChanged(() => user.FirstName);
                     user.RaisePropertyChanged(() => user.LastName);
+                    user.RaisePropertyChanged(() => user.FullName);
                     user.RaisePropertyChanged(() => user.DisplayName);
+
+                    user.RaisePropertyChanged(() => user.HasPhone);
+                    user.RaisePropertyChanged(() => user.Phone);
 
                     var dialog = CacheService.GetDialog(user.ToPeer());
                     if (dialog != null)

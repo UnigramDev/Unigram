@@ -76,6 +76,16 @@ namespace Unigram.Common
             });
         }
 
+        public static string Format(this string input)
+        {
+            if (input != null)
+            {
+                return input.Trim().Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
+            }
+
+            return input;
+        }
+
         public static string TrimEnd(this string input, string suffixToRemove)
         {
             if (input != null && suffixToRemove != null && input.EndsWith(suffixToRemove))

@@ -225,30 +225,27 @@ namespace Unigram.Controls.Items
                                 result = "You: ";
                             }
                         }
-                        else
+                        else if (message.From is TLUser user)
                         {
-                            if (InMemoryCacheService.Current.GetUser(from.Value) is TLUser user)
+                            if (user.HasFirstName)
                             {
-                                if (user.HasFirstName)
-                                {
-                                    result = $"{user.FirstName.Trim()}: ";
-                                }
-                                else if (user.HasLastName)
-                                {
-                                    result = $"{user.LastName.Trim()}: ";
-                                }
-                                else if (user.HasUsername)
-                                {
-                                    result = $"{user.Username.Trim()}: ";
-                                }
-                                else if (user.IsDeleted)
-                                {
-                                    return $"Deleted Account: ";
-                                }
-                                else
-                                {
-                                    result = $"{user.Id}: ";
-                                }
+                                result = $"{user.FirstName.Trim()}: ";
+                            }
+                            else if (user.HasLastName)
+                            {
+                                result = $"{user.LastName.Trim()}: ";
+                            }
+                            else if (user.HasUsername)
+                            {
+                                result = $"{user.Username.Trim()}: ";
+                            }
+                            else if (user.IsDeleted)
+                            {
+                                return $"Deleted Account: ";
+                            }
+                            else
+                            {
+                                result = $"{user.Id}: ";
                             }
                         }
                     }

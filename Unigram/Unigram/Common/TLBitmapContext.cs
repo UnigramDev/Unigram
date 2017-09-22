@@ -218,6 +218,27 @@ namespace Unigram.Common
             }
         }
 
+        public ImageSource this[TLChannelForbidden forbiddenChannel]
+        {
+            get
+            {
+                if (forbiddenChannel == null)
+                {
+                    return null;
+                }
+
+                if (_context.TryGetValue(forbiddenChannel.Title, out Tuple<TLBitmapSource, WeakReference<ImageSource>> reference) &&
+                    reference.Item2.TryGetTarget(out ImageSource target))
+                {
+                    return target;
+                }
+
+                var bitmap = new TLBitmapSource(forbiddenChannel);
+                _context[forbiddenChannel.Title] = new Tuple<TLBitmapSource, WeakReference<ImageSource>>(bitmap, new WeakReference<ImageSource>(bitmap.Image));
+                return bitmap.Image;
+            }
+        }
+
         public void Clear()
         {
             _context.Clear();

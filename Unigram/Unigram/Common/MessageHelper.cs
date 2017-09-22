@@ -545,6 +545,11 @@ namespace Unigram.Common
                     hyper.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
                     hyper.Foreground = foreground;
                     paragraph.Inlines.Add(hyper);
+
+                    if (entity is TLMessageEntityTextUrl textUrl)
+                    {
+                        ToolTipService.SetToolTip(hyper, textUrl.Url);
+                    }
                 }
 
                 previous = entity.Offset + entity.Length;

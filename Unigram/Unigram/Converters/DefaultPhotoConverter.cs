@@ -89,6 +89,11 @@ namespace Unigram.Converters
                 return BitmapContext[channel];
             }
 
+            if (value is TLChannelForbidden forbiddenChannel)
+            {
+                return BitmapContext[forbiddenChannel];
+            }
+
             if (value is TLUserProfilePhoto userProfilePhoto)
             {
                 if (userProfilePhoto.PhotoSmall is TLFileLocation fileLocation)

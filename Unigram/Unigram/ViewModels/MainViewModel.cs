@@ -1,49 +1,30 @@
-﻿using System;
+﻿using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Security;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Phone.Methods;
-using Telegram.Api.TL.LangPack.Methods;
-using Telegram.Api.TL.Contacts.Methods;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Core.Notifications;
-using Unigram.Core.Services;
-using Unigram.Views;
-using Windows.ApplicationModel.Background;
-using Windows.Globalization.DateTimeFormatting;
-using Windows.Networking.PushNotifications;
-using Windows.Security.Authentication.Web;
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
-using Unigram.Controls;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Math;
-using Unigram.Core;
-using Unigram.Common.Dialogs;
-using Telegram.Api.TL.Phone;
-using System.Collections.Concurrent;
+using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.Updates;
+using Telegram.Api.TL;
+using Telegram.Api.TL.Phone;
+using Telegram.Api.TL.Phone.Methods;
 using Telegram.Logs;
 using Template10.Common;
+using Unigram.Common;
+using Unigram.Common.Dialogs;
+using Unigram.Controls;
+using Unigram.Core;
+using Unigram.Core.Services;
+using Unigram.Views;
 using Windows.Media.Playback;
-using Windows.Media.Core;
-using System.Threading;
-using Telegram.Api.Services.Cache.EventArgs;
-using Telegram.Api.TL.Help.Methods;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
@@ -358,36 +339,36 @@ namespace Unigram.ViewModels
             return Task.CompletedTask;
         }
 
-        public void Handle(TLMessageCommonBase messageCommon)
+        public void Handle(TLMessageCommonBase commonMessage)
         {
-            Execute.BeginOnUIThread(() => Notify(messageCommon));
+            Execute.BeginOnUIThread(() => Notify(commonMessage));
         }
 
-        public void Notify(TLMessageCommonBase messageCommon)
+        public void Notify(TLMessageCommonBase commonMessage)
         {
             //if (this._stateService.SuppressNotifications)
             //{
             //    return;
             //}
-            if (messageCommon.IsOut)
+            if (commonMessage.IsOut)
             {
                 return;
             }
 
-            if (!messageCommon.IsUnread)
+            if (!commonMessage.IsUnread)
             {
                 return;
             }
 
-            if (messageCommon is TLMessage message && message.IsSilent)
+            if (commonMessage is TLMessage message && message.IsSilent)
             {
                 return;
             }
 
             TLUser from = null;
-            if (messageCommon.FromId != null && messageCommon.FromId.Value >= 0)
+            if (commonMessage.FromId != null && commonMessage.FromId.Value >= 0)
             {
-                from = CacheService.GetUser(messageCommon.FromId) as TLUser;
+                from = CacheService.GetUser(commonMessage.FromId) as TLUser;
                 if (from == null)
                 {
                     return;
@@ -397,8 +378,8 @@ namespace Unigram.ViewModels
             try
             {
                 TLObject activeDialog = CheckActiveDialog();
-                TLPeerBase toId = messageCommon.ToId;
-                var fromId = messageCommon.FromId;
+                TLPeerBase toId = commonMessage.ToId;
+                var fromId = commonMessage.FromId;
                 var suppress = false;
                 TLDialog dialog = null;
                 if (toId is TLPeerChat && activeDialog is TLChat && toId.Id == ((TLChat)activeDialog).Id)
@@ -419,29 +400,29 @@ namespace Unigram.ViewModels
                     TLChatBase chat = null;
                     TLUser user = null;
                     TLChannel channel = null;
-                    if (messageCommon.ToId is TLPeerChat)
+                    if (commonMessage.ToId is TLPeerChat)
                     {
-                        chat = CacheService.GetChat(messageCommon.ToId.Id);
+                        chat = CacheService.GetChat(commonMessage.ToId.Id);
                         dialog = CacheService.GetDialog(new TLPeerChat
                         {
-                            Id = messageCommon.ToId.Id
+                            Id = commonMessage.ToId.Id
                         });
                     }
-                    else if (messageCommon.ToId is TLPeerChannel)
+                    else if (commonMessage.ToId is TLPeerChannel)
                     {
-                        chat = CacheService.GetChat(messageCommon.ToId.Id);
+                        chat = CacheService.GetChat(commonMessage.ToId.Id);
                         channel = (chat as TLChannel);
-                        dialog = CacheService.GetDialog(new TLPeerChannel { ChannelId = messageCommon.ToId.Id });
+                        dialog = CacheService.GetDialog(new TLPeerChannel { ChannelId = commonMessage.ToId.Id });
                     }
-                    else if (messageCommon.IsOut)
+                    else if (commonMessage.IsOut)
                     {
-                        user = CacheService.GetUser(messageCommon.ToId.Id) as TLUser;
-                        dialog = CacheService.GetDialog(new TLPeerUser { UserId = messageCommon.ToId.Id });
+                        user = CacheService.GetUser(commonMessage.ToId.Id) as TLUser;
+                        dialog = CacheService.GetDialog(new TLPeerUser { UserId = commonMessage.ToId.Id });
                     }
                     else
                     {
-                        user = CacheService.GetUser(messageCommon.FromId) as TLUser;
-                        dialog = CacheService.GetDialog(new TLPeerUser { UserId = messageCommon.FromId.Value });
+                        user = CacheService.GetUser(commonMessage.FromId) as TLUser;
+                        dialog = CacheService.GetDialog(new TLPeerUser { UserId = commonMessage.FromId.Value });
                     }
 
                     var now = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
@@ -536,7 +517,7 @@ namespace Unigram.ViewModels
                         {
                             if (ApplicationSettings.Current.InAppPreview)
                             {
-                                // TODO
+                                _pushService.Notify(commonMessage);
                             }
 
                             if (_lastNotificationTime.HasValue)
@@ -552,7 +533,7 @@ namespace Unigram.ViewModels
 
                             if (suppress)
                             {
-                                Log.Write(string.Format("Cancel notification reason=[lastNotificationTime] msg_id={0} last_notification_time={1}, now={2}", messageCommon.Id, _lastNotificationTime, DateTime.Now), null);
+                                Log.Write(string.Format("Cancel notification reason=[lastNotificationTime] msg_id={0} last_notification_time={1}, now={2}", commonMessage.Id, _lastNotificationTime, DateTime.Now), null);
                             }
                             else
                             {

@@ -789,7 +789,7 @@ namespace Unigram.Controls
                 reader.LoadRtfText(rtf);
                 reader.Parse();
 
-                var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
+                var messageText = text.Format();
                 var entities = Utils.GetEntities(ref messageText);
                 if (entities == null)
                 {

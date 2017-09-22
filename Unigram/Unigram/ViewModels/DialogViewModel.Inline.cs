@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
+using Unigram.Common;
 using Unigram.Controls;
 using Windows.UI.Xaml;
 
@@ -87,7 +88,7 @@ namespace Unigram.ViewModels
 
             if (query != null)
             {
-                query = query.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n').Trim();
+                query = query.Format();
             }
 
             Debug.WriteLine($"@{CurrentInlineBot.Username}: {CurrentInlineBot.BotInlinePlaceholder}, {query}");
