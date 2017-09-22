@@ -1722,6 +1722,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            if (With is TLChannel check && check.IsBroadcast && !(check.IsCreator || (check.HasAdminRights && check.AdminRights.IsPostMessages)))
+            {
+                return;
+            }
+
             var messageText = text.Format();
             if (messageText.Equals("/tg_logs", StringComparison.OrdinalIgnoreCase))
             {
