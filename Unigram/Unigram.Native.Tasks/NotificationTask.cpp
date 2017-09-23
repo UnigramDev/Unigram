@@ -164,7 +164,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 
 			if (loc_key != L"DC_UPDATE")
 			{
-				UpdateTile(caption, message);
+				UpdateTile(caption, message, picture);
 			}
 		}
 	}
@@ -411,7 +411,7 @@ void NotificationTask::UpdateBadge(int badgeNumber)
 	updater->Update(ref new BadgeNotification(document));
 }
 
-void NotificationTask::UpdateTile(String^ caption, String^ message)
+void NotificationTask::UpdateTile(String^ caption, String^ message, String^ picture)
 {
 	std::wstring body = L"<text hint-style='body'><![CDATA[";
 	body += caption->Data();
@@ -423,13 +423,37 @@ void NotificationTask::UpdateTile(String^ caption, String^ message)
 	std::wstring xml = L"<tile><visual><binding template='TileMedium' branding='nameAndLogo'>";
 	xml += body;
 	xml += L"</binding><binding template='TileWide' branding='nameAndLogo'>";
+	xml += L"<group>";
+	xml += L"<subgroup hint-weight='18'>";
+	if (picture != nullptr)
+	{
+		xml += L"<image hint-crop='circle' src='";
+		xml += picture->Data();
+		xml += L"'/>";
+	}
+	xml += L"</subgroup>";
+	xml += L"<subgroup>";
 	xml += body;
+	xml += L"</subgroup>";
+	xml += L"</group>";
 	xml += L"</binding><binding template='TileLarge' branding='nameAndLogo'>";
+	xml += L"<group>";
+	xml += L"<subgroup hint-weight='18'>";
+	if (picture != nullptr)
+	{
+		xml += L"<image hint-crop='circle' src='";
+		xml += picture->Data();
+		xml += L"'/>";
+	}
+	xml += L"</subgroup>";
+	xml += L"<subgroup>";
 	xml += body;
+	xml += L"</subgroup>";
+	xml += L"</group>";
 	xml += L"</binding></visual></tile>";
 
 	auto updater = TileUpdateManager::CreateTileUpdaterForApplication(L"App");
-	//updater->EnableNotificationQueue(false);
+	//updater->EnableNotificationQueue(true);
 	//updater->EnableNotificationQueueForSquare150x150(false);
 
 	auto document = ref new XmlDocument();
