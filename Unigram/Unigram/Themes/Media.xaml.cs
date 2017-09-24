@@ -83,11 +83,9 @@ namespace Unigram.Themes
                     {
                         bubble.Context.NavigationService.Navigate(typeof(InstantPage), message.Media);
                     }
-                    else if (webPage.HasType && webPage.Type.Equals("telegram_megagroup", StringComparison.OrdinalIgnoreCase))
-                    {
-                        MessageHelper.HandleTelegramUrl(webPage.Url);
-                    }
-                    else if (webPage.HasType && webPage.Type.Equals("telegram_channel", StringComparison.OrdinalIgnoreCase))
+                    else if (webPage.HasType && (webPage.Type.Equals("telegram_megagroup", StringComparison.OrdinalIgnoreCase) ||
+                                                 webPage.Type.Equals("telegram_channel", StringComparison.OrdinalIgnoreCase) ||
+                                                 webPage.Type.Equals("telegram_message", StringComparison.OrdinalIgnoreCase)))
                     {
                         MessageHelper.HandleTelegramUrl(webPage.Url);
                     }
