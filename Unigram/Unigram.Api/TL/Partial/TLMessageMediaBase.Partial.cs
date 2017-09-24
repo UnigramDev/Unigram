@@ -48,6 +48,14 @@ namespace Telegram.Api.TL
         }
     }
 
+    public partial class TLMessageMediaGeoLive
+    {
+        public override TLInputMediaBase ToInputMedia()
+        {
+            return new TLInputMediaGeoLive { GeoPoint = Geo.ToInputGeoPoint(), Period = Period };
+        }
+    }
+
     //public partial class TLMessageMediaInvoice
     //{
     //    public override TLInputMediaBase ToInputMedia()
@@ -60,7 +68,7 @@ namespace Telegram.Api.TL
     {
         public override TLInputMediaBase ToInputMedia()
         {
-            return new TLInputMediaVenue { Address = Address, GeoPoint = Geo.ToInputGeoPoint(), Provider = Provider, Title = Title, VenueId = VenueId };
+            return new TLInputMediaVenue { Address = Address, GeoPoint = Geo.ToInputGeoPoint(), Provider = Provider, Title = Title, VenueId = VenueId, VenueType = VenueType };
         }
     }
 

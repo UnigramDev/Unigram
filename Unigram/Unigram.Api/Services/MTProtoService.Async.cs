@@ -38,6 +38,20 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLUpdatesBase>> EditGeoLiveAsync(TLInputPeerBase peer, int id, TLInputGeoPointBase geoPoint, bool stop)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
+            EditGeoLiveAsync(peer, id, geoPoint, stop, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLChannelsAdminLogResults>> GetAdminLogAsync(TLInputChannelBase inputChannel, string query, TLChannelAdminLogEventsFilter filter, TLVector<TLInputUserBase> admins, long maxId, long minId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLChannelsAdminLogResults>>();
@@ -1026,15 +1040,15 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLChannelsChannelParticipants>> GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit)
+        public Task<MTProtoResponse<TLChannelsChannelParticipantsBase>> GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit, int hash)
         {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLChannelsChannelParticipants>>();
-            GetParticipantsAsync(inputChannel, filter, offset, limit, (callback) =>
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLChannelsChannelParticipantsBase>>();
+            GetParticipantsAsync(inputChannel, filter, offset, limit, hash, (callback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLChannelsChannelParticipants>(callback));
+                tsc.TrySetResult(new MTProtoResponse<TLChannelsChannelParticipantsBase>(callback));
             }, (faultCallback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLChannelsChannelParticipants>(faultCallback));
+                tsc.TrySetResult(new MTProtoResponse<TLChannelsChannelParticipantsBase>(faultCallback));
             });
             return tsc.Task;
         }

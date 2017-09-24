@@ -11,6 +11,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Channels;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
@@ -264,15 +265,15 @@ namespace Unigram.ViewModels
                         return string.Format("{0} members", full.ParticipantsCount ?? 0);
                     }
 
-                    var participants = await ProtoService.GetParticipantsAsync(channel.ToInputChannel(), new TLChannelParticipantsRecent(), 0, config.ChatSizeMax);
-                    if (participants.IsSucceeded)
+                    var participants = await ProtoService.GetParticipantsAsync(channel.ToInputChannel(), new TLChannelParticipantsRecent(), 0, config.ChatSizeMax, 0);
+                    if (participants.IsSucceeded && participants.Result is TLChannelsChannelParticipants channelParticipants)
                     {
                         full.Participants = participants.Result;
 
                         if (full.ParticipantsCount <= config.ChatSizeMax)
                         {
                             var count = 0;
-                            foreach (var item in participants.Result.Users.OfType<TLUser>())
+                            foreach (var item in channelParticipants.Users.OfType<TLUser>())
                             {
                                 if (item.HasStatus && item.Status is TLUserStatusOnline)
                                 {

@@ -662,6 +662,13 @@ namespace Telegram.Api.TL
                 {
                     Media = invoiceNew;
                 }
+
+                var geoLiveNew = message.Media as TLMessageMediaGeoLive;
+                var geoLiveOld = Media as TLMessageMediaGeoLive;
+                if (geoLiveOld != null && geoLiveNew != null)
+                {
+                    Media = geoLiveNew;
+                }
             }
         }
 

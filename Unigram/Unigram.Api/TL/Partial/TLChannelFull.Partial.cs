@@ -9,6 +9,6 @@ namespace Telegram.Api.TL
 {
     public partial class TLChannelFull
     {
-        public TLChannelsChannelParticipants Participants { get; set; }
+        public TLChannelsChannelParticipantsBase Participants { get; set; }
     }
 }

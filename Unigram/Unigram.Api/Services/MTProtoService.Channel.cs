@@ -140,12 +140,12 @@ namespace Telegram.Api.Services
             faultCallback);
         }
 
-        public void GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit, Action<TLChannelsChannelParticipants> callback, Action<TLRPCError> faultCallback = null)
+        public void GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit, int hash, Action<TLChannelsChannelParticipantsBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLChannelsGetParticipants { Channel = inputChannel, Filter = filter, Offset = offset, Limit = limit };
+            var obj = new TLChannelsGetParticipants { Channel = inputChannel, Filter = filter, Offset = offset, Limit = limit, Hash = hash };
 
             const string caption = "channels.getParticipants";
-            SendInformativeMessage<TLChannelsChannelParticipants>(caption, obj,
+            SendInformativeMessage<TLChannelsChannelParticipantsBase>(caption, obj,
                 result =>
                 {
                     //for (var i = 0; i < result.Users.Count; i++)
@@ -159,7 +159,10 @@ namespace Telegram.Api.Services
                     //    }
                     //}
 
-                    _cacheService.SyncUsers(result.Users, r => { });
+                    if (result is TLChannelsChannelParticipants participants)
+                    {
+                        _cacheService.SyncUsers(participants.Users, r => { });
+                    }
 
                     callback?.Invoke(result);
                 },
@@ -547,6 +550,29 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesEditMessage { Flags = 0, Peer = peer, Id = id, Message = message, IsNoWebPage = noWebPage, Entities = entities, ReplyMarkup = replyMarkup };
 
             const string caption = "messages.editMessage";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
+                {
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null, true);
+                    }
+
+                    callback?.Invoke(result);
+                },
+                faultCallback);
+        }
+
+        public void EditGeoLiveAsync(TLInputPeerBase peer, int id, TLInputGeoPointBase geoPoint, bool stop, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesEditGeoLive { Peer = peer, Id = id, GeoPoint = geoPoint, IsStop = stop };
+
+            const string caption = "messages.editGeoLive";
             SendInformativeMessage<TLUpdatesBase>(caption, obj,
                 result =>
                 {

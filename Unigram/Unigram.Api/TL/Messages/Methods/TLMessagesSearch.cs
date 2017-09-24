@@ -58,7 +58,7 @@ namespace Telegram.Api.TL.Messages.Methods
 		{
 			UpdateFlags();
 
-			to.Write(0x039E9EA0);
+			to.Write(0x39E9EA0);
 			to.Write((Int32)Flags);
 			to.WriteObject(Peer);
 			to.Write(Q);
