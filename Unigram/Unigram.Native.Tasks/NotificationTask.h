@@ -23,7 +23,7 @@ namespace Unigram
 				virtual void Run(IBackgroundTaskInstance^ taskInstance);
 
 				static void UpdateBadge(int badgeNumber);
-				static void UpdateTile(String^ caption, String^ message);
+				static void UpdateTile(String^ caption, String^ message, String^ picture);
 				static void UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key);
 
 			private:
