@@ -199,24 +199,24 @@
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Grid.Row="1">
         <controls:NavigationView x:Name="Navigation" ItemClick="NavigationView_ItemClick">
             <controls:NavigationView.MenuItems>
-                <controls:NavigationViewItem x:Name="NavigationNewChat" Content="New Group" Glyph="&#xE125;" />
-                <!--<controls:NavigationViewItem Text="New Secret Chat" Glyph="&#xE125;" />-->
-                <controls:NavigationViewItem x:Name="NavigationNewChannel" Content="New Channel" Glyph="&#xE789;" />
-                <controls:NavigationViewItemSeparator/>
-
                 <controls:NavigationViewItem x:Name="NavigationChats" Content="Chats" IsChecked="True" Glyph="&#xE8BD;" />
                 <controls:NavigationViewItem x:Name="NavigationContacts" Content="Contacts" Glyph="&#xE8D4;" />
                 <controls:NavigationViewItem x:Name="NavigationCalls" Content="Calls" Glyph="&#xE717;" />
-                <!--<controls:NavigationViewItem Text="Invite Friends" Glyph="&#xE789;" />-->
                 <controls:NavigationViewItem x:Name="NavigationSettings" Content="Settings" Glyph="&#xE115;" />
-                <!--<controls:NavigationViewItem Text="Telegram FAQ" Glyph="&#xE897;" />-->
                 <controls:NavigationViewItemSeparator/>
+                <controls:NavigationViewItem x:Name="NavigationNewChat" Content="New Group" Glyph="&#xE125;" />
+                <!--<controls:NavigationViewItem Content="New Secret Chat" Glyph="&#xE125;" />-->
+                <controls:NavigationViewItem x:Name="NavigationNewChannel" Content="New Channel" Glyph="&#xE789;" />
+                <!--<controls:NavigationViewItem Content="Invite Friends" Glyph="&#xE789;" />-->
+
+                <controls:NavigationViewItemSeparator/>
+                <!--<controls:NavigationViewItem Content="Telegram FAQ" Glyph="&#xE897;" />-->
                 <controls:NavigationViewItem x:Name="NavigationOfficialChannel" Content="Official Channel" Glyph="&#xE789;" />
             </controls:NavigationView.MenuItems>
             <controls:NavigationView.PaneFooter>
                 <StackPanel>
-                    <controls:GlyphButton Click="About_Click" Content="About" Glyph="&#xE946;" Style="{StaticResource NavigationGlyphButtonStyle}"/>
                     <!--<controls:NavigationViewItem Content="{x:Bind ViewModel.Contacts.Self.FullName, Mode=OneWay}" Tag="{x:Bind ViewModel.Contacts.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Style="{StaticResource ImageNavigationMenuItemStyle}"/>-->
+                    <controls:GlyphButton Click="About_Click" Content="About" Glyph="&#xE946;" Style="{StaticResource NavigationGlyphButtonStyle}"/>
                 </StackPanel>
             </controls:NavigationView.PaneFooter>
 
