@@ -23,7 +23,7 @@ namespace Unigram.Converters
             var size = (string)parameter;
             if (size == null)
             {
-                zoom = 13;
+                //zoom = 13;
                 size = "320,240";
             }
 

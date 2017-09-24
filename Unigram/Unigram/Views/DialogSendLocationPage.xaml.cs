@@ -136,8 +136,8 @@ namespace Unigram.Views
 
                 mMap.Center = new Geopoint(new BasicGeoposition
                 {
-                    Latitude = pos.Coordinate.Latitude,
-                    Longitude = pos.Coordinate.Longitude
+                    Latitude = pos.Coordinate.Point.Position.Latitude,
+                    Longitude = pos.Coordinate.Point.Position.Longitude
                 });
                 mMap.ZoomLevel = 15;
                 userPos.Location = mMap.Center;
@@ -185,17 +185,23 @@ namespace Unigram.Views
             FindLocation();
         }
 
-        private void BtnCurrentLocation_Click(object sender, RoutedEventArgs e)
+        private void CurrentLocation_Click(object sender, RoutedEventArgs e)
         {
             Media = new TLMessageMediaGeo { Geo = new TLGeoPoint { Lat = mMap.Center.Position.Latitude, Long = mMap.Center.Position.Longitude } };
             Dialog.Hide(ContentDialogBaseResult.OK);
         }
 
+        private void LiveLocation_Click(object sender, RoutedEventArgs e)
+        {
+            Media = new TLMessageMediaGeoLive { Geo = new TLGeoPoint { Lat = mMap.Center.Position.Latitude, Long = mMap.Center.Position.Longitude }, Period = 900 };
+            Dialog.Hide(ContentDialogBaseResult.OK);
+        }
+
         private void NearbyList_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is LocationVenue venue)
+            if (e.ClickedItem is TLMessageMediaVenue venue)
             {
-                Media = venue.Venue;
+                Media = venue;
                 Dialog.Hide(ContentDialogBaseResult.OK);
             }
         }

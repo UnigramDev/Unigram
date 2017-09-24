@@ -1059,18 +1059,23 @@ namespace Unigram.ViewModels
             {
                 if (page.Media is TLMessageMediaVenue venue)
                 {
-                    await SendGeoPointAsync(venue);
+                    await SendGeoAsync(venue);
+                }
+                else if (page.Media is TLMessageMediaGeoLive geoLive)
+                {
+                    await SendGeoAsync(geoLive);
                 }
                 else if (page.Media is TLMessageMediaGeo geo && geo.Geo is TLGeoPoint geoPoint)
                 {
-                    await SendGeoPointAsync(geoPoint.Lat, geoPoint.Long);
+                    _liveLocationService.Update(geo.Geo.ToInputGeoPoint());
+                    //await SendGeoAsync(geoPoint.Lat, geoPoint.Long);
                 }
             }
 
             //NavigationService.Navigate(typeof(DialogSendLocationPage));
         }
 
-        public Task<bool> SendGeoPointAsync(double latitude, double longitude)
+        public Task<bool> SendGeoAsync(double latitude, double longitude)
         {
             var tsc = new TaskCompletionSource<bool>();
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
@@ -1120,7 +1125,42 @@ namespace Unigram.ViewModels
             return tsc.Task;
         }
 
-        public Task<bool> SendGeoPointAsync(TLMessageMediaVenue media)
+        public Task<bool> SendGeoAsync(TLMessageMediaGeoLive media)
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var inputMedia = media.ToInputMedia();
+
+                var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                if (result.IsSucceeded)
+                {
+                    tsc.SetResult(true);
+                    await _liveLocationService.TrackAsync(message);
+                }
+                else
+                {
+                    tsc.SetResult(false);
+                }
+            });
+
+            return tsc.Task;
+        }
+
+        public Task<bool> SendGeoAsync(TLMessageMediaVenue media)
         {
             var tsc = new TaskCompletionSource<bool>();
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);

@@ -261,45 +261,69 @@
             <controls:ImageView
                 Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}"
                 Constraint="{Binding Media}"
-                Click="GeoPoint_Click"
+                Click="Geo_Click"
                 MaxWidth="320"
                 MaxHeight="240"/>
-            <Border Width="20" Height="20" CornerRadius="10" Background="#54000000" IsHitTestVisible="False">
-                <Border CornerRadius="10" Margin="1" Background="White">
-                    <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
-                </Border>
-            </Border>
-            <!--<Canvas Width="26" Height="31" VerticalAlignment="Center" Margin="0,-31,0,0">
-                 <Path Canvas.Left="0.5" Canvas.Top="0.5" Width="25.162" Height="30" Data="F1M12.581,30C12.581,30 0,21.29 0,12.581 0,5.632 5.633,0 12.581,0 19.529,0 25.162,5.632 25.162,12.581 25.162,21.29 12.581,30 12.581,30" Fill="{ThemeResource MessageHeaderForegroundBrush}" StrokeThickness="0" />
-                 <Path Width="26" Height="31" Data="F1M13,0C5.82,0 0,5.82 0,13 0,22 13,31 13,31 13,31 26,22 26,13 26,5.82 20.18,0 13,0 M13,2C19.065,2 24,6.935 24,13 24,18.866 16.876,25.546 13,28.521 9.124,25.546 2,18.866 2,13 2,6.935 6.935,2 13,2" Fill="White" StrokeThickness="0" />
-                 <Path Canvas.Left="8" Canvas.Top="8" Width="10" Height="10" Data="F1M5,0C2.238,0 0,2.239 0,5 0,7.762 2.238,10 5,10 7.762,10 10,7.762 10,5 10,2.239 7.762,0 5,0" Fill="White" StrokeThickness="0" />
-                 </Canvas>-->
+            <Canvas Width="40" Height="47.691" Margin="0,-48,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                <Path Width="40" Height="47.691" Data="F1M20,47.691C20,47.691 0,33.847 0,20 0,8.955 8.955,0 20,0 31.044,0 40,8.955 40,20 40,33.847 20,47.691 20,47.691" Fill="{ThemeResource MessageHeaderForegroundBrush}" StrokeThickness="0" />
+                <!--<Path Width="40" Height="47.691" Data="F1M20,0C8.955,0 0,8.955 0,20 0,33.848 20,47.691 20,47.691 20,47.691 40,33.848 40,20 40,8.955 31.044,0 20,0 M20,2C29.925,2 38,10.075 38,20 38,30.812 24.119,42.101 19.999,45.212 15.878,42.104 2,30.829 2,20 2,10.075 10.075,2 20,2" Fill="White" Stroke="White" StrokeThickness="1" />-->
+                <Path Canvas.Left="13" Canvas.Top="13" Width="14" Height="14" Data="F1M7,0C3.135,0 0,3.136 0,7 0,10.865 3.135,14 7,14 10.865,14 14,10.865 14,7 14,3.136 10.865,0 7,0" Fill="White" StrokeThickness="0" />
+            </Canvas>
         </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="MediaVenueTemplate">
+        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+            <controls:ImageView
+                Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}"
+                Constraint="{Binding Media}"
+                Click="Geo_Click"
+                MaxWidth="320"
+                MaxHeight="240"/>
+            <Canvas Width="40" Height="47.691" Margin="0,-48,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                <Path Width="40" Height="47.691" Data="F1M20,47.691C20,47.691 0,33.847 0,20 0,8.955 8.955,0 20,0 31.044,0 40,8.955 40,20 40,33.847 20,47.691 20,47.691" Fill="{ThemeResource MessageHeaderForegroundBrush}" StrokeThickness="0" />
+                <Border VerticalAlignment="Top" Height="40" Width="40">
+                    <BitmapIcon UriSource="{Binding Media.VenueType, Converter={StaticResource VenueToGlyphConverter}}" Foreground="White" Margin="4"/>
+                </Border>
+                <!--<Path Width="40" Height="47.691" Data="F1M20,0C8.955,0 0,8.955 0,20 0,33.848 20,47.691 20,47.691 20,47.691 40,33.848 40,20 40,8.955 31.044,0 20,0 M20,2C29.925,2 38,10.075 38,20 38,30.812 24.119,42.101 19.999,45.212 15.878,42.104 2,30.829 2,20 2,10.075 10.075,2 20,2" Fill="White" Stroke="White" StrokeThickness="1" />-->
+                <Path Visibility="{Binding Media.VenueType, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=invert}" Canvas.Left="13" Canvas.Top="13" Width="14" Height="14" Data="F1M7,0C3.135,0 0,3.136 0,7 0,10.865 3.135,14 7,14 10.865,14 14,10.865 14,7 14,3.136 10.865,0 7,0" Fill="White" StrokeThickness="0" />
+            </Canvas>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaGeoLiveTemplate">
         <StackPanel>
-            <StackPanel Padding="{ThemeResource MessageContentPadding}">
-                <TextBlock Text="{Binding Media.Title}" Style="{StaticResource BaseTextBlockStyle}"/>
-                <TextBlock Text="{Binding Media.Address}" Style="{StaticResource BodyTextBlockStyle}"/>
-            </StackPanel>
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                 <controls:ImageView
                     Source="{Binding Media.Geo, Converter={StaticResource VenueToStaticImageConverter}}"
                     Constraint="{Binding Media}"
-                    Click="Venue_Click"
+                    Click="Geo_Click"
                     MaxWidth="320"
                     MaxHeight="240"/>
-                <Border Width="20" Height="20" CornerRadius="10" Background="#54000000" IsHitTestVisible="False">
-                    <Border CornerRadius="10" Margin="1" Background="White">
-                        <Border CornerRadius="10" Margin="2" Background="{ThemeResource MessageHeaderForegroundBrush}"/>
+                <Canvas Width="40" Height="47.691" Margin="0,-48,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
+                    <Path Width="40" Height="47.691" Data="F1M20,47.691C20,47.691 0,33.847 0,20 0,8.955 8.955,0 20,0 31.044,0 40,8.955 40,20 40,33.847 20,47.691 20,47.691" Fill="{ThemeResource MessageHeaderForegroundBrush}" StrokeThickness="0" />
+                    <Border Height="40" Width="40">
+                        <controls:ProfilePictureView Source="{Binding From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="32" Height="32" IsHitTestVisible="False" Margin="4,3,4,4" VerticalAlignment="Top"/>
                     </Border>
-                </Border>
-                <!--<Canvas Width="26" Height="31" VerticalAlignment="Center" Margin="0,-31,0,0">
-                     <Path Canvas.Left="0.5" Canvas.Top="0.5" Width="25.162" Height="30" Data="F1M12.581,30C12.581,30 0,21.29 0,12.581 0,5.632 5.633,0 12.581,0 19.529,0 25.162,5.632 25.162,12.581 25.162,21.29 12.581,30 12.581,30" Fill="{ThemeResource MessageHeaderForegroundBrush}" StrokeThickness="0" />
-                     <Path Width="26" Height="31" Data="F1M13,0C5.82,0 0,5.82 0,13 0,22 13,31 13,31 13,31 26,22 26,13 26,5.82 20.18,0 13,0 M13,2C19.065,2 24,6.935 24,13 24,18.866 16.876,25.546 13,28.521 9.124,25.546 2,18.866 2,13 2,6.935 6.935,2 13,2" Fill="White" StrokeThickness="0" />
-                     <Path Canvas.Left="8" Canvas.Top="8" Width="10" Height="10" Data="F1M5,0C2.238,0 0,2.239 0,5 0,7.762 2.238,10 5,10 7.762,10 10,7.762 10,5 10,2.239 7.762,0 5,0" Fill="White" StrokeThickness="0" />
-                     </Canvas>-->
+                    <!--<Path Width="40" Height="47.691" Data="F1M20,0C8.955,0 0,8.955 0,20 0,33.848 20,47.691 20,47.691 20,47.691 40,33.848 40,20 40,8.955 31.044,0 20,0 M20,2C29.925,2 38,10.075 38,20 38,30.812 24.119,42.101 19.999,45.212 15.878,42.104 2,30.829 2,20 2,10.075 10.075,2 20,2" Fill="White" Stroke="White" StrokeThickness="1" />-->
+                </Canvas>
+            </Grid>
+            <Grid Padding="{ThemeResource MessageContentPadding}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}">
+                    <Run Text="{Binding Self, Converter={StaticResource GeoLiveToLabelConverter}, ConverterParameter=title}" FontWeight="SemiBold"/>
+                    <LineBreak/>
+                    <Run Text="{Binding Self, Converter={StaticResource GeoLiveToLabelConverter}}"/>
+                </TextBlock>
+                <Grid Width="36" Height="36" Margin="0,2,0,-2" Grid.Column="1">
+                    <Ellipse Stroke="{ThemeResource MessageHeaderBorderBrush}" Opacity="0.2" StrokeThickness="2"/>
+                    <controls:PeriodTimer Background="Transparent" Value="{Binding}" IsHitTestVisible="False"/>
+
+                    <TextBlock Text="15" FontWeight="SemiBold" TextLineBounds="TrimToBaseline,TrimToCapHeight" TextAlignment="Center" VerticalAlignment="Center"/>
+                </Grid>
             </Grid>
         </StackPanel>
     </DataTemplate>
@@ -476,6 +500,7 @@
                                      DocumentThumbTemplate="{StaticResource MediaDocumentThumbTemplate}"
                                      GameTemplate="{StaticResource MediaGameTemplate}"
                                      GeoPointTemplate="{StaticResource MediaGeoPointTemplate}"
+                                     GeoLiveTemplate="{StaticResource MediaGeoLiveTemplate}"
                                      GifTemplate="{StaticResource MediaGifTemplate}"
                                      MusicTemplate="{StaticResource MediaMusicTemplate}"
                                      RoundVideoTemplate="{StaticResource MediaRoundVideoTemplate}"

@@ -641,6 +641,22 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:PeriodTimer">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{ThemeResource MessageHeaderBorderBrush}"/>
+        <Setter Property="Width" Value="36"/>
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:PeriodTimer">
+                    <Grid Background="{TemplateBinding Background}" CornerRadius="18">
+                        <local:ProgressBarRingSlice x:Name="Indicator" CacheMode="BitmapCache" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" InnerRadius="16" Radius="18" StartAngle="0" EndAngle="0"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:RatingBar">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Padding" Value="2,8"/>
@@ -814,12 +830,12 @@
                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                         </Grid>
 
-                        <Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
+                        <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
                             <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
                                 <TextBlock Text="Return to call" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </Button>
                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-                        </Grid>
+                        </Grid>-->
                     </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
@@ -838,12 +854,12 @@
                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
                         </Grid>
                         
-                        <Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
+                        <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
                             <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
                                 <TextBlock Text="Return to call" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </Button>
                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-                        </Grid>
+                        </Grid>-->
                     </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
@@ -862,12 +878,12 @@
                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
                         </Grid>
 
-                        <Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
+                        <!--<Grid Height="32" Background="{ThemeResource SystemControlHighlightAccentBrush}">
                             <Button HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}">
                                 <TextBlock Text="Return to call" Foreground="White" Style="{StaticResource CaptionTextBlockStyle}"/>
                             </Button>
                             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False"/>
-                        </Grid>
+                        </Grid>-->
                     </StackPanel>
                 </ControlTemplate>
             </Setter.Value>

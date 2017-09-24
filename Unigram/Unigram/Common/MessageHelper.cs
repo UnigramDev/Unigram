@@ -195,6 +195,10 @@ namespace Unigram.Common
                 {
                     caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                 }
+                else if (message.Media is TLMessageMediaVenue)
+                {
+                    caption = true;
+                }
 
                 var game = false;
                 var notGame = true;
@@ -204,13 +208,19 @@ namespace Unigram.Common
                     notGame = false;
                 }
 
+                var notLive = true;
+                if (message.Media is TLMessageMediaGeoLive)
+                {
+                    notLive = false;
+                }
+
                 var emptyWebPage = false;
                 if (message.Media is TLMessageMediaWebPage webpageMedia)
                 {
                     emptyWebPage = webpageMedia.WebPage is TLWebPageEmpty;
                 }
 
-                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || (text && notGame) ? Visibility.Visible : Visibility.Collapsed);
+                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || (text && notGame && notLive) ? Visibility.Visible : Visibility.Collapsed);
                 if (sender.Visibility == Visibility.Collapsed)
                 {
                     sender.Inlines.Clear();
@@ -231,10 +241,16 @@ namespace Unigram.Common
                     {
                         Debug.WriteLine("WARNING: this is weird!");
                     }
-
+                    
                     if (!string.IsNullOrWhiteSpace(message.Message))
                     {
                         paragraph.Inlines.Add(new Run { Text = message.Message });
+                    }
+                    else if (message.Media is TLMessageMediaVenue venueMedia)
+                    {
+                        paragraph.Inlines.Add(new Run { Text = venueMedia.Title, FontWeight = FontWeights.SemiBold });
+                        paragraph.Inlines.Add(new LineBreak());
+                        paragraph.Inlines.Add(new Run { Text = venueMedia.Address });
                     }
                     else if (game)
                     {

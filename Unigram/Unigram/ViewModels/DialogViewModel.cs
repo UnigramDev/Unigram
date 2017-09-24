@@ -93,6 +93,7 @@ namespace Unigram.ViewModels
         private readonly DialogStickersViewModel _stickers;
         private readonly IStickersService _stickersService;
         private readonly ILocationService _locationService;
+        private readonly ILiveLocationService _liveLocationService;
         private readonly IUploadFileManager _uploadFileManager;
         private readonly IUploadAudioManager _uploadAudioManager;
         private readonly IUploadDocumentManager _uploadDocumentManager;
@@ -101,7 +102,7 @@ namespace Unigram.ViewModels
         public int participantCount = 0;
         public int online = 0;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService, ILiveLocationService liveLocationService)
             : base(protoService, cacheService, aggregator)
         {
             _uploadFileManager = uploadFileManager;
@@ -110,6 +111,7 @@ namespace Unigram.ViewModels
             _uploadVideoManager = uploadVideoManager;
             _stickersService = stickersService;
             _locationService = locationService;
+            _liveLocationService = liveLocationService;
 
             _stickers = new DialogStickersViewModel(protoService, cacheService, aggregator, stickersService);
 

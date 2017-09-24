@@ -158,6 +158,7 @@
     </Compile>
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
+    <Compile Include="Controls\PeriodTimer.cs" />
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
@@ -247,6 +248,7 @@
     <Compile Include="Converters\ChannelTypeToStringConverter.cs" />
     <Compile Include="Converters\CompressionToGlyphConverter.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
+    <Compile Include="Converters\GeoLiveToLabelConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
     <Compile Include="Converters\MessageShortTTLConverter.cs" />
     <Compile Include="Converters\MessageToShareConverter.cs" />
@@ -254,6 +256,7 @@
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
+    <Compile Include="Converters\VenueToGlyphConverter.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\StorageMedia.cs" />
     <Compile Include="Models\StoragePhoto.cs" />

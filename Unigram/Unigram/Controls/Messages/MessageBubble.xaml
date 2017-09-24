@@ -54,6 +54,13 @@
                                 <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
                             </VisualState.Setters>
                         </VisualState>
+                        <VisualState x:Name="Hidden">
+                            <VisualState.Setters>
+                                <Setter Target="StatusControl.Padding" Value="8,4,6,4"/>
+                                <Setter Target="StatusControl.Opacity" Value="0"/>
+                                <Setter Target="StatusControl.IsHitTestVisible" Value="False"/>
+                            </VisualState.Setters>
+                        </VisualState>
                         <VisualState x:Name="Default"/>
                     </VisualStateGroup>
                 </VisualStateManager.VisualStateGroups>

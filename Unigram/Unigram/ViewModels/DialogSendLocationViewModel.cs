@@ -25,7 +25,7 @@ namespace Unigram.ViewModels
         {
             _locationService = foursquareService;
 
-            Items = new ObservableCollection<LocationVenue>();
+            Items = new ObservableCollection<TLMessageMediaVenue>();
             OnNavigatedToAsync(null, NavigationMode.New, null);
         }
 
@@ -46,7 +46,7 @@ namespace Unigram.ViewModels
             Items.AddRange(venues);
         }
 
-        public ObservableCollection<LocationVenue> Items { get; private set; }
+        public ObservableCollection<TLMessageMediaVenue> Items { get; private set; }
 
         private Geocoordinate _location;
         public Geocoordinate Location
