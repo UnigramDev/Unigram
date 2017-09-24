@@ -545,6 +545,7 @@ namespace Unigram.ViewModels.Users
                     {
                         dialog.NotifySettings = _full.NotifySettings;
                         dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                        dialog.RaisePropertyChanged(() => dialog.IsMuted);
                         dialog.RaisePropertyChanged(() => dialog.Self);
                     }
 
