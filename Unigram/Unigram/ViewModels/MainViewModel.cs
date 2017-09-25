@@ -4,6 +4,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
@@ -13,6 +15,8 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Help.Methods;
+using Telegram.Api.TL.LangPack.Methods;
 using Telegram.Api.TL.Phone;
 using Telegram.Api.TL.Phone.Methods;
 using Telegram.Logs;
@@ -311,7 +315,7 @@ namespace Unigram.ViewModels
             //Execute.BeginOnUIThread(() => Contacts.getTLContacts());
             //Execute.BeginOnUIThread(() => Contacts.GetSelfAsync());
 
-            //ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.2.2" }, result =>
+            //ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.3" }, result =>
             //{
             //    _updatesService.ProcessUpdates(result, true);
             //},

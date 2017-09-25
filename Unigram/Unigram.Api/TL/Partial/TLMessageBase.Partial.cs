@@ -231,10 +231,7 @@ namespace Telegram.Api.TL
         public event PropertyChangedEventHandler PropertyChanged;
         public override void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
-            Execute.BeginOnUIThread(() =>
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            });
+            Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
     }
 

@@ -322,7 +322,7 @@
                     <Ellipse Stroke="{ThemeResource MessageHeaderBorderBrush}" Opacity="0.2" StrokeThickness="2"/>
                     <controls:PeriodTimer Background="Transparent" Value="{Binding}" IsHitTestVisible="False"/>
 
-                    <TextBlock Text="15" FontWeight="SemiBold" TextLineBounds="TrimToBaseline,TrimToCapHeight" TextAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Text="15" Foreground="{ThemeResource MessageHeaderBorderBrush}" FontWeight="SemiBold" TextLineBounds="TrimToBaseline,TrimToCapHeight" TextAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
             </Grid>
         </StackPanel>
