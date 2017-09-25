@@ -665,6 +665,7 @@ namespace Telegram.Api.TL
 		ChannelAdminLogEventActionParticipantToggleBan = 0xE6D83D7E,
 		ChannelAdminLogEventActionParticipantToggleAdmin = 0xD5676710,
 		ChannelAdminLogEventActionChangeStickerSet = 0xB1C3CAA7,
+		ChannelAdminLogEventActionTogglePreHistoryHidden = 0x5F5C95F1,
 		ChannelAdminLogEvent = 0x3B5A3E40,
 		ChannelsAdminLogResults = 0xED8AF74D,
 		ChannelAdminLogEventsFilter = 0xEA107AE4,

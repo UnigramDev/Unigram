@@ -753,4 +753,10 @@ Duration: {1}</value>
   <data name="EventLogRemovedStickersSet" xml:space="preserve">
     <value>{0} removed sticker set</value>
   </data>
+  <data name="EventLogToggledHistoryOff" xml:space="preserve">
+    <value>{0} made group history hidden for new members</value>
+  </data>
+  <data name="EventLogToggledHistoryOn" xml:space="preserve">
+    <value>{0} made group history visible for new members</value>
+  </data>
 </root>

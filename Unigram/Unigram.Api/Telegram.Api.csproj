@@ -649,6 +649,7 @@
     <Compile Include="TL\TLChannelAdminLogEventActionParticipantToggleAdmin.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionParticipantToggleBan.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionToggleInvites.cs" />
+    <Compile Include="TL\TLChannelAdminLogEventActionTogglePreHistoryHidden.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionToggleSignatures.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionUpdatePinned.cs" />
     <Compile Include="TL\TLChannelAdminLogEventsFilter.cs" />

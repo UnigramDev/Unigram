@@ -896,6 +896,7 @@ namespace Telegram.Api.TL
 				case TLType.ChannelAdminLogEventActionParticipantToggleBan: return (T)(Object)new TLChannelAdminLogEventActionParticipantToggleBan(from);
 				case TLType.ChannelAdminLogEventActionParticipantToggleAdmin: return (T)(Object)new TLChannelAdminLogEventActionParticipantToggleAdmin(from);
 				case TLType.ChannelAdminLogEventActionChangeStickerSet: return (T)(Object)new TLChannelAdminLogEventActionChangeStickerSet(from);
+				case TLType.ChannelAdminLogEventActionTogglePreHistoryHidden: return (T)(Object)new TLChannelAdminLogEventActionTogglePreHistoryHidden(from);
 				case TLType.ChannelAdminLogEvent: return (T)(Object)new TLChannelAdminLogEvent(from);
 				case TLType.ChannelsAdminLogResults: return (T)(Object)new TLChannelsAdminLogResults(from);
 				case TLType.ChannelAdminLogEventsFilter: return (T)(Object)new TLChannelAdminLogEventsFilter(from);

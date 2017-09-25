@@ -228,6 +228,10 @@ namespace Unigram.ViewModels.Channels
                         {
                             result.Insert(0, GetServiceMessage(item));
                         }
+                        else if (item.Action is TLChannelAdminLogEventActionTogglePreHistoryHidden togglePreHistoryHidden)
+                        {
+                            result.Insert(0, GetServiceMessage(item));
+                        }
                         else if (item.Action is TLChannelAdminLogEventActionUpdatePinned updatePinned)
                         {
                             // Patch for view
