@@ -1089,14 +1089,17 @@ namespace Unigram.ViewModels
                 var maxId = _dialog?.UnreadCount > 0 ? _dialog.ReadInboxMaxId : int.MaxValue;
                 var offset = _dialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
 
-                //if (maxId == int.MaxValue)
-                //{
-                //    var history = CacheService.GetHistory(_peer.ToPeer(), maxId);
+                if (maxId == int.MaxValue)
+                {
+                    var history = CacheService.GetHistory(_peer.ToPeer());
 
-                //    UpdatingScrollMode = UpdatingScrollMode.ForceKeepLastItemInView;
-                //    Messages.AddRange(history);
-                //}
-                //else
+                    IsLastSliceLoaded = false;
+                    IsFirstSliceLoaded = false;
+
+                    UpdatingScrollMode = UpdatingScrollMode.ForceKeepLastItemInView;
+                    Items.AddRange(history.Reverse());
+                }
+                else
                 {
                     LoadFirstSliceAsync(maxId, offset);
                 }
