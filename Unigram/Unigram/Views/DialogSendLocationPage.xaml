@@ -87,7 +87,7 @@
                                 </StackPanel>
                             </Button.Content>
                         </Button>
-                        <Button x:Name="btnLiveLocation"
+                        <Button x:Name="LiveLocationButton"
                                 Click="LiveLocation_Click"
                                 Background="Transparent"
                                 Padding="0"
@@ -107,7 +107,7 @@
                                     <StackPanel Orientation="Vertical"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center">
-                                        <TextBlock Text="Share Live Location" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                                        <TextBlock x:Name="LiveLocationLabel" Text="Share Live Location" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
                                         <TextBlock Text="This feature requires background location" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                                     </StackPanel>
                                 </StackPanel>

@@ -651,6 +651,7 @@
                 <ControlTemplate TargetType="local:PeriodTimer">
                     <Grid Background="{TemplateBinding Background}" CornerRadius="18">
                         <local:ProgressBarRingSlice x:Name="Indicator" CacheMode="BitmapCache" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" StrokeStartLineCap="Flat" StrokeEndLineCap="Flat" InnerRadius="16" Radius="18" StartAngle="0" EndAngle="0"/>
+                        <TextBlock x:Name="TimeoutLabel" Text="15" Foreground="{ThemeResource MessageHeaderBorderBrush}" FontWeight="SemiBold" TextLineBounds="TrimToBaseline,TrimToCapHeight" TextAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

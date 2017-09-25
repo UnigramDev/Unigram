@@ -42,13 +42,27 @@ namespace Unigram.Views
         private MapIcon userPos;
 
         public TLMessageMediaBase Media { get; private set; }
-
         public ContentDialogBase Dialog { get; set; }
+
+        private bool? _liveLocation;
+        public bool? LiveLocation
+        {
+            get
+            {
+                return _liveLocation;
+            }
+            set
+            {
+                _liveLocation = value;
+
+                LiveLocationButton.Visibility = value.HasValue ? Visibility.Visible : Visibility.Collapsed;
+                LiveLocationLabel.Text = value == true ? "Share Live Location" : "Stop Sharing Live Location";
+            }
+        }
 
         public DialogSendLocationPage()
         {
             InitializeComponent();
-
             DataContext = UnigramContainer.Current.ResolveType<DialogSendLocationViewModel>();
 
             Loaded += OnLoaded;
@@ -193,8 +207,16 @@ namespace Unigram.Views
 
         private void LiveLocation_Click(object sender, RoutedEventArgs e)
         {
-            Media = new TLMessageMediaGeoLive { Geo = new TLGeoPoint { Lat = mMap.Center.Position.Latitude, Long = mMap.Center.Position.Longitude }, Period = 900 };
-            Dialog.Hide(ContentDialogBaseResult.OK);
+            if (LiveLocation == true)
+            {
+                Media = new TLMessageMediaGeoLive { Geo = new TLGeoPoint { Lat = mMap.Center.Position.Latitude, Long = mMap.Center.Position.Longitude }, Period = 900 };
+                Dialog.Hide(ContentDialogBaseResult.OK);
+            }
+            else if (LiveLocation == false)
+            {
+                Media = new TLMessageMediaGeoLive();
+                Dialog.Hide(ContentDialogBaseResult.OK);
+            }
         }
 
         private void NearbyList_ItemClick(object sender, ItemClickEventArgs e)

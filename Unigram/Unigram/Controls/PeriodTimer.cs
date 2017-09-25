@@ -13,6 +13,7 @@ namespace Unigram.Controls
 {
     public class PeriodTimer : Control
     {
+        private TextBlock TimeoutLabel;
         private ProgressBarRingSlice Indicator;
 
         private Storyboard _angleStoryboard;
@@ -25,6 +26,8 @@ namespace Unigram.Controls
         protected override void OnApplyTemplate()
         {
             Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
+            TimeoutLabel = (TextBlock)GetTemplateChild("TimeoutLabel");
 
             Indicator = (ProgressBarRingSlice)GetTemplateChild("Indicator");
             Indicator.EndAngle = 359;
@@ -69,6 +72,24 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region Period
+
+        public int Period
+        {
+            get { return (int)GetValue(PeriodProperty); }
+            set { SetValue(PeriodProperty, value); }
+        }
+
+        public static readonly DependencyProperty PeriodProperty =
+            DependencyProperty.Register("Period", typeof(int), typeof(PeriodTimer), new PropertyMetadata(0, OnPeriodChanged));
+
+        private static void OnPeriodChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((PeriodTimer)d).OnValueChanged(((PeriodTimer)d).Value);
+        }
+
+        #endregion
+
         private void OnValueChanged(TLMessage newValue)
         {
             if (Indicator == null)
@@ -102,6 +123,15 @@ namespace Unigram.Controls
             angleAnimation.To = 359;
             angleAnimation.Duration = difference;
             _angleStoryboard.Begin();
+
+            if (difference > TimeSpan.Zero)
+            {
+                TimeoutLabel.Text = difference.TotalHours > 1 ? difference.ToString("%h") + "h" : difference.ToString("%m");
+            }
+            else
+            {
+                TimeoutLabel.Text = "0";
+            }
 
             //double value;
             ////if (oldValue > 0.0 && oldValue < 1.0 && newValue == 0.0)

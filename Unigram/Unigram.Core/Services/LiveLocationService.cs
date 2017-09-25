@@ -16,14 +16,18 @@ namespace Unigram.Core.Services
         Task TrackAsync(TLMessage message);
 
         void Update(TLInputGeoPointBase geoPoint);
+
+        bool IsTracking(TLPeerBase peer);
+        void StopTracking(TLPeerBase peer);
+
+        MvxObservableCollection<TLMessage> Items { get; }
+        MvxObservableCollection<ITLDialogWith> Peers { get; }
     }
 
     public class LiveLocationService : ILiveLocationService
     {
         private readonly IMTProtoService _protoService;
         private readonly ILocationService _locationService;
-
-        private readonly List<TLMessage> _items;
 
         private Geolocator _locator;
 
@@ -32,12 +36,34 @@ namespace Unigram.Core.Services
             _protoService = protoService;
             _locationService = locationService;
 
-            _items = new List<TLMessage>();
+            Items = new MvxObservableCollection<TLMessage>();
+            Peers = new MvxObservableCollection<ITLDialogWith>();
+        }
+
+        public MvxObservableCollection<TLMessage> Items { get; private set; }
+        public MvxObservableCollection<ITLDialogWith> Peers { get; private set; }
+
+        public bool IsTracking(TLPeerBase peer)
+        {
+            return Peers.Any(x => peer.Equals(x.ToPeer()));
+        }
+
+        public void StopTracking(TLPeerBase peer)
+        {
+            var message = Items.FirstOrDefault(x => peer.Equals(x.Parent.ToPeer()));
+            if (message != null)
+            {
+                Items.Remove(message);
+                Peers.Remove(message.Parent);
+
+                Update(message, null, true);
+            }
         }
 
         public async Task TrackAsync(TLMessage message)
         {
-            _items.Add(message);
+            Items.Add(message);
+            Peers.Add(message.Parent);
 
             if (_locator == null)
             {
@@ -53,7 +79,7 @@ namespace Unigram.Core.Services
 
         public void Update(TLInputGeoPointBase geoPoint)
         {
-            foreach (var message in _items.ToList())
+            foreach (var message in Items.ToList())
             {
                 Update(message, geoPoint, false);
             }
@@ -72,11 +98,23 @@ namespace Unigram.Core.Services
                         return;
                     }
 
+                    if (geoPoint != null)
+                    {
+                        geoLiveMedia.Geo = geoPoint.ToGeoPoint();
+                        geoLiveMedia.RaisePropertyChanged(() => geoLiveMedia.Geo);
+                    }
+
+                    if (stop)
+                    {
+                        geoLiveMedia.Period = 0;
+                        geoLiveMedia.RaisePropertyChanged(() => geoLiveMedia.Period);
+                    }
+
                     _protoService.EditGeoLiveAsync(peer, message.Id, geoPoint, stop, null);
                 }
                 else
                 {
-                    _items.Remove(message);
+                    Items.Remove(message);
                 }
             }
         }

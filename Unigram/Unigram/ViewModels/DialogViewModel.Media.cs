@@ -1053,6 +1053,7 @@ namespace Unigram.ViewModels
             dialog.Content = page;
 
             page.Dialog = dialog;
+            page.LiveLocation = !_liveLocationService.IsTracking(Peer.ToPeer());
 
             var confirm = await dialog.ShowAsync();
             if (confirm == ContentDialogBaseResult.OK)
@@ -1063,12 +1064,18 @@ namespace Unigram.ViewModels
                 }
                 else if (page.Media is TLMessageMediaGeoLive geoLive)
                 {
-                    await SendGeoAsync(geoLive);
+                    if (geoLive.Geo == null || geoLive.Period == 0 || _liveLocationService.IsTracking(Peer.ToPeer()))
+                    {
+                        _liveLocationService.StopTracking(Peer.ToPeer());
+                    }
+                    else
+                    {
+                        await SendGeoAsync(geoLive);
+                    }
                 }
                 else if (page.Media is TLMessageMediaGeo geo && geo.Geo is TLGeoPoint geoPoint)
                 {
-                    _liveLocationService.Update(geo.Geo.ToInputGeoPoint());
-                    //await SendGeoAsync(geoPoint.Lat, geoPoint.Long);
+                    await SendGeoAsync(geoPoint.Lat, geoPoint.Long);
                 }
             }
 
