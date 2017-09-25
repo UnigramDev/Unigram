@@ -100,21 +100,22 @@
             <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" VerticalAlignment="Bottom" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
         </Grid>
 
-        <ListView ItemsSource="{x:Bind ViewModel.Items}"
-                  SelectionMode="None"
-                  Grid.Row="1">
+        <controls:PaddedListView
+            ItemsSource="{x:Bind ViewModel.Items}"
+            SelectionMode="None"
+            Grid.Row="1">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     <Setter Property="MinHeight" Value="0"/>
-                    <Setter Property="Padding" Value="0,0,12,0"/>
+                    <Setter Property="Padding" Value="0,0,0,0"/>
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplateSelector>
                 <selectors:AdminLogTemplateSelector>
                     <selectors:AdminLogTemplateSelector.MessageTemplate>
                         <DataTemplate x:DataType="tl:TLMessage">
-                            <Grid HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
+                            <Grid Margin="-52,0,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="52"/>
                                     <ColumnDefinition/>
@@ -131,7 +132,7 @@
                     </selectors:AdminLogTemplateSelector.MessageTemplate>
                     <selectors:AdminLogTemplateSelector.EditedTemplate>
                         <DataTemplate x:DataType="tl:TLMessage">
-                            <Grid HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}">
+                            <Grid Margin="-52,0,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="52"/>
                                     <ColumnDefinition/>
@@ -188,7 +189,7 @@
                     </selectors:AdminLogTemplateSelector.ServiceMessagePhotoTemplate>
                     <selectors:AdminLogTemplateSelector.StickerTemplate>
                         <DataTemplate x:DataType="tl:TLMessage">
-                            <Grid>
+                            <Grid Margin="-52,0,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="52"/>
                                     <ColumnDefinition/>
@@ -229,7 +230,7 @@
                     </selectors:AdminLogTemplateSelector.StickerTemplate>
                     <selectors:AdminLogTemplateSelector.RoundVideoTemplate>
                         <DataTemplate x:DataType="tl:TLMessage">
-                            <Grid>
+                            <Grid Margin="-52,0,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="52"/>
                                     <ColumnDefinition/>
@@ -288,7 +289,7 @@
             <ListView.Footer>
                 <Border Height="8"/>
             </ListView.Footer>
-        </ListView>
+        </controls:PaddedListView>
 
         <StackPanel Visibility="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="12,6,12,6" Margin="12" CornerRadius="{ThemeResource MessageServiceCornerRadius}" Grid.Row="1">
             <TextBlock Text="No events yet" Foreground="White" Style="{StaticResource BaseTextBlockStyle}"/>

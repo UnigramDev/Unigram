@@ -133,6 +133,7 @@
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
     <Compile Include="Controls\NavigationViewItemSeparator.cs" />
+    <Compile Include="Controls\PaddedListView.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />
@@ -877,7 +878,6 @@
     </Compile>
     <Compile Include="Triggers\BooleanTrigger.cs" />
     <Compile Include="ViewModelLocator.cs" />
-    <Compile Include="Collections\DialogCollection.cs" />
     <Compile Include="Collections\MediaCollection.cs" />
     <Compile Include="Collections\SortedObservableCollection.cs" />
     <Compile Include="Common\Attached.cs" />
