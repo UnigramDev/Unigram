@@ -25,23 +25,51 @@ namespace Unigram.Controls
     {
         private double _keyboardHeight = 300;
 
-        #region ReplyMarkup
+        //#region ReplyMarkup
 
+        //public TLReplyMarkupBase ReplyMarkup
+        //{
+        //    get { return (TLReplyMarkupBase)GetValue(ReplyMarkupProperty); }
+        //    set { SetValue(ReplyMarkupProperty, value); }
+        //}
+
+        //public static readonly DependencyProperty ReplyMarkupProperty =
+        //    DependencyProperty.Register("ReplyMarkup", typeof(TLReplyMarkupBase), typeof(ReplyMarkupPanel), new PropertyMetadata(null, OnReplyMarkupChanged));
+
+        //private static void OnReplyMarkupChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    ((ReplyMarkupPanel)d).OnReplyMarkupChanged((TLReplyMarkupBase)e.NewValue, (TLReplyMarkupBase)e.OldValue);
+        //}
+
+        //#endregion
+
+        private TLMessage _message;
+        public TLMessage Message
+        {
+            get
+            {
+                return _message;
+            }
+            set
+            {
+                _message = value;
+                OnReplyMarkupChanged(_replyMarkup, _replyMarkup);
+            }
+        }
+
+        private TLReplyMarkupBase _replyMarkup;
         public TLReplyMarkupBase ReplyMarkup
         {
-            get { return (TLReplyMarkupBase)GetValue(ReplyMarkupProperty); }
-            set { SetValue(ReplyMarkupProperty, value); }
+            get
+            {
+                return _replyMarkup;
+            }
+            set
+            {
+                _replyMarkup = value;
+                OnReplyMarkupChanged(value, value);
+            }
         }
-
-        public static readonly DependencyProperty ReplyMarkupProperty =
-            DependencyProperty.Register("ReplyMarkup", typeof(TLReplyMarkupBase), typeof(ReplyMarkupPanel), new PropertyMetadata(null, OnReplyMarkupChanged));
-
-        private static void OnReplyMarkupChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ReplyMarkupPanel)d).OnReplyMarkupChanged((TLReplyMarkupBase)e.NewValue, (TLReplyMarkupBase)e.OldValue);
-        }
-
-        #endregion
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
         {
@@ -50,7 +78,7 @@ namespace Unigram.Controls
 
         private void UpdateSize()
         {
-            var inline = DataContext is TLMessage;
+            var inline = Message is TLMessage;
             if (ReplyMarkup is TLReplyKeyboardMarkup && !inline && Parent is ScrollViewer scroll)
             {
                 var keyboard = ReplyMarkup as TLReplyKeyboardMarkup;
@@ -74,7 +102,7 @@ namespace Unigram.Controls
 
         private void OnReplyMarkupChanged(TLReplyMarkupBase newValue, TLReplyMarkupBase oldValue)
         {
-            var inline = DataContext is TLMessage;
+            var inline = Message is TLMessage;
             var resize = false;
 
             TLVector<TLKeyboardButtonRow> rows = null;
