@@ -13,6 +13,14 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
+        public void DeleteHistoryAsync(TLInputChannelBase inputChannel, int maxId, Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLChannelsDeleteHistory { Channel = inputChannel, MaxId = maxId };
+
+            const string caption = "cannels.deleteHistory";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
         public void SetStickersAsync(TLInputChannelBase inputChannel, TLInputStickerSetBase stickerset, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLChannelsSetStickers { Channel = inputChannel, StickerSet = stickerset };
