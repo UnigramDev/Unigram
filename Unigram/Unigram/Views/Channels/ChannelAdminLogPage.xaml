@@ -209,6 +209,7 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     <!-- TODO: not the right way -->
                                     <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
@@ -224,6 +225,20 @@
 
                                         <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                                     </Grid>
+                                    
+                                    <Border Visibility="{x:Bind StickerReplyVisibility}"
+                                            Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                            VerticalAlignment="Top"
+                                            HorizontalAlignment="Left"
+                                            MaxWidth="180"
+                                            Padding="8,0,8,6"
+                                            Margin="4,0,0,4"
+                                            Grid.Column="1"
+                                            Grid.Row="1">
+                                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                    </Border>
+
+                                    <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" Margin="0,0,0,2" Grid.Row="2"/>
                                 </Grid>
                             </Grid>
                         </DataTemplate>
@@ -250,6 +265,7 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     <!-- TODO: not the right way -->
                                     <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
@@ -274,6 +290,20 @@
 
                                         <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                                     </Grid>
+
+                                    <Border Visibility="{x:Bind StickerReplyVisibility}"
+                                            Background="{ThemeResource MessageServiceBackgroundBrush}"
+                                            VerticalAlignment="Top"
+                                            HorizontalAlignment="Left"
+                                            MaxWidth="180"
+                                            Padding="8,0,8,6"
+                                            Margin="4,0,0,4"
+                                            Grid.Column="1"
+                                            Grid.Row="1">
+                                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,4,0,0" Foreground="#FFFFFF" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                    </Border>
+
+                                    <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" Margin="0,0,0,2" Grid.Row="2"/>
                                 </Grid>
                             </Grid>
                         </DataTemplate>
