@@ -230,6 +230,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- TODO: not the right way -->
                 <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
@@ -273,6 +274,8 @@
 
                     <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                 </Grid>
+
+                <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Column="1" Grid.Row="2"/>
             </Grid>
         </DataTemplate>
 
@@ -283,6 +286,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
@@ -340,6 +344,8 @@
                         Grid.Row="1">
                     <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
                 </Border>
+
+                <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Row="2"/>
             </Grid>
         </DataTemplate>
 
@@ -362,6 +368,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
@@ -419,6 +426,8 @@
                             Grid.Row="1">
                         <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
                     </Border>
+
+                    <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Row="2"/>
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -430,6 +439,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
@@ -466,6 +476,8 @@
 
                     <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                 </Grid>
+
+                <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Column="1" Grid.Row="2"/>
             </Grid>
         </DataTemplate>
 
@@ -476,6 +488,7 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
@@ -513,6 +526,8 @@
                         </messages:MessageReference.Resources>
                     </messages:MessageReference>
                 </StackPanel>
+
+                <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Row="2"/>
             </Grid>
         </DataTemplate>
 
@@ -535,6 +550,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
@@ -572,6 +588,8 @@
                             </messages:MessageReference.Resources>
                         </messages:MessageReference>
                     </StackPanel>
+
+                    <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Row="2"/>
                 </Grid>
             </Grid>
         </DataTemplate>

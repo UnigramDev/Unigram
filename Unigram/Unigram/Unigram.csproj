@@ -133,6 +133,7 @@
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
     <Compile Include="Controls\NavigationViewItemSeparator.cs" />
+    <Compile Include="Controls\PaddedListView.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />
@@ -191,7 +192,6 @@
     <Compile Include="Controls\StickerView.cs" />
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
-    <Compile Include="Controls\TLListView.cs" />
     <Compile Include="Controls\Views\AttachedStickersView.xaml.cs">
       <DependentUpon>AttachedStickersView.xaml</DependentUpon>
     </Compile>
@@ -874,7 +874,6 @@
     </Compile>
     <Compile Include="Triggers\BooleanTrigger.cs" />
     <Compile Include="ViewModelLocator.cs" />
-    <Compile Include="Collections\DialogCollection.cs" />
     <Compile Include="Collections\MediaCollection.cs" />
     <Compile Include="Collections\SortedObservableCollection.cs" />
     <Compile Include="Common\Attached.cs" />

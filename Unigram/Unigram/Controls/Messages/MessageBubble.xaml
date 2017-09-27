@@ -109,6 +109,6 @@
         </UserControl>
     </ContentControl>
 
-    <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2"/>
+    <controls:ReplyMarkupPanel Message="{x:Bind ViewModel}" ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2"/>
 
 </local:MessageBubbleBase>

@@ -635,7 +635,11 @@ namespace Unigram.Views
 
         private void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
         {
-            ViewModel.KeyboardButtonExecute(e.Button, null);
+            var panel = sender as ReplyMarkupPanel;
+            if (panel != null)
+            {
+                ViewModel.KeyboardButtonExecute(e.Button, panel.DataContext as TLMessage);
+            }
         }
 
         private async void Stickers_Click(object sender, RoutedEventArgs e)
