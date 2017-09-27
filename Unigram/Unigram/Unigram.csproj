@@ -193,7 +193,6 @@
     <Compile Include="Controls\StickerView.cs" />
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
-    <Compile Include="Controls\TLListView.cs" />
     <Compile Include="Controls\Views\AttachedStickersView.xaml.cs">
       <DependentUpon>AttachedStickersView.xaml</DependentUpon>
     </Compile>
