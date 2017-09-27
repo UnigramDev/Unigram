@@ -145,6 +145,24 @@ namespace Telegram.Api.TL
             }
         }
 
+        private ITLDialogWith _participant;
+        public ITLDialogWith Participant
+        {
+            get
+            {
+                if (_participant == null)
+                {
+                    var channel = Parent as TLChannel;
+                    if (channel != null && channel.IsBroadcast)
+                        _participant = Parent;
+                    else
+                        _participant = From;
+                }
+
+                return _participant;
+            }
+        }
+
         private ITLDialogWith _parent;
         public ITLDialogWith Parent
         {

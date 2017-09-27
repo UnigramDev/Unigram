@@ -124,14 +124,7 @@ namespace Unigram.Controls
             angleAnimation.Duration = difference;
             _angleStoryboard.Begin();
 
-            if (difference > TimeSpan.Zero)
-            {
-                TimeoutLabel.Text = difference.TotalHours > 1 ? difference.ToString("%h") + "h" : difference.ToString("%m");
-            }
-            else
-            {
-                TimeoutLabel.Text = "0";
-            }
+            TimeoutLabel.Text = GetTimeout(difference);
 
             //double value;
             ////if (oldValue > 0.0 && oldValue < 1.0 && newValue == 0.0)
@@ -167,6 +160,21 @@ namespace Unigram.Controls
             //        _angleStoryboard.Begin();
             //    }
             //}
+        }
+
+        private string GetTimeout(TimeSpan difference)
+        {
+            var result = "0";
+            if (difference > TimeSpan.Zero)
+            {
+                result = Math.Ceiling(difference.TotalHours > 1 ? difference.TotalHours : difference.TotalMinutes).ToString("F0");
+                if (difference.TotalHours >= 1)
+                {
+                    result += "h";
+                }
+            }
+
+            return result;
         }
     }
 }
