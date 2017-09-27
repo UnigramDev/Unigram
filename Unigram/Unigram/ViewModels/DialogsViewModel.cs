@@ -1241,6 +1241,50 @@ namespace Unigram.ViewModels
             await ClearHistoryAsync(dialog, true);
         }
 
+        public RelayCommand<TLDialog> DialogDeleteAndBlockCommand => new RelayCommand<TLDialog>(DialogDeleteAndBlockExecute);
+        private async void DialogDeleteAndBlockExecute(TLDialog dialog)
+        {
+            if (dialog.With is TLUser user)
+            {
+                var message = "Are you sure you want to delete all message history and " + (user.IsBot ? "stop this bot" : "block this contact") + "?";
+                var buttonandtitle = (user.IsBot ? "Delete and Stop" : "Delete and Block");
+                var confirm = await TLMessageDialog.ShowAsync(message, buttonandtitle, buttonandtitle, "Cancel");
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                var result = await ProtoService.BlockAsync(user.ToInputUser());
+                if (result.IsSucceeded && result.Result)
+                {
+                    CacheService.Commit();
+                    Aggregator.Publish(new TLUpdateUserBlocked { UserId = user.Id, Blocked = true });
+                }
+
+                var offset = 0;
+                do
+                {
+                    var response = await ProtoService.DeleteHistoryAsync(false, dialog.ToInputPeer(), 0);
+                    if (response.IsSucceeded)
+                    {
+                        offset = response.Result.Offset;
+                    }
+                    else
+                    {
+                        await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                        return;
+                    }
+                }
+                while (offset > 0);
+
+                CacheService.DeleteDialog(dialog);
+                Items.Remove(dialog);
+                NavigationService.RemovePeerFromStack(dialog.With.ToPeer());
+            }
+
+            
+        }
+
         private async Task ClearHistoryAsync(TLDialog dialog, bool justClear)
         {
             var message = string.Empty;
