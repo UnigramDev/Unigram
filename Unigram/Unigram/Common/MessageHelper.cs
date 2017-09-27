@@ -80,7 +80,7 @@ namespace Unigram.Common
                 //    paragraph.Inlines.Add(hyperlink);
                 //}
 
-                if (message.HasFwdFrom)
+                if (message.HasFwdFrom && !message.IsSticker())
                 {
                     if (paragraph.Inlines.Count > 0)
                         paragraph.Inlines.Add(new LineBreak());
