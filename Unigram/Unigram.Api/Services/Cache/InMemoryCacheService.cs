@@ -579,7 +579,7 @@ namespace Telegram.Api.Services.Cache
         public TLDialog GetDialog(TLMessageCommonBase message)
         {
             TLPeerBase peer;
-            if (message.ToId is TLPeerChat)
+            if (message.ToId is TLPeerChat || message.ToId is TLPeerChannel)
             {
                 peer = message.ToId;
             }
