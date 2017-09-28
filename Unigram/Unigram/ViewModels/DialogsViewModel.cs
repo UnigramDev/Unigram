@@ -1241,14 +1241,12 @@ namespace Unigram.ViewModels
             await ClearHistoryAsync(dialog, true);
         }
 
-        public RelayCommand<TLDialog> DialogDeleteAndBlockCommand => new RelayCommand<TLDialog>(DialogDeleteAndBlockExecute);
-        private async void DialogDeleteAndBlockExecute(TLDialog dialog)
+        public RelayCommand<TLDialog> DialogDeleteAndStopCommand => new RelayCommand<TLDialog>(DialogDeleteAndStopExecute);
+        private async void DialogDeleteAndStopExecute(TLDialog dialog)
         {
             if (dialog.With is TLUser user)
             {
-                var message = "Are you sure you want to delete all message history and " + (user.IsBot ? "stop this bot" : "block this contact") + "?";
-                var buttonandtitle = (user.IsBot ? "Delete and Stop" : "Delete and Block");
-                var confirm = await TLMessageDialog.ShowAsync(message, buttonandtitle, buttonandtitle, "Cancel");
+                var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to delete all message history and stop this bot?", "Delete and Stop", "Delete and Stop", "Cancel");
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
@@ -1279,10 +1277,9 @@ namespace Unigram.ViewModels
 
                 CacheService.DeleteDialog(dialog);
                 Items.Remove(dialog);
-                NavigationService.RemovePeerFromStack(dialog.With.ToPeer());
-            }
 
-            
+                NavigationService.RemovePeerFromStack(dialog.With.ToPeer());
+            }            
         }
 
         private async Task ClearHistoryAsync(TLDialog dialog, bool justClear)
