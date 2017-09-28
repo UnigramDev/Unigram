@@ -95,7 +95,7 @@ namespace Unigram.Controls
             }
             else if (ReplyMarkup is TLReplyKeyboardHide && !inline && Parent is ScrollViewer scroll2)
             {
-                Height = double.NaN;
+                Height = 0;
                 scroll2.MaxHeight = double.PositiveInfinity;
             }
         }
