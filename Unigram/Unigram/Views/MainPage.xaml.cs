@@ -789,6 +789,24 @@ namespace Unigram.Views
 
         #endregion
 
+        #region Binding
+
+        private string ConvertGeoLive(int count, IList<TLMessage> items)
+        {
+            if (count > 1)
+            {
+                return string.Format("sharing to {0} chats", count);
+            }
+            else if (count == 1 && items[0].Parent is ITLDialogWith with)
+            {
+                return string.Format("sharing to {0}", with.DisplayName);
+            }
+
+            return null;
+        }
+
+        #endregion
+
         private void NewChat_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(CreateChatStep1Page));
