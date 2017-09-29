@@ -881,13 +881,13 @@ namespace Telegram.Api.TL
             }
         }
 
-        private TLChannel _fwdFromChannel;
-        public TLChannel FwdFromChannel
+        private TLChatBase _fwdFromChannel;
+        public TLChatBase FwdFromChannel
         {
             get
             {
                 if (_fwdFromChannel == null && HasFwdFrom && FwdFrom != null && FwdFrom.HasChannelId)
-                    _fwdFromChannel = InMemoryCacheService.Current.GetChat(FwdFrom.ChannelId) as TLChannel;
+                    _fwdFromChannel = InMemoryCacheService.Current.GetChat(FwdFrom.ChannelId);
 
                 return _fwdFromChannel;
             }
