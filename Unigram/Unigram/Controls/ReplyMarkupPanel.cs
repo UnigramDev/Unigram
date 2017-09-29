@@ -87,10 +87,10 @@ namespace Unigram.Controls
                     Height = double.NaN;
                     scroll.MaxHeight = _keyboardHeight;
                 }
-                else if (keyboard.IsResize == false && double.IsNaN(Height) && Parent is ScrollViewer scroll1)
+                else
                 {
                     Height = _keyboardHeight;
-                    scroll1.MaxHeight = double.PositiveInfinity;
+                    scroll.MaxHeight = double.PositiveInfinity;
                 }
             }
             else if (ReplyMarkup is TLReplyKeyboardHide && !inline && Parent is ScrollViewer scroll2)
