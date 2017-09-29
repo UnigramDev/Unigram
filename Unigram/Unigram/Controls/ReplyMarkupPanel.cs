@@ -82,7 +82,7 @@ namespace Unigram.Controls
             if (ReplyMarkup is TLReplyKeyboardMarkup && !inline && Parent is ScrollViewer scroll)
             {
                 var keyboard = ReplyMarkup as TLReplyKeyboardMarkup;
-                if (keyboard.IsResize && double.IsNaN(Height))
+                if (keyboard.IsResize)
                 {
                     Height = double.NaN;
                     scroll.MaxHeight = _keyboardHeight;
