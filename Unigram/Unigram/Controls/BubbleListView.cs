@@ -70,7 +70,7 @@ namespace Unigram.Controls
                     await ViewModel.LoadPreviousSliceAsync();
                 }
 
-                await ViewModel.LoadNextSliceAsync();
+                await ViewModel.LoadNextSliceAsync(false, ItemsStack.LastVisibleIndex == ItemsStack.LastCacheIndex);
             }
         }
 
@@ -84,7 +84,7 @@ namespace Unigram.Controls
             {
                 if (ViewModel.IsFirstSliceLoaded == false)
                 {
-                    await ViewModel.LoadPreviousSliceAsync(true);
+                    await ViewModel.LoadPreviousSliceAsync(true, ItemsStack.LastVisibleIndex == ItemsStack.LastCacheIndex);
                 }
             }
         }
