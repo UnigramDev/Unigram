@@ -82,20 +82,20 @@ namespace Unigram.Controls
             if (ReplyMarkup is TLReplyKeyboardMarkup && !inline && Parent is ScrollViewer scroll)
             {
                 var keyboard = ReplyMarkup as TLReplyKeyboardMarkup;
-                if (keyboard.IsResize && double.IsNaN(Height))
+                if (keyboard.IsResize)
                 {
                     Height = double.NaN;
                     scroll.MaxHeight = _keyboardHeight;
                 }
-                else if (keyboard.IsResize == false && double.IsNaN(Height) && Parent is ScrollViewer scroll1)
+                else
                 {
                     Height = _keyboardHeight;
-                    scroll1.MaxHeight = double.PositiveInfinity;
+                    scroll.MaxHeight = double.PositiveInfinity;
                 }
             }
             else if (ReplyMarkup is TLReplyKeyboardHide && !inline && Parent is ScrollViewer scroll2)
             {
-                Height = double.NaN;
+                Height = 0;
                 scroll2.MaxHeight = double.PositiveInfinity;
             }
         }

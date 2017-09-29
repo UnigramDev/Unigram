@@ -30,7 +30,7 @@
             <MenuFlyoutItem Loaded="DialogPin_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogPinCommand}" CommandParameter="{Binding}" Text="Pin to top"/>
             <MenuFlyoutItem Loaded="DialogClear_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogClearCommand}" CommandParameter="{Binding}" Text="Clear history"/>
             <MenuFlyoutItem Loaded="DialogDelete_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteCommand}" CommandParameter="{Binding}" Text="Delete conversation"/> <!-- Only shows with conversations to single people -->
-            <MenuFlyoutItem Loaded="DialogDeleteAndStop_Loaded" Text="Delete and stop"/>
+            <MenuFlyoutItem Loaded="DialogDeleteAndStop_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteAndStopCommand}" CommandParameter="{Binding}" Text="Delete and stop"/>
             <MenuFlyoutItem Loaded="DialogDeleteAndExit_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteCommand}" CommandParameter="{Binding}" Text="Delete and exit"/> <!-- Only shows if IsCreator -->
         </MenuFlyout>
 
