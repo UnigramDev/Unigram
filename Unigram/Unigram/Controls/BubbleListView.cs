@@ -67,10 +67,10 @@ namespace Unigram.Controls
             {
                 if (!ViewModel.IsFirstSliceLoaded)
                 {
-                    await ViewModel.LoadPreviousSliceAsync();
+                    await ViewModel.LoadPreviousSliceAsync(false, ItemsStack.LastVisibleIndex == ItemsStack.LastCacheIndex);
                 }
 
-                await ViewModel.LoadNextSliceAsync(false, ItemsStack.LastVisibleIndex == ItemsStack.LastCacheIndex);
+                await ViewModel.LoadNextSliceAsync();
             }
         }
 
