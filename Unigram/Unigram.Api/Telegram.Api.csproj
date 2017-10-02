@@ -278,6 +278,7 @@
     <Compile Include="TL\Help\Methods\TLHelpGetConfig.cs" />
     <Compile Include="TL\Help\Methods\TLHelpGetInviteText.cs" />
     <Compile Include="TL\Help\Methods\TLHelpGetNearestDC.cs" />
+    <Compile Include="TL\Help\Methods\TLHelpGetRecentMeUrls.cs" />
     <Compile Include="TL\Help\Methods\TLHelpGetSupport.cs" />
     <Compile Include="TL\Help\Methods\TLHelpGetTermsOfService.cs" />
     <Compile Include="TL\Help\Methods\TLHelpSaveAppLog.cs" />
@@ -286,6 +287,7 @@
     <Compile Include="TL\Help\TLHelpAppUpdateBase.cs" />
     <Compile Include="TL\Help\TLHelpInviteText.cs" />
     <Compile Include="TL\Help\TLHelpNoAppUpdate.cs" />
+    <Compile Include="TL\Help\TLHelpRecentMeUrls.cs" />
     <Compile Include="TL\Help\TLHelpSupport.cs" />
     <Compile Include="TL\Help\TLHelpTermsOfService.cs" />
     <Compile Include="TL\LangPack\Methods\TLLangPackGetDifference.cs" />
@@ -924,6 +926,7 @@
     <Compile Include="TL\TLMessageActionChatEditTitle.cs" />
     <Compile Include="TL\TLMessageActionChatJoinedByLink.cs" />
     <Compile Include="TL\TLMessageActionChatMigrateTo.cs" />
+    <Compile Include="TL\TLMessageActionCustomAction.cs" />
     <Compile Include="TL\TLMessageActionEmpty.cs" />
     <Compile Include="TL\TLMessageActionGameScore.cs" />
     <Compile Include="TL\TLMessageActionHistoryClear.cs" />
@@ -1059,6 +1062,12 @@
     <Compile Include="TL\TLPrivacyValueDisallowContacts.cs" />
     <Compile Include="TL\TLPrivacyValueDisallowUsers.cs" />
     <Compile Include="TL\TLReceivedNotifyMessage.cs" />
+    <Compile Include="TL\TLRecentMeUrlBase.cs" />
+    <Compile Include="TL\TLRecentMeUrlChat.cs" />
+    <Compile Include="TL\TLRecentMeUrlChatInvite.cs" />
+    <Compile Include="TL\TLRecentMeUrlStickerSet.cs" />
+    <Compile Include="TL\TLRecentMeUrlUnknown.cs" />
+    <Compile Include="TL\TLRecentMeUrlUser.cs" />
     <Compile Include="TL\TLReplyInlineMarkup.cs" />
     <Compile Include="TL\TLReplyKeyboardForceReply.cs" />
     <Compile Include="TL\TLReplyKeyboardHide.cs" />

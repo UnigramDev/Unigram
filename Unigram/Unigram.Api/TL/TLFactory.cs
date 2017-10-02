@@ -231,6 +231,7 @@ namespace Telegram.Api.TL
 				case TLType.HelpGetTermsOfService: return (T)(Object)new TLHelpGetTermsOfService(from);
 				case TLType.HelpSetBotUpdatesStatus: return (T)(Object)new TLHelpSetBotUpdatesStatus(from);
 				case TLType.HelpGetCdnConfig: return (T)(Object)new TLHelpGetCdnConfig(from);
+				case TLType.HelpGetRecentMeUrls: return (T)(Object)new TLHelpGetRecentMeUrls(from);
 				case TLType.ChannelsReadHistory: return (T)(Object)new TLChannelsReadHistory(from);
 				case TLType.ChannelsDeleteMessages: return (T)(Object)new TLChannelsDeleteMessages(from);
 				case TLType.ChannelsDeleteUserHistory: return (T)(Object)new TLChannelsDeleteUserHistory(from);
@@ -425,6 +426,7 @@ namespace Telegram.Api.TL
 				case TLType.MessageActionPaymentSent: return (T)(Object)new TLMessageActionPaymentSent(from);
 				case TLType.MessageActionPhoneCall: return (T)(Object)new TLMessageActionPhoneCall(from);
 				case TLType.MessageActionScreenshotTaken: return (T)(Object)new TLMessageActionScreenshotTaken(from);
+				case TLType.MessageActionCustomAction: return (T)(Object)new TLMessageActionCustomAction(from);
 				case TLType.Dialog: return (T)(Object)new TLDialog(from);
 				case TLType.PhotoEmpty: return (T)(Object)new TLPhotoEmpty(from);
 				case TLType.Photo: return (T)(Object)new TLPhoto(from);
@@ -904,6 +906,12 @@ namespace Telegram.Api.TL
 				case TLType.CdnFileHash: return (T)(Object)new TLCdnFileHash(from);
 				case TLType.MessagesFavedStickersNotModified: return (T)(Object)new TLMessagesFavedStickersNotModified(from);
 				case TLType.MessagesFavedStickers: return (T)(Object)new TLMessagesFavedStickers(from);
+				case TLType.HelpRecentMeUrls: return (T)(Object)new TLHelpRecentMeUrls(from);
+				case TLType.RecentMeUrlUser: return (T)(Object)new TLRecentMeUrlUser(from);
+				case TLType.RecentMeUrlChat: return (T)(Object)new TLRecentMeUrlChat(from);
+				case TLType.RecentMeUrlStickerSet: return (T)(Object)new TLRecentMeUrlStickerSet(from);
+				case TLType.RecentMeUrlChatInvite: return (T)(Object)new TLRecentMeUrlChatInvite(from);
+				case TLType.RecentMeUrlUnknown: return (T)(Object)new TLRecentMeUrlUnknown(from);
 				case TLType.Message: return (T)(Object)new TLMessage(from);
 				case TLType.MessageService: return (T)(Object)new TLMessageService(from);
 				case TLType.RPCResult: return (T)(Object)new TLRPCResult(from);
