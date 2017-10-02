@@ -771,6 +771,12 @@ namespace Unigram.Views
                 var message = element.DataContext as TLMessage;
                 if (message != null)
                 {
+                    if (message.IsRoundVideo() || message.IsSticker())
+                    {
+                        element.Visibility = Visibility.Collapsed;
+                        return;
+                    }
+
                     var channel = message.Parent as TLChannel;
                     if (message.IsOut && message.ToId is TLPeerUser userPeer && userPeer.Id == SettingsHelper.UserId)
                     {

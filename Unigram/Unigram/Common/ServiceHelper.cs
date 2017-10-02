@@ -465,7 +465,7 @@ namespace Unigram.Common
 
             if (action != null && _actionsCache.ContainsKey(action.GetType()))
             {
-                return _actionsCache[action.GetType()].Invoke(serviceMessage, action, fromId.Value, userFullName, useActiveLinks);
+                return _actionsCache[action.GetType()].Invoke(serviceMessage, action, fromId ?? 0, userFullName, useActiveLinks);
             }
 
             var paragraph = new Paragraph();

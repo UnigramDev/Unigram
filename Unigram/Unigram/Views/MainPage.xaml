@@ -75,7 +75,7 @@
                                 <ColumnDefinition x:Name="DetailColumn" Width="0"/>
                             </Grid.ColumnDefinitions>
                             <Grid x:Name="DetailPresenter" Background="{TemplateBinding Background}">
-                                <!--<controls:DialogBackgroundPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>-->
+                                <controls:DialogBackgroundPresenter HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
                             </Grid>
                             <ContentPresenter x:Name="MasterFrame"
                                               Content="{TemplateBinding Content}"

@@ -106,7 +106,7 @@
                     </Rectangle.Fill>
                 </Rectangle>
 
-                <controls:BackDrop BlurAmount="20"/>
+                <controls:BackDrop BlurAmount="24"/>
             </Grid>
 
             <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
@@ -142,7 +142,7 @@
                     </Rectangle.Fill>
                 </Rectangle>
 
-                <controls:BackDrop BlurAmount="20"/>
+                <controls:BackDrop BlurAmount="24"/>
             </Grid>
 
             <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">

@@ -1308,8 +1308,7 @@ namespace Unigram.Common
             var response = await protoService.CheckChatInviteAsync(link);
             if (response.IsSucceeded)
             {
-                var inviteAlready = response.Result as TLChatInviteAlready;
-                if (inviteAlready != null)
+                if (response.Result is TLChatInviteAlready inviteAlready)
                 {
                     var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                     if (service != null)
@@ -1317,9 +1316,7 @@ namespace Unigram.Common
                         service.NavigateToDialog(inviteAlready.Chat);
                     }
                 }
-
-                var invite = response.Result as TLChatInvite;
-                if (invite != null)
+                else if (response.Result is TLChatInvite invite)
                 {
                     var dialog = new JoinChatView { DataContext = invite };
                     var result = await dialog.ShowAsync();
