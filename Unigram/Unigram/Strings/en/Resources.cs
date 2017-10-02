@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 09/25/2017 10:21:02
+// 	Generated: 10/02/2017 10:58:34
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2375,22 +2375,22 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "{0} made group history hidden for new members"
         /// </summary>
-        public static string EventLogToggledHistoryOff
+        public static string EventLogToggledInvitesHistoryOff
         {
             get
             {
-                return resourceLoader.GetString("EventLogToggledHistoryOff");
+                return resourceLoader.GetString("EventLogToggledInvitesHistoryOff");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "{0} made group history visible for new members"
         /// </summary>
-        public static string EventLogToggledHistoryOn
+        public static string EventLogToggledInvitesHistoryOn
         {
             get
             {
-                return resourceLoader.GetString("EventLogToggledHistoryOn");
+                return resourceLoader.GetString("EventLogToggledInvitesHistoryOn");
             }
         }
     }

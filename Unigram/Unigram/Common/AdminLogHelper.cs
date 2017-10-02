@@ -148,11 +148,11 @@ namespace Unigram.Common
                 var togglePreHistoryHiddenAction = action as TLChannelAdminLogEventActionTogglePreHistoryHidden;
                 if (togglePreHistoryHiddenAction.NewValue)
                 {
-                    return ReplaceLinks(message, AppResources.EventLogToggledHistoryOn, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, AppResources.EventLogToggledInvitesHistoryOn, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else
                 {
-                    return ReplaceLinks(message, AppResources.EventLogToggledHistoryOff, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, AppResources.EventLogToggledInvitesHistoryOff, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
             });
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionUpdatePinned), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
