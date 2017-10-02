@@ -690,7 +690,7 @@ namespace Unigram.Views
                 var dialog = element.DataContext as TLDialog;
                 if (dialog != null)
                 {
-                    element.Visibility = dialog.Peer is TLPeerChannel ? Visibility.Collapsed : Visibility.Visible;
+                    element.Visibility = Visibility.Visible;
                 }
             }
         }

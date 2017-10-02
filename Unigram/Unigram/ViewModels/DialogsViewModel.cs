@@ -588,8 +588,8 @@ namespace Unigram.ViewModels
         private TLMessageBase GetServiceMessage(int fromId, string text, TLMessageMediaBase media, TLVector<TLMessageEntityBase> entities, int? date = null)
         {
             var message = TLUtils.GetMessage(
-                fromId, 
-                new TLPeerUser { UserId = SettingsHelper.UserId }, 
+                fromId,
+                new TLPeerUser { UserId = SettingsHelper.UserId },
                 TLMessageState.Confirmed,
                 false,
                 true,
@@ -1210,7 +1210,7 @@ namespace Unigram.ViewModels
                     title = channel.IsCreator ? "Delete" : "Leave";
                 }
 
-                var confirm = await TLMessageDialog.ShowAsync(message, "Delete", "Delete", "Cancel");
+                var confirm = await TLMessageDialog.ShowAsync(message, title, title, "Cancel");
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Task<MTProtoResponse<TLUpdatesBase>> task;
@@ -1238,7 +1238,30 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogClearCommand => new RelayCommand<TLDialog>(DialogClearExecute);
         private async void DialogClearExecute(TLDialog dialog)
         {
-            await ClearHistoryAsync(dialog, true);
+            if (dialog.With is TLUser || dialog.With is TLChat || dialog.With is TLChatForbidden)
+            {
+                await ClearHistoryAsync(dialog, true);
+            }
+            else if (dialog.With is TLChannel channel)
+            {
+                var message = string.Format("Are you sure, you want to clear history in \"{0}\"?", dialog.With.DisplayName);
+                var title = "Delete";
+
+                var confirm = await TLMessageDialog.ShowAsync(message, title, title, "Cancel");
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var response = await ProtoService.DeleteHistoryAsync(channel.ToInputChannel(), int.MaxValue);
+                    if (response.IsSucceeded)
+                    {
+                        CacheService.ClearDialog(dialog.Peer);
+                        dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+                    }
+                    else
+                    {
+                        await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    }
+                }
+            }
         }
 
         public RelayCommand<TLDialog> DialogDeleteAndStopCommand => new RelayCommand<TLDialog>(DialogDeleteAndStopExecute);
@@ -1279,7 +1302,7 @@ namespace Unigram.ViewModels
                 Items.Remove(dialog);
 
                 NavigationService.RemovePeerFromStack(dialog.With.ToPeer());
-            }            
+            }
         }
 
         private async Task ClearHistoryAsync(TLDialog dialog, bool justClear)
