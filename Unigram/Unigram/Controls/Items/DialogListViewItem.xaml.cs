@@ -450,7 +450,7 @@ namespace Unigram.Controls.Items
             }
         }
 
-        private string UpdateStateIcon(TLDraftMessageBase draft, TLMessageBase message)
+        private string UpdateStateIcon(TLDraftMessageBase draft, TLMessageBase message, TLMessageState state)
         {
             if (draft is TLDraftMessage)
             {
@@ -459,9 +459,9 @@ namespace Unigram.Controls.Items
 
             if (message is TLMessage topMessage)
             {
-                if (topMessage != null && topMessage.IsOut && IsOut(ViewModel))
+                if (topMessage.IsOut && IsOut(ViewModel))
                 {
-                    switch (topMessage.State)
+                    switch (state)
                     {
                         case TLMessageState.Sending:
                             return "\uE600";
