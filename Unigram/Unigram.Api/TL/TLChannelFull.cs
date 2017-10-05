@@ -26,7 +26,7 @@ namespace Telegram.Api.TL
 		public bool IsCanViewParticipants { get { return Flags.HasFlag(Flag.CanViewParticipants); } set { Flags = value ? (Flags | Flag.CanViewParticipants) : (Flags & ~Flag.CanViewParticipants); } }
 		public bool IsCanSetUsername { get { return Flags.HasFlag(Flag.CanSetUsername); } set { Flags = value ? (Flags | Flag.CanSetUsername) : (Flags & ~Flag.CanSetUsername); } }
 		public bool IsCanSetStickers { get { return Flags.HasFlag(Flag.CanSetStickers); } set { Flags = value ? (Flags | Flag.CanSetStickers) : (Flags & ~Flag.CanSetStickers); } }
-		public bool IsHiddenPrehistory { get { return Flags.HasFlag(Flag.HiddenPrehistory); } set { Flags = value ? (Flags | Flag.HiddenPrehistory) : (Flags & ~Flag.HiddenPrehistory); } }
+		public bool IsHiddenPreHistory { get { return Flags.HasFlag(Flag.HiddenPrehistory); } set { Flags = value ? (Flags | Flag.HiddenPrehistory) : (Flags & ~Flag.HiddenPrehistory); } }
 		public bool HasParticipantsCount { get { return Flags.HasFlag(Flag.ParticipantsCount); } set { Flags = value ? (Flags | Flag.ParticipantsCount) : (Flags & ~Flag.ParticipantsCount); } }
 		public bool HasAdminsCount { get { return Flags.HasFlag(Flag.AdminsCount); } set { Flags = value ? (Flags | Flag.AdminsCount) : (Flags & ~Flag.AdminsCount); } }
 		public bool HasKickedCount { get { return Flags.HasFlag(Flag.KickedCount); } set { Flags = value ? (Flags | Flag.KickedCount) : (Flags & ~Flag.KickedCount); } }

@@ -66,6 +66,20 @@
                 </local:TableStackPanel>
 
                 <local:TableStackPanel
+                    Visibility="{x:Bind (Visibility)ViewModel.CanEditHiddenPreHistory, Mode=OneWay}"
+                    BorderThickness="0,0,0,1"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    Padding="12,0,12,12"
+                    Margin="0,24,0,0">
+                    <TextBlock Text="Chat History For New Memebers" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <RadioButton IsChecked="{x:Bind ViewModel.IsHiddenPreHistory, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" Content="Visible" Grid.Row="2"/>
+                    <TextBlock Text="New members will see full chat history." Margin="28,-6,0,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="1"/>
+                    <RadioButton IsChecked="{x:Bind ViewModel.IsHiddenPreHistory, Mode=TwoWay}" Content="Hidden" Margin="0,8,0,0"/>
+                    <TextBlock Text="New members will not see previous messages." Margin="28,-6,0,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="3"/>
+                </local:TableStackPanel>
+
+                <local:TableStackPanel
                     BorderThickness="0,0,0,1"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                     BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"

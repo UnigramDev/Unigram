@@ -545,6 +545,29 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
+        public void TogglePreHistoryHiddenAsync(TLInputChannelBase channel, bool enabled, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLChannelsTogglePreHistoryHidden { Channel = channel, Enabled = enabled };
+
+            const string caption = "channels.togglePreHistoryHidden";
+            SendInformativeMessage<TLUpdatesBase>(caption, obj,
+                result =>
+                {
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, null);
+                    }
+
+                    callback?.Invoke(result);
+                },
+                faultCallback);
+        }
+
         public void GetMessageEditDataAsync(TLInputPeerBase peer, int id, Action<TLMessagesMessageEditData> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetMessageEditData { Peer = peer, Id = id };

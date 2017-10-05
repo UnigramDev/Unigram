@@ -24,6 +24,20 @@ namespace Telegram.Api.Services
     public partial class MTProtoService
     {
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLUpdatesBase>> TogglePreHistoryHiddenAsync(TLInputChannelBase channel, bool enabled)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
+            TogglePreHistoryHiddenAsync(channel, enabled, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<bool>> DeleteHistoryAsync(TLInputChannelBase inputChannel, int maxId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();

@@ -23,6 +23,8 @@ namespace Telegram.Api.Services
 {
     public partial interface IMTProtoService
     {
+        Task<MTProtoResponse<TLUpdatesBase>> TogglePreHistoryHiddenAsync(TLInputChannelBase channel, bool enabled);
+
         Task<MTProtoResponse<bool>> DeleteHistoryAsync(TLInputChannelBase inputChannel, int maxId);
 
         Task<MTProtoResponse<TLMessagesMessagesBase>> GetUnreadMentionsAsync(TLInputPeerBase inputPeer, int offsetId, int addOffset, int limit, int maxId, int minId);
