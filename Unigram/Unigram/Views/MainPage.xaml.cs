@@ -682,6 +682,19 @@ namespace Unigram.Views
             }
         }
 
+        private void DialogNotify_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var dialog = element.DataContext as TLDialog;
+                if (dialog != null)
+                {
+                    element.Text = dialog.IsMuted ? "Enable notifications" : "Disable notifications";
+                }
+            }
+        }
+
         private void DialogClear_Loaded(object sender, RoutedEventArgs e)
         {
             var element = sender as MenuFlyoutItem;

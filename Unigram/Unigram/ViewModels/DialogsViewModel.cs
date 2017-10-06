@@ -1188,6 +1188,51 @@ namespace Unigram.ViewModels
             }
         }
 
+        public RelayCommand<TLDialog> DialogNotifyCommand => new RelayCommand<TLDialog>(DialogNotifyExecute);
+        private async void DialogNotifyExecute(TLDialog dialog)
+        {
+            var notifySettings = dialog.NotifySettings as TLPeerNotifySettings;
+            if (notifySettings == null)
+            {
+                return;
+            }
+
+            var muteUntil = notifySettings.MuteUntil == int.MaxValue ? 0 : int.MaxValue;
+            var settings = new TLInputPeerNotifySettings
+            {
+                MuteUntil = muteUntil,
+                IsShowPreviews = notifySettings.IsShowPreviews,
+                IsSilent = notifySettings.IsSilent,
+                Sound = notifySettings.Sound
+            };
+
+            var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = dialog.ToInputPeer() }, settings);
+            if (response.IsSucceeded)
+            {
+                notifySettings.MuteUntil = muteUntil;
+
+                dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                dialog.RaisePropertyChanged(() => dialog.IsMuted);
+                dialog.RaisePropertyChanged(() => dialog.Self);
+
+                var fullChat = CacheService.GetFullChat(dialog.Id);
+                if (fullChat != null)
+                {
+                    fullChat.NotifySettings = notifySettings;
+                    fullChat.RaisePropertyChanged(() => fullChat.NotifySettings);
+                }
+
+                var fullUser = CacheService.GetFullUser(dialog.Id);
+                if (fullUser != null)
+                {
+                    fullUser.NotifySettings = notifySettings;
+                    fullUser.RaisePropertyChanged(() => fullUser.NotifySettings);
+                }
+
+                CacheService.Commit();
+            }
+        }
+
         public RelayCommand<TLDialog> DialogDeleteCommand => new RelayCommand<TLDialog>(DialogDeleteExecute);
         private async void DialogDeleteExecute(TLDialog dialog)
         {
