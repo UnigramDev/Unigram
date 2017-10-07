@@ -11,6 +11,11 @@ namespace Unigram.Core.Common
 {
     public static class Extensions
     {
+        public static bool IsEmpty<T>(this ICollection<T> items)
+        {
+            return items.Count == 0;
+        }
+
         public static void PutRange<TKey, TItem>(this IDictionary<TKey, TItem> list, IDictionary<TKey, TItem> source)
         {
             foreach (var item in source)

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
+using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.TL;
 using Unigram.Core.Common;
 using Windows.Devices.Geolocation;
@@ -19,33 +21,57 @@ namespace Unigram.Core.Services
 
         bool IsTracking(TLPeerBase peer);
         void StopTracking(TLPeerBase peer);
+        void StopTracking();
 
         MvxObservableCollection<TLMessage> Items { get; }
-        MvxObservableCollection<ITLDialogWith> Peers { get; }
     }
 
-    public class LiveLocationService : ILiveLocationService
+    public class LiveLocationService : ILiveLocationService, IHandle<MessagesRemovedEventArgs>
     {
         private readonly IMTProtoService _protoService;
         private readonly ILocationService _locationService;
 
+        private readonly ITelegramEventAggregator _aggregator;
+
         private Geolocator _locator;
 
-        public LiveLocationService(IMTProtoService protoService, ILocationService locationService)
+        public LiveLocationService(IMTProtoService protoService, ILocationService locationService, ITelegramEventAggregator aggregator)
         {
             _protoService = protoService;
             _locationService = locationService;
+            _aggregator = aggregator;
+
+            _aggregator.Subscribe(this);
 
             Items = new MvxObservableCollection<TLMessage>();
-            Peers = new MvxObservableCollection<ITLDialogWith>();
+        }
+
+        public void Handle(MessagesRemovedEventArgs args)
+        {
+            foreach (var message in args.Messages.OfType<TLMessage>())
+            {
+                var removed = Items.Remove(message);
+                if (removed == false)
+                {
+                    var already = Items.FirstOrDefault(x => x.Id == message.Id && message.Parent == args.Dialog.With);
+                    if (already != null)
+                    {
+                        Items.Remove(already);
+                    }
+                }
+            }
+
+            if (_locator != null && Items.IsEmpty())
+            {
+                _locator.PositionChanged -= OnPositionChanged;
+            }
         }
 
         public MvxObservableCollection<TLMessage> Items { get; private set; }
-        public MvxObservableCollection<ITLDialogWith> Peers { get; private set; }
 
         public bool IsTracking(TLPeerBase peer)
         {
-            return Peers.Any(x => peer.Equals(x.ToPeer()));
+            return Items.Any(x => x.Parent != null && peer.Equals(x.Parent.ToPeer()));
         }
 
         public void StopTracking(TLPeerBase peer)
@@ -54,8 +80,15 @@ namespace Unigram.Core.Services
             if (message != null)
             {
                 Items.Remove(message);
-                Peers.Remove(message.Parent);
+                Update(message, null, true);
+            }
+        }
 
+        public void StopTracking()
+        {
+            foreach (var message in Items.ToList())
+            {
+                Items.Remove(message);
                 Update(message, null, true);
             }
         }
@@ -63,13 +96,13 @@ namespace Unigram.Core.Services
         public async Task TrackAsync(TLMessage message)
         {
             Items.Add(message);
-            Peers.Add(message.Parent);
 
             if (_locator == null)
             {
                 _locator = await _locationService.StartTrackingAsync();
+                _locator.PositionChanged -= OnPositionChanged;
                 _locator.PositionChanged += OnPositionChanged;
-            } 
+            }
         }
 
         private void OnPositionChanged(Geolocator sender, PositionChangedEventArgs args)
@@ -116,6 +149,11 @@ namespace Unigram.Core.Services
                 {
                     Items.Remove(message);
                 }
+            }
+
+            if (_locator != null && Items.IsEmpty())
+            {
+                _locator.PositionChanged -= OnPositionChanged;
             }
         }
 

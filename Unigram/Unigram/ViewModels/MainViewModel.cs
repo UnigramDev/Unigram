@@ -87,6 +87,12 @@ namespace Unigram.ViewModels
             throw new NotImplementedException();
         }
 
+        public RelayCommand StopLiveLocationCommand => new RelayCommand(StopLiveLocationExecute);
+        private void StopLiveLocationExecute()
+        {
+            _liveLocationService.StopTracking();
+        }
+
         private YoloTimer _selfDestructTimer;
         private List<TLMessage> _selfDestructItems;
 
@@ -331,14 +337,23 @@ namespace Unigram.ViewModels
             //Execute.BeginOnUIThread(() => Contacts.getTLContacts());
             //Execute.BeginOnUIThread(() => Contacts.GetSelfAsync());
 
-            //ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.3" }, result =>
-            //{
-            //    _updatesService.ProcessUpdates(result, true);
-            //},
-            //fault =>
-            //{
-            //    Debugger.Break();
-            //});
+            ProtoService.SendRequestAsync<object>("langpack.getStrings", new TLLangPackGetStrings { Keys = new TLVector<string> { "CHANNEL_MESSAGE_GEOLIVE", "CHAT_MESSAGE_GEOLIVE", "MESSAGE_GEOLIVE", "PINNED_GEOLIVE" }, LangCode = "es" }, result =>
+            {
+                Debugger.Break();
+            },
+            fault =>
+            {
+                Debugger.Break();
+            });
+
+            ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.3" }, result =>
+            {
+                _updatesService.ProcessUpdates(result, true);
+            },
+            fault =>
+            {
+                Debugger.Break();
+            });
 
             if (Refresh)
             {
