@@ -68,7 +68,8 @@ namespace Unigram.ViewModels.Settings
             {
                 try
                 {
-                    await file.DeleteAsync();
+                    //await file.DeleteAsync();
+                    NativeUtils.Delete(file.Path);
                     await UpdateCacheSizeAsync();
                 }
                 catch { }
