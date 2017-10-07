@@ -68,7 +68,7 @@ namespace Unigram.ViewModels
             }
 
             Reply = message;
-            Aggregator.Publish("/dlg_focus");
+            TextField.Focus(Windows.UI.Xaml.FocusState.Keyboard);
         }
 
         #endregion
