@@ -493,8 +493,7 @@ namespace Unigram.Views
             {
                 flyout.Hide();
             }
-
-            e.Item.IsSelected = true;
+            
             ViewModel.SendMediaExecute(ViewModel.MediaLibrary, e.Item);
         }
 
@@ -1589,7 +1588,10 @@ namespace Unigram.Views
 
         public MediaLibraryCollection()
         {
-            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
 
             var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
             queryOptions.FolderDepth = FolderDepth.Deep;
@@ -1614,6 +1616,7 @@ namespace Unigram.Views
             {
                 StartIndex = 0;
                 Clear();
+                UpdateCount();
             });
         }
 
@@ -1651,9 +1654,14 @@ namespace Unigram.Views
         {
             if (e.PropertyName.Equals("IsSelected"))
             {
-                _selectedCount = this.Count(x => x.IsSelected);
-                OnPropertyChanged(new PropertyChangedEventArgs("SelectedCount"));
+                UpdateCount();
             }
+        }
+
+        private void UpdateCount()
+        {
+            _selectedCount = this.Count(x => x.IsSelected);
+            OnPropertyChanged(new PropertyChangedEventArgs("SelectedCount"));
         }
     }
 }
