@@ -92,7 +92,6 @@ namespace Unigram.Controls
                     Height = _keyboardHeight;
                     scroll.MaxHeight = double.PositiveInfinity;
                 }
-                InputPane.GetForCurrentView().TryHide();
             }
             else if (ReplyMarkup is TLReplyKeyboardHide && !inline && Parent is ScrollViewer scroll2)
             {

@@ -16,6 +16,7 @@ using Unigram.Converters;
 using Unigram.Services;
 using Windows.System.Profile;
 using Windows.UI.Notifications;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels
@@ -590,6 +591,12 @@ namespace Unigram.ViewModels
                         if (user != null && user.IsBot)
                         {
                             SetReplyMarkup(message);
+                            if (message.ReplyMarkup is TLReplyKeyboardMarkup)
+                            {
+                                ListField.Focus(FocusState.Programmatic);
+                                InputPane.GetForCurrentView().TryHide();
+                               
+                            }
                         }
                     }
 
