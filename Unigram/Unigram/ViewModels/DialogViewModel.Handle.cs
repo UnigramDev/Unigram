@@ -591,11 +591,10 @@ namespace Unigram.ViewModels
                         if (user != null && user.IsBot)
                         {
                             SetReplyMarkup(message);
+
                             if (message.ReplyMarkup is TLReplyKeyboardMarkup)
                             {
-                                ListField.Focus(FocusState.Programmatic);
                                 InputPane.GetForCurrentView().TryHide();
-                               
                             }
                         }
                     }
