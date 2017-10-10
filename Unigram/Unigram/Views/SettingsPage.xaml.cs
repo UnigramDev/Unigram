@@ -170,7 +170,15 @@ namespace Unigram.Views
 
         private async void Questions_Click(object sender, RoutedEventArgs e)
         {
-            await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
+            var response = await ViewModel.ProtoService.GetWebPageAsync("https://telegram.org/faq", 0);
+            if (response.IsSucceeded && response.Result is TLWebPage)
+            {
+                MasterDetail.NavigationService.Navigate(typeof(InstantPage), response.Result);
+            }
+            else
+            {
+                await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
+            }
         }
 
         private async void Theme_Click(object sender, RoutedEventArgs e)

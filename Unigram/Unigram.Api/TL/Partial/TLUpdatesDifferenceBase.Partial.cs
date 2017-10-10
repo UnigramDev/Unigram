@@ -59,7 +59,7 @@ namespace Telegram.Api.TL.Updates
             };
         }
 
-        protected void ProcessReading()
+        public void ProcessReading()
         {
             var userInbox = new Dictionary<int, TLUpdateReadHistoryInbox>();
             var userOutbox = new Dictionary<int, TLUpdateReadHistoryOutbox>();

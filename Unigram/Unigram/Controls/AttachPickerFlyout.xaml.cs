@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Core.Models;
+using Unigram.Models;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -56,7 +57,7 @@ namespace Unigram.Controls
 
         private void Library_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ItemClick?.Invoke(this, new MediaSelectedEventArgs((StoragePhoto)e.ClickedItem));
+            ItemClick?.Invoke(this, new MediaSelectedEventArgs((StorageMedia)e.ClickedItem));
         }
 
         private async void Camera_Click(object sender, RoutedEventArgs e)
@@ -68,11 +69,19 @@ namespace Unigram.Controls
             capture.VideoSettings.Format = CameraCaptureUIVideoFormat.Mp4;
             capture.VideoSettings.MaxResolution = CameraCaptureUIMaxVideoResolution.StandardDefinition;
 
-            var result = await capture.CaptureFileAsync(CameraCaptureUIMode.Photo /*OrVideo*/);
-            if (result != null)
+            var file = await capture.CaptureFileAsync(CameraCaptureUIMode.PhotoOrVideo);
+            if (file != null)
             {
-                await result.CopyAsync(KnownFolders.CameraRoll, DateTime.Now.ToString("WIN_yyyyMMdd_HH_mm_ss") + ".jpg", NameCollisionOption.GenerateUniqueName);
-                ItemClick?.Invoke(this, new MediaSelectedEventArgs(new StoragePhoto(result)));
+                if (file.ContentType.Equals("video/mp4"))
+                {
+                    await file.CopyAsync(KnownFolders.CameraRoll, DateTime.Now.ToString("WIN_yyyyMMdd_HH_mm_ss") + ".mp4", NameCollisionOption.GenerateUniqueName);
+                    ItemClick?.Invoke(this, new MediaSelectedEventArgs(await StorageVideo.CreateAsync(file, true)));
+                }
+                else
+                {
+                    await file.CopyAsync(KnownFolders.CameraRoll, DateTime.Now.ToString("WIN_yyyyMMdd_HH_mm_ss") + ".jpg", NameCollisionOption.GenerateUniqueName);
+                    ItemClick?.Invoke(this, new MediaSelectedEventArgs(new StoragePhoto(file) { IsSelected = true }));
+                }
             }
         }
 
@@ -81,9 +90,9 @@ namespace Unigram.Controls
 
     public class MediaSelectedEventArgs
     {
-        public StoragePhoto Item { get; private set; }
+        public StorageMedia Item { get; private set; }
 
-        public MediaSelectedEventArgs(StoragePhoto item)
+        public MediaSelectedEventArgs(StorageMedia item)
         {
             Item = item;
         }

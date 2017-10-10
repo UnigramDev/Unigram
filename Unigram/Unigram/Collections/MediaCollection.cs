@@ -52,12 +52,13 @@ namespace Unigram.Collections
         {
             try
             {
-                var response = await _protoService.SearchAsync(_peer, _query, null, _filter, 0, 0, 0, _lastMaxId, 50);
+                var response = await _protoService.SearchAsync(_peer, _query, null, _filter, 0, 0, _lastMaxId, 0, 50);
                 if (response.IsSucceeded)
                 {
                     if (response.Result.Messages.Count > 0)
                     {
-                        _lastMaxId = response.Result.Messages.Min(x => x.Id);
+                        //_lastMaxId = response.Result.Messages.Min(x => x.Id);
+                        _lastMaxId += response.Result.Messages.Count;
                         _hasMore = response.Result.Messages.Count == 50;
                     }
                     else

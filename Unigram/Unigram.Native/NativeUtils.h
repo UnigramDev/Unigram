@@ -17,6 +17,7 @@ namespace Unigram
 		{
 		public:
 			static int64 GetDirectorySize(String^ path);
+			static void Delete(String^ path);
 
 		private:
 			static uint64_t CalculateDirSize(const std::wstring &path, uint64_t size);

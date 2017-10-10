@@ -379,7 +379,7 @@ namespace Unigram.Controls.Messages
             //        constraint = webPage.Photo;
             //    }
             //}
-            else if (ViewModel?.Media is TLMessageMediaGeo || ViewModel?.Media is TLMessageMediaVenue)
+            else if (ViewModel?.Media is TLMessageMediaGeo || ViewModel?.Media is TLMessageMediaGeoLive || ViewModel?.Media is TLMessageMediaVenue)
             {
                 constraint = ViewModel?.Media;
             }
@@ -395,7 +395,7 @@ namespace Unigram.Controls.Messages
             var width = 0.0;
             var height = 0.0;
 
-            if (constraint is TLMessageMediaGeo || constraint is TLMessageMediaVenue)
+            if (constraint is TLMessageMediaGeo || constraint is TLMessageMediaGeoLive || constraint is TLMessageMediaVenue)
             {
                 width = 320;
                 height = 240;
@@ -499,6 +499,7 @@ namespace Unigram.Controls.Messages
             if (media == null) return false;
 
             if (media.TypeId == TLType.MessageMediaGeo) return true;
+            else if (media.TypeId == TLType.MessageMediaGeoLive) return true;
             else if (media.TypeId == TLType.MessageMediaVenue) return true;
             else if (media.TypeId == TLType.MessageMediaPhoto) return true;
             else if (media.TypeId == TLType.MessageMediaDocument)
@@ -533,6 +534,7 @@ namespace Unigram.Controls.Messages
             if (media == null) return false;
 
             if (media.TypeId == TLType.MessageMediaContact) return true;
+            else if (media.TypeId == TLType.MessageMediaGeoLive) return true;
             else if (media.TypeId == TLType.MessageMediaVenue) return true;
             else if (media.TypeId == TLType.MessageMediaPhoto)
             {

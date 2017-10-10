@@ -163,7 +163,9 @@ namespace Unigram.Controls.Messages
                                 case TLType.MessageMediaPhoto:
                                     return SetPhotoTemplate(forwardMessage, "forward");
                                 case TLType.MessageMediaGeo:
-                                    return SetGeoPointTemplate(forwardMessage, "forward");
+                                    return SetGeoTemplate(forwardMessage, "forward");
+                                case TLType.MessageMediaGeoLive:
+                                    return SetGeoLiveTemplate(forwardMessage, "forward");
                                 case TLType.MessageMediaVenue:
                                     return SetVenueTemplate(forwardMessage, "forward");
                                 case TLType.MessageMediaContact:
@@ -227,7 +229,9 @@ namespace Unigram.Controls.Messages
                             case TLType.MessageMediaPhoto:
                                 return SetPhotoTemplate(editMessage, "Edit message");
                             case TLType.MessageMediaGeo:
-                                return SetGeoPointTemplate(editMessage, "Edit message");
+                                return SetGeoTemplate(editMessage, "Edit message");
+                            case TLType.MessageMediaGeoLive:
+                                return SetGeoLiveTemplate(editMessage, "Edit message");
                             case TLType.MessageMediaVenue:
                                 return SetVenueTemplate(editMessage, "Edit message");
                             case TLType.MessageMediaContact:
@@ -299,7 +303,9 @@ namespace Unigram.Controls.Messages
                         case TLType.MessageMediaPhoto:
                             return SetPhotoTemplate(message, Title);
                         case TLType.MessageMediaGeo:
-                            return SetGeoPointTemplate(message, Title);
+                            return SetGeoTemplate(message, Title);
+                        case TLType.MessageMediaGeoLive:
+                            return SetGeoLiveTemplate(message, Title);
                         case TLType.MessageMediaVenue:
                             return SetVenueTemplate(message, Title);
                         case TLType.MessageMediaContact:
@@ -445,7 +451,7 @@ namespace Unigram.Controls.Messages
             return true;
         }
 
-        private bool SetGeoPointTemplate(TLMessage message, string title)
+        private bool SetGeoTemplate(TLMessage message, string title)
         {
             Visibility = Visibility.Visible;
 
@@ -454,6 +460,20 @@ namespace Unigram.Controls.Messages
 
             TitleLabel.Text = GetFromLabel(message, title);
             ServiceLabel.Text = "Location";
+            MessageLabel.Text = string.Empty;
+
+            return true;
+        }
+
+        private bool SetGeoLiveTemplate(TLMessage message, string title)
+        {
+            Visibility = Visibility.Visible;
+
+            if (ThumbRoot != null)
+                ThumbRoot.Visibility = Visibility.Collapsed;
+
+            TitleLabel.Text = GetFromLabel(message, title);
+            ServiceLabel.Text = "Live Location";
             MessageLabel.Text = string.Empty;
 
             return true;

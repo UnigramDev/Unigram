@@ -99,17 +99,17 @@ namespace Unigram.ViewModels
 
                 foreach (var item in test)
                 {
-                    if (item.IsPinned)
-                    {
-                        item.PinnedIndex = pinnedIndex++;
-                    }
-
                     if (item.With is TLChat chat && chat.HasMigratedTo)
                     {
                         continue;
                     }
                     else
                     {
+                        if (item.IsPinned)
+                        {
+                            item.PinnedIndex = pinnedIndex++;
+                        }
+
                         items.Add(item);
                     }
                 }
@@ -191,17 +191,17 @@ namespace Unigram.ViewModels
 
                 foreach (var item in response.Result.Dialogs)
                 {
-                    if (item.IsPinned)
-                    {
-                        item.PinnedIndex = pinnedIndex++;
-                    }
-
                     if (item.With is TLChat chat && chat.HasMigratedTo)
                     {
                         continue;
                     }
                     else
                     {
+                        if (item.IsPinned)
+                        {
+                            item.PinnedIndex = pinnedIndex++;
+                        }
+
                         items.Add(item);
                     }
                 }
@@ -588,8 +588,8 @@ namespace Unigram.ViewModels
         private TLMessageBase GetServiceMessage(int fromId, string text, TLMessageMediaBase media, TLVector<TLMessageEntityBase> entities, int? date = null)
         {
             var message = TLUtils.GetMessage(
-                fromId, 
-                new TLPeerUser { UserId = SettingsHelper.UserId }, 
+                fromId,
+                new TLPeerUser { UserId = SettingsHelper.UserId },
                 TLMessageState.Confirmed,
                 false,
                 true,
@@ -933,6 +933,12 @@ namespace Unigram.ViewModels
 
         public async void SearchSync(string query)
         {
+            if (string.IsNullOrEmpty(query))
+            {
+                Search.Clear();
+                return;
+            }
+
             var local = await SearchLocalAsync(query.TrimStart('@'));
 
             if (query.Equals(_searchQuery))
@@ -944,6 +950,12 @@ namespace Unigram.ViewModels
 
         public async Task SearchAsync(string query)
         {
+            if (string.IsNullOrEmpty(query))
+            {
+                Search.Clear();
+                return;
+            }
+
             var global = await SearchGlobalAsync(query);
             var messages = await SearchMessagesAsync(query);
 
@@ -985,7 +997,7 @@ namespace Unigram.ViewModels
                     var chat = dialog.With as TLChat;
                     if (chat != null)
                     {
-                        return (chat.Title.IsLike(query, StringComparison.OrdinalIgnoreCase));
+                        return (!chat.HasMigratedTo && chat.Title.IsLike(query, StringComparison.OrdinalIgnoreCase));
                     }
 
                     return false;
@@ -1176,6 +1188,51 @@ namespace Unigram.ViewModels
             }
         }
 
+        public RelayCommand<TLDialog> DialogNotifyCommand => new RelayCommand<TLDialog>(DialogNotifyExecute);
+        private async void DialogNotifyExecute(TLDialog dialog)
+        {
+            var notifySettings = dialog.NotifySettings as TLPeerNotifySettings;
+            if (notifySettings == null)
+            {
+                return;
+            }
+
+            var muteUntil = notifySettings.MuteUntil == int.MaxValue ? 0 : int.MaxValue;
+            var settings = new TLInputPeerNotifySettings
+            {
+                MuteUntil = muteUntil,
+                IsShowPreviews = notifySettings.IsShowPreviews,
+                IsSilent = notifySettings.IsSilent,
+                Sound = notifySettings.Sound
+            };
+
+            var response = await ProtoService.UpdateNotifySettingsAsync(new TLInputNotifyPeer { Peer = dialog.ToInputPeer() }, settings);
+            if (response.IsSucceeded)
+            {
+                notifySettings.MuteUntil = muteUntil;
+
+                dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                dialog.RaisePropertyChanged(() => dialog.IsMuted);
+                dialog.RaisePropertyChanged(() => dialog.Self);
+
+                var fullChat = CacheService.GetFullChat(dialog.Id);
+                if (fullChat != null)
+                {
+                    fullChat.NotifySettings = notifySettings;
+                    fullChat.RaisePropertyChanged(() => fullChat.NotifySettings);
+                }
+
+                var fullUser = CacheService.GetFullUser(dialog.Id);
+                if (fullUser != null)
+                {
+                    fullUser.NotifySettings = notifySettings;
+                    fullUser.RaisePropertyChanged(() => fullUser.NotifySettings);
+                }
+
+                CacheService.Commit();
+            }
+        }
+
         public RelayCommand<TLDialog> DialogDeleteCommand => new RelayCommand<TLDialog>(DialogDeleteExecute);
         private async void DialogDeleteExecute(TLDialog dialog)
         {
@@ -1198,7 +1255,7 @@ namespace Unigram.ViewModels
                     title = channel.IsCreator ? "Delete" : "Leave";
                 }
 
-                var confirm = await TLMessageDialog.ShowAsync(message, "Delete", "Delete", "Cancel");
+                var confirm = await TLMessageDialog.ShowAsync(message, title, title, "Cancel");
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Task<MTProtoResponse<TLUpdatesBase>> task;
@@ -1226,7 +1283,71 @@ namespace Unigram.ViewModels
         public RelayCommand<TLDialog> DialogClearCommand => new RelayCommand<TLDialog>(DialogClearExecute);
         private async void DialogClearExecute(TLDialog dialog)
         {
-            await ClearHistoryAsync(dialog, true);
+            if (dialog.With is TLUser || dialog.With is TLChat || dialog.With is TLChatForbidden)
+            {
+                await ClearHistoryAsync(dialog, true);
+            }
+            else if (dialog.With is TLChannel channel)
+            {
+                var message = string.Format("Are you sure, you want to clear history in \"{0}\"?", dialog.With.DisplayName);
+                var title = "Delete";
+
+                var confirm = await TLMessageDialog.ShowAsync(message, title, title, "Cancel");
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var response = await ProtoService.DeleteHistoryAsync(channel.ToInputChannel(), int.MaxValue);
+                    if (response.IsSucceeded)
+                    {
+                        CacheService.ClearDialog(dialog.Peer);
+                        dialog.RaisePropertyChanged(() => dialog.UnreadCount);
+                    }
+                    else
+                    {
+                        await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                    }
+                }
+            }
+        }
+
+        public RelayCommand<TLDialog> DialogDeleteAndStopCommand => new RelayCommand<TLDialog>(DialogDeleteAndStopExecute);
+        private async void DialogDeleteAndStopExecute(TLDialog dialog)
+        {
+            if (dialog.With is TLUser user)
+            {
+                var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to delete all message history and stop this bot?", "Delete and Stop", "Delete and Stop", "Cancel");
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                var result = await ProtoService.BlockAsync(user.ToInputUser());
+                if (result.IsSucceeded && result.Result)
+                {
+                    CacheService.Commit();
+                    Aggregator.Publish(new TLUpdateUserBlocked { UserId = user.Id, Blocked = true });
+                }
+
+                var offset = 0;
+                do
+                {
+                    var response = await ProtoService.DeleteHistoryAsync(false, dialog.ToInputPeer(), 0);
+                    if (response.IsSucceeded)
+                    {
+                        offset = response.Result.Offset;
+                    }
+                    else
+                    {
+                        await new TLMessageDialog(response.Error.ErrorMessage ?? "Error message", response.Error.ErrorCode.ToString()).ShowQueuedAsync();
+                        return;
+                    }
+                }
+                while (offset > 0);
+
+                CacheService.DeleteDialog(dialog);
+                Items.Remove(dialog);
+
+                NavigationService.RemovePeerFromStack(dialog.With.ToPeer());
+            }
         }
 
         private async Task ClearHistoryAsync(TLDialog dialog, bool justClear)

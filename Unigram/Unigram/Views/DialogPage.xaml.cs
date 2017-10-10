@@ -56,6 +56,7 @@ using Template10.Services.NavigationService;
 using Unigram.Core.Helpers;
 using Unigram.Native;
 using LinqToVisualTree;
+using Unigram.Models;
 
 namespace Unigram.Views
 {
@@ -87,7 +88,7 @@ namespace Unigram.Views
             //NavigationCacheMode = NavigationCacheMode.Required;
 
             ViewModel.TextField = TextField;
-            ViewModel.ListField = lvDialogs;
+            ViewModel.ListField = Messages;
 
             CheckMessageBoxEmpty();
 
@@ -98,7 +99,7 @@ namespace Unigram.Views
             StickersPanel.StickerClick = Stickers_ItemClick;
             StickersPanel.GifClick = Gifs_ItemClick;
 
-            lvDialogs.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
+            Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
             StickersPanel.RegisterPropertyChangedCallback(FrameworkElement.VisibilityProperty, StickersPanel_VisibilityChanged);
 
             _messageVisual = ElementCompositionPreview.GetElementVisual(TextField);
@@ -194,11 +195,11 @@ namespace Unigram.Views
         {
             //if (_panel != null && ViewModel.With != null)
             //{
-            //    var container = lvDialogs.ContainerFromIndex(_panel.FirstVisibleIndex);
+            //    var container = Messages.ContainerFromIndex(_panel.FirstVisibleIndex);
             //    if (container != null)
             //    {
             //        var peer = ViewModel.With.ToPeer();
-            //        var item = lvDialogs.ItemFromContainer(container) as TLMessageBase;
+            //        var item = Messages.ItemFromContainer(container) as TLMessageBase;
 
             //        ApplicationSettings.Current.AddOrUpdateValue(TLSerializationService.Current.Serialize(peer), item?.Id ?? -1);
             //    }
@@ -227,7 +228,7 @@ namespace Unigram.Views
             }
             else if (e.PropertyName.Equals("SelectedItems"))
             {
-                lvDialogs.SelectedItems.AddRange(ViewModel.SelectedMessages);
+                Messages.SelectedItems.AddRange(ViewModel.SelectedItems);
             }
         }
 
@@ -267,8 +268,8 @@ namespace Unigram.Views
 
             App.AcceleratorKeyActivated += Dispatcher_AcceleratorKeyActivated;
 
-            _panel = (ItemsStackPanel)lvDialogs.ItemsPanelRoot;
-            lvDialogs.ScrollingHost.ViewChanged += OnViewChanged;
+            _panel = (ItemsStackPanel)Messages.ItemsPanelRoot;
+            Messages.ScrollingHost.ViewChanged += OnViewChanged;
 
             TextField.FocusMaybe(FocusState.Keyboard);
         }
@@ -312,13 +313,27 @@ namespace Unigram.Views
 
                 if (StickersPanel.Visibility == Visibility.Visible)
                 {
-                    Collapse_Click(null, null);
+                    if (StickersPanel.ToggleActiveView())
+                    {
+
+                    }
+                    else
+                    {
+                        Collapse_Click(null, null);
+                    }
+
                     args.Handled = true;
                 }
 
                 if (ViewModel.SelectionMode != ListViewSelectionMode.None)
                 {
                     ViewModel.SelectionMode = ListViewSelectionMode.None;
+                    args.Handled = true;
+                }
+
+                if (ViewModel.EditedMessage != null)
+                {
+                    ViewModel.ClearReplyCommand.Execute(null);
                     args.Handled = true;
                 }
 
@@ -355,6 +370,12 @@ namespace Unigram.Views
             if (ViewModel.SelectionMode != ListViewSelectionMode.None)
             {
                 ViewModel.SelectionMode = ListViewSelectionMode.None;
+                args.Handled = true;
+            }
+
+            if (ViewModel.EditedMessage != null)
+            {
+                ViewModel.ClearReplyCommand.Execute(null);
                 args.Handled = true;
             }
 
@@ -441,6 +462,11 @@ namespace Unigram.Views
                 await Task.Delay(200);
             }
 
+            foreach (var item in ViewModel.MediaLibrary)
+            {
+                item.Reset();
+            }
+
             if (FlyoutBase.GetAttachedFlyout(ButtonAttach) is MenuFlyout flyout)
             {
                 //var bounds = ApplicationView.GetForCurrentView().VisibleBounds;
@@ -467,8 +493,8 @@ namespace Unigram.Views
             {
                 flyout.Hide();
             }
-
-            ViewModel.SendPhotoCommand.Execute(e.Item.Clone());
+            
+            ViewModel.SendMediaExecute(ViewModel.MediaLibrary, e.Item);
         }
 
         private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
@@ -476,75 +502,53 @@ namespace Unigram.Views
             ViewModel.SendBotInlineResult((TLBotInlineResultBase)e.ClickedItem);
         }
 
-        private void gridMain_DragOver(object sender, DragEventArgs e)
+        #region Drag & Drop
+
+        private void OnDragOver(object sender, DragEventArgs e)
         {
             e.AcceptedOperation = DataPackageOperation.Copy;
         }
 
-        private async void gridMain_Drop(object sender, DragEventArgs e)
+        private async void OnDrop(object sender, DragEventArgs e)
         {
             //gridLoading.Visibility = Visibility.Visible;
 
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
                 var items = await e.DataView.GetStorageItemsAsync();
-                ObservableCollection<StorageFile> images = new ObservableCollection<StorageFile>();
-                ObservableCollection<StorageFile> audio = new ObservableCollection<StorageFile>();
-                ObservableCollection<StorageFile> videos = new ObservableCollection<StorageFile>();
-                ObservableCollection<StorageFile> files = new ObservableCollection<StorageFile>();
+                var media = new ObservableCollection<StorageMedia>();
+                var files = new List<StorageFile>(items.Count);
 
-
-                // Check for file types and sort these in the correct Collections
-                foreach (StorageFile file in items)
+                foreach (var file in items.OfType<StorageFile>())
                 {
-                    // Which of the two is better practise? The second one seems more foolproof imho    - Rick
-
-                    //if (file.FileType == ".jpg" || file.ContentType == ".png")
-                    //{
-                    //    images.Add(file);
-                    //}
-
-                    // Images first
-                    if (file.ContentType == "image/jpeg" || file.ContentType == "image/png")
+                    if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("video/mp4", StringComparison.OrdinalIgnoreCase))
                     {
-                        images.Add(file);
+                        media.Add(new StoragePhoto(file) { IsSelected = true });
                     }
-                    // Audio second
-                    else if (file.ContentType == "audio/mpeg" || file.ContentType == "audio/x-wav")
+                    else if (file.ContentType == "video/mp4")
                     {
-                        audio.Add(file);
-                    }
-                    // Videos third
-                    else if (file.ContentType == "video/mpeg" || file.ContentType == "video/mp4")
-                    {
-                        videos.Add(file);
-                    }
-                    // files last
-                    else
-                    {
-                        files.Add(file);
+                        media.Add(await StorageVideo.CreateAsync(file, true));
                     }
 
-
+                    files.Add(file);
                 }
-                // Send images
-                if (images.Count > 0)
+
+                // Send compressed __only__ if user is dropping photos and videos only
+                if (media.Count > 0 && files.IsEmpty())
                 {
-                    //gridLoading.Visibility = Visibility.Collapsed;
-                    ViewModel.SendPhotoDrop(images);
+                    ViewModel.SendMediaExecute(media, media[0]);
                 }
-                //if (audio.Count > 0)
-                //{
-                //    gridLoading.Visibility = Visibility.Collapsed;
-                //}
-                //if (videos.Count > 0)
-                //{
-                //    gridLoading.Visibility = Visibility.Collapsed;
-                //}
-                //if (files.Count > 0)
-                //{
-                //    gridLoading.Visibility = Visibility.Collapsed;
-                //}
+                else if (files.Count > 0)
+                {
+                    foreach (var file in files)
+                    {
+                        ViewModel.SendFileCommand.Execute(file);
+                    }
+                }
             }
             //else if (e.DataView.Contains(StandardDataFormats.WebLink))
             //{
@@ -566,14 +570,10 @@ namespace Unigram.Views
             {
                 var text = await e.DataView.GetTextAsync();
                 TextField.Document.GetRange(TextField.Document.Selection.EndPosition, TextField.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
-
-                //gridLoading.Visibility = Visibility.Collapsed;
             }
-
-
-
-
         }
+
+        #endregion
 
         private async void Reply_Click(object sender, RoutedEventArgs e)
         {
@@ -608,7 +608,11 @@ namespace Unigram.Views
 
         private void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
         {
-            ViewModel.KeyboardButtonExecute(e.Button, null);
+            var panel = sender as ReplyMarkupPanel;
+            if (panel != null)
+            {
+                ViewModel.KeyboardButtonExecute(e.Button, panel.DataContext as TLMessage);
+            }
         }
 
         private async void Stickers_Click(object sender, RoutedEventArgs e)
@@ -661,7 +665,7 @@ namespace Unigram.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.SelectedMessages = new List<TLMessageCommonBase>(lvDialogs.SelectedItems.Cast<TLMessageCommonBase>());
+            ViewModel.SelectedItems = new List<TLMessageCommonBase>(Messages.SelectedItems.Cast<TLMessageCommonBase>());
         }
 
         #region Context menu
@@ -740,6 +744,12 @@ namespace Unigram.Views
                 var message = element.DataContext as TLMessage;
                 if (message != null)
                 {
+                    if (message.IsRoundVideo() || message.IsSticker())
+                    {
+                        element.Visibility = Visibility.Collapsed;
+                        return;
+                    }
+
                     var channel = message.Parent as TLChannel;
                     if (message.IsOut && message.ToId is TLPeerUser userPeer && userPeer.Id == SettingsHelper.UserId)
                     {
@@ -865,7 +875,7 @@ namespace Unigram.Views
             }
         }
 
-        private void MessageStickerPackInfo_Loaded(object sender, RoutedEventArgs e)
+        private void MessageAddSticker_Loaded(object sender, RoutedEventArgs e)
         {
             var element = sender as MenuFlyoutItem;
             if (element != null)
@@ -894,9 +904,13 @@ namespace Unigram.Views
             var element = sender as MenuFlyoutItem;
             if (element != null)
             {
-                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
                 {
                     element.Visibility = ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else
+                {
+                    element.Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -906,9 +920,13 @@ namespace Unigram.Views
             var element = sender as MenuFlyoutItem;
             if (element != null)
             {
-                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
                 {
                     element.Visibility = ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Visible : Visibility.Collapsed;
+                }
+                else
+                {
+                    element.Visibility = Visibility.Collapsed;
                 }
             }
         }
@@ -1313,6 +1331,19 @@ namespace Unigram.Views
             return userId != 777000 && userId != 429000 && userId != 4244000 && (userId / 1000 == 333 || userId % 1000 == 0) ? "Got a question about Telegram?" : "No messages here yet...";
         }
 
+        public string ConvertSelectedCount(int count, bool items)
+        {
+            if (items)
+            {
+                // TODO: Send 1 Photo/Video
+                return count > 0 ? count > 1 ? $"Send {count} Items" : "Send 1 Item" : "Photo or Video";
+            }
+            else
+            {
+                return count > 0 ? count > 1 ? $"Send as Files" : "Send as File" : "File";
+            }
+        }
+
         #endregion
 
         private void Share_Click(object sender, RoutedEventArgs e)
@@ -1531,7 +1562,10 @@ namespace Unigram.Views
 
         public MediaLibraryCollection()
         {
-            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled) return;
+            if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+            {
+                return;
+            }
 
             var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
             queryOptions.FolderDepth = FolderDepth.Deep;
@@ -1541,12 +1575,22 @@ namespace Unigram.Views
             StartIndex = 0;
         }
 
+        private int _selectedCount;
+        public int SelectedCount
+        {
+            get
+            {
+                return _selectedCount;
+            }
+        }
+
         private void OnContentsChanged(IStorageQueryResultBase sender, object args)
         {
             Execute.BeginOnUIThread(() =>
             {
                 StartIndex = 0;
                 Clear();
+                UpdateCount();
             });
         }
 
@@ -1561,17 +1605,37 @@ namespace Unigram.Views
 
             foreach (var file in result)
             {
-                if (Path.GetExtension(file.Name).Equals(".mp4"))
+                if (file.ContentType.Equals("video/mp4"))
                 {
-                    items.Add(new StorageVideo(file));
+                    var item = await StorageVideo.CreateAsync(file, false);
+                    items.Add(item);
+
+                    item.PropertyChanged += OnPropertyChanged;
                 }
                 else
                 {
-                    items.Add(new StoragePhoto(file));
+                    var item = new StoragePhoto(file);
+                    items.Add(item);
+
+                    item.PropertyChanged += OnPropertyChanged;
                 }
             }
 
             return items;
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals("IsSelected"))
+            {
+                UpdateCount();
+            }
+        }
+
+        private void UpdateCount()
+        {
+            _selectedCount = this.Count(x => x.IsSelected);
+            OnPropertyChanged(new PropertyChangedEventArgs("SelectedCount"));
         }
     }
 }

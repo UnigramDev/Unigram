@@ -9,6 +9,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
+using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Unigram.Collections;
@@ -210,6 +211,68 @@ namespace Unigram.ViewModels.Chats
         private void MediaExecute()
         {
             NavigationService.Navigate(typeof(DialogSharedMediaPage), _item.ToInputPeer());
+        }
+
+        public RelayCommand MigrateCommand => new RelayCommand(MigrateExecute);
+        private async void MigrateExecute()
+        {
+            var chat = _item as TLChat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var confirm = await TLMessageDialog.ShowAsync("**In supergroups:**\n• New members can see the full message history\n• Deleted messages will disappear for all members\n• Admins can pin important messages\n• Creator can set a public link for the group\n\n**Note:** this action can't be undone.", "Convert to Supergroup", "OK", "Cancel");
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var warning = await TLMessageDialog.ShowAsync("This action is irreversible. It is not possible to downgrade a supergroup to a regular group.", "Warning", "OK", "Cancel");
+            if (warning != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var response = await ProtoService.MigrateChatAsync(chat.Id);
+            if (response.IsSucceeded)
+            {
+                if (response.Result is TLUpdates updates)
+                {
+                    var channel = updates.Chats.FirstOrDefault(x => x is TLChannel) as TLChannel;
+                    if (channel != null)
+                    {
+                        var migratedFromMaxId = 0;
+
+                        var newMessage = updates.Updates.FirstOrDefault(x => x is TLUpdateNewMessage) as TLUpdateNewMessage;
+                        if (newMessage != null)
+                        {
+                            migratedFromMaxId = newMessage.Message.Id;
+                        }
+
+                        //channel.MigratedFromChatId = this.CurrentItem.Id;
+                        //channel.MigratedFromMaxId = migratedFromMaxId;
+
+                        chat.MigratedTo = channel.ToInputChannel();
+                        chat.HasMigratedTo = true;
+
+                        var dialog = CacheService.GetDialog(channel.ToPeer());
+                        if (dialog != null)
+                        {
+                            Aggregator.Publish(new DialogAddedEventArgs(dialog));
+                        }
+
+                        var previous = CacheService.GetDialog(chat.ToPeer());
+                        if (previous != null)
+                        {
+                            Aggregator.Publish(new DialogRemovedEventArgs(previous));
+                        }
+
+                        NavigationService.NavigateToDialog(channel);
+                        NavigationService.RemoveSkip(1);
+                    }
+                }
+            }
         }
 
         public RelayCommand<TLChatParticipantBase> ParticipantRemoveCommand => new RelayCommand<TLChatParticipantBase>(ParticipantRemoveExecute);

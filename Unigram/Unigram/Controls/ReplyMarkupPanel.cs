@@ -25,23 +25,51 @@ namespace Unigram.Controls
     {
         private double _keyboardHeight = 300;
 
-        #region ReplyMarkup
+        //#region ReplyMarkup
 
+        //public TLReplyMarkupBase ReplyMarkup
+        //{
+        //    get { return (TLReplyMarkupBase)GetValue(ReplyMarkupProperty); }
+        //    set { SetValue(ReplyMarkupProperty, value); }
+        //}
+
+        //public static readonly DependencyProperty ReplyMarkupProperty =
+        //    DependencyProperty.Register("ReplyMarkup", typeof(TLReplyMarkupBase), typeof(ReplyMarkupPanel), new PropertyMetadata(null, OnReplyMarkupChanged));
+
+        //private static void OnReplyMarkupChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    ((ReplyMarkupPanel)d).OnReplyMarkupChanged((TLReplyMarkupBase)e.NewValue, (TLReplyMarkupBase)e.OldValue);
+        //}
+
+        //#endregion
+
+        private TLMessage _message;
+        public TLMessage Message
+        {
+            get
+            {
+                return _message;
+            }
+            set
+            {
+                _message = value;
+                OnReplyMarkupChanged(_replyMarkup, _replyMarkup);
+            }
+        }
+
+        private TLReplyMarkupBase _replyMarkup;
         public TLReplyMarkupBase ReplyMarkup
         {
-            get { return (TLReplyMarkupBase)GetValue(ReplyMarkupProperty); }
-            set { SetValue(ReplyMarkupProperty, value); }
+            get
+            {
+                return _replyMarkup;
+            }
+            set
+            {
+                _replyMarkup = value;
+                OnReplyMarkupChanged(value, value);
+            }
         }
-
-        public static readonly DependencyProperty ReplyMarkupProperty =
-            DependencyProperty.Register("ReplyMarkup", typeof(TLReplyMarkupBase), typeof(ReplyMarkupPanel), new PropertyMetadata(null, OnReplyMarkupChanged));
-
-        private static void OnReplyMarkupChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ReplyMarkupPanel)d).OnReplyMarkupChanged((TLReplyMarkupBase)e.NewValue, (TLReplyMarkupBase)e.OldValue);
-        }
-
-        #endregion
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
         {
@@ -50,31 +78,31 @@ namespace Unigram.Controls
 
         private void UpdateSize()
         {
-            var inline = DataContext is TLMessage;
+            var inline = Message is TLMessage;
             if (ReplyMarkup is TLReplyKeyboardMarkup && !inline && Parent is ScrollViewer scroll)
             {
                 var keyboard = ReplyMarkup as TLReplyKeyboardMarkup;
-                if (keyboard.IsResize && double.IsNaN(Height))
+                if (keyboard.IsResize)
                 {
                     Height = double.NaN;
                     scroll.MaxHeight = _keyboardHeight;
                 }
-                else if (keyboard.IsResize == false && double.IsNaN(Height) && Parent is ScrollViewer scroll1)
+                else
                 {
                     Height = _keyboardHeight;
-                    scroll1.MaxHeight = double.PositiveInfinity;
+                    scroll.MaxHeight = double.PositiveInfinity;
                 }
             }
             else if (ReplyMarkup is TLReplyKeyboardHide && !inline && Parent is ScrollViewer scroll2)
             {
-                Height = double.NaN;
+                Height = 0;
                 scroll2.MaxHeight = double.PositiveInfinity;
             }
         }
 
         private void OnReplyMarkupChanged(TLReplyMarkupBase newValue, TLReplyMarkupBase oldValue)
         {
-            var inline = DataContext is TLMessage;
+            var inline = Message is TLMessage;
             var resize = false;
 
             TLVector<TLKeyboardButtonRow> rows = null;
@@ -134,14 +162,14 @@ namespace Unigram.Controls
                     var panel = new Grid();
                     panel.HorizontalAlignment = HorizontalAlignment.Stretch;
                     panel.VerticalAlignment = VerticalAlignment.Stretch;
-                    panel.Margin = new Thickness(-2, 0, -2, 0);
+                    panel.Margin = new Thickness(-1, 0, -1, 0);
 
                     for (int i = 0; i < row.Buttons.Count; i++)
                     {
                         var button = new GlyphButton();
                         button.DataContext = row.Buttons[i];
                         button.Content = row.Buttons[i].Text;
-                        button.Margin = new Thickness(2, 2, 2, j == rows.Count - 1 ? 0 : 2);
+                        button.Margin = new Thickness(1, 2, 1, 0);
                         button.HorizontalAlignment = HorizontalAlignment.Stretch;
                         button.VerticalAlignment = VerticalAlignment.Stretch;
                         button.Click += Button_Click;

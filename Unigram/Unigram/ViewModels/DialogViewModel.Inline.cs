@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
+using Unigram.Common;
 using Unigram.Controls;
 using Windows.UI.Xaml;
 
@@ -77,7 +78,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async void GetInlineBotResults(string text)
+        public async void GetInlineBotResults(string query)
         {
             if (CurrentInlineBot == null)
             {
@@ -85,7 +86,12 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            Debug.WriteLine($"@{CurrentInlineBot.Username}: {CurrentInlineBot.BotInlinePlaceholder}, {text}");
+            if (query != null)
+            {
+                query = query.Format();
+            }
+
+            Debug.WriteLine($"@{CurrentInlineBot.Username}: {CurrentInlineBot.BotInlinePlaceholder}, {query}");
 
             // TODO: cache
 
@@ -95,7 +101,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var response = await ProtoService.GetInlineBotResultsAsync(CurrentInlineBot.ToInputUser(), Peer, null, text, string.Empty);
+                var response = await ProtoService.GetInlineBotResultsAsync(CurrentInlineBot.ToInputUser(), Peer, null, query, string.Empty);
                 if (response.IsSucceeded)
                 {
                     foreach (var item in response.Result.Results)
@@ -173,7 +179,7 @@ namespace Unigram.ViewModels
             var previousMessage = InsertSendingMessage(message, false);
             //this.IsEmptyDialog = (base.Items.get_Count() == 0 && this.LazyItems.get_Count() == 0);
             var user = With as TLUser;
-            if (user != null && user.IsBot && Messages.Count == 1)
+            if (user != null && user.IsBot && Items.Count == 1)
             {
                 RaisePropertyChanged(() => With);
             }
@@ -234,8 +240,7 @@ namespace Unigram.ViewModels
             message.ViaBotId = botId;
             message.HasViaBotId = true;
 
-            var venueMedia = resultBase.SendMessage as TLBotInlineMessageMediaVenue;
-            if (venueMedia != null)
+            if (resultBase.SendMessage is TLBotInlineMessageMediaVenue venueMedia)
             {
                 message.Media = new TLMessageMediaVenue
                 {
@@ -246,18 +251,25 @@ namespace Unigram.ViewModels
                     Geo = venueMedia.Geo
                 };
             }
-
-            var geoMedia = resultBase.SendMessage as TLBotInlineMessageMediaGeo;
-            if (geoMedia != null)
+            else if (resultBase.SendMessage is TLBotInlineMessageMediaGeo geoMedia)
             {
-                message.Media = new TLMessageMediaGeo
+                if (geoMedia.Period > 0)
                 {
-                    Geo = geoMedia.Geo
-                };
+                    message.Media = new TLMessageMediaGeoLive
+                    {
+                        Geo = geoMedia.Geo,
+                        Period = geoMedia.Period
+                    };
+                }
+                else
+                {
+                    message.Media = new TLMessageMediaGeo
+                    {
+                        Geo = geoMedia.Geo
+                    };
+                }
             }
-
-            var contactMedia = resultBase.SendMessage as TLBotInlineMessageMediaContact;
-            if (contactMedia != null)
+            else if (resultBase.SendMessage is TLBotInlineMessageMediaContact contactMedia)
             {
                 message.Media = new TLMessageMediaContact
                 {
@@ -267,9 +279,7 @@ namespace Unigram.ViewModels
                     UserId = 0
                 };
             }
-
-            var mediaResult = resultBase as TLBotInlineMediaResult;
-            if (mediaResult != null)
+            else if (resultBase is TLBotInlineMediaResult mediaResult)
             {
                 if (mediaResult.Type.Equals("voice", StringComparison.OrdinalIgnoreCase))
                 {

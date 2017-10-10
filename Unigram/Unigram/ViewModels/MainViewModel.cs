@@ -1,49 +1,36 @@
-﻿using System;
+﻿using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Security;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
-using Telegram.Api.TL;
-using Telegram.Api.TL.Phone.Methods;
-using Telegram.Api.TL.LangPack.Methods;
-using Telegram.Api.TL.Contacts.Methods;
-using Unigram.Collections;
-using Unigram.Common;
-using Unigram.Converters;
-using Unigram.Core.Notifications;
-using Unigram.Core.Services;
-using Unigram.Views;
-using Windows.ApplicationModel.Background;
-using Windows.Globalization.DateTimeFormatting;
-using Windows.Networking.PushNotifications;
-using Windows.Security.Authentication.Web;
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
-using Unigram.Controls;
-using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Math;
-using Unigram.Core;
-using Unigram.Common.Dialogs;
-using Telegram.Api.TL.Phone;
-using System.Collections.Concurrent;
+using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.Updates;
+using Telegram.Api.TL;
+using Telegram.Api.TL.Help.Methods;
+using Telegram.Api.TL.LangPack.Methods;
+using Telegram.Api.TL.Messages.Methods;
+using Telegram.Api.TL.Phone;
+using Telegram.Api.TL.Phone.Methods;
 using Telegram.Logs;
 using Template10.Common;
+using Unigram.Common;
+using Unigram.Common.Dialogs;
+using Unigram.Controls;
+using Unigram.Controls.Views;
+using Unigram.Core;
+using Unigram.Core.Services;
+using Unigram.Views;
 using Windows.Media.Playback;
-using Windows.Media.Core;
-using System.Threading;
-using Telegram.Api.Services.Cache.EventArgs;
-using Telegram.Api.TL.Help.Methods;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
@@ -52,24 +39,27 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateUserTyping>,
         IHandle<TLUpdateChatUserTyping>,
         IHandle<UpdatingEventArgs>,
+        IHandle<UpdateCompletedEventArgs>,
         IHandle<TLMessageCommonBase>,
         IHandle<TLUpdateReadMessagesContents>
     {
         private readonly IUpdatesService _updatesService;
         private readonly IPushService _pushService;
         private readonly IVibrationService _vibrationService;
+        private readonly ILiveLocationService _liveLocationService;
 
         private readonly ConcurrentDictionary<int, InputTypingManager> _typingManagers;
         private readonly ConcurrentDictionary<int, InputTypingManager> _chatTypingManagers;
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUpdatesService updatesService, IPushService pushService, IVibrationService vibrationService, IContactsService contactsService, DialogsViewModel dialogs)
+        public MainViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUpdatesService updatesService, IPushService pushService, IVibrationService vibrationService, ILiveLocationService liveLocationService, IContactsService contactsService, DialogsViewModel dialogs)
             : base(protoService, cacheService, aggregator)
         {
             _updatesService = updatesService;
             _pushService = pushService;
             _vibrationService = vibrationService;
+            _liveLocationService = liveLocationService;
 
             _typingManagers = new ConcurrentDictionary<int, InputTypingManager>();
             _chatTypingManagers = new ConcurrentDictionary<int, InputTypingManager>();
@@ -84,6 +74,26 @@ namespace Unigram.ViewModels
             _selfDestructItems = new List<TLMessage>();
 
             aggregator.Subscribe(this);
+        }
+
+        public ILiveLocationService LiveLocation
+        {
+            get
+            {
+                return _liveLocationService;
+            }
+        }
+
+        public RelayCommand LiveLocationCommand => new RelayCommand(LiveLocationExecute);
+        private async void LiveLocationExecute()
+        {
+            await new LiveLocationsView().ShowQueuedAsync();
+        }
+
+        public RelayCommand StopLiveLocationCommand => new RelayCommand(StopLiveLocationExecute);
+        private void StopLiveLocationExecute()
+        {
+            _liveLocationService.StopTracking();
         }
 
         private YoloTimer _selfDestructTimer;
@@ -228,72 +238,98 @@ namespace Unigram.ViewModels
             ProtoService.SetMessageOnTime(5, "Updating...");
         }
 
+        public void Handle(UpdateCompletedEventArgs e)
+        {
+            ProtoService.SetMessageOnTime(0, null);
+        }
+
         #region Typing
 
         public void Handle(TLUpdateUserTyping update)
         {
             var user = CacheService.GetUser(update.UserId) as TLUser;
-            if (user != null && !user.IsSelf)
+            if (user == null)
             {
-                _typingManagers.TryGetValue(update.UserId, out InputTypingManager typingManager);
-                if (typingManager == null)
-                {
-                    typingManager = new InputTypingManager(users =>
-                    {
-                        user.TypingSubtitle = DialogViewModel.GetTypingString(user.ToPeer(), users, CacheService.GetUser, null);
-                        user.IsTyping = true;
-                    },
-                    () =>
-                    {
-                        user.TypingSubtitle = null;
-                        user.IsTyping = false;
-                    });
-
-                    _typingManagers[update.UserId] = typingManager;
-                }
-
-                var action = update.Action;
-                if (action is TLSendMessageCancelAction)
-                {
-                    typingManager.RemoveTypingUser(update.UserId);
-                    return;
-                }
-
-                typingManager.AddTypingUser(update.UserId, action);
+                return;
             }
+
+            if (user.IsSelf)
+            {
+                return;
+            }
+
+            var dialog = CacheService.GetDialog(user.ToPeer());
+            if (dialog == null)
+            {
+                return;
+            }
+
+            _typingManagers.TryGetValue(update.UserId, out InputTypingManager typingManager);
+            if (typingManager == null)
+            {
+                typingManager = new InputTypingManager(users =>
+                {
+                    dialog.TypingSubtitle = DialogViewModel.GetTypingString(user.ToPeer(), users, CacheService.GetUser, null);
+                    dialog.IsTyping = true;
+                },
+                () =>
+                {
+                    dialog.TypingSubtitle = null;
+                    dialog.IsTyping = false;
+                });
+
+                _typingManagers[update.UserId] = typingManager;
+            }
+
+            var action = update.Action;
+            if (action is TLSendMessageCancelAction)
+            {
+                typingManager.RemoveTypingUser(update.UserId);
+                return;
+            }
+
+            typingManager.AddTypingUser(update.UserId, action);
         }
 
         public void Handle(TLUpdateChatUserTyping update)
         {
-            var chatBase = CacheService.GetChat(update.ChatId) as TLChatBase;
-            if (chatBase != null)
+            var chat = CacheService.GetChat(update.ChatId) as TLChatBase;
+            if (chat == null)
             {
-                _typingManagers.TryGetValue(update.ChatId, out InputTypingManager typingManager);
-                if (typingManager == null)
-                {
-                    typingManager = new InputTypingManager(users =>
-                    {
-                        chatBase.TypingSubtitle = DialogViewModel.GetTypingString(chatBase.ToPeer(), users, CacheService.GetUser, null);
-                        chatBase.IsTyping = true;
-                    },
-                    () =>
-                    {
-                        chatBase.TypingSubtitle = null;
-                        chatBase.IsTyping = false;
-                    });
-
-                    _typingManagers[update.ChatId] = typingManager;
-                }
-
-                var action = update.Action;
-                if (action is TLSendMessageCancelAction)
-                {
-                    typingManager.RemoveTypingUser(update.UserId);
-                    return;
-                }
-
-                typingManager.AddTypingUser(update.UserId, action);
+                return;
             }
+
+            var dialog = CacheService.GetDialog(chat.ToPeer());
+            if (dialog == null)
+            {
+                return;
+            }
+
+            _typingManagers.TryGetValue(update.ChatId, out InputTypingManager typingManager);
+            if (typingManager == null)
+            {
+                typingManager = new InputTypingManager(users =>
+                {
+                    dialog.TypingSubtitle = DialogViewModel.GetTypingString(chat.ToPeer(), users, CacheService.GetUser, null);
+                    dialog.IsTyping = true;
+                },
+                () =>
+                {
+                    dialog.TypingSubtitle = null;
+                    dialog.IsTyping = false;
+                });
+
+                _typingManagers[update.ChatId] = typingManager;
+            }
+
+            var action = update.Action;
+            if (action is TLSendMessageCancelAction)
+            {
+                typingManager.RemoveTypingUser(update.UserId);
+                return;
+            }
+
+            typingManager.AddTypingUser(update.UserId, action);
         }
 
         #endregion
@@ -309,7 +345,16 @@ namespace Unigram.ViewModels
             //Execute.BeginOnUIThread(() => Contacts.getTLContacts());
             //Execute.BeginOnUIThread(() => Contacts.GetSelfAsync());
 
-            //ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.2.2" }, result =>
+            //ProtoService.SendRequestAsync<object>("langpack.getStrings", new TLLangPackGetStrings { Keys = new TLVector<string> { "CHANNEL_MESSAGE_GEOLIVE", "CHAT_MESSAGE_GEOLIVE", "MESSAGE_GEOLIVE", "PINNED_GEOLIVE" }, LangCode = "it" }, result =>
+            //{
+            //    Debugger.Break();
+            //},
+            //fault =>
+            //{
+            //    Debugger.Break();
+            //});
+
+            //ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.3" }, result =>
             //{
             //    _updatesService.ProcessUpdates(result, true);
             //},
@@ -337,36 +382,36 @@ namespace Unigram.ViewModels
             return Task.CompletedTask;
         }
 
-        public void Handle(TLMessageCommonBase messageCommon)
+        public void Handle(TLMessageCommonBase commonMessage)
         {
-            Execute.BeginOnUIThread(() => Notify(messageCommon));
+            Execute.BeginOnUIThread(() => Notify(commonMessage));
         }
 
-        public void Notify(TLMessageCommonBase messageCommon)
+        public void Notify(TLMessageCommonBase commonMessage)
         {
             //if (this._stateService.SuppressNotifications)
             //{
             //    return;
             //}
-            if (messageCommon.IsOut)
+            if (commonMessage.IsOut)
             {
                 return;
             }
 
-            if (!messageCommon.IsUnread)
+            if (!commonMessage.IsUnread)
             {
                 return;
             }
 
-            if (messageCommon is TLMessage message && message.IsSilent)
+            if (commonMessage is TLMessage message && message.IsSilent)
             {
                 return;
             }
 
             TLUser from = null;
-            if (messageCommon.FromId != null && messageCommon.FromId.Value >= 0)
+            if (commonMessage.FromId != null && commonMessage.FromId.Value >= 0)
             {
-                from = CacheService.GetUser(messageCommon.FromId) as TLUser;
+                from = CacheService.GetUser(commonMessage.FromId) as TLUser;
                 if (from == null)
                 {
                     return;
@@ -376,8 +421,8 @@ namespace Unigram.ViewModels
             try
             {
                 TLObject activeDialog = CheckActiveDialog();
-                TLPeerBase toId = messageCommon.ToId;
-                var fromId = messageCommon.FromId;
+                TLPeerBase toId = commonMessage.ToId;
+                var fromId = commonMessage.FromId;
                 var suppress = false;
                 TLDialog dialog = null;
                 if (toId is TLPeerChat && activeDialog is TLChat && toId.Id == ((TLChat)activeDialog).Id)
@@ -398,29 +443,29 @@ namespace Unigram.ViewModels
                     TLChatBase chat = null;
                     TLUser user = null;
                     TLChannel channel = null;
-                    if (messageCommon.ToId is TLPeerChat)
+                    if (commonMessage.ToId is TLPeerChat)
                     {
-                        chat = CacheService.GetChat(messageCommon.ToId.Id);
+                        chat = CacheService.GetChat(commonMessage.ToId.Id);
                         dialog = CacheService.GetDialog(new TLPeerChat
                         {
-                            Id = messageCommon.ToId.Id
+                            Id = commonMessage.ToId.Id
                         });
                     }
-                    else if (messageCommon.ToId is TLPeerChannel)
+                    else if (commonMessage.ToId is TLPeerChannel)
                     {
-                        chat = CacheService.GetChat(messageCommon.ToId.Id);
+                        chat = CacheService.GetChat(commonMessage.ToId.Id);
                         channel = (chat as TLChannel);
-                        dialog = CacheService.GetDialog(new TLPeerChannel { ChannelId = messageCommon.ToId.Id });
+                        dialog = CacheService.GetDialog(new TLPeerChannel { ChannelId = commonMessage.ToId.Id });
                     }
-                    else if (messageCommon.IsOut)
+                    else if (commonMessage.IsOut)
                     {
-                        user = CacheService.GetUser(messageCommon.ToId.Id) as TLUser;
-                        dialog = CacheService.GetDialog(new TLPeerUser { UserId = messageCommon.ToId.Id });
+                        user = CacheService.GetUser(commonMessage.ToId.Id) as TLUser;
+                        dialog = CacheService.GetDialog(new TLPeerUser { UserId = commonMessage.ToId.Id });
                     }
                     else
                     {
-                        user = CacheService.GetUser(messageCommon.FromId) as TLUser;
-                        dialog = CacheService.GetDialog(new TLPeerUser { UserId = messageCommon.FromId.Value });
+                        user = CacheService.GetUser(commonMessage.FromId) as TLUser;
+                        dialog = CacheService.GetDialog(new TLPeerUser { UserId = commonMessage.FromId.Value });
                     }
 
                     var now = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
@@ -515,7 +560,7 @@ namespace Unigram.ViewModels
                         {
                             if (ApplicationSettings.Current.InAppPreview)
                             {
-                                // TODO
+                                _pushService.Notify(commonMessage);
                             }
 
                             if (_lastNotificationTime.HasValue)
@@ -531,7 +576,7 @@ namespace Unigram.ViewModels
 
                             if (suppress)
                             {
-                                Log.Write(string.Format("Cancel notification reason=[lastNotificationTime] msg_id={0} last_notification_time={1}, now={2}", messageCommon.Id, _lastNotificationTime, DateTime.Now), null);
+                                Log.Write(string.Format("Cancel notification reason=[lastNotificationTime] msg_id={0} last_notification_time={1}, now={2}", commonMessage.Id, _lastNotificationTime, DateTime.Now), null);
                             }
                             else
                             {

@@ -103,6 +103,29 @@ namespace Unigram.Common
             }
         }
 
+        public static void RemoveSkip(this INavigationService service, int count)
+        {
+            while (service.Frame.BackStackDepth > count)
+            {
+                service.Frame.BackStack.RemoveAt(count);
+            }
+        }
+
+        public static void RemoveLast(this INavigationService service)
+        {
+            if (service.CanGoBack)
+            {
+                service.Frame.BackStack.RemoveAt(service.Frame.BackStackDepth - 1);
+            }
+        }
+
+        public static void RemoveLastIf(this INavigationService service, Type type)
+        {
+            if (service.CanGoBack && service.Frame.BackStack[service.Frame.BackStackDepth - 1].SourcePageType == type)
+            {
+                service.Frame.BackStack.RemoveAt(service.Frame.BackStackDepth - 1);
+            }
+        }
 
         public static async void NavigateToDialog(this INavigationService service, ITLDialogWith with, int? message = null, string accessToken = null)
         {

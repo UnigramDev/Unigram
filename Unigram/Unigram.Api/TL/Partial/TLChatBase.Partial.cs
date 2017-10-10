@@ -47,6 +47,7 @@ namespace Telegram.Api.TL
         }
 
         #region Add
+
         public virtual string DisplayName
         {
             get
@@ -60,42 +61,6 @@ namespace Telegram.Api.TL
             get
             {
                 return this;
-            }
-        }
-
-
-
-        private bool _isTyping;
-        public bool IsTyping
-        {
-            get
-            {
-                return _isTyping;
-            }
-            set
-            {
-                if (_isTyping != value)
-                {
-                    _isTyping = value;
-                    RaisePropertyChanged(() => IsTyping);
-                }
-            }
-        }
-
-        private string _typingSubtitle;
-        public string TypingSubtitle
-        {
-            get
-            {
-                return _typingSubtitle;
-            }
-            set
-            {
-                if (_typingSubtitle != value)
-                {
-                    _typingSubtitle = value;
-                    RaisePropertyChanged(() => TypingSubtitle);
-                }
             }
         }
 

@@ -104,11 +104,7 @@
     <Compile Include="Media\VideoPlayerTask.cs" />
     <Compile Include="Media\VimeoVideoPlayerTask.cs" />
     <Compile Include="Media\YouTubeVideoPlayerTask.cs" />
-    <Compile Include="Models\Country.cs" />
     <Compile Include="Models\FoursquareRootObject.cs" />
-    <Compile Include="Models\StorageMedia.cs" />
-    <Compile Include="Models\StoragePhoto.cs" />
-    <Compile Include="Models\StorageVideo.cs" />
     <Compile Include="Notifications\LiveTile.cs" />
     <Compile Include="Notifications\Toast.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -140,6 +136,7 @@
     <Compile Include="Services\HardwareService.cs" />
     <Compile Include="Services\JumpListService.cs" />
     <Compile Include="Services\KeyboardService.cs" />
+    <Compile Include="Services\LiveLocationService.cs" />
     <Compile Include="Services\LocationService.cs" />
     <Compile Include="Services\DeviceInfoService.cs" />
     <Compile Include="Services\StatsService.cs" />

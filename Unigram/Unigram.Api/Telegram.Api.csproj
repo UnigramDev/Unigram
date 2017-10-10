@@ -94,6 +94,10 @@
     <Compile Include="Services\Cache\Context\CreateDatabase.cs" />
     <Compile Include="Services\Cache\Context\DialogsContext.cs" />
     <Compile Include="Services\Cache\Context\UsersContext.cs" />
+    <Compile Include="Services\Cache\EventArgs\ChannelAvailableMessagesEventArgs.cs" />
+    <Compile Include="Services\Cache\EventArgs\DialogRemovedEventArgs.cs" />
+    <Compile Include="Services\Cache\EventArgs\MessageExpiredEventArgs.cs" />
+    <Compile Include="Services\Cache\EventArgs\MessagesRemovedEventArgs.cs" />
     <Compile Include="Services\FileManager\DownloadDocumentFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadableItem.cs" />
     <Compile Include="Services\FileManager\DownloadablePart.cs" />
@@ -191,6 +195,7 @@
     <Compile Include="TL\Channels\Methods\TLChannelsCheckUsername.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsCreateChannel.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsDeleteChannel.cs" />
+    <Compile Include="TL\Channels\Methods\TLChannelsDeleteHistory.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsDeleteMessages.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsDeleteUserHistory.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsEditAbout.cs" />
@@ -215,12 +220,15 @@
     <Compile Include="TL\Channels\Methods\TLChannelsReportSpam.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsSetStickers.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsToggleInvites.cs" />
+    <Compile Include="TL\Channels\Methods\TLChannelsTogglePreHistoryHidden.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsToggleSignatures.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsUpdatePinnedMessage.cs" />
     <Compile Include="TL\Channels\Methods\TLChannelsUpdateUsername.cs" />
     <Compile Include="TL\Channels\TLChannelsAdminLogResults.cs" />
     <Compile Include="TL\Channels\TLChannelsChannelParticipant.cs" />
     <Compile Include="TL\Channels\TLChannelsChannelParticipants.cs" />
+    <Compile Include="TL\Channels\TLChannelsChannelParticipantsBase.cs" />
+    <Compile Include="TL\Channels\TLChannelsChannelParticipantsNotModified.cs" />
     <Compile Include="TL\Contacts\Methods\TLContactsBlock.cs" />
     <Compile Include="TL\Contacts\Methods\TLContactsDeleteContact.cs" />
     <Compile Include="TL\Contacts\Methods\TLContactsDeleteContacts.cs" />
@@ -274,6 +282,7 @@
     <Compile Include="TL\Help\Methods\TLHelpGetConfig.cs" />
     <Compile Include="TL\Help\Methods\TLHelpGetInviteText.cs" />
     <Compile Include="TL\Help\Methods\TLHelpGetNearestDC.cs" />
+    <Compile Include="TL\Help\Methods\TLHelpGetRecentMeUrls.cs" />
     <Compile Include="TL\Help\Methods\TLHelpGetSupport.cs" />
     <Compile Include="TL\Help\Methods\TLHelpGetTermsOfService.cs" />
     <Compile Include="TL\Help\Methods\TLHelpSaveAppLog.cs" />
@@ -282,6 +291,7 @@
     <Compile Include="TL\Help\TLHelpAppUpdateBase.cs" />
     <Compile Include="TL\Help\TLHelpInviteText.cs" />
     <Compile Include="TL\Help\TLHelpNoAppUpdate.cs" />
+    <Compile Include="TL\Help\TLHelpRecentMeUrls.cs" />
     <Compile Include="TL\Help\TLHelpSupport.cs" />
     <Compile Include="TL\Help\TLHelpTermsOfService.cs" />
     <Compile Include="TL\LangPack\Methods\TLLangPackGetDifference.cs" />
@@ -331,6 +341,7 @@
     <Compile Include="TL\Messages\Methods\TLMessagesGetPeerDialogs.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetPeerSettings.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetPinnedDialogs.cs" />
+    <Compile Include="TL\Messages\Methods\TLMessagesGetRecentLocations.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetRecentStickers.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetSavedGifs.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesGetStickerSet.cs" />
@@ -344,6 +355,7 @@
     <Compile Include="TL\Messages\Methods\TLMessagesReadEncryptedHistory.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesReadFeaturedStickers.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesReadHistory.cs" />
+    <Compile Include="TL\Messages\Methods\TLMessagesReadMentions.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesReadMessageContents.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesReceivedMessages.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesReceivedQueue.cs" />
@@ -450,6 +462,7 @@
     <Compile Include="TL\Partial\TLDraftMessageBase.Partial.cs" />
     <Compile Include="TL\Partial\TLGeoPointBase.Partial.cs" />
     <Compile Include="TL\Partial\TLInputFileLocationBase.Partial.cs" />
+    <Compile Include="TL\Partial\TLInputGeoPointBase.cs" />
     <Compile Include="TL\Partial\TLInputPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaBase.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaContact.Partial.cs" />
@@ -476,7 +489,6 @@
     <Compile Include="TL\Partial\TLPhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLPhotoBase.Partial.cs" />
     <Compile Include="TL\Partial\TLRPCError.Partial.cs" />
-    <Compile Include="TL\Partial\TLStickerSet.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdateBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdatesBase.Partial.cs" />
     <Compile Include="TL\Partial\TLUpdatesDifferenceBase.Partial.cs" />
@@ -642,6 +654,7 @@
     <Compile Include="TL\TLChannelAdminLogEventActionParticipantToggleAdmin.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionParticipantToggleBan.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionToggleInvites.cs" />
+    <Compile Include="TL\TLChannelAdminLogEventActionTogglePreHistoryHidden.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionToggleSignatures.cs" />
     <Compile Include="TL\TLChannelAdminLogEventActionUpdatePinned.cs" />
     <Compile Include="TL\TLChannelAdminLogEventsFilter.cs" />
@@ -806,6 +819,7 @@
     <Compile Include="TL\TLInputMediaDocumentExternal.cs" />
     <Compile Include="TL\TLInputMediaEmpty.cs" />
     <Compile Include="TL\TLInputMediaGame.cs" />
+    <Compile Include="TL\TLInputMediaGeoLive.cs" />
     <Compile Include="TL\TLInputMediaGeoPoint.cs" />
     <Compile Include="TL\TLInputMediaGifExternal.cs" />
     <Compile Include="TL\TLInputMediaInvoice.cs" />
@@ -816,12 +830,13 @@
     <Compile Include="TL\TLInputMediaVenue.cs" />
     <Compile Include="TL\TLInputMessageEntityMentionName.cs" />
     <Compile Include="TL\TLInputMessagesFilterChatPhotos.cs" />
+    <Compile Include="TL\TLInputMessagesFilterContacts.cs" />
     <Compile Include="TL\TLInputMessagesFilterDocument.cs" />
     <Compile Include="TL\TLInputMessagesFilterEmpty.cs" />
+    <Compile Include="TL\TLInputMessagesFilterGeo.cs" />
     <Compile Include="TL\TLInputMessagesFilterGif.cs" />
     <Compile Include="TL\TLInputMessagesFilterMusic.cs" />
     <Compile Include="TL\TLInputMessagesFilterMyMentions.cs" />
-    <Compile Include="TL\TLInputMessagesFilterMyMentionsUnread.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhoneCalls.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhotos.cs" />
     <Compile Include="TL\TLInputMessagesFilterPhotoVideo.cs" />
@@ -914,6 +929,7 @@
     <Compile Include="TL\TLMessageActionChatEditTitle.cs" />
     <Compile Include="TL\TLMessageActionChatJoinedByLink.cs" />
     <Compile Include="TL\TLMessageActionChatMigrateTo.cs" />
+    <Compile Include="TL\TLMessageActionCustomAction.cs" />
     <Compile Include="TL\TLMessageActionEmpty.cs" />
     <Compile Include="TL\TLMessageActionGameScore.cs" />
     <Compile Include="TL\TLMessageActionHistoryClear.cs" />
@@ -945,6 +961,7 @@
     <Compile Include="TL\TLMessageMediaEmpty.cs" />
     <Compile Include="TL\TLMessageMediaGame.cs" />
     <Compile Include="TL\TLMessageMediaGeo.cs" />
+    <Compile Include="TL\TLMessageMediaGeoLive.cs" />
     <Compile Include="TL\TLMessageMediaInvoice.cs" />
     <Compile Include="TL\TLMessageMediaPhoto.cs" />
     <Compile Include="TL\TLMessageMediaUnsupported.cs" />
@@ -1048,6 +1065,12 @@
     <Compile Include="TL\TLPrivacyValueDisallowContacts.cs" />
     <Compile Include="TL\TLPrivacyValueDisallowUsers.cs" />
     <Compile Include="TL\TLReceivedNotifyMessage.cs" />
+    <Compile Include="TL\TLRecentMeUrlBase.cs" />
+    <Compile Include="TL\TLRecentMeUrlChat.cs" />
+    <Compile Include="TL\TLRecentMeUrlChatInvite.cs" />
+    <Compile Include="TL\TLRecentMeUrlStickerSet.cs" />
+    <Compile Include="TL\TLRecentMeUrlUnknown.cs" />
+    <Compile Include="TL\TLRecentMeUrlUser.cs" />
     <Compile Include="TL\TLReplyInlineMarkup.cs" />
     <Compile Include="TL\TLReplyKeyboardForceReply.cs" />
     <Compile Include="TL\TLReplyKeyboardHide.cs" />
@@ -1115,6 +1138,7 @@
     <Compile Include="TL\TLUpdateBotWebhookJSON.cs" />
     <Compile Include="TL\TLUpdateBotWebhookJSONQuery.cs" />
     <Compile Include="TL\TLUpdateChannel.cs" />
+    <Compile Include="TL\TLUpdateChannelAvailableMessages.cs" />
     <Compile Include="TL\TLUpdateChannelMessageViews.cs" />
     <Compile Include="TL\TLUpdateChannelPinnedMessage.cs" />
     <Compile Include="TL\TLUpdateChannelReadMessagesContents.cs" />

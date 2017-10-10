@@ -125,7 +125,7 @@ namespace Unigram.Controls
 
             var constraint = Constraint;
 
-            if (constraint is TLMessageMediaGeo || constraint is TLMessageMediaVenue)
+            if (constraint is TLMessageMediaGeo || constraint is TLMessageMediaGeoLive || constraint is TLMessageMediaVenue)
             {
                 width = 320;
                 height = 240;

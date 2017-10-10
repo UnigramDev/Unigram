@@ -3,6 +3,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls"
+    xmlns:models="using:Unigram.Models"
+    xmlns:selectors="using:Unigram.Selectors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -23,7 +25,7 @@
               ScrollViewer.VerticalScrollBarVisibility="Disabled"
               ScrollViewer.VerticalScrollMode="Disabled"
               MaxWidth="{ThemeResource MenuFlyoutMaxWidth}"
-              Height="88"
+              Height="96"
               Padding="12">
         <ListView.ItemsPanel>
             <ItemsPanelTemplate>
@@ -75,17 +77,37 @@
         </ListView.ItemContainerStyle>
         <ListView.Header>
             <Grid x:Name="Camera" Visibility="{Binding HardwareService.IsVideoAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Source={StaticResource Locator}}" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" RequestedTheme="Dark" Margin="0,0,12,0">
-                <local:GlyphButton Click="Camera_Click" Glyph="&#xE114;" Width="64" Height="64"/>
+                <local:GlyphButton Click="Camera_Click" Glyph="&#xE114;" Width="72" Height="72"/>
                 <Border BorderBrush="#26000000" BorderThickness="1"/>
             </Grid>
         </ListView.Header>
-        <ListView.ItemTemplate>
-            <DataTemplate>
-                <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                    <Image Source="{Binding Thumbnail}" Width="64" Height="64"/>
-                    <Border BorderBrush="#26000000" BorderThickness="1"/>
-                </Grid>
-            </DataTemplate>
-        </ListView.ItemTemplate>
+        <ListView.ItemTemplateSelector>
+            <selectors:StorageMediaTemplateSelector>
+                <selectors:StorageMediaTemplateSelector.PhotoTemplate>
+                    <DataTemplate x:DataType="models:StoragePhoto">
+                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="72" Height="72">
+                            <Image Source="{x:Bind Thumbnail, Mode=OneWay}"/>
+                            <Border BorderBrush="#26000000" BorderThickness="1"/>
+                            <CheckBox IsChecked="{x:Bind IsSelected, Mode=TwoWay}" HorizontalAlignment="Right" VerticalAlignment="Top" RequestedTheme="Dark" Style="{StaticResource OnlyCheckBoxStyle}"/>
+                        </Grid>
+                    </DataTemplate>
+                </selectors:StorageMediaTemplateSelector.PhotoTemplate>
+                <selectors:StorageMediaTemplateSelector.VideoTemplate>
+                    <DataTemplate x:DataType="models:StorageVideo">
+                        <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="72" Height="72">
+                            <Image Source="{x:Bind Thumbnail, Mode=OneWay}"/>
+                            
+                            <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Bottom" Padding="4,4,8,4">
+                                <FontIcon Glyph="&#xE102;" Foreground="White" HorizontalAlignment="Left" FontSize="12"/>
+                                <TextBlock Text="{x:Bind Duration}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                            </Grid>
+
+                            <Border BorderBrush="#26000000" BorderThickness="1"/>
+                            <CheckBox IsChecked="{x:Bind IsSelected, Mode=TwoWay}" HorizontalAlignment="Right" VerticalAlignment="Top" RequestedTheme="Dark" Style="{StaticResource OnlyCheckBoxStyle}"/>
+                        </Grid>
+                    </DataTemplate>
+                </selectors:StorageMediaTemplateSelector.VideoTemplate>
+            </selectors:StorageMediaTemplateSelector>
+        </ListView.ItemTemplateSelector>
     </ListView>
 </UserControl>

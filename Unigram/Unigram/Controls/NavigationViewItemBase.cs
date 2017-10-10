@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class TLListView : ListView
+    public class NavigationViewItemBase : ListViewItem
     {
     }
 }

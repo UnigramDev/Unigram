@@ -11,11 +11,13 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Channels;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Windows.System.Profile;
 using Windows.UI.Notifications;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels
@@ -34,6 +36,7 @@ namespace Unigram.ViewModels
         IHandle<DialogRemovedEventArgs>,
         IHandle<UpdateCompletedEventArgs>,
         IHandle<ChannelUpdateCompletedEventArgs>,
+        IHandle<ChannelAvailableMessagesEventArgs>,
         IHandle<string>
     {
         public async void Handle(string message)
@@ -47,7 +50,7 @@ namespace Unigram.ViewModels
 
                 var participant = _with;
                 var dialog = _dialog;
-                if (dialog != null && Messages.Count > 0)
+                if (dialog != null && Items.Count > 0)
                 {
                     var unread = dialog.UnreadCount;
                     if (Peer is TLInputPeerChannel && participant is TLChannel channel)
@@ -80,6 +83,26 @@ namespace Unigram.ViewModels
                 {
                     Dispatcher.Dispatch(SaveDraft);
                 }
+            }
+        }
+
+        public void Handle(ChannelAvailableMessagesEventArgs args)
+        {
+            if (With == args.Dialog.With)
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    for (var i = 0; i < Items.Count; i++)
+                    {
+                        var messageCommon = Items[i] as TLMessageCommonBase;
+                        if (messageCommon != null && messageCommon.ToId is TLPeerChannel && messageCommon.Id <= args.AvailableMinId)
+                        {
+                            Items.RemoveAt(i--);
+                        }
+                    }
+
+                    //IsEmpty = Items.Count == 0 && (_messages == null || _messages.Count == 0) && LazyItems.Count == 0;
+                });
             }
         }
 
@@ -148,7 +171,7 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnUIThread(async () =>
             {
-                Messages.Clear();
+                Items.Clear();
                 IsFirstSliceLoaded = false;
                 IsLastSliceLoaded = false;
 
@@ -164,8 +187,8 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    Messages.Clear();
-                    SelectedMessages.Clear();
+                    Items.Clear();
+                    SelectedItems.Clear();
                     SelectionMode = Windows.UI.Xaml.Controls.ListViewSelectionMode.None;
                 });
             }
@@ -179,24 +202,24 @@ namespace Unigram.ViewModels
                 {
                     foreach (var message in args.Messages)
                     {
-                        if (_editedMessage != null && _editedMessage.Id == message.Id)
+                        if (EditedMessage?.Id == message.Id)
                         {
                             ClearReplyCommand.Execute();
                         }
-                        else if (ReplyInfo != null && ReplyInfo.ReplyToMsgId == message.Id)
+                        else if (ReplyInfo?.ReplyToMsgId == message.Id)
                         {
                             ClearReplyCommand.Execute();
                         }
 
-                        var removed = Messages.Remove(message);
+                        var removed = Items.Remove(message);
                         if (removed == false)
                         {
                             // Check if this is really needed
 
-                            var already = Messages.FirstOrDefault(x => x.Id == message.Id);
+                            var already = Items.FirstOrDefault(x => x.Id == message.Id);
                             if (already != null)
                             {
-                                Messages.Remove(already);
+                                Items.Remove(already);
                             }
                         }
                     }
@@ -264,15 +287,15 @@ namespace Unigram.ViewModels
                         return string.Format("{0} members", full.ParticipantsCount ?? 0);
                     }
 
-                    var participants = await ProtoService.GetParticipantsAsync(channel.ToInputChannel(), new TLChannelParticipantsRecent(), 0, config.ChatSizeMax);
-                    if (participants.IsSucceeded)
+                    var participants = await ProtoService.GetParticipantsAsync(channel.ToInputChannel(), new TLChannelParticipantsRecent(), 0, config.ChatSizeMax, 0);
+                    if (participants.IsSucceeded && participants.Result is TLChannelsChannelParticipants channelParticipants)
                     {
                         full.Participants = participants.Result;
 
                         if (full.ParticipantsCount <= config.ChatSizeMax)
                         {
                             var count = 0;
-                            foreach (var item in participants.Result.Users.OfType<TLUser>())
+                            foreach (var item in channelParticipants.Users.OfType<TLUser>())
                             {
                                 if (item.HasStatus && item.Status is TLUserStatusOnline)
                                 {
@@ -354,7 +377,7 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    var already = Messages.FirstOrDefault(x => x.Id == update.Message.Id) as TLMessage;
+                    var already = Items.FirstOrDefault(x => x.Id == update.Message.Id) as TLMessage;
                     if (already == null)
                     {
                         return;
@@ -406,7 +429,7 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    var already = Messages.FirstOrDefault(x => x.Id == update.Message.Id) as TLMessage;
+                    var already = Items.FirstOrDefault(x => x.Id == update.Message.Id) as TLMessage;
                     if (already == null)
                     {
                         return;
@@ -458,8 +481,8 @@ namespace Unigram.ViewModels
             {
                 Execute.BeginOnUIThread(() =>
                 {
-                    var index = Messages.IndexOf(message);
-                    Messages.RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, message, index, index));
+                    var index = Items.IndexOf(message);
+                    Items.RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, message, index, index));
                 });
             }
         }
@@ -580,7 +603,7 @@ namespace Unigram.ViewModels
 
             Execute.BeginOnUIThread(() =>
             {
-                var index = InsertMessageInOrder(Messages, messageCommon);
+                var index = InsertMessageInOrder(Items, messageCommon);
                 if (index != -1)
                 {
                     var message = messageCommon as TLMessage;
@@ -590,6 +613,11 @@ namespace Unigram.ViewModels
                         if (user != null && user.IsBot)
                         {
                             SetReplyMarkup(message);
+
+                            if (message.ReplyMarkup is TLReplyKeyboardMarkup)
+                            {
+                                InputPane.GetForCurrentView().TryHide();
+                            }
                         }
                     }
 
@@ -720,9 +748,9 @@ namespace Unigram.ViewModels
         {
             Execute.BeginOnUIThread(delegate
             {
-                for (int i = 0; i < Messages.Count; i++)
+                for (int i = 0; i < Items.Count; i++)
                 {
-                    var messageCommon = Messages[i] as TLMessageCommonBase;
+                    var messageCommon = Items[i] as TLMessageCommonBase;
                     if (messageCommon != null && !messageCommon.IsOut && messageCommon.IsUnread)
                     {
                         messageCommon.SetUnread(false);

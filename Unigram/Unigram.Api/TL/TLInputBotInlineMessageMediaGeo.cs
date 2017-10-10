@@ -15,6 +15,7 @@ namespace Telegram.Api.TL
 
 		public Flag Flags { get; set; }
 		public TLInputGeoPointBase GeoPoint { get; set; }
+		public Int32 Period { get; set; }
 
 		public TLInputBotInlineMessageMediaGeo() { }
 		public TLInputBotInlineMessageMediaGeo(TLBinaryReader from)
@@ -28,6 +29,7 @@ namespace Telegram.Api.TL
 		{
 			Flags = (Flag)from.ReadInt32();
 			GeoPoint = TLFactory.Read<TLInputGeoPointBase>(from);
+			Period = from.ReadInt32();
 			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from);
 		}
 
@@ -35,9 +37,10 @@ namespace Telegram.Api.TL
 		{
 			UpdateFlags();
 
-			to.Write(0xF4A59DE1);
+			to.Write(0xC1B15D65);
 			to.Write((Int32)Flags);
 			to.WriteObject(GeoPoint);
+			to.Write(Period);
 			if (HasReplyMarkup) to.WriteObject(ReplyMarkup);
 		}
 

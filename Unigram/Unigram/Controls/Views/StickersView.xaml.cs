@@ -144,13 +144,18 @@ namespace Unigram.Controls.Views
 
         public bool ToggleActiveView()
         {
-            if (Pivot.SelectedIndex == 2 && !SemanticStickers.IsZoomedInViewActive && SemanticStickers.CanChangeViews)
-            {
-                SemanticStickers.ToggleActiveView();
-                return true;
-            }
+            //if (Pivot.SelectedIndex == 2 && !SemanticStickers.IsZoomedInViewActive && SemanticStickers.CanChangeViews)
+            //{
+            //    SemanticStickers.ToggleActiveView();
+            //    return true;
+            //}
 
             return false;
+        }
+
+        private void GroupStickers_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.GroupStickersCommand.Execute(null);
         }
     }
 

@@ -96,11 +96,19 @@ namespace Unigram.Controls.Messages
                     {
                         caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                     }
+                    else if (message.Media is TLMessageMediaVenue)
+                    {
+                        caption = true;
+                    }
 
                     if (caption)
                     {
                         StatusToDefault();
                         bottom = 4;
+                    }
+                    else if (message.Media is TLMessageMediaGeoLive)
+                    {
+                        StatusToHidden();
                     }
                     else
                     {
@@ -171,6 +179,18 @@ namespace Unigram.Controls.Messages
                 //StatusLabel.Foreground = StatusLightLabelForegroundBrush;
                 //StatusGlyph.Foreground = StatusLightGlyphForegroundBrush;
                 VisualStateManager.GoToState(LayoutRoot, "Default", false);
+            }
+        }
+
+        private void StatusToHidden()
+        {
+            if (StatusControl.Padding.Left != 8)
+            {
+                //StatusControl.Padding = new Thickness(0, 0, 6, 0);
+                //StatusControl.Background = null;
+                //StatusLabel.Foreground = StatusLightLabelForegroundBrush;
+                //StatusGlyph.Foreground = StatusLightGlyphForegroundBrush;
+                VisualStateManager.GoToState(LayoutRoot, "Hidden", false);
             }
         }
 

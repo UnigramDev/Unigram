@@ -141,6 +141,9 @@
   <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
     <value>ha pubblicato una posizione</value>
   </data>
+  <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>ha pubblicato una posizione in diretta</value>
+  </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
     <value>ha pubblicato una GIF</value>
   </data>
@@ -200,6 +203,9 @@
   </data>
   <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
     <value>{0} ha inviato una posizione al gruppo</value>
+  </data>
+  <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>{0} ha iniziato a condividere la sua posizione in diretta</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} ha inviato una GIF al gruppo</value>
@@ -273,6 +279,9 @@
   <data name="MESSAGE_GEO" xml:space="preserve">
     <value>ti ha inviato una posizione</value>
   </data>
+  <data name="MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>ha iniziato a condividere la sua posizione in diretta</value>
+  </data>
   <data name="MESSAGE_GIF" xml:space="preserve">
     <value>ti ha inviato una GIF</value>
   </data>
@@ -326,6 +335,9 @@
   </data>
   <data name="PINNED_GEO" xml:space="preserve">
     <value>ha fissato una posizione</value>
+  </data>
+  <data name="PINNED_GEOLIVE" xml:space="preserve">
+    <value>ha fissato una posizione in diretta</value>
   </data>
   <data name="PINNED_GIF" xml:space="preserve">
     <value>ha fissato una GIF</value>

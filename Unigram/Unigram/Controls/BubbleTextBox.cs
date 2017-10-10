@@ -36,6 +36,9 @@ using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Telegram.Api.TL.Channels;
 using Unigram.Native;
+using System.Collections.ObjectModel;
+using Windows.UI.Xaml.Automation;
+using Unigram.Models;
 
 namespace Unigram.Controls
 {
@@ -236,7 +239,7 @@ namespace Unigram.Controls
                     await FileIO.WriteBytesAsync(cache, buffer);
                 }
 
-                ViewModel.SendPhotoCommand.Execute(new StoragePhoto(cache));
+                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { new StoragePhoto(cache) { IsSelected = true } });
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
             {
@@ -327,8 +330,8 @@ namespace Unigram.Controls
                         if (container != null)
                         {
                             var peer = new ListViewItemAutomationPeer(container);
-                            var invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-                            invokeProv.Invoke();
+                            var provider = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+                            provider.Invoke();
                         }
                     }
                     else
@@ -369,6 +372,7 @@ namespace Unigram.Controls
             }
         }
 
+        public ListView Messages { get; set; }
         public ListView Autocomplete { get; set; }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
@@ -406,6 +410,22 @@ namespace Unigram.Controls
                     ViewModel.Aggregator.Publish("move_down");
                     e.Handled = true;
                 }
+                else if ((e.Key == VirtualKey.PageUp || e.Key == VirtualKey.Up) && Document.Selection.StartPosition == 0)
+                {
+                    var peer = new ListViewAutomationPeer(Messages);
+                    var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
+                    provider.Scroll(ScrollAmount.NoAmount, e.Key == VirtualKey.Up ? ScrollAmount.SmallDecrement : ScrollAmount.LargeDecrement);
+
+                    e.Handled = true;
+                }
+                else if (e.Key == VirtualKey.PageDown || e.Key == VirtualKey.Down && Document.Selection.StartPosition == Text.TrimEnd('\r', '\v').Length)
+                {
+                    var peer = new ListViewAutomationPeer(Messages);
+                    var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
+                    provider.Scroll(ScrollAmount.NoAmount, e.Key == VirtualKey.Down? ScrollAmount.SmallIncrement : ScrollAmount.LargeIncrement);
+
+                    e.Handled = true;
+                }
                 else if (e.Key == VirtualKey.Up || e.Key == VirtualKey.Down)
                 {
                     if (Autocomplete != null && ViewModel.Autocomplete != null)
@@ -423,7 +443,7 @@ namespace Unigram.Controls
                         e.Handled = true;
                     }
                 }
-                else if (e.Key == VirtualKey.Tab)
+                else if (e.Key == VirtualKey.Tab && Autocomplete != null && ViewModel.Autocomplete != null)
                 {
                     e.Handled = true;
                 }
@@ -769,7 +789,7 @@ namespace Unigram.Controls
                 reader.LoadRtfText(rtf);
                 reader.Parse();
 
-                var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
+                var messageText = text.Format();
                 var entities = Utils.GetEntities(ref messageText);
                 if (entities == null)
                 {

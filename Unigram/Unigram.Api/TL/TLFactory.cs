@@ -9,6 +9,7 @@ using Telegram.Api.TL.Photos;
 using Telegram.Api.TL.Upload;
 using Telegram.Api.TL.Help;
 using Telegram.Api.TL.Account;
+using Telegram.Api.TL.Channels;
 using Telegram.Api.TL.Auth;
 using Telegram.Api.TL.Payments;
 using Telegram.Api.TL.Contest.Methods;
@@ -27,7 +28,6 @@ using Telegram.Api.TL.Payments.Methods;
 using Telegram.Api.TL.Stickers.Methods;
 using Telegram.Api.TL.Phone.Methods;
 using Telegram.Api.TL.LangPack.Methods;
-using Telegram.Api.TL.Channels;
 using Telegram.Api.TL.Phone;
 
 namespace Telegram.Api.TL
@@ -204,6 +204,8 @@ namespace Telegram.Api.TL
 				case TLType.MessagesGetFavedStickers: return (T)(Object)new TLMessagesGetFavedStickers(from);
 				case TLType.MessagesFaveSticker: return (T)(Object)new TLMessagesFaveSticker(from);
 				case TLType.MessagesGetUnreadMentions: return (T)(Object)new TLMessagesGetUnreadMentions(from);
+				case TLType.MessagesGetRecentLocations: return (T)(Object)new TLMessagesGetRecentLocations(from);
+				case TLType.MessagesReadMentions: return (T)(Object)new TLMessagesReadMentions(from);
 				case TLType.UpdatesGetState: return (T)(Object)new TLUpdatesGetState(from);
 				case TLType.UpdatesGetDifference: return (T)(Object)new TLUpdatesGetDifference(from);
 				case TLType.UpdatesGetChannelDifference: return (T)(Object)new TLUpdatesGetChannelDifference(from);
@@ -228,6 +230,7 @@ namespace Telegram.Api.TL
 				case TLType.HelpGetTermsOfService: return (T)(Object)new TLHelpGetTermsOfService(from);
 				case TLType.HelpSetBotUpdatesStatus: return (T)(Object)new TLHelpSetBotUpdatesStatus(from);
 				case TLType.HelpGetCdnConfig: return (T)(Object)new TLHelpGetCdnConfig(from);
+				case TLType.HelpGetRecentMeUrls: return (T)(Object)new TLHelpGetRecentMeUrls(from);
 				case TLType.ChannelsReadHistory: return (T)(Object)new TLChannelsReadHistory(from);
 				case TLType.ChannelsDeleteMessages: return (T)(Object)new TLChannelsDeleteMessages(from);
 				case TLType.ChannelsDeleteUserHistory: return (T)(Object)new TLChannelsDeleteUserHistory(from);
@@ -258,6 +261,8 @@ namespace Telegram.Api.TL
 				case TLType.ChannelsGetAdminLog: return (T)(Object)new TLChannelsGetAdminLog(from);
 				case TLType.ChannelsSetStickers: return (T)(Object)new TLChannelsSetStickers(from);
 				case TLType.ChannelsReadMessageContents: return (T)(Object)new TLChannelsReadMessageContents(from);
+				case TLType.ChannelsDeleteHistory: return (T)(Object)new TLChannelsDeleteHistory(from);
+				case TLType.ChannelsTogglePreHistoryHidden: return (T)(Object)new TLChannelsTogglePreHistoryHidden(from);
 				case TLType.BotsSendCustomRequest: return (T)(Object)new TLBotsSendCustomRequest(from);
 				case TLType.BotsAnswerWebhookJSONQuery: return (T)(Object)new TLBotsAnswerWebhookJSONQuery(from);
 				case TLType.PaymentsGetPaymentForm: return (T)(Object)new TLPaymentsGetPaymentForm(from);
@@ -339,6 +344,7 @@ namespace Telegram.Api.TL
 				case TLType.InputMediaDocumentExternal: return (T)(Object)new TLInputMediaDocumentExternal(from);
 				case TLType.InputMediaGame: return (T)(Object)new TLInputMediaGame(from);
 				case TLType.InputMediaInvoice: return (T)(Object)new TLInputMediaInvoice(from);
+				case TLType.InputMediaGeoLive: return (T)(Object)new TLInputMediaGeoLive(from);
 				case TLType.InputChatPhotoEmpty: return (T)(Object)new TLInputChatPhotoEmpty(from);
 				case TLType.InputChatUploadedPhoto: return (T)(Object)new TLInputChatUploadedPhoto(from);
 				case TLType.InputChatPhoto: return (T)(Object)new TLInputChatPhoto(from);
@@ -400,6 +406,7 @@ namespace Telegram.Api.TL
 				case TLType.MessageMediaVenue: return (T)(Object)new TLMessageMediaVenue(from);
 				case TLType.MessageMediaGame: return (T)(Object)new TLMessageMediaGame(from);
 				case TLType.MessageMediaInvoice: return (T)(Object)new TLMessageMediaInvoice(from);
+				case TLType.MessageMediaGeoLive: return (T)(Object)new TLMessageMediaGeoLive(from);
 				case TLType.MessageActionEmpty: return (T)(Object)new TLMessageActionEmpty(from);
 				case TLType.MessageActionChatCreate: return (T)(Object)new TLMessageActionChatCreate(from);
 				case TLType.MessageActionChatEditTitle: return (T)(Object)new TLMessageActionChatEditTitle(from);
@@ -418,6 +425,7 @@ namespace Telegram.Api.TL
 				case TLType.MessageActionPaymentSent: return (T)(Object)new TLMessageActionPaymentSent(from);
 				case TLType.MessageActionPhoneCall: return (T)(Object)new TLMessageActionPhoneCall(from);
 				case TLType.MessageActionScreenshotTaken: return (T)(Object)new TLMessageActionScreenshotTaken(from);
+				case TLType.MessageActionCustomAction: return (T)(Object)new TLMessageActionCustomAction(from);
 				case TLType.Dialog: return (T)(Object)new TLDialog(from);
 				case TLType.PhotoEmpty: return (T)(Object)new TLPhotoEmpty(from);
 				case TLType.Photo: return (T)(Object)new TLPhoto(from);
@@ -483,7 +491,8 @@ namespace Telegram.Api.TL
 				case TLType.InputMessagesFilterRoundVoice: return (T)(Object)new TLInputMessagesFilterRoundVoice(from);
 				case TLType.InputMessagesFilterRoundVideo: return (T)(Object)new TLInputMessagesFilterRoundVideo(from);
 				case TLType.InputMessagesFilterMyMentions: return (T)(Object)new TLInputMessagesFilterMyMentions(from);
-				case TLType.InputMessagesFilterMyMentionsUnread: return (T)(Object)new TLInputMessagesFilterMyMentionsUnread(from);
+				case TLType.InputMessagesFilterContacts: return (T)(Object)new TLInputMessagesFilterContacts(from);
+				case TLType.InputMessagesFilterGeo: return (T)(Object)new TLInputMessagesFilterGeo(from);
 				case TLType.UpdateNewMessage: return (T)(Object)new TLUpdateNewMessage(from);
 				case TLType.UpdateMessageID: return (T)(Object)new TLUpdateMessageID(from);
 				case TLType.UpdateDeleteMessages: return (T)(Object)new TLUpdateDeleteMessages(from);
@@ -549,6 +558,7 @@ namespace Telegram.Api.TL
 				case TLType.UpdateFavedStickers: return (T)(Object)new TLUpdateFavedStickers(from);
 				case TLType.UpdateChannelReadMessagesContents: return (T)(Object)new TLUpdateChannelReadMessagesContents(from);
 				case TLType.UpdateContactsReset: return (T)(Object)new TLUpdateContactsReset(from);
+				case TLType.UpdateChannelAvailableMessages: return (T)(Object)new TLUpdateChannelAvailableMessages(from);
 				case TLType.UpdatesState: return (T)(Object)new TLUpdatesState(from);
 				case TLType.UpdatesDifferenceEmpty: return (T)(Object)new TLUpdatesDifferenceEmpty(from);
 				case TLType.UpdatesDifference: return (T)(Object)new TLUpdatesDifference(from);
@@ -721,6 +731,7 @@ namespace Telegram.Api.TL
 				case TLType.ChannelParticipantsBanned: return (T)(Object)new TLChannelParticipantsBanned(from);
 				case TLType.ChannelParticipantsSearch: return (T)(Object)new TLChannelParticipantsSearch(from);
 				case TLType.ChannelsChannelParticipants: return (T)(Object)new TLChannelsChannelParticipants(from);
+				case TLType.ChannelsChannelParticipantsNotModified: return (T)(Object)new TLChannelsChannelParticipantsNotModified(from);
 				case TLType.ChannelsChannelParticipant: return (T)(Object)new TLChannelsChannelParticipant(from);
 				case TLType.HelpTermsOfService: return (T)(Object)new TLHelpTermsOfService(from);
 				case TLType.FoundGif: return (T)(Object)new TLFoundGif(from);
@@ -776,8 +787,6 @@ namespace Telegram.Api.TL
 				case TLType.MessagesFeaturedStickers: return (T)(Object)new TLMessagesFeaturedStickers(from);
 				case TLType.MessagesRecentStickersNotModified: return (T)(Object)new TLMessagesRecentStickersNotModified(from);
 				case TLType.MessagesRecentStickers: return (T)(Object)new TLMessagesRecentStickers(from);
-				case TLType.MessagesFavedStickersNotModified: return (T)(Object)new TLMessagesFavedStickersNotModified(from);
-				case TLType.MessagesFavedStickers: return (T)(Object)new TLMessagesFavedStickers(from);
 				case TLType.MessagesArchivedStickers: return (T)(Object)new TLMessagesArchivedStickers(from);
 				case TLType.MessagesStickerSetInstallResultSuccess: return (T)(Object)new TLMessagesStickerSetInstallResultSuccess(from);
 				case TLType.MessagesStickerSetInstallResultArchive: return (T)(Object)new TLMessagesStickerSetInstallResultArchive(from);
@@ -888,11 +897,20 @@ namespace Telegram.Api.TL
 				case TLType.ChannelAdminLogEventActionParticipantToggleBan: return (T)(Object)new TLChannelAdminLogEventActionParticipantToggleBan(from);
 				case TLType.ChannelAdminLogEventActionParticipantToggleAdmin: return (T)(Object)new TLChannelAdminLogEventActionParticipantToggleAdmin(from);
 				case TLType.ChannelAdminLogEventActionChangeStickerSet: return (T)(Object)new TLChannelAdminLogEventActionChangeStickerSet(from);
+				case TLType.ChannelAdminLogEventActionTogglePreHistoryHidden: return (T)(Object)new TLChannelAdminLogEventActionTogglePreHistoryHidden(from);
 				case TLType.ChannelAdminLogEvent: return (T)(Object)new TLChannelAdminLogEvent(from);
 				case TLType.ChannelsAdminLogResults: return (T)(Object)new TLChannelsAdminLogResults(from);
 				case TLType.ChannelAdminLogEventsFilter: return (T)(Object)new TLChannelAdminLogEventsFilter(from);
 				case TLType.PopularContact: return (T)(Object)new TLPopularContact(from);
 				case TLType.CdnFileHash: return (T)(Object)new TLCdnFileHash(from);
+				case TLType.MessagesFavedStickersNotModified: return (T)(Object)new TLMessagesFavedStickersNotModified(from);
+				case TLType.MessagesFavedStickers: return (T)(Object)new TLMessagesFavedStickers(from);
+				case TLType.HelpRecentMeUrls: return (T)(Object)new TLHelpRecentMeUrls(from);
+				case TLType.RecentMeUrlUser: return (T)(Object)new TLRecentMeUrlUser(from);
+				case TLType.RecentMeUrlChat: return (T)(Object)new TLRecentMeUrlChat(from);
+				case TLType.RecentMeUrlStickerSet: return (T)(Object)new TLRecentMeUrlStickerSet(from);
+				case TLType.RecentMeUrlChatInvite: return (T)(Object)new TLRecentMeUrlChatInvite(from);
+				case TLType.RecentMeUrlUnknown: return (T)(Object)new TLRecentMeUrlUnknown(from);
 				case TLType.Message: return (T)(Object)new TLMessage(from);
 				case TLType.MessageService: return (T)(Object)new TLMessageService(from);
 				case TLType.RPCResult: return (T)(Object)new TLRPCResult(from);

@@ -50,7 +50,7 @@ namespace Unigram.Tasks
             {
                 if (_mediator == null)
                 {
-                    VoIPCallTask.Log("Mediator doesn't exists", "Creating mediator");
+                    VoIPCallTask.Log("Mediator doesn't exist", "Creating mediator");
 
                     _mediator = new VoIPCallMediator();
                     _mediator.Initialize(VoIPServiceTask.Connection);
@@ -95,6 +95,8 @@ namespace Unigram.Tasks
         [Conditional("DEBUG")]
         public static void Log(string caption, string message)
         {
+            return;
+
             var xml = $@"
                 <toast>
                     <visual>
@@ -123,7 +125,7 @@ namespace Unigram.Tasks
 
     }
 
-    internal class VoIPCallMediator : IHandle<TLUpdatePhoneCall>, IHandle, IDisposable, IStateCallback
+    internal class VoIPCallMediator : IHandle<TLUpdatePhoneCall>, IHandle, IDisposable
     {
         private readonly Queue<TLUpdatePhoneCall> _queue = new Queue<TLUpdatePhoneCall>();
 
@@ -161,7 +163,7 @@ namespace Unigram.Tasks
             }
             else
             {
-                VoIPCallTask.Log("Mediator initialized", "Disconnetting app service");
+                VoIPCallTask.Log("Mediator initialized", "Disconnecting app service");
 
                 if (_connection != null)
                 {
@@ -424,7 +426,9 @@ namespace Unigram.Tasks
                             _controller.SetProxy(ProxyProtocol.None, string.Empty, 0, string.Empty, string.Empty);
                         }
 
-                        _controller.SetStateCallback(this);
+                        _controller.CallStateChanged += OnCallStateChanged;
+                        _controller.SignalBarsChanged += OnSignalBarsChanged;
+
                         _controller.SetEncryptionKey(auth_key, _outgoing);
 
                         var connection = call.Connection;
@@ -463,7 +467,7 @@ namespace Unigram.Tasks
             }
         }
 
-        public async void OnCallStateChanged(CallState newState)
+        public async void OnCallStateChanged(VoIPControllerWrapper sender, CallState newState)
         {
             if (newState == CallState.Failed)
             {
@@ -473,7 +477,7 @@ namespace Unigram.Tasks
             await UpdateStateAsync((TLPhoneCallState)newState);
         }
 
-        public async void OnSignalBarsChanged(int count)
+        public async void OnSignalBarsChanged(VoIPControllerWrapper sender, int count)
         {
             if (_connection != null)
             {

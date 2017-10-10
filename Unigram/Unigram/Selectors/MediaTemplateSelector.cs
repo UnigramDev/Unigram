@@ -18,6 +18,7 @@ namespace Unigram.Selectors
         public DataTemplate EmptyTemplate { get; set; }
         public DataTemplate GameTemplate { get; set; }
         public DataTemplate GeoPointTemplate { get; set; }
+        public DataTemplate GeoLiveTemplate { get; set; }
         public DataTemplate GifTemplate { get; set; }
         public DataTemplate InvoiceTemplate { get; set; }
         public DataTemplate InvoicePhotoTemplate { get; set; }
@@ -79,6 +80,10 @@ namespace Unigram.Selectors
             else if (item is TLMessageMediaGeo)
             {
                 return GeoPointTemplate;
+            }
+            else if (item is TLMessageMediaGeoLive)
+            {
+                return GeoLiveTemplate;
             }
             else if (item is TLMessageMediaInvoice invoiceMedia)
             {

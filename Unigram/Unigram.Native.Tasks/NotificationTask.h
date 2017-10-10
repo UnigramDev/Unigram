@@ -22,6 +22,10 @@ namespace Unigram
 				NotificationTask() {}
 				virtual void Run(IBackgroundTaskInstance^ taskInstance);
 
+				static void UpdateBadge(int badgeNumber);
+				static void UpdateTile(String^ caption, String^ message, String^ picture);
+				static void UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key);
+
 			private:
 				void UpdateToastAndTiles(String^ content /*, std::wofstream* log*/);
 				String^ GetCaption(JsonArray^ loc_args, String^ loc_key);
@@ -32,9 +36,6 @@ namespace Unigram
 				String^ GetPicture(JsonObject^ custom, String^ group);
 				String^ GetDate(JsonObject^ notification);
 
-				void UpdateBadge(int badgeNumber);
-				void UpdateTile(String^ caption, String^ message);
-				void UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key);
 				void UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key);
 			};
 		}

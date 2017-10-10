@@ -319,6 +319,41 @@ namespace Telegram.Api.TL
                 return muteUntilDateTime > DateTime.Now;
             }
         }
+
+        private bool _isTyping;
+        public bool IsTyping
+        {
+            get
+            {
+                return _isTyping;
+            }
+            set
+            {
+                if (_isTyping != value)
+                {
+                    _isTyping = value;
+                    RaisePropertyChanged(() => IsTyping);
+                }
+            }
+        }
+
+        private string _typingSubtitle;
+        public string TypingSubtitle
+        {
+            get
+            {
+                return _typingSubtitle;
+            }
+            set
+            {
+                if (_typingSubtitle != value)
+                {
+                    _typingSubtitle = value;
+                    RaisePropertyChanged(() => TypingSubtitle);
+                }
+            }
+        }
+
         #endregion
 
     }

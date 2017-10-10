@@ -13,6 +13,7 @@ using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Core.Helpers;
 using Unigram.Core.Models;
+using Unigram.Models;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.ApplicationModel.Contacts;
@@ -77,6 +78,16 @@ namespace Unigram.ViewModels
         public RelayCommand<StorageFile> SendFileCommand => new RelayCommand<StorageFile>(SendFileExecute);
         private async void SendFileExecute(StorageFile file)
         {
+            if (MediaLibrary.SelectedCount > 0)
+            {
+                foreach (var storage in MediaLibrary.Where(x => x.IsSelected))
+                {
+                    await SendFileAsync(storage.File, storage.Caption);
+                }
+
+                return;
+            }
+
             ObservableCollection<StorageFile> storages = null;
 
             if (file == null)
@@ -169,15 +180,30 @@ namespace Unigram.ViewModels
                     AccessHash = 0,
                     Date = date,
                     Size = (int)basicProps.Size,
-                    MimeType = fileCache.ContentType,
+                    MimeType = file.ContentType,
                     Attributes = new TLVector<TLDocumentAttributeBase>
-                {
-                    new TLDocumentAttributeFilename
                     {
-                        FileName = file.Name
+                        new TLDocumentAttributeFilename
+                        {
+                            FileName = file.Name
+                        }
                     }
-                }
                 };
+
+                var musicProps = await file.Properties.GetMusicPropertiesAsync();
+                if (musicProps.Duration > TimeSpan.Zero)
+                {
+                    document.Attributes.Add(new TLDocumentAttributeAudio
+                    {
+                        Duration = (int)musicProps.Duration.TotalSeconds,
+                        Title = musicProps.Title,
+                        Performer = musicProps.Artist,
+                        IsVoice = false,
+                        HasTitle = musicProps.Title != null,
+                        HasPerformer = musicProps.Artist != null,
+                        HasWaveform = false
+                    });
+                }
 
                 var media = new TLMessageMediaDocument
                 {
@@ -266,7 +292,7 @@ namespace Unigram.ViewModels
                 AccessHash = 0,
                 Date = date,
                 Size = (int)basicProps.Size,
-                MimeType = fileCache.ContentType,
+                MimeType = file.ContentType,
                 Thumb = thumbnail,
                 Attributes = new TLVector<TLDocumentAttributeBase>
                 {
@@ -276,6 +302,21 @@ namespace Unigram.ViewModels
                     }
                 }
             };
+
+            var musicProps = await file.Properties.GetMusicPropertiesAsync();
+            if (musicProps.Duration > TimeSpan.Zero)
+            {
+                document.Attributes.Add(new TLDocumentAttributeAudio
+                {
+                    Duration = (int)musicProps.Duration.TotalSeconds,
+                    Title = musicProps.Title,
+                    Performer = musicProps.Artist,
+                    IsVoice = false,
+                    HasTitle = musicProps.Title != null,
+                    HasPerformer = musicProps.Artist != null,
+                    HasWaveform = false
+                });
+            }
 
             var media = new TLMessageMediaDocument
             {
@@ -402,6 +443,11 @@ namespace Unigram.ViewModels
                 }
             };
 
+            if (profile != null && profile.Audio == null)
+            {
+                document.Attributes.Add(new TLDocumentAttributeAnimated());
+            }
+
             var media = new TLMessageMediaDocument
             {
                 Document = document,
@@ -485,12 +531,31 @@ namespace Unigram.ViewModels
             });
         }
 
-        public RelayCommand<StoragePhoto> SendPhotoCommand => new RelayCommand<StoragePhoto>(SendPhotoExecute);
-        private async void SendPhotoExecute(StoragePhoto file)
+        public RelayCommand<ObservableCollection<StorageMedia>> SendMediaCommand => new RelayCommand<ObservableCollection<StorageMedia>>(SendMediaExecute);
+        private async void SendMediaExecute(ObservableCollection<StorageMedia> media)
         {
-            ObservableCollection<StorageMedia> storages = null;
+            if (MediaLibrary.SelectedCount > 0)
+            {
+                foreach (var storage in MediaLibrary.Where(x => x.IsSelected))
+                {
+                    if (storage is StoragePhoto photo)
+                    {
+                        await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
+                    }
+                    else if (storage is StorageVideo video)
+                    {
+                        await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync());
+                    }
+                }
 
-            if (file == null)
+                return;
+            }
+
+
+
+            ObservableCollection<StorageMedia> storages = media;
+
+            if (media == null)
             {
                 var picker = new FileOpenPicker();
                 picker.ViewMode = PickerViewMode.Thumbnail;
@@ -500,13 +565,25 @@ namespace Unigram.ViewModels
                 var files = await picker.PickMultipleFilesAsync();
                 if (files != null)
                 {
-                    storages = new ObservableCollection<StorageMedia>(files.Select(x => x.Name.EndsWith(".mp4") ? new StorageVideo(x) : (StorageMedia)new StoragePhoto(x)));
+                    storages = new ObservableCollection<StorageMedia>();
+
+                    foreach (var file in files)
+                    {
+                        if (file.ContentType.Equals("video/mp4"))
+                        {
+                            storages.Add(await StorageVideo.CreateAsync(file, true));
+                        }
+                        else
+                        {
+                            storages.Add(new StoragePhoto(file) { IsSelected = true });
+                        }
+                    }
                 }
             }
-            else
-            {
-                storages = new ObservableCollection<StorageMedia> { file };
-            }
+            //else
+            //{
+            //    storages = new ObservableCollection<StorageMedia>(media);
+            //}
 
             if (storages != null && storages.Count > 0)
             {
@@ -517,7 +594,7 @@ namespace Unigram.ViewModels
 
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
-                    foreach (var storage in dialog.Items)
+                    foreach (var storage in dialog.Items.Where(x => x.IsSelected))
                     {
                         if (storage is StoragePhoto photo)
                         {
@@ -525,19 +602,40 @@ namespace Unigram.ViewModels
                         }
                         else if (storage is StorageVideo video)
                         {
-                            MediaEncodingProfile profile = null;
-                            if (video.IsMuted)
-                            {
-                                profile = await MediaEncodingProfile.CreateFromFileAsync(storage.File);
-                                profile.Audio = null;
-                            }
-
-                            await SendVideoAsync(storage.File, storage.Caption, false, profile);
+                            await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync());
                         }
                     }
                 }
             }
         }
+
+        public async void SendMediaExecute(ObservableCollection<StorageMedia> media, StorageMedia selectedItem)
+        {
+            var storages = media;
+            if (storages != null && storages.Count > 0)
+            {
+                var dialog = new SendPhotosView { ViewModel = this, Items = storages, SelectedItem = selectedItem, IsTTLEnabled = _peer is TLInputPeerUser };
+                var dialogResult = await dialog.ShowAsync();
+
+                TextField.FocusMaybe(FocusState.Keyboard);
+
+                if (dialogResult == ContentDialogBaseResult.OK)
+                {
+                    foreach (var storage in dialog.Items.Where(x => x.IsSelected))
+                    {
+                        if (storage is StoragePhoto photo)
+                        {
+                            await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
+                        }
+                        else if (storage is StorageVideo video)
+                        {
+                            await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync());
+                        }
+                    }
+                }
+            }
+        }
+
 
         public async void SendPhotoDrop(ObservableCollection<StorageFile> files)
         {
@@ -545,7 +643,7 @@ namespace Unigram.ViewModels
 
             if (files != null)
             {
-                storages = new ObservableCollection<StorageMedia>(files.Select(x => new StoragePhoto(x)));
+                storages = new ObservableCollection<StorageMedia>(files.Select(x => new StoragePhoto(x) { IsSelected = true }));
             }
 
             if (storages != null && storages.Count > 0)
@@ -565,14 +663,7 @@ namespace Unigram.ViewModels
                         }
                         else if (storage is StorageVideo video)
                         {
-                            MediaEncodingProfile profile = null;
-                            if (video.IsMuted)
-                            {
-                                profile = await MediaEncodingProfile.CreateFromFileAsync(storage.File);
-                                profile.Audio = null;
-                            }
-
-                            await SendVideoAsync(storage.File, storage.Caption, false, profile);
+                            await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync());
                         }
                     }
                 }
@@ -992,24 +1083,36 @@ namespace Unigram.ViewModels
             dialog.Content = page;
 
             page.Dialog = dialog;
+            page.LiveLocation = !_liveLocationService.IsTracking(Peer.ToPeer());
 
             var confirm = await dialog.ShowAsync();
             if (confirm == ContentDialogBaseResult.OK)
             {
                 if (page.Media is TLMessageMediaVenue venue)
                 {
-                    await SendGeoPointAsync(venue);
+                    await SendGeoAsync(venue);
+                }
+                else if (page.Media is TLMessageMediaGeoLive geoLive)
+                {
+                    if (geoLive.Geo == null || geoLive.Period == 0 || _liveLocationService.IsTracking(Peer.ToPeer()))
+                    {
+                        _liveLocationService.StopTracking(Peer.ToPeer());
+                    }
+                    else
+                    {
+                        await SendGeoAsync(geoLive);
+                    }
                 }
                 else if (page.Media is TLMessageMediaGeo geo && geo.Geo is TLGeoPoint geoPoint)
                 {
-                    await SendGeoPointAsync(geoPoint.Lat, geoPoint.Long);
+                    await SendGeoAsync(geoPoint.Lat, geoPoint.Long);
                 }
             }
 
             //NavigationService.Navigate(typeof(DialogSendLocationPage));
         }
 
-        public Task<bool> SendGeoPointAsync(double latitude, double longitude)
+        public Task<bool> SendGeoAsync(double latitude, double longitude)
         {
             var tsc = new TaskCompletionSource<bool>();
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
@@ -1059,7 +1162,42 @@ namespace Unigram.ViewModels
             return tsc.Task;
         }
 
-        public Task<bool> SendGeoPointAsync(TLMessageMediaVenue media)
+        public Task<bool> SendGeoAsync(TLMessageMediaGeoLive media)
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var inputMedia = media.ToInputMedia();
+
+                var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                if (result.IsSucceeded)
+                {
+                    tsc.SetResult(true);
+                    await _liveLocationService.TrackAsync(message);
+                }
+                else
+                {
+                    tsc.SetResult(false);
+                }
+            });
+
+            return tsc.Task;
+        }
+
+        public Task<bool> SendGeoAsync(TLMessageMediaVenue media)
         {
             var tsc = new TaskCompletionSource<bool>();
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);

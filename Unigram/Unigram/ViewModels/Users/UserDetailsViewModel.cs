@@ -80,12 +80,12 @@ namespace Unigram.ViewModels.Users
             {
                 Item = user;
                 RaisePropertyChanged(() => IsEditEnabled);
+                RaisePropertyChanged(() => IsAddEnabled);
                 RaisePropertyChanged(() => AreNotificationsEnabled);
                 RaisePropertyChanged(() => PhoneVisibility);
                 RaisePropertyChanged(() => AddToGroupVisibility);
                 RaisePropertyChanged(() => HelpVisibility);
                 RaisePropertyChanged(() => ReportVisibility);
-                RaisePropertyChanged(() => AddContactVisibility);
 
                 var full = CacheService.GetFullUser(user.Id);
                 if (full == null)
@@ -110,7 +110,6 @@ namespace Unigram.ViewModels.Users
                     RaisePropertyChanged(() => UnblockVisibility);
                     RaisePropertyChanged(() => StopVisibility);
                     RaisePropertyChanged(() => UnstopVisibility);
-                    RaisePropertyChanged(() => AddContactVisibility);
                 }
 
                 LastSeen = LastSeenConverter.GetLabel(user, true);
@@ -210,72 +209,6 @@ namespace Unigram.ViewModels.Users
                 }
             }
         }
-
-        /// <summary>
-        /// Opens People Hub-dialog to the add selected user as a new Contact
-        /// </summary>
-        public RelayCommand AddContactCommand => new RelayCommand(AddContact);
-        private void AddContact()
-        {
-            var user = Item as TLUser;
-            if (user != null)
-            {
-                // Create the contact-card
-                Contact userContact = new Contact();
-
-                // Check if the user has a normal name
-                if (user.FullName != "" || user.FullName != null)
-                {
-                    if (user.FirstName != null)
-                    {
-                        userContact.FirstName = user.FirstName;
-                    }
-                    if (user.LastName != null)
-                    {
-                        userContact.LastName = user.LastName;
-                    }
-                }
-                // if not, use username
-                else if (user.HasUsername != false)
-                {
-                    if (user.Username != null)
-                    {
-                        userContact.LastName = user.Username;
-                    }
-                }
-                // if all else fails, use phone number (where possible)
-                else if (user.HasPhone != false)
-                {
-                    if (user.Username != null)
-                    {
-                        userContact.LastName = user.Phone;
-                    }
-                }
-                // TODO Check why phone numbers are not being shown when the contact is not yet in the users People Hub
-                if (user.Phone != null)
-                {
-                    ContactPhone userPhone = new ContactPhone();
-                    userPhone.Number = user.Phone;
-                    userContact.Phones.Add(userPhone);
-                }
-
-                // Set options for the Dialog-window
-                FullContactCardOptions options = new FullContactCardOptions();
-                options.DesiredRemainingView = Windows.UI.ViewManagement.ViewSizePreference.Default;
-
-                // Show the card
-                ContactManager.ShowFullContactCard(userContact, options);
-            }
-        }
-
-        public Visibility AddContactVisibility
-        {
-            get
-            {
-                return Item != null && Item.HasPhone && !Item.IsSelf && !Item.IsContact && !Item.IsMutualContact ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-
 
         public RelayCommand BlockCommand => new RelayCommand(BlockExecute);
         private async void BlockExecute()
@@ -414,6 +347,14 @@ namespace Unigram.ViewModels.Users
             get
             {
                 return _item != null && (_item.IsContact || _item.IsMutualContact);
+            }
+        }
+
+        public bool IsAddEnabled
+        {
+            get
+            {
+                return _item != null && (_item.HasAccessHash && _item.HasPhone && !_item.IsSelf && !_item.IsContact && !_item.IsMutualContact);
             }
         }
 
@@ -604,6 +545,7 @@ namespace Unigram.ViewModels.Users
                     {
                         dialog.NotifySettings = _full.NotifySettings;
                         dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                        dialog.RaisePropertyChanged(() => dialog.IsMuted);
                         dialog.RaisePropertyChanged(() => dialog.Self);
                     }
 
@@ -642,19 +584,21 @@ namespace Unigram.ViewModels.Users
 
         #endregion
 
-        public RelayCommand EditNameCommand => new RelayCommand(EditNameExecute);
-        private async void EditNameExecute()
+        public RelayCommand AddCommand => new RelayCommand(AddExecute);
+        private async void AddExecute()
         {
-            if (_item == null)
+            var user = _item as TLUser;
+            if (user == null)
             {
                 return;
             }
 
-            var confirm = await EditUserNameView.Current.ShowAsync(_item.FirstName, _item.LastName);
+            var confirm = await EditUserNameView.Current.ShowAsync(user.FirstName, user.LastName);
             if (confirm == ContentDialogResult.Primary)
             {
                 var contact = new TLInputPhoneContact
                 {
+                    ClientId = _item.Id,
                     FirstName = EditUserNameView.Current.FirstName,
                     LastName = EditUserNameView.Current.LastName,
                     Phone = _item.Phone
@@ -663,16 +607,122 @@ namespace Unigram.ViewModels.Users
                 var response = await ProtoService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact });
                 if (response.IsSucceeded)
                 {
-                    _item.RaisePropertyChanged(() => _item.FullName);
-                    _item.RaisePropertyChanged(() => _item.FirstName);
-                    _item.RaisePropertyChanged(() => _item.LastName);
-                    _item.RaisePropertyChanged(() => _item.DisplayName);
+                    if (response.Result.Users.Count > 0)
+                    {
+                        Aggregator.Publish(new TLUpdateContactLink
+                        {
+                            UserId = response.Result.Users[0].Id,
+                            MyLink = new TLContactLinkContact(),
+                            ForeignLink = new TLContactLinkUnknown()
+                        });
+                    }
+
+                    user.RaisePropertyChanged(() => user.HasFirstName);
+                    user.RaisePropertyChanged(() => user.HasLastName);
+                    user.RaisePropertyChanged(() => user.FirstName);
+                    user.RaisePropertyChanged(() => user.LastName);
+                    user.RaisePropertyChanged(() => user.FullName);
+                    user.RaisePropertyChanged(() => user.DisplayName);
+
+                    user.RaisePropertyChanged(() => user.HasPhone);
+                    user.RaisePropertyChanged(() => user.Phone);
+
+                    RaisePropertyChanged(() => IsEditEnabled);
+                    RaisePropertyChanged(() => IsAddEnabled);
 
                     var dialog = CacheService.GetDialog(_item.ToPeer());
                     if (dialog != null)
                     {
                         dialog.RaisePropertyChanged(() => dialog.With);
                     }
+                }
+            }
+        }
+
+        public RelayCommand EditCommand => new RelayCommand(EditExecute);
+        private async void EditExecute()
+        {
+            var user = _item as TLUser;
+            if (user == null)
+            {
+                return;
+            }
+
+            var confirm = await EditUserNameView.Current.ShowAsync(user.FirstName, user.LastName);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return; 
+            }
+
+            var contact = new TLInputPhoneContact
+            {
+                FirstName = EditUserNameView.Current.FirstName,
+                LastName = EditUserNameView.Current.LastName,
+                Phone = user.Phone
+            };
+
+            var response = await ProtoService.ImportContactsAsync(new TLVector<TLInputContactBase> { contact });
+            if (response.IsSucceeded)
+            {
+                user.RaisePropertyChanged(() => user.HasFirstName);
+                user.RaisePropertyChanged(() => user.HasLastName);
+                user.RaisePropertyChanged(() => user.FirstName);
+                user.RaisePropertyChanged(() => user.LastName);
+                user.RaisePropertyChanged(() => user.FullName);
+                user.RaisePropertyChanged(() => user.DisplayName);
+
+                var dialog = CacheService.GetDialog(user.ToPeer());
+                if (dialog != null)
+                {
+                    dialog.RaisePropertyChanged(() => dialog.With);
+                }
+            }
+        }
+
+        public RelayCommand DeleteCommand => new RelayCommand(DeleteExecute);
+        private async void DeleteExecute()
+        {
+            var user = _item as TLUser;
+            if (user == null)
+            {
+                return;
+            }
+
+            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to delete this contact?", "Telegram", "OK", "Cancel");
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var response = await ProtoService.DeleteContactAsync(user.ToInputUser());
+            if (response.IsSucceeded)
+            {
+                // TODO: delete from synced contacts
+
+                Aggregator.Publish(new TLUpdateContactLink
+                {
+                    UserId = response.Result.User.Id,
+                    MyLink = response.Result.MyLink,
+                    ForeignLink = response.Result.ForeignLink
+                });
+
+                user.RaisePropertyChanged(() => user.HasFirstName);
+                user.RaisePropertyChanged(() => user.HasLastName);
+                user.RaisePropertyChanged(() => user.FirstName);
+                user.RaisePropertyChanged(() => user.LastName);
+                user.RaisePropertyChanged(() => user.FullName);
+                user.RaisePropertyChanged(() => user.DisplayName);
+
+                user.RaisePropertyChanged(() => user.HasPhone);
+                user.RaisePropertyChanged(() => user.Phone);
+
+                RaisePropertyChanged(() => IsEditEnabled);
+                RaisePropertyChanged(() => IsAddEnabled);
+
+                var dialog = CacheService.GetDialog(_item.ToPeer());
+                if (dialog != null)
+                {
+                    dialog.RaisePropertyChanged(() => dialog.With);
                 }
             }
         }

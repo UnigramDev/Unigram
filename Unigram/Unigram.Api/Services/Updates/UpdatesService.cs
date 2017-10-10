@@ -188,6 +188,7 @@ namespace Telegram.Api.Services.Updates
             }
 #if LOG_CLIENTSEQ
             TLUtils.WriteLine(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} ptsList={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", "null", _pts != null ? _pts.ToString() : "null", ptsList.Count > 0 ? string.Join(", ", ptsList) : "null"), LogSeverity.Error);
+            Logs.Log.Write(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} ptsList={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", "null", _pts != null ? _pts.ToString() : "null", ptsList.Count > 0 ? string.Join(", ", ptsList) : "null"));
 #endif
             UpdateLostPts(ptsList);
         }
@@ -215,6 +216,7 @@ namespace Telegram.Api.Services.Updates
         {
 #if LOG_CLIENTSEQ
             TLUtils.WriteLine(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} newPts={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", seq, _pts != null ? _pts.ToString() : "null", pts), LogSeverity.Error);
+            Logs.Log.Write(string.Format("{0} {1}\nclientSeq={2} newSeq={3}\npts={4} newPts={5}\n", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), caption, ClientSeq != null ? ClientSeq.ToString() : "null", seq, _pts != null ? _pts.ToString() : "null", pts));
             //TLUtils.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture) + " " + caption + " clientSeq=" + ClientSeq + " newSeq=" + seq + " pts=" + pts, LogSeverity.Error);
 #endif
             if (seq != null)
@@ -367,6 +369,8 @@ namespace Telegram.Api.Services.Updates
                     var difference = diff as TLUpdatesDifference;
                     if (difference != null)
                     {
+                        difference.ProcessReading();
+
                         //Logs.Log.Write("UpdatesService.Publish UpdatingEventArgs");
                         Execute.BeginOnThreadPool(() => _eventAggregator.Publish(new UpdatingEventArgs()));
 
@@ -1839,6 +1843,18 @@ namespace Telegram.Api.Services.Updates
                 _cacheService.DeleteChannelMessages(updateDeleteChannelMessages.ChannelId, updateDeleteChannelMessages.Messages);
 
                 return true;
+            }
+
+            var updateChannelAvailableMessages = update as TLUpdateChannelAvailableMessages;
+            if (updateChannelAvailableMessages != null)
+            {
+                var channel = _cacheService.GetChat(updateChannelAvailableMessages.ChannelId);
+                if (channel != null)
+                {
+
+                }
+
+                _cacheService.ClearDialog(new TLPeerChannel { ChannelId = updateChannelAvailableMessages.ChannelId }, updateChannelAvailableMessages.AvailableMinId);
             }
 
             // TODO: No idea
@@ -3946,6 +3962,8 @@ namespace Telegram.Api.Services.Updates
                     var diff = differenceBase as TLUpdatesDifference;
                     if (diff != null)
                     {
+                        diff.ProcessReading();
+
                         var resetEvent = new ManualResetEvent(false);
 
                         lock (_clientSeqLock)
@@ -3995,6 +4013,8 @@ namespace Telegram.Api.Services.Updates
                 var differenceSlice = differenceBase as TLUpdatesDifference;
                 if (differenceSlice != null)
                 {
+                    differenceSlice.ProcessReading();
+
                     var updates = differenceSlice.OtherUpdates;
                     for (var i = 0; i < updates.Count; i++)
                     {
@@ -4019,6 +4039,8 @@ namespace Telegram.Api.Services.Updates
                 var differenceSlice = differenceBase as TLUpdatesDifference;
                 if (differenceSlice != null)
                 {
+                    differenceSlice.ProcessReading();
+
                     var updates = differenceSlice.OtherUpdates;
                     for (var i = 0; i < updates.Count; i++)
                     {
@@ -4045,6 +4067,8 @@ namespace Telegram.Api.Services.Updates
 
         public void SaveState()
         {
+            Logs.Log.Write(string.Format("UpdatesService.SaveState date={0} pts={1} qts={2} seq={3} unread_count={4}", _date?.ToString() ?? "null", _pts?.ToString() ?? "null", _qts?.ToString() ?? "null", ClientSeq?.ToString() ?? "null", _unreadCount?.ToString() ?? "null"));
+
             TLUtils.WritePerformance("<<Saving current state");
             TLUtils.SaveObjectToMTProtoFile(_stateRoot, Constants.StateFileName, new TLUpdatesState { Date = _date ?? -1, Pts = _pts ?? -1, Qts = _qts ?? -1, Seq = ClientSeq ?? -1, UnreadCount = _unreadCount ?? -1 });
         }

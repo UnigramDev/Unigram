@@ -165,7 +165,7 @@
 
             <Button x:Name="btnCancel"
                     Background="Transparent"
-                    Content="&#xE106;"
+                    Content="&#xE10A;"
                     FontFamily="Segoe MDL2 Assets"
                     Height="48"
                     Width="48"

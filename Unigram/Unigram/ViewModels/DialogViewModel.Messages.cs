@@ -68,7 +68,7 @@ namespace Unigram.ViewModels
             }
 
             Reply = message;
-            Aggregator.Publish("/dlg_focus");
+            TextField.Focus(Windows.UI.Xaml.FocusState.Keyboard);
         }
 
         #endregion
@@ -147,7 +147,7 @@ namespace Unigram.ViewModels
                     if (config != null && message.Date + config.EditTimeLimit > date)
                     {
                         var user = With as TLUser;
-                        if (user != null)
+                        if (user != null && !user.IsBot)
                         {
                             dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
                         }
@@ -214,16 +214,16 @@ namespace Unigram.ViewModels
             {
                 for (int j = 0; j < messages.Count; j++)
                 {
-                    if (_editedMessage != null && _editedMessage.Id == messages[j].Id)
+                    if (EditedMessage?.Id == messages[j].Id)
                     {
                         ClearReplyCommand.Execute();
                     }
-                    else if (ReplyInfo != null && ReplyInfo.ReplyToMsgId == messages[j].Id)
+                    else if (ReplyInfo?.ReplyToMsgId == messages[j].Id)
                     {
                         ClearReplyCommand.Execute();
                     }
 
-                    Messages.Remove(messages[j]);
+                    Items.Remove(messages[j]);
                 }
 
                 RaisePropertyChanged(() => With);
@@ -272,6 +272,9 @@ namespace Unigram.ViewModels
         {
             if (message is TLMessage)
             {
+                Search = null;
+                SelectionMode = ListViewSelectionMode.None;
+
                 await ForwardView.Current.ShowAsync(new List<TLMessage> { message as TLMessage });
 
                 //App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
@@ -294,7 +297,7 @@ namespace Unigram.ViewModels
         #region Multiple Delete
 
         private RelayCommand _messagesDeleteCommand;
-        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(messageCommon =>
+        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedItems.Count > 0 && SelectedItems.All(messageCommon =>
         {
             var channel = _with as TLChannel;
             if (channel != null)
@@ -370,7 +373,7 @@ namespace Unigram.ViewModels
             //}
             //else
             {
-                var messages = new List<TLMessageCommonBase>(SelectedMessages);
+                var messages = new List<TLMessageCommonBase>(SelectedItems);
 
                 var dialog = new TLMessageDialog();
                 dialog.Title = "Delete";
@@ -392,7 +395,7 @@ namespace Unigram.ViewModels
                     if (config != null && minDate + config.EditTimeLimit > date && maxDate + config.EditTimeLimit > date)
                     {
                         var user = With as TLUser;
-                        if (user != null)
+                        if (user != null && !user.IsBot)
                         {
                             dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
                         }
@@ -447,7 +450,7 @@ namespace Unigram.ViewModels
         #region Multiple Forward
 
         private RelayCommand _messagesForwardCommand;
-        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(x =>
+        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedItems.Count > 0 && SelectedItems.All(x =>
         {
             if (x is TLMessage message)
             {
@@ -468,9 +471,10 @@ namespace Unigram.ViewModels
 
         private async void MessagesForwardExecute()
         {
-            var messages = SelectedMessages.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
+            var messages = SelectedItems.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
             {
+                Search = null;
                 SelectionMode = ListViewSelectionMode.None;
 
                 await ForwardView.Current.ShowAsync(messages);
@@ -497,7 +501,7 @@ namespace Unigram.ViewModels
 
             SelectionMode = ListViewSelectionMode.Multiple;
 
-            SelectedMessages = new List<TLMessageCommonBase> { messageCommon };
+            SelectedItems = new List<TLMessageCommonBase> { messageCommon };
             RaisePropertyChanged("SelectedItems");
         }
 
@@ -590,7 +594,7 @@ namespace Unigram.ViewModels
         public RelayCommand MessageEditLastCommand => new RelayCommand(MessageEditLastExecute);
         private void MessageEditLastExecute()
         {
-            var last = Messages.LastOrDefault(x => x is TLMessage message && message.IsOut);
+            var last = Items.LastOrDefault(x => x is TLMessage message && message.IsOut);
             if (last != null)
             {
                 MessageEditCommand.Execute(last);
@@ -642,8 +646,6 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            _editedMessage = message;
-
             var config = CacheService.GetConfig();
             var editUntil = (config != null) ? (message.Date + config.EditTimeLimit + 300) : 0;
             if (message.FromId != null && message.ToId is TLPeerUser && message.FromId.Value == message.ToId.Id)
@@ -653,7 +655,7 @@ namespace Unigram.ViewModels
 
             Reply = new TLMessagesContainter
             {
-                EditMessage = _editedMessage,
+                EditMessage = message,
                 EditUntil = editUntil,
                 // TODO: setup original content
                 PreviousMessage = new TLMessage
@@ -856,12 +858,17 @@ namespace Unigram.ViewModels
 
         private TLMessage _replyMarkupMessage;
         private TLReplyMarkupBase _replyMarkup;
-        private TLMessage _editedMessage;
+
         public TLMessage EditedMessage
         {
             get
             {
-                return _editedMessage;
+                if (Reply is TLMessagesContainter container)
+                {
+                    return container.EditMessage;
+                }
+
+                return null;
             }
         }
 
@@ -1120,7 +1127,7 @@ namespace Unigram.ViewModels
                     var location = await _locationService.GetPositionAsync();
                     if (location != null)
                     {
-                        await SendGeoPointAsync(location.Point.Position.Latitude, location.Point.Position.Longitude);
+                        await SendGeoAsync(location.Point.Position.Latitude, location.Point.Position.Longitude);
                     }
                 }
             }

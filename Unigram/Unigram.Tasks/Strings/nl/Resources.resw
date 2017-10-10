@@ -141,6 +141,9 @@
   <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
     <value>plaatste een locatie</value>
   </data>
+  <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>plaatste een live-locatie</value>
+  </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
     <value>plaatste een GIF</value>
   </data>
@@ -200,6 +203,9 @@
   </data>
   <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
     <value>{0} heeft een kaart gestuurd naar de groep</value>
+  </data>
+  <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>{0} zijn een live-locatie aan het delen</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} heeft een GIF gestuurd naar de groep</value>
@@ -273,6 +279,9 @@
   <data name="MESSAGE_GEO" xml:space="preserve">
     <value>heeft je een locatie gestuurd</value>
   </data>
+  <data name="MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>zijn een live-locatie aan het delen</value>
+  </data>
   <data name="MESSAGE_GIF" xml:space="preserve">
     <value>heeft je een GIF gestuurd</value>
   </data>
@@ -326,6 +335,9 @@
   </data>
   <data name="PINNED_GEO" xml:space="preserve">
     <value>heeft een locatie vastgezet</value>
+  </data>
+  <data name="PINNED_GEOLIVE" xml:space="preserve">
+    <value>heeft een live-locatie vastgezet</value>
   </data>
   <data name="PINNED_GIF" xml:space="preserve">
     <value>heeft een GIF vastgezet</value>

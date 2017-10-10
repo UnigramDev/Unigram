@@ -35,7 +35,7 @@ namespace Unigram.Controls.Views
             InitializeComponent();
 
             var observable = Observable.FromEventPattern<TextChangedEventArgs>(SearchField, "TextChanged");
-            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnDispatcher().Subscribe(x =>
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
             {
                 if (string.IsNullOrWhiteSpace(SearchField.Text))
                 {

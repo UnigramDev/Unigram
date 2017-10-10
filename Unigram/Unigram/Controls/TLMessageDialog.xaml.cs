@@ -106,11 +106,11 @@ namespace Unigram.Controls
         {
             get
             {
-                return MessageLabel.Text;
+                return TextBlockHelper.GetMarkdown(MessageLabel);
             }
             set
             {
-                MessageLabel.Text = value;
+                TextBlockHelper.SetMarkdown(MessageLabel, value);
             }
         }
 

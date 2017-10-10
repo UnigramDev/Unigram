@@ -26,7 +26,15 @@ namespace Unigram.ViewModels.Channels
         {
             get
             {
-                return _item != null && _item.IsSignatures && _item.IsBroadcast;
+                return _item != null && _item.IsBroadcast;
+            }
+        }
+
+        public bool CanEditHiddenPreHistory
+        {
+            get
+            {
+                return _item != null && _full != null && _item.IsMegaGroup && !_item.HasUsername;
             }
         }
 
@@ -68,6 +76,18 @@ namespace Unigram.ViewModels.Channels
                 Set(ref _isSignatures, value);
             }
         }
+        private bool _isHiddenPreHistory;
+        public bool IsHiddenPreHistory
+        {
+            get
+            {
+                return _isHiddenPreHistory;
+            }
+            set
+            {
+                Set(ref _isHiddenPreHistory, value);
+            }
+        }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
@@ -107,6 +127,9 @@ namespace Unigram.ViewModels.Channels
                 {
                     Full = full;
                     About = _full.About;
+                    IsHiddenPreHistory = _full.IsHiddenPreHistory;
+
+                    RaisePropertyChanged(() => CanEditHiddenPreHistory);
                 }
             }
         }
@@ -114,12 +137,15 @@ namespace Unigram.ViewModels.Channels
         public RelayCommand SendCommand => new RelayCommand(SendExecute);
         private async void SendExecute()
         {
-            if (_item != null && _full != null && !string.Equals(_about, _full.About))
+            var about = _about.Format();
+            var title = _title.Trim();
+
+            if (_item != null && _full != null && !string.Equals(about, _full.About))
             {
-                var response = await ProtoService.EditAboutAsync(_item, _about);
+                var response = await ProtoService.EditAboutAsync(_item, about);
                 if (response.IsSucceeded)
                 {
-                    _full.About = _about;
+                    _full.About = about;
                     _full.RaisePropertyChanged(() => _full.About);
                 }
                 else
@@ -129,13 +155,41 @@ namespace Unigram.ViewModels.Channels
                 }
             }
 
-            if (_item != null && !string.Equals(_title, _item.Title))
+            if (_item != null && !string.Equals(title, _item.Title))
             {
-                var response = await ProtoService.EditTitleAsync(_item, _title);
+                var response = await ProtoService.EditTitleAsync(_item, title);
                 if (response.IsSucceeded)
                 {
-                    _item.Title = _title;
+                    _item.Title = title;
                     _item.RaisePropertyChanged(() => _item.Title);
+                }
+                else
+                {
+                    // TODO:
+                    return;
+                }
+            }
+
+            if (_item != null && _isSignatures != _item.IsSignatures)
+            {
+                var response = await ProtoService.ToggleSignaturesAsync(_item.ToInputChannel(), _isSignatures);
+                if (response.IsSucceeded)
+                {
+
+                }
+                else
+                {
+                    // TODO:
+                    return;
+                }
+            }
+
+            if (_item != null && _full != null && _isHiddenPreHistory != _full.IsHiddenPreHistory)
+            {
+                var response = await ProtoService.TogglePreHistoryHiddenAsync(_item.ToInputChannel(), _isHiddenPreHistory);
+                if (response.IsSucceeded)
+                {
+
                 }
                 else
                 {
@@ -157,16 +211,6 @@ namespace Unigram.ViewModels.Channels
         private void EditStickerSetExecute()
         {
             NavigationService.Navigate(typeof(ChannelEditStickerSetPage), _item.ToPeer());
-        }
-
-        public override void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            base.RaisePropertyChanged(propertyName);
-
-            if (propertyName.Equals(nameof(IsSignatures)))
-            {
-                ProtoService.ToggleSignaturesAsync(_item.ToInputChannel(), _isSignatures, null);
-            }
         }
     }
 }

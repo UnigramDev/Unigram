@@ -28,10 +28,11 @@
 
         <MenuFlyout x:Key="DialogMenuFlyout" Opening="MenuFlyout_Opening">
             <MenuFlyoutItem Loaded="DialogPin_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogPinCommand}" CommandParameter="{Binding}" Text="Pin to top"/>
+            <MenuFlyoutItem Loaded="DialogNotify_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogNotifyCommand}" CommandParameter="{Binding}" Text="Disable notifications"/>
             <MenuFlyoutItem Loaded="DialogClear_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogClearCommand}" CommandParameter="{Binding}" Text="Clear history"/>
-            <MenuFlyoutItem Loaded="DialogDelete_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteCommand}" CommandParameter="{Binding}" Text="Delete conversation"/> <!-- Only shows with conversations to single people -->
-            <MenuFlyoutItem Loaded="DialogDeleteAndStop_Loaded" Text="Delete and stop"/>
-            <MenuFlyoutItem Loaded="DialogDeleteAndExit_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteCommand}" CommandParameter="{Binding}" Text="Delete and exit"/> <!-- Only shows if IsCreator -->
+            <MenuFlyoutItem Loaded="DialogDelete_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteCommand}" CommandParameter="{Binding}" Text="Delete conversation"/>
+            <MenuFlyoutItem Loaded="DialogDeleteAndStop_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteAndStopCommand}" CommandParameter="{Binding}" Text="Delete and stop"/>
+            <MenuFlyoutItem Loaded="DialogDeleteAndExit_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteCommand}" CommandParameter="{Binding}" Text="Delete and exit"/>
         </MenuFlyout>
 
         <Style TargetType="PivotItem">
@@ -89,406 +90,535 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <x:Double x:Key="PaneToggleButtonSize">48</x:Double>
+        <Thickness x:Key="NavigationViewToggleBorderThickness">1</Thickness>
+        <Thickness x:Key="NavigationViewItemBorderThickness">2,1</Thickness>
+
+        <Style x:Key="ImageNavigationMenuItemStyle" TargetType="controls:NavigationViewItem">
+            <Setter Property="Foreground" Value="{ThemeResource NavigationViewItemForeground}" />
+            <Setter Property="Background" Value="{ThemeResource NavigationViewItemBackground}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource NavigationViewItemBorderBrush}" />
+            <Setter Property="BorderThickness" Value="{StaticResource NavigationViewItemBorderThickness}" />
+            <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:NavigationViewItem">
+                        <Grid x:Name="LayoutRoot" Height="40" Background="{TemplateBinding Background}" Control.IsTemplateFocusTarget="True">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="PointerStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="LayoutRoot.Background" Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
+                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource NavigationViewItemForegroundPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="LayoutRoot.Background" Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
+                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource NavigationViewItemForegroundPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Target="LayoutRoot.Background" Value="{ThemeResource NavigationViewItemBackgroundSelected}" />
+                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource NavigationViewItemForegroundSelected}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOverSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="LayoutRoot.Background" Value="{ThemeResource NavigationViewItemBackgroundSelectedPointerOver}" />
+                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource NavigationViewItemForegroundSelectedPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="PressedSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="LayoutRoot.Background" Value="{ThemeResource NavigationViewItemBackgroundSelectedPressed}" />
+                                            <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource NavigationViewItemForegroundSelectedPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="DisabledStates">
+                                    <VisualStateGroup.States>
+                                        <VisualState x:Name="Enabled" />
+                                        <VisualState x:Name="Disabled">
+                                            <VisualState.Setters>
+                                                <Setter Target="LayoutRoot.Opacity" Value="{ThemeResource ListViewItemDisabledThemeOpacity}" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup.States>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="PaneStates">
+                                    <VisualStateGroup.States>
+                                        <VisualState x:Name="NotClosedCompact" />
+                                        <VisualState x:Name="ClosedCompact" />
+                                    </VisualStateGroup.States>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="IconStates">
+                                    <VisualState x:Name="IconVisible" />
+                                    <VisualState x:Name="IconCollapsed">
+                                        <VisualState.Setters>
+                                            <Setter Target="IconBox.Visibility" Value="Collapsed" />
+                                            <Setter Target="IconColumn.Width" Value="16" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <Rectangle x:Name="SelectionIndicator" Width="6" Height="24" Fill="{ThemeResource NavigationViewSelectionIndicatorForeground}" Opacity="0" />
+                            </Grid>
+                            <Grid Height="40" HorizontalAlignment="Left">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition x:Name="IconColumn" Width="48" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Viewbox x:Name="IconBox" Margin="16,12">
+                                    <Ellipse Width="64" Height="64">
+                                        <Ellipse.Fill>
+                                            <ImageBrush ImageSource="{Binding Tag, RelativeSource={RelativeSource Mode=TemplatedParent}}" AlignmentY="Center" AlignmentX="Center" Stretch="UniformToFill" />
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                </Viewbox>
+                                <ContentPresenter x:Name="ContentPresenter"
+                                              Grid.Column="1"
+                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}" />
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
 
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Grid.Row="1">
-        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <controls:PageHeader/>
-            
-            <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Grid.RowSpan="2">
-                <Pivot.HeaderTemplate>
-                    <DataTemplate x:DataType="x:String">
-                        <TextBlock Text="{x:Bind}">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="FontFamily" Value="XamlAutoFontFamily" />
-                                    <Setter Property="FontWeight" Value="SemiBold" />
-                                    <Setter Property="FontSize" Value="15" />
-                                    <Setter Property="TextTrimming" Value="None" />
-                                    <Setter Property="TextWrapping" Value="Wrap" />
-                                    <Setter Property="LineStackingStrategy" Value="MaxHeight" />
-                                    <Setter Property="TextLineBounds" Value="Full" />
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </DataTemplate>
-                </Pivot.HeaderTemplate>
-                <Pivot.RightHeader>
+        <controls:NavigationView x:Name="Navigation" ItemClick="NavigationView_ItemClick">
+            <controls:NavigationView.MenuItems>
+                <controls:NavigationViewItem x:Name="NavigationNewChat" Content="New Group" Glyph="&#xE125;" />
+                <!--<controls:NavigationViewItem Text="New Secret Chat" Glyph="&#xE125;" />-->
+                <controls:NavigationViewItem x:Name="NavigationNewChannel" Content="New Channel" Glyph="&#xE789;" />
+                <controls:NavigationViewItemSeparator/>
+
+                <controls:NavigationViewItem x:Name="NavigationChats" Content="Chats" IsChecked="True" Glyph="&#xE8BD;" />
+                <controls:NavigationViewItem x:Name="NavigationContacts" Content="Contacts" Glyph="&#xE8D4;" />
+                <controls:NavigationViewItem x:Name="NavigationCalls" Content="Calls" Glyph="&#xE717;" />
+                <!--<controls:NavigationViewItem Text="Invite Friends" Glyph="&#xE789;" />-->
+                <controls:NavigationViewItem x:Name="NavigationSettings" Content="Settings" Glyph="&#xE115;" />
+                <!--<controls:NavigationViewItem Text="Telegram FAQ" Glyph="&#xE897;" />-->
+                <controls:NavigationViewItemSeparator/>
+                <controls:NavigationViewItem x:Name="NavigationOfficialChannel" Content="Official Channel" Glyph="&#xE789;" />
+            </controls:NavigationView.MenuItems>
+            <controls:NavigationView.PaneFooter>
+                <StackPanel>
+                    <controls:GlyphButton Click="About_Click" Content="About" Glyph="&#xE946;" Style="{StaticResource NavigationGlyphButtonStyle}"/>
+                    <controls:GlyphButton Click="Self_Click" Content="{x:Bind ViewModel.Contacts.Self.FullName, Mode=OneWay}" Tag="{x:Bind ViewModel.Contacts.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Style="{StaticResource NavigationImageGlyphButtonStyle}"/>
+                </StackPanel>
+            </controls:NavigationView.PaneFooter>
+
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <controls:ContentPageHeader>
                     <Grid>
-                        <Button x:Name="btnOptions"
-                                Padding="16,23,16,0"
-                                Style="{StaticResource EllipsisButton}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="DefaultHeader" Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}" VerticalAlignment="Center" Margin="60,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+
+                        <Button x:Name="ButtonOptions"
+                                    Padding="16,23,16,0"
+                                    Style="{StaticResource EllipsisButton}"
+                                    Grid.Column="1">
                             <FontIcon x:Name="EllipsisIcon"
-                                      VerticalAlignment="Center"
-                                      FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                      FontSize="16"
-                                      Glyph="&#xE10C;"
-                                      Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                                            VerticalAlignment="Center"
+                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                            FontSize="16"
+                                            Glyph="&#xE10C;"
+                                            Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
                             <Button.Flyout>
                                 <MenuFlyout>
-                                    <MenuFlyoutItem x:Name="NewChatItem"
-                                                    Click="NewChat_Click"
-                                                    Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                    Text="New Group"
-                                                    Tag="&#xE125;" />
-                                    <MenuFlyoutItem x:Name="NewChannelItem"
-                                                    Click="NewChannel_Click"
-                                                    Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                    Text="New Channel"
-                                                    Tag="&#xE789;" />
-
                                     <MenuFlyoutItem x:Name="EditNameItem"
-                                                    Click="{x:Bind SettingsView.EditName_Click}"
-                                                    Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                    Text="Edit name"
-                                                    Tag="&#xE104;"/>
+                                                        Click="{x:Bind SettingsView.EditName_Click}"
+                                                        Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                        Text="Edit name"
+                                                        Tag="&#xE104;"/>
                                     <MenuFlyoutItem x:Name="LogoutItem"
-                                                    Command="{x:Bind SettingsView.ViewModel.LogoutCommand}"
-                                                    Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                    Text="Logout"
-                                                    Tag="&#xE106;"/>
-
-                                    <MenuFlyoutSeparator x:Name="FlyoutSeperator"/>
-                                    <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                    Click="cbtnMasterAbout_Click"
-                                                    Text="About"
-                                                    Tag="&#xE11B;"
-                                                    MinWidth="120"/>
+                                                        Command="{x:Bind SettingsView.ViewModel.LogoutCommand}"
+                                                        Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                        Text="Logout"
+                                                        Tag="&#xE10A;"/>
                                 </MenuFlyout>
                             </Button.Flyout>
                         </Button>
-                    </Grid>
-                </Pivot.RightHeader>
-                <PivotItem Header="Chats">
-                    <!--<PivotItem.Header>
-                         <controls:TabHeaderStyle Glyph="&#xE15F;"/>
-                         </PivotItem.Header>-->
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
+
                         <controls:SearchTextBox x:Name="SearchDialogs"
-                                                Style="{StaticResource SearchTextBoxStyle}"
-                                                Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
-                                                PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                                PlaceholderText="Search chats and messages"
-                                                TextChanged="txtSearch_TextChanged"
-                                                KeyDown="txtSearch_KeyDown"
-                                                Canvas.ZIndex="1"/>
-                        <Grid Canvas.ZIndex="-1" Grid.Row="1">
-                            <controls:ScrollViewerBackground
-                                Visibility="{x:Bind (Visibility)ViewModel.Dialogs.IsFirstPinned, Mode=OneWay}"
-                                Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                                ScrollingHost="{x:Bind DialogsListView}"
-                                VerticalAlignment="Top"/>
-                            <controls:DialogsListView x:Name="DialogsListView"
-                                                      ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
-                                                      IsItemClickEnabled="True"
-                                                      SelectionMode="None"
-                                                      ItemClick="ListView_ItemClick"
-                                                      SelectionChanged="ListView_SelectionChanged">
-                                <!--CanDragItems="True" 
-                                     AllowDrop="True"-->
-                                <ListView.ItemContainerStyleSelector>
-                                    <selectors:DialogStyleSelector>
-                                        <selectors:DialogStyleSelector.DialogStyle>
-                                            <Style TargetType="ListViewItem">
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                                <Setter Property="Padding" Value="0"/>
-                                            </Style>
-                                        </selectors:DialogStyleSelector.DialogStyle>
-                                        <selectors:DialogStyleSelector.PinnedStyle>
-                                            <Style TargetType="ListViewItem">
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                    Padding="60,3,6,5"
+                                                    Background="{x:Null}"
+                                                    BorderBrush="{x:Null}"
+                                                    Style="{StaticResource SearchTextBoxStyle}"
+                                                    Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
+                                                    PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                                    PlaceholderText="Search for chats and messages"
+                                                    TextChanged="txtSearch_TextChanged"
+                                                    KeyDown="txtSearch_KeyDown"
+                                                    Grid.ColumnSpan="2"
+                                                    Canvas.ZIndex="1"/>
+                        <!--<controls:SearchTextBox x:Name="SearchContacts"
+                                                    Padding="60,3,6,5"
+                                                    Background="{x:Null}"
+                                                    BorderBrush="{x:Null}"
+                                                    Style="{StaticResource SearchTextBoxStyle}"
+                                                    Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
+                                                    PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                                    PlaceholderText="Search for contacts and usernames"
+                                                    TextChanged="txtSearch_TextChanged"
+                                                    KeyDown="txtSearch_KeyDown"
+                                                    Grid.ColumnSpan="2"
+                                                    Canvas.ZIndex="1"/>-->
+                    </Grid>
+                </controls:ContentPageHeader>
+
+                <Grid Visibility="{x:Bind ViewModel.LiveLocation.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Command="{x:Bind ViewModel.LiveLocationCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
+                        <StackPanel>
+                            <TextBlock Text="Live Location" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind ConvertGeoLive(ViewModel.LiveLocation.Items.Count, ViewModel.LiveLocation.Items), Mode=OneWay}" TextAlignment="Center" FontSize="10" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <controls:GlyphButton Command="{x:Bind ViewModel.StopLiveLocationCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
+
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
+                </Grid>
+
+
+                <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Style="{StaticResource HeaderlessPivotStyle}" Grid.Row="2">
+                    <PivotItem Header="Chats">
+                        <Grid>
+                            <ListView x:Name="DialogsSearchListView"
+                                      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                      ItemsSource="{Binding Source={StaticResource SearchResults}}"
+                                      IsItemClickEnabled="True"
+                                      SelectionMode="None"
+                                      ItemClick="ListView_ItemClick"
+                                      SelectionChanged="ListView_SelectionChanged"
+                                      Grid.Row="1">
+                                <ListView.ItemTemplateSelector>
+                                    <selectors:SearchTemplateSelector>
+                                        <selectors:SearchTemplateSelector.UserTemplate>
+                                            <DataTemplate x:DataType="models:TLUser">
+                                                <Grid Margin="0,4,0,8">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                                                    <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                                    <TextBlock Text="{x:Bind Username}"
+                                                               VerticalAlignment="Top"
+                                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               TextWrapping="NoWrap"
+                                                               Grid.Column="1"
+                                                               Grid.Row="1"
+                                                               MaxLines="1">
+                                                        <i:Interaction.Behaviors>
+                                                            <behaviors:UsernameHighlightBehavior SearchString="{Binding ElementName=SearchDialogs, Path=DataContext.Dialogs.SearchQuery}" HighlightBrush="{ThemeResource TelegramDialogLabelFromBrush}"/>
+                                                        </i:Interaction.Behaviors>
+                                                    </TextBlock>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </selectors:SearchTemplateSelector.UserTemplate>
+                                        <selectors:SearchTemplateSelector.ChannelTemplate>
+                                            <DataTemplate x:DataType="models:TLChannel">
+                                                <Grid Margin="0,6">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                                                    <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{x:Bind DisplayName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom"/>
+                                                        <Grid Margin="4,0,0,-2" Visibility="{x:Bind (Visibility)IsVerified, Mode=OneWay}" Grid.Column="1">
+                                                            <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
+                                                            <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
+                                                        </Grid>
+                                                    </Grid>
+                                                    <TextBlock Text="{x:Bind Username}"
+                                                               VerticalAlignment="Top"
+                                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               TextWrapping="NoWrap"
+                                                               Grid.Column="1"
+                                                               Grid.Row="1"
+                                                               MaxLines="1">
+                                                        <i:Interaction.Behaviors>
+                                                            <behaviors:UsernameHighlightBehavior SearchString="{Binding ElementName=SearchDialogs, Path=DataContext.Dialogs.SearchQuery}" HighlightBrush="{ThemeResource TelegramDialogLabelFromBrush}"/>
+                                                        </i:Interaction.Behaviors>
+                                                    </TextBlock>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </selectors:SearchTemplateSelector.ChannelTemplate>
+                                        <selectors:SearchTemplateSelector.ChannelForbiddenTemplate>
+                                            <DataTemplate x:DataType="models:TLChannelForbidden">
+                                                <Grid Margin="0,6">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid Background="{x:Bind Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
+                                                        <TextBlock Foreground="White" Text="{x:Bind Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
+                                                    </Grid>
+                                                    <TextBlock Text="{x:Bind DisplayName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                                    <TextBlock Text="{Binding ElementName=SearchDialogs, Path=DataContext.Dialogs.SearchQuery}"
+                                                               VerticalAlignment="Top"
+                                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               TextWrapping="NoWrap"
+                                                               Grid.Column="1"
+                                                               Grid.Row="1"
+                                                               MaxLines="1">
+                                                        <i:Interaction.Behaviors>
+                                                            <behaviors:UsernameHighlightBehavior SearchString="{Binding ElementName=SearchDialogs, Path=DataContext.Dialogs.SearchQuery}" HighlightBrush="{ThemeResource TelegramDialogLabelFromBrush}"/>
+                                                        </i:Interaction.Behaviors>
+                                                    </TextBlock>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </selectors:SearchTemplateSelector.ChannelForbiddenTemplate>
+                                        <selectors:SearchTemplateSelector.MessageTemplate>
+                                            <DataTemplate>
+                                                <items:DialogListViewItem Margin="-12,0"/>
+                                            </DataTemplate>
+                                        </selectors:SearchTemplateSelector.MessageTemplate>
+                                    </selectors:SearchTemplateSelector>
+                                </ListView.ItemTemplateSelector>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemContainerTransitions>
+                                    <TransitionCollection/>
+                                </ListView.ItemContainerTransitions>
+                                <ListView.GroupStyle>
+                                    <GroupStyle>
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Key}" Style="{StaticResource BaseTextBlockStyle}"/>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                        <GroupStyle.HeaderContainerStyle>
+                                            <Style TargetType="ListViewHeaderItem">
                                                 <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
-                                                <Setter Property="Padding" Value="0"/>
+                                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                                <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                                                <Setter Property="Margin" Value="0,0,0,0"/>
+                                                <Setter Property="Padding" Value="12,8,12,9"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                <Setter Property="VerticalContentAlignment" Value="Top" />
+                                                <Setter Property="MinHeight" Value="0"/>
+                                                <Setter Property="UseSystemFocusVisuals" Value="True" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="ListViewHeaderItem">
+                                                            <Border Background="{TemplateBinding Background}"
+                                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                                    Visibility="{Binding Content.Key, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}">
+                                                                <ContentPresenter x:Name="ContentPresenter"
+                                                                                  Margin="{TemplateBinding Padding}"
+                                                                                  Content="{TemplateBinding Content}"
+                                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
                                             </Style>
-                                        </selectors:DialogStyleSelector.PinnedStyle>
-                                    </selectors:DialogStyleSelector>
-                                </ListView.ItemContainerStyleSelector>
+                                        </GroupStyle.HeaderContainerStyle>
+                                    </GroupStyle>
+                                </ListView.GroupStyle>
+                            </ListView>
+                            <Grid x:Name="DialogsPanel">
+                                <controls:ScrollViewerBackground
+                                    Visibility="{x:Bind (Visibility)ViewModel.Dialogs.IsFirstPinned, Mode=OneWay}"
+                                    Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                                    ScrollingHost="{x:Bind DialogsListView}"
+                                    VerticalAlignment="Top"/>
+                                <controls:DialogsListView x:Name="DialogsListView"
+                                                          ItemsSource="{x:Bind ViewModel.Dialogs.Items}"
+                                                          IsItemClickEnabled="True"
+                                                          SelectionMode="None"
+                                                          ItemClick="ListView_ItemClick"
+                                                          SelectionChanged="ListView_SelectionChanged">
+                                    <!--CanDragItems="True" 
+                                         AllowDrop="True"-->
+                                    <ListView.ItemContainerStyleSelector>
+                                        <selectors:DialogStyleSelector>
+                                            <selectors:DialogStyleSelector.DialogStyle>
+                                                <Style TargetType="ListViewItem">
+                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                    <Setter Property="Padding" Value="0"/>
+                                                </Style>
+                                            </selectors:DialogStyleSelector.DialogStyle>
+                                            <selectors:DialogStyleSelector.PinnedStyle>
+                                                <Style TargetType="ListViewItem">
+                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                    <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
+                                                    <Setter Property="Padding" Value="0"/>
+                                                </Style>
+                                            </selectors:DialogStyleSelector.PinnedStyle>
+                                        </selectors:DialogStyleSelector>
+                                    </ListView.ItemContainerStyleSelector>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <items:DialogListViewItem ContextFlyout="{StaticResource DialogMenuFlyout}"/>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.Footer>
+                                        <Border Height="6"/>
+                                    </ListView.Footer>
+                                </controls:DialogsListView>
+                            </Grid>
+                        </Grid>
+                    </PivotItem>
+                    <PivotItem Loaded="PivotItem_Loaded" Header="Contacts">
+                        <Grid>
+                            <controls:ScrollViewerBackground
+                                Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
+                                ScrollingHost="{x:Bind UsersListView}"
+                                VerticalAlignment="Top"/>
+                            <ListView x:Name="UsersListView"
+                                      ItemsSource="{x:Bind ViewModel.Contacts.Items}"
+                                      IsItemClickEnabled="True"
+                                      ItemClick="ListView_ItemClick"
+                                      SelectionChanged="ListView_SelectionChanged">
+                                      <!--Header="{x:Bind ViewModel.Contacts.Self, Mode=OneWay}"-->
+                                <!--<ListView.HeaderTemplate>
+                                    <DataTemplate x:DataType="models:TLUser">
+                                        <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
+                                            <Button Click="Self_Click" Style="{StaticResource EmptyButtonStyle}">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <controls:ProfilePictureView x:Phase="3" Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="64" Height="64" Margin="12" Grid.RowSpan="2"/>
+
+                                                    <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{x:Bind FullName, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                                                        <Grid Margin="4,0,0,-2" Visibility="{x:Bind (Visibility)IsVerified, Mode=OneWay}" Grid.Column="2">
+                                                            <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
+                                                            <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
+                                                        </Grid>
+                                                    </Grid>
+                                                    <TextBlock Text="{x:Bind Phone, Converter={StaticResource PhoneNumberFormatConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
+                                                </Grid>
+                                            </Button>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.HeaderTemplate>-->
                                 <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <items:DialogListViewItem ContextFlyout="{StaticResource DialogMenuFlyout}"/>
+                                    <DataTemplate x:DataType="models:TLUser">
+                                        <Grid Margin="0,6">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            <controls:ProfilePictureView x:Phase="3" Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                                            <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                            <TextBlock Text="{x:Bind Converter={StaticResource LastSeenConverter}, ConverterParameter=list}"
+                                                       x:Phase="1"
+                                                       VerticalAlignment="Top"
+                                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       TextWrapping="NoWrap"
+                                                       Grid.Column="1"
+                                                       Grid.Row="1"
+                                                       MaxLines="1"/>
+                                        </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
-                                <ListView.Footer>
-                                    <Border Height="6"/>
-                                </ListView.Footer>
-                            </controls:DialogsListView>
+                            </ListView>
                         </Grid>
-                        <ListView x:Name="DialogsSearchListView"
-                                  Visibility="Collapsed"
-                                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                  ItemsSource="{Binding Source={StaticResource SearchResults}}"
-                                  IsItemClickEnabled="True"
-                                  SelectionMode="None"
+                    </PivotItem>
+                    <PivotItem x:Name="Calls" Header="Calls">
+                        <ListView ItemsSource="{x:Bind ViewModel.Calls.Items}"
                                   ItemClick="ListView_ItemClick"
-                                  SelectionChanged="ListView_SelectionChanged"
-                                  Grid.Row="1">
-                            <ListView.ItemTemplateSelector>
-                                <selectors:SearchTemplateSelector>
-                                    <selectors:SearchTemplateSelector.UserTemplate>
-                                        <DataTemplate x:DataType="models:TLUser">
-                                            <Grid Margin="0,4,0,8">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition/>
-                                                </Grid.ColumnDefinitions>
-                                                <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                                                <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                                                <TextBlock Text="{x:Bind Username}"
-                                                           VerticalAlignment="Top"
-                                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                                           TextTrimming="CharacterEllipsis"
-                                                           TextWrapping="NoWrap"
-                                                           Grid.Column="1"
-                                                           Grid.Row="1"
-                                                           MaxLines="1">
-                                                    <i:Interaction.Behaviors>
-                                                        <behaviors:UsernameHighlightBehavior SearchString="{Binding ElementName=SearchDialogs, Path=DataContext.Dialogs.SearchQuery}" HighlightBrush="{ThemeResource TelegramDialogLabelFromBrush}"/>
-                                                    </i:Interaction.Behaviors>
-                                                </TextBlock>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </selectors:SearchTemplateSelector.UserTemplate>
-                                    <selectors:SearchTemplateSelector.ChannelTemplate>
-                                        <DataTemplate x:DataType="models:TLChannel">
-                                            <Grid Margin="0,6">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition/>
-                                                </Grid.ColumnDefinitions>
-                                                <controls:ProfilePictureView Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                                                <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Text="{x:Bind DisplayName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Bottom"/>
-                                                    <Grid Margin="4,0,0,-2" Visibility="{x:Bind (Visibility)IsVerified, Mode=OneWay}" Grid.Column="1">
-                                                        <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
-                                                        <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
-                                                    </Grid>
-                                                </Grid>
-                                                <TextBlock Text="{x:Bind Username}"
-                                                           VerticalAlignment="Top"
-                                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                                           TextTrimming="CharacterEllipsis"
-                                                           TextWrapping="NoWrap"
-                                                           Grid.Column="1"
-                                                           Grid.Row="1"
-                                                           MaxLines="1">
-                                                    <i:Interaction.Behaviors>
-                                                        <behaviors:UsernameHighlightBehavior SearchString="{Binding ElementName=SearchDialogs, Path=DataContext.Dialogs.SearchQuery}" HighlightBrush="{ThemeResource TelegramDialogLabelFromBrush}"/>
-                                                    </i:Interaction.Behaviors>
-                                                </TextBlock>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </selectors:SearchTemplateSelector.ChannelTemplate>
-                                    <selectors:SearchTemplateSelector.ChannelForbiddenTemplate>
-                                        <DataTemplate x:DataType="models:TLChannelForbidden">
-                                            <Grid Margin="0,6">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition/>
-                                                </Grid.ColumnDefinitions>
-                                                <Grid Background="{x:Bind Id, Converter={StaticResource BubblePlaceholderConverter}}" Width="36" Height="36" CornerRadius="18" Margin="0,0,12,0" Grid.RowSpan="2">
-                                                    <TextBlock Foreground="White" Text="{x:Bind Converter={StaticResource InitialNameStringConverter}}" VerticalAlignment="Center" TextAlignment="Center"/>
-                                                </Grid>
-                                                <TextBlock Text="{x:Bind DisplayName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                                                <TextBlock Text="{Binding ElementName=SearchDialogs, Path=DataContext.Dialogs.SearchQuery}"
-                                                           VerticalAlignment="Top"
-                                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                                           TextTrimming="CharacterEllipsis"
-                                                           TextWrapping="NoWrap"
-                                                           Grid.Column="1"
-                                                           Grid.Row="1"
-                                                           MaxLines="1">
-                                                    <i:Interaction.Behaviors>
-                                                        <behaviors:UsernameHighlightBehavior SearchString="{Binding ElementName=SearchDialogs, Path=DataContext.Dialogs.SearchQuery}" HighlightBrush="{ThemeResource TelegramDialogLabelFromBrush}"/>
-                                                    </i:Interaction.Behaviors>
-                                                </TextBlock>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </selectors:SearchTemplateSelector.ChannelForbiddenTemplate>
-                                    <selectors:SearchTemplateSelector.MessageTemplate>
-                                        <DataTemplate>
-                                            <items:DialogListViewItem Margin="-12,0"/>
-                                        </DataTemplate>
-                                    </selectors:SearchTemplateSelector.MessageTemplate>
-                                </selectors:SearchTemplateSelector>
-                            </ListView.ItemTemplateSelector>
+                                  IsItemClickEnabled="True"
+                                  SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <messages:HistoryCallMessageControl/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Padding" Value="0"/>
                                 </Style>
                             </ListView.ItemContainerStyle>
-                            <ListView.ItemContainerTransitions>
-                                <TransitionCollection/>
-                            </ListView.ItemContainerTransitions>
-                            <ListView.GroupStyle>
-                                <GroupStyle>
-                                    <GroupStyle.HeaderTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Key}" Style="{StaticResource BaseTextBlockStyle}"/>
-                                        </DataTemplate>
-                                    </GroupStyle.HeaderTemplate>
-                                    <GroupStyle.HeaderContainerStyle>
-                                        <Style TargetType="ListViewHeaderItem">
-                                            <Setter Property="Background" Value="{ThemeResource TelegramBackgroundSubtitleBarBrush}" />
-                                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                            <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                                            <Setter Property="Margin" Value="0,0,0,0"/>
-                                            <Setter Property="Padding" Value="12,8,12,9"/>
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                            <Setter Property="VerticalContentAlignment" Value="Top" />
-                                            <Setter Property="MinHeight" Value="0"/>
-                                            <Setter Property="UseSystemFocusVisuals" Value="True" />
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="ListViewHeaderItem">
-                                                        <Border Background="{TemplateBinding Background}"
-                                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                                Visibility="{Binding Content.Key, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}">
-                                                            <ContentPresenter x:Name="ContentPresenter"
-                                                                              Margin="{TemplateBinding Padding}"
-                                                                              Content="{TemplateBinding Content}"
-                                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </GroupStyle.HeaderContainerStyle>
-                                </GroupStyle>
-                            </ListView.GroupStyle>
                         </ListView>
-                    </Grid>
-                </PivotItem>
-                <PivotItem Loaded="PivotItem_Loaded" Header="Contacts">
-                    <Grid>
-                        <controls:ScrollViewerBackground
-                            Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"
-                            ScrollingHost="{x:Bind UsersListView}"
-                            VerticalAlignment="Top"/>
-                        <ListView x:Name="UsersListView"
-                                  ItemsSource="{x:Bind ViewModel.Contacts.Items}"
-                                  Header="{x:Bind ViewModel.Contacts.Self, Mode=OneWay}"
-                                  IsItemClickEnabled="True"
-                                  ItemClick="ListView_ItemClick"
-                                  SelectionChanged="ListView_SelectionChanged">
-                            <ListView.HeaderTemplate>
-                                <DataTemplate x:DataType="models:TLUser">
-                                    <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
-                                        <Button Click="Self_Click" Style="{StaticResource EmptyButtonStyle}">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition/>
-                                                </Grid.ColumnDefinitions>
-                                                <controls:ProfilePictureView x:Phase="3" Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="64" Height="64" Margin="12" Grid.RowSpan="2"/>
+                    </PivotItem>
+                    <PivotItem Header="Settings">
+                        <local:SettingsPage x:Name="SettingsView" MasterDetail="{x:Bind MasterDetail}"/>
+                    </PivotItem>
+                </Pivot>
 
-                                                <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <TextBlock Text="{x:Bind FullName, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-                                                    <Grid Margin="4,0,0,-2" Visibility="{x:Bind (Visibility)IsVerified, Mode=OneWay}" Grid.Column="2">
-                                                        <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
-                                                        <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
-                                                    </Grid>
-                                                </Grid>
-                                                <TextBlock Text="{x:Bind Phone, Converter={StaticResource PhoneNumberFormatConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
-                                            </Grid>
-                                        </Button>
-                                    </Border>
-                                </DataTemplate>
-                            </ListView.HeaderTemplate>
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="models:TLUser">
-                                    <Grid Margin="0,6">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition/>
-                                        </Grid.ColumnDefinitions>
-                                        <controls:ProfilePictureView x:Phase="3" Source="{x:Bind PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" IsEnabled="False" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
-
-                                        <TextBlock Text="{x:Bind FullName}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
-                                        <TextBlock Text="{x:Bind Converter={StaticResource LastSeenConverter}, ConverterParameter=list}"
-                                                   x:Phase="1"
-                                                   VerticalAlignment="Top"
-                                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                                   TextTrimming="CharacterEllipsis"
-                                                   TextWrapping="NoWrap"
-                                                   Grid.Column="1"
-                                                   Grid.Row="1"
-                                                   MaxLines="1"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Grid>
-                </PivotItem>
-                <PivotItem x:Name="Calls" Header="Calls">
-                    <ListView ItemsSource="{x:Bind ViewModel.Calls.Items}"
-                              ItemClick="ListView_ItemClick"
-                              IsItemClickEnabled="True"
-                              SelectionMode="None">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <messages:HistoryCallMessageControl/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                <Setter Property="Padding" Value="0"/>
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                    </ListView>
-                </PivotItem>
-                <PivotItem Header="Settings">
-                    <local:SettingsPage x:Name="SettingsView" MasterDetail="{x:Bind MasterDetail}"/>
-                </PivotItem>
-            </Pivot>
-
-            <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="2" Grid.Row="1"/>
-        </Grid>
+                <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="2" Grid.Row="1"/>
+            </Grid>
+        </controls:NavigationView>
     </controls:MasterDetailView>
 </Page>
