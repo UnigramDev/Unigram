@@ -94,6 +94,10 @@
     <Compile Include="Services\Cache\Context\CreateDatabase.cs" />
     <Compile Include="Services\Cache\Context\DialogsContext.cs" />
     <Compile Include="Services\Cache\Context\UsersContext.cs" />
+    <Compile Include="Services\Cache\EventArgs\ChannelAvailableMessagesEventArgs.cs" />
+    <Compile Include="Services\Cache\EventArgs\DialogRemovedEventArgs.cs" />
+    <Compile Include="Services\Cache\EventArgs\MessageExpiredEventArgs.cs" />
+    <Compile Include="Services\Cache\EventArgs\MessagesRemovedEventArgs.cs" />
     <Compile Include="Services\FileManager\DownloadDocumentFileManager.cs" />
     <Compile Include="Services\FileManager\DownloadableItem.cs" />
     <Compile Include="Services\FileManager\DownloadablePart.cs" />

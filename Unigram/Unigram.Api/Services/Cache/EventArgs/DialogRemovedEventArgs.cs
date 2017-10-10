@@ -2,11 +2,11 @@
 
 namespace Telegram.Api.Services.Cache.EventArgs
 {
-    public class DialogAddedEventArgs
+    public class DialogRemovedEventArgs
     {
         public TLDialog Dialog { get; protected set; }
 
-        public DialogAddedEventArgs(TLDialog dialog)
+        public DialogRemovedEventArgs(TLDialog dialog)
         {
             Dialog = dialog;
         }

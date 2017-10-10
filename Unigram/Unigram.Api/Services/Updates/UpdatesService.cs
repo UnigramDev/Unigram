@@ -1854,7 +1854,7 @@ namespace Telegram.Api.Services.Updates
 
                 }
 
-                _cacheService.ClearDialog(new TLPeerChannel { ChannelId = updateChannelAvailableMessages.ChannelId });
+                _cacheService.ClearDialog(new TLPeerChannel { ChannelId = updateChannelAvailableMessages.ChannelId }, updateChannelAvailableMessages.AvailableMinId);
             }
 
             // TODO: No idea

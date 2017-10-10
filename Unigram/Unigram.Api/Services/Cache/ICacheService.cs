@@ -121,6 +121,8 @@ namespace Telegram.Api.Services.Cache
         void DeleteUser(int? id);
         void DeleteChat(int? id);
         void DeleteUserHistory(TLPeerChannel channel, TLPeerUser peer);
+
+        void ClearDialog(TLPeerBase peer, int availableMinId);
     }
 
     public class ExceptionInfo

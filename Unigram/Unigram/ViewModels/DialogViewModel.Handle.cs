@@ -35,6 +35,7 @@ namespace Unigram.ViewModels
         IHandle<DialogRemovedEventArgs>,
         IHandle<UpdateCompletedEventArgs>,
         IHandle<ChannelUpdateCompletedEventArgs>,
+        IHandle<ChannelAvailableMessagesEventArgs>,
         IHandle<string>
     {
         public async void Handle(string message)
@@ -81,6 +82,26 @@ namespace Unigram.ViewModels
                 {
                     Dispatcher.Dispatch(SaveDraft);
                 }
+            }
+        }
+
+        public void Handle(ChannelAvailableMessagesEventArgs args)
+        {
+            if (With == args.Dialog.With)
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    for (var i = 0; i < Items.Count; i++)
+                    {
+                        var messageCommon = Items[i] as TLMessageCommonBase;
+                        if (messageCommon != null && messageCommon.ToId is TLPeerChannel && messageCommon.Id <= args.AvailableMinId)
+                        {
+                            Items.RemoveAt(i--);
+                        }
+                    }
+
+                    //IsEmpty = Items.Count == 0 && (_messages == null || _messages.Count == 0) && LazyItems.Count == 0;
+                });
             }
         }
 

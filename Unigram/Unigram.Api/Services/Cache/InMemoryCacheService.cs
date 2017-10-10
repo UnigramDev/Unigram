@@ -3170,6 +3170,16 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
+        public void ClearDialog(TLPeerBase peer, int availableMinId)
+        {
+            if (peer != null)
+            {
+                _database.ClearDialog(peer, availableMinId);
+
+                _database.Commit();
+            }
+        }
+
         public void DeleteUser(int? id)
         {
             _database.DeleteUser(id);

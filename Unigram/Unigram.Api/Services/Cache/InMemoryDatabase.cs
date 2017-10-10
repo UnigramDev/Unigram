@@ -1158,6 +1158,99 @@ namespace Telegram.Api.Services.Cache
             return MessagesContext[messageId.Value];
         }
 
+        public void ClearDialog(TLPeerBase peer, int availableMinId)
+        {
+            var channel = ChatsContext[peer.Id] as TLChannel;
+            if (channel != null)
+            {
+                //channel.AvailableMinId = availableMinId;
+            }
+
+            var messages = new List<TLMessageBase>();
+
+            var isDialogRemoved = false;
+            var isTopMessageUpdated = false;
+
+            var dialogBase = GetDialog(peer);
+            TLMessageBase topMessage = null;
+            lock (_dialogsSyncRoot)
+            {
+                var dialog = dialogBase as TLDialog;
+                if (dialog != null)
+                {
+                    var updatedIndex = -1;
+                    for (var i = 0; i < dialog.Messages.Count; i++)
+                    {
+                        if (dialog.Messages[i].Id > 0 && dialog.Messages[i].Id <= availableMinId)
+                        {
+                            if (updatedIndex == -1)
+                            {
+                                updatedIndex = i;
+                            }
+                            else
+                            {
+                                messages.Add(dialog.Messages[i]);
+                                dialog.Messages.RemoveAt(i--);
+                            }
+                        }
+                    }
+
+                    if (updatedIndex >= 0 && updatedIndex < dialog.Messages.Count)
+                    {
+                        var messageCommon = dialog.Messages[updatedIndex] as TLMessageCommonBase;
+                        if (messageCommon != null)
+                        {
+                            var clearHistoryMessage = new TLMessageService();
+                            clearHistoryMessage.Id = messageCommon.Id;
+                            clearHistoryMessage.FromId = messageCommon.FromId;
+                            clearHistoryMessage.ToId = messageCommon.ToId;
+                            clearHistoryMessage.Date = messageCommon.Date;
+                            clearHistoryMessage.IsOut = messageCommon.IsOut;
+                            clearHistoryMessage.Action = new TLMessageActionHistoryClear();
+
+                            dialog.Messages[updatedIndex] = clearHistoryMessage;
+                        }
+                    }
+
+                    dialog.UnreadCount = 0;
+                    dialog.UnreadMentionsCount = 0;
+
+                    if (dialog.Messages.Count == 0)
+                    {
+                        DialogsContext.Remove(dialogBase.Id);
+                        Dialogs.Remove(dialogBase);
+                        isDialogRemoved = true;
+                    }
+                    else
+                    {
+                        dialog._topMessageItem = dialog.Messages[0];
+                        dialog.TopMessage = dialog.Messages[0].Id;
+                        dialog.TopMessageRandomId = dialog.Messages[0].RandomId;
+                        isTopMessageUpdated = true;
+                        topMessage = dialog.TopMessageItem;
+                    }
+                }
+            }
+
+            for (var i = 0; i < messages.Count; i++)
+            {
+                RemoveMessageFromContext(messages[i]);
+            }
+
+            if (isDialogRemoved && _eventAggregator != null)
+            {
+                _eventAggregator.Publish(new DialogRemovedEventArgs(dialogBase));
+            }
+            if (isTopMessageUpdated && _eventAggregator != null)
+            {
+                _eventAggregator.Publish(new TopMessageUpdatedEventArgs(dialogBase, topMessage));
+            }
+            if (_eventAggregator != null)
+            {
+                _eventAggregator.Publish(new ChannelAvailableMessagesEventArgs(dialogBase, availableMinId));
+            }
+        }
+
         public void DeleteMessages(TLPeerBase peer, TLMessageBase lastMessage, IList<int> messageIds)
         {
             if (messageIds != null)
