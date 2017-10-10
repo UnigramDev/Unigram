@@ -32,6 +32,7 @@ using System.Threading.Tasks;
 using System.Reactive.Linq;
 using Unigram.Common;
 using Unigram.Core.Services;
+using Unigram.Controls.Views;
 
 namespace Unigram.Views
 {
@@ -40,6 +41,7 @@ namespace Unigram.Views
         public DialogSendLocationViewModel ViewModel => DataContext as DialogSendLocationViewModel;
 
         private MapIcon userPos;
+        private Geoposition _lastPosition;
 
         public TLMessageMediaBase Media { get; private set; }
         public ContentDialogBase Dialog { get; set; }
@@ -158,6 +160,7 @@ namespace Unigram.Views
                 userPos.Visible = true;
                 mMap.MapElements.Remove(userPos);
                 mMap.MapElements.Add(userPos);
+                _lastPosition = pos;
 
                 // Get address for current location
                 await UpdateLocationAsync(mMap.Center);
@@ -205,12 +208,17 @@ namespace Unigram.Views
             Dialog.Hide(ContentDialogBaseResult.OK);
         }
 
-        private void LiveLocation_Click(object sender, RoutedEventArgs e)
+        private async void LiveLocation_Click(object sender, RoutedEventArgs e)
         {
             if (LiveLocation == true)
             {
-                Media = new TLMessageMediaGeoLive { Geo = new TLGeoPoint { Lat = mMap.Center.Position.Latitude, Long = mMap.Center.Position.Longitude }, Period = 900 };
-                Dialog.Hide(ContentDialogBaseResult.OK);
+                var dialog = new SelectLivePeriodView();
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm == ContentDialogResult.Primary && _lastPosition != null)
+                {
+                    Media = new TLMessageMediaGeoLive { Geo = new TLGeoPoint { Lat = _lastPosition.Coordinate.Point.Position.Latitude, Long = _lastPosition.Coordinate.Point.Position.Longitude }, Period = dialog.Period };
+                    Dialog.Hide(ContentDialogBaseResult.OK);
+                }
             }
             else if (LiveLocation == false)
             {
