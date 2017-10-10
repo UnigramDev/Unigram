@@ -20,7 +20,7 @@
                             <Grid x:Name="TogglePaneTopPadding" />
                             <local:GlyphButton x:Name="TogglePaneButton" Grid.Row="1" AutomationProperties.LandmarkType="Navigation"/>
                         </Grid>
-                        <local:SwipeSplitView x:Name="RootSplitView" OpenPaneLength="240" IsSwipeablePaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                        <SplitView x:Name="RootSplitView" OpenPaneLength="240" IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                             <SplitView.Pane>
                                 <Grid x:Name="PaneContentGrid">
                                     <Grid.RowDefinitions>
@@ -42,7 +42,7 @@
                                 </Grid>
                             </SplitView.Pane>
                             <ContentPresenter Content="{TemplateBinding Content}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
-                        </local:SwipeSplitView>
+                        </SplitView>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
