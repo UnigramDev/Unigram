@@ -3290,6 +3290,28 @@ namespace Telegram.Api.Services.Cache
             _database.Commit();
         }
 
+        public void DeleteChannelMessages(int channelId, int minId)
+        {
+            var channelContext = _database.ChannelsContext[channelId];
+            if (channelContext != null)
+            {
+                var peer = new TLPeerChannel { Id = channelId };
+
+                var messages = new List<TLMessageBase>();
+                foreach (var message in channelContext)
+                {
+                    if (message.Key <= minId)
+                    {
+                        messages.Add(message.Value);
+                    }
+                }
+
+                _database.DeleteMessages(messages, peer);
+            }
+
+            _database.Commit();
+        }
+
         private void SyncContactsInternal(TLContactsImportedContacts contacts, TLContactsImportedContacts result)
         {
             var cache = contacts.Users.ToDictionary(x => x.Id);

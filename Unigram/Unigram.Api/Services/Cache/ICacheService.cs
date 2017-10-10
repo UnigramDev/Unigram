@@ -88,6 +88,7 @@ namespace Telegram.Api.Services.Cache
         void DeleteDialog(TLDialog dialog);
         void DeleteMessages(TLVector<int> ids);
         void DeleteChannelMessages(int channelId, TLVector<int> ids);
+        void DeleteChannelMessages(int channelId, int minId);
         void DeleteMessages(TLPeerBase peer, TLMessageBase lastItem, TLVector<int> messages);
         void DeleteMessages(TLVector<long> ids);
         // TODO: Encrypted void DeleteDecryptedMessages(TLVector<long> ids);
