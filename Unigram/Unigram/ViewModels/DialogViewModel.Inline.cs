@@ -240,8 +240,7 @@ namespace Unigram.ViewModels
             message.ViaBotId = botId;
             message.HasViaBotId = true;
 
-            var venueMedia = resultBase.SendMessage as TLBotInlineMessageMediaVenue;
-            if (venueMedia != null)
+            if (resultBase.SendMessage is TLBotInlineMessageMediaVenue venueMedia)
             {
                 message.Media = new TLMessageMediaVenue
                 {
@@ -252,18 +251,25 @@ namespace Unigram.ViewModels
                     Geo = venueMedia.Geo
                 };
             }
-
-            var geoMedia = resultBase.SendMessage as TLBotInlineMessageMediaGeo;
-            if (geoMedia != null)
+            else if (resultBase.SendMessage is TLBotInlineMessageMediaGeo geoMedia)
             {
-                message.Media = new TLMessageMediaGeo
+                if (geoMedia.Period > 0)
                 {
-                    Geo = geoMedia.Geo
-                };
+                    message.Media = new TLMessageMediaGeoLive
+                    {
+                        Geo = geoMedia.Geo,
+                        Period = geoMedia.Period
+                    };
+                }
+                else
+                {
+                    message.Media = new TLMessageMediaGeo
+                    {
+                        Geo = geoMedia.Geo
+                    };
+                }
             }
-
-            var contactMedia = resultBase.SendMessage as TLBotInlineMessageMediaContact;
-            if (contactMedia != null)
+            else if (resultBase.SendMessage is TLBotInlineMessageMediaContact contactMedia)
             {
                 message.Media = new TLMessageMediaContact
                 {
@@ -273,9 +279,7 @@ namespace Unigram.ViewModels
                     UserId = 0
                 };
             }
-
-            var mediaResult = resultBase as TLBotInlineMediaResult;
-            if (mediaResult != null)
+            else if (resultBase is TLBotInlineMediaResult mediaResult)
             {
                 if (mediaResult.Type.Equals("voice", StringComparison.OrdinalIgnoreCase))
                 {

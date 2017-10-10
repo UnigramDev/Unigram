@@ -258,7 +258,7 @@ namespace Unigram.Converters
 
                 return string.Format(format, number);
             }
-            else
+            else if (seconds < 60 * 60)
             {
                 var format = AppResources.CallMinutes_any;
                 var number = seconds / 60;
@@ -273,6 +273,25 @@ namespace Unigram.Converters
                 else if (number == 4)
                 {
                     format = AppResources.CallMinutes_3_10;
+                }
+
+                return string.Format(format, number);
+            }
+            else
+            {
+                var format = "{0} hours";
+                var number = seconds / (60 * 60);
+                if (number == 1)
+                {
+                    format = "{0} hours";
+                }
+                else if (number == 2)
+                {
+                    format = "{0} hours";
+                }
+                else if (number == 4)
+                {
+                    format = "{0} hours";
                 }
 
                 return string.Format(format, number);

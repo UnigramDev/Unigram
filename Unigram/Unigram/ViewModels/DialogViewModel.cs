@@ -68,6 +68,7 @@ namespace Unigram.ViewModels
         private readonly DialogStickersViewModel _stickers;
         private readonly IStickersService _stickersService;
         private readonly ILocationService _locationService;
+        private readonly ILiveLocationService _liveLocationService;
         private readonly IUploadFileManager _uploadFileManager;
         private readonly IUploadAudioManager _uploadAudioManager;
         private readonly IUploadDocumentManager _uploadDocumentManager;
@@ -76,7 +77,7 @@ namespace Unigram.ViewModels
         public int participantCount = 0;
         public int online = 0;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService, ILiveLocationService liveLocationService)
             : base(protoService, cacheService, aggregator)
         {
             _uploadFileManager = uploadFileManager;
@@ -85,6 +86,7 @@ namespace Unigram.ViewModels
             _uploadVideoManager = uploadVideoManager;
             _stickersService = stickersService;
             _locationService = locationService;
+            _liveLocationService = liveLocationService;
 
             _stickers = new DialogStickersViewModel(protoService, cacheService, aggregator, stickersService);
 
@@ -556,7 +558,7 @@ namespace Unigram.ViewModels
             IsLoading = false;
         }
 
-        public async Task LoadPreviousSliceAsync(bool force = false)
+        public async Task LoadPreviousSliceAsync(bool force = false, bool last = false)
         {
             if (_isLoadingNextSlice || _isLoadingPreviousSlice || _peer == null)
             {
@@ -565,7 +567,14 @@ namespace Unigram.ViewModels
 
             _isLoadingPreviousSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
+            if (last)
+            {
+                UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepLastItemInView : UpdatingScrollMode.KeepLastItemInView;
+            }
+            else
+            {
+                UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
+            }
 
             Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
@@ -1064,10 +1073,13 @@ namespace Unigram.ViewModels
 
                 //if (maxId == int.MaxValue)
                 //{
-                //    var history = CacheService.GetHistory(_peer.ToPeer(), maxId);
+                //    var history = CacheService.GetHistory(_peer.ToPeer());
+
+                //    IsLastSliceLoaded = false;
+                //    IsFirstSliceLoaded = false;
 
                 //    UpdatingScrollMode = UpdatingScrollMode.ForceKeepLastItemInView;
-                //    Messages.AddRange(history);
+                //    Items.AddRange(history.Reverse());
                 //}
                 //else
                 {
@@ -1743,7 +1755,7 @@ namespace Unigram.ViewModels
                 {
                     if (container.EditMessage != null)
                     {
-                        var edit = await ProtoService.EditMessageAsync(Peer, container.EditMessage.Id, message.Message, message.Entities, null, false);
+                        var edit = await ProtoService.EditMessageAsync(Peer, container.EditMessage.Id, message.Message, message.Entities, null, null, false, false);
                         if (edit.IsSucceeded)
                         {
                             CacheService.SyncEditedMessage(container.EditMessage, true, true, cachedMessage => { });

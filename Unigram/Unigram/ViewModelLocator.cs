@@ -67,6 +67,7 @@ namespace Unigram
             container.ContainerBuilder.Register((ctx) => new UploadManager(ctx.Resolve<ITelegramEventAggregator>(), ctx.Resolve<IMTProtoService>(), ctx.Resolve<IStatsService>(), DataType.Files)).As<IUploadDocumentManager>().SingleInstance();
 
             container.ContainerBuilder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<LiveLocationService>().As<ILiveLocationService>().SingleInstance();
             container.ContainerBuilder.RegisterType<LocationService>().As<ILocationService>().SingleInstance();
             container.ContainerBuilder.RegisterType<PushService>().As<IPushService>().SingleInstance();
             container.ContainerBuilder.RegisterType<JumpListService>().As<IJumpListService>().SingleInstance();

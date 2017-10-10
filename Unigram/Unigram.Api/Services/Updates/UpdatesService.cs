@@ -1846,6 +1846,18 @@ namespace Telegram.Api.Services.Updates
                 return true;
             }
 
+            var updateChannelAvailableMessages = update as TLUpdateChannelAvailableMessages;
+            if (updateChannelAvailableMessages != null)
+            {
+                var channel = _cacheService.GetChat(updateChannelAvailableMessages.ChannelId);
+                if (channel != null)
+                {
+
+                }
+
+                _cacheService.ClearDialog(new TLPeerChannel { ChannelId = updateChannelAvailableMessages.ChannelId }, updateChannelAvailableMessages.AvailableMinId);
+            }
+
             // TODO: No idea
             //var restoreMessages = update as TLUpdateRestoreMessages;
             //if (restoreMessages != null)

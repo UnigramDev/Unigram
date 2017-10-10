@@ -9,6 +9,11 @@ int64 NativeUtils::GetDirectorySize(String^ path)
 	return CalculateDirSize(path->Data(), 0);
 }
 
+void NativeUtils::Delete(String^ path)
+{
+	DeleteFile(path->Data());
+}
+
 uint64_t NativeUtils::CalculateDirSize(const std::wstring &path, uint64_t size)
 {
 	WIN32_FIND_DATA data;

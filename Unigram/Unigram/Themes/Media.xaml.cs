@@ -83,11 +83,9 @@ namespace Unigram.Themes
                     {
                         bubble.Context.NavigationService.Navigate(typeof(InstantPage), message.Media);
                     }
-                    else if (webPage.HasType && webPage.Type.Equals("telegram_megagroup", StringComparison.OrdinalIgnoreCase))
-                    {
-                        MessageHelper.HandleTelegramUrl(webPage.Url);
-                    }
-                    else if (webPage.HasType && webPage.Type.Equals("telegram_channel", StringComparison.OrdinalIgnoreCase))
+                    else if (webPage.HasType && (webPage.Type.Equals("telegram_megagroup", StringComparison.OrdinalIgnoreCase) ||
+                                                 webPage.Type.Equals("telegram_channel", StringComparison.OrdinalIgnoreCase) ||
+                                                 webPage.Type.Equals("telegram_message", StringComparison.OrdinalIgnoreCase)))
                     {
                         MessageHelper.HandleTelegramUrl(webPage.Url);
                     }
@@ -210,7 +208,7 @@ namespace Unigram.Themes
             }
         }
 
-        private async void GeoPoint_Click(object sender, RoutedEventArgs e)
+        private async void Geo_Click(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;
             var message = element.DataContext as TLMessage;
@@ -221,17 +219,11 @@ namespace Unigram.Themes
                 {
                     await LaunchGeoPointAsync(message.From?.FullName ?? string.Empty, geoMedia.Geo as TLGeoPoint);
                 }
-            }
-        }
-
-        private async void Venue_Click(object sender, RoutedEventArgs e)
-        {
-            var element = sender as FrameworkElement;
-            var message = element.DataContext as TLMessage;
-
-            if (message != null)
-            {
-                if (message.Media is TLMessageMediaVenue venueMedia)
+                else if (message.Media is TLMessageMediaGeoLive geoLiveMedia)
+                {
+                    await LaunchGeoPointAsync(message.From?.FullName ?? string.Empty, geoLiveMedia.Geo as TLGeoPoint);
+                }
+                else if (message.Media is TLMessageMediaVenue venueMedia)
                 {
                     await LaunchGeoPointAsync(message.From?.FullName ?? string.Empty, venueMedia.Geo as TLGeoPoint);
                 }

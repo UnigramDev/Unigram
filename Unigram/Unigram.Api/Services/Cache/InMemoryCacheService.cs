@@ -580,7 +580,7 @@ namespace Telegram.Api.Services.Cache
         public TLDialog GetDialog(TLMessageCommonBase message)
         {
             TLPeerBase peer;
-            if (message.ToId is TLPeerChat)
+            if (message.ToId is TLPeerChat || message.ToId is TLPeerChannel)
             {
                 peer = message.ToId;
             }
@@ -3171,6 +3171,16 @@ namespace Telegram.Api.Services.Cache
             }
         }
 
+        public void ClearDialog(TLPeerBase peer, int availableMinId)
+        {
+            if (peer != null)
+            {
+                _database.ClearDialog(peer, availableMinId);
+
+                _database.Commit();
+            }
+        }
+
         public void DeleteUser(int? id)
         {
             _database.DeleteUser(id);
@@ -3285,6 +3295,28 @@ namespace Telegram.Api.Services.Cache
                     }
                 }
                 
+                _database.DeleteMessages(messages, peer);
+            }
+
+            _database.Commit();
+        }
+
+        public void DeleteChannelMessages(int channelId, int minId)
+        {
+            var channelContext = _database.ChannelsContext[channelId];
+            if (channelContext != null)
+            {
+                var peer = new TLPeerChannel { Id = channelId };
+
+                var messages = new List<TLMessageBase>();
+                foreach (var message in channelContext)
+                {
+                    if (message.Key <= minId)
+                    {
+                        messages.Add(message.Value);
+                    }
+                }
+
                 _database.DeleteMessages(messages, peer);
             }
 

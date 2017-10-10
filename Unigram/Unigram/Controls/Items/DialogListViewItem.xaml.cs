@@ -177,7 +177,11 @@ namespace Unigram.Controls.Items
 
                         return result + photoMedia.Caption.Replace("\r\n", "\n").Replace("\n", " ");
                     }
-                    else if (message.Media is TLMessageMediaGame)
+                    else if (message.Media is TLMessageMediaVenue venueMedia)
+                    {
+                        return result + venueMedia.Title;
+                    }
+                    else if (message.Media is TLMessageMediaGame || message.Media is TLMessageMediaGeoLive)
                     {
                         return string.Empty;
                     }
@@ -351,9 +355,13 @@ namespace Unigram.Controls.Items
                     {
                         return result + "Location";
                     }
+                    else if (message.Media is TLMessageMediaGeoLive)
+                    {
+                        return result + "Live Location";
+                    }
                     else if (message.Media is TLMessageMediaVenue)
                     {
-                        return result + "Venue";
+                        return result + "Location, ";
                     }
                     else if (message.Media is TLMessageMediaPhoto photoMedia)
                     {

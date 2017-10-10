@@ -133,6 +133,7 @@
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
     <Compile Include="Controls\NavigationViewItemSeparator.cs" />
+    <Compile Include="Controls\PaddedListView.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />
@@ -158,6 +159,7 @@
     </Compile>
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
+    <Compile Include="Controls\PeriodTimer.cs" />
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
@@ -183,6 +185,9 @@
     <Compile Include="Controls\Views\GallerySecretView.xaml.cs">
       <DependentUpon>GallerySecretView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\LiveLocationsView.xaml.cs">
+      <DependentUpon>LiveLocationsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\PhoneCallRatingView.xaml.cs">
       <DependentUpon>PhoneCallRatingView.xaml</DependentUpon>
     </Compile>
@@ -191,7 +196,6 @@
     <Compile Include="Controls\StickerView.cs" />
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
-    <Compile Include="Controls\TLListView.cs" />
     <Compile Include="Controls\Views\AttachedStickersView.xaml.cs">
       <DependentUpon>AttachedStickersView.xaml</DependentUpon>
     </Compile>
@@ -206,6 +210,9 @@
     </Compile>
     <Compile Include="Controls\Views\RoundVideoView.xaml.cs">
       <DependentUpon>RoundVideoView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\SelectLivePeriodView.xaml.cs">
+      <DependentUpon>SelectLivePeriodView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\SelectTTLSecondsView.xaml.cs">
       <DependentUpon>SelectTTLSecondsView.xaml</DependentUpon>
@@ -247,6 +254,9 @@
     <Compile Include="Converters\ChannelTypeToStringConverter.cs" />
     <Compile Include="Converters\CompressionToGlyphConverter.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
+    <Compile Include="Converters\GeoLivePeriodConverter.cs" />
+    <Compile Include="Converters\GeoLiveToLabelConverter.cs" />
+    <Compile Include="Converters\GeoLiveToVisibilityConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
     <Compile Include="Converters\MessageShortTTLConverter.cs" />
     <Compile Include="Converters\MessageToShareConverter.cs" />
@@ -254,6 +264,7 @@
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
+    <Compile Include="Converters\VenueToGlyphConverter.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\StorageMedia.cs" />
     <Compile Include="Models\StoragePhoto.cs" />
@@ -874,7 +885,6 @@
     </Compile>
     <Compile Include="Triggers\BooleanTrigger.cs" />
     <Compile Include="ViewModelLocator.cs" />
-    <Compile Include="Collections\DialogCollection.cs" />
     <Compile Include="Collections\MediaCollection.cs" />
     <Compile Include="Collections\SortedObservableCollection.cs" />
     <Compile Include="Common\Attached.cs" />
@@ -1279,6 +1289,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\LiveLocationsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\PhoneCallRatingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1328,6 +1342,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\RoundVideoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\SelectLivePeriodView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

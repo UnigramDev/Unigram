@@ -180,15 +180,30 @@ namespace Unigram.ViewModels
                     AccessHash = 0,
                     Date = date,
                     Size = (int)basicProps.Size,
-                    MimeType = fileCache.ContentType,
+                    MimeType = file.ContentType,
                     Attributes = new TLVector<TLDocumentAttributeBase>
-                {
-                    new TLDocumentAttributeFilename
                     {
-                        FileName = file.Name
+                        new TLDocumentAttributeFilename
+                        {
+                            FileName = file.Name
+                        }
                     }
-                }
                 };
+
+                var musicProps = await file.Properties.GetMusicPropertiesAsync();
+                if (musicProps.Duration > TimeSpan.Zero)
+                {
+                    document.Attributes.Add(new TLDocumentAttributeAudio
+                    {
+                        Duration = (int)musicProps.Duration.TotalSeconds,
+                        Title = musicProps.Title,
+                        Performer = musicProps.Artist,
+                        IsVoice = false,
+                        HasTitle = musicProps.Title != null,
+                        HasPerformer = musicProps.Artist != null,
+                        HasWaveform = false
+                    });
+                }
 
                 var media = new TLMessageMediaDocument
                 {
@@ -277,7 +292,7 @@ namespace Unigram.ViewModels
                 AccessHash = 0,
                 Date = date,
                 Size = (int)basicProps.Size,
-                MimeType = fileCache.ContentType,
+                MimeType = file.ContentType,
                 Thumb = thumbnail,
                 Attributes = new TLVector<TLDocumentAttributeBase>
                 {
@@ -287,6 +302,21 @@ namespace Unigram.ViewModels
                     }
                 }
             };
+
+            var musicProps = await file.Properties.GetMusicPropertiesAsync();
+            if (musicProps.Duration > TimeSpan.Zero)
+            {
+                document.Attributes.Add(new TLDocumentAttributeAudio
+                {
+                    Duration = (int)musicProps.Duration.TotalSeconds,
+                    Title = musicProps.Title,
+                    Performer = musicProps.Artist,
+                    IsVoice = false,
+                    HasTitle = musicProps.Title != null,
+                    HasPerformer = musicProps.Artist != null,
+                    HasWaveform = false
+                });
+            }
 
             var media = new TLMessageMediaDocument
             {
@@ -1053,24 +1083,36 @@ namespace Unigram.ViewModels
             dialog.Content = page;
 
             page.Dialog = dialog;
+            page.LiveLocation = !_liveLocationService.IsTracking(Peer.ToPeer());
 
             var confirm = await dialog.ShowAsync();
             if (confirm == ContentDialogBaseResult.OK)
             {
                 if (page.Media is TLMessageMediaVenue venue)
                 {
-                    await SendGeoPointAsync(venue);
+                    await SendGeoAsync(venue);
+                }
+                else if (page.Media is TLMessageMediaGeoLive geoLive)
+                {
+                    if (geoLive.Geo == null || geoLive.Period == 0 || _liveLocationService.IsTracking(Peer.ToPeer()))
+                    {
+                        _liveLocationService.StopTracking(Peer.ToPeer());
+                    }
+                    else
+                    {
+                        await SendGeoAsync(geoLive);
+                    }
                 }
                 else if (page.Media is TLMessageMediaGeo geo && geo.Geo is TLGeoPoint geoPoint)
                 {
-                    await SendGeoPointAsync(geoPoint.Lat, geoPoint.Long);
+                    await SendGeoAsync(geoPoint.Lat, geoPoint.Long);
                 }
             }
 
             //NavigationService.Navigate(typeof(DialogSendLocationPage));
         }
 
-        public Task<bool> SendGeoPointAsync(double latitude, double longitude)
+        public Task<bool> SendGeoAsync(double latitude, double longitude)
         {
             var tsc = new TaskCompletionSource<bool>();
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
@@ -1120,7 +1162,42 @@ namespace Unigram.ViewModels
             return tsc.Task;
         }
 
-        public Task<bool> SendGeoPointAsync(TLMessageMediaVenue media)
+        public Task<bool> SendGeoAsync(TLMessageMediaGeoLive media)
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            var previousMessage = InsertSendingMessage(message);
+            CacheService.SyncSendingMessage(message, previousMessage, async (m) =>
+            {
+                var inputMedia = media.ToInputMedia();
+
+                var result = await ProtoService.SendMediaAsync(Peer, inputMedia, message);
+                if (result.IsSucceeded)
+                {
+                    tsc.SetResult(true);
+                    await _liveLocationService.TrackAsync(message);
+                }
+                else
+                {
+                    tsc.SetResult(false);
+                }
+            });
+
+            return tsc.Task;
+        }
+
+        public Task<bool> SendGeoAsync(TLMessageMediaVenue media)
         {
             var tsc = new TaskCompletionSource<bool>();
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);

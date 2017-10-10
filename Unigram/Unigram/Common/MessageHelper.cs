@@ -79,7 +79,7 @@ namespace Unigram.Common
                 //    paragraph.Inlines.Add(hyperlink);
                 //}
 
-                if (message.HasFwdFrom)
+                if (message.HasFwdFrom && !message.IsSticker())
                 {
                     if (paragraph.Inlines.Count > 0)
                         paragraph.Inlines.Add(new LineBreak());
@@ -194,6 +194,10 @@ namespace Unigram.Common
                 {
                     caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                 }
+                else if (message.Media is TLMessageMediaVenue)
+                {
+                    caption = true;
+                }
 
                 var game = false;
                 var notGame = true;
@@ -203,13 +207,19 @@ namespace Unigram.Common
                     notGame = false;
                 }
 
+                var notLive = true;
+                if (message.Media is TLMessageMediaGeoLive)
+                {
+                    notLive = false;
+                }
+
                 var emptyWebPage = false;
                 if (message.Media is TLMessageMediaWebPage webpageMedia)
                 {
                     emptyWebPage = webpageMedia.WebPage is TLWebPageEmpty;
                 }
 
-                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || (text && notGame) ? Visibility.Visible : Visibility.Collapsed);
+                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || (text && notGame && notLive) ? Visibility.Visible : Visibility.Collapsed);
                 if (sender.Visibility == Visibility.Collapsed)
                 {
                     sender.Inlines.Clear();
@@ -230,10 +240,16 @@ namespace Unigram.Common
                     {
                         Debug.WriteLine("WARNING: this is weird!");
                     }
-
+                    
                     if (!string.IsNullOrWhiteSpace(message.Message))
                     {
                         paragraph.Inlines.Add(new Run { Text = message.Message });
+                    }
+                    else if (message.Media is TLMessageMediaVenue venueMedia)
+                    {
+                        paragraph.Inlines.Add(new Run { Text = venueMedia.Title, FontWeight = FontWeights.SemiBold });
+                        paragraph.Inlines.Add(new LineBreak());
+                        paragraph.Inlines.Add(new Run { Text = venueMedia.Address });
                     }
                     else if (game)
                     {
@@ -1291,8 +1307,7 @@ namespace Unigram.Common
             var response = await protoService.CheckChatInviteAsync(link);
             if (response.IsSucceeded)
             {
-                var inviteAlready = response.Result as TLChatInviteAlready;
-                if (inviteAlready != null)
+                if (response.Result is TLChatInviteAlready inviteAlready)
                 {
                     var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                     if (service != null)
@@ -1300,9 +1315,7 @@ namespace Unigram.Common
                         service.NavigateToDialog(inviteAlready.Chat);
                     }
                 }
-
-                var invite = response.Result as TLChatInvite;
-                if (invite != null)
+                else if (response.Result is TLChatInvite invite)
                 {
                     var dialog = new JoinChatView { DataContext = invite };
                     var result = await dialog.ShowAsync();

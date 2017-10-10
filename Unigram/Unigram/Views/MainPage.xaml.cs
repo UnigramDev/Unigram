@@ -682,6 +682,19 @@ namespace Unigram.Views
             }
         }
 
+        private void DialogNotify_Loaded(object sender, RoutedEventArgs e)
+        {
+            var element = sender as MenuFlyoutItem;
+            if (element != null)
+            {
+                var dialog = element.DataContext as TLDialog;
+                if (dialog != null)
+                {
+                    element.Text = dialog.IsMuted ? "Enable notifications" : "Disable notifications";
+                }
+            }
+        }
+
         private void DialogClear_Loaded(object sender, RoutedEventArgs e)
         {
             var element = sender as MenuFlyoutItem;
@@ -690,7 +703,7 @@ namespace Unigram.Views
                 var dialog = element.DataContext as TLDialog;
                 if (dialog != null)
                 {
-                    element.Visibility = dialog.Peer is TLPeerChannel ? Visibility.Collapsed : Visibility.Visible;
+                    element.Visibility = dialog.With is TLChannel channel && (channel.IsBroadcast || !channel.HasUsername) ? Visibility.Collapsed : Visibility.Visible;
                 }
             }
         }
@@ -785,6 +798,24 @@ namespace Unigram.Views
                     element.Visibility = dialog.Peer is TLPeerChat && dialog.With is TLChat ? Visibility.Visible : Visibility.Collapsed;
                 }
             }
+        }
+
+        #endregion
+
+        #region Binding
+
+        private string ConvertGeoLive(int count, IList<TLMessage> items)
+        {
+            if (count > 1)
+            {
+                return string.Format("sharing to {0} chats", count);
+            }
+            else if (count == 1 && items[0].Parent is ITLDialogWith with)
+            {
+                return string.Format("sharing to {0}", with.DisplayName);
+            }
+
+            return null;
         }
 
         #endregion

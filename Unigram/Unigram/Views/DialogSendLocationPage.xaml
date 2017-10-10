@@ -2,6 +2,7 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:Unigram.Views"
+      xmlns:tl="using:Telegram.Api.TL"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
@@ -61,7 +62,7 @@
                                 BorderThickness="0,1,0,0">
                         <!-- Current Location -->
                         <Button x:Name="btnCurrentLocation"
-                                Click="BtnCurrentLocation_Click"
+                                Click="CurrentLocation_Click"
                                 Background="Transparent"
                                 Padding="0"
                                 HorizontalAlignment="Stretch"
@@ -80,8 +81,34 @@
                                     <StackPanel Orientation="Vertical"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center">
-                                        <TextBlock Text="Send current position" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                                        <TextBlock Text="Send current location" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
                                         <TextBlock x:Name="tblCurrentLocation" Text="Getting your location..." TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+                        <Button x:Name="LiveLocationButton"
+                                Click="LiveLocation_Click"
+                                Background="Transparent"
+                                Padding="0"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                Style="{StaticResource EmptyButtonStyle}">
+                            <Button.Content>
+                                <StackPanel Height="48" Orientation="Horizontal" Margin="0,8">
+                                    <Border Height="40" Width="40" CornerRadius="20" Margin="12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+                                        <TextBlock Text=""
+                                                   Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                                   FontFamily="Segoe MDL2 Assets"
+                                                   VerticalAlignment="Center"
+                                                   TextAlignment="Center"
+                                                   FontSize="24"/>
+                                    </Border>
+                                    <StackPanel Orientation="Vertical"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center">
+                                        <TextBlock x:Name="LiveLocationLabel" Text="Share My Live Location for..." TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                                        <TextBlock Text="Updated in real time as you move" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Button.Content>
@@ -96,21 +123,16 @@
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="tl:TLMessageMediaVenue">
                     <StackPanel Height="48" Orientation="Horizontal">
                         <Border Height="40" Width="40" CornerRadius="20" Margin="0,0,12,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
-                            <!--<TextBlock Text=""
-                                       FontFamily="Segoe MDL2 Assets"
-                                       VerticalAlignment="Center"
-                                       TextAlignment="Center"
-                                       FontSize="24"/>-->
-                            <BitmapIcon UriSource="{Binding Icon}" Margin="4"/>
+                            <BitmapIcon UriSource="{x:Bind VenueType, Converter={StaticResource VenueToGlyphConverter}}" Margin="4"/>
                         </Border>
                         <StackPanel Orientation="Vertical"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center">
-                            <TextBlock Text="{Binding Venue.Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
-                            <TextBlock Text="{Binding Venue.Address}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind Title}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BodyTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind Address}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                         </StackPanel>
                     </StackPanel>
                 </DataTemplate>

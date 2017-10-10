@@ -28,10 +28,11 @@
 
         <MenuFlyout x:Key="DialogMenuFlyout" Opening="MenuFlyout_Opening">
             <MenuFlyoutItem Loaded="DialogPin_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogPinCommand}" CommandParameter="{Binding}" Text="Pin to top"/>
+            <MenuFlyoutItem Loaded="DialogNotify_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogNotifyCommand}" CommandParameter="{Binding}" Text="Disable notifications"/>
             <MenuFlyoutItem Loaded="DialogClear_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogClearCommand}" CommandParameter="{Binding}" Text="Clear history"/>
-            <MenuFlyoutItem Loaded="DialogDelete_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteCommand}" CommandParameter="{Binding}" Text="Delete conversation"/> <!-- Only shows with conversations to single people -->
-            <MenuFlyoutItem Loaded="DialogDeleteAndStop_Loaded" Text="Delete and stop"/>
-            <MenuFlyoutItem Loaded="DialogDeleteAndExit_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteCommand}" CommandParameter="{Binding}" Text="Delete and exit"/> <!-- Only shows if IsCreator -->
+            <MenuFlyoutItem Loaded="DialogDelete_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteCommand}" CommandParameter="{Binding}" Text="Delete conversation"/>
+            <MenuFlyoutItem Loaded="DialogDeleteAndStop_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteAndStopCommand}" CommandParameter="{Binding}" Text="Delete and stop"/>
+            <MenuFlyoutItem Loaded="DialogDeleteAndExit_Loaded" Command="{x:Bind ViewModel.Dialogs.DialogDeleteCommand}" CommandParameter="{Binding}" Text="Delete and exit"/>
         </MenuFlyout>
 
         <Style TargetType="PivotItem">
@@ -216,82 +217,98 @@
             <controls:NavigationView.PaneFooter>
                 <StackPanel>
                     <controls:GlyphButton Click="About_Click" Content="About" Glyph="&#xE946;" Style="{StaticResource NavigationGlyphButtonStyle}"/>
-                    <!--<controls:NavigationViewItem Content="{x:Bind ViewModel.Contacts.Self.FullName, Mode=OneWay}" Tag="{x:Bind ViewModel.Contacts.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Style="{StaticResource ImageNavigationMenuItemStyle}"/>-->
+                    <controls:GlyphButton Click="Self_Click" Content="{x:Bind ViewModel.Contacts.Self.FullName, Mode=OneWay}" Tag="{x:Bind ViewModel.Contacts.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Style="{StaticResource NavigationImageGlyphButtonStyle}"/>
                 </StackPanel>
             </controls:NavigationView.PaneFooter>
 
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Grid>
-                    <controls:ContentPageHeader>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="DefaultHeader" Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}" VerticalAlignment="Center" Margin="60,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
+                <controls:ContentPageHeader>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="DefaultHeader" Text="{x:Bind rpMasterTitlebar.SelectedItem.(PivotItem.Header), Mode=OneWay}" VerticalAlignment="Center" Margin="60,0,0,0" Style="{StaticResource BaseTextBlockStyle}"/>
 
-                            <Button x:Name="ButtonOptions"
-                                        Padding="16,23,16,0"
-                                        Style="{StaticResource EllipsisButton}"
-                                        Grid.Column="1">
-                                <FontIcon x:Name="EllipsisIcon"
-                                              VerticalAlignment="Center"
-                                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                              FontSize="16"
-                                              Glyph="&#xE10C;"
-                                              Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
-                                <Button.Flyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem x:Name="EditNameItem"
-                                                            Click="{x:Bind SettingsView.EditName_Click}"
-                                                            Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                            Text="Edit name"
-                                                            Tag="&#xE104;"/>
-                                        <MenuFlyoutItem x:Name="LogoutItem"
-                                                            Command="{x:Bind SettingsView.ViewModel.LogoutCommand}"
-                                                            Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                            Text="Logout"
-                                                            Tag="&#xE10A;"/>
-                                    </MenuFlyout>
-                                </Button.Flyout>
-                            </Button>
+                        <Button x:Name="ButtonOptions"
+                                    Padding="16,23,16,0"
+                                    Style="{StaticResource EllipsisButton}"
+                                    Grid.Column="1">
+                            <FontIcon x:Name="EllipsisIcon"
+                                            VerticalAlignment="Center"
+                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                            FontSize="16"
+                                            Glyph="&#xE10C;"
+                                            Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
+                            <Button.Flyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem x:Name="EditNameItem"
+                                                        Click="{x:Bind SettingsView.EditName_Click}"
+                                                        Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                        Text="Edit name"
+                                                        Tag="&#xE104;"/>
+                                    <MenuFlyoutItem x:Name="LogoutItem"
+                                                        Command="{x:Bind SettingsView.ViewModel.LogoutCommand}"
+                                                        Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                        Text="Logout"
+                                                        Tag="&#xE10A;"/>
+                                </MenuFlyout>
+                            </Button.Flyout>
+                        </Button>
 
-                            <controls:SearchTextBox x:Name="SearchDialogs"
-                                                        Padding="60,3,6,5"
-                                                        Background="{x:Null}"
-                                                        BorderBrush="{x:Null}"
-                                                        Style="{StaticResource SearchTextBoxStyle}"
-                                                        Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
-                                                        PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                                        PlaceholderText="Search for chats and messages"
-                                                        TextChanged="txtSearch_TextChanged"
-                                                        KeyDown="txtSearch_KeyDown"
-                                                        Grid.ColumnSpan="2"
-                                                        Canvas.ZIndex="1"/>
-                            <!--<controls:SearchTextBox x:Name="SearchContacts"
-                                                        Padding="60,3,6,5"
-                                                        Background="{x:Null}"
-                                                        BorderBrush="{x:Null}"
-                                                        Style="{StaticResource SearchTextBoxStyle}"
-                                                        Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
-                                                        PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                                        PlaceholderText="Search for contacts and usernames"
-                                                        TextChanged="txtSearch_TextChanged"
-                                                        KeyDown="txtSearch_KeyDown"
-                                                        Grid.ColumnSpan="2"
-                                                        Canvas.ZIndex="1"/>-->
-                        </Grid>
-                    </controls:ContentPageHeader>
+                        <controls:SearchTextBox x:Name="SearchDialogs"
+                                                    Padding="60,3,6,5"
+                                                    Background="{x:Null}"
+                                                    BorderBrush="{x:Null}"
+                                                    Style="{StaticResource SearchTextBoxStyle}"
+                                                    Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
+                                                    PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                                    PlaceholderText="Search for chats and messages"
+                                                    TextChanged="txtSearch_TextChanged"
+                                                    KeyDown="txtSearch_KeyDown"
+                                                    Grid.ColumnSpan="2"
+                                                    Canvas.ZIndex="1"/>
+                        <!--<controls:SearchTextBox x:Name="SearchContacts"
+                                                    Padding="60,3,6,5"
+                                                    Background="{x:Null}"
+                                                    BorderBrush="{x:Null}"
+                                                    Style="{StaticResource SearchTextBoxStyle}"
+                                                    Text="{Binding Dialogs.SearchQuery, Mode=TwoWay}"
+                                                    PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                                    PlaceholderText="Search for contacts and usernames"
+                                                    TextChanged="txtSearch_TextChanged"
+                                                    KeyDown="txtSearch_KeyDown"
+                                                    Grid.ColumnSpan="2"
+                                                    Canvas.ZIndex="1"/>-->
+                    </Grid>
+                </controls:ContentPageHeader>
+
+                <Grid Visibility="{x:Bind ViewModel.LiveLocation.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="48"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Command="{x:Bind ViewModel.LiveLocationCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
+                        <StackPanel>
+                            <TextBlock Text="Live Location" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind ConvertGeoLive(ViewModel.LiveLocation.Items.Count, ViewModel.LiveLocation.Items), Mode=OneWay}" TextAlignment="Center" FontSize="10" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
+                    </Button>
+
+                    <controls:GlyphButton Command="{x:Bind ViewModel.StopLiveLocationCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
+
+                    <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                 </Grid>
-                <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Style="{StaticResource HeaderlessPivotStyle}" Grid.Row="1">
+
+
+                <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Style="{StaticResource HeaderlessPivotStyle}" Grid.Row="2">
                     <PivotItem Header="Chats">
-                        <!--<PivotItem.Header>
-                             <controls:TabHeaderStyle Glyph="&#xE15F;"/>
-                             </PivotItem.Header>-->
                         <Grid>
                             <ListView x:Name="DialogsSearchListView"
                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -511,11 +528,11 @@
                                 VerticalAlignment="Top"/>
                             <ListView x:Name="UsersListView"
                                       ItemsSource="{x:Bind ViewModel.Contacts.Items}"
-                                      Header="{x:Bind ViewModel.Contacts.Self, Mode=OneWay}"
                                       IsItemClickEnabled="True"
                                       ItemClick="ListView_ItemClick"
                                       SelectionChanged="ListView_SelectionChanged">
-                                <ListView.HeaderTemplate>
+                                      <!--Header="{x:Bind ViewModel.Contacts.Self, Mode=OneWay}"-->
+                                <!--<ListView.HeaderTemplate>
                                     <DataTemplate x:DataType="models:TLUser">
                                         <Border Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}">
                                             <Button Click="Self_Click" Style="{StaticResource EmptyButtonStyle}">
@@ -546,7 +563,7 @@
                                             </Button>
                                         </Border>
                                     </DataTemplate>
-                                </ListView.HeaderTemplate>
+                                </ListView.HeaderTemplate>-->
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="models:TLUser">
                                         <Grid Margin="0,6">

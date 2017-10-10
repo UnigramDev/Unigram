@@ -4,7 +4,7 @@ using Telegram.Api.Native.TL;
 
 namespace Telegram.Api.TL.Channels
 {
-	public partial class TLChannelsChannelParticipants : TLObject 
+	public partial class TLChannelsChannelParticipants : TLChannelsChannelParticipantsBase 
 	{
 		public Int32 Count { get; set; }
 		public TLVector<TLChannelParticipantBase> Participants { get; set; }

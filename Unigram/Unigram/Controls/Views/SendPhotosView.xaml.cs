@@ -214,6 +214,11 @@ namespace Unigram.Controls.Views
                 return;
             }
 
+            if (Items.All(x => x.IsSelected == false))
+            {
+                SelectedItem.IsSelected = true;
+            }
+
             Hide(ContentDialogBaseResult.OK);
         }
 

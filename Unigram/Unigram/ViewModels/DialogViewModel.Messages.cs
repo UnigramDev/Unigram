@@ -68,7 +68,7 @@ namespace Unigram.ViewModels
             }
 
             Reply = message;
-            Aggregator.Publish("/dlg_focus");
+            TextField.Focus(Windows.UI.Xaml.FocusState.Keyboard);
         }
 
         #endregion
@@ -1127,7 +1127,7 @@ namespace Unigram.ViewModels
                     var location = await _locationService.GetPositionAsync();
                     if (location != null)
                     {
-                        await SendGeoPointAsync(location.Point.Position.Latitude, location.Point.Position.Longitude);
+                        await SendGeoAsync(location.Point.Position.Latitude, location.Point.Position.Longitude);
                     }
                 }
             }

@@ -11,11 +11,13 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Channels;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Windows.System.Profile;
 using Windows.UI.Notifications;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels
@@ -34,6 +36,7 @@ namespace Unigram.ViewModels
         IHandle<DialogRemovedEventArgs>,
         IHandle<UpdateCompletedEventArgs>,
         IHandle<ChannelUpdateCompletedEventArgs>,
+        IHandle<ChannelAvailableMessagesEventArgs>,
         IHandle<string>
     {
         public async void Handle(string message)
@@ -80,6 +83,26 @@ namespace Unigram.ViewModels
                 {
                     Dispatcher.Dispatch(SaveDraft);
                 }
+            }
+        }
+
+        public void Handle(ChannelAvailableMessagesEventArgs args)
+        {
+            if (With == args.Dialog.With)
+            {
+                Execute.BeginOnUIThread(() =>
+                {
+                    for (var i = 0; i < Items.Count; i++)
+                    {
+                        var messageCommon = Items[i] as TLMessageCommonBase;
+                        if (messageCommon != null && messageCommon.ToId is TLPeerChannel && messageCommon.Id <= args.AvailableMinId)
+                        {
+                            Items.RemoveAt(i--);
+                        }
+                    }
+
+                    //IsEmpty = Items.Count == 0 && (_messages == null || _messages.Count == 0) && LazyItems.Count == 0;
+                });
             }
         }
 
@@ -264,15 +287,15 @@ namespace Unigram.ViewModels
                         return string.Format("{0} members", full.ParticipantsCount ?? 0);
                     }
 
-                    var participants = await ProtoService.GetParticipantsAsync(channel.ToInputChannel(), new TLChannelParticipantsRecent(), 0, config.ChatSizeMax);
-                    if (participants.IsSucceeded)
+                    var participants = await ProtoService.GetParticipantsAsync(channel.ToInputChannel(), new TLChannelParticipantsRecent(), 0, config.ChatSizeMax, 0);
+                    if (participants.IsSucceeded && participants.Result is TLChannelsChannelParticipants channelParticipants)
                     {
                         full.Participants = participants.Result;
 
                         if (full.ParticipantsCount <= config.ChatSizeMax)
                         {
                             var count = 0;
-                            foreach (var item in participants.Result.Users.OfType<TLUser>())
+                            foreach (var item in channelParticipants.Users.OfType<TLUser>())
                             {
                                 if (item.HasStatus && item.Status is TLUserStatusOnline)
                                 {
@@ -590,6 +613,11 @@ namespace Unigram.ViewModels
                         if (user != null && user.IsBot)
                         {
                             SetReplyMarkup(message);
+
+                            if (message.ReplyMarkup is TLReplyKeyboardMarkup)
+                            {
+                                InputPane.GetForCurrentView().TryHide();
+                            }
                         }
                     }
 

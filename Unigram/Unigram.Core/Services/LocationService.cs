@@ -9,19 +9,74 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Unigram.Core.Models;
+using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Devices.Geolocation;
 
 namespace Unigram.Core.Services
 {
     public interface ILocationService
     {
+        Task<Geolocator> StartTrackingAsync();
+        void StopTracking();
+
         Task<Geocoordinate> GetPositionAsync();
 
-        Task<List<LocationVenue>> GetVenuesAsync(double latitude, double longitute, string query = null);
+        Task<List<TLMessageMediaVenue>> GetVenuesAsync(double latitude, double longitute, string query = null);
     }
 
     public class LocationService : ILocationService
     {
+        private Geolocator _locator;
+        private ExtendedExecutionSession _session;
+
+        public async Task<Geolocator> StartTrackingAsync()
+        {
+            if (_session != null)
+            {
+                return _locator;
+            }
+
+            if (_locator == null)
+            {
+                try
+                {
+                    var accessStatus = await Geolocator.RequestAccessAsync();
+                    if (accessStatus == GeolocationAccessStatus.Allowed)
+                    {
+                        _locator = new Geolocator { DesiredAccuracy = PositionAccuracy.Default, ReportInterval = uint.MaxValue };
+                    }
+                }
+                catch { }
+            }
+
+            _session = new ExtendedExecutionSession();
+            _session.Description = "Live Location";
+            _session.Reason = ExtendedExecutionReason.LocationTracking;
+            _session.Revoked += ExtendedExecutionSession_Revoked;
+
+            var result = await _session.RequestExtensionAsync();
+            if (result == ExtendedExecutionResult.Denied)
+            {
+                //TODO: handle denied
+            }
+
+            return _locator;
+        }
+
+        public void StopTracking()
+        {
+            if (_session != null)
+            {
+                _session.Dispose();
+                _session = null;
+            }
+        }
+
+        private void ExtendedExecutionSession_Revoked(object sender, ExtendedExecutionRevokedEventArgs args)
+        {
+            StopTracking();
+        }
+
         public async Task<Geocoordinate> GetPositionAsync()
         {
             try
@@ -39,7 +94,7 @@ namespace Unigram.Core.Services
             return null;
         }
 
-        public async Task<List<LocationVenue>> GetVenuesAsync(double latitude, double longitute, string query = null)
+        public async Task<List<TLMessageMediaVenue>> GetVenuesAsync(double latitude, double longitute, string query = null)
         {
             var builder = new StringBuilder("https://api.foursquare.com/v2/venues/search/?");
             if (string.IsNullOrEmpty(query) == false)
@@ -64,7 +119,7 @@ namespace Unigram.Core.Services
 
                 if (json?.response?.venues != null)
                 {
-                    var result = new List<LocationVenue>();
+                    var result = new List<TLMessageMediaVenue>();
                     foreach (var item in json.response.venues)
                     {
                         var venue = new TLMessageMediaVenue();
@@ -74,33 +129,24 @@ namespace Unigram.Core.Services
                         venue.Provider = "foursquare";
                         venue.Geo = new TLGeoPoint { Lat = item.location.lat, Long = item.location.lng };
 
-                        var location = new LocationVenue();
-                        location.Venue = venue;
-
                         if (item.categories != null && item.categories.Count > 0)
                         {
                             var icon = item.categories[0].icon;
                             if (icon != null)
                             {
-                                location.Icon = string.Format("{0}64{1}", icon.prefix, icon.suffix);
+                                venue.VenueType = icon.prefix.Replace("https://ss3.4sqi.net/img/categories_v2/", string.Empty).TrimEnd('_');
+                                //location.Icon = string.Format("https://ss3.4sqi.net/img/categories_v2/{0}_88.png");
                             }
                         }
 
-                        result.Add(location);
+                        result.Add(venue);
                     }
 
                     return result;
                 }
             }
 
-            return new List<LocationVenue>();
+            return new List<TLMessageMediaVenue>();
         }
-    }
-
-    public class LocationVenue
-    {
-        public TLMessageMediaVenue Venue { get; set; }
-
-        public string Icon { get; set; }
     }
 }

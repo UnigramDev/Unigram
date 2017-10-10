@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Telegram.Api.TL;
+﻿using Telegram.Api.TL;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -18,6 +13,11 @@ namespace Unigram.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
+            if (item == null)
+            {
+                return base.SelectTemplate(item);
+            }
+
             if (item is TLWallPaperSolid)
             {
                 return SolidTemplate;

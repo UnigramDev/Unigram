@@ -69,6 +69,7 @@ namespace Telegram.Api.TL
                 this.MigratedFromChatId = channel.MigratedFromChatId;
                 this.MigratedFromMaxId = channel.MigratedFromMaxId;
                 this.PinnedMsgId = channel.PinnedMsgId;
+                this.AvailableMinId = channel.AvailableMinId;
             }
 
             base.Update(chatFull);

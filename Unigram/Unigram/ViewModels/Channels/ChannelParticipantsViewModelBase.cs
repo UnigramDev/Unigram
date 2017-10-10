@@ -7,6 +7,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Channels;
 using Unigram.Common;
 using Windows.UI.Xaml.Navigation;
 
@@ -75,15 +76,15 @@ namespace Unigram.ViewModels.Channels
 
             public override async Task<IList<TLChannelParticipantBase>> LoadDataAsync()
             {
-                var response = await _protoService.GetParticipantsAsync(_inputChannel, _filter, Items.Count, 200);
-                if (response.IsSucceeded)
+                var response = await _protoService.GetParticipantsAsync(_inputChannel, _filter, Items.Count, 200, 0);
+                if (response.IsSucceeded && response.Result is TLChannelsChannelParticipants participants)
                 {
-                    if (response.Result.Participants.Count < 200)
+                    if (participants.Participants.Count < 200)
                     {
                         _hasMore = false;
                     }
 
-                    return response.Result.Participants;
+                    return participants.Participants;
                 }
 
                 return new TLChannelParticipantBase[0];

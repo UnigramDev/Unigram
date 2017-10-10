@@ -141,6 +141,9 @@
   <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
     <value>publicó un mapa</value>
   </data>
+  <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>publicó una ubicación en directo</value>
+  </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
     <value>publicó un GIF</value>
   </data>
@@ -200,6 +203,9 @@
   </data>
   <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
     <value>{0} envió una ubicación al grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>{0} comenzó a compartir su ubicación en directo</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} envió un GIF al grupo</value>
@@ -273,6 +279,9 @@
   <data name="MESSAGE_GEO" xml:space="preserve">
     <value>te envió una ubicación</value>
   </data>
+  <data name="MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>comenzó a compartir su ubicación en directo</value>
+  </data>
   <data name="MESSAGE_GIF" xml:space="preserve">
     <value>te envió un GIF</value>
   </data>
@@ -326,6 +335,9 @@
   </data>
   <data name="PINNED_GEO" xml:space="preserve">
     <value>ancló una ubicación</value>
+  </data>
+  <data name="PINNED_GEOLIVE" xml:space="preserve">
+    <value>ancló una ubicación en directo</value>
   </data>
   <data name="PINNED_GIF" xml:space="preserve">
     <value>ancló un GIF</value>

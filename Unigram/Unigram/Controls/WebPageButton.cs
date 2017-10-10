@@ -62,7 +62,7 @@ namespace Unigram.Controls
                     if (run1 != null)
                     {
                         run1.Text = run3.Text = string.Empty;
-                        run2.Text = "OPEN GROUP";
+                        run2.Text = "VIEW GROUP";
                         run3.Foreground = null;
                     }
 
@@ -73,7 +73,18 @@ namespace Unigram.Controls
                     if (run1 != null)
                     {
                         run1.Text = run3.Text = string.Empty;
-                        run2.Text = "OPEN CHANNEL";
+                        run2.Text = "VIEW CHANNEL";
+                        run3.Foreground = null;
+                    }
+
+                    Visibility = Visibility.Visible;
+                }
+                else if (webPage.HasType && webPage.Type.Equals("telegram_message", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (run1 != null)
+                    {
+                        run1.Text = run3.Text = string.Empty;
+                        run2.Text = "VIEW MESSAGE";
                         run3.Foreground = null;
                     }
 

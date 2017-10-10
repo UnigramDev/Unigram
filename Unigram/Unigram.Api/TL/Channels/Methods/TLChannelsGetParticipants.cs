@@ -14,6 +14,7 @@ namespace Telegram.Api.TL.Channels.Methods
 		public TLChannelParticipantsFilterBase Filter { get; set; }
 		public Int32 Offset { get; set; }
 		public Int32 Limit { get; set; }
+		public Int32 Hash { get; set; }
 
 		public TLChannelsGetParticipants() { }
 		public TLChannelsGetParticipants(TLBinaryReader from)
@@ -29,6 +30,7 @@ namespace Telegram.Api.TL.Channels.Methods
 			Filter = TLFactory.Read<TLChannelParticipantsFilterBase>(from);
 			Offset = from.ReadInt32();
 			Limit = from.ReadInt32();
+			Hash = from.ReadInt32();
 		}
 
 		public override void Write(TLBinaryWriter to)
@@ -37,6 +39,7 @@ namespace Telegram.Api.TL.Channels.Methods
 			to.WriteObject(Filter);
 			to.WriteInt32(Offset);
 			to.WriteInt32(Limit);
+			to.WriteInt32(Hash);
 		}
 	}
 }
