@@ -118,11 +118,14 @@ namespace Unigram.Controls
 
             _angleStoryboard.SkipToFill();
 
-            var angleAnimation = (DoubleAnimation)_angleStoryboard.Children[0];
-            angleAnimation.From = 359 - (difference.TotalSeconds / geoLiveMedia.Period * 359);
-            angleAnimation.To = 359;
-            angleAnimation.Duration = difference;
-            _angleStoryboard.Begin();
+            if (difference > TimeSpan.Zero)
+            {
+                var angleAnimation = (DoubleAnimation)_angleStoryboard.Children[0];
+                angleAnimation.From = 359 - (difference.TotalSeconds / geoLiveMedia.Period * 359);
+                angleAnimation.To = 359;
+                angleAnimation.Duration = difference;
+                _angleStoryboard.Begin();
+            }
 
             TimeoutLabel.Text = GetTimeout(difference);
 

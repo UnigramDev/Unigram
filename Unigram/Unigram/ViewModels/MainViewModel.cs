@@ -17,6 +17,7 @@ using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Help.Methods;
 using Telegram.Api.TL.LangPack.Methods;
+using Telegram.Api.TL.Messages.Methods;
 using Telegram.Api.TL.Phone;
 using Telegram.Api.TL.Phone.Methods;
 using Telegram.Logs;
@@ -24,6 +25,7 @@ using Template10.Common;
 using Unigram.Common;
 using Unigram.Common.Dialogs;
 using Unigram.Controls;
+using Unigram.Controls.Views;
 using Unigram.Core;
 using Unigram.Core.Services;
 using Unigram.Views;
@@ -82,9 +84,9 @@ namespace Unigram.ViewModels
         }
 
         public RelayCommand LiveLocationCommand => new RelayCommand(LiveLocationExecute);
-        private void LiveLocationExecute()
+        private async void LiveLocationExecute()
         {
-            throw new NotImplementedException();
+            await new LiveLocationsView().ShowQueuedAsync();
         }
 
         public RelayCommand StopLiveLocationCommand => new RelayCommand(StopLiveLocationExecute);
@@ -337,23 +339,23 @@ namespace Unigram.ViewModels
             //Execute.BeginOnUIThread(() => Contacts.getTLContacts());
             //Execute.BeginOnUIThread(() => Contacts.GetSelfAsync());
 
-            ProtoService.SendRequestAsync<object>("langpack.getStrings", new TLLangPackGetStrings { Keys = new TLVector<string> { "CHANNEL_MESSAGE_GEOLIVE", "CHAT_MESSAGE_GEOLIVE", "MESSAGE_GEOLIVE", "PINNED_GEOLIVE" }, LangCode = "es" }, result =>
-            {
-                Debugger.Break();
-            },
-            fault =>
-            {
-                Debugger.Break();
-            });
+            //ProtoService.SendRequestAsync<object>("langpack.getStrings", new TLLangPackGetStrings { Keys = new TLVector<string> { "CHANNEL_MESSAGE_GEOLIVE", "CHAT_MESSAGE_GEOLIVE", "MESSAGE_GEOLIVE", "PINNED_GEOLIVE" }, LangCode = "it" }, result =>
+            //{
+            //    Debugger.Break();
+            //},
+            //fault =>
+            //{
+            //    Debugger.Break();
+            //});
 
-            ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.3" }, result =>
-            {
-                _updatesService.ProcessUpdates(result, true);
-            },
-            fault =>
-            {
-                Debugger.Break();
-            });
+            //ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.3" }, result =>
+            //{
+            //    _updatesService.ProcessUpdates(result, true);
+            //},
+            //fault =>
+            //{
+            //    Debugger.Break();
+            //});
 
             if (Refresh)
             {

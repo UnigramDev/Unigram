@@ -56,7 +56,7 @@ namespace Unigram.Views
                 _liveLocation = value;
 
                 LiveLocationButton.Visibility = value.HasValue ? Visibility.Visible : Visibility.Collapsed;
-                LiveLocationLabel.Text = value == true ? "Share Live Location" : "Stop Sharing Live Location";
+                LiveLocationLabel.Text = value == true ? "Share My Live Location for..." : "Stop Sharing Live Location";
             }
         }
 

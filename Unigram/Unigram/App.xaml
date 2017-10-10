@@ -136,6 +136,7 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:GeoLiveToVisibilityConverter x:Key="GeoLiveToVisibilityConverter"/>
             <converters:GeoLiveToLabelConverter x:Key="GeoLiveToLabelConverter"/>
             <converters:VenueToGlyphConverter x:Key="VenueToGlyphConverter"/>
             <converters:CompressionToGlyphConverter x:Key="CompressionToGlyphConverter"/>

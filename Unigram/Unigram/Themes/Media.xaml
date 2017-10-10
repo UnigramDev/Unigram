@@ -309,6 +309,7 @@
                 </Canvas>
             </Grid>
             <Grid Padding="{ThemeResource MessageContentPadding}">
+                <!-- Visibility="{Binding Self, Converter={StaticResource GeoLiveToVisibilityConverter}}" -->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>

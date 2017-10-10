@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
 {
-    public class GeoLiveToLabelConverter : IValueConverter
+    public class GeoLiveToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -24,17 +25,8 @@ namespace Unigram.Converters
                 return null;
             }
 
-            if (parameter != null)
-            {
-                var expires = BindConvert.Current.DateTime(message.Date + geoLiveMedia.Period);
-                return (expires > DateTime.Now) ? "Live Location" : "Location Sharing Ended";
-            }
-            else
-            {
-                return "Updated at " + BindConvert.Current.Date(message.EditDate ?? message.Date);
-                //var expires = BindConvert.Current.DateTime(message.EditDate ?? message.Date);
-                //return (DateTime.Now - expires).ToString("updated mm minutes ago");
-            }
+            var expires = BindConvert.Current.DateTime(message.Date + geoLiveMedia.Period);
+            return (expires > DateTime.Now) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

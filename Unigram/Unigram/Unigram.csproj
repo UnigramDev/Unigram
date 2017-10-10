@@ -185,6 +185,9 @@
     <Compile Include="Controls\Views\GallerySecretView.xaml.cs">
       <DependentUpon>GallerySecretView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\LiveLocationsView.xaml.cs">
+      <DependentUpon>LiveLocationsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\PhoneCallRatingView.xaml.cs">
       <DependentUpon>PhoneCallRatingView.xaml</DependentUpon>
     </Compile>
@@ -249,6 +252,7 @@
     <Compile Include="Converters\CompressionToGlyphConverter.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
     <Compile Include="Converters\GeoLiveToLabelConverter.cs" />
+    <Compile Include="Converters\GeoLiveToVisibilityConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
     <Compile Include="Converters\MessageShortTTLConverter.cs" />
     <Compile Include="Converters\MessageToShareConverter.cs" />
@@ -1278,6 +1282,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\EditUserNameView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\LiveLocationsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
