@@ -306,7 +306,6 @@
     <Compile Include="TL\Messages\Methods\TLMessagesEditChatAdmin.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesEditChatPhoto.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesEditChatTitle.cs" />
-    <Compile Include="TL\Messages\Methods\TLMessagesEditGeoLive.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesEditInlineBotMessage.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesEditMessage.cs" />
     <Compile Include="TL\Messages\Methods\TLMessagesExportChatInvite.cs" />

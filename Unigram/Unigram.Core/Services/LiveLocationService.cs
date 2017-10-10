@@ -143,7 +143,7 @@ namespace Unigram.Core.Services
                         geoLiveMedia.RaisePropertyChanged(() => geoLiveMedia.Period);
                     }
 
-                    _protoService.EditGeoLiveAsync(peer, message.Id, geoPoint, stop, null);
+                    _protoService.EditMessageAsync(peer, message.Id, null, null, null, geoPoint, false, stop, null);
                 }
                 else
                 {

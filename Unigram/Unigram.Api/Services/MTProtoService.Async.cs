@@ -66,20 +66,6 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLUpdatesBase>> EditGeoLiveAsync(TLInputPeerBase peer, int id, TLInputGeoPointBase geoPoint, bool stop)
-        {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            EditGeoLiveAsync(peer, id, geoPoint, stop, (callback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
-            }, (faultCallback) =>
-            {
-                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(faultCallback));
-            });
-            return tsc.Task;
-        }
-
-        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLChannelsAdminLogResults>> GetAdminLogAsync(TLInputChannelBase inputChannel, string query, TLChannelAdminLogEventsFilter filter, TLVector<TLInputUserBase> admins, long maxId, long minId, int limit)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLChannelsAdminLogResults>>();
@@ -1810,10 +1796,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLUpdatesBase>> EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage)
+        public Task<MTProtoResponse<TLUpdatesBase>> EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, TLInputGeoPointBase geoPoint, bool noWebPage, bool stop)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            EditMessageAsync(peer, id, message, entities, replyMarkup, noWebPage, (callback) =>
+            EditMessageAsync(peer, id, message, entities, replyMarkup, geoPoint, noWebPage, stop, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>

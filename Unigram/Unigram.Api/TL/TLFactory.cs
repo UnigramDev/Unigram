@@ -204,7 +204,6 @@ namespace Telegram.Api.TL
 				case TLType.MessagesGetFavedStickers: return (T)(Object)new TLMessagesGetFavedStickers(from);
 				case TLType.MessagesFaveSticker: return (T)(Object)new TLMessagesFaveSticker(from);
 				case TLType.MessagesGetUnreadMentions: return (T)(Object)new TLMessagesGetUnreadMentions(from);
-				case TLType.MessagesEditGeoLive: return (T)(Object)new TLMessagesEditGeoLive(from);
 				case TLType.MessagesGetRecentLocations: return (T)(Object)new TLMessagesGetRecentLocations(from);
 				case TLType.MessagesReadMentions: return (T)(Object)new TLMessagesReadMentions(from);
 				case TLType.UpdatesGetState: return (T)(Object)new TLUpdatesGetState(from);

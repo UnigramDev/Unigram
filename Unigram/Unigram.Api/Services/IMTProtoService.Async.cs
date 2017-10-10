@@ -40,8 +40,6 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLPaymentsPaymentResultBase>> SendPaymentFormAsync(int msgId, string infoId, string optionId, TLInputPaymentCredentialsBase credentials);
         Task<MTProtoResponse<TLPaymentsValidatedRequestedInfo>> ValidateRequestedInfoAsync(int msgId, TLPaymentRequestedInfo info, bool save);
 
-        Task<MTProtoResponse<TLUpdatesBase>> EditGeoLiveAsync(TLInputPeerBase peer, int id, TLInputGeoPointBase geoPoint, bool stop);
-
         Task<MTProtoResponse<TLAccountTmpPassword>> GetTmpPasswordAsync(byte[] hash, int period);
 
         Task<MTProtoResponse<TLVector<TLStickerSetCoveredBase>>> GetAttachedStickersAsync(TLInputStickeredMediaBase media);
@@ -158,7 +156,7 @@ namespace Telegram.Api.Services
         Task<MTProtoResponse<TLMessagesMessagesBase>> GetHistoryAsync(TLInputPeerBase inputPeer, TLPeerBase peer, bool sync, int offset, int offsetDate, int maxId, int limit);
         Task<MTProtoResponse<bool>> ResetAuthorizationAsync(long hash);
         Task<MTProtoResponse<TLUpdatesBase>> MigrateChatAsync(int chatId);
-        Task<MTProtoResponse<TLUpdatesBase>> EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage);
+        Task<MTProtoResponse<TLUpdatesBase>> EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, TLInputGeoPointBase geoPoint, bool noWebPage, bool stop);
         Task<MTProtoResponse<TLMessagesAffectedMessages>> DeleteMessagesAsync(TLInputChannelBase channel, TLVector<int> id);
         Task<MTProtoResponse<TLUpdatesBase>> CreateChannelAsync(TLChannelsCreateChannel.Flag flags, string title, string about);
         Task<MTProtoResponse<TLMessagesMessagesBase>> GetMessagesAsync(TLVector<int> id);

@@ -1096,17 +1096,17 @@ namespace Unigram.ViewModels
                 var maxId = _dialog?.UnreadCount > 0 ? _dialog.ReadInboxMaxId : int.MaxValue;
                 var offset = _dialog?.UnreadCount > 0 && maxId > 0 ? -16 : 0;
 
-                if (maxId == int.MaxValue)
-                {
-                    var history = CacheService.GetHistory(_peer.ToPeer());
+                //if (maxId == int.MaxValue)
+                //{
+                //    var history = CacheService.GetHistory(_peer.ToPeer());
 
-                    IsLastSliceLoaded = false;
-                    IsFirstSliceLoaded = false;
+                //    IsLastSliceLoaded = false;
+                //    IsFirstSliceLoaded = false;
 
-                    UpdatingScrollMode = UpdatingScrollMode.ForceKeepLastItemInView;
-                    Items.AddRange(history.Reverse());
-                }
-                else
+                //    UpdatingScrollMode = UpdatingScrollMode.ForceKeepLastItemInView;
+                //    Items.AddRange(history.Reverse());
+                //}
+                //else
                 {
                     LoadFirstSliceAsync(maxId, offset);
                 }
@@ -1780,7 +1780,7 @@ namespace Unigram.ViewModels
                 {
                     if (container.EditMessage != null)
                     {
-                        var edit = await ProtoService.EditMessageAsync(Peer, container.EditMessage.Id, message.Message, message.Entities, null, false);
+                        var edit = await ProtoService.EditMessageAsync(Peer, container.EditMessage.Id, message.Message, message.Entities, null, null, false, false);
                         if (edit.IsSucceeded)
                         {
                             CacheService.SyncEditedMessage(container.EditMessage, true, true, cachedMessage => { });

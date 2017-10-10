@@ -576,34 +576,11 @@ namespace Telegram.Api.Services
             SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
-        public void EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        public void EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, TLInputGeoPointBase geoPoint, bool noWebPage, bool stop, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
-            var obj = new TLMessagesEditMessage { Flags = 0, Peer = peer, Id = id, Message = message, IsNoWebPage = noWebPage, Entities = entities, ReplyMarkup = replyMarkup };
+            var obj = new TLMessagesEditMessage { Flags = 0, Peer = peer, Id = id, Message = message, IsNoWebPage = noWebPage, Entities = entities, ReplyMarkup = replyMarkup, GeoPoint = geoPoint, IsStop = stop };
 
             const string caption = "messages.editMessage";
-            SendInformativeMessage<TLUpdatesBase>(caption, obj,
-                result =>
-                {
-                    var multiPts = result as ITLMultiPts;
-                    if (multiPts != null)
-                    {
-                        _updatesService.SetState(multiPts, caption);
-                    }
-                    else
-                    {
-                        ProcessUpdates(result, null, true);
-                    }
-
-                    callback?.Invoke(result);
-                },
-                faultCallback);
-        }
-
-        public void EditGeoLiveAsync(TLInputPeerBase peer, int id, TLInputGeoPointBase geoPoint, bool stop, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
-        {
-            var obj = new TLMessagesEditGeoLive { Peer = peer, Id = id, GeoPoint = geoPoint, IsStop = stop };
-
-            const string caption = "messages.editGeoLive";
             SendInformativeMessage<TLUpdatesBase>(caption, obj,
                 result =>
                 {
