@@ -703,7 +703,7 @@ namespace Unigram.Views
                 var dialog = element.DataContext as TLDialog;
                 if (dialog != null)
                 {
-                    element.Visibility = dialog.With is TLChannel channel && channel.IsBroadcast ? Visibility.Collapsed : Visibility.Visible;
+                    element.Visibility = dialog.With is TLChannel channel && (channel.IsBroadcast || !channel.HasUsername) ? Visibility.Collapsed : Visibility.Visible;
                 }
             }
         }
