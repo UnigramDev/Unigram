@@ -76,64 +76,64 @@ namespace Telegram.Api.Helpers
         {
             //file = await Package.Current.InstalledLocation.GetFileAsync("Assets\\Thumb.jpg");
 
-            var imageProps = await file.Properties.GetImagePropertiesAsync();
-            var videoProps = await file.Properties.GetVideoPropertiesAsync();
+            //var imageProps = await file.Properties.GetImagePropertiesAsync();
+            //var videoProps = await file.Properties.GetVideoPropertiesAsync();
 
-            if (imageProps.Width > 0 || videoProps.Width > 0)
+            //if (imageProps.Width > 0 || videoProps.Width > 0)
+            //{
+            using (var thumb = await file.GetThumbnailAsync(ThumbnailMode.MusicView, 96, ThumbnailOptions.ResizeThumbnail))
             {
-                using (var thumb = await file.GetThumbnailAsync(ThumbnailMode.SingleItem, 96, ThumbnailOptions.ResizeThumbnail))
+                if (thumb != null && thumb.Type == ThumbnailType.Image)
                 {
-                    if (thumb != null)
+                    var randomStream = thumb as IRandomAccessStream;
+
+                    var originalWidth = (int)thumb.OriginalWidth;
+                    var originalHeight = (int)thumb.OriginalHeight;
+
+                    if (thumb.ContentType != "image/jpeg")
                     {
-                        var randomStream = thumb as IRandomAccessStream;
-
-                        var originalWidth = (int)thumb.OriginalWidth;
-                        var originalHeight = (int)thumb.OriginalHeight;
-
-                        if (thumb.ContentType != "image/jpeg")
-                        {
-                            var memoryStream = new InMemoryRandomAccessStream();
-                            var bitmapDecoder = await BitmapDecoder.CreateAsync(thumb);
-                            var pixelDataProvider = await bitmapDecoder.GetPixelDataAsync();
-                            var bitmapEncoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, memoryStream);
-                            bitmapEncoder.SetPixelData(bitmapDecoder.BitmapPixelFormat, BitmapAlphaMode.Ignore, bitmapDecoder.PixelWidth, bitmapDecoder.PixelHeight, bitmapDecoder.DpiX, bitmapDecoder.DpiY, pixelDataProvider.DetachPixelData());
-                            await bitmapEncoder.FlushAsync();
-                            randomStream = memoryStream;
-                        }
-
-                        var fileLocation = new TLFileLocation
-                        {
-                            VolumeId = TLLong.Random(),
-                            LocalId = TLInt.Random(),
-                            Secret = TLLong.Random(),
-                            DCId = 0
-                        };
-
-                        var desiredName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
-                        var desiredFile = await CreateTempFileAsync(desiredName);
-
-                        var buffer = new Windows.Storage.Streams.Buffer(Convert.ToUInt32(randomStream.Size));
-                        var buffer2 = await randomStream.ReadAsync(buffer, buffer.Capacity, InputStreamOptions.None);
-                        using (var stream = await desiredFile.OpenAsync(FileAccessMode.ReadWrite))
-                        {
-                            await stream.WriteAsync(buffer2);
-                            stream.Dispose();
-                        }
-
-                        var result = new TLPhotoSize
-                        {
-                            W = originalWidth,
-                            H = originalHeight,
-                            Size = (int)randomStream.Size,
-                            Type = string.Empty,
-                            Location = fileLocation
-                        };
-
-                        randomStream.Dispose();
-                        return result;
+                        var memoryStream = new InMemoryRandomAccessStream();
+                        var bitmapDecoder = await BitmapDecoder.CreateAsync(thumb);
+                        var pixelDataProvider = await bitmapDecoder.GetPixelDataAsync();
+                        var bitmapEncoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, memoryStream);
+                        bitmapEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, bitmapDecoder.PixelWidth, bitmapDecoder.PixelHeight, bitmapDecoder.DpiX, bitmapDecoder.DpiY, pixelDataProvider.DetachPixelData());
+                        await bitmapEncoder.FlushAsync();
+                        randomStream = memoryStream;
                     }
+
+                    var fileLocation = new TLFileLocation
+                    {
+                        VolumeId = TLLong.Random(),
+                        LocalId = TLInt.Random(),
+                        Secret = TLLong.Random(),
+                        DCId = 0
+                    };
+
+                    var desiredName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+                    var desiredFile = await CreateTempFileAsync(desiredName);
+
+                    var buffer = new Windows.Storage.Streams.Buffer(Convert.ToUInt32(randomStream.Size));
+                    var buffer2 = await randomStream.ReadAsync(buffer, buffer.Capacity, InputStreamOptions.None);
+                    using (var stream = await desiredFile.OpenAsync(FileAccessMode.ReadWrite))
+                    {
+                        await stream.WriteAsync(buffer2);
+                        stream.Dispose();
+                    }
+
+                    var result = new TLPhotoSize
+                    {
+                        W = originalWidth,
+                        H = originalHeight,
+                        Size = (int)randomStream.Size,
+                        Type = string.Empty,
+                        Location = fileLocation
+                    };
+
+                    randomStream.Dispose();
+                    return result;
                 }
             }
+            //}
 
             return null;
         }

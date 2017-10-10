@@ -180,15 +180,30 @@ namespace Unigram.ViewModels
                     AccessHash = 0,
                     Date = date,
                     Size = (int)basicProps.Size,
-                    MimeType = fileCache.ContentType,
+                    MimeType = file.ContentType,
                     Attributes = new TLVector<TLDocumentAttributeBase>
-                {
-                    new TLDocumentAttributeFilename
                     {
-                        FileName = file.Name
+                        new TLDocumentAttributeFilename
+                        {
+                            FileName = file.Name
+                        }
                     }
-                }
                 };
+
+                var musicProps = await file.Properties.GetMusicPropertiesAsync();
+                if (musicProps.Duration > TimeSpan.Zero)
+                {
+                    document.Attributes.Add(new TLDocumentAttributeAudio
+                    {
+                        Duration = (int)musicProps.Duration.TotalSeconds,
+                        Title = musicProps.Title,
+                        Performer = musicProps.Artist,
+                        IsVoice = false,
+                        HasTitle = musicProps.Title != null,
+                        HasPerformer = musicProps.Artist != null,
+                        HasWaveform = false
+                    });
+                }
 
                 var media = new TLMessageMediaDocument
                 {
@@ -277,7 +292,7 @@ namespace Unigram.ViewModels
                 AccessHash = 0,
                 Date = date,
                 Size = (int)basicProps.Size,
-                MimeType = fileCache.ContentType,
+                MimeType = file.ContentType,
                 Thumb = thumbnail,
                 Attributes = new TLVector<TLDocumentAttributeBase>
                 {
@@ -287,6 +302,21 @@ namespace Unigram.ViewModels
                     }
                 }
             };
+
+            var musicProps = await file.Properties.GetMusicPropertiesAsync();
+            if (musicProps.Duration > TimeSpan.Zero)
+            {
+                document.Attributes.Add(new TLDocumentAttributeAudio
+                {
+                    Duration = (int)musicProps.Duration.TotalSeconds,
+                    Title = musicProps.Title,
+                    Performer = musicProps.Artist,
+                    IsVoice = false,
+                    HasTitle = musicProps.Title != null,
+                    HasPerformer = musicProps.Artist != null,
+                    HasWaveform = false
+                });
+            }
 
             var media = new TLMessageMediaDocument
             {

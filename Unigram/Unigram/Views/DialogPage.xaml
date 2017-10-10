@@ -1037,8 +1037,8 @@
     <Grid x:Name="LayoutRoot"
           Background="Transparent"
           AllowDrop="True"
-          DragOver="gridMain_DragOver"
-          Drop="gridMain_Drop">
+          DragOver="OnDragOver"
+          Drop="OnDrop">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="NarrowState">
