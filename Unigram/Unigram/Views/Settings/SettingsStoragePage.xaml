@@ -2,7 +2,7 @@
     x:Class="Unigram.Views.Settings.SettingsStoragePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Unigram.Views.Settings"
+    xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,25 +13,76 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Storage usage"/>
+        <controls:PageHeader Text="Storage usage" 
+                             IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
 
-        <StackPanel Grid.Row="1">
-            <Button Command="{x:Bind ViewModel.ClearCacheCommand}" IsEnabled="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" Grid.Column="1">
+        <StackPanel>
+            <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                <TextBlock Text="CACHE" 
+                           Margin="0,8" 
+                           FontWeight="SemiBold" 
+                           Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                           Style="{StaticResource CaptionTextBlockStyle}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Content="Clear" 
+                            Command="{x:Bind ViewModel.ClearCacheCommand}" 
+                            IsEnabled="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" 
+                            Grid.Column="0" />
+                    <TextBlock Text="{x:Bind ViewModel.CacheSize, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" 
+                               VerticalAlignment="Center" 
+                               Margin="12,-6"
+                               Grid.Column="1" />
+                    <ProgressBar Margin="8,0"
+                                 VerticalAlignment="Center"
+                                 Value="{x:Bind ViewModel.Percentage, Mode=OneWay}"
+                                 Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                 Maximum="100"
+                                 Minimum="0"
+                                 Grid.Column="2" />
+                    <FontIcon Glyph="&#xE8FB;"
+                              FontSize="20"
+                              FontWeight="Bold"
+                              HorizontalAlignment="Left"
+                              Visibility="{x:Bind ViewModel.TaskCompleted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                              FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                              Grid.Column="2" />
+                </Grid>
+            </StackPanel>
+            <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
+                <TextBlock Text="CACHE DETAIL" 
+                           Margin="0,8" 
+                           FontWeight="SemiBold" 
+                           Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                           Style="{StaticResource CaptionTextBlockStyle}"/>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Clear cache" VerticalAlignment="Center"/>
-                    <ContentControl Content="{x:Bind ViewModel.CacheSize, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
-                        <ContentControl.ContentTransitions>
-                            <TransitionCollection>
-                                <EntranceThemeTransition/>
-                            </TransitionCollection>
-                        </ContentControl.ContentTransitions>
-                        <ContentControl.Clip>
-                            <RectangleGeometry Rect="0,0,200,32"/>
-                        </ContentControl.Clip>
-                    </ContentControl>
+                    <TextBlock Text="Images" 
+                               VerticalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind ViewModel.ImagesCacheSize, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" 
+                               VerticalAlignment="Center" 
+                               Margin="12,0"/>
                 </StackPanel>
-            </Button>
-
+                <StackPanel Orientation="Horizontal" Margin="0,8">
+                    <TextBlock Text="Videos" 
+                               VerticalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind ViewModel.VideosCacheSize, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" 
+                               VerticalAlignment="Center" 
+                               Margin="12,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Other" 
+                               VerticalAlignment="Center"/>
+                    <TextBlock Text="{x:Bind ViewModel.OtherFilesCacheSize, Mode=OneWay, Converter={StaticResource FileSizeConverter}}" 
+                               VerticalAlignment="Center" 
+                               Margin="12,0"/>
+                </StackPanel>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>
