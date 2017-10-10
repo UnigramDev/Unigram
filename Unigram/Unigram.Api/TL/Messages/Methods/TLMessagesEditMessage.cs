@@ -13,7 +13,7 @@ namespace Telegram.Api.TL.Messages.Methods
 		public enum Flag : Int32
 		{
 			NoWebPage = (1 << 1),
-			Stop = (1 << 12),
+			StopGeoLive = (1 << 12),
 			Message = (1 << 11),
 			ReplyMarkup = (1 << 2),
 			Entities = (1 << 3),
@@ -21,7 +21,7 @@ namespace Telegram.Api.TL.Messages.Methods
 		}
 
 		public bool IsNoWebPage { get { return Flags.HasFlag(Flag.NoWebPage); } set { Flags = value ? (Flags | Flag.NoWebPage) : (Flags & ~Flag.NoWebPage); } }
-		public bool IsStop { get { return Flags.HasFlag(Flag.Stop); } set { Flags = value ? (Flags | Flag.Stop) : (Flags & ~Flag.Stop); } }
+		public bool IsStopGeoLive { get { return Flags.HasFlag(Flag.StopGeoLive); } set { Flags = value ? (Flags | Flag.StopGeoLive) : (Flags & ~Flag.StopGeoLive); } }
 		public bool HasMessage { get { return Flags.HasFlag(Flag.Message); } set { Flags = value ? (Flags | Flag.Message) : (Flags & ~Flag.Message); } }
 		public bool HasReplyMarkup { get { return Flags.HasFlag(Flag.ReplyMarkup); } set { Flags = value ? (Flags | Flag.ReplyMarkup) : (Flags & ~Flag.ReplyMarkup); } }
 		public bool HasEntities { get { return Flags.HasFlag(Flag.Entities); } set { Flags = value ? (Flags | Flag.Entities) : (Flags & ~Flag.Entities); } }
