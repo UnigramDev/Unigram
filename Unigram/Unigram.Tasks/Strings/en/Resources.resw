@@ -141,6 +141,9 @@
   <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
     <value>posted a map</value>
   </data>
+  <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>posted a live location</value>
+  </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
     <value>posted a GIF</value>
   </data>
@@ -200,6 +203,9 @@
   </data>
   <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
     <value>{0} sent a map to the group</value>
+  </data>
+  <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>{0} started sharing their live location</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} sent a GIF to the group</value>
@@ -279,6 +285,9 @@
   <data name="MESSAGE_GEO" xml:space="preserve">
     <value>sent you a map</value>
   </data>
+  <data name="MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>started sharing their live location</value>
+  </data>
   <data name="MESSAGE_GIF" xml:space="preserve">
     <value>sent you a GIF</value>
   </data>
@@ -332,6 +341,9 @@
   </data>
   <data name="PINNED_GEO" xml:space="preserve">
     <value>pinned a map</value>
+  </data>
+  <data name="PINNED_GEOLIVE" xml:space="preserve">
+    <value>pinned a live location</value>
   </data>
   <data name="PINNED_GIF" xml:space="preserve">
     <value>pinned a GIF</value>
