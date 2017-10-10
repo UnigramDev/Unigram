@@ -39,6 +39,7 @@ namespace Unigram.ViewModels
         IHandle<TLUpdateUserTyping>,
         IHandle<TLUpdateChatUserTyping>,
         IHandle<UpdatingEventArgs>,
+        IHandle<UpdateCompletedEventArgs>,
         IHandle<TLMessageCommonBase>,
         IHandle<TLUpdateReadMessagesContents>
     {
@@ -235,6 +236,11 @@ namespace Unigram.ViewModels
         public void Handle(UpdatingEventArgs e)
         {
             ProtoService.SetMessageOnTime(5, "Updating...");
+        }
+
+        public void Handle(UpdateCompletedEventArgs e)
+        {
+            ProtoService.SetMessageOnTime(0, null);
         }
 
         #region Typing
