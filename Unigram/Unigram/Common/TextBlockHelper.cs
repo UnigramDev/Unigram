@@ -45,7 +45,7 @@ namespace Unigram.Common
                 case TLAuthSentCodeTypeApp appType:
                     sender.Inlines.Add(new Run { Text = "We've sent the code to the " });
                     sender.Inlines.Add(new Run { Text = "Telegram", FontWeight = FontWeights.SemiBold });
-                    sender.Inlines.Add(new Run { Text = " app on your other device." });
+                    sender.Inlines.Add(new Run { Text = " client(s) on your other device(s)." });
                     break;
                 case TLAuthSentCodeTypeSms smsType:
                     sender.Inlines.Add(new Run { Text = "We've sent you an SMS with the code." });

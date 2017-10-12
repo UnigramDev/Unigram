@@ -147,7 +147,7 @@ namespace Unigram.ViewModels.Settings
             }
             else
             {
-                await TLMessageDialog.ShowAsync("Since you haven't provided a recovery e-mail when setting up your password, your remaining options are either to remember your password or to reset your account.", "Sorry", "OK");
+                await TLMessageDialog.ShowAsync("Since you didn't provide a recovery e-mail when setting up your account, your only remaining options are to remember your password or reset your account.", "Sorry", "OK");
                 //IsResettable = true;
             }
         }
