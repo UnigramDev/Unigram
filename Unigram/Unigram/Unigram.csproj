@@ -217,6 +217,9 @@
     <Compile Include="Controls\Views\SelectTTLSecondsView.xaml.cs">
       <DependentUpon>SelectTTLSecondsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\SendMediaView.xaml.cs">
+      <DependentUpon>SendMediaView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\SettingsDownloadView.xaml.cs">
       <DependentUpon>SettingsDownloadView.xaml</DependentUpon>
     </Compile>
@@ -868,9 +871,6 @@
     <Compile Include="Controls\Views\EditYourNameView.xaml.cs">
       <DependentUpon>EditYourNameView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\SendPhotosView.xaml.cs">
-      <DependentUpon>SendPhotosView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\VoiceButton.cs" />
     <Compile Include="Converters\BubblePlaceholderConverter.cs" />
     <Compile Include="Converters\EditToVisibilityConverter.cs" />
@@ -1353,9 +1353,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\SendPhotosView.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Controls\Views\SendMediaView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\SettingsDownloadView.xaml">
       <SubType>Designer</SubType>

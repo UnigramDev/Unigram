@@ -30,7 +30,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SendPhotosView : ContentDialogBase, INotifyPropertyChanged
+    public sealed partial class SendMediaView : ContentDialogBase, INotifyPropertyChanged
     {
         public DialogViewModel ViewModel { get; set; }
 
@@ -142,7 +142,7 @@ namespace Unigram.Controls.Views
 
         #endregion
 
-        public SendPhotosView()
+        public SendMediaView()
         {
             InitializeComponent();
             DataContext = this;

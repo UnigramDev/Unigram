@@ -587,7 +587,7 @@ namespace Unigram.ViewModels
 
             if (storages != null && storages.Count > 0)
             {
-                var dialog = new SendPhotosView { ViewModel = this, Items = storages, SelectedItem = storages[0], IsTTLEnabled = _peer is TLInputPeerUser };
+                var dialog = new SendMediaView { ViewModel = this, Items = storages, SelectedItem = storages[0], IsTTLEnabled = _peer is TLInputPeerUser };
                 var dialogResult = await dialog.ShowAsync();
 
                 TextField.FocusMaybe(FocusState.Keyboard);
@@ -614,7 +614,7 @@ namespace Unigram.ViewModels
             var storages = media;
             if (storages != null && storages.Count > 0)
             {
-                var dialog = new SendPhotosView { ViewModel = this, Items = storages, SelectedItem = selectedItem, IsTTLEnabled = _peer is TLInputPeerUser };
+                var dialog = new SendMediaView { ViewModel = this, Items = storages, SelectedItem = selectedItem, IsTTLEnabled = _peer is TLInputPeerUser };
                 var dialogResult = await dialog.ShowAsync();
 
                 TextField.FocusMaybe(FocusState.Keyboard);
@@ -622,40 +622,6 @@ namespace Unigram.ViewModels
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
                     foreach (var storage in dialog.Items.Where(x => x.IsSelected))
-                    {
-                        if (storage is StoragePhoto photo)
-                        {
-                            await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
-                        }
-                        else if (storage is StorageVideo video)
-                        {
-                            await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync());
-                        }
-                    }
-                }
-            }
-        }
-
-
-        public async void SendPhotoDrop(ObservableCollection<StorageFile> files)
-        {
-            ObservableCollection<StorageMedia> storages = null;
-
-            if (files != null)
-            {
-                storages = new ObservableCollection<StorageMedia>(files.Select(x => new StoragePhoto(x) { IsSelected = true }));
-            }
-
-            if (storages != null && storages.Count > 0)
-            {
-                var dialog = new SendPhotosView { ViewModel = this, Items = storages, SelectedItem = storages[0], IsTTLEnabled = _peer is TLInputPeerUser };
-                var dialogResult = await dialog.ShowAsync();
-
-                TextField.FocusMaybe(FocusState.Keyboard);
-
-                if (dialogResult == ContentDialogBaseResult.OK)
-                {
-                    foreach (var storage in dialog.Items)
                     {
                         if (storage is StoragePhoto photo)
                         {
