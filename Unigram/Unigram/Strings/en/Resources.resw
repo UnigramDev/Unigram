@@ -759,4 +759,46 @@ Duration: {1}</value>
   <data name="EventLogToggledInvitesHistoryOn" xml:space="preserve">
     <value>{0} made group history visible for new members</value>
   </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Unigram (Preview)</value>
+  </data>
+  <data name="IntroWizardPage1_Text" xml:space="preserve">
+    <value>**Unigram** is a Telegram Universal app built by the Windows Community, for the Windows Community</value>
+  </data>
+  <data name="IntroWizardPage1_Title" xml:space="preserve">
+    <value>Unigram</value>
+  </data>
+  <data name="IntroWizardPage2_Text" xml:space="preserve">
+    <value>**Telegram** delivers messages faster\nthan any other application.</value>
+  </data>
+  <data name="IntroWizardPage2_Title" xml:space="preserve">
+    <value>Fast</value>
+  </data>
+  <data name="IntroWizardPage3_Text" xml:space="preserve">
+    <value>**Telegram** is free forever. No ads.\nNo subscription fees.</value>
+  </data>
+  <data name="IntroWizardPage3_Title" xml:space="preserve">
+    <value>Free</value>
+  </data>
+  <data name="IntroWizardPage4_Text" xml:space="preserve">
+    <value>**Telegram** has no limits on\nthe size of your media and chats.</value>
+  </data>
+  <data name="IntroWizardPage4_Title" xml:space="preserve">
+    <value>Powerful</value>
+  </data>
+  <data name="IntroWizardPage5_Text" xml:space="preserve">
+    <value>**Telegram** keeps your messages\nsafe from hacker attacks.</value>
+  </data>
+  <data name="IntroWizardPage5_Title" xml:space="preserve">
+    <value>Secure</value>
+  </data>
+  <data name="IntroWizardPage6_Text" xml:space="preserve">
+    <value>**Telegram** lets you access your\nmessages from multiple devices.</value>
+  </data>
+  <data name="IntroWizardPage6_Title" xml:space="preserve">
+    <value>Cloud-Based</value>
+  </data>
+  <data name="IntroWizard_ContinueButton.Content" xml:space="preserve">
+    <value>Continue</value>
+  </data>
 </root>

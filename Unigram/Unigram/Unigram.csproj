@@ -1093,6 +1093,7 @@
     </PRIResource>
     <Content Include="Assets\Fonts\CamMDL2.ttf" />
     <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
+    <PRIResource Include="Strings\ja\Resources.resw" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
