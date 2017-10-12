@@ -592,14 +592,16 @@ namespace Unigram.ViewModels
 
             _isLoadingPreviousSlice = true;
             IsLoading = true;
-            if (last)
-            {
-                UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepLastItemInView : UpdatingScrollMode.KeepLastItemInView;
-            }
-            else
-            {
-                UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
-            }
+            UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
+
+            //if (last)
+            //{
+            //    UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepLastItemInView : UpdatingScrollMode.KeepLastItemInView;
+            //}
+            //else
+            //{
+            //    UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
+            //}
 
             Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 

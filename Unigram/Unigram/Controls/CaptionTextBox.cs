@@ -23,7 +23,7 @@ namespace Unigram.Controls
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        public SendPhotosView View { get; set; }
+        public SendMediaView View { get; set; }
 
         public CaptionTextBox()
         {
