@@ -160,7 +160,7 @@
       <Version>4.6.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.4.0</Version>
+      <Version>6.0.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.3</Version>
@@ -169,7 +169,7 @@
       <Version>1.1.12</Version>
     </PackageReference>
     <PackageReference Include="Universal.WinSQLite">
-      <Version>3.12.2.2</Version>
+      <Version>3.12.2.3</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
