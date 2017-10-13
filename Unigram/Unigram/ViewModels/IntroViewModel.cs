@@ -10,24 +10,28 @@ using Telegram.Api.Services.Cache;
 using Unigram.Common;
 using Unigram.Views.SignIn;
 using Windows.UI.Xaml;
+using Windows.ApplicationModel.Resources;
+using Unigram.Strings;
 
 namespace Unigram.ViewModels
 {
     public class IntroViewModel : UnigramViewModelBase
     {
+        
         public IntroViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
             Items = new ObservableCollection<IntroPage>();
 
+            var loader = ResourceLoader.GetForCurrentView();
             // TODO: put them in a separate file?
             // TODO: localization
-            Items.Add(new IntroPage { Title = "Unigram", Text = "**Unigram** is a Telegram Universal app built by the Windows Community, for the Windows Community" });
-            Items.Add(new IntroPage { Title = "Fast", Text = "**Telegram** delivers messages faster\nthan any other application." });
-            Items.Add(new IntroPage { Title = "Free", Text = "**Telegram** is free forever. No ads.\nNo subscription fees." });
-            Items.Add(new IntroPage { Title = "Powerful", Text = "**Telegram** has no limits on\nthe size of your media and chats." });
-            Items.Add(new IntroPage { Title = "Secure", Text = "**Telegram** keeps your messages\nsafe from hacker attacks." });
-            Items.Add(new IntroPage { Title = "Cloud-Based", Text = "**Telegram** lets you access your\nmessages from multiple devices." });
+            Items.Add(new IntroPage { Title = AppResources.IntroWizardPage1_Title, Text = AppResources.IntroWizardPage1_Text });
+            Items.Add(new IntroPage { Title = AppResources.IntroWizardPage2_Title, Text = AppResources.IntroWizardPage2_Text });
+            Items.Add(new IntroPage { Title = AppResources.IntroWizardPage3_Title, Text = AppResources.IntroWizardPage3_Text });
+            Items.Add(new IntroPage { Title = AppResources.IntroWizardPage4_Title, Text = AppResources.IntroWizardPage4_Text });
+            Items.Add(new IntroPage { Title = AppResources.IntroWizardPage5_Title, Text = AppResources.IntroWizardPage5_Text });
+            Items.Add(new IntroPage { Title = AppResources.IntroWizardPage6_Title, Text = AppResources.IntroWizardPage6_Text });
             SelectedItem = Items[0];
         }
 

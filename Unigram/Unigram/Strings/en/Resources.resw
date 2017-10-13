@@ -759,4 +759,91 @@ Duration: {1}</value>
   <data name="EventLogToggledInvitesHistoryOn" xml:space="preserve">
     <value>{0} made group history visible for new members</value>
   </data>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>Unigram (Alpha)</value>
+  </data>
+  <data name="IntroWizardPage1_Text" xml:space="preserve">
+    <value>**Unigram** is a Telegram Universal app built by the Windows Community, for the Windows Community</value>
+  </data>
+  <data name="IntroWizardPage1_Title" xml:space="preserve">
+    <value>Unigram</value>
+  </data>
+  <data name="IntroWizardPage2_Text" xml:space="preserve">
+    <value>**Telegram** delivers messages faster\nthan any other application.</value>
+  </data>
+  <data name="IntroWizardPage2_Title" xml:space="preserve">
+    <value>Fast</value>
+  </data>
+  <data name="IntroWizardPage3_Text" xml:space="preserve">
+    <value>**Telegram** is free forever. No ads.\nNo subscription fees.</value>
+  </data>
+  <data name="IntroWizardPage3_Title" xml:space="preserve">
+    <value>Free</value>
+  </data>
+  <data name="IntroWizardPage4_Text" xml:space="preserve">
+    <value>**Telegram** has no limits on\nthe size of your media and chats.</value>
+  </data>
+  <data name="IntroWizardPage4_Title" xml:space="preserve">
+    <value>Powerful</value>
+  </data>
+  <data name="IntroWizardPage5_Text" xml:space="preserve">
+    <value>**Telegram** keeps your messages\nsafe from hacker attacks.</value>
+  </data>
+  <data name="IntroWizardPage5_Title" xml:space="preserve">
+    <value>Secure</value>
+  </data>
+  <data name="IntroWizardPage6_Text" xml:space="preserve">
+    <value>**Telegram** lets you access your\nmessages from multiple devices.</value>
+  </data>
+  <data name="IntroWizardPage6_Title" xml:space="preserve">
+    <value>Cloud-Based</value>
+  </data>
+  <data name="IntroWizard_ContinueButton.Content" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="AboutPage_PrivacyPolicyButton.Content" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="AboutPage_ThanksLabel.Text" xml:space="preserve">
+    <value>Thank you for using Unigram! We wouldn't have been able to get this far without all help of the community.</value>
+  </data>
+  <data name="AboutPage_AppNameLabel.Text" xml:space="preserve">
+    <value>Unigram</value>
+  </data>
+  <data name="AboutPage_ChangelogButton.Content" xml:space="preserve">
+    <value>Changelog</value>
+  </data>
+  <data name="AboutPage_FAQButton.Content" xml:space="preserve">
+    <value>Frequently Asked Questions</value>
+  </data>
+  <data name="AboutPage_WebsiteButton.Content" xml:space="preserve">
+    <value>Unigram Website</value>
+  </data>
+  <data name="AboutPage_SocialMediaLabel.Text" xml:space="preserve">
+    <value>Social Media</value>
+  </data>
+  <data name="AboutPage_SupportEmailButton.Content" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="AboutPage_SupportGithubButton.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="AboutPage_SupportLabel.Text" xml:space="preserve">
+    <value>Support</value>
+  </data>
+  <data name="AboutPage_VersionLabel.Text" xml:space="preserve">
+    <value>Version:</value>
+  </data>
+  <data name="AboutPage_SpecialThanksDetailsLabel.Text" xml:space="preserve">
+    <value>We want to especially thank these people for their help and knowledge while building Unigram:</value>
+  </data>
+  <data name="AboutPage_SpecialThanksLabel.Text" xml:space="preserve">
+    <value>Special Thanks</value>
+  </data>
+  <data name="AboutPage_ThanksGregoryButton.Content" xml:space="preserve">
+    <value>Gregory Klyushnikov</value>
+  </data>
+  <data name="AboutPage_ThanksTelegramButton.Content" xml:space="preserve">
+    <value>Telegram Desktop</value>
+  </data>
 </root>
