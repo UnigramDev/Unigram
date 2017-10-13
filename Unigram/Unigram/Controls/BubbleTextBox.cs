@@ -204,6 +204,7 @@ namespace Unigram.Controls
 
                 var formats = package.AvailableFormats.ToList();
                 var text = await package.GetTextAsync();
+                var start = Document.Selection.StartPosition;
 
                 var result = Emoticon.Pattern.Replace(text, (match) =>
                 {
@@ -218,6 +219,7 @@ namespace Unigram.Controls
                 });
 
                 Document.Selection.SetText(TextSetOptions.None, result);
+                Document.Selection.SetRange(start + result.Length, start + result.Length);
             }
             else if (package.Contains(StandardDataFormats.StorageItems))
             {
