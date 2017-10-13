@@ -534,6 +534,7 @@ namespace Unigram.ViewModels
                 var dataPackage = new DataPackage();
                 dataPackage.SetText(text);
                 Clipboard.SetContent(dataPackage);
+                Clipboard.Flush();
             }
         }
 
@@ -584,6 +585,7 @@ namespace Unigram.ViewModels
                 var dataPackage = new DataPackage();
                 dataPackage.SetText(link);
                 Clipboard.SetContent(dataPackage);
+                Clipboard.Flush();
             }
         }
 
