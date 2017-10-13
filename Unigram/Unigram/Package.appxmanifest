@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Unigram.App">
-      <uap:VisualElements DisplayName="ms-resource:AppName" Square150x150Logo="Assets\Logos\Square150x150Logo\Square150x150Logo.png" Square44x44Logo="Assets\Logos\Square44x44Logo\Square44x44Logo.png" Description="Unigram" BackgroundColor="transparent">
+      <uap:VisualElements DisplayName="ms-resource:AppDisplayName" Square150x150Logo="Assets\Logos\Square150x150Logo\Square150x150Logo.png" Square44x44Logo="Assets\Logos\Square44x44Logo\Square44x44Logo.png" Description="Unigram" BackgroundColor="transparent">
         <uap:LockScreen Notification="badgeAndTileText" BadgeLogo="Assets\Logos\LockScreenLogo\LockScreenLogo.png" />
         <uap:DefaultTile Wide310x150Logo="Assets\Logos\Wide310x150Logo\Wide310x150Logo.png" Square71x71Logo="Assets\Logos\Square71x71Logo\Square71x71Logo.png" Square310x310Logo="Assets\Logos\Square310x310Logo\Square310x310Logo.png">
           <uap:ShowNameOnTiles>
@@ -27,13 +27,26 @@
         <uap:SplashScreen uap5:Optional="true" Image="Assets\Logos\SplashScreen\SplashScreen.png" BackgroundColor="transparent" />
       </uap:VisualElements>
       <Extensions>
-        <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="ms-contact-profile">
-            <uap:DisplayName>Unigram</uap:DisplayName>
-          </uap:Protocol>
+        <uap:Extension Category="windows.appService" EntryPoint="Unigram.Tasks.VoIPServiceTask">
+          <uap:AppService Name="VoIPServiceTask" ServerName="BackgroundHost" />
         </uap:Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.NotificationTask">
+          <BackgroundTasks ServerName="BackgroundHost">
+            <Task Type="pushNotification" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.VoIPCallTask">
+          <BackgroundTasks ServerName="BackgroundHost">
+            <Task Type="systemEvent" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.InteractiveTask">
+          <BackgroundTasks ServerName="BackgroundHost">
+            <Task Type="systemEvent" />
+          </BackgroundTasks>
+        </Extension>
         <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="ms-ipmessaging">
+          <uap:Protocol Name="tg">
             <uap:DisplayName>Unigram</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>
@@ -43,27 +56,14 @@
           </uap:Protocol>
         </uap:Extension>
         <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="tg">
+          <uap:Protocol Name="ms-ipmessaging">
             <uap:DisplayName>Unigram</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.InteractiveTask">
-          <BackgroundTasks ServerName="BackgroundHost">
-            <Task Type="systemEvent" />
-          </BackgroundTasks>
-        </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Tasks.VoIPCallTask">
-          <BackgroundTasks ServerName="BackgroundHost">
-            <Task Type="systemEvent" />
-          </BackgroundTasks>
-        </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="Unigram.Native.Tasks.NotificationTask">
-          <BackgroundTasks ServerName="BackgroundHost">
-            <Task Type="pushNotification" />
-          </BackgroundTasks>
-        </Extension>
-        <uap:Extension Category="windows.appService" EntryPoint="Unigram.Tasks.VoIPServiceTask">
-          <uap:AppService Name="VoIPServiceTask" ServerName="BackgroundHost" />
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="ms-contact-profile">
+            <uap:DisplayName>Unigram</uap:DisplayName>
+          </uap:Protocol>
         </uap:Extension>
         <!-- Share Target temporaraily disabled -->
         <!--<uap:Extension Category="windows.shareTarget">
