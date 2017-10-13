@@ -161,7 +161,7 @@ namespace Unigram.Controls.Items
                 {
                     if (message.Media is TLMessageMediaDocument documentMedia)
                     {
-                        if (string.IsNullOrEmpty(documentMedia.Caption))
+                        if (string.IsNullOrEmpty(documentMedia.Caption) || message.IsRoundVideo())
                         {
                             return result;
                         }

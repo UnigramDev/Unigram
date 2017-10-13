@@ -39,7 +39,20 @@ namespace Unigram.Models
 
         public static async Task<StorageVideo> CreateAsync(StorageFile file, bool selected)
         {
-            return new StorageVideo(file, await file.GetBasicPropertiesAsync(), await file.Properties.GetVideoPropertiesAsync(), await MediaEncodingProfile.CreateFromFileAsync(file)) { IsSelected = selected };
+            try
+            {
+                var profile = await MediaEncodingProfile.CreateFromFileAsync(file);
+                if (profile.Video == null)
+                {
+                    return null;
+                }
+
+                return new StorageVideo(file, await file.GetBasicPropertiesAsync(), await file.Properties.GetVideoPropertiesAsync(), profile) { IsSelected = selected };
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public VideoProperties Properties { get; private set; }

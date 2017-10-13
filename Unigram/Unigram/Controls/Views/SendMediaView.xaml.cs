@@ -259,13 +259,10 @@ namespace Unigram.Controls.Views
             {
                 foreach (var file in files)
                 {
-                    if (file.ContentType.Equals("video/mp4"))
+                    var storage = await StorageMedia.CreateAsync(file, true);
+                    if (storage != null)
                     {
-                        Items.Add(await StorageVideo.CreateAsync(file, true));
-                    }
-                    else
-                    {
-                        Items.Add(new StoragePhoto(file) { IsSelected = true });
+                        Items.Add(storage);
                     }
                 }
             }
