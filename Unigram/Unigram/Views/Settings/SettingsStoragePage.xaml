@@ -56,11 +56,14 @@
                 </Grid>
             </StackPanel>
             <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                <TextBlock Text="CACHE DETAIL" 
-                           Margin="0,8" 
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="CACHE DETAIL" 
+                           Margin="0,8,8,8" 
                            FontWeight="SemiBold" 
                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                           Style="{StaticResource CaptionTextBlockStyle}"/>
+                           Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ProgressRing IsActive="{x:Bind ViewModel.TaskCompleted, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" />
+                </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Images" 
                                VerticalAlignment="Center"/>

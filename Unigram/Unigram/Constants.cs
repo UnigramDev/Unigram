@@ -13,6 +13,8 @@ namespace Unigram
         public static readonly string[] MediaTypes = new[] { ".jpg", ".jpeg", ".png", ".gif", ".mp4" };
         public static readonly string[] PhotoTypes = new[] { ".jpg", ".jpeg", ".png", ".gif" };
 
+        public const string WallpaperFileName = "wallpaper.jpg";
+
         public static readonly string[] TelegramHosts = new string[]
         {
             "telegram.me",

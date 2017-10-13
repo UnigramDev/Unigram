@@ -44,7 +44,7 @@ namespace Unigram.Controls
             {
                 if (selectedBackground != 1000001)
                 {
-                    var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath("wallpaper.jpg"));
+                    var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath(Constants.WallpaperFileName));
                     if (item is StorageFile file)
                     {
                         if (_imageBackground == null)
