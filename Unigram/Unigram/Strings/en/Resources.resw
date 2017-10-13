@@ -846,4 +846,13 @@ Duration: {1}</value>
   <data name="AboutPage_ThanksTelegramButton.Content" xml:space="preserve">
     <value>Telegram Desktop</value>
   </data>
+  <data name="SettingsPage_EditPhotoButton.Content" xml:space="preserve">
+    <value>Set profile photo</value>
+  </data>
+  <data name="SettingsPage_GeneralButton.Content" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsPage_PhoneButton.Tag" xml:space="preserve">
+    <value>Phone</value>
+  </data>
 </root>

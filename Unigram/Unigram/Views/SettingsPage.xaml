@@ -44,7 +44,7 @@
                     </Grid>
                     <TextBlock Text="online" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
                 </Grid>
-                <controls:HyperButton Content="Set profile photo"
+                <controls:HyperButton x:Uid="SettingsPage_EditPhotoButton" Content=""
                                       Click="EditPhoto_Click"
                                       Style="{StaticResource HyperButtonStyle}"
                                       Grid.Row="1"/>
@@ -53,7 +53,7 @@
                                        BorderThickness="0,0,0,1"
                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
-                    <controls:HyperButton Tag="Phone"
+                    <controls:HyperButton x:Uid="SettingsPage_PhoneButton" Tag=""
                                           Content="{x:Bind ViewModel.Self.Phone, Mode=OneWay, Converter={StaticResource PhoneNumberFormatConverter}}"
                                           Style="{StaticResource SubtitleButtonStyle}"
                                           Click="Phone_Click"/>
@@ -71,7 +71,7 @@
                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                        Margin="0,24,0,0">
-                    <controls:HyperButton Content="General"
+                    <controls:HyperButton x:Uid="SettingsPage_GeneralButton" Content=""
                                           Click="General_Click"
                                           Style="{StaticResource HyperButtonStyle}"/>
                 </local:TableStackPanel>
