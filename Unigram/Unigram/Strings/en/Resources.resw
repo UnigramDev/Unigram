@@ -922,4 +922,10 @@ Duration: {1}</value>
     <value>Yes</value>
     <comment>Test</comment>
   </data>
+  <data name="SettingsBlockedUsersPage_Header.Text" xml:space="preserve">
+    <value>Blocked users</value>
+  </data>
+  <data name="SettingsBlockedUsersPage_ListFooter.Text" xml:space="preserve">
+    <value>Blocked users can't send you messages or add you to groups. They will not see your profile pictures, online and last seen status.</value>
+  </data>
 </root>
