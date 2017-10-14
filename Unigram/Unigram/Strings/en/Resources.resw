@@ -909,4 +909,17 @@ Duration: {1}</value>
   <data name="TGSupportDisclaimerPrimaryText" xml:space="preserve">
     <value>FAQ</value>
   </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="UnblockUserConfirmationDialogText" xml:space="preserve">
+    <value>Are you sure?</value>
+  </data>
+  <data name="UnblockUserConfirmationDialogTitle" xml:space="preserve">
+    <value>Unblock?</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Test</comment>
+  </data>
 </root>

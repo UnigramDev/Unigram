@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/14/2017 13:39:49
+// 	Generated: 10/14/2017 19:22:03
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2611,6 +2611,50 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TGSupportDisclaimerPrimaryText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No"
+        /// </summary>
+        public static string No
+        {
+            get
+            {
+                return resourceLoader.GetString("No");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure?"
+        /// </summary>
+        public static string UnblockUserConfirmationDialogText
+        {
+            get
+            {
+                return resourceLoader.GetString("UnblockUserConfirmationDialogText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unblock?"
+        /// </summary>
+        public static string UnblockUserConfirmationDialogTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("UnblockUserConfirmationDialogTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Yes"
+        /// </summary>
+        public static string Yes
+        {
+            get
+            {
+                return resourceLoader.GetString("Yes");
             }
         }
     }
