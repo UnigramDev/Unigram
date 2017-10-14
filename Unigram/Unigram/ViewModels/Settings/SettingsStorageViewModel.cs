@@ -25,11 +25,14 @@ namespace Unigram.ViewModels.Settings
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             await UpdateCacheSizeAsync(resetInitialCacheSize: true, updateDetailedCacheSizes: true);
+            TaskCompleted = true;
         }
 
         private long _cacheSize, _initialCacheSize, _imagesCacheSize, _videosCacheSize, _otherFilesCacheSize;
         private double _percentage;
         private bool _taskCompleted;
+
+        private static string[] ExcludedFileNames = new[] { Constants.WallpaperFileName };
 
         public long InitialCacheSize
         {
@@ -166,6 +169,8 @@ namespace Unigram.ViewModels.Settings
 
             foreach (var file in files)
             {
+                if (ExcludedFileNames.Any(fileName => string.Equals(fileName, file.Name, StringComparison.OrdinalIgnoreCase))) continue;
+
                 try
                 {
                     NativeUtils.Delete(file.Path);
@@ -197,17 +202,12 @@ namespace Unigram.ViewModels.Settings
 
     public static class StorageFileExtensions
     {
-        private const string JpegExtension = "jpg";
-        private const string PngExtension = "png";
-        private const string Mp4Extension = "mp4";
-
         public static IEnumerable<StorageFile> OfImageType(this IEnumerable<StorageFile> storageFiles)
         {
             if (storageFiles == null)
                 throw new ArgumentNullException(nameof(storageFiles));
 
-            return storageFiles.Where(f => f.FileType.ToLower().Contains(JpegExtension)
-                || f.FileType.ToLower().Contains(PngExtension));
+            return storageFiles.Where(f => Constants.PhotoTypes.Any(t => t.Contains(f.FileType)));
         }
 
         public static IEnumerable<StorageFile> OfVideoType(this IEnumerable<StorageFile> storageFiles)
@@ -215,7 +215,9 @@ namespace Unigram.ViewModels.Settings
             if (storageFiles == null)
                 throw new ArgumentNullException(nameof(storageFiles));
 
-            return storageFiles.Where(f => f.FileType.ToLower().Contains(Mp4Extension));
+            var videoTypes = Constants.MediaTypes.Except(Constants.PhotoTypes);
+
+            return storageFiles.Where(f => videoTypes.Any(t => t.Contains(f.FileType)));
         }
 
         public static IEnumerable<StorageFile> OfOtherTypes(this IEnumerable<StorageFile> storageFiles)
@@ -223,9 +225,7 @@ namespace Unigram.ViewModels.Settings
             if (storageFiles == null)
                 throw new ArgumentNullException(nameof(storageFiles));
 
-            return storageFiles.Where(f => !f.FileType.ToLower().Contains(JpegExtension)
-                && !f.FileType.ToLower().Contains(PngExtension)
-                && !f.FileType.ToLower().Contains(Mp4Extension));
+            return storageFiles.Where(f => Constants.MediaTypes.All(t => !t.Contains(f.FileType)));
         }
 
         public static ulong GetFileSize(this StorageFile storageFile)

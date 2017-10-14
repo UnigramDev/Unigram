@@ -22,6 +22,8 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsWallPaperViewModel : UnigramViewModelBase
     {
+        private const string TempWallpaperFileName = "temp_wallpaper.jpg";
+
         public SettingsWallPaperViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
@@ -62,7 +64,7 @@ namespace Unigram.ViewModels.Settings
                 IsLocal = true;
                 SelectedItem = null;
 
-                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath("wallpaper.jpg"));
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath(Constants.WallpaperFileName));
                 if (item is StorageFile file)
                 {
                     using (var stream = await file.OpenReadAsync())
@@ -137,7 +139,7 @@ namespace Unigram.ViewModels.Settings
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var result = await FileUtils.CreateTempFileAsync("temp_wallpaper.jpg");
+                var result = await FileUtils.CreateTempFileAsync(TempWallpaperFileName);
                 await file.CopyAndReplaceAsync(result);
 
                 IsLocal = true;
@@ -166,7 +168,7 @@ namespace Unigram.ViewModels.Settings
                     var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath(fileName));
                     if (item is StorageFile file)
                     {
-                        var result = await FileUtils.CreateTempFileAsync("wallpaper.jpg");
+                        var result = await FileUtils.CreateTempFileAsync(Constants.WallpaperFileName);
                         await file.CopyAndReplaceAsync(result);
 
                         var accent = await ImageHelper.GetAccentAsync(result);
@@ -194,10 +196,10 @@ namespace Unigram.ViewModels.Settings
             }
             else if (_selectedItem == null && _isLocal)
             {
-                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath("temp_wallpaper.jpg"));
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(FileUtils.GetTempFilePath(TempWallpaperFileName));
                 if (item is StorageFile file)
                 {
-                    var result = await FileUtils.CreateTempFileAsync("wallpaper.jpg");
+                    var result = await FileUtils.CreateTempFileAsync(Constants.WallpaperFileName);
                     await file.CopyAndReplaceAsync(result);
 
                     var accent = await ImageHelper.GetAccentAsync(result);

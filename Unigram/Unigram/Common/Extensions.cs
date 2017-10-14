@@ -5,7 +5,9 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Telegram.Api.TL;
 using Unigram.Core.Unidecode;
+using Unigram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
@@ -19,6 +21,12 @@ namespace Unigram.Common
 {
     public static class Extensions
     {
+        public static bool IsAdmin(this TLMessageBase message)
+        {
+            // Kludge
+            return message.Parent is TLChannel channel && DialogViewModel.Admins.TryGetValue(channel.Id, out IList<TLChannelParticipantBase> admins) && admins.Any(x => x.UserId == message.FromId);
+        }
+
         public static Dictionary<string, string> ParseQueryString(this string query)
         {
             var first = query.Split('?');

@@ -151,6 +151,7 @@ namespace Unigram.ViewModels.Chats
             var package = new DataPackage();
             package.SetText(_inviteLink);
             Clipboard.SetContent(package);
+            Clipboard.Flush();
 
             await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
         }

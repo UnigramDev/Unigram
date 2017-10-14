@@ -324,7 +324,7 @@ namespace Unigram
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
                 {
-                    if (NavigationService.Frame.Content is MainPage page)
+                    if (NavigationService?.Frame?.Content is MainPage page)
                     {
                         page.Activate(protocol.Uri);
                     }
@@ -338,7 +338,7 @@ namespace Unigram
                     var activate = args as ToastNotificationActivatedEventArgs;
                     var launch = activate?.Argument ?? null;
 
-                    if (NavigationService.Frame.Content is MainPage page)
+                    if (NavigationService?.Frame?.Content is MainPage page)
                     {
                         page.Activate(launch);
                     }

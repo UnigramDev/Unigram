@@ -1544,6 +1544,7 @@ namespace Unigram.Common
             if (tdesktop != null) package.SetData("application/x-td-field-tags", tdesktop);
             package.SetText(message);
             Clipboard.SetContent(package);
+            Clipboard.Flush();
         }
 
         private static IRandomAccessStream GetTDesktopClipboard(IEnumerable<TLMessageEntityBase> entities)

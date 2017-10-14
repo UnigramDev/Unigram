@@ -1701,7 +1701,7 @@ namespace Telegram.Api.Services
                     Caption = "messages.containerPart" + i,
                     Object = obj,
                     Message = transportMessage,
-                    Callback = result => callback(obj, result),
+                    Callback = result => callback?.Invoke(obj, result),
                     AttemptFailed = null,
                     FaultCallback = faultCallback,
                     ClientTicksDelta = ClientTicksDelta,

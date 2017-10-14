@@ -296,6 +296,7 @@ namespace Unigram.ViewModels.Settings
                 var package = new DataPackage();
                 package.SetText($"https://{linkPrefix}/{_username}");
                 Clipboard.SetContent(package);
+                Clipboard.Flush();
 
                 await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
             }

@@ -569,13 +569,10 @@ namespace Unigram.ViewModels
 
                     foreach (var file in files)
                     {
-                        if (file.ContentType.Equals("video/mp4"))
+                        var storage = await StorageMedia.CreateAsync(file, true);
+                        if (storage != null)
                         {
-                            storages.Add(await StorageVideo.CreateAsync(file, true));
-                        }
-                        else
-                        {
-                            storages.Add(new StoragePhoto(file) { IsSelected = true });
+                            storages.Add(storage);
                         }
                     }
                 }

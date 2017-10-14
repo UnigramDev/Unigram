@@ -58,6 +58,7 @@ using Telegram.Api.TL.Messages;
 using Windows.UI.Notifications;
 using Unigram.Native;
 using Unigram.Views.Channels;
+using Telegram.Api.TL.Channels;
 
 namespace Unigram.ViewModels
 {
@@ -89,6 +90,9 @@ namespace Unigram.ViewModels
                 return App.Current.Resources["MediaLibrary"] as MediaLibraryCollection;
             }
         }
+
+        // Kludge
+        public static Dictionary<long, IList<TLChannelParticipantBase>> Admins { get; } = new Dictionary<long, IList<TLChannelParticipantBase>>();
 
         private readonly DialogStickersViewModel _stickers;
         private readonly IStickersService _stickersService;
@@ -1089,6 +1093,31 @@ namespace Unigram.ViewModels
             //    }
             //}
 
+            if (participant is TLChannel before)
+            {
+                IList<TLChannelParticipantBase> participants = null;
+                Admins.TryGetValue(before.Id, out participants);
+
+                if (participants == null)
+                {
+                    participants = new TLChannelParticipantBase[0];
+                }
+
+                var acc = 0L;
+                foreach (var item in participants)
+                {
+                    acc = ((acc * 20261) + 0x80000000L + item.UserId) % 0x80000000L;
+                }
+
+                var response = await ProtoService.GetParticipantsAsync(before.ToInputChannel(), new TLChannelParticipantsAdmins(), 0, 200, (int)acc);
+                if (response.IsSucceeded && response.Result is TLChannelsChannelParticipants result)
+                {
+                    participants = result.Participants;
+                }
+
+                Admins[before.Id] = participants;
+            }
+
             if (messageId.HasValue)
             {
                 LoadMessageSliceAsync(null, messageId.Value);
@@ -1915,6 +1944,10 @@ namespace Unigram.ViewModels
                     clone.Entities = null;
                     clone.Message = null;
                 }
+                else if (clone.Media is TLMessageMediaGeoLive geoLiveMedia)
+                {
+                    clone.Media = new TLMessageMediaGeo { Geo = geoLiveMedia.Geo };
+                }
 
                 if (fromPeer == null)
                 {
@@ -2212,6 +2245,118 @@ namespace Unigram.ViewModels
                 message.IsOut = false;
                 message.IsPost = true;
             }
+        }
+
+        private async Task<string> GetSubtitle()
+        {
+            if (With is TLUser user)
+            {
+                return LastSeenConverter.GetLabel(user, true);
+            }
+            else if (With is TLChannel channel && channel.HasAccessHash && channel.AccessHash.HasValue)
+            {
+                var full = Full as TLChannelFull;
+                if (full == null)
+                {
+                    full = CacheService.GetFullChat(channel.Id) as TLChannelFull;
+                }
+
+                if (full == null)
+                {
+                    var response = await ProtoService.GetFullChannelAsync(new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value });
+                    if (response.IsSucceeded)
+                    {
+                        full = response.Result.FullChat as TLChannelFull;
+                    }
+                }
+
+                if (full == null)
+                {
+                    return string.Empty;
+                }
+
+                if (channel.IsBroadcast && full.HasParticipantsCount)
+                {
+                    return string.Format("{0} members", full.ParticipantsCount ?? 0);
+                }
+                else if (full.HasParticipantsCount)
+                {
+                    var config = CacheService.GetConfig();
+                    if (config == null)
+                    {
+                        return string.Format("{0} members", full.ParticipantsCount ?? 0);
+                    }
+
+                    var participants = await ProtoService.GetParticipantsAsync(channel.ToInputChannel(), new TLChannelParticipantsRecent(), 0, config.ChatSizeMax, 0);
+                    if (participants.IsSucceeded && participants.Result is TLChannelsChannelParticipants channelParticipants)
+                    {
+                        full.Participants = participants.Result;
+
+                        if (full.ParticipantsCount <= config.ChatSizeMax)
+                        {
+                            var count = 0;
+                            foreach (var item in channelParticipants.Users.OfType<TLUser>())
+                            {
+                                if (item.HasStatus && item.Status is TLUserStatusOnline)
+                                {
+                                    count++;
+                                }
+                            }
+
+                            if (count > 1)
+                            {
+                                return string.Format("{0} members, {1} online", full.ParticipantsCount ?? 0, count);
+                            }
+                        }
+                    }
+
+                    return string.Format("{0} members", full.ParticipantsCount ?? 0);
+                }
+            }
+            else if (With is TLChat chat)
+            {
+                var full = Full as TLChatFull;
+                if (full == null)
+                {
+                    full = CacheService.GetFullChat(chat.Id) as TLChatFull;
+                }
+
+                if (full == null)
+                {
+                    var response = await ProtoService.GetFullChatAsync(chat.Id);
+                    if (response.IsSucceeded)
+                    {
+                        full = response.Result.FullChat as TLChatFull;
+                    }
+                }
+
+                if (full == null)
+                {
+                    return string.Empty;
+                }
+
+                var participants = full.Participants as TLChatParticipants;
+                if (participants != null)
+                {
+                    var count = 0;
+                    foreach (var item in participants.Participants)
+                    {
+                        if (item.User != null && item.User.HasStatus && item.User.Status is TLUserStatusOnline)
+                        {
+                            count++;
+                        }
+                    }
+
+                    if (count > 1)
+                    {
+                        return string.Format("{0} members, {1} online", participants.Participants.Count, count);
+                    }
+
+                    return string.Format("{0} members", participants.Participants.Count);
+                }
+            }
+
+            return string.Empty;
         }
 
         #region Join channel

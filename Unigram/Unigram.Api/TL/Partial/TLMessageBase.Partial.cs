@@ -419,7 +419,7 @@ namespace Telegram.Api.TL
             if (size > 0)
             {
                 var videoAttribute = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
-                var animatedAttribute = document.Attributes.OfType<TLDocumentAttributeAnimated>().FirstOrDefault();
+                //var animatedAttribute = document.Attributes.OfType<TLDocumentAttributeAnimated>().FirstOrDefault();
                 if (videoAttribute != null /*&& animatedAttribute == null*/)
                 {
                     return videoAttribute.IsRoundMessage;
@@ -621,7 +621,7 @@ namespace Telegram.Api.TL
         {
             get
             {
-                return ReplyVisibility == Visibility.Visible || HasViaBotId || HasFwdFrom ? Visibility.Visible : Visibility.Collapsed;
+                return ReplyVisibility == Visibility.Visible || HasViaBotId || (HasFwdFrom && IsRoundVideo()) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 

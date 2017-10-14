@@ -180,6 +180,10 @@ namespace Unigram.ViewModels
                         clone.Entities = null;
                         clone.Message = null;
                     }
+                    else if (clone.Media is TLMessageMediaGeoLive geoLiveMedia)
+                    {
+                        clone.Media = new TLMessageMediaGeo { Geo = geoLiveMedia.Geo };
+                    }
 
                     if (fromPeer == null)
                     {
