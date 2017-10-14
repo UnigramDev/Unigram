@@ -297,6 +297,10 @@ namespace Unigram.ViewModels.Chats
                             Aggregator.Publish(newMessage);
                         }
                     }
+
+                    var removedParticipant = Participants.FirstOrDefault(p => p.UserId == participant.UserId);
+                    if (removedParticipant != null)
+                        Participants.Remove(removedParticipant);
                 }
             }
         }
