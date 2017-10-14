@@ -922,6 +922,12 @@ Duration: {1}</value>
     <value>Yes</value>
     <comment>Test</comment>
   </data>
+  <data name="SettingsAccountsPage_Header.Text" xml:space="preserve">
+    <value>Accounts management</value>
+  </data>
+  <data name="SettingsAccountsPage_NewAccount.Content" xml:space="preserve">
+    <value>New Account</value>
+  </data>
   <data name="SettingsBlockedUsersPage_Header.Text" xml:space="preserve">
     <value>Blocked users</value>
   </data>
