@@ -300,7 +300,9 @@ namespace Unigram.ViewModels.Chats
 
                     var removedParticipant = Participants.FirstOrDefault(p => p.UserId == participant.UserId);
                     if (removedParticipant != null)
+                    {
                         Participants.Remove(removedParticipant);
+                    }
                 }
             }
         }

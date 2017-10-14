@@ -106,11 +106,12 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            if (e.AddedItems == null || e.AddedItems.Count == 0) return;
-
-            foreach (var item in e.AddedItems)
+            if (e.AddedItems != null)
             {
-                ViewModel.SelectedItems.Add(item as TLUser);
+                foreach (var item in e.AddedItems)
+                {
+                    ViewModel.SelectedItems.Add(item as TLUser);
+                }
             }
         }
 
