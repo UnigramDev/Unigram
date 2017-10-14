@@ -855,4 +855,37 @@ Duration: {1}</value>
   <data name="SettingsPage_PhoneButton.Tag" xml:space="preserve">
     <value>Phone</value>
   </data>
+  <data name="SettingsPage_AskButton.Content" xml:space="preserve">
+    <value>Ask a Question</value>
+  </data>
+  <data name="SettingsPage_BioButton.Tag" xml:space="preserve">
+    <value>Bio</value>
+  </data>
+  <data name="SettingsPage_DataButton.Content" xml:space="preserve">
+    <value>Data and Storage</value>
+  </data>
+  <data name="SettingsPage_NotificationsButton.Content" xml:space="preserve">
+    <value>Notifications and Sounds</value>
+  </data>
+  <data name="SettingsPage_OnlineTextLabel.Text" xml:space="preserve">
+    <value>online</value>
+  </data>
+  <data name="SettingsPage_PrivacyButton.Content" xml:space="preserve">
+    <value>Privacy and Security</value>
+  </data>
+  <data name="SettingsPage_QuestionsButton.Content" xml:space="preserve">
+    <value>Telegram FAQ</value>
+  </data>
+  <data name="SettingsPage_StickersButton.Content" xml:space="preserve">
+    <value>Stickers</value>
+  </data>
+  <data name="SettingsPage_ThemeButton.Content" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SettingsPage_UsernameButton.Tag" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="SettingsPage_WallpaperButton.Content" xml:space="preserve">
+    <value>Chat Background</value>
+  </data>
 </root>
