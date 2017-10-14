@@ -77,7 +77,7 @@ namespace Unigram.Views
 
         public void OnBackRequested(HandledEventArgs args)
         {
-            if (MasterDetail.CurrentState == MasterDetailState.Narrow && rpMasterTitlebar.SelectedIndex != 0)
+            if (rpMasterTitlebar.SelectedIndex > 0)
             {
                 rpMasterTitlebar.SelectedIndex = 0;
                 args.Handled = true;
@@ -703,7 +703,7 @@ namespace Unigram.Views
                 var dialog = element.DataContext as TLDialog;
                 if (dialog != null)
                 {
-                    element.Visibility = dialog.With is TLChannel channel && (channel.IsBroadcast || !channel.HasUsername) ? Visibility.Collapsed : Visibility.Visible;
+                    element.Visibility = dialog.With is TLChannel channel && (channel.IsBroadcast || channel.HasUsername) ? Visibility.Collapsed : Visibility.Visible;
                 }
             }
         }

@@ -212,7 +212,7 @@
                 <controls:NavigationViewItem x:Name="NavigationSettings" Content="Settings" Glyph="&#xE115;" />
                 <!--<controls:NavigationViewItem Text="Telegram FAQ" Glyph="&#xE897;" />-->
                 <controls:NavigationViewItemSeparator/>
-                <controls:NavigationViewItem x:Name="NavigationOfficialChannel" Content="Official Channel" Glyph="&#xE789;" />
+                <controls:NavigationViewItem x:Name="NavigationOfficialChannel" Content="News" Glyph="&#xE789;" />
             </controls:NavigationView.MenuItems>
             <controls:NavigationView.PaneFooter>
                 <StackPanel>

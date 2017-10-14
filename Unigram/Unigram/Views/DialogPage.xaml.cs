@@ -524,8 +524,7 @@ namespace Unigram.Views
                     if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
-                        file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase) ||
-                        file.ContentType.Equals("video/mp4", StringComparison.OrdinalIgnoreCase))
+                        file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
                     {
                         media.Add(new StoragePhoto(file) { IsSelected = true });
                     }
@@ -538,7 +537,7 @@ namespace Unigram.Views
                 }
 
                 // Send compressed __only__ if user is dropping photos and videos only
-                if (media.Count > 0 && files.IsEmpty())
+                if (media.Count == files.Count)
                 {
                     ViewModel.SendMediaExecute(media, media[0]);
                 }
@@ -1605,19 +1604,11 @@ namespace Unigram.Views
 
             foreach (var file in result)
             {
-                if (file.ContentType.Equals("video/mp4"))
+                var storage = await StorageMedia.CreateAsync(file, false);
+                if (storage != null)
                 {
-                    var item = await StorageVideo.CreateAsync(file, false);
-                    items.Add(item);
-
-                    item.PropertyChanged += OnPropertyChanged;
-                }
-                else
-                {
-                    var item = new StoragePhoto(file);
-                    items.Add(item);
-
-                    item.PropertyChanged += OnPropertyChanged;
+                    items.Add(storage);
+                    storage.PropertyChanged += OnPropertyChanged;
                 }
             }
 

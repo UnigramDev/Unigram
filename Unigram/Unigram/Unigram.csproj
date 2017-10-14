@@ -163,6 +163,9 @@
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
+    <Compile Include="Controls\StartupSwitch.xaml.cs">
+      <DependentUpon>StartupSwitch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SwipeSplitView.cs" />
     <Compile Include="Controls\SwipeListBehavior.cs" />
     <Compile Include="Controls\SwipeListDirection.cs" />
@@ -1224,6 +1227,10 @@
     <Page Include="Controls\Messages\EditedMessageBubble.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\StartupSwitch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\VideoTimelineControl.xaml">
       <Generator>MSBuild:Compile</Generator>

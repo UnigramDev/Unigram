@@ -77,6 +77,7 @@
             <uap:DataFormat>Bitmap</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>-->
+        <uap:Extension Category="windows.voipCall" />
         <uap3:Extension Category="windows.appUriHandler">
           <uap3:AppUriHandler>
             <uap3:Host Name="t.me" />
@@ -85,7 +86,9 @@
           </uap3:AppUriHandler>
         </uap3:Extension>
         <uap4:Extension Category="windows.contactPanel" />
-        <uap:Extension Category="windows.voipCall" />
+        <uap5:Extension Category="windows.startupTask" Executable="Unigram.exe" EntryPoint="Unigram.App">
+          <uap5:StartupTask TaskId="Telegram" Enabled="false" DisplayName="Unigram" />
+        </uap5:Extension>
         <!--<desktop:Extension Category="windows.fullTrustProcess" Executable="Unigram.DesktopService.exe" />-->
       </Extensions>
     </Application>

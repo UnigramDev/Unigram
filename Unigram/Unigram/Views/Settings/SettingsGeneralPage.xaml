@@ -226,7 +226,9 @@
                         Header="Sync contacts"
                         Style="{ThemeResource CheckButtonStyle}"/>
 
-                    <StackPanel Padding="12">
+                    <controls:StartupSwitch Margin="0,24,0,0"/>
+
+                    <StackPanel Padding="12" Margin="0,24,0,0">
                         <TextBlock Text="Theme" Margin="0,0,0,4"/>
                         <controls:PivotRadioButton SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="1" Content="Light"/>
                         <controls:PivotRadioButton SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="2" Content="Dark"/>

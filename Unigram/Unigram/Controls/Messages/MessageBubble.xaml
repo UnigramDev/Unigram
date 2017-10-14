@@ -75,8 +75,18 @@
                            Margin="0,0,0,2"
                            Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                            RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                           Style="{ThemeResource CaptionTextBlockStyle}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
                            FontWeight="SemiBold"
+                           Visibility="Collapsed"
+                           Grid.Row="0"/>
+
+                <TextBlock x:Name="AdminLabel"
+                           Text="admin"
+                           Margin="0,0,0,2"
+                           Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                           RequestedTheme="{ThemeResource MessageTextBlockTheme}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           HorizontalAlignment="Right"
                            Visibility="Collapsed"
                            Grid.Row="0"/>
 
@@ -90,7 +100,7 @@
                     x:Name="MessageControl"
                     common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
                     Style="{ThemeResource BodyTextBlockStyle}"
-                    Foreground="{ThemeResource MessageForegroundBrush}"
+                    Foreground="{StaticResource MessageForegroundBrush}"
                     Grid.Row="2">
                     <TextBlock.Resources>
                         <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>

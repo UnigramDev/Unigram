@@ -204,6 +204,7 @@ namespace Unigram.Controls
 
                 var formats = package.AvailableFormats.ToList();
                 var text = await package.GetTextAsync();
+                var start = Document.Selection.StartPosition;
 
                 var result = Emoticon.Pattern.Replace(text, (match) =>
                 {
@@ -218,10 +219,45 @@ namespace Unigram.Controls
                 });
 
                 Document.Selection.SetText(TextSetOptions.None, result);
+                Document.Selection.SetRange(start + result.Length, start + result.Length);
             }
             else if (package.Contains(StandardDataFormats.StorageItems))
             {
                 e.Handled = true;
+
+                var items = await package.GetStorageItemsAsync();
+                var media = new ObservableCollection<StorageMedia>();
+                var files = new List<StorageFile>(items.Count);
+
+                foreach (var file in items.OfType<StorageFile>())
+                {
+                    if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
+                    {
+                        media.Add(new StoragePhoto(file) { IsSelected = true });
+                    }
+                    else if (file.ContentType == "video/mp4")
+                    {
+                        media.Add(await StorageVideo.CreateAsync(file, true));
+                    }
+
+                    files.Add(file);
+                }
+
+                // Send compressed __only__ if user is dropping photos and videos only
+                if (media.Count == files.Count)
+                {
+                    ViewModel.SendMediaExecute(media, media[0]);
+                }
+                else if (files.Count > 0)
+                {
+                    foreach (var file in files)
+                    {
+                        ViewModel.SendFileCommand.Execute(file);
+                    }
+                }
             }
             else if (package.Contains(StandardDataFormats.Bitmap))
             {

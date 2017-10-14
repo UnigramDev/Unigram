@@ -88,6 +88,7 @@ namespace Unigram.Controls.Views
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 Clipboard.SetContent(package);
+                Clipboard.Flush();
                 operation.ReportCompleted();
             });
         }

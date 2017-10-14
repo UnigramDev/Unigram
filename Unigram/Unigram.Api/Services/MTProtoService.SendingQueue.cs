@@ -137,7 +137,7 @@ namespace Telegram.Api.Services
                 Caption = caption,
                 Object = obj,
                 Message = transportMessage,
-                Callback = result => callback((T)result),
+                Callback = result => callback?.Invoke((T)result),
                 FastCallback = fastCallback,
                 FaultCallback = null, // чтобы не вылететь по таймауту не сохраняем сюда faultCallback, а просто запоминаем последнюю ошибку,
                 FaultQueueCallback = faultCallback, // для MTProto.CleanupQueue

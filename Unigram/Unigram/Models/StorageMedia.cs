@@ -111,5 +111,17 @@ namespace Unigram.Models
             IsSelected = false;
             Caption = null;
         }
+
+        public static async Task<StorageMedia> CreateAsync(StorageFile file, bool selected)
+        {
+            if (file.ContentType.Equals("video/mp4"))
+            {
+                return await StorageVideo.CreateAsync(file, selected);
+            }
+            else
+            {
+                return new StoragePhoto(file) { IsSelected = selected };
+            }
+        }
     }
 }

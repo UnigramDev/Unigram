@@ -1113,7 +1113,7 @@ namespace Telegram.Api.Services
                 Caption = caption,
                 Object = obj,
                 Message = transportMessage,
-                Callback = t => callback((T)t),
+                Callback = t => callback?.Invoke((T)t),
                 FaultCallback = faultCallback,
                 ClientTicksDelta = clientsTicksDelta,
                 Status = RequestStatus.Sent,
@@ -1180,7 +1180,7 @@ namespace Telegram.Api.Services
             {
                 Caption = caption,
                 Message = message,
-                Callback = t => callback((T)t),
+                Callback = t => callback?.Invoke((T)t),
                 FaultCallback = faultCallback,
                 SendTime = DateTime.Now,
                 Status = RequestStatus.Sent
