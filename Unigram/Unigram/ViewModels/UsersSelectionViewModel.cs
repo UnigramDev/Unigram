@@ -170,7 +170,7 @@ namespace Unigram.ViewModels
         {
             var local = await SearchLocalAsync(query.TrimStart('@'));
 
-            if (query.Equals(_searchQuery))
+            if (string.Equals(query, _searchQuery))
             {
                 Search.Clear();
                 if (local != null) Search.Insert(0, local);
@@ -181,7 +181,7 @@ namespace Unigram.ViewModels
         {
             var global = await SearchGlobalAsync(query);
 
-            if (query.Equals(_searchQuery))
+            if (string.Equals(query, _searchQuery))
             {
                 if (Search.Count > 1) Search.RemoveAt(1);
                 if (global != null) Search.Add(global);
