@@ -145,7 +145,7 @@ namespace Unigram.ViewModels
         public RelayCommand AskCommand => new RelayCommand(AskExecute);
         private async void AskExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync("Plase note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlase take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.", "Telegram", "FAQ", "OK");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.AppResources.TGSupportDisclaimerDetails, Strings.AppResources.TGSupportDisclaimerTitle, Strings.AppResources.TGSupportDisclaimerPrimaryText, Strings.AppResources.TGSupportDisclaimerSecondaryText);
             if (confirm == ContentDialogResult.Primary)
             {
                 await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));

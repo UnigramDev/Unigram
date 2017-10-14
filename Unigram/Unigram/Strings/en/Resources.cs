@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/14/2017 13:22:51
+// 	Generated: 10/14/2017 13:33:10
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2534,6 +2534,50 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("IntroWizardPage6_Title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlase take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions."
+        /// </summary>
+        public static string TGSupportDisclaimerDetails
+        {
+            get
+            {
+                return resourceLoader.GetString("TGSupportDisclaimerDetails");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "FAQ"
+        /// </summary>
+        public static string TGSupportDisclaimerPrimaryText
+        {
+            get
+            {
+                return resourceLoader.GetString("TGSupportDisclaimerPrimaryText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "OK"
+        /// </summary>
+        public static string TGSupportDisclaimerSecondaryText
+        {
+            get
+            {
+                return resourceLoader.GetString("TGSupportDisclaimerSecondaryText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram"
+        /// </summary>
+        public static string TGSupportDisclaimerTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("TGSupportDisclaimerTitle");
             }
         }
     }
