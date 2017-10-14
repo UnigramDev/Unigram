@@ -909,4 +909,29 @@ Duration: {1}</value>
   <data name="TGSupportDisclaimerPrimaryText" xml:space="preserve">
     <value>FAQ</value>
   </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="UnblockUserConfirmationDialogText" xml:space="preserve">
+    <value>Are you sure?</value>
+  </data>
+  <data name="UnblockUserConfirmationDialogTitle" xml:space="preserve">
+    <value>Unblock?</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Test</comment>
+  </data>
+  <data name="SettingsAccountsPage_Header.Text" xml:space="preserve">
+    <value>Accounts management</value>
+  </data>
+  <data name="SettingsAccountsPage_NewAccount.Content" xml:space="preserve">
+    <value>New Account</value>
+  </data>
+  <data name="SettingsBlockedUsersPage_Header.Text" xml:space="preserve">
+    <value>Blocked users</value>
+  </data>
+  <data name="SettingsBlockedUsersPage_ListFooter.Text" xml:space="preserve">
+    <value>Blocked users can't send you messages or add you to groups. They will not see your profile pictures, online and last seen status.</value>
+  </data>
 </root>
