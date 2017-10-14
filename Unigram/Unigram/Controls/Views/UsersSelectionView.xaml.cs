@@ -99,6 +99,21 @@ namespace Unigram.Controls.Views
             }
         }
 
+        private void SearchListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                return;
+            }
+
+            if (e.AddedItems == null || e.AddedItems.Count == 0) return;
+
+            foreach (var item in e.AddedItems)
+            {
+                ViewModel.SelectedItems.Add(item as TLUser);
+            }
+        }
+
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (ViewModel.SelectionMode == ListViewSelectionMode.None)
