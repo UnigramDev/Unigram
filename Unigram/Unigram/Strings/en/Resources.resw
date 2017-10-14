@@ -846,4 +846,67 @@ Duration: {1}</value>
   <data name="AboutPage_ThanksTelegramButton.Content" xml:space="preserve">
     <value>Telegram Desktop</value>
   </data>
+  <data name="SettingsPage_EditPhotoButton.Content" xml:space="preserve">
+    <value>Set profile photo</value>
+  </data>
+  <data name="SettingsPage_GeneralButton.Content" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsPage_PhoneButton.Tag" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="SettingsPage_AskButton.Content" xml:space="preserve">
+    <value>Ask a Question</value>
+  </data>
+  <data name="SettingsPage_BioButton.Tag" xml:space="preserve">
+    <value>Bio</value>
+  </data>
+  <data name="SettingsPage_DataButton.Content" xml:space="preserve">
+    <value>Data and Storage</value>
+  </data>
+  <data name="SettingsPage_NotificationsButton.Content" xml:space="preserve">
+    <value>Notifications and Sounds</value>
+  </data>
+  <data name="SettingsPage_OnlineTextLabel.Text" xml:space="preserve">
+    <value>online</value>
+  </data>
+  <data name="SettingsPage_PrivacyButton.Content" xml:space="preserve">
+    <value>Privacy and Security</value>
+  </data>
+  <data name="SettingsPage_QuestionsButton.Content" xml:space="preserve">
+    <value>Telegram FAQ</value>
+  </data>
+  <data name="SettingsPage_StickersButton.Content" xml:space="preserve">
+    <value>Stickers</value>
+  </data>
+  <data name="SettingsPage_ThemeButton.Content" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SettingsPage_UsernameButton.Tag" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="SettingsPage_WallpaperButton.Content" xml:space="preserve">
+    <value>Chat Background</value>
+  </data>
+  <data name="CancelDialogButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="OKDialogButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Telegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="TGLogoutSucceededDialogText" xml:space="preserve">
+    <value>The app will be closed. Relaunch it to login again.</value>
+  </data>
+  <data name="TGLogoutText" xml:space="preserve">
+    <value>Are you sure you want to logout?</value>
+  </data>
+  <data name="TGSupportDisclaimerDetails" xml:space="preserve">
+    <value>Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlase take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.</value>
+  </data>
+  <data name="TGSupportDisclaimerPrimaryText" xml:space="preserve">
+    <value>FAQ</value>
+  </data>
 </root>
