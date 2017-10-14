@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/14/2017 13:33:10
+// 	Generated: 10/14/2017 13:39:49
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2538,6 +2538,61 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Cancel"
+        /// </summary>
+        public static string CancelDialogButtonText
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelDialogButtonText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "OK"
+        /// </summary>
+        public static string OKDialogButtonText
+        {
+            get
+            {
+                return resourceLoader.GetString("OKDialogButtonText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram"
+        /// </summary>
+        public static string Telegram
+        {
+            get
+            {
+                return resourceLoader.GetString("Telegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The app will be closed. Relaunch it to login again."
+        /// </summary>
+        public static string TGLogoutSucceededDialogText
+        {
+            get
+            {
+                return resourceLoader.GetString("TGLogoutSucceededDialogText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to logout?"
+        /// </summary>
+        public static string TGLogoutText
+        {
+            get
+            {
+                return resourceLoader.GetString("TGLogoutText");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlase take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions."
         /// </summary>
         public static string TGSupportDisclaimerDetails
@@ -2556,28 +2611,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("TGSupportDisclaimerPrimaryText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "OK"
-        /// </summary>
-        public static string TGSupportDisclaimerSecondaryText
-        {
-            get
-            {
-                return resourceLoader.GetString("TGSupportDisclaimerSecondaryText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Telegram"
-        /// </summary>
-        public static string TGSupportDisclaimerTitle
-        {
-            get
-            {
-                return resourceLoader.GetString("TGSupportDisclaimerTitle");
             }
         }
     }

@@ -888,16 +888,25 @@ Duration: {1}</value>
   <data name="SettingsPage_WallpaperButton.Content" xml:space="preserve">
     <value>Chat Background</value>
   </data>
+  <data name="CancelDialogButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="OKDialogButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Telegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="TGLogoutSucceededDialogText" xml:space="preserve">
+    <value>The app will be closed. Relaunch it to login again.</value>
+  </data>
+  <data name="TGLogoutText" xml:space="preserve">
+    <value>Are you sure you want to logout?</value>
+  </data>
   <data name="TGSupportDisclaimerDetails" xml:space="preserve">
     <value>Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlase take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.</value>
   </data>
   <data name="TGSupportDisclaimerPrimaryText" xml:space="preserve">
     <value>FAQ</value>
-  </data>
-  <data name="TGSupportDisclaimerSecondaryText" xml:space="preserve">
-    <value>OK</value>
-  </data>
-  <data name="TGSupportDisclaimerTitle" xml:space="preserve">
-    <value>Telegram</value>
   </data>
 </root>
