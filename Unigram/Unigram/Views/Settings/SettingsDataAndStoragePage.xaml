@@ -96,22 +96,22 @@
 
             <StackPanel Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}" Padding="0,0,0,72" Grid.Row="1">
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="AUTOMATIC MEDIA DOWNLOAD" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:BadgeButton
+                    <TextBlock x:Uid="SettingsDataAndStoragePage_AutoMediaDownloadLabel" Text="AUTOMATIC MEDIA DOWNLOAD" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:BadgeButton x:Uid="SettingsDataAndStoragePage_AutoDownloadUsingMobileDataButton"
                         Badge="{x:Bind ViewModel.AutoDownloads[0].Flags, Mode=OneWay, Converter={StaticResource AutoDownloadConverter}}"
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         CommandParameter="{x:Bind ViewModel.AutoDownloads[0].Type}"
                         Content="When using mobile data"
                         Margin="-12,0"
                         Style="{StaticResource SubtitleButtonStyle}"/>
-                    <controls:BadgeButton
+                    <controls:BadgeButton x:Uid="SettingsDataAndStoragePage_AutoDownloadOnWiFiButton"
                         Badge="{x:Bind ViewModel.AutoDownloads[1].Flags, Mode=OneWay, Converter={StaticResource AutoDownloadConverter}}"
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         CommandParameter="{x:Bind ViewModel.AutoDownloads[1].Type}"
                         Content="When connected on Wi-Fi"
                         Margin="-12,0"
                         Style="{StaticResource SubtitleButtonStyle}"/>
-                    <controls:BadgeButton
+                    <controls:BadgeButton x:Uid="SettingsDataAndStoragePage_AutoDownloadWhenRoamingButton"
                         Badge="{x:Bind ViewModel.AutoDownloads[2].Flags, Mode=OneWay, Converter={StaticResource AutoDownloadConverter}}"
                         Command="{x:Bind ViewModel.AutoDownloadCommand}"
                         CommandParameter="{x:Bind ViewModel.AutoDownloads[2].Type}"
