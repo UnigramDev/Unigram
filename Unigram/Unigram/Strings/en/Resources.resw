@@ -920,7 +920,6 @@ Duration: {1}</value>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
-    <comment>Test</comment>
   </data>
   <data name="SettingsAccountsPage_Header.Text" xml:space="preserve">
     <value>Accounts management</value>
@@ -933,5 +932,35 @@ Duration: {1}</value>
   </data>
   <data name="SettingsBlockedUsersPage_ListFooter.Text" xml:space="preserve">
     <value>Blocked users can't send you messages or add you to groups. They will not see your profile pictures, online and last seen status.</value>
+  </data>
+  <data name="SettingsGeneralPage_ContactSyncToggle.Header" xml:space="preserve">
+    <value>Sync contacts</value>
+  </data>
+  <data name="SettingsGeneralPage_DarkRadio.Content" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="SettingsGeneralPage_LightRadio.Content" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="SettingsGeneralPage_ReplaceEmojiToggle.Header" xml:space="preserve">
+    <value>Replace emojis</value>
+  </data>
+  <data name="SettingsGeneralPage_SendByEnterToggle.Header" xml:space="preserve">
+    <value>Send by Enter</value>
+  </data>
+  <data name="SettingsGeneralPage_SystemRadio.Content" xml:space="preserve">
+    <value>Use system settings</value>
+  </data>
+  <data name="SettingsGeneralPage_ThemeChangedLabel.Text" xml:space="preserve">
+    <value>You'll see your change the next time you start the app.</value>
+  </data>
+  <data name="SettingsGeneralPage_ThemeLabel.Text" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="StartupSwitch_Label.Text" xml:space="preserve">
+    <value>You can enable this in the Startup tab in Task Manager.</value>
+  </data>
+  <data name="StartupSwitch_Toggle.Header" xml:space="preserve">
+    <value>Launch Unigram when system starts</value>
   </data>
 </root>

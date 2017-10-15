@@ -11,8 +11,9 @@
 
     <StackPanel>
         <ToggleSwitch x:Name="Toggle"
+                      x:Uid="StartupSwitch_Toggle"
                       Header="Launch Unigram when system starts"
                       Style="{ThemeResource CheckButtonStyle}"/>
-        <TextBlock x:Name="Label" Text="You can enable this in the Startup tab in Task Manager." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="12,8,12,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+        <TextBlock x:Name="Label" x:Uid="StartupSwitch_Label"  Text="You can enable this in the Startup tab in Task Manager." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="12,8,12,0" Style="{StaticResource CaptionTextBlockStyle}"/>
     </StackPanel>
 </UserControl>
