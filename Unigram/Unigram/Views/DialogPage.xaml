@@ -1491,7 +1491,8 @@
             </StackPanel>
 
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,6">
-                <StackPanel Visibility="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
+                <StackPanel Visibility="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                            RightTapped="Mentions_RightTapped">
                     <Border  Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
                              MinWidth="20"
                              Height="20"
