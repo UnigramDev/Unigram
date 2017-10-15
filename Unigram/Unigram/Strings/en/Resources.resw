@@ -1005,4 +1005,40 @@ Duration: {1}</value>
   <data name="SettingsDataAndStoragePage_ProxySettingsButton.Tag" xml:space="preserve">
     <value>Proxy settings</value>
   </data>
+  <data name="SettingsDownloadView_CheckAudio.Content" xml:space="preserve">
+    <value>Voice messages</value>
+  </data>
+  <data name="SettingsDownloadView_CheckDocument.Content" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="SettingsDownloadView_CheckGIF.Content" xml:space="preserve">
+    <value>GIFs</value>
+  </data>
+  <data name="SettingsDownloadView_CheckMusic.Content" xml:space="preserve">
+    <value>Music</value>
+  </data>
+  <data name="SettingsDownloadView_CheckPhoto.Content" xml:space="preserve">
+    <value>Photos</value>
+  </data>
+  <data name="SettingsDownloadView_CheckRound.Content" xml:space="preserve">
+    <value>Video messages</value>
+  </data>
+  <data name="SettingsDownloadView_CheckVideo.Content" xml:space="preserve">
+    <value>Videos</value>
+  </data>
+  <data name="SettingsDownloadView_CloseButton.Content" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="SettingsDownloadView_SaveButton.Content" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="WhenOnMobileData" xml:space="preserve">
+    <value>When using mobile data</value>
+  </data>
+  <data name="WhenOnWiFi" xml:space="preserve">
+    <value>When connected to Wi-Fi</value>
+  </data>
+  <data name="WhenRoaming" xml:space="preserve">
+    <value>When roaming</value>
+  </data>
 </root>
