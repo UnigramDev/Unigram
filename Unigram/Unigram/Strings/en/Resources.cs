@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/16/2017 11:54:53
+// 	Generated: 10/16/2017 11:06:56
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2655,39 +2655,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Yes");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "When using mobile data"
-        /// </summary>
-        public static string WhenOnMobileData
-        {
-            get
-            {
-                return resourceLoader.GetString("WhenOnMobileData");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "When connected to Wi-Fi"
-        /// </summary>
-        public static string WhenOnWiFi
-        {
-            get
-            {
-                return resourceLoader.GetString("WhenOnWiFi");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "When roaming"
-        /// </summary>
-        public static string WhenRoaming
-        {
-            get
-            {
-                return resourceLoader.GetString("WhenRoaming");
             }
         }
     }
