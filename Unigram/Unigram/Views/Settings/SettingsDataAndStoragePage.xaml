@@ -121,13 +121,13 @@
                         Style="{StaticResource SubtitleButtonStyle}"/>
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="DISK AND NETWORK USAGE" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:HyperButton
+                    <TextBlock x:Uid="SettingsDataAndStoragePage_DiskNetworkUsageLabel" Text="DISK AND NETWORK USAGE" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:HyperButton x:Uid="SettingsDataAndStoragePage_DiskUsageButton"
                         Tag="Storage usage"
                         Click="Storage_Click"
                         Margin="-12,0"
                         Style="{StaticResource HyperDetailButtonStyle}"/>
-                    <controls:HyperButton
+                    <controls:HyperButton x:Uid="SettingsDataAndStoragePage_NetworkUsageButton"
                         Tag="Network usage"
                         Click="Stats_Click"
                         Margin="-12,0,-12,-12"
@@ -135,16 +135,16 @@
                         Style="{StaticResource HyperDetailButtonStyle}"/>
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="CALLS" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <ComboBox Header="Use less data for calls" SelectedIndex="0">
-                        <ComboBoxItem Content="Never"/>
-                        <ComboBoxItem Content="Only on mobile data"/>
-                        <ComboBoxItem Content="Always"/>
+                    <TextBlock x:Uid="SettingsDataAndStoragePage_CallsLabel" Text="CALLS" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ComboBox x:Uid="SettingsDataAndStoragePage_CallDataComboBox" Header="Use less data for calls" SelectedIndex="0">
+                        <ComboBoxItem x:Uid="SettingsDataAndStoragePage_UseLessDataNeverItem" Content="Never"/>
+                        <ComboBoxItem x:Uid="SettingsDataAndStoragePage_UseLessDataOnMobileDataOnlyItem" Content="Only on mobile data"/>
+                        <ComboBoxItem x:Uid="SettingsDataAndStoragePage_UseLessDataAlwaysItem" Content="Always"/>
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                    <TextBlock Text="PROXY" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <controls:HyperButton
+                    <TextBlock x:Uid="SettingsDataAndStoragePage_ProxyLabel" Text="PROXY" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <controls:HyperButton x:Uid="SettingsDataAndStoragePage_ProxySettingsButton"
                         Tag="Proxy Settings"
                         Click="Proxy_Click"
                         Margin="-12,0,-12,-12"

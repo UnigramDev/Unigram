@@ -975,4 +975,34 @@ Duration: {1}</value>
   <data name="StartupSwitch_Toggle.Header" xml:space="preserve">
     <value>Launch Unigram when system starts</value>
   </data>
+  <data name="SettingsDataAndStoragePage_CallDataComboBox.Header" xml:space="preserve">
+    <value>Use less data for calls</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_CallsLabel.Text" xml:space="preserve">
+    <value>CALLS</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_DiskNetworkUsageLabel.Text" xml:space="preserve">
+    <value>DATA AND NETWORK USAGE</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_DiskUsageButton.Content" xml:space="preserve">
+    <value>Disk usage</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_NetworkUsageButton.Content" xml:space="preserve">
+    <value>Network usage</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_UseLessDataAlwaysItem.Content" xml:space="preserve">
+    <value>Always</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_UseLessDataNeverItem.Content" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_UseLessDataOnMobileDataOnlyItem.Content" xml:space="preserve">
+    <value>Only on mobile data</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_ProxyLabel.Text" xml:space="preserve">
+    <value>PROXY</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_ProxySettingsButton.Content" xml:space="preserve">
+    <value>Proxy settings</value>
+  </data>
 </root>
