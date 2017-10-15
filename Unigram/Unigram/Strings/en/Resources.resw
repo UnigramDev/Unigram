@@ -933,6 +933,18 @@ Duration: {1}</value>
   <data name="SettingsBlockedUsersPage_ListFooter.Text" xml:space="preserve">
     <value>Blocked users can't send you messages or add you to groups. They will not see your profile pictures, online and last seen status.</value>
   </data>
+  <data name="SettingsDataAndStoragePage_AutoDownloadOnWiFiButton.Content" xml:space="preserve">
+    <value>When connected to Wi-Fi</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_AutoDownloadUsingMobileDataButton.Content" xml:space="preserve">
+    <value>When using mobile data</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_AutoDownloadWhenRoamingButton.Content" xml:space="preserve">
+    <value>When roaming</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_AutoMediaDownloadLabel.Text" xml:space="preserve">
+    <value>AUTOMATIC MEDIA DOWNLOAD</value>
+  </data>
   <data name="SettingsGeneralPage_ContactSyncToggle.Header" xml:space="preserve">
     <value>Sync contacts</value>
   </data>
@@ -962,5 +974,35 @@ Duration: {1}</value>
   </data>
   <data name="StartupSwitch_Toggle.Header" xml:space="preserve">
     <value>Launch Unigram when system starts</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_CallDataComboBox.Header" xml:space="preserve">
+    <value>Use less data for calls</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_CallsLabel.Text" xml:space="preserve">
+    <value>CALLS</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_DiskNetworkUsageLabel.Text" xml:space="preserve">
+    <value>DATA AND NETWORK USAGE</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_DiskUsageButton.Tag" xml:space="preserve">
+    <value>Storage usage</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_NetworkUsageButton.Tag" xml:space="preserve">
+    <value>Network usage</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_UseLessDataAlwaysItem.Content" xml:space="preserve">
+    <value>Always</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_UseLessDataNeverItem.Content" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_UseLessDataOnMobileDataOnlyItem.Content" xml:space="preserve">
+    <value>Only on mobile data</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_ProxyLabel.Text" xml:space="preserve">
+    <value>PROXY</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_ProxySettingsButton.Tag" xml:space="preserve">
+    <value>Proxy settings</value>
   </data>
 </root>
