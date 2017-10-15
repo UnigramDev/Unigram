@@ -79,54 +79,54 @@ namespace Telegram.Api.TL
 
         public static void WritePerformance(string str)
         {
-            if (!IsPerformanceLogEnabled) return;
+            //if (!IsPerformanceLogEnabled) return;
 
-            Execute.BeginOnUIThread(() => PerformanceItems.Add(str));
+            //Execute.BeginOnUIThread(() => PerformanceItems.Add(str));
         }
 
         public static void WriteLog(string str)
         {
-            if (!IsLogEnabled) return;
+            //if (!IsLogEnabled) return;
 
-            var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-            Execute.BeginOnUIThread(() => LogItems.Add(timestamp + ": " + str));
+            //var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+            //Execute.BeginOnUIThread(() => LogItems.Add(timestamp + ": " + str));
         }
 
         public static void WriteLongPoll(string str)
         {
-            if (!IsLongPollDebugEnabled) return;
+            //if (!IsLongPollDebugEnabled) return;
 
-            Execute.BeginOnUIThread(() => LongPollItems.Add(str));
+            //Execute.BeginOnUIThread(() => LongPollItems.Add(str));
         }
 
         public static void WriteLine(LogSeverity severity = LogSeverity.Info)
         {
-            if (!IsDebugEnabled && severity != LogSeverity.Error) return;
+            //if (!IsDebugEnabled && severity != LogSeverity.Error) return;
 
-            Execute.BeginOnUIThread(() => DebugItems.Add(" "));
+            //Execute.BeginOnUIThread(() => DebugItems.Add(" "));
         }
 
         public static void WriteLineAtBegin(string str, LogSeverity severity = LogSeverity.Info)
         {
             //if (!IsDebugEnabled && severity != LogSeverity.Error) return;
 
-            Execute.BeginOnUIThread(() => DebugItems.Insert(0, str));
+            //Execute.BeginOnUIThread(() => DebugItems.Insert(0, str));
         }
 
         public static void WriteException(string caption, Exception e)
         {
             Execute.ShowDebugMessage(caption + Environment.NewLine + e);
 
-#if LOG_REGISTRATION
-            WriteLog(caption + Environment.NewLine + e);
-#endif
-            Logs.Log.Write(caption + Environment.NewLine + e);
+            //#if LOG_REGISTRATION
+            //            WriteLog(caption + Environment.NewLine + e);
+            //#endif
+            //            Logs.Log.Write(caption + Environment.NewLine + e);
 
-            Execute.BeginOnUIThread(() =>
-            {
-                DebugItems.Add(caption + Environment.NewLine + e);
-                LogBugsenseError(caption, e);
-            });
+            //            Execute.BeginOnUIThread(() =>
+            //            {
+            //                DebugItems.Add(caption + Environment.NewLine + e);
+            //                LogBugsenseError(caption, e);
+            //            });
         }
 
         public static void WriteException(Exception e)
@@ -136,11 +136,11 @@ namespace Telegram.Api.TL
 
         public static void WriteLine(string str, LogSeverity severity = LogSeverity.Info)
         {
-#if DEBUG
-            if (!IsDebugEnabled && severity != LogSeverity.Error) return;
+//#if DEBUG
+//            if (!IsDebugEnabled && severity != LogSeverity.Error) return;
 
-            Execute.BeginOnUIThread(() => DebugItems.Add(str));
-#endif
+//            Execute.BeginOnUIThread(() => DebugItems.Add(str));
+//#endif
         }
 
         public static string WriteThreadInfo()

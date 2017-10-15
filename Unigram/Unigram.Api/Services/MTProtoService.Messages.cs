@@ -19,6 +19,14 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
+        public void ReadMentionsAsync(TLInputPeerBase inputPeer, Action<TLMessagesAffectedHistory> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesReadMentions { Peer = inputPeer };
+
+            const string caption = "messages.readMentions";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
         public void GetUnreadMentionsAsync(TLInputPeerBase inputPeer, int offsetId, int addOffset, int limit, int maxId, int minId, Action<TLMessagesMessagesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesGetUnreadMentions { Peer = inputPeer, OffsetId = offsetId, AddOffset = addOffset, Limit = limit, MaxId = maxId, MinId = minId };

@@ -2914,6 +2914,39 @@ namespace Unigram.ViewModels
         }
 
         #endregion
+
+        #region Read mentions
+
+        public RelayCommand ReadMentionsCommand => new RelayCommand(ReadMentionsExecute);
+        private async void ReadMentionsExecute()
+        {
+            var peer = _peer;
+            if (peer == null)
+            {
+                return;
+            }
+
+            var dialog = _dialog;
+            if (dialog == null)
+            {
+                return;
+            }
+
+            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to clear your mentions?", "Telegram", "OK", "Cancel");
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var response = await ProtoService.ReadMentionsAsync(peer);
+            if (response.IsSucceeded)
+            {
+                dialog.UnreadMentionsCount = 0;
+                dialog.RaisePropertyChanged(() => dialog.UnreadMentionsCount);
+            }
+        }
+
+        #endregion
     }
 
     public class MessageCollection : ObservableCollection<TLMessageBase>
