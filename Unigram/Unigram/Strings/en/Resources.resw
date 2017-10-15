@@ -984,10 +984,10 @@ Duration: {1}</value>
   <data name="SettingsDataAndStoragePage_DiskNetworkUsageLabel.Text" xml:space="preserve">
     <value>DATA AND NETWORK USAGE</value>
   </data>
-  <data name="SettingsDataAndStoragePage_DiskUsageButton.Content" xml:space="preserve">
-    <value>Disk usage</value>
+  <data name="SettingsDataAndStoragePage_DiskUsageButton.Tag" xml:space="preserve">
+    <value>Storage usage</value>
   </data>
-  <data name="SettingsDataAndStoragePage_NetworkUsageButton.Content" xml:space="preserve">
+  <data name="SettingsDataAndStoragePage_NetworkUsageButton.Tag" xml:space="preserve">
     <value>Network usage</value>
   </data>
   <data name="SettingsDataAndStoragePage_UseLessDataAlwaysItem.Content" xml:space="preserve">
@@ -1002,7 +1002,7 @@ Duration: {1}</value>
   <data name="SettingsDataAndStoragePage_ProxyLabel.Text" xml:space="preserve">
     <value>PROXY</value>
   </data>
-  <data name="SettingsDataAndStoragePage_ProxySettingsButton.Content" xml:space="preserve">
+  <data name="SettingsDataAndStoragePage_ProxySettingsButton.Tag" xml:space="preserve">
     <value>Proxy settings</value>
   </data>
 </root>
