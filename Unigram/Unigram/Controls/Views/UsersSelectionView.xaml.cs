@@ -61,17 +61,29 @@ namespace Unigram.Controls.Views
 
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
             {
+                List.SelectionChanged -= ListView_SelectionChanged;
                 foreach (var item in e.NewItems)
                 {
-                    List.SelectedItems.Add(item);
+                    var listItem = List.Items?.SingleOrDefault(li => li is TLUser user && (item as TLUser).Id == user.Id);
+                    if (listItem != null)
+                    {
+                        List.SelectedItems.Add(item);
+                    }
                 }
+                List.SelectionChanged += ListView_SelectionChanged;
             }
             else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
             {
+                List.SelectionChanged -= ListView_SelectionChanged;
                 foreach (var item in e.OldItems)
                 {
-                    List.SelectedItems.Remove(item);
+                    var listItem = List.Items?.SingleOrDefault(li => li is TLUser user && (item as TLUser).Id == user.Id);
+                    if (listItem != null)
+                    {
+                        List.SelectedItems.Remove(item);
+                    }
                 }
+                List.SelectionChanged += ListView_SelectionChanged;
             }
         }
 
@@ -84,17 +96,17 @@ namespace Unigram.Controls.Views
 
             if (e.AddedItems != null)
             {
-                foreach (var item in e.AddedItems)
+                foreach (TLUser item in e.AddedItems)
                 {
-                    ViewModel.SelectedItems.Add(item as TLUser);
+                    ViewModel.SelectedItems.Add(item);
                 }
             }
 
             if (e.RemovedItems != null)
             {
-                foreach (var item in e.RemovedItems)
+                foreach (TLUser item in e.RemovedItems)
                 {
-                    ViewModel.SelectedItems.Remove(item as TLUser);
+                    ViewModel.SelectedItems.Remove(item);
                 }
             }
         }
@@ -110,16 +122,17 @@ namespace Unigram.Controls.Views
             {
                 foreach (var item in e.AddedItems)
                 {
-                    var user = item as TLUser;
-                    if (user == null)
-                    {
-                        continue;
-                    }
+                    ViewModel.SelectedItems.Add(item as TLUser);
+                    //var user = item as TLUser;
+                    //if (user == null)
+                    //{
+                    //    continue;
+                    //}
 
-                    if (ViewModel.SelectedItems.All(selectedUser => selectedUser.Id != user.Id))
-                    {
-                        ViewModel.SelectedItems.Add(user);
-                    }
+                    //if (ViewModel.SelectedItems.All(selectedUser => selectedUser.Id != user.Id))
+                    //{
+                    //    ViewModel.SelectedItems.Add(user);
+                    //}
                 }
             }
         }
