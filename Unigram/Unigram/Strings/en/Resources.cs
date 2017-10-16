@@ -2540,22 +2540,11 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Cancel"
         /// </summary>
-        public static string CancelDialogButtonText
+        public static string Cancel
         {
             get
             {
-                return resourceLoader.GetString("CancelDialogButtonText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "OK"
-        /// </summary>
-        public static string OKDialogButtonText
-        {
-            get
-            {
-                return resourceLoader.GetString("OKDialogButtonText");
+                return resourceLoader.GetString("Cancel");
             }
         }
         
@@ -3095,6 +3084,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("YouBlockedUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reset all notifications?"
+        /// </summary>
+        public static string ResetNotificationsDialogBody
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogBody");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Confirm"
+        /// </summary>
+        public static string ResetNotificationsDialogTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogTitle");
             }
         }
     }
