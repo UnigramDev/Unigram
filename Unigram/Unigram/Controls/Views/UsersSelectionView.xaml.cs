@@ -98,7 +98,7 @@ namespace Unigram.Controls.Views
             {
                 foreach (var item in e.AddedItems)
                 {
-                    if (item is TLUser user)
+                    if (item is TLUser user && ViewModel.SelectedItems.All(selectedUser => selectedUser.Id != user.Id))
                     {
                         ViewModel.SelectedItems.Add(user);
                     }
@@ -109,7 +109,7 @@ namespace Unigram.Controls.Views
             {
                 foreach (var item in e.RemovedItems)
                 {
-                    if (item is TLUser user)
+                    if (item is TLUser user && ViewModel.SelectedItems.Any(selectedUser => selectedUser.Id == user.Id))
                     {
                         ViewModel.SelectedItems.Remove(user);
                     }

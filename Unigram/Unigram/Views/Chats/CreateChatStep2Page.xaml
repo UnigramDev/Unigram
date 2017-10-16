@@ -8,5 +8,5 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <views:UsersSelectionView x:Name="View"/>
+    <views:UsersSelectionView x:Name="View" DataContext="{x:Bind DataContext}"/>
 </Page>

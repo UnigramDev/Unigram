@@ -83,8 +83,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.GetContactsAsync(hash);
             if (response.IsSucceeded && response.Result is TLContactsContacts)
             {
-                var result = response.Result as TLContactsContacts;
-                if (result != null)
+                if (response.Result is TLContactsContacts result)
                 {
                     Items.Clear();
 
@@ -200,9 +199,8 @@ namespace Unigram.ViewModels
                 var simple = new List<TLUser>();
 
                 var contactsResults = contacts.OfType<TLUser>().Where(x =>
-                    (SelectedItems.All(selectedUser => selectedUser.Id != x.Id)) && (
                     (x.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
-                    (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase))));
+                    (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase)));
 
                 foreach (var result in contactsResults)
                 {
@@ -241,7 +239,7 @@ namespace Unigram.ViewModels
                             foreach (var peer in result.Result.Results)
                             {
                                 var item = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id);
-                                if (item != null && SelectedItems.All(selectedUser => selectedUser.Id != item.Id))
+                                if (item != null)
                                 {
                                     parent.Add(item);
                                 }
