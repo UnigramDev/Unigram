@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/16/2017 13:05:52
+// 	Generated: 10/17/2017 09:30:50
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2540,22 +2540,22 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Cancel"
         /// </summary>
-        public static string CancelDialogButtonText
+        public static string Cancel
         {
             get
             {
-                return resourceLoader.GetString("CancelDialogButtonText");
+                return resourceLoader.GetString("Cancel");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "OK"
         /// </summary>
-        public static string OKDialogButtonText
+        public static string OK
         {
             get
             {
-                return resourceLoader.GetString("OKDialogButtonText");
+                return resourceLoader.GetString("OK");
             }
         }
         
@@ -2699,6 +2699,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ProxySettingsShareTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reset all notifications?"
+        /// </summary>
+        public static string ResetNotificationsDialogBody
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogBody");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Confirm"
+        /// </summary>
+        public static string ResetNotificationsDialogTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogTitle");
             }
         }
     }
