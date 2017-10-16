@@ -110,7 +110,16 @@ namespace Unigram.Controls.Views
             {
                 foreach (var item in e.AddedItems)
                 {
-                    ViewModel.SelectedItems.Add(item as TLUser);
+                    var user = item as TLUser;
+                    if (user == null)
+                    {
+                        continue;
+                    }
+
+                    if (ViewModel.SelectedItems.All(selectedUser => selectedUser.Id != user.Id))
+                    {
+                        ViewModel.SelectedItems.Add(user);
+                    }
                 }
             }
         }
