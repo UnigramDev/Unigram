@@ -3108,5 +3108,27 @@ namespace Unigram.Strings
                 return resourceLoader.GetString("YouBlockedUser");
             }
         }
+        
+        /// <summary>
+        /// Localized resource similar to "Reset all notifications?"
+        /// </summary>
+        public static string ResetNotificationsDialogBody
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogBody");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Confirm"
+        /// </summary>
+        public static string ResetNotificationsDialogTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogTitle");
+            }
+        }
     }
 }
