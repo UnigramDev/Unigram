@@ -96,17 +96,23 @@ namespace Unigram.Controls.Views
 
             if (e.AddedItems != null)
             {
-                foreach (TLUser item in e.AddedItems)
+                foreach (var item in e.AddedItems)
                 {
-                    ViewModel.SelectedItems.Add(item);
+                    if (item is TLUser user)
+                    {
+                        ViewModel.SelectedItems.Add(user);
+                    }
                 }
             }
 
             if (e.RemovedItems != null)
             {
-                foreach (TLUser item in e.RemovedItems)
+                foreach (var item in e.RemovedItems)
                 {
-                    ViewModel.SelectedItems.Remove(item);
+                    if (item is TLUser user)
+                    {
+                        ViewModel.SelectedItems.Remove(user);
+                    }
                 }
             }
         }
@@ -122,17 +128,10 @@ namespace Unigram.Controls.Views
             {
                 foreach (var item in e.AddedItems)
                 {
-                    ViewModel.SelectedItems.Add(item as TLUser);
-                    //var user = item as TLUser;
-                    //if (user == null)
-                    //{
-                    //    continue;
-                    //}
-
-                    //if (ViewModel.SelectedItems.All(selectedUser => selectedUser.Id != user.Id))
-                    //{
-                    //    ViewModel.SelectedItems.Add(user);
-                    //}
+                    if (item is TLUser user)
+                    {
+                        ViewModel.SelectedItems.Add(user);
+                    }
                 }
             }
         }
