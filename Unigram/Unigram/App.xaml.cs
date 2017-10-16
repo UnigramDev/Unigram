@@ -48,6 +48,7 @@ using Unigram.Views.Users;
 using System.Linq;
 using Telegram.Logs;
 using Windows.Media.Playback;
+using Windows.UI.StartScreen;
 
 namespace Unigram
 {
@@ -336,7 +337,8 @@ namespace Unigram
                 else
                 {
                     var activate = args as ToastNotificationActivatedEventArgs;
-                    var launch = activate?.Argument ?? null;
+                    var launched = args as LaunchActivatedEventArgs;
+                    var launch = activate?.Argument ?? launched?.Arguments;
 
                     if (NavigationService?.Frame?.Content is MainPage page)
                     {
@@ -398,6 +400,20 @@ namespace Unigram
             BadgeUpdateManager.CreateBadgeUpdaterForApplication("App").Clear();
             TileUpdateManager.CreateTileUpdaterForApplication("App").Clear();
             ToastNotificationManager.History.Clear("App");
+
+            if (SettingsHelper.UserId > 0 && ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2) && JumpList.IsSupported())
+            {
+                var current = await JumpList.LoadCurrentAsync();
+                current.SystemGroupKind = JumpListSystemGroupKind.None;
+                current.Items.Clear();
+
+                var cloud = JumpListItem.CreateWithArguments(string.Format("from_id={0}", SettingsHelper.UserId), "Cloud Storage");
+                cloud.Logo = new Uri("ms-appx:///Assets/JumpList/CloudStorage/CloudStorage.png");
+
+                current.Items.Add(cloud);
+
+                await current.SaveAsync();
+            }
 
 #if !DEBUG && !PREVIEW
             Execute.BeginOnThreadPool(async () =>
