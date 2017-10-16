@@ -1091,8 +1091,8 @@
     </AppxManifest>
     <PRIResource Include="Strings\en\Resources.resw">
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-      <Generator>ReswFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
+      <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Resources.cs</LastGenOutput>
     </PRIResource>
     <Content Include="Assets\Fonts\CamMDL2.ttf" />
