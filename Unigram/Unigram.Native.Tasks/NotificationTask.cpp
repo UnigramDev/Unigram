@@ -485,6 +485,8 @@ void NotificationTask::UpdateToast(String^ caption, String^ message, String^ sou
 	xml += launch->Data();
 	xml += L"' displaytimestamp='";
 	xml += date->Data();
+	xml += L"' hint-people='remoteid:";
+	xml += group->Data();
 	xml += L"'><visual><binding template='ToastGeneric'>";
 
 	if (picture != nullptr)
