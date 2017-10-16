@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/16/2017 15:27:10
+// 	Generated: 10/16/2017 23:18:59
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2692,6 +2692,28 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "Reset all notifications?"
+        /// </summary>
+        public static string ResetNotificationsDialogBody
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogBody");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Confirm"
+        /// </summary>
+        public static string ResetNotificationsDialogTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogTitle");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "Sorry, you can't add this user as an admin because they are in the blacklist and you can't unban them."
         /// </summary>
         public static string AddAdminErrorBlacklisted
@@ -3084,28 +3106,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("YouBlockedUser");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Reset all notifications?"
-        /// </summary>
-        public static string ResetNotificationsDialogBody
-        {
-            get
-            {
-                return resourceLoader.GetString("ResetNotificationsDialogBody");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Confirm"
-        /// </summary>
-        public static string ResetNotificationsDialogTitle
-        {
-            get
-            {
-                return resourceLoader.GetString("ResetNotificationsDialogTitle");
             }
         }
     }
