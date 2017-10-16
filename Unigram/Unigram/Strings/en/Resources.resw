@@ -846,4 +846,241 @@ Duration: {1}</value>
   <data name="AboutPage_ThanksTelegramButton.Content" xml:space="preserve">
     <value>Telegram Desktop</value>
   </data>
+  <data name="SettingsPage_EditPhotoButton.Content" xml:space="preserve">
+    <value>Set profile photo</value>
+  </data>
+  <data name="SettingsPage_GeneralButton.Content" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsPage_PhoneButton.Tag" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="SettingsPage_AskButton.Content" xml:space="preserve">
+    <value>Ask a Question</value>
+  </data>
+  <data name="SettingsPage_BioButton.Tag" xml:space="preserve">
+    <value>Bio</value>
+  </data>
+  <data name="SettingsPage_DataButton.Content" xml:space="preserve">
+    <value>Data and Storage</value>
+  </data>
+  <data name="SettingsPage_NotificationsButton.Content" xml:space="preserve">
+    <value>Notifications and Sounds</value>
+  </data>
+  <data name="SettingsPage_OnlineTextLabel.Text" xml:space="preserve">
+    <value>online</value>
+  </data>
+  <data name="SettingsPage_PrivacyButton.Content" xml:space="preserve">
+    <value>Privacy and Security</value>
+  </data>
+  <data name="SettingsPage_QuestionsButton.Content" xml:space="preserve">
+    <value>Telegram FAQ</value>
+  </data>
+  <data name="SettingsPage_StickersButton.Content" xml:space="preserve">
+    <value>Stickers</value>
+  </data>
+  <data name="SettingsPage_ThemeButton.Content" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SettingsPage_UsernameButton.Tag" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="SettingsPage_WallpaperButton.Content" xml:space="preserve">
+    <value>Chat Background</value>
+  </data>
+  <data name="CancelDialogButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="OKDialogButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Telegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="TGLogoutSucceededDialogText" xml:space="preserve">
+    <value>The app will be closed. Relaunch it to login again.</value>
+  </data>
+  <data name="TGLogoutText" xml:space="preserve">
+    <value>Are you sure you want to logout?</value>
+  </data>
+  <data name="TGSupportDisclaimerDetails" xml:space="preserve">
+    <value>Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlase take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.</value>
+  </data>
+  <data name="TGSupportDisclaimerPrimaryText" xml:space="preserve">
+    <value>FAQ</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="UnblockUserConfirmationDialogText" xml:space="preserve">
+    <value>Are you sure?</value>
+  </data>
+  <data name="UnblockUserConfirmationDialogTitle" xml:space="preserve">
+    <value>Unblock?</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="SettingsAccountsPage_Header.Text" xml:space="preserve">
+    <value>Accounts management</value>
+  </data>
+  <data name="SettingsAccountsPage_NewAccount.Content" xml:space="preserve">
+    <value>New Account</value>
+  </data>
+  <data name="SettingsBlockedUsersPage_Header.Text" xml:space="preserve">
+    <value>Blocked users</value>
+  </data>
+  <data name="SettingsBlockedUsersPage_ListFooter.Text" xml:space="preserve">
+    <value>Blocked users can't send you messages or add you to groups. They will not see your profile pictures, online and last seen status.</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_AutoDownloadOnWiFiButton.Content" xml:space="preserve">
+    <value>When connected to Wi-Fi</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_AutoDownloadUsingMobileDataButton.Content" xml:space="preserve">
+    <value>When using mobile data</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_AutoDownloadWhenRoamingButton.Content" xml:space="preserve">
+    <value>When roaming</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_AutoMediaDownloadLabel.Text" xml:space="preserve">
+    <value>AUTOMATIC MEDIA DOWNLOAD</value>
+  </data>
+  <data name="SettingsGeneralPage_ContactSyncToggle.Header" xml:space="preserve">
+    <value>Sync contacts</value>
+  </data>
+  <data name="SettingsGeneralPage_DarkRadio.Content" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="SettingsGeneralPage_LightRadio.Content" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="SettingsGeneralPage_ReplaceEmojiToggle.Header" xml:space="preserve">
+    <value>Replace emojis</value>
+  </data>
+  <data name="SettingsGeneralPage_SendByEnterToggle.Header" xml:space="preserve">
+    <value>Send by Enter</value>
+  </data>
+  <data name="SettingsGeneralPage_SystemRadio.Content" xml:space="preserve">
+    <value>Use system settings</value>
+  </data>
+  <data name="SettingsGeneralPage_ThemeChangedLabel.Text" xml:space="preserve">
+    <value>You'll see your change the next time you start the app.</value>
+  </data>
+  <data name="SettingsGeneralPage_ThemeLabel.Text" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="StartupSwitch_Label.Text" xml:space="preserve">
+    <value>You can enable this in the Startup tab in Task Manager.</value>
+  </data>
+  <data name="StartupSwitch_Toggle.Header" xml:space="preserve">
+    <value>Launch Unigram when system starts</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_CallDataComboBox.Header" xml:space="preserve">
+    <value>Use less data for calls</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_CallsLabel.Text" xml:space="preserve">
+    <value>CALLS</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_DiskNetworkUsageLabel.Text" xml:space="preserve">
+    <value>DATA AND NETWORK USAGE</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_DiskUsageButton.Tag" xml:space="preserve">
+    <value>Storage usage</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_NetworkUsageButton.Tag" xml:space="preserve">
+    <value>Network usage</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_UseLessDataAlwaysItem.Content" xml:space="preserve">
+    <value>Always</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_UseLessDataNeverItem.Content" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_UseLessDataOnMobileDataOnlyItem.Content" xml:space="preserve">
+    <value>Only on mobile data</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_ProxyLabel.Text" xml:space="preserve">
+    <value>PROXY</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_ProxySettingsButton.Tag" xml:space="preserve">
+    <value>Proxy settings</value>
+  </data>
+  <data name="SettingsDownloadView_CheckAudio.Content" xml:space="preserve">
+    <value>Voice messages</value>
+  </data>
+  <data name="SettingsDownloadView_CheckDocument.Content" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="SettingsDownloadView_CheckGIF.Content" xml:space="preserve">
+    <value>GIFs</value>
+  </data>
+  <data name="SettingsDownloadView_CheckMusic.Content" xml:space="preserve">
+    <value>Music</value>
+  </data>
+  <data name="SettingsDownloadView_CheckPhoto.Content" xml:space="preserve">
+    <value>Photos</value>
+  </data>
+  <data name="SettingsDownloadView_CheckRound.Content" xml:space="preserve">
+    <value>Video messages</value>
+  </data>
+  <data name="SettingsDownloadView_CheckVideo.Content" xml:space="preserve">
+    <value>Videos</value>
+  </data>
+  <data name="SettingsDownloadView_CloseButton.Content" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="SettingsDownloadView_SaveButton.Content" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="WhenOnMobileData" xml:space="preserve">
+    <value>When using mobile data</value>
+  </data>
+  <data name="WhenOnWiFi" xml:space="preserve">
+    <value>When connected to Wi-Fi</value>
+  </data>
+  <data name="WhenRoaming" xml:space="preserve">
+    <value>When roaming</value>
+  </data>
+  <data name="ProxyView_FieldCalls.Content" xml:space="preserve">
+    <value>Use proxy for calls</value>
+  </data>
+  <data name="ProxyView_FieldEnabled.Content" xml:space="preserve">
+    <value>Use proxy settings</value>
+  </data>
+  <data name="ProxyView_FieldPassword.PlaceholderText" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="ProxyView_FieldPort.PlaceholderText" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="ProxyView_FieldServer.Header" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="ProxyView_FieldServer.PlaceholderText" xml:space="preserve">
+    <value>Server</value>
+  </data>
+  <data name="ProxyView_FieldUsername.Header" xml:space="preserve">
+    <value>Credentials (optional)</value>
+  </data>
+  <data name="ProxyView_FieldUsername.PlaceholderText" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="ProxyView_ProxyCallQualityWarning.Text" xml:space="preserve">
+    <value>Proxy servers may degrade the quality of your calls.</value>
+  </data>
+  <data name="ProxyView_SOCKS5Label.Text" xml:space="preserve">
+    <value>SOCKS5 proxy settings</value>
+  </data>
+  <data name="ProxyView_Title.Text" xml:space="preserve">
+    <value>Proxy Settings</value>
+  </data>
+  <data name="ProxySettingsShareTitle" xml:space="preserve">
+    <value>Proxy Settings</value>
+  </data>
+  <data name="ProxyView_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ProxyView_Dialog.SecondaryButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
 </root>

@@ -1552,6 +1552,11 @@ namespace Unigram.Views
             //    };
             //}
         }
+
+        private void Mentions_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading

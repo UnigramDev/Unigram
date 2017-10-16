@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -51,7 +52,10 @@ namespace Telegram.Api.TL
         {
             try
             {
-                RaisePropertyChanged(GetMemberInfo(property).Name);
+                var propertyName = GetMemberInfo(property).Name;
+
+                //Debug.WriteLine(GetType().Name + "#" + GetHashCode() + " PropertyChanged(\"" + propertyName + "\")");
+                RaisePropertyChanged(propertyName);
             }
             catch { }
         }

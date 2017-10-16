@@ -398,13 +398,13 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel>
-            <CheckBox x:Name="CheckPhoto" Content="Photos"/>
-            <CheckBox x:Name="CheckAudio" Content="Voice messages"/>
-            <CheckBox x:Name="CheckRound" Content="Video messages"/>
-            <CheckBox x:Name="CheckVideo" Content="Videos"/>
-            <CheckBox x:Name="CheckDocument" Content="Files"/>
-            <CheckBox x:Name="CheckMusic" Content="Music"/>
-            <CheckBox x:Name="CheckGIF" Content="GIFs"/>
+            <CheckBox x:Name="CheckPhoto" x:Uid="SettingsDownloadView_CheckPhoto"  Content="Photos"/>
+            <CheckBox x:Name="CheckAudio" x:Uid="SettingsDownloadView_CheckAudio"  Content="Voice messages"/>
+            <CheckBox x:Name="CheckRound" x:Uid="SettingsDownloadView_CheckRound"  Content="Video messages"/>
+            <CheckBox x:Name="CheckVideo" x:Uid="SettingsDownloadView_CheckVideo"  Content="Videos"/>
+            <CheckBox x:Name="CheckDocument" x:Uid="SettingsDownloadView_CheckDocument" Content="Files"/>
+            <CheckBox x:Name="CheckMusic" x:Uid="SettingsDownloadView_CheckMusic"  Content="Music"/>
+            <CheckBox x:Name="CheckGIF" x:Uid="SettingsDownloadView_CheckGIF"  Content="GIFs"/>
         </StackPanel>
 
         <Grid Grid.Row="1">
@@ -420,8 +420,8 @@
                  HorizontalAlignment="Stretch" 
                  Margin="12,8,4,8"/>-->
 
-            <Button Click="Save_Click" Content="Save" HorizontalAlignment="Stretch" Margin="12,8,4,8"/>
-            <Button Click="Close_Click" Content="Close" HorizontalAlignment="Stretch" Margin="4,8,12,8" Padding="24,4,24,4" Grid.Column="1"/>
+            <Button x:Uid="SettingsDownloadView_SaveButton"  Click="Save_Click" Content="Save" HorizontalAlignment="Stretch" Margin="12,8,4,8"/>
+            <Button x:Uid="SettingsDownloadView_CloseButton"  Click="Close_Click" Content="Close" HorizontalAlignment="Stretch" Margin="4,8,12,8" Padding="24,4,24,4" Grid.Column="1"/>
         </Grid>
     </Grid>
 </controls:BottomSheet>

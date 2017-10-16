@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/13/2017 14:27:28
+// 	Generated: 10/16/2017 13:05:52
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2534,6 +2534,171 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("IntroWizardPage6_Title");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel"
+        /// </summary>
+        public static string CancelDialogButtonText
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelDialogButtonText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "OK"
+        /// </summary>
+        public static string OKDialogButtonText
+        {
+            get
+            {
+                return resourceLoader.GetString("OKDialogButtonText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram"
+        /// </summary>
+        public static string Telegram
+        {
+            get
+            {
+                return resourceLoader.GetString("Telegram");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The app will be closed. Relaunch it to login again."
+        /// </summary>
+        public static string TGLogoutSucceededDialogText
+        {
+            get
+            {
+                return resourceLoader.GetString("TGLogoutSucceededDialogText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to logout?"
+        /// </summary>
+        public static string TGLogoutText
+        {
+            get
+            {
+                return resourceLoader.GetString("TGLogoutText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlase take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions."
+        /// </summary>
+        public static string TGSupportDisclaimerDetails
+        {
+            get
+            {
+                return resourceLoader.GetString("TGSupportDisclaimerDetails");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "FAQ"
+        /// </summary>
+        public static string TGSupportDisclaimerPrimaryText
+        {
+            get
+            {
+                return resourceLoader.GetString("TGSupportDisclaimerPrimaryText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No"
+        /// </summary>
+        public static string No
+        {
+            get
+            {
+                return resourceLoader.GetString("No");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure?"
+        /// </summary>
+        public static string UnblockUserConfirmationDialogText
+        {
+            get
+            {
+                return resourceLoader.GetString("UnblockUserConfirmationDialogText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unblock?"
+        /// </summary>
+        public static string UnblockUserConfirmationDialogTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("UnblockUserConfirmationDialogTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Yes"
+        /// </summary>
+        public static string Yes
+        {
+            get
+            {
+                return resourceLoader.GetString("Yes");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "When using mobile data"
+        /// </summary>
+        public static string WhenOnMobileData
+        {
+            get
+            {
+                return resourceLoader.GetString("WhenOnMobileData");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "When connected to Wi-Fi"
+        /// </summary>
+        public static string WhenOnWiFi
+        {
+            get
+            {
+                return resourceLoader.GetString("WhenOnWiFi");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "When roaming"
+        /// </summary>
+        public static string WhenRoaming
+        {
+            get
+            {
+                return resourceLoader.GetString("WhenRoaming");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Proxy Settings"
+        /// </summary>
+        public static string ProxySettingsShareTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ProxySettingsShareTitle");
             }
         }
     }
