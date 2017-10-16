@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/17/2017 09:30:50
+// 	Generated: 10/17/2017 10:16:54
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2540,22 +2540,22 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Cancel"
         /// </summary>
-        public static string Cancel
+        public static string CancelDialogButtonText
         {
             get
             {
-                return resourceLoader.GetString("Cancel");
+                return resourceLoader.GetString("CancelDialogButtonText");
             }
         }
         
         /// <summary>
         /// Localized resource similar to "OK"
         /// </summary>
-        public static string OK
+        public static string OKDialogButtonText
         {
             get
             {
-                return resourceLoader.GetString("OK");
+                return resourceLoader.GetString("OKDialogButtonText");
             }
         }
         
@@ -2703,24 +2703,90 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Reset all notifications?"
+        /// Localized resource similar to "Audio messages"
         /// </summary>
-        public static string ResetNotificationsDialogBody
+        public static string AutoDownload_Audio
         {
             get
             {
-                return resourceLoader.GetString("ResetNotificationsDialogBody");
+                return resourceLoader.GetString("AutoDownload_Audio");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "Confirm"
+        /// Localized resource similar to "Files"
         /// </summary>
-        public static string ResetNotificationsDialogTitle
+        public static string AutoDownload_Document
         {
             get
             {
-                return resourceLoader.GetString("ResetNotificationsDialogTitle");
+                return resourceLoader.GetString("AutoDownload_Document");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "GIFs"
+        /// </summary>
+        public static string AutoDownload_GIF
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_GIF");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Music"
+        /// </summary>
+        public static string AutoDownload_Music
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_Music");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No media"
+        /// </summary>
+        public static string AutoDownload_None
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_None");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Photos"
+        /// </summary>
+        public static string AutoDownload_Photo
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_Photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video messages"
+        /// </summary>
+        public static string AutoDownload_Round
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_Round");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Videos"
+        /// </summary>
+        public static string AutoDownload_Video
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_Video");
             }
         }
     }
