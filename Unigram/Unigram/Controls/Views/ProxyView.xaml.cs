@@ -170,7 +170,7 @@ namespace Unigram.Controls.Views
                 builder.Add("pass=" + Password);
             }
 
-            var title = "Proxy Settings";
+            var title = Strings.AppResources.ProxySettingsShareTitle;
             var link = new Uri($"https://{linkPrefix}/socks?{string.Join("&", builder)}");
 
             await ShareView.Current.ShowAsync(link, title);

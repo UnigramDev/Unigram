@@ -1041,4 +1041,46 @@ Duration: {1}</value>
   <data name="WhenRoaming" xml:space="preserve">
     <value>When roaming</value>
   </data>
+  <data name="ProxyView_FieldCalls.Content" xml:space="preserve">
+    <value>Use proxy for calls</value>
+  </data>
+  <data name="ProxyView_FieldEnabled.Content" xml:space="preserve">
+    <value>Use proxy settings</value>
+  </data>
+  <data name="ProxyView_FieldPassword.PlaceholderText" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="ProxyView_FieldPort.PlaceholderText" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="ProxyView_FieldServer.Header" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="ProxyView_FieldServer.PlaceholderText" xml:space="preserve">
+    <value>Server</value>
+  </data>
+  <data name="ProxyView_FieldUsername.Header" xml:space="preserve">
+    <value>Credentials (optional)</value>
+  </data>
+  <data name="ProxyView_FieldUsername.PlaceholderText" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="ProxyView_ProxyCallQualityWarning.Text" xml:space="preserve">
+    <value>Proxy servers may degrade the quality of your calls.</value>
+  </data>
+  <data name="ProxyView_SOCKS5Label.Text" xml:space="preserve">
+    <value>SOCKS5 proxy settings</value>
+  </data>
+  <data name="ProxyView_Title.Text" xml:space="preserve">
+    <value>Proxy Settings</value>
+  </data>
+  <data name="ProxySettingsShareTitle" xml:space="preserve">
+    <value>Proxy Settings</value>
+  </data>
+  <data name="ProxyView_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ProxyView_Dialog.SecondaryButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
 </root>
