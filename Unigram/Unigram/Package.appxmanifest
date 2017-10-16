@@ -65,7 +65,7 @@
             <uap:DisplayName>Unigram</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>
-        <!-- Share Target temporaraily disabled -->
+        <!-- Share Target temporarely disabled -->
         <!--<uap:Extension Category="windows.shareTarget">
           <uap:ShareTarget>
             <uap:SupportedFileTypes>
