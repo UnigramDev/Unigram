@@ -16,7 +16,7 @@ namespace Unigram.Converters
             var flags = (AutoDownloadType)value;
             if (flags.HasFlag(AutoDownloadType.Photo))
             {
-                text += "Photos";
+                text += Strings.AppResources.AutoDownload_Photo;
             }
 
             if (flags.HasFlag(AutoDownloadType.Audio))
@@ -26,7 +26,7 @@ namespace Unigram.Converters
                     text += ", ";
                 }
 
-                text += "Voice messages";
+                text += Strings.AppResources.AutoDownload_Audio;
             }
 
             if (flags.HasFlag(AutoDownloadType.Round))
@@ -36,7 +36,7 @@ namespace Unigram.Converters
                     text += ", ";
                 }
 
-                text += "Video messages";
+                text += Strings.AppResources.AutoDownload_Round;
             }
 
             if (flags.HasFlag(AutoDownloadType.Video))
@@ -46,7 +46,7 @@ namespace Unigram.Converters
                     text += ", ";
                 }
 
-                text += "Videos";
+                text += Strings.AppResources.AutoDownload_Video;
             }
 
             if (flags.HasFlag(AutoDownloadType.Document))
@@ -55,7 +55,7 @@ namespace Unigram.Converters
                 {
                     text += ", ";
                 }
-                text += "Files";
+                text += Strings.AppResources.AutoDownload_Document;
             }
 
             if (flags.HasFlag(AutoDownloadType.Music))
@@ -64,7 +64,7 @@ namespace Unigram.Converters
                 {
                     text += ", ";
                 }
-                text += "Music";
+                text += Strings.AppResources.AutoDownload_Music;
             }
 
             if (flags.HasFlag(AutoDownloadType.GIF))
@@ -73,12 +73,12 @@ namespace Unigram.Converters
                 {
                     text += ", ";
                 }
-                text += "GIFs";
+                text += Strings.AppResources.AutoDownload_GIF;
             }
 
             if (string.IsNullOrEmpty(text))
             {
-                text = "No media";
+                text = Strings.AppResources.AutoDownload_None;
             }
 
             return text;
