@@ -1074,6 +1074,9 @@ Duration: {1}</value>
   <data name="ProxyView_Title.Text" xml:space="preserve">
     <value>Proxy Settings</value>
   </data>
+  <data name="ProxySettingsShareTitle" xml:space="preserve">
+    <value>Proxy Settings</value>
+  </data>
   <data name="ProxyView_Dialog.PrimaryButtonText" xml:space="preserve">
     <value>OK</value>
   </data>
