@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,14 +26,16 @@ namespace Unigram.ViewModels.Settings
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             await UpdateCacheSizeAsync(resetInitialCacheSize: true, updateDetailedCacheSizes: true);
-            TaskCompleted = true;
         }
 
         private long _cacheSize, _initialCacheSize, _imagesCacheSize, _videosCacheSize, _otherFilesCacheSize;
         private double _percentage;
         private bool _taskCompleted;
 
-        private static string[] ExcludedFileNames = new[] { Constants.WallpaperFileName };
+        private static string[] ExcludedFileNames = new[] 
+        {
+            Constants.WallpaperFileName
+        };
 
         public long InitialCacheSize
         {
@@ -122,14 +125,19 @@ namespace Unigram.ViewModels.Settings
         {
             CacheSize = 0;
             if (resetInitialCacheSize)
+            {
                 InitialCacheSize = 0;
+            }
 
             try
             {
                 var cacheSize = NativeUtils.GetDirectorySize(FileUtils.GetTempFileName(string.Empty));
                 CacheSize = cacheSize;
                 if (resetInitialCacheSize)
+                {
                     InitialCacheSize = cacheSize;
+                }
+
                 Percentage = InitialCacheSize > 0 ? Math.Round((double)(CacheSize * 100) / InitialCacheSize, 1) : 0.0D;
             }
             catch { }
@@ -169,7 +177,10 @@ namespace Unigram.ViewModels.Settings
 
             foreach (var file in files)
             {
-                if (ExcludedFileNames.Any(fileName => string.Equals(fileName, file.Name, StringComparison.OrdinalIgnoreCase))) continue;
+                if (ExcludedFileNames.Any(fileName => string.Equals(fileName, file.Name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    continue;
+                }
 
                 try
                 {
@@ -179,9 +190,9 @@ namespace Unigram.ViewModels.Settings
                 catch { }
             }
 
-            IsLoading = false;
-
             await UpdateCacheSizeAsync(resetInitialCacheSize: true, updateDetailedCacheSizes: true);
+
+            IsLoading = false;
             TaskCompleted = true;
         }
 
@@ -205,7 +216,9 @@ namespace Unigram.ViewModels.Settings
         public static IEnumerable<StorageFile> OfImageType(this IEnumerable<StorageFile> storageFiles)
         {
             if (storageFiles == null)
+            {
                 throw new ArgumentNullException(nameof(storageFiles));
+            }
 
             return storageFiles.Where(f => Constants.PhotoTypes.Any(t => t.Contains(f.FileType)));
         }
@@ -213,7 +226,9 @@ namespace Unigram.ViewModels.Settings
         public static IEnumerable<StorageFile> OfVideoType(this IEnumerable<StorageFile> storageFiles)
         {
             if (storageFiles == null)
+            {
                 throw new ArgumentNullException(nameof(storageFiles));
+            }
 
             var videoTypes = Constants.MediaTypes.Except(Constants.PhotoTypes);
 
@@ -223,16 +238,27 @@ namespace Unigram.ViewModels.Settings
         public static IEnumerable<StorageFile> OfOtherTypes(this IEnumerable<StorageFile> storageFiles)
         {
             if (storageFiles == null)
+            {
                 throw new ArgumentNullException(nameof(storageFiles));
+            }
 
             return storageFiles.Where(f => Constants.MediaTypes.All(t => !t.Contains(f.FileType)));
         }
 
         public static ulong GetFileSize(this StorageFile storageFile)
         {
-            var task = storageFile.GetBasicPropertiesAsync().AsTask();
-            task.Wait();
-            return task.Result.Size;
+            if (storageFile == null)
+            {
+                throw new ArgumentNullException(nameof(storageFile));
+            }
+
+            var fileInfo = new FileInfo(storageFile.Path);
+
+            return fileInfo != null ? (ulong)fileInfo.Length : 0;
+
+            //var task = storageFile.GetBasicPropertiesAsync().AsTask();
+            //task.Wait();
+            //return task.Result.Size;
         }
     }
 }
