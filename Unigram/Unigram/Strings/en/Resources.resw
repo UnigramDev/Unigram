@@ -888,10 +888,10 @@ Duration: {1}</value>
   <data name="SettingsPage_WallpaperButton.Content" xml:space="preserve">
     <value>Chat Background</value>
   </data>
-  <data name="CancelDialogButtonText" xml:space="preserve">
+  <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="OKDialogButtonText" xml:space="preserve">
+  <data name="OK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="Telegram" xml:space="preserve">
@@ -1082,5 +1082,62 @@ Duration: {1}</value>
   </data>
   <data name="ProxyView_Dialog.SecondaryButtonText" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="SettingsNotificationPage_PrivatePreview.Content" xml:space="preserve">
+    <value>Message Preview</value>
+  </data>
+  <data name="SettingsNotificationsPage_PrivateAlert.Content" xml:space="preserve">
+    <value>Alert</value>
+  </data>
+  <data name="SettingsNotificationsPage_PrivateNotificationsHeader.Text" xml:space="preserve">
+    <value>MESSAGE NOTIFICATIONS</value>
+  </data>
+  <data name="SettingsNotificationsPage_PageHeader.Text" xml:space="preserve">
+    <value>Notifications and Sounds</value>
+  </data>
+  <data name="SettingsNotificationsPage_PrivateSoundComboBox.Header" xml:space="preserve">
+    <value>Sound</value>
+  </data>
+  <data name="ResetNotificationsDialogBody" xml:space="preserve">
+    <value>Reset all notifications?</value>
+  </data>
+  <data name="ResetNotificationsDialogTitle" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="SettingsNotificationsPage_GroupAlert.Content" xml:space="preserve">
+    <value>Alert</value>
+  </data>
+  <data name="SettingsNotificationsPage_GroupDefaultSoundItem.Content" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="SettingsNotificationsPage_GroupNotificationsHeader.Text" xml:space="preserve">
+    <value>GROUP NOTIFICATIONS</value>
+  </data>
+  <data name="SettingsNotificationsPage_GroupPreview.Content" xml:space="preserve">
+    <value>Message Preview</value>
+  </data>
+  <data name="SettingsNotificationsPage_GroupSoundComboBox.Header" xml:space="preserve">
+    <value>Sound</value>
+  </data>
+  <data name="SettingsNotificationsPage_InAppNotificationsHeader.Text" xml:space="preserve">
+    <value>IN-APP NOTIFICATIONS</value>
+  </data>
+  <data name="SettingsNotificationsPage_InAppPreview.Content" xml:space="preserve">
+    <value>In-App Preview</value>
+  </data>
+  <data name="SettingsNotificationsPage_InAppSounds.Content" xml:space="preserve">
+    <value>In-App Sounds</value>
+  </data>
+  <data name="SettingsNotificationsPage_InAppVibrate.Content" xml:space="preserve">
+    <value>In-App Vibrate</value>
+  </data>
+  <data name="SettingsNotificationsPage_PrivateSoundDefaultItem.Content" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="SettingsNotificationsPage_ResetButton.Content" xml:space="preserve">
+    <value>Reset All Notifications</value>
+  </data>
+  <data name="SettingsNotificationsPage_ResetLabel.Text" xml:space="preserve">
+    <value>Undo all custom notification settings for all your contacts and groups.</value>
   </data>
 </root>

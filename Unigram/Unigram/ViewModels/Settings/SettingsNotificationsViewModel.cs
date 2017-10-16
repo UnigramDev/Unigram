@@ -291,7 +291,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetCommand => new RelayCommand(ResetExecute);
         private async void ResetExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync("Reset all notifications?", "Confirm", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(Strings.AppResources.ResetNotificationsDialogBody, Strings.AppResources.ResetNotificationsDialogTitle, Strings.AppResources.OK, Strings.AppResources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 _suppressUpdating = true;
