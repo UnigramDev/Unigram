@@ -516,6 +516,9 @@
                                     <ListView.Footer>
                                         <Border Height="6"/>
                                     </ListView.Footer>
+                                    <ListView.ItemContainerTransitions>
+                                        <TransitionCollection/>
+                                    </ListView.ItemContainerTransitions>
                                 </controls:DialogsListView>
                             </Grid>
                         </Grid>
@@ -591,6 +594,9 @@
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
+                                <!--<ListView.ItemContainerTransitions>
+                                    <TransitionCollection/>
+                                </ListView.ItemContainerTransitions>-->
                             </ListView>
                         </Grid>
                     </PivotItem>
@@ -610,6 +616,9 @@
                                     <Setter Property="Padding" Value="0"/>
                                 </Style>
                             </ListView.ItemContainerStyle>
+                            <!--<ListView.ItemContainerTransitions>
+                                <TransitionCollection/>
+                            </ListView.ItemContainerTransitions>-->
                         </ListView>
                     </PivotItem>
                     <PivotItem Header="Settings">

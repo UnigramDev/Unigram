@@ -284,6 +284,7 @@
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
+    <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\PushService.cs" />
     <Compile Include="Strings\en\Resources.cs">
       <AutoGen>True</AutoGen>
@@ -1108,6 +1109,11 @@
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-150.png" />
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-200.png" />
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-400.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-16.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-24.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-256.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-32.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-48.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-100.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-125.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-150.png" />

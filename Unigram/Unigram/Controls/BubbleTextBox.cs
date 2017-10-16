@@ -446,7 +446,7 @@ namespace Unigram.Controls
                     ViewModel.Aggregator.Publish("move_down");
                     e.Handled = true;
                 }
-                else if ((e.Key == VirtualKey.PageUp || e.Key == VirtualKey.Up) && Document.Selection.StartPosition == 0)
+                else if ((e.Key == VirtualKey.PageUp || e.Key == VirtualKey.Up) && Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
                 {
                     var peer = new ListViewAutomationPeer(Messages);
                     var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
@@ -454,7 +454,7 @@ namespace Unigram.Controls
 
                     e.Handled = true;
                 }
-                else if (e.Key == VirtualKey.PageDown || e.Key == VirtualKey.Down && Document.Selection.StartPosition == Text.TrimEnd('\r', '\v').Length)
+                else if (e.Key == VirtualKey.PageDown || e.Key == VirtualKey.Down && Document.Selection.StartPosition == Text.TrimEnd('\r', '\v').Length && ViewModel.Autocomplete == null)
                 {
                     var peer = new ListViewAutomationPeer(Messages);
                     var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
