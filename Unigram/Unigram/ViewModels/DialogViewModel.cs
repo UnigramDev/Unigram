@@ -138,6 +138,8 @@ namespace Unigram.ViewModels
             Debug.WriteLine("Finalizing DialogViewModel");
             Aggregator.Unsubscribe(this);
 
+            GC.Collect();
+
             //if (Messages != null)
             //{
             //    Messages.Clear();
@@ -1093,7 +1095,7 @@ namespace Unigram.ViewModels
             //    }
             //}
 
-            if (participant is TLChannel before)
+            if (participant is TLChannel before && before.IsMegaGroup)
             {
                 IList<TLChannelParticipantBase> participants = null;
                 Admins.TryGetValue(before.Id, out participants);

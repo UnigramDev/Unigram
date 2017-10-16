@@ -28,6 +28,11 @@ namespace Unigram.Controls.Views
             InitializeComponent();
         }
 
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Bindings.StopTracking();
+        }
+
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             ItemClick?.Invoke(sender, e);

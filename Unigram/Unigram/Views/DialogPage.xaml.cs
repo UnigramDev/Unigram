@@ -205,8 +205,6 @@ namespace Unigram.Views
             //    }
             //}
 
-            Bindings.StopTracking();
-
             base.OnNavigatingFrom(e);
         }
 
@@ -276,6 +274,8 @@ namespace Unigram.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            Bindings.StopTracking();
+
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
             InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
 
