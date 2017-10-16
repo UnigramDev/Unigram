@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/17/2017 10:16:54
+// 	Generated: 10/17/2017 10:26:36
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2540,22 +2540,11 @@ namespace Unigram.Strings
         /// <summary>
         /// Localized resource similar to "Cancel"
         /// </summary>
-        public static string CancelDialogButtonText
+        public static string Cancel
         {
             get
             {
-                return resourceLoader.GetString("CancelDialogButtonText");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "OK"
-        /// </summary>
-        public static string OKDialogButtonText
-        {
-            get
-            {
-                return resourceLoader.GetString("OKDialogButtonText");
+                return resourceLoader.GetString("Cancel");
             }
         }
         
@@ -2787,6 +2776,424 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AutoDownload_Video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user as an admin because they are in the blacklist and you can't unban them."
+        /// </summary>
+        public static string AddAdminErrorBlacklisted
+        {
+            get
+            {
+                return resourceLoader.GetString("AddAdminErrorBlacklisted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user as an admin because they are not a member of this group and you are not allowed to invite them."
+        /// </summary>
+        public static string AddAdminErrorNotAMember
+        {
+            get
+            {
+                return resourceLoader.GetString("AddAdminErrorNotAMember");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't ban this user because they are an admin in this group and you are not allowed to demote them."
+        /// </summary>
+        public static string AddBannedErrorAdmin
+        {
+            get
+            {
+                return resourceLoader.GetString("AddBannedErrorAdmin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Telegram"
+        /// </summary>
+        public static string AppName
+        {
+            get
+            {
+                return resourceLoader.GetString("AppName");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link is invalid or expired."
+        /// </summary>
+        public static string CancelLinkExpired
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelLinkExpired");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The number {0} is already connected to a Telegram account. Please delete that account before migrating to the new number."
+        /// </summary>
+        public static string ChangePhoneNumberOccupied
+        {
+            get
+            {
+                return resourceLoader.GetString("ChangePhoneNumberOccupied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only add the first 200 members to a channel. Note that an unlimited number of people may join via the channel's link."
+        /// </summary>
+        public static string ChannelUserAddLimit
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelUserAddLimit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user to channels."
+        /// </summary>
+        public static string ChannelUserCantAdd
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelUserCantAdd");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, too many admins in this channel."
+        /// </summary>
+        public static string ChannelUserCantAdmin
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelUserCantAdmin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, too many bots in this channel."
+        /// </summary>
+        public static string ChannelUserCantBot
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelUserCantBot");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this user decided to leave this channel, so you cannot invite them back here."
+        /// </summary>
+        public static string ChannelUserLeftError
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelUserLeftError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Code expired, please login again"
+        /// </summary>
+        public static string CodeExpired
+        {
+            get
+            {
+                return resourceLoader.GetString("CodeExpired");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't create a group with these users because of their privacy settings."
+        /// </summary>
+        public static string CreateGroupError
+        {
+            get
+            {
+                return resourceLoader.GetString("CreateGroupError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't edit this message."
+        /// </summary>
+        public static string EditMessageError
+        {
+            get
+            {
+                return resourceLoader.GetString("EditMessageError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "An error occurred."
+        /// </summary>
+        public static string ErrorOccurred
+        {
+            get
+            {
+                return resourceLoader.GetString("ErrorOccurred");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Too many attempts, please try again later"
+        /// </summary>
+        public static string FloodWait
+        {
+            get
+            {
+                return resourceLoader.GetString("FloodWait");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this group is full."
+        /// </summary>
+        public static string GroupUserAddLimit
+        {
+            get
+            {
+                return resourceLoader.GetString("GroupUserAddLimit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user to groups."
+        /// </summary>
+        public static string GroupUserCantAdd
+        {
+            get
+            {
+                return resourceLoader.GetString("GroupUserCantAdd");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, too many administrators in this group."
+        /// </summary>
+        public static string GroupUserCantAdmin
+        {
+            get
+            {
+                return resourceLoader.GetString("GroupUserCantAdmin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, too many bots in this group."
+        /// </summary>
+        public static string GroupUserCantBot
+        {
+            get
+            {
+                return resourceLoader.GetString("GroupUserCantBot");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this user decided to leave this group, so you cannot invite them back here."
+        /// </summary>
+        public static string GroupUserLeftError
+        {
+            get
+            {
+                return resourceLoader.GetString("GroupUserLeftError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invalid code"
+        /// </summary>
+        public static string InvalidCode
+        {
+            get
+            {
+                return resourceLoader.GetString("InvalidCode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invalid phone number"
+        /// </summary>
+        public static string InvalidPhoneNumber
+        {
+            get
+            {
+                return resourceLoader.GetString("InvalidPhoneNumber");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user to channels because of user's privacy settings."
+        /// </summary>
+        public static string InviteToChannelError
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteToChannelError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user to groups because of user's privacy settings."
+        /// </summary>
+        public static string InviteToGroupError
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteToGroupError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this group is already full."
+        /// </summary>
+        public static string JoinToGroupErrorFull
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinToGroupErrorFull");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this chat does not seem to exist."
+        /// </summary>
+        public static string JoinToGroupErrorNotExist
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinToGroupErrorNotExist");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "More info"
+        /// </summary>
+        public static string MoreInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("MoreInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "OK"
+        /// </summary>
+        public static string OK
+        {
+            get
+            {
+                return resourceLoader.GetString("OK");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, the payment was declined."
+        /// </summary>
+        public static string PaymentFailed
+        {
+            get
+            {
+                return resourceLoader.GetString("PaymentFailed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, it is not possible to deliver to your address."
+        /// </summary>
+        public static string PaymentNoShippingMethod
+        {
+            get
+            {
+                return resourceLoader.GetString("PaymentNoShippingMethod");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, the payment was cancelled by the bot."
+        /// </summary>
+        public static string PaymentPrecheckoutFailed
+        {
+            get
+            {
+                return resourceLoader.GetString("PaymentPrecheckoutFailed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this username is already taken."
+        /// </summary>
+        public static string UsernameInUse
+        {
+            get
+            {
+                return resourceLoader.GetString("UsernameInUse");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this username is invalid."
+        /// </summary>
+        public static string UsernameInvalid
+        {
+            get
+            {
+                return resourceLoader.GetString("UsernameInvalid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you are not allowed to do this."
+        /// </summary>
+        public static string UserRestricted
+        {
+            get
+            {
+                return resourceLoader.GetString("UserRestricted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user or bot to groups because you've blocked them. Please unblock to proceed."
+        /// </summary>
+        public static string YouBlockedUser
+        {
+            get
+            {
+                return resourceLoader.GetString("YouBlockedUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reset all notifications?"
+        /// </summary>
+        public static string ResetNotificationsDialogBody
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogBody");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Confirm"
+        /// </summary>
+        public static string ResetNotificationsDialogTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogTitle");
             }
         }
     }

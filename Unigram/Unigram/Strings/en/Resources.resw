@@ -889,11 +889,8 @@ Duration: {1}</value>
   <data name="SettingsPage_WallpaperButton.Content" xml:space="preserve">
     <value>Chat Background</value>
   </data>
-  <data name="CancelDialogButtonText" xml:space="preserve">
+  <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
-  </data>
-  <data name="OKDialogButtonText" xml:space="preserve">
-    <value>OK</value>
   </data>
   <data name="Telegram" xml:space="preserve">
     <value>Telegram</value>
@@ -1251,5 +1248,11 @@ Duration: {1}</value>
   <data name="YouBlockedUser" xml:space="preserve">
     <value>Sorry, you can't add this user or bot to groups because you've blocked them. Please unblock to proceed.</value>
     <comment>android</comment>
+  </data>
+  <data name="ResetNotificationsDialogBody" xml:space="preserve">
+    <value>Reset all notifications?</value>
+  </data>
+  <data name="ResetNotificationsDialogTitle" xml:space="preserve">
+    <value>Confirm</value>
   </data>
 </root>
