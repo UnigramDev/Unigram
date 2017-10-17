@@ -1255,4 +1255,15 @@ Duration: {1}</value>
   <data name="ResetNotificationsDialogTitle" xml:space="preserve">
     <value>Confirm</value>
   </data>
+  <data name="FloodWaitTime" xml:space="preserve">
+    <value>Too many attempts, please try again in {0}</value>
+  </data>
+  <data name="NobodyLikesSpam1" xml:space="preserve">
+    <value>Sorry, you can only send messages to mutual contacts at the moment.</value>
+    <comment>android</comment>
+  </data>
+  <data name="NobodyLikesSpam2" xml:space="preserve">
+    <value>Sorry, you can only add mutual contacts to groups at the moment.</value>
+    <comment>android</comment>
+  </data>
 </root>

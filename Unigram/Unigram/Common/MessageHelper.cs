@@ -241,7 +241,7 @@ namespace Unigram.Common
                     {
                         Debug.WriteLine("WARNING: this is weird!");
                     }
-                    
+
                     if (!string.IsNullOrWhiteSpace(message.Message))
                     {
                         paragraph.Inlines.Add(new Run { Text = message.Message });
@@ -1123,6 +1123,11 @@ namespace Unigram.Common
         public static async void NavigateToStickerSet(string text)
         {
             await StickerSetView.Current.ShowAsync(new TLInputStickerSetShortName { ShortName = text });
+        }
+
+        public static async void NavigateToUsername(string username, string accessToken, string post, string game)
+        {
+            NavigateToUsername(MTProtoService.Current, username, accessToken, post, game);
         }
 
         public static async void NavigateToUsername(IMTProtoService protoService, string username, string accessToken, string post, string game)

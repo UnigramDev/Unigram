@@ -27,6 +27,32 @@ namespace Unigram.Common
             return message.Parent is TLChannel channel && DialogViewModel.Admins.TryGetValue(channel.Id, out IList<TLChannelParticipantBase> admins) && admins.Any(x => x.UserId == message.FromId);
         }
 
+        public static Regex _pattern = new Regex("[\\-0-9]+", RegexOptions.Compiled);
+        public static int ToInt32(this String value)
+        {
+            if (value == null)
+            {
+                return 0;
+            }
+
+            var val = 0;
+            try
+            {
+                var matcher = _pattern.Match(value);
+                if (matcher.Success)
+                {
+                    var num = matcher.Groups[0].Value;
+                    val = int.Parse(num);
+                }
+            }
+            catch (Exception e)
+            {
+                //FileLog.e(e);
+            }
+
+            return val;
+        }
+
         public static Dictionary<string, string> ParseQueryString(this string query)
         {
             var first = query.Split('?');
