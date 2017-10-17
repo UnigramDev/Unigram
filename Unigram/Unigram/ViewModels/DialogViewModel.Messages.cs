@@ -1257,6 +1257,12 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessage> MessageSaveMediaCommand => new RelayCommand<TLMessage>(MessageSaveMediaExecute);
         private async void MessageSaveMediaExecute(TLMessage message)
         {
+            if (message.IsSticker())
+            {
+                MessageSaveStickerExecute(message);
+                return;
+            }
+
             if (message?.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
             {
                 var location = photoSize.Location;
