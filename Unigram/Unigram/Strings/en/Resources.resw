@@ -1266,4 +1266,49 @@ Duration: {1}</value>
     <value>Sorry, you can only add mutual contacts to groups at the moment.</value>
     <comment>android</comment>
   </data>
+  <data name="MessageAddSticker" xml:space="preserve">
+    <value>Add to Stickers</value>
+  </data>
+  <data name="MessageCopy" xml:space="preserve">
+    <value>Copy text</value>
+  </data>
+  <data name="MessageCopyLinkBroadcast" xml:space="preserve">
+    <value>Copy post link</value>
+  </data>
+  <data name="MessageCopyLinkMegaGroup" xml:space="preserve">
+    <value>Copy message link</value>
+  </data>
+  <data name="MessageDelete" xml:space="preserve">
+    <value>Delete message</value>
+  </data>
+  <data name="MessageEdit" xml:space="preserve">
+    <value>Edit message</value>
+  </data>
+  <data name="MessageFaveSticker" xml:space="preserve">
+    <value>Add to Favorites</value>
+  </data>
+  <data name="MessageForward" xml:space="preserve">
+    <value>Forward message</value>
+  </data>
+  <data name="MessagePin" xml:space="preserve">
+    <value>Pin message</value>
+  </data>
+  <data name="MessageReply" xml:space="preserve">
+    <value>Reply</value>
+  </data>
+  <data name="MessageSaveGIF" xml:space="preserve">
+    <value>Save to GIFs</value>
+  </data>
+  <data name="MessageSaveMedia" xml:space="preserve">
+    <value>Save file as...</value>
+  </data>
+  <data name="MessageSelect" xml:space="preserve">
+    <value>Select message</value>
+  </data>
+  <data name="MessageUnfaveSticker" xml:space="preserve">
+    <value>Remove from Favorites</value>
+  </data>
+  <data name="MessageUnpin" xml:space="preserve">
+    <value>Unpin message</value>
+  </data>
 </root>

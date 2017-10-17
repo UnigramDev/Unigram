@@ -58,6 +58,7 @@ using Unigram.Native;
 using LinqToVisualTree;
 using Unigram.Models;
 using System.Windows.Input;
+using Unigram.Strings;
 
 namespace Unigram.Views
 {
@@ -679,22 +680,22 @@ namespace Unigram.Views
             var channel = messageCommon.Parent as TLChannel;
 
             // Generic
-            menu.Items.Add(CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, element.DataContext, "Reply"));
-            menu.Items.Add(CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, element.DataContext, "Pin message"));
-            menu.Items.Add(CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, element.DataContext, "Edit message"));
-            menu.Items.Add(CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, element.DataContext, "Forward message"));
-            menu.Items.Add(CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, element.DataContext, "Delete message"));
-            menu.Items.Add(CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, element.DataContext, "Select message"));
-            menu.Items.Add(CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, element.DataContext, "Copy text"));
-            menu.Items.Add(CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, element.DataContext, "Copy post link"));
+            menu.Items.Add(CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, messageCommon, AppResources.MessageReply));
+            menu.Items.Add(CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, messageCommon, ViewModel.PinnedMessage?.Id == messageCommon.Id ? AppResources.MessageUnpin : AppResources.MessagePin));
+            menu.Items.Add(CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, messageCommon, AppResources.MessageEdit));
+            menu.Items.Add(CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, AppResources.MessageForward));
+            menu.Items.Add(CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, AppResources.MessageDelete));
+            menu.Items.Add(CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, AppResources.MessageSelect));
+            menu.Items.Add(CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, AppResources.MessageCopy));
+            menu.Items.Add(CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel.IsBroadcast ? AppResources.MessageCopyLinkBroadcast : AppResources.MessageCopyLinkMegaGroup));
 
             // Stickers
             // <MenuFlyoutItem Loaded="MessageAddSticker_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>
-            menu.Items.Add(CreateFlyoutItem(MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, element.DataContext, "Add to Favorites"));
-            menu.Items.Add(CreateFlyoutItem(MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, element.DataContext, "Delete from Favorites"));
+            menu.Items.Add(CreateFlyoutItem(MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, AppResources.MessageFaveSticker));
+            menu.Items.Add(CreateFlyoutItem(MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, AppResources.MessageUnfaveSticker));
 
-            menu.Items.Add(CreateFlyoutItem(MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, element.DataContext, "Save to GIFs"));
-            menu.Items.Add(CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, element.DataContext, "Save file as..."));
+            menu.Items.Add(CreateFlyoutItem(MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, AppResources.MessageSaveGIF));
+            menu.Items.Add(CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, AppResources.MessageSaveMedia));
 
             sender.ContextFlyout = menu;
 
@@ -1512,7 +1513,7 @@ namespace Unigram.Views
 
         private void Mentions_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-
+            ViewModel.ReadMentionsCommand.Execute();
         }
     }
 

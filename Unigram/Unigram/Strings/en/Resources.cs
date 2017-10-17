@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/17/2017 10:19:48
+// 	Generated: 10/17/2017 16:30:58
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -3227,6 +3227,171 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("NobodyLikesSpam2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add to Stickers"
+        /// </summary>
+        public static string MessageAddSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageAddSticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy text"
+        /// </summary>
+        public static string MessageCopy
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageCopy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy post link"
+        /// </summary>
+        public static string MessageCopyLinkBroadcast
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageCopyLinkBroadcast");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy message link"
+        /// </summary>
+        public static string MessageCopyLinkMegaGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageCopyLinkMegaGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete message"
+        /// </summary>
+        public static string MessageDelete
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageDelete");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit message"
+        /// </summary>
+        public static string MessageEdit
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageEdit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add to Favorites"
+        /// </summary>
+        public static string MessageFaveSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageFaveSticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward message"
+        /// </summary>
+        public static string MessageForward
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageForward");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pin message"
+        /// </summary>
+        public static string MessagePin
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reply"
+        /// </summary>
+        public static string MessageReply
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageReply");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save to GIFs"
+        /// </summary>
+        public static string MessageSaveGIF
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSaveGIF");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save file as..."
+        /// </summary>
+        public static string MessageSaveMedia
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSaveMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select message"
+        /// </summary>
+        public static string MessageSelect
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSelect");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove from Favorites"
+        /// </summary>
+        public static string MessageUnfaveSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageUnfaveSticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin message"
+        /// </summary>
+        public static string MessageUnpin
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageUnpin");
             }
         }
     }
