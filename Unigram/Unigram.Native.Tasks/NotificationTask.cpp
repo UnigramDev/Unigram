@@ -421,6 +421,12 @@ void NotificationTask::UpdateTile(String^ caption, String^ message, String^ pict
 	body += L"]]></text>";
 
 	std::wstring xml = L"<tile><visual><binding template='TileMedium' branding='nameAndLogo'>";
+	if (picture != nullptr)
+	{
+		xml += L"<image placement='peek' hint-crop='circle' src='";
+		xml += picture->Data();
+		xml += L"'/>";
+	}
 	xml += body;
 	xml += L"</binding><binding template='TileWide' branding='nameAndLogo'>";
 	xml += L"<group>";
