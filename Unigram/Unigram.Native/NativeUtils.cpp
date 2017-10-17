@@ -9,28 +9,9 @@ int64 NativeUtils::GetDirectorySize(String^ path)
 	return CalculateDirSize(path->Data(), 0);
 }
 
-int64 NativeUtils::GetFileSize(String^ path)
-{
-	return CalculateFileSize(path->Data());
-}
-
 void NativeUtils::Delete(String^ path)
 {
 	DeleteFile(path->Data());
-}
-
-uint64_t NativeUtils::CalculateFileSize(const std::wstring &path)
-{
-	WIN32_FIND_DATAW data;
-	HANDLE sh = NULL;
-	sh = FindFirstFileW(path.c_str(), &data);
-
-	if (sh == INVALID_HANDLE_VALUE)
-	{
-		return 0;
-	}
-
-	return (uint64_t)(data.nFileSizeHigh * (MAXDWORD)+data.nFileSizeLow);
 }
 
 uint64_t NativeUtils::CalculateDirSize(const std::wstring &path, uint64_t size)
