@@ -458,8 +458,15 @@ namespace Unigram.Common
                 var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
-                    //Image.UriSource = FileUtils.GetTempFileUri(fileName);
-                    _bitmapImage.SetSource(WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName))));
+                    var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
+                    if (decoded != null)
+                    {
+                        _bitmapImage.SetSource(decoded);
+                    }
+                    else
+                    {
+                        _bitmapImage.UriSource = FileUtils.GetTempFileUri(fileName);
+                    }
                 }
                 else
                 {
@@ -475,8 +482,15 @@ namespace Unigram.Common
                                     transferable.IsTransferring = false;
                                 }
 
-                                //Image.UriSource = FileUtils.GetTempFileUri(fileName);
-                                _bitmapImage.SetSource(WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName))));
+                                var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
+                                if (decoded != null)
+                                {
+                                    _bitmapImage.SetSource(decoded);
+                                }
+                                else
+                                {
+                                    _bitmapImage.UriSource = FileUtils.GetTempFileUri(fileName);
+                                }
                             });
                         }
                     });
