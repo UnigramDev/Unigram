@@ -47,22 +47,29 @@ namespace Telegram.Api.Services
 
             Debug.WriteLine("Sending " + caption);
 
-            return _connectionManager.SendRequest(obj, (message, ex) =>
+            try
             {
-                if (message.Object is TLRPCError error)
+                return _connectionManager.SendRequest(obj, (message, ex) =>
                 {
-                    faultCallback?.Invoke(error);
-                }
-                else if (message.Object is TLUnparsedObject unparsed)
-                {
-                    callback?.Invoke(TLFactory.Read<T>(unparsed.Reader, unparsed.Constructor));
-                }
-                else
-                {
-                    callback?.Invoke((T)(object)message.Object);
-                }
-            },
-            quick, datacenterId, ConnectionType.Generic, flags | (immediate ? RequestFlag.Immediate : RequestFlag.None));
+                    if (message.Object is TLRPCError error)
+                    {
+                        faultCallback?.Invoke(error);
+                    }
+                    else if (message.Object is TLUnparsedObject unparsed)
+                    {
+                        callback?.Invoke(TLFactory.Read<T>(unparsed.Reader, unparsed.Constructor));
+                    }
+                    else
+                    {
+                        callback?.Invoke((T)(object)message.Object);
+                    }
+                },
+                quick, datacenterId, ConnectionType.Generic, flags | (immediate ? RequestFlag.Immediate : RequestFlag.None));
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
         public void SendRequestAsync<T>(string caption, TLObject obj, Action<T> callback, Action<TLRPCError> faultCallback = null)
