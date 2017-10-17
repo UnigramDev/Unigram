@@ -499,7 +499,16 @@ void NotificationTask::ResetSecondaryTile(String^ caption, String^ picture, Stri
 	updater->Update(notification);
 }
 
-String^ NotificationTask::CreateTileMessageBody(String^ caption, String^ message)
+String^ NotificationTask::CreateTileMessageBody(String^ message)
+{
+	std::wstring body = L"<text hint-style='captionSubtle' hint-wrap='true'><![CDATA[";
+	body += message->Data();
+	body += L"]]></text>";
+
+	return ref new String(body.c_str());
+}
+
+String^ NotificationTask::CreateTileMessageBodyWithCaption(String^ caption, String^ message)
 {
 	std::wstring body = L"<text hint-style='body'><![CDATA[";
 	body += caption->Data();
@@ -513,12 +522,10 @@ String^ NotificationTask::CreateTileMessageBody(String^ caption, String^ message
 
 void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, String^ picture)
 {
-	auto body = NotificationTask::CreateTileMessageBody(caption, message);
+	auto body = NotificationTask::CreateTileMessageBodyWithCaption(caption, message);
 
 	std::wstring xml = L"<tile><visual>"; 
-	xml += L"<binding template='TileMedium' displayName='";
-	xml += caption->Data();
-	xml += L"' branding='name'>";
+	xml += L"<binding template='TileMedium' branding='name'>";
 	if (picture != nullptr)
 	{
 		xml += L"<image placement='peek' hint-crop='circle' src='";
@@ -527,9 +534,7 @@ void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, Strin
 	}
 	xml += body->Data();
 	xml += L"</binding>"; 
-	xml += L"<binding template='TileWide' displayName='";
-	xml += caption->Data();
-	xml += L"' branding='nameAndLogo'>";
+	xml += L"<binding template='TileWide' branding='nameAndLogo'>";
 	xml += L"<group>";
 	xml += L"<subgroup hint-weight='18'>";
 	if (picture != nullptr)
@@ -547,9 +552,7 @@ void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, Strin
 
 	if (!IsMobile())
 	{
-		xml += L"<binding template='TileLarge' displayName='";
-		xml += caption->Data();
-		xml += L"' branding='nameAndLogo'>";
+		xml += L"<binding template='TileLarge' branding='nameAndLogo'>";
 		xml += L"<group>";
 		xml += L"<subgroup hint-weight='18'>";
 		if (picture != nullptr)
@@ -580,7 +583,7 @@ void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, Strin
 
 void NotificationTask::UpdateSecondaryTile(String^ caption, String^ message, String^ picture, String^ group)
 {
-	auto body = NotificationTask::CreateTileMessageBody(caption, message);
+	auto body = NotificationTask::CreateTileMessageBody(message);
 
 	std::wstring xml = L"<tile><visual>";
 	xml += L"<binding template='TileMedium' displayName='";

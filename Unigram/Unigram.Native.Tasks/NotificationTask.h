@@ -38,7 +38,8 @@ namespace Unigram
 				String^ GetGroup(JsonObject^ custom);
 				String^ GetPicture(JsonObject^ custom, String^ group);
 				String^ GetDate(JsonObject^ notification);
-				static String^ NotificationTask::CreateTileMessageBody(String^ caption, String^ message);
+				static String^ NotificationTask::CreateTileMessageBody(String^ message);
+				static String^ NotificationTask::CreateTileMessageBodyWithCaption(String^ caption, String^ message);
 
 				void UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key);
 
