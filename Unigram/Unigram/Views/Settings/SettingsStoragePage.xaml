@@ -62,7 +62,7 @@
                            FontWeight="SemiBold" 
                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                            Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <ProgressRing IsActive="{x:Bind ViewModel.TaskCompleted, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" />
+                    <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Images" 
