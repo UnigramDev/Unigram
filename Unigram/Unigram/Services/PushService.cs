@@ -26,6 +26,10 @@ namespace Unigram.Core.Services
     {
         Task RegisterAsync();
         Task UnregisterAsync();
+        string GetGroup(ITLDialogWith with);
+        string GetPicture(ITLDialogWith with, string group);
+        string GetTitle(ITLDialogWith with);
+        string GetLaunch(ITLDialogWith with);
 
         void Notify(TLMessageCommonBase commonMessage);
     }
@@ -233,6 +237,29 @@ namespace Unigram.Core.Services
             return null;
         }
 
+        public string GetGroup(ITLDialogWith with)
+        {
+            if (with == null)
+            {
+                return null;
+            }
+
+            if (with is TLChat chat)
+            {
+                return string.Format(CultureInfo.InvariantCulture, "c{0}", chat.Id);
+            }
+            else if (with is TLChannel channel)
+            {
+                return string.Format(CultureInfo.InvariantCulture, "c{0}", channel.Id);
+            }
+            else if (with is TLUser user)
+            {
+                return string.Format(CultureInfo.InvariantCulture, "u{0}", user.Id);
+            }
+
+            return null;
+        }
+
         private string GetPicture(TLMessageCommonBase custom, string group)
         {
             TLFileLocation location = null;
@@ -259,6 +286,77 @@ namespace Unigram.Core.Services
             }
 
             return FileUtils.GetTempFileUri("placeholders/" + group + "_placeholder.png").ToString();
+        }
+
+        public string GetPicture(ITLDialogWith with, string group)
+        {
+            TLFileLocation location = null;
+            if (with is TLUser user && user.Photo is TLUserProfilePhoto userPhoto)
+            {
+                location = userPhoto.PhotoSmall as TLFileLocation;
+            }
+            else if (with is TLChat chat && chat.Photo is TLChatPhoto chatPhoto)
+            {
+                location = chatPhoto.PhotoSmall as TLFileLocation;
+            }
+            else if (with is TLChannel channel && channel.Photo is TLChatPhoto channelPhoto)
+            {
+                location = channelPhoto.PhotoSmall as TLFileLocation;
+            }
+
+            if (location != null)
+            {
+                var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                {
+                    return FileUtils.GetTempFileUri(fileName).ToString();
+                }
+            }
+
+            return FileUtils.GetTempFileUri("placeholders/" + group + "_placeholder.png").ToString();
+        }
+
+        public string GetTitle(ITLDialogWith with)
+        {
+            if (with == null)
+            {
+                return null;
+            }
+
+            if (with is TLChat chat)
+            {
+                return chat.Title;
+            }
+            else if (with is TLChannel channel)
+            {
+                return channel.Title;
+            }
+            else if (with is TLUser user)
+            {
+                return user.DisplayName;
+            }
+
+            return null;
+        }
+
+        public string GetLaunch(ITLDialogWith with)
+        {
+            var launch = string.Empty;
+            
+            if (with is TLChat chat)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "chat_id={0}", chat.Id);
+            }
+            else if (with is TLChannel channel)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "channel_id={0}&amp;access_hash={1}", channel.Id, channel.AccessHash ?? 0);
+            }
+            else if (with is TLUser user)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "from_id={0}&amp;access_hash={1}", user.Id, user.AccessHash ?? 0);
+            }
+
+            return launch;
         }
 
         #region Brief

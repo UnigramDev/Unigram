@@ -47,7 +47,7 @@ using Telegram.Api;
 using Unigram.Views;
 using Telegram.Api.TL.Phone.Methods;
 using Windows.ApplicationModel.Calls;
-using Unigram.Tasks;
+using Unigram.Native.Tasks;
 using Windows.Media.Effects;
 using Windows.Media.Transcoding;
 using Windows.Media.MediaProperties;
@@ -59,6 +59,7 @@ using Windows.UI.Notifications;
 using Unigram.Native;
 using Unigram.Views.Channels;
 using Telegram.Api.TL.Channels;
+using Windows.UI.StartScreen;
 
 namespace Unigram.ViewModels
 {
@@ -102,11 +103,12 @@ namespace Unigram.ViewModels
         private readonly IUploadAudioManager _uploadAudioManager;
         private readonly IUploadDocumentManager _uploadDocumentManager;
         private readonly IUploadVideoManager _uploadVideoManager;
+        private readonly IPushService _pushService;
 
         public int participantCount = 0;
         public int online = 0;
 
-        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService, ILiveLocationService liveLocationService)
+        public DialogViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager, IUploadAudioManager uploadAudioManager, IUploadDocumentManager uploadDocumentManager, IUploadVideoManager uploadVideoManager, IStickersService stickersService, ILocationService locationService, ILiveLocationService liveLocationService, IPushService pushService)
             : base(protoService, cacheService, aggregator)
         {
             _uploadFileManager = uploadFileManager;
@@ -116,6 +118,7 @@ namespace Unigram.ViewModels
             _stickersService = stickersService;
             _locationService = locationService;
             _liveLocationService = liveLocationService;
+            _pushService = pushService;
 
             _stickers = new DialogStickersViewModel(protoService, cacheService, aggregator, stickersService);
 
@@ -382,6 +385,32 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _isAddContactAvailable, value);
+            }
+        }
+
+        private bool _canPinChat;
+        public bool CanPinChat
+        {
+            get
+            {
+                return _canPinChat;
+            }
+            set
+            {
+                Set(ref _canPinChat, value);
+            }
+        }
+
+        private bool _canUnpinChat;
+        public bool CanUnpinChat
+        {
+            get
+            {
+                return _canUnpinChat;
+            }
+            set
+            {
+                Set(ref _canUnpinChat, value);
             }
         }
 
@@ -1071,6 +1100,12 @@ namespace Unigram.ViewModels
             Peer = participant.ToInputPeer();
             With = participant;
             Dialog = CacheService.GetDialog(Peer.ToPeer());
+            UpdatePinChatCommands();
+
+            if (CanUnpinChat)
+            {
+                ResetTile();
+            }
 
             //Aggregator.Subscribe(this);
 
@@ -2785,6 +2820,103 @@ namespace Unigram.ViewModels
         }
 
         #endregion
+
+        #region Pin chat
+
+        public RelayCommand PinChatCommand => new RelayCommand(PinChatExecute, CanExecutePinChatCommand);
+        private async void PinChatExecute()
+        {
+            var group = _pushService.GetGroup(this.With);
+            if (string.IsNullOrWhiteSpace(group))
+            {
+                return;
+            }
+
+            var displayName = _pushService.GetTitle(this.With);
+            var arguments = _pushService.GetLaunch(this.With);
+            var picture = _pushService.GetPicture(this.With, group);
+
+            var secondaryTile = new SecondaryTile(group, displayName, arguments, new Uri(picture), TileSize.Default);
+
+            var tileCreated = await secondaryTile.RequestCreateAsync();
+            if (tileCreated)
+            {
+                UpdatePinChatCommands();
+            }
+
+            ResetTile();
+        }
+
+        private void ResetTile()
+        {
+            var group = _pushService.GetGroup(this.With);
+            if (string.IsNullOrWhiteSpace(group))
+            {
+                return;
+            }
+
+            var displayName = _pushService.GetTitle(this.With);
+            var arguments = _pushService.GetLaunch(this.With);
+            var picture = _pushService.GetPicture(this.With, group);
+
+            NotificationTask.ResetSecondaryTile(displayName, picture, group);
+        }
+
+        private bool CanExecutePinChatCommand()
+        {
+            var group = _pushService.GetGroup(this.With);
+            if (string.IsNullOrWhiteSpace(group))
+            {
+                return false;
+            }
+
+            return !SecondaryTile.Exists(group);
+        }
+
+        #endregion
+
+        #region Unpin chat
+
+        public RelayCommand UnpinChatCommand => new RelayCommand(UnpinChatExecute, CanUnpinChatExecute);
+        private async void UnpinChatExecute()
+        {
+            var group = _pushService.GetGroup(this.With);
+            if (string.IsNullOrWhiteSpace(group))
+            {
+                return;
+            }
+
+            var secondaryTile = new SecondaryTile(group);
+            if (secondaryTile == null)
+            {
+                return;
+            }
+
+            var tileDeleted = await secondaryTile.RequestDeleteAsync();
+            if (tileDeleted)
+            {
+                UpdatePinChatCommands();
+            }
+        }
+
+        private bool CanUnpinChatExecute()
+        {
+            var group = _pushService.GetGroup(this.With);
+            if (string.IsNullOrWhiteSpace(group))
+            {
+                return false;
+            }
+
+            return SecondaryTile.Exists(group);
+        }
+
+        #endregion
+
+        private void UpdatePinChatCommands()
+        {
+            CanPinChat = CanExecutePinChatCommand();
+            CanUnpinChat = !CanPinChat;
+        }
 
         #region Start
 

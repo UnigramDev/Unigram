@@ -22,6 +22,7 @@ using namespace Platform;
 using namespace Windows::Storage;
 using namespace Windows::ApplicationModel::Calls;
 using namespace Windows::Foundation;
+using namespace Windows::UI::StartScreen;
 
 void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 {
@@ -164,7 +165,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 
 			if (loc_key != L"DC_UPDATE")
 			{
-				UpdateTile(caption, message, picture);
+				UpdateTile(caption, message, picture, group);
 			}
 		}
 	}
@@ -411,7 +412,61 @@ void NotificationTask::UpdateBadge(int badgeNumber)
 	updater->Update(ref new BadgeNotification(document));
 }
 
-void NotificationTask::UpdateTile(String^ caption, String^ message, String^ picture)
+void NotificationTask::ResetSecondaryTile(String^ caption, String^ picture, String^ group)
+{
+	if (group->IsEmpty())
+	{
+		return;
+	}
+
+	auto existsSecondaryTile = SecondaryTile::Exists(group);
+	if (!existsSecondaryTile)
+	{
+		return;
+	}
+
+	std::wstring xml = L"<tile><visual><binding template='TileMedium' branding='nameAndLogo'>";
+	if (picture != nullptr)
+	{
+		xml += L"<image hint-crop='circle' src='";
+		xml += picture->Data();
+		xml += L"'/>";
+	}
+	xml += L"</binding><binding template='TileWide' branding='nameAndLogo'>";
+	xml += L"<group>";
+	xml += L"<subgroup hint-weight='18'>";
+	if (picture != nullptr)
+	{
+		xml += L"<image hint-crop='circle' src='";
+		xml += picture->Data();
+		xml += L"'/>";
+	}
+	xml += L"</subgroup>";
+	xml += L"</group>";
+	xml += L"</binding><binding template='TileLarge' branding='nameAndLogo'>";
+	xml += L"<group>";
+	xml += L"<subgroup hint-weight='18'>";
+	if (picture != nullptr)
+	{
+		xml += L"<image hint-crop='circle' src='";
+		xml += picture->Data();
+		xml += L"'/>";
+	}
+	xml += L"</subgroup>";
+	xml += L"</group>";
+	xml += L"</binding></visual></tile>";
+
+	auto updater = TileUpdateManager::CreateTileUpdaterForSecondaryTile(group);
+
+	auto document = ref new XmlDocument();
+	document->LoadXml(ref new String(xml.c_str()));
+
+	auto notification = ref new TileNotification(document);
+
+	updater->Update(notification);
+}
+
+void NotificationTask::UpdateTile(String^ caption, String^ message, String^ picture, String^ group)
 {
 	std::wstring body = L"<text hint-style='body'><![CDATA[";
 	body += caption->Data();
@@ -458,7 +513,9 @@ void NotificationTask::UpdateTile(String^ caption, String^ message, String^ pict
 	xml += L"</group>";
 	xml += L"</binding></visual></tile>";
 
-	auto updater = TileUpdateManager::CreateTileUpdaterForApplication(L"App");
+	auto existsSecondaryTile = SecondaryTile::Exists(group);
+
+	auto updater = existsSecondaryTile ? TileUpdateManager::CreateTileUpdaterForSecondaryTile(group) : TileUpdateManager::CreateTileUpdaterForApplication(L"App");
 	//updater->EnableNotificationQueue(true);
 	//updater->EnableNotificationQueueForSquare150x150(false);
 
