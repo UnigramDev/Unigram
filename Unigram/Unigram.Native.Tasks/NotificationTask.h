@@ -22,9 +22,11 @@ namespace Unigram
 				NotificationTask() {}
 				virtual void Run(IBackgroundTaskInstance^ taskInstance);
 
-				static void UpdateBadge(int badgeNumber);
+				static void UpdatePrimaryBadge(int badgeNumber);
+				static void UpdateSecondaryBadge(int badgeNumber, String^ group);
 				static void ResetSecondaryTile(String^ caption, String^ picture, String^ group);
-				static void UpdateTile(String^ caption, String^ message, String^ picture, String^ group);
+				static void UpdatePrimaryTile(String^ caption, String^ message, String^ picture);
+				static void UpdateSecondaryTile(String^ caption, String^ message, String^ picture, String^ group);
 				static void UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key); 
 
 			private:
@@ -36,8 +38,11 @@ namespace Unigram
 				String^ GetGroup(JsonObject^ custom);
 				String^ GetPicture(JsonObject^ custom, String^ group);
 				String^ GetDate(JsonObject^ notification);
+				static String^ NotificationTask::CreateTileMessageBody(String^ caption, String^ message);
 
 				void UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key);
+
+				static bool IsMobile();
 			};
 		}
 	}

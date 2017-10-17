@@ -22,6 +22,7 @@ using namespace Platform;
 using namespace Windows::Storage;
 using namespace Windows::ApplicationModel::Calls;
 using namespace Windows::Foundation;
+using namespace Windows::Foundation::Metadata;
 using namespace Windows::UI::StartScreen;
 
 void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
@@ -159,13 +160,20 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 		else
 		{
 			auto tag = GetTag(custom);
+			auto existsSecondaryTile = group != nullptr && SecondaryTile::Exists(group);
 
 			UpdateToast(caption, message, sound, launch, tag, group, picture, date, loc_key);
-			UpdateBadge(data->GetNamedNumber("badge"));
+			if (existsSecondaryTile)
+				UpdateSecondaryBadge(data->GetNamedNumber("badge"), group);
+			else
+				UpdatePrimaryBadge(data->GetNamedNumber("badge"));
 
 			if (loc_key != L"DC_UPDATE")
 			{
-				UpdateTile(caption, message, picture, group);
+				if (existsSecondaryTile)
+					UpdateSecondaryTile(caption, message, picture, group);
+				else
+					UpdatePrimaryTile(caption, message, picture);
 			}
 		}
 	}
@@ -396,9 +404,27 @@ String^ NotificationTask::GetDate(JsonObject^ notification)
 	return ref new String(buffer);
 }
 
-void NotificationTask::UpdateBadge(int badgeNumber)
+void NotificationTask::UpdatePrimaryBadge(int badgeNumber)
 {
 	auto updater = BadgeUpdateManager::CreateBadgeUpdaterForApplication(L"App");
+
+	if (badgeNumber == 0)
+	{
+		updater->Clear();
+		return;
+	}
+
+	auto document = BadgeUpdateManager::GetTemplateContent(BadgeTemplateType::BadgeNumber);
+	auto element = safe_cast<XmlElement^>(document->SelectSingleNode("/badge"));
+	element->SetAttribute("value", badgeNumber.ToString());
+
+	updater->Update(ref new BadgeNotification(document));
+}
+
+void NotificationTask::UpdateSecondaryBadge(int badgeNumber, String^ group)
+{
+	auto updater = BadgeUpdateManager::CreateBadgeUpdaterForSecondaryTile(group);
+
 	if (badgeNumber == 0)
 	{
 		updater->Clear();
@@ -414,7 +440,7 @@ void NotificationTask::UpdateBadge(int badgeNumber)
 
 void NotificationTask::ResetSecondaryTile(String^ caption, String^ picture, String^ group)
 {
-	if (group->IsEmpty())
+	if (group == nullptr)
 	{
 		return;
 	}
@@ -425,36 +451,43 @@ void NotificationTask::ResetSecondaryTile(String^ caption, String^ picture, Stri
 		return;
 	}
 
-	std::wstring xml = L"<tile><visual><binding template='TileMedium' branding='nameAndLogo'>";
+	std::wstring xml = L"<tile><visual>";
+	xml += L"<binding template='TileMedium' displayName='";
+	xml += caption->Data();
+	xml += L"' branding='name'>";
 	if (picture != nullptr)
 	{
 		xml += L"<image hint-crop='circle' src='";
 		xml += picture->Data();
 		xml += L"'/>";
 	}
-	xml += L"</binding><binding template='TileWide' branding='nameAndLogo'>";
-	xml += L"<group>";
-	xml += L"<subgroup hint-weight='18'>";
+	xml += L"</binding>"; 
+	xml += L"<binding template='TileWide' displayName='";
+	xml += caption->Data();
+	xml += L"' branding='nameAndLogo'>";
 	if (picture != nullptr)
 	{
 		xml += L"<image hint-crop='circle' src='";
 		xml += picture->Data();
 		xml += L"'/>";
 	}
-	xml += L"</subgroup>";
-	xml += L"</group>";
-	xml += L"</binding><binding template='TileLarge' branding='nameAndLogo'>";
-	xml += L"<group>";
-	xml += L"<subgroup hint-weight='18'>";
-	if (picture != nullptr)
+	xml += L"</binding>";
+	
+	if (!IsMobile())
 	{
-		xml += L"<image hint-crop='circle' src='";
-		xml += picture->Data();
-		xml += L"'/>";
+		xml += L"<binding template='TileLarge' displayName='";
+		xml += caption->Data();
+		xml += L"' branding='nameAndLogo'>";
+		if (picture != nullptr)
+		{
+			xml += L"<image hint-crop='circle' src='";
+			xml += picture->Data();
+			xml += L"'/>";
+		}
+		xml += L"</binding>";
 	}
-	xml += L"</subgroup>";
-	xml += L"</group>";
-	xml += L"</binding></visual></tile>";
+
+	xml += L"</visual></tile>";
 
 	auto updater = TileUpdateManager::CreateTileUpdaterForSecondaryTile(group);
 
@@ -466,7 +499,7 @@ void NotificationTask::ResetSecondaryTile(String^ caption, String^ picture, Stri
 	updater->Update(notification);
 }
 
-void NotificationTask::UpdateTile(String^ caption, String^ message, String^ picture, String^ group)
+String^ NotificationTask::CreateTileMessageBody(String^ caption, String^ message)
 {
 	std::wstring body = L"<text hint-style='body'><![CDATA[";
 	body += caption->Data();
@@ -475,15 +508,28 @@ void NotificationTask::UpdateTile(String^ caption, String^ message, String^ pict
 	body += message->Data();
 	body += L"]]></text>";
 
-	std::wstring xml = L"<tile><visual><binding template='TileMedium' branding='nameAndLogo'>";
+	return ref new String(body.c_str());
+}
+
+void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, String^ picture)
+{
+	auto body = NotificationTask::CreateTileMessageBody(caption, message);
+
+	std::wstring xml = L"<tile><visual>"; 
+	xml += L"<binding template='TileMedium' displayName='";
+	xml += caption->Data();
+	xml += L"' branding='name'>";
 	if (picture != nullptr)
 	{
 		xml += L"<image placement='peek' hint-crop='circle' src='";
 		xml += picture->Data();
 		xml += L"'/>";
 	}
-	xml += body;
-	xml += L"</binding><binding template='TileWide' branding='nameAndLogo'>";
+	xml += body->Data();
+	xml += L"</binding>"; 
+	xml += L"<binding template='TileWide' displayName='";
+	xml += caption->Data();
+	xml += L"' branding='nameAndLogo'>";
 	xml += L"<group>";
 	xml += L"<subgroup hint-weight='18'>";
 	if (picture != nullptr)
@@ -494,10 +540,63 @@ void NotificationTask::UpdateTile(String^ caption, String^ message, String^ pict
 	}
 	xml += L"</subgroup>";
 	xml += L"<subgroup>";
-	xml += body;
+	xml += body->Data();
 	xml += L"</subgroup>";
 	xml += L"</group>";
-	xml += L"</binding><binding template='TileLarge' branding='nameAndLogo'>";
+	xml += L"</binding>";
+
+	if (!IsMobile())
+	{
+		xml += L"<binding template='TileLarge' displayName='";
+		xml += caption->Data();
+		xml += L"' branding='nameAndLogo'>";
+		xml += L"<group>";
+		xml += L"<subgroup hint-weight='18'>";
+		if (picture != nullptr)
+		{
+			xml += L"<image hint-crop='circle' src='";
+			xml += picture->Data();
+			xml += L"'/>";
+		}
+		xml += L"</subgroup>";
+		xml += L"<subgroup>";
+		xml += body->Data();
+		xml += L"</subgroup>";
+		xml += L"</group>";
+		xml += L"</binding>";
+	}
+
+	xml += L"</visual></tile>";
+
+	auto updater = TileUpdateManager::CreateTileUpdaterForApplication(L"App");
+
+	auto document = ref new XmlDocument();
+	document->LoadXml(ref new String(xml.c_str()));
+
+	auto notification = ref new TileNotification(document);
+
+	updater->Update(notification);
+}
+
+void NotificationTask::UpdateSecondaryTile(String^ caption, String^ message, String^ picture, String^ group)
+{
+	auto body = NotificationTask::CreateTileMessageBody(caption, message);
+
+	std::wstring xml = L"<tile><visual>";
+	xml += L"<binding template='TileMedium' displayName='";
+	xml += caption->Data();
+	xml += L"' branding='name'>";
+	if (picture != nullptr)
+	{
+		xml += L"<image placement='peek' hint-crop='circle' src='";
+		xml += picture->Data();
+		xml += L"'/>";
+	}
+	xml += body->Data();
+	xml += L"</binding>";
+	xml += L"<binding template='TileWide' displayName='";
+	xml += caption->Data();
+	xml += L"' branding='nameAndLogo'>";
 	xml += L"<group>";
 	xml += L"<subgroup hint-weight='18'>";
 	if (picture != nullptr)
@@ -508,16 +607,35 @@ void NotificationTask::UpdateTile(String^ caption, String^ message, String^ pict
 	}
 	xml += L"</subgroup>";
 	xml += L"<subgroup>";
-	xml += body;
+	xml += body->Data();
 	xml += L"</subgroup>";
 	xml += L"</group>";
-	xml += L"</binding></visual></tile>";
+	xml += L"</binding>";
 
-	auto existsSecondaryTile = SecondaryTile::Exists(group);
+	if (!IsMobile())
+	{
+		xml += L"<binding template='TileLarge' displayName='";
+		xml += caption->Data();
+		xml += L"' branding='nameAndLogo'>";
+		xml += L"<group>";
+		xml += L"<subgroup hint-weight='18'>";
+		if (picture != nullptr)
+		{
+			xml += L"<image hint-crop='circle' src='";
+			xml += picture->Data();
+			xml += L"'/>";
+		}
+		xml += L"</subgroup>";
+		xml += L"<subgroup>";
+		xml += body->Data();
+		xml += L"</subgroup>";
+		xml += L"</group>";
+		xml += L"</binding>";
+	}
 
-	auto updater = existsSecondaryTile ? TileUpdateManager::CreateTileUpdaterForSecondaryTile(group) : TileUpdateManager::CreateTileUpdaterForApplication(L"App");
-	//updater->EnableNotificationQueue(true);
-	//updater->EnableNotificationQueueForSquare150x150(false);
+	xml += L"</visual></tile>";
+
+	auto updater = TileUpdateManager::CreateTileUpdaterForSecondaryTile(group);
 
 	auto document = ref new XmlDocument();
 	document->LoadXml(ref new String(xml.c_str()));
@@ -590,4 +708,9 @@ void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^
 		Sleep(1000000);
 		//VoIPCallTask::Current->UpdatePhoneCall(caption, message, sound, launch, tag, group, picture, date, loc_key);
 	});
+}
+
+bool NotificationTask::IsMobile()
+{
+	return ApiInformation::IsTypePresent("Windows.UI.ViewManagement.StatusBar");
 }

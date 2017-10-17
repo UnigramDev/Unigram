@@ -166,12 +166,6 @@ namespace Unigram.Core.Services
             SettingsHelper.ChannelUri = null;
         }
 
-
-
-
-
-
-
         public void Notify(TLMessageCommonBase commonMessage)
         {
             var caption = commonMessage.Parent.DisplayName;
@@ -185,31 +179,42 @@ namespace Unigram.Core.Services
             var loc_key = commonMessage.Parent is TLChannel channel && channel.IsBroadcast ? "CHANNEL" : string.Empty;
 
             NotificationTask.UpdateToast(caption, content, sound, launch, tag, group, picture, date, loc_key);
+
+            var existsSecondaryTile = Windows.UI.StartScreen.SecondaryTile.Exists(group);
+            if (existsSecondaryTile)
+            {
+                NotificationTask.UpdateSecondaryTile(caption, content, picture, group);
+            }
+            else
+            {
+                NotificationTask.UpdatePrimaryTile(caption, content, picture);
+            }
         }
 
         private string GetLaunch(TLMessageCommonBase custom)
         {
-            var launch = string.Empty;
-
-            if (custom.Id > 0)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "msg_id={0}&amp;", custom.Id);
-            }
-            if (custom.Parent is TLChat chat)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "chat_id={0}", chat.Id);
-            }
-            else if (custom.Parent is TLChannel channel)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "channel_id={0}&amp;access_hash={1}", channel.Id, channel.AccessHash ?? 0);
-            }
-            else if (custom.Parent is TLUser user)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "from_id={0}&amp;access_hash={1}", user.Id, user.AccessHash ?? 0);
-            }
+            return GetLaunch(custom?.Parent);
 
             //launch += L"Action=";
             //launch += loc_key->Data();
+        }
+
+        public string GetLaunch(ITLDialogWith with)
+        {
+            var launch = string.Empty;
+
+            if (with is TLChat chat)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "chat_id={0}", chat.Id);
+            }
+            else if (with is TLChannel channel)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "channel_id={0}&amp;access_hash={1}", channel.Id, channel.AccessHash ?? 0);
+            }
+            else if (with is TLUser user)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "from_id={0}&amp;access_hash={1}", user.Id, user.AccessHash ?? 0);
+            }
 
             return launch;
         }
@@ -221,20 +226,7 @@ namespace Unigram.Core.Services
 
         private string GetGroup(TLMessageCommonBase custom)
         {
-            if (custom.Parent is TLChat chat)
-            {
-                return string.Format(CultureInfo.InvariantCulture, "c{0}", chat.Id);
-            }
-            else if (custom.Parent is TLChannel channel)
-            {
-                return string.Format(CultureInfo.InvariantCulture, "c{0}", channel.Id);
-            }
-            else if (custom.Parent is TLUser user)
-            {
-                return string.Format(CultureInfo.InvariantCulture, "u{0}", user.Id);
-            }
-
-            return null;
+            return GetGroup(custom?.Parent);
         }
 
         public string GetGroup(ITLDialogWith with)
@@ -262,30 +254,7 @@ namespace Unigram.Core.Services
 
         private string GetPicture(TLMessageCommonBase custom, string group)
         {
-            TLFileLocation location = null;
-            if (custom.Parent is TLUser user && user.Photo is TLUserProfilePhoto userPhoto)
-            {
-                location = userPhoto.PhotoSmall as TLFileLocation;
-            }
-            else if (custom.Parent is TLChat chat && chat.Photo is TLChatPhoto chatPhoto)
-            {
-                location = chatPhoto.PhotoSmall as TLFileLocation;
-            }
-            else if (custom.Parent is TLChannel channel && channel.Photo is TLChatPhoto channelPhoto)
-            {
-                location = channelPhoto.PhotoSmall as TLFileLocation;
-            }
-
-            if (location != null)
-            {
-                var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
-                if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                {
-                    return FileUtils.GetTempFileUri(fileName).ToString();
-                }
-            }
-
-            return FileUtils.GetTempFileUri("placeholders/" + group + "_placeholder.png").ToString();
+            return GetPicture(custom?.Parent, group);
         }
 
         public string GetPicture(ITLDialogWith with, string group)
@@ -337,26 +306,6 @@ namespace Unigram.Core.Services
             }
 
             return null;
-        }
-
-        public string GetLaunch(ITLDialogWith with)
-        {
-            var launch = string.Empty;
-            
-            if (with is TLChat chat)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "chat_id={0}", chat.Id);
-            }
-            else if (with is TLChannel channel)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "channel_id={0}&amp;access_hash={1}", channel.Id, channel.AccessHash ?? 0);
-            }
-            else if (with is TLUser user)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "from_id={0}&amp;access_hash={1}", user.Id, user.AccessHash ?? 0);
-            }
-
-            return launch;
         }
 
         #region Brief

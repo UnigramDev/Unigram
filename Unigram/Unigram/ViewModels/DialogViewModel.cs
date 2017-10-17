@@ -2837,12 +2837,19 @@ namespace Unigram.ViewModels
             var picture = _pushService.GetPicture(this.With, group);
 
             var secondaryTile = new SecondaryTile(group, displayName, arguments, new Uri(picture), TileSize.Default);
+            secondaryTile.VisualElements.Wide310x150Logo = new Uri(picture);   
+            if (!ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                secondaryTile.VisualElements.Square310x310Logo = new Uri(picture);
+            }
 
             var tileCreated = await secondaryTile.RequestCreateAsync();
             if (tileCreated)
             {
                 UpdatePinChatCommands();
             }
+
+            NotificationTask.ResetSecondaryTile(displayName, picture, group);
 
             ResetTile();
         }
@@ -2855,11 +2862,11 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            var displayName = _pushService.GetTitle(this.With);
-            var arguments = _pushService.GetLaunch(this.With);
-            var picture = _pushService.GetPicture(this.With, group);
-
-            NotificationTask.ResetSecondaryTile(displayName, picture, group);
+            var existsSecondaryTile = SecondaryTile.Exists(group);
+            if (existsSecondaryTile)
+            {
+                NotificationTask.UpdateSecondaryBadge(0, group);
+            }
         }
 
         private bool CanExecutePinChatCommand()
