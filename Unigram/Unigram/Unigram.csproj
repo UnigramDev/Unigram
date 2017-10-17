@@ -11,7 +11,7 @@
     <AssemblyName>Unigram</AssemblyName>
     <DefaultLanguage>en</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.15063.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -163,6 +163,9 @@
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
+    <Compile Include="Controls\StartupSwitch.xaml.cs">
+      <DependentUpon>StartupSwitch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SwipeSplitView.cs" />
     <Compile Include="Controls\SwipeListBehavior.cs" />
     <Compile Include="Controls\SwipeListDirection.cs" />
@@ -216,6 +219,9 @@
     </Compile>
     <Compile Include="Controls\Views\SelectTTLSecondsView.xaml.cs">
       <DependentUpon>SelectTTLSecondsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\SendMediaView.xaml.cs">
+      <DependentUpon>SendMediaView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\SettingsDownloadView.xaml.cs">
       <DependentUpon>SettingsDownloadView.xaml</DependentUpon>
@@ -278,7 +284,13 @@
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
+    <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\PushService.cs" />
+    <Compile Include="Strings\en\Resources.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resw</DependentUpon>
+    </Compile>
     <Compile Include="Triggers\DeviceFamilyTrigger.cs" />
     <Compile Include="Triggers\UserInteractionTrigger.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
@@ -868,9 +880,6 @@
     <Compile Include="Controls\Views\EditYourNameView.xaml.cs">
       <DependentUpon>EditYourNameView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\SendPhotosView.xaml.cs">
-      <DependentUpon>SendPhotosView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\VoiceButton.cs" />
     <Compile Include="Converters\BubblePlaceholderConverter.cs" />
     <Compile Include="Converters\EditToVisibilityConverter.cs" />
@@ -878,11 +887,6 @@
     <Compile Include="Selectors\DialogStyleSelector.cs" />
     <Compile Include="Selectors\InlineBotResultTemplateSelector.cs" />
     <Compile Include="Selectors\SearchTemplateSelector.cs" />
-    <Compile Include="Strings\en\Resources.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resw</DependentUpon>
-    </Compile>
     <Compile Include="Triggers\BooleanTrigger.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="Collections\MediaCollection.cs" />
@@ -1088,8 +1092,8 @@
     <PRIResource Include="Strings\en\Resources.resw">
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
       <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.cs</LastGenOutput>
     </PRIResource>
     <Content Include="Assets\Fonts\CamMDL2.ttf" />
     <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
@@ -1105,6 +1109,11 @@
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-150.png" />
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-200.png" />
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-400.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-16.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-24.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-256.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-32.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-48.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-100.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-125.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-150.png" />
@@ -1224,6 +1233,10 @@
     <Page Include="Controls\Messages\EditedMessageBubble.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\StartupSwitch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\VideoTimelineControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1353,9 +1366,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\SendPhotosView.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Controls\Views\SendMediaView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\SettingsDownloadView.xaml">
       <SubType>Designer</SubType>
@@ -1718,7 +1731,7 @@
       <Version>4.1.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.4.0</Version>
+      <Version>6.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.0</Version>
@@ -1730,7 +1743,7 @@
       <Version>3.1.1</Version>
     </PackageReference>
     <PackageReference Include="Universal.WinSQLite">
-      <Version>3.12.2.2</Version>
+      <Version>3.12.2.3</Version>
     </PackageReference>
     <PackageReference Include="Win2D.Uwp">
       <Version>1.21.0</Version>
@@ -1778,10 +1791,10 @@
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
       <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
     </SDKReference>
-    <SDKReference Include="WindowsDesktop, Version=10.0.15063.0">
+    <SDKReference Include="WindowsDesktop, Version=10.0.16299.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.15063.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.16299.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>

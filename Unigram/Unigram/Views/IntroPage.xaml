@@ -141,7 +141,7 @@
             </FlipView.ItemTemplate>
         </FlipView>
 
-        <Button Content="Continue"
+        <Button x:Uid="IntroWizard_ContinueButton" Content=""
                 Command="{Binding ContinueCommand}"
                 HorizontalAlignment="Stretch"
                 Grid.Row="3"/>

@@ -479,20 +479,29 @@ namespace Unigram.ViewModels
                     }
 
                     var prepare = await transcoder.PrepareFileTranscodeAsync(fileCache, fileResult, profile);
-                    await prepare.TranscodeAsync().AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }, 0, 200.0));
+                    if (prepare.CanTranscode)
+                    {
+                        await prepare.TranscodeAsync().AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }, 0, 200.0));
 
-                    //await fileCache.DeleteAsync();
-                    fileCache = fileResult;
+                        if (prepare.FailureReason == TranscodeFailureReason.None)
+                        {
+                            //await fileCache.DeleteAsync();
+                            fileCache = fileResult;
 
-                    thumbnailBase = await FileUtils.GetFileThumbnailAsync(fileCache);
-                    thumbnail = thumbnailBase as TLPhotoSize;
+                            thumbnailBase = await FileUtils.GetFileThumbnailAsync(fileCache);
+                            thumbnail = thumbnailBase as TLPhotoSize;
 
-                    desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
-                    document.Thumb = thumbnail;
+                            if (thumbnail != null)
+                            {
+                                desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
+                                document.Thumb = thumbnail;
+                            }
+                        }
+                    }
                 }
 
                 var fileId = TLLong.Random();
-                var upload = await _uploadVideoManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }, 0.5, 2.0));
+                var upload = await _uploadVideoManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadVideoAction { Progress = progress }, 0.5, 2.0));
                 if (upload != null)
                 {
                     var thumbFileId = TLLong.Random();
@@ -569,13 +578,10 @@ namespace Unigram.ViewModels
 
                     foreach (var file in files)
                     {
-                        if (file.ContentType.Equals("video/mp4"))
+                        var storage = await StorageMedia.CreateAsync(file, true);
+                        if (storage != null)
                         {
-                            storages.Add(await StorageVideo.CreateAsync(file, true));
-                        }
-                        else
-                        {
-                            storages.Add(new StoragePhoto(file) { IsSelected = true });
+                            storages.Add(storage);
                         }
                     }
                 }
@@ -587,7 +593,7 @@ namespace Unigram.ViewModels
 
             if (storages != null && storages.Count > 0)
             {
-                var dialog = new SendPhotosView { ViewModel = this, Items = storages, SelectedItem = storages[0], IsTTLEnabled = _peer is TLInputPeerUser };
+                var dialog = new SendMediaView { ViewModel = this, Items = storages, SelectedItem = storages[0], IsTTLEnabled = _peer is TLInputPeerUser };
                 var dialogResult = await dialog.ShowAsync();
 
                 TextField.FocusMaybe(FocusState.Keyboard);
@@ -614,7 +620,7 @@ namespace Unigram.ViewModels
             var storages = media;
             if (storages != null && storages.Count > 0)
             {
-                var dialog = new SendPhotosView { ViewModel = this, Items = storages, SelectedItem = selectedItem, IsTTLEnabled = _peer is TLInputPeerUser };
+                var dialog = new SendMediaView { ViewModel = this, Items = storages, SelectedItem = selectedItem, IsTTLEnabled = _peer is TLInputPeerUser };
                 var dialogResult = await dialog.ShowAsync();
 
                 TextField.FocusMaybe(FocusState.Keyboard);
@@ -622,40 +628,6 @@ namespace Unigram.ViewModels
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
                     foreach (var storage in dialog.Items.Where(x => x.IsSelected))
-                    {
-                        if (storage is StoragePhoto photo)
-                        {
-                            await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
-                        }
-                        else if (storage is StorageVideo video)
-                        {
-                            await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync());
-                        }
-                    }
-                }
-            }
-        }
-
-
-        public async void SendPhotoDrop(ObservableCollection<StorageFile> files)
-        {
-            ObservableCollection<StorageMedia> storages = null;
-
-            if (files != null)
-            {
-                storages = new ObservableCollection<StorageMedia>(files.Select(x => new StoragePhoto(x) { IsSelected = true }));
-            }
-
-            if (storages != null && storages.Count > 0)
-            {
-                var dialog = new SendPhotosView { ViewModel = this, Items = storages, SelectedItem = storages[0], IsTTLEnabled = _peer is TLInputPeerUser };
-                var dialogResult = await dialog.ShowAsync();
-
-                TextField.FocusMaybe(FocusState.Keyboard);
-
-                if (dialogResult == ContentDialogBaseResult.OK)
-                {
-                    foreach (var storage in dialog.Items)
                     {
                         if (storage is StoragePhoto photo)
                         {

@@ -28,6 +28,11 @@ namespace Unigram.Controls.Views
             InitializeComponent();
         }
 
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Bindings.StopTracking();
+        }
+
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             ItemClick?.Invoke(sender, e);
@@ -37,7 +42,7 @@ namespace Unigram.Controls.Views
 
         private Visibility ConvertBannedRights(ITLDialogWith with, bool invert)
         {
-            if (with is TLChannel channel && channel.HasBannedRights && channel.BannedRights.IsSendInline)
+            if (with is TLChannel channel && channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsSendInline)
             {
                 return invert ? Visibility.Collapsed : Visibility.Visible;
             }

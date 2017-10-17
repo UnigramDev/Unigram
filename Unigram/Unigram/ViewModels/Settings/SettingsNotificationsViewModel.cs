@@ -11,6 +11,7 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Core.Services;
+using Unigram.Strings;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -291,7 +292,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetCommand => new RelayCommand(ResetExecute);
         private async void ResetExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync("Reset all notifications?", "Confirm", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(AppResources.ResetNotificationsDialogBody, AppResources.ResetNotificationsDialogTitle, AppResources.OK, AppResources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 _suppressUpdating = true;

@@ -100,10 +100,10 @@ namespace Telegram.Api.Services.Cache
                         // TODO: Encrypted var ed = Dialogs[i] as TLEncryptedDialog;
                         if (d != null)
                         {
-                            var currentTopMessage = (TLMessageCommonBase)d.TopMessageItem;
+                            var currentDateIndex = d.GetDateIndex();
 
-                            if (currentTopMessage != null
-                                && currentTopMessage.Date < topMessage.Date)
+                            if (currentDateIndex != 0
+                                && currentDateIndex < dialog.GetDateIndex())
                             {
                                 isAdded = true;
                                 Dialogs.Insert(i, dialog);

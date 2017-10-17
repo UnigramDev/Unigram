@@ -17,7 +17,7 @@ namespace Unigram.ViewModels.Settings
 {
     public class SettingsGeneralViewModel : UnigramViewModelBase
     {
-        private IContactsService _contactsService;
+        private readonly IContactsService _contactsService;
 
         public SettingsGeneralViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IContactsService contactsService)
             : base(protoService, cacheService, aggregator)

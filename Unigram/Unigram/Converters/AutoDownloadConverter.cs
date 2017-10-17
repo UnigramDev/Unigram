@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unigram.Common;
+using Unigram.Strings;
 using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
@@ -14,71 +15,34 @@ namespace Unigram.Converters
         {
             var text = string.Empty;
             var flags = (AutoDownloadType)value;
-            if (flags.HasFlag(AutoDownloadType.Photo))
-            {
-                text += "Photos";
-            }
 
-            if (flags.HasFlag(AutoDownloadType.Audio))
-            {
-                if (text.Length > 0)
-                {
-                    text += ", ";
-                }
-
-                text += "Voice messages";
-            }
-
-            if (flags.HasFlag(AutoDownloadType.Round))
-            {
-                if (text.Length > 0)
-                {
-                    text += ", ";
-                }
-
-                text += "Video messages";
-            }
-
-            if (flags.HasFlag(AutoDownloadType.Video))
-            {
-                if (text.Length > 0)
-                {
-                    text += ", ";
-                }
-
-                text += "Videos";
-            }
-
-            if (flags.HasFlag(AutoDownloadType.Document))
-            {
-                if (text.Length > 0)
-                {
-                    text += ", ";
-                }
-                text += "Files";
-            }
-
-            if (flags.HasFlag(AutoDownloadType.Music))
-            {
-                if (text.Length > 0)
-                {
-                    text += ", ";
-                }
-                text += "Music";
-            }
-
-            if (flags.HasFlag(AutoDownloadType.GIF))
-            {
-                if (text.Length > 0)
-                {
-                    text += ", ";
-                }
-                text += "GIFs";
-            }
+            text = AppendFlag(flags, AutoDownloadType.Photo, text, AppResources.AutoDownload_Photo);
+            text = AppendFlag(flags, AutoDownloadType.Audio, text, AppResources.AutoDownload_Audio);
+            text = AppendFlag(flags, AutoDownloadType.Round, text, AppResources.AutoDownload_Round);
+            text = AppendFlag(flags, AutoDownloadType.Video, text, AppResources.AutoDownload_Video);
+            text = AppendFlag(flags, AutoDownloadType.Document, text, AppResources.AutoDownload_Document);
+            text = AppendFlag(flags, AutoDownloadType.GIF, text, AppResources.AutoDownload_GIF);
+            text = AppendFlag(flags, AutoDownloadType.Photo, text, AppResources.AutoDownload_Photo);
+            text = AppendFlag(flags, AutoDownloadType.Photo, text, AppResources.AutoDownload_Photo);
 
             if (string.IsNullOrEmpty(text))
             {
-                text = "No media";
+                text = AppResources.AutoDownload_None;
+            }
+
+            return text;
+        }
+
+        private string AppendFlag(AutoDownloadType flags, AutoDownloadType value, string text, string label)
+        {
+            if (flags.HasFlag(value))
+            {
+                if (text.Length > 0)
+                {
+                    text += ", ";
+                }
+
+                text += label;
             }
 
             return text;

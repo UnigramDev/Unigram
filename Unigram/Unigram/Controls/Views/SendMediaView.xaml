@@ -1,5 +1,5 @@
 ﻿<controls:ContentDialogBase
-    x:Class="Unigram.Controls.Views.SendPhotosView"
+    x:Class="Unigram.Controls.Views.SendMediaView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls.Views"
@@ -393,7 +393,7 @@
                     MaxLength="200"
                     InputScope="Chat"
                     PlaceholderText="Add a caption..."
-                    Margin="12,8,0,8"
+                    Margin="12,8,12,8"
                     Grid.Row="1"/>
             </Grid>
         </Grid>

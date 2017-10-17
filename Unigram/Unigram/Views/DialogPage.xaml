@@ -186,40 +186,6 @@
             </Setter>
         </Style>
 
-        <!-- Teorically temporary location, but we'll see -->
-        <MenuFlyout x:Key="MessageMenuFlyout" Opening="MenuFlyout_Opening">
-            <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
-            <MenuFlyoutItem Loaded="MessagePin_Loaded" Command="{x:Bind ViewModel.MessagePinCommand}" CommandParameter="{Binding}" Text="Pin message"/>
-            <MenuFlyoutItem Loaded="MessageEdit_Loaded" Command="{x:Bind ViewModel.MessageEditCommand}" CommandParameter="{Binding}" Text="Edit message"/>
-            <MenuFlyoutItem Loaded="MessageForward_Loaded" Command="{x:Bind ViewModel.MessageForwardCommand}" CommandParameter="{Binding}" Text="Forward message"/>
-            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
-            <MenuFlyoutItem Loaded="MessageSelect_Loaded" Command="{x:Bind ViewModel.MessageSelectCommand}" CommandParameter="{Binding}" Text="Select message"/>
-            <MenuFlyoutItem Loaded="MessageCopy_Loaded" Command="{x:Bind ViewModel.MessageCopyCommand}" CommandParameter="{Binding}" Text="Copy text"/>
-            <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
-            <MenuFlyoutItem Loaded="MessageSaveGIF_Loaded" Command="{x:Bind ViewModel.MessageSaveGIFCommand}" CommandParameter="{Binding}" Text="Save to GIFs"/>
-            <MenuFlyoutItem Loaded="MessageSaveMedia_Loaded" Command="{x:Bind ViewModel.MessageSaveMediaCommand}" CommandParameter="{Binding}" Text="Save file as..."/>
-        </MenuFlyout>
-
-        <MenuFlyout x:Key="StickerMenuFlyout" Opening="MenuFlyout_Opening">
-            <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
-            <MenuFlyoutItem Loaded="MessagePin_Loaded" Command="{x:Bind ViewModel.MessagePinCommand}" CommandParameter="{Binding}" Text="Pin message"/>
-            <MenuFlyoutItem Loaded="MessageForward_Loaded" Command="{x:Bind ViewModel.MessageForwardCommand}" CommandParameter="{Binding}" Text="Forward message"/>
-            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
-            <MenuFlyoutItem Loaded="MessageSelect_Loaded" Command="{x:Bind ViewModel.MessageSelectCommand}" CommandParameter="{Binding}" Text="Select message"/>
-            <MenuFlyoutItem Loaded="MessageCopyLink_Loaded" Command="{x:Bind ViewModel.MessageCopyLinkCommand}" CommandParameter="{Binding}" Text="Copy post link"/>
-            <MenuFlyoutItem Loaded="MessageAddSticker_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>
-            <MenuFlyoutItem Loaded="MessageFaveSticker_Loaded" Command="{x:Bind ViewModel.MessageFaveStickerCommand}" CommandParameter="{Binding}" Text="Add to Favorites"/>
-            <MenuFlyoutItem Loaded="MessageUnfaveSticker_Loaded" Command="{x:Bind ViewModel.MessageUnfaveStickerCommand}" CommandParameter="{Binding}" Text="Delete from Favorites"/>
-            <!--<MenuFlyoutItem Loaded="MessageStickerPackInfo_Loaded" Command="{x:Bind ViewModel.MessageStickerPackInfoCommand}" CommandParameter="{Binding}" Text="Sticker pack info"/>-->
-            <MenuFlyoutItem Loaded="MessageSaveSticker_Loaded" Command="{x:Bind ViewModel.MessageSaveStickerCommand}" CommandParameter="{Binding}" Text="Save sticker as..."/>
-        </MenuFlyout>
-
-        <MenuFlyout x:Key="ServiceMenuFlyout" Opening="MenuFlyout_Opening">
-            <MenuFlyoutItem Loaded="MessageCallAgain_Loaded" Text="Call Again" IsEnabled="False"/>
-            <MenuFlyoutItem Loaded="MessageReply_Loaded" Command="{x:Bind ViewModel.MessageReplyCommand}" CommandParameter="{Binding}" Text="Reply"/>
-            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
-        </MenuFlyout>
-            
         <!-- Round video -->
         <DataTemplate x:Key="UserRoundVideoTemplate" x:DataType="models:TLMessage">
             <Grid Margin="0,2">
@@ -254,7 +220,7 @@
                     </messages:MessageReference>
                 </StackPanel>
 
-                <Grid x:Name="MediaControl" ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1" Grid.Row="1">
+                <Grid x:Name="MediaControl" ContextRequested="Message_ContextRequested" Grid.Column="1" Grid.Row="1">
                     <Ellipse Fill="Black"/>
                     <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
@@ -293,7 +259,7 @@
                 <!-- TODO: not the right way -->
                 <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
-                <Grid x:Name="MediaControl" ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Row="1">
+                <Grid x:Name="MediaControl" ContextRequested="Message_ContextRequested" Grid.Row="1">
                     <Ellipse Fill="Black"/>
                     <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
@@ -375,7 +341,7 @@
                     <!-- TODO: not the right way -->
                     <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
-                    <Grid x:Name="MediaControl" ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Row="1">
+                    <Grid x:Name="MediaControl" ContextRequested="Message_ContextRequested" Grid.Row="1">
                         <Ellipse Fill="Black"/>
                         <controls:ImageView
                             Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
@@ -465,7 +431,7 @@
                     </messages:MessageReference>
                 </StackPanel>
 
-                <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Column="1" Grid.Row="1">
+                <Grid ContextRequested="Message_ContextRequested" Grid.Column="1" Grid.Row="1">
                     <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
@@ -495,7 +461,7 @@
                 <!-- TODO: not the right way -->
                 <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
-                <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
+                <Grid ContextRequested="Message_ContextRequested" Grid.Row="1">
                     <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                         Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
@@ -557,7 +523,7 @@
                     <!-- TODO: not the right way -->
                     <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
-                    <Grid ContextFlyout="{StaticResource StickerMenuFlyout}" Grid.Row="1">
+                    <Grid ContextRequested="Message_ContextRequested" Grid.Row="1">
                         <controls:ImageView
                             Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
                             Constraint="{x:Bind ((models:TLMessageMediaDocument)Media).Document}"
@@ -596,18 +562,18 @@
 
         <!-- Region Service -->
         <DataTemplate x:Key="ServiceMessageTemplate">
-            <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+            <Border ContextRequested="Message_ContextRequested" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" Margin="0,8,0,2" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                 <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceMessagePhotoTemplate">
             <StackPanel Margin="0,8,0,2">
-                <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
+                <Border ContextRequested="Message_ContextRequested" Background="{ThemeResource MessageServiceBackgroundBrush}" HorizontalAlignment="Center" Padding="12,5,12,7" CornerRadius="{ThemeResource MessageServiceCornerRadius}">
                     <RichTextBlock common:ServiceHelper.Message="{Binding Self}" Foreground="White" TextAlignment="Center" Style="{ThemeResource CaptionRichTextBlockStyle}"/>
                 </Border>
 
-                <Border ContextFlyout="{StaticResource ServiceMenuFlyout}" Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
+                <Border ContextRequested="Message_ContextRequested" Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
                     <controls:ProfilePictureView Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                 </Border>
             </StackPanel>
@@ -629,7 +595,7 @@
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">
-            <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}">
+            <messages:MessageBubble ContextRequested="Message_ContextRequested">
                 <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -646,7 +612,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+                <messages:MessageBubble ContextRequested="Message_ContextRequested"/>
 
                 <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -672,7 +638,7 @@
                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
                                              Click="ProfileBubble_Click"/>
-                <messages:MessageBubble ContextFlyout="{StaticResource MessageMenuFlyout}" Grid.Column="1"/>
+                <messages:MessageBubble ContextRequested="Message_ContextRequested" Grid.Column="1"/>
 
                 <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -686,7 +652,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceUserCallMessageTemplate">
-            <messages:PhoneCallMessageBubble ContextFlyout="{StaticResource ServiceMenuFlyout}">
+            <messages:PhoneCallMessageBubble ContextRequested="Message_ContextRequested">
                 <StackPanel.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -698,7 +664,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ServiceFriendCallMessageTemplate">
-            <messages:PhoneCallMessageBubble ContextFlyout="{StaticResource ServiceMenuFlyout}"/>
+            <messages:PhoneCallMessageBubble ContextRequested="Message_ContextRequested"/>
         </DataTemplate>
 
         <selectors:MessageTemplateSelector x:Key="MessageTemplateSelector"
@@ -1491,7 +1457,8 @@
             </StackPanel>
 
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,6">
-                <StackPanel Visibility="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
+                <StackPanel Visibility="{x:Bind ViewModel.Dialog.UnreadMentionsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                            RightTapped="Mentions_RightTapped">
                     <Border  Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
                              MinWidth="20"
                              Height="20"

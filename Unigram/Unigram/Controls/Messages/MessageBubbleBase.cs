@@ -158,7 +158,7 @@ namespace Unigram.Controls.Messages
 
         #endregion
 
-        protected void OnMessageChanged(TextBlock paragraph)
+        protected void OnMessageChanged(TextBlock paragraph, TextBlock admin)
         {
             paragraph.Inlines.Clear();
 
@@ -241,17 +241,29 @@ namespace Unigram.Controls.Messages
 
                 if (paragraph.Inlines.Count > 0)
                 {
-                    paragraph.Inlines.Add(new Run { Text = " " });
+                    if (paragraph != admin && message.IsAdmin())
+                    {
+                        paragraph.Inlines.Add(new Run { Text = " admin", Foreground = null, FontSize = 12 });
+                        admin.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        paragraph.Inlines.Add(new Run { Text = " " });
+                        admin.Visibility = Visibility.Collapsed;
+                    }
+
                     paragraph.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     paragraph.Visibility = Visibility.Collapsed;
+                    admin.Visibility = Visibility.Collapsed;
                 }
             }
             else
             {
                 paragraph.Visibility = Visibility.Collapsed;
+                admin.Visibility = Visibility.Collapsed;
             }
         }
 

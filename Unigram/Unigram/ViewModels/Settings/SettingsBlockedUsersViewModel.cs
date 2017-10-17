@@ -13,6 +13,7 @@ using Template10.Utils;
 using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Strings;
 using Unigram.Views.Settings;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -102,10 +103,10 @@ namespace Unigram.ViewModels.Settings
         private async void UnblockExecute(TLUser user)
         {
             var dialog = new TLMessageDialog();
-            dialog.Title = "Unblock";
-            dialog.Message = "You sure?";
-            dialog.PrimaryButtonText = "Yes";
-            dialog.SecondaryButtonText = "No";
+            dialog.Title = AppResources.UnblockUserConfirmationDialogTitle;
+            dialog.Message = AppResources.UnblockUserConfirmationDialogText;
+            dialog.PrimaryButtonText = AppResources.Yes;
+            dialog.SecondaryButtonText = AppResources.No;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)

@@ -212,7 +212,7 @@
                 <controls:NavigationViewItem x:Name="NavigationSettings" Content="Settings" Glyph="&#xE115;" />
                 <!--<controls:NavigationViewItem Text="Telegram FAQ" Glyph="&#xE897;" />-->
                 <controls:NavigationViewItemSeparator/>
-                <controls:NavigationViewItem x:Name="NavigationOfficialChannel" Content="Official Channel" Glyph="&#xE789;" />
+                <controls:NavigationViewItem x:Name="NavigationOfficialChannel" Content="News" Glyph="&#xE789;" />
             </controls:NavigationView.MenuItems>
             <controls:NavigationView.PaneFooter>
                 <StackPanel>
@@ -516,6 +516,9 @@
                                     <ListView.Footer>
                                         <Border Height="6"/>
                                     </ListView.Footer>
+                                    <ListView.ItemContainerTransitions>
+                                        <TransitionCollection/>
+                                    </ListView.ItemContainerTransitions>
                                 </controls:DialogsListView>
                             </Grid>
                         </Grid>
@@ -591,6 +594,9 @@
                                         </Grid>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
+                                <!--<ListView.ItemContainerTransitions>
+                                    <TransitionCollection/>
+                                </ListView.ItemContainerTransitions>-->
                             </ListView>
                         </Grid>
                     </PivotItem>
@@ -610,6 +616,9 @@
                                     <Setter Property="Padding" Value="0"/>
                                 </Style>
                             </ListView.ItemContainerStyle>
+                            <!--<ListView.ItemContainerTransitions>
+                                <TransitionCollection/>
+                            </ListView.ItemContainerTransitions>-->
                         </ListView>
                     </PivotItem>
                     <PivotItem Header="Settings">

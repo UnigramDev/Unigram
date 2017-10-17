@@ -83,8 +83,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.GetContactsAsync(hash);
             if (response.IsSucceeded && response.Result is TLContactsContacts)
             {
-                var result = response.Result as TLContactsContacts;
-                if (result != null)
+                if (response.Result is TLContactsContacts result)
                 {
                     Items.Clear();
 
@@ -170,7 +169,7 @@ namespace Unigram.ViewModels
         {
             var local = await SearchLocalAsync(query.TrimStart('@'));
 
-            if (query.Equals(_searchQuery))
+            if (string.Equals(query, _searchQuery))
             {
                 Search.Clear();
                 if (local != null) Search.Insert(0, local);
@@ -181,7 +180,7 @@ namespace Unigram.ViewModels
         {
             var global = await SearchGlobalAsync(query);
 
-            if (query.Equals(_searchQuery))
+            if (string.Equals(query, _searchQuery))
             {
                 if (Search.Count > 1) Search.RemoveAt(1);
                 if (global != null) Search.Add(global);
@@ -200,8 +199,9 @@ namespace Unigram.ViewModels
                 var simple = new List<TLUser>();
 
                 var contactsResults = contacts.OfType<TLUser>().Where(x =>
+                    (SelectedItems.All(selectedUser => selectedUser.Id != x.Id)) && (
                     (x.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
-                    (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase)));
+                    (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase))));
 
                 foreach (var result in contactsResults)
                 {
@@ -240,7 +240,7 @@ namespace Unigram.ViewModels
                             foreach (var peer in result.Result.Results)
                             {
                                 var item = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id);
-                                if (item != null)
+                                if (item != null && SelectedItems.All(selectedUser => selectedUser.Id != item.Id))
                                 {
                                     parent.Add(item);
                                 }

@@ -30,7 +30,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Views
 {
-    public sealed partial class SendPhotosView : ContentDialogBase, INotifyPropertyChanged
+    public sealed partial class SendMediaView : ContentDialogBase, INotifyPropertyChanged
     {
         public DialogViewModel ViewModel { get; set; }
 
@@ -142,7 +142,7 @@ namespace Unigram.Controls.Views
 
         #endregion
 
-        public SendPhotosView()
+        public SendMediaView()
         {
             InitializeComponent();
             DataContext = this;
@@ -206,6 +206,12 @@ namespace Unigram.Controls.Views
 
         private void Accept_Click(object sender, RoutedEventArgs e)
         {
+            if (Items == null)
+            {
+                Hide(ContentDialogBaseResult.Cancel);
+                return;
+            }
+
             if (IsEditingCompression && SelectedItem is StorageVideo video)
             {
                 video.Compression = (int)CompressionValue.Value;
@@ -259,13 +265,10 @@ namespace Unigram.Controls.Views
             {
                 foreach (var file in files)
                 {
-                    if (file.ContentType.Equals("video/mp4"))
+                    var storage = await StorageMedia.CreateAsync(file, true);
+                    if (storage != null)
                     {
-                        Items.Add(await StorageVideo.CreateAsync(file, true));
-                    }
-                    else
-                    {
-                        Items.Add(new StoragePhoto(file) { IsSelected = true });
+                        Items.Add(storage);
                     }
                 }
             }

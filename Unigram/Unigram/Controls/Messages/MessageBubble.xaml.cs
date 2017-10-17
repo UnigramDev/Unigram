@@ -31,21 +31,26 @@ namespace Unigram.Controls.Messages
         public MessageBubble()
         {
             InitializeComponent();
+        }
 
-            DataContextChanged += (s, args) =>
-            {
-                if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
-                if (ViewModel == null) Bindings.StopTracking();
+        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
+            if (ViewModel == null) Bindings.StopTracking();
 
-                _oldValue = ViewModel;
-            };
+            _oldValue = ViewModel;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Bindings.StopTracking();
         }
 
         #region Adaptive part
 
         private Visibility UpdateFirst(bool isFirst)
         {
-            OnMessageChanged(HeaderLabel);
+            OnMessageChanged(HeaderLabel, AdminLabel);
             return isFirst ? Visibility.Visible : Visibility.Collapsed;
         }
 

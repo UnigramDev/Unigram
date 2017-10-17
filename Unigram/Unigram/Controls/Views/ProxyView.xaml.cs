@@ -8,6 +8,7 @@ using System.Text;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
 using Unigram.Common;
+using Unigram.Strings;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -170,7 +171,7 @@ namespace Unigram.Controls.Views
                 builder.Add("pass=" + Password);
             }
 
-            var title = "Proxy Settings";
+            var title = AppResources.ProxySettingsShareTitle;
             var link = new Uri($"https://{linkPrefix}/socks?{string.Join("&", builder)}");
 
             await ShareView.Current.ShowAsync(link, title);

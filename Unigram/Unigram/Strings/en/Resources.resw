@@ -759,4 +759,556 @@ Duration: {1}</value>
   <data name="EventLogToggledInvitesHistoryOn" xml:space="preserve">
     <value>{0} made group history visible for new members</value>
   </data>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>Unigram (Alpha)</value>
+  </data>
+  <data name="IntroWizardPage1_Text" xml:space="preserve">
+    <value>**Unigram** is a Telegram Universal app built by the Windows Community, for the Windows Community</value>
+  </data>
+  <data name="IntroWizardPage1_Title" xml:space="preserve">
+    <value>Unigram</value>
+  </data>
+  <data name="IntroWizardPage2_Text" xml:space="preserve">
+    <value>**Telegram** delivers messages faster\nthan any other application.</value>
+  </data>
+  <data name="IntroWizardPage2_Title" xml:space="preserve">
+    <value>Fast</value>
+  </data>
+  <data name="IntroWizardPage3_Text" xml:space="preserve">
+    <value>**Telegram** is free forever. No ads.\nNo subscription fees.</value>
+  </data>
+  <data name="IntroWizardPage3_Title" xml:space="preserve">
+    <value>Free</value>
+  </data>
+  <data name="IntroWizardPage4_Text" xml:space="preserve">
+    <value>**Telegram** has no limits on\nthe size of your media and chats.</value>
+  </data>
+  <data name="IntroWizardPage4_Title" xml:space="preserve">
+    <value>Powerful</value>
+  </data>
+  <data name="IntroWizardPage5_Text" xml:space="preserve">
+    <value>**Telegram** keeps your messages\nsafe from hacker attacks.</value>
+  </data>
+  <data name="IntroWizardPage5_Title" xml:space="preserve">
+    <value>Secure</value>
+  </data>
+  <data name="IntroWizardPage6_Text" xml:space="preserve">
+    <value>**Telegram** lets you access your\nmessages from multiple devices.</value>
+  </data>
+  <data name="IntroWizardPage6_Title" xml:space="preserve">
+    <value>Cloud-Based</value>
+  </data>
+  <data name="IntroWizard_ContinueButton.Content" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="AboutPage_PrivacyPolicyButton.Content" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="AboutPage_ThanksLabel.Text" xml:space="preserve">
+    <value>Thank you for using Unigram! We wouldn't have been able to get this far without all help of the community.</value>
+  </data>
+  <data name="AboutPage_AppNameLabel.Text" xml:space="preserve">
+    <value>Unigram</value>
+    <comment>App name label in AboutPage</comment>
+  </data>
+  <data name="AboutPage_ChangelogButton.Content" xml:space="preserve">
+    <value>Changelog</value>
+  </data>
+  <data name="AboutPage_FAQButton.Content" xml:space="preserve">
+    <value>Frequently Asked Questions</value>
+  </data>
+  <data name="AboutPage_WebsiteButton.Content" xml:space="preserve">
+    <value>Unigram Website</value>
+  </data>
+  <data name="AboutPage_SocialMediaLabel.Text" xml:space="preserve">
+    <value>Social Media</value>
+  </data>
+  <data name="AboutPage_SupportEmailButton.Content" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="AboutPage_SupportGithubButton.Content" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="AboutPage_SupportLabel.Text" xml:space="preserve">
+    <value>Support</value>
+  </data>
+  <data name="AboutPage_VersionLabel.Text" xml:space="preserve">
+    <value>Version:</value>
+  </data>
+  <data name="AboutPage_SpecialThanksDetailsLabel.Text" xml:space="preserve">
+    <value>We want to especially thank these people for their help and knowledge while building Unigram:</value>
+  </data>
+  <data name="AboutPage_SpecialThanksLabel.Text" xml:space="preserve">
+    <value>Special Thanks</value>
+  </data>
+  <data name="AboutPage_ThanksGregoryButton.Content" xml:space="preserve">
+    <value>Gregory Klyushnikov</value>
+  </data>
+  <data name="AboutPage_ThanksTelegramButton.Content" xml:space="preserve">
+    <value>Telegram Desktop</value>
+  </data>
+  <data name="SettingsPage_EditPhotoButton.Content" xml:space="preserve">
+    <value>Set profile photo</value>
+  </data>
+  <data name="SettingsPage_GeneralButton.Content" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsPage_PhoneButton.Tag" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="SettingsPage_AskButton.Content" xml:space="preserve">
+    <value>Ask a Question</value>
+  </data>
+  <data name="SettingsPage_BioButton.Tag" xml:space="preserve">
+    <value>Bio</value>
+  </data>
+  <data name="SettingsPage_DataButton.Content" xml:space="preserve">
+    <value>Data and Storage</value>
+  </data>
+  <data name="SettingsPage_NotificationsButton.Content" xml:space="preserve">
+    <value>Notifications and Sounds</value>
+  </data>
+  <data name="SettingsPage_OnlineTextLabel.Text" xml:space="preserve">
+    <value>online</value>
+  </data>
+  <data name="SettingsPage_PrivacyButton.Content" xml:space="preserve">
+    <value>Privacy and Security</value>
+  </data>
+  <data name="SettingsPage_QuestionsButton.Content" xml:space="preserve">
+    <value>Telegram FAQ</value>
+  </data>
+  <data name="SettingsPage_StickersButton.Content" xml:space="preserve">
+    <value>Stickers</value>
+  </data>
+  <data name="SettingsPage_ThemeButton.Content" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SettingsPage_UsernameButton.Tag" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="SettingsPage_WallpaperButton.Content" xml:space="preserve">
+    <value>Chat Background</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Telegram" xml:space="preserve">
+    <value>Telegram</value>
+  </data>
+  <data name="TGLogoutSucceededDialogText" xml:space="preserve">
+    <value>The app will be closed. Relaunch it to login again.</value>
+  </data>
+  <data name="TGLogoutText" xml:space="preserve">
+    <value>Are you sure you want to logout?</value>
+  </data>
+  <data name="TGSupportDisclaimerDetails" xml:space="preserve">
+    <value>Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlase take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.</value>
+  </data>
+  <data name="TGSupportDisclaimerPrimaryText" xml:space="preserve">
+    <value>FAQ</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="UnblockUserConfirmationDialogText" xml:space="preserve">
+    <value>Are you sure?</value>
+  </data>
+  <data name="UnblockUserConfirmationDialogTitle" xml:space="preserve">
+    <value>Unblock?</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="SettingsAccountsPage_Header.Text" xml:space="preserve">
+    <value>Accounts management</value>
+  </data>
+  <data name="SettingsAccountsPage_NewAccount.Content" xml:space="preserve">
+    <value>New Account</value>
+  </data>
+  <data name="SettingsBlockedUsersPage_Header.Text" xml:space="preserve">
+    <value>Blocked users</value>
+  </data>
+  <data name="SettingsBlockedUsersPage_ListFooter.Text" xml:space="preserve">
+    <value>Blocked users can't send you messages or add you to groups. They will not see your profile pictures, online and last seen status.</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_AutoDownloadOnWiFiButton.Content" xml:space="preserve">
+    <value>When connected to Wi-Fi</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_AutoDownloadUsingMobileDataButton.Content" xml:space="preserve">
+    <value>When using mobile data</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_AutoDownloadWhenRoamingButton.Content" xml:space="preserve">
+    <value>When roaming</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_AutoMediaDownloadLabel.Text" xml:space="preserve">
+    <value>AUTOMATIC MEDIA DOWNLOAD</value>
+  </data>
+  <data name="SettingsGeneralPage_ContactSyncToggle.Header" xml:space="preserve">
+    <value>Sync contacts</value>
+  </data>
+  <data name="SettingsGeneralPage_DarkRadio.Content" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="SettingsGeneralPage_LightRadio.Content" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="SettingsGeneralPage_ReplaceEmojiToggle.Header" xml:space="preserve">
+    <value>Replace emojis</value>
+  </data>
+  <data name="SettingsGeneralPage_SendByEnterToggle.Header" xml:space="preserve">
+    <value>Send by Enter</value>
+  </data>
+  <data name="SettingsGeneralPage_SystemRadio.Content" xml:space="preserve">
+    <value>Use system settings</value>
+  </data>
+  <data name="SettingsGeneralPage_ThemeChangedLabel.Text" xml:space="preserve">
+    <value>You'll see your change the next time you start the app.</value>
+  </data>
+  <data name="SettingsGeneralPage_ThemeLabel.Text" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="StartupSwitch_Label.Text" xml:space="preserve">
+    <value>You can enable this in the Startup tab in Task Manager.</value>
+  </data>
+  <data name="StartupSwitch_Toggle.Header" xml:space="preserve">
+    <value>Launch Unigram when system starts</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_CallDataComboBox.Header" xml:space="preserve">
+    <value>Use less data for calls</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_CallsLabel.Text" xml:space="preserve">
+    <value>CALLS</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_DiskNetworkUsageLabel.Text" xml:space="preserve">
+    <value>DATA AND NETWORK USAGE</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_DiskUsageButton.Tag" xml:space="preserve">
+    <value>Storage usage</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_NetworkUsageButton.Tag" xml:space="preserve">
+    <value>Network usage</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_UseLessDataAlwaysItem.Content" xml:space="preserve">
+    <value>Always</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_UseLessDataNeverItem.Content" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_UseLessDataOnMobileDataOnlyItem.Content" xml:space="preserve">
+    <value>Only on mobile data</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_ProxyLabel.Text" xml:space="preserve">
+    <value>PROXY</value>
+  </data>
+  <data name="SettingsDataAndStoragePage_ProxySettingsButton.Tag" xml:space="preserve">
+    <value>Proxy settings</value>
+  </data>
+  <data name="SettingsDownloadView_CheckAudio.Content" xml:space="preserve">
+    <value>Voice messages</value>
+  </data>
+  <data name="SettingsDownloadView_CheckDocument.Content" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="SettingsDownloadView_CheckGIF.Content" xml:space="preserve">
+    <value>GIFs</value>
+  </data>
+  <data name="SettingsDownloadView_CheckMusic.Content" xml:space="preserve">
+    <value>Music</value>
+  </data>
+  <data name="SettingsDownloadView_CheckPhoto.Content" xml:space="preserve">
+    <value>Photos</value>
+  </data>
+  <data name="SettingsDownloadView_CheckRound.Content" xml:space="preserve">
+    <value>Video messages</value>
+  </data>
+  <data name="SettingsDownloadView_CheckVideo.Content" xml:space="preserve">
+    <value>Videos</value>
+  </data>
+  <data name="SettingsDownloadView_CloseButton.Content" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="SettingsDownloadView_SaveButton.Content" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="WhenOnMobileData" xml:space="preserve">
+    <value>When using mobile data</value>
+  </data>
+  <data name="WhenOnWiFi" xml:space="preserve">
+    <value>When connected to Wi-Fi</value>
+  </data>
+  <data name="WhenRoaming" xml:space="preserve">
+    <value>When roaming</value>
+  </data>
+  <data name="ProxyView_FieldCalls.Content" xml:space="preserve">
+    <value>Use proxy for calls</value>
+  </data>
+  <data name="ProxyView_FieldEnabled.Content" xml:space="preserve">
+    <value>Use proxy settings</value>
+  </data>
+  <data name="ProxyView_FieldPassword.PlaceholderText" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="ProxyView_FieldPort.PlaceholderText" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="ProxyView_FieldServer.Header" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="ProxyView_FieldServer.PlaceholderText" xml:space="preserve">
+    <value>Server</value>
+  </data>
+  <data name="ProxyView_FieldUsername.Header" xml:space="preserve">
+    <value>Credentials (optional)</value>
+  </data>
+  <data name="ProxyView_FieldUsername.PlaceholderText" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="ProxyView_ProxyCallQualityWarning.Text" xml:space="preserve">
+    <value>Proxy servers may degrade the quality of your calls.</value>
+  </data>
+  <data name="ProxyView_SOCKS5Label.Text" xml:space="preserve">
+    <value>SOCKS5 proxy settings</value>
+  </data>
+  <data name="ProxyView_Title.Text" xml:space="preserve">
+    <value>Proxy Settings</value>
+  </data>
+  <data name="ProxySettingsShareTitle" xml:space="preserve">
+    <value>Proxy Settings</value>
+  </data>
+  <data name="ProxyView_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ProxyView_Dialog.SecondaryButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="AutoDownload_Audio" xml:space="preserve">
+    <value>Audio messages</value>
+  </data>
+  <data name="AutoDownload_Document" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="AutoDownload_GIF" xml:space="preserve">
+    <value>GIFs</value>
+  </data>
+  <data name="AutoDownload_Music" xml:space="preserve">
+    <value>Music</value>
+  </data>
+  <data name="AutoDownload_None" xml:space="preserve">
+    <value>No media</value>
+  </data>
+  <data name="AutoDownload_Photo" xml:space="preserve">
+    <value>Photos</value>
+  </data>
+  <data name="AutoDownload_Round" xml:space="preserve">
+    <value>Video messages</value>
+  </data>
+  <data name="AutoDownload_Video" xml:space="preserve">
+    <value>Videos</value>
+  </data>
+  <data name="AddAdminErrorBlacklisted" xml:space="preserve">
+    <value>Sorry, you can't add this user as an admin because they are in the blacklist and you can't unban them.</value>
+    <comment>android</comment>
+  </data>
+  <data name="AddAdminErrorNotAMember" xml:space="preserve">
+    <value>Sorry, you can't add this user as an admin because they are not a member of this group and you are not allowed to invite them.</value>
+    <comment>android</comment>
+  </data>
+  <data name="AddBannedErrorAdmin" xml:space="preserve">
+    <value>Sorry, you can't ban this user because they are an admin in this group and you are not allowed to demote them.</value>
+    <comment>android</comment>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Telegram</value>
+    <comment>android</comment>
+  </data>
+  <data name="CancelLinkExpired" xml:space="preserve">
+    <value>Link is invalid or expired.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ChangePhoneNumberOccupied" xml:space="preserve">
+    <value>The number {0} is already connected to a Telegram account. Please delete that account before migrating to the new number.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ChannelUserAddLimit" xml:space="preserve">
+    <value>Sorry, you can only add the first 200 members to a channel. Note that an unlimited number of people may join via the channel's link.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ChannelUserCantAdd" xml:space="preserve">
+    <value>Sorry, you can't add this user to channels.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ChannelUserCantAdmin" xml:space="preserve">
+    <value>Sorry, too many admins in this channel.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ChannelUserCantBot" xml:space="preserve">
+    <value>Sorry, too many bots in this channel.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ChannelUserLeftError" xml:space="preserve">
+    <value>Sorry, this user decided to leave this channel, so you cannot invite them back here.</value>
+    <comment>android</comment>
+  </data>
+  <data name="CodeExpired" xml:space="preserve">
+    <value>Code expired, please login again</value>
+    <comment>android</comment>
+  </data>
+  <data name="CreateGroupError" xml:space="preserve">
+    <value>Sorry, you can't create a group with these users because of their privacy settings.</value>
+    <comment>android</comment>
+  </data>
+  <data name="EditMessageError" xml:space="preserve">
+    <value>Sorry, you can't edit this message.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ErrorOccurred" xml:space="preserve">
+    <value>An error occurred.</value>
+    <comment>android</comment>
+  </data>
+  <data name="FloodWait" xml:space="preserve">
+    <value>Too many attempts, please try again later</value>
+    <comment>android</comment>
+  </data>
+  <data name="GroupUserAddLimit" xml:space="preserve">
+    <value>Sorry, this group is full.</value>
+    <comment>android</comment>
+  </data>
+  <data name="GroupUserCantAdd" xml:space="preserve">
+    <value>Sorry, you can't add this user to groups.</value>
+    <comment>android</comment>
+  </data>
+  <data name="GroupUserCantAdmin" xml:space="preserve">
+    <value>Sorry, too many administrators in this group.</value>
+    <comment>android</comment>
+  </data>
+  <data name="GroupUserCantBot" xml:space="preserve">
+    <value>Sorry, too many bots in this group.</value>
+    <comment>android</comment>
+  </data>
+  <data name="GroupUserLeftError" xml:space="preserve">
+    <value>Sorry, this user decided to leave this group, so you cannot invite them back here.</value>
+    <comment>android</comment>
+  </data>
+  <data name="InvalidCode" xml:space="preserve">
+    <value>Invalid code</value>
+    <comment>android</comment>
+  </data>
+  <data name="InvalidPhoneNumber" xml:space="preserve">
+    <value>Invalid phone number</value>
+    <comment>android</comment>
+  </data>
+  <data name="InviteToChannelError" xml:space="preserve">
+    <value>Sorry, you can't add this user to channels because of user's privacy settings.</value>
+    <comment>android</comment>
+  </data>
+  <data name="InviteToGroupError" xml:space="preserve">
+    <value>Sorry, you can't add this user to groups because of user's privacy settings.</value>
+    <comment>android</comment>
+  </data>
+  <data name="JoinToGroupErrorFull" xml:space="preserve">
+    <value>Sorry, this group is already full.</value>
+    <comment>android</comment>
+  </data>
+  <data name="JoinToGroupErrorNotExist" xml:space="preserve">
+    <value>Sorry, this chat does not seem to exist.</value>
+    <comment>android</comment>
+  </data>
+  <data name="MoreInfo" xml:space="preserve">
+    <value>More info</value>
+    <comment>android</comment>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+    <comment>android</comment>
+  </data>
+  <data name="PaymentFailed" xml:space="preserve">
+    <value>Sorry, the payment was declined.</value>
+    <comment>android</comment>
+  </data>
+  <data name="PaymentNoShippingMethod" xml:space="preserve">
+    <value>Sorry, it is not possible to deliver to your address.</value>
+    <comment>android</comment>
+  </data>
+  <data name="PaymentPrecheckoutFailed" xml:space="preserve">
+    <value>Sorry, the payment was cancelled by the bot.</value>
+    <comment>android</comment>
+  </data>
+  <data name="UsernameInUse" xml:space="preserve">
+    <value>Sorry, this username is already taken.</value>
+    <comment>android</comment>
+  </data>
+  <data name="UsernameInvalid" xml:space="preserve">
+    <value>Sorry, this username is invalid.</value>
+    <comment>android</comment>
+  </data>
+  <data name="UserRestricted" xml:space="preserve">
+    <value>Sorry, you are not allowed to do this.</value>
+    <comment>android</comment>
+  </data>
+  <data name="YouBlockedUser" xml:space="preserve">
+    <value>Sorry, you can't add this user or bot to groups because you've blocked them. Please unblock to proceed.</value>
+    <comment>android</comment>
+  </data>
+  <data name="ResetNotificationsDialogBody" xml:space="preserve">
+    <value>Reset all notifications?</value>
+  </data>
+  <data name="ResetNotificationsDialogTitle" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="FloodWaitTime" xml:space="preserve">
+    <value>Too many attempts, please try again in {0}</value>
+  </data>
+  <data name="NobodyLikesSpam1" xml:space="preserve">
+    <value>Sorry, you can only send messages to mutual contacts at the moment.</value>
+    <comment>android</comment>
+  </data>
+  <data name="NobodyLikesSpam2" xml:space="preserve">
+    <value>Sorry, you can only add mutual contacts to groups at the moment.</value>
+    <comment>android</comment>
+  </data>
+  <data name="MessageAddSticker" xml:space="preserve">
+    <value>Add to Stickers</value>
+  </data>
+  <data name="MessageCopy" xml:space="preserve">
+    <value>Copy text</value>
+  </data>
+  <data name="MessageCopyLinkBroadcast" xml:space="preserve">
+    <value>Copy post link</value>
+  </data>
+  <data name="MessageCopyLinkMegaGroup" xml:space="preserve">
+    <value>Copy message link</value>
+  </data>
+  <data name="MessageDelete" xml:space="preserve">
+    <value>Delete message</value>
+  </data>
+  <data name="MessageEdit" xml:space="preserve">
+    <value>Edit message</value>
+  </data>
+  <data name="MessageFaveSticker" xml:space="preserve">
+    <value>Add to Favorites</value>
+  </data>
+  <data name="MessageForward" xml:space="preserve">
+    <value>Forward message</value>
+  </data>
+  <data name="MessagePin" xml:space="preserve">
+    <value>Pin message</value>
+  </data>
+  <data name="MessageReply" xml:space="preserve">
+    <value>Reply</value>
+  </data>
+  <data name="MessageSaveGIF" xml:space="preserve">
+    <value>Save to GIFs</value>
+  </data>
+  <data name="MessageSaveMedia" xml:space="preserve">
+    <value>Save file as...</value>
+  </data>
+  <data name="MessageSelect" xml:space="preserve">
+    <value>Select message</value>
+  </data>
+  <data name="MessageUnfaveSticker" xml:space="preserve">
+    <value>Remove from Favorites</value>
+  </data>
+  <data name="MessageUnpin" xml:space="preserve">
+    <value>Unpin message</value>
+  </data>
 </root>

@@ -5,7 +5,10 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Telegram.Api.TL;
 using Unigram.Core.Unidecode;
+using Unigram.ViewModels;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
@@ -19,6 +22,38 @@ namespace Unigram.Common
 {
     public static class Extensions
     {
+        public static bool IsAdmin(this TLMessageBase message)
+        {
+            // Kludge
+            return message.Parent is TLChannel channel && DialogViewModel.Admins.TryGetValue(channel.Id, out IList<TLChannelParticipantBase> admins) && admins.Any(x => x.UserId == message.FromId);
+        }
+
+        public static Regex _pattern = new Regex("[\\-0-9]+", RegexOptions.Compiled);
+        public static int ToInt32(this String value)
+        {
+            if (value == null)
+            {
+                return 0;
+            }
+
+            var val = 0;
+            try
+            {
+                var matcher = _pattern.Match(value);
+                if (matcher.Success)
+                {
+                    var num = matcher.Groups[0].Value;
+                    val = int.Parse(num);
+                }
+            }
+            catch (Exception e)
+            {
+                //FileLog.e(e);
+            }
+
+            return val;
+        }
+
         public static Dictionary<string, string> ParseQueryString(this string query)
         {
             var first = query.Split('?');
@@ -249,6 +284,19 @@ namespace Unigram.Common
             }
 
             return transform;
+        }
+    }
+
+    public static class ClipboardEx
+    {
+        public static void TrySetContent(DataPackage content)
+        {
+            try
+            {
+                Clipboard.SetContent(content);
+                Clipboard.Flush();
+            }
+            catch { }
         }
     }
 }

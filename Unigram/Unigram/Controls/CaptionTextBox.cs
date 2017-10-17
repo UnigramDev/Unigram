@@ -23,7 +23,7 @@ namespace Unigram.Controls
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
-        public SendPhotosView View { get; set; }
+        public SendMediaView View { get; set; }
 
         public CaptionTextBox()
         {
@@ -135,7 +135,10 @@ namespace Unigram.Controls
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            View.SelectedItem.Caption = Text.ToString();
+            if (View?.SelectedItem != null)
+            {
+                View.SelectedItem.Caption = Text.ToString();
+            }
         }
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)

@@ -16,13 +16,13 @@
         <controls:PageHeader Text="Storage usage" 
                              IsLoading="{x:Bind ViewModel.IsLoading, Mode=OneWay}"/>
 
-        <StackPanel>
+        <StackPanel Grid.Row="1">
             <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
                 <TextBlock Text="CACHE" 
                            Margin="0,8" 
                            FontWeight="SemiBold" 
                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                           Style="{StaticResource CaptionTextBlockStyle}"/>
+                           Style="{StaticResource SettingsGroupTextBlockStyle}"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -56,11 +56,14 @@
                 </Grid>
             </StackPanel>
             <StackPanel Style="{StaticResource SettingsGroupPanelStyle}">
-                <TextBlock Text="CACHE DETAIL" 
-                           Margin="0,8" 
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="CACHE DETAIL" 
+                           Margin="0,8,8,8" 
                            FontWeight="SemiBold" 
                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                           Style="{StaticResource CaptionTextBlockStyle}"/>
+                           Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <ProgressRing IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
+                </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Images" 
                                VerticalAlignment="Center"/>

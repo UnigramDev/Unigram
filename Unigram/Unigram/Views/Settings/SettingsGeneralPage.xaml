@@ -211,27 +211,29 @@
                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                        BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
                                        Margin="0,0,0,0">
-                    <ToggleSwitch
+                    <ToggleSwitch x:Uid="SettingsGeneralPage_SendByEnterToggle"
                         IsOn="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
                         Header="Send by Enter"
                         Style="{ThemeResource CheckButtonStyle}"/>
 
-                    <ToggleSwitch
+                    <ToggleSwitch x:Uid="SettingsGeneralPage_ReplaceEmojiToggle"
                         IsOn="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
                         Header="Replace emojis"
                         Style="{ThemeResource CheckButtonStyle}"/>
 
-                    <ToggleSwitch
+                    <ToggleSwitch x:Uid="SettingsGeneralPage_ContactSyncToggle"
                         IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
                         Header="Sync contacts"
                         Style="{ThemeResource CheckButtonStyle}"/>
 
-                    <StackPanel Padding="12">
-                        <TextBlock Text="Theme" Margin="0,0,0,4"/>
-                        <controls:PivotRadioButton SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="1" Content="Light"/>
-                        <controls:PivotRadioButton SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="2" Content="Dark"/>
-                        <controls:PivotRadioButton SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="0" Content="Use system setting"/>
-                        <TextBlock Visibility="{x:Bind ViewModel.IsThemeChanged, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Text="You'll see your change the next time you start the app." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <controls:StartupSwitch Margin="0,24,0,0"/>
+
+                    <StackPanel Padding="12" Margin="0,24,0,0">
+                        <TextBlock x:Uid="SettingsGeneralPage_ThemeLabel" Text="Theme" Margin="0,0,0,4"/>
+                        <controls:PivotRadioButton x:Uid="SettingsGeneralPage_LightRadio" SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="1" Content="Light"/>
+                        <controls:PivotRadioButton x:Uid="SettingsGeneralPage_DarkRadio" SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="2" Content="Dark"/>
+                        <controls:PivotRadioButton x:Uid="SettingsGeneralPage_SystemRadio" SelectedValue="{x:Bind ViewModel.RequestedTheme, Mode=TwoWay}" Index="0" Content="Use system setting"/>
+                        <TextBlock x:Uid="SettingsGeneralPage_ThemeChangedLabel" Visibility="{x:Bind ViewModel.IsThemeChanged, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Text="You'll see your change the next time you start the app." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </StackPanel>
                 </local:TableStackPanel>
             </StackPanel>

@@ -16,6 +16,7 @@ using Unigram.Converters;
 using Unigram.Core.Helpers;
 using Unigram.Core.Services;
 using Unigram.Services;
+using Unigram.Strings;
 using Unigram.Views;
 using Windows.Storage;
 using Windows.System;
@@ -145,7 +146,7 @@ namespace Unigram.ViewModels
         public RelayCommand AskCommand => new RelayCommand(AskExecute);
         private async void AskExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync("Plase note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while.\n\nPlase take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.", "Telegram", "FAQ", "OK");
+            var confirm = await TLMessageDialog.ShowAsync(AppResources.TGSupportDisclaimerDetails, AppResources.Telegram, AppResources.TGSupportDisclaimerPrimaryText, AppResources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
@@ -163,7 +164,7 @@ namespace Unigram.ViewModels
         public RelayCommand LogoutCommand => new RelayCommand(LogoutExecute);
         private async void LogoutExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to logout?", "Unigram", "OK", "Cancel");
+            var confirm = await TLMessageDialog.ShowAsync(AppResources.TGLogoutText, AppResources.AppDisplayName, AppResources.OK, AppResources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -184,7 +185,7 @@ namespace Unigram.ViewModels
                 CacheService.ClearAsync();
                 CacheService.ClearConfigImportAsync();
 
-                await TLMessageDialog.ShowAsync("The app will be closed. Relaunch it to login again.", "Unigram", "OK");
+                await TLMessageDialog.ShowAsync(AppResources.TGLogoutSucceededDialogText, AppResources.AppDisplayName, AppResources.OK);
                 App.Current.Exit();
             }
             else

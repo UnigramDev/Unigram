@@ -11,6 +11,7 @@ using Template10.Mvvm;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
+using Unigram.Strings;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -21,9 +22,9 @@ namespace Unigram.ViewModels.Settings
         {
             AutoDownloads = new ObservableCollection<SettingsDataAutoDownload>
             {
-                new SettingsDataAutoDownload("When using mobile data", NetworkType.Mobile),
-                new SettingsDataAutoDownload("When connected on Wi-Fi", NetworkType.WiFi),
-                new SettingsDataAutoDownload("When roaming", NetworkType.Roaming),
+                new SettingsDataAutoDownload(AppResources.WhenOnMobileData, NetworkType.Mobile),
+                new SettingsDataAutoDownload(AppResources.WhenOnWiFi, NetworkType.WiFi),
+                new SettingsDataAutoDownload(AppResources.WhenRoaming, NetworkType.Roaming),
             };
         }
 
