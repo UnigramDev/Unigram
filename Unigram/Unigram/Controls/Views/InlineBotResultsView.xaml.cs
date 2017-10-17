@@ -42,7 +42,7 @@ namespace Unigram.Controls.Views
 
         private Visibility ConvertBannedRights(ITLDialogWith with, bool invert)
         {
-            if (with is TLChannel channel && channel.HasBannedRights && channel.BannedRights.IsSendInline)
+            if (with is TLChannel channel && channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsSendInline)
             {
                 return invert ? Visibility.Collapsed : Visibility.Visible;
             }

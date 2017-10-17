@@ -57,6 +57,8 @@ using Unigram.Core.Helpers;
 using Unigram.Native;
 using LinqToVisualTree;
 using Unigram.Models;
+using System.Windows.Input;
+using Unigram.Strings;
 
 namespace Unigram.Views
 {
@@ -493,8 +495,8 @@ namespace Unigram.Views
             {
                 flyout.Hide();
             }
-            
-            ViewModel.SendMediaExecute(ViewModel.MediaLibrary, e.Item);
+
+            ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
         }
 
         private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
@@ -669,324 +671,280 @@ namespace Unigram.Views
 
         #region Context menu
 
-        private void MenuFlyout_Opening(object sender, object e)
+        private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = sender as MenuFlyout;
+            var menu = new MenuFlyout();
 
-            foreach (var item in flyout.Items)
+            var element = sender as FrameworkElement;
+            var messageCommon = element.DataContext as TLMessageCommonBase;
+            var channel = messageCommon.Parent as TLChannel;
+
+            // Generic
+            menu.Items.Add(CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, messageCommon, AppResources.MessageReply));
+            menu.Items.Add(CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, messageCommon, ViewModel.PinnedMessage?.Id == messageCommon.Id ? AppResources.MessageUnpin : AppResources.MessagePin));
+            menu.Items.Add(CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, messageCommon, AppResources.MessageEdit));
+            menu.Items.Add(CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, AppResources.MessageForward));
+            menu.Items.Add(CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, AppResources.MessageDelete));
+            menu.Items.Add(CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, AppResources.MessageSelect));
+            menu.Items.Add(CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, AppResources.MessageCopy));
+            menu.Items.Add(CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel != null && channel.IsBroadcast ? AppResources.MessageCopyLinkBroadcast : AppResources.MessageCopyLinkMegaGroup));
+
+            // Stickers
+            // <MenuFlyoutItem Loaded="MessageAddSticker_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>
+            menu.Items.Add(CreateFlyoutItem(MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, AppResources.MessageFaveSticker));
+            menu.Items.Add(CreateFlyoutItem(MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, AppResources.MessageUnfaveSticker));
+
+            menu.Items.Add(CreateFlyoutItem(MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, AppResources.MessageSaveGIF));
+            menu.Items.Add(CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, AppResources.MessageSaveMedia));
+
+            sender.ContextFlyout = menu;
+
+            if (args.TryGetPosition(sender, out Point point))
             {
-                item.Visibility = Visibility.Visible;
+                menu.ShowAt(sender, point);
             }
         }
 
-        private void MessageReply_Loaded(object sender, RoutedEventArgs e)
+        private MenuFlyoutItem CreateFlyoutItem(Func<TLMessageCommonBase, Visibility> visibility, ICommand command, object parameter, string text)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
-            {
-                var messageCommon = element.DataContext as TLMessageCommonBase;
-                if (messageCommon != null)
-                {
-                    //var channel = ViewModel.With as TLChannel;
-                    //if (channel != null && channel.MigratedFromChatId != null)
-                    //{
-                    //    if (messageCommon.ToId is TLPeerChat)
-                    //    {
-                    //        element.Visibility = messageCommon.ToId.Id == channel.MigratedFromChatId ? Visibility.Collapsed : Visibility.Visible;
-                    //    }
-                    //}
+            var flyoutItem = new MenuFlyoutItem();
+            //flyoutItem.Visibility = visibility(parameter as TLMessageCommonBase);
+            flyoutItem.Loaded += (s, args) => flyoutItem.Visibility = visibility(parameter as TLMessageCommonBase);
+            flyoutItem.Command = command;
+            flyoutItem.CommandParameter = parameter;
+            flyoutItem.Text = text;
 
-                    var channel = messageCommon.Parent as TLChannel;
-                    if (channel != null)
-                    {
-                        if (channel.IsBroadcast)
-                        {
-                            element.Visibility = channel.IsCreator || channel.HasAdminRights ? Visibility.Visible : Visibility.Collapsed;
-                            return;
-                        }
-                    }
-                }
-
-                element.Visibility = Visibility.Visible;
-            }
+            return flyoutItem;
         }
 
-        private void MessagePin_Loaded(object sender, RoutedEventArgs e)
+        private Visibility MessageReply_Loaded(TLMessageCommonBase messageCommon)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            //var channel = ViewModel.With as TLChannel;
+            //if (channel != null && channel.MigratedFromChatId != null)
+            //{
+            //    if (messageCommon.ToId is TLPeerChat)
+            //    {
+            //        element.Visibility = messageCommon.ToId.Id == channel.MigratedFromChatId ? Visibility.Collapsed : Visibility.Visible;
+            //    }
+            //}
+
+            if (messageCommon.Parent is TLChannel channel)
             {
-                var messageCommon = element.DataContext as TLMessageCommonBase;
-                if (messageCommon != null)
+                if (channel.IsBroadcast)
                 {
-                    var channel = messageCommon.Parent as TLChannel;
-                    if (channel != null && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPinMessages)) && !channel.IsBroadcast)
-                    {
-                        if (messageCommon.ToId is TLPeerChannel)
-                        {
-                            element.Visibility = Visibility.Visible;
-                            element.Text = ViewModel.PinnedMessage != null && ViewModel.PinnedMessage.Id == messageCommon.Id ? "Unpin message" : "Pin message";
-                            return;
-                        }
-                    }
-                }
-
-                element.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void MessageEdit_Loaded(object sender, RoutedEventArgs e)
-        {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
-            {
-                var message = element.DataContext as TLMessage;
-                if (message != null)
-                {
-                    if (message.IsRoundVideo() || message.IsSticker())
-                    {
-                        element.Visibility = Visibility.Collapsed;
-                        return;
-                    }
-
-                    var channel = message.Parent as TLChannel;
-                    if (message.IsOut && message.ToId is TLPeerUser userPeer && userPeer.Id == SettingsHelper.UserId)
-                    {
-                        element.Visibility = Visibility.Visible;
-                        return;
-                    }
-                    else if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsEditMessages)))) && (message.Media is ITLMessageMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
-                    {
-                        var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
-                        var config = ViewModel.CacheService.GetConfig();
-                        if (config != null && message.Date + config.EditTimeLimit < date)
-                        {
-                            element.Visibility = Visibility.Collapsed;
-                            return;
-                        }
-
-                        element.Visibility = Visibility.Visible;
-                        return;
-                    }
-                }
-
-                element.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void MessageDelete_Loaded(object sender, RoutedEventArgs e)
-        {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
-            {
-                element.Visibility = Visibility.Visible;
-
-                var messageCommon = element.DataContext as TLMessageCommonBase;
-                if (messageCommon != null)
-                {
-                    var channel = messageCommon.Parent as TLChannel;
-                    if (channel != null)
-                    {
-                        if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
-                        {
-                            element.Visibility = Visibility.Collapsed;
-                        }
-
-                        if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
-                        {
-                            element.Visibility = Visibility.Collapsed;
-                        }
-                    }
+                    return channel.IsCreator || channel.HasAdminRights ? Visibility.Visible : Visibility.Collapsed;
                 }
             }
+
+            return Visibility.Visible;
         }
 
-        private void MessageForward_Loaded(object sender, RoutedEventArgs e)
+        private Visibility MessagePin_Loaded(TLMessageCommonBase messageCommon)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            if (messageCommon is TLMessage message && message.Parent is TLChannel channel && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPinMessages)) && !channel.IsBroadcast)
             {
-                var message = element.DataContext as TLMessage;
-                if (message != null && message.Media is TLMessageMediaPhoto photoMedia)
+                if (message.ToId is TLPeerChannel)
                 {
-                    element.Visibility = photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-                    return;
-                }
-                else if (message != null && message.Media is TLMessageMediaDocument documentMedia)
-                {
-                    element.Visibility = documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-                    return;
-                }
-
-                element.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void MessageCopy_Loaded(object sender, RoutedEventArgs e)
-        {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
-            {
-                if (element.DataContext is TLMessage message)
-                {
-                    if (!string.IsNullOrEmpty(message.Message))
-                    {
-                        Visibility = Visibility.Visible;
-                        return;
-                    }
-
-                    if (message.Media is ITLMessageMediaCaption mediaCaption && !string.IsNullOrEmpty(mediaCaption.Caption))
-                    {
-                        element.Visibility = Visibility.Visible;
-                        return;
-                    }
-                }
-
-                element.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void MessageCopyLink_Loaded(object sender, RoutedEventArgs e)
-        {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
-            {
-                if (element.DataContext is TLMessageCommonBase messageCommon)
-                {
-                    if (messageCommon.Parent is TLChannel channel && channel.HasUsername)
-                    {
-                        element.Text = channel.IsBroadcast ? "Copy post link" : "Copy message link";
-                        element.Visibility = Visibility.Visible;
-                        return;
-                    }
-                }
-
-                element.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void MessageSelect_Loaded(object sender, RoutedEventArgs e)
-        {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
-            {
-                element.Visibility = ViewModel.SelectionMode == ListViewSelectionMode.None ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-
-        private void MessageAddSticker_Loaded(object sender, RoutedEventArgs e)
-        {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
-            {
-                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
-                {
-                    if (document.StickerSet is TLInputStickerSetID setId)
-                    {
-                        element.Visibility = ViewModel.Stickers.StickersService.IsStickerPackInstalled(setId.Id) ? Visibility.Collapsed : Visibility.Visible;
-                    }
-                    else
-                    {
-                        element.Visibility = Visibility.Collapsed;
-                    }
+                    //element.Text = ViewModel.PinnedMessage != null && ViewModel.PinnedMessage.Id == messageCommon.Id ? "Unpin message" : "Pin message";
+                    return Visibility.Visible;
                 }
             }
+
+            return Visibility.Collapsed;
         }
 
-        private void MessageSaveSticker_Loaded(object sender, RoutedEventArgs e)
+        private Visibility MessageEdit_Loaded(TLMessageCommonBase messageCommon)
         {
-
-        }
-
-        private void MessageFaveSticker_Loaded(object sender, RoutedEventArgs e)
-        {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            if (messageCommon is TLMessage message)
             {
-                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
+                if (message.IsRoundVideo() || message.IsSticker())
                 {
-                    element.Visibility = ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Collapsed : Visibility.Visible;
+                    return Visibility.Collapsed;
+                }
+
+                var channel = message.Parent as TLChannel;
+                if (message.IsOut && message.ToId is TLPeerUser userPeer && userPeer.Id == SettingsHelper.UserId)
+                {
+                    return Visibility.Visible;
+                }
+                else if (message.HasFwdFrom == false && message.ViaBotId == null && (message.IsOut || (channel != null && channel.IsBroadcast && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsEditMessages)))) && (message.Media is ITLMessageMediaCaption || message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaEmpty || message.Media == null))
+                {
+                    var date = TLUtils.DateToUniversalTimeTLInt(ViewModel.ProtoService.ClientTicksDelta, DateTime.Now);
+                    var config = ViewModel.CacheService.GetConfig();
+                    if (config != null && message.Date + config.EditTimeLimit < date)
+                    {
+                        return Visibility.Collapsed;
+                    }
+
+                    return Visibility.Visible;
+                }
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageDelete_Loaded(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon.Parent is TLChannel channel)
+            {
+                if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
+                {
+                    return Visibility.Collapsed;
+                }
+
+                if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
+                {
+                    return Visibility.Collapsed;
+                }
+            }
+
+            return Visibility.Visible;
+        }
+
+        private Visibility MessageForward_Loaded(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon is TLMessage message)
+            {
+                if (message.Media is TLMessageMediaPhoto photoMedia)
+                {
+                    return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else if (message.Media is TLMessageMediaDocument documentMedia)
+                {
+                    return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                }
+
+                return Visibility.Visible;
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageCopy_Loaded(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon is TLMessage message)
+            {
+                if (!string.IsNullOrEmpty(message.Message))
+                {
+                    return Visibility.Visible;
+                }
+
+                if (message.Media is ITLMessageMediaCaption mediaCaption && !string.IsNullOrEmpty(mediaCaption.Caption))
+                {
+                    return Visibility.Visible;
+                }
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageCopyLink_Loaded(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon.Parent is TLChannel channel && channel.HasUsername)
+            {
+                //element.Text = channel.IsBroadcast ? "Copy post link" : "Copy message link";
+                return Visibility.Visible;
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageSelect_Loaded(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon is TLMessage message)
+            {
+                return ViewModel.SelectionMode == ListViewSelectionMode.None ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageAddSticker_Loaded(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                if (document.StickerSet is TLInputStickerSetID setId)
+                {
+                    return ViewModel.Stickers.StickersService.IsStickerPackInstalled(setId.Id) ? Visibility.Collapsed : Visibility.Visible;
                 }
                 else
                 {
-                    element.Visibility = Visibility.Collapsed;
+                    return Visibility.Collapsed;
                 }
             }
+
+            return Visibility.Collapsed;
         }
 
-        private void MessageUnfaveSticker_Loaded(object sender, RoutedEventArgs e)
+        private Visibility MessageSaveSticker_Loaded(TLMessageCommonBase messageCommon)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            if (messageCommon is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
             {
-                if (element.DataContext is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
-                {
-                    element.Visibility = ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Visible : Visibility.Collapsed;
-                }
-                else
-                {
-                    element.Visibility = Visibility.Collapsed;
-                }
+                return Visibility.Visible;
             }
+
+            return Visibility.Collapsed;
         }
 
-        private void MessageSaveMedia_Loaded(object sender, RoutedEventArgs e)
+        private Visibility MessageFaveSticker_Loaded(TLMessageCommonBase messageCommon)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            if (messageCommon is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
             {
-                var message = element.DataContext as TLMessage;
+                return ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Collapsed : Visibility.Visible;
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageUnfaveSticker_Loaded(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon is TLMessage message && message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document && document.StickerSet is TLInputStickerSetID setId)
+            {
+                return ViewModel.Stickers.StickersService.IsStickerInFavorites(document) ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageSaveMedia_Loaded(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon is TLMessage message)
+            {
                 if (message != null && message.Media is TLMessageMediaPhoto photoMedia)
                 {
-                    element.Visibility = photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-                    return;
+                    return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
                 }
                 else if (message != null && message.Media is TLMessageMediaDocument documentMedia)
                 {
-                    element.Visibility = documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
-                    return;
+                    return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
                 }
-
-                element.Visibility = Visibility.Collapsed;
             }
+
+            return Visibility.Collapsed;
         }
 
-        private void MessageSaveGIF_Loaded(object sender, RoutedEventArgs e)
+        private Visibility MessageSaveGIF_Loaded(TLMessageCommonBase messageCommon)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            if (messageCommon is TLMessage message && message.IsGif())
             {
-                var message = element.DataContext as TLMessage;
-                if (message != null)
-                {
-                    if (message.IsGif())
-                    {
-                        Visibility = Visibility.Visible;
-                        return;
-                    }
-                }
-
-                element.Visibility = Visibility.Collapsed;
+                return Visibility.Visible;
             }
+
+            return Visibility.Collapsed;
         }
 
-        private void MessageCallAgain_Loaded(object sender, RoutedEventArgs e)
+        private Visibility MessageCallAgain_Loaded(TLMessageCommonBase messageCommon)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            var message = messageCommon as TLMessageService;
+            if (message != null)
             {
-                var message = element.DataContext as TLMessageService;
-                if (message != null)
+                if (message.Action is TLMessageActionPhoneCall)
                 {
-                    if (message.Action is TLMessageActionPhoneCall)
-                    {
-                        Visibility = Visibility.Visible;
-                        return;
-                    }
+                    return Visibility.Visible;
                 }
-
-                element.Visibility = Visibility.Collapsed;
             }
+
+            return Visibility.Collapsed;
         }
 
         #endregion
@@ -999,7 +957,7 @@ namespace Unigram.Views
         private async void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
             var channel = ViewModel.With as TLChannel;
-            if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendStickers)
+            if (channel != null && channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsSendStickers)
             {
                 await TLMessageDialog.ShowAsync("The admins of this group restricted you from posting stickers here.", "Warning", "OK");
                 return;
@@ -1555,7 +1513,7 @@ namespace Unigram.Views
 
         private void Mentions_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-
+            ViewModel.ReadMentionsCommand.Execute();
         }
     }
 

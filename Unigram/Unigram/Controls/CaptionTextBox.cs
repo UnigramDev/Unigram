@@ -135,7 +135,10 @@ namespace Unigram.Controls
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            View.SelectedItem.Caption = Text.ToString();
+            if (View?.SelectedItem != null)
+            {
+                View.SelectedItem.Caption = Text.ToString();
+            }
         }
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)

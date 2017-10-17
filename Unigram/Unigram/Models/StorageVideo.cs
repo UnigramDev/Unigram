@@ -37,7 +37,7 @@ namespace Unigram.Models
             }
         }
 
-        public static async Task<StorageVideo> CreateAsync(StorageFile file, bool selected)
+        public new static async Task<StorageVideo> CreateAsync(StorageFile file, bool selected)
         {
             try
             {
@@ -47,7 +47,10 @@ namespace Unigram.Models
                     return null;
                 }
 
-                return new StorageVideo(file, await file.GetBasicPropertiesAsync(), await file.Properties.GetVideoPropertiesAsync(), profile) { IsSelected = selected };
+                var basic = await file.GetBasicPropertiesAsync();
+                var video = await file.Properties.GetVideoPropertiesAsync();
+
+                return new StorageVideo(file, basic, video, profile) { IsSelected = selected };
             }
             catch
             {

@@ -76,6 +76,11 @@ namespace Unigram.Controls
 
         private async void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
+            if (ScrollingHost == null || ItemsStack == null || ViewModel == null)
+            {
+                return;
+            }
+
             if (ScrollingHost.VerticalOffset < 120 && !e.IsIntermediate)
             {
                 await ViewModel.LoadNextSliceAsync(true);
