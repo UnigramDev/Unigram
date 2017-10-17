@@ -162,9 +162,9 @@ namespace Unigram.ViewModels.Settings
                 return;
             }
 
-            ImagesCacheSize = files.OfImageType().Sum(f => (long)f.GetFileSize());
-            VideosCacheSize = files.OfVideoType().Sum(f => (long)f.GetFileSize());
-            OtherFilesCacheSize = files.OfOtherTypes().Sum(f => (long)f.GetFileSize());
+            ImagesCacheSize = files.OfImageType().TotalSize();
+            VideosCacheSize = files.OfVideoType().TotalSize();
+            OtherFilesCacheSize = files.OfOtherTypes().TotalSize();
         }
 
         public RelayCommand ClearCacheCommand => new RelayCommand(ClearCacheExecute);
@@ -245,20 +245,14 @@ namespace Unigram.ViewModels.Settings
             return storageFiles.Where(f => Constants.MediaTypes.All(t => !t.Contains(f.FileType)));
         }
 
-        public static ulong GetFileSize(this StorageFile storageFile)
+        public static long TotalSize(this IEnumerable<StorageFile> storageFiles)
         {
-            if (storageFile == null)
+            if (storageFiles == null)
             {
-                throw new ArgumentNullException(nameof(storageFile));
+                throw new ArgumentNullException(nameof(storageFiles));
             }
 
-            var fileInfo = new FileInfo(storageFile.Path);
-
-            return fileInfo != null ? (ulong)fileInfo.Length : 0;
-
-            //var task = storageFile.GetBasicPropertiesAsync().AsTask();
-            //task.Wait();
-            //return task.Result.Size;
+            return storageFiles.Sum(f => NativeUtils.GetFileSize(f.Path));
         }
     }
 }
