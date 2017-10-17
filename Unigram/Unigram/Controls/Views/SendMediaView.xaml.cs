@@ -206,6 +206,12 @@ namespace Unigram.Controls.Views
 
         private void Accept_Click(object sender, RoutedEventArgs e)
         {
+            if (Items == null)
+            {
+                Hide(ContentDialogBaseResult.Cancel);
+                return;
+            }
+
             if (IsEditingCompression && SelectedItem is StorageVideo video)
             {
                 video.Compression = (int)CompressionValue.Value;

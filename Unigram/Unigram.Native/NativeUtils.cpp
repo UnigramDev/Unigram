@@ -43,16 +43,13 @@ void NativeUtils::CleanDirectoryInternal(const std::wstring &path, std::vector<s
 
 	do
 	{
-		// skip current and parent
 		if (IsBrowsePath(data.cFileName))
 		{
 			continue;
 		}
 
-		// if found object is ...
 		if ((data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
 		{
-			// directory, then search it recursievly
 			CleanDirectoryInternal(path + L"\\" + data.cFileName, filters);
 		}
 		else
@@ -83,17 +80,18 @@ uint64_t NativeUtils::GetDirectorySizeInternal(const std::wstring &path, const s
 
 	do
 	{
-		// skip current and parent
-		if (!IsBrowsePath(data.cFileName))
+		if (IsBrowsePath(data.cFileName))
 		{
-			if ((data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
-			{
-				size = GetDirectorySizeInternal(path + L"\\" + data.cFileName, filter, size);
-			}
-			else
-			{
-				size += (uint64_t)(data.nFileSizeHigh * (MAXDWORD)+data.nFileSizeLow);
-			}
+			continue;
+		}
+
+		if ((data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
+		{
+			size = GetDirectorySizeInternal(path + L"\\" + data.cFileName, filter, size);
+		}
+		else
+		{
+			size += (uint64_t)(data.nFileSizeHigh * (MAXDWORD)+data.nFileSizeLow);
 		}
 
 	} while (FindNextFile(sh, &data)); // do

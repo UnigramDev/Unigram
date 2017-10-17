@@ -479,20 +479,29 @@ namespace Unigram.ViewModels
                     }
 
                     var prepare = await transcoder.PrepareFileTranscodeAsync(fileCache, fileResult, profile);
-                    await prepare.TranscodeAsync().AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }, 0, 200.0));
+                    if (prepare.CanTranscode)
+                    {
+                        await prepare.TranscodeAsync().AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }, 0, 200.0));
 
-                    //await fileCache.DeleteAsync();
-                    fileCache = fileResult;
+                        if (prepare.FailureReason == TranscodeFailureReason.None)
+                        {
+                            //await fileCache.DeleteAsync();
+                            fileCache = fileResult;
 
-                    thumbnailBase = await FileUtils.GetFileThumbnailAsync(fileCache);
-                    thumbnail = thumbnailBase as TLPhotoSize;
+                            thumbnailBase = await FileUtils.GetFileThumbnailAsync(fileCache);
+                            thumbnail = thumbnailBase as TLPhotoSize;
 
-                    desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
-                    document.Thumb = thumbnail;
+                            if (thumbnail != null)
+                            {
+                                desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
+                                document.Thumb = thumbnail;
+                            }
+                        }
+                    }
                 }
 
                 var fileId = TLLong.Random();
-                var upload = await _uploadVideoManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }, 0.5, 2.0));
+                var upload = await _uploadVideoManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadVideoAction { Progress = progress }, 0.5, 2.0));
                 if (upload != null)
                 {
                     var thumbFileId = TLLong.Random();
