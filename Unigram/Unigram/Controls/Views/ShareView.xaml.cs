@@ -25,6 +25,7 @@ using Windows.UI;
 using Template10.Utils;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
+using Unigram.Common;
 
 namespace Unigram.Controls.Views
 {
@@ -82,13 +83,12 @@ namespace Unigram.Controls.Views
         private async void OnShareToClipboard(ShareProviderOperation operation)
         {
             var webLink = await operation.Data.GetWebLinkAsync();
-            var package = new DataPackage();
-            package.SetText(webLink.ToString());
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(webLink.ToString());
 
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                Clipboard.SetContent(package);
-                Clipboard.Flush();
+                ClipboardEx.TrySetContent(dataPackage);
                 operation.ReportCompleted();
             });
         }

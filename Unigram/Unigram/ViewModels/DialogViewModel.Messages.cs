@@ -533,8 +533,7 @@ namespace Unigram.ViewModels
             {
                 var dataPackage = new DataPackage();
                 dataPackage.SetText(text);
-                Clipboard.SetContent(dataPackage);
-                Clipboard.Flush();
+                ClipboardEx.TrySetContent(dataPackage);
             }
         }
 
@@ -542,51 +541,56 @@ namespace Unigram.ViewModels
 
         #region Copy link
 
-        public RelayCommand<TLMessage> MessageCopyLinkCommand => new RelayCommand<TLMessage>(MessageCopyLinkExecute);
-        private void MessageCopyLinkExecute(TLMessage message)
+        public RelayCommand<TLMessageCommonBase> MessageCopyLinkCommand => new RelayCommand<TLMessageCommonBase>(MessageCopyLinkExecute);
+        private void MessageCopyLinkExecute(TLMessageCommonBase messageCommon)
         {
-            if (message == null) return;
-
-            if (With is TLChannel channel)
+            if (messageCommon == null)
             {
-                var link = $"{channel.Username}/{message.Id}";
+                return;
+            }
 
-                if (message.IsRoundVideo())
+            var channel = With as TLChannel;
+            if (channel == null)
+            {
+                return;
+            }
+
+            var link = $"{channel.Username}/{messageCommon.Id}";
+
+            if (messageCommon is TLMessage message && message.IsRoundVideo())
+            {
+                link = $"https://telesco.pe/{link}";
+            }
+            else
+            {
+                var config = CacheService.GetConfig();
+                if (config != null)
                 {
-                    link = $"https://telesco.pe/{link}";
+                    var linkPrefix = config.MeUrlPrefix;
+                    if (linkPrefix.EndsWith("/"))
+                    {
+                        linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
+                    }
+                    if (linkPrefix.StartsWith("https://"))
+                    {
+                        linkPrefix = linkPrefix.Substring(8);
+                    }
+                    else if (linkPrefix.StartsWith("http://"))
+                    {
+                        linkPrefix = linkPrefix.Substring(7);
+                    }
+
+                    link = $"https://{linkPrefix}/{link}";
                 }
                 else
                 {
-                    var config = CacheService.GetConfig();
-                    if (config != null)
-                    {
-                        var linkPrefix = config.MeUrlPrefix;
-                        if (linkPrefix.EndsWith("/"))
-                        {
-                            linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
-                        }
-                        if (linkPrefix.StartsWith("https://"))
-                        {
-                            linkPrefix = linkPrefix.Substring(8);
-                        }
-                        else if (linkPrefix.StartsWith("http://"))
-                        {
-                            linkPrefix = linkPrefix.Substring(7);
-                        }
-
-                        link = $"https://{linkPrefix}/{link}";
-                    }
-                    else
-                    {
-                        link = $"https://t.me/{link}";
-                    }
+                    link = $"https://t.me/{link}";
                 }
-
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(link);
-                Clipboard.SetContent(dataPackage);
-                Clipboard.Flush();
             }
+
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(link);
+            ClipboardEx.TrySetContent(dataPackage);
         }
 
         #endregion

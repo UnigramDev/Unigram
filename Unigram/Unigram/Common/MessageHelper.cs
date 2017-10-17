@@ -1545,11 +1545,10 @@ namespace Unigram.Common
         {
             var tdesktop = GetTDesktopClipboard(entities);
 
-            var package = new DataPackage();
-            if (tdesktop != null) package.SetData("application/x-td-field-tags", tdesktop);
-            package.SetText(message);
-            Clipboard.SetContent(package);
-            Clipboard.Flush();
+            var dataPackage = new DataPackage();
+            if (tdesktop != null) dataPackage.SetData("application/x-td-field-tags", tdesktop);
+            dataPackage.SetText(message);
+            ClipboardEx.TrySetContent(dataPackage);
         }
 
         private static IRandomAccessStream GetTDesktopClipboard(IEnumerable<TLMessageEntityBase> entities)

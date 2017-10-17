@@ -496,7 +496,7 @@ namespace Unigram.Views
                 flyout.Hide();
             }
 
-            ViewModel.SendMediaExecute(ViewModel.MediaLibrary, e.Item);
+            ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
         }
 
         private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
@@ -687,7 +687,7 @@ namespace Unigram.Views
             menu.Items.Add(CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, AppResources.MessageDelete));
             menu.Items.Add(CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, AppResources.MessageSelect));
             menu.Items.Add(CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, AppResources.MessageCopy));
-            menu.Items.Add(CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel.IsBroadcast ? AppResources.MessageCopyLinkBroadcast : AppResources.MessageCopyLinkMegaGroup));
+            menu.Items.Add(CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel != null && channel.IsBroadcast ? AppResources.MessageCopyLinkBroadcast : AppResources.MessageCopyLinkMegaGroup));
 
             // Stickers
             // <MenuFlyoutItem Loaded="MessageAddSticker_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>

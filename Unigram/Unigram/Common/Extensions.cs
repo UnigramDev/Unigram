@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Unigram.Core.Unidecode;
 using Unigram.ViewModels;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
@@ -283,6 +284,19 @@ namespace Unigram.Common
             }
 
             return transform;
+        }
+    }
+
+    public static class ClipboardEx
+    {
+        public static void TrySetContent(DataPackage content)
+        {
+            try
+            {
+                Clipboard.SetContent(content);
+                Clipboard.Flush();
+            }
+            catch { }
         }
     }
 }

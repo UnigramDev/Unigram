@@ -148,10 +148,9 @@ namespace Unigram.ViewModels.Chats
         public RelayCommand CopyCommand => new RelayCommand(CopyExecute);
         private async void CopyExecute()
         {
-            var package = new DataPackage();
-            package.SetText(_inviteLink);
-            Clipboard.SetContent(package);
-            Clipboard.Flush();
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(_inviteLink);
+            ClipboardEx.TrySetContent(dataPackage);
 
             await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
         }
