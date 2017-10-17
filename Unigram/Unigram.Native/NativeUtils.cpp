@@ -6,7 +6,23 @@ using namespace Platform;
 
 int64 NativeUtils::GetDirectorySize(String^ path)
 {
-	return CalculateDirSize(path->Data(), 0);
+	return GetDirectorySize(path, L"\\*");
+}
+
+int64 NativeUtils::GetDirectorySize(String^ path, String^ filter)
+{
+	return GetDirectorySizeInternal(path->Data(), filter->Data(), 0);
+}
+
+void NativeUtils::CleanDirectory(String^ path, const Array<String^>^ filters)
+{
+	std::vector<std::wstring> array;
+	for each (auto var in filters)
+	{
+		array.push_back(var->Data());
+	}
+
+	CleanDirectoryInternal(path->Data(), array);
 }
 
 void NativeUtils::Delete(String^ path)
@@ -14,11 +30,51 @@ void NativeUtils::Delete(String^ path)
 	DeleteFile(path->Data());
 }
 
-uint64_t NativeUtils::CalculateDirSize(const std::wstring &path, uint64_t size)
+void NativeUtils::CleanDirectoryInternal(const std::wstring &path, std::vector<std::wstring> filters)
 {
 	WIN32_FIND_DATA data;
 	HANDLE sh = NULL;
 	sh = FindFirstFile((path + L"\\*").c_str(), &data);
+
+	if (sh == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+
+	do
+	{
+		// skip current and parent
+		if (IsBrowsePath(data.cFileName))
+		{
+			continue;
+		}
+
+		// if found object is ...
+		if ((data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
+		{
+			// directory, then search it recursievly
+			CleanDirectoryInternal(path + L"\\" + data.cFileName, filters);
+		}
+		else
+		{
+			if (std::find(filters.begin(), filters.end(), data.cFileName) != filters.end())
+			{
+				continue;
+			}
+
+			DeleteFile((path + L"\\" + data.cFileName).c_str());
+		}
+
+	} while (FindNextFile(sh, &data)); // do
+
+	FindClose(sh);
+}
+
+uint64_t NativeUtils::GetDirectorySizeInternal(const std::wstring &path, const std::wstring &filter, uint64_t size)
+{
+	WIN32_FIND_DATA data;
+	HANDLE sh = NULL;
+	sh = FindFirstFile((path + filter).c_str(), &data);
 
 	if (sh == INVALID_HANDLE_VALUE)
 	{
@@ -30,15 +86,12 @@ uint64_t NativeUtils::CalculateDirSize(const std::wstring &path, uint64_t size)
 		// skip current and parent
 		if (!IsBrowsePath(data.cFileName))
 		{
-			// if found object is ...
 			if ((data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
 			{
-				// directory, then search it recursievly
-				size = CalculateDirSize(path + L"\\" + data.cFileName, size);
+				size = GetDirectorySizeInternal(path + L"\\" + data.cFileName, filter, size);
 			}
-			else 
+			else
 			{
-				// otherwise get object size and add it to directory size
 				size += (uint64_t)(data.nFileSizeHigh * (MAXDWORD)+data.nFileSizeLow);
 			}
 		}

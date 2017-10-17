@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,20 +22,17 @@ namespace Unigram.ViewModels.Settings
         {
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            await UpdateCacheSizeAsync(resetInitialCacheSize: true, updateDetailedCacheSizes: true);
+            UpdateCacheSize(resetInitialCacheSize: true, updateDetailedCacheSizes: true);
+            TaskCompleted = true;
+
+            return Task.CompletedTask;
         }
 
-        private long _cacheSize, _initialCacheSize, _imagesCacheSize, _videosCacheSize, _otherFilesCacheSize;
-        private double _percentage;
-        private bool _taskCompleted;
+        private static string[] ExcludedFileNames = new[] { Constants.WallpaperFileName };
 
-        private static string[] ExcludedFileNames = new[] 
-        {
-            Constants.WallpaperFileName
-        };
-
+        private long _initialCacheSize;
         public long InitialCacheSize
         {
             get
@@ -49,6 +45,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        private double _percentage;
         public double Percentage
         {
             get
@@ -61,6 +58,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        private long _cacheSize;
         public long CacheSize
         {
             get
@@ -73,6 +71,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        private long _imagesCacheSize;
         public long ImagesCacheSize
         {
             get
@@ -85,6 +84,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        private long _videosCacheSize;
         public long VideosCacheSize
         {
             get
@@ -97,6 +97,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        private long _otherFilesCacheSize;
         public long OtherFilesCacheSize
         {
             get
@@ -109,6 +110,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        private bool _taskCompleted;
         public bool TaskCompleted
         {
             get
@@ -121,9 +123,10 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        private async Task UpdateCacheSizeAsync(bool resetInitialCacheSize, bool updateDetailedCacheSizes)
+        private void UpdateCacheSize(bool resetInitialCacheSize, bool updateDetailedCacheSizes)
         {
             CacheSize = 0;
+
             if (resetInitialCacheSize)
             {
                 InitialCacheSize = 0;
@@ -133,6 +136,7 @@ namespace Unigram.ViewModels.Settings
             {
                 var cacheSize = NativeUtils.GetDirectorySize(FileUtils.GetTempFileName(string.Empty));
                 CacheSize = cacheSize;
+
                 if (resetInitialCacheSize)
                 {
                     InitialCacheSize = cacheSize;
@@ -145,26 +149,27 @@ namespace Unigram.ViewModels.Settings
             {
                 if (updateDetailedCacheSizes)
                 {
-                    var files = await this.RetrieveCacheFilesAsync();
+                    var filter = Constants.MediaTypes;
+                    var images = 0L;
+                    var videos = 0L;
 
-                    UpdateCacheTypes(files);
+                    for (int i = 0; i < filter.Length; i++)
+                    {
+                        if (Constants.PhotoTypes.Contains(filter[i]))
+                        {
+                            images += NativeUtils.GetDirectorySize(FileUtils.GetTempFileName(string.Empty), "\\*" + filter[i]);
+                        }
+                        else
+                        {
+                            videos += NativeUtils.GetDirectorySize(FileUtils.GetTempFileName(string.Empty), "\\*" + filter[i]);
+                        }
+                    }
+
+                    ImagesCacheSize = images;
+                    VideosCacheSize = videos;
+                    OtherFilesCacheSize = Math.Max(_cacheSize - images - videos, 0);
                 }
             }
-        }
-
-        public void UpdateCacheTypes(IReadOnlyList<StorageFile> files)
-        {
-            if (files == null || files.Count == 0)
-            {
-                ImagesCacheSize = 0;
-                VideosCacheSize = 0;
-                OtherFilesCacheSize = 0;
-                return;
-            }
-
-            ImagesCacheSize = files.OfImageType().Sum(f => (long)f.GetFileSize());
-            VideosCacheSize = files.OfVideoType().Sum(f => (long)f.GetFileSize());
-            OtherFilesCacheSize = files.OfOtherTypes().Sum(f => (long)f.GetFileSize());
         }
 
         public RelayCommand ClearCacheCommand => new RelayCommand(ClearCacheExecute);
@@ -173,92 +178,15 @@ namespace Unigram.ViewModels.Settings
             IsLoading = true;
             TaskCompleted = false;
 
-            var files = await this.RetrieveCacheFilesAsync();
-
-            foreach (var file in files)
+            await Task.Run(() =>
             {
-                if (ExcludedFileNames.Any(fileName => string.Equals(fileName, file.Name, StringComparison.OrdinalIgnoreCase)))
-                {
-                    continue;
-                }
-
-                try
-                {
-                    NativeUtils.Delete(file.Path);
-                    await UpdateCacheSizeAsync(resetInitialCacheSize: false, updateDetailedCacheSizes: false);
-                }
-                catch { }
-            }
-
-            await UpdateCacheSizeAsync(resetInitialCacheSize: true, updateDetailedCacheSizes: true);
+                NativeUtils.CleanDirectory(FileUtils.GetTempFileName(string.Empty), ExcludedFileNames);
+            });
 
             IsLoading = false;
+
+            UpdateCacheSize(resetInitialCacheSize: true, updateDetailedCacheSizes: true);
             TaskCompleted = true;
-        }
-
-        private async Task<IReadOnlyList<StorageFile>> RetrieveCacheFilesAsync()
-        {
-            var folder = await StorageFolder.GetFolderFromPathAsync(FileUtils.GetTempFileName(string.Empty));
-            var queryOptions = new QueryOptions
-            {
-                FolderDepth = FolderDepth.Deep
-            };
-
-            var query = folder.CreateFileQueryWithOptions(queryOptions);
-            var result = await query.GetFilesAsync();
-
-            return result;
-        }
-    }
-
-    public static class StorageFileExtensions
-    {
-        public static IEnumerable<StorageFile> OfImageType(this IEnumerable<StorageFile> storageFiles)
-        {
-            if (storageFiles == null)
-            {
-                throw new ArgumentNullException(nameof(storageFiles));
-            }
-
-            return storageFiles.Where(f => Constants.PhotoTypes.Any(t => t.Contains(f.FileType)));
-        }
-
-        public static IEnumerable<StorageFile> OfVideoType(this IEnumerable<StorageFile> storageFiles)
-        {
-            if (storageFiles == null)
-            {
-                throw new ArgumentNullException(nameof(storageFiles));
-            }
-
-            var videoTypes = Constants.MediaTypes.Except(Constants.PhotoTypes);
-
-            return storageFiles.Where(f => videoTypes.Any(t => t.Contains(f.FileType)));
-        }
-
-        public static IEnumerable<StorageFile> OfOtherTypes(this IEnumerable<StorageFile> storageFiles)
-        {
-            if (storageFiles == null)
-            {
-                throw new ArgumentNullException(nameof(storageFiles));
-            }
-
-            return storageFiles.Where(f => Constants.MediaTypes.All(t => !t.Contains(f.FileType)));
-        }
-
-        public static ulong GetFileSize(this StorageFile storageFile)
-        {
-            if (storageFile == null)
-            {
-                throw new ArgumentNullException(nameof(storageFile));
-            }
-
-            var fileInfo = new FileInfo(storageFile.Path);
-
-            return fileInfo != null ? (ulong)fileInfo.Length : 0;
-
-            //var task = storageFile.GetBasicPropertiesAsync().AsTask();
-            //task.Wait();
-            //return task.Result.Size;
         }
     }
 }
