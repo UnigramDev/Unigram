@@ -120,9 +120,6 @@
   <data name="AUTH_REGION" xml:space="preserve">
     <value>Accesso da un nuovo dispositivo {0}, posizione: {1}</value>
   </data>
-  <data name="AUTH_UNKNOWN" xml:space="preserve">
-    <value>Accesso da un nuovo dispositivo {0}</value>
-  </data>
   <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
     <value>ha pubblicato un messaggio vocale</value>
   </data>
@@ -131,9 +128,6 @@
   </data>
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
     <value>ha pubblicato un file</value>
-  </data>
-  <data name="CHANNEL_MESSAGE_FWDS" xml:space="preserve">
-    <value>ha pubblicato {1} messaggi inoltrati</value>
   </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
     <value>ti ha invitato a giocare a {1}</value>
@@ -179,9 +173,6 @@
   </data>
   <data name="CHAT_DELETE_YOU" xml:space="preserve">
     <value>{0} ti ha rimosso dal gruppo</value>
-  </data>
-  <data name="CHAT_JOINED" xml:space="preserve">
-    <value>{0} si è unito al gruppo</value>
   </data>
   <data name="CHAT_LEFT" xml:space="preserve">
     <value>{0} ha lasciato il gruppo</value>
@@ -240,14 +231,8 @@
   <data name="CHAT_TITLE_EDITED" xml:space="preserve">
     <value>{0} ha cambiato il nome del gruppo</value>
   </data>
-  <data name="CONTACT_ACTIVATED" xml:space="preserve">
-    <value>{0} ti ha aiutato ad attivare il tuo account!</value>
-  </data>
   <data name="CONTACT_JOINED" xml:space="preserve">
     <value>{0} si è unito a Telegram!</value>
-  </data>
-  <data name="DC_UPDATE" xml:space="preserve">
-    <value>Apri questa notifica per aggiornare le impostazioni dell'app</value>
   </data>
   <data name="ENCRYPTED_MESSAGE" xml:space="preserve">
     <value>Hai un nuovo messaggio{0}</value>
