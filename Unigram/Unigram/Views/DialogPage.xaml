@@ -1153,15 +1153,18 @@
                                 <MenuFlyoutItem Text="Add to contacts"
                                                 Command="{x:Bind ViewModel.AddContactCommand}"
                                                 Visibility="{x:Bind (Visibility)ViewModel.IsAddContactAvailable, Mode=OneWay}"/>
-                            
 
-                            
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
-                                                x:Name="cbtnPinToStart"
-                                                Visibility="Collapsed"
-                                                IsEnabled="False"
-                                                Tag="&#xE141;"
+                                                Command="{x:Bind ViewModel.PinChatCommand}"
+                                                Visibility="{x:Bind (Visibility)ViewModel.CanPinChat, Mode=OneWay}"
+                                                Tag="&#xE718;"
                                                 Text="Pin to Start"/>
+
+                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                Command="{x:Bind ViewModel.UnpinChatCommand}"
+                                                Visibility="{x:Bind (Visibility)ViewModel.CanUnpinChat, Mode=OneWay}"
+                                                Tag="&#xE77A;"
+                                                Text="Unpin from Start"/>
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>
