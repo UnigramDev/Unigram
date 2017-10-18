@@ -42,8 +42,6 @@ namespace Unigram
 				static String^ NotificationTask::CreateTileMessageBodyWithCaption(String^ caption, String^ message);
 
 				void UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key);
-
-				static bool IsMobile();
 			};
 		}
 	}

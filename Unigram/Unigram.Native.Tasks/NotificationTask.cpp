@@ -13,16 +13,15 @@
 #include "Shlwapi.h"
 
 using namespace concurrency;
-using namespace Windows::UI::Notifications;
+using namespace Platform;
+using namespace Unigram::Native::Tasks;
+using namespace Windows::ApplicationModel::Calls;
 using namespace Windows::ApplicationModel::Resources;
 using namespace Windows::Data::Json;
 using namespace Windows::Data::Xml::Dom;
-using namespace Unigram::Native::Tasks;
-using namespace Platform;
-using namespace Windows::Storage;
-using namespace Windows::ApplicationModel::Calls;
 using namespace Windows::Foundation;
-using namespace Windows::Foundation::Metadata;
+using namespace Windows::Storage;
+using namespace Windows::UI::Notifications;
 using namespace Windows::UI::StartScreen;
 
 void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
@@ -472,21 +471,16 @@ void NotificationTask::ResetSecondaryTile(String^ caption, String^ picture, Stri
 		xml += L"'/>";
 	}
 	xml += L"</binding>";
-	
-	if (!IsMobile())
+	xml += L"<binding template='TileLarge' displayName='";
+	xml += caption->Data();
+	xml += L"' branding='nameAndLogo'>";
+	if (picture != nullptr)
 	{
-		xml += L"<binding template='TileLarge' displayName='";
-		xml += caption->Data();
-		xml += L"' branding='nameAndLogo'>";
-		if (picture != nullptr)
-		{
-			xml += L"<image hint-crop='circle' src='";
-			xml += picture->Data();
-			xml += L"'/>";
-		}
-		xml += L"</binding>";
+		xml += L"<image hint-crop='circle' src='";
+		xml += picture->Data();
+		xml += L"'/>";
 	}
-
+	xml += L"</binding>";
 	xml += L"</visual></tile>";
 
 	auto updater = TileUpdateManager::CreateTileUpdaterForSecondaryTile(group);
@@ -549,26 +543,21 @@ void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, Strin
 	xml += L"</subgroup>";
 	xml += L"</group>";
 	xml += L"</binding>";
-
-	if (!IsMobile())
+	xml += L"<binding template='TileLarge' branding='nameAndLogo'>";
+	xml += L"<group>";
+	xml += L"<subgroup hint-weight='18'>";
+	if (picture != nullptr)
 	{
-		xml += L"<binding template='TileLarge' branding='nameAndLogo'>";
-		xml += L"<group>";
-		xml += L"<subgroup hint-weight='18'>";
-		if (picture != nullptr)
-		{
-			xml += L"<image hint-crop='circle' src='";
-			xml += picture->Data();
-			xml += L"'/>";
-		}
-		xml += L"</subgroup>";
-		xml += L"<subgroup>";
-		xml += body->Data();
-		xml += L"</subgroup>";
-		xml += L"</group>";
-		xml += L"</binding>";
+		xml += L"<image hint-crop='circle' src='";
+		xml += picture->Data();
+		xml += L"'/>";
 	}
-
+	xml += L"</subgroup>";
+	xml += L"<subgroup>";
+	xml += body->Data();
+	xml += L"</subgroup>";
+	xml += L"</group>";
+	xml += L"</binding>";
 	xml += L"</visual></tile>";
 
 	auto updater = TileUpdateManager::CreateTileUpdaterForApplication(L"App");
@@ -614,28 +603,23 @@ void NotificationTask::UpdateSecondaryTile(String^ caption, String^ message, Str
 	xml += L"</subgroup>";
 	xml += L"</group>";
 	xml += L"</binding>";
-
-	if (!IsMobile())
+	xml += L"<binding template='TileLarge' displayName='";
+	xml += caption->Data();
+	xml += L"' branding='nameAndLogo'>";
+	xml += L"<group>";
+	xml += L"<subgroup hint-weight='18'>";
+	if (picture != nullptr)
 	{
-		xml += L"<binding template='TileLarge' displayName='";
-		xml += caption->Data();
-		xml += L"' branding='nameAndLogo'>";
-		xml += L"<group>";
-		xml += L"<subgroup hint-weight='18'>";
-		if (picture != nullptr)
-		{
-			xml += L"<image hint-crop='circle' src='";
-			xml += picture->Data();
-			xml += L"'/>";
-		}
-		xml += L"</subgroup>";
-		xml += L"<subgroup>";
-		xml += body->Data();
-		xml += L"</subgroup>";
-		xml += L"</group>";
-		xml += L"</binding>";
+		xml += L"<image hint-crop='circle' src='";
+		xml += picture->Data();
+		xml += L"'/>";
 	}
-
+	xml += L"</subgroup>";
+	xml += L"<subgroup>";
+	xml += body->Data();
+	xml += L"</subgroup>";
+	xml += L"</group>";
+	xml += L"</binding>";
 	xml += L"</visual></tile>";
 
 	auto updater = TileUpdateManager::CreateTileUpdaterForSecondaryTile(group);
@@ -711,9 +695,4 @@ void NotificationTask::UpdatePhoneCall(String^ caption, String^ message, String^
 		Sleep(1000000);
 		//VoIPCallTask::Current->UpdatePhoneCall(caption, message, sound, launch, tag, group, picture, date, loc_key);
 	});
-}
-
-bool NotificationTask::IsMobile()
-{
-	return ApiInformation::IsTypePresent("Windows.UI.ViewManagement.StatusBar");
 }
