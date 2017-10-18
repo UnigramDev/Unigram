@@ -1311,4 +1311,60 @@ Duration: {1}</value>
   <data name="MessageUnpin" xml:space="preserve">
     <value>Unpin message</value>
   </data>
+  <data name="SettingsMasksArchivedPage_Footer.Text" xml:space="preserve">
+    <value>You can have up to 200 sets of masks.
+Unused sets are archived when you add more.</value>
+    <comment>ios</comment>
+  </data>
+  <data name="SettingsMasksArchivedPage_Header.Text" xml:space="preserve">
+    <value>Archived Masks</value>
+    <comment>StickerPacksSettings.ArchivedMasks</comment>
+  </data>
+  <data name="SettingsMasksPage_ArchivedStickers.Content" xml:space="preserve">
+    <value>Archived Masks</value>
+    <comment>StickerPacksSettings.ArchivedMasks</comment>
+  </data>
+  <data name="SettingsMasksPage_Footer.Text" xml:space="preserve">
+    <value>You can add masks to photos and videos you send. To do this, open the photo editor before sending a photo or video.</value>
+    <comment>MaskStickerSettings.Info</comment>
+  </data>
+  <data name="SettingsMasksPage_Header.Text" xml:space="preserve">
+    <value>Masks</value>
+    <comment>MaskStickerSettings.Title</comment>
+  </data>
+  <data name="SettingsStickersArchivedPage_Footer.Text" xml:space="preserve">
+    <value>You can have up to 200 sticker sets installed.
+Unused stickers are archived when you add more.</value>
+    <comment>StickerPacksSettings.ArchivedPacks.Info</comment>
+  </data>
+  <data name="SettingsStickersArchivedPage_Header.Text" xml:space="preserve">
+    <value>Archived Stickers</value>
+    <comment>StickerPacksSettings.ArchivedPacks</comment>
+  </data>
+  <data name="SettingsStickersFeaturedPage_Header.Text" xml:space="preserve">
+    <value>Trending Stickers</value>
+    <comment>StickerPacksSettings.FeaturedPacks</comment>
+  </data>
+  <data name="SettingsStickersPage_ArchivedStickers.Content" xml:space="preserve">
+    <value>Archived Stickers</value>
+    <comment>StickerPacksSettings.ArchivedPacks</comment>
+  </data>
+  <data name="SettingsStickersPage_FeaturedStickers.Content" xml:space="preserve">
+    <value>Trending Stickers</value>
+    <comment>StickerPacksSettings.FeaturedPacks</comment>
+  </data>
+  <data name="SettingsStickersPage_Footer.[using:Unigram.Common]MessageHelper.Text" xml:space="preserve">
+    <value>Artists are welcome to add their own sticker sets using our @stickers bot.
+
+Tap on a sticker to view and add the whole set.</value>
+    <comment>StickerPacksSettings.ManagingHelp</comment>
+  </data>
+  <data name="SettingsStickersPage_Header.Text" xml:space="preserve">
+    <value>Stickers</value>
+    <comment>ChatSettings.Stickers</comment>
+  </data>
+  <data name="SettingsStickersPage_Masks.Content" xml:space="preserve">
+    <value>Masks</value>
+    <comment>MaskStickerSettings.Title</comment>
+  </data>
 </root>

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views.Settings"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:common="using:Unigram.Common"
     xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,7 +15,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Stickers"/>
+        <controls:PageHeader x:Uid="SettingsStickersPage_Header" Text="Stickers"/>
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
                   ItemTemplate="{StaticResource StickerSetItemTemplate}"
@@ -28,19 +29,26 @@
                   Grid.Row="1">
             <ListView.Header>
                 <StackPanel>
-                    <controls:BadgeButton 
-                        Content="Trending stickers"
+                    <controls:BadgeButton
+                        x:Uid="SettingsStickersPage_FeaturedStickers"
+                        Content="Trending Stickers"
                         Click="FeaturedStickers_Click"
                         Badge="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay}"
                         BadgeVisibility="{x:Bind ViewModel.FeaturedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Style="{StaticResource BadgeButtonStyle}"/>
                     <controls:BadgeButton
-                        Content="Archived stickers"
+                        x:Uid="SettingsStickersPage_ArchivedStickers"
+                        Content="Archived Stickers"
                         Click="ArchivedStickers_Click"
                         Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Style="{StaticResource BadgeButtonStyle}"/>
-                    <controls:HyperButton Content="Masks" Click="Masks_Click" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Style="{StaticResource HyperButtonStyle}"/>
+                    <controls:HyperButton
+                        x:Uid="SettingsStickersPage_Masks"
+                        Content="Masks"
+                        Click="Masks_Click"
+                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                        Style="{StaticResource HyperButtonStyle}"/>
                 </StackPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>
@@ -49,6 +57,9 @@
                     <Setter Property="Padding" Value="12,0,0,0"/>
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.Footer>
+                <TextBlock x:Uid="SettingsStickersPage_Footer" common:MessageHelper.Text="Artists are welcome to add their own sticker sets using our @stickers bot.&#10;&#10;Tap on a sticker to view and add the whole set." Margin="12" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+            </ListView.Footer>
         </ListView>
     </Grid>
 </Page>
