@@ -27,9 +27,17 @@ namespace Unigram.Controls.Views
 
         public StorageFile Result { get; private set; }
 
-        public EditYourPhotoView(StorageFile file)
+        public EditYourPhotoView(StorageFile file, ImageCroppingProportions croppingProportions = ImageCroppingProportions.Square, bool isCropEnabled = false, bool useRoundCropper = true)
         {
             InitializeComponent();
+
+            Cropper.Proportions = croppingProportions;
+            Cropper.IsCropEnabled = isCropEnabled;
+
+            if (useRoundCropper)
+            {
+                Cropper.Style = App.Current.Resources["RoundImageCropperStyle"] as Style;
+            }
 
             //_inkPresenter = Canvas.InkPresenter;
             //_inkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Mouse | CoreInputDeviceTypes.Pen | CoreInputDeviceTypes.Touch;

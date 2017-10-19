@@ -432,7 +432,15 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <controls:GlyphButton Glyph="&#xE7A8;" IsEnabled="False"/>
+                <controls:GlyphButton Click="Crop_Click" 
+                                      Glyph="&#xE7A8;"
+                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                      IsEnabled="{Binding SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" />
+                <controls:GlyphButton Click="Uncrop_Click" 
+                                      Glyph="&#xE7A7;"
+                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                      IsEnabled="{Binding SelectedItem.IsCropped, Mode=OneWay}" />
+                <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="1"/>
                 <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="1"/>
                 <controls:GlyphButton Click="Compress_Click"
                                       Glyph="{Binding SelectedItem.Compression, Mode=OneWay, Converter={StaticResource CompressionToGlyphConverter}}"

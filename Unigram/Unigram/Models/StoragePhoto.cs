@@ -32,9 +32,33 @@ namespace Unigram.Models
             }
         }
 
+        private StorageFile _croppedFile;
+        public StorageFile CroppedFile
+        {
+            get { return _croppedFile; }
+            set
+            {
+                _croppedFile = value;
+                if (_croppedFile != null)
+                {
+                    LoadCroppedPreview();
+                }
+                else
+                {
+                    LoadPreview();
+                }
+            }
+        }
+
         private async void LoadPreview()
         {
             _preview = await ImageHelper.GetPreviewBitmapAsync(File);
+            RaisePropertyChanged(() => Preview);
+        }
+
+        private async void LoadCroppedPreview()
+        {
+            _preview = await ImageHelper.GetPreviewBitmapAsync(CroppedFile);
             RaisePropertyChanged(() => Preview);
         }
 
@@ -43,6 +67,7 @@ namespace Unigram.Models
             var item = new StoragePhoto(File);
             item._thumbnail = _thumbnail;
             item._preview = _preview;
+            item._croppedFile = _croppedFile;
 
             return item;
         }
