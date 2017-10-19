@@ -293,19 +293,19 @@ String^ NotificationTask::GetGroup(JsonObject^ custom)
 	{
 		if (custom->HasKey("chat_id"))
 		{
-			return String::Concat("c", custom->GetNamedString("chat_id"));
+			return String::Concat("c", safe_cast<int>(custom->GetNamedNumber("chat_id")));
 		}
 		else if (custom->HasKey("channel_id"))
 		{
-			return String::Concat("c", custom->GetNamedString("channel_id"));
+			return String::Concat("c", safe_cast<int>(custom->GetNamedNumber("channel_id")));
 		}
 		else if (custom->HasKey("from_id"))
 		{
-			return String::Concat("u", custom->GetNamedString("from_id"));
+			return String::Concat("u", safe_cast<int>(custom->GetNamedNumber("from_id")));
 		}
 		else if (custom->HasKey("contact_id"))
 		{
-			return String::Concat("u", custom->GetNamedString("contact_id"));
+			return String::Concat("u", safe_cast<int>(custom->GetNamedNumber("contact_id")));
 		}
 	}
 
