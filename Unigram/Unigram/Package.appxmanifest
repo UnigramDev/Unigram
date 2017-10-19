@@ -85,7 +85,7 @@
             <uap3:Host Name="telegram.dog" />
           </uap3:AppUriHandler>
         </uap3:Extension>
-        <uap4:Extension Category="windows.contactPanel" />
+        <!--<uap4:Extension Category="windows.contactPanel" />-->
         <uap5:Extension Category="windows.startupTask" Executable="Unigram.exe" EntryPoint="Unigram.App">
           <uap5:StartupTask TaskId="Telegram" Enabled="false" DisplayName="Unigram" />
         </uap5:Extension>
