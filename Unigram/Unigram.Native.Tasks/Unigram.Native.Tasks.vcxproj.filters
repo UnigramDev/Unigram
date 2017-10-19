@@ -23,8 +23,8 @@
     <Filter Include="Strings\nl">
       <UniqueIdentifier>{eaee6506-a5fa-4400-b253-9788638a2e29}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Strings\pt">
-      <UniqueIdentifier>{6f0d56ed-bb30-45d2-b762-64710c5749a1}</UniqueIdentifier>
+    <Filter Include="Strings\pt-BR">
+      <UniqueIdentifier>{fe309f13-26d4-48b5-87c9-fb71da65e290}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -53,8 +53,8 @@
     <PRIResource Include="..\unigram.tasks\strings\nl\resources.resw">
       <Filter>Strings\nl</Filter>
     </PRIResource>
-    <PRIResource Include="..\unigram.tasks\strings\pt\resources.resw">
-      <Filter>Strings\pt</Filter>
+    <PRIResource Include="..\Unigram.Tasks\Strings\pt-BR\Resources.resw">
+      <Filter>Strings\pt-BR</Filter>
     </PRIResource>
   </ItemGroup>
 </Project>

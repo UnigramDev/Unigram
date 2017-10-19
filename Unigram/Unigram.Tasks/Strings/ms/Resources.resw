@@ -118,234 +118,234 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AUTH_REGION" xml:space="preserve">
-    <value>Accesso da un nuovo dispositivo {0}, posizione: {1}</value>
+    <value>Daftar masuk dari perantis baru {0}, lokasi: {1}</value>
   </data>
   <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
-    <value>ha pubblicato un messaggio vocale</value>
+    <value>pos mesej suara</value>
   </data>
   <data name="CHANNEL_MESSAGE_CONTACT" xml:space="preserve">
-    <value>ha pubblicato un contatto</value>
+    <value>pos kenalan</value>
   </data>
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
-    <value>ha pubblicato un file</value>
+    <value>pos dokumen</value>
   </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
-    <value>ti ha invitato a giocare a {1}</value>
+    <value>jemput anda untuk bermain {1}</value>
   </data>
   <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
-    <value>ha pubblicato una posizione</value>
+    <value>pos peta</value>
   </data>
   <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>ha pubblicato una posizione attuale</value>
+    <value>menyiarkan lokasi secara langsung</value>
   </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
-    <value>ha pubblicato una GIF</value>
+    <value>pos GIF</value>
   </data>
   <data name="CHANNEL_MESSAGE_NOTEXT" xml:space="preserve">
-    <value>ha pubblicato un messaggio</value>
+    <value>pos mesej</value>
   </data>
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
-    <value>ha pubblicato una foto</value>
+    <value>pos foto</value>
   </data>
   <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
-    <value>ha pubblicato un videomessaggio</value>
+    <value>pos mesej video</value>
   </data>
   <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
-    <value>ha pubblicato uno {1}sticker</value>
+    <value>pos {1}sticker</value>
   </data>
   <data name="CHANNEL_MESSAGE_TEXT" xml:space="preserve">
-    <value>{1}</value>
+    <value>{1} </value>
   </data>
   <data name="CHANNEL_MESSAGE_VIDEO" xml:space="preserve">
-    <value>ha pubblicato un video</value>
+    <value>pos video</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
-    <value>{0} ha invitato {2} nel gruppo</value>
+    <value>{0} jemput {2} ke group</value>
   </data>
   <data name="CHAT_ADD_YOU" xml:space="preserve">
-    <value>{0} ti ha invitato nel gruppo</value>
+    <value>{0} jemput anda ke group</value>
   </data>
   <data name="CHAT_CREATED" xml:space="preserve">
-    <value>{0} ti ha invitato nel gruppo</value>
+    <value>{0} jemput anda ke group</value>
   </data>
   <data name="CHAT_DELETE_MEMBER" xml:space="preserve">
-    <value>{0} ha rimosso {2} dal gruppo</value>
+    <value>{0} keluarkan {2} dari group</value>
   </data>
   <data name="CHAT_DELETE_YOU" xml:space="preserve">
-    <value>{0} ti ha rimosso dal gruppo</value>
+    <value>{0} keluarkan anda dari group</value>
   </data>
   <data name="CHAT_LEFT" xml:space="preserve">
-    <value>{0} ha lasciato il gruppo</value>
+    <value>{0} keluar dari group</value>
   </data>
   <data name="CHAT_MESSAGE_AUDIO" xml:space="preserve">
-    <value>{0} ha inviato un messaggio vocale al gruppo</value>
+    <value>{0} kirim mesej suara ke group</value>
   </data>
   <data name="CHAT_MESSAGE_CONTACT" xml:space="preserve">
-    <value>{0} ha condiviso un contatto nel gruppo</value>
+    <value>{0} kongsi kenalan di group</value>
   </data>
   <data name="CHAT_MESSAGE_DOC" xml:space="preserve">
-    <value>{0} ha inviato un file al gruppo</value>
+    <value>{0} kirim fail ke group</value>
   </data>
   <data name="CHAT_MESSAGE_FWDS" xml:space="preserve">
-    <value>{0} ha inoltrato {2} messaggi al gruppo</value>
+    <value>{0} majukan {2} mesej ke group</value>
   </data>
   <data name="CHAT_MESSAGE_GAME" xml:space="preserve">
-    <value>{0} ha invitato il gruppo a giocare a {2}</value>
+    <value>{0} jemput group ini untuk bermain {2}</value>
   </data>
   <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
-    <value>{0} ha inviato una posizione al gruppo</value>
+    <value>{0} kirim peta ke group</value>
   </data>
   <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>{0} ha iniziato a condividere la sua posizione attuale</value>
+    <value>{0} mula berkongsi lokasi secara langsung</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
-    <value>{0} ha inviato una GIF al gruppo</value>
+    <value>{0} kirim GIF ke group</value>
   </data>
   <data name="CHAT_MESSAGE_INVOICE" xml:space="preserve">
-    <value>{0} ha inviato una fattura per {2} al gruppo</value>
+    <value>{0} mengirim invois untuk {2} kepada group</value>
   </data>
   <data name="CHAT_MESSAGE_NOTEXT" xml:space="preserve">
-    <value>{0} ha inviato un messaggio al gruppo</value>
+    <value>{0} kirim mesej ke group</value>
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
-    <value>{0} ha inviato una foto al gruppo</value>
+    <value>{0} kirim gambar ke group</value>
   </data>
   <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
-    <value>{0} ha inviato un videomessaggio al gruppo</value>
+    <value>{0} kirim mesej video ke group</value>
   </data>
   <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
-    <value>{0} ha inviato uno {2}sticker al gruppo</value>
+    <value>{0} kirim {2}sticker ke group</value>
   </data>
   <data name="CHAT_MESSAGE_TEXT" xml:space="preserve">
     <value>{0}: {2}</value>
   </data>
   <data name="CHAT_MESSAGE_VIDEO" xml:space="preserve">
-    <value>{0} ha inviato un video al gruppo</value>
+    <value>{0} kirim video ke group</value>
   </data>
   <data name="CHAT_PHOTO_EDITED" xml:space="preserve">
-    <value>{0} ha cambiato la foto del gruppo</value>
+    <value>{0} sunting gambar group</value>
   </data>
   <data name="CHAT_RETURNED" xml:space="preserve">
-    <value>{0} è tornato nel gruppo</value>
+    <value>{0} kembali ke group</value>
   </data>
   <data name="CHAT_TITLE_EDITED" xml:space="preserve">
-    <value>{0} ha cambiato il nome del gruppo</value>
+    <value>{0} sunting nama group</value>
   </data>
   <data name="CONTACT_JOINED" xml:space="preserve">
-    <value>{0} si è unito a Telegram!</value>
+    <value>{0} sertai Telegram!</value>
   </data>
   <data name="ENCRYPTED_MESSAGE" xml:space="preserve">
-    <value>Hai un nuovo messaggio{0}</value>
+    <value>Anda ada mesej baru{0}</value>
   </data>
   <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
-    <value>La tua chat segreta è stata accettata{0}</value>
+    <value>Permintaan penyulitan anda diterima{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
-    <value>Nuova richiesta di crittografia{0}</value>
+    <value>Minta penyulitan baru{0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
-    <value>Hai un nuovo messaggio{0}</value>
+    <value>Anda ada mesej baru{0}</value>
   </data>
   <data name="MESSAGE_AUDIO" xml:space="preserve">
-    <value>ti ha inviato un messaggio vocale</value>
+    <value>kirim mesej suara</value>
   </data>
   <data name="MESSAGE_CONTACT" xml:space="preserve">
-    <value>ha condiviso un contatto con te</value>
+    <value>kongsi kenalan dengan anda </value>
   </data>
   <data name="MESSAGE_DOC" xml:space="preserve">
-    <value>ti ha inviato un file</value>
+    <value>kirim fail  </value>
   </data>
   <data name="MESSAGE_FWDS" xml:space="preserve">
-    <value>ti ha inoltrato {1} messaggi</value>
+    <value>majukan kepada anda {1} mesej</value>
   </data>
   <data name="MESSAGE_GAME" xml:space="preserve">
-    <value>ti ha invitato a giocare a {1}</value>
+    <value>jemput anda untuk bermain {1}</value>
   </data>
   <data name="MESSAGE_GEO" xml:space="preserve">
-    <value>ti ha inviato una posizione</value>
+    <value>kirim peta</value>
   </data>
   <data name="MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>ha iniziato a condividere la sua posizione attuale</value>
+    <value>mula berkongsi lokasi secara langsung</value>
   </data>
   <data name="MESSAGE_GIF" xml:space="preserve">
-    <value>ti ha inviato una GIF</value>
+    <value>kirim GIF</value>
   </data>
   <data name="MESSAGE_INVOICE" xml:space="preserve">
-    <value>ti ha inviato una fattura per {1}</value>
+    <value>mengirim anda invois untuk {1}</value>
   </data>
   <data name="MESSAGE_NOTEXT" xml:space="preserve">
-    <value>ti ha inviato un messaggio</value>
+    <value>kirim mesej</value>
   </data>
   <data name="MESSAGE_PHOTO" xml:space="preserve">
-    <value>ti ha inviato una foto</value>
+    <value>kirim foto</value>
   </data>
   <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
-    <value>ti ha inviato una foto con autodistruzione</value>
+    <value>kirim foto musnah-sendiri </value>
   </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
-    <value>ti ha inviato un videomessaggio</value>
+    <value>kirim mesej video</value>
   </data>
   <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
-    <value>ha fatto uno screenshot!</value>
+    <value>ambil gambar skrin!</value>
   </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
-    <value>ti ha inviato uno {1}sticker</value>
+    <value>kirim anda {1}sticker</value>
   </data>
   <data name="MESSAGE_TEXT" xml:space="preserve">
-    <value>{1}</value>
+    <value>{1} </value>
   </data>
   <data name="MESSAGE_VIDEO" xml:space="preserve">
-    <value>ti ha inviato un video</value>
+    <value>kirim video</value>
   </data>
   <data name="MESSAGE_VIDEO_SECRET" xml:space="preserve">
-    <value>ti ha inviato un video con autodistruzione</value>
+    <value>kirim video musnah-sendiri </value>
   </data>
   <data name="PHONE_CALL_MISSED" xml:space="preserve">
-    <value>Hai perso una chiamata da {0}</value>
+    <value>Anda terlepas panggilan daripada {0}</value>
   </data>
   <data name="PHONE_CALL_REQUEST" xml:space="preserve">
-    <value>{0} ti sta chiamando</value>
+    <value>{0} memanggil anda</value>
   </data>
   <data name="PINNED_AUDIO" xml:space="preserve">
-    <value>ha fissato un messaggio vocale</value>
+    <value>tampal mesej suara</value>
   </data>
   <data name="PINNED_CONTACT" xml:space="preserve">
-    <value>ha fissato un contatto</value>
+    <value>tampal kenalan</value>
   </data>
   <data name="PINNED_DOC" xml:space="preserve">
-    <value>ha fissato un file</value>
+    <value>tampal fail</value>
   </data>
   <data name="PINNED_GAME" xml:space="preserve">
-    <value>ha fissato un gioco</value>
+    <value>tampal game</value>
   </data>
   <data name="PINNED_GEO" xml:space="preserve">
-    <value>ha fissato una posizione</value>
+    <value>tampal peta</value>
   </data>
   <data name="PINNED_GEOLIVE" xml:space="preserve">
-    <value>ha fissato una posizione attuale</value>
+    <value>tampal lokasi secara langsung</value>
   </data>
   <data name="PINNED_GIF" xml:space="preserve">
-    <value>ha fissato una GIF</value>
+    <value>tampal GIF</value>
   </data>
   <data name="PINNED_INVOICE" xml:space="preserve">
-    <value>ha fissato una fattura</value>
+    <value>menampal invois</value>
   </data>
   <data name="PINNED_NOTEXT" xml:space="preserve">
-    <value>ha fissato un messaggio</value>
+    <value>tampal mesej</value>
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
-    <value>ha fissato una foto</value>
+    <value>tampal foto </value>
   </data>
   <data name="PINNED_ROUND" xml:space="preserve">
-    <value>ha fissato un videomessaggio</value>
+    <value>tampal mesej video</value>
   </data>
   <data name="PINNED_STICKER" xml:space="preserve">
-    <value>ha fissato uno {1}sticker</value>
+    <value>tampal {1}sticker</value>
   </data>
   <data name="PINNED_TEXT" xml:space="preserve">
-    <value>ha fissato "{1}"</value>
+    <value>tampal "{1}"</value>
   </data>
   <data name="PINNED_VIDEO" xml:space="preserve">
-    <value>ha fissato un video</value>
+    <value>tampal video</value>
   </data>
 </root>

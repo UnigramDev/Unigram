@@ -169,13 +169,13 @@
     <value>{0} invited you to the group</value>
   </data>
   <data name="CHAT_DELETE_MEMBER" xml:space="preserve">
-    <value>{0} kicked {2} from the group</value>
+    <value>{0} removed {2} from the group</value>
   </data>
   <data name="CHAT_DELETE_YOU" xml:space="preserve">
-    <value>{0} kicked you from the group</value>
+    <value>{0} removed you from the group</value>
   </data>
   <data name="CHAT_LEFT" xml:space="preserve">
-    <value>{0} has left the group</value>
+    <value>{0} left the group</value>
   </data>
   <data name="CHAT_MESSAGE_AUDIO" xml:space="preserve">
     <value>{0} sent a voice message to the group</value>
@@ -184,7 +184,7 @@
     <value>{0} shared a contact in the group</value>
   </data>
   <data name="CHAT_MESSAGE_DOC" xml:space="preserve">
-    <value>{0} sent a document to the group</value>
+    <value>{0} sent a file to the group</value>
   </data>
   <data name="CHAT_MESSAGE_FWDS" xml:space="preserve">
     <value>{0} forwarded {2} messages to the group</value>
@@ -202,7 +202,7 @@
     <value>{0} sent a GIF to the group</value>
   </data>
   <data name="CHAT_MESSAGE_INVOICE" xml:space="preserve">
-    <value>{0} sent an invoice for {2}</value>
+    <value>{0} sent an invoice for {2} to the group</value>
   </data>
   <data name="CHAT_MESSAGE_NOTEXT" xml:space="preserve">
     <value>{0} sent a message to the group</value>
@@ -226,7 +226,7 @@
     <value>{0} edited the group's photo</value>
   </data>
   <data name="CHAT_RETURNED" xml:space="preserve">
-    <value>{0} has returned to the group</value>
+    <value>{0} returned to the group</value>
   </data>
   <data name="CHAT_TITLE_EDITED" xml:space="preserve">
     <value>{0} edited the group's name</value>
@@ -238,7 +238,7 @@
     <value>You have a new message{0}</value>
   </data>
   <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
-    <value>Your encryption request was accepted{0}</value>
+    <value>Your secret chat was accepted{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
     <value>New encryption request{0}</value>
@@ -301,7 +301,7 @@
     <value>sent you a self-destructing video</value>
   </data>
   <data name="PHONE_CALL_MISSED" xml:space="preserve">
-    <value>Missed call</value>
+    <value>You missed a call from {0}</value>
   </data>
   <data name="PHONE_CALL_REQUEST" xml:space="preserve">
     <value>{0} is calling you</value>
