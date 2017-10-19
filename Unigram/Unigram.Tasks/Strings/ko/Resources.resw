@@ -118,234 +118,234 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AUTH_REGION" xml:space="preserve">
-    <value>Accesso da un nuovo dispositivo {0}, posizione: {1}</value>
+    <value>{1}에서 {0} 기기로 로그인함</value>
   </data>
   <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
-    <value>ha pubblicato un messaggio vocale</value>
+    <value>님이 음성메시지를 보냈습니다</value>
   </data>
   <data name="CHANNEL_MESSAGE_CONTACT" xml:space="preserve">
-    <value>ha pubblicato un contatto</value>
+    <value>님이 연락처를 공유했습니다</value>
   </data>
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
-    <value>ha pubblicato un file</value>
+    <value>님이 문서를 보냈습니다</value>
   </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
-    <value>ti ha invitato a giocare a {1}</value>
+    <value>님이 {1} 게임으로 초대했습니다</value>
   </data>
   <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
-    <value>ha pubblicato una posizione</value>
+    <value>님이 위치를 보냈습니다</value>
   </data>
   <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>ha pubblicato una posizione attuale</value>
+    <value>님이 실시간 위치를 전송하였습니다.</value>
   </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
-    <value>ha pubblicato una GIF</value>
+    <value>님이 GIF파일을 보냈습니다</value>
   </data>
   <data name="CHANNEL_MESSAGE_NOTEXT" xml:space="preserve">
-    <value>ha pubblicato un messaggio</value>
+    <value>님이 메시지를 보냈습니다</value>
   </data>
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
-    <value>ha pubblicato una foto</value>
+    <value>님이 사진을 보냈습니다</value>
   </data>
   <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
-    <value>ha pubblicato un videomessaggio</value>
+    <value>님이 영상메시지를 보냈습니다</value>
   </data>
   <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
-    <value>ha pubblicato uno {1}sticker</value>
+    <value>님이 {1}스티커를 작성했습니다.</value>
   </data>
   <data name="CHANNEL_MESSAGE_TEXT" xml:space="preserve">
     <value>{1}</value>
   </data>
   <data name="CHANNEL_MESSAGE_VIDEO" xml:space="preserve">
-    <value>ha pubblicato un video</value>
+    <value>님이 동영상을 보냈습니다</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
-    <value>{0} ha invitato {2} nel gruppo</value>
+    <value>{0}님이 그룹에 {2}님을 초대했습니다</value>
   </data>
   <data name="CHAT_ADD_YOU" xml:space="preserve">
-    <value>{0} ti ha invitato nel gruppo</value>
+    <value>{0}님이 그룹에 초대했습니다</value>
   </data>
   <data name="CHAT_CREATED" xml:space="preserve">
-    <value>{0} ti ha invitato nel gruppo</value>
+    <value>{0}님이 그룹으로 초대했습니다</value>
   </data>
   <data name="CHAT_DELETE_MEMBER" xml:space="preserve">
-    <value>{0} ha rimosso {2} dal gruppo</value>
+    <value>{1} 그룹방에서 {2} 님을 {0} 님이 내보냈습니다.</value>
   </data>
   <data name="CHAT_DELETE_YOU" xml:space="preserve">
-    <value>{0} ti ha rimosso dal gruppo</value>
+    <value>{1} 그룹방에서 {0}님이 회원님을 내보냈습니다.</value>
   </data>
   <data name="CHAT_LEFT" xml:space="preserve">
-    <value>{0} ha lasciato il gruppo</value>
+    <value>{0}님이 그룹을 떠났습니다</value>
   </data>
   <data name="CHAT_MESSAGE_AUDIO" xml:space="preserve">
-    <value>{0} ha inviato un messaggio vocale al gruppo</value>
+    <value>{0} 님이 그룹에 음성 메시지를 보냈습니다</value>
   </data>
   <data name="CHAT_MESSAGE_CONTACT" xml:space="preserve">
-    <value>{0} ha condiviso un contatto nel gruppo</value>
+    <value>{0}님이 그룹에 연락처를 공유했습니다</value>
   </data>
   <data name="CHAT_MESSAGE_DOC" xml:space="preserve">
-    <value>{0} ha inviato un file al gruppo</value>
+    <value>{0}님이 그룹에 파일을 보냈습니다</value>
   </data>
   <data name="CHAT_MESSAGE_FWDS" xml:space="preserve">
-    <value>{0} ha inoltrato {2} messaggi al gruppo</value>
+    <value>{1} 그룹방에 {2} 개의 메시지를 {0} 님이 전달하였습니다.</value>
   </data>
   <data name="CHAT_MESSAGE_GAME" xml:space="preserve">
-    <value>{0} ha invitato il gruppo a giocare a {2}</value>
+    <value>{0} 님이 그룹에 {2} 게임으로 초대했습니다</value>
   </data>
   <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
-    <value>{0} ha inviato una posizione al gruppo</value>
+    <value>{0}님이 그룹으로 위치를 보냈습니다</value>
   </data>
   <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>{0} ha iniziato a condividere la sua posizione attuale</value>
+    <value>{0}님이과 함께 실시간 위치를 공유하기 시작했습니다.</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
-    <value>{0} ha inviato una GIF al gruppo</value>
+    <value>{0} 님께서 그룹에 GIF파일을 보냈습니다</value>
   </data>
   <data name="CHAT_MESSAGE_INVOICE" xml:space="preserve">
-    <value>{0} ha inviato una fattura per {2} al gruppo</value>
+    <value>{2}에 대한 인보이스를 {0}님이그룹에 보냈습니다.</value>
   </data>
   <data name="CHAT_MESSAGE_NOTEXT" xml:space="preserve">
-    <value>{0} ha inviato un messaggio al gruppo</value>
+    <value>{0}님이 그룹으로 메시지를 보냈습니다</value>
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
-    <value>{0} ha inviato una foto al gruppo</value>
+    <value>{0}님이 그룹으로 사진을 보냈습니다</value>
   </data>
   <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
-    <value>{0} ha inviato un videomessaggio al gruppo</value>
+    <value>{0} 님이 그룹에 영상 메시지를 보냈습니다</value>
   </data>
   <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
-    <value>{0} ha inviato uno {2}sticker al gruppo</value>
+    <value>{0}님이 {2}스티커를그룹방에 보냈습니다</value>
   </data>
   <data name="CHAT_MESSAGE_TEXT" xml:space="preserve">
     <value>{0}: {2}</value>
   </data>
   <data name="CHAT_MESSAGE_VIDEO" xml:space="preserve">
-    <value>{0} ha inviato un video al gruppo</value>
+    <value>{0}님이 그룹으로 동영상을 보냈습니다</value>
   </data>
   <data name="CHAT_PHOTO_EDITED" xml:space="preserve">
-    <value>{0} ha cambiato la foto del gruppo</value>
+    <value>{0}님이 그룹의 사진을 변경했습니다</value>
   </data>
   <data name="CHAT_RETURNED" xml:space="preserve">
-    <value>{0} è tornato nel gruppo</value>
+    <value>{0}님이 그룹으로 되돌아왔습니다</value>
   </data>
   <data name="CHAT_TITLE_EDITED" xml:space="preserve">
-    <value>{0} ha cambiato il nome del gruppo</value>
+    <value>{0}님이 그룹의 이름을 변경했습니다</value>
   </data>
   <data name="CONTACT_JOINED" xml:space="preserve">
-    <value>{0} si è unito a Telegram!</value>
+    <value>{0}님이 텔레그램에 가입했습니다!</value>
   </data>
   <data name="ENCRYPTED_MESSAGE" xml:space="preserve">
-    <value>Hai un nuovo messaggio{0}</value>
+    <value>{0} 새 메시지가 있습니다</value>
   </data>
   <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
-    <value>La tua chat segreta è stata accettata{0}</value>
+    <value>암호화 요청이 수락됐습니다{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
-    <value>Nuova richiesta di crittografia{0}</value>
+    <value>새로운 암호화 요청 {0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
-    <value>Hai un nuovo messaggio{0}</value>
+    <value>{0} 새 메시지가 있습니다</value>
   </data>
   <data name="MESSAGE_AUDIO" xml:space="preserve">
-    <value>ti ha inviato un messaggio vocale</value>
+    <value>님이 음성 메시지를 보냈습니다</value>
   </data>
   <data name="MESSAGE_CONTACT" xml:space="preserve">
-    <value>ha condiviso un contatto con te</value>
+    <value>님이 연락처를 공유했습니다</value>
   </data>
   <data name="MESSAGE_DOC" xml:space="preserve">
-    <value>ti ha inviato un file</value>
+    <value>님이 파일을 보냈습니다</value>
   </data>
   <data name="MESSAGE_FWDS" xml:space="preserve">
-    <value>ti ha inoltrato {1} messaggi</value>
+    <value>{1}개의 메시지를 {0}님이 전달하였습니다.</value>
   </data>
   <data name="MESSAGE_GAME" xml:space="preserve">
-    <value>ti ha invitato a giocare a {1}</value>
+    <value>님이 {1} 게임으로 초대했습니다</value>
   </data>
   <data name="MESSAGE_GEO" xml:space="preserve">
-    <value>ti ha inviato una posizione</value>
+    <value>님이 위치를 보냈습니다</value>
   </data>
   <data name="MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>ha iniziato a condividere la sua posizione attuale</value>
+    <value>님이 실시간 위치를 공유하기 시작했습니다.</value>
   </data>
   <data name="MESSAGE_GIF" xml:space="preserve">
-    <value>ti ha inviato una GIF</value>
+    <value>님께서 GIF파일을 보냈습니다</value>
   </data>
   <data name="MESSAGE_INVOICE" xml:space="preserve">
-    <value>ti ha inviato una fattura per {1}</value>
+    <value>{1}에 대한 인보이스를 {0}님이 보냈습니다.</value>
   </data>
   <data name="MESSAGE_NOTEXT" xml:space="preserve">
-    <value>ti ha inviato un messaggio</value>
+    <value>님이 메시지를 보냈습니다</value>
   </data>
   <data name="MESSAGE_PHOTO" xml:space="preserve">
-    <value>ti ha inviato una foto</value>
+    <value>님이 사진을 보냈습니다</value>
   </data>
   <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
-    <value>ti ha inviato una foto con autodistruzione</value>
+    <value>님이 자동삭제되는 사진을 전송했습니다</value>
   </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
-    <value>ti ha inviato un videomessaggio</value>
+    <value>님이 영상 메시지를 보냈습니다</value>
   </data>
   <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
-    <value>ha fatto uno screenshot!</value>
+    <value>님이 화면을 캡춰했습니다!</value>
   </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
-    <value>ti ha inviato uno {1}sticker</value>
+    <value>님이 {1}스티커를 보냈습니다</value>
   </data>
   <data name="MESSAGE_TEXT" xml:space="preserve">
     <value>{1}</value>
   </data>
   <data name="MESSAGE_VIDEO" xml:space="preserve">
-    <value>ti ha inviato un video</value>
+    <value>님이 동영상을 보냈습니다</value>
   </data>
   <data name="MESSAGE_VIDEO_SECRET" xml:space="preserve">
-    <value>ti ha inviato un video con autodistruzione</value>
+    <value>님이 자동삭제되는 동영상을 전송했습니다.</value>
   </data>
   <data name="PHONE_CALL_MISSED" xml:space="preserve">
-    <value>Hai perso una chiamata da {0}</value>
+    <value>{0}으로부터 부재중 전화가 있습니다.</value>
   </data>
   <data name="PHONE_CALL_REQUEST" xml:space="preserve">
-    <value>{0} ti sta chiamando</value>
+    <value>{0}님으로 부터 전화가 왔습니다</value>
   </data>
   <data name="PINNED_AUDIO" xml:space="preserve">
-    <value>ha fissato un messaggio vocale</value>
+    <value>님이 음성메시지를 고정함</value>
   </data>
   <data name="PINNED_CONTACT" xml:space="preserve">
-    <value>ha fissato un contatto</value>
+    <value>님이 연락처를 고정함</value>
   </data>
   <data name="PINNED_DOC" xml:space="preserve">
-    <value>ha fissato un file</value>
+    <value>님이 파일을 고정함</value>
   </data>
   <data name="PINNED_GAME" xml:space="preserve">
-    <value>ha fissato un gioco</value>
+    <value>님이 게임을 고정함</value>
   </data>
   <data name="PINNED_GEO" xml:space="preserve">
-    <value>ha fissato una posizione</value>
+    <value>님이 지도를 고정함</value>
   </data>
   <data name="PINNED_GEOLIVE" xml:space="preserve">
-    <value>ha fissato una posizione attuale</value>
+    <value>님이 실시간 위치를 고정했습니다.</value>
   </data>
   <data name="PINNED_GIF" xml:space="preserve">
-    <value>ha fissato una GIF</value>
+    <value>님이 GIF를 고정함</value>
   </data>
   <data name="PINNED_INVOICE" xml:space="preserve">
-    <value>ha fissato una fattura</value>
+    <value>님이 인보이스를 고정하였습니다</value>
   </data>
   <data name="PINNED_NOTEXT" xml:space="preserve">
-    <value>ha fissato un messaggio</value>
+    <value>님이 메시지를 고정함</value>
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
-    <value>ha fissato una foto</value>
+    <value>님이 사진을 고정함</value>
   </data>
   <data name="PINNED_ROUND" xml:space="preserve">
-    <value>ha fissato un videomessaggio</value>
+    <value>님이 영상메시지를 고정함</value>
   </data>
   <data name="PINNED_STICKER" xml:space="preserve">
-    <value>ha fissato uno {1}sticker</value>
+    <value>님이 {1}스티커를 고정했습니다.</value>
   </data>
   <data name="PINNED_TEXT" xml:space="preserve">
-    <value>ha fissato "{1}"</value>
+    <value>님이 "{1}" 를 고정함</value>
   </data>
   <data name="PINNED_VIDEO" xml:space="preserve">
-    <value>ha fissato un video</value>
+    <value>님이 동영상을 고정함</value>
   </data>
 </root>

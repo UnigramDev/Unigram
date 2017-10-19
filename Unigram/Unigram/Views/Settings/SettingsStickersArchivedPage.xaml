@@ -13,7 +13,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Archived stickers"/>
+        <controls:PageHeader x:Uid="SettingsStickersArchivedPage_Header" Text="Archived Stickers"/>
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
                   ItemTemplate="{StaticResource StickerSetItemTemplate}"
@@ -21,6 +21,9 @@
                   IsItemClickEnabled="True"
                   SelectionMode="None"
                   Grid.Row="1">
+            <ListView.Header>
+                <TextBlock x:Uid="SettingsStickersArchivedPage_Footer" Text="You can have up to 200 sticker sets installed.&#10;Unused stickers are archived when you add more." Margin="12" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+            </ListView.Header>
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
