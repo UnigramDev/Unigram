@@ -229,7 +229,7 @@ namespace Unigram.ViewModels.Settings
                 var settings = result as TLPeerNotifySettings;
                 if (settings != null)
                 {
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         _suppressUpdating = true;
                         PrivateAlert = settings.MuteUntil == 0;
@@ -249,7 +249,7 @@ namespace Unigram.ViewModels.Settings
                 var settings = result as TLPeerNotifySettings;
                 if (settings != null)
                 {
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         _suppressUpdating = true;
                         GroupAlert = settings.MuteUntil == 0;
@@ -271,7 +271,7 @@ namespace Unigram.ViewModels.Settings
             var notifyUsers = update.Peer as TLNotifyUsers;
             if (notifyUsers != null && settings != null)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     PrivateAlert = settings.MuteUntil == 0;
                     PrivatePreview = settings.IsShowPreviews;
@@ -281,7 +281,7 @@ namespace Unigram.ViewModels.Settings
             var notifyChats = update.Peer as TLNotifyChats;
             if (notifyChats != null && settings != null)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     GroupAlert = settings.MuteUntil == 0;
                     GroupPreview = settings.IsShowPreviews;

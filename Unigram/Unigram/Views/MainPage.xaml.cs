@@ -461,6 +461,7 @@ namespace Unigram.Views
                 //UsersListView.IsItemClickEnabled = true;
                 UsersListView.SelectionMode = ListViewSelectionMode.None;
                 UsersListView.SelectedItem = null;
+
                 Separator.BorderThickness = new Thickness(0);
             }
             else
@@ -474,6 +475,7 @@ namespace Unigram.Views
                 //UsersListView.IsItemClickEnabled = false;
                 UsersListView.SelectionMode = ListViewSelectionMode.Single;
                 UsersListView.SelectedItem = _lastSelected;
+
                 Separator.BorderThickness = new Thickness(0, 0, 1, 0);
             }
         }

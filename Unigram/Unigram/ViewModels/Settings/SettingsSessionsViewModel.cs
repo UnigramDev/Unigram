@@ -42,7 +42,7 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(TLUpdateServiceNotification update)
         {
-            Execute.BeginOnUIThread(async () =>
+            BeginOnUIThread(async () =>
             {
                 await UpdateSessionsAsync();
             });

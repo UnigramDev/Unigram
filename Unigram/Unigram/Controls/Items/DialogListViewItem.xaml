@@ -162,15 +162,11 @@
                 <Run x:Name="FromLabel" Foreground="{ThemeResource TelegramDialogLabelFromBrush}"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
             </TextBlock>
 
-            <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}">
-                <!--<ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0,0,4,2" Style="{StaticResource UploadProgressRingStyle}"/>-->
-                <TextBlock Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"
+            <TextBlock Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}"
                            Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
-                           Style="{StaticResource BodyTextBlockStyle}"/>
-                <ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
-            </StackPanel>
-
-
+                           Style="{StaticResource BodyTextBlockStyle}">
+                    <Run Text="{x:Bind ViewModel.TypingSubtitle, Mode=OneWay}"/><Run Text="..."/>
+            </TextBlock>
 
             <Border Visibility="{x:Bind UpdateIsPinned(ViewModel.IsPinned, ViewModel.UnreadCount), Mode=OneWay, FallbackValue=Collapsed}"
                     Width="20"

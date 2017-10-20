@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/17/2017 16:30:58
+// 	Generated: 10/20/2017 18:34:40
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -3392,6 +3392,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessageUnpin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy image"
+        /// </summary>
+        public static string MessageCopyMedia
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageCopyMedia");
             }
         }
     }

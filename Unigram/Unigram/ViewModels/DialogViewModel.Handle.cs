@@ -90,7 +90,7 @@ namespace Unigram.ViewModels
         {
             if (With == args.Dialog.With)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     for (var i = 0; i < Items.Count; i++)
                     {
@@ -110,7 +110,7 @@ namespace Unigram.ViewModels
         {
             if (With is TLUser user && user.Id == update.UserId)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     IsShareContactAvailable = user.HasAccessHash && !user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact;
                     IsAddContactAvailable = user.HasAccessHash && user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact;
@@ -145,7 +145,7 @@ namespace Unigram.ViewModels
 
             if (flag)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     if (args.Draft is TLDraftMessage draft)
                     {
@@ -169,7 +169,7 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateCompletedEventArgs args)
         {
-            Execute.BeginOnUIThread(async () =>
+            BeginOnUIThread(async () =>
             {
                 Items.Clear();
                 IsFirstSliceLoaded = false;
@@ -185,7 +185,7 @@ namespace Unigram.ViewModels
         {
             if (With == args.Dialog.With)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     Items.Clear();
                     SelectedItems.Clear();
@@ -198,7 +198,7 @@ namespace Unigram.ViewModels
         {
             if (With == args.Dialog.With && args.Messages != null)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     foreach (var message in args.Messages)
                     {
@@ -229,7 +229,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateUserStatus statusUpdate)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 if (With is TLUser user)
                 {
@@ -263,7 +263,7 @@ namespace Unigram.ViewModels
 
             if (channel.Id == message.ToId.Id)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     var already = Items.FirstOrDefault(x => x.Id == update.Message.Id) as TLMessage;
                     if (already == null)
@@ -315,7 +315,7 @@ namespace Unigram.ViewModels
 
             if (flag)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     var already = Items.FirstOrDefault(x => x.Id == update.Message.Id) as TLMessage;
                     if (already == null)
@@ -367,7 +367,7 @@ namespace Unigram.ViewModels
 
             if (flag)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     var index = Items.IndexOf(message);
                     Items.RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, message, index, index));
@@ -451,7 +451,7 @@ namespace Unigram.ViewModels
                             //channel.MigratedFromChatId = ((TLChatBase)this.With).Id;
                             //channel.MigratedFromMaxId = serviceMessage.Id;
 
-                            Execute.BeginOnUIThread(() =>
+                            BeginOnUIThread(() =>
                             {
                                 //this.StateService.With = channel;
                                 //this.StateService.RemoveBackEntries = true;
@@ -489,7 +489,7 @@ namespace Unigram.ViewModels
         {
             ProcessReplies(new List<TLMessageBase> { messageCommon });
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 var index = InsertMessageInOrder(Items, messageCommon);
                 if (index != -1)
@@ -634,7 +634,7 @@ namespace Unigram.ViewModels
 
         private void SetRead(TLMessageCommonBase topMessage, Func<TLDialog, int> getUnreadCount)
         {
-            Execute.BeginOnUIThread(delegate
+            BeginOnUIThread(delegate
             {
                 for (int i = 0; i < Items.Count; i++)
                 {
@@ -676,7 +676,7 @@ namespace Unigram.ViewModels
 
                 if (channel.HasBannedRights && channel.BannedRights.IsSendMessages)
                 {
-                    Execute.BeginOnUIThread(() => SetText(null));
+                    BeginOnUIThread(() => SetText(null));
                 }
 
                 if (Full is TLChannelFull channelFull)

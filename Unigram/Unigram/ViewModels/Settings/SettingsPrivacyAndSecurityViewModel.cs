@@ -37,7 +37,7 @@ namespace Unigram.ViewModels.Settings
         {
             ProtoService.GetAccountTTLAsync(result =>
             {
-                Execute.BeginOnUIThread(() => AccountTTL = result.Days);
+                BeginOnUIThread(() => AccountTTL = result.Days);
             });
 
             return base.OnNavigatedToAsync(parameter, mode, state);

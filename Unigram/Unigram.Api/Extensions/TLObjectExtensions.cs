@@ -20,6 +20,47 @@ namespace Telegram.Api
         {
             return source.Substring(startIndex, endIndex - startIndex);
         }
+
+        public static TLPhoto GetPhoto(this TLMessageBase messageBase)
+        {
+            if (messageBase is TLMessage message)
+            {
+                if (message.Media is TLMessageMediaPhoto photoMedia)
+                {
+                    return photoMedia.Photo as TLPhoto;
+                }
+                else if (message?.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+                {
+                    return webPage.Photo as TLPhoto;
+                }
+            }
+            else if (messageBase is TLMessageService serviceMessage)
+            {
+                if (serviceMessage.Action is TLMessageActionChatEditPhoto editPhotoAction)
+                {
+                    return editPhotoAction.Photo as TLPhoto;
+                }
+            }
+
+            return null;
+        }
+
+        public static TLDocument GetDocument(this TLMessageBase messageBase)
+        {
+            if (messageBase is TLMessage message)
+            {
+                if (message.Media is TLMessageMediaDocument documentMedia)
+                {
+                    return documentMedia.Document as TLDocument;
+                }
+                else if (message?.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+                {
+                    return webPage.Document as TLDocument;
+                }
+            }
+
+            return null;
+        }
     }
     //    public static void NullableToStream(this TLObject obj, Stream output)
     //    {

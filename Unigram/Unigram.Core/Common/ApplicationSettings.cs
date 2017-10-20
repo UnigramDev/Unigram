@@ -132,8 +132,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 086660;
-        public const string CurrentChangelog = "- Share your location with friends in real time with the new Live Locations. \n- Control whether new members in supergroups can see earlier message history.\n- Easily recognize messages from group admins by the new ‘admin’ badge.\n- Select and send multiple photos and videos from the attach flyout.\n- Send videos choosing compression level.";
+        public const int CurrentVersion = 086910;
+        public const string CurrentChangelog = "- Share your location with friends in real time with the new Live Locations. \n- Control whether new members in supergroups can see earlier message history.\n- Easily recognize messages from group admins by the new ‘admin’ badge.\n- Select and send multiple photos and videos from the attach flyout.\n- Send videos choosing compression level.\n- Launch Unigram when system starts.";
 
         private int? _appVersion;
         public int Version
