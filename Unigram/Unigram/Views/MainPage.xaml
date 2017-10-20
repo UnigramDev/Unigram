@@ -88,13 +88,13 @@
                                               HorizontalContentAlignment="Stretch"
                                               VerticalContentAlignment="Stretch"/>
 
-                            <toolkit:GridSplitter
+                            <!--<toolkit:GridSplitter
                                 Background="Transparent"
                                 HorizontalAlignment="Left"
                                 Grid.Column="1"
                                 ResizeDirection="Auto"
                                 ResizeBehavior="BasedOnAlignment"
-                                CursorBehavior="ChangeOnSplitterHover"/>
+                                CursorBehavior="ChangeOnSplitterHover"/>-->
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
