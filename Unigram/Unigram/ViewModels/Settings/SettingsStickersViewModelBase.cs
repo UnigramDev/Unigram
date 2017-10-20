@@ -137,7 +137,7 @@ namespace Unigram.ViewModels.Settings
 
         public MvxObservableCollection<TLMessagesStickerSet> Items { get; private set; }
 
-        public RelayCommand<TLMessagesStickerSet> ReorderCommand => new RelayCommand<TLMessagesStickerSet>(ReorderExecute);
+        public RelayCommand<TLMessagesStickerSet> ReorderCommand { get; } = new RelayCommand<TLMessagesStickerSet>(ReorderExecute);
         private void ReorderExecute(TLMessagesStickerSet set)
         {
             var stickers = _stickersService.GetStickerSets(_type);

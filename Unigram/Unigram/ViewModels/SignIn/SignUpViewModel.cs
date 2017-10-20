@@ -69,8 +69,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
             if (_sentCode == null)

@@ -77,7 +77,7 @@ namespace Unigram.ViewModels.Settings
 
         #endregion
 
-        public RelayCommand PasswordCommand => new RelayCommand(PasswordExecute);
+        public RelayCommand PasswordCommand { get; } = new RelayCommand(PasswordExecute);
         private async void PasswordExecute()
         {
             var response = await ProtoService.GetPasswordAsync();
@@ -98,7 +98,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ClearPaymentsCommand => new RelayCommand(ClearPaymentsExecute);
+        public RelayCommand ClearPaymentsCommand { get; } = new RelayCommand(ClearPaymentsExecute);
         private async void ClearPaymentsExecute()
         {
             var dialog = new ContentDialog();
@@ -142,7 +142,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand AccountTTLCommand => new RelayCommand(AccountTTLExecute);
+        public RelayCommand AccountTTLCommand { get; } = new RelayCommand(AccountTTLExecute);
         private async void AccountTTLExecute()
         {
             var dialog = new ContentDialog();

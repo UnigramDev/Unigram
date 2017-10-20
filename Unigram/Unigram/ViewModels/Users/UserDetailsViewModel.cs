@@ -166,7 +166,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand SendMessageCommand => new RelayCommand(SendMessageExecute);
+        public RelayCommand SendMessageCommand { get; } = new RelayCommand(SendMessageExecute);
         private void SendMessageExecute()
         {
             if (Item is TLUser user)
@@ -175,7 +175,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
+        public RelayCommand MediaCommand { get; } = new RelayCommand(MediaExecute);
         private void MediaExecute()
         {
             if (Item is TLUser user && user.HasAccessHash)
@@ -184,7 +184,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand CommonChatsCommand => new RelayCommand(CommonChatsExecute);
+        public RelayCommand CommonChatsCommand { get; } = new RelayCommand(CommonChatsExecute);
         private void CommonChatsExecute()
         {
             if (Item is TLUser user && user.HasAccessHash)
@@ -193,7 +193,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand SystemCallCommand => new RelayCommand(SystemCallExecute);
+        public RelayCommand SystemCallCommand { get; } = new RelayCommand(SystemCallExecute);
         private void SystemCallExecute()
         {
             var user = Item as TLUser;
@@ -210,7 +210,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand BlockCommand => new RelayCommand(BlockExecute);
+        public RelayCommand BlockCommand { get; } = new RelayCommand(BlockExecute);
         private async void BlockExecute()
         {
             if (Item is TLUser user)
@@ -236,7 +236,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand UnblockCommand => new RelayCommand(UnblockExecute);
+        public RelayCommand UnblockCommand { get; } = new RelayCommand(UnblockExecute);
         private async void UnblockExecute()
         {
             if (Item is TLUser user)
@@ -267,7 +267,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand ReportCommand => new RelayCommand(ReportExecute);
+        public RelayCommand ReportCommand { get; } = new RelayCommand(ReportExecute);
         private async void ReportExecute()
         {
             var user = Item as TLUser;
@@ -520,7 +520,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
+        public RelayCommand ToggleMuteCommand { get; } = new RelayCommand(ToggleMuteExecute);
         private async void ToggleMuteExecute()
         {
             if (_item == null || _full == null)
@@ -568,7 +568,7 @@ namespace Unigram.ViewModels.Users
 
         #region Call
 
-        public RelayCommand CallCommand => new RelayCommand(CallExecute);
+        public RelayCommand CallCommand { get; } = new RelayCommand(CallExecute);
         private async void CallExecute()
         {
             if (_item == null || _full == null)
@@ -596,7 +596,7 @@ namespace Unigram.ViewModels.Users
 
         #endregion
 
-        public RelayCommand AddCommand => new RelayCommand(AddExecute);
+        public RelayCommand AddCommand { get; } = new RelayCommand(AddExecute);
         private async void AddExecute()
         {
             var user = _item as TLUser;
@@ -651,7 +651,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand EditCommand => new RelayCommand(EditExecute);
+        public RelayCommand EditCommand { get; } = new RelayCommand(EditExecute);
         private async void EditExecute()
         {
             var user = _item as TLUser;
@@ -691,7 +691,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand DeleteCommand => new RelayCommand(DeleteExecute);
+        public RelayCommand DeleteCommand { get; } = new RelayCommand(DeleteExecute);
         private async void DeleteExecute()
         {
             var user = _item as TLUser;

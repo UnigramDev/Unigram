@@ -134,7 +134,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute);
         private async void SendExecute()
         {
             var about = _about.Format();
@@ -201,13 +201,13 @@ namespace Unigram.ViewModels.Channels
             NavigationService.GoBack();
         }
 
-        public RelayCommand EditTypeCommand => new RelayCommand(EditTypeExecute);
+        public RelayCommand EditTypeCommand { get; } = new RelayCommand(EditTypeExecute);
         private void EditTypeExecute()
         {
             NavigationService.Navigate(typeof(ChannelEditTypePage), _item.ToPeer());
         }
 
-        public RelayCommand EditStickerSetCommand => new RelayCommand(EditStickerSetExecute);
+        public RelayCommand EditStickerSetCommand { get; } = new RelayCommand(EditStickerSetExecute);
         private void EditStickerSetExecute()
         {
             NavigationService.Navigate(typeof(ChannelEditStickerSetPage), _item.ToPeer());

@@ -70,8 +70,7 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute, () => !IsLoading);
         private void SendExecute()
         {
             if (_shipping != null)

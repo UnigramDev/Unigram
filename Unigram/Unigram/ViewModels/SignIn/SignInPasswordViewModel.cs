@@ -86,8 +86,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
             if (_parameters == null)
@@ -139,7 +138,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        public RelayCommand ForgotCommand => new RelayCommand(ForgotExecute);
+        public RelayCommand ForgotCommand { get; } = new RelayCommand(ForgotExecute);
         private async void ForgotExecute()
         {
             if (_parameters == null)
@@ -170,7 +169,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        public RelayCommand ResetCommand => new RelayCommand(ResetExecute);
+        public RelayCommand ResetCommand { get; } = new RelayCommand(ResetExecute);
         private async void ResetExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync("This action can't be undone.\n\nIf you reset your account, all your messages and chats will be deleted.", "Warning", "Reset", "Cancel");

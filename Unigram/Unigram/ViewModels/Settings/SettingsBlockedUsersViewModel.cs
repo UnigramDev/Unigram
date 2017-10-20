@@ -93,13 +93,13 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand BlockCommand => new RelayCommand(BlockExecute);
+        public RelayCommand BlockCommand { get; } = new RelayCommand(BlockExecute);
         private void BlockExecute()
         {
             NavigationService.Navigate(typeof(SettingsBlockUserPage), new TLVector<TLUserBase>(Items));
         }
 
-        public RelayCommand<TLUser> UnblockCommand => new RelayCommand<TLUser>(UnblockExecute);
+        public RelayCommand<TLUser> UnblockCommand { get; } = new RelayCommand<TLUser>(UnblockExecute);
         private async void UnblockExecute(TLUser user)
         {
             var dialog = new TLMessageDialog();

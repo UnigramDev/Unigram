@@ -85,8 +85,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
             if (_sentCode == null)
@@ -187,8 +186,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        private RelayCommand _resendCommand;
-        public RelayCommand ResendCommand => _resendCommand = _resendCommand ?? new RelayCommand(ResendExecute, () => !IsLoading);
+        public RelayCommand ResendCommand { get; } = new RelayCommand(ResendExecute, () => !IsLoading);
         private async void ResendExecute()
         {
             if (_sentCode == null)

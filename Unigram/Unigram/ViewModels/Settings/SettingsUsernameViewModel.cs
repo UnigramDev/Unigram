@@ -196,7 +196,7 @@ namespace Unigram.ViewModels.Settings
             return true;
         }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute);
         private async void SendExecute()
         {
             var response = await ProtoService.UpdateUsernameAsync(Username);
@@ -273,7 +273,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand CopyCommand => new RelayCommand(CopyExecute);
+        public RelayCommand CopyCommand { get; } = new RelayCommand(CopyExecute);
         private async void CopyExecute()
         {
             var config = CacheService.GetConfig();

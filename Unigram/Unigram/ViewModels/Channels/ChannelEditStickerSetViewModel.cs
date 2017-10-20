@@ -182,7 +182,7 @@ namespace Unigram.ViewModels.Channels
 
         public MvxObservableCollection<TLMessagesStickerSet> Items { get; private set; }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute);
         private async void SendExecute()
         {
             if (_shortName != _selectedItem?.Set.ShortName && !string.IsNullOrWhiteSpace(_shortName))
@@ -232,7 +232,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public RelayCommand CancelCommand => new RelayCommand(CancelExecute);
+        public RelayCommand CancelCommand { get; } = new RelayCommand(CancelExecute);
         private void CancelExecute()
         {
             ShortName = null;

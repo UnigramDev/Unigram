@@ -101,7 +101,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public RelayCommand<TLChannel> RevokeLinkCommand => new RelayCommand<TLChannel>(RevokeLinkExecute);
+        public RelayCommand<TLChannel> RevokeLinkCommand { get; } = new RelayCommand<TLChannel>(RevokeLinkExecute);
         private async void RevokeLinkExecute(TLChannel channel)
         {
             var dialog = new TLMessageDialog();

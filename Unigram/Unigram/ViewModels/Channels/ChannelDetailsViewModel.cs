@@ -134,7 +134,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public RelayCommand<StorageFile> EditPhotoCommand => new RelayCommand<StorageFile>(EditPhotoExecute);
+        public RelayCommand<StorageFile> EditPhotoCommand { get; } = new RelayCommand<StorageFile>(EditPhotoExecute);
         private async void EditPhotoExecute(StorageFile file)
         {
             var fileLocation = new TLFileLocation
@@ -211,7 +211,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public RelayCommand EditCommand => new RelayCommand(EditExecute);
+        public RelayCommand EditCommand { get; } = new RelayCommand(EditExecute);
         private void EditExecute()
         {
             if (_item == null)
@@ -223,7 +223,7 @@ namespace Unigram.ViewModels.Channels
             //NavigationService.Navigate(typeof(ChannelManagePage), _item.ToPeer());
         }
 
-        public RelayCommand InviteCommand => new RelayCommand(InviteExecute);
+        public RelayCommand InviteCommand { get; } = new RelayCommand(InviteExecute);
         private void InviteExecute()
         {
             if (_item == null)
@@ -234,7 +234,7 @@ namespace Unigram.ViewModels.Channels
             NavigationService.Navigate(typeof(ChatInvitePage), _item.ToPeer());
         }
 
-        public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
+        public RelayCommand MediaCommand { get; } = new RelayCommand(MediaExecute);
         private void MediaExecute()
         {
             if (_item == null)
@@ -245,7 +245,7 @@ namespace Unigram.ViewModels.Channels
             NavigationService.Navigate(typeof(DialogSharedMediaPage), _item.ToInputPeer());
         }
 
-        public RelayCommand AdminsCommand => new RelayCommand(AdminsExecute);
+        public RelayCommand AdminsCommand { get; } = new RelayCommand(AdminsExecute);
         private void AdminsExecute()
         {
             if (_item == null)
@@ -256,7 +256,7 @@ namespace Unigram.ViewModels.Channels
             NavigationService.Navigate(typeof(ChannelAdminsPage), _item.ToPeer());
         }
 
-        public RelayCommand BannedCommand => new RelayCommand(BannedExecute);
+        public RelayCommand BannedCommand { get; } = new RelayCommand(BannedExecute);
         private void BannedExecute()
         {
             if (_item == null)
@@ -267,7 +267,7 @@ namespace Unigram.ViewModels.Channels
             NavigationService.Navigate(typeof(ChannelBannedPage), _item.ToPeer());
         }
 
-        public RelayCommand KickedCommand => new RelayCommand(KickedExecute);
+        public RelayCommand KickedCommand { get; } = new RelayCommand(KickedExecute);
         private void KickedExecute()
         {
             if (_item == null)
@@ -278,7 +278,7 @@ namespace Unigram.ViewModels.Channels
             NavigationService.Navigate(typeof(ChannelKickedPage), _item.ToPeer());
         }
 
-        public RelayCommand ParticipantsCommand => new RelayCommand(ParticipantsExecute);
+        public RelayCommand ParticipantsCommand { get; } = new RelayCommand(ParticipantsExecute);
         private void ParticipantsExecute()
         {
             if (_item == null)
@@ -289,7 +289,7 @@ namespace Unigram.ViewModels.Channels
             NavigationService.Navigate(typeof(ChannelParticipantsPage), _item.ToPeer());
         }
 
-        public RelayCommand AdminLogCommand => new RelayCommand(AdminLogExecute);
+        public RelayCommand AdminLogCommand { get; } = new RelayCommand(AdminLogExecute);
         private void AdminLogExecute()
         {
             if (_item == null)
@@ -300,7 +300,7 @@ namespace Unigram.ViewModels.Channels
             NavigationService.Navigate(typeof(ChannelAdminLogPage), _item.ToPeer());
         }
 
-        public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
+        public RelayCommand ToggleMuteCommand { get; } = new RelayCommand(ToggleMuteExecute);
         private async void ToggleMuteExecute()
         {
             if (_item == null || _full == null)
@@ -343,7 +343,7 @@ namespace Unigram.ViewModels.Channels
 
         #region Context menu
 
-        public RelayCommand<TLChannelParticipantBase> ParticipantEditCommand => new RelayCommand<TLChannelParticipantBase>(ParticipantEditExecute);
+        public RelayCommand<TLChannelParticipantBase> ParticipantEditCommand { get; } = new RelayCommand<TLChannelParticipantBase>(ParticipantEditExecute);
         private void ParticipantEditExecute(TLChannelParticipantBase participant)
         {
             if (_item == null)
@@ -361,7 +361,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public RelayCommand<TLChannelParticipantBase> ParticipantPromoteCommand => new RelayCommand<TLChannelParticipantBase>(ParticipantPromoteExecute);
+        public RelayCommand<TLChannelParticipantBase> ParticipantPromoteCommand { get; } = new RelayCommand<TLChannelParticipantBase>(ParticipantPromoteExecute);
         private void ParticipantPromoteExecute(TLChannelParticipantBase participant)
         {
             if (_item == null)
@@ -372,7 +372,7 @@ namespace Unigram.ViewModels.Channels
             NavigationService.Navigate(typeof(ChannelAdminRightsPage), TLTuple.Create(_item.ToPeer(), participant));
         }
 
-        public RelayCommand<TLChannelParticipantBase> ParticipantRestrictCommand => new RelayCommand<TLChannelParticipantBase>(ParticipantRestrictExecute);
+        public RelayCommand<TLChannelParticipantBase> ParticipantRestrictCommand { get; } = new RelayCommand<TLChannelParticipantBase>(ParticipantRestrictExecute);
         private void ParticipantRestrictExecute(TLChannelParticipantBase participant)
         {
             if (_item == null)

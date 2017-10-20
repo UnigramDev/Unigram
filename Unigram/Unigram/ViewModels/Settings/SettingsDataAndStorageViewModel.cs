@@ -40,7 +40,7 @@ namespace Unigram.ViewModels.Settings
 
         public ObservableCollection<SettingsDataAutoDownload> AutoDownloads { get; private set; }
 
-        public RelayCommand<NetworkType> AutoDownloadCommand => new RelayCommand<NetworkType>(AutoDownloadExecute);
+        public RelayCommand<NetworkType> AutoDownloadCommand { get; } = new RelayCommand<NetworkType>(AutoDownloadExecute);
         private async void AutoDownloadExecute(NetworkType network)
         {
             var confirm = await SettingsDownloadView.Current.ShowAsync(ApplicationSettings.Current.AutoDownload[network]);

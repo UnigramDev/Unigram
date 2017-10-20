@@ -48,8 +48,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
+        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
         private async void SendExecute()
         {
             var response = await ProtoService.CreateChannelAsync(TLChannelsCreateChannel.Flag.Broadcast, _title, _about);

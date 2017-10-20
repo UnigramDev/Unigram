@@ -133,8 +133,7 @@ namespace Unigram.ViewModels.Settings
 
         public List<KeyedList<string, Country>> Countries { get; } = Country.GroupedCountries;
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
             if (PhoneCode == null || PhoneNumber == null)

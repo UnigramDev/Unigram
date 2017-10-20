@@ -128,7 +128,7 @@ namespace Unigram.ViewModels.Settings
 
         public MvxObservableCollection<TLWallPaperBase> Items { get; private set; }
 
-        public RelayCommand LocalCommand => new RelayCommand(LocalExecute);
+        public RelayCommand LocalCommand { get; } = new RelayCommand(LocalExecute);
         private async void LocalExecute()
         {
             var picker = new FileOpenPicker();
@@ -154,7 +154,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand DoneCommand => new RelayCommand(DoneExecute);
+        public RelayCommand DoneCommand { get; } = new RelayCommand(DoneExecute);
         private async void DoneExecute()
         {
             if (_selectedItem is TLWallPaper wallpaper)

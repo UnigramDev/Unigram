@@ -62,7 +62,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand NewAccountCommand => new RelayCommand(NewAccountExecute);
+        public RelayCommand NewAccountCommand { get; } = new RelayCommand(NewAccountExecute);
         private void NewAccountExecute()
         {
             SettingsHelper.SwitchGuid = Guid.NewGuid().ToString();

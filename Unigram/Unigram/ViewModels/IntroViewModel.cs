@@ -35,8 +35,7 @@ namespace Unigram.ViewModels
             SelectedItem = Items[0];
         }
 
-        private RelayCommand _continueCommand;
-        public RelayCommand ContinueCommand => _continueCommand = (_continueCommand ?? new RelayCommand(ContinueExecute /*, () => SelectedItem == Items.Last()*/));
+        public RelayCommand ContinueCommand { get; } = new RelayCommand(ContinueExecute /*, () => SelectedItem == Items.Last()*/);
         private void ContinueExecute()
         {
             NavigationService.Navigate(typeof(SignInPage));

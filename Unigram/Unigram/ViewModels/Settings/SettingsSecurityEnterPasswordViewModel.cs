@@ -68,8 +68,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
             if (_passwordBase == null)
@@ -121,7 +120,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ForgotCommand => new RelayCommand(ForgotExecute);
+        public RelayCommand ForgotCommand { get; } = new RelayCommand(ForgotExecute);
         private async void ForgotExecute()
         {
             if (_passwordBase == null)
