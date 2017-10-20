@@ -71,5 +71,14 @@ namespace Unigram.ViewModels
                 Set(ref _isLoading, value);
             }
         }
+
+        protected virtual void BeginOnUIThread(Action action)
+        {
+            var dispatcher = Dispatcher;
+            if (dispatcher != null)
+            {
+                dispatcher.Dispatch(action);
+            }
+        }
     }
 }

@@ -130,7 +130,7 @@ namespace Unigram.ViewModels.Users
                 // TODO: 06/05/2017
                 //Item.IsBlocked = message.Blocked;
                 Full.IsBlocked = message.Blocked;
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     RaisePropertyChanged(() => BlockVisibility);
                     RaisePropertyChanged(() => UnblockVisibility);
@@ -148,7 +148,7 @@ namespace Unigram.ViewModels.Users
                 var peer = notifyPeer.Peer;
                 if (peer is TLPeerUser && peer.Id == Item.Id)
                 {
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         Full.NotifySettings = message.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);

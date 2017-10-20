@@ -172,7 +172,7 @@ namespace Unigram.ViewModels.Channels
         private void ProcessStickerSets(StickerType type)
         {
             var stickers = _stickersService.GetStickerSets(type);
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 Items.ReplaceWith(stickers);
                 SelectedItem = null;

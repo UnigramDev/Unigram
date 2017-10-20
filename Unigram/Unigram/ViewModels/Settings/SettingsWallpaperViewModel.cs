@@ -37,7 +37,7 @@ namespace Unigram.ViewModels.Settings
                     result.Insert(0, defa);
                 }
 
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     Items.ReplaceWith(result);
                     UpdateView();

@@ -254,7 +254,7 @@ namespace Unigram.ViewModels
                 Aggregator.Publish(new MessagesRemovedEventArgs(dialog, messages));
             }
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 for (int j = 0; j < messages.Count; j++)
                 {

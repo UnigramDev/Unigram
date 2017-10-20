@@ -72,7 +72,7 @@ namespace Unigram.ViewModels
                 var result = response.Result as TLContactsContacts;
                 if (result != null)
                 {
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         foreach (var item in result.Users.OfType<TLUser>())
                         {
@@ -174,7 +174,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateUserStatus message)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 var first = Items.FirstOrDefault(x => x.Id == message.UserId);
                 if (first != null)
@@ -200,7 +200,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateContactLink update)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 var contact = update.MyLink is TLContactLinkContact;
                 var already = Items.FirstOrDefault(x => x.Id == update.UserId);

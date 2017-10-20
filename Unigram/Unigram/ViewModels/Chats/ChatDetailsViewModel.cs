@@ -149,7 +149,7 @@ namespace Unigram.ViewModels.Chats
                 var peer = notifyPeer.Peer;
                 if (peer is TLPeerChat && peer.Id == Item.Id)
                 {
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         Full.NotifySettings = message.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);

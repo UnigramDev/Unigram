@@ -193,7 +193,7 @@ namespace Unigram.ViewModels.Channels
                 var peer = notifyPeer.Peer;
                 if (peer is TLPeerChannel && peer.Id == Item.Id)
                 {
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         Full.NotifySettings = update.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);

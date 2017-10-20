@@ -211,7 +211,7 @@ namespace Unigram.ViewModels
             CacheService.DeleteMessages(Peer.ToPeer(), lastMessage, remoteMessages);
             CacheService.DeleteMessages(cachedMessages);
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 for (int j = 0; j < messages.Count; j++)
                 {
@@ -644,7 +644,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.GetMessageEditDataAsync(Peer, message.Id);
             if (response.IsSucceeded)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     var messageEditText = GetMessageEditText(response.Result, message);
                     StartEditMessage(messageEditText, message);
@@ -652,7 +652,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     //this.IsWorking = false;
                     //if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.MESSAGE_ID_INVALID))
