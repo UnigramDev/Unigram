@@ -41,6 +41,8 @@ namespace Unigram
 				static String^ NotificationTask::CreateTileMessageBody(String^ message);
 				static String^ NotificationTask::CreateTileMessageBodyWithCaption(String^ caption, String^ message);
 
+				static std::wstring Escape(std::wstring data);
+
 				void UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key);
 			};
 		}

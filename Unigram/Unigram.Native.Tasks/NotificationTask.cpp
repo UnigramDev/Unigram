@@ -56,7 +56,7 @@ void NotificationTask::Run(IBackgroundTaskInstance^ taskInstance)
 		{
 			UpdateToastAndTiles(details->Content /*, &log*/);
 		}
-		catch (Exception^ ex) 
+		catch (Exception^ ex)
 		{
 			//time(&rawtime);
 			//localtime_s(&timeinfo, &rawtime);
@@ -151,7 +151,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 			//ToastNotificationManager::History->Remove(L"phoneCall");
 		}
 
-		if (loc_key->Equals(L"PHONE_CALL_REQUEST")) 
+		if (loc_key->Equals(L"PHONE_CALL_REQUEST"))
 		{
 			UpdateToast(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
 			UpdatePhoneCall(caption, message, sound, launch, L"phoneCall", group, picture, date, loc_key);
@@ -279,7 +279,7 @@ String^ NotificationTask::GetLaunch(JsonObject^ custom, String^ loc_key)
 
 String^ NotificationTask::GetTag(JsonObject^ custom)
 {
-	if (custom) 
+	if (custom)
 	{
 		return custom->GetNamedString("msg_id");
 	}
@@ -437,6 +437,25 @@ void NotificationTask::UpdateSecondaryBadge(int badgeNumber, String^ group)
 	updater->Update(ref new BadgeNotification(document));
 }
 
+std::wstring NotificationTask::Escape(std::wstring data)
+{
+	std::wstring buffer;
+	buffer.reserve(data.size());
+	for (size_t pos = 0; pos != data.size(); ++pos)
+	{
+		switch (data[pos])
+		{
+			case '&':  buffer.append(L"&amp;");       break;
+			case '\"': buffer.append(L"&quot;");      break;
+			case '\'': buffer.append(L"&apos;");      break;
+			case '<':  buffer.append(L"&lt;");        break;
+			case '>':  buffer.append(L"&gt;");        break;
+			default:   buffer.append(&data[pos], 1); break;
+		}
+	}
+	return buffer;
+}
+
 void NotificationTask::ResetSecondaryTile(String^ caption, String^ picture, String^ group)
 {
 	if (group == nullptr)
@@ -450,9 +469,11 @@ void NotificationTask::ResetSecondaryTile(String^ caption, String^ picture, Stri
 		return;
 	}
 
+	auto escapedCaption = NotificationTask::Escape(caption->Data());
+
 	std::wstring xml = L"<tile><visual>";
 	xml += L"<binding template='TileMedium' displayName='";
-	xml += caption->Data();
+	xml += escapedCaption;
 	xml += L"' branding='name'>";
 	if (picture != nullptr)
 	{
@@ -460,9 +481,9 @@ void NotificationTask::ResetSecondaryTile(String^ caption, String^ picture, Stri
 		xml += picture->Data();
 		xml += L"'/>";
 	}
-	xml += L"</binding>"; 
+	xml += L"</binding>";
 	xml += L"<binding template='TileWide' displayName='";
-	xml += caption->Data();
+	xml += escapedCaption;
 	xml += L"' branding='nameAndLogo'>";
 	if (picture != nullptr)
 	{
@@ -472,7 +493,7 @@ void NotificationTask::ResetSecondaryTile(String^ caption, String^ picture, Stri
 	}
 	xml += L"</binding>";
 	xml += L"<binding template='TileLarge' displayName='";
-	xml += caption->Data();
+	xml += escapedCaption;
 	xml += L"' branding='nameAndLogo'>";
 	if (picture != nullptr)
 	{
@@ -518,7 +539,7 @@ void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, Strin
 {
 	auto body = NotificationTask::CreateTileMessageBodyWithCaption(caption, message);
 
-	std::wstring xml = L"<tile><visual>"; 
+	std::wstring xml = L"<tile><visual>";
 	xml += L"<binding template='TileMedium' branding='name'>";
 	if (picture != nullptr)
 	{
@@ -527,7 +548,7 @@ void NotificationTask::UpdatePrimaryTile(String^ caption, String^ message, Strin
 		xml += L"'/>";
 	}
 	xml += body->Data();
-	xml += L"</binding>"; 
+	xml += L"</binding>";
 	xml += L"<binding template='TileWide' branding='nameAndLogo'>";
 	xml += L"<group>";
 	xml += L"<subgroup hint-weight='18'>";
@@ -574,9 +595,11 @@ void NotificationTask::UpdateSecondaryTile(String^ caption, String^ message, Str
 {
 	auto body = NotificationTask::CreateTileMessageBody(message);
 
+	auto escapedCaption = NotificationTask::Escape(caption->Data());
+
 	std::wstring xml = L"<tile><visual>";
 	xml += L"<binding template='TileMedium' displayName='";
-	xml += caption->Data();
+	xml += escapedCaption;
 	xml += L"' branding='name'>";
 	if (picture != nullptr)
 	{
@@ -587,7 +610,7 @@ void NotificationTask::UpdateSecondaryTile(String^ caption, String^ message, Str
 	xml += body->Data();
 	xml += L"</binding>";
 	xml += L"<binding template='TileWide' displayName='";
-	xml += caption->Data();
+	xml += escapedCaption;
 	xml += L"' branding='nameAndLogo'>";
 	xml += L"<group>";
 	xml += L"<subgroup hint-weight='18'>";
@@ -604,7 +627,7 @@ void NotificationTask::UpdateSecondaryTile(String^ caption, String^ message, Str
 	xml += L"</group>";
 	xml += L"</binding>";
 	xml += L"<binding template='TileLarge' displayName='";
-	xml += caption->Data();
+	xml += escapedCaption;
 	xml += L"' branding='nameAndLogo'>";
 	xml += L"<group>";
 	xml += L"<subgroup hint-weight='18'>";
