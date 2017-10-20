@@ -40,20 +40,13 @@ namespace Unigram.Models
             set { Set(ref _cropRectangle, value); }
         }
 
-        private int _zoomFactor;
-        public int ZoomFactor
-        {
-            get { return _zoomFactor; }
-            set { Set(ref _zoomFactor, value); }
-        }
-
         private async void LoadPreview()
         {
             _preview = await ImageHelper.GetPreviewBitmapAsync(File);
             RaisePropertyChanged(() => Preview);
         }
 
-        private async void LoadCroppedPreview()
+        public async void LoadCroppedPreview()
         {
             if (!CropRectangle.HasValue)
             {

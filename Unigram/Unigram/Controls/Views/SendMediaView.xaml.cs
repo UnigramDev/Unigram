@@ -405,14 +405,15 @@ namespace Unigram.Controls.Views
                 {
                     UseMouseAndTouchGestures = true,
                     IsCropEnabled = true,
-                    CropperProportions = ImageCroppingProportions.Custom
+                    CropperProportions = ImageCroppingProportions.Custom,
+                    MaxZoomFactor = 10
                 };
 
                 var dialogResult = await dialog.ShowAsync();
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
-                    photo.ZoomFactor = dialog.ZoomFactor;
                     photo.CropRectangle = dialog.CropRectangle;
+                    photo.LoadCroppedPreview();
                 }
                 IsEditingCropping = false;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
@@ -423,7 +424,6 @@ namespace Unigram.Controls.Views
         {
             if (SelectedItem is StoragePhoto photo && photo.IsCropped)
             {
-                photo.ZoomFactor = 0;
                 photo.CropRectangle = null;
 
                 IsEditingCropping = false;

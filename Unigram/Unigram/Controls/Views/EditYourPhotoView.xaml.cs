@@ -70,6 +70,12 @@ namespace Unigram.Controls.Views
             get { return this.Cropper.CropRectangle; }
         }
 
+        public int MaxZoomFactor
+        {
+            get { return this.Cropper.MaxZoomFactor; }
+            set { this.Cropper.MaxZoomFactor = value; }
+        }
+
         public int ZoomFactor
         {
             get { return this.Cropper.CurrentZoomFactor; }
