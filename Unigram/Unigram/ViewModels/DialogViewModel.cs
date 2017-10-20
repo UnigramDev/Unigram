@@ -1141,7 +1141,7 @@ namespace Unigram.ViewModels
                 }
 
                 var acc = 0L;
-                foreach (var item in participants)
+                foreach (var item in participants.OrderBy(x => x.UserId))
                 {
                     acc = ((acc * 20261) + 0x80000000L + item.UserId) % 0x80000000L;
                 }
