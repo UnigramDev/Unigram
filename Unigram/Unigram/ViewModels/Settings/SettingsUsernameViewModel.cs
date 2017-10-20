@@ -215,7 +215,7 @@ namespace Unigram.ViewModels.Settings
                 {
                     //this.HasError = true;
                     //this.Error = AppResources.FloodWaitString;
-                    //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                    //Telegram.Api.Helpers.Dispatch(delegate
                     //{
                     //    MessageBox.Show(AppResources.FloodWaitString, AppResources.Error, 0);
                     //});
@@ -229,7 +229,7 @@ namespace Unigram.ViewModels.Settings
                     //messageBuilder.AppendLine("Result: " + error);
                     //this.HasError = true;
                     //this.Error = AppResources.ServerError;
-                    //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                    //Telegram.Api.Helpers.Dispatch(delegate
                     //{
                     //    MessageBox.Show(messageBuilder.ToString(), AppResources.ServerError, 0);
                     //});
@@ -240,7 +240,7 @@ namespace Unigram.ViewModels.Settings
                     {
                         //this.HasError = true;
                         //this.Error = AppResources.UsernameInvalid;
-                        //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                        //Telegram.Api.Helpers.Dispatch(delegate
                         //{
                         //    MessageBox.Show(AppResources.UsernameInvalid, AppResources.Error, 0);
                         //});
@@ -249,7 +249,7 @@ namespace Unigram.ViewModels.Settings
                     {
                         //this.HasError = true;
                         //this.Error = AppResources.UsernameOccupied;
-                        //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                        //Telegram.Api.Helpers.Dispatch(delegate
                         //{
                         //    MessageBox.Show(AppResources.UsernameOccupied, AppResources.Error, 0);
                         //});

@@ -60,7 +60,7 @@ namespace Unigram.ViewModels.SignIn
 
             if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     SelectedCountry = country;
                 });

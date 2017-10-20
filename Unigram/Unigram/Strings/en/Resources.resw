@@ -1367,4 +1367,7 @@ Tap on a sticker to view and add the whole set.</value>
     <value>Masks</value>
     <comment>MaskStickerSettings.Title</comment>
   </data>
+  <data name="MessageCopyMedia" xml:space="preserve">
+    <value>Copy image</value>
+  </data>
 </root>

@@ -57,7 +57,7 @@ namespace Unigram.ViewModels.Settings
 
             if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     SelectedCountry = country;
                 });

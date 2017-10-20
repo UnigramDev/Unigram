@@ -130,7 +130,7 @@ namespace Unigram.ViewModels.Users
                 // TODO: 06/05/2017
                 //Item.IsBlocked = message.Blocked;
                 Full.IsBlocked = message.Blocked;
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     RaisePropertyChanged(() => BlockVisibility);
                     RaisePropertyChanged(() => UnblockVisibility);
@@ -148,7 +148,7 @@ namespace Unigram.ViewModels.Users
                 var peer = notifyPeer.Peer;
                 if (peer is TLPeerUser && peer.Id == Item.Id)
                 {
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         Full.NotifySettings = message.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);
@@ -224,6 +224,12 @@ namespace Unigram.ViewModels.Users
                 var result = await ProtoService.BlockAsync(user.ToInputUser());
                 if (result.IsSucceeded && result.Result)
                 {
+                    if (Full is TLUserFull full)
+                    {
+                        full.IsBlocked = true;
+                        full.RaisePropertyChanged(() => full.IsBlocked);
+                    }
+
                     CacheService.Commit();
                     Aggregator.Publish(new TLUpdateUserBlocked { UserId = user.Id, Blocked = true });
                 }
@@ -244,6 +250,12 @@ namespace Unigram.ViewModels.Users
                 var result = await ProtoService.UnblockAsync(user.ToInputUser());
                 if (result.IsSucceeded && result.Result)
                 {
+                    if (Full is TLUserFull full)
+                    {
+                        full.IsBlocked = false;
+                        full.RaisePropertyChanged(() => full.IsBlocked);
+                    }
+
                     CacheService.Commit();
                     Aggregator.Publish(new TLUpdateUserBlocked { UserId = user.Id, Blocked = false });
 

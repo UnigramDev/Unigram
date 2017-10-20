@@ -850,7 +850,7 @@ namespace Unigram.ViewModels
             var obj = new TLMessagesGetHistory { Peer = Peer, OffsetId = 0, OffsetDate = dateOffset - 1, AddOffset = offset, Limit = limit, MaxId = 0, MinId = 0 };
             ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.getHistory", obj, result =>
             {
-                Execute.BeginOnUIThread(async () =>
+                BeginOnUIThread(async () =>
                 {
                     await LoadMessageSliceAsync(null, result.Messages[0].Id);
                 });
@@ -1141,7 +1141,7 @@ namespace Unigram.ViewModels
                 }
 
                 var acc = 0L;
-                foreach (var item in participants)
+                foreach (var item in participants.OrderBy(x => x.UserId))
                 {
                     acc = ((acc * 20261) + 0x80000000L + item.UserId) % 0x80000000L;
                 }
@@ -2080,7 +2080,7 @@ namespace Unigram.ViewModels
                         message.Reply = _replyMarkupMessage;
                     }
 
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         if (Reply != null)
                         {
@@ -2114,7 +2114,7 @@ namespace Unigram.ViewModels
                         //}
                     }
 
-                    Execute.BeginOnUIThread(delegate
+                    BeginOnUIThread(delegate
                     {
                         Reply = null;
                     });

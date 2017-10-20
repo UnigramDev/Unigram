@@ -54,6 +54,10 @@ namespace Unigram.Views
                 {
                     ViewModel.UpdatingScrollMode = UpdatingScrollMode.KeepLastItemInView;
                 }
+                else
+                {
+                    ViewModel.UpdatingScrollMode = UpdatingScrollMode.ForceKeepItemsInView;
+                }
 
                 Arrow.Visibility = Visibility.Collapsed;
             }

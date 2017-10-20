@@ -10,6 +10,7 @@
     xmlns:models="using:Telegram.Api.TL"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:behaviors="using:Unigram.Behaviors"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:vms="using:Unigram.ViewModels"
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -59,7 +60,8 @@
                                         <VisualState.Setters>
                                             <Setter Target="MasterColumn.Width" Value="260*" />
                                             <Setter Target="DetailColumn.Width" Value="540*" />
-                                            <Setter Target="MasterColumn.MinWidth" Value="260" />
+                                            <!--<Setter Target="MasterColumn.MinWidth" Value="260" />-->
+                                            <Setter Target="MasterColumn.MinWidth" Value="72" />
                                             <Setter Target="MasterColumn.MaxWidth" Value="540" />
                                             <Setter Target="DetailPresenter.(Grid.Column)" Value="1" />
                                         </VisualState.Setters>
@@ -85,6 +87,14 @@
                                               ContentTransitions="{TemplateBinding ContentTransitions}"
                                               HorizontalContentAlignment="Stretch"
                                               VerticalContentAlignment="Stretch"/>
+
+                            <toolkit:GridSplitter
+                                Background="Transparent"
+                                HorizontalAlignment="Left"
+                                Grid.Column="1"
+                                ResizeDirection="Auto"
+                                ResizeBehavior="BasedOnAlignment"
+                                CursorBehavior="ChangeOnSplitterHover"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -295,17 +305,16 @@
                     </Grid.ColumnDefinitions>
 
                     <Button Command="{x:Bind ViewModel.LiveLocationCommand}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="2">
-                        <StackPanel>
-                            <TextBlock Text="Live Location" TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}"/>
-                            <TextBlock Text="{x:Bind ConvertGeoLive(ViewModel.LiveLocation.Items.Count, ViewModel.LiveLocation.Items), Mode=OneWay}" TextAlignment="Center" FontSize="10" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                        </StackPanel>
+                        <TextBlock TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
+                            <Run Text="Live Location" FontWeight="SemiBold"/>
+                            <Run Text="{x:Bind ConvertGeoLive(ViewModel.LiveLocation.Items.Count, ViewModel.LiveLocation.Items), Mode=OneWay}"/>
+                        </TextBlock>
                     </Button>
 
                     <controls:GlyphButton Command="{x:Bind ViewModel.StopLiveLocationCommand}" Glyph="&#xE10A;" FontSize="16" Height="32" Grid.Column="1"/>
 
                     <Border BorderThickness="0,0,0,1" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
                 </Grid>
-
 
                 <Pivot x:Name="rpMasterTitlebar" SelectionChanged="Pivot_SelectionChanged" Style="{StaticResource HeaderlessPivotStyle}" Grid.Row="2">
                     <PivotItem Header="Chats">
@@ -626,7 +635,7 @@
                     </PivotItem>
                 </Pivot>
 
-                <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="2" Grid.Row="1"/>
+                <Border x:Name="Separator" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" HorizontalAlignment="Right" Grid.RowSpan="3" Grid.Row="1"/>
             </Grid>
         </controls:NavigationView>
     </controls:MasterDetailView>

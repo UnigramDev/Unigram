@@ -86,7 +86,7 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(FeaturedStickersDidLoadedEventArgs e)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 FeaturedStickersCount = _stickersService.GetUnreadStickerSets().Count;
             });
@@ -94,7 +94,7 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(ArchivedStickersCountDidLoadedEventArgs e)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 ArchivedStickersCount = _stickersService.GetArchivedStickersCount(_type);
             });
@@ -103,7 +103,7 @@ namespace Unigram.ViewModels.Settings
         private void ProcessStickerSets(StickerType type)
         {
             var stickers = _stickersService.GetStickerSets(type);
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 Items.ReplaceWith(stickers);
             });

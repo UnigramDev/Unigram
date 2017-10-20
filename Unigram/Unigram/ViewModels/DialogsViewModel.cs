@@ -114,7 +114,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     Items.ReplaceWith(items);
                     IsFirstPinned = Items.Any(x => x.IsPinned);
@@ -155,7 +155,7 @@ namespace Unigram.ViewModels
             //{
             //    var pinnedIndex = 0;
 
-            //    Execute.BeginOnUIThread(() =>
+            //    BeginOnUIThread(() =>
             //    {
             //        foreach (var item in result.Dialogs)
             //        {
@@ -206,7 +206,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     Items.ReplaceWith(items);
                     IsFirstPinned = Items.Any(x => x.IsPinned);
@@ -272,7 +272,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 var dialog = Items.FirstOrDefault(x => x.Id == args.Dialog.Id);
                 if (dialog != null)
@@ -284,7 +284,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateUserName userName)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 for (int i = 0; i < Items.Count; i++)
                 {
@@ -308,7 +308,7 @@ namespace Unigram.ViewModels
             var dialogs = CacheService.GetDialogs();
             dialogs = ReorderDrafts(dialogs);
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 var items = new List<TLDialog>(dialogs.Count);
 
@@ -340,7 +340,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateContactLink update)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 for (int i = 0; i < Items.Count; i++)
                 {
@@ -361,7 +361,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 int msgId;
                 if (message.ToId is TLPeerUser)
@@ -391,7 +391,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 for (int i = 0; i < Items.Count; i++)
                 {
@@ -405,7 +405,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateDraftMessage update)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 TLDialog dialog = null;
                 for (int i = 0; i < Items.Count; i++)
@@ -440,7 +440,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateDialogPinned update)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 TLDialog dialog = null;
                 for (int i = 0; i < Items.Count; i++)
@@ -502,7 +502,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdatePinnedDialogs update)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 if (update.HasOrder)
                 {
@@ -534,7 +534,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateChannel update)
         {
-            Execute.BeginOnUIThread(delegate
+            BeginOnUIThread(delegate
             {
                 var dialog = Items.FirstOrDefault(x => x.Peer is TLPeerChannel && x.Peer.Id == update.ChannelId);
                 if (dialog != null)
@@ -548,7 +548,7 @@ namespace Unigram.ViewModels
         {
             if (update.IsPopup)
             {
-                Execute.BeginOnUIThread(async () =>
+                BeginOnUIThread(async () =>
                 {
                     await TLMessageDialog.ShowAsync(update.Message, "Telegram", "OK");
                 });
@@ -569,7 +569,7 @@ namespace Unigram.ViewModels
 
             //if (serviceNotification.Popup)
             //{
-            //    Execute.BeginOnUIThread(delegate
+            //    BeginOnUIThread(delegate
             //    {
             //        //MessageBox.Show(serviceNotification.Message.ToString(), AppResources.AppName, 0);
             //    });
@@ -629,7 +629,7 @@ namespace Unigram.ViewModels
             TLNotifyPeer notifyPeer = notifySettings.Peer as TLNotifyPeer;
             if (notifyPeer != null)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     for (int i = 0; i < Items.Count; i++)
                     {
@@ -648,7 +648,7 @@ namespace Unigram.ViewModels
 
         //private void HandleTypingCommon(TLUpdateTypingBase updateTyping, Dictionary<int, Telegram.Api.WindowsPhone.Tuple<TLDialog, InputTypingManager>> typingCache)
         //{
-        //    Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+        //    Telegram.Api.Helpers.BeginOnUIThread(delegate
         //    {
         //        TelegramTransitionFrame telegramTransitionFrame = Application.get_Current().get_RootVisual() as TelegramTransitionFrame;
         //        if (telegramTransitionFrame != null && !(telegramTransitionFrame.get_Content() is ShellView))
@@ -670,14 +670,14 @@ namespace Unigram.ViewModels
         //                    {
         //                        tuple = new Telegram.Api.WindowsPhone.Tuple<TLDialog, InputTypingManager>(dialog, new InputTypingManager(delegate (IList<Telegram.Api.WindowsPhone.Tuple<int, TLSendMessageActionBase>> users)
         //                        {
-        //                            Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+        //                            Telegram.Api.Helpers.BeginOnUIThread(delegate
         //                            {
         //                                dialog.TypingString = this.GetTypingString(dialog.Peer, users);
         //                                dialog.NotifyOfPropertyChange<string>(() => dialog.Self.TypingString);
         //                            });
         //                        }, delegate
         //                        {
-        //                            Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+        //                            Telegram.Api.Helpers.BeginOnUIThread(delegate
         //                            {
         //                                dialog.TypingString = null;
         //                                dialog.NotifyOfPropertyChange<string>(() => dialog.Self.TypingString);
@@ -710,7 +710,7 @@ namespace Unigram.ViewModels
 
         private void OnTopMessageUpdated(object sender, TopMessageUpdatedEventArgs e)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 try
                 {
@@ -758,7 +758,7 @@ namespace Unigram.ViewModels
                         var already = Items.FirstOrDefault(x => x.Id == e.Dialog.Id);
                         if (already != null)
                         {
-                            //Execute.BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
+                            //BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
 
                             var index = Items.IndexOf(already);
 
@@ -841,7 +841,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 var index = -1;
                 for (int i = 0; i < Items.Count; i++)
@@ -1419,5 +1419,12 @@ namespace Unigram.ViewModels
         }
 
         #endregion
+
+        protected override void BeginOnUIThread(Action action)
+        {
+            // This is somehow needed because this viewmodel requires a Dispatcher
+            // in some situations where base one might be null.
+            Execute.BeginOnUIThread(action);
+        }
     }
 }

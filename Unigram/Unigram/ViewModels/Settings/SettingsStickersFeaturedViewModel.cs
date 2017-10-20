@@ -56,7 +56,7 @@ namespace Unigram.ViewModels.Settings
         private void ProcessStickerSets()
         {
             var stickers = _stickersService.GetFeaturedStickerSets();
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 Items.ReplaceWith(stickers);
             });
