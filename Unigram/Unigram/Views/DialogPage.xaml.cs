@@ -190,16 +190,11 @@ namespace Unigram.Views
         {
             ViewModel.IsActive = true;
 
-            if (App.ShareOperation != null)
+            if (App.DataPackage != null)
             {
                 var package = App.DataPackage;
-                var operation = App.ShareOperation;
-
                 App.DataPackage = null;
-                App.ShareOperation = null;
-
                 await HandlePackageAsync(package);
-                operation.ReportCompleted();
             }
 
             base.OnNavigatedTo(e);

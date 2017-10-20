@@ -234,7 +234,6 @@ namespace Unigram
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
-            Execute.Initialize();
             Locator.Configure();
 
             if (Window.Current != null)
@@ -259,8 +258,6 @@ namespace Unigram
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
-            Execute.Initialize();
-
             if (SettingsHelper.IsAuthorized)
             {
                 if (args is ShareTargetActivatedEventArgs share)
@@ -310,6 +307,8 @@ namespace Unigram
                 }
                 else if (args is VoiceCommandActivatedEventArgs voice)
                 {
+                    Execute.Initialize();
+
                     SpeechRecognitionResult speechResult = voice.Result;
                     string command = speechResult.RulePath[0];
 
@@ -371,6 +370,8 @@ namespace Unigram
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
                 {
+                    Execute.Initialize();
+
                     if (ShareOperation != null)
                     {
                         ShareOperation.ReportCompleted();
@@ -388,6 +389,8 @@ namespace Unigram
                 }
                 else
                 {
+                    Execute.Initialize();
+
                     var activate = args as ToastNotificationActivatedEventArgs;
                     var launched = args as LaunchActivatedEventArgs;
                     var launch = activate?.Argument ?? launched?.Arguments;
@@ -404,6 +407,8 @@ namespace Unigram
             }
             else
             {
+                Execute.Initialize();
+
                 NavigationService.Navigate(typeof(IntroPage));
             }
 
