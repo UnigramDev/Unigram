@@ -2376,30 +2376,24 @@ namespace Telegram.Api.Services.Updates
             var serviceMessage = messageBase as TLMessageService;
             if (serviceMessage != null)
             {
-                var chatEditTitleAction = serviceMessage.Action as TLMessageActionChatEditTitle;
-                if (chatEditTitleAction != null)
+                if (serviceMessage.Action is TLMessageActionChatEditTitle chatEditTitleAction)
                 {
                     var chatBase = _cacheService.GetChat(serviceMessage.ToId.Id);
 
-                    var channel = chatBase as TLChannel;
-                    if (channel != null)
+                    if (chatBase is TLChannel channel)
                     {
                         channel.Title = chatEditTitleAction.Title;
                         channel.RaisePropertyChanged(() => channel.Title);
                         channel.RaisePropertyChanged(() => channel.DisplayName);
                     }
-
-                    var chat = chatBase as TLChat;
-                    if (chat != null)
+                    else if (chatBase is TLChat chat)
                     {
                         chat.Title = chatEditTitleAction.Title;
                         chat.RaisePropertyChanged(() => chat.Title);
                         chat.RaisePropertyChanged(() => chat.DisplayName);
                     }
                 }
-
-                var chatEditPhotoAction = serviceMessage.Action as TLMessageActionChatEditPhoto;
-                if (chatEditPhotoAction != null)
+                else if (serviceMessage.Action is TLMessageActionChatEditPhoto chatEditPhotoAction)
                 {
                     var photo = chatEditPhotoAction.Photo as TLPhoto;
                     if (photo != null)
@@ -2408,40 +2402,44 @@ namespace Telegram.Api.Services.Updates
                         var big = photo.Full as TLPhotoSize;
 
                         var chatBase = _cacheService.GetChat(serviceMessage.ToId.Id);
-
-                        var channel = chatBase as TLChannel;
-                        if (channel != null)
+                        if (chatBase is TLChannel channel)
                         {
                             channel.Photo = new TLChatPhoto { PhotoSmall = small.Location, PhotoBig = big.Location };
                             channel.RaisePropertyChanged(() => channel.PhotoSelf);
                         }
-
-                        var chat = chatBase as TLChat;
-                        if (chat != null)
+                        if (chatBase is TLChat chat)
                         {
                             chat.Photo = new TLChatPhoto { PhotoSmall = small.Location, PhotoBig = big.Location };
                             chat.RaisePropertyChanged(() => chat.PhotoSelf);
                         }
                     }
-                }
 
-                var chatDeletePhotoAction = serviceMessage.Action as TLMessageActionChatDeletePhoto;
-                if (chatDeletePhotoAction != null)
+                    var chatFull = _cacheService.GetFullChat(serviceMessage.ToId.Id);
+                    if (chatFull != null)
+                    {
+                        chatFull.ChatPhoto = photo;
+                        chatFull.RaisePropertyChanged(() => chatFull.ChatPhoto);
+                    }
+                }
+                if (serviceMessage.Action is TLMessageActionChatDeletePhoto chatDeletePhotoAction)
                 {
                     var chatBase = _cacheService.GetChat(serviceMessage.ToId.Id);
-
-                    var channel = chatBase as TLChannel;
-                    if (channel != null)
+                    if (chatBase is TLChannel channel)
                     {
                         channel.Photo = new TLChatPhotoEmpty();
                         channel.RaisePropertyChanged(() => channel.PhotoSelf);
                     }
-
-                    var chat = chatBase as TLChat;
-                    if (chat != null)
+                    else if (chatBase is TLChat chat)
                     {
                         chat.Photo = new TLChatPhotoEmpty();
                         chat.RaisePropertyChanged(() => chat.PhotoSelf);
+                    }
+
+                    var chatFull = _cacheService.GetFullChat(serviceMessage.ToId.Id);
+                    if (chatFull != null)
+                    {
+                        chatFull.ChatPhoto = new TLPhotoEmpty();
+                        chatFull.RaisePropertyChanged(() => chatFull.ChatPhoto);
                     }
                 }
             }
