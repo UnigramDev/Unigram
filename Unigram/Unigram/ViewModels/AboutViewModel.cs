@@ -52,28 +52,28 @@ namespace Unigram.ViewModels
 
         #region USEFUL
 
-        public RelayCommand UsefulPrivacyCommand { get; } = new RelayCommand(UsefulPrivacyExecute);
+        public RelayCommand UsefulPrivacyCommand => new RelayCommand(UsefulPrivacyExecute);
         private async void UsefulPrivacyExecute()
         {
             var uri = new Uri(@UsefulPrivacy);
             var success = await Windows.System.Launcher.LaunchUriAsync(uri);
         }
 
-        public RelayCommand UsefulFaqCommand { get; } = new RelayCommand(UsefulFaqExecute);
+        public RelayCommand UsefulFaqCommand => new RelayCommand(UsefulFaqExecute);
         private async void UsefulFaqExecute()
         {
             var uri = new Uri(@UsefulFaq);
             var success = await Windows.System.Launcher.LaunchUriAsync(uri);
         }
 
-        public RelayCommand UsefulWebsiteCommand { get; } = new RelayCommand(UsefulWebsiteExecute);
+        public RelayCommand UsefulWebsiteCommand => new RelayCommand(UsefulWebsiteExecute);
         private async void UsefulWebsiteExecute()
         {
             var uri = new Uri(@UsefulWebsite);
             var success = await Windows.System.Launcher.LaunchUriAsync(uri);
         }
 
-        public RelayCommand UsefulChangelogCommand { get; } = new RelayCommand(UsefulChangelogExecute);
+        public RelayCommand UsefulChangelogCommand => new RelayCommand(UsefulChangelogExecute);
         private async void UsefulChangelogExecute()
         {
             var uri = new Uri(@UsefulChangelog);
@@ -84,14 +84,14 @@ namespace Unigram.ViewModels
 
         #region SUPPORT
 
-        public RelayCommand SupportEmailCommand { get; } = new RelayCommand(SupportEmailExecute);
+        public RelayCommand SupportEmailCommand => new RelayCommand(SupportEmailExecute);
         private async void SupportEmailExecute()
         {
             var uri = new Uri(@SupportEmail);
             var success = await Windows.System.Launcher.LaunchUriAsync(uri);
         }
 
-        public RelayCommand SupportGitHubCommand { get; } = new RelayCommand(SupportGitHubExecute);
+        public RelayCommand SupportGitHubCommand => new RelayCommand(SupportGitHubExecute);
         private async void SupportGitHubExecute()
         {
             var uri = new Uri(@SupportGitHub);
@@ -102,14 +102,14 @@ namespace Unigram.ViewModels
 
         #region SOCIAL
 
-        public RelayCommand SocialTwitterCommand { get; } = new RelayCommand(SocialTwitterExecute);
+        public RelayCommand SocialTwitterCommand => new RelayCommand(SocialTwitterExecute);
         private async void SocialTwitterExecute()
         {
             var uri = new Uri(@SocialTwitter);
             var success = await Windows.System.Launcher.LaunchUriAsync(uri);
         }
 
-        public RelayCommand SocialFacebookCommand { get; } = new RelayCommand(SocialFacebookExecute);
+        public RelayCommand SocialFacebookCommand => new RelayCommand(SocialFacebookExecute);
         private async void SocialFacebookExecute()
         {
             var uri = new Uri(@SocialFacebook);
@@ -120,14 +120,14 @@ namespace Unigram.ViewModels
 
         #region THANKS
 
-        public RelayCommand ThanksTelegramCommand { get; } = new RelayCommand(ThanksTelegramExecute);
+        public RelayCommand ThanksTelegramCommand => new RelayCommand(ThanksTelegramExecute);
         private async void ThanksTelegramExecute()
         {
             var uri = new Uri(@ThanksTelegram);
             var success = await Windows.System.Launcher.LaunchUriAsync(uri);
         }
 
-        public RelayCommand ThanksGregoryCommand { get; } = new RelayCommand(ThanksGregoryExecute);
+        public RelayCommand ThanksGregoryCommand => new RelayCommand(ThanksGregoryExecute);
         private async void ThanksGregoryExecute()
         {
             var uri = new Uri(@ThanksGregory);

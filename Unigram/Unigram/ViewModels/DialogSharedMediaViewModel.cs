@@ -105,7 +105,7 @@ namespace Unigram.ViewModels
 
         #region Goto
 
-        public RelayCommand<TLMessageBase> MessageGotoCommand { get; } = new RelayCommand<TLMessageBase>(MessageGotoExecute);
+        public RelayCommand<TLMessageBase> MessageGotoCommand => new RelayCommand<TLMessageBase>(MessageGotoExecute);
         private void MessageGotoExecute(TLMessageBase messageBase)
         {
             NavigationService.NavigateToDialog(_with, messageBase.Id);
@@ -115,7 +115,7 @@ namespace Unigram.ViewModels
 
         #region Delete
 
-        public RelayCommand<TLMessageBase> MessageDeleteCommand { get; } = new RelayCommand<TLMessageBase>(MessageDeleteExecute);
+        public RelayCommand<TLMessageBase> MessageDeleteCommand => new RelayCommand<TLMessageBase>(MessageDeleteExecute);
         private async void MessageDeleteExecute(TLMessageBase messageBase)
         {
             if (messageBase == null) return;
@@ -305,7 +305,7 @@ namespace Unigram.ViewModels
 
         #region Forward
 
-        public RelayCommand<TLMessageBase> MessageForwardCommand { get; } = new RelayCommand<TLMessageBase>(MessageForwardExecute);
+        public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
         private void MessageForwardExecute(TLMessageBase message)
         {
             if (message is TLMessage)
@@ -322,7 +322,8 @@ namespace Unigram.ViewModels
 
         #region Multiple Delete
 
-        public RelayCommand MessagesDeleteCommand { get; } = new RelayCommand(MessagesDeleteExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(messageCommon =>
+        private RelayCommand _messagesDeleteCommand;
+        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(messageCommon =>
         {
             var channel = _with as TLChannel;
             if (channel != null)
@@ -339,7 +340,7 @@ namespace Unigram.ViewModels
             }
 
             return true;
-        }));
+        })));
 
         private async void MessagesDeleteExecute()
         {
@@ -472,24 +473,8 @@ namespace Unigram.ViewModels
 
         #region Multiple Forward
 
-        public RelayCommand MessagesForwardCommand { get; } = new RelayCommand(MessagesForwardExecute, () => SelectedItems.Count > 0 && SelectedItems.All(x =>
-        {
-            if (x is TLMessage message)
-            {
-                if (message.Media is TLMessageMediaPhoto photoMedia)
-                {
-                    return !photoMedia.HasTTLSeconds;
-                }
-                else if (message.Media is TLMessageMediaDocument documentMedia)
-                {
-                    return !documentMedia.HasTTLSeconds;
-                }
-
-                return true;
-            }
-
-            return false;
-        }));
+        private RelayCommand _messagesForwardCommand;
+        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(x => x is TLMessage)));
 
         private void MessagesForwardExecute()
         {
@@ -507,7 +492,7 @@ namespace Unigram.ViewModels
 
         #region Select
 
-        public RelayCommand<TLMessageBase> MessageSelectCommand { get; } = new RelayCommand<TLMessageBase>(MessageSelectExecute);
+        public RelayCommand<TLMessageBase> MessageSelectCommand => new RelayCommand<TLMessageBase>(MessageSelectExecute);
         private void MessageSelectExecute(TLMessageBase message)
         {
             var messageCommon = message as TLMessageCommonBase;

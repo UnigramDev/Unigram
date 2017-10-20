@@ -114,7 +114,7 @@ namespace Unigram.ViewModels.Channels
 
         public MvxObservableCollection<TLChannel> AdminedPublicChannels { get; private set; }
 
-        public RelayCommand<TLChannel> RevokeLinkCommand { get; } = new RelayCommand<TLChannel>(RevokeLinkExecute);
+        public RelayCommand<TLChannel> RevokeLinkCommand => new RelayCommand<TLChannel>(RevokeLinkExecute);
         private async void RevokeLinkExecute(TLChannel channel)
         {
             var dialog = new TLMessageDialog();

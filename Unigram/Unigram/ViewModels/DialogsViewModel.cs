@@ -1125,7 +1125,7 @@ namespace Unigram.ViewModels
 
         #region Commands
 
-        public RelayCommand<TLDialog> DialogPinCommand { get; } = new RelayCommand<TLDialog>(DialogPinExecute);
+        public RelayCommand<TLDialog> DialogPinCommand => new RelayCommand<TLDialog>(DialogPinExecute);
         private async void DialogPinExecute(TLDialog dialog)
         {
             if (Items.Where(x => x.IsPinned).Count() == PinnedDialogsCountMax && !dialog.IsPinned)
@@ -1188,7 +1188,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLDialog> DialogNotifyCommand { get; } = new RelayCommand<TLDialog>(DialogNotifyExecute);
+        public RelayCommand<TLDialog> DialogNotifyCommand => new RelayCommand<TLDialog>(DialogNotifyExecute);
         private async void DialogNotifyExecute(TLDialog dialog)
         {
             var notifySettings = dialog.NotifySettings as TLPeerNotifySettings;
@@ -1233,7 +1233,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLDialog> DialogDeleteCommand { get; } = new RelayCommand<TLDialog>(DialogDeleteExecute);
+        public RelayCommand<TLDialog> DialogDeleteCommand => new RelayCommand<TLDialog>(DialogDeleteExecute);
         private async void DialogDeleteExecute(TLDialog dialog)
         {
             if (dialog.With is TLUser || dialog.With is TLChat || dialog.With is TLChatForbidden)
@@ -1280,7 +1280,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLDialog> DialogClearCommand { get; } = new RelayCommand<TLDialog>(DialogClearExecute);
+        public RelayCommand<TLDialog> DialogClearCommand => new RelayCommand<TLDialog>(DialogClearExecute);
         private async void DialogClearExecute(TLDialog dialog)
         {
             if (dialog.With is TLUser || dialog.With is TLChat || dialog.With is TLChatForbidden)
@@ -1309,7 +1309,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLDialog> DialogDeleteAndStopCommand { get; } = new RelayCommand<TLDialog>(DialogDeleteAndStopExecute);
+        public RelayCommand<TLDialog> DialogDeleteAndStopCommand => new RelayCommand<TLDialog>(DialogDeleteAndStopExecute);
         private async void DialogDeleteAndStopExecute(TLDialog dialog)
         {
             if (dialog.With is TLUser user)

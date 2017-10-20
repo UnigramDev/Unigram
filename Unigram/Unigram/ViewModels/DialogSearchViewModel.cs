@@ -172,13 +172,13 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        public RelayCommand FilterCommand { get; } = new RelayCommand(FilterExecute);
+        public RelayCommand FilterCommand => new RelayCommand(FilterExecute);
         private void FilterExecute()
         {
             IsFiltering = true;
         }
 
-        public RelayCommand<string> SearchCommand { get; } = new RelayCommand<string>(SearchExecute);
+        public RelayCommand<string> SearchCommand => new RelayCommand<string>(SearchExecute);
         private async void SearchExecute(string query)
         {
             Query = query;
@@ -213,7 +213,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand NextCommand { get; } = new RelayCommand(NextExecute, NextCanExecute);
+        private RelayCommand _nextCommand;
+        public RelayCommand NextCommand => _nextCommand = _nextCommand ?? new RelayCommand(NextExecute, NextCanExecute);
         private async void NextExecute()
         {
             if (Items == null || SelectedIndex <= 1)
@@ -239,7 +240,8 @@ namespace Unigram.ViewModels
             return SelectedIndex > 1;
         }
 
-        public RelayCommand PreviousCommand { get; } = new RelayCommand(PreviousExecute, PreviousCanExecute);
+        private RelayCommand _previousCommand;
+        public RelayCommand PreviousCommand => _previousCommand = _previousCommand ?? new RelayCommand(PreviousExecute, PreviousCanExecute);
         private async void PreviousExecute()
         {
             if (Items == null || SelectedIndex >= TotalItems)

@@ -109,7 +109,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<StorageFile> EditPhotoCommand { get; } = new RelayCommand<StorageFile>(EditPhotoExecute);
+        public RelayCommand<StorageFile> EditPhotoCommand => new RelayCommand<StorageFile>(EditPhotoExecute);
         private async void EditPhotoExecute(StorageFile file)
         {
             var fileLocation = new TLFileLocation
@@ -143,7 +143,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand AskCommand { get; } = new RelayCommand(AskExecute);
+        public RelayCommand AskCommand => new RelayCommand(AskExecute);
         private async void AskExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync(AppResources.TGSupportDisclaimerDetails, AppResources.Telegram, AppResources.TGSupportDisclaimerPrimaryText, AppResources.Cancel);
@@ -161,7 +161,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand LogoutCommand { get; } = new RelayCommand(LogoutExecute);
+        public RelayCommand LogoutCommand => new RelayCommand(LogoutExecute);
         private async void LogoutExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync(AppResources.TGLogoutText, AppResources.AppDisplayName, AppResources.OK, AppResources.Cancel);
@@ -196,7 +196,7 @@ namespace Unigram.ViewModels
 
 #if DEBUG
 
-        public RelayCommand DeleteAccountCommand { get; } = new RelayCommand(DeleteAccountExecute);
+        public RelayCommand DeleteAccountCommand => new RelayCommand(DeleteAccountExecute);
         private async void DeleteAccountExecute()
         {
             var config = InMemoryCacheService.Current.GetConfig();

@@ -37,7 +37,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLChannel> ChannelOpenCommand { get; } = new RelayCommand<TLChannel>(ChannelOpenExecute);
+        public RelayCommand<TLChannel> ChannelOpenCommand => new RelayCommand<TLChannel>(ChannelOpenExecute);
         private void ChannelOpenExecute(TLChannel channel)
         {
             if (channel != null)
@@ -46,7 +46,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLChannel> ChannelJoinCommand { get; } = new RelayCommand<TLChannel>(ChannelJoinExecute);
+        public RelayCommand<TLChannel> ChannelJoinCommand => new RelayCommand<TLChannel>(ChannelJoinExecute);
         private async void ChannelJoinExecute(TLChannel channel)
         {
             if (channel != null && channel.IsLeft)
@@ -59,7 +59,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand ShareCommand { get; } = new RelayCommand(ShareExecute);
+        public RelayCommand ShareCommand => new RelayCommand(ShareExecute);
         private async void ShareExecute()
         {
             if (ShareLink != null)
@@ -68,7 +68,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand FeedbackCommand { get; } = new RelayCommand(FeedbackExecute);
+        public RelayCommand FeedbackCommand => new RelayCommand(FeedbackExecute);
         private async void FeedbackExecute()
         {
             var user = CacheService.GetUser("previews");

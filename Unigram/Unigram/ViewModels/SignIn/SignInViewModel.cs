@@ -136,7 +136,8 @@ namespace Unigram.ViewModels.SignIn
 
         public List<KeyedList<string, Country>> Countries { get; } = Country.GroupedCountries;
 
-        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute, () => !IsLoading);
+        private RelayCommand _sendCommand;
+        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
             if (PhoneCode == null || PhoneNumber == null)
@@ -173,7 +174,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        public RelayCommand ProxyCommand { get; } = new RelayCommand(ProxyExecute);
+        public RelayCommand ProxyCommand => new RelayCommand(ProxyExecute);
         private async void ProxyExecute()
         {
             var dialog = new ProxyView();

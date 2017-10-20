@@ -172,7 +172,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ClearCacheCommand { get; } = new RelayCommand(ClearCacheExecute);
+        public RelayCommand ClearCacheCommand => new RelayCommand(ClearCacheExecute);
         private async void ClearCacheExecute()
         {
             IsLoading = true;

@@ -140,7 +140,8 @@ namespace Unigram.ViewModels
 
         public ObservableCollection<TLUser> SelectedItems { get; private set; }
 
-        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute, () => Minimum <= SelectedItems.Count && Maximum >= SelectedItems.Count);
+        private RelayCommand _sendCommand;
+        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => Minimum <= SelectedItems.Count && Maximum >= SelectedItems.Count);
         protected virtual void SendExecute()
         {
 

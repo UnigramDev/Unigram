@@ -98,13 +98,13 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand LiveLocationCommand { get; } = new RelayCommand(LiveLocationExecute);
+        public RelayCommand LiveLocationCommand => new RelayCommand(LiveLocationExecute);
         private async void LiveLocationExecute()
         {
             await new LiveLocationsView().ShowQueuedAsync();
         }
 
-        public RelayCommand StopLiveLocationCommand { get; } = new RelayCommand(StopLiveLocationExecute);
+        public RelayCommand StopLiveLocationCommand => new RelayCommand(StopLiveLocationExecute);
         private void StopLiveLocationExecute()
         {
             _liveLocationService.StopTracking();

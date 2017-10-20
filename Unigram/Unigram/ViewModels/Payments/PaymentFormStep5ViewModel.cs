@@ -154,7 +154,8 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute, () => !IsLoading);
+        private RelayCommand _sendCommand;
+        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync(string .Format("Neither Telegram, nor {0} will have access to your credit card information. Credit card details will be handled only by the payment system, {1}.\n\nPayments will go directly to the developer of {0}. Telegram cannot provide any guarantees, so proceed at your own risk. In case of problems, please contact the developer of {0} or your bank.", _bot.FullName, _provider.FullName), "Transaction review", "OK", "Cancel");

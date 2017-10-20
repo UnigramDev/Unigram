@@ -109,7 +109,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<TLAuthorization> TerminateCommand { get; } = new RelayCommand<TLAuthorization>(TerminateExecute);
+        public RelayCommand<TLAuthorization> TerminateCommand => new RelayCommand<TLAuthorization>(TerminateExecute);
         private async void TerminateExecute(TLAuthorization session)
         {
             var terminate = await TLMessageDialog.ShowAsync("Terminate this session?", "Telegram", "Yes", "No");
@@ -127,7 +127,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand TerminateOthersCommand { get; } = new RelayCommand(TerminateOtherExecute);
+        public RelayCommand TerminateOthersCommand => new RelayCommand(TerminateOtherExecute);
         private async void TerminateOtherExecute()
         {
             var terminate = await TLMessageDialog.ShowAsync("Are you sure you want to terminate all other sessions?", "Telegram", "Yes", "No");

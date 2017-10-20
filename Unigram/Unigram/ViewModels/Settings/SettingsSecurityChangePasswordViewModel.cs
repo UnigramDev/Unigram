@@ -69,7 +69,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute);
+        public RelayCommand SendCommand => new RelayCommand(SendExecute);
         private async void SendExecute()
         {
             //ProtoService.UpdatePasswordSettingsAsync()

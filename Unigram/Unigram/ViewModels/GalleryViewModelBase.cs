@@ -144,7 +144,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand StickersCommand { get; } = new RelayCommand(StickersExecute);
+        public RelayCommand StickersCommand => new RelayCommand(StickersExecute);
         private async void StickersExecute()
         {
             if (_selectedItem != null && _selectedItem.HasStickers)
@@ -168,7 +168,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand GotoCommand { get; } = new RelayCommand(GotoExecute);
+        public RelayCommand GotoCommand => new RelayCommand(GotoExecute);
         protected virtual void GotoExecute()
         {
             NavigationService.GoBack();
@@ -190,12 +190,12 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand DeleteCommand { get; } = new RelayCommand(DeleteExecute);
+        public RelayCommand DeleteCommand => new RelayCommand(DeleteExecute);
         protected virtual void DeleteExecute()
         {
         }
 
-        public RelayCommand OpenWithCommand { get; } = new RelayCommand(OpenWithExecute);
+        public RelayCommand OpenWithCommand => new RelayCommand(OpenWithExecute);
         protected virtual async void OpenWithExecute()
         {
             object value = null;

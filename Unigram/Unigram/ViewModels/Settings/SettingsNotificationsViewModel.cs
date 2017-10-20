@@ -289,7 +289,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ResetCommand { get; } = new RelayCommand(ResetExecute);
+        public RelayCommand ResetCommand => new RelayCommand(ResetExecute);
         private async void ResetExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync(AppResources.ResetNotificationsDialogBody, AppResources.ResetNotificationsDialogTitle, AppResources.OK, AppResources.Cancel);

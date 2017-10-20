@@ -98,7 +98,8 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute, () => !IsLoading);
+        private RelayCommand _sendCommand;
+        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
         private async void SendExecute()
         {
             IsLoading = true;
@@ -148,7 +149,7 @@ namespace Unigram.ViewModels.Payments
             }
         }
 
-        public RelayCommand ChooseCommand { get; } = new RelayCommand(ChooseExecute);
+        public RelayCommand ChooseCommand => new RelayCommand(ChooseExecute);
         private void ChooseExecute()
         {
             NavigationService.NavigateToPaymentFormStep3(_message, _paymentForm, _info, _requestedInfo, _shipping);

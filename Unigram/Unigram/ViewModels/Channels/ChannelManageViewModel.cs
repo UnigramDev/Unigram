@@ -52,7 +52,7 @@ namespace Unigram.ViewModels.Channels
             return Task.CompletedTask;
         }
 
-        public RelayCommand AdminLogCommand { get; } = new RelayCommand(AdminLogExecute);
+        public RelayCommand AdminLogCommand => new RelayCommand(AdminLogExecute);
         private void AdminLogExecute()
         {
             if (_item == null)

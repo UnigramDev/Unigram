@@ -53,7 +53,9 @@ namespace Unigram.ViewModels
 
 
 
-        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute, () => SelectedItem != null);
+        private RelayCommand _sendCommand;
+        public RelayCommand SendCommand => _sendCommand = (_sendCommand ?? new RelayCommand(SendExecute, () => SelectedItem != null));
+
         private void SendExecute()
         {
             var messages = Messages?.ToList();

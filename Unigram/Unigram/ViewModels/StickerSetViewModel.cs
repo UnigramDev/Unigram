@@ -81,7 +81,7 @@ namespace Unigram.ViewModels
 
         public ObservableCollection<TLMessagesStickerSet> Items { get; private set; }
 
-        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute);
+        public RelayCommand SendCommand => new RelayCommand(SendExecute);
         private async void SendExecute()
         {
             IsLoading = true;

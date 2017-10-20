@@ -167,7 +167,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public RelayCommand<StorageFile> EditPhotoCommand { get; } = new RelayCommand<StorageFile>(EditPhotoExecute);
+        public RelayCommand<StorageFile> EditPhotoCommand => new RelayCommand<StorageFile>(EditPhotoExecute);
         private async void EditPhotoExecute(StorageFile file)
         {
             var fileLocation = new TLFileLocation
@@ -201,19 +201,19 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public RelayCommand InviteCommand { get; } = new RelayCommand(InviteExecute);
+        public RelayCommand InviteCommand => new RelayCommand(InviteExecute);
         private void InviteExecute()
         {
             NavigationService.Navigate(typeof(ChatInvitePage), _item.ToPeer());
         }
 
-        public RelayCommand MediaCommand { get; } = new RelayCommand(MediaExecute);
+        public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
         private void MediaExecute()
         {
             NavigationService.Navigate(typeof(DialogSharedMediaPage), _item.ToInputPeer());
         }
 
-        public RelayCommand MigrateCommand { get; } = new RelayCommand(MigrateExecute);
+        public RelayCommand MigrateCommand => new RelayCommand(MigrateExecute);
         private async void MigrateExecute()
         {
             var chat = _item as TLChat;
@@ -275,7 +275,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public RelayCommand<TLChatParticipantBase> ParticipantRemoveCommand { get; } = new RelayCommand<TLChatParticipantBase>(ParticipantRemoveExecute);
+        public RelayCommand<TLChatParticipantBase> ParticipantRemoveCommand => new RelayCommand<TLChatParticipantBase>(ParticipantRemoveExecute);
         private async void ParticipantRemoveExecute(TLChatParticipantBase participant)
         {
             if (participant == null || participant.User == null)
@@ -307,7 +307,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public RelayCommand ToggleMuteCommand { get; } = new RelayCommand(ToggleMuteExecute);
+        public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
         private async void ToggleMuteExecute()
         {
             if (_item == null || _full == null)

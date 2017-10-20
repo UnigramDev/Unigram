@@ -314,7 +314,7 @@ namespace Unigram.ViewModels.Channels
 
         #endregion
 
-        public RelayCommand SendCommand { get; } = new RelayCommand(SendExecute);
+        public RelayCommand SendCommand => new RelayCommand(SendExecute);
         private async void SendExecute()
         {
             var rights = new TLChannelBannedRights
@@ -337,7 +337,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public RelayCommand DismissCommand { get; } = new RelayCommand(DismissExecute);
+        public RelayCommand DismissCommand => new RelayCommand(DismissExecute);
         private async void DismissExecute()
         {
             var rights = new TLChannelBannedRights();
