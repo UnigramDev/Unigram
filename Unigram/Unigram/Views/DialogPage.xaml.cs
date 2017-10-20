@@ -687,6 +687,7 @@ namespace Unigram.Views
             menu.Items.Add(CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, AppResources.MessageDelete));
             menu.Items.Add(CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, AppResources.MessageSelect));
             menu.Items.Add(CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, AppResources.MessageCopy));
+            menu.Items.Add(CreateFlyoutItem(MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, messageCommon, AppResources.MessageCopyMedia));
             menu.Items.Add(CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel != null && channel.IsBroadcast ? AppResources.MessageCopyLinkBroadcast : AppResources.MessageCopyLinkMegaGroup));
 
             // Stickers
@@ -838,6 +839,23 @@ namespace Unigram.Views
             return Visibility.Collapsed;
         }
 
+        private Visibility MessageCopyMedia_Loaded(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon is TLMessage message)
+            {
+                if (message.Media is TLMessageMediaPhoto photoMedia)
+                {
+                    return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+                {
+                    return webPage.HasPhoto ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+
+            return Visibility.Collapsed;
+        }
+
         private Visibility MessageCopyLink_Loaded(TLMessageCommonBase messageCommon)
         {
             if (messageCommon.Parent is TLChannel channel && channel.HasUsername)
@@ -910,13 +928,17 @@ namespace Unigram.Views
         {
             if (messageCommon is TLMessage message)
             {
-                if (message != null && message.Media is TLMessageMediaPhoto photoMedia)
+                if (message.Media is TLMessageMediaPhoto photoMedia)
                 {
                     return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
                 }
-                else if (message != null && message.Media is TLMessageMediaDocument documentMedia)
+                else if (message.Media is TLMessageMediaDocument documentMedia)
                 {
                     return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+                {
+                    return webPage.HasDocument || webPage.HasPhoto ? Visibility.Visible : Visibility.Collapsed;
                 }
             }
 
@@ -925,9 +947,19 @@ namespace Unigram.Views
 
         private Visibility MessageSaveGIF_Loaded(TLMessageCommonBase messageCommon)
         {
-            if (messageCommon is TLMessage message && message.IsGif())
+            if (messageCommon is TLMessage message)
             {
-                return Visibility.Visible;
+                if (message.IsGif())
+                {
+                    return Visibility.Visible;
+                }
+                else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+                {
+                    if (TLMessage.IsGif(webPage.Document))
+                    {
+                        return Visibility.Visible;
+                    }
+                }
             }
 
             return Visibility.Collapsed;
@@ -1249,7 +1281,8 @@ namespace Unigram.Views
 
                 TextField.SetText(null, null);
                 ViewModel.SendCommand.Execute(insert);
-                ViewModel.BotCommands = null;
+
+                ViewModel.Autocomplete = null;
             }
             else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
             {
