@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -164,6 +165,80 @@ namespace Unigram.Core.Helpers
             }
 
             return result;
+        }
+
+        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, Rect cropRectangle)
+        {
+            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
+
+            using (var fileStream = await sourceFile.OpenAsync(FileAccessMode.Read))
+            using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                var decoder = await BitmapDecoder.CreateAsync(fileStream);
+                var bounds = new BitmapBounds();
+                bounds.X = (uint)cropRectangle.X;
+                bounds.Y = (uint)cropRectangle.Y;
+                bounds.Width = (uint)cropRectangle.Width;
+                bounds.Height = (uint)cropRectangle.Height;
+
+                var transform = ComputeScalingTransformForSourceImage(decoder);
+                transform.Bounds = bounds;
+
+                var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+                var propertySet = new BitmapPropertySet();
+                var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
+                propertySet.Add("ImageQuality", qualityValue);
+
+                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputStream);
+                encoder.SetSoftwareBitmap(pixelData);
+                await encoder.FlushAsync();
+            }
+
+            return file;
+        }
+
+        public static async Task<ImageSource> CropAndPreviewAsync(StorageFile sourceFile, Rect cropRectangle)
+        {
+            using (var imageStream = await sourceFile.OpenReadAsync())
+            {
+                var decoder = await BitmapDecoder.CreateAsync(imageStream);
+                var bounds = new BitmapBounds();
+                bounds.X = (uint)cropRectangle.X;
+                bounds.Y = (uint)cropRectangle.Y;
+                bounds.Width = (uint)cropRectangle.Width;
+                bounds.Height = (uint)cropRectangle.Height;
+
+                var transform = ComputeScalingTransformForSourceImage(decoder);
+                transform.Bounds = bounds;
+
+                var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+                var propertySet = new BitmapPropertySet();
+                var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
+                propertySet.Add("ImageQuality", qualityValue);
+
+                var bitmap = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+                var bitmapImage = new SoftwareBitmapSource();
+                await bitmapImage.SetBitmapAsync(bitmap);
+
+                return bitmapImage;
+            }
+        }
+
+        public static BitmapTransform ComputeScalingTransformForSourceImage(BitmapDecoder sourceDecoder)
+        {
+            var transform = new BitmapTransform();
+
+            if (sourceDecoder.PixelHeight > 1280)
+            {
+                float scalingFactor = (float)1280.0 / (float)sourceDecoder.PixelHeight;
+
+                transform.ScaledWidth = (uint)Math.Floor(sourceDecoder.PixelWidth * scalingFactor);
+                transform.ScaledHeight = (uint)Math.Floor(sourceDecoder.PixelHeight * scalingFactor);
+            }
+
+            return transform;
         }
     }
 }

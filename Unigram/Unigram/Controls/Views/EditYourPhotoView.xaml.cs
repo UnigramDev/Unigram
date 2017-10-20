@@ -27,12 +27,11 @@ namespace Unigram.Controls.Views
 
         public StorageFile Result { get; private set; }
 
-        public EditYourPhotoView(StorageFile file, ImageCroppingProportions croppingProportions = ImageCroppingProportions.Square, bool isCropEnabled = false, bool useRoundCropper = true)
+        public EditYourPhotoView(StorageFile file, bool useMouseAndTouchGestures = false, bool useRoundCropper = true)
         {
             InitializeComponent();
 
-            Cropper.Proportions = croppingProportions;
-            Cropper.IsCropEnabled = isCropEnabled;
+            Cropper.UseMouseAndTouchGestures = useMouseAndTouchGestures;
 
             if (useRoundCropper)
             {
@@ -46,6 +45,34 @@ namespace Unigram.Controls.Views
             {
                 await Cropper.SetSourceAsync(file);
             };
+        }
+        
+        public bool IsCropEnabled
+        {
+            get { return this.Cropper.IsCropEnabled; }
+            set { this.Cropper.IsCropEnabled = value; }
+        }
+
+        public bool UseMouseAndTouchGestures
+        {
+            get { return this.Cropper.UseMouseAndTouchGestures; }
+            set { this.Cropper.UseMouseAndTouchGestures = value; }
+        }
+
+        public ImageCroppingProportions CropperProportions
+        {
+            get { return this.Cropper.Proportions; }
+            set { this.Cropper.Proportions = value; }
+        }
+
+        public Rect CropRectangle
+        {
+            get { return this.Cropper.CropRectangle; }
+        }
+
+        public int ZoomFactor
+        {
+            get { return this.Cropper.CurrentZoomFactor; }
         }
 
         private async void Accept_Click(object sender, RoutedEventArgs e)

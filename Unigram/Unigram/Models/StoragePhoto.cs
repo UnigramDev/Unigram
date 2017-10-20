@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
 using Unigram.Core.Helpers;
+using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -32,22 +33,18 @@ namespace Unigram.Models
             }
         }
 
-        private StorageFile _croppedFile;
-        public StorageFile CroppedFile
+        private Rect? _cropRectangle;
+        public Rect? CropRectangle
         {
-            get { return _croppedFile; }
-            set
-            {
-                _croppedFile = value;
-                if (_croppedFile != null)
-                {
-                    LoadCroppedPreview();
-                }
-                else
-                {
-                    LoadPreview();
-                }
-            }
+            get { return _cropRectangle; }
+            set { Set(ref _cropRectangle, value); }
+        }
+
+        private int _zoomFactor;
+        public int ZoomFactor
+        {
+            get { return _zoomFactor; }
+            set { Set(ref _zoomFactor, value); }
         }
 
         private async void LoadPreview()
@@ -58,7 +55,12 @@ namespace Unigram.Models
 
         private async void LoadCroppedPreview()
         {
-            _preview = await ImageHelper.GetPreviewBitmapAsync(CroppedFile);
+            if (!CropRectangle.HasValue)
+            {
+                return;
+            }
+            
+            _preview = await ImageHelper.CropAndPreviewAsync(File, CropRectangle.Value);
             RaisePropertyChanged(() => Preview);
         }
 
@@ -67,7 +69,7 @@ namespace Unigram.Models
             var item = new StoragePhoto(File);
             item._thumbnail = _thumbnail;
             item._preview = _preview;
-            item._croppedFile = _croppedFile;
+            item._cropRectangle = _cropRectangle;
 
             return item;
         }

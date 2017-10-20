@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Unigram.Core.Helpers;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
@@ -89,6 +90,26 @@ namespace Unigram.Controls
             set { SetValue(s_proportionsProperty, value); }
         }
 
+        public bool UseMouseAndTouchGestures
+        {
+            get { return (bool)GetValue(UseMouseAndTouchGesturesProperty); }
+            set { SetValue(UseMouseAndTouchGesturesProperty, value); }
+        }
+       
+        public static readonly DependencyProperty UseMouseAndTouchGesturesProperty =
+            DependencyProperty.Register("UseMouseAndTouchGestures", typeof(bool), typeof(ImageCropper), new PropertyMetadata(false));
+
+        public int MaxZoomFactor
+        {
+            get { return (int)GetValue(MaxZoomFactorProperty); }
+            set { SetValue(MaxZoomFactorProperty, value); }
+        }
+        
+        public static readonly DependencyProperty MaxZoomFactorProperty =
+            DependencyProperty.Register("MaxZoomFactor", typeof(int), typeof(ImageCropper), new PropertyMetadata(3));
+
+        public int CurrentZoomFactor { get; private set; }
+
         //public static DependencyProperty RotationAngleProperty
         //{
         //    get { return s_rotationAngleProperty; }
@@ -143,8 +164,12 @@ namespace Unigram.Controls
             m_imageViewer = (Image)GetTemplateChild("ImageViewer");
             m_imageThumb = (FrameworkElement)GetTemplateChild("ImageThumb");
 
-            //m_imageThumb.ManipulationMode = ManipulationModes.Rotate | ManipulationModes.Scale | ManipulationModes.TranslateX | ManipulationModes.TranslateY;
             m_imageThumb.ManipulationDelta += ImageThumb_ManipulationDelta;
+            if (UseMouseAndTouchGestures)
+            {
+                m_imageThumb.ManipulationMode = ManipulationModes.Scale | ManipulationModes.TranslateX | ManipulationModes.TranslateY;
+                m_imageThumb.PointerWheelChanged += ImageThumb_PointerWheelChanged;
+            }
 
             m_outerClip = (Geometry)GetTemplateChild("OuterClip");
             m_innerClip = (Geometry)GetTemplateChild("InnerClip");
@@ -386,33 +411,9 @@ namespace Unigram.Controls
 
         public async Task<StorageFile> CropAsync()
         {
-            var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
+            var croppedFile = await ImageHelper.CropAsync(m_imageSource, CropRectangle);
 
-            using (var fileStream = await m_imageSource.OpenAsync(FileAccessMode.Read))
-            using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))
-            {
-                var decoder = await BitmapDecoder.CreateAsync(fileStream);
-                var bounds = new BitmapBounds();
-                bounds.X = (uint)CropRectangle.X;
-                bounds.Y = (uint)CropRectangle.Y;
-                bounds.Width = (uint)CropRectangle.Width;
-                bounds.Height = (uint)CropRectangle.Height;
-
-                var transform = ComputeScalingTransformForSourceImage(decoder);
-                transform.Bounds = bounds;
-
-                var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-
-                var propertySet = new BitmapPropertySet();
-                var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
-                propertySet.Add("ImageQuality", qualityValue);
-
-                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputStream);
-                encoder.SetSoftwareBitmap(pixelData);
-                await encoder.FlushAsync();
-            }
-
-            return file;
+            return croppedFile;
         }
 
         public async Task SetSourceAsync(StorageFile file)
@@ -421,7 +422,7 @@ namespace Unigram.Controls
             using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
-                var transform = ComputeScalingTransformForSourceImage(decoder);
+                var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder);
 
                 var software = await decoder.GetSoftwareBitmapAsync(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
                 source = new SoftwareBitmapSource();
@@ -450,21 +451,6 @@ namespace Unigram.Controls
             }
 
             UpdateCropRectangle(m_cropRectangle, false);
-        }
-
-        private BitmapTransform ComputeScalingTransformForSourceImage(BitmapDecoder sourceDecoder)
-        {
-            var transform = new BitmapTransform();
-
-            if (sourceDecoder.PixelHeight > 1280)
-            {
-                float scalingFactor = (float)1280.0 / (float)sourceDecoder.PixelHeight;
-
-                transform.ScaledWidth = (uint)Math.Floor(sourceDecoder.PixelWidth * scalingFactor);
-                transform.ScaledHeight = (uint)Math.Floor(sourceDecoder.PixelHeight * scalingFactor);
-            }
-
-            return transform;
         }
 
         private void OnProportionsChanged(ImageCroppingProportions oldValue, ImageCroppingProportions newValue)
@@ -635,6 +621,95 @@ namespace Unigram.Controls
 
                 e.Handled = true;
             }
+        }
+
+        private void ImageThumb_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        {
+            if (!UseMouseAndTouchGestures)
+            {
+                return;
+            }
+
+            var mouseWheelDelta = e.GetCurrentPoint(sender as UIElement).Properties.MouseWheelDelta / 100;
+            if (mouseWheelDelta == 0)
+            {
+                return;
+            }
+            
+            if (mouseWheelDelta > 0)
+            {
+                ZoomIn();
+            }
+            else
+            {
+                ZoomOut();
+            }
+
+            e.Handled = true;
+        }
+
+        private void ZoomIn(double zoomInFactor = 1.1)
+        {
+            if (CurrentZoomFactor >= MaxZoomFactor)
+            {
+                return;
+            }
+
+            CurrentZoomFactor++;
+
+            double width;
+            double height;
+            var imageScale = m_imageRectangle.Width / m_imageRectangle.Height;
+
+            if (m_thumbsRectangle.Width / m_thumbsRectangle.Height < imageScale)
+            {
+                height = Math.Max(m_imageRectangle.Height * zoomInFactor, m_thumbsRectangle.Height);
+                width = height * imageScale;
+            }
+            else
+            {
+                width = Math.Max(m_imageRectangle.Width * zoomInFactor, m_thumbsRectangle.Width);
+                height = width / imageScale;
+            }
+
+            m_imageRectangle.X = Clamp(m_imageRectangle.Left + (m_imageRectangle.Width - width) / 2.0, m_thumbsRectangle.Right - width, m_thumbsRectangle.Left);
+            m_imageRectangle.Y = Clamp(m_imageRectangle.Top + (m_imageRectangle.Height - height) / 2.0, m_thumbsRectangle.Bottom - height, m_thumbsRectangle.Top);
+            m_imageRectangle.Width = width;
+            m_imageRectangle.Height = height;
+
+            UpdateCropRectangle(false);
+        }
+
+        private void ZoomOut(double zoomOutFactor = 0.9)
+        {
+            if (CurrentZoomFactor <= 0)
+            {
+                return;
+            }
+
+            CurrentZoomFactor--;
+
+            double width;
+            double height;
+            var imageScale = m_imageRectangle.Width / m_imageRectangle.Height;
+
+            if (m_thumbsRectangle.Width / m_thumbsRectangle.Height < imageScale)
+            {
+                height = Math.Max(m_imageRectangle.Height * zoomOutFactor, m_thumbsRectangle.Height);
+                width = height * imageScale;
+            }
+            else
+            {
+                width = Math.Max(m_imageRectangle.Width * zoomOutFactor, m_thumbsRectangle.Width);
+                height = width / imageScale;
+            }
+
+            m_imageRectangle.X = Clamp(m_imageRectangle.Left + (m_imageRectangle.Width - width) / 2.0, m_thumbsRectangle.Right - width, m_thumbsRectangle.Left);
+            m_imageRectangle.Y = Clamp(m_imageRectangle.Top + (m_imageRectangle.Height - height) / 2.0, m_thumbsRectangle.Bottom - height, m_thumbsRectangle.Top);
+            m_imageRectangle.Width = width;
+            m_imageRectangle.Height = height;
+
+            UpdateCropRectangle(false);
         }
 
         private void TopLeftThumb_PointerMoved(object sender, PointerRoutedEventArgs e)

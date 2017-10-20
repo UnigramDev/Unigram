@@ -75,7 +75,7 @@ namespace Unigram.Models
 
         public bool IsPhoto => this is StoragePhoto;
         public bool IsVideo => this is StorageVideo;
-        public bool IsCropped => this is StoragePhoto photo && photo.CroppedFile != null; 
+        public bool IsCropped => this is StoragePhoto photo && photo.CropRectangle.HasValue; 
 
         private async void LoadThumbnail()
         {
