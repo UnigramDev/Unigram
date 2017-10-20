@@ -49,6 +49,8 @@ using System.Linq;
 using Telegram.Logs;
 using Windows.Media.Playback;
 using Windows.UI.StartScreen;
+using Windows.System;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace Unigram
 {
@@ -57,7 +59,9 @@ namespace Unigram
     /// </summary>
     sealed partial class App : BootStrapper
     {
-        public static ShareOperation ShareOperation { get; private set; }
+        public static ShareOperation ShareOperation { get; set; }
+        public static DataPackageView DataPackage { get; set; }
+
         public static AppServiceConnection Connection { get; private set; }
 
         public static AppInMemoryState InMemoryState { get; } = new AppInMemoryState();
@@ -255,12 +259,54 @@ namespace Unigram
 
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
+            Execute.Initialize();
+
             if (SettingsHelper.IsAuthorized)
             {
                 if (args is ShareTargetActivatedEventArgs share)
                 {
+                    var package = new DataPackage();
+                    var operation = share.ShareOperation.Data;
+                    if (operation.Contains(StandardDataFormats.ApplicationLink))
+                    {
+                        package.SetApplicationLink(await operation.GetApplicationLinkAsync());
+                    }
+                    if (operation.Contains(StandardDataFormats.Bitmap))
+                    {
+                        package.SetBitmap(await operation.GetBitmapAsync());
+                    }
+                    //if (operation.Contains(StandardDataFormats.Html))
+                    //{
+                    //    package.SetHtmlFormat(await operation.GetHtmlFormatAsync());
+                    //}
+                    //if (operation.Contains(StandardDataFormats.Rtf))
+                    //{
+                    //    package.SetRtf(await operation.GetRtfAsync());
+                    //}
+                    if (operation.Contains(StandardDataFormats.StorageItems))
+                    {
+                        package.SetStorageItems(await operation.GetStorageItemsAsync());
+                    }
+                    if (operation.Contains(StandardDataFormats.Text))
+                    {
+                        package.SetText(await operation.GetTextAsync());
+                    }
+                    //if (operation.Contains(StandardDataFormats.Uri))
+                    //{
+                    //    package.SetUri(await operation.GetUriAsync());
+                    //}
+                    if (operation.Contains(StandardDataFormats.WebLink))
+                    {
+                        package.SetWebLink(await operation.GetWebLinkAsync());
+                    }
+
                     ShareOperation = share.ShareOperation;
-                    NavigationService.Navigate(typeof(ShareTargetPage));
+                    DataPackage = package.GetView();
+
+                    var options = new LauncherOptions();
+                    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
+
+                    await Launcher.LaunchUriAsync(new Uri("tg://"), options);
                 }
                 else if (args is VoiceCommandActivatedEventArgs voice)
                 {
@@ -325,6 +371,12 @@ namespace Unigram
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
                 {
+                    if (ShareOperation != null)
+                    {
+                        ShareOperation.ReportCompleted();
+                        ShareOperation = null;
+                    }
+
                     if (NavigationService?.Frame?.Content is MainPage page)
                     {
                         page.Activate(protocol.Uri);

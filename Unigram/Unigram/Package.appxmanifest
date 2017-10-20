@@ -65,8 +65,7 @@
             <uap:DisplayName>Unigram</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>
-        <!-- Share Target temporarely disabled -->
-        <!--<uap:Extension Category="windows.shareTarget">
+        <uap:Extension Category="windows.shareTarget">
           <uap:ShareTarget>
             <uap:SupportedFileTypes>
               <uap:SupportsAnyFileType />
@@ -76,7 +75,7 @@
             <uap:DataFormat>StorageItems</uap:DataFormat>
             <uap:DataFormat>Bitmap</uap:DataFormat>
           </uap:ShareTarget>
-        </uap:Extension>-->
+        </uap:Extension>
         <uap:Extension Category="windows.voipCall" />
         <uap3:Extension Category="windows.appUriHandler">
           <uap3:AppUriHandler>
