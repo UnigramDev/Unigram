@@ -224,6 +224,12 @@ namespace Unigram.ViewModels.Users
                 var result = await ProtoService.BlockAsync(user.ToInputUser());
                 if (result.IsSucceeded && result.Result)
                 {
+                    if (Full is TLUserFull full)
+                    {
+                        full.IsBlocked = true;
+                        full.RaisePropertyChanged(() => full.IsBlocked);
+                    }
+
                     CacheService.Commit();
                     Aggregator.Publish(new TLUpdateUserBlocked { UserId = user.Id, Blocked = true });
                 }
@@ -244,6 +250,12 @@ namespace Unigram.ViewModels.Users
                 var result = await ProtoService.UnblockAsync(user.ToInputUser());
                 if (result.IsSucceeded && result.Result)
                 {
+                    if (Full is TLUserFull full)
+                    {
+                        full.IsBlocked = false;
+                        full.RaisePropertyChanged(() => full.IsBlocked);
+                    }
+
                     CacheService.Commit();
                     Aggregator.Publish(new TLUpdateUserBlocked { UserId = user.Id, Blocked = false });
 
