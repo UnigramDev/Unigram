@@ -186,9 +186,16 @@ namespace Unigram.Views
         //    base.OnNavigatedTo(e);
         //}
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             ViewModel.IsActive = true;
+
+            if (App.DataPackage != null)
+            {
+                var package = App.DataPackage;
+                App.DataPackage = null;
+                await HandlePackageAsync(package);
+            }
 
             base.OnNavigatedTo(e);
         }
@@ -513,11 +520,15 @@ namespace Unigram.Views
 
         private async void OnDrop(object sender, DragEventArgs e)
         {
-            //gridLoading.Visibility = Visibility.Visible;
+            await HandlePackageAsync(e.DataView);
+        }
+        //gridLoading.Visibility = Visibility.Visible;
 
-            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        private async Task HandlePackageAsync(DataPackageView package)
+        {
+            if (package.Contains(StandardDataFormats.StorageItems))
             {
-                var items = await e.DataView.GetStorageItemsAsync();
+                var items = await package.GetStorageItemsAsync();
                 var media = new ObservableCollection<StorageMedia>();
                 var files = new List<StorageFile>(items.Count);
 
@@ -567,9 +578,9 @@ namespace Unigram.Views
             //    gridLoading.Visibility = Visibility.Collapsed;
             //
             //}
-            else if (e.DataView.Contains(StandardDataFormats.Text))
+            else if (package.Contains(StandardDataFormats.Text))
             {
-                var text = await e.DataView.GetTextAsync();
+                var text = await package.GetTextAsync();
                 TextField.Document.GetRange(TextField.Document.Selection.EndPosition, TextField.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
             }
         }

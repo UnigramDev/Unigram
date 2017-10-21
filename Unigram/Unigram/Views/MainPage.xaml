@@ -10,6 +10,7 @@
     xmlns:models="using:Telegram.Api.TL"
     xmlns:messages="using:Unigram.Controls.Messages"
     xmlns:behaviors="using:Unigram.Behaviors"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:vms="using:Unigram.ViewModels"
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -86,6 +87,14 @@
                                               ContentTransitions="{TemplateBinding ContentTransitions}"
                                               HorizontalContentAlignment="Stretch"
                                               VerticalContentAlignment="Stretch"/>
+
+                            <!--<toolkit:GridSplitter
+                                Background="Transparent"
+                                HorizontalAlignment="Left"
+                                Grid.Column="1"
+                                ResizeDirection="Auto"
+                                ResizeBehavior="BasedOnAlignment"
+                                CursorBehavior="ChangeOnSplitterHover"/>-->
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
