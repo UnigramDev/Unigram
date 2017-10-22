@@ -37,6 +37,7 @@ using Windows.UI.ViewManagement;
 using Windows.System.Display;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Aggregator;
+using Unigram.Common;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -143,7 +144,7 @@ namespace Unigram.Controls.Views
                 _lastPosition = sender.Position;
             }
 
-            Execute.BeginOnUIThread(() =>
+            this.BeginOnUIThread(() =>
             {
                 if (_destructed)
                 {
@@ -161,7 +162,7 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            Execute.BeginOnUIThread(() =>
+            this.BeginOnUIThread(() =>
             {
                 if (ViewModel?.SelectedItem is GalleryMessageItem messageItem && messageItem.Message == args.Message)
                 {

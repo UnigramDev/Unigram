@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +24,8 @@ namespace Unigram.ViewModels.Chats
         public ChatInviteLinkViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            CopyCommand = new RelayCommand(CopyExecute);
+            RevokeCommand = new RelayCommand(RevokeExecute);
         }
 
         private TLChatBase _item;
@@ -145,7 +147,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public RelayCommand CopyCommand => new RelayCommand(CopyExecute);
+        public RelayCommand CopyCommand { get; }
         private async void CopyExecute()
         {
             var dataPackage = new DataPackage();
@@ -155,7 +157,7 @@ namespace Unigram.ViewModels.Chats
             await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
         }
 
-        public RelayCommand RevokeCommand => new RelayCommand(RevokeExecute);
+        public RelayCommand RevokeCommand { get; }
         private async void RevokeExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync("Are you sure you want to revoke this link? Once you do, no one will be able to join the group using it.", "Telegram", "Revoke", "Cancel");

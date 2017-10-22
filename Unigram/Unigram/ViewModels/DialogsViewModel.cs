@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -60,6 +60,12 @@ namespace Unigram.ViewModels
             SearchTokens = new Dictionary<string, CancellationTokenSource>();
 
             Execute.BeginOnThreadPool(() => LoadFirstSlice());
+
+            DialogPinCommand = new RelayCommand<TLDialog>(DialogPinExecute);
+            DialogNotifyCommand = new RelayCommand<TLDialog>(DialogNotifyExecute);
+            DialogDeleteCommand = new RelayCommand<TLDialog>(DialogDeleteExecute);
+            DialogClearCommand = new RelayCommand<TLDialog>(DialogClearExecute);
+            DialogDeleteAndStopCommand = new RelayCommand<TLDialog>(DialogDeleteAndStopExecute);
         }
 
         public int PinnedDialogsIndex { get; set; }
@@ -1125,7 +1131,7 @@ namespace Unigram.ViewModels
 
         #region Commands
 
-        public RelayCommand<TLDialog> DialogPinCommand => new RelayCommand<TLDialog>(DialogPinExecute);
+        public RelayCommand<TLDialog> DialogPinCommand { get; }
         private async void DialogPinExecute(TLDialog dialog)
         {
             if (Items.Where(x => x.IsPinned).Count() == PinnedDialogsCountMax && !dialog.IsPinned)
@@ -1188,7 +1194,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLDialog> DialogNotifyCommand => new RelayCommand<TLDialog>(DialogNotifyExecute);
+        public RelayCommand<TLDialog> DialogNotifyCommand { get; }
         private async void DialogNotifyExecute(TLDialog dialog)
         {
             var notifySettings = dialog.NotifySettings as TLPeerNotifySettings;
@@ -1233,7 +1239,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLDialog> DialogDeleteCommand => new RelayCommand<TLDialog>(DialogDeleteExecute);
+        public RelayCommand<TLDialog> DialogDeleteCommand { get; }
         private async void DialogDeleteExecute(TLDialog dialog)
         {
             if (dialog.With is TLUser || dialog.With is TLChat || dialog.With is TLChatForbidden)
@@ -1280,7 +1286,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLDialog> DialogClearCommand => new RelayCommand<TLDialog>(DialogClearExecute);
+        public RelayCommand<TLDialog> DialogClearCommand { get; }
         private async void DialogClearExecute(TLDialog dialog)
         {
             if (dialog.With is TLUser || dialog.With is TLChat || dialog.With is TLChatForbidden)
@@ -1309,7 +1315,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLDialog> DialogDeleteAndStopCommand => new RelayCommand<TLDialog>(DialogDeleteAndStopExecute);
+        public RelayCommand<TLDialog> DialogDeleteAndStopCommand { get; }
         private async void DialogDeleteAndStopExecute(TLDialog dialog)
         {
             if (dialog.With is TLUser user)

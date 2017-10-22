@@ -1510,11 +1510,7 @@ namespace Telegram.Api.Services.Updates
                     if (message.Views == null || message.Views.Value < updateChannelMessageViews.Views)
                     {
                         message.Views = updateChannelMessageViews.Views;
-
-                        Execute.BeginOnUIThread(() =>
-                        {
-                            message.RaisePropertyChanged(() => message.Views);
-                        });
+                        message.RaisePropertyChanged(() => message.Views);
                     }
                 }
 
@@ -2188,7 +2184,7 @@ namespace Telegram.Api.Services.Updates
                     _cacheService.SyncMessage(message,
                         m =>
                         {
-                            Helpers.Execute.BeginOnUIThread(() => message.RaisePropertyChanged(() => message.Media));
+                            message.RaisePropertyChanged(() => message.Media);
                         });
                 }
 

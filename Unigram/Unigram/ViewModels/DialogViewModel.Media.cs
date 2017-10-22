@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -30,14 +30,14 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel
     {
-        public RelayCommand<TLDocument> SendStickerCommand => new RelayCommand<TLDocument>(SendStickerExecute);
+        public RelayCommand<TLDocument> SendStickerCommand { get; }
         public void SendStickerExecute(TLDocument document)
         {
             SendDocument(document, null);
             Stickers.StickersService.AddRecentSticker(StickerType.Image, document, (int)(Utils.CurrentTimestamp / 1000), false);
         }
 
-        public RelayCommand<TLDocument> SendGifCommand => new RelayCommand<TLDocument>(SendGifExecute);
+        public RelayCommand<TLDocument> SendGifCommand { get; }
         public void SendGifExecute(TLDocument document)
         {
             SendDocument(document, null);
@@ -75,7 +75,7 @@ namespace Unigram.ViewModels
             });
         }
 
-        public RelayCommand<StorageFile> SendFileCommand => new RelayCommand<StorageFile>(SendFileExecute);
+        public RelayCommand<StorageFile> SendFileCommand { get; }
         private async void SendFileExecute(StorageFile file)
         {
             if (MediaLibrary.SelectedCount > 0)
@@ -540,7 +540,7 @@ namespace Unigram.ViewModels
             });
         }
 
-        public RelayCommand<ObservableCollection<StorageMedia>> SendMediaCommand => new RelayCommand<ObservableCollection<StorageMedia>>(SendMediaExecute);
+        public RelayCommand<ObservableCollection<StorageMedia>> SendMediaCommand { get; }
         private async void SendMediaExecute(ObservableCollection<StorageMedia> media)
         {
             if (MediaLibrary.SelectedCount > 0)
@@ -965,7 +965,7 @@ namespace Unigram.ViewModels
             });
         }
 
-        public RelayCommand SendContactCommand => new RelayCommand(SendContactExecute);
+        public RelayCommand SendContactCommand { get; }
         private async void SendContactExecute()
         {
             var picker = new ContactPicker();
@@ -1068,7 +1068,7 @@ namespace Unigram.ViewModels
             return tsc.Task;
         }
 
-        public RelayCommand SendLocationCommand => new RelayCommand(SendLocationExecute);
+        public RelayCommand SendLocationCommand { get; }
         private async void SendLocationExecute()
         {
             var page = new DialogSendLocationPage();

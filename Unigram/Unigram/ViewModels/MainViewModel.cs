@@ -1,4 +1,4 @@
-﻿using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Concurrent;
@@ -76,6 +76,9 @@ namespace Unigram.ViewModels
             _selfDestructItems = new List<TLMessage>();
 
             aggregator.Subscribe(this);
+
+            LiveLocationCommand = new RelayCommand(LiveLocationExecute);
+            StopLiveLocationCommand = new RelayCommand(StopLiveLocationExecute);
         }
 
         public override IDispatcherWrapper Dispatcher
@@ -98,13 +101,13 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand LiveLocationCommand => new RelayCommand(LiveLocationExecute);
+        public RelayCommand LiveLocationCommand { get; }
         private async void LiveLocationExecute()
         {
             await new LiveLocationsView().ShowQueuedAsync();
         }
 
-        public RelayCommand StopLiveLocationCommand => new RelayCommand(StopLiveLocationExecute);
+        public RelayCommand StopLiveLocationCommand { get; }
         private void StopLiveLocationExecute()
         {
             _liveLocationService.StopTracking();

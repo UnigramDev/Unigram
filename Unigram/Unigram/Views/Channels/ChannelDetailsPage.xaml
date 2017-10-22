@@ -19,14 +19,6 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Page.Resources>
-        <MenuFlyout x:Key="ParticipantMenuFlyout" Opening="MenuFlyout_Opening">
-            <MenuFlyoutItem Loaded="ParticipantEdit_Loaded" Command="{x:Bind ViewModel.ParticipantEditCommand}" CommandParameter="{Binding}" Text="Edit permissions"/>
-            <MenuFlyoutItem Loaded="ParticipantPromote_Loaded" Command="{x:Bind ViewModel.ParticipantPromoteCommand}" CommandParameter="{Binding}" Text="Promote"/>
-            <MenuFlyoutItem Loaded="ParticipantRestrict_Loaded" Command="{x:Bind ViewModel.ParticipantRestrictCommand}" CommandParameter="{Binding}" Text="Restrict"/>
-        </MenuFlyout>
-    </Page.Resources>
-    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -165,7 +157,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:TLChannelParticipantBase">
-                    <Grid Padding="0,6" Background="Transparent" ContextFlyout="{StaticResource ParticipantMenuFlyout}">
+                    <Grid Padding="0,6" Background="Transparent" ContextRequested="Participant_ContextRequested">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>

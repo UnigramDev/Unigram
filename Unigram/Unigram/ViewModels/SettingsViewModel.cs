@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,6 +41,10 @@ namespace Unigram.ViewModels
             _contactsService = contactsService;
             _uploadFileManager = uploadFileManager;
             _stickersService = stickersService;
+
+            AskCommand = new RelayCommand(AskExecute);
+            LogoutCommand = new RelayCommand(LogoutExecute);
+            EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -109,7 +113,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<StorageFile> EditPhotoCommand => new RelayCommand<StorageFile>(EditPhotoExecute);
+        public RelayCommand<StorageFile> EditPhotoCommand { get; }
         private async void EditPhotoExecute(StorageFile file)
         {
             var fileLocation = new TLFileLocation
@@ -143,7 +147,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand AskCommand => new RelayCommand(AskExecute);
+        public RelayCommand AskCommand { get; }
         private async void AskExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync(AppResources.TGSupportDisclaimerDetails, AppResources.Telegram, AppResources.TGSupportDisclaimerPrimaryText, AppResources.Cancel);
@@ -161,7 +165,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand LogoutCommand => new RelayCommand(LogoutExecute);
+        public RelayCommand LogoutCommand { get; }
         private async void LogoutExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync(AppResources.TGLogoutText, AppResources.AppDisplayName, AppResources.OK, AppResources.Cancel);
@@ -193,35 +197,5 @@ namespace Unigram.ViewModels
 
             }
         }
-
-#if DEBUG
-
-        public RelayCommand DeleteAccountCommand => new RelayCommand(DeleteAccountExecute);
-        private async void DeleteAccountExecute()
-        {
-            var config = InMemoryCacheService.Current.GetConfig();
-            if (config == null)
-            {
-                return;
-            }
-
-            // THIS CODE WILL RUN ONLY IF FIRST CONFIGURED SERVER IP IS TEST SERVER
-            if (config.TestMode)
-            {
-                var dialog = new InputDialog();
-                var confirm = await dialog.ShowQueuedAsync();
-                if (confirm == ContentDialogResult.Primary && dialog.Text.Equals(Self.Phone) && Self.Username != "frayxrulez")
-                {
-                    var really = await TLMessageDialog.ShowAsync("REAAAALLY???", "REALLYYYY???", "YES", "NO I DON'T WANT TO");
-                    if (really == ContentDialogResult.Primary)
-                    {
-                        await ProtoService.DeleteAccountAsync("Testing registration");
-                        App.Current.Exit();
-                    }
-                }
-            }
-        }
-
-#endif
     }
 }

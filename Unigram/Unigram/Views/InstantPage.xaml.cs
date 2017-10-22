@@ -251,7 +251,7 @@ namespace Unigram.Views
                 MTProtoService.Current.ResolveUsernameAsync(chat.Username,
                     result =>
                     {
-                        Execute.BeginOnUIThread(() => button.Content = result.Chats.FirstOrDefault());
+                        this.BeginOnUIThread(() => button.Content = result.Chats.FirstOrDefault());
                     });
             }
 
@@ -1104,7 +1104,7 @@ namespace Unigram.Views
                 protoService.SendInformativeMessageInternal<TLWebPageBase>("messages.getWebPage", new TLMessagesGetWebPage { Url = urlText.Url, Hash = 0 },
                     result =>
                     {
-                        Execute.BeginOnUIThread(() =>
+                        this.BeginOnUIThread(() =>
                         {
                             ViewModel.NavigationService.Navigate(typeof(InstantPage), result);
                         });

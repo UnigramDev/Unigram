@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -31,6 +31,10 @@ namespace Unigram.ViewModels.Settings
             _statusTimestampRules = statusTimestamp;
             _phoneCallRules = phoneCall;
             _chatInviteRules = chatInvite;
+
+            PasswordCommand = new RelayCommand(PasswordExecute);
+            ClearPaymentsCommand = new RelayCommand(ClearPaymentsExecute);
+            AccountTTLCommand = new RelayCommand(AccountTTLExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -77,7 +81,7 @@ namespace Unigram.ViewModels.Settings
 
         #endregion
 
-        public RelayCommand PasswordCommand => new RelayCommand(PasswordExecute);
+        public RelayCommand PasswordCommand { get; }
         private async void PasswordExecute()
         {
             var response = await ProtoService.GetPasswordAsync();
@@ -98,7 +102,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ClearPaymentsCommand => new RelayCommand(ClearPaymentsExecute);
+        public RelayCommand ClearPaymentsCommand { get; }
         private async void ClearPaymentsExecute()
         {
             var dialog = new ContentDialog();
@@ -142,7 +146,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand AccountTTLCommand => new RelayCommand(AccountTTLExecute);
+        public RelayCommand AccountTTLCommand { get; }
         private async void AccountTTLExecute()
         {
             var dialog = new ContentDialog();

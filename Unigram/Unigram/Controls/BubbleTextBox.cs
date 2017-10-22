@@ -95,7 +95,7 @@ namespace Unigram.Controls
 
             _textChangedSubscription = textChangedEvents
                 .Throttle(TimeSpan.FromMilliseconds(200))
-                .Subscribe(e => Execute.BeginOnUIThread(() => UpdateInlineBot(true)));
+                .Subscribe(e => this.BeginOnUIThread(() => UpdateInlineBot(true)));
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;

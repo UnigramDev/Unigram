@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +20,7 @@ namespace Unigram.ViewModels.Settings
         public SettingsStorageViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            ClearCacheCommand = new RelayCommand(ClearCacheExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -172,7 +173,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ClearCacheCommand => new RelayCommand(ClearCacheExecute);
+        public RelayCommand ClearCacheCommand { get; }
         private async void ClearCacheExecute()
         {
             IsLoading = true;

@@ -49,6 +49,8 @@ using Windows.System;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI;
+using System.Windows.Input;
+using Unigram.Strings;
 
 namespace Unigram.Views
 {
@@ -661,145 +663,138 @@ namespace Unigram.Views
 
         #region Context menu
 
-        private void MenuFlyout_Opening(object sender, object e)
+        private void Dialog_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = sender as MenuFlyout;
+            var menu = new MenuFlyout();
 
-            foreach (var item in flyout.Items)
+            var element = sender as FrameworkElement;
+            var dialog = element.DataContext as TLDialog;
+
+            CreateFlyoutItem(ref menu, DialogPin_Loaded, ViewModel.Dialogs.DialogPinCommand, dialog, dialog.IsPinned ? AppResources.DialogUnpin : AppResources.DialogPin);
+            CreateFlyoutItem(ref menu, DialogNotify_Loaded, ViewModel.Dialogs.DialogNotifyCommand, dialog, dialog.IsMuted ? AppResources.DialogNotificationsEnable : AppResources.DialogNotificationsDisable);
+            CreateFlyoutItem(ref menu, DialogClear_Loaded, ViewModel.Dialogs.DialogClearCommand, dialog, AppResources.DialogClearHistory);
+            CreateFlyoutItem(ref menu, DialogDelete_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, DialogDelete_Text(dialog));
+            CreateFlyoutItem(ref menu, DialogDeleteAndStop_Loaded, ViewModel.Dialogs.DialogDeleteAndStopCommand, dialog, AppResources.DialogDeleteAndStop);
+            CreateFlyoutItem(ref menu, DialogDeleteAndExit_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, AppResources.DialogDeleteAndExit);
+
+            if (menu.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
-                item.Visibility = Visibility.Visible;
+                menu.ShowAt(sender, point);
             }
         }
 
-        private void DialogPin_Loaded(object sender, RoutedEventArgs e)
+        private void CreateFlyoutItem(ref MenuFlyout menu, Func<TLDialog, Visibility> visibility, ICommand command, object parameter, string text)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            var value = visibility(parameter as TLDialog);
+            if (value == Visibility.Visible)
             {
-                var dialog = element.DataContext as TLDialog;
-                if (dialog != null)
-                {
-                    element.Text = dialog.IsPinned ? "Unpin from top" : "Pin to top";
-                }
+                var flyoutItem = new MenuFlyoutItem();
+                //flyoutItem.Loaded += (s, args) => flyoutItem.Visibility = visibility(parameter as TLMessageCommonBase);
+                flyoutItem.Command = command;
+                flyoutItem.CommandParameter = parameter;
+                flyoutItem.Text = text;
+
+                menu.Items.Add(flyoutItem);
             }
         }
 
-        private void DialogNotify_Loaded(object sender, RoutedEventArgs e)
+        private Visibility DialogPin_Loaded(TLDialog dialog)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
-            {
-                var dialog = element.DataContext as TLDialog;
-                if (dialog != null)
-                {
-                    element.Text = dialog.IsMuted ? "Enable notifications" : "Disable notifications";
-                }
-            }
+            return Visibility.Visible;
         }
 
-        private void DialogClear_Loaded(object sender, RoutedEventArgs e)
+        private Visibility DialogNotify_Loaded(TLDialog dialog)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
-            {
-                var dialog = element.DataContext as TLDialog;
-                if (dialog != null)
-                {
-                    element.Visibility = dialog.With is TLChannel channel && (channel.IsBroadcast || channel.HasUsername) ? Visibility.Collapsed : Visibility.Visible;
-                }
-            }
+            return Visibility.Visible;
         }
 
-        private void DialogDelete_Loaded(object sender, RoutedEventArgs e)
+        private Visibility DialogClear_Loaded(TLDialog dialog)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            return dialog.With is TLChannel channel && (channel.IsBroadcast || channel.HasUsername) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private Visibility DialogDelete_Loaded(TLDialog dialog)
+        {
+            var channelPeer = dialog.Peer as TLPeerChannel;
+            if (channelPeer != null)
             {
-                var dialog = element.DataContext as TLDialog;
-                if (dialog != null)
+                return Visibility.Visible;
+            }
+
+            var userPeer = dialog.Peer as TLPeerUser;
+            if (userPeer != null)
+            {
+                return Visibility.Visible;
+            }
+
+            var chatPeer = dialog.Peer as TLPeerChat;
+            if (chatPeer != null)
+            {
+                return dialog.With is TLChatForbidden || dialog.With is TLChatEmpty ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private string DialogDelete_Text(TLDialog dialog)
+        {
+            var channelPeer = dialog.Peer as TLPeerChannel;
+            if (channelPeer != null)
+            {
+                var channel = dialog.With as TLChannel;
+                if (channel != null)
                 {
-                    var channelPeer = dialog.Peer as TLPeerChannel;
-                    if (channelPeer != null)
+                    if (channel.IsCreator)
                     {
-                        var channel = dialog.With as TLChannel;
-                        if (channel != null)
-                        {
-                            if (channel.IsCreator)
-                            {
-                                element.Text = channel.IsMegaGroup ? "Delete group" : "Delete channel";
-                            }
-                            else
-                            {
-                                element.Text = channel.IsMegaGroup ? "Leave group" : "Leave channel";
-                            }
-                        }
-
-                        element.Visibility = Visibility.Visible;
-                        return;
-                    }
-
-                    var userPeer = dialog.Peer as TLPeerUser;
-                    if (userPeer != null)
-                    {
-                        element.Text = "Delete conversation";
-                        element.Visibility = Visibility.Visible;
-                        return;
-                    }
-
-                    var chatPeer = dialog.Peer as TLPeerChat;
-                    if (chatPeer != null)
-                    {
-                        element.Text = "Delete conversation";
-                        element.Visibility = dialog.With is TLChatForbidden || dialog.With is TLChatEmpty ? Visibility.Visible : Visibility.Collapsed;
-                        return;
-                    }
-                }
-            }
-        }
-
-        private void DialogDeleteAndStop_Loaded(object sender, RoutedEventArgs e)
-        {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
-            {
-                var dialog = element.DataContext as TLDialog;
-                if (dialog != null)
-                {
-                    var user = dialog.With as TLUser;
-                    if (user != null)
-                    {
-                        var full = ViewModel.CacheService.GetFullUser(user.Id);
-                        if (full != null)
-                        {
-                            element.Visibility = user.IsBot && !full.IsBlocked ? Visibility.Visible : Visibility.Collapsed;
-                        }
-                        else
-                        {
-                            element.Visibility = user.IsBot ? Visibility.Visible : Visibility.Collapsed;
-                        }
-
-                        // TODO: 06/05/2017
-                        //element.Visibility = user.IsBot && !user.IsBlocked ? Visibility.Visible : Visibility.Collapsed;
+                        return channel.IsMegaGroup ? AppResources.DialogDeleteGroup : AppResources.DialogDeleteChannel;;
                     }
                     else
                     {
-                        element.Visibility = Visibility.Collapsed;
+                        return channel.IsMegaGroup ? AppResources.DialogLeaveGroup : AppResources.DialogLeaveChannel;
                     }
                 }
             }
+
+            var userPeer = dialog.Peer as TLPeerUser;
+            if (userPeer != null)
+            {
+                return AppResources.DialogDelete;
+            }
+
+            var chatPeer = dialog.Peer as TLPeerChat;
+            if (chatPeer != null)
+            {
+                return AppResources.DialogDelete;
+            }
+
+            return null;
         }
 
-        private void DialogDeleteAndExit_Loaded(object sender, RoutedEventArgs e)
+        private Visibility DialogDeleteAndStop_Loaded(TLDialog dialog)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            var user = dialog.With as TLUser;
+            if (user != null)
             {
-                var dialog = element.DataContext as TLDialog;
-                if (dialog != null)
+                var full = ViewModel.CacheService.GetFullUser(user.Id);
+                if (full != null)
                 {
-                    element.Visibility = dialog.Peer is TLPeerChat && dialog.With is TLChat ? Visibility.Visible : Visibility.Collapsed;
+                    return user.IsBot && !full.IsBlocked ? Visibility.Visible : Visibility.Collapsed;
                 }
+                else
+                {
+                    return user.IsBot ? Visibility.Visible : Visibility.Collapsed;
+                }
+
+                // TODO: 06/05/2017
+                //element.Visibility = user.IsBot && !user.IsBlocked ? Visibility.Visible : Visibility.Collapsed;
             }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility DialogDeleteAndExit_Loaded(TLDialog dialog)
+        {
+            return dialog.Peer is TLPeerChat && dialog.With is TLChat ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion

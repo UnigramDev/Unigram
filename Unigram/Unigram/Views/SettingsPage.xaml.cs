@@ -38,18 +38,6 @@ namespace Unigram.Views
             NavigationCacheMode = NavigationCacheMode.Required;
 
 #if DEBUG
-            // THIS CODE WILL RUN ONLY IF FIRST CONFIGURED SERVER IP IS TEST SERVER
-            if (Telegram.Api.Constants.FirstServerIpAddress.Equals("149.154.167.40"))
-            {
-                var optionDelete = new HyperButton();
-                optionDelete.Style = App.Current.Resources["HyperButtonStyle"] as Style;
-                optionDelete.Command = ViewModel.DeleteAccountCommand;
-                optionDelete.Content = "!!! DELETE ACCOUNT !!!";
-
-                //OptionsGroup4.Children.Clear();
-                OptionsGroup4.Children.Add(optionDelete);
-            }
-
             var optionAccounts = new HyperButton();
             optionAccounts.Style = App.Current.Resources["HyperButtonStyle"] as Style;
             optionAccounts.Click += Accounts_Click;

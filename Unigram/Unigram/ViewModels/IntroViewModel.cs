@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -33,10 +33,11 @@ namespace Unigram.ViewModels
             Items.Add(new IntroPage { Title = AppResources.IntroWizardPage5_Title, Text = AppResources.IntroWizardPage5_Text });
             Items.Add(new IntroPage { Title = AppResources.IntroWizardPage6_Title, Text = AppResources.IntroWizardPage6_Text });
             SelectedItem = Items[0];
+
+            ContinueCommand = new RelayCommand(ContinueExecute /*, () => SelectedItem == Items.Last()*/);
         }
 
-        private RelayCommand _continueCommand;
-        public RelayCommand ContinueCommand => _continueCommand = (_continueCommand ?? new RelayCommand(ContinueExecute /*, () => SelectedItem == Items.Last()*/));
+        public RelayCommand ContinueCommand { get; }
         private void ContinueExecute()
         {
             NavigationService.Navigate(typeof(SignInPage));

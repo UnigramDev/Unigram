@@ -33,16 +33,5 @@ namespace Unigram.Views.Channels
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<ChannelAdminRightsViewModel>();
         }
-
-        private async void Photo_Click(object sender, RoutedEventArgs e)
-        {
-            var user = ViewModel.Item.User as TLUser;
-            var userFull = ViewModel.Full as TLUserFull;
-            if (userFull != null && userFull.ProfilePhoto is TLPhoto && user != null)
-            {
-                var viewModel = new UserPhotosViewModel(ViewModel.ProtoService, userFull, user);
-                await GalleryView.Current.ShowAsync(viewModel, () => Picture);
-            }
-        }
     }
 }
