@@ -44,7 +44,6 @@ namespace Unigram.ViewModels
 
             AskCommand = new RelayCommand(AskExecute);
             LogoutCommand = new RelayCommand(LogoutExecute);
-            DeleteAccountCommand = new RelayCommand(DeleteAccountExecute);
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
         }
 
@@ -198,35 +197,5 @@ namespace Unigram.ViewModels
 
             }
         }
-
-#if DEBUG
-
-        public RelayCommand DeleteAccountCommand { get; }
-        private async void DeleteAccountExecute()
-        {
-            var config = InMemoryCacheService.Current.GetConfig();
-            if (config == null)
-            {
-                return;
-            }
-
-            // THIS CODE WILL RUN ONLY IF FIRST CONFIGURED SERVER IP IS TEST SERVER
-            if (config.TestMode)
-            {
-                var dialog = new InputDialog();
-                var confirm = await dialog.ShowQueuedAsync();
-                if (confirm == ContentDialogResult.Primary && dialog.Text.Equals(Self.Phone) && Self.Username != "frayxrulez")
-                {
-                    var really = await TLMessageDialog.ShowAsync("REAAAALLY???", "REALLYYYY???", "YES", "NO I DON'T WANT TO");
-                    if (really == ContentDialogResult.Primary)
-                    {
-                        await ProtoService.DeleteAccountAsync("Testing registration");
-                        App.Current.Exit();
-                    }
-                }
-            }
-        }
-
-#endif
     }
 }
