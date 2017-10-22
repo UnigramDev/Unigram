@@ -113,7 +113,7 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<ForwardViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogSendLocationViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<DialogsViewModel>().SingleInstance();
-            container.ContainerBuilder.RegisterType<DialogViewModel>();
+            container.ContainerBuilder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);
             container.ContainerBuilder.RegisterType<DialogStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<UserDetailsViewModel>();
             container.ContainerBuilder.RegisterType<ChannelManageViewModel>();
