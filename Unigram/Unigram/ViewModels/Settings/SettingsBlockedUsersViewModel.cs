@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -26,6 +26,10 @@ namespace Unigram.ViewModels.Settings
             : base(protoService, cacheService, aggregator)
         {
             Items = new ObservableCollection<TLUser>();
+
+            BlockCommand = new RelayCommand(BlockExecute);
+            UnblockCommand = new RelayCommand<TLUser>(UnblockExecute);
+
             Aggregator.Subscribe(this);
         }
 
@@ -61,7 +65,7 @@ namespace Unigram.ViewModels.Settings
             var user = CacheService.GetUser(message.UserId) as TLUser;
             if (user != null)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     if (message.Blocked)
                     {
@@ -78,7 +82,7 @@ namespace Unigram.ViewModels.Settings
                 var response = await ProtoService.GetFullUserAsync(new TLInputUser { UserId = message.UserId, AccessHash = 0 });
                 if (response.IsSucceeded)
                 {
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         if (message.Blocked)
                         {
@@ -93,13 +97,13 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand BlockCommand => new RelayCommand(BlockExecute);
+        public RelayCommand BlockCommand { get; }
         private void BlockExecute()
         {
             NavigationService.Navigate(typeof(SettingsBlockUserPage), new TLVector<TLUserBase>(Items));
         }
 
-        public RelayCommand<TLUser> UnblockCommand => new RelayCommand<TLUser>(UnblockExecute);
+        public RelayCommand<TLUser> UnblockCommand { get; }
         private async void UnblockExecute(TLUser user)
         {
             var dialog = new TLMessageDialog();

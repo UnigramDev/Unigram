@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -28,6 +28,8 @@ namespace Unigram.ViewModels
             Search = new ObservableCollection<KeyedList<string, TLObject>>();
             SelectedItems = new ObservableCollection<TLUser>();
             SelectedItems.CollectionChanged += OnCollectionChanged;
+
+            SendCommand = new RelayCommand(SendExecute, () => Minimum <= SelectedItems.Count && Maximum >= SelectedItems.Count);
         }
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -140,8 +142,7 @@ namespace Unigram.ViewModels
 
         public ObservableCollection<TLUser> SelectedItems { get; private set; }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => Minimum <= SelectedItems.Count && Maximum >= SelectedItems.Count);
+        public RelayCommand SendCommand { get; }
         protected virtual void SendExecute()
         {
 

@@ -36,7 +36,7 @@ namespace Unigram.ViewModels.Settings
         {
             if (e.Type == _type)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     Items.HasMoreItems = false;
                     Items.Clear();

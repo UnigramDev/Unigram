@@ -543,7 +543,7 @@ namespace Telegram.Api.Services.Cache
                                 if (notifyTopMessageUpdated)
                                 {
                                     dialog._topMessageItem = commonMessage;
-                                    Helpers.Execute.BeginOnUIThread(() => dialog.RaisePropertyChanged(() => dialog.TopMessageItem));
+                                    dialog.RaisePropertyChanged(() => dialog.TopMessageItem);
                                 }
                                 else
                                 {

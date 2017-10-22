@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
@@ -24,6 +25,11 @@ namespace Unigram.ViewModels
         public DialogSharedMediaViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(x => x is TLMessage));
+            MessageGotoCommand = new RelayCommand<TLMessageBase>(MessageGotoExecute);
+            MessageDeleteCommand = new RelayCommand<TLMessageBase>(MessageDeleteExecute);
+            MessageForwardCommand = new RelayCommand<TLMessageBase>(MessageForwardExecute);
+            MessageSelectCommand = new RelayCommand<TLMessageBase>(MessageSelectExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -105,7 +111,7 @@ namespace Unigram.ViewModels
 
         #region Goto
 
-        public RelayCommand<TLMessageBase> MessageGotoCommand => new RelayCommand<TLMessageBase>(MessageGotoExecute);
+        public RelayCommand<TLMessageBase> MessageGotoCommand { get; }
         private void MessageGotoExecute(TLMessageBase messageBase)
         {
             NavigationService.NavigateToDialog(_with, messageBase.Id);
@@ -115,7 +121,7 @@ namespace Unigram.ViewModels
 
         #region Delete
 
-        public RelayCommand<TLMessageBase> MessageDeleteCommand => new RelayCommand<TLMessageBase>(MessageDeleteExecute);
+        public RelayCommand<TLMessageBase> MessageDeleteCommand { get; }
         private async void MessageDeleteExecute(TLMessageBase messageBase)
         {
             if (messageBase == null) return;
@@ -254,7 +260,7 @@ namespace Unigram.ViewModels
                 Aggregator.Publish(new MessagesRemovedEventArgs(dialog, messages));
             }
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 for (int j = 0; j < messages.Count; j++)
                 {
@@ -305,7 +311,7 @@ namespace Unigram.ViewModels
 
         #region Forward
 
-        public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
+        public RelayCommand<TLMessageBase> MessageForwardCommand { get; }
         private void MessageForwardExecute(TLMessageBase message)
         {
             if (message is TLMessage)
@@ -473,8 +479,7 @@ namespace Unigram.ViewModels
 
         #region Multiple Forward
 
-        private RelayCommand _messagesForwardCommand;
-        public RelayCommand MessagesForwardCommand => _messagesForwardCommand = (_messagesForwardCommand ?? new RelayCommand(MessagesForwardExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(x => x is TLMessage)));
+        public RelayCommand MessagesForwardCommand { get; }
 
         private void MessagesForwardExecute()
         {
@@ -492,7 +497,7 @@ namespace Unigram.ViewModels
 
         #region Select
 
-        public RelayCommand<TLMessageBase> MessageSelectCommand => new RelayCommand<TLMessageBase>(MessageSelectExecute);
+        public RelayCommand<TLMessageBase> MessageSelectCommand { get; }
         private void MessageSelectExecute(TLMessageBase message)
         {
             var messageCommon = message as TLMessageCommonBase;

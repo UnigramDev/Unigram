@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +21,8 @@ namespace Unigram.ViewModels.Settings
         public SettingsUsernameViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
+            SendCommand = new RelayCommand(SendExecute);
+            CopyCommand = new RelayCommand(CopyExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -196,7 +198,7 @@ namespace Unigram.ViewModels.Settings
             return true;
         }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             var response = await ProtoService.UpdateUsernameAsync(Username);
@@ -215,7 +217,7 @@ namespace Unigram.ViewModels.Settings
                 {
                     //this.HasError = true;
                     //this.Error = AppResources.FloodWaitString;
-                    //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                    //Telegram.Api.Helpers.Dispatch(delegate
                     //{
                     //    MessageBox.Show(AppResources.FloodWaitString, AppResources.Error, 0);
                     //});
@@ -229,7 +231,7 @@ namespace Unigram.ViewModels.Settings
                     //messageBuilder.AppendLine("Result: " + error);
                     //this.HasError = true;
                     //this.Error = AppResources.ServerError;
-                    //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                    //Telegram.Api.Helpers.Dispatch(delegate
                     //{
                     //    MessageBox.Show(messageBuilder.ToString(), AppResources.ServerError, 0);
                     //});
@@ -240,7 +242,7 @@ namespace Unigram.ViewModels.Settings
                     {
                         //this.HasError = true;
                         //this.Error = AppResources.UsernameInvalid;
-                        //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                        //Telegram.Api.Helpers.Dispatch(delegate
                         //{
                         //    MessageBox.Show(AppResources.UsernameInvalid, AppResources.Error, 0);
                         //});
@@ -249,7 +251,7 @@ namespace Unigram.ViewModels.Settings
                     {
                         //this.HasError = true;
                         //this.Error = AppResources.UsernameOccupied;
-                        //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                        //Telegram.Api.Helpers.Dispatch(delegate
                         //{
                         //    MessageBox.Show(AppResources.UsernameOccupied, AppResources.Error, 0);
                         //});
@@ -273,7 +275,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand CopyCommand => new RelayCommand(CopyExecute);
+        public RelayCommand CopyCommand { get; }
         private async void CopyExecute()
         {
             var config = CacheService.GetConfig();

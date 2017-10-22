@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -33,6 +33,13 @@ namespace Unigram.ViewModels.Chats
             : base(protoService, cacheService, aggregator)
         {
             _uploadFileManager = uploadFileManager;
+
+            EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
+            InviteCommand = new RelayCommand(InviteExecute);
+            MediaCommand = new RelayCommand(MediaExecute);
+            MigrateCommand = new RelayCommand(MigrateExecute);
+            ParticipantRemoveCommand = new RelayCommand<TLChatParticipantBase>(ParticipantRemoveExecute);
+            ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
         }
 
         private TLChat _item;
@@ -149,7 +156,7 @@ namespace Unigram.ViewModels.Chats
                 var peer = notifyPeer.Peer;
                 if (peer is TLPeerChat && peer.Id == Item.Id)
                 {
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         Full.NotifySettings = message.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);
@@ -167,7 +174,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public RelayCommand<StorageFile> EditPhotoCommand => new RelayCommand<StorageFile>(EditPhotoExecute);
+        public RelayCommand<StorageFile> EditPhotoCommand { get; }
         private async void EditPhotoExecute(StorageFile file)
         {
             var fileLocation = new TLFileLocation
@@ -201,19 +208,19 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public RelayCommand InviteCommand => new RelayCommand(InviteExecute);
+        public RelayCommand InviteCommand { get; }
         private void InviteExecute()
         {
             NavigationService.Navigate(typeof(ChatInvitePage), _item.ToPeer());
         }
 
-        public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
+        public RelayCommand MediaCommand { get; }
         private void MediaExecute()
         {
             NavigationService.Navigate(typeof(DialogSharedMediaPage), _item.ToInputPeer());
         }
 
-        public RelayCommand MigrateCommand => new RelayCommand(MigrateExecute);
+        public RelayCommand MigrateCommand { get; }
         private async void MigrateExecute()
         {
             var chat = _item as TLChat;
@@ -275,7 +282,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public RelayCommand<TLChatParticipantBase> ParticipantRemoveCommand => new RelayCommand<TLChatParticipantBase>(ParticipantRemoveExecute);
+        public RelayCommand<TLChatParticipantBase> ParticipantRemoveCommand { get; }
         private async void ParticipantRemoveExecute(TLChatParticipantBase participant)
         {
             if (participant == null || participant.User == null)
@@ -307,7 +314,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
+        public RelayCommand ToggleMuteCommand { get; }
         private async void ToggleMuteExecute()
         {
             if (_item == null || _full == null)

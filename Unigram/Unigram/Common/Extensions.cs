@@ -28,6 +28,11 @@ namespace Unigram.Common
             return message.Parent is TLChannel channel && DialogViewModel.Admins.TryGetValue(channel.Id, out IList<TLChannelParticipantBase> admins) && admins.Any(x => x.UserId == message.FromId);
         }
 
+        public static void BeginOnUIThread(this DependencyObject element, Action action)
+        {
+            element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
+        }
+
         public static Regex _pattern = new Regex("[\\-0-9]+", RegexOptions.Compiled);
         public static int ToInt32(this String value)
         {
@@ -121,14 +126,36 @@ namespace Unigram.Common
             return input;
         }
 
-        public static string TrimEnd(this string input, string suffixToRemove)
+        public static string TrimStart(this string target, string trimString)
         {
-            if (input != null && suffixToRemove != null && input.EndsWith(suffixToRemove))
+            string result = target;
+            while (result.StartsWith(trimString))
             {
-                return input.Substring(0, input.Length - suffixToRemove.Length);
+                result = result.Substring(trimString.Length);
             }
-            else return input;
+
+            return result;
         }
+
+        public static string TrimEnd(this string target, string trimString)
+        {
+            string result = target;
+            while (result.EndsWith(trimString))
+            {
+                result = result.Substring(0, result.Length - trimString.Length);
+            }
+
+            return result;
+        }
+
+        //public static string TrimEnd(this string input, string suffixToRemove)
+        //{
+        //    if (input != null && suffixToRemove != null && input.EndsWith(suffixToRemove))
+        //    {
+        //        return input.Substring(0, input.Length - suffixToRemove.Length);
+        //    }
+        //    else return input;
+        //}
 
         public static void AddRange<T>(this IList<T> list, IEnumerable<T> source)
         {

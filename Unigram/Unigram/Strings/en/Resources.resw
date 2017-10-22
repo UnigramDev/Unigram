@@ -1311,4 +1311,108 @@ Duration: {1}</value>
   <data name="MessageUnpin" xml:space="preserve">
     <value>Unpin message</value>
   </data>
+  <data name="SettingsMasksArchivedPage_Footer.Text" xml:space="preserve">
+    <value>You can have up to 200 sets of masks.
+Unused sets are archived when you add more.</value>
+    <comment>ios</comment>
+  </data>
+  <data name="SettingsMasksArchivedPage_Header.Text" xml:space="preserve">
+    <value>Archived Masks</value>
+    <comment>StickerPacksSettings.ArchivedMasks</comment>
+  </data>
+  <data name="SettingsMasksPage_ArchivedStickers.Content" xml:space="preserve">
+    <value>Archived Masks</value>
+    <comment>StickerPacksSettings.ArchivedMasks</comment>
+  </data>
+  <data name="SettingsMasksPage_Footer.Text" xml:space="preserve">
+    <value>You can add masks to photos and videos you send. To do this, open the photo editor before sending a photo or video.</value>
+    <comment>MaskStickerSettings.Info</comment>
+  </data>
+  <data name="SettingsMasksPage_Header.Text" xml:space="preserve">
+    <value>Masks</value>
+    <comment>MaskStickerSettings.Title</comment>
+  </data>
+  <data name="SettingsStickersArchivedPage_Footer.Text" xml:space="preserve">
+    <value>You can have up to 200 sticker sets installed.
+Unused stickers are archived when you add more.</value>
+    <comment>StickerPacksSettings.ArchivedPacks.Info</comment>
+  </data>
+  <data name="SettingsStickersArchivedPage_Header.Text" xml:space="preserve">
+    <value>Archived Stickers</value>
+    <comment>StickerPacksSettings.ArchivedPacks</comment>
+  </data>
+  <data name="SettingsStickersFeaturedPage_Header.Text" xml:space="preserve">
+    <value>Trending Stickers</value>
+    <comment>StickerPacksSettings.FeaturedPacks</comment>
+  </data>
+  <data name="SettingsStickersPage_ArchivedStickers.Content" xml:space="preserve">
+    <value>Archived Stickers</value>
+    <comment>StickerPacksSettings.ArchivedPacks</comment>
+  </data>
+  <data name="SettingsStickersPage_FeaturedStickers.Content" xml:space="preserve">
+    <value>Trending Stickers</value>
+    <comment>StickerPacksSettings.FeaturedPacks</comment>
+  </data>
+  <data name="SettingsStickersPage_Footer.[using:Unigram.Common]MessageHelper.Text" xml:space="preserve">
+    <value>Artists are welcome to add their own sticker sets using our @stickers bot.
+
+Tap on a sticker to view and add the whole set.</value>
+    <comment>StickerPacksSettings.ManagingHelp</comment>
+  </data>
+  <data name="SettingsStickersPage_Header.Text" xml:space="preserve">
+    <value>Stickers</value>
+    <comment>ChatSettings.Stickers</comment>
+  </data>
+  <data name="SettingsStickersPage_Masks.Content" xml:space="preserve">
+    <value>Masks</value>
+    <comment>MaskStickerSettings.Title</comment>
+  </data>
+  <data name="MessageCopyMedia" xml:space="preserve">
+    <value>Copy image</value>
+  </data>
+  <data name="ParticipantEdit" xml:space="preserve">
+    <value>Edit permissions</value>
+  </data>
+  <data name="ParticipantPromote" xml:space="preserve">
+    <value>Promote</value>
+  </data>
+  <data name="ParticipantRestrict" xml:space="preserve">
+    <value>Restrict</value>
+  </data>
+  <data name="DialogClearHistory" xml:space="preserve">
+    <value>Clear history</value>
+  </data>
+  <data name="DialogDelete" xml:space="preserve">
+    <value>Delete conversation</value>
+  </data>
+  <data name="DialogDeleteAndExit" xml:space="preserve">
+    <value>Delete and exit</value>
+  </data>
+  <data name="DialogDeleteAndStop" xml:space="preserve">
+    <value>Delete and stop</value>
+  </data>
+  <data name="DialogDeleteChannel" xml:space="preserve">
+    <value>Delete channel</value>
+  </data>
+  <data name="DialogDeleteGroup" xml:space="preserve">
+    <value>Delete group</value>
+  </data>
+  <data name="DialogLeaveChannel" xml:space="preserve">
+    <value>Leave channel</value>
+  </data>
+  <data name="DialogLeaveGroup" xml:space="preserve">
+    <value>Leave group</value>
+  </data>
+  <data name="DialogNotificationsDisable" xml:space="preserve">
+    <value>Disable notifications</value>
+  </data>
+  <data name="DialogNotificationsEnable" xml:space="preserve">
+    <value>Enable notifications</value>
+  </data>
+  <data name="DialogPin" xml:space="preserve">
+    <value>Pin to top</value>
+  </data>
+  <data name="DialogUnpin" xml:space="preserve">
+    <value>Unpin from top</value>
+  </data>
 </root>

@@ -76,7 +76,8 @@ namespace Unigram.ViewModels.Channels
 
             public override async Task<IList<TLChannelParticipantBase>> LoadDataAsync()
             {
-                var hash = CalculateHash(this);
+                //var hash = CalculateHash(this);
+                var hash = 0;
 
                 var response = await _protoService.GetParticipantsAsync(_inputChannel, _filter, Items.Count, 200, hash);
                 if (response.IsSucceeded && response.Result is TLChannelsChannelParticipants participants)

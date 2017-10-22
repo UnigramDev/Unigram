@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Trending stickers"/>
+        <controls:PageHeader x:Uid="SettingsStickersFeaturedPage_Header" Text="Trending Stickers"/>
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
                   ItemTemplate="{StaticResource StickerSetItemTemplate}"

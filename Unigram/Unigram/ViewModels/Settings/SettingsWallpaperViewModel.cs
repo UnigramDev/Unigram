@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -37,12 +37,15 @@ namespace Unigram.ViewModels.Settings
                     result.Insert(0, defa);
                 }
 
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     Items.ReplaceWith(result);
                     UpdateView();
                 });
             });
+
+            LocalCommand = new RelayCommand(LocalExecute);
+            DoneCommand = new RelayCommand(DoneExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -117,7 +120,7 @@ namespace Unigram.ViewModels.Settings
             set
             {
                 Set(ref _selectedItem, value);
-                
+
                 if (value != null)
                 {
                     Local = null;
@@ -128,7 +131,7 @@ namespace Unigram.ViewModels.Settings
 
         public MvxObservableCollection<TLWallPaperBase> Items { get; private set; }
 
-        public RelayCommand LocalCommand => new RelayCommand(LocalExecute);
+        public RelayCommand LocalCommand { get; }
         private async void LocalExecute()
         {
             var picker = new FileOpenPicker();
@@ -154,7 +157,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand DoneCommand => new RelayCommand(DoneExecute);
+        public RelayCommand DoneCommand { get; }
         private async void DoneExecute()
         {
             if (_selectedItem is TLWallPaper wallpaper)

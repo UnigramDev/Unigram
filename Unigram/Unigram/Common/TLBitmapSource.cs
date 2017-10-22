@@ -199,7 +199,7 @@ namespace Unigram.Common
                     var result = await _downloadWebFileManager.DownloadFileAsync(fileName, document.DCId, new TLInputWebFileLocation { Url = document.Url, AccessHash = document.AccessHash }, document.Size).AsTask(document.Download());
                     if (result != null && Phase <= PHASE_FULL)
                     {
-                        Execute.BeginOnUIThread(() =>
+                        _bitmapImage.BeginOnUIThread(() =>
                         {
                             _bitmapImage.UriSource = FileUtils.GetTempFileUri(fileName);
                         });
@@ -333,7 +333,7 @@ namespace Unigram.Common
                         {
                             Phase = phase;
 
-                            Execute.BeginOnUIThread(() =>
+                            _bitmapImage.BeginOnUIThread(() =>
                             {
                                 if (transferable != null)
                                 {
@@ -406,7 +406,7 @@ namespace Unigram.Common
                         {
                             Phase = phase;
 
-                            Execute.BeginOnUIThread(() =>
+                            _bitmapImage.BeginOnUIThread(() =>
                             {
                                 if (transferable != null)
                                 {
@@ -475,7 +475,7 @@ namespace Unigram.Common
                         var result = await _downloadManager.DownloadFileAsync(location, fileSize).AsTask(transferable?.Download());
                         if (result != null && Phase <= phase)
                         {
-                            Execute.BeginOnUIThread(() =>
+                            _bitmapImage.BeginOnUIThread(() =>
                             {
                                 if (transferable != null)
                                 {

@@ -95,7 +95,7 @@ namespace Unigram.Controls
 
             _textChangedSubscription = textChangedEvents
                 .Throttle(TimeSpan.FromMilliseconds(200))
-                .Subscribe(e => Execute.BeginOnUIThread(() => UpdateInlineBot(true)));
+                .Subscribe(e => this.BeginOnUIThread(() => UpdateInlineBot(true)));
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -838,7 +838,23 @@ namespace Unigram.Controls
                     entities.Add(entity);
                 }
 
-                await ViewModel.SendMessageAsync(messageText, entities, false);
+                //var matches = Regex.Matches(messageText, "@\\[(.*?)\\]\\((.*?)\\)");
+                //var offset = 0;
+
+                //foreach (Match match in matches)
+                //{
+                //    var user = InMemoryCacheService.Current.GetUser(match.Groups[2].Value) as TLUser;
+                //    if (user != null)
+                //    {
+                //        entities.Add(new TLInputMessageEntityMentionName { Offset = match.Index + offset, Length = match.Groups[1].Length, UserId = user.ToInputUser() });
+
+                //        messageText = messageText.Remove(match.Index + offset, match.Length);
+                //        messageText = messageText.Insert(match.Index + offset, match.Groups[1].Value);
+                //        offset += match.Length - match.Groups[1].Length;
+                //    }
+                //}
+
+                await ViewModel.SendMessageAsync(messageText, entities.OrderBy(x => x.Offset).ToList(), false);
             }
             //else
             //{

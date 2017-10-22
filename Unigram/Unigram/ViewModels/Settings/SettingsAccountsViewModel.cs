@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -26,6 +26,8 @@ namespace Unigram.ViewModels.Settings
             : base(protoService, cacheService, aggregator)
         {
             Items = new ObservableCollection<string>();
+
+            NewAccountCommand = new RelayCommand(NewAccountExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -62,7 +64,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand NewAccountCommand => new RelayCommand(NewAccountExecute);
+        public RelayCommand NewAccountCommand { get; }
         private void NewAccountExecute()
         {
             SettingsHelper.SwitchGuid = Guid.NewGuid().ToString();

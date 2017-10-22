@@ -118,249 +118,234 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AUTH_REGION" xml:space="preserve">
-    <value>Início de sessão a partir de um novo dispositivo {0}, local: {1}</value>
-  </data>
-  <data name="AUTH_UNKNOWN" xml:space="preserve">
-    <value>Início de sessão a partir de um novo dispositivo {0}</value>
+    <value>تم تسجيل الدخول لحسابك من جهاز جديد {0}, الموقع: {1}</value>
   </data>
   <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
-    <value>publicou uma mensagem de voz</value>
+    <value>أرسل رسالة صوتية</value>
   </data>
   <data name="CHANNEL_MESSAGE_CONTACT" xml:space="preserve">
-    <value>publicou um contacto</value>
+    <value>أرسل جهة اتصال</value>
   </data>
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
-    <value>publicou um documento</value>
-  </data>
-  <data name="CHANNEL_MESSAGE_FWDS" xml:space="preserve">
-    <value>publicou {1} mensagens reencaminhadas</value>
+    <value>أرسل مستند</value>
   </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
-    <value>convidou-te para jogar {1}</value>
+    <value>قام بدعوتك للعب {1}</value>
   </data>
   <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
-    <value>publicou um mapa</value>
+    <value>أرسل خريطة</value>
   </data>
   <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>postou uma localização em tempo real</value>
+    <value>قام بنشر موقع حي</value>
   </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
-    <value>publicou um GIF</value>
+    <value>أرسل صورة متحركة</value>
   </data>
   <data name="CHANNEL_MESSAGE_NOTEXT" xml:space="preserve">
-    <value>publicou uma mensagem</value>
+    <value>أرسل رسالة</value>
   </data>
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
-    <value>publicou uma foto</value>
+    <value>أرسل صورة</value>
   </data>
   <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
-    <value>publicou uma mensagem de vídeo</value>
+    <value>أرسل رسالة مرئية</value>
   </data>
   <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
-    <value>publicou um {1}sticker</value>
+    <value>أرسل {1}ملصق</value>
   </data>
   <data name="CHANNEL_MESSAGE_TEXT" xml:space="preserve">
     <value>{1}</value>
   </data>
   <data name="CHANNEL_MESSAGE_VIDEO" xml:space="preserve">
-    <value>publicou um vídeo</value>
+    <value>أرسل مقطع مرئي</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
-    <value>{0} convidou {2} para o grupo</value>
+    <value>{0} قام بدعوة {2} للمجموعة</value>
   </data>
   <data name="CHAT_ADD_YOU" xml:space="preserve">
-    <value>{0} convidou-te para o grupo</value>
+    <value>{0} قام بدعوتك للمجموعة</value>
   </data>
   <data name="CHAT_CREATED" xml:space="preserve">
-    <value>{0} convidou-te para o grupo</value>
+    <value>{0} قام بدعوتك للمجموعة</value>
   </data>
   <data name="CHAT_DELETE_MEMBER" xml:space="preserve">
-    <value>{0} removeu {2} do grupo</value>
+    <value>{0} قام بإزالة {2} من المجموعة</value>
   </data>
   <data name="CHAT_DELETE_YOU" xml:space="preserve">
-    <value>{0} removeu-te do grupo</value>
-  </data>
-  <data name="CHAT_JOINED" xml:space="preserve">
-    <value>{0} entrou no grupo</value>
+    <value>{0} قام بإزالتك من المجموعة</value>
   </data>
   <data name="CHAT_LEFT" xml:space="preserve">
-    <value>{0} saiu do grupo</value>
+    <value>{0} غادر المجموعة</value>
   </data>
   <data name="CHAT_MESSAGE_AUDIO" xml:space="preserve">
-    <value>{0} enviou uma mensagem de voz para o grupo</value>
+    <value>{0} قام بإرسال رسالة صوتية للمجموعة</value>
   </data>
   <data name="CHAT_MESSAGE_CONTACT" xml:space="preserve">
-    <value>{0} partilhou um contacto no grupo</value>
+    <value>{0} قام بإرسال جهة إتصال</value>
   </data>
   <data name="CHAT_MESSAGE_DOC" xml:space="preserve">
-    <value>{0} enviou um ficheiro para o grupo</value>
+    <value>{0} قام بإرسال ملف للمجموعة</value>
   </data>
   <data name="CHAT_MESSAGE_FWDS" xml:space="preserve">
-    <value>{0} reencaminhou {2} mensagens para o grupo</value>
+    <value>{0} قام بإعادة إرسال {2} رسائل للمجموعة</value>
   </data>
   <data name="CHAT_MESSAGE_GAME" xml:space="preserve">
-    <value>{0} convidou o grupo para jogar {2}</value>
+    <value>{0} قام بدعوة المجموعة للعب {2}</value>
   </data>
   <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
-    <value>{0} enviou uma localização para o grupo</value>
+    <value>{0} شارك موقعه معك</value>
   </data>
   <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>{0} começou a compartilhar a localização em tempo real</value>
+    <value>{0} قام بمشاركة موقعه الحي مع</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
-    <value>{0} enviou um GIF para o grupo</value>
+    <value>{0} قام بإرسال صورة متحركة للمجموعة</value>
   </data>
   <data name="CHAT_MESSAGE_INVOICE" xml:space="preserve">
-    <value>{0} enviou uma fatura para {2}</value>
+    <value>{0} أرسل فاتورة لـ {2} للمجموعة</value>
   </data>
   <data name="CHAT_MESSAGE_NOTEXT" xml:space="preserve">
-    <value>{0} enviou uma mensagem para o grupo</value>
+    <value>{0} قام بإرسال رسالة</value>
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
-    <value>{0} enviou uma foto para o grupo</value>
+    <value>{0} قام بإرسال صورة</value>
   </data>
   <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
-    <value>{0} enviou uma mensagem de vídeo para o grupo</value>
+    <value>{0} قام بإرسال رسالة مرئية للمجموعة</value>
   </data>
   <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
-    <value>{0} enviou um {2}sticker para o grupo</value>
+    <value>{0} قام بإرسال {2}ملصق للمجموعة</value>
   </data>
   <data name="CHAT_MESSAGE_TEXT" xml:space="preserve">
     <value>{0}: {2}</value>
   </data>
   <data name="CHAT_MESSAGE_VIDEO" xml:space="preserve">
-    <value>{0} enviou um vídeo para o grupo</value>
+    <value>{0} قام بإرسال مقطع مرئي</value>
   </data>
   <data name="CHAT_PHOTO_EDITED" xml:space="preserve">
-    <value>{0} alterou a foto do grupo</value>
+    <value>{0} قام تغيير صورة المجموعة</value>
   </data>
   <data name="CHAT_RETURNED" xml:space="preserve">
-    <value>{0} voltou para o grupo</value>
+    <value>{0} عاد إلى المجموعة</value>
   </data>
   <data name="CHAT_TITLE_EDITED" xml:space="preserve">
-    <value>{0} alterou o nome do grupo</value>
-  </data>
-  <data name="CONTACT_ACTIVATED" xml:space="preserve">
-    <value>{0} ajudou a activar a tua conta!</value>
+    <value>{0} قام بتعديل عنوان المجموعة</value>
   </data>
   <data name="CONTACT_JOINED" xml:space="preserve">
-    <value>{0} entrou para o Telegram!</value>
-  </data>
-  <data name="DC_UPDATE" xml:space="preserve">
-    <value>Abra esta notificação para atualizar as definições da aplicação</value>
+    <value>{0} قام بالتسجيل في تيليجرام!</value>
   </data>
   <data name="ENCRYPTED_MESSAGE" xml:space="preserve">
-    <value>Tens uma nova mensagem{0}</value>
+    <value>لديك رسالة جديدة{0}</value>
   </data>
   <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
-    <value>Pedido de encriptação aceite{0}</value>
+    <value>تم قبول طلب التشفير{0}</value>
   </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
-    <value>Nova pedido de encriptação{0}</value>
+    <value>طلب تشفير جديد{0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
-    <value>Tens uma nova mensagem{0}</value>
+    <value>لديك رسالة جديدة{0}</value>
   </data>
   <data name="MESSAGE_AUDIO" xml:space="preserve">
-    <value>enviou uma mensagem de voz</value>
+    <value>قام بإرسال رسالة صوتية لك</value>
   </data>
   <data name="MESSAGE_CONTACT" xml:space="preserve">
-    <value>partilhou um contato</value>
+    <value>قام بإرسال جهة اتصال</value>
   </data>
   <data name="MESSAGE_DOC" xml:space="preserve">
-    <value>enviou-te um arquivo</value>
+    <value>قام بإرسال ملف لك</value>
   </data>
   <data name="MESSAGE_FWDS" xml:space="preserve">
-    <value>reencaminhou {1} mensagens para ti</value>
+    <value>قام بإعادة إرسال {1} رسائل لك</value>
   </data>
   <data name="MESSAGE_GAME" xml:space="preserve">
-    <value>convidou-te para jogar {1}</value>
+    <value>قام بدعوتك للعب {1}</value>
   </data>
   <data name="MESSAGE_GEO" xml:space="preserve">
-    <value>enviou uma localização</value>
+    <value>شارك موقعه معك</value>
   </data>
   <data name="MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>começou a compartilhar a localização em tempo real</value>
+    <value>بدأ مشاركة موقعه الحي</value>
   </data>
   <data name="MESSAGE_GIF" xml:space="preserve">
-    <value>enviou um GIF</value>
+    <value>أرسل لك صورة متحركة</value>
   </data>
   <data name="MESSAGE_INVOICE" xml:space="preserve">
-    <value>te enviou uma fatura paga {1}</value>
+    <value>أرسل فاتورة لـ {1}</value>
   </data>
   <data name="MESSAGE_NOTEXT" xml:space="preserve">
-    <value>enviou uma mensagem</value>
+    <value>قام بإرسال رسالة</value>
   </data>
   <data name="MESSAGE_PHOTO" xml:space="preserve">
-    <value>enviou-te uma foto</value>
+    <value>قام بإرسال صورة</value>
   </data>
   <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
-    <value>enviou-te uma foto auto-destrutiva</value>
+    <value>أرسل لك صورة بتدمير ذاتي</value>
   </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
-    <value>enviou uma mensagem de vídeo</value>
+    <value>قام بإرسال رسالة مرئية لك</value>
   </data>
   <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
-    <value>realizou uma captura de tela!</value>
+    <value>قام بتصوير الشاشة!</value>
   </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
-    <value>enviou-te um {1}sticker</value>
+    <value>قام بإرسال {1}ملصق</value>
   </data>
   <data name="MESSAGE_TEXT" xml:space="preserve">
     <value>{1}</value>
   </data>
   <data name="MESSAGE_VIDEO" xml:space="preserve">
-    <value>enviou-te um vídeo</value>
+    <value>قام بإرسال مقطع مرئي</value>
   </data>
   <data name="MESSAGE_VIDEO_SECRET" xml:space="preserve">
-    <value>enviou-te um vídeo auto-destrutivo</value>
+    <value>أرسل لك فيديو بتدمير ذاتي </value>
   </data>
   <data name="PHONE_CALL_MISSED" xml:space="preserve">
-    <value>Chamada não atendida</value>
+    <value>يوجد مكالمة فائتة من {0}</value>
   </data>
   <data name="PHONE_CALL_REQUEST" xml:space="preserve">
-    <value>{0} está te ligando</value>
+    <value>{0} يتصل بك</value>
   </data>
   <data name="PINNED_AUDIO" xml:space="preserve">
-    <value>afixou uma mensagem de voz</value>
+    <value>ثبت رسالة صوتية</value>
   </data>
   <data name="PINNED_CONTACT" xml:space="preserve">
-    <value>afixou um contacto</value>
+    <value>ثبت جهة اتصال</value>
   </data>
   <data name="PINNED_DOC" xml:space="preserve">
-    <value>afixou um ficheiro</value>
+    <value>ثبت ملف</value>
   </data>
   <data name="PINNED_GAME" xml:space="preserve">
-    <value>afixou um jogo</value>
+    <value>ثبت لعبة</value>
   </data>
   <data name="PINNED_GEO" xml:space="preserve">
-    <value>afixou um mapa</value>
+    <value>ثبت خريطة</value>
   </data>
   <data name="PINNED_GEOLIVE" xml:space="preserve">
-    <value>fixou uma localização em tempo real</value>
+    <value>قام بتثبيت مكان حي</value>
   </data>
   <data name="PINNED_GIF" xml:space="preserve">
-    <value>afixou um GIF</value>
+    <value>ثبت صورة متحركة</value>
   </data>
   <data name="PINNED_INVOICE" xml:space="preserve">
-    <value>afixou uma fatura</value>
+    <value>ثبت فاتورة</value>
   </data>
   <data name="PINNED_NOTEXT" xml:space="preserve">
-    <value>afixou uma mensagem</value>
+    <value>ثبت رسالة</value>
   </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
-    <value>afixou uma foto</value>
+    <value>ثبت صورة</value>
   </data>
   <data name="PINNED_ROUND" xml:space="preserve">
-    <value>afixou uma mensagem de vídeo</value>
+    <value>ثبت رسالة مرئية</value>
   </data>
   <data name="PINNED_STICKER" xml:space="preserve">
-    <value>afixou um {1}sticker</value>
+    <value>ثبت {1}ملصق</value>
   </data>
   <data name="PINNED_TEXT" xml:space="preserve">
-    <value>afixou "{1}"</value>
+    <value>ثبت "{1}"</value>
   </data>
   <data name="PINNED_VIDEO" xml:space="preserve">
-    <value>afixou um vídeo</value>
+    <value>ثبت فيديو</value>
   </data>
 </root>

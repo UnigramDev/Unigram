@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache.EventArgs;
@@ -33,7 +34,7 @@ namespace Unigram.ViewModels
     {
         #region Reply
 
-        public RelayCommand<TLMessageBase> MessageReplyCommand => new RelayCommand<TLMessageBase>(MessageReplyExecute);
+        public RelayCommand<TLMessageBase> MessageReplyCommand { get; }
         private void MessageReplyExecute(TLMessageBase message)
         {
             Search = null;
@@ -75,7 +76,7 @@ namespace Unigram.ViewModels
 
         #region Delete
 
-        public RelayCommand<TLMessageBase> MessageDeleteCommand => new RelayCommand<TLMessageBase>(MessageDeleteExecute);
+        public RelayCommand<TLMessageBase> MessageDeleteCommand { get; }
         private async void MessageDeleteExecute(TLMessageBase messageBase)
         {
             if (messageBase == null) return;
@@ -210,7 +211,7 @@ namespace Unigram.ViewModels
             CacheService.DeleteMessages(Peer.ToPeer(), lastMessage, remoteMessages);
             CacheService.DeleteMessages(cachedMessages);
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 for (int j = 0; j < messages.Count; j++)
                 {
@@ -267,7 +268,7 @@ namespace Unigram.ViewModels
 
         #region Forward
 
-        public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
+        public RelayCommand<TLMessageBase> MessageForwardCommand { get; }
         private async void MessageForwardExecute(TLMessageBase message)
         {
             if (message is TLMessage)
@@ -286,7 +287,7 @@ namespace Unigram.ViewModels
 
         #region Share
 
-        public RelayCommand<TLMessage> MessageShareCommand => new RelayCommand<TLMessage>(MessageShareExecute);
+        public RelayCommand<TLMessage> MessageShareCommand { get; }
         private async void MessageShareExecute(TLMessage message)
         {
             await ShareView.Current.ShowAsync(message);
@@ -488,7 +489,7 @@ namespace Unigram.ViewModels
 
         #region Select
 
-        public RelayCommand<TLMessageBase> MessageSelectCommand => new RelayCommand<TLMessageBase>(MessageSelectExecute);
+        public RelayCommand<TLMessageBase> MessageSelectCommand { get; }
         private void MessageSelectExecute(TLMessageBase message)
         {
             Search = null;
@@ -509,7 +510,7 @@ namespace Unigram.ViewModels
 
         #region Copy
 
-        public RelayCommand<TLMessage> MessageCopyCommand => new RelayCommand<TLMessage>(MessageCopyExecute);
+        public RelayCommand<TLMessage> MessageCopyCommand { get; }
         private void MessageCopyExecute(TLMessage message)
         {
             if (message == null)
@@ -539,9 +540,32 @@ namespace Unigram.ViewModels
 
         #endregion
 
+        #region Copy media
+
+        public RelayCommand<TLMessage> MessageCopyMediaCommand { get; }
+        private async void MessageCopyMediaExecute(TLMessage message)
+        {
+            var photo = message.GetPhoto();
+            if (photo?.Full is TLPhotoSize photoSize)
+            {
+                var location = photoSize.Location;
+                var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                {
+                    var result = await FileUtils.GetTempFileAsync(fileName);
+
+                    var dataPackage = new DataPackage();
+                    dataPackage.SetStorageItems(new[] { result });
+                    ClipboardEx.TrySetContent(dataPackage);
+                }
+            }
+        }
+
+        #endregion
+
         #region Copy link
 
-        public RelayCommand<TLMessageCommonBase> MessageCopyLinkCommand => new RelayCommand<TLMessageCommonBase>(MessageCopyLinkExecute);
+        public RelayCommand<TLMessageCommonBase> MessageCopyLinkCommand { get; }
         private void MessageCopyLinkExecute(TLMessageCommonBase messageCommon)
         {
             if (messageCommon == null)
@@ -597,7 +621,7 @@ namespace Unigram.ViewModels
 
         #region Edit
 
-        public RelayCommand MessageEditLastCommand => new RelayCommand(MessageEditLastExecute);
+        public RelayCommand MessageEditLastCommand { get; }
         private void MessageEditLastExecute()
         {
             var last = Items.LastOrDefault(x => x is TLMessage message && message.IsOut);
@@ -607,7 +631,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLMessage> MessageEditCommand => new RelayCommand<TLMessage>(MessageEditExecute);
+        public RelayCommand<TLMessage> MessageEditCommand { get; }
         private async void MessageEditExecute(TLMessage message)
         {
             Search = null;
@@ -620,7 +644,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.GetMessageEditDataAsync(Peer, message.Id);
             if (response.IsSucceeded)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     var messageEditText = GetMessageEditText(response.Result, message);
                     StartEditMessage(messageEditText, message);
@@ -628,7 +652,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     //this.IsWorking = false;
                     //if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.MESSAGE_ID_INVALID))
@@ -797,7 +821,7 @@ namespace Unigram.ViewModels
 
         #region Pin
 
-        public RelayCommand<TLMessageBase> MessagePinCommand => new RelayCommand<TLMessageBase>(MessagePinExecute);
+        public RelayCommand<TLMessageBase> MessagePinCommand { get; }
         private async void MessagePinExecute(TLMessageBase message)
         {
             if (PinnedMessage?.Id == message.Id)
@@ -938,7 +962,7 @@ namespace Unigram.ViewModels
             ReplyMarkup = message.ReplyMarkup;
         }
 
-        //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand => new RelayCommand<TLKeyboardButtonBase>(KeyboardButtonExecute);
+        //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand { get; }
         public async void KeyboardButtonExecute(TLKeyboardButtonBase button, TLMessage message)
         {
             if (button is TLKeyboardButtonBuy buyButton)
@@ -1147,7 +1171,7 @@ namespace Unigram.ViewModels
 
         #region Open reply
 
-        public RelayCommand<TLMessageCommonBase> MessageOpenReplyCommand => new RelayCommand<TLMessageCommonBase>(MessageOpenReplyExecute);
+        public RelayCommand<TLMessageCommonBase> MessageOpenReplyCommand { get; }
         private async void MessageOpenReplyExecute(TLMessageCommonBase messageCommon)
         {
             if (messageCommon != null && messageCommon.ReplyToMsgId.HasValue)
@@ -1160,7 +1184,7 @@ namespace Unigram.ViewModels
 
         #region Sticker info
 
-        public RelayCommand<TLMessage> MessageStickerPackInfoCommand => new RelayCommand<TLMessage>(MessageStickerPackInfoExecute);
+        public RelayCommand<TLMessage> MessageStickerPackInfoCommand { get; }
         private async void MessageStickerPackInfoExecute(TLMessage message)
         {
             if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
@@ -1177,7 +1201,7 @@ namespace Unigram.ViewModels
 
         #region Fave sticker
 
-        public RelayCommand<TLMessage> MessageFaveStickerCommand => new RelayCommand<TLMessage>(MessageFaveStickerExecute);
+        public RelayCommand<TLMessage> MessageFaveStickerCommand { get; }
         private void MessageFaveStickerExecute(TLMessage message)
         {
             if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
@@ -1190,7 +1214,7 @@ namespace Unigram.ViewModels
 
         #region Unfave sticker
 
-        public RelayCommand<TLMessage> MessageUnfaveStickerCommand => new RelayCommand<TLMessage>(MessageUnfaveStickerExecute);
+        public RelayCommand<TLMessage> MessageUnfaveStickerCommand { get; }
         private void MessageUnfaveStickerExecute(TLMessage message)
         {
             if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
@@ -1203,7 +1227,7 @@ namespace Unigram.ViewModels
 
         #region Save sticker as
 
-        public RelayCommand<TLMessage> MessageSaveStickerCommand => new RelayCommand<TLMessage>(MessageSaveStickerExecute);
+        public RelayCommand<TLMessage> MessageSaveStickerCommand { get; }
         private async void MessageSaveStickerExecute(TLMessage message)
         {
             if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
@@ -1258,7 +1282,7 @@ namespace Unigram.ViewModels
 
         #region Save file as
 
-        public RelayCommand<TLMessage> MessageSaveMediaCommand => new RelayCommand<TLMessage>(MessageSaveMediaExecute);
+        public RelayCommand<TLMessage> MessageSaveMediaCommand { get; }
         private async void MessageSaveMediaExecute(TLMessage message)
         {
             if (message.IsSticker())
@@ -1267,50 +1291,62 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            if (message?.Media is TLMessageMediaPhoto photoMedia && photoMedia.Photo is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
+            var photo = message.GetPhoto();
+            if (photo?.Full is TLPhotoSize photoSize)
             {
-                var location = photoSize.Location;
-                var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
-                if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                {
-                    var picker = new FileSavePicker();
-                    picker.FileTypeChoices.Add("JPEG Image", new[] { ".jpg" });
-                    picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                    picker.SuggestedFileName = BindConvert.Current.DateTime(message.Date).ToString("photo_yyyyMMdd_HH_mm_ss") + ".jpg";
-
-                    var file = await picker.PickSaveFileAsync();
-                    if (file != null)
-                    {
-                        var result = await FileUtils.GetTempFileAsync(fileName);
-                        await result.CopyAndReplaceAsync(file);
-                    }
-                }
+                await SavePhotoAsync(photoSize, message.Date);
             }
 
-            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            var document = message.GetDocument();
+            if (document != null)
             {
-                var fileName = document.GetFileName();
-                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                await SaveDocumentAsync(document, message.Date);
+            }
+        }
+
+        private async Task SavePhotoAsync(TLPhotoSize photoSize, int date)
+        {
+            var location = photoSize.Location;
+            var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            {
+                var picker = new FileSavePicker();
+                picker.FileTypeChoices.Add("JPEG Image", new[] { ".jpg" });
+                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                picker.SuggestedFileName = BindConvert.Current.DateTime(date).ToString("photo_yyyyMMdd_HH_mm_ss") + ".jpg";
+
+                var file = await picker.PickSaveFileAsync();
+                if (file != null)
                 {
-                    var extension = document.GetFileExtension();
+                    var result = await FileUtils.GetTempFileAsync(fileName);
+                    await result.CopyAndReplaceAsync(file);
+                }
+            }
+        }
 
-                    var picker = new FileSavePicker();
-                    picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { document.GetFileExtension() });
-                    picker.SuggestedStartLocation = PickerLocationId.Downloads;
-                    picker.SuggestedFileName = BindConvert.Current.DateTime(message.Date).ToString("photo_yyyyMMdd_HH_mm_ss") + extension;
+        private async Task SaveDocumentAsync(TLDocument document, int date)
+        {
+            var fileName = document.GetFileName();
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            {
+                var extension = document.GetFileExtension();
 
-                    var fileNameAttribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
-                    if (fileNameAttribute != null)
-                    {
-                        picker.SuggestedFileName = fileNameAttribute.FileName;
-                    }
+                var picker = new FileSavePicker();
+                picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { document.GetFileExtension() });
+                picker.SuggestedStartLocation = PickerLocationId.Downloads;
+                picker.SuggestedFileName = BindConvert.Current.DateTime(date).ToString("photo_yyyyMMdd_HH_mm_ss") + extension;
 
-                    var file = await picker.PickSaveFileAsync();
-                    if (file != null)
-                    {
-                        var result = await FileUtils.GetTempFileAsync(fileName);
-                        await result.CopyAndReplaceAsync(file);
-                    }
+                var fileNameAttribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
+                if (fileNameAttribute != null)
+                {
+                    picker.SuggestedFileName = fileNameAttribute.FileName;
+                }
+
+                var file = await picker.PickSaveFileAsync();
+                if (file != null)
+                {
+                    var result = await FileUtils.GetTempFileAsync(fileName);
+                    await result.CopyAndReplaceAsync(file);
                 }
             }
         }
@@ -1319,18 +1355,28 @@ namespace Unigram.ViewModels
 
         #region Save to GIFs
 
-        public RelayCommand<TLMessage> MessageSaveGIFCommand => new RelayCommand<TLMessage>(MessageSaveGIFExecute);
+        public RelayCommand<TLMessage> MessageSaveGIFCommand { get; }
         private async void MessageSaveGIFExecute(TLMessage message)
         {
-            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            TLDocument document = null;
+            if (message?.Media is TLMessageMediaDocument documentMedia)
             {
-                var response = await ProtoService.SaveGifAsync(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, false);
-                if (response.IsSucceeded)
-                {
-                    _stickers.StickersService.AddRecentGif(document, (int)(Utils.CurrentTimestamp / 1000));
+                document = documentMedia.Document as TLDocument;
+            }
+            else if (message?.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+            {
+                document = webPage.Document as TLDocument;
+            }
 
-                    //_stickers.SyncGifs();
-                }
+            if (document == null)
+            {
+                return;
+            }
+
+            var response = await ProtoService.SaveGifAsync(new TLInputDocument { Id = document.Id, AccessHash = document.AccessHash }, false);
+            if (response.IsSucceeded)
+            {
+                _stickers.StickersService.AddRecentGif(document, (int)(Utils.CurrentTimestamp / 1000));
             }
         }
 

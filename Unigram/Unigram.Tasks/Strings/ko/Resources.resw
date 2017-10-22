@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AUTH_REGION" xml:space="preserve">
+    <value>{1}에서 {0} 기기로 로그인함</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
+    <value>님이 음성메시지를 보냈습니다</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_CONTACT" xml:space="preserve">
+    <value>님이 연락처를 공유했습니다</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
+    <value>님이 문서를 보냈습니다</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
+    <value>님이 {1} 게임으로 초대했습니다</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
+    <value>님이 위치를 보냈습니다</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>님이 실시간 위치를 전송하였습니다.</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
+    <value>님이 GIF파일을 보냈습니다</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_NOTEXT" xml:space="preserve">
+    <value>님이 메시지를 보냈습니다</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
+    <value>님이 사진을 보냈습니다</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
+    <value>님이 영상메시지를 보냈습니다</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
+    <value>님이 {1}스티커를 작성했습니다.</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_TEXT" xml:space="preserve">
+    <value>{1}</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_VIDEO" xml:space="preserve">
+    <value>님이 동영상을 보냈습니다</value>
+  </data>
+  <data name="CHAT_ADD_MEMBER" xml:space="preserve">
+    <value>{0}님이 그룹에 {2}님을 초대했습니다</value>
+  </data>
+  <data name="CHAT_ADD_YOU" xml:space="preserve">
+    <value>{0}님이 그룹에 초대했습니다</value>
+  </data>
+  <data name="CHAT_CREATED" xml:space="preserve">
+    <value>{0}님이 그룹으로 초대했습니다</value>
+  </data>
+  <data name="CHAT_DELETE_MEMBER" xml:space="preserve">
+    <value>{1} 그룹방에서 {2} 님을 {0} 님이 내보냈습니다.</value>
+  </data>
+  <data name="CHAT_DELETE_YOU" xml:space="preserve">
+    <value>{1} 그룹방에서 {0}님이 회원님을 내보냈습니다.</value>
+  </data>
+  <data name="CHAT_LEFT" xml:space="preserve">
+    <value>{0}님이 그룹을 떠났습니다</value>
+  </data>
+  <data name="CHAT_MESSAGE_AUDIO" xml:space="preserve">
+    <value>{0} 님이 그룹에 음성 메시지를 보냈습니다</value>
+  </data>
+  <data name="CHAT_MESSAGE_CONTACT" xml:space="preserve">
+    <value>{0}님이 그룹에 연락처를 공유했습니다</value>
+  </data>
+  <data name="CHAT_MESSAGE_DOC" xml:space="preserve">
+    <value>{0}님이 그룹에 파일을 보냈습니다</value>
+  </data>
+  <data name="CHAT_MESSAGE_FWDS" xml:space="preserve">
+    <value>{1} 그룹방에 {2} 개의 메시지를 {0} 님이 전달하였습니다.</value>
+  </data>
+  <data name="CHAT_MESSAGE_GAME" xml:space="preserve">
+    <value>{0} 님이 그룹에 {2} 게임으로 초대했습니다</value>
+  </data>
+  <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
+    <value>{0}님이 그룹으로 위치를 보냈습니다</value>
+  </data>
+  <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>{0}님이과 함께 실시간 위치를 공유하기 시작했습니다.</value>
+  </data>
+  <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
+    <value>{0} 님께서 그룹에 GIF파일을 보냈습니다</value>
+  </data>
+  <data name="CHAT_MESSAGE_INVOICE" xml:space="preserve">
+    <value>{2}에 대한 인보이스를 {0}님이그룹에 보냈습니다.</value>
+  </data>
+  <data name="CHAT_MESSAGE_NOTEXT" xml:space="preserve">
+    <value>{0}님이 그룹으로 메시지를 보냈습니다</value>
+  </data>
+  <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
+    <value>{0}님이 그룹으로 사진을 보냈습니다</value>
+  </data>
+  <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
+    <value>{0} 님이 그룹에 영상 메시지를 보냈습니다</value>
+  </data>
+  <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
+    <value>{0}님이 {2}스티커를그룹방에 보냈습니다</value>
+  </data>
+  <data name="CHAT_MESSAGE_TEXT" xml:space="preserve">
+    <value>{0}: {2}</value>
+  </data>
+  <data name="CHAT_MESSAGE_VIDEO" xml:space="preserve">
+    <value>{0}님이 그룹으로 동영상을 보냈습니다</value>
+  </data>
+  <data name="CHAT_PHOTO_EDITED" xml:space="preserve">
+    <value>{0}님이 그룹의 사진을 변경했습니다</value>
+  </data>
+  <data name="CHAT_RETURNED" xml:space="preserve">
+    <value>{0}님이 그룹으로 되돌아왔습니다</value>
+  </data>
+  <data name="CHAT_TITLE_EDITED" xml:space="preserve">
+    <value>{0}님이 그룹의 이름을 변경했습니다</value>
+  </data>
+  <data name="CONTACT_JOINED" xml:space="preserve">
+    <value>{0}님이 텔레그램에 가입했습니다!</value>
+  </data>
+  <data name="ENCRYPTED_MESSAGE" xml:space="preserve">
+    <value>{0} 새 메시지가 있습니다</value>
+  </data>
+  <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
+    <value>암호화 요청이 수락됐습니다{0}</value>
+  </data>
+  <data name="ENCRYPTION_REQUEST" xml:space="preserve">
+    <value>새로운 암호화 요청 {0}</value>
+  </data>
+  <data name="LOCKED_MESSAGE" xml:space="preserve">
+    <value>{0} 새 메시지가 있습니다</value>
+  </data>
+  <data name="MESSAGE_AUDIO" xml:space="preserve">
+    <value>님이 음성 메시지를 보냈습니다</value>
+  </data>
+  <data name="MESSAGE_CONTACT" xml:space="preserve">
+    <value>님이 연락처를 공유했습니다</value>
+  </data>
+  <data name="MESSAGE_DOC" xml:space="preserve">
+    <value>님이 파일을 보냈습니다</value>
+  </data>
+  <data name="MESSAGE_FWDS" xml:space="preserve">
+    <value>{1}개의 메시지를 {0}님이 전달하였습니다.</value>
+  </data>
+  <data name="MESSAGE_GAME" xml:space="preserve">
+    <value>님이 {1} 게임으로 초대했습니다</value>
+  </data>
+  <data name="MESSAGE_GEO" xml:space="preserve">
+    <value>님이 위치를 보냈습니다</value>
+  </data>
+  <data name="MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>님이 실시간 위치를 공유하기 시작했습니다.</value>
+  </data>
+  <data name="MESSAGE_GIF" xml:space="preserve">
+    <value>님께서 GIF파일을 보냈습니다</value>
+  </data>
+  <data name="MESSAGE_INVOICE" xml:space="preserve">
+    <value>{1}에 대한 인보이스를 {0}님이 보냈습니다.</value>
+  </data>
+  <data name="MESSAGE_NOTEXT" xml:space="preserve">
+    <value>님이 메시지를 보냈습니다</value>
+  </data>
+  <data name="MESSAGE_PHOTO" xml:space="preserve">
+    <value>님이 사진을 보냈습니다</value>
+  </data>
+  <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
+    <value>님이 자동삭제되는 사진을 전송했습니다</value>
+  </data>
+  <data name="MESSAGE_ROUND" xml:space="preserve">
+    <value>님이 영상 메시지를 보냈습니다</value>
+  </data>
+  <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
+    <value>님이 화면을 캡춰했습니다!</value>
+  </data>
+  <data name="MESSAGE_STICKER" xml:space="preserve">
+    <value>님이 {1}스티커를 보냈습니다</value>
+  </data>
+  <data name="MESSAGE_TEXT" xml:space="preserve">
+    <value>{1}</value>
+  </data>
+  <data name="MESSAGE_VIDEO" xml:space="preserve">
+    <value>님이 동영상을 보냈습니다</value>
+  </data>
+  <data name="MESSAGE_VIDEO_SECRET" xml:space="preserve">
+    <value>님이 자동삭제되는 동영상을 전송했습니다.</value>
+  </data>
+  <data name="PHONE_CALL_MISSED" xml:space="preserve">
+    <value>{0}으로부터 부재중 전화가 있습니다.</value>
+  </data>
+  <data name="PHONE_CALL_REQUEST" xml:space="preserve">
+    <value>{0}님으로 부터 전화가 왔습니다</value>
+  </data>
+  <data name="PINNED_AUDIO" xml:space="preserve">
+    <value>님이 음성메시지를 고정함</value>
+  </data>
+  <data name="PINNED_CONTACT" xml:space="preserve">
+    <value>님이 연락처를 고정함</value>
+  </data>
+  <data name="PINNED_DOC" xml:space="preserve">
+    <value>님이 파일을 고정함</value>
+  </data>
+  <data name="PINNED_GAME" xml:space="preserve">
+    <value>님이 게임을 고정함</value>
+  </data>
+  <data name="PINNED_GEO" xml:space="preserve">
+    <value>님이 지도를 고정함</value>
+  </data>
+  <data name="PINNED_GEOLIVE" xml:space="preserve">
+    <value>님이 실시간 위치를 고정했습니다.</value>
+  </data>
+  <data name="PINNED_GIF" xml:space="preserve">
+    <value>님이 GIF를 고정함</value>
+  </data>
+  <data name="PINNED_INVOICE" xml:space="preserve">
+    <value>님이 인보이스를 고정하였습니다</value>
+  </data>
+  <data name="PINNED_NOTEXT" xml:space="preserve">
+    <value>님이 메시지를 고정함</value>
+  </data>
+  <data name="PINNED_PHOTO" xml:space="preserve">
+    <value>님이 사진을 고정함</value>
+  </data>
+  <data name="PINNED_ROUND" xml:space="preserve">
+    <value>님이 영상메시지를 고정함</value>
+  </data>
+  <data name="PINNED_STICKER" xml:space="preserve">
+    <value>님이 {1}스티커를 고정했습니다.</value>
+  </data>
+  <data name="PINNED_TEXT" xml:space="preserve">
+    <value>님이 "{1}" 를 고정함</value>
+  </data>
+  <data name="PINNED_VIDEO" xml:space="preserve">
+    <value>님이 동영상을 고정함</value>
+  </data>
+</root>

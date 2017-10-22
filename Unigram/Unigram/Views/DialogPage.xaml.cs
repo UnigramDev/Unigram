@@ -186,9 +186,16 @@ namespace Unigram.Views
         //    base.OnNavigatedTo(e);
         //}
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             ViewModel.IsActive = true;
+
+            if (App.DataPackage != null)
+            {
+                var package = App.DataPackage;
+                App.DataPackage = null;
+                await HandlePackageAsync(package);
+            }
 
             base.OnNavigatedTo(e);
         }
@@ -513,11 +520,15 @@ namespace Unigram.Views
 
         private async void OnDrop(object sender, DragEventArgs e)
         {
-            //gridLoading.Visibility = Visibility.Visible;
+            await HandlePackageAsync(e.DataView);
+        }
+        //gridLoading.Visibility = Visibility.Visible;
 
-            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+        private async Task HandlePackageAsync(DataPackageView package)
+        {
+            if (package.Contains(StandardDataFormats.StorageItems))
             {
-                var items = await e.DataView.GetStorageItemsAsync();
+                var items = await package.GetStorageItemsAsync();
                 var media = new ObservableCollection<StorageMedia>();
                 var files = new List<StorageFile>(items.Count);
 
@@ -567,9 +578,9 @@ namespace Unigram.Views
             //    gridLoading.Visibility = Visibility.Collapsed;
             //
             //}
-            else if (e.DataView.Contains(StandardDataFormats.Text))
+            else if (package.Contains(StandardDataFormats.Text))
             {
-                var text = await e.DataView.GetTextAsync();
+                var text = await package.GetTextAsync();
                 TextField.Document.GetRange(TextField.Document.Selection.EndPosition, TextField.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
             }
         }
@@ -680,41 +691,45 @@ namespace Unigram.Views
             var channel = messageCommon.Parent as TLChannel;
 
             // Generic
-            menu.Items.Add(CreateFlyoutItem(MessageReply_Loaded, ViewModel.MessageReplyCommand, messageCommon, AppResources.MessageReply));
-            menu.Items.Add(CreateFlyoutItem(MessagePin_Loaded, ViewModel.MessagePinCommand, messageCommon, ViewModel.PinnedMessage?.Id == messageCommon.Id ? AppResources.MessageUnpin : AppResources.MessagePin));
-            menu.Items.Add(CreateFlyoutItem(MessageEdit_Loaded, ViewModel.MessageEditCommand, messageCommon, AppResources.MessageEdit));
-            menu.Items.Add(CreateFlyoutItem(MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, AppResources.MessageForward));
-            menu.Items.Add(CreateFlyoutItem(MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, AppResources.MessageDelete));
-            menu.Items.Add(CreateFlyoutItem(MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, AppResources.MessageSelect));
-            menu.Items.Add(CreateFlyoutItem(MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, AppResources.MessageCopy));
-            menu.Items.Add(CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel != null && channel.IsBroadcast ? AppResources.MessageCopyLinkBroadcast : AppResources.MessageCopyLinkMegaGroup));
+            CreateFlyoutItem(ref menu, MessageReply_Loaded, ViewModel.MessageReplyCommand, messageCommon, AppResources.MessageReply);
+            CreateFlyoutItem(ref menu, MessagePin_Loaded, ViewModel.MessagePinCommand, messageCommon, ViewModel.PinnedMessage?.Id == messageCommon.Id ? AppResources.MessageUnpin : AppResources.MessagePin);
+            CreateFlyoutItem(ref menu, MessageEdit_Loaded, ViewModel.MessageEditCommand, messageCommon, AppResources.MessageEdit);
+            CreateFlyoutItem(ref menu, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, AppResources.MessageForward);
+            CreateFlyoutItem(ref menu, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, AppResources.MessageDelete);
+            CreateFlyoutItem(ref menu, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, AppResources.MessageSelect);
+            CreateFlyoutItem(ref menu, MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, AppResources.MessageCopy);
+            CreateFlyoutItem(ref menu, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, messageCommon, AppResources.MessageCopyMedia);
+            CreateFlyoutItem(ref menu, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel != null && channel.IsBroadcast ? AppResources.MessageCopyLinkBroadcast : AppResources.MessageCopyLinkMegaGroup);
 
             // Stickers
             // <MenuFlyoutItem Loaded="MessageAddSticker_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>
-            menu.Items.Add(CreateFlyoutItem(MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, AppResources.MessageFaveSticker));
-            menu.Items.Add(CreateFlyoutItem(MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, AppResources.MessageUnfaveSticker));
+            CreateFlyoutItem(ref menu, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, AppResources.MessageFaveSticker);
+            CreateFlyoutItem(ref menu, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, AppResources.MessageUnfaveSticker);
 
-            menu.Items.Add(CreateFlyoutItem(MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, AppResources.MessageSaveGIF));
-            menu.Items.Add(CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, AppResources.MessageSaveMedia));
+            CreateFlyoutItem(ref menu, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, AppResources.MessageSaveGIF);
+            CreateFlyoutItem(ref menu, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, AppResources.MessageSaveMedia);
 
-            sender.ContextFlyout = menu;
+            //sender.ContextFlyout = menu;
 
-            if (args.TryGetPosition(sender, out Point point))
+            if (menu.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
                 menu.ShowAt(sender, point);
             }
         }
 
-        private MenuFlyoutItem CreateFlyoutItem(Func<TLMessageCommonBase, Visibility> visibility, ICommand command, object parameter, string text)
+        private void CreateFlyoutItem(ref MenuFlyout menu, Func<TLMessageCommonBase, Visibility> visibility, ICommand command, object parameter, string text)
         {
-            var flyoutItem = new MenuFlyoutItem();
-            //flyoutItem.Visibility = visibility(parameter as TLMessageCommonBase);
-            flyoutItem.Loaded += (s, args) => flyoutItem.Visibility = visibility(parameter as TLMessageCommonBase);
-            flyoutItem.Command = command;
-            flyoutItem.CommandParameter = parameter;
-            flyoutItem.Text = text;
+            var value = visibility(parameter as TLMessageCommonBase);
+            if (value == Visibility.Visible)
+            {
+                var flyoutItem = new MenuFlyoutItem();
+                //flyoutItem.Loaded += (s, args) => flyoutItem.Visibility = visibility(parameter as TLMessageCommonBase);
+                flyoutItem.Command = command;
+                flyoutItem.CommandParameter = parameter;
+                flyoutItem.Text = text;
 
-            return flyoutItem;
+                menu.Items.Add(flyoutItem);
+            }
         }
 
         private Visibility MessageReply_Loaded(TLMessageCommonBase messageCommon)
@@ -838,6 +853,23 @@ namespace Unigram.Views
             return Visibility.Collapsed;
         }
 
+        private Visibility MessageCopyMedia_Loaded(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon is TLMessage message)
+            {
+                if (message.Media is TLMessageMediaPhoto photoMedia)
+                {
+                    return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+                {
+                    return webPage.HasPhoto ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+
+            return Visibility.Collapsed;
+        }
+
         private Visibility MessageCopyLink_Loaded(TLMessageCommonBase messageCommon)
         {
             if (messageCommon.Parent is TLChannel channel && channel.HasUsername)
@@ -910,13 +942,17 @@ namespace Unigram.Views
         {
             if (messageCommon is TLMessage message)
             {
-                if (message != null && message.Media is TLMessageMediaPhoto photoMedia)
+                if (message.Media is TLMessageMediaPhoto photoMedia)
                 {
                     return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
                 }
-                else if (message != null && message.Media is TLMessageMediaDocument documentMedia)
+                else if (message.Media is TLMessageMediaDocument documentMedia)
                 {
                     return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+                {
+                    return webPage.HasDocument || webPage.HasPhoto ? Visibility.Visible : Visibility.Collapsed;
                 }
             }
 
@@ -925,9 +961,19 @@ namespace Unigram.Views
 
         private Visibility MessageSaveGIF_Loaded(TLMessageCommonBase messageCommon)
         {
-            if (messageCommon is TLMessage message && message.IsGif())
+            if (messageCommon is TLMessage message)
             {
-                return Visibility.Visible;
+                if (message.IsGif())
+                {
+                    return Visibility.Visible;
+                }
+                else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+                {
+                    if (TLMessage.IsGif(webPage.Document))
+                    {
+                        return Visibility.Visible;
+                    }
+                }
             }
 
             return Visibility.Collapsed;
@@ -1249,7 +1295,8 @@ namespace Unigram.Views
 
                 TextField.SetText(null, null);
                 ViewModel.SendCommand.Execute(insert);
-                ViewModel.BotCommands = null;
+
+                ViewModel.Autocomplete = null;
             }
             else if (e.ClickedItem is EmojiSuggestion emoji && BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(TextField.Document.Selection.EndPosition, text.Length)), out string replacement))
             {

@@ -1,4 +1,4 @@
-﻿using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections.Concurrent;
@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
@@ -18,6 +19,7 @@ using Telegram.Api.TL;
 using Telegram.Api.TL.Help.Methods;
 using Telegram.Api.TL.LangPack.Methods;
 using Telegram.Api.TL.Messages.Methods;
+using Telegram.Api.TL.Methods;
 using Telegram.Api.TL.Phone;
 using Telegram.Api.TL.Phone.Methods;
 using Telegram.Logs;
@@ -74,6 +76,21 @@ namespace Unigram.ViewModels
             _selfDestructItems = new List<TLMessage>();
 
             aggregator.Subscribe(this);
+
+            LiveLocationCommand = new RelayCommand(LiveLocationExecute);
+            StopLiveLocationCommand = new RelayCommand(StopLiveLocationExecute);
+        }
+
+        public override IDispatcherWrapper Dispatcher
+        {
+            get => base.Dispatcher;
+            set
+            {
+                base.Dispatcher = value;
+                Dialogs.Dispatcher = value;
+                Contacts.Dispatcher = value;
+                Calls.Dispatcher = value;
+            }
         }
 
         public ILiveLocationService LiveLocation
@@ -84,13 +101,13 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand LiveLocationCommand => new RelayCommand(LiveLocationExecute);
+        public RelayCommand LiveLocationCommand { get; }
         private async void LiveLocationExecute()
         {
             await new LiveLocationsView().ShowQueuedAsync();
         }
 
-        public RelayCommand StopLiveLocationCommand => new RelayCommand(StopLiveLocationExecute);
+        public RelayCommand StopLiveLocationCommand { get; }
         private void StopLiveLocationExecute()
         {
             _liveLocationService.StopTracking();
@@ -111,7 +128,7 @@ namespace Unigram.ViewModels
                 }
             }
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 foreach (var message in messages)
                 {
@@ -175,7 +192,7 @@ namespace Unigram.ViewModels
                         destructIn = 0;
                     }
 
-                    Execute.BeginOnUIThread(() => destructMedia.DestructIn = Math.Max(0, destructIn - 1));
+                    BeginOnUIThread(() => destructMedia.DestructIn = Math.Max(0, destructIn - 1));
                 }
 
                 if (destructIn > 0)
@@ -338,12 +355,15 @@ namespace Unigram.ViewModels
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            Task.Run(() => _pushService.RegisterAsync());
+            if (mode == NavigationMode.New)
+            {
+                Execute.BeginOnThreadPool(() => _pushService.RegisterAsync());
+            }
 
-            Execute.BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
-            //Execute.BeginOnUIThread(() => Dialogs.LoadFirstSlice());
-            //Execute.BeginOnUIThread(() => Contacts.getTLContacts());
-            //Execute.BeginOnUIThread(() => Contacts.GetSelfAsync());
+            BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
+            //Dispatch(() => Dialogs.LoadFirstSlice());
+            //Dispatch(() => Contacts.getTLContacts());
+            //Dispatch(() => Contacts.GetSelfAsync());
 
             //ProtoService.SendRequestAsync<object>("langpack.getStrings", new TLLangPackGetStrings { Keys = new TLVector<string> { "CHANNEL_MESSAGE_GEOLIVE", "CHAT_MESSAGE_GEOLIVE", "MESSAGE_GEOLIVE", "PINNED_GEOLIVE" }, LangCode = "it" }, result =>
             //{
@@ -357,6 +377,40 @@ namespace Unigram.ViewModels
             //ProtoService.SendRequestAsync<TLUpdatesBase>("help.getAppChangelog", new TLHelpGetAppChangelog { PrevAppVersion = "4.3" }, result =>
             //{
             //    _updatesService.ProcessUpdates(result, true);
+            //},
+            //fault =>
+            //{
+            //    Debugger.Break();
+            //});
+
+            //var obj = new TLLangPackGetStrings { LangCode = "fa", Keys = new TLVector<string> { "AUTH_REGION", "CHANNEL_MESSAGE_AUDIO", "CHANNEL_MESSAGE_CONTACT", "CHANNEL_MESSAGE_DOC", "CHANNEL_MESSAGE_GAME", "CHANNEL_MESSAGE_GEO", "CHANNEL_MESSAGE_GEOLIVE", "CHANNEL_MESSAGE_GIF", "CHANNEL_MESSAGE_NOTEXT", "CHANNEL_MESSAGE_PHOTO", "CHANNEL_MESSAGE_ROUND", "CHANNEL_MESSAGE_STICKER", "CHANNEL_MESSAGE_TEXT", "CHANNEL_MESSAGE_VIDEO", "CHAT_ADD_MEMBER", "CHAT_ADD_YOU", "CHAT_CREATED", "CHAT_DELETE_MEMBER", "CHAT_DELETE_YOU", "CHAT_LEFT", "CHAT_MESSAGE_AUDIO", "CHAT_MESSAGE_CONTACT", "CHAT_MESSAGE_DOC", "CHAT_MESSAGE_FWDS", "CHAT_MESSAGE_GAME", "CHAT_MESSAGE_GEO", "CHAT_MESSAGE_GEOLIVE", "CHAT_MESSAGE_GIF", "CHAT_MESSAGE_INVOICE", "CHAT_MESSAGE_NOTEXT", "CHAT_MESSAGE_PHOTO", "CHAT_MESSAGE_ROUND", "CHAT_MESSAGE_STICKER", "CHAT_MESSAGE_TEXT", "CHAT_MESSAGE_VIDEO", "CHAT_PHOTO_EDITED", "CHAT_RETURNED", "CHAT_TITLE_EDITED", "CONTACT_JOINED", "ENCRYPTED_MESSAGE", "ENCRYPTION_ACCEPT", "ENCRYPTION_REQUEST", "LOCKED_MESSAGE", "MESSAGE_AUDIO", "MESSAGE_CONTACT", "MESSAGE_DOC", "MESSAGE_FWDS", "MESSAGE_GAME", "MESSAGE_GEO", "MESSAGE_GEOLIVE", "MESSAGE_GIF", "MESSAGE_INVOICE", "MESSAGE_NOTEXT", "MESSAGE_PHOTO", "MESSAGE_PHOTO_SECRET", "MESSAGE_ROUND", "MESSAGE_SCREENSHOT", "MESSAGE_STICKER", "MESSAGE_TEXT", "MESSAGE_VIDEO", "MESSAGE_VIDEO_SECRET", "PHONE_CALL_MISSED", "PHONE_CALL_REQUEST", "PINNED_AUDIO", "PINNED_CONTACT", "PINNED_DOC", "PINNED_GAME", "PINNED_GEO", "PINNED_GEOLIVE", "PINNED_GIF", "PINNED_INVOICE", "PINNED_NOTEXT", "PINNED_PHOTO", "PINNED_ROUND", "PINNED_STICKER", "PINNED_TEXT", "PINNED_VIDEO" } };
+
+            //const string caption = "langpack.getStrings";
+            //ProtoService.SendRequestAsync<TLVector<TLLangPackStringBase>>(caption, obj, result =>
+            //{
+            //    var builder = new StringBuilder();
+
+            //    foreach (var item in result.OfType<TLLangPackString>())
+            //    {
+            //        var value = item.Value;
+            //        if (item.Key.StartsWith("CHANNEL") || item.Key.StartsWith("MESSAGE") || item.Key.StartsWith("PINNED"))
+            //        {
+            //            value = value.TrimStart("%1$@").TrimStart(':', ' ');
+            //        }
+            //        else if (item.Key.StartsWith("CHAT"))
+            //        {
+            //            value = value.Replace(" %2$@", string.Empty).Replace("@%2$@", string.Empty).Replace("%2$ ", string.Empty).Replace("«%2$@»", string.Empty).TrimEnd();
+            //        }
+
+            //        value = value.Replace("%1$@", "{0}");
+            //        value = value.Replace("%2$@", "{1}");
+            //        value = value.Replace("%3$@", "{2}");
+
+            //        builder.AppendLine($"{item.Key}\t{value}");
+            //    }
+
+            //    var yella = builder.ToString();
+            //    var cips = true;
             //},
             //fault =>
             //{
@@ -384,7 +438,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLMessageCommonBase commonMessage)
         {
-            Execute.BeginOnUIThread(() => Notify(commonMessage));
+            BeginOnUIThread(() => Notify(commonMessage));
         }
 
         public void Notify(TLMessageCommonBase commonMessage)
@@ -488,7 +542,7 @@ namespace Unigram.ViewModels
                                     {
                                         dialog.NotifySettings = chatFull.FullChat.NotifySettings;
 
-                                        Execute.BeginOnUIThread(() =>
+                                        BeginOnUIThread(() =>
                                         {
                                             dialog.RaisePropertyChanged(() => dialog.NotifySettings);
                                             dialog.RaisePropertyChanged(() => dialog.Self);
@@ -505,7 +559,7 @@ namespace Unigram.ViewModels
                                     {
                                         dialog.NotifySettings = chatFull.FullChat.NotifySettings;
 
-                                        Execute.BeginOnUIThread(() =>
+                                        BeginOnUIThread(() =>
                                         {
                                             dialog.RaisePropertyChanged(() => dialog.NotifySettings);
                                             dialog.RaisePropertyChanged(() => dialog.Self);
@@ -536,7 +590,7 @@ namespace Unigram.ViewModels
                                 {
                                     dialog.NotifySettings = userFull.NotifySettings;
 
-                                    Execute.BeginOnUIThread(() =>
+                                    BeginOnUIThread(() =>
                                     {
                                         dialog.RaisePropertyChanged(() => dialog.NotifySettings);
                                         dialog.RaisePropertyChanged(() => dialog.Self);
@@ -744,7 +798,7 @@ namespace Unigram.ViewModels
 
                 var user = CacheService.GetUser(callRequested.AdminId) as TLUser;
 
-                Execute.BeginOnUIThread(async () =>
+                BeginOnUIThread(async () =>
                 {
                     var dialog = await TLMessageDialog.ShowAsync(user.DisplayName, "CAAAALLL", "OK", "Cancel");
                     if (dialog == Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
@@ -815,7 +869,7 @@ namespace Unigram.ViewModels
 
                 var user = CacheService.GetUser(call.AdminId) as TLUser;
 
-                Execute.BeginOnUIThread(async () =>
+                BeginOnUIThread(async () =>
                 {
                     var dialog = await TLMessageDialog.ShowAsync(user.DisplayName, string.Join(" ", emoji), "OK");
                 });

@@ -9,6 +9,7 @@ using Telegram.Api.Native.TL;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Template10.Services.SerializationService;
+using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Core.Services;
 using Unigram.Webview;
@@ -71,7 +72,7 @@ namespace Unigram.Views
         {
             sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramGameProxy(withMyScore =>
             {
-                Execute.BeginOnUIThread(async () =>
+                this.BeginOnUIThread(async () =>
                 {
                     await ShareView.Current.ShowAsync(_shareMessage, withMyScore);
                 });

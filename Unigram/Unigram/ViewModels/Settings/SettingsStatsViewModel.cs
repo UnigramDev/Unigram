@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -84,6 +84,8 @@ namespace Unigram.ViewModels.Settings
             };
 
             Refresh();
+
+            ResetCommand = new RelayCommand(ResetExecute);
         }
 
         public string Title { get; private set; }
@@ -115,7 +117,7 @@ namespace Unigram.ViewModels.Settings
 
         public MvxObservableCollection<SettingsStatsDataBase> Items { get; private set; }
 
-        public RelayCommand ResetCommand => new RelayCommand(ResetExecute);
+        public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync("Do you want to reset your usage statistics?", "Telegram", "Reset", "Cancel");

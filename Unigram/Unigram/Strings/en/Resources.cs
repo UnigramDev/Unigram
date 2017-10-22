@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/17/2017 16:30:58
+// 	Generated: 10/22/2017 13:32:14
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -3392,6 +3392,182 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessageUnpin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy image"
+        /// </summary>
+        public static string MessageCopyMedia
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageCopyMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit permissions"
+        /// </summary>
+        public static string ParticipantEdit
+        {
+            get
+            {
+                return resourceLoader.GetString("ParticipantEdit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Promote"
+        /// </summary>
+        public static string ParticipantPromote
+        {
+            get
+            {
+                return resourceLoader.GetString("ParticipantPromote");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restrict"
+        /// </summary>
+        public static string ParticipantRestrict
+        {
+            get
+            {
+                return resourceLoader.GetString("ParticipantRestrict");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear history"
+        /// </summary>
+        public static string DialogClearHistory
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogClearHistory");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete conversation"
+        /// </summary>
+        public static string DialogDelete
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDelete");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete and exit"
+        /// </summary>
+        public static string DialogDeleteAndExit
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDeleteAndExit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete and stop"
+        /// </summary>
+        public static string DialogDeleteAndStop
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDeleteAndStop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete channel"
+        /// </summary>
+        public static string DialogDeleteChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDeleteChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete group"
+        /// </summary>
+        public static string DialogDeleteGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDeleteGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Leave channel"
+        /// </summary>
+        public static string DialogLeaveChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogLeaveChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Leave group"
+        /// </summary>
+        public static string DialogLeaveGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogLeaveGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable notifications"
+        /// </summary>
+        public static string DialogNotificationsDisable
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogNotificationsDisable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable notifications"
+        /// </summary>
+        public static string DialogNotificationsEnable
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogNotificationsEnable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pin to top"
+        /// </summary>
+        public static string DialogPin
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogPin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin from top"
+        /// </summary>
+        public static string DialogUnpin
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogUnpin");
             }
         }
     }

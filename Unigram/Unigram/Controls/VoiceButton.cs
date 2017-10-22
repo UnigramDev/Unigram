@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Native;
 using Unigram.ViewModels;
@@ -161,7 +162,7 @@ namespace Unigram.Controls
                 _recording = true;
                 _start = DateTime.Now;
 
-                Execute.BeginOnUIThread(() =>
+                this.BeginOnUIThread(() =>
                 {
                     if (_video)
                     {
@@ -231,7 +232,7 @@ namespace Unigram.Controls
 
                 _recording = false;
 
-                Execute.BeginOnUIThread(() =>
+                this.BeginOnUIThread(() =>
                 {
                     if (_video)
                     {
@@ -269,7 +270,7 @@ namespace Unigram.Controls
                 {
                     Debug.WriteLine("Sending voice message");
 
-                    Execute.BeginOnUIThread(async () =>
+                    this.BeginOnUIThread(async () =>
                     {
                         if (_video)
                         {
