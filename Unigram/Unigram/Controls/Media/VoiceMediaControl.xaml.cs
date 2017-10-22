@@ -295,7 +295,7 @@ namespace Unigram.Controls.Media
 
         private void OnFileCompleted(AudioFileInputNode sender, object args)
         {
-            Execute.BeginOnUIThread(() =>
+            this.BeginOnUIThread(() =>
             {
                 _graph.Stop();
                 _timer.Stop();
