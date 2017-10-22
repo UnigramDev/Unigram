@@ -334,7 +334,7 @@ namespace Telegram.Api.TL
                 var video = attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 if (animated != null && video != null)
                 {
-                    return true;
+                    return !video.IsRoundMessage;
                 }
             }
 
