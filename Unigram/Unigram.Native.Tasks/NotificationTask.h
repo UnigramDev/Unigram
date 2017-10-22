@@ -23,10 +23,10 @@ namespace Unigram
 				virtual void Run(IBackgroundTaskInstance^ taskInstance);
 
 				static void UpdatePrimaryBadge(int badgeNumber);
-				static void UpdateSecondaryBadge(int badgeNumber, String^ group);
+				//static void UpdateSecondaryBadge(String^ group, bool resetBadge);
 				static void ResetSecondaryTile(String^ caption, String^ picture, String^ group);
 				static void UpdatePrimaryTile(String^ caption, String^ message, String^ picture);
-				static void UpdateSecondaryTile(String^ caption, String^ message, String^ picture, String^ group);
+				//static void UpdateSecondaryTile(String^ caption, String^ message, String^ picture, String^ group);
 				static void UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key); 
 
 			private:

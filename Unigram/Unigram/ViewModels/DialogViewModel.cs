@@ -2863,7 +2863,6 @@ namespace Unigram.ViewModels
             if (existsSecondaryTile)
             {
                 NotificationTask.ResetSecondaryTile(displayName, picture, group);
-                NotificationTask.UpdateSecondaryBadge(0, group);
             }
         }
 
