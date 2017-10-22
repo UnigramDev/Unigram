@@ -14,7 +14,6 @@ using Template10.Common;
 using Telegram.Api.Helpers;
 using Unigram.Core.Services;
 using Telegram.Api.Services.Updates;
-using Telegram.Api.Transport;
 using Telegram.Api.Services.Connection;
 using System.Threading;
 using System.Collections.ObjectModel;
@@ -61,6 +60,7 @@ using Unigram.Views.Channels;
 using Telegram.Api.TL.Channels;
 using Windows.UI.StartScreen;
 using Unigram.Models;
+using Telegram.Api.Native;
 
 namespace Unigram.ViewModels
 {
