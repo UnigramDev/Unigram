@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,6 +28,8 @@ namespace Unigram.ViewModels.Settings
             : base(protoService, cacheService, aggregator)
         {
             _vibrationService = vibrationService;
+
+            ResetCommand = new RelayCommand(ResetExecute);
 
             Aggregator.Subscribe(this);
             PropertyChanged += OnPropertyChanged;
@@ -289,7 +291,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ResetCommand => new RelayCommand(ResetExecute);
+        public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync(AppResources.ResetNotificationsDialogBody, AppResources.ResetNotificationsDialogTitle, AppResources.OK, AppResources.Cancel);

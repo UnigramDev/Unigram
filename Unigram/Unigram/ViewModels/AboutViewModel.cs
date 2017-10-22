@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Windows.Input;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
@@ -16,6 +17,16 @@ namespace Unigram.ViewModels
         public AboutViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            UsefulPrivacyCommand = new RelayCommand(UsefulPrivacyExecute);
+            UsefulFaqCommand = new RelayCommand(UsefulFaqExecute);
+            UsefulWebsiteCommand = new RelayCommand(UsefulWebsiteExecute);
+            UsefulChangelogCommand = new RelayCommand(UsefulChangelogExecute);
+            SupportEmailCommand = new RelayCommand(SupportEmailExecute);
+            SupportGitHubCommand = new RelayCommand(SupportGitHubExecute);
+            SocialTwitterCommand = new RelayCommand(SocialTwitterExecute);
+            SocialFacebookCommand = new RelayCommand(SocialFacebookExecute);
+            ThanksTelegramCommand = new RelayCommand(ThanksTelegramExecute);
+            ThanksGregoryCommand = new RelayCommand(ThanksGregoryExecute);
         }
 
         /// <summary>
@@ -34,25 +45,25 @@ namespace Unigram.ViewModels
 
         #region Useful
 
-        public RelayCommand UsefulPrivacyCommand => new RelayCommand(UsefulPrivacyExecute);
+        public RelayCommand UsefulPrivacyCommand { get; }
         private async void UsefulPrivacyExecute()
         {
             await Launcher.LaunchUriAsync(new Uri("http://unigram.me/privacy.html"));
         }
 
-        public RelayCommand UsefulFaqCommand => new RelayCommand(UsefulFaqExecute);
+        public RelayCommand UsefulFaqCommand { get; }
         private async void UsefulFaqExecute()
         {
             await Launcher.LaunchUriAsync(new Uri("http://unigram.me/faq.html"));
         }
 
-        public RelayCommand UsefulWebsiteCommand => new RelayCommand(UsefulWebsiteExecute);
+        public RelayCommand UsefulWebsiteCommand { get; }
         private async void UsefulWebsiteExecute()
         {
             await Launcher.LaunchUriAsync(new Uri("http://unigram.me"));
         }
 
-        public RelayCommand UsefulChangelogCommand => new RelayCommand(UsefulChangelogExecute);
+        public RelayCommand UsefulChangelogCommand { get; }
         private async void UsefulChangelogExecute()
         {
             await Launcher.LaunchUriAsync(new Uri("https://github.com/UnigramDev/Unigram/releases"));
@@ -62,13 +73,13 @@ namespace Unigram.ViewModels
 
         #region Support
 
-        public RelayCommand SupportEmailCommand => new RelayCommand(SupportEmailExecute);
+        public RelayCommand SupportEmailCommand { get; }
         private async void SupportEmailExecute()
         {
             await Launcher.LaunchUriAsync(new Uri("mailto:team@unigram.me"));
         }
 
-        public RelayCommand SupportGitHubCommand => new RelayCommand(SupportGitHubExecute);
+        public RelayCommand SupportGitHubCommand { get; }
         private async void SupportGitHubExecute()
         {
             await Launcher.LaunchUriAsync(new Uri("https://www.github.com/UnigramDev/Unigram/issues"));
@@ -78,13 +89,13 @@ namespace Unigram.ViewModels
 
         #region Social
 
-        public RelayCommand SocialTwitterCommand => new RelayCommand(SocialTwitterExecute);
+        public RelayCommand SocialTwitterCommand { get; }
         private async void SocialTwitterExecute()
         {
             await Launcher.LaunchUriAsync(new Uri("https://twitter.com/UnigramApp"));
         }
 
-        public RelayCommand SocialFacebookCommand => new RelayCommand(SocialFacebookExecute);
+        public RelayCommand SocialFacebookCommand { get; }
         private async void SocialFacebookExecute()
         {
             await Launcher.LaunchUriAsync(new Uri("https://www.facebook.com/UnigramApp"));
@@ -94,13 +105,13 @@ namespace Unigram.ViewModels
 
         #region Thanks
 
-        public RelayCommand ThanksTelegramCommand => new RelayCommand(ThanksTelegramExecute);
+        public RelayCommand ThanksTelegramCommand { get; }
         private async void ThanksTelegramExecute()
         {
             await Launcher.LaunchUriAsync(new Uri("https://github.com/grishka"));
         }
 
-        public RelayCommand ThanksGregoryCommand => new RelayCommand(ThanksGregoryExecute);
+        public RelayCommand ThanksGregoryCommand { get; }
         private async void ThanksGregoryExecute()
         {
             await Launcher.LaunchUriAsync(new Uri("https://github.com/grishka"));

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Unigram.Views.SignIn;
@@ -38,6 +38,9 @@ namespace Unigram.ViewModels.SignIn
             {
                 GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
             }
+
+            SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
+            ProxyCommand = new RelayCommand(ProxyExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -136,8 +139,7 @@ namespace Unigram.ViewModels.SignIn
 
         public List<KeyedList<string, Country>> Countries { get; } = Country.GroupedCountries;
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             if (PhoneCode == null || PhoneNumber == null)
@@ -174,7 +176,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        public RelayCommand ProxyCommand => new RelayCommand(ProxyExecute);
+        public RelayCommand ProxyCommand { get; }
         private async void ProxyExecute()
         {
             var dialog = new ProxyView();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,6 +41,11 @@ namespace Unigram.ViewModels
             _contactsService = contactsService;
             _uploadFileManager = uploadFileManager;
             _stickersService = stickersService;
+
+            AskCommand = new RelayCommand(AskExecute);
+            LogoutCommand = new RelayCommand(LogoutExecute);
+            DeleteAccountCommand = new RelayCommand(DeleteAccountExecute);
+            EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -109,7 +114,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<StorageFile> EditPhotoCommand => new RelayCommand<StorageFile>(EditPhotoExecute);
+        public RelayCommand<StorageFile> EditPhotoCommand { get; }
         private async void EditPhotoExecute(StorageFile file)
         {
             var fileLocation = new TLFileLocation
@@ -143,7 +148,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand AskCommand => new RelayCommand(AskExecute);
+        public RelayCommand AskCommand { get; }
         private async void AskExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync(AppResources.TGSupportDisclaimerDetails, AppResources.Telegram, AppResources.TGSupportDisclaimerPrimaryText, AppResources.Cancel);
@@ -161,7 +166,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand LogoutCommand => new RelayCommand(LogoutExecute);
+        public RelayCommand LogoutCommand { get; }
         private async void LogoutExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync(AppResources.TGLogoutText, AppResources.AppDisplayName, AppResources.OK, AppResources.Cancel);
@@ -196,7 +201,7 @@ namespace Unigram.ViewModels
 
 #if DEBUG
 
-        public RelayCommand DeleteAccountCommand => new RelayCommand(DeleteAccountExecute);
+        public RelayCommand DeleteAccountCommand { get; }
         private async void DeleteAccountExecute()
         {
             var config = InMemoryCacheService.Current.GetConfig();

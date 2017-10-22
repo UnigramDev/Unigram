@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -20,6 +20,9 @@ namespace Unigram.ViewModels.Channels
         public ChannelEditViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager)
             : base(protoService, cacheService, aggregator, uploadFileManager)
         {
+            SendCommand = new RelayCommand(SendExecute);
+            EditTypeCommand = new RelayCommand(EditTypeExecute);
+            EditStickerSetCommand = new RelayCommand(EditStickerSetExecute);
         }
 
         public bool CanEditSignatures
@@ -134,7 +137,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             var about = _about.Format();
@@ -201,13 +204,13 @@ namespace Unigram.ViewModels.Channels
             NavigationService.GoBack();
         }
 
-        public RelayCommand EditTypeCommand => new RelayCommand(EditTypeExecute);
+        public RelayCommand EditTypeCommand { get; }
         private void EditTypeExecute()
         {
             NavigationService.Navigate(typeof(ChannelEditTypePage), _item.ToPeer());
         }
 
-        public RelayCommand EditStickerSetCommand => new RelayCommand(EditStickerSetExecute);
+        public RelayCommand EditStickerSetCommand { get; }
         private void EditStickerSetExecute()
         {
             NavigationService.Navigate(typeof(ChannelEditStickerSetPage), _item.ToPeer());

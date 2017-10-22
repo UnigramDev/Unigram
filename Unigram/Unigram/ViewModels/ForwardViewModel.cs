@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -23,6 +23,8 @@ namespace Unigram.ViewModels
         {
             Dialogs = dialogs;
             GroupedItems = new ObservableCollection<ForwardViewModel> { this };
+
+            SendCommand = new RelayCommand(SendExecute, () => SelectedItem != null);
         }
 
         private TLDialog _selectedItem;
@@ -53,9 +55,7 @@ namespace Unigram.ViewModels
 
 
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = (_sendCommand ?? new RelayCommand(SendExecute, () => SelectedItem != null));
-
+        public RelayCommand SendCommand { get; }
         private void SendExecute()
         {
             var messages = Messages?.ToList();

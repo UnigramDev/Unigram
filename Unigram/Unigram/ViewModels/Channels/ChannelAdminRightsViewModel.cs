@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +19,9 @@ namespace Unigram.ViewModels.Channels
         public ChannelAdminRightsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            ProfileCommand = new RelayCommand(ProfileExecute);
+            SendCommand = new RelayCommand(SendExecute);
+            DismissCommand = new RelayCommand(DismissExecute);
         }
 
         private TLChannel _channel;
@@ -285,7 +288,7 @@ namespace Unigram.ViewModels.Channels
 
         #endregion
 
-        public RelayCommand ProfileCommand => new RelayCommand(ProfileExecute);
+        public RelayCommand ProfileCommand { get; }
         private void ProfileExecute()
         {
             var user = _item.User;
@@ -297,7 +300,7 @@ namespace Unigram.ViewModels.Channels
             NavigationService.Navigate(typeof(UserDetailsPage), user.ToPeer());
         }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             var rights = new TLChannelAdminRights
@@ -321,7 +324,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public RelayCommand DismissCommand => new RelayCommand(DismissExecute);
+        public RelayCommand DismissCommand { get; }
         private async void DismissExecute()
         {
             var rights = new TLChannelAdminRights();

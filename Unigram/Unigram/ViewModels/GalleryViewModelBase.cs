@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -28,6 +28,10 @@ namespace Unigram.ViewModels
         public GalleryViewModelBase(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            StickersCommand = new RelayCommand(StickersExecute);
+            GotoCommand = new RelayCommand(GotoExecute);
+            DeleteCommand = new RelayCommand(DeleteExecute);
+            OpenWithCommand = new RelayCommand(OpenWithExecute);
         }
 
         public int SelectedIndex
@@ -144,7 +148,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand StickersCommand => new RelayCommand(StickersExecute);
+        public RelayCommand StickersCommand { get; }
         private async void StickersExecute()
         {
             if (_selectedItem != null && _selectedItem.HasStickers)
@@ -168,7 +172,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand GotoCommand => new RelayCommand(GotoExecute);
+        public RelayCommand GotoCommand { get; }
         protected virtual void GotoExecute()
         {
             NavigationService.GoBack();
@@ -190,12 +194,12 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand DeleteCommand => new RelayCommand(DeleteExecute);
+        public RelayCommand DeleteCommand { get; }
         protected virtual void DeleteExecute()
         {
         }
 
-        public RelayCommand OpenWithCommand => new RelayCommand(OpenWithExecute);
+        public RelayCommand OpenWithCommand { get; }
         protected virtual async void OpenWithExecute()
         {
             object value = null;

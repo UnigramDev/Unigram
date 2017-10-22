@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +21,8 @@ namespace Unigram.ViewModels.Settings
         public SettingsUsernameViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
+            SendCommand = new RelayCommand(SendExecute);
+            CopyCommand = new RelayCommand(CopyExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -196,7 +198,7 @@ namespace Unigram.ViewModels.Settings
             return true;
         }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             var response = await ProtoService.UpdateUsernameAsync(Username);
@@ -273,7 +275,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand CopyCommand => new RelayCommand(CopyExecute);
+        public RelayCommand CopyCommand { get; }
         private async void CopyExecute()
         {
             var config = CacheService.GetConfig();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,6 +29,8 @@ namespace Unigram.ViewModels.Settings
         public SettingsSecurityEnterPasswordViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
+            SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
+            ForgotCommand = new RelayCommand(ForgotExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -69,7 +71,7 @@ namespace Unigram.ViewModels.Settings
         }
 
         private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             if (_passwordBase == null)
@@ -121,7 +123,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ForgotCommand => new RelayCommand(ForgotExecute);
+        public RelayCommand ForgotCommand { get; }
         private async void ForgotExecute()
         {
             if (_passwordBase == null)

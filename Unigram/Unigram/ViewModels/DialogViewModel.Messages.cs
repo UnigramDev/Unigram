@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -34,7 +34,7 @@ namespace Unigram.ViewModels
     {
         #region Reply
 
-        public RelayCommand<TLMessageBase> MessageReplyCommand => new RelayCommand<TLMessageBase>(MessageReplyExecute);
+        public RelayCommand<TLMessageBase> MessageReplyCommand { get; }
         private void MessageReplyExecute(TLMessageBase message)
         {
             Search = null;
@@ -76,7 +76,7 @@ namespace Unigram.ViewModels
 
         #region Delete
 
-        public RelayCommand<TLMessageBase> MessageDeleteCommand => new RelayCommand<TLMessageBase>(MessageDeleteExecute);
+        public RelayCommand<TLMessageBase> MessageDeleteCommand { get; }
         private async void MessageDeleteExecute(TLMessageBase messageBase)
         {
             if (messageBase == null) return;
@@ -268,7 +268,7 @@ namespace Unigram.ViewModels
 
         #region Forward
 
-        public RelayCommand<TLMessageBase> MessageForwardCommand => new RelayCommand<TLMessageBase>(MessageForwardExecute);
+        public RelayCommand<TLMessageBase> MessageForwardCommand { get; }
         private async void MessageForwardExecute(TLMessageBase message)
         {
             if (message is TLMessage)
@@ -287,7 +287,7 @@ namespace Unigram.ViewModels
 
         #region Share
 
-        public RelayCommand<TLMessage> MessageShareCommand => new RelayCommand<TLMessage>(MessageShareExecute);
+        public RelayCommand<TLMessage> MessageShareCommand { get; }
         private async void MessageShareExecute(TLMessage message)
         {
             await ShareView.Current.ShowAsync(message);
@@ -489,7 +489,7 @@ namespace Unigram.ViewModels
 
         #region Select
 
-        public RelayCommand<TLMessageBase> MessageSelectCommand => new RelayCommand<TLMessageBase>(MessageSelectExecute);
+        public RelayCommand<TLMessageBase> MessageSelectCommand { get; }
         private void MessageSelectExecute(TLMessageBase message)
         {
             Search = null;
@@ -510,7 +510,7 @@ namespace Unigram.ViewModels
 
         #region Copy
 
-        public RelayCommand<TLMessage> MessageCopyCommand => new RelayCommand<TLMessage>(MessageCopyExecute);
+        public RelayCommand<TLMessage> MessageCopyCommand { get; }
         private void MessageCopyExecute(TLMessage message)
         {
             if (message == null)
@@ -542,7 +542,7 @@ namespace Unigram.ViewModels
 
         #region Copy media
 
-        public RelayCommand<TLMessage> MessageCopyMediaCommand => new RelayCommand<TLMessage>(MessageCopyMediaExecute);
+        public RelayCommand<TLMessage> MessageCopyMediaCommand { get; }
         private async void MessageCopyMediaExecute(TLMessage message)
         {
             var photo = message.GetPhoto();
@@ -565,7 +565,7 @@ namespace Unigram.ViewModels
 
         #region Copy link
 
-        public RelayCommand<TLMessageCommonBase> MessageCopyLinkCommand => new RelayCommand<TLMessageCommonBase>(MessageCopyLinkExecute);
+        public RelayCommand<TLMessageCommonBase> MessageCopyLinkCommand { get; }
         private void MessageCopyLinkExecute(TLMessageCommonBase messageCommon)
         {
             if (messageCommon == null)
@@ -621,7 +621,7 @@ namespace Unigram.ViewModels
 
         #region Edit
 
-        public RelayCommand MessageEditLastCommand => new RelayCommand(MessageEditLastExecute);
+        public RelayCommand MessageEditLastCommand { get; }
         private void MessageEditLastExecute()
         {
             var last = Items.LastOrDefault(x => x is TLMessage message && message.IsOut);
@@ -631,7 +631,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLMessage> MessageEditCommand => new RelayCommand<TLMessage>(MessageEditExecute);
+        public RelayCommand<TLMessage> MessageEditCommand { get; }
         private async void MessageEditExecute(TLMessage message)
         {
             Search = null;
@@ -821,7 +821,7 @@ namespace Unigram.ViewModels
 
         #region Pin
 
-        public RelayCommand<TLMessageBase> MessagePinCommand => new RelayCommand<TLMessageBase>(MessagePinExecute);
+        public RelayCommand<TLMessageBase> MessagePinCommand { get; }
         private async void MessagePinExecute(TLMessageBase message)
         {
             if (PinnedMessage?.Id == message.Id)
@@ -962,7 +962,7 @@ namespace Unigram.ViewModels
             ReplyMarkup = message.ReplyMarkup;
         }
 
-        //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand => new RelayCommand<TLKeyboardButtonBase>(KeyboardButtonExecute);
+        //public RelayCommand<TLKeyboardButtonBase> KeyboardButtonCommand { get; }
         public async void KeyboardButtonExecute(TLKeyboardButtonBase button, TLMessage message)
         {
             if (button is TLKeyboardButtonBuy buyButton)
@@ -1171,7 +1171,7 @@ namespace Unigram.ViewModels
 
         #region Open reply
 
-        public RelayCommand<TLMessageCommonBase> MessageOpenReplyCommand => new RelayCommand<TLMessageCommonBase>(MessageOpenReplyExecute);
+        public RelayCommand<TLMessageCommonBase> MessageOpenReplyCommand { get; }
         private async void MessageOpenReplyExecute(TLMessageCommonBase messageCommon)
         {
             if (messageCommon != null && messageCommon.ReplyToMsgId.HasValue)
@@ -1184,7 +1184,7 @@ namespace Unigram.ViewModels
 
         #region Sticker info
 
-        public RelayCommand<TLMessage> MessageStickerPackInfoCommand => new RelayCommand<TLMessage>(MessageStickerPackInfoExecute);
+        public RelayCommand<TLMessage> MessageStickerPackInfoCommand { get; }
         private async void MessageStickerPackInfoExecute(TLMessage message)
         {
             if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
@@ -1201,7 +1201,7 @@ namespace Unigram.ViewModels
 
         #region Fave sticker
 
-        public RelayCommand<TLMessage> MessageFaveStickerCommand => new RelayCommand<TLMessage>(MessageFaveStickerExecute);
+        public RelayCommand<TLMessage> MessageFaveStickerCommand { get; }
         private void MessageFaveStickerExecute(TLMessage message)
         {
             if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
@@ -1214,7 +1214,7 @@ namespace Unigram.ViewModels
 
         #region Unfave sticker
 
-        public RelayCommand<TLMessage> MessageUnfaveStickerCommand => new RelayCommand<TLMessage>(MessageUnfaveStickerExecute);
+        public RelayCommand<TLMessage> MessageUnfaveStickerCommand { get; }
         private void MessageUnfaveStickerExecute(TLMessage message)
         {
             if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
@@ -1227,7 +1227,7 @@ namespace Unigram.ViewModels
 
         #region Save sticker as
 
-        public RelayCommand<TLMessage> MessageSaveStickerCommand => new RelayCommand<TLMessage>(MessageSaveStickerExecute);
+        public RelayCommand<TLMessage> MessageSaveStickerCommand { get; }
         private async void MessageSaveStickerExecute(TLMessage message)
         {
             if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
@@ -1282,7 +1282,7 @@ namespace Unigram.ViewModels
 
         #region Save file as
 
-        public RelayCommand<TLMessage> MessageSaveMediaCommand => new RelayCommand<TLMessage>(MessageSaveMediaExecute);
+        public RelayCommand<TLMessage> MessageSaveMediaCommand { get; }
         private async void MessageSaveMediaExecute(TLMessage message)
         {
             if (message.IsSticker())
@@ -1355,7 +1355,7 @@ namespace Unigram.ViewModels
 
         #region Save to GIFs
 
-        public RelayCommand<TLMessage> MessageSaveGIFCommand => new RelayCommand<TLMessage>(MessageSaveGIFExecute);
+        public RelayCommand<TLMessage> MessageSaveGIFCommand { get; }
         private async void MessageSaveGIFExecute(TLMessage message)
         {
             TLDocument document = null;
