@@ -272,6 +272,7 @@
     <Compile Include="Converters\UsernameConverter.cs" />
     <Compile Include="Converters\VenueToGlyphConverter.cs" />
     <Compile Include="Models\Country.cs" />
+    <Compile Include="Models\StorageDocument.cs" />
     <Compile Include="Models\StorageMedia.cs" />
     <Compile Include="Models\StoragePhoto.cs" />
     <Compile Include="Models\StorageVideo.cs" />

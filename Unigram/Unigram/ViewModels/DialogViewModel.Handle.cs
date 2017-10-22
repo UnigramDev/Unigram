@@ -650,6 +650,7 @@ namespace Unigram.ViewModels
                     topMessage.SetUnread(false);
                 }
 
+                _dialog.ReadInboxMaxId = Dialog.TopMessage;
                 _dialog.UnreadCount = getUnreadCount.Invoke(_dialog);
                 _dialog.RaisePropertyChanged(() => _dialog.UnreadCount);
 
