@@ -740,6 +740,35 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:ImageCropper">
                     <Grid x:Name="LayoutRoot" Margin="{TemplateBinding Padding}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition GeneratedDuration="0:0:0.3" To="Disabled">
+                                        <VisualTransition.GeneratedEasingFunction>
+                                            <CubicEase EasingMode="EaseInOut"/>
+                                        </VisualTransition.GeneratedEasingFunction>
+                                    </VisualTransition>
+                                    <VisualTransition GeneratedDuration="0:0:0.3" From="Disabled" >
+                                        <VisualTransition.GeneratedEasingFunction>
+                                            <CubicEase EasingMode="EaseInOut"/>
+                                        </VisualTransition.GeneratedEasingFunction>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="ImageThumb.ManipulationMode" Value="None"/>
+                                        <Setter Target="ThumbsContainer.IsHitTestVisible" Value="False"/>
+                                        <Setter Target="Clip.IsHitTestVisible" Value="False"/>
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <DoubleAnimation From="0.6" To="1" Storyboard.TargetName="Clip" Storyboard.TargetProperty="Opacity"/>
+                                        <DoubleAnimation From="1.0" To="0" Storyboard.TargetName="ThumbsContainer" Storyboard.TargetProperty="Opacity"/>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        
                         <Grid.Resources>
                             <Style x:Key="CircularThumbStyle" TargetType="local:ImageCropperThumb">
                                 <Setter Property="Background" Value="White" />
@@ -776,7 +805,7 @@
                         </Grid.Resources>
 
                         <Canvas>
-                            <Grid x:Name="ImageThumb" RenderTransformOrigin="0.5,0.5">
+                            <Grid x:Name="ImageThumb" RenderTransformOrigin="0.5,0.5" ManipulationMode="Rotate,Scale,TranslateX,TranslateY">
                                 <Grid.RenderTransform>
                                     <CompositeTransform x:Name="ImageThumbTransform" />
                                 </Grid.RenderTransform>
@@ -785,7 +814,7 @@
                                                   VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
                             </Grid>
 
-                            <Path Fill="{TemplateBinding Background}" Stroke="Transparent" StrokeThickness="1">
+                            <Path x:Name="Clip" Opacity="0.6" Fill="{TemplateBinding Background}" Stroke="Transparent" StrokeThickness="1">
                                 <Path.Data>
                                     <GeometryGroup>
                                         <RectangleGeometry x:Name="OuterClip"/>

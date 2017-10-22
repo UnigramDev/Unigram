@@ -403,8 +403,6 @@ namespace Unigram.Controls.Views
                 IsEditingCropping = true;
                 var dialog = new EditYourPhotoView(photo.File, useRoundCropper: false)
                 {
-                    UseMouseAndTouchGestures = true,
-                    IsCropEnabled = false,
                     CropperProportions = ImageCroppingProportions.Custom,
                     MaxZoomFactor = 10
                 };

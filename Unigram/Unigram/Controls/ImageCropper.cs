@@ -90,15 +90,6 @@ namespace Unigram.Controls
             set { SetValue(s_proportionsProperty, value); }
         }
 
-        public bool UseMouseAndTouchGestures
-        {
-            get { return (bool)GetValue(UseMouseAndTouchGesturesProperty); }
-            set { SetValue(UseMouseAndTouchGesturesProperty, value); }
-        }
-       
-        public static readonly DependencyProperty UseMouseAndTouchGesturesProperty =
-            DependencyProperty.Register("UseMouseAndTouchGestures", typeof(bool), typeof(ImageCropper), new PropertyMetadata(false));
-
         public int MaxZoomFactor
         {
             get { return (int)GetValue(MaxZoomFactorProperty); }
@@ -165,11 +156,7 @@ namespace Unigram.Controls
             m_imageThumb = (FrameworkElement)GetTemplateChild("ImageThumb");
 
             m_imageThumb.ManipulationDelta += ImageThumb_ManipulationDelta;
-            if (UseMouseAndTouchGestures)
-            {
-                m_imageThumb.ManipulationMode = ManipulationModes.Scale | ManipulationModes.TranslateX | ManipulationModes.TranslateY;
-                m_imageThumb.PointerWheelChanged += ImageThumb_PointerWheelChanged;
-            }
+            m_imageThumb.PointerWheelChanged += ImageThumb_PointerWheelChanged;
 
             m_outerClip = (Geometry)GetTemplateChild("OuterClip");
             m_innerClip = (Geometry)GetTemplateChild("InnerClip");
@@ -625,7 +612,7 @@ namespace Unigram.Controls
 
         private void ImageThumb_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
         {
-            if (!UseMouseAndTouchGestures)
+            if (!IsCropEnabled)
             {
                 return;
             }
