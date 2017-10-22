@@ -37,10 +37,14 @@ namespace Telegram.Api.Helpers
         {
             lock (SyncLock)
             {
-                var path = FileUtils.GetFileName(key);
-                var payload = JsonConvert.SerializeObject(value, Formatting.None, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
-                File.WriteAllText(path + ".tmp", payload);
-                File.Copy(path + ".tmp", path);
+                try
+                {
+                    var path = FileUtils.GetFileName(key);
+                    var payload = JsonConvert.SerializeObject(value, Formatting.None, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+                    File.WriteAllText(path + ".tmp", payload);
+                    File.Copy(path + ".tmp", path, true);
+                }
+                catch { }
             }
         }
 
