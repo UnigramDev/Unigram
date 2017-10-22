@@ -404,7 +404,7 @@ namespace Unigram.Controls.Views
                 var dialog = new EditYourPhotoView(photo.File, useRoundCropper: false)
                 {
                     UseMouseAndTouchGestures = true,
-                    IsCropEnabled = true,
+                    IsCropEnabled = false,
                     CropperProportions = ImageCroppingProportions.Custom,
                     MaxZoomFactor = 10
                 };
