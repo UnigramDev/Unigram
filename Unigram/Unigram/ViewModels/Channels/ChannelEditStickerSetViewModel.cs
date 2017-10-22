@@ -25,12 +25,12 @@ namespace Unigram.ViewModels.Channels
         {
             _stickersService = stickersService;
 
-            Aggregator.Subscribe(this);
+            SendCommand = new RelayCommand(SendExecute);
+            CancelCommand = new RelayCommand(CancelExecute);
 
             Items = new MvxObservableCollection<TLMessagesStickerSet>();
 
-            SendCommand = new RelayCommand(SendExecute);
-            CancelCommand = new RelayCommand(CancelExecute);
+            Aggregator.Subscribe(this);
         }
 
         private TLChannelFull _full;

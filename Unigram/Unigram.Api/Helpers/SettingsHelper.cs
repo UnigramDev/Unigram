@@ -12,7 +12,6 @@ namespace Telegram.Api.Helpers
 
         public static object GetValue(string key)
         {
-            var error = false;
             var path = FileUtils.GetFileName(key);
 
             lock (SyncLock)
@@ -27,16 +26,8 @@ namespace Telegram.Api.Helpers
 
                         return obj;
                     }
-                    catch
-                    {
-                        error = true;
-                    }
+                    catch { }
                 }
-            }
-
-            if (error && File.Exists(path + ".bak"))
-            {
-                return GetValue(key + ".bak");
             }
 
             return null;
@@ -47,18 +38,9 @@ namespace Telegram.Api.Helpers
             lock (SyncLock)
             {
                 var path = FileUtils.GetFileName(key);
-                if (File.Exists(path))
-                {
-                    if (File.Exists(path + ".bak"))
-                    {
-                        File.Delete(path + ".bak");
-                    }
-
-                    File.Move(path, path + ".bak");
-                }
-
                 var payload = JsonConvert.SerializeObject(value, Formatting.None, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
-                File.WriteAllText(path, payload);
+                File.WriteAllText(path + ".tmp", payload);
+                File.Copy(path + ".tmp", path);
             }
         }
 

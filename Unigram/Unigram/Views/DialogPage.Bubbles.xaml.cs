@@ -39,6 +39,9 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 using Unigram.Controls;
+using Telegram.Api;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 
 namespace Unigram.Views
 {
@@ -107,13 +110,15 @@ namespace Unigram.Views
                 var messageIds = new TLVector<int>();
                 var dialog = ViewModel.Dialog;
 
+                var news = new Dictionary<string, MediaPlayerItem>();
+
                 for (int i = index0; i <= index1; i++)
                 {
-                    var container = Messages.ContainerFromIndex(i);
+                    var container = Messages.ContainerFromIndex(i) as ListViewItem;
                     if (container != null)
                     {
                         var item = Messages.ItemFromContainer(container);
-                        if (item != null && item is TLMessageCommonBase commonMessage && !commonMessage.IsOut)
+                        if (item is TLMessageCommonBase commonMessage && !commonMessage.IsOut)
                         {
                             //if (commonMessage.IsUnread)
                             //{
@@ -135,7 +140,66 @@ namespace Unigram.Views
                                 messageIds.Add(commonMessage.Id);
                             }
                         }
+
+                        if (item is TLMessage message && message.IsGif())
+                        {
+                            var document = message.GetDocument();
+                            var fileName = document.GetFileName();
+                            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                            {
+                                var root = container.ContentTemplateRoot as FrameworkElement;
+                                if (root is Grid grid)
+                                {
+                                    root = grid.FindName("Bubble") as FrameworkElement;
+                                }
+
+                                var media = root.FindName("MediaControl") as MediaControl;
+                                if (media != null)
+                                {
+                                    news[fileName] = new MediaPlayerItem { Container = media.ContentTemplateRoot as Grid };
+                                }
+                            }
+                        }
                     }
+                }
+
+                foreach (var item in _old.Keys.Except(news.Keys).ToList())
+                {
+                    var presenter = _old[item].Presenter;
+                    if (presenter != null && presenter.MediaPlayer != null)
+                    {
+                        presenter.MediaPlayer.Source = null;
+                        presenter.MediaPlayer.Dispose();
+                        presenter.MediaPlayer = null;
+                    }
+
+                    var container = _old[item].Container;
+                    if (container != null && presenter != null)
+                    {
+                        container.Children.Remove(presenter);
+                    }
+
+                    _old.Remove(item);
+                }
+
+                foreach (var item in news.Keys.Except(_old.Keys).ToList())
+                {
+                    var container = news[item].Container;
+                    if (container != null && container.Children.Count < 5)
+                    {
+                        var player = new MediaPlayer();
+                        player.AutoPlay = true;
+                        player.IsLoopingEnabled = true;
+                        player.Source = MediaSource.CreateFromUri(FileUtils.GetTempFileUri(item));
+
+                        var presenter = new MediaPlayerPresenter();
+                        presenter.MediaPlayer = player;
+
+                        news[item].Presenter = presenter;
+                        container.Children.Add(presenter);
+                    }
+
+                    _old.Add(item, news[item]);
                 }
 
                 if (messageIds.Count > 0)
@@ -257,6 +321,14 @@ namespace Unigram.Views
                 await Task.Delay(4000);
                 DateHeader.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private Dictionary<string, MediaPlayerItem> _old = new Dictionary<string, MediaPlayerItem>();
+
+        class MediaPlayerItem
+        {
+            public Grid Container { get; set; }
+            public MediaPlayerPresenter Presenter { get; set; }
         }
 
         private Color[] colors = new Color[]

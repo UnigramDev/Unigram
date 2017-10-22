@@ -129,12 +129,7 @@ namespace Unigram.ViewModels
             {
                 _informativeTimer.Stop();
                 InformativeMessage = null;
-        };
-
-            Items = new MessageCollection();
-            Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
-
-            Aggregator.Subscribe(this);
+            };
 
             NextMentionCommand = new RelayCommand(NextMentionExecute);
             PreviousSliceCommand = new RelayCommand(PreviousSliceExecute);
@@ -188,6 +183,11 @@ namespace Unigram.ViewModels
             SendMediaCommand = new RelayCommand<ObservableCollection<StorageMedia>>(SendMediaExecute);
             SendContactCommand = new RelayCommand(SendContactExecute);
             SendLocationCommand = new RelayCommand(SendLocationExecute);
+
+            Items = new MessageCollection();
+            Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
+
+            Aggregator.Subscribe(this);
         }
 
         ~DialogViewModel()

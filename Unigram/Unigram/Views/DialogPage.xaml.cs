@@ -285,6 +285,17 @@ namespace Unigram.Views
         {
             Bindings.StopTracking();
 
+            foreach (var item in _old.Values)
+            {
+                var presenter = item.Presenter;
+                if (presenter != null && presenter.MediaPlayer != null)
+                {
+                    presenter.MediaPlayer.Source = null;
+                    presenter.MediaPlayer.Dispose();
+                    presenter.MediaPlayer = null;
+                }
+            }
+
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
             InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
 

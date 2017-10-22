@@ -168,7 +168,7 @@
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
             <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
-                <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
             </Border>
 
             <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
@@ -217,15 +217,19 @@
               Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
-            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}, ConverterParameter=thumbnail}"
-                                Constraint="{Binding Media.Document}"
-                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
             <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                                 Constraint="{Binding Media.Document}"
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+            <!--<controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                Constraint="{Binding Media.Document}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"
-                                Click="Photo_Click"/>
+                                Click="Photo_Click"/>-->
+
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+            </Border>
 
             <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>

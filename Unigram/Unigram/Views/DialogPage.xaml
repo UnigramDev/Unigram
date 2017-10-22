@@ -595,7 +595,7 @@
         <!-- EndRegion -->
 
         <DataTemplate x:Key="UserMessageTemplate">
-            <messages:MessageBubble ContextRequested="Message_ContextRequested">
+            <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested">
                 <FrameworkElement.Resources>
                     <ResourceDictionary>
                         <ResourceDictionary.MergedDictionaries>
@@ -612,7 +612,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <messages:MessageBubble ContextRequested="Message_ContextRequested"/>
+                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested"/>
 
                 <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -638,7 +638,7 @@
                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
                                              Click="ProfileBubble_Click"/>
-                <messages:MessageBubble ContextRequested="Message_ContextRequested" Grid.Column="1"/>
+                <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" Grid.Column="1"/>
 
                 <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
                         Background="{ThemeResource MessageServiceBackgroundBrush}"

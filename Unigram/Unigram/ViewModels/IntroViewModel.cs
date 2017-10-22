@@ -21,11 +21,9 @@ namespace Unigram.ViewModels
         public IntroViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
-            Items = new ObservableCollection<IntroPage>();
+            ContinueCommand = new RelayCommand(ContinueExecute /*, () => SelectedItem == Items.Last()*/);
 
-            var loader = ResourceLoader.GetForCurrentView();
-            // TODO: put them in a separate file?
-            // TODO: localization
+            Items = new ObservableCollection<IntroPage>();
             Items.Add(new IntroPage { Title = AppResources.IntroWizardPage1_Title, Text = AppResources.IntroWizardPage1_Text });
             Items.Add(new IntroPage { Title = AppResources.IntroWizardPage2_Title, Text = AppResources.IntroWizardPage2_Text });
             Items.Add(new IntroPage { Title = AppResources.IntroWizardPage3_Title, Text = AppResources.IntroWizardPage3_Text });
@@ -33,8 +31,6 @@ namespace Unigram.ViewModels
             Items.Add(new IntroPage { Title = AppResources.IntroWizardPage5_Title, Text = AppResources.IntroWizardPage5_Text });
             Items.Add(new IntroPage { Title = AppResources.IntroWizardPage6_Title, Text = AppResources.IntroWizardPage6_Text });
             SelectedItem = Items[0];
-
-            ContinueCommand = new RelayCommand(ContinueExecute /*, () => SelectedItem == Items.Last()*/);
         }
 
         public RelayCommand ContinueCommand { get; }

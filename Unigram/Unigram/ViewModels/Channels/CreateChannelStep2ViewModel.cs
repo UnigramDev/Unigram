@@ -27,6 +27,9 @@ namespace Unigram.ViewModels.Channels
             : base(protoService, cacheService, aggregator)
         {
             AdminedPublicChannels = new MvxObservableCollection<TLChannel>();
+
+            RevokeLinkCommand = new RelayCommand<TLChannel>(RevokeLinkExecute);
+
             PropertyChanged += OnPropertyChanged;
         }
 
@@ -101,7 +104,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public RelayCommand<TLChannel> RevokeLinkCommand => new RelayCommand<TLChannel>(RevokeLinkExecute);
+        public RelayCommand<TLChannel> RevokeLinkCommand { get; }
         private async void RevokeLinkExecute(TLChannel channel)
         {
             var dialog = new TLMessageDialog();

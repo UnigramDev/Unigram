@@ -83,9 +83,9 @@ namespace Unigram.ViewModels.Settings
                 new SettingsStatsDataBase(statsService, "TOTAL", type, DataType.Total)
             };
 
-            Refresh();
-
             ResetCommand = new RelayCommand(ResetExecute);
+
+            Refresh();
         }
 
         public string Title { get; private set; }
