@@ -179,16 +179,7 @@ namespace Unigram.Core.Services
             var loc_key = commonMessage.Parent is TLChannel channel && channel.IsBroadcast ? "CHANNEL" : string.Empty;
 
             NotificationTask.UpdateToast(caption, content, sound, launch, tag, group, picture, date, loc_key);
-
-            var existsSecondaryTile = Windows.UI.StartScreen.SecondaryTile.Exists(group);
-            if (existsSecondaryTile)
-            {
-                NotificationTask.UpdateSecondaryTile(caption, content, picture, group);
-            }
-            else
-            {
-                NotificationTask.UpdatePrimaryTile(caption, content, picture);
-            }
+            NotificationTask.UpdatePrimaryTile(caption, content, picture);
         }
 
         private string GetLaunch(TLMessageCommonBase custom)

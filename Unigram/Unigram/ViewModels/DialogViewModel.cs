@@ -2898,11 +2898,8 @@ namespace Unigram.ViewModels
             if (tileCreated)
             {
                 UpdatePinChatCommands();
+                ResetTile();
             }
-
-            NotificationTask.ResetSecondaryTile(displayName, picture, group);
-
-            ResetTile();
         }
 
         private void ResetTile()
@@ -2913,10 +2910,13 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var displayName = _pushService.GetTitle(this.With);
+            var picture = _pushService.GetPicture(this.With, group);
+
             var existsSecondaryTile = SecondaryTile.Exists(group);
             if (existsSecondaryTile)
             {
-                NotificationTask.UpdateSecondaryBadge(0, group);
+                NotificationTask.ResetSecondaryTile(displayName, picture, group);
             }
         }
 

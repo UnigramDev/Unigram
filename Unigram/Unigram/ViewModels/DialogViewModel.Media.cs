@@ -549,7 +549,8 @@ namespace Unigram.ViewModels
                 {
                     if (storage is StoragePhoto photo)
                     {
-                        await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
+                        var storageFile = await photo.GetFileAsync();
+                        await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
                     }
                     else if (storage is StorageVideo video)
                     {
@@ -559,8 +560,6 @@ namespace Unigram.ViewModels
 
                 return;
             }
-
-
 
             ObservableCollection<StorageMedia> storages = media;
 
@@ -604,7 +603,8 @@ namespace Unigram.ViewModels
                     {
                         if (storage is StoragePhoto photo)
                         {
-                            await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
+                            var storageFile = await photo.GetFileAsync();
+                            await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
                         }
                         else if (storage is StorageVideo video)
                         {
@@ -631,7 +631,8 @@ namespace Unigram.ViewModels
                     {
                         if (storage is StoragePhoto photo)
                         {
-                            await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
+                            var storageFile = await photo.GetFileAsync();
+                            await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
                         }
                         else if (storage is StorageVideo video)
                         {

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
 using Unigram.Core.Helpers;
+using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -73,8 +74,22 @@ namespace Unigram.Models
             }
         }
 
+        protected Rect? _cropRectangle;
+        public Rect? CropRectangle
+        {
+            get
+            {
+                return _cropRectangle;
+            }
+            set
+            {
+                Set(ref _cropRectangle, value);
+            }
+        }
+
         public bool IsPhoto => this is StoragePhoto;
         public bool IsVideo => this is StorageVideo;
+        public bool IsCropped => this is StoragePhoto photo && photo.CropRectangle.HasValue && photo.ApplyCrop;
 
         private async void LoadThumbnail()
         {

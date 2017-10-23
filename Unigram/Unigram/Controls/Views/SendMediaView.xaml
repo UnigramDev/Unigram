@@ -412,6 +412,10 @@
             </Slider>
         </Grid>
 
+        <Grid Visibility="{x:Bind IsEditingCropping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#AA000000" Grid.Row="1">
+            <controls:ImageCropper x:Name="Cropper" Proportions="Custom" IsCropEnabled="True" MaxZoomFactor="10" />
+        </Grid>
+
         <Grid x:Name="Commands" Background="#FF1F1F1F" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -432,7 +436,9 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <controls:GlyphButton Glyph="&#xE7A8;" IsEnabled="False"/>
+                <controls:GlyphButton Click="Crop_Click" 
+                                      Glyph="&#xE7A8;" />
+                <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="1"/>
                 <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="1"/>
                 <controls:GlyphButton Click="Compress_Click"
                                       Glyph="{Binding SelectedItem.Compression, Mode=OneWay, Converter={StaticResource CompressionToGlyphConverter}}"
@@ -450,6 +456,12 @@
                     Style="{StaticResource SelfDestructButtonStyle}"
                     Grid.Column="3"/>
             </Grid>
+
+            <Button Content="Reset" 
+                    Click="ResetCrop_Click" 
+                    HorizontalAlignment="Center" 
+                    Grid.Column="1"
+                    Visibility="{x:Bind IsEditingCropping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
             <controls:GlyphButton Click="Accept_Click"
                                   Glyph="{x:Bind ConvertAccept(IsEditing), Mode=OneWay}"
