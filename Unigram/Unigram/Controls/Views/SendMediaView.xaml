@@ -412,6 +412,10 @@
             </Slider>
         </Grid>
 
+        <Grid Visibility="{x:Bind IsEditingCropping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#AA000000" Grid.Row="1">
+            <controls:ImageCropper x:Name="Cropper" Proportions="Custom" IsCropEnabled="True" MaxZoomFactor="10" />
+        </Grid>
+
         <Grid x:Name="Commands" Background="#FF1F1F1F" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>

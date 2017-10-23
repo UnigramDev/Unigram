@@ -50,7 +50,11 @@ namespace Unigram.Views.Channels
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var dialog = new EditYourPhotoView(file);
+                var dialog = new EditYourPhotoView(file)
+                {
+                    CroppingProportions = ImageCroppingProportions.Square,
+                    IsCropEnabled = false
+                };
                 var dialogResult = await dialog.ShowAsync();
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {

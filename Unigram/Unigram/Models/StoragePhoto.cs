@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
 using Unigram.Core.Helpers;
-using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -33,11 +32,31 @@ namespace Unigram.Models
             }
         }
 
-        private Rect? _cropRectangle;
-        public Rect? CropRectangle
+        private bool _applyCrop;
+        public bool ApplyCrop
         {
-            get { return _cropRectangle; }
-            set { Set(ref _cropRectangle, value); }
+            get
+            {
+                return _applyCrop;
+            }
+            set
+            {
+                Set(ref _applyCrop, value);
+
+                if (File == null)
+                {
+                    return;
+                }
+
+                if (!_applyCrop)
+                {
+                    LoadPreview();
+                }
+                else if (_applyCrop && CropRectangle.HasValue)
+                {
+                    LoadCroppedPreview();
+                }
+            }
         }
 
         private async void LoadPreview()
@@ -46,15 +65,25 @@ namespace Unigram.Models
             RaisePropertyChanged(() => Preview);
         }
 
-        public async void LoadCroppedPreview()
+        private async void LoadCroppedPreview()
         {
             if (!CropRectangle.HasValue)
             {
                 return;
             }
-            
+
             _preview = await ImageHelper.CropAndPreviewAsync(File, CropRectangle.Value);
             RaisePropertyChanged(() => Preview);
+        }
+
+        public Task<StorageFile> GetFileAsync()
+        {
+            if (IsCropped)
+            {
+                return ImageHelper.CropAsync(File, CropRectangle.Value);
+            }
+
+            return Task.FromResult(File);
         }
 
         public override StorageMedia Clone()

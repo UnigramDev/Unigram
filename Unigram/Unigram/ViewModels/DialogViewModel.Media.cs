@@ -549,15 +549,8 @@ namespace Unigram.ViewModels
                 {
                     if (storage is StoragePhoto photo)
                     {
-                        if (photo.IsCropped)
-                        {
-                            var croppedFile = await ImageHelper.CropAsync(photo.File, photo.CropRectangle.Value);
-                            await SendPhotoAsync(croppedFile, storage.Caption, storage.TTLSeconds);
-                        }
-                        else
-                        {
-                            await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
-                        }
+                        var storageFile = await photo.GetFileAsync();
+                        await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
                     }
                     else if (storage is StorageVideo video)
                     {
@@ -610,15 +603,8 @@ namespace Unigram.ViewModels
                     {
                         if (storage is StoragePhoto photo)
                         {
-                            if (photo.IsCropped)
-                            {
-                                var croppedFile = await ImageHelper.CropAsync(photo.File, photo.CropRectangle.Value);
-                                await SendPhotoAsync(croppedFile, storage.Caption, storage.TTLSeconds);
-                            }
-                            else
-                            {
-                                await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
-                            }
+                            var storageFile = await photo.GetFileAsync();
+                            await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
                         }
                         else if (storage is StorageVideo video)
                         {
@@ -645,15 +631,8 @@ namespace Unigram.ViewModels
                     {
                         if (storage is StoragePhoto photo)
                         {
-                            if (photo.IsCropped)
-                            {
-                                var croppedFile = await ImageHelper.CropAsync(photo.File, photo.CropRectangle.Value);
-                                await SendPhotoAsync(croppedFile, storage.Caption, storage.TTLSeconds);
-                            }
-                            else
-                            {
-                                await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
-                            }
+                            var storageFile = await photo.GetFileAsync();
+                            await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
                         }
                         else if (storage is StorageVideo video)
                         {

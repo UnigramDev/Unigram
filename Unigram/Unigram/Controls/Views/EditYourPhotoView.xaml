@@ -164,7 +164,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <controls:ImageCropper x:Name="Cropper" />
+        <controls:ImageCropper x:Name="Cropper" Proportions="Square" IsCropEnabled="False" Style="{StaticResource RoundImageCropperStyle}"/>
 
         <Grid x:Name="Commands" Background="#FF1F1F1F" Grid.Row="1">
             <Grid.ColumnDefinitions>
