@@ -238,7 +238,7 @@
                         <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
                     </StackPanel>
 
-                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,6,4" Margin="4"/>
                 </Grid>
 
                 <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Column="1" Grid.Row="2"/>
@@ -277,7 +277,7 @@
                         <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
                     </StackPanel>
 
-                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,6,4" Margin="4"/>
                 </Grid>
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
@@ -359,7 +359,7 @@
                             <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
                         </StackPanel>
 
-                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,6,4" Margin="4"/>
                     </Grid>
 
                     <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
@@ -440,7 +440,7 @@
                         HorizontalAlignment="Right"
                         Click="StickerSet_Click"/>
 
-                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,6,4" Margin="4"/>
                 </Grid>
 
                 <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Column="1" Grid.Row="2"/>
@@ -470,7 +470,7 @@
                         HorizontalAlignment="Left"
                         Click="StickerSet_Click"/>
 
-                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                    <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,6,4" Margin="4"/>
                 </Grid>
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
@@ -532,7 +532,7 @@
                             HorizontalAlignment="Left"
                             Click="StickerSet_Click"/>
 
-                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,6,4" Margin="4"/>
                     </Grid>
 
                     <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
