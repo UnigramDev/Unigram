@@ -264,6 +264,7 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        <controls:BackDrop BlurAmount="5"/>
 
                         <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" Width="48" Height="48">
                             <Border x:Name="RootGrid" CornerRadius="{TemplateBinding CornerRadius}">

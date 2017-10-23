@@ -238,7 +238,7 @@ namespace Unigram.Common
         }
 
         private bool? _isAutoPlayEnabled;
-        private bool IsAutoPlayEnabled
+        public bool IsAutoPlayEnabled
         {
             get
             {

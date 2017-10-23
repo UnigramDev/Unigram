@@ -3,89 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.TL;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.Foundation;
-using Telegram.Api.TL;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Controls
 {
-    public class ImageView : HyperlinkButton
+    public class MediaPlayerView : MediaPlayerPresenter
     {
-        private FrameworkElement Holder;
-
-        public ImageView()
-        {
-            DefaultStyleKey = typeof(ImageView);
-        }
-
-        protected override void OnApplyTemplate()
-        {
-            Holder = (FrameworkElement)GetTemplateChild("Holder");
-            Holder.Loaded += Holder_Loaded;
-
-            if (Holder is Image image)
-            {
-                image.ImageFailed += Holder_ImageFailed;
-                image.ImageOpened += Holder_ImageOpened;
-            }
-        }
-
-        private void Holder_Loaded(object sender, RoutedEventArgs e)
-        {
-            OnSourceChanged(Source, null);
-        }
-
-        private void Holder_ImageFailed(object sender, ExceptionRoutedEventArgs e)
-        {
-            ImageFailed?.Invoke(this, e);
-        }
-
-        private void Holder_ImageOpened(object sender, RoutedEventArgs e)
-        {
-            ImageOpened?.Invoke(this, e);
-        }
-
-        #region Source
-
-        public ImageSource Source
-        {
-            get { return (ImageSource)GetValue(SourceProperty); }
-            set { SetValue(SourceProperty, value); }
-        }
-
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(ImageSource), typeof(ImageView), new PropertyMetadata(null, OnSourceChanged));
-
-        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ImageView)d).OnSourceChanged((ImageSource)e.NewValue, (ImageSource)e.OldValue);
-        }
-
-        private void OnSourceChanged(ImageSource newValue, ImageSource oldValue)
-        {
-            if (newValue is WriteableBitmap bitmap && bitmap.PixelWidth > 0 && bitmap.PixelHeight > 0)
-            {
-                ImageOpened?.Invoke(this, null);
-            }
-        }
-
-        #endregion
-
-        #region Stretch
-
-        public Stretch Stretch
-        {
-            get { return (Stretch)GetValue(StretchProperty); }
-            set { SetValue(StretchProperty, value); }
-        }
-
-        public static readonly DependencyProperty StretchProperty =
-            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(ImageView), new PropertyMetadata(Stretch.Uniform));
-
-        #endregion
+        //public MediaPlayerView()
+        //{
+        //    DefaultStyleKey = typeof(MediaPlayerView);
+        //}
 
         #region Constraint
 
@@ -96,18 +26,13 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty ConstraintProperty =
-            DependencyProperty.Register("Constraint", typeof(object), typeof(ImageView), new PropertyMetadata(null, OnConstraintChanged));
+            DependencyProperty.Register("Constraint", typeof(object), typeof(MediaPlayerView), new PropertyMetadata(null, OnConstraintChanged));
 
         private static void OnConstraintChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ImageView)d).OnConstraintChanged(e.NewValue, e.OldValue);
-            ((ImageView)d).InvalidateMeasure();
+            ((MediaPlayerView)d).InvalidateMeasure();
         }
 
-        protected virtual void OnConstraintChanged(object newValue, object oldValue)
-        {
-
-        }
         #endregion
 
         protected override Size MeasureOverride(Size availableSize)
@@ -201,7 +126,7 @@ namespace Unigram.Controls
             }
 
             if (constraint is TLVector<TLDocumentAttributeBase> attributes)
-            { 
+            {
                 var imageSize = attributes.OfType<TLDocumentAttributeImageSize>().FirstOrDefault();
                 if (imageSize != null)
                 {
@@ -242,6 +167,11 @@ namespace Unigram.Controls
                 //    Holder.Height = height * ratio;
                 //}
 
+                if (MediaPlayer != null)
+                {
+                    MediaPlayer.SetSurfaceSize(new Size(width * ratio, height * ratio));
+                }
+
                 return new Size(width * ratio, height * ratio);
             }
             else
@@ -249,9 +179,5 @@ namespace Unigram.Controls
                 return new Size(width, height);
             }
         }
-
-        public event ExceptionRoutedEventHandler ImageFailed;
-
-        public event RoutedEventHandler ImageOpened;
     }
 }

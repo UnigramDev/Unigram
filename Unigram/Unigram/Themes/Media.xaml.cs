@@ -128,7 +128,15 @@ namespace Unigram.Themes
 
             if (message != null)
             {
-                if (message.IsVideo() || message.IsRoundVideo() || message.IsGif() || message.IsPhoto())
+                if (message.IsGif())
+                {
+                    var page = element.Ancestors<DialogPage>().FirstOrDefault() as DialogPage;
+                    if (page != null)
+                    {
+                        page.Play(message);
+                    }
+                }
+                else if (message.IsVideo() || message.IsRoundVideo() || message.IsGif() || message.IsPhoto())
                 {
                     var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
                     if (media == null)

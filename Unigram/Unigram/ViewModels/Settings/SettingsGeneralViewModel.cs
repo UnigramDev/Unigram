@@ -51,6 +51,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsAutoPlayEnabled
+        {
+            get
+            {
+                return ApplicationSettings.Current.IsAutoPlayEnabled;
+            }
+            set
+            {
+                ApplicationSettings.Current.IsAutoPlayEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool IsContactsSyncEnabled
         {
             get

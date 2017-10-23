@@ -125,6 +125,7 @@
     <Compile Include="Controls\Items\SharedLinkListViewItem.xaml.cs">
       <DependentUpon>SharedLinkListViewItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MediaPlayerView.cs" />
     <Compile Include="Controls\Messages\HistoryCallMessageControlBase.cs" />
     <Compile Include="Controls\Messages\EditedMessageBubble.xaml.cs">
       <DependentUpon>EditedMessageBubble.xaml</DependentUpon>
@@ -163,6 +164,7 @@
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
+    <Compile Include="Controls\AspectView.cs" />
     <Compile Include="Controls\StartupSwitch.xaml.cs">
       <DependentUpon>StartupSwitch.xaml</DependentUpon>
     </Compile>
@@ -1098,6 +1100,7 @@
     </PRIResource>
     <Content Include="Assets\Fonts\CamMDL2.ttf" />
     <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
+    <None Include="Assets\Fonts\Telegram.json" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
