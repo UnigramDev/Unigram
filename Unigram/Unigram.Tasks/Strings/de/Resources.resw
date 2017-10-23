@@ -120,463 +120,232 @@
   <data name="AUTH_REGION" xml:space="preserve">
     <value>Zugriff von einem neuen Gerät {0}, Standort: {1}</value>
   </data>
-  <data name="AUTH_REGION1" xml:space="preserve">
-    <value>Zugriff von einem neuen Gerät {0}, Standort: {1}</value>
-  </data>
   <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
-    <value>hat eine Sprachnachricht gesendet</value>
-  </data>
-  <data name="CHANNEL_MESSAGE_AUDIO1" xml:space="preserve">
     <value>hat eine Sprachnachricht gesendet</value>
   </data>
   <data name="CHANNEL_MESSAGE_CONTACT" xml:space="preserve">
     <value>hat einen Kontakt gesendet</value>
   </data>
-  <data name="CHANNEL_MESSAGE_CONTACT1" xml:space="preserve">
-    <value>hat einen Kontakt gesendet</value>
-  </data>
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
-    <value>hat eine Datei gesendet</value>
-  </data>
-  <data name="CHANNEL_MESSAGE_DOC1" xml:space="preserve">
     <value>hat eine Datei gesendet</value>
   </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
     <value>hat dich eingeladen, {1} zu spielen</value>
   </data>
-  <data name="CHANNEL_MESSAGE_GAME1" xml:space="preserve">
-    <value>hat dich eingeladen, {1} zu spielen</value>
-  </data>
   <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
-    <value>hat einen Standort gesendet</value>
-  </data>
-  <data name="CHANNEL_MESSAGE_GEO1" xml:space="preserve">
     <value>hat einen Standort gesendet</value>
   </data>
   <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
     <value>hat Live-Standort geteilt</value>
   </data>
-  <data name="CHANNEL_MESSAGE_GEOLIVE1" xml:space="preserve">
-    <value>hat Live-Standort geteilt</value>
-  </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
-    <value>hat ein GIF gesendet</value>
-  </data>
-  <data name="CHANNEL_MESSAGE_GIF1" xml:space="preserve">
     <value>hat ein GIF gesendet</value>
   </data>
   <data name="CHANNEL_MESSAGE_NOTEXT" xml:space="preserve">
     <value>hat eine Nachricht gesendet</value>
   </data>
-  <data name="CHANNEL_MESSAGE_NOTEXT1" xml:space="preserve">
-    <value>hat eine Nachricht gesendet</value>
-  </data>
   <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
-    <value>hat ein Bild gesendet</value>
-  </data>
-  <data name="CHANNEL_MESSAGE_PHOTO1" xml:space="preserve">
     <value>hat ein Bild gesendet</value>
   </data>
   <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
     <value>hat eine Videonachricht gesendet</value>
   </data>
-  <data name="CHANNEL_MESSAGE_ROUND1" xml:space="preserve">
-    <value>hat eine Videonachricht gesendet</value>
-  </data>
   <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
-    <value>hat einen {1}Sticker gesendet</value>
-  </data>
-  <data name="CHANNEL_MESSAGE_STICKER1" xml:space="preserve">
     <value>hat einen {1}Sticker gesendet</value>
   </data>
   <data name="CHANNEL_MESSAGE_TEXT" xml:space="preserve">
     <value>{1}</value>
   </data>
-  <data name="CHANNEL_MESSAGE_TEXT1" xml:space="preserve">
-    <value>{1}</value>
-  </data>
   <data name="CHANNEL_MESSAGE_VIDEO" xml:space="preserve">
-    <value>hat ein Video gesendet</value>
-  </data>
-  <data name="CHANNEL_MESSAGE_VIDEO1" xml:space="preserve">
     <value>hat ein Video gesendet</value>
   </data>
   <data name="CHAT_ADD_MEMBER" xml:space="preserve">
     <value>{0} hat {2} in die Gruppe eingeladen</value>
   </data>
-  <data name="CHAT_ADD_MEMBER1" xml:space="preserve">
-    <value>{0} hat {2} in die Gruppe eingeladen</value>
-  </data>
   <data name="CHAT_ADD_YOU" xml:space="preserve">
-    <value>{0} hat dich in die Gruppe eingeladen</value>
-  </data>
-  <data name="CHAT_ADD_YOU1" xml:space="preserve">
     <value>{0} hat dich in die Gruppe eingeladen</value>
   </data>
   <data name="CHAT_CREATED" xml:space="preserve">
     <value>{0} hat dich in die Gruppe eingeladen</value>
   </data>
-  <data name="CHAT_CREATED1" xml:space="preserve">
-    <value>{0} hat dich in die Gruppe eingeladen</value>
-  </data>
   <data name="CHAT_DELETE_MEMBER" xml:space="preserve">
-    <value>{0} hat {2} aus der Gruppe entfernt</value>
-  </data>
-  <data name="CHAT_DELETE_MEMBER1" xml:space="preserve">
     <value>{0} hat {2} aus der Gruppe entfernt</value>
   </data>
   <data name="CHAT_DELETE_YOU" xml:space="preserve">
     <value>{0} hat dich aus der Gruppe entfernt</value>
   </data>
-  <data name="CHAT_DELETE_YOU1" xml:space="preserve">
-    <value>{0} hat dich aus der Gruppe entfernt</value>
-  </data>
   <data name="CHAT_LEFT" xml:space="preserve">
-    <value>{0} hat die Gruppe verlassen</value>
-  </data>
-  <data name="CHAT_LEFT1" xml:space="preserve">
     <value>{0} hat die Gruppe verlassen</value>
   </data>
   <data name="CHAT_MESSAGE_AUDIO" xml:space="preserve">
     <value>{0} hat eine Sprachnachricht an die Gruppe gesendet</value>
   </data>
-  <data name="CHAT_MESSAGE_AUDIO1" xml:space="preserve">
-    <value>{0} hat eine Sprachnachricht an die Gruppe gesendet</value>
-  </data>
   <data name="CHAT_MESSAGE_CONTACT" xml:space="preserve">
-    <value>{0} hat einen Kontakt an die Gruppe gesendet</value>
-  </data>
-  <data name="CHAT_MESSAGE_CONTACT1" xml:space="preserve">
     <value>{0} hat einen Kontakt an die Gruppe gesendet</value>
   </data>
   <data name="CHAT_MESSAGE_DOC" xml:space="preserve">
     <value>{0} hat eine Datei an die Gruppe gesendet</value>
   </data>
-  <data name="CHAT_MESSAGE_DOC1" xml:space="preserve">
-    <value>{0} hat eine Datei an die Gruppe gesendet</value>
-  </data>
   <data name="CHAT_MESSAGE_FWDS" xml:space="preserve">
-    <value>{0} hat an die Gruppe {2} Nachrichten weitergeleitet</value>
-  </data>
-  <data name="CHAT_MESSAGE_FWDS1" xml:space="preserve">
     <value>{0} hat an die Gruppe {2} Nachrichten weitergeleitet</value>
   </data>
   <data name="CHAT_MESSAGE_GAME" xml:space="preserve">
     <value>{0} hat die Gruppe eingeladen, {2} zu spielen</value>
   </data>
-  <data name="CHAT_MESSAGE_GAME1" xml:space="preserve">
-    <value>{0} hat die Gruppe eingeladen, {2} zu spielen</value>
-  </data>
   <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
-    <value>{0} hat einen Standort an die Gruppe gesendet</value>
-  </data>
-  <data name="CHAT_MESSAGE_GEO1" xml:space="preserve">
     <value>{0} hat einen Standort an die Gruppe gesendet</value>
   </data>
   <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
     <value>{0} teilt jetzt seinen Live-Standort</value>
   </data>
-  <data name="CHAT_MESSAGE_GEOLIVE1" xml:space="preserve">
-    <value>{0} teilt jetzt den Live-Standort</value>
-  </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
-    <value>{0} hat ein GIF an die Gruppe gesendet</value>
-  </data>
-  <data name="CHAT_MESSAGE_GIF1" xml:space="preserve">
     <value>{0} hat ein GIF an die Gruppe gesendet</value>
   </data>
   <data name="CHAT_MESSAGE_INVOICE" xml:space="preserve">
     <value>{0} hat eine Rechnung über {2} gesendet</value>
   </data>
-  <data name="CHAT_MESSAGE_INVOICE1" xml:space="preserve">
-    <value>{0} hat eine Rechnung für {2} an die Gruppe gesendet</value>
-  </data>
   <data name="CHAT_MESSAGE_NOTEXT" xml:space="preserve">
-    <value>{0} hat eine Nachricht an die Gruppe gesendet</value>
-  </data>
-  <data name="CHAT_MESSAGE_NOTEXT1" xml:space="preserve">
     <value>{0} hat eine Nachricht an die Gruppe gesendet</value>
   </data>
   <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
     <value>{0} hat ein Bild an die Gruppe gesendet</value>
   </data>
-  <data name="CHAT_MESSAGE_PHOTO1" xml:space="preserve">
-    <value>{0} hat ein Bild an die Gruppe gesendet</value>
-  </data>
   <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
-    <value>{0} hat eine Videonachricht an die Gruppe gesendet</value>
-  </data>
-  <data name="CHAT_MESSAGE_ROUND1" xml:space="preserve">
     <value>{0} hat eine Videonachricht an die Gruppe gesendet</value>
   </data>
   <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
     <value>{0} hat einen {2}Sticker an die Gruppe gesendet</value>
   </data>
-  <data name="CHAT_MESSAGE_STICKER1" xml:space="preserve">
-    <value>{0} hat einen {2}Sticker an die Gruppe gesendet</value>
-  </data>
   <data name="CHAT_MESSAGE_TEXT" xml:space="preserve">
-    <value>{0}: {2}</value>
-  </data>
-  <data name="CHAT_MESSAGE_TEXT1" xml:space="preserve">
     <value>{0}: {2}</value>
   </data>
   <data name="CHAT_MESSAGE_VIDEO" xml:space="preserve">
     <value>{0} hat ein Video an die Gruppe gesendet</value>
   </data>
-  <data name="CHAT_MESSAGE_VIDEO1" xml:space="preserve">
-    <value>{0} hat ein Video an die Gruppe gesendet</value>
-  </data>
   <data name="CHAT_PHOTO_EDITED" xml:space="preserve">
-    <value>{0} hat das Bild der Gruppe geändert</value>
-  </data>
-  <data name="CHAT_PHOTO_EDITED1" xml:space="preserve">
     <value>{0} hat das Bild der Gruppe geändert</value>
   </data>
   <data name="CHAT_RETURNED" xml:space="preserve">
     <value>{0} ist in die Gruppe zurückgekehrt</value>
   </data>
-  <data name="CHAT_RETURNED1" xml:space="preserve">
-    <value>{0} ist in die Gruppe zurückgekehrt</value>
-  </data>
   <data name="CHAT_TITLE_EDITED" xml:space="preserve">
-    <value>{0} hat den Namen der Gruppe geändert</value>
-  </data>
-  <data name="CHAT_TITLE_EDITED1" xml:space="preserve">
     <value>{0} hat den Namen der Gruppe geändert</value>
   </data>
   <data name="CONTACT_JOINED" xml:space="preserve">
     <value>{0} benutzt jetzt Telegram!</value>
   </data>
-  <data name="CONTACT_JOINED1" xml:space="preserve">
-    <value>{0} benutzt jetzt Telegram!</value>
-  </data>
   <data name="ENCRYPTED_MESSAGE" xml:space="preserve">
-    <value>Du hast eine neue Nachricht{0}</value>
-  </data>
-  <data name="ENCRYPTED_MESSAGE1" xml:space="preserve">
     <value>Du hast eine neue Nachricht{0}</value>
   </data>
   <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
     <value>Deine Verschlüsselungs-Aufforderung wurde angenommen{0}</value>
   </data>
-  <data name="ENCRYPTION_ACCEPT1" xml:space="preserve">
-    <value>Deine Verschlüsselungs-Aufforderung wurde angenommen{0}</value>
-  </data>
   <data name="ENCRYPTION_REQUEST" xml:space="preserve">
-    <value>Neue Verschlüsselungs-Aufforderung{0}</value>
-  </data>
-  <data name="ENCRYPTION_REQUEST1" xml:space="preserve">
     <value>Neue Verschlüsselungs-Aufforderung{0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
     <value>Du hast eine neue Nachricht {0}</value>
   </data>
-  <data name="LOCKED_MESSAGE1" xml:space="preserve">
-    <value>Du hast eine neue Nachricht {0}</value>
-  </data>
   <data name="MESSAGE_AUDIO" xml:space="preserve">
-    <value>hat dir eine Sprachnachricht gesendet</value>
-  </data>
-  <data name="MESSAGE_AUDIO1" xml:space="preserve">
     <value>hat dir eine Sprachnachricht gesendet</value>
   </data>
   <data name="MESSAGE_CONTACT" xml:space="preserve">
     <value>hat dir einen Kontakt gesendet</value>
   </data>
-  <data name="MESSAGE_CONTACT1" xml:space="preserve">
-    <value>hat dir einen Kontakt gesendet</value>
-  </data>
   <data name="MESSAGE_DOC" xml:space="preserve">
-    <value>hat dir eine Datei gesendet</value>
-  </data>
-  <data name="MESSAGE_DOC1" xml:space="preserve">
     <value>hat dir eine Datei gesendet</value>
   </data>
   <data name="MESSAGE_FWDS" xml:space="preserve">
     <value>hat dir {1} Nachrichten weitergeleitet</value>
   </data>
-  <data name="MESSAGE_FWDS1" xml:space="preserve">
-    <value>hat dir {1} Nachrichten weitergeleitet</value>
-  </data>
   <data name="MESSAGE_GAME" xml:space="preserve">
-    <value>hat dich eingeladen, {1} zu spielen</value>
-  </data>
-  <data name="MESSAGE_GAME1" xml:space="preserve">
     <value>hat dich eingeladen, {1} zu spielen</value>
   </data>
   <data name="MESSAGE_GEO" xml:space="preserve">
     <value>hat dir einen Standort gesendet</value>
   </data>
-  <data name="MESSAGE_GEO1" xml:space="preserve">
-    <value>hat dir einen Standort gesendet</value>
-  </data>
   <data name="MESSAGE_GEOLIVE" xml:space="preserve">
-    <value>teilt jetzt seinen Live-Standort</value>
-  </data>
-  <data name="MESSAGE_GEOLIVE1" xml:space="preserve">
     <value>teilt jetzt seinen Live-Standort</value>
   </data>
   <data name="MESSAGE_GIF" xml:space="preserve">
     <value>hat dir ein GIF gesendet</value>
   </data>
-  <data name="MESSAGE_GIF1" xml:space="preserve">
-    <value>hat dir ein GIF gesendet</value>
-  </data>
   <data name="MESSAGE_INVOICE" xml:space="preserve">
     <value>hat dir eine Rechnung über {1} gesendet</value>
   </data>
-  <data name="MESSAGE_INVOICE1" xml:space="preserve">
-    <value>hat dir eine Rechnung für {1} gesendet</value>
-  </data>
   <data name="MESSAGE_NOTEXT" xml:space="preserve">
-    <value>hat dir eine Nachricht gesendet</value>
-  </data>
-  <data name="MESSAGE_NOTEXT1" xml:space="preserve">
     <value>hat dir eine Nachricht gesendet</value>
   </data>
   <data name="MESSAGE_PHOTO" xml:space="preserve">
     <value>hat dir ein Bild gesendet</value>
   </data>
-  <data name="MESSAGE_PHOTO1" xml:space="preserve">
-    <value>hat dir ein Bild gesendet</value>
-  </data>
   <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
-    <value>hat dir ein selbstzerstörendes Bild gesendet</value>
-  </data>
-  <data name="MESSAGE_PHOTO_SECRET1" xml:space="preserve">
     <value>hat dir ein selbstzerstörendes Bild gesendet</value>
   </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
     <value>hat dir eine Videonachricht gesendet</value>
   </data>
-  <data name="MESSAGE_ROUND1" xml:space="preserve">
-    <value>hat dir eine Videonachricht gesendet</value>
-  </data>
   <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
-    <value>hat ein Bildschirmfoto gemacht!</value>
-  </data>
-  <data name="MESSAGE_SCREENSHOT1" xml:space="preserve">
     <value>hat ein Bildschirmfoto gemacht!</value>
   </data>
   <data name="MESSAGE_STICKER" xml:space="preserve">
     <value>hat dir einen {1}Sticker gesendet</value>
   </data>
-  <data name="MESSAGE_STICKER1" xml:space="preserve">
-    <value>hat dir einen {1}Sticker gesendet</value>
-  </data>
   <data name="MESSAGE_TEXT" xml:space="preserve">
-    <value>{1}</value>
-  </data>
-  <data name="MESSAGE_TEXT1" xml:space="preserve">
     <value>{1}</value>
   </data>
   <data name="MESSAGE_VIDEO" xml:space="preserve">
     <value>hat dir ein Video gesendet</value>
   </data>
-  <data name="MESSAGE_VIDEO1" xml:space="preserve">
-    <value>hat dir ein Video gesendet</value>
-  </data>
   <data name="MESSAGE_VIDEO_SECRET" xml:space="preserve">
-    <value>hat dir ein selbstzerstörendes Video gesendet</value>
-  </data>
-  <data name="MESSAGE_VIDEO_SECRET1" xml:space="preserve">
     <value>hat dir ein selbstzerstörendes Video gesendet</value>
   </data>
   <data name="PHONE_CALL_MISSED" xml:space="preserve">
     <value>Anruf in Abwesenheit</value>
   </data>
-  <data name="PHONE_CALL_MISSED1" xml:space="preserve">
-    <value>Du hast einen Anruf von {0} verpasst</value>
-  </data>
   <data name="PHONE_CALL_REQUEST" xml:space="preserve">
-    <value>{0} ruft dich an</value>
-  </data>
-  <data name="PHONE_CALL_REQUEST1" xml:space="preserve">
     <value>{0} ruft dich an</value>
   </data>
   <data name="PINNED_AUDIO" xml:space="preserve">
     <value>hat eine Sprachnachricht angeheftet</value>
   </data>
-  <data name="PINNED_AUDIO1" xml:space="preserve">
-    <value>hat eine Sprachnachricht angeheftet</value>
-  </data>
   <data name="PINNED_CONTACT" xml:space="preserve">
-    <value>hat einen Kontakt angeheftet</value>
-  </data>
-  <data name="PINNED_CONTACT1" xml:space="preserve">
     <value>hat einen Kontakt angeheftet</value>
   </data>
   <data name="PINNED_DOC" xml:space="preserve">
     <value>hat eine Datei angeheftet</value>
   </data>
-  <data name="PINNED_DOC1" xml:space="preserve">
-    <value>hat eine Datei angeheftet</value>
-  </data>
   <data name="PINNED_GAME" xml:space="preserve">
-    <value>hat ein Spiel angeheftet</value>
-  </data>
-  <data name="PINNED_GAME1" xml:space="preserve">
     <value>hat ein Spiel angeheftet</value>
   </data>
   <data name="PINNED_GEO" xml:space="preserve">
     <value>hat einen Standort angeheftet</value>
   </data>
-  <data name="PINNED_GEO1" xml:space="preserve">
-    <value>hat einen Standort angeheftet</value>
-  </data>
   <data name="PINNED_GEOLIVE" xml:space="preserve">
-    <value>hat einen Live-Standort angeheftet</value>
-  </data>
-  <data name="PINNED_GEOLIVE1" xml:space="preserve">
     <value>hat einen Live-Standort angeheftet</value>
   </data>
   <data name="PINNED_GIF" xml:space="preserve">
     <value>hat ein GIF angeheftet</value>
   </data>
-  <data name="PINNED_GIF1" xml:space="preserve">
-    <value>hat ein GIF angeheftet</value>
-  </data>
   <data name="PINNED_INVOICE" xml:space="preserve">
-    <value>hat eine Rechnung angeheftet</value>
-  </data>
-  <data name="PINNED_INVOICE1" xml:space="preserve">
     <value>hat eine Rechnung angeheftet</value>
   </data>
   <data name="PINNED_NOTEXT" xml:space="preserve">
     <value>hat eine Nachricht angeheftet</value>
   </data>
-  <data name="PINNED_NOTEXT1" xml:space="preserve">
-    <value>hat eine Nachricht angeheftet</value>
-  </data>
   <data name="PINNED_PHOTO" xml:space="preserve">
-    <value>hat ein Bild angeheftet</value>
-  </data>
-  <data name="PINNED_PHOTO1" xml:space="preserve">
     <value>hat ein Bild angeheftet</value>
   </data>
   <data name="PINNED_ROUND" xml:space="preserve">
     <value>hat eine Videonachricht angeheftet</value>
   </data>
-  <data name="PINNED_ROUND1" xml:space="preserve">
-    <value>hat eine Videonachricht angeheftet</value>
-  </data>
   <data name="PINNED_STICKER" xml:space="preserve">
-    <value>hat einen {1}Sticker angeheftet</value>
-  </data>
-  <data name="PINNED_STICKER1" xml:space="preserve">
     <value>hat einen {1}Sticker angeheftet</value>
   </data>
   <data name="PINNED_TEXT" xml:space="preserve">
     <value>hat "{1}" angeheftet</value>
   </data>
-  <data name="PINNED_TEXT1" xml:space="preserve">
-    <value>hat "{1}" angeheftet</value>
-  </data>
   <data name="PINNED_VIDEO" xml:space="preserve">
-    <value>hat ein Video angeheftet</value>
-  </data>
-  <data name="PINNED_VIDEO1" xml:space="preserve">
     <value>hat ein Video angeheftet</value>
   </data>
 </root>
