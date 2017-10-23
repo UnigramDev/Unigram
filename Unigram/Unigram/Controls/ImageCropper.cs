@@ -406,7 +406,7 @@ namespace Unigram.Controls
         public async Task SetSourceAsync(StorageFile file)
         {
             SoftwareBitmapSource source;
-            using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
+            using (var fileStream = await ImageHelper.OpenReadAsync(file))
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
                 var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder);

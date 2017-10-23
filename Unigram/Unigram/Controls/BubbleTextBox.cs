@@ -236,7 +236,7 @@ namespace Unigram.Controls
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
                     {
-                        media.Add(new StoragePhoto(file) { IsSelected = true });
+                        media.Add(await StoragePhoto.CreateAsync(file, true));
                     }
                     else if (file.ContentType == "video/mp4")
                     {
@@ -275,7 +275,7 @@ namespace Unigram.Controls
                     await FileIO.WriteBytesAsync(cache, buffer);
                 }
 
-                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { new StoragePhoto(cache) { IsSelected = true } });
+                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { await StoragePhoto.CreateAsync(cache, true) });
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
             {
@@ -834,7 +834,7 @@ namespace Unigram.Controls
 
                 foreach (var entity in parser.Entities)
                 {
-                    // Check intersections
+                    // TODO: Check intersections
                     entities.Add(entity);
                 }
 

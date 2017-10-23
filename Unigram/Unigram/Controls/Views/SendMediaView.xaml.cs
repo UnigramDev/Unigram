@@ -243,13 +243,12 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            if (IsEditingCropping && SelectedItem is StoragePhoto photo)
+            if (IsEditingCropping && SelectedItem is StorageMedia media)
             {
-                photo.CropRectangle = Cropper.CropRectangle;
-                photo.ApplyCrop = true;
+                media.CropRectangle = Cropper.CropRectangle;
+                media.Refresh();
 
                 IsEditingCropping = false;
-
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
                 return;
             }
@@ -270,7 +269,7 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            if (IsEditingCropping && SelectedItem is StoragePhoto photo)
+            if (IsEditingCropping && SelectedItem is StorageMedia media)
             {
                 IsEditingCropping = false;
                 return;
@@ -403,14 +402,15 @@ namespace Unigram.Controls.Views
 
         private async void Crop_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectedItem is StoragePhoto photo)
+            if (SelectedItem is StorageMedia media)
             {
                 IsEditingCropping = true;
                 
-                await Cropper.SetSourceAsync(photo.File);
-                if (photo.CropRectangle.HasValue)
+                await Cropper.SetSourceAsync(media.File);
+
+                if (media.CropRectangle.HasValue)
                 {
-                    Cropper.CropRectangle = photo.CropRectangle.Value;
+                    Cropper.CropRectangle = media.CropRectangle.Value;
                 }
             }
         }

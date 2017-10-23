@@ -4,9 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Api.Helpers;
+using Telegram.Api.TL;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
+using Windows.Media.Editing;
+using Windows.Media.Effects;
 using Windows.Storage;
+using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
@@ -79,50 +84,69 @@ namespace Unigram.Core.Helpers
 
         public static async Task<ImageSource> GetPreviewBitmapAsync(StorageFile sourceFile, int requestedMinSide = 1280)
         {
+            if (sourceFile.ContentType.Equals("video/mp4"))
+            {
+                var props = await sourceFile.Properties.GetVideoPropertiesAsync();
+                var composition = new MediaComposition();
+                var clip = await MediaClip.CreateFromFileAsync(sourceFile);
+
+                composition.Clips.Add(clip);
+
+                using (var imageStream = await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.Width, (int)props.Height, VideoFramePrecision.NearestKeyFrame))
+                {
+                    return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
+                }
+            }
+
             using (var imageStream = await sourceFile.OpenReadAsync())
             {
-                var decoder = await BitmapDecoder.CreateAsync(imageStream);
-                if (decoder.BitmapPixelFormat == BitmapPixelFormat.Bgra8)
+                return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
+            }
+        }
+
+        public static async Task<ImageSource> GetPreviewBitmapAsync(IRandomAccessStream imageStream, int requestedMinSide = 1280)
+        {
+            var decoder = await BitmapDecoder.CreateAsync(imageStream);
+            if (decoder.BitmapPixelFormat == BitmapPixelFormat.Bgra8)
+            {
+                var originalPixelWidth = decoder.PixelWidth;
+                var originalPixelHeight = decoder.PixelHeight;
+
+                BitmapTransform transform;
+
+                if (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide)
                 {
-                    var originalPixelWidth = decoder.PixelWidth;
-                    var originalPixelHeight = decoder.PixelHeight;
+                    double ratioX = (double)requestedMinSide / originalPixelWidth;
+                    double ratioY = (double)requestedMinSide / originalPixelHeight;
+                    double ratio = Math.Min(ratioX, ratioY);
 
-                    BitmapTransform transform;
+                    uint width = (uint)(originalPixelWidth * ratio);
+                    uint height = (uint)(originalPixelHeight * ratio);
 
-                    if (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide)
+                    transform = new BitmapTransform
                     {
-                        double ratioX = (double)requestedMinSide / originalPixelWidth;
-                        double ratioY = (double)requestedMinSide / originalPixelHeight;
-                        double ratio = Math.Min(ratioX, ratioY);
-
-                        uint width = (uint)(originalPixelWidth * ratio);
-                        uint height = (uint)(originalPixelHeight * ratio);
-
-                        transform = new BitmapTransform
-                        {
-                            ScaledWidth = width,
-                            ScaledHeight = height,
-                            InterpolationMode = BitmapInterpolationMode.Linear
-                        };
-                    }
-                    else
-                    {
-                        transform = new BitmapTransform();
-                    }
-
-                    var bitmap = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-                    var bitmapImage = new SoftwareBitmapSource();
-                    await bitmapImage.SetBitmapAsync(bitmap);
-
-                    return bitmapImage;
+                        ScaledWidth = width,
+                        ScaledHeight = height,
+                        InterpolationMode = BitmapInterpolationMode.Linear
+                    };
                 }
                 else
                 {
-                    var bitmap = new BitmapImage();
-                    await bitmap.SetSourceAsync(imageStream);
-
-                    return bitmap;
+                    transform = new BitmapTransform();
                 }
+
+                var bitmap = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+                var bitmapImage = new SoftwareBitmapSource();
+                await bitmapImage.SetBitmapAsync(bitmap);
+
+                return bitmapImage;
+            }
+            else
+            {
+                var bitmap = new BitmapImage();
+                await bitmap.SetSourceAsync(imageStream);
+
+                return bitmap;
             }
         }
 
@@ -171,7 +195,7 @@ namespace Unigram.Core.Helpers
         {
             var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
 
-            using (var fileStream = await sourceFile.OpenAsync(FileAccessMode.Read))
+            using (var fileStream = await OpenReadAsync(sourceFile))
             using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
@@ -183,6 +207,7 @@ namespace Unigram.Core.Helpers
 
                 var transform = ComputeScalingTransformForSourceImage(decoder);
                 transform.Bounds = bounds;
+                transform.InterpolationMode = BitmapInterpolationMode.Linear;
 
                 var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
@@ -200,30 +225,65 @@ namespace Unigram.Core.Helpers
 
         public static async Task<ImageSource> CropAndPreviewAsync(StorageFile sourceFile, Rect cropRectangle)
         {
+            if (sourceFile.ContentType.Equals("video/mp4"))
+            {
+                var props = await sourceFile.Properties.GetVideoPropertiesAsync();
+                var composition = new MediaComposition();
+                var clip = await MediaClip.CreateFromFileAsync(sourceFile);
+
+                composition.Clips.Add(clip);
+
+                using (var imageStream = await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.Width, (int)props.Height, VideoFramePrecision.NearestKeyFrame))
+                {
+                    return await CropAndPreviewAsync(imageStream, cropRectangle);
+                }
+            }
+
             using (var imageStream = await sourceFile.OpenReadAsync())
             {
-                var decoder = await BitmapDecoder.CreateAsync(imageStream);
-                var bounds = new BitmapBounds();
-                bounds.X = (uint)cropRectangle.X;
-                bounds.Y = (uint)cropRectangle.Y;
-                bounds.Width = (uint)cropRectangle.Width;
-                bounds.Height = (uint)cropRectangle.Height;
-
-                var transform = ComputeScalingTransformForSourceImage(decoder);
-                transform.Bounds = bounds;
-
-                var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-
-                var propertySet = new BitmapPropertySet();
-                var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
-                propertySet.Add("ImageQuality", qualityValue);
-
-                var bitmap = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
-                var bitmapImage = new SoftwareBitmapSource();
-                await bitmapImage.SetBitmapAsync(bitmap);
-
-                return bitmapImage;
+                return await CropAndPreviewAsync(imageStream, cropRectangle);
             }
+        }
+
+        public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream imageStream, Rect cropRectangle)
+        {
+            var decoder = await BitmapDecoder.CreateAsync(imageStream);
+            var bounds = new BitmapBounds();
+            bounds.X = (uint)cropRectangle.X;
+            bounds.Y = (uint)cropRectangle.Y;
+            bounds.Width = (uint)cropRectangle.Width;
+            bounds.Height = (uint)cropRectangle.Height;
+
+            var transform = ComputeScalingTransformForSourceImage(decoder);
+            transform.Bounds = bounds;
+
+            var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+            var propertySet = new BitmapPropertySet();
+            var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
+            propertySet.Add("ImageQuality", qualityValue);
+
+            var bitmap = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, BitmapAlphaMode.Premultiplied, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+            var bitmapImage = new SoftwareBitmapSource();
+            await bitmapImage.SetBitmapAsync(bitmap);
+
+            return bitmapImage;
+        }
+
+        public static async Task<IRandomAccessStream> OpenReadAsync(StorageFile sourceFile)
+        {
+            if (sourceFile.ContentType.Equals("video/mp4"))
+            {
+                var props = await sourceFile.Properties.GetVideoPropertiesAsync();
+                var composition = new MediaComposition();
+                var clip = await MediaClip.CreateFromFileAsync(sourceFile);
+
+                composition.Clips.Add(clip);
+
+                return await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.Width, (int)props.Height, VideoFramePrecision.NearestKeyFrame);
+            }
+
+            return await sourceFile.OpenReadAsync();
         }
 
         public static BitmapTransform ComputeScalingTransformForSourceImage(BitmapDecoder sourceDecoder)
@@ -239,6 +299,128 @@ namespace Unigram.Core.Helpers
             }
 
             return transform;
+        }
+
+        public static async Task<TLPhotoSizeBase> GetVideoThumbnailAsync(StorageFile file, VideoTransformEffectDefinition effect)
+        {
+            file = await CropAsync(file, effect.CropRectangle);
+
+            TLPhotoSizeBase result;
+            var fileLocation = new TLFileLocation
+            {
+                VolumeId = TLLong.Random(),
+                LocalId = TLInt.Random(),
+                Secret = TLLong.Random(),
+                DCId = 0
+            };
+
+            var desiredName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+            var desiredFile = await FileUtils.CreateTempFileAsync(desiredName);
+
+            using (var fileStream = await OpenReadAsync(file))
+            using (var outputStream = await desiredFile.OpenAsync(FileAccessMode.ReadWrite))
+            {
+                var decoder = await BitmapDecoder.CreateAsync(fileStream);
+
+                double ratioX = (double)90 / effect.CropRectangle.Width;
+                double ratioY = (double)90 / effect.CropRectangle.Height;
+                double ratio = Math.Min(ratioX, ratioY);
+
+                uint width = (uint)(effect.CropRectangle.Width * ratio);
+                uint height = (uint)(effect.CropRectangle.Height * ratio);
+
+                var transform = new BitmapTransform();
+                transform.ScaledWidth = width;
+                transform.ScaledHeight = height;
+                transform.InterpolationMode = BitmapInterpolationMode.Linear;
+
+                var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
+
+                var propertySet = new BitmapPropertySet();
+                var qualityValue = new BitmapTypedValue(0.77, PropertyType.Single);
+                propertySet.Add("ImageQuality", qualityValue);
+
+                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputStream);
+                encoder.SetSoftwareBitmap(pixelData);
+                await encoder.FlushAsync();
+
+                result = new TLPhotoSize
+                {
+                    W = (int)width,
+                    H = (int)height,
+                    Size = (int)outputStream.Size,
+                    Type = string.Empty,
+                    Location = fileLocation
+                };
+            }
+
+            return result;
+        }
+
+        public static async Task<TLPhotoSizeBase> GetFileThumbnailAsync(StorageFile file)
+        {
+            //file = await Package.Current.InstalledLocation.GetFileAsync("Assets\\Thumb.jpg");
+
+            //var imageProps = await file.Properties.GetImagePropertiesAsync();
+            //var videoProps = await file.Properties.GetVideoPropertiesAsync();
+
+            //if (imageProps.Width > 0 || videoProps.Width > 0)
+            //{
+            using (var thumb = await file.GetThumbnailAsync(ThumbnailMode.ListView, 96, ThumbnailOptions.ResizeThumbnail))
+            {
+                if (thumb != null && thumb.Type == ThumbnailType.Image)
+                {
+                    var randomStream = thumb as IRandomAccessStream;
+
+                    var originalWidth = (int)thumb.OriginalWidth;
+                    var originalHeight = (int)thumb.OriginalHeight;
+
+                    if (thumb.ContentType != "image/jpeg")
+                    {
+                        var memoryStream = new InMemoryRandomAccessStream();
+                        var bitmapDecoder = await BitmapDecoder.CreateAsync(thumb);
+                        var pixelDataProvider = await bitmapDecoder.GetPixelDataAsync();
+                        var bitmapEncoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, memoryStream);
+                        bitmapEncoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Ignore, bitmapDecoder.PixelWidth, bitmapDecoder.PixelHeight, bitmapDecoder.DpiX, bitmapDecoder.DpiY, pixelDataProvider.DetachPixelData());
+                        await bitmapEncoder.FlushAsync();
+                        randomStream = memoryStream;
+                    }
+
+                    var fileLocation = new TLFileLocation
+                    {
+                        VolumeId = TLLong.Random(),
+                        LocalId = TLInt.Random(),
+                        Secret = TLLong.Random(),
+                        DCId = 0
+                    };
+
+                    var desiredName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+                    var desiredFile = await FileUtils.CreateTempFileAsync(desiredName);
+
+                    var buffer = new Windows.Storage.Streams.Buffer(Convert.ToUInt32(randomStream.Size));
+                    var buffer2 = await randomStream.ReadAsync(buffer, buffer.Capacity, InputStreamOptions.None);
+                    using (var stream = await desiredFile.OpenAsync(FileAccessMode.ReadWrite))
+                    {
+                        await stream.WriteAsync(buffer2);
+                        stream.Dispose();
+                    }
+
+                    var result = new TLPhotoSize
+                    {
+                        W = originalWidth,
+                        H = originalHeight,
+                        Size = (int)randomStream.Size,
+                        Type = string.Empty,
+                        Location = fileLocation
+                    };
+
+                    randomStream.Dispose();
+                    return result;
+                }
+            }
+            //}
+
+            return null;
         }
     }
 }

@@ -550,7 +550,7 @@ namespace Unigram.Views
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
                     {
-                        media.Add(new StoragePhoto(file) { IsSelected = true });
+                        media.Add(await StoragePhoto.CreateAsync(file, true));
                     }
                     else if (file.ContentType == "video/mp4")
                     {
