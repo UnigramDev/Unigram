@@ -437,13 +437,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton Click="Crop_Click" 
-                                      Glyph="&#xE7A8;"
-                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                                      IsEnabled="{Binding SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" />
-                <controls:GlyphButton Click="Uncrop_Click" 
-                                      Glyph="&#xE7A7;"
-                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                      IsEnabled="{Binding SelectedItem.IsCropped, Mode=OneWay}" />
+                                      Glyph="&#xE7A8;" />
                 <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="1"/>
                 <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="1"/>
                 <controls:GlyphButton Click="Compress_Click"
@@ -462,6 +456,12 @@
                     Style="{StaticResource SelfDestructButtonStyle}"
                     Grid.Column="3"/>
             </Grid>
+
+            <Button Content="Reset" 
+                    Click="ResetCrop_Click" 
+                    HorizontalAlignment="Center" 
+                    Grid.Column="1"
+                    Visibility="{x:Bind IsEditingCropping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
             <controls:GlyphButton Click="Accept_Click"
                                   Glyph="{x:Bind ConvertAccept(IsEditing), Mode=OneWay}"

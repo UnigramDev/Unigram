@@ -415,14 +415,9 @@ namespace Unigram.Controls.Views
             }
         }
 
-        private void Uncrop_Click(object sender, RoutedEventArgs e)
+        private void ResetCrop_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectedItem is StoragePhoto photo)
-            {
-                photo.ApplyCrop = false;
-                
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
-            }
+            Cropper.Reset();
         }
     }
 }

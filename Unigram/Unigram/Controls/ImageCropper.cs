@@ -440,6 +440,24 @@ namespace Unigram.Controls
             UpdateCropRectangle(m_cropRectangle, false);
         }
 
+        public void Reset()
+        {
+            var imageScale = m_imageSize.Width / m_imageSize.Height;
+            var cropScale = GetProportionsFactor(Proportions, imageScale);
+            if (imageScale < cropScale)
+            {
+                var cropHeight = m_imageSize.Width / cropScale;
+                m_cropRectangle = new Rect(0.0, (m_imageSize.Height - cropHeight) / 2.0, m_imageSize.Width, cropHeight);
+            }
+            else
+            {
+                var cropWidth = m_imageSize.Height * cropScale;
+                m_cropRectangle = new Rect((m_imageSize.Width - cropWidth) / 2.0, 0.0, cropWidth, m_imageSize.Height);
+            }
+
+            UpdateCropRectangle(m_cropRectangle, false);
+        }
+
         private void OnProportionsChanged(ImageCroppingProportions oldValue, ImageCroppingProportions newValue)
         {
             var cropScale = m_cropRectangle.Width / m_cropRectangle.Height;
