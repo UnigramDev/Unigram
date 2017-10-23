@@ -310,8 +310,56 @@ namespace Unigram.Controls.Views
 
             if (item.IsVideo)
             {
-                Play(item);
+                switch (_mediaPlayer?.MediaPlayer?.PlaybackSession.PlaybackState)
+                {
+                    case MediaPlaybackState.Playing:
+                        {
+                            Pause();
+                            return;
+                        }
+                    case MediaPlaybackState.Paused:
+                        {
+                            Resume();
+                            return;
+                        }
+                    default:
+                        {
+                            Play(item);
+                            return;
+                        }
+                }
+
             }
+        }
+
+        private void Pause()
+        {
+            try
+            {
+                var surfaceVisual = ElementCompositionPreview.GetElementChildVisual(Surface);
+                if (surfaceVisual != null)
+                {
+                    surfaceVisual.IsVisible = false;
+                }
+                
+                _mediaPlayer.MediaPlayer.Pause();
+            }
+            catch { }
+        }
+
+        private void Resume()
+        {
+            try
+            {
+                var surfaceVisual = ElementCompositionPreview.GetElementChildVisual(Surface);
+                if (surfaceVisual != null)
+                {
+                    surfaceVisual.IsVisible = true;
+                }
+
+                _mediaPlayer.MediaPlayer.Play();
+            }
+            catch { }
         }
 
         private void Play(GalleryItem item)
