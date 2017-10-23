@@ -209,7 +209,7 @@
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 AutomationProperties.AccessibilityView="Raw"
                                 Text="&#xE899;"/>
-                            
+
                             <TextBlock
                                 x:Name="OffPresenter"
                                 FontFamily="{ThemeResource TelegramThemeFontFamily}"
@@ -437,8 +437,14 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton Click="Crop_Click" 
-                                      Glyph="&#xE7A8;" />
-                <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="1"/>
+                                      Glyph="&#xE7A8;"
+                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                      IsEnabled="{Binding SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" />
+                <controls:GlyphButton Click="Crop_Click" 
+                                      Glyph="&#xE7A8;"
+                                      Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                      IsEnabled="{Binding SelectedItem.IsCropped, Mode=OneWay}" />
                 <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="1"/>
                 <controls:GlyphButton Click="Compress_Click"
                                       Glyph="{Binding SelectedItem.Compression, Mode=OneWay, Converter={StaticResource CompressionToGlyphConverter}}"

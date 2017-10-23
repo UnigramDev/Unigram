@@ -109,14 +109,14 @@
                 <controls:BackDrop BlurAmount="24"/>
             </Grid>
 
-            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
-                <TextBlock Text="{Binding Media.DestructIn, Converter={StaticResource MessageShortTTLConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-            </Border>
-
             <controls:TransferButton Completed="SecretDownload_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
             <!--<controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.DestructProgress}" IsHitTestVisible="False" Style="{StaticResource TimeoutProgressBarRingStyle}"/>-->
             <controls:SelfDestructTimer Background="Transparent" Foreground="White" Value="{x:Bind Media.(tl:ITLMessageMediaDestruct.DestructDate), Mode=OneWay}" Maximum="{x:Bind Media.(tl:ITLMessageMediaDestruct.TTLSeconds)}" IsHitTestVisible="False"/>
+
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                <TextBlock Text="{Binding Media.DestructIn, Converter={StaticResource MessageShortTTLConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+            </Border>
         </Grid>
     </DataTemplate>
 
@@ -145,15 +145,14 @@
                 <controls:BackDrop BlurAmount="24"/>
             </Grid>
 
-            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
-                <TextBlock Text="{Binding Media.DestructIn, Converter={StaticResource MessageShortTTLConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-            </Border>
-
             <controls:TransferButton Completed="SecretDownload_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.DestructProgress}" IsHitTestVisible="False" Style="{StaticResource TimeoutProgressBarRingStyle}"/>
             <!--<controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.DestructProgress}" IsHitTestVisible="False" Style="{StaticResource TimeoutProgressBarRingStyle}"/>-->
             <controls:SelfDestructTimer Background="Transparent" Foreground="White" Value="{x:Bind Media.(tl:ITLMessageMediaDestruct.DestructDate), Mode=OneWay}" Maximum="{x:Bind Media.(tl:ITLMessageMediaDestruct.TTLSeconds)}" IsHitTestVisible="False"/>
+
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                <TextBlock Text="{Binding Media.DestructIn, Converter={StaticResource MessageShortTTLConverter}}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+            </Border>
         </Grid>
     </DataTemplate>
 
@@ -167,12 +166,12 @@
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
-                <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-            </Border>
-
             <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
+
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+            </Border>
         </Grid>
     </DataTemplate>
 
@@ -185,12 +184,12 @@
                                 MaxHeight="{ThemeResource TelegramLightMediaMaxHeight}"
                                 Style="{StaticResource RoundImageViewStyle}"/>
 
-            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
-                <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
-            </Border>
-
             <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
+
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
+                <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+            </Border>
         </Grid>
     </DataTemplate>
 
@@ -222,12 +221,12 @@
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
-                <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White"/>
-            </Border>
-
             <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
+
+            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
+                <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White"/>
+            </Border>
         </Grid>
     </DataTemplate>
 
@@ -439,12 +438,12 @@
                                     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                     MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-                <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,4" Margin="4">
-                    <TextBlock Text="GAME" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-                </Border>
-
                 <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Game.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                 <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Game.Document.Progress}" IsHitTestVisible="False"/>
+
+                <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,4" Margin="4">
+                    <TextBlock Text="GAME" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                </Border>
             </Grid>
         </StackPanel>
     </DataTemplate>
@@ -470,12 +469,12 @@
                                     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                     MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-                <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,4" Margin="4">
-                    <TextBlock Text="GAME" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-                </Grid>
-
                 <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Game.Photo}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                 <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Game.Photo.Progress}" IsHitTestVisible="False"/>
+
+                <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,4" Margin="4">
+                    <TextBlock Text="GAME" Style="{StaticResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                </Grid>
             </Grid>
         </StackPanel>
     </DataTemplate>

@@ -306,7 +306,7 @@ namespace Unigram.Views
                     presenter.Constraint = container.DataContext;
 
                     news[item].Presenter = presenter;
-                    container.Children.Insert(news[item].Watermark ? 1 : 4, presenter);
+                    container.Children.Insert(news[item].Watermark ? 3 : 4, presenter);
                 }
 
                 _old.Add(item, news[item]);
