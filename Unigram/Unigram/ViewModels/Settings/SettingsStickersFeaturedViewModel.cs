@@ -29,9 +29,9 @@ namespace Unigram.ViewModels.Settings
         {
             _stickersService = stickersService;
 
-            Aggregator.Subscribe(this);
-
             Items = new MvxObservableCollection<TLMessagesStickerSet>();
+
+            Aggregator.Subscribe(this);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)

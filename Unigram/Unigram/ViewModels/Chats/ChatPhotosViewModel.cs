@@ -30,6 +30,7 @@ namespace Unigram.ViewModels.Chats
             Items = new MvxObservableCollection<GalleryItem> { new GalleryPhotoItem(chatFull.ChatPhoto as TLPhoto, chat) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
+
             Initialize();
         }
 

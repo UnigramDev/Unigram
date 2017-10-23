@@ -285,6 +285,17 @@ namespace Unigram.Views
         {
             Bindings.StopTracking();
 
+            foreach (var item in _old.Values)
+            {
+                var presenter = item.Presenter;
+                if (presenter != null && presenter.MediaPlayer != null)
+                {
+                    presenter.MediaPlayer.Source = null;
+                    presenter.MediaPlayer.Dispose();
+                    presenter.MediaPlayer = null;
+                }
+            }
+
             InputPane.GetForCurrentView().Showing -= InputPane_Showing;
             InputPane.GetForCurrentView().Hiding -= InputPane_Hiding;
 
@@ -703,6 +714,7 @@ namespace Unigram.Views
 
             // Stickers
             // <MenuFlyoutItem Loaded="MessageAddSticker_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>
+            CreateFlyoutItem(ref menu, MessageAddSticker_Loaded, new RelayCommand(() => StickerSet_Click(element, null)), messageCommon, AppResources.MessageAddSticker);
             CreateFlyoutItem(ref menu, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, AppResources.MessageFaveSticker);
             CreateFlyoutItem(ref menu, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, AppResources.MessageUnfaveSticker);
 

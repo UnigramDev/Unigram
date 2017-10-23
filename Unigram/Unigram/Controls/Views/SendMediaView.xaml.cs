@@ -98,7 +98,7 @@ namespace Unigram.Controls.Views
         {
             get
             {
-                return _isEditingCompression;
+                return _isEditingCompression || _isEditingCropping;
             }
         }
 
@@ -115,6 +115,24 @@ namespace Unigram.Controls.Views
                 {
                     _isEditingCompression = value;
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsEditingCompression"));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsEditing"));
+                }
+            }
+        }
+
+        private bool _isEditingCropping;
+        public bool IsEditingCropping
+        {
+            get
+            {
+                return _isEditingCropping;
+            }
+            set
+            {
+                if (_isEditingCropping != value)
+                {
+                    _isEditingCropping = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsEditingCropping"));
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsEditing"));
                 }
             }
@@ -168,6 +186,11 @@ namespace Unigram.Controls.Views
                 e.Handled = true;
                 IsEditingCompression = false;
             }
+            else if (IsEditingCropping)
+            {
+                e.Handled = true;
+                IsEditingCropping = false;
+            }
             else
             {
                 e.Handled = true;
@@ -220,6 +243,17 @@ namespace Unigram.Controls.Views
                 return;
             }
 
+            if (IsEditingCropping && SelectedItem is StoragePhoto photo)
+            {
+                photo.CropRectangle = Cropper.CropRectangle;
+                photo.ApplyCrop = true;
+
+                IsEditingCropping = false;
+
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
+                return;
+            }
+
             if (Items.All(x => x.IsSelected == false))
             {
                 SelectedItem.IsSelected = true;
@@ -233,6 +267,12 @@ namespace Unigram.Controls.Views
             if (IsEditingCompression && SelectedItem is StorageVideo video)
             {
                 IsEditingCompression = false;
+                return;
+            }
+
+            if (IsEditingCropping && SelectedItem is StoragePhoto photo)
+            {
+                IsEditingCropping = false;
                 return;
             }
 
@@ -359,6 +399,25 @@ namespace Unigram.Controls.Views
                 CompressionValue.Maximum = video.MaxCompression - 1;
                 CompressionValue.Value = video.Compression;
             }
+        }
+
+        private async void Crop_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedItem is StoragePhoto photo)
+            {
+                IsEditingCropping = true;
+                
+                await Cropper.SetSourceAsync(photo.File);
+                if (photo.CropRectangle.HasValue)
+                {
+                    Cropper.CropRectangle = photo.CropRectangle.Value;
+                }
+            }
+        }
+
+        private void ResetCrop_Click(object sender, RoutedEventArgs e)
+        {
+            Cropper.Reset();
         }
     }
 }

@@ -27,9 +27,9 @@ namespace Unigram.ViewModels.Settings
             _type = type;
             _stickersService = stickersService;
 
-            aggregator.Subscribe(this);
-
             Items = new ItemsCollection(protoService, type);
+
+            Aggregator.Subscribe(this);
         }
 
         public void Handle(NeedReloadArchivedStickersEventArgs e)

@@ -221,6 +221,11 @@
                         Header="Replace emojis"
                         Style="{ThemeResource CheckButtonStyle}"/>
 
+                    <ToggleSwitch x:Uid="SettingsGeneralPage_AutoPlayToggle"
+                        IsOn="{x:Bind ViewModel.IsAutoPlayEnabled, Mode=TwoWay}"
+                        Header="Autoplay GIFs"
+                        Style="{ThemeResource CheckButtonStyle}"/>
+
                     <ToggleSwitch x:Uid="SettingsGeneralPage_ContactSyncToggle"
                         IsOn="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
                         Header="Sync contacts"

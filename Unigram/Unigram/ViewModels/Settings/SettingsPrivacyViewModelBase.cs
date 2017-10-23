@@ -26,6 +26,7 @@ namespace Unigram.ViewModels.Settings
             _key = key;
 
             UpdatePrivacyAsync();
+
             Aggregator.Subscribe(this);
         }
 

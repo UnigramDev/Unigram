@@ -16,6 +16,7 @@ namespace Unigram.ViewModels.Chats
         public CreateChatStep1ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
         }
 
         private string _title;
@@ -32,8 +33,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
+        public RelayCommand SendCommand { get; }
         private void SendExecute()
         {
             NavigationService.Navigate(typeof(CreateChatStep2Page), _title);

@@ -1415,4 +1415,8 @@ Tap on a sticker to view and add the whole set.</value>
   <data name="DialogUnpin" xml:space="preserve">
     <value>Unpin from top</value>
   </data>
+  <data name="SettingsGeneralPage_AutoPlayToggle.Header" xml:space="preserve">
+    <value>Autoplay GIFs</value>
+    <comment>ChatSettings.AutoPlayAnimations</comment>
+  </data>
 </root>

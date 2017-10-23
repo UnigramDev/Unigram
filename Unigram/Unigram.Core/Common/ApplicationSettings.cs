@@ -237,6 +237,23 @@ namespace Unigram.Common
             }
         }
 
+        private bool? _isAutoPlayEnabled;
+        public bool IsAutoPlayEnabled
+        {
+            get
+            {
+                if (_isAutoPlayEnabled == null)
+                    _isAutoPlayEnabled = GetValueOrDefault("IsAutoPlayEnabled", true);
+
+                return _isAutoPlayEnabled ?? true;
+            }
+            set
+            {
+                _isAutoPlayEnabled = value;
+                AddOrUpdateValue("IsAutoPlayEnabled", value);
+            }
+        }
+
         private int? _selectedBackground;
         public int SelectedBackground
         {

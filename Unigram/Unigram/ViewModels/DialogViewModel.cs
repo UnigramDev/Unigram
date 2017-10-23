@@ -129,12 +129,7 @@ namespace Unigram.ViewModels
             {
                 _informativeTimer.Stop();
                 InformativeMessage = null;
-        };
-
-            Items = new MessageCollection();
-            Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
-
-            Aggregator.Subscribe(this);
+            };
 
             NextMentionCommand = new RelayCommand(NextMentionExecute);
             PreviousSliceCommand = new RelayCommand(PreviousSliceExecute);
@@ -188,6 +183,11 @@ namespace Unigram.ViewModels
             SendMediaCommand = new RelayCommand<ObservableCollection<StorageMedia>>(SendMediaExecute);
             SendContactCommand = new RelayCommand(SendContactExecute);
             SendLocationCommand = new RelayCommand(SendLocationExecute);
+
+            Items = new MessageCollection();
+            Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
+
+            Aggregator.Subscribe(this);
         }
 
         ~DialogViewModel()
@@ -2898,11 +2898,8 @@ namespace Unigram.ViewModels
             if (tileCreated)
             {
                 UpdatePinChatCommands();
+                ResetTile();
             }
-
-            NotificationTask.ResetSecondaryTile(displayName, picture, group);
-
-            ResetTile();
         }
 
         private void ResetTile()
@@ -2913,10 +2910,13 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            var displayName = _pushService.GetTitle(this.With);
+            var picture = _pushService.GetPicture(this.With, group);
+
             var existsSecondaryTile = SecondaryTile.Exists(group);
             if (existsSecondaryTile)
             {
-                NotificationTask.UpdateSecondaryBadge(0, group);
+                NotificationTask.ResetSecondaryTile(displayName, picture, group);
             }
         }
 

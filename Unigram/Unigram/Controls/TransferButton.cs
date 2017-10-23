@@ -13,6 +13,7 @@ using Unigram.Views;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using LinqToVisualTree;
 
 namespace Unigram.Controls
 {
@@ -68,7 +69,7 @@ namespace Unigram.Controls
                     {
                         if (TLMessage.IsGif(document))
                         {
-                            var context = DefaultPhotoConverter.BitmapContext[document, null];
+                            //var context = DefaultPhotoConverter.BitmapContext[document, null];
                         }
                         else
                         {
@@ -215,8 +216,8 @@ namespace Unigram.Controls
                 }
                 else if (TLMessage.IsGif(document))
                 {
-                    Visibility = Visibility.Collapsed;
-                    return "\uE102";
+                    //Visibility = Visibility.Collapsed;
+                    return "\uE906";
                 }
 
                 return "\uE160";

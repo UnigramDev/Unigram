@@ -126,35 +126,54 @@ namespace Unigram.Themes
             var element = sender as FrameworkElement;
             var message = element.DataContext as TLMessage;
 
-            if (message != null)
+            if (message == null)
             {
-                if (message.IsVideo() || message.IsRoundVideo() || message.IsGif() || message.IsPhoto())
+                return;
+            }
+
+            var document = message.GetDocument();
+            if (TLMessage.IsGif(document))
+            {
+                var bubble = element.Ancestors<MessageBubble>().FirstOrDefault() as MessageBubble;
+                if (bubble == null)
                 {
-                    var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
-                    if (media == null)
-                    {
-                        media = element;
-                    }
-
-                    //ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
-
-                    GalleryViewModelBase viewModel;
-                    if (message.Parent != null)
-                    {
-                        viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
-                    }
-                    else
-                    {
-                        viewModel = new SingleGalleryViewModel(new GalleryMessageItem(message));
-                    }
-
-                    await GalleryView.Current.ShowAsync(viewModel, () => media);
+                    return;
                 }
-                else if (e != null)
+
+                var page = bubble.Ancestors<DialogPage>().FirstOrDefault() as DialogPage;
+                if (page == null)
                 {
-                    var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(e.FileName));
-                    await Launcher.LaunchFileAsync(file);
+                    return;
                 }
+
+                page.Play(bubble.ViewModel);
+            }
+            else if (TLMessage.IsVideo(document) || TLMessage.IsRoundVideo(document) || TLMessage.IsGif(document) || message.IsPhoto())
+            {
+                var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
+                if (media == null)
+                {
+                    media = element;
+                }
+
+                //ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
+
+                GalleryViewModelBase viewModel;
+                if (message.Parent != null)
+                {
+                    viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
+                }
+                else
+                {
+                    viewModel = new SingleGalleryViewModel(new GalleryMessageItem(message));
+                }
+
+                await GalleryView.Current.ShowAsync(viewModel, () => media);
+            }
+            else if (e != null)
+            {
+                var file = await StorageFile.GetFileFromApplicationUriAsync(FileUtils.GetTempFileUri(e.FileName));
+                await Launcher.LaunchFileAsync(file);
             }
         }
 
@@ -163,48 +182,50 @@ namespace Unigram.Themes
             var element = sender as FrameworkElement;
             var message = element.DataContext as TLMessage;
 
-            if (message != null)
+            if (message == null)
             {
-                if (message.IsMediaUnread && !message.IsOut)
+                return;
+            }
+
+            if (message.IsMediaUnread && !message.IsOut)
+            {
+                var vector = new TLVector<int> { message.Id };
+                if (message.Parent is TLChannel channel)
                 {
-                    var vector = new TLVector<int> { message.Id };
-                    if (message.Parent is TLChannel channel)
+                    TelegramEventAggregator.Instance.Publish(new TLUpdateChannelReadMessagesContents { ChannelId = channel.Id, Messages = vector });
+                    MTProtoService.Current.ReadMessageContentsAsync(channel.ToInputChannel(), vector, result =>
                     {
-                        TelegramEventAggregator.Instance.Publish(new TLUpdateChannelReadMessagesContents { ChannelId = channel.Id, Messages = vector });
-                        MTProtoService.Current.ReadMessageContentsAsync(channel.ToInputChannel(), vector, result =>
-                        {
-                            message.IsMediaUnread = false;
-                            message.RaisePropertyChanged(() => message.IsMediaUnread);
-                        });
-                    }
-                    else
+                        message.IsMediaUnread = false;
+                        message.RaisePropertyChanged(() => message.IsMediaUnread);
+                    });
+                }
+                else
+                {
+                    TelegramEventAggregator.Instance.Publish(new TLUpdateReadMessagesContents { Messages = vector });
+                    MTProtoService.Current.ReadMessageContentsAsync(vector, result =>
                     {
-                        TelegramEventAggregator.Instance.Publish(new TLUpdateReadMessagesContents { Messages = vector });
-                        MTProtoService.Current.ReadMessageContentsAsync(vector, result =>
-                        {
-                            message.IsMediaUnread = false;
-                            message.RaisePropertyChanged(() => message.IsMediaUnread);
-                        });
-                    }
+                        message.IsMediaUnread = false;
+                        message.RaisePropertyChanged(() => message.IsMediaUnread);
+                    });
                 }
+            }
 
-                var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
-                if (media == null)
-                {
-                    media = element;
-                }
+            var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
+            if (media == null)
+            {
+                media = element;
+            }
 
-                if (media is Grid grid)
-                {
-                    // TODO: WARNING!!!
-                    media = grid.Children[1] as FrameworkElement;
-                }
+            if (media is Grid grid)
+            {
+                // TODO: WARNING!!!
+                media = grid.Children[1] as FrameworkElement;
+            }
 
-                if (message.Parent != null)
-                {
-                    var viewModel = new GallerySecretViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current, InMemoryCacheService.Current, TelegramEventAggregator.Instance);
-                    await GallerySecretView.Current.ShowAsync(viewModel, () => media);
-                }
+            if (message.Parent != null)
+            {
+                var viewModel = new GallerySecretViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current, InMemoryCacheService.Current, TelegramEventAggregator.Instance);
+                await GallerySecretView.Current.ShowAsync(viewModel, () => media);
             }
         }
 
