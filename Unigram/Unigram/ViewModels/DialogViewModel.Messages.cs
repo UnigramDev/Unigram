@@ -546,18 +546,25 @@ namespace Unigram.ViewModels
         private async void MessageCopyMediaExecute(TLMessage message)
         {
             var photo = message.GetPhoto();
-            if (photo?.Full is TLPhotoSize photoSize)
+            var photoSize = photo?.Full as TLPhotoSize;
+            if (photoSize == null)
             {
-                var location = photoSize.Location;
-                var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
-                if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                {
-                    var result = await FileUtils.GetTempFileAsync(fileName);
+                return;
+            }
 
+            var location = photoSize.Location;
+            var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            {
+                var result = await FileUtils.GetTempFileAsync(fileName);
+
+                try
+                {
                     var dataPackage = new DataPackage();
                     dataPackage.SetStorageItems(new[] { result });
                     ClipboardEx.TrySetContent(dataPackage);
                 }
+                catch { }
             }
         }
 
