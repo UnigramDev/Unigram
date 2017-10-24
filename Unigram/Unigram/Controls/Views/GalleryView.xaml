@@ -42,7 +42,7 @@
         </Style>
     </Control.Resources>
 
-    <Grid x:Name="LayoutRoot" RequestedTheme="Dark">
+    <Grid x:Name="LayoutRoot" RequestedTheme="Dark" Tapped="LayoutRoot_Tapped">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
@@ -79,8 +79,7 @@
                 Loaded="ImageView_ImageOpened"
                 Source="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                 Constraint="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}"
-                IsHitTestVisible="False"
-                Grid.RowSpan="3"/>
+                Tapped="ImageView_Tapped" />
 
             <!--<local:TransferButton Completed="Download_Click" Transferable="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}" IsTransferring="{x:Bind ViewModel.FirstItem.Source.IsTransferring, Mode=OneWay}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{x:Bind ViewModel.FirstItem.Source.Progress, Mode=OneWay}" IsHitTestVisible="False"/>-->
