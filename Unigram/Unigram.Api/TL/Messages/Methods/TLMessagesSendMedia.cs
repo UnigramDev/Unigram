@@ -17,6 +17,7 @@ namespace Telegram.Api.TL.Messages.Methods
 			ClearDraft = (1 << 7),
 			ReplyToMsgId = (1 << 0),
 			ReplyMarkup = (1 << 2),
+			GroupedId = (1 << 8),
 		}
 
 		public bool IsSilent { get { return Flags.HasFlag(Flag.Silent); } set { Flags = value ? (Flags | Flag.Silent) : (Flags & ~Flag.Silent); } }
@@ -24,6 +25,7 @@ namespace Telegram.Api.TL.Messages.Methods
 		public bool IsClearDraft { get { return Flags.HasFlag(Flag.ClearDraft); } set { Flags = value ? (Flags | Flag.ClearDraft) : (Flags & ~Flag.ClearDraft); } }
 		public bool HasReplyToMsgId { get { return Flags.HasFlag(Flag.ReplyToMsgId); } set { Flags = value ? (Flags | Flag.ReplyToMsgId) : (Flags & ~Flag.ReplyToMsgId); } }
 		public bool HasReplyMarkup { get { return Flags.HasFlag(Flag.ReplyMarkup); } set { Flags = value ? (Flags | Flag.ReplyMarkup) : (Flags & ~Flag.ReplyMarkup); } }
+		public bool HasGroupedId { get { return Flags.HasFlag(Flag.GroupedId); } set { Flags = value ? (Flags | Flag.GroupedId) : (Flags & ~Flag.GroupedId); } }
 
 		public Flag Flags { get; set; }
 		public TLInputPeerBase Peer { get; set; }
@@ -31,6 +33,7 @@ namespace Telegram.Api.TL.Messages.Methods
 		public TLInputMediaBase Media { get; set; }
 		public Int64 RandomId { get; set; }
 		public TLReplyMarkupBase ReplyMarkup { get; set; }
+		public Int64? GroupedId { get; set; }
 
 		public TLMessagesSendMedia() { }
 		public TLMessagesSendMedia(TLBinaryReader from)
@@ -48,25 +51,28 @@ namespace Telegram.Api.TL.Messages.Methods
 			Media = TLFactory.Read<TLInputMediaBase>(from);
 			RandomId = from.ReadInt64();
 			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from);
+			if (HasGroupedId) GroupedId = from.ReadInt64();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
-			to.Write(0xC8F16791);
+			to.Write(0x61A461CD);
 			to.Write((Int32)Flags);
 			to.WriteObject(Peer);
 			if (HasReplyToMsgId) to.Write(ReplyToMsgId.Value);
 			to.WriteObject(Media);
 			to.Write(RandomId);
 			if (HasReplyMarkup) to.WriteObject(ReplyMarkup);
+			if (HasGroupedId) to.Write(GroupedId.Value);
 		}
 
 		private void UpdateFlags()
 		{
 			HasReplyToMsgId = ReplyToMsgId != null;
 			HasReplyMarkup = ReplyMarkup != null;
+			HasGroupedId = GroupedId != null;
 		}
 	}
 }
