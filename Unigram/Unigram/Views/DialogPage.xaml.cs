@@ -546,6 +546,11 @@ namespace Unigram.Views
 
                 foreach (var file in items.OfType<StorageFile>())
                 {
+                    if (await file.SkipAsync())
+                    {
+                        continue;
+                    }
+
                     if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
@@ -562,7 +567,7 @@ namespace Unigram.Views
                 }
 
                 // Send compressed __only__ if user is dropping photos and videos only
-                if (media.Count == files.Count)
+                if (media.Count > 0 && media.Count == files.Count)
                 {
                     ViewModel.SendMediaExecute(media, media[0]);
                 }
@@ -573,6 +578,22 @@ namespace Unigram.Views
                         ViewModel.SendFileCommand.Execute(file);
                     }
                 }
+            }
+            else if (package.Contains(StandardDataFormats.Bitmap))
+            {
+                var bitmap = await package.GetBitmapAsync();
+                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                using (var stream = await bitmap.OpenReadAsync())
+                using (var reader = new DataReader(stream))
+                {
+                    await reader.LoadAsync((uint)stream.Size);
+                    var buffer = new byte[(int)stream.Size];
+                    reader.ReadBytes(buffer);
+                    await FileIO.WriteBytesAsync(cache, buffer);
+                }
+
+                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { await StoragePhoto.CreateAsync(cache, true) });
             }
             //else if (e.DataView.Contains(StandardDataFormats.WebLink))
             //{
