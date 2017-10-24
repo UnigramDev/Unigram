@@ -301,9 +301,17 @@ namespace Unigram.Core.Helpers
             return transform;
         }
 
-        public static async Task<TLPhotoSizeBase> GetVideoThumbnailAsync(StorageFile file, VideoTransformEffectDefinition effect)
+        public static async Task<TLPhotoSizeBase> GetVideoThumbnailAsync(StorageFile file, VideoProperties props, VideoTransformEffectDefinition effect)
         {
-            file = await CropAsync(file, effect.CropRectangle);
+            double originalWidth = props.Width;
+            double originalHeight = props.Height;
+
+            if (effect != null && !effect.CropRectangle.IsEmpty)
+            {
+                file = await CropAsync(file, effect.CropRectangle);
+                originalWidth = effect.CropRectangle.Width;
+                originalHeight = effect.CropRectangle.Height;
+            }
 
             TLPhotoSizeBase result;
             var fileLocation = new TLFileLocation
@@ -322,12 +330,12 @@ namespace Unigram.Core.Helpers
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
 
-                double ratioX = (double)90 / effect.CropRectangle.Width;
-                double ratioY = (double)90 / effect.CropRectangle.Height;
+                double ratioX = (double)90 / originalWidth;
+                double ratioY = (double)90 / originalHeight;
                 double ratio = Math.Min(ratioX, ratioY);
 
-                uint width = (uint)(effect.CropRectangle.Width * ratio);
-                uint height = (uint)(effect.CropRectangle.Height * ratio);
+                uint width = (uint)(originalWidth * ratio);
+                uint height = (uint)(originalHeight * ratio);
 
                 var transform = new BitmapTransform();
                 transform.ScaledWidth = width;

@@ -405,13 +405,9 @@ namespace Unigram.Controls.Views
             if (SelectedItem is StorageMedia media)
             {
                 IsEditingCropping = true;
-                
-                await Cropper.SetSourceAsync(media.File);
 
-                if (media.CropRectangle.HasValue)
-                {
-                    Cropper.CropRectangle = media.CropRectangle.Value;
-                }
+                await Cropper.SetSourceAsync(media.File);
+                Cropper.CropRectangle = media.CropRectangle ?? Rect.Empty;
             }
         }
 

@@ -487,7 +487,11 @@ namespace Unigram.Controls
 
         protected virtual void OnCropRectangleChanged(Rect oldValue, Rect newValue)
         {
-            if (newValue != m_cropRectangle)
+            if (newValue.IsEmpty)
+            {
+                Reset();
+            }
+            else if (newValue != m_cropRectangle)
             {
                 m_cropRectangle = newValue;
                 UpdateCropRectangle(m_cropRectangle, false);

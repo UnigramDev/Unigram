@@ -399,7 +399,8 @@ namespace Unigram.ViewModels
 
             var basicProps = await fileCache.GetBasicPropertiesAsync();
             var videoProps = await fileCache.Properties.GetVideoPropertiesAsync();
-            var thumbnail = await ImageHelper.GetVideoThumbnailAsync(file, transform) as TLPhotoSize;
+
+            var thumbnail = await ImageHelper.GetVideoThumbnailAsync(file, videoProps, transform) as TLPhotoSize;
             if (thumbnail == null)
             {
                 return;

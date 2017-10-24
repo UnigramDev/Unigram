@@ -67,15 +67,7 @@ namespace Unigram.Controls
                     }
                     else
                     {
-                        if (TLMessage.IsGif(document))
-                        {
-                            //var context = DefaultPhotoConverter.BitmapContext[document, null];
-                        }
-                        else
-                        {
-                            var manager = ChooseDownloadManager(document);
-                            document.DownloadAsync(manager);
-                        }
+                        document.DownloadAsync(ChooseDownloadManager(document));
                     }
                 }
             }
