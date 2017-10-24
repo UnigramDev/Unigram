@@ -60,7 +60,7 @@ namespace Unigram.Controls
         private static Size s_minimumSize = new Size(100, 100);
 
         private StorageFile m_imageSource;
-        private SoftwareBitmapSource m_imagePreview;
+        private ImageSource m_imagePreview;
 
         private Geometry m_outerClip;
         private Geometry m_innerClip;
@@ -415,11 +415,34 @@ namespace Unigram.Controls
                 source = new SoftwareBitmapSource();
                 await source.SetBitmapAsync(software);
 
-                m_imagePreview = source;
-                m_imageSource = file;
-                m_imageSize = new Size(software.PixelWidth, software.PixelHeight);
-                m_imageViewer.Source = m_imagePreview;
+                SetSource(file, source, software.PixelWidth, software.PixelHeight);
             }
+
+            Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
+            Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
+
+            var imageScale = m_imageSize.Width / m_imageSize.Height;
+            var cropScale = GetProportionsFactor(Proportions, imageScale);
+            if (imageScale < cropScale)
+            {
+                var cropHeight = m_imageSize.Width / cropScale;
+                m_cropRectangle = new Rect(0.0, (m_imageSize.Height - cropHeight) / 2.0, m_imageSize.Width, cropHeight);
+            }
+            else
+            {
+                var cropWidth = m_imageSize.Height * cropScale;
+                m_cropRectangle = new Rect((m_imageSize.Width - cropWidth) / 2.0, 0.0, cropWidth, m_imageSize.Height);
+            }
+
+            UpdateCropRectangle(m_cropRectangle, false);
+        }
+
+        public void SetSource(StorageFile file, ImageSource source, double width, double height)
+        {
+            m_imagePreview = source;
+            m_imageSource = file;
+            m_imageSize = new Size(width, height);
+            m_imageViewer.Source = m_imagePreview;
 
             Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
             Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);

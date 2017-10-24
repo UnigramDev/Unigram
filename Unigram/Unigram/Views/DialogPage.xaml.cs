@@ -514,7 +514,7 @@ namespace Unigram.Views
                 flyout.Hide();
             }
 
-            ViewModel.SendMediaExecute(ViewModel.MediaLibrary, e.Item);
+            ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia>(ViewModel.MediaLibrary), e.Item);
             //ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
         }
 

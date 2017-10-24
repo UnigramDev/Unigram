@@ -35,6 +35,18 @@ namespace Unigram.Models
             }
         }
 
+        protected ImageSource _bitmap;
+        public ImageSource Bitmap
+        {
+            get
+            {
+                if (_bitmap == null)
+                    Refresh();
+
+                return _bitmap;
+            }
+        }
+
         protected ImageSource _preview;
         public ImageSource Preview
         {
@@ -129,13 +141,18 @@ namespace Unigram.Models
 
         public virtual async void Refresh()
         {
+            if (_bitmap == null)
+            {
+                _bitmap = await ImageHelper.GetPreviewBitmapAsync(File);
+            }
+
             if (CropRectangle.HasValue)
             {
                 _preview = await ImageHelper.CropAndPreviewAsync(File, CropRectangle.Value);
             }
             else
             {
-                _preview = await ImageHelper.GetPreviewBitmapAsync(File);
+                _preview = _bitmap;
             }
 
             RaisePropertyChanged(() => Preview);

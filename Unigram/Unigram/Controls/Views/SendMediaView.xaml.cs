@@ -24,6 +24,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
@@ -406,8 +407,23 @@ namespace Unigram.Controls.Views
             {
                 IsEditingCropping = true;
 
-                await Cropper.SetSourceAsync(media.File);
-                Cropper.CropRectangle = media.CropRectangle ?? Rect.Empty;
+                if (media.Bitmap is SoftwareBitmapSource source)
+                {
+                    var props = await media.File.Properties.GetImagePropertiesAsync();
+                    var width = props.Width;
+                    var height = props.Height;
+
+                    if (height > 1280)
+                    {
+                        float scalingFactor = (float)1280.0 / (float)height;
+
+                        width = (uint)Math.Floor(width * scalingFactor);
+                        height = (uint)Math.Floor(height * scalingFactor);
+                    }
+
+                    Cropper.SetSource(media.File, source, width, height);
+                    Cropper.CropRectangle = media.CropRectangle ?? Rect.Empty;
+                }
             }
         }
 
