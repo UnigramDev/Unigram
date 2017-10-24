@@ -241,7 +241,7 @@ namespace Unigram.Controls.Messages
 
                 if (paragraph.Inlines.Count > 0)
                 {
-                    if (paragraph != admin && message.IsAdmin())
+                    if (paragraph != admin && !message.IsOut && message.IsAdmin())
                     {
                         paragraph.Inlines.Add(new Run { Text = " admin", Foreground = null, FontSize = 12 });
                         admin.Visibility = Visibility.Visible;
