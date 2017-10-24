@@ -210,7 +210,7 @@ namespace Unigram.Core.Helpers
                     cropHeight = (uint)Math.Floor(decoder.PixelHeight * scalingFactor);
                 }
 
-                var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(cropWidth, cropHeight), new Size(decoder.PixelWidth, decoder.PixelHeight), 1280, 1280);
+                var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(cropWidth, cropHeight), new Size(decoder.PixelWidth, decoder.PixelHeight), 1280, 0);
 
                 var bounds = new BitmapBounds();
                 bounds.X = (uint)scaledCrop.X;
@@ -240,8 +240,8 @@ namespace Unigram.Core.Helpers
 
         private static (Rect, Size) Scale(Rect rect, Size start, Size size, int min, int max)
         {
-            var width = rect.Width;
-            var height = rect.Height;
+            var width = rect.Width * size.Width / start.Width;
+            var height = rect.Height * size.Height / start.Height;
 
             if (width > min || height > min)
             {
@@ -250,7 +250,7 @@ namespace Unigram.Core.Helpers
                 double ratio = Math.Min(ratioX, ratioY);
 
                 width = width * ratio;
-                height = width * ratio;
+                height = height * ratio;
             }
 
             if (width < max || height < max)
@@ -263,8 +263,6 @@ namespace Unigram.Core.Helpers
                 height = height * ratio;
             }
 
-            // start.Width : rect.Width = ? : width
-            // start.Height : rect.Hegith = ? : height
             var ratioW = start.Width * width / rect.Width;
             var ratioH = start.Height * height / rect.Height;
 
