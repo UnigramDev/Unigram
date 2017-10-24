@@ -169,12 +169,20 @@
     {
       "selection": [
         {
+          "order": 58,
+          "id": 33,
+          "name": "SavedMessages",
+          "prevSize": 32,
+          "code": 59655,
+          "tempChar": ""
+        },
+        {
           "order": 57,
           "id": 32,
           "name": "GifPlay",
           "prevSize": 32,
           "code": 59654,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 43,
@@ -182,7 +190,7 @@
           "name": "Timer0",
           "prevSize": 32,
           "code": 59648,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 41,
@@ -190,7 +198,7 @@
           "name": "Timer",
           "prevSize": 32,
           "code": 59545,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 44,
@@ -198,7 +206,7 @@
           "name": "Effects",
           "prevSize": 32,
           "code": 58900,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 40,
@@ -206,7 +214,7 @@
           "name": "e10a",
           "prevSize": 32,
           "code": 57610,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 39,
@@ -214,7 +222,7 @@
           "name": "e102",
           "prevSize": 32,
           "code": 57602,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 38,
@@ -222,7 +230,7 @@
           "name": "e118",
           "prevSize": 32,
           "code": 57624,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 37,
@@ -230,7 +238,7 @@
           "name": "e160",
           "prevSize": 32,
           "code": 57696,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 36,
@@ -238,7 +246,7 @@
           "name": "Silent",
           "prevSize": 32,
           "code": 58890,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 35,
@@ -246,7 +254,7 @@
           "name": "SilentNotSilent",
           "prevSize": 32,
           "code": 58889,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 34,
@@ -260,7 +268,7 @@
             58901,
             58902
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 33,
@@ -268,7 +276,7 @@
           "name": "Commands",
           "prevSize": 32,
           "code": 58899,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 29,
@@ -276,7 +284,7 @@
           "name": "VideoMessage",
           "prevSize": 32,
           "code": 58898,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 28,
@@ -284,7 +292,7 @@
           "name": "InstantView",
           "prevSize": 32,
           "code": 58897,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 27,
@@ -292,7 +300,7 @@
           "name": "Microphone",
           "prevSize": 32,
           "code": 58896,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 22,
@@ -300,7 +308,7 @@
           "name": "Hangup",
           "prevSize": 32,
           "code": 58895,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 21,
@@ -308,7 +316,7 @@
           "name": "Masks",
           "prevSize": 32,
           "code": 58894,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 15,
@@ -316,7 +324,7 @@
           "name": "Featured",
           "prevSize": 32,
           "code": 58893,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 13,
@@ -324,7 +332,7 @@
           "name": "Outgoing",
           "prevSize": 32,
           "code": 58891,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 12,
@@ -332,7 +340,7 @@
           "name": "Incoming",
           "prevSize": 32,
           "code": 58892,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 8,
@@ -340,7 +348,7 @@
           "name": "Views",
           "prevSize": 32,
           "code": 58887,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 7,
@@ -348,7 +356,7 @@
           "name": "Stickers",
           "prevSize": 32,
           "code": 58886,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 2,
@@ -356,7 +364,7 @@
           "prevSize": 32,
           "code": 58880,
           "name": "Clock",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 3,
@@ -364,7 +372,7 @@
           "prevSize": 32,
           "code": 58881,
           "name": "Double",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 42,
@@ -372,7 +380,7 @@
           "prevSize": 32,
           "code": 58882,
           "name": "Single",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 5,
@@ -380,7 +388,7 @@
           "prevSize": 32,
           "code": 58885,
           "name": "Verified",
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 0,
@@ -394,6 +402,21 @@
       "height": 1024,
       "prevSize": 32,
       "icons": [
+        {
+          "id": 33,
+          "paths": [
+            "M869.926 64.79v828.601l-360-280.055-39.425 30.53-321.168 249.525v-828.601h720.593zM933.926 0.79h-848.593v1023.407l424.296-329.801 424.296 329.801v-1023.407z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "SavedMessages"
+          ]
+        },
         {
           "id": 32,
           "paths": [
@@ -801,7 +824,7 @@
       "metadata": {
         "fontFamily": "Telegram",
         "majorVersion": 1,
-        "minorVersion": 36
+        "minorVersion": 37
       },
       "metrics": {
         "emSize": 1024,
