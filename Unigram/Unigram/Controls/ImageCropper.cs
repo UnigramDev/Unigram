@@ -61,6 +61,7 @@ namespace Unigram.Controls
 
         private StorageFile m_imageSource;
         private ImageSource m_imagePreview;
+        private bool m_imageWaiting;
 
         private Geometry m_outerClip;
         private Geometry m_innerClip;
@@ -244,7 +245,15 @@ namespace Unigram.Controls
                 bottomRightThumb.PointerMoved += BottomRightThumb_PointerMoved;
             }
 
-            UpdateCropRectangle(CropRectangle, false);
+            if (m_imageWaiting)
+            {
+                m_imageWaiting = false;
+                SetSource(m_imageSource, m_imagePreview, m_imageSize.Width, m_imageSize.Height);
+            }
+            else
+            {
+                UpdateCropRectangle(CropRectangle, false);
+            }
         }
 
         private void UpdateThumbs(Rect thumbsRectangle)
@@ -442,25 +451,33 @@ namespace Unigram.Controls
             m_imagePreview = source;
             m_imageSource = file;
             m_imageSize = new Size(width, height);
-            m_imageViewer.Source = m_imagePreview;
 
-            Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
-            Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
-
-            var imageScale = m_imageSize.Width / m_imageSize.Height;
-            var cropScale = GetProportionsFactor(Proportions, imageScale);
-            if (imageScale < cropScale)
+            if (m_imageViewer != null)
             {
-                var cropHeight = m_imageSize.Width / cropScale;
-                m_cropRectangle = new Rect(0.0, (m_imageSize.Height - cropHeight) / 2.0, m_imageSize.Width, cropHeight);
+                m_imageViewer.Source = m_imagePreview;
+
+                Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
+                Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
+
+                var imageScale = m_imageSize.Width / m_imageSize.Height;
+                var cropScale = GetProportionsFactor(Proportions, imageScale);
+                if (imageScale < cropScale)
+                {
+                    var cropHeight = m_imageSize.Width / cropScale;
+                    m_cropRectangle = new Rect(0.0, (m_imageSize.Height - cropHeight) / 2.0, m_imageSize.Width, cropHeight);
+                }
+                else
+                {
+                    var cropWidth = m_imageSize.Height * cropScale;
+                    m_cropRectangle = new Rect((m_imageSize.Width - cropWidth) / 2.0, 0.0, cropWidth, m_imageSize.Height);
+                }
+
+                UpdateCropRectangle(m_cropRectangle, false);
             }
             else
             {
-                var cropWidth = m_imageSize.Height * cropScale;
-                m_cropRectangle = new Rect((m_imageSize.Width - cropWidth) / 2.0, 0.0, cropWidth, m_imageSize.Height);
+                m_imageWaiting = true;
             }
-
-            UpdateCropRectangle(m_cropRectangle, false);
         }
 
         public void Reset()
