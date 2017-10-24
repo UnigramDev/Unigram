@@ -199,13 +199,28 @@ namespace Unigram.Core.Helpers
             using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
-                var bounds = new BitmapBounds();
-                bounds.X = (uint)cropRectangle.X;
-                bounds.Y = (uint)cropRectangle.Y;
-                bounds.Width = (uint)cropRectangle.Width;
-                bounds.Height = (uint)cropRectangle.Height;
+                var cropWidth = decoder.PixelWidth;
+                var cropHeight = decoder.PixelHeight;
 
-                var transform = ComputeScalingTransformForSourceImage(decoder);
+                if (decoder.PixelHeight > 1280)
+                {
+                    float scalingFactor = (float)1280.0 / (float)decoder.PixelHeight;
+
+                    cropWidth = (uint)Math.Floor(decoder.PixelWidth * scalingFactor);
+                    cropHeight = (uint)Math.Floor(decoder.PixelHeight * scalingFactor);
+                }
+
+                var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(cropWidth, cropHeight), new Size(decoder.PixelWidth, decoder.PixelHeight), 1280, 1280);
+
+                var bounds = new BitmapBounds();
+                bounds.X = (uint)scaledCrop.X;
+                bounds.Y = (uint)scaledCrop.Y;
+                bounds.Width = (uint)scaledCrop.Width;
+                bounds.Height = (uint)scaledCrop.Height;
+
+                var transform = new BitmapTransform();
+                transform.ScaledWidth = (uint)scaledSize.Width;
+                transform.ScaledHeight = (uint)scaledSize.Height;
                 transform.Bounds = bounds;
                 transform.InterpolationMode = BitmapInterpolationMode.Linear;
 
@@ -221,6 +236,44 @@ namespace Unigram.Core.Helpers
             }
 
             return file;
+        }
+
+        private static (Rect, Size) Scale(Rect rect, Size start, Size size, int min, int max)
+        {
+            var width = rect.Width;
+            var height = rect.Height;
+
+            if (width > min || height > min)
+            {
+                double ratioX = (double)min / width;
+                double ratioY = (double)min / height;
+                double ratio = Math.Min(ratioX, ratioY);
+
+                width = width * ratio;
+                height = width * ratio;
+            }
+
+            if (width < max || height < max)
+            {
+                double ratioX = (double)max / width;
+                double ratioY = (double)max / height;
+                double ratio = Math.Min(ratioX, ratioY);
+
+                width = width * ratio;
+                height = height * ratio;
+            }
+
+            // start.Width : rect.Width = ? : width
+            // start.Height : rect.Hegith = ? : height
+            var ratioW = start.Width * width / rect.Width;
+            var ratioH = start.Height * height / rect.Height;
+
+            var x = rect.X * ratioW / start.Width;
+            var y = rect.Y * ratioH / start.Height;
+            var w = rect.Width * ratioW / start.Width;
+            var h = rect.Height * ratioH / start.Height;
+
+            return (new Rect(x, y, w, h), new Size(ratioW, ratioH));
         }
 
         public static async Task<ImageSource> CropAndPreviewAsync(StorageFile sourceFile, Rect cropRectangle)
