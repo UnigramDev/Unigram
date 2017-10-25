@@ -341,12 +341,15 @@ namespace Unigram.Core.Helpers
         {
             var transform = new BitmapTransform();
 
-            if (sourceDecoder.PixelHeight > 1280)
+            if (sourceDecoder.PixelWidth > 1280 || sourceDecoder.PixelHeight > 1280)
             {
-                float scalingFactor = (float)1280.0 / (float)sourceDecoder.PixelHeight;
+                double ratioX = (double)1280 / sourceDecoder.PixelWidth;
+                double ratioY = (double)1280 / sourceDecoder.PixelHeight;
+                double ratio = Math.Min(ratioX, ratioY);
 
-                transform.ScaledWidth = (uint)Math.Floor(sourceDecoder.PixelWidth * scalingFactor);
-                transform.ScaledHeight = (uint)Math.Floor(sourceDecoder.PixelHeight * scalingFactor);
+                transform.ScaledWidth = (uint)(sourceDecoder.PixelWidth * ratio);
+                transform.ScaledHeight = (uint)(sourceDecoder.PixelHeight * ratio);
+
             }
 
             return transform;

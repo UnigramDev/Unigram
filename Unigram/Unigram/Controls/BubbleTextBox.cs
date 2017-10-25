@@ -231,6 +231,11 @@ namespace Unigram.Controls
 
                 foreach (var file in items.OfType<StorageFile>())
                 {
+                    if (await file.SkipAsync())
+                    {
+                        continue;
+                    }
+
                     if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
@@ -247,7 +252,7 @@ namespace Unigram.Controls
                 }
 
                 // Send compressed __only__ if user is dropping photos and videos only
-                if (media.Count == files.Count)
+                if (media.Count > 0 && media.Count == files.Count)
                 {
                     ViewModel.SendMediaExecute(media, media[0]);
                 }
