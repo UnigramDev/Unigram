@@ -463,11 +463,23 @@
                     Grid.Column="3"/>
             </Grid>
 
-            <Button Content="Reset" 
-                    Click="ResetCrop_Click" 
-                    HorizontalAlignment="Center" 
-                    Grid.Column="1"
-                    Visibility="{x:Bind IsEditingCropping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Grid Visibility="{x:Bind IsEditingCropping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" HorizontalAlignment="Center" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <controls:GlyphButton Glyph="&#xE909;" FontFamily="{ThemeResource TelegramThemeFontFamily}" IsEnabled="False"/>
+                <controls:GlyphButton Glyph="&#xE908;" FontFamily="{ThemeResource TelegramThemeFontFamily}" IsEnabled="False" Grid.Column="1"/>
+                <controls:GlyphButton Glyph="&#xE90A;" FontFamily="{ThemeResource TelegramThemeFontFamily}" IsEnabled="False" Grid.Column="2"/>
+
+                <Button Content="Reset" 
+                        Click="ResetCrop_Click" 
+                        HorizontalAlignment="Center" 
+                        Grid.Column="3"
+                        Visibility="{x:Bind IsEditingCropping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
 
             <controls:GlyphButton Click="Accept_Click"
                                   Glyph="{x:Bind ConvertAccept(IsEditing), Mode=OneWay}"
