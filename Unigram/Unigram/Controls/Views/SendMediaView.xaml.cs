@@ -413,12 +413,14 @@ namespace Unigram.Controls.Views
                     var width = props.Width;
                     var height = props.Height;
 
-                    if (height > 1280)
+                    if (width > 1280 || height > 1280)
                     {
-                        float scalingFactor = (float)1280.0 / (float)height;
+                        double ratioX = (double)1280 / width;
+                        double ratioY = (double)1280 / height;
+                        double ratio = Math.Min(ratioX, ratioY);
 
-                        width = (uint)Math.Floor(width * scalingFactor);
-                        height = (uint)Math.Floor(height * scalingFactor);
+                        width = (uint)(width * ratio);
+                        height = (uint)(height * ratio);
                     }
 
                     Cropper.SetSource(media.File, source, width, height);
