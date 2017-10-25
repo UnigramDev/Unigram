@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -116,6 +117,43 @@ namespace Telegram.Api.TL
 
     public partial class TLPhoto
     {
+        public async void DownloadAsync(IDownloadFileManager manager, Action<TLPhoto> completed)
+        {
+            var photoSize = Full as TLPhotoSize;
+            if (photoSize == null)
+            {
+                return;
+            }
+
+            var location = photoSize.Location as TLFileLocation;
+            if (location == null)
+            {
+                return;
+            }
+
+            var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            {
+
+            }
+            else
+            {
+                if (IsTransferring)
+                {
+                    return;
+                }
+
+                IsTransferring = true;
+
+                var operation = manager.DownloadFileAsync(location, photoSize.Size);
+                var download = await operation.AsTask(Download());
+                if (download != null)
+                {
+                    IsTransferring = false;
+                    completed(this);
+                }
+            }
+        }
         public void Cancel(IDownloadFileManager manager, IUploadManager uploadManager)
         {
             if (manager != null)
