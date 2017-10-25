@@ -596,6 +596,7 @@ namespace Unigram.Views
         {
             if (ViewModel.Contacts.Self != null)
             {
+                Navigation.IsPaneOpen = false;
                 MasterDetail.NavigationService.NavigateToDialog(ViewModel.Contacts.Self);
             }
         }

@@ -132,7 +132,7 @@ namespace Unigram.Themes
             }
 
             var document = message.GetDocument();
-            if (TLMessage.IsGif(document))
+            if (TLMessage.IsGif(document) && !ApplicationSettings.Current.IsAutoPlayEnabled)
             {
                 var bubble = element.Ancestors<MessageBubble>().FirstOrDefault() as MessageBubble;
                 if (bubble == null)
@@ -159,13 +159,13 @@ namespace Unigram.Themes
                 //ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", media);
 
                 GalleryViewModelBase viewModel;
-                if (message.Parent != null)
+                if (message.Parent == null || TLMessage.IsRoundVideo(document) || TLMessage.IsGif(document))
                 {
-                    viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
+                    viewModel = new SingleGalleryViewModel(new GalleryMessageItem(message));
                 }
                 else
                 {
-                    viewModel = new SingleGalleryViewModel(new GalleryMessageItem(message));
+                    viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
                 }
 
                 await GalleryView.Current.ShowAsync(viewModel, () => media);
