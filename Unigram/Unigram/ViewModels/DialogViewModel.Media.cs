@@ -703,6 +703,9 @@ namespace Unigram.ViewModels
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
 
+            message.GroupedId = 10;
+            message.HasGroupedId = true;
+
             if (Reply != null)
             {
                 message.HasReplyToMsgId = true;
