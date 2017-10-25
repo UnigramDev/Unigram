@@ -42,6 +42,8 @@ namespace Unigram.Common
                 return true;
             }
 
+            return false;
+
             try
             {
                 await StorageFile.GetFileFromPathAsync(item.Path);
