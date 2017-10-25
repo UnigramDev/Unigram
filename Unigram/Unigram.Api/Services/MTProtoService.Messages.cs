@@ -764,17 +764,8 @@ namespace Telegram.Api.Services
         {
             var obj = new TLMessagesSendMedia { Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, Media = inputMedia, RandomId = message.RandomId.Value };
 
-            // TODO: verify
-            //if (message.IsChannelMessage)
-            //{
-            //    obj.SetChannelMessage();
-            //}
-
-            var message48 = message as TLMessage;
-            if (message48 != null && message48.IsSilent)
-            {
-                obj.IsSilent = true;
-            }
+            obj.IsSilent = message.IsSilent;
+            obj.GroupedId = message.GroupedId;
 
             const string caption = "messages.sendMedia";
             SendMediaAsyncInternal(obj,
