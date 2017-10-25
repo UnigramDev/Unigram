@@ -72,11 +72,6 @@
                         </Grid>
                         <TextBlock Text="{x:Bind ViewModel.Item, Converter={StaticResource LastSeenConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
                     </Grid>
-                    <controls:HyperButton Content="Set group photo"
-                                          Click="EditPhoto_Click"
-                                          Visibility="{x:Bind (Visibility)ViewModel.IsEditEnabled, Mode=OneWay}"
-                                          Style="{StaticResource HyperButtonStyle}"
-                                          Grid.Row="1"/>
 
                     <local:TableStackPanel x:Name="Group0"
                                            BorderThickness="0,0,0,1"

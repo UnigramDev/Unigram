@@ -55,8 +55,9 @@ namespace Unigram.Views.Channels
                     CroppingProportions = ImageCroppingProportions.Square,
                     IsCropEnabled = false
                 };
-                var dialogResult = await dialog.ShowAsync();
-                if (dialogResult == ContentDialogBaseResult.OK)
+
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogBaseResult.OK)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }

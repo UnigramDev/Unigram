@@ -405,9 +405,9 @@ namespace Unigram.Controls
             await SetSourceAsync(file);
         }
 
-        public async Task<StorageFile> CropAsync()
+        public async Task<StorageFile> CropAsync(int min = 1280, int max = 0)
         {
-            var croppedFile = await ImageHelper.CropAsync(m_imageSource, CropRectangle);
+            var croppedFile = await ImageHelper.CropAsync(m_imageSource, CropRectangle, min, max);
 
             return croppedFile;
         }

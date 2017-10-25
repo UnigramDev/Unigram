@@ -191,7 +191,7 @@ namespace Unigram.Core.Helpers
             return result;
         }
 
-        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, Rect cropRectangle)
+        public static async Task<StorageFile> CropAsync(StorageFile sourceFile, Rect cropRectangle, int min = 1280, int max = 0)
         {
             var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
 
@@ -199,18 +199,20 @@ namespace Unigram.Core.Helpers
             using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
-                var cropWidth = decoder.PixelWidth;
-                var cropHeight = decoder.PixelHeight;
+                var cropWidth = (double)decoder.PixelWidth;
+                var cropHeight = (double)decoder.PixelHeight;
 
-                if (decoder.PixelHeight > 1280)
+                if (decoder.PixelWidth > 1280 || decoder.PixelHeight > 1280)
                 {
-                    float scalingFactor = (float)1280.0 / (float)decoder.PixelHeight;
+                    double ratioX = (double)1280 / cropWidth;
+                    double ratioY = (double)1280 / cropHeight;
+                    double ratio = Math.Min(ratioX, ratioY);
 
-                    cropWidth = (uint)Math.Floor(decoder.PixelWidth * scalingFactor);
-                    cropHeight = (uint)Math.Floor(decoder.PixelHeight * scalingFactor);
+                    cropWidth = cropWidth * ratio;
+                    cropHeight = cropHeight * ratio;
                 }
 
-                var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(cropWidth, cropHeight), new Size(decoder.PixelWidth, decoder.PixelHeight), 1280, 0);
+                var (scaledCrop, scaledSize) = Scale(cropRectangle, new Size(cropWidth, cropHeight), new Size(decoder.PixelWidth, decoder.PixelHeight), min, max);
 
                 var bounds = new BitmapBounds();
                 bounds.X = (uint)scaledCrop.X;
