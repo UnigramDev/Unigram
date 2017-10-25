@@ -1148,6 +1148,12 @@
                                                 MinWidth="120"/>
 
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                Command="{x:Bind ViewModel.ShareContactCommand}"
+                                                Visibility="{x:Bind (Visibility)ViewModel.IsShareContactAvailable, Mode=OneWay}"
+                                                Tag="&#xE8D4;"
+                                                Text="Share my contact"/>
+
+                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Command="{x:Bind ViewModel.PinChatCommand}"
                                                 Visibility="{x:Bind (Visibility)ViewModel.CanPinChat, Mode=OneWay}"
                                                 Tag="&#xE718;"
@@ -1157,10 +1163,6 @@
                                                 Visibility="{x:Bind (Visibility)ViewModel.CanUnpinChat, Mode=OneWay}"
                                                 Tag="&#xE77A;"
                                                 Text="Unpin from Start"/>
-
-                                <MenuFlyoutItem Text="Share my contact"
-                                                Command="{x:Bind ViewModel.ShareContactCommand}"
-                                                Visibility="{x:Bind (Visibility)ViewModel.IsShareContactAvailable, Mode=OneWay}"/>
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>
