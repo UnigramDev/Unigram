@@ -273,6 +273,7 @@
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
     <Compile Include="Converters\VenueToGlyphConverter.cs" />
+    <Compile Include="Helpers\TLFileHelper.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\StorageDocument.cs" />
     <Compile Include="Models\StorageMedia.cs" />
@@ -1760,6 +1761,10 @@
     <ProjectReference Include="..\Libraries\libtgvoip\libtgvoip.UWP.vcxproj">
       <Project>{88803693-7606-484b-9d2f-4bb789d57c29}</Project>
       <Name>libtgvoip</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telegram.Intro\Telegram.Intro.vcxproj">
+      <Project>{1cfa1bfa-98d3-4316-8e3b-ac3ea8b3510e}</Project>
+      <Name>Telegram.Intro</Name>
     </ProjectReference>
     <ProjectReference Include="..\Unigram.Api\Telegram.Api.csproj">
       <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>

@@ -16,9 +16,11 @@ using Unigram.Common;
 using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Core.Common;
+using Unigram.Helpers;
 using Unigram.ViewModels.Chats;
 using Unigram.ViewModels.Users;
 using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.System;
 
 namespace Unigram.ViewModels
@@ -31,6 +33,7 @@ namespace Unigram.ViewModels
             StickersCommand = new RelayCommand(StickersExecute);
             GotoCommand = new RelayCommand(GotoExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
+            SaveCommand = new RelayCommand(SaveExecute);
             OpenWithCommand = new RelayCommand(OpenWithExecute);
         }
 
@@ -136,7 +139,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return false;
+                return true;
             }
         }
 
@@ -199,34 +202,25 @@ namespace Unigram.ViewModels
         {
         }
 
+        public RelayCommand SaveCommand { get; }
+        protected virtual async void SaveExecute()
+        {
+            var value = GetTLObjectFromSelectedGalleryItem();
+
+            if (value is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
+            {
+                await TLFileHelper.SavePhotoAsync(photoSize, photo.Date);
+            }
+            else if (value is TLDocument document)
+            {
+                await TLFileHelper.SaveDocumentAsync(document, document.Date);
+            }
+        }
+
         public RelayCommand OpenWithCommand { get; }
         protected virtual async void OpenWithExecute()
         {
-            object value = null;
-
-            if (SelectedItem is GalleryMessageItem messageItem)
-            {
-                if (messageItem.Message.Media is TLMessageMediaPhoto photoMedia)
-                {
-                    value = photoMedia.Photo;
-                }
-                else if (messageItem.Message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
-                {
-                    value = document;
-                }
-            }
-            else if (SelectedItem is GalleryMessageServiceItem serviceItem && serviceItem.Message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction)
-            {
-                value = chatEditPhotoAction.Photo;
-            }
-            else if (SelectedItem is GalleryPhotoItem photoItem)
-            {
-                value = photoItem.Photo;
-            }
-            else if (SelectedItem is GalleryDocumentItem documentItem)
-            {
-                value = documentItem.Document;
-            }
+            var value = GetTLObjectFromSelectedGalleryItem();
 
             if (value is TLPhoto photo && photo.Full is TLPhotoSize photoSize)
             {
@@ -262,6 +256,39 @@ namespace Unigram.ViewModels
 
             // Open that file
             //await Windows.System.Launcher.LaunchFileAsync(*INSERT FILE HERE*);
+        }
+
+        private object GetTLObjectFromSelectedGalleryItem()
+        {
+            if (SelectedItem is GalleryMessageItem messageItem)
+            {
+                if (messageItem.Message.Media is TLMessageMediaPhoto photoMedia)
+                {
+                    return photoMedia.Photo;
+                }
+
+                if (messageItem.Message.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+                {
+                    return document;
+                }
+            }
+
+            if (SelectedItem is GalleryMessageServiceItem serviceItem && serviceItem.Message.Action is TLMessageActionChatEditPhoto chatEditPhotoAction)
+            {
+                return chatEditPhotoAction.Photo;
+            }
+
+            if (SelectedItem is GalleryPhotoItem photoItem)
+            {
+                return photoItem.Photo;
+            }
+
+            if (SelectedItem is GalleryDocumentItem documentItem)
+            {
+                return documentItem.Document;
+            }
+
+            return null;
         }
     }
 

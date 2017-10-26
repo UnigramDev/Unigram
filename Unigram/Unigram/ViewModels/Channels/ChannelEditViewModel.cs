@@ -5,22 +5,29 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
+using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Views.Channels;
+using Windows.Storage;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Channels
 {
     public class ChannelEditViewModel : ChannelDetailsViewModel
     {
+        private readonly IUploadFileManager _uploadFileManager;
+
         public ChannelEditViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager)
-            : base(protoService, cacheService, aggregator, uploadFileManager)
+            : base(protoService, cacheService, aggregator)
         {
+            _uploadFileManager = uploadFileManager;
+
             SendCommand = new RelayCommand(SendExecute);
+            EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
             EditTypeCommand = new RelayCommand(EditTypeExecute);
             EditStickerSetCommand = new RelayCommand(EditStickerSetExecute);
         }
@@ -202,6 +209,38 @@ namespace Unigram.ViewModels.Channels
             }
 
             NavigationService.GoBack();
+        }
+
+        public RelayCommand<StorageFile> EditPhotoCommand { get; }
+        private async void EditPhotoExecute(StorageFile file)
+        {
+            var fileLocation = new TLFileLocation
+            {
+                VolumeId = TLLong.Random(),
+                LocalId = TLInt.Random(),
+                Secret = TLLong.Random(),
+                DCId = 0
+            };
+
+            var fileName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+            var fileCache = await FileUtils.CreateTempFileAsync(fileName);
+
+            await file.CopyAndReplaceAsync(fileCache);
+            var fileScale = fileCache;
+
+            var basicProps = await fileScale.GetBasicPropertiesAsync();
+            var imageProps = await fileScale.Properties.GetImagePropertiesAsync();
+
+            var fileId = TLLong.Random();
+            var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name, false);
+            if (upload != null)
+            {
+                var response = await ProtoService.EditPhotoAsync(_item, new TLInputChatUploadedPhoto { File = upload.ToInputFile() });
+                if (response.IsSucceeded)
+                {
+
+                }
+            }
         }
 
         public RelayCommand EditTypeCommand { get; }

@@ -500,10 +500,7 @@ namespace Unigram.ViewModels
                     if (commonMessage.ToId is TLPeerChat)
                     {
                         chat = CacheService.GetChat(commonMessage.ToId.Id);
-                        dialog = CacheService.GetDialog(new TLPeerChat
-                        {
-                            Id = commonMessage.ToId.Id
-                        });
+                        dialog = CacheService.GetDialog(new TLPeerChat { Id = commonMessage.ToId.Id });
                     }
                     else if (commonMessage.ToId is TLPeerChannel)
                     {
@@ -570,7 +567,7 @@ namespace Unigram.ViewModels
                         }
 
                         var notifySettings = notifySettingsBase as TLPeerNotifySettings;
-                        suppress = (notifySettings == null || notifySettings.MuteUntil > now);
+                        suppress = (notifySettings == null || notifySettings.MuteUntil > now) && !commonMessage.IsMentioned;
                     }
 
                     if (user != null)

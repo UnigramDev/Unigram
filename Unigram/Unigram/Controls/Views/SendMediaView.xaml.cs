@@ -174,6 +174,11 @@ namespace Unigram.Controls.Views
 
             //TTLSeconds.ItemsSource = seconds;
 
+            CroppoBox.SelectionChanged += (s, args) =>
+            {
+                Cropper.Proportions = (ImageCroppingProportions)CroppoBox.SelectedItem;
+            };
+
             TTLSeconds.RegisterPropertyChangedCallback(GlyphButton.GlyphProperty, OnSecondsChanged);
 
             Loaded += OnLoaded;
@@ -424,7 +429,11 @@ namespace Unigram.Controls.Views
                     }
 
                     Cropper.SetSource(media.File, source, width, height);
+                    Cropper.Proportions = ImageCroppingProportions.Custom;
                     Cropper.CropRectangle = media.CropRectangle ?? Rect.Empty;
+
+                    CroppoBox.ItemsSource = ImageCropper.GetProportionsFor(width, height);
+                    CroppoBox.SelectedItem = Cropper.Proportions;
                 }
             }
         }
