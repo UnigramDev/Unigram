@@ -151,7 +151,7 @@ namespace Telegram.Api.TL
 		ChatEmpty = 0x9BA2D800,
 		Chat = 0xD91CDD54,
 		ChatForbidden = 0x7328BDB,
-		Channel = 0xCB44B1C,
+		Channel = 0x450B7115,
 		ChannelForbidden = 0x289DA732,
 		ChatFull = 0x2E02A614,
 		ChannelFull = 0x76AF5481,

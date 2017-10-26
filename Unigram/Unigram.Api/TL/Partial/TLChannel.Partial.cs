@@ -13,8 +13,6 @@ namespace Telegram.Api.TL
     {
         public Int32 AdminsCount { get; set; }
 
-        public Int32? ParticipantsCount { get; set; }
-
         public TLVector<int> ParticipantIds { get; set; }
 
         public Int32? ReadInboxMaxId { get; set; }

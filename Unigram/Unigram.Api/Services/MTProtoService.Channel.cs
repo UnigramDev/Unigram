@@ -249,7 +249,7 @@ namespace Telegram.Api.Services
                     channel.IsLeft = true;
                     if (channel.ParticipantsCount != null)
                     {
-                        channel.ParticipantsCount = new int?(channel.ParticipantsCount.Value - 1);
+                        channel.ParticipantsCount = channel.ParticipantsCount.Value - 1;
                     }
                     _cacheService.Commit();
 
