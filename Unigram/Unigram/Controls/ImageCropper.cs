@@ -26,13 +26,19 @@ namespace Unigram.Controls
     {
         Custom,
         Original,
-        Widescreen,
         Square,
-        ThreeOverTwo,
-        FourOverThree,
-        FourOverSix,
+        TwoOverThree,
+        ThreeOverFive,
+        ThreeOverFour,
+        FourOverFive,
         FiveOverSeven,
-        EightOverTen
+        NineOverSixteen,
+        ThreeOverTwo,
+        FiveOverThree,
+        FourOverThree,
+        FiveOverFour,
+        SevenOverFive,
+        SixteenOverNine,
     }
 
     public sealed class ImageCropperThumb : Control
@@ -381,23 +387,65 @@ namespace Unigram.Controls
             {
                 case ImageCroppingProportions.Original:
                     return m_imageSize.Width / m_imageSize.Height;
-                case ImageCroppingProportions.Widescreen:
-                    return 16.0 / 9.0;
                 case ImageCroppingProportions.Square:
                     return 1.0;
-                case ImageCroppingProportions.ThreeOverTwo:
-                    return 3.0 / 2.0;
-                case ImageCroppingProportions.FourOverThree:
-                    return 4.0 / 3.0;
-                case ImageCroppingProportions.FourOverSix:
-                    return 4.0 / 6.0;
+                // Portrait
+                case ImageCroppingProportions.TwoOverThree:
+                    return 2.0 / 3.0;
+                case ImageCroppingProportions.ThreeOverFive:
+                    return 3.0 / 5.0;
+                case ImageCroppingProportions.ThreeOverFour:
+                    return 3.0 / 4.0;
+                case ImageCroppingProportions.FourOverFive:
+                    return 4.0 / 5.0;
                 case ImageCroppingProportions.FiveOverSeven:
                     return 5.0 / 7.0;
-                case ImageCroppingProportions.EightOverTen:
-                    return 8.0 / 10.0;
+                case ImageCroppingProportions.NineOverSixteen:
+                    return 9.0 / 16.0;
+                // Landscape
+                case ImageCroppingProportions.ThreeOverTwo:
+                    return 3.0 / 2.0;
+                case ImageCroppingProportions.FiveOverThree:
+                    return 5.0 / 3.0;
+                case ImageCroppingProportions.FourOverThree:
+                    return 4.0 / 3.0;
+                case ImageCroppingProportions.FiveOverFour:
+                    return 5.0 / 4.0;
+                case ImageCroppingProportions.SevenOverFive:
+                    return 7.0 / 5.0;
+                case ImageCroppingProportions.SixteenOverNine:
+                    return 16.0 / 9.0;
                 default:
                     return defaultValue;
             }
+        }
+
+        public static IReadOnlyList<ImageCroppingProportions> GetProportionsFor(double width, double height)
+        {
+            var items = new List<ImageCroppingProportions>();
+            items.Add(ImageCroppingProportions.Original);
+            items.Add(ImageCroppingProportions.Square);
+
+            if (width > height)
+            {
+                items.Add(ImageCroppingProportions.ThreeOverTwo);
+                items.Add(ImageCroppingProportions.FiveOverThree);
+                items.Add(ImageCroppingProportions.FourOverThree);
+                items.Add(ImageCroppingProportions.FiveOverFour);
+                items.Add(ImageCroppingProportions.SevenOverFive);
+                items.Add(ImageCroppingProportions.SixteenOverNine);
+            }
+            else
+            {
+                items.Add(ImageCroppingProportions.TwoOverThree);
+                items.Add(ImageCroppingProportions.ThreeOverFive);
+                items.Add(ImageCroppingProportions.ThreeOverFour);
+                items.Add(ImageCroppingProportions.FourOverFive);
+                items.Add(ImageCroppingProportions.FiveOverSeven);
+                items.Add(ImageCroppingProportions.NineOverSixteen);
+            }
+
+            return items;
         }
 
         public async void SetSource(StorageFile file)

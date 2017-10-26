@@ -479,6 +479,8 @@
                         HorizontalAlignment="Center" 
                         Grid.Column="3"
                         Visibility="{x:Bind IsEditingCropping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <ComboBox x:Name="CroppoBox" Grid.ColumnSpan="4"/>
             </Grid>
 
             <controls:GlyphButton Click="Accept_Click"
