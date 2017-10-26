@@ -764,7 +764,7 @@ Duration: {1}</value>
   </data>
   <data name="IntroPage_Wizard1_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
     <value>The world's **fastest** messaging app.
-;It is **free** and **secure**.</value>
+It is **free** and **secure**.</value>
   </data>
   <data name="IntroPage_Wizard1_Title.Text" xml:space="preserve">
     <value>Telegram</value>
