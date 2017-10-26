@@ -386,7 +386,6 @@
 
                 <controls:CaptionTextBox
                     x:Name="CaptionInput"
-                    KeyDown="TextBox_KeyDown"
                     View="{x:Bind}"
                     Autocomplete="{x:Bind ListAutocomplete}"
                     DataContext="{x:Bind ViewModel}"

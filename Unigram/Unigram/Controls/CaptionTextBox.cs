@@ -75,33 +75,33 @@ namespace Unigram.Controls
                     return;
                 }
 
-                //// If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-                //if (ApplicationSettings.Current.IsSendByEnterEnabled)
-                //{
-                //    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                //    if (send)
-                //    {
-                //        AcceptsReturn = false;
-                //        await SendAsync();
-                //    }
-                //    else
-                //    {
-                //        AcceptsReturn = true;
-                //    }
-                //}
-                //else
-                //{
-                //    var send = key.HasFlag(CoreVirtualKeyStates.Down) && ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                //    if (send)
-                //    {
-                //        AcceptsReturn = false;
-                //        await SendAsync();
-                //    }
-                //    else
-                //    {
-                //        AcceptsReturn = true;
-                //    }
-                //}
+                // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
+                if (ApplicationSettings.Current.IsSendByEnterEnabled)
+                {
+                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    if (send)
+                    {
+                        AcceptsReturn = false;
+                        View?.Accept();
+                    }
+                    else
+                    {
+                        AcceptsReturn = true;
+                    }
+                }
+                else
+                {
+                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    if (send)
+                    {
+                        AcceptsReturn = false;
+                        View?.Accept();
+                    }
+                    else
+                    {
+                        AcceptsReturn = true;
+                    }
+                }
             }
         }
 
