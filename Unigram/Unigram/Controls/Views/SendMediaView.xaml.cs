@@ -233,6 +233,11 @@ namespace Unigram.Controls.Views
             KeyboardPlaceholder.Height = new GridLength(1, GridUnitType.Auto);
         }
 
+        public void Accept()
+        {
+            Accept_Click(null, null);
+        }
+
         private void Accept_Click(object sender, RoutedEventArgs e)
         {
             if (Items == null)
