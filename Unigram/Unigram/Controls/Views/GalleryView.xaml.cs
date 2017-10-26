@@ -229,12 +229,7 @@ namespace Unigram.Controls.Views
 
             if (ViewModel.SelectedItem == ViewModel.FirstItem)
             {
-                //Flip.Opacity = 0;
                 Surface.Visibility = Visibility.Visible;
-
-                //Layer.Visibility = Visibility.Collapsed;
-                //TopBar.Visibility = Visibility.Collapsed;
-                //BotBar.Visibility = Visibility.Collapsed;
 
                 var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
                 if (animation != null && _closing != null)
@@ -245,14 +240,8 @@ namespace Unigram.Controls.Views
                         animation.TryStart(element);
                     }
                 }
-
-                //DataContext = null;
-                //Bindings.StopTracking();
-
-                //Hide();
             }
-
-            //Flip.Opacity = 0;
+            
             Layer.Visibility = Visibility.Collapsed;
             TopBar.Visibility = Visibility.Collapsed;
             BotBar.Visibility = Visibility.Collapsed;
@@ -449,48 +438,6 @@ namespace Unigram.Controls.Views
         {
             DataContext = null;
             Bindings.StopTracking();
-        }
-
-        private void LayoutRoot_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Dispose();
-
-            if (ViewModel.SelectedItem == ViewModel.FirstItem)
-            {
-                //Flip.Opacity = 0;
-                Surface.Visibility = Visibility.Visible;
-
-                //Layer.Visibility = Visibility.Collapsed;
-                //TopBar.Visibility = Visibility.Collapsed;
-                //BotBar.Visibility = Visibility.Collapsed;
-
-                var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
-                if (animation != null && _closing != null)
-                {
-                    var element = _closing();
-                    if (element.ActualWidth > 0)
-                    {
-                        animation.TryStart(element);
-                    }
-                }
-
-                //DataContext = null;
-                //Bindings.StopTracking();
-
-                //Hide();
-            }
-
-            //Flip.Opacity = 0;
-            Layer.Visibility = Visibility.Collapsed;
-            TopBar.Visibility = Visibility.Collapsed;
-            BotBar.Visibility = Visibility.Collapsed;
-
-            DataContext = null;
-            Bindings.StopTracking();
-
-            Hide();
-
-            e.Handled = true;
         }
     }
 }

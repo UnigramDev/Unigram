@@ -42,7 +42,7 @@
         </Style>
     </Control.Resources>
 
-    <Grid x:Name="LayoutRoot" RequestedTheme="Dark" Tapped="LayoutRoot_Tapped">
+    <Grid x:Name="LayoutRoot" RequestedTheme="Dark">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
