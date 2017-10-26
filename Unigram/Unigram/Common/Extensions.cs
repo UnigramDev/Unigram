@@ -81,6 +81,12 @@ namespace Unigram.Common
             return val;
         }
 
+        public static int TryParseOrDefault(string value, int defaultValue)
+        {
+            int.TryParse(value, out defaultValue);
+            return defaultValue;
+        }
+
         public static Dictionary<string, string> ParseQueryString(this string query)
         {
             var first = query.Split('?');
