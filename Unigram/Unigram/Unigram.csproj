@@ -272,6 +272,7 @@
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
+    <Compile Include="Converters\UsernameToLinkConverter.cs" />
     <Compile Include="Converters\VenueToGlyphConverter.cs" />
     <Compile Include="Helpers\TLFileHelper.cs" />
     <Compile Include="Models\Country.cs" />

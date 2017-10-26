@@ -9,6 +9,7 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Strings;
 using Windows.UI.Xaml.Navigation;
 
@@ -163,32 +164,12 @@ namespace Unigram.ViewModels.Channels
                         }
                         else if (item.Action is TLChannelAdminLogEventActionChangeUsername changeUsername)
                         {
-                            var config = InMemoryCacheService.Current.GetConfig();
-                            if (config == null)
-                            {
-                                continue;
-                            }
-
-                            var linkPrefix = config.MeUrlPrefix;
-                            if (linkPrefix.EndsWith("/"))
-                            {
-                                linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
-                            }
-                            if (linkPrefix.StartsWith("https://"))
-                            {
-                                linkPrefix = linkPrefix.Substring(8);
-                            }
-                            else if (linkPrefix.StartsWith("http://"))
-                            {
-                                linkPrefix = linkPrefix.Substring(7);
-                            }
-
                             var message = new TLMessage();
                             //message.Id = item.Id;
                             message.FromId = item.UserId;
                             message.ToId = _channel.ToPeer();
                             message.Date = item.Date;
-                            message.Message = string.IsNullOrEmpty(changeUsername.NewValue) ? string.Empty : $"https://{linkPrefix}/{changeUsername.NewValue}";
+                            message.Message = string.IsNullOrEmpty(changeUsername.NewValue) ? string.Empty : UsernameToLinkConverter.Convert(changeUsername.NewValue);
                             message.Entities = new TLVector<TLMessageEntityBase>();
                             message.HasMedia = true;
                             message.HasEntities = true;
@@ -206,7 +187,7 @@ namespace Unigram.ViewModels.Channels
                                     WebPage = new TLWebPage
                                     {
                                         SiteName = AppResources.EventLogPreviousLink,
-                                        Description = $"https://{linkPrefix}/{changeUsername.PrevValue}",
+                                        Description = UsernameToLinkConverter.Convert(changeUsername.PrevValue),
                                         HasSiteName = true,
                                         HasDescription = true
                                     }
