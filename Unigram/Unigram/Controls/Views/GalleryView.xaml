@@ -174,7 +174,8 @@
                             <MenuFlyoutItem Command="{x:Bind ViewModel.DeleteCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
                                             Text="Delete"/>
-                            <MenuFlyoutItem Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.SaveCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanSave}"
                                             Text="Save file as..." />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.OpenWithCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanOpenWith}"

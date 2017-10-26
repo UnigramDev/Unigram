@@ -514,7 +514,8 @@ namespace Unigram.Views
                 flyout.Hide();
             }
 
-            ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
+            ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia>(ViewModel.MediaLibrary), e.Item);
+            //ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
         }
 
         private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
@@ -545,12 +546,17 @@ namespace Unigram.Views
 
                 foreach (var file in items.OfType<StorageFile>())
                 {
+                    if (await file.SkipAsync())
+                    {
+                        continue;
+                    }
+
                     if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
                     {
-                        media.Add(new StoragePhoto(file) { IsSelected = true });
+                        media.Add(await StoragePhoto.CreateAsync(file, true));
                     }
                     else if (file.ContentType == "video/mp4")
                     {
@@ -561,7 +567,7 @@ namespace Unigram.Views
                 }
 
                 // Send compressed __only__ if user is dropping photos and videos only
-                if (media.Count == files.Count)
+                if (media.Count > 0 && media.Count == files.Count)
                 {
                     ViewModel.SendMediaExecute(media, media[0]);
                 }
@@ -572,6 +578,22 @@ namespace Unigram.Views
                         ViewModel.SendFileCommand.Execute(file);
                     }
                 }
+            }
+            else if (package.Contains(StandardDataFormats.Bitmap))
+            {
+                var bitmap = await package.GetBitmapAsync();
+                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                using (var stream = await bitmap.OpenReadAsync())
+                using (var reader = new DataReader(stream))
+                {
+                    await reader.LoadAsync((uint)stream.Size);
+                    var buffer = new byte[(int)stream.Size];
+                    reader.ReadBytes(buffer);
+                    await FileIO.WriteBytesAsync(cache, buffer);
+                }
+
+                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { await StoragePhoto.CreateAsync(cache, true) });
             }
             //else if (e.DataView.Contains(StandardDataFormats.WebLink))
             //{
@@ -725,6 +747,11 @@ namespace Unigram.Views
 
             if (menu.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
                 menu.ShowAt(sender, point);
             }
         }

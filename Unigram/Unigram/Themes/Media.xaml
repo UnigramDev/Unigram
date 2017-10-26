@@ -166,12 +166,32 @@
                                 MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                 MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}">
+                <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" Padding="8,4,8,4" Margin="4">
+                    <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                </Border>
+            </controls:TransferButton>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
 
-            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
-                <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-            </Border>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="MediaGifTemplate">
+        <Grid x:Name="MediaControl"
+              Background="Black"
+              MinWidth="{ThemeResource TelegramMediaMinWidth}"
+              MinHeight="{ThemeResource TelegramMediaMinHeight}">
+            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                Constraint="{Binding Media.Document}"
+                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
+                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
+
+            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}">
+                <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" Padding="8,4,8,4" Margin="4">
+                    <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White"/>
+                </Border>
+            </controls:TransferButton>
+            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
         </Grid>
     </DataTemplate>
 
@@ -199,37 +219,6 @@
                             MaxWidth="{ThemeResource TelegramLightMediaMaxWidth}"
                             MaxHeight="{ThemeResource TelegramLightMediaMaxHeight}"/>
     </DataTemplate>
-
-    <!--<DataTemplate x:Key="MediaGifTemplate">
-         <Grid Background="Black"
-         MinWidth="{ThemeResource TelegramMediaMinWidth}"
-         MinHeight="{ThemeResource TelegramMediaMinHeight}">
-         <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
-         Constraint="{Binding Media.Document}"
-         MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-         MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
-         </Grid>
-         </DataTemplate>-->
-
-    <DataTemplate x:Key="MediaGifTemplate">
-        <Grid x:Name="MediaControl"
-              Background="Black"
-              MinWidth="{ThemeResource TelegramMediaMinWidth}"
-              MinHeight="{ThemeResource TelegramMediaMinHeight}">
-            <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
-                                Constraint="{Binding Media.Document}"
-                                MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
-                                MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
-
-            <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
-            <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-
-            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4">
-                <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White"/>
-            </Border>
-        </Grid>
-    </DataTemplate>
-
 
     <DataTemplate x:Key="MediaContactTemplate">
         <Grid MinWidth="220">

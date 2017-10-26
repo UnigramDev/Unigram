@@ -48,29 +48,6 @@ namespace Unigram.Views.Channels
             }
         }
 
-        private async void EditPhoto_Click(object sender, RoutedEventArgs e)
-        {
-            var picker = new FileOpenPicker();
-            picker.ViewMode = PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
-
-            var file = await picker.PickSingleFileAsync();
-            if (file != null)
-            {
-                var dialog = new EditYourPhotoView(file)
-                {
-                    CroppingProportions = ImageCroppingProportions.Square,
-                    IsCropEnabled = false
-                };
-                var dialogResult = await dialog.ShowAsync();
-                if (dialogResult == ContentDialogBaseResult.OK)
-                {
-                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
-                }
-            }
-        }
-
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is TLChannelParticipantBase participant && participant.User != null)
@@ -108,6 +85,11 @@ namespace Unigram.Views.Channels
 
             if (menu.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
                 menu.ShowAt(sender, point);
             }
         }

@@ -80,7 +80,7 @@ namespace Unigram.Controls
                 else
                 {
                     await file.CopyAsync(KnownFolders.CameraRoll, DateTime.Now.ToString("WIN_yyyyMMdd_HH_mm_ss") + ".jpg", NameCollisionOption.GenerateUniqueName);
-                    ItemClick?.Invoke(this, new MediaSelectedEventArgs(new StoragePhoto(file) { IsSelected = true }));
+                    ItemClick?.Invoke(this, new MediaSelectedEventArgs(await StoragePhoto.CreateAsync(file, true)));
                 }
             }
         }

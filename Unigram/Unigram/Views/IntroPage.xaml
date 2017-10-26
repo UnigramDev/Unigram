@@ -9,171 +9,348 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style x:Key="IndicatorListViewItemStyle" TargetType="ListViewItem">
-            <Setter Property="Width" Value="20"/>
-            <Setter Property="Height" Value="20"/>
-            <Setter Property="MinWidth" Value="0"/>
-            <Setter Property="MinHeight" Value="0"/>
+        <SolidColorBrush x:Key="StartButtonBackground" Color="#2ca5e0" />
+        <SolidColorBrush x:Key="StartButtonBackgroundPointerOver" Color="#2ca5e0" />
+        <SolidColorBrush x:Key="StartButtonBackgroundPressed" Color="#227eab" />
+        <StaticResource x:Key="StartButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+        <StaticResource x:Key="StartButtonForeground" ResourceKey="SystemControlBackgroundChromeWhiteBrush" />
+        <StaticResource x:Key="StartButtonForegroundPointerOver" ResourceKey="SystemControlBackgroundChromeWhiteBrush" />
+        <StaticResource x:Key="StartButtonForegroundPressed" ResourceKey="SystemControlBackgroundChromeWhiteBrush" />
+        <StaticResource x:Key="StartButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+        <StaticResource x:Key="StartButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
+        <StaticResource x:Key="StartButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
+        <StaticResource x:Key="StartButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+        <StaticResource x:Key="StartButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledTransparentBrush" />
+
+        <Style x:Key="StartButtonStyle" TargetType="Button">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="Margin" Value="24"/>
+            <Setter Property="Padding" Value="12,3,12,5" />
+            <Setter Property="Foreground" Value="{ThemeResource StartButtonForeground}"/>
+            <Setter Property="Background" Value="{ThemeResource StartButtonBackground}"/>
+            <Setter Property="BorderBrush" Value="{ThemeResource StartButtonBorderBrush}" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
-                        <Grid Background="{TemplateBinding Background}">
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="RootGrid" Background="{TemplateBinding Background}" CornerRadius="16">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="PointerOver"/>
-                                    <VisualState x:Name="Selected">
+                                    <VisualState x:Name="Normal">
                                         <Storyboard>
-                                            <ColorAnimation Storyboard.TargetName="fillColor" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)" BeginTime="00:00:00" Duration="0" To="#3c3c3a"/>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
                                         </Storyboard>
                                     </VisualState>
-                                    <VisualState x:Name="PointerOverSelected">
+                                    <VisualState x:Name="PointerOver">
                                         <Storyboard>
-                                            <ColorAnimation Storyboard.TargetName="fillColor" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)" BeginTime="00:00:00" Duration="0" To="#3c3c3a"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonBorderBrushPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonForegroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="RootGrid" />
                                         </Storyboard>
                                     </VisualState>
-                                    <VisualState x:Name="PressedSelected">
+                                    <VisualState x:Name="Pressed">
                                         <Storyboard>
-                                            <ColorAnimation Storyboard.TargetName="fillColor" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)" BeginTime="00:00:00" Duration="0" To="#3c3c3a"/>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonBackgroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonBorderBrushPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonForegroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerDownThemeAnimation Storyboard.TargetName="RootGrid" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonBackgroundDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonBorderBrushDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource StartButtonForegroundDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <Ellipse x:Name="fillColor" IsHitTestVisible="False" Width="8" Height="8" Fill="#bfbfbf" Margin="4,0"/>
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              CornerRadius="16"
+                                              BorderBrush="{TemplateBinding BorderBrush}"
+                                              BorderThickness="{TemplateBinding BorderThickness}"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              Padding="{TemplateBinding Padding}"
+                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              AutomationProperties.AccessibilityView="Raw" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
-        <Style x:Key="IndicatorListViewStyle" TargetType="ListView">
-            <Setter Property="IsTabStop" Value="False"/>
-            <Setter Property="TabNavigation" Value="Once"/>
-            <Setter Property="IsSwipeEnabled" Value="True"/>
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
-            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
-            <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False"/>
-            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled"/>
-            <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="True"/>
-            <Setter Property="ScrollViewer.ZoomMode" Value="Disabled"/>
-            <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
-            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True"/>
-            <Setter Property="Height" Value="40"/>
-            <Setter Property="ItemContainerTransitions">
-                <Setter.Value>
-                    <TransitionCollection>
-                        <AddDeleteThemeTransition/>
-                        <ContentThemeTransition/>
-                        <ReorderThemeTransition/>
-                        <EntranceThemeTransition IsStaggeringEnabled="False"/>
-                    </TransitionCollection>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="ItemsPanel">
-                <Setter.Value>
-                    <ItemsPanelTemplate>
-                        <ItemsStackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
-                    </ItemsPanelTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListView">
-                        <ItemsPresenter FooterTransitions="{TemplateBinding FooterTransitions}" FooterTemplate="{TemplateBinding FooterTemplate}" Footer="{TemplateBinding Footer}" HeaderTemplate="{TemplateBinding HeaderTemplate}" Header="{TemplateBinding Header}" HeaderTransitions="{TemplateBinding HeaderTransitions}" Padding="{TemplateBinding Padding}"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <ControlTemplate x:Key="HorizontalNextTemplate" TargetType="Button">
+            <Border x:Name="Root"
+                    Background="{ThemeResource FlipViewNextPreviousButtonBackground}"
+                    BorderThickness="{ThemeResource FlipViewButtonBorderThemeThickness}"
+                    BorderBrush="{ThemeResource FlipViewNextPreviousButtonBorderBrush}">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="PointerOver">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBackgroundPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="BorderBrush">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBorderBrushPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Arrow" Storyboard.TargetProperty="Foreground">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousArrowForegroundPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Pressed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBackgroundPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="BorderBrush">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBorderBrushPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Arrow" Storyboard.TargetProperty="Foreground">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousArrowForegroundPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <FontIcon x:Name="Arrow"
+                          FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                          FontSize="12"
+                          Foreground="{ThemeResource FlipViewNextPreviousArrowForeground}"
+                          Glyph="&#xE0E3;"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          MirroredWhenRightToLeft="True"
+                          UseLayoutRounding="False" />
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="HorizontalPreviousTemplate" TargetType="Button">
+            <Border x:Name="Root"
+                    Background="{ThemeResource FlipViewNextPreviousButtonBackground}"
+                    BorderThickness="{ThemeResource FlipViewButtonBorderThemeThickness}"
+                    BorderBrush="{ThemeResource FlipViewNextPreviousButtonBorderBrush}">
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="PointerOver">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBackgroundPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="BorderBrush">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBorderBrushPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Arrow" Storyboard.TargetProperty="Foreground">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousArrowForegroundPointerOver}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Pressed">
+                            <Storyboard>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBackgroundPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="BorderBrush">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousButtonBorderBrushPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Arrow" Storyboard.TargetProperty="Foreground">
+                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource FlipViewNextPreviousArrowForegroundPressed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                            </Storyboard>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <FontIcon x:Name="Arrow"
+                          FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                          FontSize="12"
+                          Foreground="{ThemeResource FlipViewNextPreviousArrowForeground}"
+                          Glyph="&#xE0E2;"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          MirroredWhenRightToLeft="True"
+                          UseLayoutRounding="False" />
+            </Border>
+        </ControlTemplate>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition />
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <!-- Header -->
-        <Border Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
-                Height="{ThemeResource AppBarThemeCompactHeight}"/>
-
-        <Border Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Grid.Row="1">
-            <!-- Black panel needed for the SwapChainPanel -->
-            <Border Width="200" Height="200" Background="Transparent">
-                <!-- Logo placeholder -->
-                <Grid Background="Transparent">
-                    <!--<Ellipse Height="148"
-                             Width="148"
-                             Fill="{ThemeResource SystemControlBackgroundAccentBrush}"
-                             HorizontalAlignment="Center"/>
-                    <Image Source="ms-appx:///Assets/Logos/Square150x150Logo/Square150x150Logo.png"
-                           Height="148"
-                           Width="148"
-                           Margin="0,12,0,0"/>-->
-
-                    <Border Background="{ThemeResource TelegramBackgroundAccentBrush}" CornerRadius="74" Height="148" Width="148" Margin="12" Grid.RowSpan="2">
-                        <Path Width="64" Height="64" Data="F1M66.638,48.407C70.789,44.254 70.793,37.518 66.638,33.363 62.488,29.212 55.747,29.212 51.592,33.363 47.442,37.518 47.442,44.257 51.592,48.407 55.751,52.563 62.484,52.555 66.638,48.407 M56.583,88.165C52.721,91.776 48.724,95.216 44.815,98.746 42.843,100.56 42.487,100.478 41.666,97.996 40.425,94.271 39.192,90.583 37.992,86.867 38.539,85.492 38.938,84.018 39.136,82.436 39.701,77.803 38.765,73.562 36.423,69.971L35.395,68.545C34.949,67.989,34.466,67.45,33.951,66.933L33.501,66.503 33.509,66.494 33.061,66.041C32.55,65.537,32.007,65.054,31.428,64.606L30.02,63.585C26.434,61.214 22.178,60.283 17.567,60.86 15.97,61.054 14.53,61.469 13.151,62.011 9.406,60.826 5.727,59.58 1.979,58.331 -0.486,57.529 -0.55,57.149 1.246,55.158 4.794,51.288 8.222,47.286 11.836,43.416 12.606,42.582 13.759,41.877 14.851,41.556 19.394,40.343 24.004,39.447 28.516,38.134 29.732,37.815 31.042,37.013 31.88,36.054 43.655,22.29 57.578,11.375 74.449,4.492 81.874,1.484 89.623,-0.309 97.654,0.044 98.58,0.076 99.222,0.139 99.765,0.234 99.86,0.764 99.916,1.443 99.959,2.328 100.295,10.395 98.529,18.136 95.502,25.54 88.611,42.423 77.698,56.361 63.932,68.14 62.962,68.964 62.191,70.248 61.841,71.476 60.57,75.993 59.657,80.635 58.432,85.143 58.126,86.242 57.423,87.393 56.583,88.165 M26.003,91.983C17.911,94.315,9.77,96.314,1.568,98.427L1.535,98.461C1.537,98.453 1.537,98.448 1.542,98.435 1.529,98.435 1.525,98.435 1.514,98.439L1.548,98.409C3.658,90.208 5.66,82.061 7.992,73.968 9.382,69.071 13.009,65.989 18.112,65.356 23.038,64.757 27.159,66.317 30.275,69.678 30.279,69.683 30.283,69.683 30.287,69.687 30.29,69.691 30.294,69.691 30.296,69.7 33.654,72.812 35.218,76.937 34.621,81.863 33.986,86.967 30.9,90.591 26.003,91.983" Fill="#FFFFFFFF" StrokeThickness="0" Stretch="UniformToFill"/>
-                    </Border>
-                </Grid>
+        <StackPanel VerticalAlignment="Center">
+            <Border Width="200" Height="200" Background="Black">
+                <SwapChainPanel x:Name="SwapChain" Loaded="SwapChain_Loaded" Width="200" Height="200"/>
             </Border>
-        </Border>
+            <StackPanel Opacity="0">
+                <TextBlock Padding="12,0,12,12"
+                           Text="Telegram"
+                           FontWeight="SemiBold"
+                           TextAlignment="Center"
+                           Style="{ThemeResource TitleTextBlockStyle}"/>
+                <TextBlock Padding="12,0,12,24"
+                           common:TextBlockHelper.Markdown="The world's **fastest** messaging app.&#x0a;It is **free** and **secure**."
+                           TextAlignment="Center"
+                           Style="{ThemeResource BodyTextBlockStyle}"
+                           MaxWidth="360"/>
+            </StackPanel>
+            <ListView x:Name="Carousel"
+                      Style="{StaticResource IndicatorListViewStyle}"
+                      ItemContainerStyle="{StaticResource IndicatorListViewItemStyle}"
+                      IsFocusEngagementEnabled="False"
+                      IsHitTestVisible="False"
+                      IsTabStop="False"
+                      SelectedIndex="0"
+                      Grid.Row="4">
+                <ListViewItem/>
+                <ListViewItem/>
+                <ListViewItem/>
+                <ListViewItem/>
+                <ListViewItem/>
+                <ListViewItem/>
+            </ListView>
+        </StackPanel>
 
-        <FlipView ItemsSource="{Binding Items}"
-                  SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                  Grid.Row="2">
-            <FlipView.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Margin="0,26">
-                        <TextBlock Padding="12,0,12,12"
-                                   Text="{Binding Title}"
-                                   FontWeight="SemiBold"
-                                   TextAlignment="Center"
-                                   Style="{ThemeResource TitleTextBlockStyle}"/>
-                        <TextBlock Padding="12,0"
-                                   common:TextBlockHelper.Markdown="{Binding Text}"
-                                   TextAlignment="Center"
-                                   Style="{ThemeResource BodyTextBlockStyle}"
-                                   MaxWidth="360"/>
-                    </StackPanel>
-                </DataTemplate>
-            </FlipView.ItemTemplate>
-        </FlipView>
+        <Grid x:Name="LayoutRoot" Background="Transparent" HorizontalAlignment="Left">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Border VerticalAlignment="Center">
+                <StackPanel>
+                    <TextBlock x:Uid="IntroPage_Wizard1_Title"
+                               Text="Telegram"
+                               FontWeight="SemiBold"
+                               TextAlignment="Center"
+                               Padding="12,200,12,12"
+                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                    <TextBlock x:Uid="IntroPage_Wizard1_Text"
+                               common:TextBlockHelper.Markdown="The world's **fastest** messaging app.&#x0a;It is **free** and **secure**."
+                               TextAlignment="Center"
+                               Padding="12,0,12,64"
+                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                </StackPanel>
+            </Border>
+            <Border VerticalAlignment="Center" Grid.Column="1">
+                <StackPanel>
+                    <TextBlock x:Uid="IntroPage_Wizard2_Title"
+                               Text="Fast"
+                               FontWeight="SemiBold"
+                               TextAlignment="Center"
+                               Padding="12,200,12,12"
+                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                    <TextBlock x:Uid="IntroPage_Wizard2_Text"
+                               common:TextBlockHelper.Markdown="**Telegram** delivers messages faster&#x0a;than any other application."
+                               TextAlignment="Center"
+                               Padding="12,0,12,64"
+                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                </StackPanel>
+            </Border>
+            <Border VerticalAlignment="Center" Grid.Column="2">
+                <StackPanel>
+                    <TextBlock x:Uid="IntroPage_Wizard3_Title"
+                               Text="Free"
+                               FontWeight="SemiBold"
+                               TextAlignment="Center"
+                               Padding="12,200,12,12"
+                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                    <TextBlock x:Uid="IntroPage_Wizard3_Text"
+                               common:TextBlockHelper.Markdown="**Telegram** is free forever. No ads.&#x0a;No subscription fees."
+                               TextAlignment="Center"
+                               Padding="12,0,12,64"
+                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                </StackPanel>
+            </Border>
+            <Border VerticalAlignment="Center" Grid.Column="3">
+                <StackPanel>
+                    <TextBlock x:Uid="IntroPage_Wizard4_Title"
+                               Text="Powerful"
+                               FontWeight="SemiBold"
+                               TextAlignment="Center"
+                               Padding="12,200,12,12"
+                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                    <TextBlock x:Uid="IntroPage_Wizard4_Text"
+                               common:TextBlockHelper.Markdown="**Telegram** has no limits on&#x0a;the size of your media and chats."
+                               TextAlignment="Center"
+                               Padding="12,0,12,64"
+                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                </StackPanel>
+            </Border>
+            <Border VerticalAlignment="Center" Grid.Column="4">
+                <StackPanel>
+                    <TextBlock x:Uid="IntroPage_Wizard5_Title"
+                               Text="Secure"
+                               FontWeight="SemiBold"
+                               TextAlignment="Center"
+                               Padding="12,200,12,12"
+                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                    <TextBlock x:Uid="IntroPage_Wizard5_Text"
+                               common:TextBlockHelper.Markdown="**Telegram** keeps your messages&#x0a;safe from hacker attacks."
+                               TextAlignment="Center"
+                               Padding="12,0,12,64"
+                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                </StackPanel>
+            </Border>
+            <Border VerticalAlignment="Center" Grid.Column="5">
+                <StackPanel>
+                    <TextBlock x:Uid="IntroPage_Wizard6_Title"
+                               Text="Cloud-Based"
+                               FontWeight="SemiBold"
+                               TextAlignment="Center"
+                               Padding="12,200,12,12"
+                               Style="{ThemeResource TitleTextBlockStyle}"/>
+                    <TextBlock x:Uid="IntroPage_Wizard6_Text"
+                               common:TextBlockHelper.Markdown="**Telegram** lets you access your&#x0a;messages from multiple devices."
+                               TextAlignment="Center"
+                               Padding="12,0,12,64"
+                               Style="{ThemeResource BodyTextBlockStyle}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
 
-        <Button x:Uid="IntroWizard_ContinueButton" Content=""
-                Command="{Binding ContinueCommand}"
-                HorizontalAlignment="Stretch"
-                Grid.Row="3"/>
+        <Button x:Name="BackButton"
+                Click="Back_Click"
+                Template="{StaticResource HorizontalPreviousTemplate}"
+                Width="20"
+                Height="36"
+                IsTabStop="False"
+                UseSystemFocusVisuals="False"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center" />
+        <Button x:Name="NextButton"
+                Click="Next_Click"
+                Template="{StaticResource HorizontalNextTemplate}"
+                Width="20"
+                Height="36"
+                IsTabStop="False"
+                UseSystemFocusVisuals="False"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center" />
 
-        <ListView ItemsSource="{Binding Items}"
-                  ItemContainerStyle="{StaticResource IndicatorListViewItemStyle}"
-                  SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-                  Style="{StaticResource IndicatorListViewStyle}"
-                  Grid.Row="4"/>
-
-        <!--<VisualStateManager.VisualStateGroups>
-             <VisualStateGroup x:Name="DisplayModeStates">
-             <VisualState x:Name="Wide">
-             <VisualState.StateTriggers>
-             <AdaptiveTrigger MinWindowWidth="600" />
-             </VisualState.StateTriggers>
-             <VisualState.Setters>
-             <Setter Target="rpMain.HorizontalAlignment" Value="Stretch" />
-             <Setter Target="rpScrollContent.HorizontalAlignment" Value="Center"/>
-             <Setter Target="rpScrollContent.Width" Value="400"/>
-             <Setter Target="rpScrollContent.VerticalAlignment" Value="Center"/>
-             </VisualState.Setters>
-             </VisualState>
-             <VisualState x:Name="Compact">
-             <VisualState.StateTriggers>
-             <AdaptiveTrigger MinWindowWidth="0" />
-             </VisualState.StateTriggers>
-             <VisualState.Setters>
-             <Setter Target="rpMain.HorizontalAlignment" Value="Stretch" />
-             </VisualState.Setters>
-             </VisualState>
-             </VisualStateGroup>
-             </VisualStateManager.VisualStateGroups>-->
+        <Button Click="Start_Click" Content="Start Messaging" Style="{StaticResource StartButtonStyle}"/>
     </Grid>
 </Page>

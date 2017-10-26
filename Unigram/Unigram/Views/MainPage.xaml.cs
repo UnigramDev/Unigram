@@ -596,6 +596,7 @@ namespace Unigram.Views
         {
             if (ViewModel.Contacts.Self != null)
             {
+                Navigation.IsPaneOpen = false;
                 MasterDetail.NavigationService.NavigateToDialog(ViewModel.Contacts.Self);
             }
         }
@@ -679,6 +680,11 @@ namespace Unigram.Views
 
             if (menu.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
                 menu.ShowAt(sender, point);
             }
         }

@@ -308,7 +308,13 @@ namespace Unigram.Controls.Views
 
             if (item.IsVideo)
             {
-                switch (_mediaPlayer?.MediaPlayer?.PlaybackSession.PlaybackState)
+                if (_mediaPlayer.MediaPlayer?.Source == null)
+                {
+                    Play(item);
+                    return;
+                }
+
+                switch (_mediaPlayer.MediaPlayer?.PlaybackSession.PlaybackState)
                 {
                     case MediaPlaybackState.Playing:
                         {
@@ -443,11 +449,6 @@ namespace Unigram.Controls.Views
         {
             DataContext = null;
             Bindings.StopTracking();
-        }
-
-        private void Download_Click(object sender, object e)
-        {
-
         }
 
         private void LayoutRoot_Tapped(object sender, TappedRoutedEventArgs e)

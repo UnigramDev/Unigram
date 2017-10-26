@@ -12,7 +12,7 @@ namespace Telegram.Api.TL
 {
     public partial class TLDocument
     {
-        public async void DownloadAsync(IDownloadManager manager)
+        public async void DownloadAsync(IDownloadManager manager, Action<TLDocument> completed)
         {
             var fileName = this.GetFileName();
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
@@ -33,6 +33,7 @@ namespace Telegram.Api.TL
                 if (download != null)
                 {
                     IsTransferring = false;
+                    completed(this);
                 }
             }
         }

@@ -42,11 +42,9 @@ namespace Unigram.Controls.Media
                 {
                     Loading?.Invoke(s, null);
 
-                    var mediaDocument = ViewModel.Media as TLMessageMediaDocument;
-                    if (mediaDocument != null)
+                    if (ViewModel.Media is TLMessageMediaDocument mediaDocument)
                     {
-                        var document = mediaDocument.Document as TLDocument;
-                        if (document != null)
+                        if (mediaDocument.Document is TLDocument document)
                         {
                             UpdateGlyph();
 
@@ -72,11 +70,9 @@ namespace Unigram.Controls.Media
 
         private void UpdateGlyph()
         {
-            var documentMedia = ViewModel?.Media as TLMessageMediaDocument;
-            if (documentMedia != null)
+            if (ViewModel?.Media is TLMessageMediaDocument documentMedia)
             {
-                var document = documentMedia.Document as TLDocument;
-                if (document != null)
+                if (documentMedia.Document is TLDocument document)
                 {
                     var fileName = Path.GetFileNameWithoutExtension(document.GetFileName()) + ".ogg";
                     if (File.Exists(FileUtils.GetTempFileName(fileName)))
@@ -196,21 +192,25 @@ namespace Unigram.Controls.Media
         private AudioFileInputNode _fileInputNode;
 
         private static DisplayRequest _displayRequest = new DisplayRequest();
-        private static VoiceMediaControl _currentPlaying;
 
         private async void Toggle_Click(object sender, RoutedEventArgs e)
         {
             if (_state == PlaybackState.Paused)
             {
-                if (_currentPlaying != null && _currentPlaying._state == PlaybackState.Playing)
+                if (_fileInputNode != null && _fileInputNode.Position.TotalMilliseconds > 0)
                 {
-                    _currentPlaying.Toggle_Click(null, null);
-                }
+                    _fileInputNode.Seek(_fileInputNode.Position);
 
-                if (ViewModel is TLMessage message && message.Media is TLMessageMediaDocument documentMedia)
+                    _graph.Start();
+                    _timer.Start();
+                    _state = PlaybackState.Playing;
+                    UpdateGlyph();
+
+                    _displayRequest.RequestActive();
+                }
+                else if (ViewModel is TLMessage message && message.Media is TLMessageMediaDocument documentMedia)
                 {
-                    var document = documentMedia.Document as TLDocument;
-                    if (document != null)
+                    if (documentMedia.Document is TLDocument document)
                     {
                         var fileName = document.GetFileName();
                         if (File.Exists(FileUtils.GetTempFileName(fileName)) == false)
@@ -275,7 +275,6 @@ namespace Unigram.Controls.Media
                         UpdateGlyph();
 
                         _displayRequest.RequestActive();
-                        _currentPlaying = this;
 
                         Slide.Maximum = _fileInputNode.Duration.TotalMilliseconds;
                         Slide.Value = 0;

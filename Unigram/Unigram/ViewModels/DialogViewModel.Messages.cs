@@ -16,6 +16,7 @@ using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
 using Unigram.Converters;
+using Unigram.Helpers;
 using Unigram.Native;
 using Unigram.Services;
 using Unigram.Views;
@@ -546,18 +547,25 @@ namespace Unigram.ViewModels
         private async void MessageCopyMediaExecute(TLMessage message)
         {
             var photo = message.GetPhoto();
-            if (photo?.Full is TLPhotoSize photoSize)
+            var photoSize = photo?.Full as TLPhotoSize;
+            if (photoSize == null)
             {
-                var location = photoSize.Location;
-                var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
-                if (File.Exists(FileUtils.GetTempFileName(fileName)))
-                {
-                    var result = await FileUtils.GetTempFileAsync(fileName);
+                return;
+            }
 
+            var location = photoSize.Location;
+            var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            {
+                var result = await FileUtils.GetTempFileAsync(fileName);
+
+                try
+                {
                     var dataPackage = new DataPackage();
                     dataPackage.SetStorageItems(new[] { result });
                     ClipboardEx.TrySetContent(dataPackage);
                 }
+                catch { }
             }
         }
 
@@ -1294,60 +1302,13 @@ namespace Unigram.ViewModels
             var photo = message.GetPhoto();
             if (photo?.Full is TLPhotoSize photoSize)
             {
-                await SavePhotoAsync(photoSize, message.Date);
+                await TLFileHelper.SavePhotoAsync(photoSize, message.Date);
             }
 
             var document = message.GetDocument();
             if (document != null)
             {
-                await SaveDocumentAsync(document, message.Date);
-            }
-        }
-
-        private async Task SavePhotoAsync(TLPhotoSize photoSize, int date)
-        {
-            var location = photoSize.Location;
-            var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
-            if (File.Exists(FileUtils.GetTempFileName(fileName)))
-            {
-                var picker = new FileSavePicker();
-                picker.FileTypeChoices.Add("JPEG Image", new[] { ".jpg" });
-                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                picker.SuggestedFileName = BindConvert.Current.DateTime(date).ToString("photo_yyyyMMdd_HH_mm_ss") + ".jpg";
-
-                var file = await picker.PickSaveFileAsync();
-                if (file != null)
-                {
-                    var result = await FileUtils.GetTempFileAsync(fileName);
-                    await result.CopyAndReplaceAsync(file);
-                }
-            }
-        }
-
-        private async Task SaveDocumentAsync(TLDocument document, int date)
-        {
-            var fileName = document.GetFileName();
-            if (File.Exists(FileUtils.GetTempFileName(fileName)))
-            {
-                var extension = document.GetFileExtension();
-
-                var picker = new FileSavePicker();
-                picker.FileTypeChoices.Add($"{extension.TrimStart('.').ToUpper()} File", new[] { document.GetFileExtension() });
-                picker.SuggestedStartLocation = PickerLocationId.Downloads;
-                picker.SuggestedFileName = BindConvert.Current.DateTime(date).ToString("photo_yyyyMMdd_HH_mm_ss") + extension;
-
-                var fileNameAttribute = document.Attributes.OfType<TLDocumentAttributeFilename>().FirstOrDefault();
-                if (fileNameAttribute != null)
-                {
-                    picker.SuggestedFileName = fileNameAttribute.FileName;
-                }
-
-                var file = await picker.PickSaveFileAsync();
-                if (file != null)
-                {
-                    var result = await FileUtils.GetTempFileAsync(fileName);
-                    await result.CopyAndReplaceAsync(file);
-                }
+                await TLFileHelper.SaveDocumentAsync(document, message.Date);
             }
         }
 

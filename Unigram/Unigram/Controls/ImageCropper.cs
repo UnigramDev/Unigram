@@ -26,13 +26,19 @@ namespace Unigram.Controls
     {
         Custom,
         Original,
-        Widescreen,
         Square,
-        ThreeOverTwo,
-        FourOverThree,
-        FourOverSix,
+        TwoOverThree,
+        ThreeOverFive,
+        ThreeOverFour,
+        FourOverFive,
         FiveOverSeven,
-        EightOverTen
+        NineOverSixteen,
+        ThreeOverTwo,
+        FiveOverThree,
+        FourOverThree,
+        FiveOverFour,
+        SevenOverFive,
+        SixteenOverNine,
     }
 
     public sealed class ImageCropperThumb : Control
@@ -60,7 +66,8 @@ namespace Unigram.Controls
         private static Size s_minimumSize = new Size(100, 100);
 
         private StorageFile m_imageSource;
-        private SoftwareBitmapSource m_imagePreview;
+        private ImageSource m_imagePreview;
+        private bool m_imageWaiting;
 
         private Geometry m_outerClip;
         private Geometry m_innerClip;
@@ -244,7 +251,15 @@ namespace Unigram.Controls
                 bottomRightThumb.PointerMoved += BottomRightThumb_PointerMoved;
             }
 
-            UpdateCropRectangle(CropRectangle, false);
+            if (m_imageWaiting)
+            {
+                m_imageWaiting = false;
+                SetSource(m_imageSource, m_imagePreview, m_imageSize.Width, m_imageSize.Height);
+            }
+            else
+            {
+                UpdateCropRectangle(CropRectangle, false);
+            }
         }
 
         private void UpdateThumbs(Rect thumbsRectangle)
@@ -372,23 +387,65 @@ namespace Unigram.Controls
             {
                 case ImageCroppingProportions.Original:
                     return m_imageSize.Width / m_imageSize.Height;
-                case ImageCroppingProportions.Widescreen:
-                    return 16.0 / 9.0;
                 case ImageCroppingProportions.Square:
                     return 1.0;
-                case ImageCroppingProportions.ThreeOverTwo:
-                    return 3.0 / 2.0;
-                case ImageCroppingProportions.FourOverThree:
-                    return 4.0 / 3.0;
-                case ImageCroppingProportions.FourOverSix:
-                    return 4.0 / 6.0;
+                // Portrait
+                case ImageCroppingProportions.TwoOverThree:
+                    return 2.0 / 3.0;
+                case ImageCroppingProportions.ThreeOverFive:
+                    return 3.0 / 5.0;
+                case ImageCroppingProportions.ThreeOverFour:
+                    return 3.0 / 4.0;
+                case ImageCroppingProportions.FourOverFive:
+                    return 4.0 / 5.0;
                 case ImageCroppingProportions.FiveOverSeven:
                     return 5.0 / 7.0;
-                case ImageCroppingProportions.EightOverTen:
-                    return 8.0 / 10.0;
+                case ImageCroppingProportions.NineOverSixteen:
+                    return 9.0 / 16.0;
+                // Landscape
+                case ImageCroppingProportions.ThreeOverTwo:
+                    return 3.0 / 2.0;
+                case ImageCroppingProportions.FiveOverThree:
+                    return 5.0 / 3.0;
+                case ImageCroppingProportions.FourOverThree:
+                    return 4.0 / 3.0;
+                case ImageCroppingProportions.FiveOverFour:
+                    return 5.0 / 4.0;
+                case ImageCroppingProportions.SevenOverFive:
+                    return 7.0 / 5.0;
+                case ImageCroppingProportions.SixteenOverNine:
+                    return 16.0 / 9.0;
                 default:
                     return defaultValue;
             }
+        }
+
+        public static IReadOnlyList<ImageCroppingProportions> GetProportionsFor(double width, double height)
+        {
+            var items = new List<ImageCroppingProportions>();
+            items.Add(ImageCroppingProportions.Original);
+            items.Add(ImageCroppingProportions.Square);
+
+            if (width > height)
+            {
+                items.Add(ImageCroppingProportions.ThreeOverTwo);
+                items.Add(ImageCroppingProportions.FiveOverThree);
+                items.Add(ImageCroppingProportions.FourOverThree);
+                items.Add(ImageCroppingProportions.FiveOverFour);
+                items.Add(ImageCroppingProportions.SevenOverFive);
+                items.Add(ImageCroppingProportions.SixteenOverNine);
+            }
+            else
+            {
+                items.Add(ImageCroppingProportions.TwoOverThree);
+                items.Add(ImageCroppingProportions.ThreeOverFive);
+                items.Add(ImageCroppingProportions.ThreeOverFour);
+                items.Add(ImageCroppingProportions.FourOverFive);
+                items.Add(ImageCroppingProportions.FiveOverSeven);
+                items.Add(ImageCroppingProportions.NineOverSixteen);
+            }
+
+            return items;
         }
 
         public async void SetSource(StorageFile file)
@@ -396,9 +453,9 @@ namespace Unigram.Controls
             await SetSourceAsync(file);
         }
 
-        public async Task<StorageFile> CropAsync()
+        public async Task<StorageFile> CropAsync(int min = 1280, int max = 0)
         {
-            var croppedFile = await ImageHelper.CropAsync(m_imageSource, CropRectangle);
+            var croppedFile = await ImageHelper.CropAsync(m_imageSource, CropRectangle, min, max);
 
             return croppedFile;
         }
@@ -406,7 +463,7 @@ namespace Unigram.Controls
         public async Task SetSourceAsync(StorageFile file)
         {
             SoftwareBitmapSource source;
-            using (var fileStream = await file.OpenAsync(FileAccessMode.Read))
+            using (var fileStream = await ImageHelper.OpenReadAsync(file))
             {
                 var decoder = await BitmapDecoder.CreateAsync(fileStream);
                 var transform = ImageHelper.ComputeScalingTransformForSourceImage(decoder);
@@ -415,10 +472,7 @@ namespace Unigram.Controls
                 source = new SoftwareBitmapSource();
                 await source.SetBitmapAsync(software);
 
-                m_imagePreview = source;
-                m_imageSource = file;
-                m_imageSize = new Size(software.PixelWidth, software.PixelHeight);
-                m_imageViewer.Source = m_imagePreview;
+                SetSource(file, source, software.PixelWidth, software.PixelHeight);
             }
 
             Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
@@ -438,6 +492,40 @@ namespace Unigram.Controls
             }
 
             UpdateCropRectangle(m_cropRectangle, false);
+        }
+
+        public void SetSource(StorageFile file, ImageSource source, double width, double height)
+        {
+            m_imagePreview = source;
+            m_imageSource = file;
+            m_imageSize = new Size(width, height);
+
+            if (m_imageViewer != null)
+            {
+                m_imageViewer.Source = m_imagePreview;
+
+                Canvas.SetLeft(m_imageThumb, (m_layoutRoot.ActualWidth - m_imageSize.Width) / 2.0);
+                Canvas.SetTop(m_imageThumb, (m_layoutRoot.ActualHeight - m_imageSize.Height) / 2.0);
+
+                var imageScale = m_imageSize.Width / m_imageSize.Height;
+                var cropScale = GetProportionsFactor(Proportions, imageScale);
+                if (imageScale < cropScale)
+                {
+                    var cropHeight = m_imageSize.Width / cropScale;
+                    m_cropRectangle = new Rect(0.0, (m_imageSize.Height - cropHeight) / 2.0, m_imageSize.Width, cropHeight);
+                }
+                else
+                {
+                    var cropWidth = m_imageSize.Height * cropScale;
+                    m_cropRectangle = new Rect((m_imageSize.Width - cropWidth) / 2.0, 0.0, cropWidth, m_imageSize.Height);
+                }
+
+                UpdateCropRectangle(m_cropRectangle, false);
+            }
+            else
+            {
+                m_imageWaiting = true;
+            }
         }
 
         public void Reset()
@@ -487,7 +575,11 @@ namespace Unigram.Controls
 
         protected virtual void OnCropRectangleChanged(Rect oldValue, Rect newValue)
         {
-            if (newValue != m_cropRectangle)
+            if (newValue.IsEmpty)
+            {
+                Reset();
+            }
+            else if (newValue != m_cropRectangle)
             {
                 m_cropRectangle = newValue;
                 UpdateCropRectangle(m_cropRectangle, false);
