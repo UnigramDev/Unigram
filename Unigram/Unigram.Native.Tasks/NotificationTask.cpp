@@ -140,7 +140,7 @@ void NotificationTask::UpdateToastAndTiles(String^ content /*, std::wofstream* l
 
 		auto caption = GetCaption(loc_args, loc_key);
 		auto message = GetMessage(loc_args, loc_key);
-		auto sound = data->GetNamedString("sound", "silent");
+		auto sound = data->GetNamedString("sound", "Default");
 		auto launch = GetLaunch(custom, loc_key);
 		auto group = GetGroup(custom);
 		auto picture = GetPicture(custom, group);
