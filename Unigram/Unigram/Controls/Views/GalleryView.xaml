@@ -111,7 +111,7 @@
 
             <local:GlyphButton Command="{x:Bind ViewModel.StickersCommand}"
                                Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
-                               FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                               FontFamily="{StaticResource TelegramThemeFontFamily}"
                                HorizontalAlignment="Right"
                                Glyph="&#xE60E;"
                                FontSize="24"/>
