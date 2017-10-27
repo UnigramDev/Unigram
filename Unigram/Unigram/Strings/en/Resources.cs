@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/26/2017 15:08:29
+// 	Generated: 10/27/2017 13:29:03
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -3436,6 +3436,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DialogUnpin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View in chat"
+        /// </summary>
+        public static string MessageView
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageView");
             }
         }
     }

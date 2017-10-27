@@ -106,7 +106,7 @@ namespace Unigram.ViewModels
         //    }
         //}
 
-        public override bool CanGoto => true;
+        public override bool CanView => true;
     }
 
     public class GalleryMessageItem : GalleryItem

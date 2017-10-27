@@ -23,14 +23,6 @@
             <Setter Property="Margin" Value="0"/>
         </Style>
 
-        <MenuFlyout x:Key="MessageMenuFlyout" Opening="MenuFlyout_Opening">
-            <MenuFlyoutItem Loaded="MessageGoto_Loaded" Command="{x:Bind ViewModel.MessageGotoCommand}" CommandParameter="{Binding}" Text="Go to message"/>
-            <MenuFlyoutItem Loaded="MessageSave_Loaded" Command="{x:Bind ViewModel.MessageSaveCommand}" CommandParameter="{Binding}" Text="Save file as..."/>
-            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
-            <MenuFlyoutItem Loaded="MessageForward_Loaded" Command="{x:Bind ViewModel.MessageForwardCommand}" CommandParameter="{Binding}" Text="Forward message"/>
-            <MenuFlyoutItem Loaded="MessageSelect_Loaded" Command="{x:Bind ViewModel.MessageSelectCommand}" CommandParameter="{Binding}" Text="Select message"/>
-        </MenuFlyout>
-
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -127,14 +119,14 @@
                         <selectors:MediaTemplateSelector>
                             <selectors:MediaTemplateSelector.PhotoTemplate>
                                 <DataTemplate>
-                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextFlyout="{StaticResource MessageMenuFlyout}" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextRequested="Message_ContextRequested" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                                         <Image Source="{Binding Media.Photo.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
                                     </controls:SimpleHyperlinkButton>
                                 </DataTemplate>
                             </selectors:MediaTemplateSelector.PhotoTemplate>
                             <selectors:MediaTemplateSelector.VideoTemplate>
                                 <DataTemplate>
-                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextFlyout="{StaticResource MessageMenuFlyout}" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextRequested="Message_ContextRequested" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                                         <Image Source="{Binding Media.Document.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
                                     </controls:SimpleHyperlinkButton>
                                 </DataTemplate>
@@ -228,7 +220,7 @@
                     </ListView.GroupStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <items:SharedFileListViewItem ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+                            <items:SharedFileListViewItem ContextRequested="Message_ContextRequested"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </controls:GroupedListView>
@@ -313,7 +305,7 @@
                     </ListView.GroupStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <items:SharedLinkListViewItem ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+                            <items:SharedLinkListViewItem ContextRequested="Message_ContextRequested"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </controls:GroupedListView>

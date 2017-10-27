@@ -27,7 +27,7 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(x => x is TLMessage));
-            MessageGotoCommand = new RelayCommand<TLMessageBase>(MessageGotoExecute);
+            MessageViewCommand = new RelayCommand<TLMessageBase>(MessageViewExecute);
             MessageSaveCommand = new RelayCommand<TLMessageBase>(MessageSaveExecute);
             MessageDeleteCommand = new RelayCommand<TLMessageBase>(MessageDeleteExecute);
             MessageForwardCommand = new RelayCommand<TLMessageBase>(MessageForwardExecute);
@@ -111,10 +111,10 @@ namespace Unigram.ViewModels
             }
         }
 
-        #region Goto
+        #region View
 
-        public RelayCommand<TLMessageBase> MessageGotoCommand { get; }
-        private void MessageGotoExecute(TLMessageBase messageBase)
+        public RelayCommand<TLMessageBase> MessageViewCommand { get; }
+        private void MessageViewExecute(TLMessageBase messageBase)
         {
             NavigationService.NavigateToDialog(_with, messageBase.Id);
         }

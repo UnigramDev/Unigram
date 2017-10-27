@@ -168,9 +168,9 @@
                               Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
                     <Button.Flyout>
                         <MenuFlyout>
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.GotoCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanGoto}"
-                                            Text="Go to message"/>
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.ViewCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanView}"
+                                            Text="View in chat"/>
                             <MenuFlyoutItem Command="{x:Bind ViewModel.DeleteCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
                                             Text="Delete"/>

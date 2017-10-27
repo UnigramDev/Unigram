@@ -31,7 +31,7 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             StickersCommand = new RelayCommand(StickersExecute);
-            GotoCommand = new RelayCommand(GotoExecute);
+            ViewCommand = new RelayCommand(ViewExecute);
             DeleteCommand = new RelayCommand(DeleteExecute);
             SaveCommand = new RelayCommand(SaveExecute);
             OpenWithCommand = new RelayCommand(OpenWithExecute);
@@ -119,7 +119,7 @@ namespace Unigram.ViewModels
 
         protected virtual void LoadNext() { }
 
-        public virtual bool CanGoto
+        public virtual bool CanView
         {
             get
             {
@@ -175,8 +175,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand GotoCommand { get; }
-        protected virtual void GotoExecute()
+        public RelayCommand ViewCommand { get; }
+        protected virtual void ViewExecute()
         {
             NavigationService.GoBack();
 
