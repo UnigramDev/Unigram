@@ -250,15 +250,17 @@ namespace Unigram.Controls
                             var dialog = InMemoryCacheService.Current.GetDialog(channel.ToPeer());
                             if (dialog != null)
                             {
-                                var settings = dialog.NotifySettings as TLPeerNotifySettings;
-                                if (settings != null)
-                                {
-                                    Content = settings.MuteUntil > 0 ? "Unmute" : "Mute";
-                                }
-                                else
-                                {
-                                    Content = "Mute";
-                                }
+                                Content = dialog.IsMuted ? "Unmute" : "Mute";
+
+                                //var settings = dialog.NotifySettings as TLPeerNotifySettings;
+                                //if (settings != null)
+                                //{
+                                //    Content = settings.MuteUntil > 0 ? "Unmute" : "Mute";
+                                //}
+                                //else
+                                //{
+                                //    Content = "Mute";
+                                //}
                             }
 
                             return false;

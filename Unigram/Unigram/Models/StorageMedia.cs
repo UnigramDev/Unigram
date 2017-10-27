@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
+using Unigram.Controls;
 using Unigram.Core.Helpers;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
@@ -109,6 +110,19 @@ namespace Unigram.Models
             set
             {
                 Set(ref _cropRectangle, value == _fullRectangle ? null : value);
+            }
+        }
+
+        protected ImageCroppingProportions _cropProportions = ImageCroppingProportions.Custom;
+        public ImageCroppingProportions CropProportions
+        {
+            get
+            {
+                return _cropProportions;
+            }
+            set
+            {
+                Set(ref _cropProportions, value);
             }
         }
 

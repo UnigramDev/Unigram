@@ -279,6 +279,7 @@
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Visibility="{TemplateBinding ContentVisibility}"
                                           Padding="{TemplateBinding Padding}"/>
 
                         <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" Width="48" Height="48">

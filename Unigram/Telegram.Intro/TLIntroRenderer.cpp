@@ -103,7 +103,9 @@ void TLIntroRenderer::DestroyRenderSurface()
 	if (mOpenGLES)
 	{
 		mOpenGLES->DestroySurface(mRenderSurface);
+		mOpenGLES->Reset();
 	}
+
 	mRenderSurface = EGL_NO_SURFACE;
 }
 

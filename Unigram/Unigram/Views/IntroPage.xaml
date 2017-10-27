@@ -8,6 +8,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SuppressNavigationTransitionInfo />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Page.Resources>
         <SolidColorBrush x:Key="StartButtonBackground" Color="#2ca5e0" />
         <SolidColorBrush x:Key="StartButtonBackgroundPointerOver" Color="#2ca5e0" />
@@ -200,7 +208,7 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel VerticalAlignment="Center">
             <Border Width="200" Height="200" Background="Black">
-                <SwapChainPanel x:Name="SwapChain" Loaded="SwapChain_Loaded" Width="200" Height="200"/>
+                <SwapChainPanel x:Name="SwapChain" Loaded="SwapChain_Loaded" Unloaded="SwapChain_Unloaded" Width="200" Height="200"/>
             </Border>
             <StackPanel Opacity="0">
                 <TextBlock Padding="12,0,12,12"

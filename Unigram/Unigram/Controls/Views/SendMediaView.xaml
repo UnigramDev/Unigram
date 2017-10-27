@@ -386,7 +386,6 @@
 
                 <controls:CaptionTextBox
                     x:Name="CaptionInput"
-                    KeyDown="TextBox_KeyDown"
                     View="{x:Bind}"
                     Autocomplete="{x:Bind ListAutocomplete}"
                     DataContext="{x:Bind ViewModel}"
@@ -413,7 +412,16 @@
         </Grid>
 
         <Grid Visibility="{x:Bind IsEditingCropping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Background="#AA000000" Grid.Row="1">
-            <controls:ImageCropper x:Name="Cropper" Proportions="Custom" IsCropEnabled="True" MaxZoomFactor="10" />
+            <controls:ImageCropper x:Name="Cropper" Proportions="Custom" IsCropEnabled="True" MaxZoomFactor="10" Padding="48,48,48,72"/>
+
+            <Button Click="ResetCrop_Click"
+                    Content="RESET" 
+                    Height="48"
+                    Padding="24,0"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Center"
+                    Foreground="{ThemeResource ButtonForeground}"
+                    Style="{StaticResource TextBlockButtonStyle}"/>
         </Grid>
 
         <Grid x:Name="Commands" Background="#FF1F1F1F" Grid.Row="3">
@@ -438,13 +446,11 @@
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton Click="Crop_Click" 
                                       Glyph="&#xE7A8;"
-                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                                      IsEnabled="{Binding SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" />
+                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" />
                 <controls:GlyphButton Click="Crop_Click" 
                                       Glyph="&#xE7A8;"
                                       Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                      IsEnabled="{Binding SelectedItem.IsCropped, Mode=OneWay}" />
+                                      Visibility="{x:Bind SelectedItem.IsCropped, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"  />
                 <controls:GlyphButton Glyph="&#xEE56;" IsEnabled="False" Grid.Column="1"/>
                 <controls:GlyphButton Click="Compress_Click"
                                       Glyph="{Binding SelectedItem.Compression, Mode=OneWay, Converter={StaticResource CompressionToGlyphConverter}}"
@@ -468,19 +474,22 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton Glyph="&#xE909;" FontFamily="{ThemeResource TelegramThemeFontFamily}" IsEnabled="False"/>
                 <controls:GlyphButton Glyph="&#xE908;" FontFamily="{ThemeResource TelegramThemeFontFamily}" IsEnabled="False" Grid.Column="1"/>
-                <controls:GlyphButton Glyph="&#xE90A;" FontFamily="{ThemeResource TelegramThemeFontFamily}" IsEnabled="False" Grid.Column="2"/>
+                <controls:GlyphButton Click="Proportions_Click"
+                                      Glyph="&#xE90A;"
+                                      Visibility="{x:Bind ConvertProportions(SelectedItem.CropProportions, x:False), Mode=OneWay}"
+                                      FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                      Grid.Column="2"/>
+                <controls:GlyphButton Click="Proportions_Click"
+                                      Glyph="&#xE90A;"
+                                      Visibility="{x:Bind ConvertProportions(SelectedItem.CropProportions, x:True), Mode=OneWay}"
+                                      Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
+                                      FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                      Grid.Column="2"/>
 
-                <Button Content="Reset" 
-                        Click="ResetCrop_Click" 
-                        HorizontalAlignment="Center" 
-                        Grid.Column="3"
-                        Visibility="{x:Bind IsEditingCropping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                <ComboBox x:Name="CroppoBox" Grid.ColumnSpan="4"/>
+                <ComboBox x:Name="CroppoBox" Visibility="Collapsed" Grid.ColumnSpan="4"/>
             </Grid>
 
             <controls:GlyphButton Click="Accept_Click"

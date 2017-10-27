@@ -1425,4 +1425,7 @@ Tap on a sticker to view and add the whole set.</value>
     <value>Autoplay GIFs</value>
     <comment>ChatSettings.AutoPlayAnimations</comment>
   </data>
+  <data name="MessageView" xml:space="preserve">
+    <value>View in chat</value>
+  </data>
 </root>

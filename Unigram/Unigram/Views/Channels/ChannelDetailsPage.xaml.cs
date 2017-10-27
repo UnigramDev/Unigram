@@ -74,27 +74,27 @@ namespace Unigram.Views.Channels
 
         private void Participant_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var menu = new MenuFlyout();
+            var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
             var participant = element.DataContext as TLChannelParticipantBase;
 
-            CreateFlyoutItem(ref menu, ParticipantEdit_Loaded, ViewModel.ParticipantEditCommand, participant, AppResources.ParticipantEdit);
-            CreateFlyoutItem(ref menu, ParticipantPromote_Loaded, ViewModel.ParticipantPromoteCommand, participant, AppResources.ParticipantPromote);
-            CreateFlyoutItem(ref menu, ParticipantRestrict_Loaded, ViewModel.ParticipantRestrictCommand, participant, AppResources.ParticipantRestrict);
+            CreateFlyoutItem(ref flyout, ParticipantEdit_Loaded, ViewModel.ParticipantEditCommand, participant, AppResources.ParticipantEdit);
+            CreateFlyoutItem(ref flyout, ParticipantPromote_Loaded, ViewModel.ParticipantPromoteCommand, participant, AppResources.ParticipantPromote);
+            CreateFlyoutItem(ref flyout, ParticipantRestrict_Loaded, ViewModel.ParticipantRestrictCommand, participant, AppResources.ParticipantRestrict);
 
-            if (menu.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
+            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
                 if (point.X < 0 || point.Y < 0)
                 {
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                menu.ShowAt(sender, point);
+                flyout.ShowAt(sender, point);
             }
         }
 
-        private void CreateFlyoutItem(ref MenuFlyout menu, Func<TLChannelParticipantBase, Visibility> visibility, ICommand command, object parameter, string text)
+        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<TLChannelParticipantBase, Visibility> visibility, ICommand command, object parameter, string text)
         {
             var value = visibility(parameter as TLChannelParticipantBase);
             if (value == Visibility.Visible)
@@ -105,7 +105,7 @@ namespace Unigram.Views.Channels
                 flyoutItem.CommandParameter = parameter;
                 flyoutItem.Text = text;
 
-                menu.Items.Add(flyoutItem);
+                flyout.Items.Add(flyoutItem);
             }
         }
 

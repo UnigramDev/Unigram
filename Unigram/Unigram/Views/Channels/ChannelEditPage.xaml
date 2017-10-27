@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Views"
     xmlns:controls="using:Unigram.Controls"
+    xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -49,68 +50,114 @@
                     Style="{StaticResource HyperButtonStyle}"
                     Grid.Row="1"/>
 
-                <local:TableStackPanel
-                    BorderThickness="0,0,0,1"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
-                    <!--<controls:HyperButton Tag="About"
-                         Content="{x:Bind ViewModel.Full.About, Mode=OneWay}"
-                         Visibility="{x:Bind ViewModel.Full.About, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                         Style="{StaticResource SubtitleButtonStyle}"/>-->
+                <StackPanel>
+                    <controls:UpdateTextBox Text="{Binding About, Mode=TwoWay}" MaxLength="{StaticResource ChannelAboutMaxLength}" PlaceholderText="Description (optional)" TextWrapping="Wrap" AcceptsReturn="True" Margin="12,6,12,6"/>
+                    <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" Height="1" Margin="12,0,0,0"/>
+                </StackPanel>
 
-                    <StackPanel>
-                        <!--<TextBlock Text="Description (optional)" Margin="12,11,12,8" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>-->
-                        <controls:UpdateTextBox Text="{Binding About, Mode=TwoWay}" MaxLength="{StaticResource ChannelAboutMaxLength}" PlaceholderText="Description (optional)" TextWrapping="Wrap" AcceptsReturn="True" Margin="12,6,12,6"/>
-                        <Rectangle Fill="{ThemeResource SystemControlForegroundBaseLowBrush}" Height="1" Margin="12,0,0,0"/>
+                <StackPanel Visibility="{x:Bind ViewModel.Full.IsCanSetUsername, Mode=OneWay}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            BorderThickness="0,0,0,1"
+                            Margin="12,24,0,0">
+                    <StackPanel BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                                BorderThickness="0,0,0,1"
+                                Padding="0,12,12,12">
+                        <RadioButton IsChecked="{x:Bind ViewModel.IsPublic, Mode=TwoWay}" Content="Public"/>
+                        <TextBlock Text="Anyone can find the channel in search and join." Margin="28,-6,0,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <RadioButton IsChecked="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" Content="Private" Margin="0,8,0,0"/>
+                        <TextBlock Text="Only people with a special invite link may join." Margin="28,-6,0,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                     </StackPanel>
-                </local:TableStackPanel>
 
-                <local:TableStackPanel
-                    Visibility="{x:Bind (Visibility)ViewModel.CanEditHiddenPreHistory, Mode=OneWay}"
-                    BorderThickness="0,0,0,1"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                    Padding="12,0,12,12"
-                    Margin="0,24,0,0">
-                    <TextBlock Text="Chat History For New Memebers" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
-                    <RadioButton IsChecked="{x:Bind ViewModel.IsHiddenPreHistory, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" Content="Visible" Grid.Row="2"/>
-                    <TextBlock Text="New members will see full chat history." Margin="28,-6,0,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="1"/>
-                    <RadioButton IsChecked="{x:Bind ViewModel.IsHiddenPreHistory, Mode=TwoWay}" Content="Hidden" Margin="0,8,0,0"/>
-                    <TextBlock Text="New members will not see previous messages." Margin="28,-6,0,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="3"/>
-                </local:TableStackPanel>
+                    <StackPanel Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <StackPanel Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
+                            <controls:UpdateTextBox x:Name="Username" Text="{Binding Username, Mode=TwoWay}" Header="Link" PlaceholderText="{ThemeResource MeUrlPrefixShort}" Margin="0,12,12,8" Style="{StaticResource InlinePlaceholderTextBoxStyle}" Grid.Row="1"/>
+                            
+                            <TextBlock Visibility="{x:Bind ViewModel.IsAvailable, Mode=OneWay}" Foreground="Green" Margin="0,0,0,8">
+                                <Run Text="{x:Bind ViewModel.Username, Mode=OneWay}"/>
+                                <Run Text="is available."/>
+                            </TextBlock>
+                            <TextBlock Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay}" Text="Checking username..." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="0,0,0,8"/>
+                            <TextBlock Visibility="{x:Bind ViewModel.ErrorMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}" Text="{x:Bind ViewModel.ErrorMessage, Mode=OneWay}" Foreground="Red" Margin="0,0,0,8"/>
 
-                <local:TableStackPanel
-                    BorderThickness="0,0,0,1"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                    Margin="0,24,0,0">
-                    <controls:BadgeButton
-                        Content="Group Type"
-                        IsEnabled="{x:Bind ViewModel.Full.IsCanSetUsername, Mode=OneWay}"
-                        Badge="{x:Bind ViewModel.Item.HasUsername, Mode=OneWay, Converter={StaticResource ChannelTypeToStringConverter}}"
-                        Command="{x:Bind ViewModel.EditTypeCommand}"
-                        Style="{StaticResource BadgeButtonStyle}"/>
+                            <TextBlock Text="People can share this link with others and find your channel using Telegram search." Margin="0,0,12,12" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        </StackPanel>
 
+                        <ListView Visibility="{x:Bind ViewModel.HasTooMuchUsernames, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                  ItemsSource="{x:Bind ViewModel.AdminedPublicChannels}"
+                                  IsItemClickEnabled="True"
+                                  ItemClick="ListView_ItemClick"
+                                  SelectionMode="None"
+                                  Style="{StaticResource StaticListViewStyle}"
+                                  Margin="-12,0,0,0">
+                            <ListView.Header>
+                                <TextBlock Text="Sorry, you have reserved too many public usernames.&#x0a;You can revoke the link from one of your older groups or channels, or create a private entity instead." Foreground="#FF0000" Margin="12,12,12,6" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            </ListView.Header>
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="tl:TLChannel">
+                                    <Grid Margin="0,6">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <controls:ProfilePictureView x:Phase="2" Source="{x:Bind PhotoSelf, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="0,0,12,0" Grid.RowSpan="2"/>
+
+                                        <TextBlock Text="{x:Bind DisplayName}" Grid.Column="1" VerticalAlignment="Bottom" Grid.Row="0"/>
+                                        <TextBlock VerticalAlignment="Top"
+                                               Style="{StaticResource CaptionTextBlockStyle}"
+                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap"
+                                               Grid.Column="1"
+                                               Grid.Row="1"
+                                               MaxLines="1">
+                                            <Run Text="{ThemeResource MeUrlPrefixShort}"/><Run Text="{x:Bind Username}" Foreground="{ThemeResource TelegramDialogLabelFromBrush}"/>
+                                        </TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+
+                    <StackPanel Visibility="{x:Bind ViewModel.IsPublic, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}">
+                        <TextBox Text="{x:Bind ViewModel.InviteLink, Mode=OneWay}" Header="Link" IsReadOnly="True" Margin="0,12,12,8" Grid.Row="1"/>
+                        <TextBlock Text="People can join your channel by following this link. You can revoke the link at any time." Margin="0,0,12,12" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="2"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Margin="0,24,0,0" Visibility="{x:Bind ViewModel.CanEditSignatures, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ToggleSwitch
                         Header="Sign Messages"
                         IsOn="{x:Bind ViewModel.IsSignatures, Mode=TwoWay}"
-                        Visibility="{x:Bind (Visibility)ViewModel.CanEditSignatures, Mode=OneWay}"
                         Style="{ThemeResource CheckButtonStyle}"/>
+                    <TextBlock Text="Add names of the admins to the messages they post." Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
 
+                <StackPanel Visibility="{x:Bind ViewModel.CanEditHiddenPreHistory, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                            BorderThickness="0,0,0,1"
+                            Padding="0,0,12,12"
+                            Margin="12,24,0,0">
+                    <TextBlock Text="Chat History For New Memebers" Style="{StaticResource SettingsGroupTextBlockStyle}"/>
+                    <RadioButton IsChecked="{x:Bind ViewModel.IsHiddenPreHistory, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}" Content="Visible"/>
+                    <TextBlock Text="New members will see full chat history." Margin="28,-6,0,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <RadioButton IsChecked="{x:Bind ViewModel.IsHiddenPreHistory, Mode=TwoWay}" Content="Hidden" Margin="0,8,0,0"/>
+                    <TextBlock Text="New members will not see previous messages." Margin="28,-6,0,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Margin="0,24,0,0" Visibility="{x:Bind ViewModel.Full.IsCanSetStickers, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <controls:BadgeButton
                         Content="Group Stickers"
-                        Visibility="{x:Bind ViewModel.Full.IsCanSetStickers, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Badge="{x:Bind ViewModel.Full.StickerSet.Title, Mode=OneWay}"
                         Command="{x:Bind ViewModel.EditStickerSetCommand}"
                         Style="{StaticResource BadgeButtonStyle}"/>
-                </local:TableStackPanel>
-                <TextBlock Visibility="{x:Bind ViewModel.Full.IsCanSetStickers, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Text="You can choose sticker set which will be available for every member while in the group chat." Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="You can choose sticker set which will be available for every member while in the group chat." Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
 
-                <local:TableStackPanel
-                    BorderThickness="0,0,0,1"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                    Margin="0,24,0,18">
+                <StackPanel Margin="0,24,0,18">
                     <controls:BadgeButton
                         Content="Admins"
                         Command="{x:Bind ViewModel.AdminsCommand}"
@@ -129,8 +176,7 @@
                         Badge="{x:Bind ViewModel.Full.ParticipantsCount, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.Full.HasParticipantsCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                         Style="{StaticResource BadgeButtonStyle}"/>
-                </local:TableStackPanel>
-
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>

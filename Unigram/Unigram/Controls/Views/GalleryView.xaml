@@ -79,8 +79,7 @@
                 Loaded="ImageView_ImageOpened"
                 Source="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                 Constraint="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}"
-                IsHitTestVisible="False"
-                Grid.RowSpan="3"/>
+                Click="ImageView_Click" />
 
             <!--<local:TransferButton Completed="Download_Click" Transferable="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}" IsTransferring="{x:Bind ViewModel.FirstItem.Source.IsTransferring, Mode=OneWay}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{x:Bind ViewModel.FirstItem.Source.Progress, Mode=OneWay}" IsHitTestVisible="False"/>-->
@@ -169,9 +168,9 @@
                               Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
                     <Button.Flyout>
                         <MenuFlyout>
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.GotoCommand}"
-                                            Visibility="{x:Bind (Visibility)ViewModel.CanGoto}"
-                                            Text="Go to message"/>
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.ViewCommand}"
+                                            Visibility="{x:Bind (Visibility)ViewModel.CanView}"
+                                            Text="View in chat"/>
                             <MenuFlyoutItem Command="{x:Bind ViewModel.DeleteCommand}"
                                             Visibility="{x:Bind (Visibility)ViewModel.CanDelete}"
                                             Text="Delete"/>

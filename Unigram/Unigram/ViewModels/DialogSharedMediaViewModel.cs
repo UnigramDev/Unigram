@@ -15,6 +15,7 @@ using Unigram.Collections;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
+using Unigram.Helpers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -26,7 +27,8 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(x => x is TLMessage));
-            MessageGotoCommand = new RelayCommand<TLMessageBase>(MessageGotoExecute);
+            MessageViewCommand = new RelayCommand<TLMessageBase>(MessageViewExecute);
+            MessageSaveCommand = new RelayCommand<TLMessageBase>(MessageSaveExecute);
             MessageDeleteCommand = new RelayCommand<TLMessageBase>(MessageDeleteExecute);
             MessageForwardCommand = new RelayCommand<TLMessageBase>(MessageForwardExecute);
             MessageSelectCommand = new RelayCommand<TLMessageBase>(MessageSelectExecute);
@@ -109,12 +111,32 @@ namespace Unigram.ViewModels
             }
         }
 
-        #region Goto
+        #region View
 
-        public RelayCommand<TLMessageBase> MessageGotoCommand { get; }
-        private void MessageGotoExecute(TLMessageBase messageBase)
+        public RelayCommand<TLMessageBase> MessageViewCommand { get; }
+        private void MessageViewExecute(TLMessageBase messageBase)
         {
             NavigationService.NavigateToDialog(_with, messageBase.Id);
+        }
+
+        #endregion
+
+        #region Save
+
+        public RelayCommand<TLMessageBase> MessageSaveCommand { get; }
+        private async void MessageSaveExecute(TLMessageBase messageBase)
+        {
+            var photo = messageBase.GetPhoto();
+            if (photo?.Full is TLPhotoSize photoSize)
+            {
+                await TLFileHelper.SavePhotoAsync(photoSize, messageBase.Date);
+            }
+
+            var document = messageBase.GetDocument();
+            if (document != null)
+            {
+                await TLFileHelper.SaveDocumentAsync(document, messageBase.Date);
+            }
         }
 
         #endregion
@@ -192,8 +214,7 @@ namespace Unigram.ViewModels
                     var config = CacheService.GetConfig();
                     if (config != null && message.Date + config.EditTimeLimit > date)
                     {
-                        var user = With as TLUser;
-                        if (user != null)
+                        if (With is TLUser user)
                         {
                             dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
                         }
@@ -331,8 +352,7 @@ namespace Unigram.ViewModels
         private RelayCommand _messagesDeleteCommand;
         public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(messageCommon =>
         {
-            var channel = _with as TLChannel;
-            if (channel != null)
+            if (_with is TLChannel channel)
             {
                 if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
                 {
@@ -424,8 +444,7 @@ namespace Unigram.ViewModels
                     var config = CacheService.GetConfig();
                     if (config != null && minDate + config.EditTimeLimit > date && maxDate + config.EditTimeLimit > date)
                     {
-                        var user = With as TLUser;
-                        if (user != null)
+                        if (With is TLUser user)
                         {
                             dialog.CheckBoxLabel = string.Format("Delete for {0}", user.FullName);
                         }

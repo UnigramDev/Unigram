@@ -115,12 +115,7 @@ namespace Telegram.Api.Services
             var obj = draft.ToSaveDraftObject(peer);
 
             const string caption = "messages.saveDraft";
-            SendInformativeMessage<bool>(caption, obj,
-                result =>
-                {
-                    callback?.Invoke(result);
-                },
-                faultCallback);
+            SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
         }
 
         public void GetPeerDialogsAsync(TLVector<TLInputPeerBase> peers, Action<TLMessagesPeerDialogs> callback, Action<TLRPCError> faultCallback = null)
@@ -136,7 +131,16 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesGetInlineBotResults { Flags = 0, Bot = bot, Peer = peer, GeoPoint = geoPoint, Query = query, Offset = offset };
 
             const string caption = "messages.getInlineBotResults";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage<TLMessagesBotResults>(caption, obj, 
+                result =>
+                {
+                    _cacheService.SyncUsers(result.Users,
+                        r =>
+                        {
+                            callback?.Invoke(result);
+                        });
+                },
+                faultCallback);
         }
 
         public void SetInlineBotResultsAsync(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM, Action<bool> callback, Action<TLRPCError> faultCallback = null)

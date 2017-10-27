@@ -42,8 +42,20 @@ namespace Unigram.Views
 
         private void SwapChain_Loaded(object sender, RoutedEventArgs e)
         {
-            _renderer = new TLIntroRenderer(SwapChain);
-            _renderer.Loaded();
+            if (_renderer == null)
+            {
+                _renderer = new TLIntroRenderer(SwapChain);
+                _renderer.Loaded();
+            }
+        }
+
+        private void SwapChain_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (_renderer != null)
+            {
+                _renderer.Dispose();
+                _renderer = null;
+            }
         }
 
         private void Interact_Tick(object sender, object e)
