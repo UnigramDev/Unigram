@@ -426,12 +426,10 @@ namespace Unigram.Controls.Views
             }
         }
 
-        private void ImageView_Tapped(object sender, TappedRoutedEventArgs e)
+        private void ImageView_Clicked(object sender, RoutedEventArgs e)
         {
             TopBar.Visibility = TopBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
             BotBar.Visibility = BotBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-
-            e.Handled = true;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)

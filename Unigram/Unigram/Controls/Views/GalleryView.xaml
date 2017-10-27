@@ -79,7 +79,7 @@
                 Loaded="ImageView_ImageOpened"
                 Source="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                 Constraint="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}"
-                Tapped="ImageView_Tapped" />
+                Click="ImageView_Clicked" />
 
             <!--<local:TransferButton Completed="Download_Click" Transferable="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}" IsTransferring="{x:Bind ViewModel.FirstItem.Source.IsTransferring, Mode=OneWay}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{x:Bind ViewModel.FirstItem.Source.Progress, Mode=OneWay}" IsHitTestVisible="False"/>-->
