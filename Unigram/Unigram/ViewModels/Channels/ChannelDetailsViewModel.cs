@@ -13,6 +13,7 @@ using Telegram.Api.TL;
 using Template10.Utils;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Views;
 using Unigram.Views.Channels;
@@ -36,6 +37,7 @@ namespace Unigram.ViewModels.Channels
             ParticipantsCommand = new RelayCommand(ParticipantsExecute);
             AdminLogCommand = new RelayCommand(AdminLogExecute);
             ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
+            UsernameCommand = new RelayCommand(UsernameExecute);
             ParticipantEditCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantEditExecute);
             ParticipantPromoteCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantPromoteExecute);
             ParticipantRestrictCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantRestrictExecute);
@@ -316,6 +318,21 @@ namespace Unigram.ViewModels.Channels
                     CacheService.Commit();
                 }
             }
+        }
+
+        public RelayCommand UsernameCommand { get; }
+        public async void UsernameExecute()
+        {
+            var item = _item as TLChannel;
+            if (item == null)
+            {
+                return;
+            }
+
+            var title = item.Title;
+            var link = new Uri(UsernameToLinkConverter.Convert(item.Username));
+
+            await ShareView.Current.ShowAsync(link, title);
         }
 
         #region Context menu
