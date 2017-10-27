@@ -666,30 +666,30 @@ namespace Unigram.Views
 
         private void Dialog_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var menu = new MenuFlyout();
+            var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
             var dialog = element.DataContext as TLDialog;
 
-            CreateFlyoutItem(ref menu, DialogPin_Loaded, ViewModel.Dialogs.DialogPinCommand, dialog, dialog.IsPinned ? AppResources.DialogUnpin : AppResources.DialogPin);
-            CreateFlyoutItem(ref menu, DialogNotify_Loaded, ViewModel.Dialogs.DialogNotifyCommand, dialog, dialog.IsMuted ? AppResources.DialogNotificationsEnable : AppResources.DialogNotificationsDisable);
-            CreateFlyoutItem(ref menu, DialogClear_Loaded, ViewModel.Dialogs.DialogClearCommand, dialog, AppResources.DialogClearHistory);
-            CreateFlyoutItem(ref menu, DialogDelete_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, DialogDelete_Text(dialog));
-            CreateFlyoutItem(ref menu, DialogDeleteAndStop_Loaded, ViewModel.Dialogs.DialogDeleteAndStopCommand, dialog, AppResources.DialogDeleteAndStop);
-            CreateFlyoutItem(ref menu, DialogDeleteAndExit_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, AppResources.DialogDeleteAndExit);
+            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Dialogs.DialogPinCommand, dialog, dialog.IsPinned ? AppResources.DialogUnpin : AppResources.DialogPin);
+            CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Dialogs.DialogNotifyCommand, dialog, dialog.IsMuted ? AppResources.DialogNotificationsEnable : AppResources.DialogNotificationsDisable);
+            CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Dialogs.DialogClearCommand, dialog, AppResources.DialogClearHistory);
+            CreateFlyoutItem(ref flyout, DialogDelete_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, DialogDelete_Text(dialog));
+            CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Dialogs.DialogDeleteAndStopCommand, dialog, AppResources.DialogDeleteAndStop);
+            CreateFlyoutItem(ref flyout, DialogDeleteAndExit_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, AppResources.DialogDeleteAndExit);
 
-            if (menu.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
+            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
                 if (point.X < 0 || point.Y < 0)
                 {
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                menu.ShowAt(sender, point);
+                flyout.ShowAt(sender, point);
             }
         }
 
-        private void CreateFlyoutItem(ref MenuFlyout menu, Func<TLDialog, Visibility> visibility, ICommand command, object parameter, string text)
+        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<TLDialog, Visibility> visibility, ICommand command, object parameter, string text)
         {
             var value = visibility(parameter as TLDialog);
             if (value == Visibility.Visible)
@@ -700,7 +700,7 @@ namespace Unigram.Views
                 flyoutItem.CommandParameter = parameter;
                 flyoutItem.Text = text;
 
-                menu.Items.Add(flyoutItem);
+                flyout.Items.Add(flyoutItem);
             }
         }
 

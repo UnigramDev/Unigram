@@ -134,6 +134,19 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region ContentVisibility
+
+        public Visibility ContentVisibility
+        {
+            get { return (Visibility)GetValue(ContentVisibilityProperty); }
+            set { SetValue(ContentVisibilityProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContentVisibilityProperty =
+            DependencyProperty.Register("ContentVisibility", typeof(Visibility), typeof(TransferButton), new PropertyMetadata(Visibility.Collapsed));
+
+        #endregion
+
         private void CompletedPhoto(TLPhoto photo)
         {
             var context = DefaultPhotoConverter.BitmapContext[photo, false];
@@ -171,7 +184,7 @@ namespace Unigram.Controls
                 var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
-                    VisualStateManager.GoToState(this, "CompletedState", false);
+                    ContentVisibility = Visibility.Collapsed;
 
                     var message = DataContext as TLMessage;
                     if (message != null && message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
@@ -184,8 +197,7 @@ namespace Unigram.Controls
                 }
                 else if (photo.IsTransferring || (photo.DownloadingProgress > 0 && photo.DownloadingProgress < 1) || (photo.UploadingProgress > 0 && photo.DownloadingProgress < 1))
                 {
-                    VisualStateManager.GoToState(this, "PendingState", false);
-
+                    ContentVisibility = Visibility.Visible;
                     Visibility = Visibility.Visible;
                     return "\uE10A";
                 }
@@ -204,7 +216,7 @@ namespace Unigram.Controls
             var fileName = document.GetFileName();
             if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
-                VisualStateManager.GoToState(this, "CompletedState", false);
+                ContentVisibility = Visibility.Collapsed;
 
                 var message = DataContext as TLMessage;
                 if (message != null && message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
@@ -226,8 +238,7 @@ namespace Unigram.Controls
             }
             else if (document.IsTransferring || (document.DownloadingProgress > 0 && document.DownloadingProgress < 1) || (document.UploadingProgress > 0 && document.DownloadingProgress < 1))
             {
-                VisualStateManager.GoToState(this, "PendingState", false);
-
+                ContentVisibility = Visibility.Visible;
                 return "\uE10A";
             }
 

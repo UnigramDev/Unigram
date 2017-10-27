@@ -149,30 +149,30 @@ namespace Unigram.Views
 
         private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var menu = new MenuFlyout();
+            var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
             var messageCommon = element.DataContext as TLMessageCommonBase;
             var channel = messageCommon.Parent as TLChannel;
 
-            CreateFlyoutItem(ref menu, MessageView_Loaded, ViewModel.MessageViewCommand, messageCommon, AppResources.MessageView);
-            CreateFlyoutItem(ref menu, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, AppResources.MessageDelete);
-            CreateFlyoutItem(ref menu, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, AppResources.MessageForward);
-            CreateFlyoutItem(ref menu, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, AppResources.MessageSelect);
-            CreateFlyoutItem(ref menu, MessageSave_Loaded, ViewModel.MessageSaveCommand, messageCommon, AppResources.MessageSaveMedia);
+            CreateFlyoutItem(ref flyout, MessageView_Loaded, ViewModel.MessageViewCommand, messageCommon, AppResources.MessageView);
+            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, AppResources.MessageDelete);
+            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, AppResources.MessageForward);
+            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, AppResources.MessageSelect);
+            CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, messageCommon, AppResources.MessageSaveMedia);
 
-            if (menu.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
+            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
                 if (point.X < 0 || point.Y < 0)
                 {
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                menu.ShowAt(sender, point);
+                flyout.ShowAt(sender, point);
             }
         }
 
-        private void CreateFlyoutItem(ref MenuFlyout menu, Func<TLMessageCommonBase, Visibility> visibility, ICommand command, object parameter, string text)
+        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<TLMessageCommonBase, Visibility> visibility, ICommand command, object parameter, string text)
         {
             var value = visibility(parameter as TLMessageCommonBase);
             if (value == Visibility.Visible)
@@ -183,7 +183,7 @@ namespace Unigram.Views
                 flyoutItem.CommandParameter = parameter;
                 flyoutItem.Text = text;
 
-                menu.Items.Add(flyoutItem);
+                flyout.Items.Add(flyoutItem);
             }
         }
 
