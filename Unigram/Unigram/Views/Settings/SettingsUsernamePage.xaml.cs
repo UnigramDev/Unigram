@@ -34,7 +34,7 @@ namespace Unigram.Views.Settings
             {
                 if (ViewModel.UpdateIsValid(Username.Text))
                 {
-                    ViewModel.CheckIfAvailableAsync(Username.Text);
+                    ViewModel.CheckAvailability(Username.Text);
                 }
             });
         }
