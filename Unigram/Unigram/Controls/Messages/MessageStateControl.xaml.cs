@@ -62,6 +62,10 @@ namespace Unigram.Controls.Messages
                 {
                     number += $"{message.PostAuthor}, ";
                 }
+                else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                {
+                    number += $"{message.FwdFrom.PostAuthor}, ";
+                }
             }
             else
             {

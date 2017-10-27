@@ -200,10 +200,10 @@ namespace Unigram.Controls.Messages
                     {
                         name = channel.DisplayName;
 
-                        if (message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
-                        {
-                            name += $" ({message.FwdFrom.PostAuthor})";
-                        }
+                        //if (message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                        //{
+                        //    name += $" ({message.FwdFrom.PostAuthor})";
+                        //}
                     }
 
                     var user = message.FwdFromUser;
