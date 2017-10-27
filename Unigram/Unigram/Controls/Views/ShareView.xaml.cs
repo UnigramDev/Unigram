@@ -47,7 +47,7 @@ namespace Unigram.Controls.Views
         {
             Bindings.Update();
 
-            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested"))
+            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested") && !ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
             {
                 DataTransferManager.GetForCurrentView().ShareProvidersRequested -= OnShareProvidersRequested;
                 DataTransferManager.GetForCurrentView().ShareProvidersRequested += OnShareProvidersRequested;
@@ -59,7 +59,7 @@ namespace Unigram.Controls.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested"))
+            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested") && !ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
             {
                 DataTransferManager.GetForCurrentView().ShareProvidersRequested -= OnShareProvidersRequested;
             }
