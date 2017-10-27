@@ -25,6 +25,7 @@
 
         <MenuFlyout x:Key="MessageMenuFlyout" Opening="MenuFlyout_Opening">
             <MenuFlyoutItem Loaded="MessageGoto_Loaded" Command="{x:Bind ViewModel.MessageGotoCommand}" CommandParameter="{Binding}" Text="Go to message"/>
+            <MenuFlyoutItem Loaded="MessageSave_Loaded" Command="{x:Bind ViewModel.MessageSaveCommand}" CommandParameter="{Binding}" Text="Save file as..."/>
             <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
             <MenuFlyoutItem Loaded="MessageForward_Loaded" Command="{x:Bind ViewModel.MessageForwardCommand}" CommandParameter="{Binding}" Text="Forward message"/>
             <MenuFlyoutItem Loaded="MessageSelect_Loaded" Command="{x:Bind ViewModel.MessageSelectCommand}" CommandParameter="{Binding}" Text="Select message"/>

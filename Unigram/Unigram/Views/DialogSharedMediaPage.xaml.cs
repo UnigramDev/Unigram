@@ -157,11 +157,22 @@ namespace Unigram.Views
 
         private void MessageGoto_Loaded(object sender, RoutedEventArgs e)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            if (sender is MenuFlyoutItem element)
             {
-                var messageCommon = element.DataContext as TLMessageCommonBase;
-                if (messageCommon != null)
+                if (element.DataContext is TLMessageCommonBase messageCommon)
+                {
+
+                }
+
+                element.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void MessageSave_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem element)
+            {
+                if (element.DataContext is TLMessageCommonBase messageCommon)
                 {
 
                 }
@@ -172,16 +183,13 @@ namespace Unigram.Views
 
         private void MessageDelete_Loaded(object sender, RoutedEventArgs e)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            if (sender is MenuFlyoutItem element)
             {
                 element.Visibility = Visibility.Visible;
 
-                var messageCommon = element.DataContext as TLMessageCommonBase;
-                if (messageCommon != null)
+                if (element.DataContext is TLMessageCommonBase messageCommon)
                 {
-                    var channel = messageCommon.Parent as TLChannel;
-                    if (channel != null)
+                    if (messageCommon.Parent is TLChannel channel)
                     {
                         if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
                         {
@@ -199,11 +207,9 @@ namespace Unigram.Views
 
         private void MessageForward_Loaded(object sender, RoutedEventArgs e)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            if (sender is MenuFlyoutItem element)
             {
-                var messageCommon = element.DataContext as TLMessageCommonBase;
-                if (messageCommon != null)
+                if (element.DataContext is TLMessageCommonBase messageCommon)
                 {
 
                 }
@@ -214,8 +220,7 @@ namespace Unigram.Views
 
         private void MessageSelect_Loaded(object sender, RoutedEventArgs e)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            if (sender is MenuFlyoutItem element)
             {
                 element.Visibility = ViewModel.SelectionMode == ListViewSelectionMode.None ? Visibility.Visible : Visibility.Collapsed;
             }
