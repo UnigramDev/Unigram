@@ -212,7 +212,7 @@
 
                             <TextBlock
                                 x:Name="OffPresenter"
-                                FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                FontFamily="{StaticResource TelegramThemeFontFamily}"
                                 FontSize="20"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
@@ -456,15 +456,15 @@
                                       Glyph="{Binding SelectedItem.Compression, Mode=OneWay, Converter={StaticResource CompressionToGlyphConverter}}"
                                       Visibility="{x:Bind SelectedItem.IsVideo, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                       IsEnabled="{Binding SelectedItem.CanCompress, Mode=OneWay}"
-                                      FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
                                       Grid.Column="2"/>
-                <controls:GlyphButton Visibility="{x:Bind SelectedItem.IsPhoto, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Glyph="&#xE614;" IsEnabled="False" FontFamily="{ThemeResource TelegramThemeFontFamily}" Grid.Column="2"/>
+                <controls:GlyphButton Visibility="{x:Bind SelectedItem.IsPhoto, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" Glyph="&#xE614;" IsEnabled="False" FontFamily="{StaticResource TelegramThemeFontFamily}" Grid.Column="2"/>
                 <controls:GlyphButton
                     x:Name="TTLSeconds"
                     Click="TTLSeconds_Click"
                     Glyph="{x:Bind SelectedItem.TTLSeconds, Mode=OneWay}"
                     Visibility="{x:Bind IsTTLEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                    FontFamily="{StaticResource TelegramThemeFontFamily}"
                     Style="{StaticResource SelfDestructButtonStyle}"
                     Grid.Column="3"/>
             </Grid>
@@ -475,18 +475,18 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <controls:GlyphButton Glyph="&#xE909;" FontFamily="{ThemeResource TelegramThemeFontFamily}" IsEnabled="False"/>
-                <controls:GlyphButton Glyph="&#xE908;" FontFamily="{ThemeResource TelegramThemeFontFamily}" IsEnabled="False" Grid.Column="1"/>
+                <controls:GlyphButton Glyph="&#xE909;" FontFamily="{StaticResource TelegramThemeFontFamily}" IsEnabled="False"/>
+                <controls:GlyphButton Glyph="&#xE908;" FontFamily="{StaticResource TelegramThemeFontFamily}" IsEnabled="False" Grid.Column="1"/>
                 <controls:GlyphButton Click="Proportions_Click"
                                       Glyph="&#xE90A;"
                                       Visibility="{x:Bind ConvertProportions(SelectedItem.CropProportions, x:False), Mode=OneWay}"
-                                      FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
                                       Grid.Column="2"/>
                 <controls:GlyphButton Click="Proportions_Click"
                                       Glyph="&#xE90A;"
                                       Visibility="{x:Bind ConvertProportions(SelectedItem.CropProportions, x:True), Mode=OneWay}"
                                       Foreground="{ThemeResource TelegramBackgroundAccentBrush}"
-                                      FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
                                       Grid.Column="2"/>
 
                 <ComboBox x:Name="CroppoBox" Visibility="Collapsed" Grid.ColumnSpan="4"/>

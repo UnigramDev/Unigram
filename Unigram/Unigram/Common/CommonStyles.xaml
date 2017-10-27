@@ -1437,9 +1437,9 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <TextBlock x:Name="ContentPresenter" HorizontalAlignment="Center" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                            <Run Text="&#xE611;" FontFamily="{ThemeResource TelegramThemeFontFamily}" />
+                            <Run Text="&#xE611;" FontFamily="{StaticResource TelegramThemeFontFamily}" />
                             <Run Text="  INSTANT VIEW  " />
-                            <Run Text="&#xE611;" Foreground="{x:Null}" FontFamily="{ThemeResource TelegramThemeFontFamily}" />
+                            <Run Text="&#xE611;" Foreground="{x:Null}" FontFamily="{StaticResource TelegramThemeFontFamily}" />
                         </TextBlock>
                     </Grid>
                 </ControlTemplate>
