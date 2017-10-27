@@ -229,12 +229,7 @@ namespace Unigram.Controls.Views
 
             if (ViewModel.SelectedItem == ViewModel.FirstItem)
             {
-                //Flip.Opacity = 0;
                 Surface.Visibility = Visibility.Visible;
-
-                Layer.Visibility = Visibility.Collapsed;
-                TopBar.Visibility = Visibility.Collapsed;
-                BotBar.Visibility = Visibility.Collapsed;
 
                 var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
                 if (animation != null && _closing != null)
@@ -245,24 +240,16 @@ namespace Unigram.Controls.Views
                         animation.TryStart(element);
                     }
                 }
-
-                DataContext = null;
-                Bindings.StopTracking();
-
-                Hide();
             }
-            else
-            {
-                //Flip.Opacity = 0;
-                Layer.Visibility = Visibility.Collapsed;
-                TopBar.Visibility = Visibility.Collapsed;
-                BotBar.Visibility = Visibility.Collapsed;
+            
+            Layer.Visibility = Visibility.Collapsed;
+            TopBar.Visibility = Visibility.Collapsed;
+            BotBar.Visibility = Visibility.Collapsed;
 
-                DataContext = null;
-                Bindings.StopTracking();
+            DataContext = null;
+            Bindings.StopTracking();
 
-                Hide();
-            }
+            Hide();
 
             e.Handled = true;
         }
@@ -439,7 +426,7 @@ namespace Unigram.Controls.Views
             }
         }
 
-        private void ImageView_Tapped(object sender, TappedRoutedEventArgs e)
+        private void ImageView_Click(object sender, RoutedEventArgs e)
         {
             TopBar.Visibility = TopBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
             BotBar.Visibility = BotBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
