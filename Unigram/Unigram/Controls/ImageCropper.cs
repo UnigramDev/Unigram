@@ -528,10 +528,10 @@ namespace Unigram.Controls
             }
         }
 
-        public void Reset()
+        public void Reset(ImageCroppingProportions? proportions = null)
         {
             var imageScale = m_imageSize.Width / m_imageSize.Height;
-            var cropScale = GetProportionsFactor(Proportions, imageScale);
+            var cropScale = GetProportionsFactor(proportions ?? Proportions, imageScale);
             if (imageScale < cropScale)
             {
                 var cropHeight = m_imageSize.Width / cropScale;
@@ -543,7 +543,7 @@ namespace Unigram.Controls
                 m_cropRectangle = new Rect((m_imageSize.Width - cropWidth) / 2.0, 0.0, cropWidth, m_imageSize.Height);
             }
 
-            UpdateCropRectangle(m_cropRectangle, false);
+            UpdateCropRectangle(m_cropRectangle, true);
         }
 
         private void OnProportionsChanged(ImageCroppingProportions oldValue, ImageCroppingProportions newValue)
