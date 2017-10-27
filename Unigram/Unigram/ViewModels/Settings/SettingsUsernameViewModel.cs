@@ -106,7 +106,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public async Task CheckIfAvailableAsync(string text)
+        public async void CheckAvailability(string text)
         {
             var response = await ProtoService.CheckUsernameAsync(text);
             if (response.IsSucceeded)
