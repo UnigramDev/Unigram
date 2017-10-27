@@ -65,6 +65,9 @@ namespace Unigram.Controls.Items
                 _oldViewModel = ViewModel;
                 ViewModel.PropertyChanged += OnPropertyChanged;
 
+                Photo.Visibility = ViewModel.With is TLUser user1 && user1.IsSelf ? Visibility.Collapsed : Visibility.Visible;
+                SavedMessages.Visibility = ViewModel.With is TLUser user2 && user2.IsSelf ? Visibility.Visible : Visibility.Collapsed;
+
                 FromLabel.Text = UpdateFromLabel(ViewModel);
                 BriefLabel.Text = UpdateBriefLabel(ViewModel);
                 UpdateTimeLabel();

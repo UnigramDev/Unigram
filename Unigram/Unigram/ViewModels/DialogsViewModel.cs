@@ -105,7 +105,7 @@ namespace Unigram.ViewModels
 
                 foreach (var item in test)
                 {
-                    if ((item.With is TLChat chat && chat.HasMigratedTo) || (item.With is TLUser user && user.IsSelf))
+                    if ((item.With is TLChat chat && chat.HasMigratedTo) /*|| (item.With is TLUser user && user.IsSelf)*/)
                     {
                         continue;
                     }
@@ -197,7 +197,7 @@ namespace Unigram.ViewModels
 
                 foreach (var item in response.Result.Dialogs)
                 {
-                    if ((item.With is TLChat chat && chat.HasMigratedTo) || (item.With is TLUser user && user.IsSelf))
+                    if ((item.With is TLChat chat && chat.HasMigratedTo) /*|| (item.With is TLUser user && user.IsSelf)*/)
                     {
                         continue;
                     }
@@ -718,11 +718,11 @@ namespace Unigram.ViewModels
         {
             BeginOnUIThread(() =>
             {
-                if (e.Dialog.With is TLUser user && user.IsSelf)
-                {
-                    Items.Remove(e.Dialog);
-                    return;
-                }
+                //if (e.Dialog.With is TLUser user && user.IsSelf)
+                //{
+                //    Items.Remove(e.Dialog);
+                //    return;
+                //}
 
                 try
                 {
@@ -855,11 +855,11 @@ namespace Unigram.ViewModels
 
             BeginOnUIThread(() =>
             {
-                if (e.Dialog.With is TLUser user && user.IsSelf)
-                {
-                    Items.Remove(e.Dialog);
-                    return;
-                }
+                //if (e.Dialog.With is TLUser user && user.IsSelf)
+                //{
+                //    Items.Remove(e.Dialog);
+                //    return;
+                //}
 
                 var index = -1;
                 for (int i = 0; i < Items.Count; i++)
