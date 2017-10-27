@@ -90,7 +90,11 @@ namespace Unigram.Controls.Messages
                         {
                             top = 4;
                         }
-                        if (message.HasFwdFrom || message.HasViaBotId || message.HasReplyToMsgId || message.IsPost)
+                        if (message.IsFirst && message.IsSaved())
+                        {
+                            top = 4;
+                        }
+                        if ((message.HasFwdFrom && !message.IsSaved()) || message.HasViaBotId || message.HasReplyToMsgId || message.IsPost)
                         {
                             top = 4;
                         }

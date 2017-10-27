@@ -324,9 +324,9 @@
                 <controls:ProfilePictureView x:Phase="3"
                                              x:Name="PhotoBubble"
                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
-                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                             Source="{x:Bind Participant.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                             Click="ProfileBubble_Click"/>
+                                             Click="Photo_Click"/>
 
                 <Grid Margin="0,2" Grid.Column="1">
                     <Grid.ColumnDefinitions>
@@ -387,10 +387,20 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Bottom"
                             CornerRadius="14"
-                            Margin="8,0,0,4"
+                            Margin="8,0,0,2"
                             Grid.Column="1"
                             Grid.Row="1">
                         <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+                    </Border>
+                    <Border Visibility="{x:Bind FwdFrom.HasSavedFromMsgId, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                            Background="{ThemeResource MessageServiceBackgroundBrush}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            CornerRadius="14"
+                            Margin="8,0,0,2"
+                            Grid.Column="2"
+                            Grid.Row="1">
+                        <controls:GlyphButton Click="View_Click" Glyph="&#xE90B;" FontFamily="{StaticResource TelegramThemeFontFamily}" Padding="0,2,0,0" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
                     </Border>
 
                     <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Row="2"/>
@@ -506,9 +516,9 @@
                 <controls:ProfilePictureView x:Phase="3"
                                              x:Name="PhotoBubble"
                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
-                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                             Source="{x:Bind Participant.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                             Click="ProfileBubble_Click"/>
+                                             Click="Photo_Click"/>
 
                 <Grid Margin="0,2" Grid.Column="1">
                     <Grid.ColumnDefinitions>
@@ -554,6 +564,17 @@
                             </messages:MessageReference.Resources>
                         </messages:MessageReference>
                     </StackPanel>
+
+                    <Border Visibility="{x:Bind FwdFrom.HasSavedFromMsgId, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                            Background="{ThemeResource MessageServiceBackgroundBrush}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            CornerRadius="14"
+                            Margin="8,0,0,2"
+                            Grid.Column="2"
+                            Grid.Row="1">
+                        <controls:GlyphButton Click="View_Click" Glyph="&#xE90B;" FontFamily="{StaticResource TelegramThemeFontFamily}" Padding="0,2,0,0" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+                    </Border>
 
                     <controls:ReplyMarkupPanel Message="{x:Bind}" ReplyMarkup="{x:Bind ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2" Grid.Row="2"/>
                 </Grid>
@@ -635,9 +656,9 @@
                 <controls:ProfilePictureView x:Phase="3"
                                              x:Name="PhotoBubble"
                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
-                                             Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                             Source="{x:Bind Participant.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                             Click="ProfileBubble_Click"/>
+                                             Click="Photo_Click"/>
                 <messages:MessageBubble x:Name="Bubble" ContextRequested="Message_ContextRequested" Grid.Column="1"/>
 
                 <Border Visibility="{x:Bind Converter={StaticResource MessageToShareConverter}}"
@@ -647,6 +668,14 @@
                         Margin="8,0,0,4"
                         Grid.Column="2">
                     <controls:GlyphButton Click="Share_Click" Glyph="&#xEE35;" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
+                </Border>
+                <Border Visibility="{x:Bind FwdFrom.HasSavedFromMsgId, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                        Background="{ThemeResource MessageServiceBackgroundBrush}"
+                        VerticalAlignment="Bottom"
+                        CornerRadius="14"
+                        Margin="8,0,0,4"
+                        Grid.Column="2">
+                    <controls:GlyphButton Click="View_Click" Glyph="&#xE90B;" FontFamily="{StaticResource TelegramThemeFontFamily}" Padding="0,2,0,0" Foreground="{ThemeResource MessageServiceForegroundBrush}" FontSize="14" Width="28" Height="28" CornerRadius="14"/>
                 </Border>
             </Grid>
         </DataTemplate>
@@ -1083,37 +1112,41 @@
                             Grid.ColumnSpan="3">
                         <Button.Content>
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <controls:ProfilePictureView Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
+                                <TextBlock Text="Saved Messages" VerticalAlignment="Center" Margin="12,0" Visibility="{x:Bind ViewModel.WithUser.IsSelf, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" Style="{StaticResource BaseTextBlockStyle}"/>
 
-                                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
-                                    <TextBlock x:Name="tblDialogName"
-                                               Text="{x:Bind ViewModel.With.DisplayName, Mode=OneWay}"
-                                               Style="{StaticResource BaseTextBlockStyle}"
-                                               TextWrapping="NoWrap"
-                                               TextTrimming="CharacterEllipsis"
-                                               MaxLines="1"/>
-                                    <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
-                                        <TextBlock x:Name="tblDialogStatus"
-                                                   Visibility="{x:Bind ViewModel.Dialog.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                                                   Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                                   Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}" />
-                                        <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.Dialog.IsTyping, Mode=OneWay}">
-                                            <!--<ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0,0,4,2" Style="{StaticResource UploadProgressRingStyle}"/>-->
-                                            <TextBlock Text="{x:Bind ViewModel.Dialog.TypingSubtitle, Mode=OneWay}"
-                                                       Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
-                                                       Style="{StaticResource CaptionTextBlockStyle}"/>
-                                            <ProgressRing IsActive="{x:Bind ViewModel.Dialog.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </StackPanel>
+                                <Grid Visibility="{x:Bind ViewModel.WithUser.IsSelf, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert, FallbackValue=Visible}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <controls:ProfilePictureView Source="{x:Bind ViewModel.With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="36" Height="36" Margin="12,0" IsHitTestVisible="False"/>
 
-                                <Border Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable,Mode=OneWay}" Width="48" Grid.Column="2"/>
+                                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="1">
+                                        <TextBlock x:Name="tblDialogName"
+                                                   Text="{x:Bind ViewModel.With.DisplayName, Mode=OneWay}"
+                                                   Style="{StaticResource BaseTextBlockStyle}"
+                                                   TextWrapping="NoWrap"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   MaxLines="1"/>
+                                        <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+                                            <TextBlock x:Name="tblDialogStatus"
+                                                       Visibility="{x:Bind ViewModel.Dialog.IsTyping, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                                       Text="{x:Bind ViewModel.LastSeen, Mode=OneWay}" />
+                                            <StackPanel Orientation="Horizontal" Visibility="{x:Bind (Visibility)ViewModel.Dialog.IsTyping, Mode=OneWay}">
+                                                <!--<ProgressRing IsActive="{x:Bind ViewModel.IsTyping, Mode=OneWay}" VerticalAlignment="Bottom" Margin="0,0,4,2" Style="{StaticResource UploadProgressRingStyle}"/>-->
+                                                <TextBlock Text="{x:Bind ViewModel.Dialog.TypingSubtitle, Mode=OneWay}"
+                                                           Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
+                                                           Style="{StaticResource CaptionTextBlockStyle}"/>
+                                                <ProgressRing IsActive="{x:Bind ViewModel.Dialog.IsTyping, Mode=OneWay}" Style="{StaticResource TypingProgressRingStyle}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+
+                                    <Border Visibility="{x:Bind (Visibility)ViewModel.IsPhoneCallsAvailable,Mode=OneWay}" Width="48" Grid.Column="2"/>
+                                </Grid>
                             </Grid>
                         </Button.Content>
                     </Button>
@@ -1765,7 +1798,7 @@
                                               AllowFocusOnInteraction="False"
                                               Glyph="&#xE613;"
                                               Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                              FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                              FontFamily="{StaticResource TelegramThemeFontFamily}"
                                               VerticalAlignment="Bottom"/>
                     </Border>
 
@@ -1774,7 +1807,7 @@
                                               Click="Stickers_Click"
                                               AllowFocusOnInteraction="False"
                                               Glyph="&#xE606;"
-                                              FontFamily="{ThemeResource TelegramThemeFontFamily}"
+                                              FontFamily="{StaticResource TelegramThemeFontFamily}"
                                               VerticalAlignment="Bottom"/>
                     </Border>
 

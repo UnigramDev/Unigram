@@ -120,7 +120,7 @@ namespace Telegram.Api.Services.Cache
             }
 
             TLUtils.WritePerformance(string.Format("GetCachedDialogs time ({0} from {1}): {2}", dialogs.Count, _database.CountRecords<TLDialog>(), timer.Elapsed));
-            return dialogs.OrderByDescending(x => x.GetDateIndex()).ToList();
+            return dialogs.OrderByDescending(x => x.GetDateIndexWithDraft()).ToList();
         }
 
 

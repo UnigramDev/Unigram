@@ -2075,6 +2075,8 @@ namespace Unigram.ViewModels
                                 clone.FwdFrom.HasChannelId = clone.FwdFrom.HasChannelPost = true;
                                 clone.FwdFrom.ChannelId = fwdChannel.Id;
                                 clone.FwdFrom.ChannelPost = fwdMessage.Id;
+                                clone.FwdFrom.HasPostAuthor = fwdMessage.HasPostAuthor;
+                                clone.FwdFrom.PostAuthor = fwdMessage.PostAuthor;
                             }
                         }
                     }
@@ -2091,6 +2093,14 @@ namespace Unigram.ViewModels
                             FromId = fwdMessage.FromId,
                             Date = fwdMessage.Date
                         };
+                    }
+
+                    if (clone.FwdFrom != null && ((_peer is TLInputPeerUser user && user.UserId == SettingsHelper.UserId) || _peer is TLInputPeerSelf))
+                    {
+                        clone.FwdFrom.SavedFromMsgId = fwdMessage.Id;
+                        clone.FwdFrom.SavedFromPeer = fwdMessage.Parent?.ToPeer();
+                        clone.FwdFrom.HasSavedFromMsgId = true;
+                        clone.FwdFrom.HasSavedFromPeer = clone.FwdFrom.SavedFromPeer != null;
                     }
                 }
 
@@ -3241,22 +3251,21 @@ namespace Unigram.ViewModels
             }
 
             var oldFirst = item.IsFirst;
-            var isItemPost = false;
-            if (item is TLMessage) isItemPost = ((TLMessage)item).IsPost;
 
-            if (!isItemPost)
+            var itemPost = item is TLMessage && ((TLMessage)item).IsPost;
+
+            if (!itemPost)
             {
                 var attach = false;
                 if (previous != null)
                 {
-                    var isPreviousPost = false;
-                    if (previous is TLMessage) isPreviousPost = ((TLMessage)previous).IsPost;
+                    var previousPost = previous is TLMessage && ((TLMessage)previous).IsPost;
 
-                    attach = !isPreviousPost &&
+                    attach = !previousPost &&
                              !(previous is TLMessageService && !(((TLMessageService)previous).Action is TLMessageActionPhoneCall)) &&
                              !(previous.IsService()) &&
                              !(previous is TLMessageEmpty) &&
-                             previous.FromId == item.FromId &&
+                             AreTogether(item, previous) &&
                              item.Date - previous.Date < 900;
                 }
 
@@ -3276,70 +3285,27 @@ namespace Unigram.ViewModels
                     previous.IsLast = false;
                 }
             }
-
-            //if (item.IsFirst && item is TLMessage)
-            //{
-            //    var message = item as TLMessage;
-            //    if (message != null && !message.IsPost && !message.IsOut)
-            //    {
-            //        base.InsertItem(index, new TLMessageEmpty { Date = item.Date, FromId = item.FromId, Id = item.Id, ToId = item.ToId });
-            //    }
-            //}
-
-            //if (!item.IsFirst && oldFirst)
-            //{
-            //    var next = index > 0 ? this[index - 1] : null;
-            //    if (next is TLMessageEmpty)
-            //    {
-            //        Remove(item);
-            //    }
-            //}
         }
 
-        //public ObservableCollection<MessageGroup> Groups { get; private set; } = new ObservableCollection<MessageGroup>();
+        private bool AreTogether(TLMessageBase item1, TLMessageBase item2)
+        {
+            if (item1 is TLMessage message1 && item2 is TLMessage message2)
+            {
+                var saved1 = message1.IsSaved();
+                var saved2 = message2.IsSaved();
+                if (saved1 && saved2)
+                {
+                    return message1.FwdFrom.FromId == message2.FwdFrom.FromId && 
+                           message1.FwdFrom.SavedFromPeer.Equals(message2.FwdFrom.SavedFromPeer);
+                }
+                else if (saved1 || saved2)
+                {
+                    return false;
+                }
+            }
 
-        //protected override void InsertItem(int index, TLMessageBase item)
-        //{
-        //    base.InsertItem(index, item);
-
-        //    var group = GroupForIndex(index);
-        //    if (group == null || group?.FromId != item.FromId)
-        //    {
-        //        group = new MessageGroup(this, item.From, item.FromId, item.ToId, item is TLMessage ? ((TLMessage)item).IsOut : false);
-        //        Groups.Insert(index == 0 ? 0 : Groups.Count, group); // TODO: should not be 0 all the time
-        //    }
-
-        //    group.Insert(Math.Max(0, index - group.FirstIndex), item);
-        //}
-
-        //protected override void RemoveItem(int index)
-        //{
-        //    base.RemoveItem(index);
-
-        //    var group = GroupForIndex(index);
-        //    if (group != null)
-        //    {
-        //        group.RemoveAt(index - group.FirstIndex);
-        //    }
-        //}
-
-        //private MessageGroup GroupForIndex(int index)
-        //{
-        //    if (index == 0)
-        //    {
-        //        return Groups.FirstOrDefault();
-        //    }
-        //    else if (index == Count - 1)
-        //    {
-        //        return Groups.LastOrDefault();
-        //    }
-        //    else
-        //    {
-        //        return Groups.FirstOrDefault(x => x.FirstIndex >= index && x.LastIndex <= index);
-        //    }
-        //}
-
-        //public override event NotifyCollectionChangedEventHandler CollectionChanged;
+            return item1.FromId == item2.FromId;
+        }
 
         public void RaiseCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
@@ -3363,76 +3329,8 @@ namespace Unigram.ViewModels
             }
 
             OnCollectionChanged(args);
-            //CollectionChanged?.Invoke(this, args);
         }
     }
-
-    //public class MessageGroup : ObservableCollection<TLMessageBase>
-    //{
-    //    private ObservableCollection<MessageGroup> _parent;
-
-    //    public MessageGroup(MessageCollection parent, TLUser from, int? fromId, TLPeerBase toId, bool isOut)
-    //    {
-    //        _parent = parent.Groups;
-
-    //        From = from;
-    //        if (fromId == null)
-    //            FromId = 33303409;
-    //        FromId = fromId;
-    //        ToId = toId;
-    //        IsOut = isOut;
-    //    }
-
-    //    public TLUser From { get; private set; }
-
-    //    public int? FromId { get; private set; }
-
-    //    public TLPeerBase ToId { get; private set; }
-
-    //    public bool IsOut { get; private set; }
-
-    //    public int FirstIndex
-    //    {
-    //        get
-    //        {
-    //            var count = 0;
-    //            var index = _parent.IndexOf(this);
-    //            if (index > 0)
-    //            {
-    //                count = _parent[index - 1].LastIndex + 1;
-    //            }
-
-    //            return count;
-    //        }
-    //    }
-
-    //    public int LastIndex
-    //    {
-    //        get
-    //        {
-    //            return FirstIndex + Math.Max(0, Count - 1);
-    //        }
-    //    }
-
-    //    protected override void InsertItem(int index, TLMessageBase item)
-    //    {
-    //        // TODO: experimental
-    //        if (index == 0)
-    //        {
-    //            if (Count > 0)
-    //                this[0].IsFirst = false;
-
-    //            item.IsFirst = true;
-    //        }
-
-    //        base.InsertItem(index, item);
-    //    }
-
-    //    protected override void RemoveItem(int index)
-    //    {
-    //        base.RemoveItem(index);
-    //    }
-    //}
 
     public class TLUserCommand
     {

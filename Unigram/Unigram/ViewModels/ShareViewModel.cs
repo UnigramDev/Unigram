@@ -11,7 +11,9 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
+using Unigram.Core.Common;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
 {
@@ -20,10 +22,41 @@ namespace Unigram.ViewModels
         public ShareViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, DialogsViewModel dialogs)
             : base(protoService, cacheService, aggregator)
         {
-            Dialogs = dialogs;
-            GroupedItems = new ObservableCollection<ShareViewModel> { this };
+            Items = new MvxObservableCollection<TLDialog>();
+            GroupedItems = new MvxObservableCollection<ShareViewModel> { this };
 
             SendCommand = new RelayCommand(SendExecute, () => SelectedItems.Count > 0);
+        }
+
+        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        {
+            var dialogs = CacheService.GetDialogs();
+            var self = dialogs.FirstOrDefault(x => x.With is TLUser user && user.IsSelf);
+            if (self == null)
+            {
+                var user = CacheService.GetUser(SettingsHelper.UserId);
+                if (user == null)
+                {
+                    var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
+                    if (response.IsSucceeded)
+                    {
+                        user = response.Result.FirstOrDefault() as TLUser;
+                    }
+                }
+
+                if (user != null)
+                {
+                    self = new TLDialog { With = user, Peer = user.ToPeer() };
+                }
+            }
+
+            if (self != null)
+            {
+                dialogs.Remove(self);
+                dialogs.Insert(0, self);
+            }
+
+            Items.ReplaceWith(dialogs);
         }
 
         private List<TLDialog> _selectedItems = new List<TLDialog>();
@@ -103,9 +136,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        public DialogsViewModel Dialogs { get; private set; }
-
-        public ObservableCollection<ShareViewModel> GroupedItems { get; private set; }
+        public MvxObservableCollection<TLDialog> Items { get; private set; }
+        public MvxObservableCollection<ShareViewModel> GroupedItems { get; private set; }
 
 
 
@@ -220,6 +252,8 @@ namespace Unigram.ViewModels
                                     clone.FwdFrom.HasChannelId = clone.FwdFrom.HasChannelPost = true;
                                     clone.FwdFrom.ChannelId = fwdChannel.Id;
                                     clone.FwdFrom.ChannelPost = fwdMessage.Id;
+                                    clone.FwdFrom.HasPostAuthor = fwdMessage.HasPostAuthor;
+                                    clone.FwdFrom.PostAuthor = fwdMessage.PostAuthor;
                                 }
                             }
                         }
@@ -236,6 +270,14 @@ namespace Unigram.ViewModels
                                 FromId = fwdMessage.FromId,
                                 Date = fwdMessage.Date
                             };
+                        }
+
+                        if (clone.FwdFrom != null && ((toPeer is TLInputPeerUser user && user.UserId == SettingsHelper.UserId) || toPeer is TLInputPeerSelf))
+                        {
+                            clone.FwdFrom.SavedFromMsgId = fwdMessage.Id;
+                            clone.FwdFrom.SavedFromPeer = fwdMessage.Parent?.ToPeer();
+                            clone.FwdFrom.HasSavedFromMsgId = true;
+                            clone.FwdFrom.HasSavedFromPeer = clone.FwdFrom.SavedFromPeer != null;
                         }
                     }
 

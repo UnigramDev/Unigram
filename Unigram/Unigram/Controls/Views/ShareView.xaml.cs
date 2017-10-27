@@ -190,6 +190,23 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
+        private new IAsyncOperation<ContentDialogBaseResult> ShowAsync()
+        {
+            ViewModel.Items.Clear();
+
+            RoutedEventHandler handler = null;
+            handler = new RoutedEventHandler(async (s, args) =>
+            {
+                Loaded -= handler;
+                await ViewModel.OnNavigatedToAsync(null, NavigationMode.New, null);
+            });
+
+            Loaded += handler;
+            return base.ShowAsync();
+        }
+
+
+
         private Border LineTop;
         private Border LineAccent;
 

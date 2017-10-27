@@ -283,6 +283,7 @@
     <Compile Include="Models\StorageVideo.cs" />
     <Compile Include="Selectors\AdminLogTemplateSelector.cs" />
     <Compile Include="Selectors\AutocompleteTemplateSelector.cs" />
+    <Compile Include="Selectors\DialogTemplateSelector.cs" />
     <Compile Include="Selectors\GalleryTemplateSelector.cs" />
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetCoveredTemplateSelector.cs" />

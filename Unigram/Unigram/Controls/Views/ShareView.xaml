@@ -17,7 +17,7 @@
     mc:Ignorable="d">
 
     <controls:ContentDialogBase.Resources>
-        <CollectionViewSource x:Name="ViewSource" Source="{x:Bind ViewModel.GroupedItems, Mode=OneWay}" ItemsPath="Dialogs.Static" IsSourceGrouped="True"/>
+        <CollectionViewSource x:Name="ViewSource" Source="{x:Bind ViewModel.GroupedItems, Mode=OneWay}" ItemsPath="Items" IsSourceGrouped="True"/>
 
         <Style TargetType="GridViewItem" x:Key="GridViewItemExpandedStyle">
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -458,14 +458,28 @@
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="4"/>
             </common:FluidGridView.Triggers>
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="tl:TLDialog">
-                    <StackPanel Margin="0,12">
-                        <controls:ProfilePictureView IsHitTestVisible="False" Source="{x:Bind With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" Margin="8,0"/>
-                        <TextBlock Text="{x:Bind With.DisplayName, Mode=OneWay}" Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </GridView.ItemTemplate>
+            <GridView.ItemTemplateSelector>
+                <selectors:DialogTemplateSelector>
+                    <selectors:DialogTemplateSelector.ItemTemplate>
+                        <DataTemplate x:DataType="tl:TLDialog">
+                            <StackPanel Margin="0,12">
+                                <controls:ProfilePictureView IsHitTestVisible="False" Source="{x:Bind With.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Width="48" Height="48" Margin="8,0"/>
+                                <TextBlock Text="{x:Bind With.DisplayName, Mode=OneWay}" Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </selectors:DialogTemplateSelector.ItemTemplate>
+                    <selectors:DialogTemplateSelector.SelfTemplate>
+                        <DataTemplate x:DataType="tl:TLDialog">
+                            <StackPanel Margin="0,12">
+                                <Border Background="{ThemeResource SystemControlBackgroundAccentBrush}" Width="48" Height="48" CornerRadius="24" Margin="8,0">
+                                    <FontIcon Glyph="&#xE907;" Foreground="White" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+                                </Border>
+                                <TextBlock Text="{x:Bind With.DisplayName, Mode=OneWay}" Margin="0,8,0,0" FontSize="10" TextAlignment="Center" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource CaptionTextBlockStyle}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </selectors:DialogTemplateSelector.SelfTemplate>
+                </selectors:DialogTemplateSelector>
+            </GridView.ItemTemplateSelector>
             <GridView.Header>
                 <Border x:Name="Header" Background="Transparent" Tapped="LightDismiss_Tapped"/>
             </GridView.Header>

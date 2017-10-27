@@ -185,8 +185,18 @@ namespace Unigram.Controls.Messages
 
                     paragraph.Inlines.Add(hyperlink);
                 }
+                else if (message.IsFirst && message.IsSaved())
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(new Run { Text = message.FwdFromUser?.FullName ?? message.FwdFromChannel?.DisplayName ?? string.Empty, Foreground = Convert.Bubble(message.FwdFrom?.FromId ?? message.FwdFrom?.ChannelId ?? 0) });
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = paragraph.Foreground;
+                    hyperlink.Click += (s, args) => FwdFrom_Click(message);
 
-                if (message.HasFwdFrom)
+                    paragraph.Inlines.Add(hyperlink);
+                }
+
+                if (message.HasFwdFrom && !message.IsSaved())
                 {
                     if (paragraph.Inlines.Count > 0)
                         paragraph.Inlines.Add(new LineBreak());

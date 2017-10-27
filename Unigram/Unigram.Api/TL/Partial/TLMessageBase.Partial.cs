@@ -155,6 +155,8 @@ namespace Telegram.Api.TL
                     var channel = Parent as TLChannel;
                     if (channel != null && channel.IsBroadcast)
                         _participant = Parent;
+                    else if (this is TLMessage message && message.IsSaved())
+                        _participant = message.FwdFromUser ?? (ITLDialogWith)message.FwdFromChannel;
                     else
                         _participant = From;
                 }
@@ -281,6 +283,15 @@ namespace Telegram.Api.TL
 
     public partial class TLMessage
     {
+
+        #region Saved
+
+        public bool IsSaved()
+        {
+            return HasFwdFrom && FwdFrom != null && FwdFrom.HasSavedFromPeer && FwdFrom.SavedFromPeer != null;
+        }
+
+        #endregion
 
         #region Game
 

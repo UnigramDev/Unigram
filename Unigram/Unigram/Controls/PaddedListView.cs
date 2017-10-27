@@ -23,12 +23,11 @@ namespace Unigram.Controls
                 {
                     bubble.Padding = new Thickness(12, 0, 12, 0);
                 }
-                else
+                else if (messageCommon is TLMessage message)
                 {
-                    var message = item as TLMessage;
-                    if (message != null && message.ToId is TLPeerChat || message.ToId is TLPeerChannel && !message.IsPost)
+                    if (message.IsSaved() || message.ToId is TLPeerChat || message.ToId is TLPeerChannel && !message.IsPost)
                     {
-                        if (message.IsOut)
+                        if (message.IsOut && !message.IsSaved())
                         {
                             if (message.IsSticker())
                             {

@@ -55,24 +55,19 @@ namespace Telegram.Api.TL
 
         //#region User equality
 
-        //public static bool operator ==(TLPeerBase peer, TLUserBase user)
+        //public static bool operator ==(TLPeerBase peer1, TLPeerBase peer2)
         //{
-        //    if (((object)peer == null) || ((object)peer == null))
+        //    if ((object)peer1 == null || (object)peer2 == null)
         //    {
         //        return false;
         //    }
 
-        //    if (peer is TLPeerUser userPeer && userPeer.UserId == user.Id)
-        //    {
-        //        return true;
-        //    }
-
-        //    return false;
+        //    return peer1.Equals(peer2);
         //}
 
-        //public static bool operator !=(TLPeerBase peer, TLUserBase user)
+        //public static bool operator !=(TLPeerBase peer1, TLPeerBase peer2)
         //{
-        //    return !(peer == user);
+        //    return !(peer1 == peer2);
         //}
 
         //#endregion

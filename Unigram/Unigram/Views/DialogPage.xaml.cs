@@ -450,9 +450,16 @@ namespace Unigram.Views
 
         private void btnDialogInfo_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.With is TLUserBase)
+            if (ViewModel.With is TLUser user)
             {
-                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), ViewModel.Peer.ToPeer());
+                if (user.IsSelf)
+                {
+                    ViewModel.NavigationService.Navigate(typeof(DialogSharedMediaPage), ViewModel.Peer);
+                }
+                else
+                {
+                    ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), ViewModel.Peer.ToPeer());
+                }
             }
             else if (ViewModel.With is TLChannel)
             {
@@ -698,13 +705,44 @@ namespace Unigram.Views
             TextField.Focus(FocusState.Keyboard);
         }
 
-        private void ProfileBubble_Click(object sender, RoutedEventArgs e)
+        private void Photo_Click(object sender, RoutedEventArgs e)
         {
             var control = sender as FrameworkElement;
             var message = control.DataContext as TLMessage;
-            if (message != null && message.HasFromId)
+
+            if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasFromId)
+            {
+                ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FwdFrom.FromId.Value });
+            }
+            else if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasChannelId)
+            {
+                ViewModel.NavigationService.NavigateToDialog(message.FwdFromChannel);
+            }
+            else if (message != null && message.HasFromId)
             {
                 ViewModel.NavigationService.Navigate(typeof(UserDetailsPage), new TLPeerUser { UserId = message.FromId.Value });
+            }
+        }
+
+        private void View_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var message = button.DataContext as TLMessage;
+
+            if (message != null && message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasSavedFromPeer && message.FwdFrom.SavedFromPeer != null && message.FwdFrom.HasSavedFromMsgId && message.FwdFrom.SavedFromMsgId != null)
+            {
+                ITLDialogWith with = null;
+                if (message.FwdFrom.SavedFromPeer is TLPeerUser user)
+                    with = InMemoryCacheService.Current.GetUser(user.UserId);
+                else if (message.FwdFrom.SavedFromPeer is TLPeerChat chat)
+                    with = InMemoryCacheService.Current.GetChat(chat.ChatId);
+                else if (message.FwdFrom.SavedFromPeer is TLPeerChannel channel)
+                    with = InMemoryCacheService.Current.GetChat(channel.ChannelId);
+
+                if (with != null)
+                {
+                    ViewModel.NavigationService.NavigateToDialog(with, message: message.FwdFrom.SavedFromMsgId);
+                }
             }
         }
 

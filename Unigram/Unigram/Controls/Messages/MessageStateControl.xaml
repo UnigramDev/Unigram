@@ -21,6 +21,6 @@
         <ToolTipService.ToolTip>
             <ToolTip Opened="ToolTip_Opened"/>
         </ToolTipService.ToolTip>
-        <Run x:Name="ViewsGlyph" FontSize="10" FontFamily="{ThemeResource TelegramThemeFontFamily}"/><Run Text="{x:Bind ConvertViews(ViewModel, ViewModel.Views), Mode=OneWay, FallbackValue=}"/><Run Text="{x:Bind ConvertEdit(ViewModel.HasEditDate, ViewModel.HasViaBotId, ViewModel.ReplyMarkup), Mode=OneWay, FallbackValue=}" FontStyle="Italic"/><Run Text="{x:Bind Convert.Date(ViewModel.Date), FallbackValue=}"/><Run Text="{x:Bind ConvertState(ViewModel.IsOut, ViewModel.IsPost, ViewModel.State), Mode=OneWay, FallbackValue=}" FontSize="10" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
+        <Run x:Name="ViewsGlyph" FontSize="10" FontFamily="{StaticResource TelegramThemeFontFamily}"/><Run Text="{x:Bind ConvertViews(ViewModel, ViewModel.Views), Mode=OneWay, FallbackValue=}"/><Run Text="{x:Bind ConvertEdit(ViewModel.HasEditDate, ViewModel.HasViaBotId, ViewModel.ReplyMarkup), Mode=OneWay, FallbackValue=}" FontStyle="Italic"/><Run Text="{x:Bind Convert.Date(ViewModel.Date), FallbackValue=}"/><Run Text="{x:Bind ConvertState(ViewModel.IsOut, ViewModel.IsPost, ViewModel.IsSaved(), ViewModel.State), Mode=OneWay, FallbackValue=}" FontSize="10" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
     </TextBlock>
 </local:HackedContentPresenter>

@@ -95,7 +95,7 @@ namespace Unigram.Selectors
 
             if (message.IsSticker())
             {
-                if (message.FwdFrom is TLMessageFwdHeader header && header.HasSavedFromPeer)
+                if (message.IsSaved())
                 {
                     return ChatFriendStickerTemplate;
                 }
@@ -113,7 +113,7 @@ namespace Unigram.Selectors
             }
             else if (message.IsRoundVideo())
             {
-                if (message.FwdFrom is TLMessageFwdHeader header && header.HasSavedFromPeer)
+                if (message.IsSaved())
                 {
                     return ChatFriendRoundVideoTemplate;
                 }
@@ -131,7 +131,7 @@ namespace Unigram.Selectors
             }
             else
             {
-                if (message.FwdFrom is TLMessageFwdHeader header && header.HasSavedFromPeer)
+                if (message.IsSaved())
                 {
                     return ChatFriendMessageTemplate;
                 }

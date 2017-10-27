@@ -218,7 +218,8 @@
             <controls:NavigationView.PaneFooter>
                 <StackPanel>
                     <controls:GlyphButton Click="About_Click" Content="About" Glyph="&#xE946;" Style="{StaticResource NavigationGlyphButtonStyle}"/>
-                    <controls:GlyphButton Click="Self_Click" Content="{x:Bind ViewModel.Contacts.Self.FullName, Mode=OneWay}" Tag="{x:Bind ViewModel.Contacts.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Style="{StaticResource NavigationImageGlyphButtonStyle}"/>
+                    <controls:GlyphButton Click="Self_Click" Content="Saved Messages" Glyph="&#xE907;" FontFamily="{StaticResource TelegramThemeFontFamily}" Style="{StaticResource NavigationGlyphButtonStyle}"/>
+                    <!--<controls:GlyphButton Click="Self_Click" Content="{x:Bind ViewModel.Contacts.Self.FullName, Mode=OneWay}" Tag="{x:Bind ViewModel.Contacts.Self.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Style="{StaticResource NavigationImageGlyphButtonStyle}"/>-->
                 </StackPanel>
             </controls:NavigationView.PaneFooter>
 
