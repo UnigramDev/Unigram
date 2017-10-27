@@ -110,10 +110,7 @@
                     <TextBlock Text="{x:Bind ViewModel.Item, Converter={StaticResource LastSeenConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
                 </Grid>
 
-                <local:TableStackPanel x:Name="Group1"
-                                       BorderThickness="0,0,0,1"
-                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}">
+                <StackPanel>
                     <controls:HyperButton Tag="Phone"
                                           Command="{Binding CallCommand}"
                                           Visibility="{Binding PhoneVisibility}"
@@ -135,14 +132,10 @@
                             <Run Text="@"/><Run Text="{Binding Item.Username}"/>
                         </TextBlock>
                     </controls:HyperButton>
-                </local:TableStackPanel>
+                </StackPanel>
 
 
-                <local:TableStackPanel x:Name="Group2"
-                                       BorderThickness="0,0,0,1"
-                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                       Margin="0,24,0,0">
+                <StackPanel Margin="0,24,0,0">
                     <controls:HyperButton Content="Send message"
                                           Command="{Binding SendMessageCommand}"
                                           Style="{StaticResource HyperButtonStyle}"/>
@@ -166,13 +159,9 @@
                                           IsEnabled="False"
                                           Visibility="{Binding HelpVisibility}"
                                           Style="{StaticResource HyperButtonStyle}"/>
-                </local:TableStackPanel>
+                </StackPanel>
 
-                <local:TableStackPanel x:Name="Group3"
-                                       BorderThickness="0,0,0,1"
-                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                       Margin="0,24,0,0">
+                <StackPanel Margin="0,24,0,0">
                     <controls:HyperButton Content="Shared Media"
                                           Command="{Binding MediaCommand}"
                                           Style="{StaticResource HyperButtonStyle}"
@@ -192,13 +181,9 @@
                                           Badge="{x:Bind ViewModel.Full.CommonChatsCount, Mode=OneWay}"
                                           Visibility="{x:Bind ViewModel.Full.CommonChatsCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                           Style="{StaticResource BadgeButtonStyle}"/>
-                </local:TableStackPanel>
+                </StackPanel>
 
-                <local:TableStackPanel x:Name="Group4"
-                                       BorderThickness="0,0,0,1"
-                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                       Margin="0,24">
+                <StackPanel Margin="0,24">
                     <controls:HyperButton Content="Report"
                                           Command="{Binding ReportCommand}"
                                           Visibility="{Binding ReportVisibility}"
@@ -227,7 +212,7 @@
                                           Visibility="{Binding UnblockVisibility}"
                                           Style="{StaticResource HyperButtonStyle}"
                                           Foreground="Red"/>
-                </local:TableStackPanel>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>
