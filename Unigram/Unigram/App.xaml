@@ -136,6 +136,7 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:ChannelToSummaryConverter x:Key="ChannelToSummaryConverter"/>
             <converters:UsernameToLinkConverter x:Key="UsernameToLinkConverter"/>
             <converters:GeoLivePeriodConverter x:Key="GeoLivePeriodConverter"/>
             <converters:GeoLiveToVisibilityConverter x:Key="GeoLiveToVisibilityConverter"/>

@@ -259,6 +259,7 @@
     <Compile Include="Converters\BooleanToIndexConverter.cs" />
     <Compile Include="Converters\ChannelJoinedToVisibilityConverter.cs" />
     <Compile Include="Converters\ChannelParticipantToTypeConverter.cs" />
+    <Compile Include="Converters\ChannelToSummaryConverter.cs" />
     <Compile Include="Converters\ChannelTypeToStringConverter.cs" />
     <Compile Include="Converters\CompressionToGlyphConverter.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
