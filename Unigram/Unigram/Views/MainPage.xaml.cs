@@ -873,6 +873,10 @@ namespace Unigram.Views
             {
                 rpMasterTitlebar.SelectedIndex = 3;
             }
+            else if (args.ClickedItem == NavigationSavedMessages && ViewModel.Contacts.Self != null)
+            {
+                MasterDetail.NavigationService.NavigateToDialog(ViewModel.Contacts.Self);
+            }
             else if (args.ClickedItem == NavigationOfficialChannel)
             {
                 MessageHelper.NavigateToUsername(ViewModel.ProtoService, "unigram", null, null, null);
