@@ -57,20 +57,8 @@ namespace Unigram.Controls.Views
             }
         }
 
-        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(List<TLMessage> messages)
-        {
-            ViewModel.Messages = messages;
-            ViewModel.SwitchInline = null;
-            ViewModel.SwitchInlineBot = null;
-            ViewModel.SendMessage = null;
-            ViewModel.SendMessageUrl = false;
-
-            return ShowAsync();
-        }
-
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLKeyboardButtonSwitchInline switchInline, TLUser bot)
         {
-            ViewModel.Messages = null;
             ViewModel.SwitchInline = switchInline;
             ViewModel.SwitchInlineBot = bot;
             ViewModel.SendMessage = null;
@@ -81,7 +69,6 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(string message, bool hasUrl)
         {
-            ViewModel.Messages = null;
             ViewModel.SwitchInline = null;
             ViewModel.SwitchInlineBot = null;
             ViewModel.SendMessage = message;

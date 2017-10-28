@@ -270,17 +270,14 @@ namespace Unigram.ViewModels
         #region Forward
 
         public RelayCommand<TLMessageBase> MessageForwardCommand { get; }
-        private async void MessageForwardExecute(TLMessageBase message)
+        private async void MessageForwardExecute(TLMessageBase messageBase)
         {
-            if (message is TLMessage)
+            if (messageBase is TLMessage message)
             {
                 Search = null;
                 SelectionMode = ListViewSelectionMode.None;
 
-                await ForwardView.Current.ShowAsync(new List<TLMessage> { message as TLMessage });
-
-                //App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
-                //NavigationService.GoBackAt(0);
+                await ShareView.Current.ShowAsync(message);
             }
         }
 
@@ -479,10 +476,7 @@ namespace Unigram.ViewModels
                 Search = null;
                 SelectionMode = ListViewSelectionMode.None;
 
-                await ForwardView.Current.ShowAsync(messages);
-
-                //App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
-                //NavigationService.GoBackAt(0);
+                await ShareView.Current.ShowAsync(messages);
             }
         }
 

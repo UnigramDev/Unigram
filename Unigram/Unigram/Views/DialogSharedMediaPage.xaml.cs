@@ -71,16 +71,16 @@ namespace Unigram.Views
                 switch (ScrollingHost.SelectedIndex)
                 {
                     case 0:
-                        ScrollingMedia.SelectedItems.AddRange(ViewModel.SelectedMessages);
+                        ScrollingMedia.SelectedItems.AddRange(ViewModel.SelectedItems);
                         break;
                     case 1:
-                        ScrollingFiles.SelectedItems.AddRange(ViewModel.SelectedMessages);
+                        ScrollingFiles.SelectedItems.AddRange(ViewModel.SelectedItems);
                         break;
                     case 2:
-                        ScrollingLinks.SelectedItems.AddRange(ViewModel.SelectedMessages);
+                        ScrollingLinks.SelectedItems.AddRange(ViewModel.SelectedItems);
                         break;
                     case 3:
-                        ScrollingMusic.SelectedItems.AddRange(ViewModel.SelectedMessages);
+                        ScrollingMusic.SelectedItems.AddRange(ViewModel.SelectedItems);
                         break;
                 }
             }
@@ -136,7 +136,7 @@ namespace Unigram.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.SelectedMessages = new List<TLMessageCommonBase>(((ListViewBase)sender).SelectedItems.Cast<TLMessageCommonBase>());
+            ViewModel.SelectedItems = new List<TLMessageCommonBase>(((ListViewBase)sender).SelectedItems.Cast<TLMessageCommonBase>());
         }
 
         private bool ConvertSelectionMode(ListViewSelectionMode mode)

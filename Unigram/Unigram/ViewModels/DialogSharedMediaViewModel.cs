@@ -26,7 +26,7 @@ namespace Unigram.ViewModels
         public DialogSharedMediaViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(x => x is TLMessage));
+            MessagesForwardCommand = new RelayCommand(MessagesForwardExecute, () => SelectedItems.Count > 0 && SelectedItems.All(x => x is TLMessage));
             MessageViewCommand = new RelayCommand<TLMessageBase>(MessageViewExecute);
             MessageSaveCommand = new RelayCommand<TLMessageBase>(MessageSaveExecute);
             MessageDeleteCommand = new RelayCommand<TLMessageBase>(MessageDeleteExecute);
@@ -96,16 +96,16 @@ namespace Unigram.ViewModels
             }
         }
 
-        private List<TLMessageCommonBase> _selectedMessages = new List<TLMessageCommonBase>();
-        public List<TLMessageCommonBase> SelectedMessages
+        private List<TLMessageCommonBase> _selectedItems = new List<TLMessageCommonBase>();
+        public List<TLMessageCommonBase> SelectedItems
         {
             get
             {
-                return _selectedMessages;
+                return _selectedItems;
             }
             set
             {
-                Set(ref _selectedMessages, value);
+                Set(ref _selectedItems, value);
                 MessagesForwardCommand.RaiseCanExecuteChanged();
                 MessagesDeleteCommand.RaiseCanExecuteChanged();
             }
@@ -333,15 +333,13 @@ namespace Unigram.ViewModels
         #region Forward
 
         public RelayCommand<TLMessageBase> MessageForwardCommand { get; }
-        private void MessageForwardExecute(TLMessageBase message)
+        private async void MessageForwardExecute(TLMessageBase messageBase)
         {
-            if (message is TLMessage)
+            if (messageBase is TLMessage message)
             {
-                //await ShareView.Current.ShowAsync(new TLStickerSet());
-                //return;
+                SelectionMode = ListViewSelectionMode.None;
 
-                App.InMemoryState.ForwardMessages = new List<TLMessage> { message as TLMessage };
-                NavigationService.GoBackAt(0);
+                await ShareView.Current.ShowAsync(message);
             }
         }
 
@@ -350,7 +348,7 @@ namespace Unigram.ViewModels
         #region Multiple Delete
 
         private RelayCommand _messagesDeleteCommand;
-        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedMessages.Count > 0 && SelectedMessages.All(messageCommon =>
+        public RelayCommand MessagesDeleteCommand => _messagesDeleteCommand = (_messagesDeleteCommand ?? new RelayCommand(MessagesDeleteExecute, () => SelectedItems.Count > 0 && SelectedItems.All(messageCommon =>
         {
             if (_with is TLChannel channel)
             {
@@ -423,7 +421,7 @@ namespace Unigram.ViewModels
             //}
             //else
             {
-                var messages = new List<TLMessageCommonBase>(SelectedMessages);
+                var messages = new List<TLMessageCommonBase>(SelectedItems);
 
                 var dialog = new TLMessageDialog();
                 dialog.Title = "Delete";
@@ -499,16 +497,14 @@ namespace Unigram.ViewModels
         #region Multiple Forward
 
         public RelayCommand MessagesForwardCommand { get; }
-
-        private void MessagesForwardExecute()
+        private async void MessagesForwardExecute()
         {
-            var messages = SelectedMessages.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
+            var messages = SelectedItems.OfType<TLMessage>().Where(x => x.Id != 0).OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
             {
                 SelectionMode = ListViewSelectionMode.None;
 
-                App.InMemoryState.ForwardMessages = new List<TLMessage>(messages);
-                NavigationService.GoBackAt(0);
+                await ShareView.Current.ShowAsync(messages);
             }
         }
 
@@ -527,7 +523,7 @@ namespace Unigram.ViewModels
 
             SelectionMode = ListViewSelectionMode.Multiple;
 
-            SelectedMessages = new List<TLMessageCommonBase> { messageCommon };
+            SelectedItems = new List<TLMessageCommonBase> { messageCommon };
             RaisePropertyChanged("SelectedItems");
         }
 
