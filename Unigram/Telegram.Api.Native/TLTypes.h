@@ -220,6 +220,7 @@ namespace Telegram
 					IFACEMETHODIMP get_RatingEDecay(_Out_ INT32* value);
 					IFACEMETHODIMP get_StickersRecentLimit(_Out_ INT32* value);
 					IFACEMETHODIMP get_StickersFavedLimit(_Out_ INT32* value);
+					IFACEMETHODIMP get_ChannelsReadMediaPeriod(_Out_ INT32* value);
 					IFACEMETHODIMP get_TmpSessions(_Out_ __FIReference_1_int** value);
 					IFACEMETHODIMP get_PinnedDialogsCountMax(_Out_ INT32* value);
 					IFACEMETHODIMP get_CallReceiveTimeoutMs(_Out_ INT32* value);
@@ -346,6 +347,11 @@ namespace Telegram
 						return m_stickersFavedLimit;
 					}
 
+					inline INT32 GetChannelsReadMediaPeriod() const
+					{
+						return m_channelsReadMediaPeriod;
+					}
+
 					inline INT32 GetTmpSessions() const
 					{
 						return m_tmpSessions;
@@ -424,6 +430,7 @@ namespace Telegram
 					INT32 m_ratingEDecay;
 					INT32 m_stickersRecentLimit;
 					INT32 m_stickersFavedLimit;
+					INT32 m_channelsReadMediaPeriod;
 					INT32 m_tmpSessions;
 					INT32 m_pinnedDialogsCountMax;
 					INT32 m_callReceiveTimeoutMs;

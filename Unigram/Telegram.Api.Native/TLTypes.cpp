@@ -175,6 +175,7 @@ TLConfig::TLConfig() :
 	m_ratingEDecay(0),
 	m_stickersRecentLimit(0),
 	m_stickersFavedLimit(0),
+	m_channelsReadMediaPeriod(0),
 	m_tmpSessions(0),
 	m_pinnedDialogsCountMax(0),
 	m_callReceiveTimeoutMs(0),
@@ -448,6 +449,17 @@ HRESULT TLConfig::get_StickersFavedLimit(INT32* value)
 	return S_OK;
 }
 
+HRESULT TLConfig::get_ChannelsReadMediaPeriod(INT32* value)
+{
+	if (value == nullptr)
+	{
+		return E_POINTER;
+	}
+
+	*value = m_channelsReadMediaPeriod;
+	return S_OK;
+}
+
 HRESULT TLConfig::get_TmpSessions(__FIReference_1_int** value)
 {
 	if (value == nullptr)
@@ -581,6 +593,7 @@ HRESULT TLConfig::ReadBody(ITLBinaryReaderEx* reader)
 	ReturnIfFailed(result, reader->ReadInt32(&m_ratingEDecay));
 	ReturnIfFailed(result, reader->ReadInt32(&m_stickersRecentLimit));
 	ReturnIfFailed(result, reader->ReadInt32(&m_stickersFavedLimit));
+	ReturnIfFailed(result, reader->ReadInt32(&m_channelsReadMediaPeriod));
 
 	if ((m_flags & TLConfigFlag::TmpSessions) == TLConfigFlag::TmpSessions)
 	{
@@ -629,6 +642,7 @@ HRESULT TLConfig::WriteBody(ITLBinaryWriterEx* writer)
 	ReturnIfFailed(result, writer->WriteInt32(m_ratingEDecay));
 	ReturnIfFailed(result, writer->WriteInt32(m_stickersRecentLimit));
 	ReturnIfFailed(result, writer->WriteInt32(m_stickersFavedLimit));
+	ReturnIfFailed(result, writer->WriteInt32(m_channelsReadMediaPeriod));
 
 	if ((m_flags & TLConfigFlag::TmpSessions) == TLConfigFlag::TmpSessions)
 	{
