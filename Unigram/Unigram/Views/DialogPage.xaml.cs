@@ -514,7 +514,8 @@ namespace Unigram.Views
                 flyout.Hide();
             }
 
-            ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
+            ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia>(ViewModel.MediaLibrary), e.Item);
+            //ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
         }
 
         private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
@@ -545,12 +546,17 @@ namespace Unigram.Views
 
                 foreach (var file in items.OfType<StorageFile>())
                 {
+                    if (await file.SkipAsync())
+                    {
+                        continue;
+                    }
+
                     if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
                     {
-                        media.Add(new StoragePhoto(file) { IsSelected = true });
+                        media.Add(await StoragePhoto.CreateAsync(file, true));
                     }
                     else if (file.ContentType == "video/mp4")
                     {
@@ -561,7 +567,7 @@ namespace Unigram.Views
                 }
 
                 // Send compressed __only__ if user is dropping photos and videos only
-                if (media.Count == files.Count)
+                if (media.Count > 0 && media.Count == files.Count)
                 {
                     ViewModel.SendMediaExecute(media, media[0]);
                 }
@@ -572,6 +578,22 @@ namespace Unigram.Views
                         ViewModel.SendFileCommand.Execute(file);
                     }
                 }
+            }
+            else if (package.Contains(StandardDataFormats.Bitmap))
+            {
+                var bitmap = await package.GetBitmapAsync();
+                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                using (var stream = await bitmap.OpenReadAsync())
+                using (var reader = new DataReader(stream))
+                {
+                    await reader.LoadAsync((uint)stream.Size);
+                    var buffer = new byte[(int)stream.Size];
+                    reader.ReadBytes(buffer);
+                    await FileIO.WriteBytesAsync(cache, buffer);
+                }
+
+                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { await StoragePhoto.CreateAsync(cache, true) });
             }
             //else if (e.DataView.Contains(StandardDataFormats.WebLink))
             //{
@@ -695,41 +717,46 @@ namespace Unigram.Views
 
         private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var menu = new MenuFlyout();
+            var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
             var messageCommon = element.DataContext as TLMessageCommonBase;
             var channel = messageCommon.Parent as TLChannel;
 
             // Generic
-            CreateFlyoutItem(ref menu, MessageReply_Loaded, ViewModel.MessageReplyCommand, messageCommon, AppResources.MessageReply);
-            CreateFlyoutItem(ref menu, MessagePin_Loaded, ViewModel.MessagePinCommand, messageCommon, ViewModel.PinnedMessage?.Id == messageCommon.Id ? AppResources.MessageUnpin : AppResources.MessagePin);
-            CreateFlyoutItem(ref menu, MessageEdit_Loaded, ViewModel.MessageEditCommand, messageCommon, AppResources.MessageEdit);
-            CreateFlyoutItem(ref menu, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, AppResources.MessageForward);
-            CreateFlyoutItem(ref menu, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, AppResources.MessageDelete);
-            CreateFlyoutItem(ref menu, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, AppResources.MessageSelect);
-            CreateFlyoutItem(ref menu, MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, AppResources.MessageCopy);
-            CreateFlyoutItem(ref menu, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, messageCommon, AppResources.MessageCopyMedia);
-            CreateFlyoutItem(ref menu, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel != null && channel.IsBroadcast ? AppResources.MessageCopyLinkBroadcast : AppResources.MessageCopyLinkMegaGroup);
+            CreateFlyoutItem(ref flyout, MessageReply_Loaded, ViewModel.MessageReplyCommand, messageCommon, AppResources.MessageReply);
+            CreateFlyoutItem(ref flyout, MessagePin_Loaded, ViewModel.MessagePinCommand, messageCommon, ViewModel.PinnedMessage?.Id == messageCommon.Id ? AppResources.MessageUnpin : AppResources.MessagePin);
+            CreateFlyoutItem(ref flyout, MessageEdit_Loaded, ViewModel.MessageEditCommand, messageCommon, AppResources.MessageEdit);
+            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, AppResources.MessageForward);
+            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, AppResources.MessageDelete);
+            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, AppResources.MessageSelect);
+            CreateFlyoutItem(ref flyout, MessageCopy_Loaded, ViewModel.MessageCopyCommand, messageCommon, AppResources.MessageCopy);
+            CreateFlyoutItem(ref flyout, MessageCopyMedia_Loaded, ViewModel.MessageCopyMediaCommand, messageCommon, AppResources.MessageCopyMedia);
+            CreateFlyoutItem(ref flyout, MessageCopyLink_Loaded, ViewModel.MessageCopyLinkCommand, messageCommon, channel != null && channel.IsBroadcast ? AppResources.MessageCopyLinkBroadcast : AppResources.MessageCopyLinkMegaGroup);
 
             // Stickers
             // <MenuFlyoutItem Loaded="MessageAddSticker_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>
-            CreateFlyoutItem(ref menu, MessageAddSticker_Loaded, new RelayCommand(() => StickerSet_Click(element, null)), messageCommon, AppResources.MessageAddSticker);
-            CreateFlyoutItem(ref menu, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, AppResources.MessageFaveSticker);
-            CreateFlyoutItem(ref menu, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, AppResources.MessageUnfaveSticker);
+            CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => StickerSet_Click(element, null)), messageCommon, AppResources.MessageAddSticker);
+            CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, AppResources.MessageFaveSticker);
+            CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, AppResources.MessageUnfaveSticker);
 
-            CreateFlyoutItem(ref menu, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, AppResources.MessageSaveGIF);
-            CreateFlyoutItem(ref menu, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, AppResources.MessageSaveMedia);
+            CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, AppResources.MessageSaveGIF);
+            CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, AppResources.MessageSaveMedia);
 
             //sender.ContextFlyout = menu;
 
-            if (menu.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
+            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
-                menu.ShowAt(sender, point);
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                flyout.ShowAt(sender, point);
             }
         }
 
-        private void CreateFlyoutItem(ref MenuFlyout menu, Func<TLMessageCommonBase, Visibility> visibility, ICommand command, object parameter, string text)
+        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<TLMessageCommonBase, Visibility> visibility, ICommand command, object parameter, string text)
         {
             var value = visibility(parameter as TLMessageCommonBase);
             if (value == Visibility.Visible)
@@ -740,7 +767,7 @@ namespace Unigram.Views
                 flyoutItem.CommandParameter = parameter;
                 flyoutItem.Text = text;
 
-                menu.Items.Add(flyoutItem);
+                flyout.Items.Add(flyoutItem);
             }
         }
 

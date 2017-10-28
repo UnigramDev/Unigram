@@ -23,6 +23,8 @@ using System.ComponentModel;
 using Unigram.Common;
 using Windows.UI.Core;
 using Windows.System;
+using System.Windows.Input;
+using Unigram.Strings;
 
 namespace Unigram.Views
 {
@@ -145,80 +147,82 @@ namespace Unigram.Views
 
         #region Context menu
 
-        private void MenuFlyout_Opening(object sender, object e)
+        private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = sender as MenuFlyout;
+            var flyout = new MenuFlyout();
 
-            foreach (var item in flyout.Items)
-            {
-                item.Visibility = Visibility.Visible;
-            }
-        }
+            var element = sender as FrameworkElement;
+            var messageCommon = element.DataContext as TLMessageCommonBase;
+            var channel = messageCommon.Parent as TLChannel;
 
-        private void MessageGoto_Loaded(object sender, RoutedEventArgs e)
-        {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            CreateFlyoutItem(ref flyout, MessageView_Loaded, ViewModel.MessageViewCommand, messageCommon, AppResources.MessageView);
+            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, AppResources.MessageDelete);
+            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, AppResources.MessageForward);
+            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, AppResources.MessageSelect);
+            CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, messageCommon, AppResources.MessageSaveMedia);
+
+            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
-                var messageCommon = element.DataContext as TLMessageCommonBase;
-                if (messageCommon != null)
+                if (point.X < 0 || point.Y < 0)
                 {
-
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                element.Visibility = Visibility.Visible;
+                flyout.ShowAt(sender, point);
             }
         }
 
-        private void MessageDelete_Loaded(object sender, RoutedEventArgs e)
+        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<TLMessageCommonBase, Visibility> visibility, ICommand command, object parameter, string text)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
+            var value = visibility(parameter as TLMessageCommonBase);
+            if (value == Visibility.Visible)
             {
-                element.Visibility = Visibility.Visible;
+                var flyoutItem = new MenuFlyoutItem();
+                //flyoutItem.Loaded += (s, args) => flyoutItem.Visibility = visibility(parameter as TLMessageCommonBase);
+                flyoutItem.Command = command;
+                flyoutItem.CommandParameter = parameter;
+                flyoutItem.Text = text;
 
-                var messageCommon = element.DataContext as TLMessageCommonBase;
-                if (messageCommon != null)
-                {
-                    var channel = messageCommon.Parent as TLChannel;
-                    if (channel != null)
-                    {
-                        if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
-                        {
-                            element.Visibility = Visibility.Collapsed;
-                        }
-
-                        if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
-                        {
-                            element.Visibility = Visibility.Collapsed;
-                        }
-                    }
-                }
+                flyout.Items.Add(flyoutItem);
             }
         }
 
-        private void MessageForward_Loaded(object sender, RoutedEventArgs e)
+        private Visibility MessageView_Loaded(TLMessageCommonBase messageCommon)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
-            {
-                var messageCommon = element.DataContext as TLMessageCommonBase;
-                if (messageCommon != null)
-                {
+            return Visibility.Visible;
+        }
 
+        private Visibility MessageSave_Loaded(TLMessageCommonBase messageCommon)
+        {
+            return Visibility.Visible;
+        }
+
+        private Visibility MessageDelete_Loaded(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon.Parent is TLChannel channel)
+            {
+                if (messageCommon.Id == 1 && messageCommon.ToId is TLPeerChannel)
+                {
+                    return Visibility.Collapsed;
                 }
 
-                element.Visibility = Visibility.Visible;
+                if (!messageCommon.IsOut && !channel.IsCreator && !channel.HasAdminRights || (channel.AdminRights != null && !channel.AdminRights.IsDeleteMessages))
+                {
+                    return Visibility.Collapsed;
+                }
             }
+
+            return Visibility.Visible;
         }
 
-        private void MessageSelect_Loaded(object sender, RoutedEventArgs e)
+        private Visibility MessageForward_Loaded(TLMessageCommonBase messageCommon)
         {
-            var element = sender as MenuFlyoutItem;
-            if (element != null)
-            {
-                element.Visibility = ViewModel.SelectionMode == ListViewSelectionMode.None ? Visibility.Visible : Visibility.Collapsed;
-            }
+            return Visibility.Visible;
+        }
+
+        private Visibility MessageSelect_Loaded(TLMessageCommonBase messageCommon)
+        {
+            return ViewModel.SelectionMode == ListViewSelectionMode.None ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -10,6 +11,7 @@ using Unigram.Core.Unidecode;
 using Unigram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -31,6 +33,26 @@ namespace Unigram.Common
         public static void BeginOnUIThread(this DependencyObject element, Action action)
         {
             element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
+        }
+
+        public static async Task<bool> SkipAsync(this IStorageItem item)
+        {
+            if (item.Attributes.HasFlag(Windows.Storage.FileAttributes.Temporary))
+            {
+                return true;
+            }
+
+            return false;
+
+            try
+            {
+                await StorageFile.GetFileFromPathAsync(item.Path);
+                return false;
+            }
+            catch
+            {
+                return true;
+            }
         }
 
         public static Regex _pattern = new Regex("[\\-0-9]+", RegexOptions.Compiled);
@@ -57,6 +79,12 @@ namespace Unigram.Common
             }
 
             return val;
+        }
+
+        public static int TryParseOrDefault(string value, int defaultValue)
+        {
+            int.TryParse(value, out defaultValue);
+            return defaultValue;
         }
 
         public static Dictionary<string, string> ParseQueryString(this string query)

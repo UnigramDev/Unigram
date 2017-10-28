@@ -207,7 +207,7 @@
     <FontFamily x:Key="TelegramThemeFontFamily">ms-appx:///Assets/Fonts/Telegram.ttf#Telegram</FontFamily>
 
     <Style TargetType="controls:TransferButton">
-        <Setter Property="FontFamily" Value="{ThemeResource TelegramThemeFontFamily}" />
+        <Setter Property="FontFamily" Value="{StaticResource TelegramThemeFontFamily}" />
     </Style>
     
     <Style x:Name="MediaTransferButtonStyle" TargetType="controls:TransferButton">
@@ -217,10 +217,10 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="FontFamily" Value="{ThemeResource TelegramThemeFontFamily}" />
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="FontFamily" Value="{StaticResource TelegramThemeFontFamily}" />
         <Setter Property="Glyph" Value="&#xE700;" />
         <Setter Property="Height" Value="Auto" />
         <Setter Property="Width" Value="Auto" />
@@ -263,16 +263,31 @@
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="TransferStates">
+                                <VisualState x:Name="PendingState"/>
+                                <VisualState x:Name="CompletedState">
+                                    <VisualState.Setters>
+                                        <Setter Target="TransferPresenter.Visibility" Value="Collapsed"/>
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <!--<controls:BackDrop BlurAmount="5"/>-->
+
+                        <ContentPresenter x:Name="TransferPresenter"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Visibility="{TemplateBinding ContentVisibility}"
+                                          Padding="{TemplateBinding Padding}"/>
 
                         <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" Width="48" Height="48">
                             <Border x:Name="RootGrid" CornerRadius="{TemplateBinding CornerRadius}">
                                 <TextBlock
                                     x:Name="ContentPresenter"
-                                    Margin="{TemplateBinding Padding}"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
                                     AutomationProperties.AccessibilityView="Raw"
                                     Text="{TemplateBinding Glyph}"/>
                             </Border>

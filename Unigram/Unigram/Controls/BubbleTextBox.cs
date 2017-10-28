@@ -231,12 +231,17 @@ namespace Unigram.Controls
 
                 foreach (var file in items.OfType<StorageFile>())
                 {
+                    if (await file.SkipAsync())
+                    {
+                        continue;
+                    }
+
                     if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
                     {
-                        media.Add(new StoragePhoto(file) { IsSelected = true });
+                        media.Add(await StoragePhoto.CreateAsync(file, true));
                     }
                     else if (file.ContentType == "video/mp4")
                     {
@@ -247,7 +252,7 @@ namespace Unigram.Controls
                 }
 
                 // Send compressed __only__ if user is dropping photos and videos only
-                if (media.Count == files.Count)
+                if (media.Count > 0 && media.Count == files.Count)
                 {
                     ViewModel.SendMediaExecute(media, media[0]);
                 }
@@ -275,7 +280,7 @@ namespace Unigram.Controls
                     await FileIO.WriteBytesAsync(cache, buffer);
                 }
 
-                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { new StoragePhoto(cache) { IsSelected = true } });
+                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { await StoragePhoto.CreateAsync(cache, true) });
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
             {
@@ -580,7 +585,7 @@ namespace Unigram.Controls
                     {
                         ViewModel.Autocomplete = GetUsernames(username.ToLower(), text.StartsWith('@' + username));
                     }
-                    else if (SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0 && ApplicationSettings.Current.IsReplaceEmojiEnabled)
+                    else if (SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
                     {
                         ViewModel.Autocomplete = EmojiSuggestion.GetSuggestions(replacement);
                     }
@@ -834,7 +839,7 @@ namespace Unigram.Controls
 
                 foreach (var entity in parser.Entities)
                 {
-                    // Check intersections
+                    // TODO: Check intersections
                     entities.Add(entity);
                 }
 

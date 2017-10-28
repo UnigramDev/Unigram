@@ -70,7 +70,7 @@ namespace Unigram.Controls.Views
 
         private async void Accept_Click(object sender, RoutedEventArgs e)
         {
-            Result = await Cropper.CropAsync();
+            Result = await Cropper.CropAsync(640, 640);
             Hide(ContentDialogBaseResult.OK);
         }
 

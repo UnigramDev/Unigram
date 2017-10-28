@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
 using Unigram.Core.Helpers;
+using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -15,65 +16,15 @@ namespace Unigram.Models
 {
     public class StoragePhoto : StorageMedia
     {
-        public StoragePhoto(StorageFile file)
+        private BasicProperties _basic;
+
+        public StoragePhoto(StorageFile file, BasicProperties basic, ImageProperties props)
             : base(file)
         {
-        }
+            _fullRectangle = new Rect(0, 0, props.Width, props.Height);
+            _basic = basic;
 
-        private ImageSource _preview;
-        public ImageSource Preview
-        {
-            get
-            {
-                if (_preview == null)
-                    LoadPreview();
-
-                return _preview;
-            }
-        }
-
-        private bool _applyCrop;
-        public bool ApplyCrop
-        {
-            get
-            {
-                return _applyCrop;
-            }
-            set
-            {
-                Set(ref _applyCrop, value);
-
-                if (File == null)
-                {
-                    return;
-                }
-
-                if (!_applyCrop)
-                {
-                    LoadPreview();
-                }
-                else if (_applyCrop && CropRectangle.HasValue)
-                {
-                    LoadCroppedPreview();
-                }
-            }
-        }
-
-        private async void LoadPreview()
-        {
-            _preview = await ImageHelper.GetPreviewBitmapAsync(File);
-            RaisePropertyChanged(() => Preview);
-        }
-
-        private async void LoadCroppedPreview()
-        {
-            if (!CropRectangle.HasValue)
-            {
-                return;
-            }
-
-            _preview = await ImageHelper.CropAndPreviewAsync(File, CropRectangle.Value);
-            RaisePropertyChanged(() => Preview);
+            Properties = props;
         }
 
         public Task<StorageFile> GetFileAsync()
@@ -86,9 +37,26 @@ namespace Unigram.Models
             return Task.FromResult(File);
         }
 
+        public ImageProperties Properties { get; private set; }
+
+        public new static async Task<StoragePhoto> CreateAsync(StorageFile file, bool selected)
+        {
+            try
+            {
+                var basic = await file.GetBasicPropertiesAsync();
+                var image = await file.Properties.GetImagePropertiesAsync();
+
+                return new StoragePhoto(file, basic, image) { IsSelected = selected };
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public override StorageMedia Clone()
         {
-            var item = new StoragePhoto(File);
+            var item = new StoragePhoto(File, _basic, Properties);
             item._thumbnail = _thumbnail;
             item._preview = _preview;
             item._cropRectangle = _cropRectangle;

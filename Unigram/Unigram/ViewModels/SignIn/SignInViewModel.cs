@@ -33,17 +33,17 @@ namespace Unigram.ViewModels.SignIn
         {
             ProtoService.GotUserCountry += GotUserCountry;
 
-            if (!string.IsNullOrEmpty(ProtoService.Country))
-            {
-                GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
-            }
-
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ProxyCommand = new RelayCommand(ProxyExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            if (!string.IsNullOrEmpty(ProtoService.Country))
+            {
+                GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
+            }
+
             IsLoading = false;
             return Task.CompletedTask;
         }
@@ -192,7 +192,7 @@ namespace Unigram.ViewModels.SignIn
             if (confirm == ContentDialogResult.Primary)
             {
                 SettingsHelper.ProxyServer = dialog.Server;
-                SettingsHelper.ProxyPort = int.Parse(dialog.Port ?? "1080");
+                SettingsHelper.ProxyPort = Extensions.TryParseOrDefault(dialog.Port, 1080);
                 SettingsHelper.ProxyUsername = dialog.Username;
                 SettingsHelper.ProxyPassword = dialog.Password;
                 SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;

@@ -8,6 +8,7 @@ using System.Text;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Strings;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -133,26 +134,6 @@ namespace Unigram.Controls.Views
 
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
-            var config = InMemoryCacheService.Current.GetConfig();
-            if (config == null)
-            {
-                return;
-            }
-
-            var linkPrefix = config.MeUrlPrefix;
-            if (linkPrefix.EndsWith("/"))
-            {
-                linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
-            }
-            if (linkPrefix.StartsWith("https://"))
-            {
-                linkPrefix = linkPrefix.Substring(8);
-            }
-            else if (linkPrefix.StartsWith("http://"))
-            {
-                linkPrefix = linkPrefix.Substring(7);
-            }
-
             var builder = new List<string>();
             if (Server != null)
             {
@@ -172,7 +153,7 @@ namespace Unigram.Controls.Views
             }
 
             var title = AppResources.ProxySettingsShareTitle;
-            var link = new Uri($"https://{linkPrefix}/socks?{string.Join("&", builder)}");
+            var link = new Uri(UsernameToLinkConverter.Convert($"socks?{string.Join("&", builder)}"));
 
             await ShareView.Current.ShowAsync(link, title);
         }

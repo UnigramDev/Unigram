@@ -113,12 +113,7 @@ namespace Telegram.Api.Services
             var obj = draft.ToSaveDraftObject(peer);
 
             const string caption = "messages.saveDraft";
-            SendInformativeMessage<bool>(caption, obj,
-                result =>
-                {
-                    callback?.Invoke(result);
-                },
-                faultCallback);
+            SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
         }
 
         public void GetPeerDialogsAsync(TLVector<TLInputPeerBase> peers, Action<TLMessagesPeerDialogs> callback, Action<TLRPCError> faultCallback = null)

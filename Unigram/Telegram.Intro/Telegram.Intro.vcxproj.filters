@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="core">
+      <UniqueIdentifier>{9eec9734-9332-451f-ae1c-83174de40a51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty">
+      <UniqueIdentifier>{8c3c1ad2-0f39-4d4a-8eba-869a26fc0e53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\linmath">
+      <UniqueIdentifier>{bb100ee0-7d54-4406-b951-ef14920440cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{fef2ec62-81bb-432b-8f84-ff592fdc934f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="OpenGLES.cpp" />
+    <ClCompile Include="SimpleRenderer.cpp" />
+    <ClCompile Include="texture_helper.cpp" />
+    <ClCompile Include="WICTextureLoader.cpp" />
+    <ClCompile Include="core\animations.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\buffer.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\objects.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\program.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\rngs.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\shader.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\timing.c">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="TLIntroRenderer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="OpenGLES.h" />
+    <ClInclude Include="SimpleRenderer.h" />
+    <ClInclude Include="texture_helper.h" />
+    <ClInclude Include="WICTextureLoader.h" />
+    <ClInclude Include="core\animations.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\buffer.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\config.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\macros.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\math_helper.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\matrix.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\objects.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\program.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\rngs.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\shader.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\timing.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\linmath\linmath.h">
+      <Filter>3rdparty\linmath</Filter>
+    </ClInclude>
+    <ClInclude Include="opengl.h" />
+    <ClInclude Include="TLIntroRenderer.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\fast_arrow.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\fast_arrow_shadow.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\fast_body.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\fast_spiral.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\ic_bubble.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\ic_bubble_dot.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\ic_cam.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\ic_cam_lens.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\ic_pencil.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\ic_pin.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\ic_smile.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\ic_smile_eye.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\ic_videocam.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\knot_down.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\knot_up.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\powerful_infinity.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\powerful_infinity_white.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\powerful_mask.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\powerful_star.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\private_door.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\private_screw.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\telegram_plane.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\telegram_sphere.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

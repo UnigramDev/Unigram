@@ -113,7 +113,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public override bool CanGoto => true;
+        public override bool CanView => true;
     }
 
     //public class GalleryChatPhotoItem : GalleryItem

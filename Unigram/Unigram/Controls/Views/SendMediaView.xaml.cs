@@ -10,6 +10,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
 using Template10.Common;
 using Unigram.Common;
+using Unigram.Converters;
 using Unigram.Core.Models;
 using Unigram.Models;
 using Unigram.Native;
@@ -24,6 +25,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
@@ -173,6 +175,11 @@ namespace Unigram.Controls.Views
 
             //TTLSeconds.ItemsSource = seconds;
 
+            CroppoBox.SelectionChanged += (s, args) =>
+            {
+                Cropper.Proportions = (ImageCroppingProportions)CroppoBox.SelectedItem;
+            };
+
             TTLSeconds.RegisterPropertyChangedCallback(GlyphButton.GlyphProperty, OnSecondsChanged);
 
             Loaded += OnLoaded;
@@ -227,6 +234,11 @@ namespace Unigram.Controls.Views
             KeyboardPlaceholder.Height = new GridLength(1, GridUnitType.Auto);
         }
 
+        public void Accept()
+        {
+            Accept_Click(null, null);
+        }
+
         private void Accept_Click(object sender, RoutedEventArgs e)
         {
             if (Items == null)
@@ -243,18 +255,17 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            if (IsEditingCropping && SelectedItem is StoragePhoto photo)
+            if (IsEditingCropping && SelectedItem is StorageMedia media)
             {
-                photo.CropRectangle = Cropper.CropRectangle;
-                photo.ApplyCrop = true;
+                media.CropRectangle = Cropper.CropRectangle;
+                media.Refresh();
 
                 IsEditingCropping = false;
-
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
                 return;
             }
 
-            if (Items.All(x => x.IsSelected == false))
+            if (SelectedItem != null && Items.All(x => x.IsSelected == false))
             {
                 SelectedItem.IsSelected = true;
             }
@@ -270,7 +281,7 @@ namespace Unigram.Controls.Views
                 return;
             }
 
-            if (IsEditingCropping && SelectedItem is StoragePhoto photo)
+            if (IsEditingCropping && SelectedItem is StorageMedia media)
             {
                 IsEditingCropping = false;
                 return;
@@ -403,21 +414,111 @@ namespace Unigram.Controls.Views
 
         private async void Crop_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectedItem is StoragePhoto photo)
+            if (SelectedItem is StorageMedia media)
             {
                 IsEditingCropping = true;
-                
-                await Cropper.SetSourceAsync(photo.File);
-                if (photo.CropRectangle.HasValue)
+
+                if (media.Bitmap is SoftwareBitmapSource source)
                 {
-                    Cropper.CropRectangle = photo.CropRectangle.Value;
+                    var props = await media.File.Properties.GetImagePropertiesAsync();
+                    var width = props.Width;
+                    var height = props.Height;
+
+                    if (width > 1280 || height > 1280)
+                    {
+                        double ratioX = (double)1280 / width;
+                        double ratioY = (double)1280 / height;
+                        double ratio = Math.Min(ratioX, ratioY);
+
+                        width = (uint)(width * ratio);
+                        height = (uint)(height * ratio);
+                    }
+
+                    Cropper.SetSource(media.File, source, width, height);
+                    Cropper.Proportions = media.CropProportions;
+                    Cropper.CropRectangle = media.CropRectangle ?? Rect.Empty;
+
+                    CroppoBox.ItemsSource = ImageCropper.GetProportionsFor(width, height);
+                    CroppoBox.SelectedItem = Cropper.Proportions;
+                }
+            }
+        }
+
+        private async void Proportions_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedItem is StorageMedia media)
+            {
+                if (media.CropProportions == ImageCroppingProportions.Custom)
+                {
+                    var props = await media.File.Properties.GetImagePropertiesAsync();
+                    var width = props.Width;
+                    var height = props.Height;
+
+                    if (width > 1280 || height > 1280)
+                    {
+                        double ratioX = (double)1280 / width;
+                        double ratioY = (double)1280 / height;
+                        double ratio = Math.Min(ratioX, ratioY);
+
+                        width = (uint)(width * ratio);
+                        height = (uint)(height * ratio);
+                    }
+
+                    var flyout = new MenuFlyout();
+                    var items = ImageCropper.GetProportionsFor(width, height);
+
+                    var handler = new RoutedEventHandler((s, args) =>
+                    {
+                        if (s is MenuFlyoutItem option)
+                        {
+                            media.CropProportions = (ImageCroppingProportions)option.Tag;
+                            Cropper.Proportions = media.CropProportions;
+                        }
+                    });
+
+                    foreach (var item in items)
+                    {
+                        var option = new MenuFlyoutItem();
+                        option.Click += handler;
+                        option.Text = ProportionsToLabelConverter.Convert(item);
+                        option.Tag = item;
+                        option.MinWidth = 140;
+                        option.HorizontalContentAlignment = HorizontalAlignment.Center;
+
+                        flyout.Items.Add(option);
+                    }
+
+                    if (flyout.Items.Count > 0)
+                    {
+                        flyout.ShowAt((Button)sender);
+                    }
+                }
+                else
+                {
+                    media.CropProportions = ImageCroppingProportions.Custom;
+                    Cropper.Proportions = ImageCroppingProportions.Custom;
                 }
             }
         }
 
         private void ResetCrop_Click(object sender, RoutedEventArgs e)
         {
-            Cropper.Reset();
+            if (SelectedItem is StorageMedia media)
+            {
+                media.CropProportions = ImageCroppingProportions.Custom;
+                Cropper.Reset(ImageCroppingProportions.Custom);
+                Cropper.Proportions = ImageCroppingProportions.Custom;
+            }
+        }
+
+        private Visibility ConvertProportions(ImageCroppingProportions proportions, bool positive)
+        {
+            if (positive)
+            {
+                return proportions == ImageCroppingProportions.Custom ? Visibility.Collapsed : Visibility.Visible;
+            }
+
+            return proportions == ImageCroppingProportions.Custom ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

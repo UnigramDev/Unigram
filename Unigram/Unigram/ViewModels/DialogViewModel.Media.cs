@@ -165,7 +165,7 @@ namespace Unigram.ViewModels
             await file.CopyAndReplaceAsync(fileCache);
 
             var basicProps = await fileCache.GetBasicPropertiesAsync();
-            var thumbnail = await FileUtils.GetFileThumbnailAsync(file);
+            var thumbnail = await ImageHelper.GetFileThumbnailAsync(file);
             if (thumbnail as TLPhotoSize != null)
             {
                 await SendThumbnailFileAsync(file, fileLocation, fileName, basicProps, thumbnail as TLPhotoSize, fileCache, caption);
@@ -399,8 +399,8 @@ namespace Unigram.ViewModels
 
             var basicProps = await fileCache.GetBasicPropertiesAsync();
             var videoProps = await fileCache.Properties.GetVideoPropertiesAsync();
-            var thumbnailBase = await FileUtils.GetFileThumbnailAsync(file);
-            var thumbnail = thumbnailBase as TLPhotoSize;
+
+            var thumbnail = await ImageHelper.GetVideoThumbnailAsync(file, videoProps, transform) as TLPhotoSize;
             if (thumbnail == null)
             {
                 return;
@@ -481,21 +481,12 @@ namespace Unigram.ViewModels
                     var prepare = await transcoder.PrepareFileTranscodeAsync(fileCache, fileResult, profile);
                     if (prepare.CanTranscode)
                     {
-                        await prepare.TranscodeAsync().AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }, 0, 200.0));
+                        await prepare.TranscodeAsync().AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadVideoAction { Progress = progress }, 0, 200.0));
 
                         if (prepare.FailureReason == TranscodeFailureReason.None)
                         {
                             //await fileCache.DeleteAsync();
                             fileCache = fileResult;
-
-                            thumbnailBase = await FileUtils.GetFileThumbnailAsync(fileCache);
-                            thumbnail = thumbnailBase as TLPhotoSize;
-
-                            if (thumbnail != null)
-                            {
-                                desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
-                                document.Thumb = thumbnail;
-                            }
                         }
                     }
                 }
@@ -554,7 +545,7 @@ namespace Unigram.ViewModels
                     }
                     else if (storage is StorageVideo video)
                     {
-                        await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync());
+                        await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync(), video.GetTransform());
                     }
                 }
 
@@ -608,7 +599,7 @@ namespace Unigram.ViewModels
                         }
                         else if (storage is StorageVideo video)
                         {
-                            await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync());
+                            await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync(), video.GetTransform());
                         }
                     }
                 }
@@ -636,7 +627,7 @@ namespace Unigram.ViewModels
                         }
                         else if (storage is StorageVideo video)
                         {
-                            await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync());
+                            await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync(), video.GetTransform());
                         }
                     }
                 }
@@ -779,7 +770,7 @@ namespace Unigram.ViewModels
 
             var basicProps = await fileCache.GetBasicPropertiesAsync();
             var imageProps = await fileCache.Properties.GetImagePropertiesAsync();
-            var thumbnailBase = await FileUtils.GetFileThumbnailAsync(file);
+            var thumbnailBase = await ImageHelper.GetFileThumbnailAsync(file);
             var thumbnail = thumbnailBase as TLPhotoSize;
 
             var desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);

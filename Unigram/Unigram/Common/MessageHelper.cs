@@ -310,9 +310,13 @@ namespace Unigram.Common
                             {
                                 placeholder = (message.From.FullName + "  " ?? string.Empty) + placeholder;
                             }
-                            else if (message.HasPostAuthor && message.PostAuthor != null)
+                            else if (message.IsPost && message.HasPostAuthor && message.PostAuthor != null)
                             {
                                 placeholder = (message.PostAuthor + "  " ?? string.Empty) + placeholder;
+                            }
+                            else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                            {
+                                placeholder = (message.FwdFrom.PostAuthor + "  " ?? string.Empty) + placeholder;
                             }
                         }
 

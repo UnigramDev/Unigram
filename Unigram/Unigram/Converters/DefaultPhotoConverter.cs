@@ -216,6 +216,28 @@ namespace Unigram.Converters
                 return BitmapContext[photo];
             }
 
+            var photoSizeBase2 = value as TLPhotoSizeBase;
+            if (photoSizeBase2 != null)
+            {
+                var photoSize = photoSizeBase2 as TLPhotoSize;
+                if (photoSize != null)
+                {
+                    var fileLocation = photoSize.Location as TLFileLocation;
+                    if (fileLocation != null /*&& (photoMedia == null || !photoMedia.IsCanceled)*/)
+                    {
+                        return ReturnOrEnqueueImage(false, fileLocation, null, photoSize.Size, photoMedia);
+                    }
+                }
+
+                var photoCachedSize = photoSizeBase2 as TLPhotoCachedSize;
+                if (photoCachedSize != null)
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.SetSource(photoCachedSize.Bytes);
+                    return bitmap;
+                }
+            }
+
             if (value is TLBotInlineMediaResult botInlineMediaResult && botInlineMediaResult.Type.Equals("sticker", StringComparison.OrdinalIgnoreCase))
             {
                 var document = botInlineMediaResult.Document as TLDocument;
@@ -393,6 +415,38 @@ namespace Unigram.Converters
                 Execute.BeginOnThreadPool(async () =>
                 {
                     await manager.DownloadFileAsync(location, fileSize);
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
+                    });
+                });
+
+                return bitmap;
+            }
+
+            return null;
+        }
+
+        public static BitmapImage ReturnOrEnqueueImage(bool checkChatSettings, TLFileLocation location, TLObject owner, int fileSize, TLMessageMediaPhoto mediaPhoto)
+        {
+            string fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            {
+                var bitmap = new BitmapImage();
+                bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
+                return bitmap;
+            }
+
+            if (fileSize >= 0)
+            {
+                var manager = UnigramContainer.Current.ResolveType<IDownloadFileManager>();
+                var bitmap = new BitmapImage();
+
+                //Execute.BeginOnThreadPool(() => manager.DownloadFile(location, owner, fileSize));
+                Execute.BeginOnThreadPool(async () =>
+                {
+                    await manager.DownloadFileAsync(location, fileSize).AsTask(mediaPhoto?.Photo.Download());
                     Execute.BeginOnUIThread(() =>
                     {
                         bitmap.UriSource = FileUtils.GetTempFileUri(fileName);

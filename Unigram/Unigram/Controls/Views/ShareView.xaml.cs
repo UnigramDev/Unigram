@@ -26,6 +26,7 @@ using Template10.Utils;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
 using Unigram.Common;
+using Unigram.Converters;
 
 namespace Unigram.Controls.Views
 {
@@ -46,7 +47,7 @@ namespace Unigram.Controls.Views
         {
             Bindings.Update();
 
-            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested"))
+            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested") && !ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
             {
                 DataTransferManager.GetForCurrentView().ShareProvidersRequested -= OnShareProvidersRequested;
                 DataTransferManager.GetForCurrentView().ShareProvidersRequested += OnShareProvidersRequested;
@@ -58,7 +59,7 @@ namespace Unigram.Controls.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested"))
+            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested") && !ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
             {
                 DataTransferManager.GetForCurrentView().ShareProvidersRequested -= OnShareProvidersRequested;
             }
@@ -132,29 +133,7 @@ namespace Unigram.Controls.Views
                 }
                 else
                 {
-                    var config = ViewModel.CacheService.GetConfig();
-                    if (config != null)
-                    {
-                        var linkPrefix = config.MeUrlPrefix;
-                        if (linkPrefix.EndsWith("/"))
-                        {
-                            linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
-                        }
-                        if (linkPrefix.StartsWith("https://"))
-                        {
-                            linkPrefix = linkPrefix.Substring(8);
-                        }
-                        else if (linkPrefix.StartsWith("http://"))
-                        {
-                            linkPrefix = linkPrefix.Substring(7);
-                        }
-
-                        link = $"https://{linkPrefix}/{link}";
-                    }
-                    else
-                    {
-                        link = $"https://t.me/{link}";
-                    }
+                    link = UsernameToLinkConverter.Convert(link);
                 }
 
                 string title = null;
@@ -174,24 +153,9 @@ namespace Unigram.Controls.Views
             }
             else if (message.Media is TLMessageMediaGame gameMedia)
             {
-                var config = ViewModel.CacheService.GetConfig();
-                if (config != null && message.ViaBot != null && message.ViaBot.Username != null)
+                if (message.ViaBot != null && message.ViaBot.Username != null)
                 {
-                    var linkPrefix = config.MeUrlPrefix;
-                    if (linkPrefix.EndsWith("/"))
-                    {
-                        linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
-                    }
-                    if (linkPrefix.StartsWith("https://"))
-                    {
-                        linkPrefix = linkPrefix.Substring(8);
-                    }
-                    else if (linkPrefix.StartsWith("http://"))
-                    {
-                        linkPrefix = linkPrefix.Substring(7);
-                    }
-
-                    ViewModel.ShareLink = new Uri($"https://{linkPrefix}/{message.From.Username}?game={gameMedia.Game.ShortName}");
+                    ViewModel.ShareLink = new Uri(UsernameToLinkConverter.Convert($"{message.From.Username}?game={gameMedia.Game.ShortName}"));
                     ViewModel.ShareTitle = gameMedia.Game.Title;
                 }
             }

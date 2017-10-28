@@ -762,40 +762,46 @@ Duration: {1}</value>
   <data name="AppDisplayName" xml:space="preserve">
     <value>Unigram (Alpha)</value>
   </data>
-  <data name="IntroWizardPage1_Text" xml:space="preserve">
-    <value>**Unigram** is a Telegram Universal app built by the Windows Community, for the Windows Community</value>
+  <data name="IntroPage_Wizard1_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
+    <value>The world's **fastest** messaging app.
+It is **free** and **secure**.</value>
   </data>
-  <data name="IntroWizardPage1_Title" xml:space="preserve">
-    <value>Unigram</value>
+  <data name="IntroPage_Wizard1_Title.Text" xml:space="preserve">
+    <value>Telegram</value>
   </data>
-  <data name="IntroWizardPage2_Text" xml:space="preserve">
-    <value>**Telegram** delivers messages faster\nthan any other application.</value>
+  <data name="IntroPage_Wizard2_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
+    <value>**Telegram** delivers messages faster
+than any other application.</value>
   </data>
-  <data name="IntroWizardPage2_Title" xml:space="preserve">
+  <data name="IntroPage_Wizard2_Title.Text" xml:space="preserve">
     <value>Fast</value>
   </data>
-  <data name="IntroWizardPage3_Text" xml:space="preserve">
-    <value>**Telegram** is free forever. No ads.\nNo subscription fees.</value>
+  <data name="IntroPage_Wizard3_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
+    <value>**Telegram** is free forever. No ads.
+No subscription fees.</value>
   </data>
-  <data name="IntroWizardPage3_Title" xml:space="preserve">
+  <data name="IntroPage_Wizard3_Title.Text" xml:space="preserve">
     <value>Free</value>
   </data>
-  <data name="IntroWizardPage4_Text" xml:space="preserve">
-    <value>**Telegram** has no limits on\nthe size of your media and chats.</value>
+  <data name="IntroPage_Wizard4_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
+    <value>**Telegram** has no limits on
+the size of your media and chats.</value>
   </data>
-  <data name="IntroWizardPage4_Title" xml:space="preserve">
+  <data name="IntroPage_Wizard4_Title.Text" xml:space="preserve">
     <value>Powerful</value>
   </data>
-  <data name="IntroWizardPage5_Text" xml:space="preserve">
-    <value>**Telegram** keeps your messages\nsafe from hacker attacks.</value>
+  <data name="IntroPage_Wizard5_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
+    <value>**Telegram** keeps your messages
+safe from hacker attacks.</value>
   </data>
-  <data name="IntroWizardPage5_Title" xml:space="preserve">
+  <data name="IntroPage_Wizard5_Title.Text" xml:space="preserve">
     <value>Secure</value>
   </data>
-  <data name="IntroWizardPage6_Text" xml:space="preserve">
-    <value>**Telegram** lets you access your\nmessages from multiple devices.</value>
+  <data name="IntroPage_Wizard6_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
+    <value>**Telegram** lets you access your
+messages from multiple devices.</value>
   </data>
-  <data name="IntroWizardPage6_Title" xml:space="preserve">
+  <data name="IntroPage_Wizard6_Title.Text" xml:space="preserve">
     <value>Cloud-Based</value>
   </data>
   <data name="IntroWizard_ContinueButton.Content" xml:space="preserve">
@@ -1418,5 +1424,8 @@ Tap on a sticker to view and add the whole set.</value>
   <data name="SettingsGeneralPage_AutoPlayToggle.Header" xml:space="preserve">
     <value>Autoplay GIFs</value>
     <comment>ChatSettings.AutoPlayAnimations</comment>
+  </data>
+  <data name="MessageView" xml:space="preserve">
+    <value>View in chat</value>
   </data>
 </root>

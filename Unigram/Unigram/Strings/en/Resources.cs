@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/23/2017 11:42:23
+// 	Generated: 10/27/2017 13:29:03
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2406,138 +2406,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "**Unigram** is a Telegram Universal app built by the Windows Community, for the Windows Community"
-        /// </summary>
-        public static string IntroWizardPage1_Text
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage1_Text");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Unigram"
-        /// </summary>
-        public static string IntroWizardPage1_Title
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage1_Title");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "**Telegram** delivers messages faster\nthan any other application."
-        /// </summary>
-        public static string IntroWizardPage2_Text
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage2_Text");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Fast"
-        /// </summary>
-        public static string IntroWizardPage2_Title
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage2_Title");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "**Telegram** is free forever. No ads.\nNo subscription fees."
-        /// </summary>
-        public static string IntroWizardPage3_Text
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage3_Text");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Free"
-        /// </summary>
-        public static string IntroWizardPage3_Title
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage3_Title");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "**Telegram** has no limits on\nthe size of your media and chats."
-        /// </summary>
-        public static string IntroWizardPage4_Text
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage4_Text");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Powerful"
-        /// </summary>
-        public static string IntroWizardPage4_Title
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage4_Title");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "**Telegram** keeps your messages\nsafe from hacker attacks."
-        /// </summary>
-        public static string IntroWizardPage5_Text
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage5_Text");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Secure"
-        /// </summary>
-        public static string IntroWizardPage5_Title
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage5_Title");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "**Telegram** lets you access your\nmessages from multiple devices."
-        /// </summary>
-        public static string IntroWizardPage6_Text
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage6_Text");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Cloud-Based"
-        /// </summary>
-        public static string IntroWizardPage6_Title
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage6_Title");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Cancel"
         /// </summary>
         public static string Cancel
@@ -3568,6 +3436,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("DialogUnpin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View in chat"
+        /// </summary>
+        public static string MessageView
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageView");
             }
         }
     }

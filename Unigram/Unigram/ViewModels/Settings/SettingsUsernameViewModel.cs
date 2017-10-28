@@ -11,6 +11,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Converters;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Navigation;
 
@@ -105,7 +106,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public async Task CheckIfAvailableAsync(string text)
+        public async void CheckAvailability(string text)
         {
             var response = await ProtoService.CheckUsernameAsync(text);
             if (response.IsSucceeded)
@@ -278,29 +279,11 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand CopyCommand { get; }
         private async void CopyExecute()
         {
-            var config = CacheService.GetConfig();
-            if (config != null)
-            {
-                var linkPrefix = config.MeUrlPrefix;
-                if (linkPrefix.EndsWith("/"))
-                {
-                    linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
-                }
-                if (linkPrefix.StartsWith("https://"))
-                {
-                    linkPrefix = linkPrefix.Substring(8);
-                }
-                else if (linkPrefix.StartsWith("http://"))
-                {
-                    linkPrefix = linkPrefix.Substring(7);
-                }
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(UsernameToLinkConverter.Convert(_username));
+            ClipboardEx.TrySetContent(dataPackage);
 
-                var dataPackage = new DataPackage();
-                dataPackage.SetText($"https://{linkPrefix}/{_username}");
-                ClipboardEx.TrySetContent(dataPackage);
-
-                await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
-            }
+            await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
         }
     }
 }

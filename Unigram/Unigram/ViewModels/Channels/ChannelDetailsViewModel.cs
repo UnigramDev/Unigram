@@ -13,6 +13,7 @@ using Telegram.Api.TL;
 using Template10.Utils;
 using Unigram.Collections;
 using Unigram.Common;
+using Unigram.Controls.Views;
 using Unigram.Converters;
 using Unigram.Views;
 using Unigram.Views.Channels;
@@ -24,14 +25,9 @@ namespace Unigram.ViewModels.Channels
 {
     public class ChannelDetailsViewModel : ChannelParticipantsViewModelBase, IHandle<TLUpdateChannel>, IHandle<TLUpdateNotifySettings>
     {
-        private readonly IUploadFileManager _uploadFileManager;
-
-        public ChannelDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, IUploadFileManager uploadFileManager)
+        public ChannelDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator, null)
         {
-            _uploadFileManager = uploadFileManager;
-
-            EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
             EditCommand = new RelayCommand(EditExecute);
             InviteCommand = new RelayCommand(InviteExecute);
             MediaCommand = new RelayCommand(MediaExecute);
@@ -41,6 +37,7 @@ namespace Unigram.ViewModels.Channels
             ParticipantsCommand = new RelayCommand(ParticipantsExecute);
             AdminLogCommand = new RelayCommand(AdminLogExecute);
             ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
+            UsernameCommand = new RelayCommand(UsernameExecute);
             ParticipantEditCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantEditExecute);
             ParticipantPromoteCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantPromoteExecute);
             ParticipantRestrictCommand = new RelayCommand<TLChannelParticipantBase>(ParticipantRestrictExecute);
@@ -145,38 +142,6 @@ namespace Unigram.ViewModels.Channels
                 }
 
                 return false;
-            }
-        }
-
-        public RelayCommand<StorageFile> EditPhotoCommand { get; }
-        private async void EditPhotoExecute(StorageFile file)
-        {
-            var fileLocation = new TLFileLocation
-            {
-                VolumeId = TLLong.Random(),
-                LocalId = TLInt.Random(),
-                Secret = TLLong.Random(),
-                DCId = 0
-            };
-
-            var fileName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
-            var fileCache = await FileUtils.CreateTempFileAsync(fileName);
-
-            await file.CopyAndReplaceAsync(fileCache);
-            var fileScale = fileCache;
-
-            var basicProps = await fileScale.GetBasicPropertiesAsync();
-            var imageProps = await fileScale.Properties.GetImagePropertiesAsync();
-
-            var fileId = TLLong.Random();
-            var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name, false);
-            if (upload != null)
-            {
-                var response = await ProtoService.EditPhotoAsync(_item, new TLInputChatUploadedPhoto { File = upload.ToInputFile() });
-                if (response.IsSucceeded)
-                {
-
-                }
             }
         }
 
@@ -353,6 +318,21 @@ namespace Unigram.ViewModels.Channels
                     CacheService.Commit();
                 }
             }
+        }
+
+        public RelayCommand UsernameCommand { get; }
+        public async void UsernameExecute()
+        {
+            var item = _item as TLChannel;
+            if (item == null)
+            {
+                return;
+            }
+
+            var title = item.Title;
+            var link = new Uri(UsernameToLinkConverter.Convert(item.Username));
+
+            await ShareView.Current.ShowAsync(link, title);
         }
 
         #region Context menu
