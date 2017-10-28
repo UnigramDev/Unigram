@@ -118,7 +118,7 @@ namespace Unigram.Controls.Views
         {
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
-            ViewModel.Message = message;
+            ViewModel.Messages = new[] { message };
             ViewModel.InputMedia = null;
             ViewModel.IsWithMyScore = withMyScore;
 
@@ -163,11 +163,22 @@ namespace Unigram.Controls.Views
             return ShowAsync();
         }
 
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(IEnumerable<TLMessage> messages, bool withMyScore = false)
+        {
+            ViewModel.ShareLink = null;
+            ViewModel.ShareTitle = null;
+            ViewModel.Messages = messages;
+            ViewModel.InputMedia = null;
+            ViewModel.IsWithMyScore = withMyScore;
+
+            return ShowAsync();
+        }
+
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(Uri link, string title)
         {
             ViewModel.ShareLink = link;
             ViewModel.ShareTitle = title;
-            ViewModel.Message = null;
+            ViewModel.Messages = null;
             ViewModel.InputMedia = null;
             ViewModel.IsWithMyScore = false;
 
@@ -178,7 +189,7 @@ namespace Unigram.Controls.Views
         {
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
-            ViewModel.Message = null;
+            ViewModel.Messages = null;
             ViewModel.InputMedia = inputMedia;
             ViewModel.IsWithMyScore = false;
 

@@ -40,16 +40,16 @@ namespace Unigram.ViewModels
             }
         }
 
-        private TLMessage _message;
-        public TLMessage Message
+        private IEnumerable<TLMessage> _messages;
+        public IEnumerable<TLMessage> Messages
         {
             get
             {
-                return _message;
+                return _messages;
             }
             set
             {
-                Set(ref _message, value);
+                Set(ref _messages, value);
             }
         }
 
@@ -120,100 +120,102 @@ namespace Unigram.ViewModels
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
 
-            if (_message != null)
+            if (_messages != null)
             {
                 foreach (var dialog in dialogs)
                 {
                     TLInputPeerBase toPeer = dialog.ToInputPeer();
                     TLInputPeerBase fromPeer = null;
-                    var fwdMessage = _message;
 
                     var msgs = new TLVector<TLMessage>();
                     var msgIds = new TLVector<int>();
 
-                    var clone = fwdMessage.Clone();
-                    clone.Id = 0;
-                    clone.HasReplyToMsgId = false;
-                    clone.ReplyToMsgId = null;
-                    clone.HasReplyMarkup = false;
-                    clone.ReplyMarkup = null;
-                    clone.Date = date;
-                    clone.ToId = dialog.Peer;
-                    clone.RandomId = TLLong.Random();
-                    clone.IsOut = true;
-                    clone.IsPost = false;
-                    clone.FromId = SettingsHelper.UserId;
-                    clone.IsMediaUnread = dialog.Peer is TLPeerChannel ? true : false;
-                    clone.IsUnread = true;
-                    clone.State = TLMessageState.Sending;
-
-                    if (clone.Media == null)
+                    foreach (var fwdMessage in _messages)
                     {
-                        clone.HasMedia = true;
-                        clone.Media = new TLMessageMediaEmpty();
-                    }
 
-                    if (fwdMessage.Parent is TLChannel channel)
-                    {
-                        if (channel.IsBroadcast)
+                        var clone = fwdMessage.Clone();
+                        clone.Id = 0;
+                        clone.HasReplyToMsgId = false;
+                        clone.ReplyToMsgId = null;
+                        clone.HasReplyMarkup = false;
+                        clone.ReplyMarkup = null;
+                        clone.Date = date;
+                        clone.ToId = dialog.Peer;
+                        clone.RandomId = TLLong.Random();
+                        clone.IsOut = true;
+                        clone.IsPost = false;
+                        clone.FromId = SettingsHelper.UserId;
+                        clone.IsMediaUnread = dialog.Peer is TLPeerChannel ? true : false;
+                        clone.IsUnread = true;
+                        clone.State = TLMessageState.Sending;
+
+                        if (clone.Media == null)
                         {
-                            if (!channel.IsSignatures)
-                            {
-                                clone.HasFromId = false;
-                                clone.FromId = null;
-                            }
-
-                            // TODO
-                            //if (IsSilent)
-                            //{
-                            //    clone.IsSilent = true;
-                            //}
-
-                            clone.HasViews = true;
-                            clone.Views = 1;
+                            clone.HasMedia = true;
+                            clone.Media = new TLMessageMediaEmpty();
                         }
-                    }
 
-                    if (clone.Media is TLMessageMediaGame gameMedia)
-                    {
-                        clone.HasEntities = false;
-                        clone.Entities = null;
-                        clone.Message = null;
-                    }
-                    else if (clone.Media is TLMessageMediaGeoLive geoLiveMedia)
-                    {
-                        clone.Media = new TLMessageMediaGeo { Geo = geoLiveMedia.Geo };
-                    }
-
-                    if (fromPeer == null)
-                    {
-                        fromPeer = fwdMessage.Parent.ToInputPeer();
-                    }
-
-                    if (clone.FwdFrom == null && !clone.IsGame())
-                    {
-                        if (fwdMessage.ToId is TLPeerChannel)
+                        if (fwdMessage.Parent is TLChannel channel)
                         {
-                            var fwdChannel = CacheService.GetChat(fwdMessage.ToId.Id) as TLChannel;
-                            if (fwdChannel != null && fwdChannel.IsMegaGroup)
+                            if (channel.IsBroadcast)
                             {
-                                clone.HasFwdFrom = true;
-                                clone.FwdFrom = new TLMessageFwdHeader
+                                if (!channel.IsSignatures)
                                 {
-                                    HasFromId = true,
-                                    FromId = fwdMessage.FromId,
-                                    Date = fwdMessage.Date
-                                };
+                                    clone.HasFromId = false;
+                                    clone.FromId = null;
+                                }
+
+                                // TODO
+                                //if (IsSilent)
+                                //{
+                                //    clone.IsSilent = true;
+                                //}
+
+                                clone.HasViews = true;
+                                clone.Views = 1;
                             }
-                            else
+                        }
+
+                        if (clone.Media is TLMessageMediaGame gameMedia)
+                        {
+                            clone.HasEntities = false;
+                            clone.Entities = null;
+                            clone.Message = null;
+                        }
+                        else if (clone.Media is TLMessageMediaGeoLive geoLiveMedia)
+                        {
+                            clone.Media = new TLMessageMediaGeo { Geo = geoLiveMedia.Geo };
+                        }
+
+                        if (fromPeer == null)
+                        {
+                            fromPeer = fwdMessage.Parent.ToInputPeer();
+                        }
+
+                        if (clone.FwdFrom == null && !clone.IsGame())
+                        {
+                            if (fwdMessage.ToId is TLPeerChannel)
                             {
-                                clone.HasFwdFrom = true;
-                                clone.FwdFrom = new TLMessageFwdHeader
+                                var fwdChannel = CacheService.GetChat(fwdMessage.ToId.Id) as TLChannel;
+                                if (fwdChannel != null && fwdChannel.IsMegaGroup)
                                 {
-                                    HasFromId = fwdMessage.HasFromId,
-                                    FromId = fwdMessage.FromId,
-                                    Date = fwdMessage.Date
-                                };
+                                    clone.HasFwdFrom = true;
+                                    clone.FwdFrom = new TLMessageFwdHeader
+                                    {
+                                        HasFromId = true,
+                                        FromId = fwdMessage.FromId,
+                                        Date = fwdMessage.Date
+                                    };
+                                }
+                                else
+                                {
+                                    clone.HasFwdFrom = true;
+                                    clone.FwdFrom = new TLMessageFwdHeader
+                                    {
+                                        HasFromId = fwdMessage.HasFromId,
+                                        FromId = fwdMessage.FromId,
+                                        Date = fwdMessage.Date
+                                    };
 
                                 if (fwdChannel.IsBroadcast)
                                 {
@@ -239,15 +241,19 @@ namespace Unigram.ViewModels
                         }
                     }
 
-                    msgs.Add(clone);
-                    msgIds.Add(fwdMessage.Id);
+                        msgs.Add(clone);
+                        msgIds.Add(fwdMessage.Id);
+                    }
 
-                    CacheService.SyncSendingMessage(clone, null, async (m) =>
+                    CacheService.SyncSendingMessages(msgs, null, async (m) =>
                     {
                         var response = await ProtoService.ForwardMessagesAsync(toPeer, fromPeer, msgIds, msgs, IsWithMyScore);
                         if (response.IsSucceeded)
                         {
-                            Aggregator.Publish(m);
+                            foreach (var i in m)
+                            {
+                                Aggregator.Publish(i);
+                            }
                         }
                     });
                 }
