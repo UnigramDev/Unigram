@@ -390,7 +390,7 @@ namespace Unigram.Views
                         if (caption)
                         {
                             textBlock.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
-                            textBlock.TextAlignment = TextAlignment.Center;
+                            textBlock.Margin = new Thickness(0, 12, 0, 0);
                         }
                         break;
                     case TLType.PageBlockPullquote:
@@ -707,7 +707,7 @@ namespace Unigram.Views
         {
             var element = new StackPanel { Style = Resources["BlockCollageStyle"] as Style };
 
-            var items = new List<Image>();
+            var items = new List<ImageView>();
             foreach (var item in block.Items)
             {
                 if (item is TLPageBlockPhoto photoBlock)
@@ -715,8 +715,13 @@ namespace Unigram.Views
                     var photo = photos.FirstOrDefault(x => x.Id == photoBlock.PhotoId);
                     if (photo != null)
                     {
-                        var child = new Image();
+                        var galleryItem = new GalleryPhotoItem(photo as TLPhoto, photoBlock.Caption?.ToString());
+                        ViewModel.Gallery.Items.Add(galleryItem);
+
+                        var child = new ImageView();
                         child.Source = (ImageSource)DefaultPhotoConverter.Convert(photo, true);
+                        child.DataContext = galleryItem;
+                        child.Click += Image_Click;
                         child.Width = 72;
                         child.Height = 72;
                         child.Stretch = Stretch.UniformToFill;
@@ -730,8 +735,13 @@ namespace Unigram.Views
                     var video = documents.FirstOrDefault(x => x.Id == videoBlock.VideoId);
                     if (video != null)
                     {
-                        var child = new Image();
+                        var galleryItem = new GalleryDocumentItem(video as TLDocument, videoBlock.Caption?.ToString());
+                        ViewModel.Gallery.Items.Add(galleryItem);
+
+                        var child = new ImageView();
                         child.Source = (ImageSource)DefaultPhotoConverter.Convert(video, true);
+                        child.DataContext = galleryItem;
+                        child.Click += Image_Click;
                         child.Width = 72;
                         child.Height = 72;
                         child.Stretch = Stretch.UniformToFill;
@@ -783,7 +793,7 @@ namespace Unigram.Views
             header.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
             header.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
             header.ColumnDefinitions.Add(new ColumnDefinition());
-            header.Margin = new Thickness(_padding, 0, 0, _padding);
+            header.Margin = new Thickness(_padding, 0, 0, 0);
 
             var photo = photos.FirstOrDefault(x => x.Id == block.AuthorPhotoId);
             var ellipse = new Ellipse();
