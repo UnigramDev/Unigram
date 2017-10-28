@@ -41,8 +41,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        public List<TLMessage> Messages { get; set; }
-
         public TLKeyboardButtonSwitchInline SwitchInline { get; set; }
         public TLUser SwitchInlineBot { get; set; }
 
@@ -58,7 +56,6 @@ namespace Unigram.ViewModels
         public RelayCommand SendCommand { get; }
         private void SendExecute()
         {
-            var messages = Messages?.ToList();
             var switchInline = SwitchInline;
             var switchInlineBot = SwitchInlineBot;
             var sendMessage = SendMessage;
@@ -69,7 +66,6 @@ namespace Unigram.ViewModels
             var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
             if (service != null)
             {
-                App.InMemoryState.ForwardMessages = messages;
                 App.InMemoryState.SwitchInline = switchInline;
                 App.InMemoryState.SwitchInlineBot = switchInlineBot;
                 App.InMemoryState.SendMessage = sendMessage;
