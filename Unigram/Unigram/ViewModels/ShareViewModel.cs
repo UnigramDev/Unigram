@@ -31,6 +31,20 @@ namespace Unigram.ViewModels
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             var dialogs = CacheService.GetDialogs();
+            if (dialogs.IsEmpty())
+            {
+                // TODO: request
+            }
+
+            for (int i = 0; i < dialogs.Count; i++)
+            {
+                if (dialogs[i].With is TLChannel channel && (channel.IsBroadcast && !(channel.IsCreator || (channel.HasAdminRights && channel.AdminRights != null && channel.AdminRights.IsPostMessages))))
+                {
+                    dialogs.RemoveAt(i);
+                    i--;
+                }
+            }
+
             var self = dialogs.FirstOrDefault(x => x.With is TLUser user && user.IsSelf);
             if (self == null)
             {
