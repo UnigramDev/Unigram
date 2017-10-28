@@ -8,12 +8,20 @@
     {
       "selection": [
         {
-          "order": 62,
+          "order": 64,
+          "id": 35,
+          "name": "ViewMessageFilled",
+          "prevSize": 32,
+          "code": 59660,
+          "tempChar": ""
+        },
+        {
+          "order": 63,
           "id": 34,
           "name": "ViewMessage",
           "prevSize": 32,
           "code": 59659,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 58,
@@ -21,7 +29,7 @@
           "name": "SavedMessages",
           "prevSize": 32,
           "code": 59655,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 57,
@@ -29,7 +37,7 @@
           "name": "GifPlay",
           "prevSize": 32,
           "code": 59654,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 43,
@@ -37,7 +45,7 @@
           "name": "Timer0",
           "prevSize": 32,
           "code": 59648,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 41,
@@ -45,7 +53,7 @@
           "name": "Timer",
           "prevSize": 32,
           "code": 59545,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 44,
@@ -53,7 +61,7 @@
           "name": "Effects",
           "prevSize": 32,
           "code": 58900,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 40,
@@ -61,7 +69,7 @@
           "name": "e10a",
           "prevSize": 32,
           "code": 57610,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 39,
@@ -69,7 +77,7 @@
           "name": "e102",
           "prevSize": 32,
           "code": 57602,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 38,
@@ -77,7 +85,7 @@
           "name": "e118",
           "prevSize": 32,
           "code": 57624,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 37,
@@ -85,7 +93,7 @@
           "name": "e160",
           "prevSize": 32,
           "code": 57696,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 36,
@@ -93,7 +101,7 @@
           "name": "Silent",
           "prevSize": 32,
           "code": 58890,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 35,
@@ -101,7 +109,7 @@
           "name": "SilentNotSilent",
           "prevSize": 32,
           "code": 58889,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 34,
@@ -115,7 +123,7 @@
             58901,
             58902
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 33,
@@ -123,7 +131,7 @@
           "name": "Commands",
           "prevSize": 32,
           "code": 58899,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 29,
@@ -131,7 +139,7 @@
           "name": "VideoMessage",
           "prevSize": 32,
           "code": 58898,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 28,
@@ -139,7 +147,7 @@
           "name": "InstantView",
           "prevSize": 32,
           "code": 58897,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 27,
@@ -147,7 +155,7 @@
           "name": "Microphone",
           "prevSize": 32,
           "code": 58896,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 22,
@@ -155,7 +163,7 @@
           "name": "Hangup",
           "prevSize": 32,
           "code": 58895,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 21,
@@ -163,7 +171,7 @@
           "name": "Masks",
           "prevSize": 32,
           "code": 58894,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 15,
@@ -171,7 +179,7 @@
           "name": "Featured",
           "prevSize": 32,
           "code": 58893,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 13,
@@ -179,7 +187,7 @@
           "name": "Outgoing",
           "prevSize": 32,
           "code": 58891,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 12,
@@ -187,7 +195,7 @@
           "name": "Incoming",
           "prevSize": 32,
           "code": 58892,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 8,
@@ -195,7 +203,7 @@
           "name": "Views",
           "prevSize": 32,
           "code": 58887,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 7,
@@ -203,7 +211,7 @@
           "name": "Stickers",
           "prevSize": 32,
           "code": 58886,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 2,
@@ -211,7 +219,7 @@
           "prevSize": 32,
           "code": 58880,
           "name": "Clock",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 3,
@@ -219,7 +227,7 @@
           "prevSize": 32,
           "code": 58881,
           "name": "Double",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 42,
@@ -227,7 +235,7 @@
           "prevSize": 32,
           "code": 58882,
           "name": "Single",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 5,
@@ -235,7 +243,7 @@
           "prevSize": 32,
           "code": 58885,
           "name": "Verified",
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 0,
@@ -250,10 +258,25 @@
       "prevSize": 32,
       "icons": [
         {
+          "id": 35,
+          "paths": [
+            "M0 82.506v704h128v237.494l237.506-237.494h658.494v-704h-1024zM551.994 590.797l-45-45 81-81.493h-274.494v-64h274.494l-81-81.507 45-45.001 158.506 158.507-158.506 158.494z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ViewMessageFilled"
+          ]
+        },
+        {
           "id": 34,
           "paths": [
-            "M0 41.253h1024v704h-658.494l-237.506 237.494v-237.494h-128v-704zM960 681.253v-576h-896v576h128v146.494l146.506-146.494h621.494z",
-            "M551.994 232.544l158.507 158.506-158.507 158.494-45-45 81-81.494h-274.494v-64h274.494l-81-81.506z"
+            "M0 82.506h1024v704h-658.494l-237.506 237.494v-237.494h-128v-704zM960 722.506v-576h-896v576h128v146.494l146.506-146.494h621.494z",
+            "M551.994 273.796l158.507 158.507-158.507 158.494-45-45.001 81-81.493h-274.494v-64h274.494l-81-81.506z"
           ],
           "attrs": [
             {},
@@ -679,12 +702,28 @@
     {
       "selection": [
         {
+          "order": 65,
+          "id": 4,
+          "name": "MultiSingle",
+          "prevSize": 32,
+          "code": 59661,
+          "tempChar": ""
+        },
+        {
+          "order": 66,
+          "id": 3,
+          "name": "MultiMulti",
+          "prevSize": 32,
+          "code": 59662,
+          "tempChar": ""
+        },
+        {
           "order": 59,
           "id": 2,
           "name": "Flip",
           "prevSize": 32,
           "code": 59656,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 60,
@@ -692,7 +731,7 @@
           "name": "Rotate",
           "prevSize": 32,
           "code": 59657,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 61,
@@ -700,7 +739,7 @@
           "name": "Aspect",
           "prevSize": 32,
           "code": 59658,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 2,
@@ -714,6 +753,40 @@
       "height": 1024,
       "prevSize": 32,
       "icons": [
+        {
+          "id": 4,
+          "paths": [
+            "M960 320v640h-896v-640h896zM1024 256h-1024v768h1024v-768z",
+            "M256 0v95.802h64v-31.802h384v31.802h64v-95.802z",
+            "M128 128v95.802h64v-31.802h640v31.802h64v-95.802z"
+          ],
+          "attrs": [
+            {},
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "MultiSingle"
+          ]
+        },
+        {
+          "id": 3,
+          "paths": [
+            "M0 0v1024h1024v-1024h-1024zM64 64h416v416h-416v-416zM64 960v-416h416v416h-416zM960 960h-416v-416h416v416zM544 480v-416h416v416h-416z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "MultiMulti"
+          ]
+        },
         {
           "id": 2,
           "paths": [
@@ -771,7 +844,7 @@
           "name": "video_240",
           "prevSize": 32,
           "code": 59649,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 51,
@@ -779,7 +852,7 @@
           "name": "video_360",
           "prevSize": 32,
           "code": 59650,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 52,
@@ -787,7 +860,7 @@
           "name": "video_480",
           "prevSize": 32,
           "code": 59651,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 53,
@@ -795,7 +868,7 @@
           "name": "video_720",
           "prevSize": 32,
           "code": 59652,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 54,
@@ -803,7 +876,7 @@
           "name": "video_1080",
           "prevSize": 32,
           "code": 59653,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 1,
@@ -936,7 +1009,7 @@
       "metadata": {
         "fontFamily": "Telegram",
         "majorVersion": 1,
-        "minorVersion": 39
+        "minorVersion": 42
       },
       "metrics": {
         "emSize": 1024,

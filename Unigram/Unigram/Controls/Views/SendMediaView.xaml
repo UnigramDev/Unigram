@@ -309,6 +309,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="48"/>
+                    <ColumnDefinition Width="48"/>
                 </Grid.ColumnDefinitions>
                 <ListView x:Name="List"
                           ItemsSource="{x:Bind Items}"
@@ -346,7 +347,8 @@
                         </Grid>
                     </ListView.Footer>
                 </ListView>
-                <CheckBox IsChecked="{x:Bind SelectedItem.IsSelected, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0" Style="{StaticResource OnlyCheckBoxStyle}" Grid.Column="1"/>
+                <controls:GlyphToggleButton UncheckedGlyph="&#xE90D;" CheckedGlyph="&#xE90E;" FontFamily="{StaticResource TelegramThemeFontFamily}" Grid.Column="1"/>
+                <CheckBox IsChecked="{x:Bind SelectedItem.IsSelected, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0" Style="{StaticResource OnlyCheckBoxStyle}" Grid.Column="2"/>
             </Grid>
 
             <ListView x:Name="ListAutocomplete"
