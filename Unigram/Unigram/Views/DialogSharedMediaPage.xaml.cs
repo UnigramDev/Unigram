@@ -136,7 +136,10 @@ namespace Unigram.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.SelectedItems = new List<TLMessageCommonBase>(((ListViewBase)sender).SelectedItems.Cast<TLMessageCommonBase>());
+            if (ViewModel.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                ViewModel.SelectedItems = new List<TLMessageCommonBase>(((ListViewBase)sender).SelectedItems.Cast<TLMessageCommonBase>());
+            }
         }
 
         private bool ConvertSelectionMode(ListViewSelectionMode mode)
