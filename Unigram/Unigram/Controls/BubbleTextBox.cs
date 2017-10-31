@@ -221,7 +221,7 @@ namespace Unigram.Controls
                 Document.Selection.SetText(TextSetOptions.None, result);
                 Document.Selection.SetRange(start + result.Length, start + result.Length);
             }
-            else if (package.Contains(StandardDataFormats.StorageItems))
+            else if (package.Contains(StandardDataFormats.StorageItems) && package.Contains("FileContents"))
             {
                 e.Handled = true;
 
@@ -269,6 +269,7 @@ namespace Unigram.Controls
                 e.Handled = true;
 
                 var bitmap = await package.GetBitmapAsync();
+                var media = new ObservableCollection<StorageMedia>();
                 var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
 
                 using (var stream = await bitmap.OpenReadAsync())
@@ -278,9 +279,11 @@ namespace Unigram.Controls
                     var buffer = new byte[(int)stream.Size];
                     reader.ReadBytes(buffer);
                     await FileIO.WriteBytesAsync(cache, buffer);
+
+                    media.Add(await StoragePhoto.CreateAsync(cache, true));
                 }
 
-                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { await StoragePhoto.CreateAsync(cache, true) });
+                ViewModel.SendMediaExecute(media, media[0]);
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
             {
@@ -843,21 +846,17 @@ namespace Unigram.Controls
                     entities.Add(entity);
                 }
 
-                //var matches = Regex.Matches(messageText, "@\\[(.*?)\\]\\((.*?)\\)");
-                //var offset = 0;
+                var matches = Regex.Matches(messageText, "\\[(.*?)\\]\\((.*?)\\)");
+                var offset = 0;
 
-                //foreach (Match match in matches)
-                //{
-                //    var user = InMemoryCacheService.Current.GetUser(match.Groups[2].Value) as TLUser;
-                //    if (user != null)
-                //    {
-                //        entities.Add(new TLInputMessageEntityMentionName { Offset = match.Index + offset, Length = match.Groups[1].Length, UserId = user.ToInputUser() });
+                foreach (Match match in matches)
+                {
+                    entities.Add(new TLMessageEntityTextUrl { Offset = match.Index + offset, Length = match.Groups[1].Length, Url = match.Groups[2].Value });
 
-                //        messageText = messageText.Remove(match.Index + offset, match.Length);
-                //        messageText = messageText.Insert(match.Index + offset, match.Groups[1].Value);
-                //        offset += match.Length - match.Groups[1].Length;
-                //    }
-                //}
+                    messageText = messageText.Remove(match.Index + offset, match.Length);
+                    messageText = messageText.Insert(match.Index + offset, match.Groups[1].Value);
+                    offset += match.Length - match.Groups[1].Length;
+                }
 
                 await ViewModel.SendMessageAsync(messageText, entities.OrderBy(x => x.Offset).ToList(), false);
             }
