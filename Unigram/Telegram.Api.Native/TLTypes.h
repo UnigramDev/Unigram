@@ -73,7 +73,7 @@ namespace Telegram
 
 					MakeTLTypeTraits(TLDCOption, 0x5d8c6cc);
 					MakeTLTypeTraits(TLDisabledFeature, 0xae636f24);
-					MakeTLTypeTraits(TLConfig, 0x8df376a4);
+					MakeTLTypeTraits(TLConfig, 0x9c840964);
 					MakeTLTypeTraits(TLCDNPublicKey, 0xc982eaba);
 					MakeTLTypeTraits(TLCDNConfig, 0x5725e40a);
 					MakeTLTypeTraits(TLRPCError, 0x2144ca19);
