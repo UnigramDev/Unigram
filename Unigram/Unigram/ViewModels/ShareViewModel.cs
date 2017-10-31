@@ -13,6 +13,7 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Core.Common;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels
@@ -22,59 +23,77 @@ namespace Unigram.ViewModels
         public ShareViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator, DialogsViewModel dialogs)
             : base(protoService, cacheService, aggregator)
         {
-            Items = new MvxObservableCollection<TLDialog>();
+            Items = new MvxObservableCollection<ITLDialogWith>();
             GroupedItems = new MvxObservableCollection<ShareViewModel> { this };
+            SelectedItems = new List<ITLDialogWith>();
 
-            SendCommand = new RelayCommand(SendExecute, () => SelectedItems.Count > 0);
+            SendCommand = new RelayCommand(SendExecute, () => SelectedItems?.Count > 0);
         }
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var dialogs = CacheService.GetDialogs();
-            if (dialogs.IsEmpty())
+            var dialogs = GetDialogs();
+            if (dialogs != null)
             {
-                // TODO: request
+                Items.ReplaceWith(dialogs);
             }
 
-            for (int i = 0; i < dialogs.Count; i++)
+            return Task.CompletedTask;
+        }
+
+        private List<ITLDialogWith> _dialogs;
+        private List<ITLDialogWith> GetDialogs()
+        {
+            if (_dialogs == null)
             {
-                if (dialogs[i].With is TLChannel channel && (channel.IsBroadcast && !(channel.IsCreator || (channel.HasAdminRights && channel.AdminRights != null && channel.AdminRights.IsPostMessages))))
+                var dialogs = CacheService.GetDialogs().Select(x => x.With).ToList();
+                if (dialogs.IsEmpty())
                 {
-                    dialogs.RemoveAt(i);
-                    i--;
+                    // TODO: request
                 }
-            }
 
-            var self = dialogs.FirstOrDefault(x => x.With is TLUser user && user.IsSelf);
-            if (self == null)
-            {
-                var user = CacheService.GetUser(SettingsHelper.UserId);
-                if (user == null)
+                for (int i = 0; i < dialogs.Count; i++)
                 {
-                    var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
-                    if (response.IsSucceeded)
+                    if (dialogs[i] is TLChannel channel && (channel.IsBroadcast && !(channel.IsCreator || (channel.HasAdminRights && channel.AdminRights != null && channel.AdminRights.IsPostMessages))))
                     {
-                        user = response.Result.FirstOrDefault() as TLUser;
+                        dialogs.RemoveAt(i);
+                        i--;
                     }
                 }
 
-                if (user != null)
+                var self = dialogs.FirstOrDefault(x => x is TLUser user && user.IsSelf);
+                if (self == null)
                 {
-                    self = new TLDialog { With = user, Peer = user.ToPeer() };
+                    var user = CacheService.GetUser(SettingsHelper.UserId);
+                    if (user == null)
+                    {
+                        //var response = await ProtoService.GetUsersAsync(new TLVector<TLInputUserBase> { new TLInputUserSelf() });
+                        //if (response.IsSucceeded)
+                        //{
+                        //    user = response.Result.FirstOrDefault() as TLUser;
+                        //}
+                    }
+
+                    if (user != null)
+                    {
+                        self = user;
+                    }
                 }
+
+                if (self != null)
+                {
+                    dialogs.Remove(self);
+                    dialogs.Insert(0, self);
+                }
+
+                _dialogs = dialogs;
             }
 
-            if (self != null)
-            {
-                dialogs.Remove(self);
-                dialogs.Insert(0, self);
-            }
-
-            Items.ReplaceWith(dialogs);
+            return _dialogs;
         }
 
-        private List<TLDialog> _selectedItems = new List<TLDialog>();
-        public List<TLDialog> SelectedItems
+        private List<ITLDialogWith> _selectedItems = new List<ITLDialogWith>();
+        public List<ITLDialogWith> SelectedItems
         {
             get
             {
@@ -83,7 +102,7 @@ namespace Unigram.ViewModels
             set
             {
                 Set(ref _selectedItems, value);
-                SendCommand.RaiseCanExecuteChanged();
+                SendCommand?.RaiseCanExecuteChanged();
             }
         }
 
@@ -150,7 +169,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public MvxObservableCollection<TLDialog> Items { get; private set; }
+        public MvxObservableCollection<ITLDialogWith> Items { get; private set; }
         public MvxObservableCollection<ShareViewModel> GroupedItems { get; private set; }
 
 
@@ -178,20 +197,21 @@ namespace Unigram.ViewModels
 
                     foreach (var fwdMessage in _messages)
                     {
-
                         var clone = fwdMessage.Clone();
                         clone.Id = 0;
+                        clone.HasEditDate = false;
+                        clone.EditDate = null;
                         clone.HasReplyToMsgId = false;
                         clone.ReplyToMsgId = null;
                         clone.HasReplyMarkup = false;
                         clone.ReplyMarkup = null;
                         clone.Date = date;
-                        clone.ToId = dialog.Peer;
+                        clone.ToId = dialog.ToPeer();
                         clone.RandomId = TLLong.Random();
                         clone.IsOut = true;
                         clone.IsPost = false;
                         clone.FromId = SettingsHelper.UserId;
-                        clone.IsMediaUnread = dialog.Peer is TLPeerChannel ? true : false;
+                        clone.IsMediaUnread = dialog.ToPeer() is TLPeerChannel ? true : false;
                         clone.IsUnread = true;
                         clone.State = TLMessageState.Sending;
 
@@ -329,7 +349,7 @@ namespace Unigram.ViewModels
 
                 foreach (var dialog in dialogs)
                 {
-                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.Peer, TLMessageState.Sending, true, true, date, null, new TLMessageMediaEmpty(), TLLong.Random(), null);
+                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.ToPeer(), TLMessageState.Sending, true, true, date, null, new TLMessageMediaEmpty(), TLLong.Random(), null);
 
                     CacheService.SyncSendingMessage(message, null, async (m) =>
                     {
@@ -348,7 +368,7 @@ namespace Unigram.ViewModels
                 foreach (var dialog in dialogs)
                 {
                     var messageText = ShareLink.ToString();
-                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.Peer, TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), null);
+                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.ToPeer(), TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), null);
 
                     CacheService.SyncSendingMessage(message, null, async (m) =>
                     {
@@ -367,10 +387,116 @@ namespace Unigram.ViewModels
             //NavigationService.GoBackAt(0);
         }
 
-        //_stateService.ForwardMessages = Messages.Where(x => x.IsSelected).ToList();
-        //_stateService.ForwardMessages.Reverse();
+        #region Search
 
-        //SelectionMode = Windows.UI.Xaml.Controls.ListViewSelectionMode.None;
-        //NavigationService.GoBack();
+        private ListViewSelectionMode _selectionMode = ListViewSelectionMode.Multiple;
+        public ListViewSelectionMode SelectionMode
+        {
+            get
+            {
+                return _selectionMode;
+            }
+            set
+            {
+                Set(ref _selectionMode, value);
+            }
+        }
+
+        public async void Search(string text)
+        {
+            var results = await SearchLocalAsync(text);
+            if (results != null)
+            {
+                SelectionMode = ListViewSelectionMode.None;
+                Items.ReplaceWith(results.Cast<TLDialog>().Select(x => x.With));
+            }
+            else
+            {
+                var dialogs = GetDialogs();
+                if (dialogs != null)
+                {
+                    foreach (var item in _selectedItems)
+                    {
+                        //dialogs.Remove(item);
+                        //dialogs.Insert(0, item);
+
+                        if (dialogs.Contains(item)) { }
+                        else
+                        {
+                            dialogs.Insert(0, item);
+                        }
+                    }
+
+                    SelectionMode = ListViewSelectionMode.None;
+                    Items.ReplaceWith(dialogs);
+                }
+            }
+        }
+
+        private async Task<KeyedList<string, TLObject>> SearchLocalAsync(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return null;
+            }
+
+            var dialogs = await Task.Run(() => CacheService.GetDialogs());
+            var contacts = await Task.Run(() => CacheService.GetContacts());
+
+            if (dialogs != null && contacts != null)
+            {
+                var simple = new List<TLDialog>();
+                var parent = dialogs.Where(dialog =>
+                {
+                    var user = dialog.With as TLUser;
+                    if (user != null)
+                    {
+                        return (user.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
+                               (user.HasUsername && user.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    var channel = dialog.With as TLChannel;
+                    if (channel != null)
+                    {
+                        return (channel.Title.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
+                               (channel.HasUsername && channel.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    var chat = dialog.With as TLChat;
+                    if (chat != null)
+                    {
+                        return (!chat.HasMigratedTo && chat.Title.IsLike(query, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    return false;
+                }).ToList();
+
+                var contactsResults = contacts.OfType<TLUser>().Where(x =>
+                    (x.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
+                    (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase)));
+
+                foreach (var result in contactsResults)
+                {
+                    var dialog = parent.FirstOrDefault(x => x.Peer.TypeId == TLType.PeerUser && x.Id == result.Id);
+                    if (dialog == null)
+                    {
+                        simple.Add(new TLDialog
+                        {
+                            With = result,
+                            Peer = new TLPeerUser { UserId = result.Id }
+                        });
+                    }
+                }
+
+                if (parent.Count > 0 || simple.Count > 0)
+                {
+                    return new KeyedList<string, TLObject>(null, parent.OrderByDescending(x => x.GetDateIndexWithDraft()).Union(simple.OrderBy(x => x.With.DisplayName)));
+                }
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 }

@@ -288,7 +288,7 @@ namespace Unigram.Controls.Views
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.SelectedItem = e.ClickedItem as TLDialog;
+            ViewModel.SelectedItem = e.ClickedItem as ITLDialogWith;
             ViewModel.SendCommand.Execute();
         }
     }

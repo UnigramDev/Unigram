@@ -23,7 +23,7 @@ namespace Unigram.ViewModels
         public ForwardViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
-            Items = new MvxObservableCollection<TLDialog>();
+            Items = new MvxObservableCollection<ITLDialogWith>();
             GroupedItems = new MvxObservableCollection<ForwardViewModel> { this };
 
             SendCommand = new RelayCommand(SendExecute, () => SelectedItem != null);
@@ -31,7 +31,7 @@ namespace Unigram.ViewModels
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            var dialogs = CacheService.GetDialogs();
+            var dialogs = CacheService.GetDialogs().Select(x => x.With).ToList();
             if (dialogs.IsEmpty())
             {
                 // TODO: request
@@ -39,14 +39,14 @@ namespace Unigram.ViewModels
 
             for (int i = 0; i < dialogs.Count; i++)
             {
-                if (dialogs[i].With is TLChannel channel && (channel.IsBroadcast && !(channel.IsCreator || (channel.HasAdminRights && channel.AdminRights != null && channel.AdminRights.IsPostMessages))))
+                if (dialogs[i] is TLChannel channel && (channel.IsBroadcast && !(channel.IsCreator || (channel.HasAdminRights && channel.AdminRights != null && channel.AdminRights.IsPostMessages))))
                 {
                     dialogs.RemoveAt(i);
                     i--;
                 }
             }
 
-            var self = dialogs.FirstOrDefault(x => x.With is TLUser user && user.IsSelf);
+            var self = dialogs.FirstOrDefault(x => x is TLUser user && user.IsSelf);
             if (self == null)
             {
                 var user = CacheService.GetUser(SettingsHelper.UserId);
@@ -61,7 +61,7 @@ namespace Unigram.ViewModels
 
                 if (user != null)
                 {
-                    self = new TLDialog { With = user, Peer = user.ToPeer() };
+                    self = user;
                 }
             }
 
@@ -74,8 +74,8 @@ namespace Unigram.ViewModels
             Items.ReplaceWith(dialogs);
         }
 
-        private TLDialog _selectedItem;
-        public TLDialog SelectedItem
+        private ITLDialogWith _selectedItem;
+        public ITLDialogWith SelectedItem
         {
             get
             {
@@ -96,7 +96,7 @@ namespace Unigram.ViewModels
 
         //public DialogsViewModel Dialogs { get; private set; }
 
-        public MvxObservableCollection<TLDialog> Items { get; private set; }
+        public MvxObservableCollection<ITLDialogWith> Items { get; private set; }
         public MvxObservableCollection<ForwardViewModel> GroupedItems { get; private set; }
 
 
@@ -118,7 +118,7 @@ namespace Unigram.ViewModels
                 App.InMemoryState.SwitchInlineBot = switchInlineBot;
                 App.InMemoryState.SendMessage = sendMessage;
                 App.InMemoryState.SendMessageUrl = sendMessageUrl;
-                service.NavigateToDialog(_selectedItem.With);
+                service.NavigateToDialog(_selectedItem);
             }
         }
     }

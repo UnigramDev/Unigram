@@ -417,7 +417,53 @@ namespace Unigram.Controls.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.SelectedItems = new List<TLDialog>(List.SelectedItems.Cast<TLDialog>());
+            //ViewModel.SelectedItems = new List<ITLDialogWith>(List.SelectedItems.Cast<ITLDialogWith>());
+
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                foreach (var item in ViewModel.SelectedItems)
+                {
+                    if (item is ITLDialogWith with && List.Items.Contains(with) && !List.SelectedItems.Contains(with))
+                    {
+                        Debug.WriteLine("Adding \"{0}\" to ListView", (object)with.DisplayName);
+                        List.SelectedItems.Add(with);
+                    }
+                }
+
+                ViewModel.SelectionMode = ListViewSelectionMode.Multiple;
+                return;
+            }
+
+            if (e.AddedItems != null)
+            {
+                foreach (var item in e.AddedItems)
+                {
+                    if (item is ITLDialogWith with && !ViewModel.SelectedItems.Contains(with))
+                    {
+                        Debug.WriteLine("Adding \"{0}\" to ViewModel", (object)with.DisplayName);
+                        ViewModel.SelectedItems.Add(with);
+                        ViewModel.SendCommand.RaiseCanExecuteChanged();
+                    }
+                }
+            }
+
+            if (e.RemovedItems != null)
+            {
+                foreach (var item in e.RemovedItems)
+                {
+                    if (item is ITLDialogWith with && ViewModel.SelectedItems.Contains(with))
+                    {
+                        Debug.WriteLine("Removing \"{0}\" from ViewModel", (object)with.DisplayName);
+                        ViewModel.SelectedItems.Remove(with);
+                        ViewModel.SendCommand.RaiseCanExecuteChanged();
+                    }
+                }
+            }
+        }
+
+        private void Query_Changed(object sender, TextChangedEventArgs e)
+        {
+            ViewModel.Search(((TextBox)sender).Text);
         }
     }
 }

@@ -4802,7 +4802,7 @@
                                         Margin="{TemplateBinding BorderThickness}"
                                         Padding="{TemplateBinding Padding}"
                                         IsTabStop="False"
-                                        Grid.ColumnSpan="3"
+                                        Grid.ColumnSpan="1"
                                         Content="{TemplateBinding PlaceholderText}"
                                         IsHitTestVisible="False"/>
                         <Button x:Name="CleanButton"
