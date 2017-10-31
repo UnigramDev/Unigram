@@ -35,26 +35,6 @@ namespace Unigram.Common
             element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
         }
 
-        public static async Task<bool> SkipAsync(this IStorageItem item)
-        {
-            //if (item.Attributes.HasFlag(Windows.Storage.FileAttributes.Temporary))
-            //{
-            //    return true;
-            //}
-
-            return false;
-
-            try
-            {
-                await StorageFile.GetFileFromPathAsync(item.Path);
-                return false;
-            }
-            catch
-            {
-                return true;
-            }
-        }
-
         public static Regex _pattern = new Regex("[\\-0-9]+", RegexOptions.Compiled);
         public static int ToInt32(this String value)
         {

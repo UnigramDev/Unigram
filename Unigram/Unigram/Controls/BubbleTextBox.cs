@@ -231,11 +231,6 @@ namespace Unigram.Controls
 
                 foreach (var file in items.OfType<StorageFile>())
                 {
-                    if (await file.SkipAsync())
-                    {
-                        continue;
-                    }
-
                     if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
