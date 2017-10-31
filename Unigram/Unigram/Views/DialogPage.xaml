@@ -595,7 +595,7 @@
                 </Border>
 
                 <Border ContextRequested="Message_ContextRequested" Width="96" Height="96" CornerRadius="48" Background="Black" Margin="0,8,0,0">
-                    <controls:ProfilePictureView Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
+                    <controls:ProfilePictureView Click="Media_Click" Source="{Binding Action.Photo, Converter={StaticResource DefaultPhotoConverter}}" Width="96" Height="96"/>
                 </Border>
             </StackPanel>
         </DataTemplate>
@@ -696,7 +696,44 @@
             <messages:PhoneCallMessageBubble ContextRequested="Message_ContextRequested"/>
         </DataTemplate>
 
+        <DataTemplate x:Key="GroupedPhotoTemplate" x:DataType="models:TLMessage">
+            <Grid x:Name="MediaControl" Background="Black" ContextRequested="Message_ContextRequested">
+                <Rectangle>
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <HyperlinkButton Click="Media_Click" Content="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                
+                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
+
+                <messages:MessageStateControl Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GroupedVideoTemplate" x:DataType="models:TLMessage">
+            <Grid x:Name="MediaControl" Background="Black" ContextRequested="Message_ContextRequested">
+                <Rectangle>
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <HyperlinkButton Click="Media_Click" Content="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}">
+                    <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" Padding="8,4,8,4" Margin="4">
+                        <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                    </Border>
+                </controls:TransferButton>
+                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
+
+                <messages:MessageStateControl Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
+            </Grid>
+        </DataTemplate>
+
         <selectors:MessageTemplateSelector x:Key="MessageTemplateSelector"
+                                           GroupedItems="{x:Bind ViewModel.GroupedItems}"
                                            UserMessageTemplate="{StaticResource UserMessageTemplate}"
                                            UserStickerTemplate="{StaticResource UserStickerTemplate}"
                                            UserRoundVideoTemplate="{StaticResource UserRoundVideoTemplate}"
@@ -706,6 +743,8 @@
                                            ChatFriendMessageTemplate="{StaticResource ChatFriendMessageTemplate}"
                                            ChatFriendStickerTemplate="{StaticResource ChatFriendStickerTemplate}"
                                            ChatFriendRoundVideoTemplate="{StaticResource ChatFriendRoundVideoTemplate}"
+                                           GroupedPhotoTemplate="{StaticResource GroupedPhotoTemplate}"
+                                           GroupedVideoTemplate="{StaticResource GroupedVideoTemplate}"
                                            ServiceMessageTemplate="{StaticResource ServiceMessageTemplate}"
                                            ServiceMessagePhotoTemplate="{StaticResource ServiceMessagePhotoTemplate}"
                                            ServiceMessageLocalTemplate="{StaticResource ServiceMessageLocalTemplate}"
@@ -1276,7 +1315,7 @@
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
                 <ListView.ItemContainerStyleSelector>
-                    <selectors:MessageStyleSelector>
+                    <selectors:MessageStyleSelector GroupedItems="{x:Bind ViewModel.GroupedItems}">
                         <selectors:MessageStyleSelector.MessageStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -1367,6 +1406,56 @@
                                 </Setter>
                             </Style>
                         </selectors:MessageStyleSelector.ServiceStyle>
+                        <selectors:MessageStyleSelector.GroupStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                                <Setter Property="TabNavigation" Value="Local"/>
+                                <Setter Property="IsHoldingEnabled" Value="True"/>
+                                <Setter Property="Padding" Value="12,0,12,0"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                                <Setter Property="MinWidth" Value="0"/>
+                                <Setter Property="MinHeight" Value="0"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListViewItem">
+                                            <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                   Control.IsTemplateFocusTarget="True"
+                                                                   FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                                                                   FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                                                                   FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                                                                   FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                                                                   FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                                                                   SelectionCheckMarkVisualEnabled="{ThemeResource GridViewItemSelectionCheckMarkVisualEnabled}"
+                                                                   CheckBrush="{ThemeResource GridViewItemCheckBrush}"
+                                                                   CheckBoxBrush="{ThemeResource GridViewItemCheckBoxBrush}"
+                                                                   DragBackground="{ThemeResource GridViewItemDragBackground}"
+                                                                   DragForeground="{ThemeResource GridViewItemDragForeground}"
+                                                                   FocusBorderBrush="{ThemeResource GridViewItemFocusBorderBrush}"
+                                                                   FocusSecondaryBorderBrush="{ThemeResource GridViewItemFocusSecondaryBorderBrush}"
+                                                                   PlaceholderBackground="{ThemeResource GridViewItemPlaceholderBackground}"
+                                                                   PointerOverBackground="{ThemeResource GridViewItemBackgroundPointerOver}"
+                                                                   PointerOverForeground="{ThemeResource GridViewItemForegroundPointerOver}"
+                                                                   SelectedBackground="{ThemeResource GridViewItemBackgroundSelected}"
+                                                                   SelectedForeground="{ThemeResource GridViewItemForegroundSelected}"
+                                                                   SelectedPointerOverBackground="{ThemeResource GridViewItemBackgroundSelectedPointerOver}"
+                                                                   PressedBackground="{ThemeResource GridViewItemBackgroundPressed}"
+                                                                   SelectedPressedBackground="{ThemeResource GridViewItemBackgroundSelectedPressed}"
+                                                                   DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                                   DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                                   ReorderHintOffset="{ThemeResource GridViewItemReorderHintThemeOffset}"
+                                                                   HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                   VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                   ContentMargin="{TemplateBinding Padding}"
+                                                                   CheckMode="{ThemeResource GridViewItemCheckMode}" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </selectors:MessageStyleSelector.GroupStyle>
                     </selectors:MessageStyleSelector>
                 </ListView.ItemContainerStyleSelector>
                 <ListView.Header>

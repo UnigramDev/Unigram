@@ -1070,6 +1070,11 @@ namespace Unigram.Views
 
         #endregion
 
+        private void Media_Click(object sender, RoutedEventArgs e)
+        {
+            Media.Download_Click(sender as FrameworkElement, null);
+        }
+
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
             Media.Download_Click(sender as FrameworkElement, e);

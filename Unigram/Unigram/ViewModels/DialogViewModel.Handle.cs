@@ -92,6 +92,26 @@ namespace Unigram.ViewModels
             {
                 BeginOnUIThread(() =>
                 {
+                    var groups = new Dictionary<long, GroupedMessages>();
+
+                    for (var i = 0; i < Items.Count; i++)
+                    {
+                        var messageCommon = Items[i] as TLMessageCommonBase;
+                        if (messageCommon != null && messageCommon.ToId is TLPeerChannel && messageCommon.Id <= args.AvailableMinId)
+                        {
+                            if (messageCommon is TLMessage grouped && grouped.HasGroupedId && grouped.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out GroupedMessages group))
+                            {
+                                group.Messages.Remove(grouped);
+                                groups[groupedId] = group;
+                            }
+                        }
+                    }
+
+                    foreach (var group in groups.Values)
+                    {
+                        group.Calculate();
+                    }
+
                     for (var i = 0; i < Items.Count; i++)
                     {
                         var messageCommon = Items[i] as TLMessageCommonBase;
@@ -200,8 +220,30 @@ namespace Unigram.ViewModels
             {
                 BeginOnUIThread(() =>
                 {
+                    var groups = new Dictionary<long, GroupedMessages>();
+
                     foreach (var message in args.Messages)
                     {
+                        if (message is TLMessage grouped && grouped.HasGroupedId && grouped.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out GroupedMessages group))
+                        {
+                            groups[groupedId] = group;
+                            groups[groupedId].Messages.Remove(grouped);
+                        }
+                    }
+
+                    foreach (var group in groups.Values)
+                    {
+                        group.Calculate();
+                    }
+
+                    foreach (var message in args.Messages)
+                    {
+                        if (message is TLMessage grouped && grouped.HasGroupedId && grouped.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out GroupedMessages group))
+                        {
+                            groups[groupedId] = group;
+                            groups[groupedId].Messages.Remove(grouped);
+                        }
+
                         if (EditedMessage?.Id == message.Id)
                         {
                             ClearReplyCommand.Execute();

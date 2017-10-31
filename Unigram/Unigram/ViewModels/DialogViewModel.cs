@@ -96,6 +96,10 @@ namespace Unigram.ViewModels
         // Kludge
         public static Dictionary<long, IList<TLChannelParticipantBase>> Admins { get; } = new Dictionary<long, IList<TLChannelParticipantBase>>();
 
+        public Dictionary<long, GroupedMessages> GroupedItems => _groupedMessages;
+
+        private readonly Dictionary<long, GroupedMessages> _groupedMessages = new Dictionary<long, GroupedMessages>();
+
         private readonly DialogStickersViewModel _stickers;
         private readonly IStickersService _stickersService;
         private readonly ILocationService _locationService;
@@ -1028,16 +1032,30 @@ namespace Unigram.ViewModels
             var replyIds = new TLVector<int>();
             var replyToMsgs = new List<TLMessageCommonBase>();
 
+            var groups = new Dictionary<long, GroupedMessages>();
+
             for (int i = 0; i < messages.Count; i++)
             {
-                var message = messages[i] as TLMessageCommonBase;
-                if (message != null)
+                var commonMessage = messages[i] as TLMessageCommonBase;
+                if (commonMessage != null)
                 {
-                    var replyId = message.ReplyToMsgId;
+                    if (commonMessage is TLMessage message && message.HasGroupedId && message.GroupedId is long groupedId)
+                    {
+                        _groupedMessages.TryGetValue(groupedId, out GroupedMessages group);
+                        if (group == null)
+                        {
+                            group = _groupedMessages[groupedId] = new GroupedMessages { GroupedId = groupedId };
+                        }
+
+                        group.Messages.Add(message);
+                        groups[groupedId] = group;
+                    }
+
+                    var replyId = commonMessage.ReplyToMsgId;
                     if (replyId != null && replyId.Value != 0)
                     {
                         var channelId = new int?();
-                        var channel = message.ToId as TLPeerChannel;
+                        var channel = commonMessage.ToId as TLPeerChannel;
                         if (channel != null)
                         {
                             channelId = channel.Id;
@@ -1058,7 +1076,7 @@ namespace Unigram.ViewModels
                         else
                         {
                             replyIds.Add(replyId.Value);
-                            replyToMsgs.Add(message);
+                            replyToMsgs.Add(commonMessage);
                         }
                     }
 
@@ -1067,6 +1085,11 @@ namespace Unigram.ViewModels
                     //    message.Media.NotListened = true;
                     //}
                 }
+            }
+
+            foreach (var group in groups.Values)
+            {
+                group.Calculate();
             }
 
             if (replyIds.Count > 0)
@@ -3327,7 +3350,6 @@ namespace Unigram.ViewModels
 
                 UpdateAttach(next, item, index + 1);
                 UpdateAttach(item, previous, index);
-
             }
 
             OnCollectionChanged(args);

@@ -101,6 +101,7 @@
     <Compile Include="Common\AdminLogHelper.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\Dialogs\OutputTypingManager.cs" />
+    <Compile Include="Common\GroupedMessages.cs" />
     <Compile Include="Common\ImageLoader\ContentDrawer.cs" />
     <Compile Include="Common\ImageLoader\ImageLoader.cs" />
     <Compile Include="Common\ImageLoader\ManagedSurface.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\Theme.cs" />
     <Compile Include="Common\TLBitmapContext.cs" />
+    <Compile Include="Common\UniqueList.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
     <Compile Include="Common\VoIPConnection.cs" />
     <Compile Include="Controls\CaptionTextBox.cs" />

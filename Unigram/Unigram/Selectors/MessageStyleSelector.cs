@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -11,7 +12,11 @@ namespace Unigram.Selectors
 {
     public class MessageStyleSelector : StyleSelector
     {
-        public Style ChatFriendMessageStyle { get; set; }
+        public Dictionary<long, GroupedMessages> GroupedItems { get; set; }
+
+        //public Style ChatFriendMessageStyle { get; set; }
+
+        public Style GroupStyle { get; set; }
 
         public Style MessageStyle { get; set; }
 
@@ -30,6 +35,11 @@ namespace Unigram.Selectors
                 if (message.IsService())
                 {
                     return ServiceStyle;
+                }
+
+                if (message.HasGroupedId && message.GroupedId is long groupedId && GroupedItems != null && GroupedItems.TryGetValue(groupedId, out GroupedMessages group) && group.Messages.Count > 1)
+                {
+                    return GroupStyle;
                 }
 
                 //if (message.IsOut)

@@ -238,6 +238,8 @@ namespace Unigram
 
             if (Window.Current != null)
             {
+                Execute.Initialize();
+
                 Window.Current.Activated -= Window_Activated;
                 Window.Current.Activated += Window_Activated;
                 Window.Current.VisibilityChanged -= Window_VisibilityChanged;

@@ -99,7 +99,9 @@
                     <StaticResource x:Key="NavigationViewSelectionIndicatorForeground" ResourceKey="SystemControlForegroundAccentBrush" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
-            
+
+            <SolidColorBrush x:Key="GridViewItemCheckBrush" Color="White"/>
+
             <x:Double x:Key="PaneToggleButtonSize">48</x:Double>
             <Thickness x:Key="NavigationViewToggleBorderThickness">1</Thickness>
             <Thickness x:Key="NavigationViewItemBorderThickness">2,1</Thickness>

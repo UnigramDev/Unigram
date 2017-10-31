@@ -80,7 +80,10 @@ namespace Unigram.ViewModels
         public RelayCommand<TLMessageBase> MessageDeleteCommand { get; }
         private async void MessageDeleteExecute(TLMessageBase messageBase)
         {
-            if (messageBase == null) return;
+            if (messageBase == null)
+            {
+                return;
+            }
 
             var message = messageBase as TLMessage;
             if (message != null && !message.IsOut && !message.IsPost && Peer is TLInputPeerChannel)
@@ -214,6 +217,22 @@ namespace Unigram.ViewModels
 
             BeginOnUIThread(() =>
             {
+                var groups = new Dictionary<long, GroupedMessages>();
+
+                for (int j = 0; j < messages.Count; j++)
+                {
+                    if (messages[j] is TLMessage grouped && grouped.HasGroupedId && grouped.GroupedId is long groupedId && _groupedMessages.TryGetValue(groupedId, out GroupedMessages group))
+                    {
+                        group.Messages.Remove(grouped);
+                        groups[groupedId] = group;
+                    }
+                }
+
+                foreach (var group in groups.Values)
+                {
+                    group.Calculate();
+                }
+
                 for (int j = 0; j < messages.Count; j++)
                 {
                     if (EditedMessage?.Id == messages[j].Id)

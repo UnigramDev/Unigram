@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
+using Unigram.Common;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -11,6 +12,8 @@ namespace Unigram.Selectors
 {
     public class MessageTemplateSelector : DataTemplateSelector
     {
+        public Dictionary<long, GroupedMessages> GroupedItems { get; set; }
+
         private readonly Dictionary<Type, Func<TLMessageBase, DataTemplate>> _templatesCache;
 
         protected DataTemplate EmptyMessageTemplate = new DataTemplate();
@@ -34,6 +37,9 @@ namespace Unigram.Selectors
         public DataTemplate ServiceMessagePhotoTemplate { get; set; }
         public DataTemplate ServiceMessageLocalTemplate { get; set; }
         public DataTemplate ServiceMessageDateTemplate { get; set; }
+
+        public DataTemplate GroupedPhotoTemplate { get; set; }
+        public DataTemplate GroupedVideoTemplate { get; set; }
 
         public MessageTemplateSelector()
         {
@@ -82,6 +88,11 @@ namespace Unigram.Selectors
             if (message == null)
             {
                 return EmptyMessageTemplate;
+            }
+
+            if (message.HasGroupedId && message.GroupedId is long groupedId && GroupedItems != null && GroupedItems.TryGetValue(groupedId, out GroupedMessages group) && group.Messages.Count > 1)
+            {
+                return message.Media is TLMessageMediaPhoto ? GroupedPhotoTemplate : GroupedVideoTemplate;
             }
 
             if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))

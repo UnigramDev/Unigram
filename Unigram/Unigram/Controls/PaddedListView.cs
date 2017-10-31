@@ -14,39 +14,57 @@ namespace Unigram.Controls
     {
         protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
         {
-            var bubble = element as ListViewItem;
+            var container = element as ListViewItem;
             var messageCommon = item as TLMessageCommonBase;
 
-            if (bubble != null && messageCommon != null)
+            if (container != null && messageCommon != null)
             {
                 if (messageCommon.IsService())
                 {
-                    bubble.Padding = new Thickness(12, 0, 12, 0);
+                    container.Padding = new Thickness(12, 0, 12, 0);
+
+                    container.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    container.Width = double.NaN;
+                    container.Height = double.NaN;
+                    container.Margin = new Thickness();
                 }
                 else if (messageCommon is TLMessage message)
                 {
+                    if (message.HasGroupedId && message.GroupedId != null && PrepareContainerForItemGrouping(element, message, message.GroupedId ?? 0))
+                    {
+                        base.PrepareContainerForItemOverride(element, item);
+                        return;
+                    }
+                    else
+                    {
+                        container.HorizontalAlignment = HorizontalAlignment.Stretch;
+                        container.Width = double.NaN;
+                        container.Height = double.NaN;
+                        container.Margin = new Thickness();
+                    }
+
                     if (message.IsSaved() || message.ToId is TLPeerChat || message.ToId is TLPeerChannel && !message.IsPost)
                     {
                         if (message.IsOut && !message.IsSaved())
                         {
                             if (message.IsSticker())
                             {
-                                bubble.Padding = new Thickness(12, 0, 12, 0);
+                                container.Padding = new Thickness(12, 0, 12, 0);
                             }
                             else
                             {
-                                bubble.Padding = new Thickness(52, 0, 12, 0);
+                                container.Padding = new Thickness(52, 0, 12, 0);
                             }
                         }
                         else
                         {
                             if (message.IsSticker())
                             {
-                                bubble.Padding = new Thickness(52, 0, 12, 0);
+                                container.Padding = new Thickness(52, 0, 12, 0);
                             }
                             else
                             {
-                                bubble.Padding = new Thickness(52, 0, MessageToShareConverter.Convert(message) ? 12 : 52, 0);
+                                container.Padding = new Thickness(52, 0, MessageToShareConverter.Convert(message) ? 12 : 52, 0);
                             }
                         }
                     }
@@ -54,17 +72,17 @@ namespace Unigram.Controls
                     {
                         if (message.IsSticker())
                         {
-                            bubble.Padding = new Thickness(12, 0, 12, 0);
+                            container.Padding = new Thickness(12, 0, 12, 0);
                         }
                         else
                         {
                             if (message.IsOut && !message.IsPost)
                             {
-                                bubble.Padding = new Thickness(52, 0, 12, 0);
+                                container.Padding = new Thickness(52, 0, 12, 0);
                             }
                             else
                             {
-                                bubble.Padding = new Thickness(12, 0, MessageToShareConverter.Convert(message) ? 12 : 52, 0);
+                                container.Padding = new Thickness(12, 0, MessageToShareConverter.Convert(message) ? 12 : 52, 0);
                             }
                         }
                     }
@@ -72,6 +90,11 @@ namespace Unigram.Controls
             }
 
             base.PrepareContainerForItemOverride(element, item);
+        }
+
+        protected virtual bool PrepareContainerForItemGrouping(DependencyObject element, TLMessage message, long groupedId)
+        {
+            return false;
         }
     }
 }
