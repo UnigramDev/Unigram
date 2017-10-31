@@ -188,7 +188,7 @@
 
         <!-- Round video -->
         <DataTemplate x:Key="UserRoundVideoTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
+            <Grid Margin="{ThemeResource MessageContentMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
@@ -199,7 +199,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- TODO: not the right way -->
-                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -246,7 +246,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="FriendRoundVideoTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
+            <Grid Margin="{ThemeResource MessageContentMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -257,7 +257,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- TODO: not the right way -->
-                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <Grid x:Name="MediaControl" ContextRequested="Message_ContextRequested" Grid.Row="1">
                     <Ellipse Fill="Black"/>
@@ -328,7 +328,7 @@
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
                                              Click="Photo_Click"/>
 
-                <Grid Margin="0,2" Grid.Column="1">
+                <Grid Margin="{ThemeResource MessageContentMargin}" Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
@@ -339,7 +339,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <!-- TODO: not the right way -->
-                    <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                    <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                     <Grid x:Name="MediaControl" ContextRequested="Message_ContextRequested" Grid.Row="1">
                         <Ellipse Fill="Black"/>
@@ -409,7 +409,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
+            <Grid Margin="{ThemeResource MessageContentMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
@@ -420,7 +420,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- TODO: not the right way -->
-                <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -458,7 +458,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="FriendStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
+            <Grid Margin="{ThemeResource MessageContentMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -469,7 +469,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- TODO: not the right way -->
-                <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <Grid ContextRequested="Message_ContextRequested" Grid.Row="1">
                     <controls:ImageView
@@ -520,7 +520,7 @@
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
                                              Click="Photo_Click"/>
 
-                <Grid Margin="0,2" Grid.Column="1">
+                <Grid Margin="{ThemeResource MessageContentMargin}" Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
@@ -531,7 +531,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <!-- TODO: not the right way -->
-                    <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                    <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                     <Grid ContextRequested="Message_ContextRequested" Grid.Row="1">
                         <controls:ImageView
