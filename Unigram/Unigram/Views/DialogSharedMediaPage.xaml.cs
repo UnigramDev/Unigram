@@ -97,7 +97,7 @@ namespace Unigram.Views
 
         private void Photo_Click(object sender, RoutedEventArgs e)
         {
-            Themes.Media.Photo_Click(sender);
+            Themes.Media.Download_Click(sender as FrameworkElement, null);
         }
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)

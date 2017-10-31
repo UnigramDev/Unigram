@@ -180,7 +180,7 @@ namespace Unigram.Controls.Items
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
-            Themes.Media.Download(sender, e);
+            Themes.Media.Download_Click(sender as FrameworkElement, e);
         }
     }
 }
