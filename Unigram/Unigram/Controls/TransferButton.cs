@@ -202,6 +202,7 @@ namespace Unigram.Controls
                     return "\uE10A";
                 }
 
+                ContentVisibility = Visibility.Visible;
                 Visibility = Visibility.Visible;
                 return "\uE118";
             }
@@ -211,6 +212,7 @@ namespace Unigram.Controls
 
         private string UpdateGlyph(TLDocument document)
         {
+            ContentVisibility = Visibility.Visible;
             Visibility = Visibility.Visible;
 
             var fileName = document.GetFileName();

@@ -538,7 +538,7 @@ namespace Unigram.Views
 
         private async Task HandlePackageAsync(DataPackageView package)
         {
-            if (package.Contains(StandardDataFormats.StorageItems))
+            if (package.Contains(StandardDataFormats.StorageItems) && package.Contains("FileContents"))
             {
                 var items = await package.GetStorageItemsAsync();
                 var media = new ObservableCollection<StorageMedia>();
@@ -546,11 +546,6 @@ namespace Unigram.Views
 
                 foreach (var file in items.OfType<StorageFile>())
                 {
-                    if (await file.SkipAsync())
-                    {
-                        continue;
-                    }
-
                     if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
@@ -710,7 +705,10 @@ namespace Unigram.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.SelectedItems = new List<TLMessageCommonBase>(Messages.SelectedItems.Cast<TLMessageCommonBase>());
+            if (ViewModel.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                ViewModel.SelectedItems = new List<TLMessageCommonBase>(Messages.SelectedItems.Cast<TLMessageCommonBase>());
+            }
         }
 
         #region Context menu
@@ -1036,7 +1034,7 @@ namespace Unigram.Views
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
-            Media.Download(sender, e);
+            Media.Download_Click(sender as FrameworkElement, e);
         }
 
         private async void Stickers_ItemClick(object sender, ItemClickEventArgs e)

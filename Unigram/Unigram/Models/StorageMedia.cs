@@ -99,6 +99,9 @@ namespace Unigram.Models
             }
         }
 
+        public virtual uint Width { get; }
+        public virtual uint Height { get; }
+
         protected Rect? _fullRectangle;
         protected Rect? _cropRectangle;
         public Rect? CropRectangle

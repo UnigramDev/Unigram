@@ -125,7 +125,7 @@
                                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                                             Click="ProfileBubble_Click"/>
+                                                             Click="Photo_Click"/>
                                 <messages:MessageBubble Grid.Column="1"/>
                             </Grid>
                         </DataTemplate>
@@ -142,7 +142,7 @@
                                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                                             Click="ProfileBubble_Click"/>
+                                                             Click="Photo_Click"/>
                                 <messages:EditedMessageBubble Grid.Column="1"/>
                             </Grid>
                         </DataTemplate>
@@ -199,7 +199,7 @@
                                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                                             Click="ProfileBubble_Click"/>
+                                                             Click="Photo_Click"/>
 
                                 <Grid Margin="0,2" Grid.Column="1">
                                     <Grid.ColumnDefinitions>
@@ -255,7 +255,7 @@
                                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                                             Click="ProfileBubble_Click"/>
+                                                             Click="Photo_Click"/>
 
                                 <Grid Margin="0,2" Grid.Column="1">
                                     <Grid.ColumnDefinitions>

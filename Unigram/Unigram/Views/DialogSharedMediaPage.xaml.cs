@@ -97,7 +97,7 @@ namespace Unigram.Views
 
         private void Photo_Click(object sender, RoutedEventArgs e)
         {
-            Themes.Media.Photo_Click(sender);
+            Themes.Media.Download_Click(sender as FrameworkElement, null);
         }
 
         private void List_SelectionModeChanged(DependencyObject sender, DependencyProperty dp)
@@ -136,7 +136,10 @@ namespace Unigram.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.SelectedItems = new List<TLMessageCommonBase>(((ListViewBase)sender).SelectedItems.Cast<TLMessageCommonBase>());
+            if (ViewModel.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                ViewModel.SelectedItems = new List<TLMessageCommonBase>(((ListViewBase)sender).SelectedItems.Cast<TLMessageCommonBase>());
+            }
         }
 
         private bool ConvertSelectionMode(ListViewSelectionMode mode)

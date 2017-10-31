@@ -1963,7 +1963,7 @@ namespace Unigram.ViewModels
                     if (forwardMessages != null)
                     {
                         App.InMemoryState.ForwardMessages = null;
-                        await ForwardMessagesAsync(forwardMessages);
+                        ForwardMessages(forwardMessages);
                     }
                 });
             }
@@ -1972,12 +1972,12 @@ namespace Unigram.ViewModels
                 if (forwardMessages != null)
                 {
                     App.InMemoryState.ForwardMessages = null;
-                    await ForwardMessagesAsync(forwardMessages);
+                    ForwardMessages(forwardMessages);
                 }
             }
         }
 
-        public async Task ForwardMessagesAsync(IEnumerable<TLMessage> forwardMessages)
+        public void ForwardMessages(IEnumerable<TLMessage> forwardMessages)
         {
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
 
@@ -1989,6 +1989,8 @@ namespace Unigram.ViewModels
             {
                 var clone = fwdMessage.Clone();
                 clone.Id = 0;
+                clone.HasEditDate = false;
+                clone.EditDate = null;
                 clone.HasReplyToMsgId = false;
                 clone.ReplyToMsgId = null;
                 clone.HasReplyMarkup = false;
