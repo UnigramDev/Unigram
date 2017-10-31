@@ -27,6 +27,9 @@ namespace Unigram.Models
             Properties = props;
         }
 
+        public override uint Width => Properties.Width;
+        public override uint Height => Properties.Height;
+
         public Task<StorageFile> GetFileAsync()
         {
             if (IsCropped)
