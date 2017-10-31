@@ -37,10 +37,10 @@ namespace Unigram.Common
 
         public static async Task<bool> SkipAsync(this IStorageItem item)
         {
-            if (item.Attributes.HasFlag(Windows.Storage.FileAttributes.Temporary))
-            {
-                return true;
-            }
+            //if (item.Attributes.HasFlag(Windows.Storage.FileAttributes.Temporary))
+            //{
+            //    return true;
+            //}
 
             return false;
 
