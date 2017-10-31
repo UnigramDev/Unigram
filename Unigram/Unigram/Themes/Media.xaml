@@ -172,7 +172,6 @@
                 </Border>
             </controls:TransferButton>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-
         </Grid>
     </DataTemplate>
 

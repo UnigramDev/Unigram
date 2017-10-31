@@ -1034,7 +1034,7 @@ namespace Unigram.Views
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
-            Media.Download(sender, e);
+            Media.Download_Click(sender as FrameworkElement, e);
         }
 
         private async void Stickers_ItemClick(object sender, ItemClickEventArgs e)

@@ -49,24 +49,7 @@ namespace Unigram.Themes
 
         private void Photo_Click(object sender, RoutedEventArgs e)
         {
-            Photo_Click(sender);
-        }
-
-        public static async void Photo_Click(object sender)
-        {
-            Download(sender, null);
-            return;
-
-            var image = sender as FrameworkElement;
-            var message = image.DataContext as TLMessage;
-
-            if (message != null)
-            {
-                //ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", image);
-
-                var viewModel = new DialogGalleryViewModel(message.Parent.ToInputPeer(), message, MTProtoService.Current);
-                await GalleryView.Current.ShowAsync(viewModel, () => image);
-            }
+            Download_Click(sender, null);
         }
 
         private void InstantView_Click(object sender, RoutedEventArgs e)
@@ -113,15 +96,10 @@ namespace Unigram.Themes
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
-            Download(sender, e);
+            Download_Click(sender as FrameworkElement, e);
         }
 
-        private void SecretDownload_Click(object sender, TransferCompletedEventArgs e)
-        {
-            SecretDownload(sender, e);
-        }
-
-        public static async void Download(object sender, TransferCompletedEventArgs e)
+        public static async void Download_Click(FrameworkElement sender, TransferCompletedEventArgs e)
         {
             var element = sender as FrameworkElement;
             var message = element.DataContext as TLMessage;
@@ -177,7 +155,12 @@ namespace Unigram.Themes
             }
         }
 
-        public static async void SecretDownload(object sender, TransferCompletedEventArgs e)
+        private void SecretDownload_Click(object sender, TransferCompletedEventArgs e)
+        {
+            SecretDownload_Click(sender as FrameworkElement, e);
+        }
+
+        public static async void SecretDownload_Click(FrameworkElement sender, TransferCompletedEventArgs e)
         {
             var element = sender as FrameworkElement;
             var message = element.DataContext as TLMessage;
