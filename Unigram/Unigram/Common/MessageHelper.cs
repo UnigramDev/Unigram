@@ -214,10 +214,10 @@ namespace Unigram.Common
                     notLive = false;
                 }
 
-                var emptyWebPage = false;
+                var empty = false;
                 if (message.Media is TLMessageMediaWebPage webpageMedia)
                 {
-                    emptyWebPage = webpageMedia.WebPage is TLWebPageEmpty;
+                    empty = webpageMedia.WebPage is TLWebPageEmpty || webpageMedia.WebPage is TLWebPagePending;
                 }
 
                 sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || (text && notGame && notLive) ? Visibility.Visible : Visibility.Collapsed);
@@ -281,7 +281,7 @@ namespace Unigram.Common
                     //ReplaceAll(message, text, paragraph, sender.Foreground, true);
                 }
 
-                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || emptyWebPage || message?.Media == null)
+                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || empty || message?.Media == null)
                 {
                     if (IsAnyCharacterRightToLeft(message.Message ?? string.Empty))
                     {

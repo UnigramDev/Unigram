@@ -171,12 +171,12 @@ namespace Unigram.Selectors
                         return WebPageDocumentTemplate;
                     }*/
 
-                    if (webpage.Document != null)
+                    if (webpage.Document is TLDocument)
                     {
                         return WebPageDocumentTemplate;
                     }
 
-                    if (webpage.Photo != null && webpage.Type != null)
+                    if (webpage.Photo is TLPhoto && webpage.Type != null)
                     {
                         if (IsWebPagePhotoTemplate(webpage))
                         {
