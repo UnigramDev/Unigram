@@ -538,7 +538,25 @@ namespace Unigram.Views
 
         private async Task HandlePackageAsync(DataPackageView package)
         {
-            if (package.Contains(StandardDataFormats.StorageItems) && package.Contains("FileContents"))
+            var boh = string.Join(", ", package.AvailableFormats);
+
+            if (package.Contains(StandardDataFormats.Bitmap))
+            {
+                var bitmap = await package.GetBitmapAsync();
+                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                using (var stream = await bitmap.OpenReadAsync())
+                using (var reader = new DataReader(stream))
+                {
+                    await reader.LoadAsync((uint)stream.Size);
+                    var buffer = new byte[(int)stream.Size];
+                    reader.ReadBytes(buffer);
+                    await FileIO.WriteBytesAsync(cache, buffer);
+                }
+
+                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { await StoragePhoto.CreateAsync(cache, true) });
+            }
+            else if (package.Contains(StandardDataFormats.StorageItems))
             {
                 var items = await package.GetStorageItemsAsync();
                 var media = new ObservableCollection<StorageMedia>();
@@ -573,22 +591,6 @@ namespace Unigram.Views
                         ViewModel.SendFileCommand.Execute(file);
                     }
                 }
-            }
-            else if (package.Contains(StandardDataFormats.Bitmap))
-            {
-                var bitmap = await package.GetBitmapAsync();
-                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
-
-                using (var stream = await bitmap.OpenReadAsync())
-                using (var reader = new DataReader(stream))
-                {
-                    await reader.LoadAsync((uint)stream.Size);
-                    var buffer = new byte[(int)stream.Size];
-                    reader.ReadBytes(buffer);
-                    await FileIO.WriteBytesAsync(cache, buffer);
-                }
-
-                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { await StoragePhoto.CreateAsync(cache, true) });
             }
             //else if (e.DataView.Contains(StandardDataFormats.WebLink))
             //{

@@ -221,7 +221,28 @@ namespace Unigram.Controls
                 Document.Selection.SetText(TextSetOptions.None, result);
                 Document.Selection.SetRange(start + result.Length, start + result.Length);
             }
-            else if (package.Contains(StandardDataFormats.StorageItems) && package.Contains("FileContents"))
+            else if (package.Contains(StandardDataFormats.Bitmap))
+            {
+                e.Handled = true;
+
+                var bitmap = await package.GetBitmapAsync();
+                var media = new ObservableCollection<StorageMedia>();
+                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                using (var stream = await bitmap.OpenReadAsync())
+                using (var reader = new DataReader(stream))
+                {
+                    await reader.LoadAsync((uint)stream.Size);
+                    var buffer = new byte[(int)stream.Size];
+                    reader.ReadBytes(buffer);
+                    await FileIO.WriteBytesAsync(cache, buffer);
+
+                    media.Add(await StoragePhoto.CreateAsync(cache, true));
+                }
+
+                ViewModel.SendMediaExecute(media, media[0]);
+            }
+            else if (package.Contains(StandardDataFormats.StorageItems))
             {
                 e.Handled = true;
 
@@ -258,27 +279,6 @@ namespace Unigram.Controls
                         ViewModel.SendFileCommand.Execute(file);
                     }
                 }
-            }
-            else if (package.Contains(StandardDataFormats.Bitmap))
-            {
-                e.Handled = true;
-
-                var bitmap = await package.GetBitmapAsync();
-                var media = new ObservableCollection<StorageMedia>();
-                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
-
-                using (var stream = await bitmap.OpenReadAsync())
-                using (var reader = new DataReader(stream))
-                {
-                    await reader.LoadAsync((uint)stream.Size);
-                    var buffer = new byte[(int)stream.Size];
-                    reader.ReadBytes(buffer);
-                    await FileIO.WriteBytesAsync(cache, buffer);
-
-                    media.Add(await StoragePhoto.CreateAsync(cache, true));
-                }
-
-                ViewModel.SendMediaExecute(media, media[0]);
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
             {
