@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.Controls
 {
-    public class GroupedGridView : GridView
+    public class GroupedGridView : SelectGridView
     {
         public ScrollViewer ScrollingHost { get; private set; }
         public ItemsWrapGrid ItemsStack { get; private set; }

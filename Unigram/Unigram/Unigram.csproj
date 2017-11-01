@@ -165,6 +165,8 @@
     <Compile Include="Controls\PeriodTimer.cs" />
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
+    <Compile Include="Controls\SelectGridView.cs" />
+    <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
     <Compile Include="Controls\AspectView.cs" />
     <Compile Include="Controls\StartupSwitch.xaml.cs">

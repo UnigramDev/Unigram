@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Unigram.Controls
 {
-    public class PaddedListView : ListView
+    public class PaddedListView : SelectListView
     {
         protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
         {
