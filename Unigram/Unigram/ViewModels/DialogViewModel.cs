@@ -66,8 +66,6 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : UnigramViewModelBase
     {
-        public bool IsActive { get; set; }
-
         public MessageCollection Items { get; private set; }
 
         private List<TLMessageCommonBase> _selectedItems = new List<TLMessageCommonBase>();
@@ -227,6 +225,14 @@ namespace Unigram.ViewModels
             //    SelectedMessages.Clear();
             //    SelectedMessages = null;
             //}
+        }
+
+        public bool IsActive
+        {
+            get
+            {
+                return NavigationService?.IsPeerActive(Peer) ?? false;
+            }
         }
 
         public DialogStickersViewModel Stickers { get { return _stickers; } }
