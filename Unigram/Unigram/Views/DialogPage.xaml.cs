@@ -329,6 +329,12 @@ namespace Unigram.Views
                     args.Handled = true;
                 }
 
+                if (ReplyMarkupPanel.Visibility == Visibility.Visible)
+                {
+                    Markup_Click(null, null);
+                    args.Handled = true;
+                }
+
                 if (ViewModel.SelectionMode != ListViewSelectionMode.None)
                 {
                     ViewModel.SelectionMode = ListViewSelectionMode.None;
@@ -371,6 +377,12 @@ namespace Unigram.Views
                 args.Handled = true;
             }
 
+            if (ReplyMarkupPanel.Visibility == Visibility.Visible)
+            {
+                Markup_Click(null, null);
+                args.Handled = true;
+            }
+
             if (ViewModel.SelectionMode != ListViewSelectionMode.None)
             {
                 ViewModel.SelectionMode = ListViewSelectionMode.None;
@@ -405,6 +417,7 @@ namespace Unigram.Views
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
                 btnCommands.Visibility = Visibility.Visible;
+                btnMarkup.Visibility = Visibility.Visible;
                 btnStickers.Visibility = Visibility.Visible;
                 btnVoiceMessage.Visibility = Visibility.Visible;
             }
@@ -412,6 +425,7 @@ namespace Unigram.Views
             {
                 btnSendMessage.Visibility = Visibility.Visible;
                 btnCommands.Visibility = Visibility.Collapsed;
+                btnMarkup.Visibility = Visibility.Collapsed;
                 btnStickers.Visibility = Visibility.Collapsed;
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
             }
@@ -678,6 +692,30 @@ namespace Unigram.Views
         {
             TextField.SetText("/", null);
             TextField.Focus(FocusState.Keyboard);
+        }
+
+        private void Markup_Click(object sender, RoutedEventArgs e)
+        {
+            if (ReplyMarkupPanel.Visibility == Visibility.Visible)
+            {
+                ReplyMarkupPanel.Visibility = Visibility.Collapsed;
+                ButtonMarkup.IsChecked = false;
+
+                Focus(FocusState.Programmatic);
+                TextField.Focus(FocusState.Keyboard);
+
+                InputPane.GetForCurrentView().TryShow();
+            }
+            else
+            {
+                ReplyMarkupPanel.Visibility = Visibility.Visible;
+                ButtonMarkup.IsChecked = true;
+
+                Focus(FocusState.Programmatic);
+                TextField.Focus(FocusState.Programmatic);
+
+                InputPane.GetForCurrentView().TryHide();
+            }
         }
 
         private void ProfileBubble_Click(object sender, RoutedEventArgs e)
