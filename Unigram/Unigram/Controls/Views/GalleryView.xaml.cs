@@ -135,12 +135,12 @@ namespace Unigram.Controls.Views
             throw new NotImplementedException();
         }
 
-        private async void OnSourceChanged(MediaPlayer sender, object args)
+        private async void CheckIfSourceChanged()
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                Transport.TransportVisibility = sender.Source == null ? Visibility.Collapsed : Visibility.Visible;
-                Details.Visibility = sender.Source == null ? Visibility.Visible : Visibility.Collapsed;
+                Transport.TransportVisibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Collapsed : Visibility.Visible;
+                Details.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
             });
         }
 
@@ -394,6 +394,7 @@ namespace Unigram.Controls.Views
                     _mediaPlayer = _mediaPlayerElement.MediaPlayer;
                     _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
                     _mediaPlayer.IsLoopingEnabled = item.IsLoop;
+                    CheckIfSourceChanged();
 
                     _mediaPlayer.SetSurfaceSize(new Size(_surface.ActualWidth, _surface.ActualHeight));
 
@@ -441,6 +442,7 @@ namespace Unigram.Controls.Views
                 _mediaPlayerElement.SetMediaPlayer(null);
                 _mediaPlayer.Dispose();
                 _mediaPlayer = null;
+                CheckIfSourceChanged();
             }
         }
 
