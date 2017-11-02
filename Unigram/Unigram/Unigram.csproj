@@ -119,6 +119,7 @@
     <Compile Include="Controls\DialogSearchToolBar.xaml.cs">
       <DependentUpon>DialogSearchToolBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GalleryTransportControls.cs" />
     <Compile Include="Controls\GroupedGridView.cs" />
     <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
