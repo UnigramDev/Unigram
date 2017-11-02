@@ -1246,7 +1246,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesReadMessageContents { Id = id };
 
             const string caption = "messages.readMessageContents";
-            ReadMessageContentsAsyncInternal(obj,
+            SendInformativeMessage<TLMessagesAffectedMessages>(caption, obj,
                 result =>
                 {
                     var multiPts = result as ITLMultiPts;
@@ -1261,7 +1261,7 @@ namespace Telegram.Api.Services
 
                     callback?.Invoke(result);
                 },
-                () => { },
+                /*() => { },*/
                 faultCallback);
         }
 
