@@ -903,7 +903,7 @@ namespace Telegram.Api.Services
             //TLUtils.WriteLine(string.Format("{0} messages.getDialogs offset_date={1} offset_peer={2} offset_id={3} limit={4}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), offsetDate, offsetPeer, offsetId, limit), LogSeverity.Error);          
 
             const string caption = "messages.getDialogs";
-            SendInformativeMessage<TLMessagesDialogsBase>(caption, obj, result =>
+            GetDialogsAsyncInternal(obj, result =>
             {
                 var dialogsCache = new Dictionary<int, List<TLDialog>>();
                 foreach (var dialogBase in result.Dialogs)
@@ -968,7 +968,9 @@ namespace Telegram.Api.Services
 
                 var r = obj;
                 _cacheService.SyncDialogs(result, callback);
-            }, faultCallback);
+            },
+            () => { },
+            faultCallback);
         }
 
         private void GetChannelHistoryAsyncInternal(bool sync, TLPeerBase peer, TLMessagesMessagesBase result, Action<TLMessagesMessagesBase> callback)
