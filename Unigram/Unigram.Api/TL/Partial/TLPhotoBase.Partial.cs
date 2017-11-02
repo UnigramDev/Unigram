@@ -88,8 +88,8 @@ namespace Telegram.Api.TL
 
             return new Progress<double>((value) =>
             {
-                IsTransferring = value < 1 && value > 0;
                 DownloadingProgress = value;
+                IsTransferring = value < 1 && value > 0;
                 Debug.WriteLine(value);
             });
         }
@@ -100,8 +100,8 @@ namespace Telegram.Api.TL
 
             return new Progress<double>((value) =>
             {
-                IsTransferring = value < 1 && value > 0;
                 UploadingProgress = value;
+                IsTransferring = value < 1 && value > 0;
                 Debug.WriteLine(value);
             });
         }
@@ -149,6 +149,8 @@ namespace Telegram.Api.TL
                 var download = await operation.AsTask(Download());
                 if (download != null)
                 {
+                    UploadingProgress = 0;
+                    DownloadingProgress = 1;
                     IsTransferring = false;
                     completed(this);
                 }

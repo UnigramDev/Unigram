@@ -267,8 +267,8 @@ namespace Unigram.ViewModels
             {
                 var local = value / divider;
 
-                document.IsTransferring = local < 1 && local > 0;
                 document.UploadingProgress = delta + local;
+                document.IsTransferring = local < 1 && local > 0;
                 Debug.WriteLine(value);
 
                 OutputTypingManager.SetTyping(action((int)local * 100));
