@@ -65,8 +65,8 @@ namespace Unigram.Controls.Views
             InitializeComponent();
 
             Layer.Visibility = Visibility.Collapsed;
-            TopBar.Visibility = Visibility.Collapsed;
-            BotBar.Visibility = Visibility.Collapsed;
+            //TopBar.Visibility = Visibility.Collapsed;
+            //BotBar.Visibility = Visibility.Collapsed;
 
             _mediaPlayerElement = new MediaPlayerElement { Style = Resources["yolo"] as Style };
             _mediaPlayerElement.AreTransportControlsEnabled = true;
@@ -121,13 +121,27 @@ namespace Unigram.Controls.Views
                 layerHideAnimation.Target = nameof(Visual.Opacity);
                 layerHideAnimation.Duration = duration;
 
-                ElementCompositionPreview.SetImplicitShowAnimation(TopBar, topShowAnimation);
-                ElementCompositionPreview.SetImplicitHideAnimation(TopBar, topHideAnimation);
-                ElementCompositionPreview.SetImplicitShowAnimation(BotBar, botShowAnimation);
-                ElementCompositionPreview.SetImplicitHideAnimation(BotBar, botHideAnimation);
+                //ElementCompositionPreview.SetImplicitShowAnimation(TopBar, topShowAnimation);
+                //ElementCompositionPreview.SetImplicitHideAnimation(TopBar, topHideAnimation);
+                //ElementCompositionPreview.SetImplicitShowAnimation(BotBar, botShowAnimation);
+                //ElementCompositionPreview.SetImplicitHideAnimation(BotBar, botHideAnimation);
                 ElementCompositionPreview.SetImplicitShowAnimation(Layer, layerShowAnimation);
                 ElementCompositionPreview.SetImplicitHideAnimation(Layer, layerHideAnimation);
             }
+        }
+
+        private void OnMediaOpened(MediaPlayer sender, object args)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async void OnSourceChanged(MediaPlayer sender, object args)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Transport.TransportVisibility = sender.Source == null ? Visibility.Collapsed : Visibility.Visible;
+                Details.Visibility = sender.Source == null ? Visibility.Visible : Visibility.Collapsed;
+            });
         }
 
         private async void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
@@ -261,8 +275,13 @@ namespace Unigram.Controls.Views
             }
             
             Layer.Visibility = Visibility.Collapsed;
-            TopBar.Visibility = Visibility.Collapsed;
-            BotBar.Visibility = Visibility.Collapsed;
+            //TopBar.Visibility = Visibility.Collapsed;
+            //BotBar.Visibility = Visibility.Collapsed;
+
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+            {
+                Transport.Hide();
+            }
 
             DataContext = null;
             Bindings.StopTracking();
@@ -278,8 +297,13 @@ namespace Unigram.Controls.Views
             if (animation != null)
             {
                 Layer.Visibility = Visibility.Visible;
-                TopBar.Visibility = Visibility.Visible;
-                BotBar.Visibility = Visibility.Visible;
+                //TopBar.Visibility = Visibility.Visible;
+                //BotBar.Visibility = Visibility.Visible;
+
+                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+                {
+                    Transport.Hide();
+                }
 
                 //Flip.Opacity = 1;
                 if (animation.TryStart(Surface))
@@ -422,8 +446,20 @@ namespace Unigram.Controls.Views
 
         private void ImageView_Click(object sender, RoutedEventArgs e)
         {
-            TopBar.Visibility = TopBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-            BotBar.Visibility = BotBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+            {
+                if (Transport.IsVisible)
+                {
+                    Transport.Hide();
+                }
+                else
+                {
+                    Transport.Show();
+                }
+            }
+
+            //TopBar.Visibility = TopBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            //BotBar.Visibility = BotBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)

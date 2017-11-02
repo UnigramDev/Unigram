@@ -1592,7 +1592,7 @@
                       HorizontalScrollMode="Disabled"
                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                       Grid.Row="4">
-            <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" AllowFocusOnInteraction="True" Margin="4,-2,4,0"/>
+            <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" AllowFocusOnInteraction="True" Margin="4,0,4,0"/>
         </ScrollViewer>
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">
@@ -1767,6 +1767,19 @@
                                               Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               FontFamily="{ThemeResource TelegramThemeFontFamily}"
                                               VerticalAlignment="Bottom"/>
+                    </Border>
+
+                    <Border x:Name="btnMarkup" Grid.Column="1">
+                        <controls:GlyphToggleButton x:Name="ButtonMarkup"
+                                                    Click="Markup_Click"
+                                                    AllowFocusOnInteraction="False"
+                                                    CheckedGlyph="&#xE910;"
+                                                    UncheckedGlyph="&#xE90F;"
+                                                    IsChecked="True"
+                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                    Visibility="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                                    FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                    VerticalAlignment="Bottom"/>
                     </Border>
 
                     <Border x:Name="btnStickers" Grid.Column="2">
