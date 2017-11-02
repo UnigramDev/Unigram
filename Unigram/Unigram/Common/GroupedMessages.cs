@@ -41,7 +41,7 @@ namespace Unigram.Common
 
         public long GroupedId { get; set; }
 
-        public IList<TLMessage> Messages { get; } = new UniqueList<int, TLMessage>(x => x.Id);
+        public IList<TLMessage> Messages { get; } = new UniqueList<long, TLMessage>(x => x.RandomId ?? x.Id);
         public Dictionary<TLMessage, GroupedMessagePosition> Positions { get; } = new Dictionary<TLMessage, GroupedMessagePosition>();
 
         private class MessageGroupedLayoutAttempt

@@ -228,15 +228,18 @@ namespace Unigram.Controls
                 group.Positions.TryGetValue(message, out GroupedMessagePosition position) && 
                 group.Messages.Count > 1)
             {
+                var messageId = message.RandomId ?? message.Id;
+
                 var width = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 320);
                 var height = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 420);
 
                 container.HorizontalAlignment = message.IsOut ? HorizontalAlignment.Right : HorizontalAlignment.Left;
-                container.Padding = message.IsOut ? new Thickness(2, 0, 0, 2) : new Thickness(0, 0, 2, 2);
+                container.Padding = new Thickness();
                 container.Width = position.pw / 700d * width;
                 container.Height = position.ph * height;
 
-                var inset = group.Messages[0].IsFirst ? 12d / height : 0;
+                container.Width -= 2;
+                container.Height -= 2;
 
                 var left = 700d;
                 var top = 0d;
@@ -245,22 +248,23 @@ namespace Unigram.Controls
                 {
                     var msg = group.Messages[i];
                     var pos = group.Positions[msg];
+                    var msgId = msg.RandomId ?? msg.Id;
 
-                    if (msg.Id > message.Id && pos.MinY == position.MinY && message.IsOut)
+                    if (msgId > messageId && pos.MinY == position.MinY && message.IsOut)
                     {
                         left -= pos.pw;
                     }
-                    else if (msg.Id < message.Id && pos.MinY == position.MinY && !message.IsOut)
+                    else if (msgId < messageId && pos.MinY == position.MinY && !message.IsOut)
                     {
                         left -= pos.pw;
                     }
 
-                    if (msg.Id < message.Id && pos.MinY == position.MinY)
+                    if (msgId < messageId && pos.MinY == position.MinY)
                     {
                         top = pos.ph * 2 - position.ph;
                     }
 
-                    if (msg.Id <= message.Id && position.SpanSize == 1000)
+                    if (msgId <= messageId && position.SpanSize == 1000)
                     {
                         if (i == 1)
                         {
@@ -283,11 +287,11 @@ namespace Unigram.Controls
 
                 if (message.IsOut)
                 {
-                    container.Margin = new Thickness(0, top, 12 + left, 0);
+                    container.Margin = new Thickness(2, 2 + top, 12 + left, position.Last ? 2 : 0);
                 }
                 else
                 {
-                    container.Margin = new Thickness(12 + left, top, 0, 0);
+                    container.Margin = new Thickness(12 + left, 2 + top, 2, position.Last ? 2 : 0);
                 }
 
                 return true;
