@@ -32,6 +32,8 @@ namespace Telegram.Api.TL
                 var download = await operation.AsTask(Download());
                 if (download != null)
                 {
+                    UploadingProgress = 0;
+                    DownloadingProgress = 1;
                     IsTransferring = false;
                     completed(this);
                 }
