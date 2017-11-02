@@ -49,7 +49,8 @@ namespace Unigram.Controls.Views
         private Func<FrameworkElement> _closing;
 
         private DisplayRequest _request;
-        private MediaPlayerElement _mediaPlayer;
+        private MediaPlayer _mediaPlayer;
+        private MediaPlayerElement _mediaPlayerElement;
         private MediaPlayerSurface _mediaSurface;
 
         private FrameworkElement _surface;
@@ -67,11 +68,9 @@ namespace Unigram.Controls.Views
             TopBar.Visibility = Visibility.Collapsed;
             BotBar.Visibility = Visibility.Collapsed;
 
-            _mediaPlayer = new MediaPlayerElement { Style = Resources["yolo"] as Style };
-            _mediaPlayer.AreTransportControlsEnabled = true;
-            _mediaPlayer.TransportControls = Transport;
-            _mediaPlayer.SetMediaPlayer(new MediaPlayer());
-            _mediaPlayer.MediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+            _mediaPlayerElement = new MediaPlayerElement { Style = Resources["yolo"] as Style };
+            _mediaPlayerElement.AreTransportControlsEnabled = true;
+            _mediaPlayerElement.TransportControls = Transport;
 
             _layerVisual = ElementCompositionPreview.GetElementVisual(Layer);
             //_topBarVisual = ElementCompositionPreview.GetElementVisual(TopBar);
@@ -140,17 +139,34 @@ namespace Unigram.Controls.Views
                     case MediaPlaybackState.Opening:
                     case MediaPlaybackState.Buffering:
                     case MediaPlaybackState.Playing:
-                        if (_request == null)
                         {
-                            _request = new DisplayRequest();
-                            _request.RequestActive();
+                            if (_request == null)
+                            {
+                                _request = new DisplayRequest();
+                                _request.RequestActive();
+                            }
+
+                            var surfaceVisual = ElementCompositionPreview.GetElementChildVisual(Surface);
+                            if (surfaceVisual != null)
+                            {
+                                surfaceVisual.IsVisible = true;
+                            }
+
+                            break;
                         }
-                        break;
                     default:
-                        if (_request != null)
                         {
-                            _request.RequestRelease();
-                            _request = null;
+                            if (_request != null)
+                            {
+                                _request.RequestRelease();
+                                _request = null;
+                            }
+
+                            var surfaceVisual = ElementCompositionPreview.GetElementChildVisual(Surface);
+                            if (surfaceVisual != null)
+                            {
+                                surfaceVisual.IsVisible = false;
+                            }
                         }
                         break;
                 }
@@ -165,7 +181,9 @@ namespace Unigram.Controls.Views
                 //return new GalleryView();
 
                 if (_current == null)
+                {
                     _current = new GalleryView();
+                }
 
                 return _current;
             }
@@ -297,22 +315,22 @@ namespace Unigram.Controls.Views
 
             if (item.IsVideo)
             {
-                if (_mediaPlayer.MediaPlayer?.Source == null)
+                if (_mediaPlayer == null || _mediaPlayerElement?.Source == null)
                 {
                     Play(item);
                     return;
                 }
 
-                switch (_mediaPlayer.MediaPlayer?.PlaybackSession.PlaybackState)
+                switch (_mediaPlayer?.PlaybackSession?.PlaybackState)
                 {
                     case MediaPlaybackState.Playing:
                         {
-                            Pause();
+                            _mediaPlayer.Pause();
                             return;
                         }
                     case MediaPlaybackState.Paused:
                         {
-                            Resume();
+                            _mediaPlayer.Play();
                             return;
                         }
                     default:
@@ -323,36 +341,6 @@ namespace Unigram.Controls.Views
                 }
 
             }
-        }
-
-        private void Pause()
-        {
-            try
-            {
-                var surfaceVisual = ElementCompositionPreview.GetElementChildVisual(Surface);
-                if (surfaceVisual != null)
-                {
-                    surfaceVisual.IsVisible = false;
-                }
-                
-                _mediaPlayer.MediaPlayer.Pause();
-            }
-            catch { }
-        }
-
-        private void Resume()
-        {
-            try
-            {
-                var surfaceVisual = ElementCompositionPreview.GetElementChildVisual(Surface);
-                if (surfaceVisual != null)
-                {
-                    surfaceVisual.IsVisible = true;
-                }
-
-                _mediaPlayer.MediaPlayer.Play();
-            }
-            catch { }
         }
 
         private void Play(GalleryItem item)
@@ -367,12 +355,6 @@ namespace Unigram.Controls.Views
                     //_surface = parent.FindName("Surface") as ImageView;
                     _surface = parent;
 
-                    _mediaPlayer.MediaPlayer.SetSurfaceSize(new Size(_surface.ActualWidth, _surface.ActualHeight));
-
-                    var swapchain = _mediaPlayer.MediaPlayer.GetSurface(_layerVisual.Compositor);
-                    var brush = _layerVisual.Compositor.CreateSurfaceBrush(swapchain.CompositionSurface);
-                    var size = new Vector2((float)_surface.ActualWidth, (float)_surface.ActualHeight);
-
                     //var mask = Unigram.Common.ImageLoader.Instance.LoadCircle(240, Colors.White).Brush;
                     //var graphicsEffect = new AlphaMaskEffect
                     //{
@@ -384,6 +366,16 @@ namespace Unigram.Controls.Views
                     //var effectBrush = effectFactory.CreateBrush();
                     //effectBrush.SetSourceParameter("image", brush);
                     //effectBrush.SetSourceParameter("mask", mask);
+                    _mediaPlayerElement.Source = MediaSource.CreateFromUri(item.GetVideoSource());
+                    _mediaPlayer = _mediaPlayerElement.MediaPlayer;
+                    _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+                    _mediaPlayer.IsLoopingEnabled = item.IsLoop;
+
+                    _mediaPlayer.SetSurfaceSize(new Size(_surface.ActualWidth, _surface.ActualHeight));
+
+                    var swapchain = _mediaPlayer.GetSurface(_layerVisual.Compositor);
+                    var brush = _layerVisual.Compositor.CreateSurfaceBrush(swapchain.CompositionSurface);
+                    var size = new Vector2((float)_surface.ActualWidth, (float)_surface.ActualHeight);
 
                     _surfaceVisual = _layerVisual.Compositor.CreateSpriteVisual();
                     _surfaceVisual.Size = size;
@@ -392,9 +384,8 @@ namespace Unigram.Controls.Views
                     ElementCompositionPreview.SetElementChildVisual(_surface, _surfaceVisual);
 
                     _mediaSurface = swapchain;
-                    _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
-                    _mediaPlayer.MediaPlayer.IsLoopingEnabled = item.IsLoop;
-                    _mediaPlayer.MediaPlayer.Play();
+
+                    _mediaPlayer.Play();
                 }
             }
             catch { }
@@ -419,10 +410,13 @@ namespace Unigram.Controls.Views
                 _surfaceVisual = null;
             }
 
-            if (_mediaPlayer?.Source != null)
+            if (_mediaPlayerElement?.Source != null)
             {
-                _mediaPlayer.MediaPlayer.Pause();
-                _mediaPlayer.Source = null;
+                _mediaPlayer.Pause();
+                _mediaPlayer.PlaybackSession.PlaybackStateChanged -= OnPlaybackStateChanged;
+                _mediaPlayerElement.SetMediaPlayer(null);
+                _mediaPlayer.Dispose();
+                _mediaPlayer = null;
             }
         }
 
