@@ -220,6 +220,10 @@ namespace Unigram.ViewModels
                     PinnedDialogsCountMax = config.PinnedDialogsCountMax;
                 });
             }
+            else
+            {
+                await TLMessageDialog.ShowAsync("Failed fetching dialogs");
+            }
 
             Aggregator.Subscribe(this);
         }
@@ -1262,31 +1266,34 @@ namespace Unigram.ViewModels
             {
                 var message = string.Empty;
                 var title = string.Empty;
-                if (channel.IsBroadcast)
-                {
-                    message = channel.IsCreator ? "Are you sure, you want to delete this channel?\r\n\r\nThis action cannot be undone." : "Are you sure you want to leave this channel?";
-                    title = channel.IsCreator ? "Delete" : "Leave";
-                }
-                else if (channel.IsMegaGroup)
-                {
-                    message = channel.IsCreator ? "Are you sure, you want to delete this group? All members will be removed and all messages will be lost.\r\n\r\nThis action cannot be undone." : "Are you sure you want to leave this group?";
-                    title = channel.IsCreator ? "Delete" : "Leave";
-                }
+                //if (channel.IsBroadcast)
+                //{
+                //    message = channel.IsCreator ? "Are you sure, you want to delete this channel?\r\n\r\nThis action cannot be undone." : "Are you sure you want to leave this channel?";
+                //    title = channel.IsCreator ? "Delete" : "Leave";
+                //}
+                //else if (channel.IsMegaGroup)
+                //{
+                //    message = channel.IsCreator ? "Are you sure, you want to delete this group? All members will be removed and all messages will be lost.\r\n\r\nThis action cannot be undone." : "Are you sure you want to leave this group?";
+                //    title = channel.IsCreator ? "Delete" : "Leave";
+                //}
+
+                message = channel.IsBroadcast ? "Are you sure you want to leave this channel?" : "Are you sure you want to leave this group?";
+                title = "Leave";
 
                 var confirm = await TLMessageDialog.ShowAsync(message, title, title, "Cancel");
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    Task<MTProtoResponse<TLUpdatesBase>> task;
-                    if (channel.IsCreator)
-                    {
-                        task = ProtoService.DeleteChannelAsync(channel);
-                    }
-                    else
-                    {
-                        task = ProtoService.LeaveChannelAsync(channel);
-                    }
+                    //Task<MTProtoResponse<TLUpdatesBase>> task;
+                    //if (channel.IsCreator)
+                    //{
+                    //    task = ProtoService.DeleteChannelAsync(channel);
+                    //}
+                    //else
+                    //{
+                    //    task = ProtoService.LeaveChannelAsync(channel);
+                    //}
 
-                    var response = await task;
+                    var response = await ProtoService.LeaveChannelAsync(channel);
                     if (response.IsSucceeded)
                     {
                         CacheService.DeleteDialog(dialog);
