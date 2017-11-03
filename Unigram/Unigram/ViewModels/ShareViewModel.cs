@@ -32,6 +32,11 @@ namespace Unigram.ViewModels
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            if (mode == NavigationMode.New)
+            {
+                _dialogs = null;
+            }
+
             var dialogs = GetDialogs();
             if (dialogs != null)
             {
