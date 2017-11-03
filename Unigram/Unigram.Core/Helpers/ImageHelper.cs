@@ -84,23 +84,30 @@ namespace Unigram.Core.Helpers
 
         public static async Task<ImageSource> GetPreviewBitmapAsync(StorageFile sourceFile, int requestedMinSide = 1280)
         {
-            if (sourceFile.ContentType.Equals("video/mp4"))
+            try
             {
-                var props = await sourceFile.Properties.GetVideoPropertiesAsync();
-                var composition = new MediaComposition();
-                var clip = await MediaClip.CreateFromFileAsync(sourceFile);
+                if (sourceFile.ContentType.Equals("video/mp4"))
+                {
+                    var props = await sourceFile.Properties.GetVideoPropertiesAsync();
+                    var composition = new MediaComposition();
+                    var clip = await MediaClip.CreateFromFileAsync(sourceFile);
 
-                composition.Clips.Add(clip);
+                    composition.Clips.Add(clip);
 
-                using (var imageStream = await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.Width, (int)props.Height, VideoFramePrecision.NearestKeyFrame))
+                    using (var imageStream = await composition.GetThumbnailAsync(TimeSpan.Zero, (int)props.Width, (int)props.Height, VideoFramePrecision.NearestKeyFrame))
+                    {
+                        return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
+                    }
+                }
+
+                using (var imageStream = await sourceFile.OpenReadAsync())
                 {
                     return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
                 }
             }
-
-            using (var imageStream = await sourceFile.OpenReadAsync())
+            catch
             {
-                return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
+                return null;
             }
         }
 

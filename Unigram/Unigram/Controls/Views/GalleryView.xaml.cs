@@ -250,7 +250,7 @@ namespace Unigram.Controls.Views
                     }
                 }
             }
-            
+
             Layer.Visibility = Visibility.Collapsed;
             //TopBar.Visibility = Visibility.Collapsed;
             //BotBar.Visibility = Visibility.Collapsed;
