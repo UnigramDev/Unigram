@@ -1238,9 +1238,43 @@ namespace Telegram.Api.Services
                             }
                         }
                     }
+
                     // send acknowledgments
                     SendAcknowledgments(transportMessage);
 
+                    // set client ticks delta
+                    bool updated = false;
+                    lock (_activeTransportRoot)
+                    {
+                        if (transport.ClientTicksDelta == 0)
+                        {
+                            var serverTime = transportMessage.MsgId;
+                            var clientTime = transport.GenerateMessageId();
+
+                            var serverDateTime = Utils.UnixTimestampToDateTime(serverTime >> 32);
+                            var clientDateTime = Utils.UnixTimestampToDateTime(clientTime >> 32);
+
+                            //var errorInfo = new StringBuilder();
+
+                            //errorInfo.AppendLine("Server time: " + serverDateTime);
+                            //errorInfo.AppendLine("Client time: " + clientDateTime);
+
+                            transport.ClientTicksDelta = serverTime - clientTime;
+
+                            if (transport.ClientTicksDelta == 0) transport.ClientTicksDelta = 1;
+                            updated = true;
+                        }
+                    }
+
+                    if (updated && _config != null)
+                    {
+                        var dcOption = _config.DCOptions.FirstOrDefault(x => string.Equals(x.IpAddress, transport.Host, StringComparison.OrdinalIgnoreCase));
+                        if (dcOption != null)
+                        {
+                            dcOption.ClientTicksDelta = transport.ClientTicksDelta;
+                            _cacheService.SetConfig(_config);
+                        }
+                    }
 
                     // updates
                     _updatesService.ProcessTransportMessage(transportMessage);
