@@ -287,11 +287,11 @@ namespace Unigram.Controls
 
                 if (message.IsOut)
                 {
-                    container.Margin = new Thickness(2, 2 + top, 12 + left, position.Last ? 2 : 0);
+                    container.Margin = new Thickness(2, 2 + top, 12 + left, position.IsLast ? 2 : 0);
                 }
                 else
                 {
-                    container.Margin = new Thickness(12 + left, 2 + top, 2, position.Last ? 2 : 0);
+                    container.Margin = new Thickness(12 + left, 2 + top, 2, position.IsLast ? 2 : 0);
                 }
 
                 return true;
