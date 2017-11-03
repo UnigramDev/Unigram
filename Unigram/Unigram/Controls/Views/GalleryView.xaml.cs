@@ -278,19 +278,21 @@ namespace Unigram.Controls.Views
                 //TopBar.Visibility = Visibility.Visible;
                 //BotBar.Visibility = Visibility.Visible;
 
-                Transport.Show();
-
                 //Flip.Opacity = 1;
                 if (animation.TryStart(Surface))
                 {
                     animation.Completed += (s, args) =>
                     {
+                        Transport.Show();
+
                         //Flip.Opacity = 1;
                         //Surface.Visibility = Visibility.Collapsed;
                     };
                 }
                 else
                 {
+                    Transport.Show();
+
                     //Flip.Opacity = 1;
                     //Surface.Visibility = Visibility.Collapsed;
                 }
