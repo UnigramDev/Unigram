@@ -299,8 +299,6 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLUpdatesBase>(caption, obj,
                 result =>
                 {
-
-
                     var multiPts = result as ITLMultiPts;
                     if (multiPts != null)
                     {
