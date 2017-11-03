@@ -181,7 +181,7 @@ namespace Unigram.Controls
         {
             if (photo.Full is TLPhotoSize photoSize)
             {
-                if (photo.IsTransferring || (photo.DownloadingProgress > 0 && photo.DownloadingProgress < 1) || (photo.UploadingProgress > 0 && photo.DownloadingProgress < 1))
+                if (photo.IsTransferring || (photo.DownloadingProgress > 0 && photo.DownloadingProgress < 1) || (photo.UploadingProgress > 0 && photo.UploadingProgress < 1))
                 {
                     ContentVisibility = Visibility.Visible;
                     Visibility = Visibility.Visible;
@@ -214,7 +214,7 @@ namespace Unigram.Controls
             ContentVisibility = Visibility.Visible;
             Visibility = Visibility.Visible;
 
-            if (document.IsTransferring || (document.DownloadingProgress > 0 && document.DownloadingProgress < 1) || (document.UploadingProgress > 0 && document.DownloadingProgress < 1))
+            if (document.IsTransferring || (document.DownloadingProgress > 0 && document.DownloadingProgress < 1) || (document.UploadingProgress > 0 && document.UploadingProgress < 1))
             {
                 ContentVisibility = Visibility.Visible;
                 return "\uE10A";
