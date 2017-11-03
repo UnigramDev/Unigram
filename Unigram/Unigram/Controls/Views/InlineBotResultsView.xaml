@@ -279,7 +279,7 @@
                         Content="{x:Bind ViewModel.InlineBotResults.SwitchPM.Text, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPM, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                         HorizontalAlignment="Stretch"/>
-                <controls:OrientableListView ItemsSource="{x:Bind ViewModel.InlineBotResults.Results, Mode=OneWay}"
+                <controls:OrientableListView ItemsSource="{x:Bind ViewModel.InlineBotResults, Mode=OneWay}"
                                              IsHorizontal="{x:Bind ViewModel.InlineBotResults.IsGallery, Mode=OneWay}"
                                              ItemTemplateSelector="{StaticResource InlineBotResultTemplateSelector}"
                                              ItemClick="ListView_ItemClick"
