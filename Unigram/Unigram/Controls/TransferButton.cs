@@ -181,8 +181,13 @@ namespace Unigram.Controls
         {
             if (photo.Full is TLPhotoSize photoSize)
             {
-                var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
-                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                if (photo.IsTransferring || (photo.DownloadingProgress > 0 && photo.DownloadingProgress < 1) || (photo.UploadingProgress > 0 && photo.DownloadingProgress < 1))
+                {
+                    ContentVisibility = Visibility.Visible;
+                    Visibility = Visibility.Visible;
+                    return "\uE10A";
+                }
+                else if (File.Exists(FileUtils.GetTempFileName(string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret))))
                 {
                     ContentVisibility = Visibility.Collapsed;
 
@@ -194,12 +199,6 @@ namespace Unigram.Controls
 
                     Visibility = Visibility.Collapsed;
                     return "\uE160";
-                }
-                else if (photo.IsTransferring || (photo.DownloadingProgress > 0 && photo.DownloadingProgress < 1) || (photo.UploadingProgress > 0 && photo.DownloadingProgress < 1))
-                {
-                    ContentVisibility = Visibility.Visible;
-                    Visibility = Visibility.Visible;
-                    return "\uE10A";
                 }
 
                 ContentVisibility = Visibility.Visible;
@@ -215,8 +214,12 @@ namespace Unigram.Controls
             ContentVisibility = Visibility.Visible;
             Visibility = Visibility.Visible;
 
-            var fileName = document.GetFileName();
-            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            if (document.IsTransferring || (document.DownloadingProgress > 0 && document.DownloadingProgress < 1) || (document.UploadingProgress > 0 && document.DownloadingProgress < 1))
+            {
+                ContentVisibility = Visibility.Visible;
+                return "\uE10A";
+            }
+            else if (File.Exists(FileUtils.GetTempFileName(document.GetFileName())))
             {
                 ContentVisibility = Visibility.Collapsed;
 
@@ -237,11 +240,6 @@ namespace Unigram.Controls
                 }
 
                 return "\uE160";
-            }
-            else if (document.IsTransferring || (document.DownloadingProgress > 0 && document.DownloadingProgress < 1) || (document.UploadingProgress > 0 && document.DownloadingProgress < 1))
-            {
-                ContentVisibility = Visibility.Visible;
-                return "\uE10A";
             }
 
             return "\uE118";

@@ -453,6 +453,7 @@
     <Compile Include="TL\Methods\TLRPCDropAnswer.cs" />
     <Compile Include="TL\Methods\TLSetClientDHParams.cs" />
     <Compile Include="TL\Partial\TLAuthorization.Partial.cs" />
+    <Compile Include="TL\Partial\TLBadMsgNotification.Partial.cs" />
     <Compile Include="TL\Partial\TLBadServerSalt.Partial.cs" />
     <Compile Include="TL\Partial\TLBotInlineResultBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelAdminLogEvent.Partial.cs" />
