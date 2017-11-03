@@ -301,7 +301,7 @@ namespace Unigram.Controls
                             profile.Video.Height = 240;
                             profile.Video.Bitrate = 300000;
 
-                            await ViewModel.SendVideoAsync(_file, null, true, profile, transform);
+                            await ViewModel.SendVideoAsync(_file, null, true, null, profile, transform);
                         }
                         else
                         {

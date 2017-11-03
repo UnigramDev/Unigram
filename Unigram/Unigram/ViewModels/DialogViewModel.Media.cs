@@ -377,7 +377,7 @@ namespace Unigram.ViewModels
             });
         }
 
-        public async Task SendVideoAsync(StorageFile file, string caption, bool round, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        public async Task SendVideoAsync(StorageFile file, string caption, bool round, int? ttlSeconds = null, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
         {
             if (_peer == null)
             {
@@ -451,7 +451,11 @@ namespace Unigram.ViewModels
             var media = new TLMessageMediaDocument
             {
                 Document = document,
-                Caption = caption
+                HasDocument = document != null,
+                Caption = caption,
+                HasCaption = caption != null,
+                TTLSeconds = ttlSeconds,
+                HasTTLSeconds = ttlSeconds != null
             };
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, _peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
@@ -505,7 +509,8 @@ namespace Unigram.ViewModels
                             Thumb = thumbUpload.ToInputFile(),
                             MimeType = document.MimeType,
                             Caption = media.Caption,
-                            Attributes = document.Attributes
+                            Attributes = document.Attributes,
+                            TTLSeconds = ttlSeconds
                         };
 
                         var result = await ProtoService.SendMediaAsync(_peer, inputMedia, message);
@@ -545,7 +550,7 @@ namespace Unigram.ViewModels
                     }
                     else if (storage is StorageVideo video)
                     {
-                        await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync(), video.GetTransform());
+                        await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
                     }
                 }
 
@@ -599,7 +604,7 @@ namespace Unigram.ViewModels
                         }
                         else if (storage is StorageVideo video)
                         {
-                            await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync(), video.GetTransform());
+                            await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
                         }
                     }
                 }
@@ -627,7 +632,7 @@ namespace Unigram.ViewModels
                         }
                         else if (storage is StorageVideo video)
                         {
-                            await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync(), video.GetTransform());
+                            await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
                         }
                     }
                 }
