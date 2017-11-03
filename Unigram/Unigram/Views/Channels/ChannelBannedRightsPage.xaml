@@ -35,7 +35,7 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <controls:ProfilePictureView x:Name="Picture" Command="{x:Bind ViewModel.ProfileCommand}" Source="{x:Bind ViewModel.Item.User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Height="64" Width="64" Margin="12" Grid.RowSpan="2"/>
+                    <controls:ProfilePictureView x:Name="Picture" Command="{x:Bind ViewModel.ProfileCommand}" Source="{x:Bind ViewModel.Item.User.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}" Height="64" Width="64" Margin="12,6" Grid.RowSpan="2"/>
 
                     <Grid VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.Column="1">
                         <Grid.ColumnDefinitions>
