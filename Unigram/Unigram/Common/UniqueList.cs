@@ -90,6 +90,11 @@ namespace Unigram.Common
             return _inner.Remove(_selector(item));
         }
 
+        public bool Remove(TKey key)
+        {
+            return _inner.Remove(key);
+        }
+
         public void RemoveAt(int index)
         {
             _inner.RemoveAt(index);
