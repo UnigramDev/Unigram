@@ -23,6 +23,10 @@ namespace Telegram.Api.Services
 {
     public partial interface IMTProtoService
     {
+        Task<MTProtoResponse<TLUpdatesBase>> SendMultiMediaAsync(TLInputPeerBase inputPeer, TLVector<TLInputSingleMedia> multiMedia, IList<TLMessage> messages);
+
+        Task<MTProtoResponse<TLMessageMediaBase>> UploadMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message);
+
         Task<MTProtoResponse<TLMessagesAffectedHistory>> ReadMentionsAsync(TLInputPeerBase inputPeer);
 
         Task<MTProtoResponse<TLUpdatesBase>> TogglePreHistoryHiddenAsync(TLInputChannelBase channel, bool enabled);

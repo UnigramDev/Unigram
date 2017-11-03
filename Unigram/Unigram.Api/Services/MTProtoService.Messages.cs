@@ -766,6 +766,84 @@ namespace Telegram.Api.Services
                 faultCallback);
         }
 
+        public void UploadMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLMessageMediaBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesUploadMedia { Peer = inputPeer, Media = inputMedia };
+
+            const string caption = "messages.uploadMedia";
+            SendInformativeMessage<TLMessageMediaBase>(caption, obj,
+                result =>
+                {
+                    message.Media = result;
+                    message.RaisePropertyChanged(() => message.Media);
+
+                    callback?.Invoke(result);
+                },
+                faultCallback);
+        }
+
+        public void SendMultiMediaAsync(TLInputPeerBase inputPeer, TLVector<TLInputSingleMedia> multiMedia, IList<TLMessage> messages, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLMessagesSendMultiMedia { Peer = inputPeer, MultiMedia = multiMedia };
+
+            var first = messages.FirstOrDefault();
+            if (first != null)
+            {
+                obj.GroupedId = first.GroupedId;
+                obj.HasGroupedId = first.HasGroupedId;
+
+                obj.ReplyToMsgId = first.ReplyToMsgId;
+                obj.HasReplyToMsgId = first.HasReplyToMsgId;
+
+                obj.IsSilent = first.IsSilent;
+            }
+
+            const string caption = "messages.sendMultiMedia";
+            SendMultiMediaAsyncInternal(obj,
+                result =>
+                {
+                    Execute.BeginOnUIThread(() =>
+                    {
+                        foreach (var message in messages)
+                        {
+                            message.State = GetMessageStatus(_cacheService, message.ToId);
+
+                            // TODO: 24/04/2017 verify if this is really needed
+                            if (message.Media is TLMessageMediaPhoto photoMedia)
+                            {
+                                photoMedia.Photo.IsTransferring = false;
+                                photoMedia.Photo.LastProgress = 0.0;
+                                photoMedia.Photo.DownloadingProgress = 0.0;
+                            }
+                            else if (message.Media is TLMessageMediaDocument documentMedia)
+                            {
+                                documentMedia.Document.IsTransferring = false;
+                                documentMedia.Document.LastProgress = 0.0;
+                                documentMedia.Document.DownloadingProgress = 0.0;
+                            }
+                        }
+                    });
+
+                    var multiPts = result as ITLMultiPts;
+                    if (multiPts != null)
+                    {
+                        _updatesService.SetState(multiPts, caption);
+                    }
+                    else
+                    {
+                        ProcessUpdates(result, messages);
+                    }
+
+                    callback?.Invoke(result);
+                },
+                () =>
+                {
+                    //TLUtils.WriteLine(caption + " fast result " + message.RandomIndex, LogSeverity.Error);
+                    //fastCallback();
+                },
+                faultCallback);
+        }
+
         public void SendMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message, Action<TLUpdatesBase> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLMessagesSendMedia { Peer = inputPeer, ReplyToMsgId = message.ReplyToMsgId, Media = inputMedia, RandomId = message.RandomId.Value };

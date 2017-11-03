@@ -254,6 +254,23 @@ namespace Unigram.Common
             }
         }
 
+        private bool? _isSendGrouped;
+        public bool IsSendGrouped
+        {
+            get
+            {
+                if (_isSendGrouped == null)
+                    _isSendGrouped = GetValueOrDefault("IsSendGrouped", true);
+
+                return _isSendGrouped ?? true;
+            }
+            set
+            {
+                _isSendGrouped = value;
+                AddOrUpdateValue("IsSendGrouped", value);
+            }
+        }
+
         private int? _selectedBackground;
         public int SelectedBackground
         {

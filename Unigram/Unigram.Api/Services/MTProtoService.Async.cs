@@ -24,6 +24,34 @@ namespace Telegram.Api.Services
     public partial class MTProtoService
     {
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLUpdatesBase>> SendMultiMediaAsync(TLInputPeerBase inputPeer, TLVector<TLInputSingleMedia> multiMedia, IList<TLMessage> messages)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
+            SendMultiMediaAsync(inputPeer, multiMedia, messages, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLMessageMediaBase>> UploadMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessageMediaBase>>();
+            UploadMediaAsync(inputPeer, inputMedia, message, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessageMediaBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessageMediaBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesAffectedHistory>> ReadMentionsAsync(TLInputPeerBase inputPeer)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedHistory>>();

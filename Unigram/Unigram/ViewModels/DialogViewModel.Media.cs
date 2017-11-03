@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
@@ -541,16 +542,23 @@ namespace Unigram.ViewModels
         {
             if (MediaLibrary.SelectedCount > 0)
             {
-                foreach (var storage in MediaLibrary.Where(x => x.IsSelected))
+                if (ApplicationSettings.Current.IsSendGrouped)
                 {
-                    if (storage is StoragePhoto photo)
+                    await SendGroupedAsync(MediaLibrary.Where(x => x.IsSelected).ToList());
+                }
+                else
+                {
+                    foreach (var storage in MediaLibrary.Where(x => x.IsSelected))
                     {
-                        var storageFile = await photo.GetFileAsync();
-                        await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
-                    }
-                    else if (storage is StorageVideo video)
-                    {
-                        await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
+                        if (storage is StoragePhoto photo)
+                        {
+                            var storageFile = await photo.GetFileAsync();
+                            await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
+                        }
+                        else if (storage is StorageVideo video)
+                        {
+                            await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
+                        }
                     }
                 }
 
@@ -588,23 +596,34 @@ namespace Unigram.ViewModels
 
             if (storages != null && storages.Count > 0)
             {
-                var dialog = new SendMediaView { ViewModel = this, Items = storages, SelectedItem = storages[0], IsTTLEnabled = _peer is TLInputPeerUser };
+                var dialog = new SendMediaView { ViewModel = this, IsTTLEnabled = _peer is TLInputPeerUser };
+                dialog.SetItems(storages);
+                dialog.SelectedItem = storages[0];
+
                 var dialogResult = await dialog.ShowAsync();
 
                 TextField.FocusMaybe(FocusState.Keyboard);
 
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
-                    foreach (var storage in dialog.Items.Where(x => x.IsSelected))
+                    var items = dialog.SelectedItems.ToList();
+                    if (dialog.IsGrouped)
                     {
-                        if (storage is StoragePhoto photo)
+                        await SendGroupedAsync(items);
+                    }
+                    else
+                    {
+                        foreach (var storage in items)
                         {
-                            var storageFile = await photo.GetFileAsync();
-                            await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
-                        }
-                        else if (storage is StorageVideo video)
-                        {
-                            await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
+                            if (storage is StoragePhoto photo)
+                            {
+                                var storageFile = await photo.GetFileAsync();
+                                await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
+                            }
+                            else if (storage is StorageVideo video)
+                            {
+                                await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
+                            }
                         }
                     }
                 }
@@ -616,23 +635,34 @@ namespace Unigram.ViewModels
             var storages = media;
             if (storages != null && storages.Count > 0)
             {
-                var dialog = new SendMediaView { ViewModel = this, Items = storages, SelectedItem = selectedItem, IsTTLEnabled = _peer is TLInputPeerUser };
+                var dialog = new SendMediaView { ViewModel = this, IsTTLEnabled = _peer is TLInputPeerUser };
+                dialog.SetItems(storages);
+                dialog.SelectedItem = selectedItem;
+
                 var dialogResult = await dialog.ShowAsync();
 
                 TextField.FocusMaybe(FocusState.Keyboard);
 
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
-                    foreach (var storage in dialog.Items.Where(x => x.IsSelected))
+                    var items = dialog.SelectedItems.ToList();
+                    if (dialog.IsGrouped)
                     {
-                        if (storage is StoragePhoto photo)
+                        await SendGroupedAsync(items);
+                    }
+                    else
+                    {
+                        foreach (var storage in items)
                         {
-                            var storageFile = await photo.GetFileAsync();
-                            await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
-                        }
-                        else if (storage is StorageVideo video)
-                        {
-                            await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
+                            if (storage is StoragePhoto photo)
+                            {
+                                var storageFile = await photo.GetFileAsync();
+                                await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
+                            }
+                            else if (storage is StorageVideo video)
+                            {
+                                await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
+                            }
                         }
                     }
                 }
@@ -1199,5 +1229,326 @@ namespace Unigram.ViewModels
 
             return tsc.Task;
         }
+
+        #region Grouped
+
+        private async Task SendGroupedAsync(ICollection<StorageMedia> items)
+        {
+            var groupedId = TLLong.Random();
+            var randomId = TLLong.Random(items.Count);
+
+            var operations = new List<(TLMessage message, Task operation)>();
+            foreach (var item in items)
+            {
+                if (item is StoragePhoto photo)
+                {
+                    var op = await PreparePhotoAsync(photo.File, photo.Caption, groupedId);
+                    if (op.message != null && op.operation != null)
+                    {
+                        operations.Add(op);
+                    }
+                }
+                else if (item is StorageVideo video)
+                {
+                    var op = await PrepareVideoAsync(video.File, video.Caption, false, groupedId, await video.GetEncodingAsync(), video.GetTransform());
+                    if (op.message != null && op.operation != null)
+                    {
+                        operations.Add(op);
+                    }
+                }
+            }
+
+            var messages = operations.Select(x => x.message).ToList();
+            for (int i = 0; i < messages.Count; i++)
+            {
+                messages[i].RandomId = randomId[i];
+            }
+
+            var inputMedia = messages.Select(x => new TLInputSingleMedia { Media = x.Media.ToInputMedia(), RandomId = x.RandomId ?? 0 });
+
+            var group = new GroupedMessages { GroupedId = groupedId };
+            group.Messages.AddRange(messages);
+            group.Calculate();
+
+            _groupedMessages[groupedId] = group;
+
+            TLMessageBase previousMessage = null;
+            foreach (var message in messages)
+            {
+                var result = InsertSendingMessage(message, false);
+                if (previousMessage == null)
+                {
+                    previousMessage = result;
+                }
+            }
+
+            CacheService.SyncSendingMessages(messages, previousMessage, async msgs =>
+            {
+                foreach (var op in operations)
+                {
+                    await op.operation;
+                }
+
+                var response = await ProtoService.SendMultiMediaAsync(_peer, new TLVector<TLInputSingleMedia>(inputMedia), messages);
+                if (response.IsSucceeded && response.Result is TLUpdates updates)
+                {
+                    foreach (var update in updates.Updates.OfType<TLUpdateMessageID>())
+                    {
+                        var message = messages.FirstOrDefault(x => x.Id == update.Id);
+                        if (message == null)
+                        {
+                            continue;
+                        }
+
+                        group.Messages.Remove(update.RandomId);
+                        group.Messages.Add(message);
+                    }
+
+                    group.Calculate();
+                }
+            });
+        }
+
+        private async Task<(TLMessage message, Task operation)> PreparePhotoAsync(StorageFile file, string caption, long? groupedId)
+        {
+            var originalProps = await file.Properties.GetImagePropertiesAsync();
+
+            var imageWidth = originalProps.Width;
+            var imageHeight = originalProps.Height;
+            if (imageWidth >= 20 * imageHeight || imageHeight >= 20 * imageWidth)
+            {
+                return (null, null);
+            }
+
+            var fileLocation = new TLFileLocation
+            {
+                VolumeId = TLLong.Random(),
+                LocalId = TLInt.Random(),
+                Secret = TLLong.Random(),
+                DCId = 0
+            };
+
+            var fileName = string.Format("{0}_{1}_{2}.jpg", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+            var fileCache = await FileUtils.CreateTempFileAsync(fileName);
+
+            StorageFile fileScale = null;
+            try
+            {
+                fileScale = await ImageHelper.ScaleJpegAsync(file, fileCache, 1280, 0.77);
+            }
+            catch (InvalidCastException)
+            {
+                await fileCache.DeleteAsync();
+                return (null, null);
+            }
+
+            var basicProps = await fileScale.GetBasicPropertiesAsync();
+            var imageProps = await fileScale.Properties.GetImagePropertiesAsync();
+
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var photoSize = new TLPhotoSize
+            {
+                Type = "y",
+                W = (int)imageProps.Width,
+                H = (int)imageProps.Height,
+                Location = fileLocation,
+                Size = (int)basicProps.Size
+            };
+
+            var photo = new TLPhoto
+            {
+                Id = 0,
+                AccessHash = 0,
+                Date = date,
+                Sizes = new TLVector<TLPhotoSizeBase> { photoSize },
+            };
+
+            var media = new TLMessageMediaPhoto
+            {
+                Photo = photo,
+                Caption = caption,
+                HasPhoto = true,
+                HasCaption = caption != null,
+            };
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+            message.GroupedId = groupedId;
+            message.HasGroupedId = groupedId.HasValue;
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            return (message, UploadPhotoAsync(message, fileCache));
+        }
+
+        private async Task<MTProtoResponse<TLMessageMediaBase>> UploadPhotoAsync(TLMessage message, StorageFile fileCache)
+        {
+            var media = message.Media as TLMessageMediaPhoto;
+            var photo = media.Photo as TLPhoto;
+
+            var fileId = TLLong.Random();
+            var upload = await _uploadFileManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(Upload(photo, progress => new TLSendMessageUploadPhotoAction { Progress = progress }));
+            if (upload != null)
+            {
+                var inputMedia = new TLInputMediaUploadedPhoto
+                {
+                    File = upload.ToInputFile(),
+                    Caption = media.Caption,
+                };
+
+                return await ProtoService.UploadMediaAsync(Peer, inputMedia, message);
+            }
+
+            return null;
+        }
+
+        public async Task<(TLMessage message, Task operation)> PrepareVideoAsync(StorageFile file, string caption, bool round, long? groupedId, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        {
+            var fileLocation = new TLFileLocation
+            {
+                VolumeId = TLLong.Random(),
+                LocalId = TLInt.Random(),
+                Secret = TLLong.Random(),
+                DCId = 0
+            };
+
+            var fileName = string.Format("{0}_{1}_{2}.mp4", fileLocation.VolumeId, fileLocation.LocalId, fileLocation.Secret);
+            var fileCache = await FileUtils.CreateTempFileAsync(fileName);
+
+            await file.CopyAndReplaceAsync(fileCache);
+
+            var basicProps = await fileCache.GetBasicPropertiesAsync();
+            var videoProps = await fileCache.Properties.GetVideoPropertiesAsync();
+
+            var thumbnail = await ImageHelper.GetVideoThumbnailAsync(file, videoProps, transform) as TLPhotoSize;
+            if (thumbnail == null)
+            {
+                await fileCache.DeleteAsync();
+                return (null, null);
+            }
+
+            var desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
+
+            var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
+
+            var videoWidth = (int)videoProps.Width;
+            var videoHeight = (int)videoProps.Height;
+
+            if (profile != null)
+            {
+                videoWidth = (int)profile.Video.Width;
+                videoHeight = (int)profile.Video.Height;
+            }
+
+            var document = new TLDocument
+            {
+                Id = 0,
+                AccessHash = 0,
+                Date = date,
+                Size = (int)basicProps.Size,
+                MimeType = fileCache.ContentType,
+                Thumb = thumbnail,
+                Attributes = new TLVector<TLDocumentAttributeBase>
+                {
+                    new TLDocumentAttributeFilename
+                    {
+                        FileName = file.Name
+                    },
+                    new TLDocumentAttributeVideo
+                    {
+                        Duration = (int)videoProps.Duration.TotalSeconds,
+                        W = videoWidth,
+                        H = videoHeight,
+                        IsRoundMessage = round
+                    }
+                }
+            };
+
+            if (profile != null && profile.Audio == null)
+            {
+                document.Attributes.Add(new TLDocumentAttributeAnimated());
+            }
+
+            var media = new TLMessageMediaDocument
+            {
+                Document = document,
+                Caption = caption
+            };
+
+            var message = TLUtils.GetMessage(SettingsHelper.UserId, _peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
+            message.GroupedId = groupedId;
+            message.HasGroupedId = groupedId.HasValue;
+
+            if (Reply != null)
+            {
+                message.HasReplyToMsgId = true;
+                message.ReplyToMsgId = Reply.Id;
+                message.Reply = Reply;
+                Reply = null;
+            }
+
+            return (message, UploadVideoAsync(message, fileName, desiredName, fileCache, profile, transform));
+        }
+
+        private async Task<MTProtoResponse<TLMessageMediaBase>> UploadVideoAsync(TLMessage message, string fileName, string desiredName, StorageFile fileCache, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        {
+            var media = message.Media as TLMessageMediaDocument;
+            var document = media.Document as TLDocument;
+
+            if (profile != null)
+            {
+                await fileCache.RenameAsync(fileName + ".temp.mp4");
+                var fileResult = await FileUtils.CreateTempFileAsync(fileName);
+
+                var transcoder = new MediaTranscoder();
+                if (transform != null)
+                {
+                    transcoder.AddVideoEffect(transform.ActivatableClassId, true, transform.Properties);
+                }
+
+                var prepare = await transcoder.PrepareFileTranscodeAsync(fileCache, fileResult, profile);
+                if (prepare.CanTranscode)
+                {
+                    await prepare.TranscodeAsync().AsTask(Upload(document as TLDocument, progress => new TLSendMessageUploadVideoAction { Progress = progress }, 0, 200.0));
+
+                    if (prepare.FailureReason == TranscodeFailureReason.None)
+                    {
+                        //await fileCache.DeleteAsync();
+                        fileCache = fileResult;
+                    }
+                }
+            }
+
+            var fileId = TLLong.Random();
+            var upload = await _uploadVideoManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadVideoAction { Progress = progress }, 0.5, 2.0));
+            if (upload != null)
+            {
+                var thumbFileId = TLLong.Random();
+                var thumbUpload = await _uploadDocumentManager.UploadFileAsync(thumbFileId, desiredName);
+                if (thumbUpload != null)
+                {
+                    var inputMedia = new TLInputMediaUploadedDocument
+                    {
+                        File = upload.ToInputFile(),
+                        Thumb = thumbUpload.ToInputFile(),
+                        MimeType = document.MimeType,
+                        Caption = media.Caption,
+                        Attributes = document.Attributes
+                    };
+
+                    return await ProtoService.UploadMediaAsync(_peer, inputMedia, message);
+                }
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 }

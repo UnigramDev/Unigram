@@ -291,9 +291,11 @@
                       Grid.ColumnSpan="2">
                 <FlipView.ItemTemplate>
                     <DataTemplate>
-                        <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" StretchDirection="DownOnly">
-                            <Image Source="{Binding Preview}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
-                        </Viewbox>
+                        <Border Tapped="Select_Tapped" Background="Transparent">
+                            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" StretchDirection="DownOnly">
+                                <Image Source="{Binding Preview}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
+                            </Viewbox>
+                        </Border>
                     </DataTemplate>
                 </FlipView.ItemTemplate>
             </FlipView>
@@ -308,8 +310,8 @@
             <Grid Background="#AA000000" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="48"/>
-                    <ColumnDefinition Width="48"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <ListView x:Name="List"
                           ItemsSource="{x:Bind Items}"
@@ -347,8 +349,8 @@
                         </Grid>
                     </ListView.Footer>
                 </ListView>
-                <controls:GlyphToggleButton UncheckedGlyph="&#xE90D;" CheckedGlyph="&#xE90E;" FontFamily="{StaticResource TelegramThemeFontFamily}" Grid.Column="1"/>
-                <CheckBox IsChecked="{x:Bind SelectedItem.IsSelected, Mode=TwoWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0" Style="{StaticResource OnlyCheckBoxStyle}" Grid.Column="2"/>
+                <controls:GlyphToggleButton IsChecked="{Binding IsGrouped, Mode=TwoWay}" Visibility="{x:Bind IsGroupingEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" UncheckedGlyph="&#xE90D;" CheckedGlyph="&#xE90E;" FontFamily="{StaticResource TelegramThemeFontFamily}" Grid.Column="1"/>
+                <CheckBox Click="Select_Click" IsChecked="{x:Bind ConvertSelected(SelectedItem), Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0" Margin="14,0" Style="{StaticResource OnlyCheckBoxStyle}" Grid.Column="2"/>
             </Grid>
 
             <ListView x:Name="ListAutocomplete"
@@ -491,7 +493,7 @@
                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
                                       Grid.Column="2"/>
 
-                <ComboBox x:Name="CroppoBox" Visibility="Collapsed" Grid.ColumnSpan="4"/>
+                <ComboBox x:Name="ProportionsBox" Visibility="Collapsed" Grid.ColumnSpan="4"/>
             </Grid>
 
             <controls:GlyphButton Click="Accept_Click"
@@ -501,7 +503,6 @@
                                   HorizontalAlignment="Right"
                                   Padding="4,2,0,0"
                                   Grid.Column="7"/>
-
         </Grid>
     </Grid>
 </controls:ContentDialogBase>
