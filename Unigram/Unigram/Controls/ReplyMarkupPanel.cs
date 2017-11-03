@@ -1,10 +1,12 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Unigram.Core.Services;
+using Unigram.Views;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -214,6 +216,12 @@ namespace Unigram.Controls
 
                 if (Children.Count > 0 && !inline)
                 {
+                    var page = this.Ancestors<DialogPage>().FirstOrDefault() as DialogPage;
+                    if (page != null)
+                    {
+                        page.ShowMarkup();
+                    }
+
                     Padding = new Thickness(0, 0, 0, 4);
                 }
                 else if (!inline)

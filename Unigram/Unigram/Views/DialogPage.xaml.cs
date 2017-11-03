@@ -167,6 +167,12 @@ namespace Unigram.Views
 
                 TextField.FocusMaybe(FocusState.Keyboard);
             }
+            else if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible && TextField.FocusState == FocusState.Unfocused)
+            {
+                CollapseMarkup(true);
+
+                TextField.FocusMaybe(FocusState.Keyboard);
+            }
         }
 
         //protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -296,6 +302,7 @@ namespace Unigram.Views
             _lastKnownKeyboardHeight = Math.Max(260, args.OccludedRect.Height);
 
             Collapse_Click(null, null);
+            CollapseMarkup(false);
         }
 
         private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -328,9 +335,9 @@ namespace Unigram.Views
                     args.Handled = true;
                 }
 
-                if (ReplyMarkupPanel.Visibility == Visibility.Visible)
+                if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
                 {
-                    Markup_Click(null, null);
+                    CollapseMarkup(false);
                     args.Handled = true;
                 }
 
@@ -376,9 +383,9 @@ namespace Unigram.Views
                 args.Handled = true;
             }
 
-            if (ReplyMarkupPanel.Visibility == Visibility.Visible)
+            if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
             {
-                Markup_Click(null, null);
+                CollapseMarkup(false);
                 args.Handled = true;
             }
 
@@ -427,6 +434,16 @@ namespace Unigram.Views
                 btnMarkup.Visibility = Visibility.Collapsed;
                 btnStickers.Visibility = Visibility.Collapsed;
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
+            }
+
+            if (StickersPanel.Visibility == Visibility.Visible)
+            {
+                Collapse_Click(StickersPanel, null);
+            }
+
+            if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
+            {
+                CollapseMarkup(false);
             }
         }
 
@@ -703,24 +720,52 @@ namespace Unigram.Views
         {
             if (ReplyMarkupPanel.Visibility == Visibility.Visible)
             {
-                ReplyMarkupPanel.Visibility = Visibility.Collapsed;
-                ButtonMarkup.IsChecked = false;
+                CollapseMarkup(true);
+            }
+            else
+            {
+                ShowMarkup();
+            }
+        }
 
+        private void CollapseMarkup(bool keyboard)
+        {
+            ReplyMarkupPanel.Visibility = Visibility.Collapsed;
+            ButtonMarkup.IsChecked = false;
+
+            if (keyboard)
+            {
                 Focus(FocusState.Programmatic);
                 TextField.Focus(FocusState.Keyboard);
 
                 InputPane.GetForCurrentView().TryShow();
             }
-            else
+        }
+
+        public void ShowMarkup()
+        {
+            ReplyMarkupPanel.Visibility = Visibility.Visible;
+            ButtonMarkup.IsChecked = true;
+
+            Focus(FocusState.Programmatic);
+            TextField.Focus(FocusState.Programmatic);
+
+            InputPane.GetForCurrentView().TryHide();
+        }
+
+        private void TextField_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (StickersPanel.Visibility == Visibility.Visible)
             {
-                ReplyMarkupPanel.Visibility = Visibility.Visible;
-                ButtonMarkup.IsChecked = true;
-
-                Focus(FocusState.Programmatic);
-                TextField.Focus(FocusState.Programmatic);
-
-                InputPane.GetForCurrentView().TryHide();
+                Collapse_Click(StickersPanel, null);
             }
+            
+            if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
+            {
+                CollapseMarkup(false);
+            }
+
+            InputPane.GetForCurrentView().TryShow();
         }
 
         private void Photo_Click(object sender, RoutedEventArgs e)
