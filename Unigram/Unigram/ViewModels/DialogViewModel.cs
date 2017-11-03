@@ -914,10 +914,13 @@ namespace Unigram.ViewModels
             var obj = new TLMessagesGetHistory { Peer = Peer, OffsetId = 0, OffsetDate = dateOffset - 1, AddOffset = offset, Limit = limit, MaxId = 0, MinId = 0 };
             ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.getHistory", obj, result =>
             {
-                BeginOnUIThread(async () =>
+                if (result.Messages.Count > 0)
                 {
-                    await LoadMessageSliceAsync(null, result.Messages[0].Id);
-                });
+                    BeginOnUIThread(async () =>
+                    {
+                        await LoadMessageSliceAsync(null, result.Messages[0].Id);
+                    });
+                }
             });
 
             //var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, dateOffset, 0, limit);
@@ -2409,7 +2412,7 @@ namespace Unigram.ViewModels
 
                 if (channel.IsBroadcast && full.HasParticipantsCount)
                 {
-                    return string.Format("{0} members", full.ParticipantsCount ?? 0);
+                    return string.Format("{0} subscribers", full.ParticipantsCount ?? 0);
                 }
                 else if (full.HasParticipantsCount)
                 {
