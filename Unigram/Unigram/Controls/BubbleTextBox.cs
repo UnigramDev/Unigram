@@ -193,6 +193,14 @@ namespace Unigram.Controls
             Document.Selection.StartPosition = Document.Selection.EndPosition;
         }
 
+        public event EventHandler<TappedRoutedEventArgs> Capture;
+
+        protected override void OnTapped(TappedRoutedEventArgs e)
+        {
+            Capture?.Invoke(this, e);
+            base.OnTapped(e);
+        }
+
         private async void OnPaste(object sender, TextControlPasteEventArgs e)
         {
             // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
@@ -449,7 +457,7 @@ namespace Unigram.Controls
                     ViewModel.Aggregator.Publish("move_down");
                     e.Handled = true;
                 }
-                else if ((e.Key == VirtualKey.PageUp || e.Key == VirtualKey.Up) && Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
+                else if ((e.Key == VirtualKey.PageUp /*|| e.Key == VirtualKey.Up*/) && Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
                 {
                     var peer = new ListViewAutomationPeer(Messages);
                     var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
@@ -457,7 +465,7 @@ namespace Unigram.Controls
 
                     e.Handled = true;
                 }
-                else if (e.Key == VirtualKey.PageDown || e.Key == VirtualKey.Down && Document.Selection.StartPosition == Text.TrimEnd('\r', '\v').Length && ViewModel.Autocomplete == null)
+                else if ((e.Key == VirtualKey.PageDown /*|| e.Key == VirtualKey.Down*/) && Document.Selection.StartPosition == Text.TrimEnd('\r', '\v').Length && ViewModel.Autocomplete == null)
                 {
                     var peer = new ListViewAutomationPeer(Messages);
                     var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
