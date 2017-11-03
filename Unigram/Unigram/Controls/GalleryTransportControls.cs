@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
@@ -13,6 +14,11 @@ namespace Unigram.Controls
     [ContentProperty(Name = "Content")]
     public class GalleryTransportControls : MediaTransportControls
     {
+        public GalleryTransportControls()
+        {
+            DefaultStyleKey = typeof(GalleryTransportControls);
+        }
+
         #region Header
 
         public object Header
@@ -61,7 +67,7 @@ namespace Unigram.Controls
         }
 
         public static readonly DependencyProperty TransportVisibilityProperty =
-            DependencyProperty.Register("TransportVisibility", typeof(Visibility), typeof(GalleryTransportControls), new PropertyMetadata(Visibility.Visible));
+            DependencyProperty.Register("TransportVisibility", typeof(Visibility), typeof(GalleryTransportControls), new PropertyMetadata(Visibility.Collapsed));
 
         #endregion
 
@@ -88,6 +94,30 @@ namespace Unigram.Controls
                 }
 
                 return control.CurrentState?.Name == "ControlPanelFadeIn";
+            }
+        }
+
+        public new void Show()
+        {
+            //if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+            //{
+            //    base.Show();
+            //}
+            //else
+            {
+                VisualStateManager.GoToState(this, "ControlPanelFadeIn", false);
+            }
+        }
+
+        public new void Hide()
+        {
+            //if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+            //{
+            //    base.Hide();
+            //}
+            //else
+            {
+                VisualStateManager.GoToState(this, "ControlPanelFadeOut", false);
             }
         }
     }
