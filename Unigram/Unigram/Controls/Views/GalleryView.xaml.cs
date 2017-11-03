@@ -137,8 +137,8 @@ namespace Unigram.Controls.Views
         {
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                Transport.TransportVisibility = _mediaPlayer?.Source != null ? Visibility.Visible : Visibility.Collapsed;
-                Details.Visibility = _mediaPlayer?.Source != null ? Visibility.Collapsed : Visibility.Visible;
+                Transport.TransportVisibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Collapsed : Visibility.Visible;
+                Details.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
             });
         }
 
