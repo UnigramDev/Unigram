@@ -46,7 +46,7 @@ The following tools and SDKs are mandatory for the project development:
     * .NET Framework 4.7 SDK
     * NuGet package manager
     * Universal Windows Platform tools
-    * Windows 10 SDK 15063
+    * Windows 10 SDK 16299
 
 [Can I use Visual Studio 2015?](https://github.com/UnigramDev/Unigram/wiki/FAQ:-Development#why-do-i-have-to-use-visual-studio-2017-cant-i-use-vs2015)
 

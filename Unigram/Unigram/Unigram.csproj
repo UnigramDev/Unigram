@@ -281,6 +281,7 @@
     <Compile Include="Converters\UsernameConverter.cs" />
     <Compile Include="Converters\UsernameToLinkConverter.cs" />
     <Compile Include="Converters\VenueToGlyphConverter.cs" />
+    <Compile Include="Helpers\AudioGraphHelper.cs" />
     <Compile Include="Helpers\TLFileHelper.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\StorageDocument.cs" />
