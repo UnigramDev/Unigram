@@ -163,6 +163,11 @@ namespace Unigram.Models
                 _bitmap = await ImageHelper.GetPreviewBitmapAsync(File);
             }
 
+            if (_bitmap == null)
+            {
+                _bitmap = new BitmapImage();
+            }
+
             if (CropRectangle.HasValue)
             {
                 _preview = await ImageHelper.CropAndPreviewAsync(File, CropRectangle.Value);
