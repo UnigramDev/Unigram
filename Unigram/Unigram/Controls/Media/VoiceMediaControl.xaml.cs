@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -7,20 +6,17 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Unigram.Views;
-using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Media.Audio;
-using Windows.Media.Render;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Common;
-using Windows.System.Display;
 using Telegram.Api.Services;
 using Telegram.Api.Aggregator;
+using Unigram.Helpers;
 
 namespace Unigram.Controls.Media
 {
@@ -187,38 +183,30 @@ namespace Unigram.Controls.Media
 
         private DispatcherTimer _timer;
         private PlaybackState _state = PlaybackState.Paused;
-        private AudioGraph _graph;
-        private AudioDeviceOutputNode _deviceOutputNode;
-        private AudioFileInputNode _fileInputNode;
-
-        private static DisplayRequest _displayRequest = new DisplayRequest();
+        private TimeSpan _position = TimeSpan.Zero;
+        private string _fileName;
 
         private async void Toggle_Click(object sender, RoutedEventArgs e)
         {
             if (_state == PlaybackState.Paused)
             {
-                if (_fileInputNode != null && _fileInputNode.Position.TotalMilliseconds > 0)
+                if (AudioGraphHelper.FileInputNode != null && string.Equals(_fileName, AudioGraphHelper.CurrentFileName, StringComparison.OrdinalIgnoreCase) && _position.TotalMilliseconds > 0)
                 {
-                    _fileInputNode.Seek(_fileInputNode.Position);
-
-                    _graph.Start();
-                    _timer.Start();
-                    _state = PlaybackState.Playing;
-                    UpdateGlyph();
-
-                    _displayRequest.RequestActive();
+                    AudioGraphHelper.FileInputNode.Seek(_position);
+                    Slide.Value = _position.TotalMilliseconds;
+                    PlayOrResume();
                 }
                 else if (ViewModel is TLMessage message && message.Media is TLMessageMediaDocument documentMedia)
                 {
                     if (documentMedia.Document is TLDocument document)
                     {
-                        var fileName = document.GetFileName();
-                        if (File.Exists(FileUtils.GetTempFileName(fileName)) == false)
+                        _fileName = document.GetFileName();
+                        if (File.Exists(FileUtils.GetTempFileName(_fileName)) == false)
                         {
                             _state = PlaybackState.Loading;
                             UpdateGlyph();
                             var manager = UnigramContainer.Current.ResolveType<IDownloadAudioFileManager>();
-                            var download = await manager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Document.Download());
+                            var download = await manager.DownloadFileAsync(_fileName, document.DCId, document.ToInputFileLocation(), document.Size).AsTask(documentMedia.Document.Download());
                         }
 
                         if (message.IsMediaUnread && !message.IsOut)
@@ -244,90 +232,71 @@ namespace Unigram.Controls.Media
                             }
                         }
 
-                        var settings = new AudioGraphSettings(AudioRenderCategory.Media);
-                        settings.QuantumSizeSelectionMode = QuantumSizeSelectionMode.LowestLatency;
-
-                        var result = await AudioGraph.CreateAsync(settings);
-                        if (result.Status != AudioGraphCreationStatus.Success)
+                        var result = await AudioGraphHelper.LoadAsync(this, _fileName);
+                        if (result != AudioGraphCreationStatus.Success)
+                        {
                             return;
+                        }
 
-                        _graph = result.Graph;
-                        Debug.WriteLine("Graph successfully created!");
+                        AudioGraphHelper.FileInputNode.FileCompleted += OnFileCompleted;
 
-                        var file = await FileUtils.GetTempFileAsync(fileName);
+                        if (_position.Milliseconds > 0)
+                        {
+                            AudioGraphHelper.FileInputNode.Seek(_position);
+                            Slide.Value = _position.TotalMilliseconds;
+                        }
+                        else
+                        {
+                            _position = TimeSpan.Zero;
+                            Slide.Value = 0;
+                        }
 
-                        var fileInputNodeResult = await _graph.CreateFileInputNodeAsync(file);
-                        if (fileInputNodeResult.Status != AudioFileNodeCreationStatus.Success)
-                            return;
-
-                        var deviceOutputNodeResult = await _graph.CreateDeviceOutputNodeAsync();
-                        if (deviceOutputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
-                            return;
-
-                        _deviceOutputNode = deviceOutputNodeResult.DeviceOutputNode;
-                        _fileInputNode = fileInputNodeResult.FileInputNode;
-                        _fileInputNode.AddOutgoingConnection(_deviceOutputNode);
-                        _fileInputNode.FileCompleted += OnFileCompleted;
-
-                        _graph.Start();
-                        _timer.Start();
-                        _state = PlaybackState.Playing;
-                        UpdateGlyph();
-
-                        _displayRequest.RequestActive();
-
-                        Slide.Maximum = _fileInputNode.Duration.TotalMilliseconds;
-                        Slide.Value = 0;
+                        Slide.Maximum = AudioGraphHelper.GetGraphTotalDuration();
+                        PlayOrResume();
                     }
                 }
             }
             else if (_state == PlaybackState.Playing)
             {
-                _graph?.Stop();
-                _timer?.Stop();
-                _state = PlaybackState.Paused;
-                UpdateGlyph();
-
-                _displayRequest.RequestRelease();
+                Pause();
             }
+        }
+
+        private void PlayOrResume()
+        {
+            AudioGraphHelper.PlayGraph();
+            _timer.Start();
+            _state = PlaybackState.Playing;
+            UpdateGlyph();
+        }
+
+        public void Pause()
+        {
+            AudioGraphHelper.StopGraph();
+            _timer?.Stop();
+            _state = PlaybackState.Paused;
+            UpdateGlyph();
         }
 
         private void OnFileCompleted(AudioFileInputNode sender, object args)
         {
             this.BeginOnUIThread(() =>
             {
-                _graph.Stop();
-                _timer.Stop();
-                _fileInputNode.Seek(TimeSpan.Zero);
-                _state = PlaybackState.Paused;
-                UpdateGlyph();
+                Pause();
 
-                _displayRequest.RequestRelease();
+                _position = TimeSpan.Zero;
+                AudioGraphHelper.FileInputNode.Seek(_position);
 
-                DurationLabel.Text = _fileInputNode.Duration.ToString("mm\\:ss");
+                DurationLabel.Text = AudioGraphHelper.FileInputNode.Duration.ToString("mm\\:ss");
                 Slide.Value = 0;
             });
         }
 
         private void OnTick(object sender, object e)
         {
-            DurationLabel.Text = _fileInputNode.Position.ToString("mm\\:ss") + " / " + _fileInputNode.Duration.ToString("mm\\:ss");
-            Slide.Value = _fileInputNode.Position.TotalMilliseconds;
-            //_position += 200;
-            ////Indicator.Value = _fileNode.Position.TotalMilliseconds;
-
-            //if (_position >= Indicator.Maximum)
-            //{
-            //    _position = 200;
-            //    _timer.Stop();
-            //    _graph.Stop();
-            //    _fileNode.Seek(TimeSpan.Zero);
-
-            //    VisualStateManager.GoToState(this, "Paused", false);
-            //    State = PlaybackState.Paused;
-            //    Indicator.Value = 0;
-            //    CurrentPlaying = null;
-            //}
+            _position = AudioGraphHelper.FileInputNode.Position;
+            DurationLabel.Text = _position.ToString("mm\\:ss") + " / " + AudioGraphHelper.FileInputNode.Duration.ToString("mm\\:ss");        
+            Slide.Value = _position.TotalMilliseconds;
         }
 
         #endregion
