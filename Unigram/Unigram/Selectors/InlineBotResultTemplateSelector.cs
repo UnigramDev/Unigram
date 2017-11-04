@@ -43,8 +43,7 @@ namespace Unigram.Selectors
                 }
             }
 
-            var mediaResult = item as TLBotInlineMediaResult;
-            if (mediaResult != null)
+            if (item is TLBotInlineMediaResult mediaResult)
             {
                 if (mediaResult.Type.Equals("photo", StringComparison.OrdinalIgnoreCase))
                 {
@@ -71,9 +70,7 @@ namespace Unigram.Selectors
                     return GameMediaTemplate;
                 }
             }
-
-            var result = item as TLBotInlineResult;
-            if (result != null)
+            else if (item is TLBotInlineResult result)
             {
                 if (result.Type.Equals("photo", StringComparison.OrdinalIgnoreCase))
                 {
