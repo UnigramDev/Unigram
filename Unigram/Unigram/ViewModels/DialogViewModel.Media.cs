@@ -542,7 +542,7 @@ namespace Unigram.ViewModels
         {
             if (MediaLibrary.SelectedCount > 0)
             {
-                if (ApplicationSettings.Current.IsSendGrouped)
+                if (ApplicationSettings.Current.IsSendGrouped && MediaLibrary.SelectedCount > 1)
                 {
                     await SendGroupedAsync(MediaLibrary.Where(x => x.IsSelected).ToList());
                 }
@@ -607,7 +607,7 @@ namespace Unigram.ViewModels
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
                     var items = dialog.SelectedItems.ToList();
-                    if (dialog.IsGrouped)
+                    if (items.Count > 1 && dialog.IsGrouped)
                     {
                         await SendGroupedAsync(items);
                     }
@@ -646,7 +646,7 @@ namespace Unigram.ViewModels
                 if (dialogResult == ContentDialogBaseResult.OK)
                 {
                     var items = dialog.SelectedItems.ToList();
-                    if (dialog.IsGrouped)
+                    if (items.Count > 1 && dialog.IsGrouped)
                     {
                         await SendGroupedAsync(items);
                     }
