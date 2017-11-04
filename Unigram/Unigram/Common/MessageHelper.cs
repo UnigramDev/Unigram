@@ -37,6 +37,197 @@ namespace Unigram.Common
 {
     public class MessageHelper
     {
+        #region Message
+
+        public static TLMessage GetMessage(DependencyObject obj)
+        {
+            return (TLMessage)obj.GetValue(MessageProperty);
+        }
+
+        public static void SetMessage(DependencyObject obj, TLMessage value)
+        {
+            // TODO: shitty hack!!!
+            var oldValue = obj.GetValue(MessageProperty);
+            obj.SetValue(MessageProperty, value);
+
+            if (oldValue == value)
+            {
+                OnMessageChanged(obj as RichTextBlock, value);
+            }
+        }
+
+        public static readonly DependencyProperty MessageProperty =
+            DependencyProperty.RegisterAttached("Message", typeof(TLMessage), typeof(MessageHelper), new PropertyMetadata(null, OnMessageChanged));
+
+        private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as RichTextBlock;
+            var newValue = e.NewValue as TLMessage;
+
+            OnMessageChanged(sender, newValue);
+        }
+
+        private static void OnMessageChanged(RichTextBlock sender, TLMessage newValue)
+        {
+            //sender.IsTextSelectionEnabled = false;
+            var block = sender.Blocks[0] as Paragraph;
+            var span = block.Inlines[0] as Span;
+
+            var message = newValue as TLMessage;
+            if (message != null /*&& sender.Visibility == Visibility.Visible*/)
+            {
+                var text = !string.IsNullOrWhiteSpace(message.Message);
+
+                var caption = false;
+                if (message.Media is ITLMessageMediaCaption captionMedia)
+                {
+                    caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
+                }
+                else if (message.Media is TLMessageMediaVenue)
+                {
+                    caption = true;
+                }
+
+                var game = false;
+                var notGame = true;
+                if (message.Media is TLMessageMediaGame)
+                {
+                    game = sender.Tag != null;
+                    notGame = false;
+                }
+
+                var notLive = true;
+                if (message.Media is TLMessageMediaGeoLive)
+                {
+                    notLive = false;
+                }
+
+                var empty = false;
+                if (message.Media is TLMessageMediaWebPage webpageMedia)
+                {
+                    empty = webpageMedia.WebPage is TLWebPageEmpty || webpageMedia.WebPage is TLWebPagePending;
+                }
+
+                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || (text && notGame && notLive) ? Visibility.Visible : Visibility.Collapsed);
+                if (sender.Visibility == Visibility.Collapsed)
+                {
+                    span.Inlines.Clear();
+                    return;
+                }
+
+                var foreground = sender.Resources["MessageHyperlinkForegroundBrush"] as SolidColorBrush;
+
+                var paragraph = new Span();
+
+                if (message.HasEntities && message.Entities != null)
+                {
+                    ReplaceEntities(message, paragraph, foreground);
+                }
+                else
+                {
+                    if (message.HasEntities && message.Entities == null)
+                    {
+                        Debug.WriteLine("WARNING: this is weird!");
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(message.Message))
+                    {
+                        paragraph.Inlines.Add(new Run { Text = message.Message });
+                    }
+                    else if (message.Media is TLMessageMediaVenue venueMedia)
+                    {
+                        paragraph.Inlines.Add(new Run { Text = venueMedia.Title, FontWeight = FontWeights.SemiBold });
+                        paragraph.Inlines.Add(new LineBreak());
+                        paragraph.Inlines.Add(new Run { Text = venueMedia.Address });
+                    }
+                    else if (game)
+                    {
+                        var gameMedia = message.Media as TLMessageMediaGame;
+                        if (gameMedia != null)
+                        {
+                            Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a TLMessageMediaGame");
+                            ReplaceAll(message, gameMedia.Game.Description, paragraph, sender.Foreground, true);
+                        }
+                    }
+                    else if (caption)
+                    {
+                        var captionMedia2 = message.Media as ITLMessageMediaCaption;
+                        if (captionMedia2 != null)
+                        {
+                            Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a ITLMediaCaption");
+                            ReplaceAll(message, captionMedia2.Caption, paragraph, sender.Foreground, true);
+                        }
+                    }
+
+                    //var text = message.Message;
+                    //var captionMedia = message.Media as ITLMediaCaption;
+                    //if (captionMedia != null && !string.IsNullOrWhiteSpace(captionMedia.Caption))
+                    //{
+                    //    text = captionMedia.Caption;
+                    //}
+
+                    //ReplaceAll(message, text, paragraph, sender.Foreground, true);
+                }
+
+                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || empty || message?.Media == null)
+                {
+                    if (IsAnyCharacterRightToLeft(message.Message ?? string.Empty))
+                    {
+                        paragraph.Inlines.Add(new LineBreak());
+                    }
+                    else
+                    {
+                        //var date = BindConvert.Current.Date(message.Date);
+                        //var placeholder = message.IsOut ? $"  {date}  " : $"  {date}";
+
+                        //var bot = false;
+                        //if (message.From != null)
+                        //{
+                        //    bot = message.From.IsBot;
+                        //}
+
+                        //if (message.HasEditDate && !message.HasViaBotId && !bot && !(message.ReplyMarkup is TLReplyInlineMarkup))
+                        //{
+                        //    placeholder = "edited" + placeholder;
+                        //}
+
+                        //if (message.HasViews)
+                        //{
+                        //    placeholder = "WS  " + (message.Views ?? 0) + placeholder;
+
+                        //    if (message.HasFromId && message.From != null)
+                        //    {
+                        //        placeholder = (message.From.FullName + "  " ?? string.Empty) + placeholder;
+                        //    }
+                        //    else if (message.IsPost && message.HasPostAuthor && message.PostAuthor != null)
+                        //    {
+                        //        placeholder = (message.PostAuthor + "  " ?? string.Empty) + placeholder;
+                        //    }
+                        //    else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                        //    {
+                        //        placeholder = (message.FwdFrom.PostAuthor + "  " ?? string.Empty) + placeholder;
+                        //    }
+                        //}
+
+                        //paragraph.Inlines.Add(new Run { Text = "\u200E" + placeholder, Foreground = null, FontSize = 12 });
+                    }
+                }
+                else
+                {
+                    paragraph.Inlines.Add(new Run { Text = " " });
+                }
+
+                span.Inlines.Clear();
+                span.Inlines.Add(paragraph);
+            }
+            else
+            {
+                span.Inlines.Clear();
+            }
+        }
+
+        #endregion
+
         #region IsFirst
 
         public static TLMessageBase GetHeader(DependencyObject obj)
@@ -146,195 +337,6 @@ namespace Unigram.Common
             else
             {
                 paragraph.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        #endregion
-
-        #region Message
-
-        public static TLMessage GetMessage(DependencyObject obj)
-        {
-            return (TLMessage)obj.GetValue(MessageProperty);
-        }
-
-        public static void SetMessage(DependencyObject obj, TLMessage value)
-        {
-            // TODO: shitty hack!!!
-            var oldValue = obj.GetValue(MessageProperty);
-            obj.SetValue(MessageProperty, value);
-
-            if (oldValue == value)
-            {
-                OnMessageChanged(obj as TextBlock, value);
-            }
-        }
-
-        public static readonly DependencyProperty MessageProperty =
-            DependencyProperty.RegisterAttached("Message", typeof(TLMessage), typeof(MessageHelper), new PropertyMetadata(null, OnMessageChanged));
-
-        private static void OnMessageChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as TextBlock;
-            var newValue = e.NewValue as TLMessage;
-
-            OnMessageChanged(sender, newValue);
-        }
-
-        private static void OnMessageChanged(TextBlock sender, TLMessage newValue)
-        {
-            //sender.IsTextSelectionEnabled = false;
-
-            var message = newValue as TLMessage;
-            if (message != null /*&& sender.Visibility == Visibility.Visible*/)
-            {
-                var text = !string.IsNullOrWhiteSpace(message.Message);
-
-                var caption = false;
-                if (message.Media is ITLMessageMediaCaption captionMedia)
-                {
-                    caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
-                }
-                else if (message.Media is TLMessageMediaVenue)
-                {
-                    caption = true;
-                }
-
-                var game = false;
-                var notGame = true;
-                if (message.Media is TLMessageMediaGame)
-                {
-                    game = sender.Tag != null;
-                    notGame = false;
-                }
-
-                var notLive = true;
-                if (message.Media is TLMessageMediaGeoLive)
-                {
-                    notLive = false;
-                }
-
-                var empty = false;
-                if (message.Media is TLMessageMediaWebPage webpageMedia)
-                {
-                    empty = webpageMedia.WebPage is TLWebPageEmpty || webpageMedia.WebPage is TLWebPagePending;
-                }
-
-                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || (text && notGame && notLive) ? Visibility.Visible : Visibility.Collapsed);
-                if (sender.Visibility == Visibility.Collapsed)
-                {
-                    sender.Inlines.Clear();
-                    return;
-                }
-
-                var foreground = sender.Resources["MessageHyperlinkForegroundBrush"] as SolidColorBrush;
-
-                var paragraph = new Span();
-
-                if (message.HasEntities && message.Entities != null)
-                {
-                    ReplaceEntities(message, paragraph, foreground);
-                }
-                else
-                {
-                    if (message.HasEntities && message.Entities == null)
-                    {
-                        Debug.WriteLine("WARNING: this is weird!");
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(message.Message))
-                    {
-                        paragraph.Inlines.Add(new Run { Text = message.Message });
-                    }
-                    else if (message.Media is TLMessageMediaVenue venueMedia)
-                    {
-                        paragraph.Inlines.Add(new Run { Text = venueMedia.Title, FontWeight = FontWeights.SemiBold });
-                        paragraph.Inlines.Add(new LineBreak());
-                        paragraph.Inlines.Add(new Run { Text = venueMedia.Address });
-                    }
-                    else if (game)
-                    {
-                        var gameMedia = message.Media as TLMessageMediaGame;
-                        if (gameMedia != null)
-                        {
-                            Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a TLMessageMediaGame");
-                            ReplaceAll(message, gameMedia.Game.Description, paragraph, sender.Foreground, true);
-                        }
-                    }
-                    else if (caption)
-                    {
-                        var captionMedia2 = message.Media as ITLMessageMediaCaption;
-                        if (captionMedia2 != null)
-                        {
-                            Debug.WriteLine("WARNING: Using Regex to process message entities, considering it as a ITLMediaCaption");
-                            ReplaceAll(message, captionMedia2.Caption, paragraph, sender.Foreground, true);
-                        }
-                    }
-
-                    //var text = message.Message;
-                    //var captionMedia = message.Media as ITLMediaCaption;
-                    //if (captionMedia != null && !string.IsNullOrWhiteSpace(captionMedia.Caption))
-                    //{
-                    //    text = captionMedia.Caption;
-                    //}
-
-                    //ReplaceAll(message, text, paragraph, sender.Foreground, true);
-                }
-
-                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || empty || message?.Media == null)
-                {
-                    if (IsAnyCharacterRightToLeft(message.Message ?? string.Empty))
-                    {
-                        paragraph.Inlines.Add(new LineBreak());
-                    }
-                    else
-                    {
-                        var date = BindConvert.Current.Date(message.Date);
-                        var placeholder = message.IsOut ? $"  {date}  " : $"  {date}";
-
-                        var bot = false;
-                        if (message.From != null)
-                        {
-                            bot = message.From.IsBot;
-                        }
-
-                        if (message.HasEditDate && !message.HasViaBotId && !bot && !(message.ReplyMarkup is TLReplyInlineMarkup))
-                        {
-                            placeholder = "edited" + placeholder;
-                        }
-
-                        if (message.HasViews)
-                        {
-                            placeholder = "WS  " + (message.Views ?? 0) + placeholder;
-
-                            if (message.HasFromId && message.From != null)
-                            {
-                                placeholder = (message.From.FullName + "  " ?? string.Empty) + placeholder;
-                            }
-                            else if (message.IsPost && message.HasPostAuthor && message.PostAuthor != null)
-                            {
-                                placeholder = (message.PostAuthor + "  " ?? string.Empty) + placeholder;
-                            }
-                            else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
-                            {
-                                placeholder = (message.FwdFrom.PostAuthor + "  " ?? string.Empty) + placeholder;
-                            }
-                        }
-
-                        paragraph.Inlines.Add(new Run { Text = "\u200E" + placeholder, Foreground = null, FontSize = 12 });
-                    }
-                }
-                else
-                {
-                    paragraph.Inlines.Add(new Run { Text = " " });
-                }
-
-                sender.Inlines.Clear();
-                sender.Inlines.Add(paragraph);
-            }
-            else
-            {
-                sender.Inlines.Clear();
             }
         }
 
