@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.Helpers;
+using Telegram.Api.Services;
 using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
 using Unigram.Common;
@@ -29,8 +30,8 @@ namespace Unigram.ViewModels
             }
         }
 
-        private TLMessagesBotResults _inlineBotResults;
-        public TLMessagesBotResults InlineBotResults
+        private BotResultsCollection _inlineBotResults;
+        public BotResultsCollection InlineBotResults
         {
             get
             {
@@ -47,7 +48,7 @@ namespace Unigram.ViewModels
         {
             get
             {
-                return _inlineBotResults != null && ((_inlineBotResults.HasSwitchPM && _inlineBotResults.SwitchPM != null) || (_inlineBotResults.Results != null && _inlineBotResults.Results.Count > 0)) ? Visibility.Visible : Visibility.Collapsed;
+                return _inlineBotResults != null && ((_inlineBotResults.HasSwitchPM && _inlineBotResults.SwitchPM != null) || _inlineBotResults.Count > 0) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -101,17 +102,22 @@ namespace Unigram.ViewModels
             }
             else
             {
-                var response = await ProtoService.GetInlineBotResultsAsync(CurrentInlineBot.ToInputUser(), Peer, null, query, string.Empty);
-                if (response.IsSucceeded)
-                {
-                    foreach (var item in response.Result.Results)
-                    {
-                        item.QueryId = response.Result.QueryId;
-                    }
+                var collection = new BotResultsCollection(ProtoService, CurrentInlineBot.ToInputUser(), Peer, null, query);
+                var result = await collection.LoadMoreItemsAsync(0);
 
-                    InlineBotResults = response.Result;
-                    Debug.WriteLine(response.Result.Results.Count.ToString());
-                }
+                InlineBotResults = collection;
+
+                //var response = await ProtoService.GetInlineBotResultsAsync(CurrentInlineBot.ToInputUser(), Peer, null, query, string.Empty);
+                //if (response.IsSucceeded)
+                //{
+                //    foreach (var item in response.Result.Results)
+                //    {
+                //        item.QueryId = response.Result.QueryId;
+                //    }
+
+                //    InlineBotResults = response.Result;
+                //    Debug.WriteLine(response.Result.Results.Count.ToString());
+                //}
             }
         }
 
@@ -240,8 +246,7 @@ namespace Unigram.ViewModels
             message.ViaBotId = botId;
             message.HasViaBotId = true;
 
-            var venueMedia = resultBase.SendMessage as TLBotInlineMessageMediaVenue;
-            if (venueMedia != null)
+            if (resultBase.SendMessage is TLBotInlineMessageMediaVenue venueMedia)
             {
                 message.Media = new TLMessageMediaVenue
                 {
@@ -252,18 +257,25 @@ namespace Unigram.ViewModels
                     Geo = venueMedia.Geo
                 };
             }
-
-            var geoMedia = resultBase.SendMessage as TLBotInlineMessageMediaGeo;
-            if (geoMedia != null)
+            else if (resultBase.SendMessage is TLBotInlineMessageMediaGeo geoMedia)
             {
-                message.Media = new TLMessageMediaGeo
+                if (geoMedia.Period > 0)
                 {
-                    Geo = geoMedia.Geo
-                };
+                    message.Media = new TLMessageMediaGeoLive
+                    {
+                        Geo = geoMedia.Geo,
+                        Period = geoMedia.Period
+                    };
+                }
+                else
+                {
+                    message.Media = new TLMessageMediaGeo
+                    {
+                        Geo = geoMedia.Geo
+                    };
+                }
             }
-
-            var contactMedia = resultBase.SendMessage as TLBotInlineMessageMediaContact;
-            if (contactMedia != null)
+            else if (resultBase.SendMessage is TLBotInlineMessageMediaContact contactMedia)
             {
                 message.Media = new TLMessageMediaContact
                 {
@@ -273,9 +285,7 @@ namespace Unigram.ViewModels
                     UserId = 0
                 };
             }
-
-            var mediaResult = resultBase as TLBotInlineMediaResult;
-            if (mediaResult != null)
+            else if (resultBase is TLBotInlineMediaResult mediaResult)
             {
                 if (mediaResult.Type.Equals("voice", StringComparison.OrdinalIgnoreCase))
                 {
@@ -578,6 +588,61 @@ namespace Unigram.ViewModels
                 message.ReplyMarkup = resultBase.SendMessage.ReplyMarkup;
                 message.HasReplyMarkup = true;
             }
+        }
+    }
+
+    public class BotResultsCollection : IncrementalCollection<TLBotInlineResultBase>
+    {
+        private readonly IMTProtoService _protoService;
+
+        private readonly TLInputUserBase _bot;
+        private readonly TLInputPeerBase _peer;
+        private readonly TLInputGeoPointBase _geoPoint;
+        private readonly string _query;
+
+        private TLMessagesBotResults _results;
+        private string _nextOffset;
+
+        public BotResultsCollection(IMTProtoService protoService, TLInputUserBase bot, TLInputPeerBase peer, TLInputGeoPointBase geoPoint, string query)
+        {
+            _protoService = protoService;
+            _bot = bot;
+            _peer = peer;
+            _geoPoint = geoPoint;
+            _query = query;
+
+            _nextOffset = string.Empty;
+        }
+
+        public bool IsGallery => _results.IsGallery;
+        public bool HasNextOffset => _results.HasNextOffset;
+        public bool HasSwitchPM => _results.HasSwitchPM;
+
+        public Int64 QueryId => _results.QueryId;
+        public String NextOffset => _results.NextOffset;
+        public TLInlineBotSwitchPM SwitchPM => _results.SwitchPM;
+        public Int32 CacheTime => _results.CacheTime;
+
+        public override async Task<IList<TLBotInlineResultBase>> LoadDataAsync()
+        {
+            if (_nextOffset != null)
+            {
+                var response = await _protoService.GetInlineBotResultsAsync(_bot, _peer, _geoPoint, _query, _nextOffset);
+                if (response.IsSucceeded)
+                {
+                    _results = response.Result;
+                    _nextOffset = response.Result.NextOffset;
+
+                    foreach (var item in response.Result.Results)
+                    {
+                        item.QueryId = response.Result.QueryId;
+                    }
+
+                    return response.Result.Results;
+                }
+            }
+
+            return new TLBotInlineResultBase[0];
         }
     }
 }

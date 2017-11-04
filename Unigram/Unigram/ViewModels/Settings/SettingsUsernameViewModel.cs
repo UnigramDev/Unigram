@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +11,7 @@ using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
+using Unigram.Converters;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Navigation;
 
@@ -21,6 +22,8 @@ namespace Unigram.ViewModels.Settings
         public SettingsUsernameViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
+            SendCommand = new RelayCommand(SendExecute);
+            CopyCommand = new RelayCommand(CopyExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -103,7 +106,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public async Task CheckIfAvailableAsync(string text)
+        public async void CheckAvailability(string text)
         {
             var response = await ProtoService.CheckUsernameAsync(text);
             if (response.IsSucceeded)
@@ -196,7 +199,7 @@ namespace Unigram.ViewModels.Settings
             return true;
         }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             var response = await ProtoService.UpdateUsernameAsync(Username);
@@ -215,7 +218,7 @@ namespace Unigram.ViewModels.Settings
                 {
                     //this.HasError = true;
                     //this.Error = AppResources.FloodWaitString;
-                    //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                    //Telegram.Api.Helpers.Dispatch(delegate
                     //{
                     //    MessageBox.Show(AppResources.FloodWaitString, AppResources.Error, 0);
                     //});
@@ -229,7 +232,7 @@ namespace Unigram.ViewModels.Settings
                     //messageBuilder.AppendLine("Result: " + error);
                     //this.HasError = true;
                     //this.Error = AppResources.ServerError;
-                    //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                    //Telegram.Api.Helpers.Dispatch(delegate
                     //{
                     //    MessageBox.Show(messageBuilder.ToString(), AppResources.ServerError, 0);
                     //});
@@ -240,7 +243,7 @@ namespace Unigram.ViewModels.Settings
                     {
                         //this.HasError = true;
                         //this.Error = AppResources.UsernameInvalid;
-                        //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                        //Telegram.Api.Helpers.Dispatch(delegate
                         //{
                         //    MessageBox.Show(AppResources.UsernameInvalid, AppResources.Error, 0);
                         //});
@@ -249,7 +252,7 @@ namespace Unigram.ViewModels.Settings
                     {
                         //this.HasError = true;
                         //this.Error = AppResources.UsernameOccupied;
-                        //Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+                        //Telegram.Api.Helpers.Dispatch(delegate
                         //{
                         //    MessageBox.Show(AppResources.UsernameOccupied, AppResources.Error, 0);
                         //});
@@ -273,32 +276,14 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand CopyCommand => new RelayCommand(CopyExecute);
+        public RelayCommand CopyCommand { get; }
         private async void CopyExecute()
         {
-            var config = CacheService.GetConfig();
-            if (config != null)
-            {
-                var linkPrefix = config.MeUrlPrefix;
-                if (linkPrefix.EndsWith("/"))
-                {
-                    linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
-                }
-                if (linkPrefix.StartsWith("https://"))
-                {
-                    linkPrefix = linkPrefix.Substring(8);
-                }
-                else if (linkPrefix.StartsWith("http://"))
-                {
-                    linkPrefix = linkPrefix.Substring(7);
-                }
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(UsernameToLinkConverter.Convert(_username));
+            ClipboardEx.TrySetContent(dataPackage);
 
-                var package = new DataPackage();
-                package.SetText($"https://{linkPrefix}/{_username}");
-                Clipboard.SetContent(package);
-
-                await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
-            }
+            await new TLMessageDialog("Link copied to clipboard").ShowQueuedAsync();
         }
     }
 }

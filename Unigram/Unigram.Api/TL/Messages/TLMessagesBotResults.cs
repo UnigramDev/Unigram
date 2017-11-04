@@ -24,6 +24,7 @@ namespace Telegram.Api.TL.Messages
 		public TLInlineBotSwitchPM SwitchPM { get; set; }
 		public TLVector<TLBotInlineResultBase> Results { get; set; }
 		public Int32 CacheTime { get; set; }
+		public TLVector<TLUserBase> Users { get; set; }
 
 		public TLMessagesBotResults() { }
 		public TLMessagesBotResults(TLBinaryReader from)
@@ -41,6 +42,7 @@ namespace Telegram.Api.TL.Messages
 			if (HasSwitchPM) SwitchPM = TLFactory.Read<TLInlineBotSwitchPM>(from);
 			Results = TLFactory.Read<TLVector<TLBotInlineResultBase>>(from);
 			CacheTime = from.ReadInt32();
+			Users = TLFactory.Read<TLVector<TLUserBase>>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
@@ -53,6 +55,7 @@ namespace Telegram.Api.TL.Messages
 			if (HasSwitchPM) to.WriteObject(SwitchPM);
 			to.WriteObject(Results);
 			to.WriteInt32(CacheTime);
+			to.WriteObject(Users);
 		}
 
 		private void UpdateFlags()

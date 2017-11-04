@@ -16,7 +16,7 @@
     MaxWidth="{ThemeResource MessageMaxWidth}">
 
     <!-- TODO: not the right way -->
-    <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
+    <Border Height="4" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
     <ContentControl HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Style="{ThemeResource MessageBubbleStyle}">
         <UserControl x:Name="LayoutRoot">

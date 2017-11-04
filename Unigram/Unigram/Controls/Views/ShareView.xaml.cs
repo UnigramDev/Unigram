@@ -25,6 +25,8 @@ using Windows.UI;
 using Template10.Utils;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
+using Unigram.Common;
+using Unigram.Converters;
 
 namespace Unigram.Controls.Views
 {
@@ -45,7 +47,7 @@ namespace Unigram.Controls.Views
         {
             Bindings.Update();
 
-            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested"))
+            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested") && !ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
             {
                 DataTransferManager.GetForCurrentView().ShareProvidersRequested -= OnShareProvidersRequested;
                 DataTransferManager.GetForCurrentView().ShareProvidersRequested += OnShareProvidersRequested;
@@ -57,7 +59,7 @@ namespace Unigram.Controls.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested"))
+            if (ApiInformation.IsEventPresent("Windows.ApplicationModel.DataTransfer.DataTransferManager", "ShareProvidersRequested") && !ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
             {
                 DataTransferManager.GetForCurrentView().ShareProvidersRequested -= OnShareProvidersRequested;
             }
@@ -82,12 +84,12 @@ namespace Unigram.Controls.Views
         private async void OnShareToClipboard(ShareProviderOperation operation)
         {
             var webLink = await operation.Data.GetWebLinkAsync();
-            var package = new DataPackage();
-            package.SetText(webLink.ToString());
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(webLink.ToString());
 
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                Clipboard.SetContent(package);
+                ClipboardEx.TrySetContent(dataPackage);
                 operation.ReportCompleted();
             });
         }
@@ -116,7 +118,7 @@ namespace Unigram.Controls.Views
         {
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
-            ViewModel.Message = message;
+            ViewModel.Messages = new[] { message };
             ViewModel.InputMedia = null;
             ViewModel.IsWithMyScore = withMyScore;
 
@@ -131,29 +133,7 @@ namespace Unigram.Controls.Views
                 }
                 else
                 {
-                    var config = ViewModel.CacheService.GetConfig();
-                    if (config != null)
-                    {
-                        var linkPrefix = config.MeUrlPrefix;
-                        if (linkPrefix.EndsWith("/"))
-                        {
-                            linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
-                        }
-                        if (linkPrefix.StartsWith("https://"))
-                        {
-                            linkPrefix = linkPrefix.Substring(8);
-                        }
-                        else if (linkPrefix.StartsWith("http://"))
-                        {
-                            linkPrefix = linkPrefix.Substring(7);
-                        }
-
-                        link = $"https://{linkPrefix}/{link}";
-                    }
-                    else
-                    {
-                        link = $"https://t.me/{link}";
-                    }
+                    link = UsernameToLinkConverter.Convert(link);
                 }
 
                 string title = null;
@@ -173,27 +153,23 @@ namespace Unigram.Controls.Views
             }
             else if (message.Media is TLMessageMediaGame gameMedia)
             {
-                var config = ViewModel.CacheService.GetConfig();
-                if (config != null && message.ViaBot != null && message.ViaBot.Username != null)
+                if (message.ViaBot != null && message.ViaBot.Username != null)
                 {
-                    var linkPrefix = config.MeUrlPrefix;
-                    if (linkPrefix.EndsWith("/"))
-                    {
-                        linkPrefix = linkPrefix.Substring(0, linkPrefix.Length - 1);
-                    }
-                    if (linkPrefix.StartsWith("https://"))
-                    {
-                        linkPrefix = linkPrefix.Substring(8);
-                    }
-                    else if (linkPrefix.StartsWith("http://"))
-                    {
-                        linkPrefix = linkPrefix.Substring(7);
-                    }
-
-                    ViewModel.ShareLink = new Uri($"https://{linkPrefix}/{message.From.Username}?game={gameMedia.Game.ShortName}");
+                    ViewModel.ShareLink = new Uri(UsernameToLinkConverter.Convert($"{message.From.Username}?game={gameMedia.Game.ShortName}"));
                     ViewModel.ShareTitle = gameMedia.Game.Title;
                 }
             }
+
+            return ShowAsync();
+        }
+
+        public IAsyncOperation<ContentDialogBaseResult> ShowAsync(IEnumerable<TLMessage> messages, bool withMyScore = false)
+        {
+            ViewModel.ShareLink = null;
+            ViewModel.ShareTitle = null;
+            ViewModel.Messages = messages;
+            ViewModel.InputMedia = null;
+            ViewModel.IsWithMyScore = withMyScore;
 
             return ShowAsync();
         }
@@ -202,7 +178,7 @@ namespace Unigram.Controls.Views
         {
             ViewModel.ShareLink = link;
             ViewModel.ShareTitle = title;
-            ViewModel.Message = null;
+            ViewModel.Messages = null;
             ViewModel.InputMedia = null;
             ViewModel.IsWithMyScore = false;
 
@@ -213,7 +189,7 @@ namespace Unigram.Controls.Views
         {
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
-            ViewModel.Message = null;
+            ViewModel.Messages = null;
             ViewModel.InputMedia = inputMedia;
             ViewModel.IsWithMyScore = false;
 

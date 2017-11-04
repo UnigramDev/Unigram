@@ -79,7 +79,7 @@ namespace Unigram.Common
                 //    paragraph.Inlines.Add(hyperlink);
                 //}
 
-                if (message.HasFwdFrom)
+                if (message.HasFwdFrom && !message.IsSticker())
                 {
                     if (paragraph.Inlines.Count > 0)
                         paragraph.Inlines.Add(new LineBreak());
@@ -194,6 +194,10 @@ namespace Unigram.Common
                 {
                     caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                 }
+                else if (message.Media is TLMessageMediaVenue)
+                {
+                    caption = true;
+                }
 
                 var game = false;
                 var notGame = true;
@@ -203,13 +207,19 @@ namespace Unigram.Common
                     notGame = false;
                 }
 
-                var emptyWebPage = false;
-                if (message.Media is TLMessageMediaWebPage webpageMedia)
+                var notLive = true;
+                if (message.Media is TLMessageMediaGeoLive)
                 {
-                    emptyWebPage = webpageMedia.WebPage is TLWebPageEmpty;
+                    notLive = false;
                 }
 
-                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || (text && notGame) ? Visibility.Visible : Visibility.Collapsed);
+                var empty = false;
+                if (message.Media is TLMessageMediaWebPage webpageMedia)
+                {
+                    empty = webpageMedia.WebPage is TLWebPageEmpty || webpageMedia.WebPage is TLWebPagePending;
+                }
+
+                sender.Visibility = (message.Media == null || /*message.Media is TLMessageMediaEmpty || message.Media is TLMessageMediaWebPage ||*/ game || caption || (text && notGame && notLive) ? Visibility.Visible : Visibility.Collapsed);
                 if (sender.Visibility == Visibility.Collapsed)
                 {
                     sender.Inlines.Clear();
@@ -234,6 +244,12 @@ namespace Unigram.Common
                     if (!string.IsNullOrWhiteSpace(message.Message))
                     {
                         paragraph.Inlines.Add(new Run { Text = message.Message });
+                    }
+                    else if (message.Media is TLMessageMediaVenue venueMedia)
+                    {
+                        paragraph.Inlines.Add(new Run { Text = venueMedia.Title, FontWeight = FontWeights.SemiBold });
+                        paragraph.Inlines.Add(new LineBreak());
+                        paragraph.Inlines.Add(new Run { Text = venueMedia.Address });
                     }
                     else if (game)
                     {
@@ -264,7 +280,7 @@ namespace Unigram.Common
                     //ReplaceAll(message, text, paragraph, sender.Foreground, true);
                 }
 
-                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || emptyWebPage || message?.Media == null)
+                if (message?.Media is TLMessageMediaEmpty || message?.Media is ITLMessageMediaCaption || empty || message?.Media == null)
                 {
                     if (IsAnyCharacterRightToLeft(message.Message ?? string.Empty))
                     {
@@ -294,9 +310,13 @@ namespace Unigram.Common
                             {
                                 placeholder = (message.From.FullName + "  " ?? string.Empty) + placeholder;
                             }
-                            else if (message.HasPostAuthor && message.PostAuthor != null)
+                            else if (message.IsPost && message.HasPostAuthor && message.PostAuthor != null)
                             {
                                 placeholder = (message.PostAuthor + "  " ?? string.Empty) + placeholder;
+                            }
+                            else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                            {
+                                placeholder = (message.FwdFrom.PostAuthor + "  " ?? string.Empty) + placeholder;
                             }
                         }
 
@@ -1108,6 +1128,11 @@ namespace Unigram.Common
             await StickerSetView.Current.ShowAsync(new TLInputStickerSetShortName { ShortName = text });
         }
 
+        public static async void NavigateToUsername(string username, string accessToken, string post, string game)
+        {
+            NavigateToUsername(MTProtoService.Current, username, accessToken, post, game);
+        }
+
         public static async void NavigateToUsername(IMTProtoService protoService, string username, string accessToken, string post, string game)
         {
             if (username.StartsWith("@"))
@@ -1291,8 +1316,7 @@ namespace Unigram.Common
             var response = await protoService.CheckChatInviteAsync(link);
             if (response.IsSucceeded)
             {
-                var inviteAlready = response.Result as TLChatInviteAlready;
-                if (inviteAlready != null)
+                if (response.Result is TLChatInviteAlready inviteAlready)
                 {
                     var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
                     if (service != null)
@@ -1300,9 +1324,7 @@ namespace Unigram.Common
                         service.NavigateToDialog(inviteAlready.Chat);
                     }
                 }
-
-                var invite = response.Result as TLChatInvite;
-                if (invite != null)
+                else if (response.Result is TLChatInvite invite)
                 {
                     var dialog = new JoinChatView { DataContext = invite };
                     var result = await dialog.ShowAsync();
@@ -1526,10 +1548,10 @@ namespace Unigram.Common
         {
             var tdesktop = GetTDesktopClipboard(entities);
 
-            var package = new DataPackage();
-            if (tdesktop != null) package.SetData("application/x-td-field-tags", tdesktop);
-            package.SetText(message);
-            Clipboard.SetContent(package);
+            var dataPackage = new DataPackage();
+            if (tdesktop != null) dataPackage.SetData("application/x-td-field-tags", tdesktop);
+            dataPackage.SetText(message);
+            ClipboardEx.TrySetContent(dataPackage);
         }
 
         private static IRandomAccessStream GetTDesktopClipboard(IEnumerable<TLMessageEntityBase> entities)

@@ -95,6 +95,8 @@ namespace Unigram.Tasks
         [Conditional("DEBUG")]
         public static void Log(string caption, string message)
         {
+            return;
+
             var xml = $@"
                 <toast>
                     <visual>

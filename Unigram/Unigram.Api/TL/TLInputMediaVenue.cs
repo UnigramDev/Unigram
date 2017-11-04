@@ -11,6 +11,7 @@ namespace Telegram.Api.TL
 		public String Address { get; set; }
 		public String Provider { get; set; }
 		public String VenueId { get; set; }
+		public String VenueType { get; set; }
 
 		public TLInputMediaVenue() { }
 		public TLInputMediaVenue(TLBinaryReader from)
@@ -27,6 +28,7 @@ namespace Telegram.Api.TL
 			Address = from.ReadString();
 			Provider = from.ReadString();
 			VenueId = from.ReadString();
+			VenueType = from.ReadString();
 		}
 
 		public override void Write(TLBinaryWriter to)
@@ -36,6 +38,7 @@ namespace Telegram.Api.TL
 			to.WriteString(Address ?? string.Empty);
 			to.WriteString(Provider ?? string.Empty);
 			to.WriteString(VenueId ?? string.Empty);
+			to.WriteString(VenueType ?? string.Empty);
 		}
 	}
 }

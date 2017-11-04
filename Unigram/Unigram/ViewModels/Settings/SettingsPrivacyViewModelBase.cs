@@ -26,6 +26,7 @@ namespace Unigram.ViewModels.Settings
             _key = key;
 
             UpdatePrivacyAsync();
+
             Aggregator.Subscribe(this);
         }
 
@@ -96,7 +97,7 @@ namespace Unigram.ViewModels.Settings
                 badge = string.Format("{0} ({1})", badge, string.Join(", ", list));
             }
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 Badge = badge;
 

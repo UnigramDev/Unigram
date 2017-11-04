@@ -9,6 +9,7 @@ using Telegram.Api.TL.Contacts;
 using Unigram.Common;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Contacts;
+using Windows.Foundation.Metadata;
 
 namespace Unigram.Core.Services
 {
@@ -127,6 +128,11 @@ namespace Unigram.Core.Services
                     annotation.ContactId = contact.Id;
                     annotation.RemoteId = contact.RemoteId;
                     annotation.SupportedOperations = ContactAnnotationOperations.ContactProfile | ContactAnnotationOperations.Message | ContactAnnotationOperations.AudioCall;
+
+                    if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5))
+                    {
+                        annotation.SupportedOperations |= ContactAnnotationOperations.Share;
+                    }
 
                     if (annotation.ProviderProperties.Count == 0)
                     {

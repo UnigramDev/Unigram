@@ -18,6 +18,11 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
+        private void GetDialogsAsyncInternal(TLMessagesGetDialogs message, Action<TLMessagesDialogsBase> callback, Action fastCallback, Action<TLRPCError> faultCallback)
+        {
+            SendAsyncInternal("messages.getDialogs", int.MaxValue, message, callback, fastCallback, faultCallback);
+        }
+
         private void ReadEncryptedHistoryAsyncInternal(TLMessagesReadEncryptedHistory message, Action<bool> callback, Action fastCallback, Action<TLRPCError> faultCallback)
         {
             SendAsyncInternal("messages.readEncryptedHistory", int.MaxValue, message, callback, fastCallback, faultCallback);

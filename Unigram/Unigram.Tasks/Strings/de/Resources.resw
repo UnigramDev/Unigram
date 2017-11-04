@@ -120,9 +120,6 @@
   <data name="AUTH_REGION" xml:space="preserve">
     <value>Zugriff von einem neuen Gerät {0}, Standort: {1}</value>
   </data>
-  <data name="AUTH_UNKNOWN" xml:space="preserve">
-    <value>Zugriff von einem neuen Gerät {0}</value>
-  </data>
   <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
     <value>hat eine Sprachnachricht gesendet</value>
   </data>
@@ -132,14 +129,14 @@
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
     <value>hat eine Datei gesendet</value>
   </data>
-  <data name="CHANNEL_MESSAGE_FWDS" xml:space="preserve">
-    <value>hat {1} Nachrichten weitergeleitet</value>
-  </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
     <value>hat dich eingeladen, {1} zu spielen</value>
   </data>
   <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
     <value>hat einen Standort gesendet</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>hat Live-Standort geteilt</value>
   </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
     <value>hat ein GIF gesendet</value>
@@ -177,9 +174,6 @@
   <data name="CHAT_DELETE_YOU" xml:space="preserve">
     <value>{0} hat dich aus der Gruppe entfernt</value>
   </data>
-  <data name="CHAT_JOINED" xml:space="preserve">
-    <value>{0} ist der Gruppe beigetreten</value>
-  </data>
   <data name="CHAT_LEFT" xml:space="preserve">
     <value>{0} hat die Gruppe verlassen</value>
   </data>
@@ -200,6 +194,9 @@
   </data>
   <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
     <value>{0} hat einen Standort an die Gruppe gesendet</value>
+  </data>
+  <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>{0} teilt jetzt seinen Live-Standort</value>
   </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} hat ein GIF an die Gruppe gesendet</value>
@@ -234,14 +231,8 @@
   <data name="CHAT_TITLE_EDITED" xml:space="preserve">
     <value>{0} hat den Namen der Gruppe geändert</value>
   </data>
-  <data name="CONTACT_ACTIVATED" xml:space="preserve">
-    <value>{0} hat dir geholfen dein Konto zu aktivieren!</value>
-  </data>
   <data name="CONTACT_JOINED" xml:space="preserve">
     <value>{0} benutzt jetzt Telegram!</value>
-  </data>
-  <data name="DC_UPDATE" xml:space="preserve">
-    <value>Diese Mitteilung öffnen, um die App-Einstellungen zu aktualisieren</value>
   </data>
   <data name="ENCRYPTED_MESSAGE" xml:space="preserve">
     <value>Du hast eine neue Nachricht{0}</value>
@@ -272,6 +263,9 @@
   </data>
   <data name="MESSAGE_GEO" xml:space="preserve">
     <value>hat dir einen Standort gesendet</value>
+  </data>
+  <data name="MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>teilt jetzt seinen Live-Standort</value>
   </data>
   <data name="MESSAGE_GIF" xml:space="preserve">
     <value>hat dir ein GIF gesendet</value>
@@ -326,6 +320,9 @@
   </data>
   <data name="PINNED_GEO" xml:space="preserve">
     <value>hat einen Standort angeheftet</value>
+  </data>
+  <data name="PINNED_GEOLIVE" xml:space="preserve">
+    <value>hat einen Live-Standort angeheftet</value>
   </data>
   <data name="PINNED_GIF" xml:space="preserve">
     <value>hat ein GIF angeheftet</value>

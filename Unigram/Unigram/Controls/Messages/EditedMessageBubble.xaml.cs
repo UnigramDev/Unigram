@@ -45,7 +45,7 @@ namespace Unigram.Controls.Messages
 
         private Visibility UpdateFirst(bool isFirst)
         {
-            OnMessageChanged(HeaderLabel);
+            OnMessageChanged(HeaderLabel, HeaderLabel);
             return isFirst ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -57,10 +57,11 @@ namespace Unigram.Controls.Messages
         private void OnMediaChanged()
         {
             var message = DataContext as TLMessage;
+
             var empty = false;
-            if (message.Media is TLMessageMediaWebPage)
+            if (message.Media is TLMessageMediaWebPage webpageMedia)
             {
-                empty = ((TLMessageMediaWebPage)message.Media).WebPage is TLWebPageEmpty;
+                empty = webpageMedia.WebPage is TLWebPageEmpty || webpageMedia.WebPage is TLWebPagePending;
             }
 
             if (message == null || message.Media == null || message.Media is TLMessageMediaEmpty || empty)

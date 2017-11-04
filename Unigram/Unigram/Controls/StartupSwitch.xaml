@@ -1,0 +1,19 @@
+﻿<UserControl
+    x:Class="Unigram.Controls.StartupSwitch"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Unigram.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <StackPanel>
+        <ToggleSwitch x:Name="Toggle"
+                      x:Uid="StartupSwitch_Toggle"
+                      Header="Launch Unigram when system starts"
+                      Style="{ThemeResource CheckButtonStyle}"/>
+        <TextBlock x:Name="Label" x:Uid="StartupSwitch_Label"  Text="You can enable this in the Startup tab in Task Manager." Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Margin="12,8,12,0" Style="{StaticResource CaptionTextBlockStyle}"/>
+    </StackPanel>
+</UserControl>

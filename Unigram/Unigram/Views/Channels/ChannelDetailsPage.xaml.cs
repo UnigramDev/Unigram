@@ -4,10 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Input;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
+using Unigram.Strings;
 using Unigram.ViewModels.Channels;
 using Unigram.ViewModels.Chats;
 using Unigram.Views.Users;
@@ -46,25 +48,6 @@ namespace Unigram.Views.Channels
             }
         }
 
-        private async void EditPhoto_Click(object sender, RoutedEventArgs e)
-        {
-            var picker = new FileOpenPicker();
-            picker.ViewMode = PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            picker.FileTypeFilter.AddRange(Constants.PhotoTypes);
-
-            var file = await picker.PickSingleFileAsync();
-            if (file != null)
-            {
-                var dialog = new EditYourPhotoView(file);
-                var dialogResult = await dialog.ShowAsync();
-                if (dialogResult == ContentDialogBaseResult.OK)
-                {
-                    ViewModel.EditPhotoCommand.Execute(dialog.Result);
-                }
-            }
-        }
-
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is TLChannelParticipantBase participant && participant.User != null)
@@ -89,77 +72,89 @@ namespace Unigram.Views.Channels
 
         #region Context menu
 
-        private void MenuFlyout_Opening(object sender, object e)
+        private void Participant_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = sender as MenuFlyout;
+            var flyout = new MenuFlyout();
 
-            foreach (var item in flyout.Items)
-            {
-                item.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void ParticipantEdit_Loaded(object sender, RoutedEventArgs e)
-        {
             var element = sender as FrameworkElement;
             var participant = element.DataContext as TLChannelParticipantBase;
 
+            CreateFlyoutItem(ref flyout, ParticipantEdit_Loaded, ViewModel.ParticipantEditCommand, participant, AppResources.ParticipantEdit);
+            CreateFlyoutItem(ref flyout, ParticipantPromote_Loaded, ViewModel.ParticipantPromoteCommand, participant, AppResources.ParticipantPromote);
+            CreateFlyoutItem(ref flyout, ParticipantRestrict_Loaded, ViewModel.ParticipantRestrictCommand, participant, AppResources.ParticipantRestrict);
+
+            if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
+            {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                flyout.ShowAt(sender, point);
+            }
+        }
+
+        private void CreateFlyoutItem(ref MenuFlyout flyout, Func<TLChannelParticipantBase, Visibility> visibility, ICommand command, object parameter, string text)
+        {
+            var value = visibility(parameter as TLChannelParticipantBase);
+            if (value == Visibility.Visible)
+            {
+                var flyoutItem = new MenuFlyoutItem();
+                //flyoutItem.Loaded += (s, args) => flyoutItem.Visibility = visibility(parameter as TLMessageCommonBase);
+                flyoutItem.Command = command;
+                flyoutItem.CommandParameter = parameter;
+                flyoutItem.Text = text;
+
+                flyout.Items.Add(flyoutItem);
+            }
+        }
+
+        private Visibility ParticipantEdit_Loaded(TLChannelParticipantBase participant)
+        {
             var channel = ViewModel.Item as TLChannel;
             if (channel == null)
             {
-                return;
+                return Visibility.Collapsed;
             }
 
             if ((channel.IsCreator || (channel.HasAdminRights && (channel.AdminRights.IsAddAdmins || channel.AdminRights.IsBanUsers))) && ((participant is TLChannelParticipantAdmin admin && admin.IsCanEdit) || participant is TLChannelParticipantBanned))
             {
-                element.Visibility = participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
+                return participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
             }
-            else
-            {
-                element.Visibility = Visibility.Collapsed;
-            }
+
+            return Visibility.Collapsed;
         }
 
-        private void ParticipantPromote_Loaded(object sender, RoutedEventArgs e)
+        private Visibility ParticipantPromote_Loaded(TLChannelParticipantBase participant)
         {
-            var element = sender as FrameworkElement;
-            var participant = element.DataContext as TLChannelParticipantBase;
-
             var channel = ViewModel.Item as TLChannel;
             if (channel == null)
             {
-                return;
+                return Visibility.Collapsed;
             }
 
             if ((channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsAddAdmins)) && !(participant is TLChannelParticipantAdmin))
             {
-                element.Visibility = participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
+                return participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
             }
-            else
-            {
-                element.Visibility = Visibility.Collapsed;
-            }
+
+            return Visibility.Collapsed;
         }
 
-        private void ParticipantRestrict_Loaded(object sender, RoutedEventArgs e)
+        private Visibility ParticipantRestrict_Loaded(TLChannelParticipantBase participant)
         {
-            var element = sender as FrameworkElement;
-            var participant = element.DataContext as TLChannelParticipantBase;
-
             var channel = ViewModel.Item as TLChannel;
             if (channel == null)
             {
-                return;
+                return Visibility.Collapsed;
             }
 
             if ((channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsBanUsers)) && ((participant is TLChannelParticipantAdmin admin && admin.IsCanEdit) || (!(participant is TLChannelParticipantBanned) && !(participant is TLChannelParticipantAdmin))))
             {
-                element.Visibility = participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
+                return participant is TLChannelParticipantCreator || participant.User.IsSelf ? Visibility.Collapsed : Visibility.Visible;
             }
-            else
-            {
-                element.Visibility = Visibility.Collapsed;
-            }
+
+            return Visibility.Collapsed;
         }
 
         #endregion

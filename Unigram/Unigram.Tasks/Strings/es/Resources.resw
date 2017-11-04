@@ -120,9 +120,6 @@
   <data name="AUTH_REGION" xml:space="preserve">
     <value>Sesión iniciada desde un nuevo dispositivo {0}, ubicación: {1}</value>
   </data>
-  <data name="AUTH_UNKNOWN" xml:space="preserve">
-    <value>Sesión iniciada desde un nuevo dispositivo {0}</value>
-  </data>
   <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
     <value>publicó un mensaje de voz</value>
   </data>
@@ -132,14 +129,14 @@
   <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
     <value>publicó un archivo</value>
   </data>
-  <data name="CHANNEL_MESSAGE_FWDS" xml:space="preserve">
-    <value>publicó {1} mensajes reenviados</value>
-  </data>
   <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
     <value>te invitó a jugar a {1}</value>
   </data>
   <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
     <value>publicó un mapa</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>publicó una ubicación en directo</value>
   </data>
   <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
     <value>publicó un GIF</value>
@@ -151,7 +148,7 @@
     <value>publicó una foto</value>
   </data>
   <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
-    <value>publicó un mensaje de vídeo</value>
+    <value>publicó un videomensaje</value>
   </data>
   <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
     <value>publicó un {1}sticker</value>
@@ -177,9 +174,6 @@
   <data name="CHAT_DELETE_YOU" xml:space="preserve">
     <value>{0} te eliminó del grupo</value>
   </data>
-  <data name="CHAT_JOINED" xml:space="preserve">
-    <value>{0} se unió al grupo</value>
-  </data>
   <data name="CHAT_LEFT" xml:space="preserve">
     <value>{0} dejó el grupo</value>
   </data>
@@ -201,11 +195,14 @@
   <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
     <value>{0} envió una ubicación al grupo</value>
   </data>
+  <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>{0} está enviando su ubicación en directo</value>
+  </data>
   <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
     <value>{0} envió un GIF al grupo</value>
   </data>
   <data name="CHAT_MESSAGE_INVOICE" xml:space="preserve">
-    <value>{0} envió una factura por {2}</value>
+    <value>{0} te envió una factura por {2} al grupo</value>
   </data>
   <data name="CHAT_MESSAGE_NOTEXT" xml:space="preserve">
     <value>{0} envió un mensaje al grupo</value>
@@ -214,7 +211,7 @@
     <value>{0} envió una foto al grupo</value>
   </data>
   <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
-    <value>{0} envió un mensaje de vídeo al grupo</value>
+    <value>{0} envió un videomensaje al grupo</value>
   </data>
   <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
     <value>{0} envió un {2}sticker al grupo</value>
@@ -234,17 +231,11 @@
   <data name="CHAT_TITLE_EDITED" xml:space="preserve">
     <value>{0} cambió el nombre del grupo</value>
   </data>
-  <data name="CONTACT_ACTIVATED" xml:space="preserve">
-    <value>¡{0} te ayudó a activar tu cuenta!</value>
-  </data>
   <data name="CONTACT_JOINED" xml:space="preserve">
     <value>¡{0} se unió a Telegram!</value>
   </data>
-  <data name="DC_UPDATE" xml:space="preserve">
-    <value>Abre esta notificación para actualizar los ajustes de la aplicación</value>
-  </data>
   <data name="ENCRYPTED_MESSAGE" xml:space="preserve">
-    <value>Tienes un nuevo mensaje{0}</value>
+    <value>Tienes un mensaje nuevo{0}</value>
   </data>
   <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
     <value>Tu solicitud de cifrado fue aceptada{0}</value>
@@ -253,7 +244,7 @@
     <value>Nueva solicitud de cifrado{0}</value>
   </data>
   <data name="LOCKED_MESSAGE" xml:space="preserve">
-    <value>Tienes un nuevo mensaje{0}</value>
+    <value>Tienes un mensaje nuevo{0}</value>
   </data>
   <data name="MESSAGE_AUDIO" xml:space="preserve">
     <value>te envió un mensaje de voz</value>
@@ -273,6 +264,9 @@
   <data name="MESSAGE_GEO" xml:space="preserve">
     <value>te envió una ubicación</value>
   </data>
+  <data name="MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>comenzó a enviar su ubicación en directo</value>
+  </data>
   <data name="MESSAGE_GIF" xml:space="preserve">
     <value>te envió un GIF</value>
   </data>
@@ -289,7 +283,7 @@
     <value>te envió una foto con autodestrucción</value>
   </data>
   <data name="MESSAGE_ROUND" xml:space="preserve">
-    <value>te envió un mensaje de vídeo</value>
+    <value>te envió un videomensaje</value>
   </data>
   <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
     <value>¡hizo una captura de pantalla!</value>
@@ -307,7 +301,7 @@
     <value>te envió un vídeo con autodestrucción</value>
   </data>
   <data name="PHONE_CALL_MISSED" xml:space="preserve">
-    <value>Llamada perdida</value>
+    <value>Perdiste una llamada de {0}</value>
   </data>
   <data name="PHONE_CALL_REQUEST" xml:space="preserve">
     <value>{0} te está llamando</value>
@@ -327,6 +321,9 @@
   <data name="PINNED_GEO" xml:space="preserve">
     <value>ancló una ubicación</value>
   </data>
+  <data name="PINNED_GEOLIVE" xml:space="preserve">
+    <value>ancló una ubicación en directo</value>
+  </data>
   <data name="PINNED_GIF" xml:space="preserve">
     <value>ancló un GIF</value>
   </data>
@@ -340,7 +337,7 @@
     <value>ancló una foto</value>
   </data>
   <data name="PINNED_ROUND" xml:space="preserve">
-    <value>ancló un mensaje de vídeo</value>
+    <value>ancló un videomensaje</value>
   </data>
   <data name="PINNED_STICKER" xml:space="preserve">
     <value>ancló un {1}sticker</value>

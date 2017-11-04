@@ -11,11 +11,13 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.Updates;
 using Telegram.Api.TL;
+using Telegram.Api.TL.Channels;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.Services;
 using Windows.System.Profile;
 using Windows.UI.Notifications;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 
 namespace Unigram.ViewModels
@@ -34,6 +36,7 @@ namespace Unigram.ViewModels
         IHandle<DialogRemovedEventArgs>,
         IHandle<UpdateCompletedEventArgs>,
         IHandle<ChannelUpdateCompletedEventArgs>,
+        IHandle<ChannelAvailableMessagesEventArgs>,
         IHandle<string>
     {
         public async void Handle(string message)
@@ -83,11 +86,31 @@ namespace Unigram.ViewModels
             }
         }
 
+        public void Handle(ChannelAvailableMessagesEventArgs args)
+        {
+            if (With == args.Dialog.With)
+            {
+                BeginOnUIThread(() =>
+                {
+                    for (var i = 0; i < Items.Count; i++)
+                    {
+                        var messageCommon = Items[i] as TLMessageCommonBase;
+                        if (messageCommon != null && messageCommon.ToId is TLPeerChannel && messageCommon.Id <= args.AvailableMinId)
+                        {
+                            Items.RemoveAt(i--);
+                        }
+                    }
+
+                    //IsEmpty = Items.Count == 0 && (_messages == null || _messages.Count == 0) && LazyItems.Count == 0;
+                });
+            }
+        }
+
         public void Handle(TLUpdateContactLink update)
         {
             if (With is TLUser user && user.Id == update.UserId)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     IsShareContactAvailable = user.HasAccessHash && !user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact;
                     IsAddContactAvailable = user.HasAccessHash && user.HasPhone && !user.IsSelf && !user.IsContact && !user.IsMutualContact;
@@ -122,7 +145,7 @@ namespace Unigram.ViewModels
 
             if (flag)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     if (args.Draft is TLDraftMessage draft)
                     {
@@ -146,7 +169,7 @@ namespace Unigram.ViewModels
 
         public void Handle(UpdateCompletedEventArgs args)
         {
-            Execute.BeginOnUIThread(async () =>
+            BeginOnUIThread(async () =>
             {
                 Items.Clear();
                 IsFirstSliceLoaded = false;
@@ -162,7 +185,7 @@ namespace Unigram.ViewModels
         {
             if (With == args.Dialog.With)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     Items.Clear();
                     SelectedItems.Clear();
@@ -175,7 +198,7 @@ namespace Unigram.ViewModels
         {
             if (With == args.Dialog.With && args.Messages != null)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     foreach (var message in args.Messages)
                     {
@@ -206,7 +229,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateUserStatus statusUpdate)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 if (With is TLUser user)
                 {
@@ -222,118 +245,6 @@ namespace Unigram.ViewModels
                     //}
                 }
             });
-        }
-
-        private async Task<string> GetSubtitle()
-        {
-            if (With is TLUser user)
-            {
-                return LastSeenConverter.GetLabel(user, true);
-            }
-            else if (With is TLChannel channel && channel.HasAccessHash && channel.AccessHash.HasValue)
-            {
-                var full = Full as TLChannelFull;
-                if (full == null)
-                {
-                    full = CacheService.GetFullChat(channel.Id) as TLChannelFull;
-                }
-
-                if (full == null)
-                {
-                    var response = await ProtoService.GetFullChannelAsync(new TLInputChannel { ChannelId = channel.Id, AccessHash = channel.AccessHash.Value });
-                    if (response.IsSucceeded)
-                    {
-                        full = response.Result.FullChat as TLChannelFull;
-                    }
-                }
-
-                if (full == null)
-                {
-                    return string.Empty;
-                }
-
-                if (channel.IsBroadcast && full.HasParticipantsCount)
-                {
-                    return string.Format("{0} members", full.ParticipantsCount ?? 0);
-                }
-                else if (full.HasParticipantsCount)
-                {
-                    var config = CacheService.GetConfig();
-                    if (config == null)
-                    {
-                        return string.Format("{0} members", full.ParticipantsCount ?? 0);
-                    }
-
-                    var participants = await ProtoService.GetParticipantsAsync(channel.ToInputChannel(), new TLChannelParticipantsRecent(), 0, config.ChatSizeMax);
-                    if (participants.IsSucceeded)
-                    {
-                        full.Participants = participants.Result;
-
-                        if (full.ParticipantsCount <= config.ChatSizeMax)
-                        {
-                            var count = 0;
-                            foreach (var item in participants.Result.Users.OfType<TLUser>())
-                            {
-                                if (item.HasStatus && item.Status is TLUserStatusOnline)
-                                {
-                                    count++;
-                                }
-                            }
-
-                            if (count > 1)
-                            {
-                                return string.Format("{0} members, {1} online", full.ParticipantsCount ?? 0, count);
-                            }
-                        }
-                    }
-
-                    return string.Format("{0} members", full.ParticipantsCount ?? 0);
-                }
-            }
-            else if (With is TLChat chat)
-            {
-                var full = Full as TLChatFull;
-                if (full == null)
-                {
-                    full = CacheService.GetFullChat(chat.Id) as TLChatFull;
-                }
-
-                if (full == null)
-                {
-                    var response = await ProtoService.GetFullChatAsync(chat.Id);
-                    if (response.IsSucceeded)
-                    {
-                        full = response.Result.FullChat as TLChatFull;
-                    }
-                }
-
-                if (full == null)
-                {
-                    return string.Empty;
-                }
-
-                var participants = full.Participants as TLChatParticipants;
-                if (participants != null)
-                {
-                    var count = 0;
-                    foreach (var item in participants.Participants)
-                    {
-                        if (item.User != null && item.User.HasStatus && item.User.Status is TLUserStatusOnline)
-                        {
-                            count++;
-                        }
-                    }
-
-                    if (count > 1)
-                    {
-                        return string.Format("{0} members, {1} online", participants.Participants.Count, count);
-                    }
-
-                    return string.Format("{0} members", participants.Participants.Count);
-                }
-            }
-
-            return string.Empty;
         }
 
         public void Handle(TLUpdateEditChannelMessage update)
@@ -352,7 +263,7 @@ namespace Unigram.ViewModels
 
             if (channel.Id == message.ToId.Id)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     var already = Items.FirstOrDefault(x => x.Id == update.Message.Id) as TLMessage;
                     if (already == null)
@@ -404,7 +315,7 @@ namespace Unigram.ViewModels
 
             if (flag)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     var already = Items.FirstOrDefault(x => x.Id == update.Message.Id) as TLMessage;
                     if (already == null)
@@ -456,7 +367,7 @@ namespace Unigram.ViewModels
 
             if (flag)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     var index = Items.IndexOf(message);
                     Items.RaiseCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, message, index, index));
@@ -540,7 +451,7 @@ namespace Unigram.ViewModels
                             //channel.MigratedFromChatId = ((TLChatBase)this.With).Id;
                             //channel.MigratedFromMaxId = serviceMessage.Id;
 
-                            Execute.BeginOnUIThread(() =>
+                            BeginOnUIThread(() =>
                             {
                                 //this.StateService.With = channel;
                                 //this.StateService.RemoveBackEntries = true;
@@ -578,7 +489,7 @@ namespace Unigram.ViewModels
         {
             ProcessReplies(new List<TLMessageBase> { messageCommon });
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 var index = InsertMessageInOrder(Items, messageCommon);
                 if (index != -1)
@@ -590,6 +501,11 @@ namespace Unigram.ViewModels
                         if (user != null && user.IsBot)
                         {
                             SetReplyMarkup(message);
+
+                            if (message.ReplyMarkup is TLReplyKeyboardMarkup)
+                            {
+                                InputPane.GetForCurrentView().TryHide();
+                            }
                         }
                     }
 
@@ -718,7 +634,7 @@ namespace Unigram.ViewModels
 
         private void SetRead(TLMessageCommonBase topMessage, Func<TLDialog, int> getUnreadCount)
         {
-            Execute.BeginOnUIThread(delegate
+            BeginOnUIThread(delegate
             {
                 for (int i = 0; i < Items.Count; i++)
                 {
@@ -734,6 +650,7 @@ namespace Unigram.ViewModels
                     topMessage.SetUnread(false);
                 }
 
+                _dialog.ReadInboxMaxId = Dialog.TopMessage;
                 _dialog.UnreadCount = getUnreadCount.Invoke(_dialog);
                 _dialog.RaisePropertyChanged(() => _dialog.UnreadCount);
 
@@ -760,7 +677,7 @@ namespace Unigram.ViewModels
 
                 if (channel.HasBannedRights && channel.BannedRights.IsSendMessages)
                 {
-                    Execute.BeginOnUIThread(() => SetText(null));
+                    BeginOnUIThread(() => SetText(null));
                 }
 
                 if (Full is TLChannelFull channelFull)

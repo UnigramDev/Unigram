@@ -1,10 +1,12 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Api.TL;
 using Unigram.Core.Services;
+using Unigram.Views;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -25,23 +27,51 @@ namespace Unigram.Controls
     {
         private double _keyboardHeight = 300;
 
-        #region ReplyMarkup
+        //#region ReplyMarkup
 
+        //public TLReplyMarkupBase ReplyMarkup
+        //{
+        //    get { return (TLReplyMarkupBase)GetValue(ReplyMarkupProperty); }
+        //    set { SetValue(ReplyMarkupProperty, value); }
+        //}
+
+        //public static readonly DependencyProperty ReplyMarkupProperty =
+        //    DependencyProperty.Register("ReplyMarkup", typeof(TLReplyMarkupBase), typeof(ReplyMarkupPanel), new PropertyMetadata(null, OnReplyMarkupChanged));
+
+        //private static void OnReplyMarkupChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    ((ReplyMarkupPanel)d).OnReplyMarkupChanged((TLReplyMarkupBase)e.NewValue, (TLReplyMarkupBase)e.OldValue);
+        //}
+
+        //#endregion
+
+        private TLMessage _message;
+        public TLMessage Message
+        {
+            get
+            {
+                return _message;
+            }
+            set
+            {
+                _message = value;
+                OnReplyMarkupChanged(_replyMarkup, _replyMarkup);
+            }
+        }
+
+        private TLReplyMarkupBase _replyMarkup;
         public TLReplyMarkupBase ReplyMarkup
         {
-            get { return (TLReplyMarkupBase)GetValue(ReplyMarkupProperty); }
-            set { SetValue(ReplyMarkupProperty, value); }
+            get
+            {
+                return _replyMarkup;
+            }
+            set
+            {
+                _replyMarkup = value;
+                OnReplyMarkupChanged(value, value);
+            }
         }
-
-        public static readonly DependencyProperty ReplyMarkupProperty =
-            DependencyProperty.Register("ReplyMarkup", typeof(TLReplyMarkupBase), typeof(ReplyMarkupPanel), new PropertyMetadata(null, OnReplyMarkupChanged));
-
-        private static void OnReplyMarkupChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ReplyMarkupPanel)d).OnReplyMarkupChanged((TLReplyMarkupBase)e.NewValue, (TLReplyMarkupBase)e.OldValue);
-        }
-
-        #endregion
 
         private void InputPane_Showing(InputPane sender, InputPaneVisibilityEventArgs args)
         {
@@ -50,31 +80,31 @@ namespace Unigram.Controls
 
         private void UpdateSize()
         {
-            var inline = DataContext is TLMessage;
+            var inline = Message is TLMessage;
             if (ReplyMarkup is TLReplyKeyboardMarkup && !inline && Parent is ScrollViewer scroll)
             {
                 var keyboard = ReplyMarkup as TLReplyKeyboardMarkup;
-                if (keyboard.IsResize && double.IsNaN(Height))
+                if (keyboard.IsResize)
                 {
                     Height = double.NaN;
                     scroll.MaxHeight = _keyboardHeight;
                 }
-                else if (keyboard.IsResize == false && double.IsNaN(Height) && Parent is ScrollViewer scroll1)
+                else
                 {
                     Height = _keyboardHeight;
-                    scroll1.MaxHeight = double.PositiveInfinity;
+                    scroll.MaxHeight = double.PositiveInfinity;
                 }
             }
             else if (ReplyMarkup is TLReplyKeyboardHide && !inline && Parent is ScrollViewer scroll2)
             {
-                Height = double.NaN;
+                Height = 0;
                 scroll2.MaxHeight = double.PositiveInfinity;
             }
         }
 
         private void OnReplyMarkupChanged(TLReplyMarkupBase newValue, TLReplyMarkupBase oldValue)
         {
-            var inline = DataContext is TLMessage;
+            var inline = Message is TLMessage;
             var resize = false;
 
             TLVector<TLKeyboardButtonRow> rows = null;
@@ -186,6 +216,12 @@ namespace Unigram.Controls
 
                 if (Children.Count > 0 && !inline)
                 {
+                    var page = this.Ancestors<DialogPage>().FirstOrDefault() as DialogPage;
+                    if (page != null)
+                    {
+                        page.ShowMarkup();
+                    }
+
                     Padding = new Thickness(0, 0, 0, 4);
                 }
                 else if (!inline)

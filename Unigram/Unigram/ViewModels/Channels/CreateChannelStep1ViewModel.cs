@@ -19,6 +19,7 @@ namespace Unigram.ViewModels.Channels
         public CreateChannelStep1ViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
+            SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
         }
 
         private string _title;
@@ -48,8 +49,7 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             var response = await ProtoService.CreateChannelAsync(TLChannelsCreateChannel.Flag.Broadcast, _title, _about);

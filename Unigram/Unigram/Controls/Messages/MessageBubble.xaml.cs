@@ -31,21 +31,26 @@ namespace Unigram.Controls.Messages
         public MessageBubble()
         {
             InitializeComponent();
+        }
 
-            DataContextChanged += (s, args) =>
-            {
-                if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
-                if (ViewModel == null) Bindings.StopTracking();
+        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
+            if (ViewModel == null) Bindings.StopTracking();
 
-                _oldValue = ViewModel;
-            };
+            _oldValue = ViewModel;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Bindings.StopTracking();
         }
 
         #region Adaptive part
 
         private Visibility UpdateFirst(bool isFirst)
         {
-            OnMessageChanged(HeaderLabel);
+            OnMessageChanged(HeaderLabel, AdminLabel);
             return isFirst ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -57,10 +62,11 @@ namespace Unigram.Controls.Messages
         private void OnMediaChanged()
         {
             var message = DataContext as TLMessage;
+
             var empty = false;
-            if (message.Media is TLMessageMediaWebPage)
+            if (message.Media is TLMessageMediaWebPage webpageMedia)
             {
-                empty = ((TLMessageMediaWebPage)message.Media).WebPage is TLWebPageEmpty;
+                empty = webpageMedia.WebPage is TLWebPageEmpty || webpageMedia.WebPage is TLWebPagePending;
             }
 
             if (message == null || message.Media == null || message.Media is TLMessageMediaEmpty || empty)
@@ -96,11 +102,19 @@ namespace Unigram.Controls.Messages
                     {
                         caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                     }
+                    else if (message.Media is TLMessageMediaVenue)
+                    {
+                        caption = true;
+                    }
 
                     if (caption)
                     {
                         StatusToDefault();
                         bottom = 4;
+                    }
+                    else if (message.Media is TLMessageMediaGeoLive)
+                    {
+                        StatusToHidden();
                     }
                     else
                     {
@@ -152,26 +166,17 @@ namespace Unigram.Controls.Messages
 
         private void StatusToFullMedia()
         {
-            if (StatusControl.Padding.Left != 6)
-            {
-                //StatusControl.Padding = new Thickness(6, 2, 6, 4);
-                //StatusControl.Background = StatusDarkBackgroundBrush;
-                //StatusLabel.Foreground = StatusDarkForegroundBrush;
-                //StatusGlyph.Foreground = StatusDarkForegroundBrush;
-                VisualStateManager.GoToState(LayoutRoot, "FullMedia", false);
-            }
+            VisualStateManager.GoToState(LayoutRoot, "FullMedia", false);
         }
 
         private void StatusToDefault()
         {
-            if (StatusControl.Padding.Left != 0)
-            {
-                //StatusControl.Padding = new Thickness(0, 0, 6, 0);
-                //StatusControl.Background = null;
-                //StatusLabel.Foreground = StatusLightLabelForegroundBrush;
-                //StatusGlyph.Foreground = StatusLightGlyphForegroundBrush;
-                VisualStateManager.GoToState(LayoutRoot, "Default", false);
-            }
+            VisualStateManager.GoToState(LayoutRoot, "Default", false);
+        }
+
+        private void StatusToHidden()
+        {
+            VisualStateManager.GoToState(LayoutRoot, "Hidden", false);
         }
 
         #endregion

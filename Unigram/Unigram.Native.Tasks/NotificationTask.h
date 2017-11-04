@@ -22,9 +22,12 @@ namespace Unigram
 				NotificationTask() {}
 				virtual void Run(IBackgroundTaskInstance^ taskInstance);
 
-				static void UpdateBadge(int badgeNumber);
-				static void UpdateTile(String^ caption, String^ message);
-				static void UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key);
+				static void UpdatePrimaryBadge(int badgeNumber);
+				//static void UpdateSecondaryBadge(String^ group, bool resetBadge);
+				static void ResetSecondaryTile(String^ caption, String^ picture, String^ group);
+				static void UpdatePrimaryTile(String^ caption, String^ message, String^ picture);
+				//static void UpdateSecondaryTile(String^ caption, String^ message, String^ picture, String^ group);
+				static void UpdateToast(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key); 
 
 			private:
 				void UpdateToastAndTiles(String^ content /*, std::wofstream* log*/);
@@ -35,6 +38,10 @@ namespace Unigram
 				String^ GetGroup(JsonObject^ custom);
 				String^ GetPicture(JsonObject^ custom, String^ group);
 				String^ GetDate(JsonObject^ notification);
+				static String^ NotificationTask::CreateTileMessageBody(String^ message);
+				static String^ NotificationTask::CreateTileMessageBodyWithCaption(String^ caption, String^ message);
+
+				static std::wstring Escape(std::wstring data);
 
 				void UpdatePhoneCall(String^ caption, String^ message, String^ sound, String^ launch, String^ tag, String^ group, String^ picture, String^ date, String^ loc_key);
 			};

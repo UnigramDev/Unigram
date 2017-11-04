@@ -11,18 +11,18 @@
     <AssemblyName>Unigram</AssemblyName>
     <DefaultLanguage>en</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.15063.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>Unigram_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>BCF3F68C8F50DE819284C634BE7D5030F61E2216</PackageCertificateThumbprint>
-    <!--<BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>-->
+    <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -59,7 +59,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;PREVIEW</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -71,7 +71,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;PREVIEW</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -83,7 +83,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;CODE_ANALYSIS;PREVIEW</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -101,6 +101,7 @@
     <Compile Include="Common\AdminLogHelper.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\Dialogs\OutputTypingManager.cs" />
+    <Compile Include="Common\MosaicMedia.cs" />
     <Compile Include="Common\ImageLoader\ContentDrawer.cs" />
     <Compile Include="Common\ImageLoader\ImageLoader.cs" />
     <Compile Include="Common\ImageLoader\ManagedSurface.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Controls\DialogSearchToolBar.xaml.cs">
       <DependentUpon>DialogSearchToolBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GalleryTransportControls.cs" />
     <Compile Include="Controls\GroupedGridView.cs" />
     <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
@@ -125,14 +127,17 @@
     <Compile Include="Controls\Items\SharedLinkListViewItem.xaml.cs">
       <DependentUpon>SharedLinkListViewItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MediaPlayerView.cs" />
     <Compile Include="Controls\Messages\HistoryCallMessageControlBase.cs" />
     <Compile Include="Controls\Messages\EditedMessageBubble.xaml.cs">
       <DependentUpon>EditedMessageBubble.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MosaicRow.cs" />
     <Compile Include="Controls\NavigationView.cs" />
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
     <Compile Include="Controls\NavigationViewItemSeparator.cs" />
+    <Compile Include="Controls\PaddedListView.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\BottomSheet.cs" />
@@ -158,9 +163,16 @@
     </Compile>
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
+    <Compile Include="Controls\PeriodTimer.cs" />
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
+    <Compile Include="Controls\SelectGridView.cs" />
+    <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
+    <Compile Include="Controls\AspectView.cs" />
+    <Compile Include="Controls\StartupSwitch.xaml.cs">
+      <DependentUpon>StartupSwitch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SwipeSplitView.cs" />
     <Compile Include="Controls\SwipeListBehavior.cs" />
     <Compile Include="Controls\SwipeListDirection.cs" />
@@ -183,6 +195,9 @@
     <Compile Include="Controls\Views\GallerySecretView.xaml.cs">
       <DependentUpon>GallerySecretView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\LiveLocationsView.xaml.cs">
+      <DependentUpon>LiveLocationsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\PhoneCallRatingView.xaml.cs">
       <DependentUpon>PhoneCallRatingView.xaml</DependentUpon>
     </Compile>
@@ -191,7 +206,6 @@
     <Compile Include="Controls\StickerView.cs" />
     <Compile Include="Controls\TagsTextBox.cs" />
     <Compile Include="Controls\TagsWrapPanel.cs" />
-    <Compile Include="Controls\TLListView.cs" />
     <Compile Include="Controls\Views\AttachedStickersView.xaml.cs">
       <DependentUpon>AttachedStickersView.xaml</DependentUpon>
     </Compile>
@@ -207,8 +221,14 @@
     <Compile Include="Controls\Views\RoundVideoView.xaml.cs">
       <DependentUpon>RoundVideoView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Views\SelectLivePeriodView.xaml.cs">
+      <DependentUpon>SelectLivePeriodView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Views\SelectTTLSecondsView.xaml.cs">
       <DependentUpon>SelectTTLSecondsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\SendMediaView.xaml.cs">
+      <DependentUpon>SendMediaView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\SettingsDownloadView.xaml.cs">
       <DependentUpon>SettingsDownloadView.xaml</DependentUpon>
@@ -247,14 +267,23 @@
     <Compile Include="Converters\ChannelTypeToStringConverter.cs" />
     <Compile Include="Converters\CompressionToGlyphConverter.cs" />
     <Compile Include="Converters\EnumToBooleanConverter.cs" />
+    <Compile Include="Converters\GeoLivePeriodConverter.cs" />
+    <Compile Include="Converters\GeoLiveToLabelConverter.cs" />
+    <Compile Include="Converters\GeoLiveToVisibilityConverter.cs" />
     <Compile Include="Converters\InvoiceToAmountConverter.cs" />
     <Compile Include="Converters\MessageShortTTLConverter.cs" />
     <Compile Include="Converters\MessageToShareConverter.cs" />
     <Compile Include="Converters\MessageTTLConverter.cs" />
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
+    <Compile Include="Converters\ProportionsToLabelConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
+    <Compile Include="Converters\UsernameToLinkConverter.cs" />
+    <Compile Include="Converters\VenueToGlyphConverter.cs" />
+    <Compile Include="Helpers\AudioGraphHelper.cs" />
+    <Compile Include="Helpers\TLFileHelper.cs" />
     <Compile Include="Models\Country.cs" />
+    <Compile Include="Models\StorageDocument.cs" />
     <Compile Include="Models\StorageMedia.cs" />
     <Compile Include="Models\StoragePhoto.cs" />
     <Compile Include="Models\StorageVideo.cs" />
@@ -267,7 +296,13 @@
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
+    <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\PushService.cs" />
+    <Compile Include="Strings\en\Resources.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resw</DependentUpon>
+    </Compile>
     <Compile Include="Triggers\DeviceFamilyTrigger.cs" />
     <Compile Include="Triggers\UserInteractionTrigger.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
@@ -857,9 +892,6 @@
     <Compile Include="Controls\Views\EditYourNameView.xaml.cs">
       <DependentUpon>EditYourNameView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Views\SendPhotosView.xaml.cs">
-      <DependentUpon>SendPhotosView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\VoiceButton.cs" />
     <Compile Include="Converters\BubblePlaceholderConverter.cs" />
     <Compile Include="Converters\EditToVisibilityConverter.cs" />
@@ -867,14 +899,8 @@
     <Compile Include="Selectors\DialogStyleSelector.cs" />
     <Compile Include="Selectors\InlineBotResultTemplateSelector.cs" />
     <Compile Include="Selectors\SearchTemplateSelector.cs" />
-    <Compile Include="Strings\en\Resources.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resw</DependentUpon>
-    </Compile>
     <Compile Include="Triggers\BooleanTrigger.cs" />
     <Compile Include="ViewModelLocator.cs" />
-    <Compile Include="Collections\DialogCollection.cs" />
     <Compile Include="Collections\MediaCollection.cs" />
     <Compile Include="Collections\SortedObservableCollection.cs" />
     <Compile Include="Common\Attached.cs" />
@@ -1078,11 +1104,12 @@
     <PRIResource Include="Strings\en\Resources.resw">
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
       <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.cs</LastGenOutput>
     </PRIResource>
     <Content Include="Assets\Fonts\CamMDL2.ttf" />
     <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
+    <None Include="Assets\Fonts\Telegram.json" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1095,6 +1122,11 @@
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-150.png" />
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-200.png" />
     <Content Include="Assets\Images\ShareProvider_CopyLink24x24.scale-400.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-16.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-24.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-256.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-32.png" />
+    <Content Include="Assets\JumpList\CloudStorage\CloudStorage.targetsize-48.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-100.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-125.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-150.png" />
@@ -1215,6 +1247,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\StartupSwitch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\VideoTimelineControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1279,6 +1315,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\LiveLocationsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\PhoneCallRatingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1331,13 +1371,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Views\SelectLivePeriodView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Views\SelectTTLSecondsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Views\SendPhotosView.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Controls\Views\SendMediaView.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Views\SettingsDownloadView.xaml">
       <SubType>Designer</SubType>
@@ -1694,13 +1738,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Autofac">
-      <Version>4.6.1</Version>
+      <Version>4.6.2</Version>
     </PackageReference>
     <PackageReference Include="HockeySDK.UWP">
       <Version>4.1.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.4.0</Version>
+      <Version>6.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.0</Version>
@@ -1708,11 +1752,17 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.3</Version>
     </PackageReference>
+    <PackageReference Include="Portable.BouncyCastle">
+      <Version>1.8.1.3</Version>
+    </PackageReference>
     <PackageReference Include="System.Reactive">
       <Version>3.1.1</Version>
     </PackageReference>
+    <PackageReference Include="System.ValueTuple">
+      <Version>4.4.0</Version>
+    </PackageReference>
     <PackageReference Include="Universal.WinSQLite">
-      <Version>3.12.2.2</Version>
+      <Version>3.12.2.3</Version>
     </PackageReference>
     <PackageReference Include="Win2D.Uwp">
       <Version>1.21.0</Version>
@@ -1722,6 +1772,10 @@
     <ProjectReference Include="..\Libraries\libtgvoip\libtgvoip.UWP.vcxproj">
       <Project>{88803693-7606-484b-9d2f-4bb789d57c29}</Project>
       <Name>libtgvoip</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Telegram.Intro\Telegram.Intro.vcxproj">
+      <Project>{1cfa1bfa-98d3-4316-8e3b-ac3ea8b3510e}</Project>
+      <Name>Telegram.Intro</Name>
     </ProjectReference>
     <ProjectReference Include="..\Telegram.Api.Native\Telegram.Api.Native.vcxproj">
       <Project>{6a7d27d0-36e8-4364-ac69-740b75ee653c}</Project>
@@ -1760,10 +1814,10 @@
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
       <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
     </SDKReference>
-    <SDKReference Include="WindowsDesktop, Version=10.0.15063.0">
+    <SDKReference Include="WindowsDesktop, Version=10.0.16299.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.15063.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.16299.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>

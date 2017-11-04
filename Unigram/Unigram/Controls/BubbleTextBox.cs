@@ -95,7 +95,7 @@ namespace Unigram.Controls
 
             _textChangedSubscription = textChangedEvents
                 .Throttle(TimeSpan.FromMilliseconds(200))
-                .Subscribe(e => Execute.BeginOnUIThread(() => UpdateInlineBot(true)));
+                .Subscribe(e => this.BeginOnUIThread(() => UpdateInlineBot(true)));
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -193,6 +193,14 @@ namespace Unigram.Controls
             Document.Selection.StartPosition = Document.Selection.EndPosition;
         }
 
+        public event EventHandler<TappedRoutedEventArgs> Capture;
+
+        protected override void OnTapped(TappedRoutedEventArgs e)
+        {
+            Capture?.Invoke(this, e);
+            base.OnTapped(e);
+        }
+
         private async void OnPaste(object sender, TextControlPasteEventArgs e)
         {
             // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
@@ -204,6 +212,7 @@ namespace Unigram.Controls
 
                 var formats = package.AvailableFormats.ToList();
                 var text = await package.GetTextAsync();
+                var start = Document.Selection.StartPosition;
 
                 var result = Emoticon.Pattern.Replace(text, (match) =>
                 {
@@ -218,16 +227,14 @@ namespace Unigram.Controls
                 });
 
                 Document.Selection.SetText(TextSetOptions.None, result);
-            }
-            else if (package.Contains(StandardDataFormats.StorageItems))
-            {
-                e.Handled = true;
+                Document.Selection.SetRange(start + result.Length, start + result.Length);
             }
             else if (package.Contains(StandardDataFormats.Bitmap))
             {
                 e.Handled = true;
 
                 var bitmap = await package.GetBitmapAsync();
+                var media = new ObservableCollection<StorageMedia>();
                 var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
 
                 using (var stream = await bitmap.OpenReadAsync())
@@ -237,9 +244,49 @@ namespace Unigram.Controls
                     var buffer = new byte[(int)stream.Size];
                     reader.ReadBytes(buffer);
                     await FileIO.WriteBytesAsync(cache, buffer);
+
+                    media.Add(await StoragePhoto.CreateAsync(cache, true));
                 }
 
-                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { new StoragePhoto(cache) { IsSelected = true } });
+                ViewModel.SendMediaExecute(media, media[0]);
+            }
+            else if (package.Contains(StandardDataFormats.StorageItems))
+            {
+                e.Handled = true;
+
+                var items = await package.GetStorageItemsAsync();
+                var media = new ObservableCollection<StorageMedia>();
+                var files = new List<StorageFile>(items.Count);
+
+                foreach (var file in items.OfType<StorageFile>())
+                {
+                    if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
+                        file.ContentType.Equals("image/gif", StringComparison.OrdinalIgnoreCase))
+                    {
+                        media.Add(await StoragePhoto.CreateAsync(file, true));
+                    }
+                    else if (file.ContentType == "video/mp4")
+                    {
+                        media.Add(await StorageVideo.CreateAsync(file, true));
+                    }
+
+                    files.Add(file);
+                }
+
+                // Send compressed __only__ if user is dropping photos and videos only
+                if (media.Count > 0 && media.Count == files.Count)
+                {
+                    ViewModel.SendMediaExecute(media, media[0]);
+                }
+                else if (files.Count > 0)
+                {
+                    foreach (var file in files)
+                    {
+                        ViewModel.SendFileCommand.Execute(file);
+                    }
+                }
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
             {
@@ -410,7 +457,7 @@ namespace Unigram.Controls
                     ViewModel.Aggregator.Publish("move_down");
                     e.Handled = true;
                 }
-                else if ((e.Key == VirtualKey.PageUp || e.Key == VirtualKey.Up) && Document.Selection.StartPosition == 0)
+                else if ((e.Key == VirtualKey.PageUp /*|| e.Key == VirtualKey.Up*/) && Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
                 {
                     var peer = new ListViewAutomationPeer(Messages);
                     var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
@@ -418,7 +465,7 @@ namespace Unigram.Controls
 
                     e.Handled = true;
                 }
-                else if (e.Key == VirtualKey.PageDown || e.Key == VirtualKey.Down && Document.Selection.StartPosition == Text.TrimEnd('\r', '\v').Length)
+                else if ((e.Key == VirtualKey.PageDown /*|| e.Key == VirtualKey.Down*/) && Document.Selection.StartPosition == Text.TrimEnd('\r', '\v').Length && ViewModel.Autocomplete == null)
                 {
                     var peer = new ListViewAutomationPeer(Messages);
                     var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
@@ -544,7 +591,7 @@ namespace Unigram.Controls
                     {
                         ViewModel.Autocomplete = GetUsernames(username.ToLower(), text.StartsWith('@' + username));
                     }
-                    else if (SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0 && ApplicationSettings.Current.IsReplaceEmojiEnabled)
+                    else if (SearchByEmoji(text.Substring(0, Math.Min(Document.Selection.EndPosition, text.Length)), out string replacement) && replacement.Length > 0)
                     {
                         ViewModel.Autocomplete = EmojiSuggestion.GetSuggestions(replacement);
                     }
@@ -798,11 +845,23 @@ namespace Unigram.Controls
 
                 foreach (var entity in parser.Entities)
                 {
-                    // Check intersections
+                    // TODO: Check intersections
                     entities.Add(entity);
                 }
 
-                await ViewModel.SendMessageAsync(messageText, entities, false);
+                var matches = Regex.Matches(messageText, "\\[(.*?)\\]\\((.*?)\\)");
+                var offset = 0;
+
+                foreach (Match match in matches)
+                {
+                    entities.Add(new TLMessageEntityTextUrl { Offset = match.Index + offset, Length = match.Groups[1].Length, Url = match.Groups[2].Value });
+
+                    messageText = messageText.Remove(match.Index + offset, match.Length);
+                    messageText = messageText.Insert(match.Index + offset, match.Groups[1].Value);
+                    offset += match.Length - match.Groups[1].Length;
+                }
+
+                await ViewModel.SendMessageAsync(messageText, entities.OrderBy(x => x.Offset).ToList(), false);
             }
             //else
             //{

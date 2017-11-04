@@ -1511,11 +1511,7 @@ namespace Telegram.Api.Services.Updates
                     if (message.Views == null || message.Views.Value < updateChannelMessageViews.Views)
                     {
                         message.Views = updateChannelMessageViews.Views;
-
-                        Execute.BeginOnUIThread(() =>
-                        {
-                            message.RaisePropertyChanged(() => message.Views);
-                        });
+                        message.RaisePropertyChanged(() => message.Views);
                     }
                 }
 
@@ -1844,6 +1840,18 @@ namespace Telegram.Api.Services.Updates
                 _cacheService.DeleteChannelMessages(updateDeleteChannelMessages.ChannelId, updateDeleteChannelMessages.Messages);
 
                 return true;
+            }
+
+            var updateChannelAvailableMessages = update as TLUpdateChannelAvailableMessages;
+            if (updateChannelAvailableMessages != null)
+            {
+                var channel = _cacheService.GetChat(updateChannelAvailableMessages.ChannelId);
+                if (channel != null)
+                {
+
+                }
+
+                _cacheService.ClearDialog(new TLPeerChannel { ChannelId = updateChannelAvailableMessages.ChannelId }, updateChannelAvailableMessages.AvailableMinId);
             }
 
             // TODO: No idea
@@ -2177,7 +2185,7 @@ namespace Telegram.Api.Services.Updates
                     _cacheService.SyncMessage(message,
                         m =>
                         {
-                            Helpers.Execute.BeginOnUIThread(() => message.RaisePropertyChanged(() => message.Media));
+                            message.RaisePropertyChanged(() => message.Media);
                         });
                 }
 
@@ -2365,30 +2373,24 @@ namespace Telegram.Api.Services.Updates
             var serviceMessage = messageBase as TLMessageService;
             if (serviceMessage != null)
             {
-                var chatEditTitleAction = serviceMessage.Action as TLMessageActionChatEditTitle;
-                if (chatEditTitleAction != null)
+                if (serviceMessage.Action is TLMessageActionChatEditTitle chatEditTitleAction)
                 {
                     var chatBase = _cacheService.GetChat(serviceMessage.ToId.Id);
 
-                    var channel = chatBase as TLChannel;
-                    if (channel != null)
+                    if (chatBase is TLChannel channel)
                     {
                         channel.Title = chatEditTitleAction.Title;
                         channel.RaisePropertyChanged(() => channel.Title);
                         channel.RaisePropertyChanged(() => channel.DisplayName);
                     }
-
-                    var chat = chatBase as TLChat;
-                    if (chat != null)
+                    else if (chatBase is TLChat chat)
                     {
                         chat.Title = chatEditTitleAction.Title;
                         chat.RaisePropertyChanged(() => chat.Title);
                         chat.RaisePropertyChanged(() => chat.DisplayName);
                     }
                 }
-
-                var chatEditPhotoAction = serviceMessage.Action as TLMessageActionChatEditPhoto;
-                if (chatEditPhotoAction != null)
+                else if (serviceMessage.Action is TLMessageActionChatEditPhoto chatEditPhotoAction)
                 {
                     var photo = chatEditPhotoAction.Photo as TLPhoto;
                     if (photo != null)
@@ -2397,40 +2399,44 @@ namespace Telegram.Api.Services.Updates
                         var big = photo.Full as TLPhotoSize;
 
                         var chatBase = _cacheService.GetChat(serviceMessage.ToId.Id);
-
-                        var channel = chatBase as TLChannel;
-                        if (channel != null)
+                        if (chatBase is TLChannel channel)
                         {
                             channel.Photo = new TLChatPhoto { PhotoSmall = small.Location, PhotoBig = big.Location };
                             channel.RaisePropertyChanged(() => channel.PhotoSelf);
                         }
-
-                        var chat = chatBase as TLChat;
-                        if (chat != null)
+                        if (chatBase is TLChat chat)
                         {
                             chat.Photo = new TLChatPhoto { PhotoSmall = small.Location, PhotoBig = big.Location };
                             chat.RaisePropertyChanged(() => chat.PhotoSelf);
                         }
                     }
-                }
 
-                var chatDeletePhotoAction = serviceMessage.Action as TLMessageActionChatDeletePhoto;
-                if (chatDeletePhotoAction != null)
+                    var chatFull = _cacheService.GetFullChat(serviceMessage.ToId.Id);
+                    if (chatFull != null)
+                    {
+                        chatFull.ChatPhoto = photo;
+                        chatFull.RaisePropertyChanged(() => chatFull.ChatPhoto);
+                    }
+                }
+                if (serviceMessage.Action is TLMessageActionChatDeletePhoto chatDeletePhotoAction)
                 {
                     var chatBase = _cacheService.GetChat(serviceMessage.ToId.Id);
-
-                    var channel = chatBase as TLChannel;
-                    if (channel != null)
+                    if (chatBase is TLChannel channel)
                     {
                         channel.Photo = new TLChatPhotoEmpty();
                         channel.RaisePropertyChanged(() => channel.PhotoSelf);
                     }
-
-                    var chat = chatBase as TLChat;
-                    if (chat != null)
+                    else if (chatBase is TLChat chat)
                     {
                         chat.Photo = new TLChatPhotoEmpty();
                         chat.RaisePropertyChanged(() => chat.PhotoSelf);
+                    }
+
+                    var chatFull = _cacheService.GetFullChat(serviceMessage.ToId.Id);
+                    if (chatFull != null)
+                    {
+                        chatFull.ChatPhoto = new TLPhotoEmpty();
+                        chatFull.RaisePropertyChanged(() => chatFull.ChatPhoto);
                     }
                 }
             }
@@ -3450,7 +3456,7 @@ namespace Telegram.Api.Services.Updates
                         {
                             for (var i = _pts.Value + 1; i < ptsList[0]; i++)
                             {
-                                _lostPts[i] = new Tuple<DateTime, TLUpdatesState>(DateTime.Now, new TLUpdatesState { Seq = ClientSeq.Value, Pts = _pts.Value, Date = _date.Value, Qts = _qts.Value });
+                                _lostPts[i] = new Tuple<DateTime, TLUpdatesState>(DateTime.Now, new TLUpdatesState { Seq = ClientSeq ?? 0, Pts = _pts ?? 0, Date = _date ?? 0, Qts = _qts ?? 0 });
                             }
                         }
 
@@ -3476,7 +3482,7 @@ namespace Telegram.Api.Services.Updates
                 {
                     var lastPtsValue = ptsList.Last();
                     var maxPtsValue = Math.Max(lastPtsValue, _pts != null ? _pts.Value : -1);
-                    _pts = new int?(maxPtsValue);
+                    _pts = maxPtsValue;
                 }
 
                 if (_lostPts.Count > 0)

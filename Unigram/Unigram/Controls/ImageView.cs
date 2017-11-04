@@ -74,6 +74,19 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region Stretch
+
+        public Stretch Stretch
+        {
+            get { return (Stretch)GetValue(StretchProperty); }
+            set { SetValue(StretchProperty, value); }
+        }
+
+        public static readonly DependencyProperty StretchProperty =
+            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(ImageView), new PropertyMetadata(Stretch.Uniform));
+
+        #endregion
+
         #region Constraint
 
         public object Constraint
@@ -97,19 +110,6 @@ namespace Unigram.Controls
         }
         #endregion
 
-        #region Stretch
-
-        public Stretch Stretch
-        {
-            get { return (Stretch)GetValue(StretchProperty); }
-            set { SetValue(StretchProperty, value); }
-        }
-
-        public static readonly DependencyProperty StretchProperty =
-            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(ImageView), new PropertyMetadata(Stretch.Uniform));
-
-        #endregion
-
         protected override Size MeasureOverride(Size availableSize)
         {
             if (Constraint == null)
@@ -125,7 +125,7 @@ namespace Unigram.Controls
 
             var constraint = Constraint;
 
-            if (constraint is TLMessageMediaGeo || constraint is TLMessageMediaVenue)
+            if (constraint is TLMessageMediaGeo || constraint is TLMessageMediaGeoLive || constraint is TLMessageMediaVenue)
             {
                 width = 320;
                 height = 240;

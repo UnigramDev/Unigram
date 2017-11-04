@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -31,9 +31,11 @@ namespace Unigram.ViewModels.Settings
             _type = type;
             _stickersService = stickersService;
 
-            Aggregator.Subscribe(this);
-
             Items = new MvxObservableCollection<TLMessagesStickerSet>();
+
+            ReorderCommand = new RelayCommand<TLMessagesStickerSet>(ReorderExecute);
+
+            Aggregator.Subscribe(this);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -86,7 +88,7 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(FeaturedStickersDidLoadedEventArgs e)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 FeaturedStickersCount = _stickersService.GetUnreadStickerSets().Count;
             });
@@ -94,7 +96,7 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(ArchivedStickersCountDidLoadedEventArgs e)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 ArchivedStickersCount = _stickersService.GetArchivedStickersCount(_type);
             });
@@ -103,7 +105,7 @@ namespace Unigram.ViewModels.Settings
         private void ProcessStickerSets(StickerType type)
         {
             var stickers = _stickersService.GetStickerSets(type);
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 Items.ReplaceWith(stickers);
             });
@@ -137,7 +139,7 @@ namespace Unigram.ViewModels.Settings
 
         public MvxObservableCollection<TLMessagesStickerSet> Items { get; private set; }
 
-        public RelayCommand<TLMessagesStickerSet> ReorderCommand => new RelayCommand<TLMessagesStickerSet>(ReorderExecute);
+        public RelayCommand<TLMessagesStickerSet> ReorderCommand { get; }
         private void ReorderExecute(TLMessagesStickerSet set)
         {
             var stickers = _stickersService.GetStickerSets(_type);

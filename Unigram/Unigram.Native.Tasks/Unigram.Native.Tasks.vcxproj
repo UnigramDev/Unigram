@@ -46,7 +46,7 @@
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformMinVersion>10.0.14393.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
   </PropertyGroup>
@@ -240,7 +240,7 @@
     <PRIResource Include="..\unigram.tasks\strings\es\resources.resw" />
     <PRIResource Include="..\unigram.tasks\strings\it\resources.resw" />
     <PRIResource Include="..\unigram.tasks\strings\nl\resources.resw" />
-    <PRIResource Include="..\unigram.tasks\strings\pt\resources.resw" />
+    <PRIResource Include="..\Unigram.Tasks\Strings\pt-BR\Resources.resw" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -13,10 +13,12 @@
     d:DesignWidth="400"
     Margin="{ThemeResource MessageContentMargin}"
     HorizontalAlignment="{ThemeResource MessageHorizontalAlignment}"
-    MaxWidth="{ThemeResource MessageMaxWidth}">
+    MaxWidth="{ThemeResource MessageMaxWidth}"
+    DataContextChanged="OnDataContextChanged"
+    Unloaded="OnUnloaded">
 
     <!-- TODO: not the right way -->
-    <Border Height="6" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay, FallbackValue=Collapsed}"/>
+    <Border Height="4" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay, FallbackValue=Collapsed}"/>
 
     <!--<controls:SwipeListViewItem
         RightBackground="#007aff"
@@ -54,6 +56,12 @@
                                 <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
                             </VisualState.Setters>
                         </VisualState>
+                        <VisualState x:Name="Hidden">
+                            <VisualState.Setters>
+                                <Setter Target="StatusControl.Opacity" Value="0"/>
+                                <Setter Target="StatusControl.IsHitTestVisible" Value="False"/>
+                            </VisualState.Setters>
+                        </VisualState>
                         <VisualState x:Name="Default"/>
                     </VisualStateGroup>
                 </VisualStateManager.VisualStateGroups>
@@ -68,8 +76,18 @@
                            Margin="0,0,0,2"
                            Foreground="{ThemeResource MessageHeaderForegroundBrush}"
                            RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                           Style="{ThemeResource CaptionTextBlockStyle}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
                            FontWeight="SemiBold"
+                           Visibility="Collapsed"
+                           Grid.Row="0"/>
+
+                <TextBlock x:Name="AdminLabel"
+                           Text="admin"
+                           Margin="0,0,0,2"
+                           Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                           RequestedTheme="{ThemeResource MessageTextBlockTheme}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           HorizontalAlignment="Right"
                            Visibility="Collapsed"
                            Grid.Row="0"/>
 
@@ -83,7 +101,7 @@
                     x:Name="MessageControl"
                     common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
                     Style="{ThemeResource BodyTextBlockStyle}"
-                    Foreground="{ThemeResource MessageForegroundBrush}"
+                    Foreground="{StaticResource MessageForegroundBrush}"
                     Grid.Row="2">
                     <TextBlock.Resources>
                         <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
@@ -109,6 +127,6 @@
         </UserControl>
     </ContentControl>
 
-    <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2"/>
+    <controls:ReplyMarkupPanel Message="{x:Bind ViewModel}" ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2"/>
 
 </local:MessageBubbleBase>

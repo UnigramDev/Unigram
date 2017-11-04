@@ -26,6 +26,10 @@ namespace Unigram.Core.Services
     {
         Task RegisterAsync();
         Task UnregisterAsync();
+        string GetGroup(ITLDialogWith with);
+        string GetPicture(ITLDialogWith with, string group);
+        string GetTitle(ITLDialogWith with);
+        string GetLaunch(ITLDialogWith with);
 
         void Notify(TLMessageCommonBase commonMessage);
     }
@@ -162,12 +166,6 @@ namespace Unigram.Core.Services
             SettingsHelper.ChannelUri = null;
         }
 
-
-
-
-
-
-
         public void Notify(TLMessageCommonBase commonMessage)
         {
             var caption = commonMessage.Parent.DisplayName;
@@ -181,31 +179,33 @@ namespace Unigram.Core.Services
             var loc_key = commonMessage.Parent is TLChannel channel && channel.IsBroadcast ? "CHANNEL" : string.Empty;
 
             NotificationTask.UpdateToast(caption, content, sound, launch, tag, group, picture, date, loc_key);
+            NotificationTask.UpdatePrimaryTile(caption, content, picture);
         }
 
         private string GetLaunch(TLMessageCommonBase custom)
         {
-            var launch = string.Empty;
-
-            if (custom.Id > 0)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "msg_id={0}&amp;", custom.Id);
-            }
-            if (custom.Parent is TLChat chat)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "chat_id={0}", chat.Id);
-            }
-            else if (custom.Parent is TLChannel channel)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "channel_id={0}&amp;access_hash={1}", channel.Id, channel.AccessHash ?? 0);
-            }
-            else if (custom.Parent is TLUser user)
-            {
-                launch += string.Format(CultureInfo.InvariantCulture, "from_id={0}&amp;access_hash={1}", user.Id, user.AccessHash ?? 0);
-            }
+            return GetLaunch(custom?.Parent);
 
             //launch += L"Action=";
             //launch += loc_key->Data();
+        }
+
+        public string GetLaunch(ITLDialogWith with)
+        {
+            var launch = string.Empty;
+
+            if (with is TLChat chat)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "chat_id={0}", chat.Id);
+            }
+            else if (with is TLChannel channel)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "channel_id={0}&amp;access_hash={1}", channel.Id, channel.AccessHash ?? 0);
+            }
+            else if (with is TLUser user)
+            {
+                launch += string.Format(CultureInfo.InvariantCulture, "from_id={0}&amp;access_hash={1}", user.Id, user.AccessHash ?? 0);
+            }
 
             return launch;
         }
@@ -217,15 +217,25 @@ namespace Unigram.Core.Services
 
         private string GetGroup(TLMessageCommonBase custom)
         {
-            if (custom.Parent is TLChat chat)
+            return GetGroup(custom?.Parent);
+        }
+
+        public string GetGroup(ITLDialogWith with)
+        {
+            if (with == null)
+            {
+                return null;
+            }
+
+            if (with is TLChat chat)
             {
                 return string.Format(CultureInfo.InvariantCulture, "c{0}", chat.Id);
             }
-            else if (custom.Parent is TLChannel channel)
+            else if (with is TLChannel channel)
             {
                 return string.Format(CultureInfo.InvariantCulture, "c{0}", channel.Id);
             }
-            else if (custom.Parent is TLUser user)
+            else if (with is TLUser user)
             {
                 return string.Format(CultureInfo.InvariantCulture, "u{0}", user.Id);
             }
@@ -235,16 +245,21 @@ namespace Unigram.Core.Services
 
         private string GetPicture(TLMessageCommonBase custom, string group)
         {
+            return GetPicture(custom?.Parent, group);
+        }
+
+        public string GetPicture(ITLDialogWith with, string group)
+        {
             TLFileLocation location = null;
-            if (custom.Parent is TLUser user && user.Photo is TLUserProfilePhoto userPhoto)
+            if (with is TLUser user && user.Photo is TLUserProfilePhoto userPhoto)
             {
                 location = userPhoto.PhotoSmall as TLFileLocation;
             }
-            else if (custom.Parent is TLChat chat && chat.Photo is TLChatPhoto chatPhoto)
+            else if (with is TLChat chat && chat.Photo is TLChatPhoto chatPhoto)
             {
                 location = chatPhoto.PhotoSmall as TLFileLocation;
             }
-            else if (custom.Parent is TLChannel channel && channel.Photo is TLChatPhoto channelPhoto)
+            else if (with is TLChannel channel && channel.Photo is TLChatPhoto channelPhoto)
             {
                 location = channelPhoto.PhotoSmall as TLFileLocation;
             }
@@ -259,6 +274,29 @@ namespace Unigram.Core.Services
             }
 
             return FileUtils.GetTempFileUri("placeholders/" + group + "_placeholder.png").ToString();
+        }
+
+        public string GetTitle(ITLDialogWith with)
+        {
+            if (with == null)
+            {
+                return null;
+            }
+
+            if (with is TLChat chat)
+            {
+                return chat.Title;
+            }
+            else if (with is TLChannel channel)
+            {
+                return channel.Title;
+            }
+            else if (with is TLUser user)
+            {
+                return user.DisplayName;
+            }
+
+            return null;
         }
 
         #region Brief
@@ -298,7 +336,11 @@ namespace Unigram.Core.Services
 
                         return result + photoMedia.Caption.Replace("\r\n", "\n").Replace("\n", " ");
                     }
-                    else if (message.Media is TLMessageMediaGame)
+                    else if (message.Media is TLMessageMediaVenue venueMedia)
+                    {
+                        return result + venueMedia.Title;
+                    }
+                    else if (message.Media is TLMessageMediaGame || message.Media is TLMessageMediaGeoLive)
                     {
                         return string.Empty;
                     }
@@ -464,9 +506,13 @@ namespace Unigram.Core.Services
                     {
                         return result + "Location";
                     }
+                    else if (message.Media is TLMessageMediaGeoLive)
+                    {
+                        return result + "Live Location";
+                    }
                     else if (message.Media is TLMessageMediaVenue)
                     {
-                        return result + "Venue";
+                        return result + "Location, ";
                     }
                     else if (message.Media is TLMessageMediaPhoto photoMedia)
                     {

@@ -503,7 +503,7 @@
 
             <TextBlock Text="👁" HorizontalAlignment="Center" IsColorFontEnabled="False">
                 <Run Text="👁"/>
-                <Run Text="&#xE607;" FontFamily="{ThemeResource TelegramThemeFontFamily}"/>
+                <Run Text="&#xE607;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
             </TextBlock>
 
             <Button Content="Test" Click="Button_Click"/>

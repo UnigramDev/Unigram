@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -29,6 +29,8 @@ namespace Unigram.ViewModels
             _stickers = stickers;
 
             Items = new ObservableCollection<TLMessagesStickerSet>();
+
+            SendCommand = new RelayCommand(SendExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -81,7 +83,7 @@ namespace Unigram.ViewModels
 
         public ObservableCollection<TLMessagesStickerSet> Items { get; private set; }
 
-        public RelayCommand SendCommand => new RelayCommand(SendExecute);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             IsLoading = true;

@@ -24,6 +24,48 @@ namespace Telegram.Api.Services
     public partial class MTProtoService
     {
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLMessagesAffectedHistory>> ReadMentionsAsync(TLInputPeerBase inputPeer)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedHistory>>();
+            ReadMentionsAsync(inputPeer, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedHistory>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLMessagesAffectedHistory>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<TLUpdatesBase>> TogglePreHistoryHiddenAsync(TLInputChannelBase channel, bool enabled)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
+            TogglePreHistoryHiddenAsync(channel, enabled, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
+        public Task<MTProtoResponse<bool>> DeleteHistoryAsync(TLInputChannelBase inputChannel, int maxId)
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
+            DeleteHistoryAsync(inputChannel, maxId, (callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesMessagesBase>> GetUnreadMentionsAsync(TLInputPeerBase inputPeer, int offsetId, int addOffset, int limit, int maxId, int minId)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesMessagesBase>>();
@@ -1012,15 +1054,15 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLChannelsChannelParticipants>> GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit)
+        public Task<MTProtoResponse<TLChannelsChannelParticipantsBase>> GetParticipantsAsync(TLInputChannelBase inputChannel, TLChannelParticipantsFilterBase filter, int offset, int limit, int hash)
         {
-            var tsc = new TaskCompletionSource<MTProtoResponse<TLChannelsChannelParticipants>>();
-            GetParticipantsAsync(inputChannel, filter, offset, limit, (callback) =>
+            var tsc = new TaskCompletionSource<MTProtoResponse<TLChannelsChannelParticipantsBase>>();
+            GetParticipantsAsync(inputChannel, filter, offset, limit, hash, (callback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLChannelsChannelParticipants>(callback));
+                tsc.TrySetResult(new MTProtoResponse<TLChannelsChannelParticipantsBase>(callback));
             }, (faultCallback) =>
             {
-                tsc.TrySetResult(new MTProtoResponse<TLChannelsChannelParticipants>(faultCallback));
+                tsc.TrySetResult(new MTProtoResponse<TLChannelsChannelParticipantsBase>(faultCallback));
             });
             return tsc.Task;
         }
@@ -1740,10 +1782,10 @@ namespace Telegram.Api.Services
         }
 
         [DebuggerStepThrough]
-        public Task<MTProtoResponse<TLUpdatesBase>> EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, bool noWebPage)
+        public Task<MTProtoResponse<TLUpdatesBase>> EditMessageAsync(TLInputPeerBase peer, int id, string message, TLVector<TLMessageEntityBase> entities, TLReplyMarkupBase replyMarkup, TLInputGeoPointBase geoPoint, bool noWebPage, bool stop)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLUpdatesBase>>();
-            EditMessageAsync(peer, id, message, entities, replyMarkup, noWebPage, (callback) =>
+            EditMessageAsync(peer, id, message, entities, replyMarkup, geoPoint, noWebPage, stop, (callback) =>
             {
                 tsc.TrySetResult(new MTProtoResponse<TLUpdatesBase>(callback));
             }, (faultCallback) =>

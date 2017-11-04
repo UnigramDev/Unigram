@@ -48,6 +48,9 @@ using Unigram.Views.Users;
 using System.Linq;
 using Telegram.Logs;
 using Windows.Media.Playback;
+using Windows.UI.StartScreen;
+using Windows.System;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace Unigram
 {
@@ -56,7 +59,9 @@ namespace Unigram
     /// </summary>
     sealed partial class App : BootStrapper
     {
-        public static ShareOperation ShareOperation { get; private set; }
+        public static ShareOperation ShareOperation { get; set; }
+        public static DataPackageView DataPackage { get; set; }
+
         public static AppServiceConnection Connection { get; private set; }
 
         public static AppInMemoryState InMemoryState { get; } = new AppInMemoryState();
@@ -229,7 +234,6 @@ namespace Unigram
 
         public override Task OnInitializeAsync(IActivatedEventArgs args)
         {
-            Execute.Initialize();
             Locator.Configure();
 
             if (Window.Current != null)
@@ -258,11 +262,53 @@ namespace Unigram
             {
                 if (args is ShareTargetActivatedEventArgs share)
                 {
+                    var package = new DataPackage();
+                    var operation = share.ShareOperation.Data;
+                    if (operation.Contains(StandardDataFormats.ApplicationLink))
+                    {
+                        package.SetApplicationLink(await operation.GetApplicationLinkAsync());
+                    }
+                    if (operation.Contains(StandardDataFormats.Bitmap))
+                    {
+                        package.SetBitmap(await operation.GetBitmapAsync());
+                    }
+                    //if (operation.Contains(StandardDataFormats.Html))
+                    //{
+                    //    package.SetHtmlFormat(await operation.GetHtmlFormatAsync());
+                    //}
+                    //if (operation.Contains(StandardDataFormats.Rtf))
+                    //{
+                    //    package.SetRtf(await operation.GetRtfAsync());
+                    //}
+                    if (operation.Contains(StandardDataFormats.StorageItems))
+                    {
+                        package.SetStorageItems(await operation.GetStorageItemsAsync());
+                    }
+                    if (operation.Contains(StandardDataFormats.Text))
+                    {
+                        package.SetText(await operation.GetTextAsync());
+                    }
+                    //if (operation.Contains(StandardDataFormats.Uri))
+                    //{
+                    //    package.SetUri(await operation.GetUriAsync());
+                    //}
+                    if (operation.Contains(StandardDataFormats.WebLink))
+                    {
+                        package.SetWebLink(await operation.GetWebLinkAsync());
+                    }
+
                     ShareOperation = share.ShareOperation;
-                    NavigationService.Navigate(typeof(ShareTargetPage));
+                    DataPackage = package.GetView();
+
+                    var options = new LauncherOptions();
+                    options.TargetApplicationPackageFamilyName = Package.Current.Id.FamilyName;
+
+                    await Launcher.LaunchUriAsync(new Uri("tg://"), options);
                 }
                 else if (args is VoiceCommandActivatedEventArgs voice)
                 {
+                    Execute.Initialize();
+
                     SpeechRecognitionResult speechResult = voice.Result;
                     string command = speechResult.RulePath[0];
 
@@ -324,7 +370,15 @@ namespace Unigram
                 }
                 else if (args is ProtocolActivatedEventArgs protocol)
                 {
-                    if (NavigationService.Frame.Content is MainPage page)
+                    Execute.Initialize();
+
+                    if (ShareOperation != null)
+                    {
+                        ShareOperation.ReportCompleted();
+                        ShareOperation = null;
+                    }
+
+                    if (NavigationService?.Frame?.Content is MainPage page)
                     {
                         page.Activate(protocol.Uri);
                     }
@@ -335,10 +389,13 @@ namespace Unigram
                 }
                 else
                 {
-                    var activate = args as ToastNotificationActivatedEventArgs;
-                    var launch = activate?.Argument ?? null;
+                    Execute.Initialize();
 
-                    if (NavigationService.Frame.Content is MainPage page)
+                    var activate = args as ToastNotificationActivatedEventArgs;
+                    var launched = args as LaunchActivatedEventArgs;
+                    var launch = activate?.Argument ?? launched?.Arguments;
+
+                    if (NavigationService?.Frame?.Content is MainPage page)
                     {
                         page.Activate(launch);
                     }
@@ -350,6 +407,8 @@ namespace Unigram
             }
             else
             {
+                Execute.Initialize();
+
                 NavigationService.Navigate(typeof(IntroPage));
             }
 
@@ -398,6 +457,20 @@ namespace Unigram
             BadgeUpdateManager.CreateBadgeUpdaterForApplication("App").Clear();
             TileUpdateManager.CreateTileUpdaterForApplication("App").Clear();
             ToastNotificationManager.History.Clear("App");
+
+            if (SettingsHelper.UserId > 0 && ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2) && JumpList.IsSupported())
+            {
+                var current = await JumpList.LoadCurrentAsync();
+                current.SystemGroupKind = JumpListSystemGroupKind.None;
+                current.Items.Clear();
+
+                var cloud = JumpListItem.CreateWithArguments(string.Format("from_id={0}", SettingsHelper.UserId), "Cloud Storage");
+                cloud.Logo = new Uri("ms-appx:///Assets/JumpList/CloudStorage/CloudStorage.png");
+
+                current.Items.Add(cloud);
+
+                await current.SaveAsync();
+            }
 
 #if !DEBUG && !PREVIEW
             Execute.BeginOnThreadPool(async () =>

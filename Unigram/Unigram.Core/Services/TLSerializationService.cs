@@ -45,7 +45,7 @@ namespace Unigram.Core.Services
 
         public T Deserialize<T>(string parameter)
         {
-            if (parameter == null)
+            if (string.IsNullOrEmpty(parameter))
             {
                 return (T)(object)null;
             }

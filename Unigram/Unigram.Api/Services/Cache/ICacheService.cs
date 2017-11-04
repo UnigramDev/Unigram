@@ -89,6 +89,7 @@ namespace Telegram.Api.Services.Cache
         void DeleteDialog(TLDialog dialog);
         void DeleteMessages(TLVector<int> ids);
         void DeleteChannelMessages(int channelId, TLVector<int> ids);
+        void DeleteChannelMessages(int channelId, int minId);
         void DeleteMessages(TLPeerBase peer, TLMessageBase lastItem, TLVector<int> messages);
         void DeleteMessages(TLVector<long> ids);
         // TODO: Encrypted void DeleteDecryptedMessages(TLVector<long> ids);
@@ -121,6 +122,8 @@ namespace Telegram.Api.Services.Cache
         void DeleteUser(int? id);
         void DeleteChat(int? id);
         void DeleteUserHistory(TLPeerChannel channel, TLPeerUser peer);
+
+        void ClearDialog(TLPeerBase peer, int availableMinId);
     }
 
     public class ExceptionInfo

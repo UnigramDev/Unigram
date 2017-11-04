@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Api.Aggregator;
@@ -36,6 +36,18 @@ namespace Unigram.ViewModels.Users
         public UserDetailsViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            SendMessageCommand = new RelayCommand(SendMessageExecute);
+            MediaCommand = new RelayCommand(MediaExecute);
+            CommonChatsCommand = new RelayCommand(CommonChatsExecute);
+            SystemCallCommand = new RelayCommand(SystemCallExecute);
+            BlockCommand = new RelayCommand(BlockExecute);
+            UnblockCommand = new RelayCommand(UnblockExecute);
+            ReportCommand = new RelayCommand(ReportExecute);
+            ToggleMuteCommand = new RelayCommand(ToggleMuteExecute);
+            CallCommand = new RelayCommand(CallExecute);
+            AddCommand = new RelayCommand(AddExecute);
+            EditCommand = new RelayCommand(EditExecute);
+            DeleteCommand = new RelayCommand(DeleteExecute);
         }
 
         private TLUser _item;
@@ -130,7 +142,7 @@ namespace Unigram.ViewModels.Users
                 // TODO: 06/05/2017
                 //Item.IsBlocked = message.Blocked;
                 Full.IsBlocked = message.Blocked;
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     RaisePropertyChanged(() => BlockVisibility);
                     RaisePropertyChanged(() => UnblockVisibility);
@@ -148,7 +160,7 @@ namespace Unigram.ViewModels.Users
                 var peer = notifyPeer.Peer;
                 if (peer is TLPeerUser && peer.Id == Item.Id)
                 {
-                    Execute.BeginOnUIThread(() =>
+                    BeginOnUIThread(() =>
                     {
                         Full.NotifySettings = message.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);
@@ -166,7 +178,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand SendMessageCommand => new RelayCommand(SendMessageExecute);
+        public RelayCommand SendMessageCommand { get; }
         private void SendMessageExecute()
         {
             if (Item is TLUser user)
@@ -175,7 +187,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand MediaCommand => new RelayCommand(MediaExecute);
+        public RelayCommand MediaCommand { get; }
         private void MediaExecute()
         {
             if (Item is TLUser user && user.HasAccessHash)
@@ -184,7 +196,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand CommonChatsCommand => new RelayCommand(CommonChatsExecute);
+        public RelayCommand CommonChatsCommand { get; }
         private void CommonChatsExecute()
         {
             if (Item is TLUser user && user.HasAccessHash)
@@ -193,7 +205,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand SystemCallCommand => new RelayCommand(SystemCallExecute);
+        public RelayCommand SystemCallCommand { get; }
         private void SystemCallExecute()
         {
             var user = Item as TLUser;
@@ -210,7 +222,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand BlockCommand => new RelayCommand(BlockExecute);
+        public RelayCommand BlockCommand { get; }
         private async void BlockExecute()
         {
             if (Item is TLUser user)
@@ -224,13 +236,19 @@ namespace Unigram.ViewModels.Users
                 var result = await ProtoService.BlockAsync(user.ToInputUser());
                 if (result.IsSucceeded && result.Result)
                 {
+                    if (Full is TLUserFull full)
+                    {
+                        full.IsBlocked = true;
+                        full.RaisePropertyChanged(() => full.IsBlocked);
+                    }
+
                     CacheService.Commit();
                     Aggregator.Publish(new TLUpdateUserBlocked { UserId = user.Id, Blocked = true });
                 }
             }
         }
 
-        public RelayCommand UnblockCommand => new RelayCommand(UnblockExecute);
+        public RelayCommand UnblockCommand { get; }
         private async void UnblockExecute()
         {
             if (Item is TLUser user)
@@ -244,6 +262,12 @@ namespace Unigram.ViewModels.Users
                 var result = await ProtoService.UnblockAsync(user.ToInputUser());
                 if (result.IsSucceeded && result.Result)
                 {
+                    if (Full is TLUserFull full)
+                    {
+                        full.IsBlocked = false;
+                        full.RaisePropertyChanged(() => full.IsBlocked);
+                    }
+
                     CacheService.Commit();
                     Aggregator.Publish(new TLUpdateUserBlocked { UserId = user.Id, Blocked = false });
 
@@ -255,7 +279,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand ReportCommand => new RelayCommand(ReportExecute);
+        public RelayCommand ReportCommand { get; }
         private async void ReportExecute()
         {
             var user = Item as TLUser;
@@ -508,7 +532,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand ToggleMuteCommand => new RelayCommand(ToggleMuteExecute);
+        public RelayCommand ToggleMuteCommand { get; }
         private async void ToggleMuteExecute()
         {
             if (_item == null || _full == null)
@@ -545,6 +569,7 @@ namespace Unigram.ViewModels.Users
                     {
                         dialog.NotifySettings = _full.NotifySettings;
                         dialog.RaisePropertyChanged(() => dialog.NotifySettings);
+                        dialog.RaisePropertyChanged(() => dialog.IsMuted);
                         dialog.RaisePropertyChanged(() => dialog.Self);
                     }
 
@@ -555,7 +580,7 @@ namespace Unigram.ViewModels.Users
 
         #region Call
 
-        public RelayCommand CallCommand => new RelayCommand(CallExecute);
+        public RelayCommand CallCommand { get; }
         private async void CallExecute()
         {
             if (_item == null || _full == null)
@@ -583,7 +608,7 @@ namespace Unigram.ViewModels.Users
 
         #endregion
 
-        public RelayCommand AddCommand => new RelayCommand(AddExecute);
+        public RelayCommand AddCommand { get; }
         private async void AddExecute()
         {
             var user = _item as TLUser;
@@ -638,7 +663,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand EditCommand => new RelayCommand(EditExecute);
+        public RelayCommand EditCommand { get; }
         private async void EditExecute()
         {
             var user = _item as TLUser;
@@ -678,7 +703,7 @@ namespace Unigram.ViewModels.Users
             }
         }
 
-        public RelayCommand DeleteCommand => new RelayCommand(DeleteExecute);
+        public RelayCommand DeleteCommand { get; }
         private async void DeleteExecute()
         {
             var user = _item as TLUser;

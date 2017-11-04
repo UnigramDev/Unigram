@@ -14,15 +14,19 @@ namespace Telegram.Api.TL.Messages.Methods
 		public enum Flag : Int32
 		{
 			NoWebPage = (1 << 1),
+			StopGeoLive = (1 << 12),
 			Message = (1 << 11),
 			ReplyMarkup = (1 << 2),
 			Entities = (1 << 3),
+			GeoPoint = (1 << 13),
 		}
 
 		public bool IsNoWebPage { get { return Flags.HasFlag(Flag.NoWebPage); } set { Flags = value ? (Flags | Flag.NoWebPage) : (Flags & ~Flag.NoWebPage); } }
+		public bool IsStopGeoLive { get { return Flags.HasFlag(Flag.StopGeoLive); } set { Flags = value ? (Flags | Flag.StopGeoLive) : (Flags & ~Flag.StopGeoLive); } }
 		public bool HasMessage { get { return Flags.HasFlag(Flag.Message); } set { Flags = value ? (Flags | Flag.Message) : (Flags & ~Flag.Message); } }
 		public bool HasReplyMarkup { get { return Flags.HasFlag(Flag.ReplyMarkup); } set { Flags = value ? (Flags | Flag.ReplyMarkup) : (Flags & ~Flag.ReplyMarkup); } }
 		public bool HasEntities { get { return Flags.HasFlag(Flag.Entities); } set { Flags = value ? (Flags | Flag.Entities) : (Flags & ~Flag.Entities); } }
+		public bool HasGeoPoint { get { return Flags.HasFlag(Flag.GeoPoint); } set { Flags = value ? (Flags | Flag.GeoPoint) : (Flags & ~Flag.GeoPoint); } }
 
 		public Flag Flags { get; set; }
 		public TLInputPeerBase Peer { get; set; }
@@ -30,6 +34,7 @@ namespace Telegram.Api.TL.Messages.Methods
 		public String Message { get; set; }
 		public TLReplyMarkupBase ReplyMarkup { get; set; }
 		public TLVector<TLMessageEntityBase> Entities { get; set; }
+		public TLInputGeoPointBase GeoPoint { get; set; }
 
 		public TLMessagesEditMessage() { }
 		public TLMessagesEditMessage(TLBinaryReader from)
@@ -47,6 +52,7 @@ namespace Telegram.Api.TL.Messages.Methods
 			if (HasMessage) Message = from.ReadString();
 			if (HasReplyMarkup) ReplyMarkup = TLFactory.Read<TLReplyMarkupBase>(from);
 			if (HasEntities) Entities = TLFactory.Read<TLVector<TLMessageEntityBase>>(from);
+			if (HasGeoPoint) GeoPoint = TLFactory.Read<TLInputGeoPointBase>(from);
 		}
 
 		public override void Write(TLBinaryWriter to)
@@ -59,6 +65,7 @@ namespace Telegram.Api.TL.Messages.Methods
 			if (HasMessage) to.WriteString(Message ?? string.Empty);
 			if (HasReplyMarkup) to.WriteObject(ReplyMarkup);
 			if (HasEntities) to.WriteObject(Entities);
+			if (HasGeoPoint) to.WriteObject(GeoPoint);
 		}
 
 		private void UpdateFlags()
@@ -66,6 +73,7 @@ namespace Telegram.Api.TL.Messages.Methods
 			HasMessage = Message != null;
 			HasReplyMarkup = ReplyMarkup != null;
 			HasEntities = Entities != null;
+			HasGeoPoint = GeoPoint != null;
 		}
 	}
 }

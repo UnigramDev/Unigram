@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Telegram.Api.TL;
 using Unigram.Core.Unidecode;
+using Unigram.ViewModels;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -19,6 +24,49 @@ namespace Unigram.Common
 {
     public static class Extensions
     {
+        public static bool IsAdmin(this TLMessageBase message)
+        {
+            // Kludge
+            return message.Parent is TLChannel channel && DialogViewModel.Admins.TryGetValue(channel.Id, out IList<TLChannelParticipantBase> admins) && admins.Any(x => x.UserId == message.FromId);
+        }
+
+        public static void BeginOnUIThread(this DependencyObject element, Action action)
+        {
+            element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
+        }
+
+        public static Regex _pattern = new Regex("[\\-0-9]+", RegexOptions.Compiled);
+        public static int ToInt32(this String value)
+        {
+            if (value == null)
+            {
+                return 0;
+            }
+
+            var val = 0;
+            try
+            {
+                var matcher = _pattern.Match(value);
+                if (matcher.Success)
+                {
+                    var num = matcher.Groups[0].Value;
+                    val = int.Parse(num);
+                }
+            }
+            catch (Exception e)
+            {
+                //FileLog.e(e);
+            }
+
+            return val;
+        }
+
+        public static int TryParseOrDefault(string value, int defaultValue)
+        {
+            int.TryParse(value, out defaultValue);
+            return defaultValue;
+        }
+
         public static Dictionary<string, string> ParseQueryString(this string query)
         {
             var first = query.Split('?');
@@ -86,14 +134,36 @@ namespace Unigram.Common
             return input;
         }
 
-        public static string TrimEnd(this string input, string suffixToRemove)
+        public static string TrimStart(this string target, string trimString)
         {
-            if (input != null && suffixToRemove != null && input.EndsWith(suffixToRemove))
+            string result = target;
+            while (result.StartsWith(trimString))
             {
-                return input.Substring(0, input.Length - suffixToRemove.Length);
+                result = result.Substring(trimString.Length);
             }
-            else return input;
+
+            return result;
         }
+
+        public static string TrimEnd(this string target, string trimString)
+        {
+            string result = target;
+            while (result.EndsWith(trimString))
+            {
+                result = result.Substring(0, result.Length - trimString.Length);
+            }
+
+            return result;
+        }
+
+        //public static string TrimEnd(this string input, string suffixToRemove)
+        //{
+        //    if (input != null && suffixToRemove != null && input.EndsWith(suffixToRemove))
+        //    {
+        //        return input.Substring(0, input.Length - suffixToRemove.Length);
+        //    }
+        //    else return input;
+        //}
 
         public static void AddRange<T>(this IList<T> list, IEnumerable<T> source)
         {
@@ -249,6 +319,19 @@ namespace Unigram.Common
             }
 
             return transform;
+        }
+    }
+
+    public static class ClipboardEx
+    {
+        public static void TrySetContent(DataPackage content)
+        {
+            try
+            {
+                Clipboard.SetContent(content);
+                Clipboard.Flush();
+            }
+            catch { }
         }
     }
 }

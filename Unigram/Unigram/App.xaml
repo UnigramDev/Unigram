@@ -136,6 +136,11 @@
 
             <MediaElement x:Key="AudioPlayer"/>
 
+            <converters:UsernameToLinkConverter x:Key="UsernameToLinkConverter"/>
+            <converters:GeoLivePeriodConverter x:Key="GeoLivePeriodConverter"/>
+            <converters:GeoLiveToVisibilityConverter x:Key="GeoLiveToVisibilityConverter"/>
+            <converters:GeoLiveToLabelConverter x:Key="GeoLiveToLabelConverter"/>
+            <converters:VenueToGlyphConverter x:Key="VenueToGlyphConverter"/>
             <converters:CompressionToGlyphConverter x:Key="CompressionToGlyphConverter"/>
             <converters:MessageShortTTLConverter x:Key="MessageShortTTLConverter"/>
             <converters:MessageTTLConverter x:Key="MessageTTLConverter"/>

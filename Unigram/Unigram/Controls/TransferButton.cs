@@ -13,6 +13,7 @@ using Unigram.Views;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using LinqToVisualTree;
 
 namespace Unigram.Controls
 {
@@ -45,7 +46,7 @@ namespace Unigram.Controls
                         }
                         else
                         {
-                            var context = DefaultPhotoConverter.BitmapContext[photo, false];
+                            photo.DownloadAsync(UnigramContainer.Current.ResolveType<IDownloadFileManager>(), CompletedPhoto);
                         }
                     }
                 }
@@ -66,15 +67,7 @@ namespace Unigram.Controls
                     }
                     else
                     {
-                        if (TLMessage.IsGif(document))
-                        {
-                            var context = DefaultPhotoConverter.BitmapContext[document, null];
-                        }
-                        else
-                        {
-                            var manager = ChooseDownloadManager(document);
-                            document.DownloadAsync(manager);
-                        }
+                        document.DownloadAsync(ChooseDownloadManager(document), CompletedDocument);
                     }
                 }
             }
@@ -141,6 +134,30 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region ContentVisibility
+
+        public Visibility ContentVisibility
+        {
+            get { return (Visibility)GetValue(ContentVisibilityProperty); }
+            set { SetValue(ContentVisibilityProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContentVisibilityProperty =
+            DependencyProperty.Register("ContentVisibility", typeof(Visibility), typeof(TransferButton), new PropertyMetadata(Visibility.Collapsed));
+
+        #endregion
+
+        private void CompletedPhoto(TLPhoto photo)
+        {
+            var context = DefaultPhotoConverter.BitmapContext[photo, false];
+            Update();
+        }
+
+        private void CompletedDocument(TLDocument document)
+        {
+            Update();
+        }
+
         public void Update()
         {
             OnTransferableChanged(Transferable, null);
@@ -164,9 +181,16 @@ namespace Unigram.Controls
         {
             if (photo.Full is TLPhotoSize photoSize)
             {
-                var fileName = string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret);
-                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                if (photo.IsTransferring || (photo.DownloadingProgress > 0 && photo.DownloadingProgress < 1) || (photo.UploadingProgress > 0 && photo.DownloadingProgress < 1))
                 {
+                    ContentVisibility = Visibility.Visible;
+                    Visibility = Visibility.Visible;
+                    return "\uE10A";
+                }
+                else if (File.Exists(FileUtils.GetTempFileName(string.Format("{0}_{1}_{2}.jpg", photoSize.Location.VolumeId, photoSize.Location.LocalId, photoSize.Location.Secret))))
+                {
+                    ContentVisibility = Visibility.Collapsed;
+
                     var message = DataContext as TLMessage;
                     if (message != null && message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds)
                     {
@@ -176,19 +200,8 @@ namespace Unigram.Controls
                     Visibility = Visibility.Collapsed;
                     return "\uE160";
                 }
-                else if (photo.IsTransferring)
-                {
-                    return "\uE10A";
-                }
-                else if (photo.DownloadingProgress > 0 && photo.DownloadingProgress < 1)
-                {
-                    return "\uE10A";
-                }
-                else if (photo.UploadingProgress > 0 && photo.DownloadingProgress < 1)
-                {
-                    return "\uE10A";
-                }
 
+                ContentVisibility = Visibility.Visible;
                 Visibility = Visibility.Visible;
                 return "\uE118";
             }
@@ -198,11 +211,18 @@ namespace Unigram.Controls
 
         private string UpdateGlyph(TLDocument document)
         {
+            ContentVisibility = Visibility.Visible;
             Visibility = Visibility.Visible;
 
-            var fileName = document.GetFileName();
-            if (File.Exists(FileUtils.GetTempFileName(fileName)))
+            if (document.IsTransferring || (document.DownloadingProgress > 0 && document.DownloadingProgress < 1) || (document.UploadingProgress > 0 && document.DownloadingProgress < 1))
             {
+                ContentVisibility = Visibility.Visible;
+                return "\uE10A";
+            }
+            else if (File.Exists(FileUtils.GetTempFileName(document.GetFileName())))
+            {
+                ContentVisibility = Visibility.Collapsed;
+
                 var message = DataContext as TLMessage;
                 if (message != null && message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds)
                 {
@@ -215,23 +235,11 @@ namespace Unigram.Controls
                 }
                 else if (TLMessage.IsGif(document))
                 {
-                    Visibility = Visibility.Collapsed;
-                    return "\uE102";
+                    //Visibility = Visibility.Collapsed;
+                    return "\uE906";
                 }
 
                 return "\uE160";
-            }
-            else if (document.IsTransferring)
-            {
-                return "\uE10A";
-            }
-            else if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
-            {
-                return "\uE10A";
-            }
-            else if (document.UploadingProgress > 0 && document.DownloadingProgress < 1)
-            {
-                return "\uE10A";
             }
 
             return "\uE118";

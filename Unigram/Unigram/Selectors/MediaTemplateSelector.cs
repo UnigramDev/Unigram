@@ -17,7 +17,9 @@ namespace Unigram.Selectors
         public DataTemplate DocumentThumbTemplate { get; set; }
         public DataTemplate EmptyTemplate { get; set; }
         public DataTemplate GameTemplate { get; set; }
-        public DataTemplate GeoPointTemplate { get; set; }
+        public DataTemplate GamePhotoTemplate { get; set; }
+        public DataTemplate GeoTemplate { get; set; }
+        public DataTemplate GeoLiveTemplate { get; set; }
         public DataTemplate GifTemplate { get; set; }
         public DataTemplate InvoiceTemplate { get; set; }
         public DataTemplate InvoicePhotoTemplate { get; set; }
@@ -68,9 +70,9 @@ namespace Unigram.Selectors
 
                 return PhotoTemplate;
             }
-            else if (item is TLMessageMediaGame)
+            else if (item is TLMessageMediaGame gameMedia)
             {
-                return GameTemplate;
+                return gameMedia.Game.HasDocument ? GameTemplate : GamePhotoTemplate;
             }
             else if (item is TLMessageMediaVenue)
             {
@@ -78,7 +80,11 @@ namespace Unigram.Selectors
             }
             else if (item is TLMessageMediaGeo)
             {
-                return GeoPointTemplate;
+                return GeoTemplate;
+            }
+            else if (item is TLMessageMediaGeoLive)
+            {
+                return GeoLiveTemplate;
             }
             else if (item is TLMessageMediaInvoice invoiceMedia)
             {
@@ -165,12 +171,12 @@ namespace Unigram.Selectors
                         return WebPageDocumentTemplate;
                     }*/
 
-                    if (webpage.Document != null)
+                    if (webpage.Document is TLDocument)
                     {
                         return WebPageDocumentTemplate;
                     }
 
-                    if (webpage.Photo != null && webpage.Type != null)
+                    if (webpage.Photo is TLPhoto && webpage.Type != null)
                     {
                         if (IsWebPagePhotoTemplate(webpage))
                         {

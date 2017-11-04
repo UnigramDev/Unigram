@@ -31,14 +31,19 @@ namespace Unigram.Controls.Messages
         public MessageStateControl()
         {
             InitializeComponent();
+        }
 
-            DataContextChanged += (s, args) =>
-            {
-                if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
-                if (ViewModel == null) Bindings.StopTracking();
+        private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            if (ViewModel != null && ViewModel != _oldValue) Bindings.Update();
+            if (ViewModel == null) Bindings.StopTracking();
 
-                _oldValue = ViewModel;
-            };
+            _oldValue = ViewModel;
+        }
+        
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Bindings.StopTracking();
         }
 
         public string ConvertViews(TLMessage message, int? views)
@@ -50,12 +55,16 @@ namespace Unigram.Controls.Messages
                 //ViewsGlyph.Text = "\uE607\u2009";
                 ViewsGlyph.Text = "\uE607\u00A0\u00A0";
 
-                number = Convert.ShortNumber(views ?? 0);
+                number = Convert.ShortNumber(Math.Max(views ?? 1, 1));
                 number += "   ";
 
                 if (message.IsPost && message.HasPostAuthor && message.PostAuthor != null)
                 {
                     number += $"{message.PostAuthor}, ";
+                }
+                else if (message.HasFwdFrom && message.FwdFrom != null && message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                {
+                    number += $"{message.FwdFrom.PostAuthor}, ";
                 }
             }
             else
@@ -75,7 +84,7 @@ namespace Unigram.Controls.Messages
                 bot = message.From.IsBot;
             }
 
-            return hasEditDate && !hasViaBotId && !bot && replyMarkup?.TypeId != TLType.ReplyInlineMarkup ? "edited\u00A0\u2009" : string.Empty;
+            return hasEditDate && !hasViaBotId && !bot && !(replyMarkup is TLReplyInlineMarkup) ? "edited\u00A0\u2009" : string.Empty;
         }
 
         private string ConvertState(bool isOut, bool isPost, TLMessageState value)
@@ -113,7 +122,7 @@ namespace Unigram.Controls.Messages
                     bot = message.From.IsBot;
                 }
 
-                if (message.HasEditDate && !message.HasViaBotId && !bot && message.ReplyMarkup?.TypeId != TLType.ReplyInlineMarkup)
+                if (message.HasEditDate && !message.HasViaBotId && !bot && !(message.ReplyMarkup is TLReplyInlineMarkup))
                 {
                     var edit = Convert.DateTime(message.EditDate.Value);
                     text += $"\r\nEdited: {Convert.LongDate.Format(edit)} {Convert.LongTime.Format(edit)}";

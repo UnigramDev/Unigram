@@ -158,7 +158,7 @@ namespace Unigram.Controls.Messages
 
         #endregion
 
-        protected void OnMessageChanged(TextBlock paragraph)
+        protected void OnMessageChanged(TextBlock paragraph, TextBlock admin)
         {
             paragraph.Inlines.Clear();
 
@@ -200,10 +200,10 @@ namespace Unigram.Controls.Messages
                     {
                         name = channel.DisplayName;
 
-                        if (message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
-                        {
-                            name += $" ({message.FwdFrom.PostAuthor})";
-                        }
+                        //if (message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                        //{
+                        //    name += $" ({message.FwdFrom.PostAuthor})";
+                        //}
                     }
 
                     var user = message.FwdFromUser;
@@ -241,17 +241,29 @@ namespace Unigram.Controls.Messages
 
                 if (paragraph.Inlines.Count > 0)
                 {
-                    paragraph.Inlines.Add(new Run { Text = " " });
+                    if (paragraph != admin && !message.IsOut && message.IsAdmin())
+                    {
+                        paragraph.Inlines.Add(new Run { Text = " admin", Foreground = null, FontSize = 12 });
+                        admin.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        paragraph.Inlines.Add(new Run { Text = " " });
+                        admin.Visibility = Visibility.Collapsed;
+                    }
+
                     paragraph.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     paragraph.Visibility = Visibility.Collapsed;
+                    admin.Visibility = Visibility.Collapsed;
                 }
             }
             else
             {
                 paragraph.Visibility = Visibility.Collapsed;
+                admin.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -311,6 +323,11 @@ namespace Unigram.Controls.Messages
         {
             if (args.TryGetPosition(sender, out Point point))
             {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
                 var text = sender as RichTextBlock;
                 var hyperlink = text.GetHyperlinkFromPoint(point);
                 if (hyperlink != null && hyperlink.NavigateUri != null)
@@ -379,7 +396,7 @@ namespace Unigram.Controls.Messages
             //        constraint = webPage.Photo;
             //    }
             //}
-            else if (ViewModel?.Media is TLMessageMediaGeo || ViewModel?.Media is TLMessageMediaVenue)
+            else if (ViewModel?.Media is TLMessageMediaGeo || ViewModel?.Media is TLMessageMediaGeoLive || ViewModel?.Media is TLMessageMediaVenue)
             {
                 constraint = ViewModel?.Media;
             }
@@ -395,7 +412,7 @@ namespace Unigram.Controls.Messages
             var width = 0.0;
             var height = 0.0;
 
-            if (constraint is TLMessageMediaGeo || constraint is TLMessageMediaVenue)
+            if (constraint is TLMessageMediaGeo || constraint is TLMessageMediaGeoLive || constraint is TLMessageMediaVenue)
             {
                 width = 320;
                 height = 240;
@@ -499,6 +516,7 @@ namespace Unigram.Controls.Messages
             if (media == null) return false;
 
             if (media.TypeId == TLType.MessageMediaGeo) return true;
+            else if (media.TypeId == TLType.MessageMediaGeoLive) return true;
             else if (media.TypeId == TLType.MessageMediaVenue) return true;
             else if (media.TypeId == TLType.MessageMediaPhoto) return true;
             else if (media.TypeId == TLType.MessageMediaDocument)
@@ -533,6 +551,7 @@ namespace Unigram.Controls.Messages
             if (media == null) return false;
 
             if (media.TypeId == TLType.MessageMediaContact) return true;
+            else if (media.TypeId == TLType.MessageMediaGeoLive) return true;
             else if (media.TypeId == TLType.MessageMediaVenue) return true;
             else if (media.TypeId == TLType.MessageMediaPhoto)
             {

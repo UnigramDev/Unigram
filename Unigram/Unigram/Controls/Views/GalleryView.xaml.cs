@@ -49,11 +49,9 @@ namespace Unigram.Controls.Views
         private Func<FrameworkElement> _closing;
 
         private DisplayRequest _request;
-        private MediaPlayerElement _mediaPlayer;
-        private MediaPlayerSurface _mediaSurface;
-
-        private FrameworkElement _surface;
-        private SpriteVisual _surfaceVisual;
+        private MediaPlayerElement _mediaPlayerElement;
+        private MediaPlayer _mediaPlayer;
+        private Grid _surface;
 
         private Visual _layerVisual;
         //private Visual _topBarVisual;
@@ -64,14 +62,13 @@ namespace Unigram.Controls.Views
             InitializeComponent();
 
             Layer.Visibility = Visibility.Collapsed;
-            TopBar.Visibility = Visibility.Collapsed;
-            BotBar.Visibility = Visibility.Collapsed;
+            //TopBar.Visibility = Visibility.Collapsed;
+            //BotBar.Visibility = Visibility.Collapsed;
 
-            _mediaPlayer = new MediaPlayerElement { Style = Resources["yolo"] as Style };
-            _mediaPlayer.AreTransportControlsEnabled = true;
-            _mediaPlayer.TransportControls = Transport;
-            _mediaPlayer.SetMediaPlayer(new MediaPlayer());
-            _mediaPlayer.MediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+            _mediaPlayerElement = new MediaPlayerElement { Style = Resources["yolo"] as Style };
+            _mediaPlayerElement.AreTransportControlsEnabled = true;
+            _mediaPlayerElement.TransportControls = Transport;
+            _mediaPlayerElement.Tapped += MediaPlayer_Tapped;
 
             _layerVisual = ElementCompositionPreview.GetElementVisual(Layer);
             //_topBarVisual = ElementCompositionPreview.GetElementVisual(TopBar);
@@ -122,13 +119,27 @@ namespace Unigram.Controls.Views
                 layerHideAnimation.Target = nameof(Visual.Opacity);
                 layerHideAnimation.Duration = duration;
 
-                ElementCompositionPreview.SetImplicitShowAnimation(TopBar, topShowAnimation);
-                ElementCompositionPreview.SetImplicitHideAnimation(TopBar, topHideAnimation);
-                ElementCompositionPreview.SetImplicitShowAnimation(BotBar, botShowAnimation);
-                ElementCompositionPreview.SetImplicitHideAnimation(BotBar, botHideAnimation);
+                //ElementCompositionPreview.SetImplicitShowAnimation(TopBar, topShowAnimation);
+                //ElementCompositionPreview.SetImplicitHideAnimation(TopBar, topHideAnimation);
+                //ElementCompositionPreview.SetImplicitShowAnimation(BotBar, botShowAnimation);
+                //ElementCompositionPreview.SetImplicitHideAnimation(BotBar, botHideAnimation);
                 ElementCompositionPreview.SetImplicitShowAnimation(Layer, layerShowAnimation);
                 ElementCompositionPreview.SetImplicitHideAnimation(Layer, layerHideAnimation);
             }
+        }
+
+        private void OnSourceChanged(MediaPlayer sender, object args)
+        {
+            OnSourceChanged();
+        }
+
+        private async void OnSourceChanged()
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Transport.TransportVisibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Collapsed : Visibility.Visible;
+                Details.Visibility = _mediaPlayer == null || _mediaPlayer.Source == null ? Visibility.Visible : Visibility.Collapsed;
+            });
         }
 
         private async void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
@@ -225,16 +236,9 @@ namespace Unigram.Controls.Views
 
         protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
         {
-            Dispose();
-
             if (ViewModel.SelectedItem == ViewModel.FirstItem)
             {
-                //Flip.Opacity = 0;
                 Surface.Visibility = Visibility.Visible;
-
-                Layer.Visibility = Visibility.Collapsed;
-                TopBar.Visibility = Visibility.Collapsed;
-                BotBar.Visibility = Visibility.Collapsed;
 
                 var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", Surface);
                 if (animation != null && _closing != null)
@@ -245,24 +249,22 @@ namespace Unigram.Controls.Views
                         animation.TryStart(element);
                     }
                 }
-
-                DataContext = null;
-                Bindings.StopTracking();
-
-                Hide();
             }
-            else
+
+            Layer.Visibility = Visibility.Collapsed;
+            //TopBar.Visibility = Visibility.Collapsed;
+            //BotBar.Visibility = Visibility.Collapsed;
+
+            if (Transport.IsVisible)
             {
-                //Flip.Opacity = 0;
-                Layer.Visibility = Visibility.Collapsed;
-                TopBar.Visibility = Visibility.Collapsed;
-                BotBar.Visibility = Visibility.Collapsed;
-
-                DataContext = null;
-                Bindings.StopTracking();
-
-                Hide();
+                Transport.Hide();
             }
+
+            DataContext = null;
+            Bindings.StopTracking();
+
+            Dispose();
+            Hide();
 
             e.Handled = true;
         }
@@ -273,24 +275,45 @@ namespace Unigram.Controls.Views
             if (animation != null)
             {
                 Layer.Visibility = Visibility.Visible;
-                TopBar.Visibility = Visibility.Visible;
-                BotBar.Visibility = Visibility.Visible;
+                //TopBar.Visibility = Visibility.Visible;
+                //BotBar.Visibility = Visibility.Visible;
 
                 //Flip.Opacity = 1;
                 if (animation.TryStart(Surface))
                 {
                     animation.Completed += (s, args) =>
                     {
+                        Transport.Show();
+
                         //Flip.Opacity = 1;
                         //Surface.Visibility = Visibility.Collapsed;
                     };
                 }
                 else
                 {
+                    Transport.Show();
+
                     //Flip.Opacity = 1;
                     //Surface.Visibility = Visibility.Collapsed;
                 }
+
+                var border = sender as FrameworkElement;
+                var item = border.DataContext as GalleryItem;
+                if (item == null)
+                {
+                    return;
+                }
+
+                if (item.IsVideo)
+                {
+                    Play(item);
+                }
             }
+        }
+
+        private string ConvertFrom(ITLDialogWith with)
+        {
+            return with is TLUser user && user.IsSelf ? user.FullName : with?.DisplayName;
         }
 
         private string ConvertDate(int value)
@@ -301,7 +324,7 @@ namespace Unigram.Controls.Views
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
-            var border = sender as TransferButton;
+            var border = sender as FrameworkElement;
             var item = border.DataContext as GalleryItem;
             if (item == null)
             {
@@ -318,42 +341,34 @@ namespace Unigram.Controls.Views
         {
             try
             {
+                if (_surface != null)
+                {
+                    _surface.Children.Remove(_mediaPlayerElement);
+                }
+
                 var parent = Surface;
 
                 //var container = Flip.ContainerFromItem(item) as ContentControl;
                 //if (container != null && container.ContentTemplateRoot is Grid parent)
                 {
                     //_surface = parent.FindName("Surface") as ImageView;
-                    _surface = parent;
 
-                    _mediaPlayer.MediaPlayer.SetSurfaceSize(new Size(_surface.ActualWidth, _surface.ActualHeight));
+                    if (_mediaPlayer == null)
+                    {
+                        _mediaPlayer = new MediaPlayer();
+                        _mediaPlayer.SourceChanged += OnSourceChanged;
+                        _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+                    }
 
-                    var swapchain = _mediaPlayer.MediaPlayer.GetSurface(_layerVisual.Compositor);
-                    var brush = _layerVisual.Compositor.CreateSurfaceBrush(swapchain.CompositionSurface);
-                    var size = new Vector2((float)_surface.ActualWidth, (float)_surface.ActualHeight);
+                    _mediaPlayerElement.Tag = item.Source;
+                    _mediaPlayerElement.SetMediaPlayer(_mediaPlayer);
 
-                    //var mask = Unigram.Common.ImageLoader.Instance.LoadCircle(240, Colors.White).Brush;
-                    //var graphicsEffect = new AlphaMaskEffect
-                    //{
-                    //    Source = new CompositionEffectSourceParameter("image"),
-                    //    AlphaMask = new CompositionEffectSourceParameter("mask")
-                    //};
-
-                    //var effectFactory = _layerVisual.Compositor.CreateEffectFactory(graphicsEffect);
-                    //var effectBrush = effectFactory.CreateBrush();
-                    //effectBrush.SetSourceParameter("image", brush);
-                    //effectBrush.SetSourceParameter("mask", mask);
-
-                    _surfaceVisual = _layerVisual.Compositor.CreateSpriteVisual();
-                    _surfaceVisual.Size = size;
-                    _surfaceVisual.Brush = brush;
-
-                    ElementCompositionPreview.SetElementChildVisual(_surface, _surfaceVisual);
-
-                    _mediaSurface = swapchain;
                     _mediaPlayer.Source = MediaSource.CreateFromUri(item.GetVideoSource());
-                    _mediaPlayer.MediaPlayer.IsLoopingEnabled = item.IsLoop;
-                    _mediaPlayer.MediaPlayer.Play();
+                    _mediaPlayer.IsLoopingEnabled = item.IsLoop;
+                    _mediaPlayer.Play();
+
+                    _surface = parent;
+                    _surface.Children.Add(_mediaPlayerElement);
                 }
             }
             catch { }
@@ -368,38 +383,54 @@ namespace Unigram.Controls.Views
         {
             if (_surface != null)
             {
-                ElementCompositionPreview.SetElementChildVisual(_surface, null);
+                _surface.Children.Remove(_mediaPlayerElement);
                 _surface = null;
             }
 
-            if (_surfaceVisual != null)
+            if (_mediaPlayer != null)
             {
-                _surfaceVisual.Brush = null;
-                _surfaceVisual = null;
-            }
+                _mediaPlayer.SourceChanged -= OnSourceChanged;
+                _mediaPlayer.PlaybackSession.PlaybackStateChanged -= OnPlaybackStateChanged;
 
-            if (_mediaPlayer?.Source != null)
-            {
-                _mediaPlayer.MediaPlayer.Pause();
-                _mediaPlayer.Source = null;
+                _mediaPlayerElement.SetMediaPlayer(null);
+
+                _mediaPlayer.Dispose();
+                _mediaPlayer = null;
+
+                OnSourceChanged();
             }
         }
 
-        private void ImageView_Tapped(object sender, TappedRoutedEventArgs e)
+        private void ImageView_Click(object sender, RoutedEventArgs e)
         {
-            TopBar.Visibility = TopBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-            BotBar.Visibility = BotBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            if (Transport.IsVisible)
+            {
+                Transport.Hide();
+            }
+            else
+            {
+                Transport.Show();
+            }
+        }
+
+        private void MediaPlayer_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (Transport.IsVisible)
+            {
+                Transport.Hide();
+            }
+            else
+            {
+                Transport.Show();
+            }
+
+            e.Handled = true;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             DataContext = null;
             Bindings.StopTracking();
-        }
-
-        private void Download_Click(object sender, object e)
-        {
-
         }
     }
 }

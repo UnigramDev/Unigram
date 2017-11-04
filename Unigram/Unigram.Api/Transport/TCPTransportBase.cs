@@ -576,8 +576,10 @@ namespace Telegram.Api.Transport
 
         protected virtual void WRITE_LOG(string str, Exception ex)
         {
+#if LOG_REGISTRATION
             var type = ex != null ? ex.GetType().Name : "null";
             WRITE_LOG(String.Format("{0} {1} {2}={3}", str, Id, type, ex));
+#endif
         }
 
 #if TCP_OBFUSCATED_2

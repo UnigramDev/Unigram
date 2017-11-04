@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unigram.Common;
 using Unigram.Controls;
@@ -33,6 +34,15 @@ namespace Unigram.Views.Channels
         {
             InitializeComponent();
             DataContext = UnigramContainer.Current.ResolveType<ChannelEditViewModel>();
+
+            var observable = Observable.FromEventPattern<TextChangedEventArgs>(Username, "TextChanged");
+            var throttled = observable.Throttle(TimeSpan.FromMilliseconds(Constants.TypingTimeout)).ObserveOnDispatcher().Subscribe(x =>
+            {
+                if (ViewModel.UpdateIsValid(Username.Text))
+                {
+                    ViewModel.CheckAvailability(Username.Text);
+                }
+            });
         }
 
         private void Photo_Click(object sender, RoutedEventArgs e)
@@ -50,13 +60,23 @@ namespace Unigram.Views.Channels
             var file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                var dialog = new EditYourPhotoView(file);
-                var dialogResult = await dialog.ShowAsync();
-                if (dialogResult == ContentDialogBaseResult.OK)
+                var dialog = new EditYourPhotoView(file)
+                {
+                    CroppingProportions = ImageCroppingProportions.Square,
+                    IsCropEnabled = false
+                };
+
+                var confirm = await dialog.ShowAsync();
+                if (confirm == ContentDialogBaseResult.OK)
                 {
                     ViewModel.EditPhotoCommand.Execute(dialog.Result);
                 }
             }
+        }
+
+        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            //ViewModel.RevokeLinkCommand.Execute(e.ClickedItem);
         }
     }
 }

@@ -12,10 +12,19 @@ namespace Unigram.Controls
     {
         private bool _needUpdate;
 
+        public ScrollViewer ScrollingHost { get; private set; }
+
         public OrientableListView()
         {
             DefaultStyleKey = typeof(OrientableListView);
             ChoosingItemContainer += OnChoosingItemContainer;
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            ScrollingHost = (ScrollViewer)GetTemplateChild("ScrollViewer");
+
+            base.OnApplyTemplate();
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

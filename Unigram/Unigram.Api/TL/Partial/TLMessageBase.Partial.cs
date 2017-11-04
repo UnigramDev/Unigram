@@ -145,6 +145,24 @@ namespace Telegram.Api.TL
             }
         }
 
+        private ITLDialogWith _participant;
+        public ITLDialogWith Participant
+        {
+            get
+            {
+                if (_participant == null)
+                {
+                    var channel = Parent as TLChannel;
+                    if (channel != null && channel.IsBroadcast)
+                        _participant = Parent;
+                    else
+                        _participant = From;
+                }
+
+                return _participant;
+            }
+        }
+
         private ITLDialogWith _parent;
         public ITLDialogWith Parent
         {
@@ -231,10 +249,7 @@ namespace Telegram.Api.TL
         public event PropertyChangedEventHandler PropertyChanged;
         public override void RaisePropertyChanged([CallerMemberName] string propertyName = "")
         {
-            Execute.BeginOnUIThread(() =>
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            });
+            Execute.OnUIThread(() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }
     }
 
@@ -319,7 +334,7 @@ namespace Telegram.Api.TL
                 var video = attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
                 if (animated != null && video != null)
                 {
-                    return true;
+                    return !video.IsRoundMessage;
                 }
             }
 
@@ -404,7 +419,7 @@ namespace Telegram.Api.TL
             if (size > 0)
             {
                 var videoAttribute = document.Attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
-                var animatedAttribute = document.Attributes.OfType<TLDocumentAttributeAnimated>().FirstOrDefault();
+                //var animatedAttribute = document.Attributes.OfType<TLDocumentAttributeAnimated>().FirstOrDefault();
                 if (videoAttribute != null /*&& animatedAttribute == null*/)
                 {
                     return videoAttribute.IsRoundMessage;
@@ -606,7 +621,7 @@ namespace Telegram.Api.TL
         {
             get
             {
-                return ReplyVisibility == Visibility.Visible || HasViaBotId || HasFwdFrom ? Visibility.Visible : Visibility.Collapsed;
+                return ReplyVisibility == Visibility.Visible || HasViaBotId || (HasFwdFrom && IsRoundVideo()) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -661,6 +676,13 @@ namespace Telegram.Api.TL
                 if (invoiceOld != null && invoiceNew != null)
                 {
                     Media = invoiceNew;
+                }
+
+                var geoLiveNew = message.Media as TLMessageMediaGeoLive;
+                var geoLiveOld = Media as TLMessageMediaGeoLive;
+                if (geoLiveOld != null && geoLiveNew != null)
+                {
+                    Media = geoLiveNew;
                 }
             }
         }
@@ -881,13 +903,13 @@ namespace Telegram.Api.TL
             }
         }
 
-        private TLChannel _fwdFromChannel;
-        public TLChannel FwdFromChannel
+        private TLChatBase _fwdFromChannel;
+        public TLChatBase FwdFromChannel
         {
             get
             {
                 if (_fwdFromChannel == null && HasFwdFrom && FwdFrom != null && FwdFrom.HasChannelId)
-                    _fwdFromChannel = InMemoryCacheService.Current.GetChat(FwdFrom.ChannelId) as TLChannel;
+                    _fwdFromChannel = InMemoryCacheService.Current.GetChat(FwdFrom.ChannelId);
 
                 return _fwdFromChannel;
             }

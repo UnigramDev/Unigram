@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -23,6 +23,8 @@ namespace Unigram.ViewModels
         {
             Dialogs = dialogs;
             GroupedItems = new ObservableCollection<ForwardViewModel> { this };
+
+            SendCommand = new RelayCommand(SendExecute, () => SelectedItem != null);
         }
 
         private TLDialog _selectedItem;
@@ -39,8 +41,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        public List<TLMessage> Messages { get; set; }
-
         public TLKeyboardButtonSwitchInline SwitchInline { get; set; }
         public TLUser SwitchInlineBot { get; set; }
 
@@ -53,12 +53,9 @@ namespace Unigram.ViewModels
 
 
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = (_sendCommand ?? new RelayCommand(SendExecute, () => SelectedItem != null));
-
+        public RelayCommand SendCommand { get; }
         private void SendExecute()
         {
-            var messages = Messages?.ToList();
             var switchInline = SwitchInline;
             var switchInlineBot = SwitchInlineBot;
             var sendMessage = SendMessage;
@@ -69,7 +66,6 @@ namespace Unigram.ViewModels
             var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
             if (service != null)
             {
-                App.InMemoryState.ForwardMessages = messages;
                 App.InMemoryState.SwitchInline = switchInline;
                 App.InMemoryState.SwitchInlineBot = switchInlineBot;
                 App.InMemoryState.SendMessage = sendMessage;

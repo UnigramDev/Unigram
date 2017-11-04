@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Unigram.Views.SignIn;
@@ -33,14 +33,17 @@ namespace Unigram.ViewModels.SignIn
         {
             ProtoService.GotUserCountry += GotUserCountry;
 
-            if (!string.IsNullOrEmpty(ProtoService.Country))
-            {
-                GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
-            }
+            SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
+            ProxyCommand = new RelayCommand(ProxyExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            if (!string.IsNullOrEmpty(ProtoService.Country))
+            {
+                GotUserCountry(this, new CountryEventArgs { Country = ProtoService.Country });
+            }
+
             IsLoading = false;
             return Task.CompletedTask;
         }
@@ -59,7 +62,7 @@ namespace Unigram.ViewModels.SignIn
 
             if (country != null && SelectedCountry == null && string.IsNullOrEmpty(PhoneNumber))
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     SelectedCountry = country;
                 });
@@ -135,8 +138,7 @@ namespace Unigram.ViewModels.SignIn
 
         public List<KeyedList<string, Country>> Countries { get; } = Country.GroupedCountries;
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             if (PhoneCode == null || PhoneNumber == null)
@@ -173,7 +175,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        public RelayCommand ProxyCommand => new RelayCommand(ProxyExecute);
+        public RelayCommand ProxyCommand { get; }
         private async void ProxyExecute()
         {
             var dialog = new ProxyView();
@@ -190,7 +192,7 @@ namespace Unigram.ViewModels.SignIn
             if (confirm == ContentDialogResult.Primary)
             {
                 SettingsHelper.ProxyServer = dialog.Server;
-                SettingsHelper.ProxyPort = int.Parse(dialog.Port ?? "1080");
+                SettingsHelper.ProxyPort = Extensions.TryParseOrDefault(dialog.Port, 1080);
                 SettingsHelper.ProxyUsername = dialog.Username;
                 SettingsHelper.ProxyPassword = dialog.Password;
                 SettingsHelper.IsProxyEnabled = dialog.IsProxyEnabled;

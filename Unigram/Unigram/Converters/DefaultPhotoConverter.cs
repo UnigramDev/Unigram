@@ -19,6 +19,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml;
 
 namespace Unigram.Converters
 {
@@ -28,7 +29,23 @@ namespace Unigram.Converters
         private static readonly Dictionary<string, WeakReference> _cachedSources = new Dictionary<string, WeakReference>();
         private static readonly Dictionary<string, WeakReference<WriteableBitmap>> _cachedWebPImages = new Dictionary<string, WeakReference<WriteableBitmap>>();
 
-        public static readonly TLBitmapContext BitmapContext = new TLBitmapContext();
+        private static readonly Dictionary<Window, TLBitmapContext> _threadContext = new Dictionary<Window, TLBitmapContext>();
+
+        public static TLBitmapContext BitmapContext
+        {
+            get
+            {
+                if (_threadContext.TryGetValue(Window.Current, out TLBitmapContext value))
+                {
+                    return value;
+                }
+
+                var context = new TLBitmapContext();
+                _threadContext[Window.Current] = context;
+
+                return context;
+            }
+        }
 
         private static readonly AnimatedImageSourceRendererFactory _videoFactory = new AnimatedImageSourceRendererFactory();
 
@@ -193,6 +210,12 @@ namespace Unigram.Converters
                 value = photoMedia.Photo;
             }
 
+            var photo = value as TLPhoto;
+            if (photo != null)
+            {
+                return BitmapContext[photo];
+            }
+
             var photoSizeBase2 = value as TLPhotoSizeBase;
             if (photoSizeBase2 != null)
             {
@@ -212,64 +235,6 @@ namespace Unigram.Converters
                     var bitmap = new BitmapImage();
                     bitmap.SetSource(photoCachedSize.Bytes);
                     return bitmap;
-                }
-            }
-
-            var photo = value as TLPhoto;
-            if (photo != null)
-            {
-                return BitmapContext[photo];
-
-                //double num = 400;
-                //double num2;
-                //if (double.TryParse((string)parameter, out num2))
-                //{
-                //    num = num2;
-                //}
-
-                //TLPhotoSize photoSize = null;
-                //foreach (var current in photo.Sizes.OfType<TLPhotoSize>())
-                //{
-                //    if (photoSize == null || Math.Abs(num - photoSize.W) > Math.Abs(num - current.W))
-                //    {
-                //        photoSize = current;
-                //    }
-                //}
-
-                var photoSizeBase = photo.Full;
-                if (thumbnail)
-                {
-                    photoSizeBase = photo.Thumb;
-                }
-
-                if (photoSizeBase != null)
-                {
-                    //if (!string.IsNullOrEmpty(photoSize.TempUrl))
-                    //{
-                    //    if (photoMedia != null)
-                    //    {
-                    //        photoMedia.DownloadingProgress = 0.01;
-                    //    }
-                    //    return photoSize.TempUrl;
-                    //}
-
-                    var photoSize = photoSizeBase as TLPhotoSize;
-                    if (photoSize != null)
-                    {
-                        var fileLocation = photoSize.Location as TLFileLocation;
-                        if (fileLocation != null /*&& (photoMedia == null || !photoMedia.IsCanceled)*/)
-                        {
-                            return ReturnOrEnqueueImage(false, fileLocation, photo, photoSize.Size, photoMedia);
-                        }
-                    }
-
-                    var photoCachedSize = photoSizeBase as TLPhotoCachedSize;
-                    if (photoCachedSize != null)
-                    {
-                        var bitmap = new BitmapImage();
-                        bitmap.SetSource(photoCachedSize.Bytes);
-                        return bitmap;
-                    }
                 }
             }
 
@@ -362,45 +327,6 @@ namespace Unigram.Converters
                 //}
 
                 return BitmapContext[tLDocument3, thumbnail];
-
-                if (TLMessage.IsSticker(tLDocument3))
-                {
-                    //if (parameter != null && string.Equals(parameter.ToString(), "ignoreStickers", StringComparison.OrdinalIgnoreCase))
-                    //{
-                    //    return null;
-                    //}
-
-                    if (thumbnail)
-                    {
-                        return ReturnOrEnqueueStickerThumbnail(tLDocument3, null);
-                    }
-
-                    return ReturnOrEnqueueSticker(tLDocument3, null);
-                }
-                //else if (TLMessage.IsGif(tLDocument3))
-                //{
-                //    return ReturnOrEnqueueGif(tLDocument3, thumbnail);
-                //}
-                else
-                {
-                    var photoSize = tLDocument3.Thumb as TLPhotoSize;
-                    if (photoSize != null)
-                    {
-                        var fileLocation = photoSize.Location as TLFileLocation;
-                        if (fileLocation != null)
-                        {
-                            return ReturnOrEnqueueImage(false, fileLocation, tLDocument3, photoSize.Size, null);
-                        }
-                    }
-
-                    var photoCachedSize = tLDocument3.Thumb as TLPhotoCachedSize;
-                    if (photoCachedSize != null)
-                    {
-                        var bitmap = new BitmapImage();
-                        bitmap.SetSource(photoCachedSize.Bytes);
-                        return bitmap;
-                    }
-                }
             }
 
             //var videoMedia = value as TLMessageMediaVideo;
@@ -446,37 +372,6 @@ namespace Unigram.Converters
                 if (webpage.Photo is TLPhoto webpagePhoto)
                 {
                     return BitmapContext[webpagePhoto];
-
-                    //double num3 = 400;
-                    //if (double.TryParse((string)parameter, out double num4))
-                    //{
-                    //    num3 = num4;
-                    //}
-
-                    //TLPhotoSize photoSize = null;
-                    //foreach (var current in tLPhoto2.Sizes.OfType<TLPhotoSize>())
-                    //{
-                    //    if (photoSize == null || Math.Abs(num3 - (double)photoSize.W) > Math.Abs(num3 - (double)current.W))
-                    //    {
-                    //        photoSize = current;
-                    //    }
-                    //}
-
-                    var photoSizeBase = webpagePhoto.Full;
-                    if (thumbnail)
-                    {
-                        photoSizeBase = webpagePhoto.Thumb;
-                    }
-
-                    var photoSize = photoSizeBase as TLPhotoSize;
-                    if (photoSize != null)
-                    {
-                        var fileLocation = photoSize.Location as TLFileLocation;
-                        if (fileLocation != null)
-                        {
-                            return DefaultPhotoConverter.ReturnOrEnqueueImage(false, fileLocation, webpage, photoSize.Size, null);
-                        }
-                    }
                 }
             }
 
@@ -490,367 +385,6 @@ namespace Unigram.Converters
                 return BitmapContext[webDocument];
             }
 
-            return null;
-        }
-
-        private static ImageSource DecodeWebPImage(string cacheKey, byte[] buffer, Action faultCallback = null)
-        {
-            try
-            {
-                if (_cachedWebPImages.TryGetValue(cacheKey, out WeakReference<WriteableBitmap> weakReference) && weakReference.TryGetTarget(out WriteableBitmap writeableBitmap))
-                {
-                    return writeableBitmap;
-                }
-
-                try
-                {
-                    var result = WebPImage.DecodeFromByteArray(buffer);
-                    _cachedWebPImages[cacheKey] = new WeakReference<WriteableBitmap>(result);
-
-                    return result;
-                }
-                catch
-                {
-                    faultCallback?.Invoke();
-                }
-            }
-            catch (Exception e)
-            {
-                TLUtils.WriteException("WebPDecode ex ", e);
-            }
-
-            return null;
-        }
-
-        public static BitmapImage ReturnImage(TLFileLocation location)
-        {
-            var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
-
-            if (File.Exists(FileUtils.GetTempFileName(fileName)))
-            {
-                var bitmap = new BitmapImage();
-                bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
-                return bitmap;
-            }
-
-            return null;
-        }
-
-        //public static BitmapImage ReturnOrEnqueueImage(Stopwatch timer, bool checkChatSettings, TLEncryptedFile location, TLObject owner, TLDecryptedMessageMediaBase mediaPhoto)
-        //{
-        //    string text = string.Format("{0}_{1}_{2}.jpg", location.Id, location.DCId, location.AccessHash);
-        //    using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
-        //    {
-        //        if (userStoreForApplication.FileExists(text))
-        //        {
-        //            BitmapImage bitmapImage2;
-        //            BitmapImage result;
-        //            try
-        //            {
-        //                using (IsolatedStorageFileStream isolatedStorageFileStream = userStoreForApplication.OpenFile(text, 3, 1))
-        //                {
-        //                    isolatedStorageFileStream.Seek(0L, 0);
-        //                    BitmapImage bitmapImage = new BitmapImage();
-        //                    bitmapImage.SetSource(isolatedStorageFileStream);
-        //                    bitmapImage2 = bitmapImage;
-        //                }
-        //            }
-        //            catch (Exception)
-        //            {
-        //                result = null;
-        //                return result;
-        //            }
-        //            result = bitmapImage2;
-        //            return result;
-        //        }
-        //        TLObject tLObject = null;
-        //        if (checkChatSettings)
-        //        {
-        //            INavigationService navigationService = IoC.Get<INavigationService>(null);
-        //            SecretDialogDetailsView secretDialogDetailsView = navigationService.CurrentContent as SecretDialogDetailsView;
-        //            if (secretDialogDetailsView != null)
-        //            {
-        //                SecretDialogDetailsViewModel secretDialogDetailsViewModel = secretDialogDetailsView.get_DataContext() as SecretDialogDetailsViewModel;
-        //                if (secretDialogDetailsViewModel != null)
-        //                {
-        //                    tLObject = secretDialogDetailsViewModel.With;
-        //                }
-        //            }
-        //        }
-        //        IStateService stateService = IoC.Get<IStateService>(null);
-        //        TLChatSettings chatSettings = stateService.GetChatSettings();
-        //        if (chatSettings != null)
-        //        {
-        //            if (tLObject is TLUserBase && !chatSettings.AutoDownloadPhotoPrivateChats)
-        //            {
-        //                BitmapImage result = null;
-        //                return result;
-        //            }
-        //            if (tLObject is TLChatBase && !chatSettings.AutoDownloadPhotoGroups)
-        //            {
-        //                BitmapImage result = null;
-        //                return result;
-        //            }
-        //        }
-        //        if (mediaPhoto != null)
-        //        {
-        //            mediaPhoto.DownloadingProgress = 0.01;
-        //        }
-        //        Telegram.Api.Helpers.Execute.BeginOnThreadPool(delegate
-        //        {
-        //            IEncryptedFileManager encryptedFileManager = IoC.Get<IEncryptedFileManager>(null);
-        //            encryptedFileManager.DownloadFile(location, owner, null);
-        //        });
-        //    }
-        //    return null;
-        //}
-
-        public static ImageSource ReturnOrEnqueueGif(TLDocument document, bool thumbnail)
-        {
-            if (document == null)
-            {
-                return null;
-            }
-
-            if (thumbnail)
-            {
-                var photoSize = document.Thumb as TLPhotoSize;
-                if (photoSize != null)
-                {
-                    var fileLocation = photoSize.Location as TLFileLocation;
-                    if (fileLocation != null)
-                    {
-                        return ReturnOrEnqueueImage(false, fileLocation, document, photoSize.Size, null);
-                    }
-                }
-
-                var photoCachedSize = document.Thumb as TLPhotoCachedSize;
-                if (photoCachedSize != null)
-                {
-                    var bitmap = new BitmapImage();
-                    bitmap.SetSource(photoCachedSize.Bytes);
-                    return bitmap;
-                }
-            }
-
-            var filename = document.GetFileName();
-
-            if (!File.Exists(FileUtils.GetTempFileName(filename)))
-            {
-                var renderer = _videoFactory.CreateRenderer(320, 320);
-                var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
-                Execute.BeginOnThreadPool(async () =>
-                {
-                    await manager.DownloadFileAsync(filename, document.DCId, document.ToInputFileLocation(), document.Size);
-                    Execute.BeginOnUIThread(async () =>
-                    {
-                            await renderer.SetSourceAsync(FileUtils.GetTempFileUri(filename));
-                    });
-                });
-
-                return renderer.ImageSource;
-
-                //var cachedSize = document.Thumb as TLPhotoCachedSize;
-                //if (cachedSize != null)
-                //{
-                //    var cacheKey = "cached" + document.GetFileName();
-                //    var data = cachedSize.Bytes;
-                //    if (data == null)
-                //    {
-                //        return null;
-                //    }
-
-                //    return DecodeWebPImage(cacheKey, data, () => { });
-                //}
-                //else
-                //{
-                //    var photoSize = document.Thumb as TLPhotoSize;
-                //    if (photoSize != null)
-                //    {
-                //        var location = photoSize.Location as TLFileLocation;
-                //        if (location != null)
-                //        {
-                //            return EnqueueStickerPreview(location, sticker, photoSize, bitmap);
-                //        }
-                //    }
-                //}
-            }
-            else if (document.Size > 0 /*&& document.Size < 262144*/)
-            {
-                var renderer = _videoFactory.CreateRenderer(320, 320);
-                Execute.BeginOnUIThread(async () =>
-                {
-                    await renderer.SetSourceAsync(FileUtils.GetTempFileUri(filename));
-                });
-                return renderer.ImageSource;
-            }
-
-            return null;
-
-            //if (document == null)
-            //{
-            //    return null;
-            //}
-            //string documentLocalFileName = document.GetFileName();
-            //using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
-            //{
-            //    if (!userStoreForApplication.FileExists(documentLocalFileName))
-            //    {
-            //        TLObject owner = document;
-            //        if (sticker != null)
-            //        {
-            //            owner = sticker;
-            //        }
-            //        UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>().DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size, delegate (double progress)
-            //        {
-            //        }, null);
-
-            //        UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>()
-            //        TLPhotoCachedSize tLPhotoCachedSize = document.Thumb as TLPhotoCachedSize;
-            //        if (tLPhotoCachedSize != null)
-            //        {
-            //            string cacheKey = "cached" + document.GetFileName();
-            //            byte[] data = tLPhotoCachedSize.Bytes.Data;
-            //            ImageSource result;
-            //            if (data == null)
-            //            {
-            //                result = null;
-            //                return result;
-            //            }
-            //            result = DefaultPhotoConverter.DecodeWebPImage(cacheKey, data, delegate
-            //            {
-            //            });
-            //            return result;
-            //        }
-            //        else
-            //        {
-            //            var photoSize = document.Thumb as TLPhotoSize;
-            //            if (photoSize != null)
-            //            {
-            //                var fileLocation = photoSize.Location as TLFileLocation;
-            //                if (fileLocation != null)
-            //                {
-            //                    return DefaultPhotoConverter.ReturnOrEnqueueStickerPreview(fileLocation, sticker, photoSize.Size);
-            //                }
-            //            }
-            //        }
-            //    }
-            //    else if (document.DocumentSize > 0 && document.DocumentSize < 262144)
-            //    {
-            //        byte[] array;
-            //        using (IsolatedStorageFileStream isolatedStorageFileStream = userStoreForApplication.OpenFile(documentLocalFileName, 3))
-            //        {
-            //            array = new byte[isolatedStorageFileStream.get_Length()];
-            //            isolatedStorageFileStream.Read(array, 0, array.Length);
-            //        }
-            //        ImageSource result = DefaultPhotoConverter.DecodeWebPImage(documentLocalFileName, array, delegate
-            //        {
-            //            using (IsolatedStorageFile userStoreForApplication2 = IsolatedStorageFile.GetUserStoreForApplication())
-            //            {
-            //                userStoreForApplication2.DeleteFile(documentLocalFileName);
-            //            }
-            //        });
-            //        return result;
-            //    }
-            //}
-            //return null;
-        }
-
-        public static BitmapImage ReturnOrEnqueueImage(bool checkChatSettings, TLFileLocation location, TLObject owner, int fileSize, TLMessageMediaPhoto mediaPhoto)
-        {
-            string fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
-
-            if (File.Exists(FileUtils.GetTempFileName(fileName)))
-            {
-                var bitmap = new BitmapImage();
-                bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
-                return bitmap;
-            }
-
-            if (fileSize >= 0)
-            {
-                var manager = UnigramContainer.Current.ResolveType<IDownloadFileManager>();
-                var bitmap = new BitmapImage();
-
-                //Execute.BeginOnThreadPool(() => manager.DownloadFile(location, owner, fileSize));
-                Execute.BeginOnThreadPool(async () =>
-                {
-                    await manager.DownloadFileAsync(location, fileSize).AsTask(mediaPhoto?.Photo.Download());
-                    Execute.BeginOnUIThread(() =>
-                    {
-                        bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
-                    });
-                });
-
-                return bitmap;
-            }
-
-            //using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
-            //{
-            //    if (userStoreForApplication.FileExists(text))
-            //    {
-            //        BitmapImage bitmapImage2;
-            //        BitmapImage result;
-            //        try
-            //        {
-            //            using (IsolatedStorageFileStream isolatedStorageFileStream = userStoreForApplication.OpenFile(text, 3, 1))
-            //            {
-            //                isolatedStorageFileStream.Seek(0L, 0);
-            //                BitmapImage bitmapImage = new BitmapImage();
-            //                bitmapImage.SetSource(isolatedStorageFileStream);
-            //                bitmapImage2 = bitmapImage;
-            //            }
-            //        }
-            //        catch (Exception)
-            //        {
-            //            result = null;
-            //            return result;
-            //        }
-            //        result = bitmapImage2;
-            //        return result;
-            //    }
-            //    if (fileSize != null)
-            //    {
-            //        TLObject tLObject = null;
-            //        if (checkChatSettings)
-            //        {
-            //            INavigationService navigationService = IoC.Get<INavigationService>(null);
-            //            DialogDetailsView dialogDetailsView = navigationService.CurrentContent as DialogDetailsView;
-            //            if (dialogDetailsView != null)
-            //            {
-            //                DialogDetailsViewModel dialogDetailsViewModel = dialogDetailsView.get_DataContext() as DialogDetailsViewModel;
-            //                if (dialogDetailsViewModel != null)
-            //                {
-            //                    tLObject = dialogDetailsViewModel.With;
-            //                }
-            //            }
-            //        }
-            //        IStateService stateService = IoC.Get<IStateService>(null);
-            //        TLChatSettings chatSettings = stateService.GetChatSettings();
-            //        if (chatSettings != null)
-            //        {
-            //            if (tLObject is TLUserBase && !chatSettings.AutoDownloadPhotoPrivateChats)
-            //            {
-            //                BitmapImage result = null;
-            //                return result;
-            //            }
-            //            if (tLObject is TLChatBase && !chatSettings.AutoDownloadPhotoGroups)
-            //            {
-            //                BitmapImage result = null;
-            //                return result;
-            //            }
-            //        }
-            //        if (mediaPhoto != null)
-            //        {
-            //            mediaPhoto.DownloadingProgress = 0.01;
-            //        }
-            //        Telegram.Api.Helpers.Execute.BeginOnThreadPool(delegate
-            //        {
-            //            IFileManager fileManager = IoC.Get<IFileManager>(null);
-            //            fileManager.DownloadFile(location, owner, fileSize);
-            //        });
-            //    }
-            //}
             return null;
         }
 
@@ -893,99 +427,30 @@ namespace Unigram.Converters
             return null;
         }
 
-        //private static ImageSource ReturnOrEnqueueSticker(TLDecryptedMessageMediaExternalDocument document, TLDecryptedMessage owner)
-        //{
-        //    if (document == null)
-        //    {
-        //        return null;
-        //    }
-        //    string documentLocalFileName = document.GetFileName();
-        //    using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
-        //    {
-        //        if (!userStoreForApplication.FileExists(documentLocalFileName))
-        //        {
-        //            IoC.Get<IDocumentFileManager>(null).DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size, delegate (double progress)
-        //            {
-        //            }, null);
-        //            TLPhotoCachedSize tLPhotoCachedSize = document.Thumb as TLPhotoCachedSize;
-        //            if (tLPhotoCachedSize != null)
-        //            {
-        //                string cacheKey = "cached" + document.GetFileName();
-        //                byte[] data = tLPhotoCachedSize.Bytes.Data;
-        //                ImageSource result;
-        //                if (data == null)
-        //                {
-        //                    result = null;
-        //                    return result;
-        //                }
-        //                result = DefaultPhotoConverter.DecodeWebPImage(cacheKey, data, delegate
-        //                {
-        //                });
-        //                return result;
-        //            }
-        //            else
-        //            {
-        //                TLPhotoSize tLPhotoSize = document.Thumb as TLPhotoSize;
-        //                if (tLPhotoSize != null)
-        //                {
-        //                    TLFileLocation tLFileLocation = tLPhotoSize.Location as TLFileLocation;
-        //                    if (tLFileLocation != null)
-        //                    {
-        //                        ImageSource result = DefaultPhotoConverter.ReturnOrEnqueueStickerPreview(tLFileLocation, owner, tLPhotoSize.Size);
-        //                        return result;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        else if (document.Size.Value > 0 && document.Size.Value < 262144)
-        //        {
-        //            byte[] array;
-        //            using (IsolatedStorageFileStream isolatedStorageFileStream = userStoreForApplication.OpenFile(documentLocalFileName, 3))
-        //            {
-        //                array = new byte[isolatedStorageFileStream.get_Length()];
-        //                isolatedStorageFileStream.Read(array, 0, array.Length);
-        //            }
-        //            ImageSource result = DefaultPhotoConverter.DecodeWebPImage(documentLocalFileName, array, delegate
-        //            {
-        //                using (IsolatedStorageFile userStoreForApplication2 = IsolatedStorageFile.GetUserStoreForApplication())
-        //                {
-        //                    userStoreForApplication2.DeleteFile(documentLocalFileName);
-        //                }
-        //            });
-        //            return result;
-        //        }
-        //    }
-        //    return null;
-        //}
-
-        public static ImageSource EnqueueStickerPreview(TLFileLocation location, TLObject owner, TLPhotoSize photoSize, StickerBitmapSource bitmap)
+        public static BitmapImage ReturnOrEnqueueImage(bool checkChatSettings, TLFileLocation location, TLObject owner, int fileSize, TLMessageMediaPhoto mediaPhoto)
         {
-            string filename = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
+            string fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
 
-            if (File.Exists(FileUtils.GetTempFileName(filename)) && bitmap.IsSet == false)
+            if (File.Exists(FileUtils.GetTempFileName(fileName)))
             {
-                byte[] array = File.ReadAllBytes(FileUtils.GetTempFileName(filename));
-
-                return DecodeWebPImage(filename, array, () =>
-                {
-                    File.Delete(FileUtils.GetTempFileName(filename));
-                });
+                var bitmap = new BitmapImage();
+                bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
+                return bitmap;
             }
 
-            if (photoSize != null)
+            if (fileSize >= 0)
             {
                 var manager = UnigramContainer.Current.ResolveType<IDownloadFileManager>();
+                var bitmap = new BitmapImage();
+
+                //Execute.BeginOnThreadPool(() => manager.DownloadFile(location, owner, fileSize));
                 Execute.BeginOnThreadPool(async () =>
                 {
-                    await manager.DownloadFileAsync(location, photoSize.Size);
-                    if (bitmap.IsSet == false)
+                    await manager.DownloadFileAsync(location, fileSize).AsTask(mediaPhoto?.Photo.Download());
+                    Execute.BeginOnUIThread(() =>
                     {
-                        var buffer = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(filename)));
-                        Execute.BeginOnUIThread(() =>
-                        {
-                            bitmap.SetStream(buffer);
-                        });
-                    }
+                        bitmap.UriSource = FileUtils.GetTempFileUri(fileName);
+                    });
                 });
 
                 return bitmap;
@@ -993,270 +458,5 @@ namespace Unigram.Converters
 
             return null;
         }
-
-        public static ImageSource ReturnOrEnqueueSticker(TLDocument document, TLObject sticker)
-        {
-            if (document == null)
-            {
-                return null;
-            }
-
-            var filename = document.GetFileName();
-
-            if (!File.Exists(FileUtils.GetTempFileName(filename)))
-            {
-                TLObject owner = document;
-                if (sticker != null)
-                {
-                    owner = sticker;
-                }
-
-                var bitmap = new StickerBitmapSource();
-                var manager = UnigramContainer.Current.ResolveType<IDownloadDocumentFileManager>();
-                Execute.BeginOnThreadPool(async () =>
-                {
-                    await manager.DownloadFileAsync(filename, document.DCId, document.ToInputFileLocation(), document.Size);
-                    var buffer = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(filename)));
-                    Execute.BeginOnUIThread(() =>
-                    {
-                        bitmap.SetStream(buffer);
-                    });
-                });
-
-                var cachedSize = document.Thumb as TLPhotoCachedSize;
-                if (cachedSize != null)
-                {
-                    var cacheKey = "cached" + document.GetFileName();
-                    var data = cachedSize.Bytes;
-                    if (data == null)
-                    {
-                        return null;
-                    }
-
-                    return DecodeWebPImage(cacheKey, data, () => { });
-                }
-                else
-                {
-                    var photoSize = document.Thumb as TLPhotoSize;
-                    if (photoSize != null)
-                    {
-                        var location = photoSize.Location as TLFileLocation;
-                        if (location != null)
-                        {
-                            return EnqueueStickerPreview(location, sticker, photoSize, bitmap);
-                        }
-                    }
-                }
-            }
-            else if (document.Size > 0 && document.Size < 262144)
-            {
-                var array = File.ReadAllBytes(FileUtils.GetTempFileName(filename));
-                return DecodeWebPImage(filename, array, delegate
-                {
-                    File.Delete(FileUtils.GetTempFileName(filename));
-                });
-            }
-
-            return null;
-
-            //if (document == null)
-            //{
-            //    return null;
-            //}
-            //string documentLocalFileName = document.GetFileName();
-            //using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
-            //{
-            //    if (!userStoreForApplication.FileExists(documentLocalFileName))
-            //    {
-            //        TLObject owner = document;
-            //        if (sticker != null)
-            //        {
-            //            owner = sticker;
-            //        }
-            //        UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>().DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size, delegate (double progress)
-            //        {
-            //        }, null);
-
-            //        UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>()
-            //        TLPhotoCachedSize tLPhotoCachedSize = document.Thumb as TLPhotoCachedSize;
-            //        if (tLPhotoCachedSize != null)
-            //        {
-            //            string cacheKey = "cached" + document.GetFileName();
-            //            byte[] data = tLPhotoCachedSize.Bytes.Data;
-            //            ImageSource result;
-            //            if (data == null)
-            //            {
-            //                result = null;
-            //                return result;
-            //            }
-            //            result = DefaultPhotoConverter.DecodeWebPImage(cacheKey, data, delegate
-            //            {
-            //            });
-            //            return result;
-            //        }
-            //        else
-            //        {
-            //            var photoSize = document.Thumb as TLPhotoSize;
-            //            if (photoSize != null)
-            //            {
-            //                var fileLocation = photoSize.Location as TLFileLocation;
-            //                if (fileLocation != null)
-            //                {
-            //                    return DefaultPhotoConverter.ReturnOrEnqueueStickerPreview(fileLocation, sticker, photoSize.Size);
-            //                }
-            //            }
-            //        }
-            //    }
-            //    else if (document.DocumentSize > 0 && document.DocumentSize < 262144)
-            //    {
-            //        byte[] array;
-            //        using (IsolatedStorageFileStream isolatedStorageFileStream = userStoreForApplication.OpenFile(documentLocalFileName, 3))
-            //        {
-            //            array = new byte[isolatedStorageFileStream.get_Length()];
-            //            isolatedStorageFileStream.Read(array, 0, array.Length);
-            //        }
-            //        ImageSource result = DefaultPhotoConverter.DecodeWebPImage(documentLocalFileName, array, delegate
-            //        {
-            //            using (IsolatedStorageFile userStoreForApplication2 = IsolatedStorageFile.GetUserStoreForApplication())
-            //            {
-            //                userStoreForApplication2.DeleteFile(documentLocalFileName);
-            //            }
-            //        });
-            //        return result;
-            //    }
-            //}
-            //return null;
-        }
-        public static ImageSource ReturnOrEnqueueStickerThumbnail(TLDocument document, TLObject sticker)
-        {
-            var bitmap = new StickerBitmapSource();
-            var cachedSize = document.Thumb as TLPhotoCachedSize;
-            if (cachedSize != null)
-            {
-                var cacheKey = "cached" + document.GetFileName();
-                var data = cachedSize.Bytes;
-                if (data == null)
-                {
-                    return null;
-                }
-
-                return DecodeWebPImage(cacheKey, data, () => { });
-            }
-            else
-            {
-                var photoSize = document.Thumb as TLPhotoSize;
-                if (photoSize != null)
-                {
-                    var location = photoSize.Location as TLFileLocation;
-                    if (location != null)
-                    {
-                        return EnqueueStickerPreview(location, sticker, photoSize, bitmap);
-                    }
-                }
-            }
-
-            return null;
-
-            //if (document == null)
-            //{
-            //    return null;
-            //}
-            //string documentLocalFileName = document.GetFileName();
-            //using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
-            //{
-            //    if (!userStoreForApplication.FileExists(documentLocalFileName))
-            //    {
-            //        TLObject owner = document;
-            //        if (sticker != null)
-            //        {
-            //            owner = sticker;
-            //        }
-            //        UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>().DownloadFileAsync(document.FileName, document.DCId, document.ToInputFileLocation(), owner, document.Size, delegate (double progress)
-            //        {
-            //        }, null);
-
-            //        UnigramContainer.Instance.ResolverType<IDownloadDocumentFileManager>()
-            //        TLPhotoCachedSize tLPhotoCachedSize = document.Thumb as TLPhotoCachedSize;
-            //        if (tLPhotoCachedSize != null)
-            //        {
-            //            string cacheKey = "cached" + document.GetFileName();
-            //            byte[] data = tLPhotoCachedSize.Bytes.Data;
-            //            ImageSource result;
-            //            if (data == null)
-            //            {
-            //                result = null;
-            //                return result;
-            //            }
-            //            result = DefaultPhotoConverter.DecodeWebPImage(cacheKey, data, delegate
-            //            {
-            //            });
-            //            return result;
-            //        }
-            //        else
-            //        {
-            //            var photoSize = document.Thumb as TLPhotoSize;
-            //            if (photoSize != null)
-            //            {
-            //                var fileLocation = photoSize.Location as TLFileLocation;
-            //                if (fileLocation != null)
-            //                {
-            //                    return DefaultPhotoConverter.ReturnOrEnqueueStickerPreview(fileLocation, sticker, photoSize.Size);
-            //                }
-            //            }
-            //        }
-            //    }
-            //    else if (document.DocumentSize > 0 && document.DocumentSize < 262144)
-            //    {
-            //        byte[] array;
-            //        using (IsolatedStorageFileStream isolatedStorageFileStream = userStoreForApplication.OpenFile(documentLocalFileName, 3))
-            //        {
-            //            array = new byte[isolatedStorageFileStream.get_Length()];
-            //            isolatedStorageFileStream.Read(array, 0, array.Length);
-            //        }
-            //        ImageSource result = DefaultPhotoConverter.DecodeWebPImage(documentLocalFileName, array, delegate
-            //        {
-            //            using (IsolatedStorageFile userStoreForApplication2 = IsolatedStorageFile.GetUserStoreForApplication())
-            //            {
-            //                userStoreForApplication2.DeleteFile(documentLocalFileName);
-            //            }
-            //        });
-            //        return result;
-            //    }
-            //}
-            //return null;
-        }
-
-        //public static ImageSource ReturnOrEnqueueStickerPreview(TLFileLocation location, TLObject owner, TLInt fileSize)
-        //{
-        //    string fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
-        //    using (IsolatedStorageFile userStoreForApplication = IsolatedStorageFile.GetUserStoreForApplication())
-        //    {
-        //        if (userStoreForApplication.FileExists(fileName))
-        //        {
-        //            byte[] array;
-        //            using (IsolatedStorageFileStream isolatedStorageFileStream = userStoreForApplication.OpenFile(fileName, 3))
-        //            {
-        //                array = new byte[isolatedStorageFileStream.get_Length()];
-        //                isolatedStorageFileStream.Read(array, 0, array.Length);
-        //            }
-        //            return DefaultPhotoConverter.DecodeWebPImage(fileName, array, delegate
-        //            {
-        //                using (IsolatedStorageFile userStoreForApplication2 = IsolatedStorageFile.GetUserStoreForApplication())
-        //                {
-        //                    userStoreForApplication2.DeleteFile(fileName);
-        //                }
-        //            });
-        //        }
-        //        if (fileSize != null)
-        //        {
-        //            IFileManager fileManager = IoC.Get<IFileManager>(null);
-        //            Telegram.Api.Helpers.Execute.BeginOnThreadPool(delegate
-        //            {
-        //                fileManager.DownloadFile(location, owner, fileSize);
-        //            });
-        //        }
-        //    }
-        //    return null;
-        //}
     }
 }
