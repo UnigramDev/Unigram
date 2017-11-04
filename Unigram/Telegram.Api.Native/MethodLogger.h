@@ -29,7 +29,7 @@
 #define BreakIfFailed(result, method) \
 	if(FAILED(result = method)) \
 	{ \
-		Telegram::Api::Native::Diagnostics::MethodLogger::TraceMethodError(_STRINGIFY_W(__FUNCTION__), _STRINGIFY_W("" _STRINGIFY(__LINE__)), result); \
+		Telegram::Api::Native::Diagnostics::MethodLogger::LogMethodHRESULT(_STRINGIFY_W(__FUNCTION__), _STRINGIFY_W("" _STRINGIFY(__LINE__)), result); \
 		break; \
 	}
 #endif
