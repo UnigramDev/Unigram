@@ -220,7 +220,7 @@
                     </messages:MessageReference>
                 </StackPanel>
 
-                <Grid x:Name="MediaControl" ContextRequested="Message_ContextRequested" Grid.Column="1" Grid.Row="1">
+                <Grid x:Name="Media" ContextRequested="Message_ContextRequested" Grid.Column="1" Grid.Row="1">
                     <Ellipse Fill="Black"/>
                     <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
@@ -259,7 +259,7 @@
                 <!-- TODO: not the right way -->
                 <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
-                <Grid x:Name="MediaControl" ContextRequested="Message_ContextRequested" Grid.Row="1">
+                <Grid x:Name="Media" ContextRequested="Message_ContextRequested" Grid.Row="1">
                     <Ellipse Fill="Black"/>
                     <controls:ImageView
                         Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
@@ -341,7 +341,7 @@
                     <!-- TODO: not the right way -->
                     <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
-                    <Grid x:Name="MediaControl" ContextRequested="Message_ContextRequested" Grid.Row="1">
+                    <Grid x:Name="Media" ContextRequested="Message_ContextRequested" Grid.Row="1">
                         <Ellipse Fill="Black"/>
                         <controls:ImageView
                             Source="{x:Bind ((models:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"

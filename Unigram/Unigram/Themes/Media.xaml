@@ -69,7 +69,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaPhotoTemplate">
-        <Grid x:Name="MediaControl"
+        <Grid x:Name="Media"
               Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
@@ -85,7 +85,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaSecretPhotoTemplate" x:DataType="tl:TLMessage">
-        <Grid x:Name="MediaControl"
+        <Grid x:Name="Media"
               Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
@@ -121,7 +121,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaSecretVideoTemplate" x:DataType="tl:TLMessage">
-        <Grid x:Name="MediaControl"
+        <Grid x:Name="Media"
               Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
@@ -157,7 +157,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaVideoTemplate">
-        <Grid x:Name="MediaControl"
+        <Grid x:Name="Media"
               Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
@@ -176,7 +176,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaGifTemplate">
-        <Grid x:Name="MediaControl"
+        <Grid x:Name="Media"
               Background="Black"
               MinWidth="{ThemeResource TelegramMediaMinWidth}"
               MinHeight="{ThemeResource TelegramMediaMinHeight}">
@@ -195,7 +195,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="MediaRoundVideoTemplate">
-        <Grid x:Name="MediaControl">
+        <Grid x:Name="Media">
             <Ellipse Fill="Black"/>
             <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                                 Constraint="{Binding Media.Document}"
