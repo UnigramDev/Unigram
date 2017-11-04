@@ -76,17 +76,19 @@
                     </TextBlock>
                 </Border>
 
-
-                <TextBlock
+                <RichTextBlock
                     x:Name="MessageControl"
                     common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
-                    Style="{ThemeResource BodyTextBlockStyle}"
-                    Foreground="{ThemeResource MessageForegroundBrush}"
+                    Style="{ThemeResource BodyRichTextBlockStyle}"
+                    Foreground="{StaticResource MessageForegroundBrush}"
                     Grid.Row="2">
-                    <TextBlock.Resources>
+                    <RichTextBlock.Resources>
                         <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
-                    </TextBlock.Resources>
-                </TextBlock>
+                    </RichTextBlock.Resources>
+                    <Paragraph>
+                        <Span/><InlineUIContainer><TextBlock x:Name="Placeholder" TextLineBounds="TrimToBaseline" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
+                    </Paragraph>
+                </RichTextBlock>
 
                 <controls:MediaControl
                     x:Name="MediaControl"
