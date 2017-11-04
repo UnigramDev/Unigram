@@ -132,6 +132,12 @@
     <Compile Include="Controls\Messages\EditedMessageBubble.xaml.cs">
       <DependentUpon>EditedMessageBubble.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\InvoiceStatusBar.xaml.cs">
+      <DependentUpon>InvoiceStatusBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Messages\MessageStatusBar.xaml.cs">
+      <DependentUpon>MessageStatusBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MosaicRow.cs" />
     <Compile Include="Controls\NavigationView.cs" />
     <Compile Include="Controls\NavigationViewItem.cs" />
@@ -148,15 +154,9 @@
       <DependentUpon>DialogSearchBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\GlyphRadioButton.cs" />
-    <Compile Include="Controls\Messages\InvoiceStatusControl.xaml.cs">
-      <DependentUpon>InvoiceStatusControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Messages\PhoneCallMessageBubbleBase.cs" />
     <Compile Include="Controls\Messages\HistoryCallMessageControl.xaml.cs">
       <DependentUpon>HistoryCallMessageControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Messages\MessageStateControl.xaml.cs">
-      <DependentUpon>MessageStateControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\PhoneCallMessageBubble.xaml.cs">
       <DependentUpon>PhoneCallMessageBubble.xaml</DependentUpon>
@@ -1247,6 +1247,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Messages\InvoiceStatusBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\MessageStatusBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\StartupSwitch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1292,14 +1300,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\HistoryCallMessageControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Messages\InvoiceStatusControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Messages\MessageStateControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

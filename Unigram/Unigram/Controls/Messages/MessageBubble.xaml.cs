@@ -73,7 +73,7 @@ namespace Unigram.Controls.Messages
             {
                 MediaControl.Margin = new Thickness(0);
                 StatusToDefault();
-                Grid.SetRow(StatusControl, 2);
+                Grid.SetRow(StatusBar, 2);
                 Grid.SetRow(MessageControl, 2);
             }
             else if (message != null && message.Media != null)
@@ -122,14 +122,14 @@ namespace Unigram.Controls.Messages
                     }
 
                     MediaControl.Margin = new Thickness(left, top, right, bottom);
-                    Grid.SetRow(StatusControl, caption ? 4 : 3);
+                    Grid.SetRow(StatusBar, caption ? 4 : 3);
                     Grid.SetRow(MessageControl, caption ? 4 : 2);
                 }
                 else if (message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaGame)
                 {
                     MediaControl.Margin = new Thickness(0);
                     StatusToDefault();
-                    Grid.SetRow(StatusControl, 4);
+                    Grid.SetRow(StatusBar, 4);
                     Grid.SetRow(MessageControl, 2);
                 }
                 else if (message.Media is TLMessageMediaInvoice invoiceMedia)
@@ -138,7 +138,7 @@ namespace Unigram.Controls.Messages
 
                     MediaControl.Margin = new Thickness(0);
                     StatusToDefault();
-                    Grid.SetRow(StatusControl, caption ? 3 : 4);
+                    Grid.SetRow(StatusBar, caption ? 3 : 4);
                 }
                 else /*if (IsInlineMedia(message.Media))*/
                 {
@@ -150,7 +150,7 @@ namespace Unigram.Controls.Messages
 
                     MediaControl.Margin = new Thickness(0, 4, 0, caption ? 8 : 2);
                     StatusToDefault();
-                    Grid.SetRow(StatusControl, caption ? 4 : 3);
+                    Grid.SetRow(StatusBar, caption ? 4 : 3);
                     Grid.SetRow(MessageControl, caption ? 4 : 2);
                 }
                 //else
@@ -158,7 +158,7 @@ namespace Unigram.Controls.Messages
                 //    Debug.WriteLine("NE UNO NE L'ALTRO");
                 //    MediaControl.Margin = new Thickness(0);
                 //    StatusToDefault();
-                //    Grid.SetRow(StatusControl, 4);
+                //    Grid.SetRow(StatusBar, 4);
                 //    Grid.SetRow(MessageControl, 2);
                 //}
             }
