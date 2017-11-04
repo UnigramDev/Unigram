@@ -27,7 +27,6 @@ using namespace Microsoft::WRL::Wrappers;
 		return result; \
 	}
 
-
 #define BreakIfFailed(result, method) \
 	if(FAILED(result = method)) \
 	{ \
@@ -39,11 +38,15 @@ using namespace Microsoft::WRL::Wrappers;
 
 #define ReturnIfFailed(result, method) \
 	if(FAILED(result = method)) \
-		return result
+	{ \
+		return result; \
+	}
 
 #define BreakIfFailed(result, method) \
 	if(FAILED(result = method)) \
-		break
+	{ \
+		break; \
+	}
 
 #endif
 

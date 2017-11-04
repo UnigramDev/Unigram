@@ -137,7 +137,6 @@ namespace Microsoft
 						ComPtr<CriticalSectionGuard> context(reinterpret_cast<CriticalSectionGuard*>(lpArgToCompletionRoutine));
 						if (WaitForSingleObject(context->m_waitEvent.Get(), 10000) != WAIT_OBJECT_0)
 						{
-							__debugbreak();
 							return 1;
 						}
 

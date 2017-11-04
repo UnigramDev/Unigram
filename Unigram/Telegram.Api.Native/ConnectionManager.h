@@ -196,44 +196,6 @@ namespace Telegram
 					return GetTickCount64();
 				}
 
-				template<unsigned int sizeDest>
-				inline HRESULT Log(LogLevel logLevel, wchar_t const (&message)[sizeDest])
-				{
-					auto lock = LockCriticalSection();
-
-					if (m_logger == nullptr)
-					{
-						return S_OK;
-					}
-
-					return m_logger->Log(logLevel, HString::MakeReference(message).Get());
-				}
-
-				inline HRESULT LogFormat(LogLevel logLevel, LPCWSTR pwhFormat, ...)
-				{
-					auto lock = LockCriticalSection();
-
-					if (m_logger == nullptr)
-					{
-						return S_OK;
-					}
-
-					va_list args;
-					va_start(args, pwhFormat);
-
-					WCHAR buffer[1024];
-					auto length = vswprintf_s(buffer, 1024, pwhFormat, args);
-
-					va_end(args);
-
-					if (length < 0)
-					{
-						return E_INVALIDARG;
-					}
-
-					return m_logger->Log(logLevel, HString::MakeReference<1024>(buffer, static_cast<UINT32>(length)).Get());
-				}
-
 			private:
 				struct ProcessRequestsContext
 				{
@@ -336,7 +298,6 @@ namespace Telegram
 				INT32 m_timeDifference;
 				INT32 m_userId;
 				ComPtr<IProxySettings> m_proxySettings;
-				ComPtr<ILogger> m_logger;
 				std::wstring m_settingsFolderPath;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_sessionCreatedEventSource;
 				EventSource<__FITypedEventHandler_2_Telegram__CApi__CNative__CConnectionManager_IInspectable> m_authenticationRequiredEventSource;

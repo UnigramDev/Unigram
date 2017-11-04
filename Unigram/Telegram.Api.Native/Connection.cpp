@@ -11,7 +11,7 @@
 #include "ConnectionManager.h"
 #include "Helpers\StringHelper.h"
 
-#include "MethodDebug.h"
+#include "MethodLogger.h"
 
 #if FALSE && _DEBUG
 #define NEXT_ENDPOINT_CONNECTION_TIMEOUT INFINITE

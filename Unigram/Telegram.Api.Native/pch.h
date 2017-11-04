@@ -4,6 +4,10 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
+#ifndef TRACE
+#define TRACE
+#endif
+
 #include <windows.h>
 
 #define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x)) 
