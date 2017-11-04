@@ -20,117 +20,156 @@
     <!-- TODO: not the right way -->
     <Border Height="4" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay, FallbackValue=Collapsed}"/>
 
-    <!--<controls:SwipeListViewItem
-        RightBackground="#007aff"
-        RightBehavior="Collapse"
-        LeftBehavior="Disabled"
-        ItemSwipe="SwipeListViewItem_ItemSwipe"
-        HorizontalContentAlignment="Stretch"
-        VerticalContentAlignment="Stretch"
-        Style="{ThemeResource MessageBubbleStyle}">
-        <controls:SwipeListViewItem.LeftContentTemplate>
-            <DataTemplate/>
-        </controls:SwipeListViewItem.LeftContentTemplate>
-        <controls:SwipeListViewItem.RightContentTemplate>
-            <DataTemplate>
-                <Border VerticalAlignment="Center">
-                    <FontIcon Glyph="&#xE248;" Foreground="White" Margin="12,0"/>
-                </Border>
-            </DataTemplate>
-        </controls:SwipeListViewItem.RightContentTemplate>-->
-    <ContentControl HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Style="{ThemeResource MessageBubbleStyle}">
-        <UserControl x:Name="LayoutRoot">
-            <Grid x:Name="ContentPanel"
-                  Padding="{ThemeResource MessageContentPadding}"
-                  CornerRadius="{ThemeResource MessageCornerRadius}"
-                  Background="{ThemeResource MessageBackgroundBrush}"
-                  BorderBrush="{ThemeResource MessageBorderBrush}"
-                  BorderThickness="0,0,0,2">
-                <VisualStateManager.VisualStateGroups>
-                    <VisualStateGroup>
-                        <VisualState x:Name="FullMedia">
-                            <VisualState.Setters>
-                                <Setter Target="StatusBar.Padding" Value="6,4,6,4"/>
-                                <Setter Target="StatusBar.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
-                                <Setter Target="StatusBar.Foreground" Value="White"/>
-                                <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
-                            </VisualState.Setters>
-                        </VisualState>
-                        <VisualState x:Name="Hidden">
-                            <VisualState.Setters>
-                                <Setter Target="StatusBar.Opacity" Value="0"/>
-                                <Setter Target="StatusBar.IsHitTestVisible" Value="False"/>
-                            </VisualState.Setters>
-                        </VisualState>
-                        <VisualState x:Name="Default"/>
-                    </VisualStateGroup>
-                </VisualStateManager.VisualStateGroups>
+    <UserControl x:Name="LayoutRoot">
+        <Grid x:Name="ContentPanel"
+                Padding="{ThemeResource MessageContentPadding}"
+                CornerRadius="{ThemeResource MessageCornerRadius}"
+                Background="{ThemeResource MessageBackgroundBrush}"
+                BorderBrush="{ThemeResource MessageBorderBrush}"
+                BorderThickness="0,0,0,2">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState x:Name="Normal"/>
+                    <VisualState x:Name="LightMediaOut">
+                        <VisualState.Setters>
+                            <Setter Target="StatusBar.Padding" Value="6,4,6,4"/>
+                            <Setter Target="StatusBar.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
+                            <Setter Target="StatusBar.Foreground" Value="White"/>
+                            <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
+                            <Setter Target="ContentPanel.Background" Value="Transparent"/>
+                            <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
+                            <Setter Target="Header.VerticalAlignment" Value="Top"/>
+                            <Setter Target="Header.Padding" Value="8,2,8,4"/>
+                            <Setter Target="Header.(Grid.Row)" Value="3"/>
+                            <Setter Target="Reply.Margin" Value="0,4,0,2"/>
+                            <Setter Target="Reply.BorderBrush" Value="#FFFFFF"/>
+                            <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
+                            <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
+
+                            <Setter Target="Header.Margin" Value="-12,-4,12,0"/>
+                            <Setter Target="Header.HorizontalAlignment" Value="Right"/>
+                            <Setter Target="Message.(Grid.Column)" Value="2"/>
+                            <Setter Target="Media.(Grid.Column)" Value="2"/>
+                            <Setter Target="StatusBar.(Grid.Column)" Value="2"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="LightMedia">
+                        <VisualState.Setters>
+                            <Setter Target="StatusBar.Padding" Value="6,4,6,4"/>
+                            <Setter Target="StatusBar.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
+                            <Setter Target="StatusBar.Foreground" Value="White"/>
+                            <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
+                            <Setter Target="ContentPanel.Background" Value="Transparent"/>
+                            <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
+                            <Setter Target="Header.VerticalAlignment" Value="Top"/>
+                            <Setter Target="Header.Padding" Value="8,2,8,4"/>
+                            <Setter Target="Header.(Grid.Row)" Value="3"/>
+                            <Setter Target="Reply.Margin" Value="0,4,0,2"/>
+                            <Setter Target="Reply.BorderBrush" Value="#FFFFFF"/>
+                            <Setter Target="HeaderLabel.Margin" Value="0,2,0,2"/>
+                            <Setter Target="HeaderLabel.Foreground" Value="#FFFFFF"/>
+
+                            <Setter Target="Header.Margin" Value="14,-4,-14,0"/>
+                            <Setter Target="Header.HorizontalAlignment" Value="Left"/>
+                            <Setter Target="Message.(Grid.Column)" Value="0"/>
+                            <Setter Target="Media.(Grid.Column)" Value="0"/>
+                            <Setter Target="StatusBar.(Grid.Column)" Value="0"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="FullMedia">
+                        <VisualState.Setters>
+                            <Setter Target="StatusBar.Padding" Value="6,4,6,4"/>
+                            <Setter Target="StatusBar.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
+                            <Setter Target="StatusBar.Foreground" Value="White"/>
+                            <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Hidden">
+                        <VisualState.Setters>
+                            <Setter Target="StatusBar.Opacity" Value="0"/>
+                            <Setter Target="StatusBar.IsHitTestVisible" Value="False"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid x:Name="Header" Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBlock x:Name="HeaderLabel"
-                           Margin="0,0,0,2"
-                           Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                           RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           FontWeight="SemiBold"
-                           Visibility="Collapsed"
-                           Grid.Row="0"/>
+                            Margin="0,0,0,2"
+                            Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                            RequestedTheme="{ThemeResource MessageTextBlockTheme}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            FontWeight="SemiBold"
+                            Visibility="Collapsed"/>
 
                 <TextBlock x:Name="AdminLabel"
-                           Text="admin"
-                           Margin="0,0,0,2"
-                           Foreground="{ThemeResource MessageSubtleLabelBrush}"
-                           RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                           Style="{StaticResource CaptionTextBlockStyle}"
-                           HorizontalAlignment="Right"
-                           Visibility="Collapsed"
-                           Grid.Row="0"/>
+                            Text="admin"
+                            Margin="0,0,0,2"
+                            Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                            RequestedTheme="{ThemeResource MessageTextBlockTheme}"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            HorizontalAlignment="Right"
+                            Visibility="Collapsed"/>
 
                 <local:MessageReference
+                    x:Name="Reply"
                     Message="{x:Bind ViewModel.Reply.SelfBase, Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.ReplyVisibility, FallbackValue=Collapsed}"
                     Click="Reply_Click"
                     Grid.Row="1"/>
-
-                <RichTextBlock
-                    x:Name="Message"
-                    common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
-                    Style="{ThemeResource BodyRichTextBlockStyle}"
-                    Foreground="{StaticResource MessageForegroundBrush}"
-                    ContextRequested="Message_ContextRequested"
-                    Grid.Row="2">
-                    <RichTextBlock.Resources>
-                        <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
-                    </RichTextBlock.Resources>
-                    <Paragraph>
-                        <Span/><InlineUIContainer><TextBlock x:Name="Placeholder" TextLineBounds="TrimToBaseline" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
-                    </Paragraph>
-                </RichTextBlock>
-
-                <controls:MediaControl
-                    x:Name="Media"
-                    Media="{x:Bind ConvertMedia(ViewModel.Media), Mode=OneWay}"
-                    HorizontalContentAlignment="Stretch"
-                    VerticalContentAlignment="Stretch"
-                    ContentChanged="OnMediaChanged"
-                    ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
-                    Grid.Row="3"/>
-
-                <local:MessageStatusBar
-                    x:Name="StatusBar"
-                    VerticalAlignment="Bottom"
-                    HorizontalAlignment="Right"
-                    SizeChanged="StatusBar_SizeChanged"
-                    Margin="0,0,-6,-2"
-                    Grid.Row="4"/>
             </Grid>
-        </UserControl>
-    </ContentControl>
+
+            <RichTextBlock
+                x:Name="Message"
+                common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
+                Style="{ThemeResource BodyRichTextBlockStyle}"
+                Foreground="{StaticResource MessageForegroundBrush}"
+                ContextRequested="Message_ContextRequested"
+                Grid.Column="1"
+                Grid.Row="2">
+                <RichTextBlock.Resources>
+                    <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
+                </RichTextBlock.Resources>
+                <Paragraph>
+                    <Span/><InlineUIContainer><TextBlock x:Name="Placeholder" TextLineBounds="TrimToBaseline" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
+                </Paragraph>
+            </RichTextBlock>
+
+            <controls:MediaControl
+                x:Name="Media"
+                Media="{x:Bind ConvertMedia(ViewModel.Media), Mode=OneWay}"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                ContentChanged="OnMediaChanged"
+                ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
+                Grid.Column="1"
+                Grid.Row="3"/>
+
+            <local:MessageStatusBar
+                x:Name="StatusBar"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                SizeChanged="StatusBar_SizeChanged"
+                Margin="0,0,-6,-2"
+                Grid.Column="1"
+                Grid.Row="4"/>
+        </Grid>
+    </UserControl>
 
     <controls:ReplyMarkupPanel Message="{x:Bind ViewModel}" ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" Margin="0,0,0,2"/>
 

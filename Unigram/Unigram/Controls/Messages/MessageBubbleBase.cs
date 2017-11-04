@@ -160,30 +160,36 @@ namespace Unigram.Controls.Messages
 
         #endregion
 
-        protected void OnMessageChanged(TextBlock paragraph, TextBlock admin)
+        protected void OnMessageChanged(TextBlock paragraph, TextBlock admin, Grid parent)
         {
             paragraph.Inlines.Clear();
 
             var message = DataContext as TLMessage;
-            if (message != null)
+            if (message == null)
             {
-                if (message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
-                {
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = message.From?.FullName ?? string.Empty, Foreground = Convert.Bubble(message.FromId ?? 0) });
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = paragraph.Foreground;
-                    hyperlink.Click += (s, args) => From_Click(message);
+                return;
+            }
 
-                    paragraph.Inlines.Add(hyperlink);
-                }
-                else if (message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
-                {
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = message.Parent?.DisplayName ?? string.Empty, Foreground = Convert.Bubble(message.ToId.Id) });
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = paragraph.Foreground;
-                    hyperlink.Click += (s, args) => From_Click(message);
+            var sticker = message.IsSticker();
+            var light = sticker || message.IsRoundVideo();
+
+            if (!light && message.IsFirst && !message.IsOut && !message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+            {
+                var hyperlink = new Hyperlink();
+                hyperlink.Inlines.Add(new Run { Text = message.From?.FullName ?? string.Empty });
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Foreground = Convert.Bubble(message.FromId ?? 0);
+                hyperlink.Click += (s, args) => From_Click(message);
+
+                paragraph.Inlines.Add(hyperlink);
+            }
+            else if (!light && message.IsPost && (message.ToId is TLPeerChat || message.ToId is TLPeerChannel))
+            {
+                var hyperlink = new Hyperlink();
+                hyperlink.Inlines.Add(new Run { Text = message.Parent?.DisplayName ?? string.Empty });
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Foreground = Convert.Bubble(message.ToId.Id);
+                hyperlink.Click += (s, args) => From_Click(message);
 
                     paragraph.Inlines.Add(hyperlink);
                 }
@@ -193,79 +199,74 @@ namespace Unigram.Controls.Messages
                     if (paragraph.Inlines.Count > 0)
                         paragraph.Inlines.Add(new LineBreak());
 
-                    paragraph.Inlines.Add(new Run { Text = "Forwarded from " });
+                paragraph.Inlines.Add(new Run { Text = "Forwarded from " });
 
-                    var name = string.Empty;
+                var name = string.Empty;
 
-                    var channel = message.FwdFromChannel;
-                    if (channel != null)
-                    {
-                        name = channel.DisplayName;
+                var channel = message.FwdFromChannel;
+                if (channel != null)
+                {
+                    name = channel.DisplayName;
 
-                        //if (message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
-                        //{
-                        //    name += $" ({message.FwdFrom.PostAuthor})";
-                        //}
-                    }
-
-                    var user = message.FwdFromUser;
-                    if (user != null)
-                    {
-                        if (name.Length > 0)
-                        {
-                            name += $" ({user.FullName})";
-                        }
-                        else
-                        {
-                            name = user.FullName;
-                        }
-                    }
-
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = name });
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = paragraph.Foreground;
-                    hyperlink.Click += (s, args) => FwdFrom_Click(message);
-
-                    paragraph.Inlines.Add(hyperlink);
+                    //if (message.FwdFrom.HasPostAuthor && message.FwdFrom.PostAuthor != null)
+                    //{
+                    //    name += $" ({message.FwdFrom.PostAuthor})";
+                    //}
                 }
 
-                if (message.HasViaBotId && message.ViaBot != null && !message.ViaBot.IsDeleted && message.ViaBot.HasUsername)
+                var user = message.FwdFromUser;
+                if (user != null)
                 {
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @") + message.ViaBot.Username });
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = paragraph.Foreground;
-                    hyperlink.Click += (s, args) => ViaBot_Click(message);
-
-                    paragraph.Inlines.Add(hyperlink);
-                }
-
-                if (paragraph.Inlines.Count > 0)
-                {
-                    if (paragraph != admin && !message.IsOut && message.IsAdmin())
+                    if (name.Length > 0)
                     {
-                        paragraph.Inlines.Add(new Run { Text = " admin", Foreground = null, FontSize = 12 });
-                        admin.Visibility = Visibility.Visible;
+                        name += $" ({user.FullName})";
                     }
                     else
                     {
-                        paragraph.Inlines.Add(new Run { Text = " " });
-                        admin.Visibility = Visibility.Collapsed;
+                        name = user.FullName;
                     }
+                }
 
-                    paragraph.Visibility = Visibility.Visible;
+                var hyperlink = new Hyperlink();
+                hyperlink.Inlines.Add(new Run { Text = name });
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : paragraph.Foreground;
+                hyperlink.Click += (s, args) => FwdFrom_Click(message);
+
+                paragraph.Inlines.Add(hyperlink);
+            }
+
+            if (message.HasViaBotId && message.ViaBot != null && !message.ViaBot.IsDeleted && message.ViaBot.HasUsername)
+            {
+                var hyperlink = new Hyperlink();
+                hyperlink.Inlines.Add(new Run { Text = (paragraph.Inlines.Count > 0 ? " via @" : "via @") + message.ViaBot.Username });
+                hyperlink.UnderlineStyle = UnderlineStyle.None;
+                hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : paragraph.Foreground;
+                hyperlink.Click += (s, args) => ViaBot_Click(message);
+
+                paragraph.Inlines.Add(hyperlink);
+            }
+
+            if (paragraph.Inlines.Count > 0)
+            {
+                if (paragraph != admin && !message.IsOut && message.IsAdmin())
+                {
+                    admin.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    paragraph.Visibility = Visibility.Collapsed;
                     admin.Visibility = Visibility.Collapsed;
                 }
+
+                paragraph.Inlines.Add(new Run { Text = " " });
+                paragraph.Visibility = Visibility.Visible;
+                parent.Visibility = Visibility.Visible;
             }
             else
             {
                 paragraph.Visibility = Visibility.Collapsed;
                 admin.Visibility = Visibility.Collapsed;
+                parent.Visibility = message.HasReplyToMsgId ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 

@@ -19,14 +19,6 @@ namespace Unigram.Selectors
         public DataTemplate FriendMessageTemplate { get; set; }
         public DataTemplate ChatFriendMessageTemplate { get; set; }
 
-        public DataTemplate UserStickerTemplate { get; set; }
-        public DataTemplate FriendStickerTemplate { get; set; }
-        public DataTemplate ChatFriendStickerTemplate { get; set; }
-
-        public DataTemplate UserRoundVideoTemplate { get; set; }
-        public DataTemplate FriendRoundVideoTemplate { get; set; }
-        public DataTemplate ChatFriendRoundVideoTemplate { get; set; }
-
         public DataTemplate ServiceUserCallTemplate { get; set; }
         public DataTemplate ServiceFriendCallTemplate { get; set; }
 
@@ -93,45 +85,16 @@ namespace Unigram.Selectors
                 return ServiceMessageTemplate;
             }
 
-            if (message.IsSticker())
+            if (message.IsOut && !message.IsPost)
             {
-                if (message.IsOut && !message.IsPost)
-                {
-                    return UserStickerTemplate;
-                }
-                else if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
-                {
-                    return ChatFriendStickerTemplate;
-                }
+                return UserMessageTemplate;
+            }
+            else if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
+            {
+                return ChatFriendMessageTemplate;
+            }
 
-                return FriendStickerTemplate;
-            }
-            else if (message.IsRoundVideo())
-            {
-                if (message.IsOut && !message.IsPost)
-                {
-                    return UserRoundVideoTemplate;
-                }
-                else if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
-                {
-                    return ChatFriendRoundVideoTemplate;
-                }
-
-                return FriendRoundVideoTemplate;
-            }
-            else
-            {
-                if (message.IsOut && !message.IsPost)
-                {
-                    return UserMessageTemplate;
-                }
-                else if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
-                {
-                    return ChatFriendMessageTemplate;
-                }
-                
-                return FriendMessageTemplate;
-            }
+            return FriendMessageTemplate;
         }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
