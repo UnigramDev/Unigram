@@ -101,6 +101,7 @@
     <Compile Include="Common\AdminLogHelper.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\Dialogs\OutputTypingManager.cs" />
+    <Compile Include="Common\MosaicMedia.cs" />
     <Compile Include="Common\ImageLoader\ContentDrawer.cs" />
     <Compile Include="Common\ImageLoader\ImageLoader.cs" />
     <Compile Include="Common\ImageLoader\ManagedSurface.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Controls\Messages\EditedMessageBubble.xaml.cs">
       <DependentUpon>EditedMessageBubble.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MosaicRow.cs" />
     <Compile Include="Controls\NavigationView.cs" />
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
