@@ -72,6 +72,11 @@ namespace Unigram.Views.Channels
 
         #region Context menu
 
+        private void About_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            MessageHelper.Hyperlink_ContextRequested(sender, args);
+        }
+
         private void Participant_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
