@@ -66,11 +66,11 @@ namespace Unigram.Controls.Messages
 
             if (message == null || message.Media == null || message.Media is TLMessageMediaEmpty || empty)
             {
-                MediaControl.Margin = new Thickness(0);
+                Media.Margin = new Thickness(0);
                 Placeholder.Visibility = Visibility.Visible;
                 StatusToDefault();
                 Grid.SetRow(StatusBar, 2);
-                Grid.SetRow(MessageControl, 2);
+                Grid.SetRow(Message, 2);
             }
             else if (message != null && message.Media != null)
             {
@@ -117,27 +117,28 @@ namespace Unigram.Controls.Messages
                         StatusToFullMedia();
                     }
 
-                    MediaControl.Margin = new Thickness(left, top, right, bottom);
+                    Media.Margin = new Thickness(left, top, right, bottom);
                     Placeholder.Visibility = caption ? Visibility.Visible : Visibility.Collapsed;
                     Grid.SetRow(StatusBar, caption ? 4 : 3);
-                    Grid.SetRow(MessageControl, caption ? 4 : 2);
+                    Grid.SetRow(Message, caption ? 4 : 2);
                 }
                 else if (message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaGame)
                 {
-                    MediaControl.Margin = new Thickness(0);
+                    Media.Margin = new Thickness(0);
                     Placeholder.Visibility = Visibility.Collapsed;
                     StatusToDefault();
                     Grid.SetRow(StatusBar, 4);
-                    Grid.SetRow(MessageControl, 2);
+                    Grid.SetRow(Message, 2);
                 }
                 else if (message.Media is TLMessageMediaInvoice invoiceMedia)
                 {
                     var caption = !invoiceMedia.HasPhoto;
 
-                    MediaControl.Margin = new Thickness(0);
+                    Media.Margin = new Thickness(0);
                     Placeholder.Visibility = caption ? Visibility.Visible : Visibility.Collapsed;
                     StatusToDefault();
                     Grid.SetRow(StatusBar, caption ? 3 : 4);
+                    Grid.SetRow(Message, 2);
                 }
                 else /*if (IsInlineMedia(message.Media))*/
                 {
@@ -147,11 +148,11 @@ namespace Unigram.Controls.Messages
                         caption = !string.IsNullOrWhiteSpace(captionMedia.Caption);
                     }
 
-                    MediaControl.Margin = new Thickness(0, 4, 0, caption ? 8 : 2);
+                    Media.Margin = new Thickness(0, 4, 0, caption ? 8 : 2);
                     Placeholder.Visibility = caption ? Visibility.Visible : Visibility.Collapsed;
                     StatusToDefault();
                     Grid.SetRow(StatusBar, caption ? 4 : 3);
-                    Grid.SetRow(MessageControl, caption ? 4 : 2);
+                    Grid.SetRow(Message, caption ? 4 : 2);
                 }
                 //else
                 //{
