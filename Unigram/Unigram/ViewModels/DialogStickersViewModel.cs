@@ -72,7 +72,7 @@ namespace Unigram.ViewModels
 
             Aggregator.Subscribe(this);
 
-            SavedGifs = new MvxObservableCollection<TLDocument>();
+            SavedGifs = new MvxObservableCollection<IList<MosaicMediaPosition>>();
             FeaturedStickers = new MvxObservableCollection<TLFeaturedStickerSet>();
             SavedStickers = new StickerSetCollection();
 
@@ -132,7 +132,7 @@ namespace Unigram.ViewModels
             var recent = _stickersService.GetRecentGifs();
             BeginOnUIThread(() =>
             {
-                SavedGifs.ReplaceWith(recent);
+                SavedGifs.ReplaceWith(MosaicMedia.Calculate(recent));
             });
         }
 
@@ -252,7 +252,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public MvxObservableCollection<TLDocument> SavedGifs { get; private set; }
+        public MvxObservableCollection<IList<MosaicMediaPosition>> SavedGifs { get; private set; }
 
         public MvxObservableCollection<TLFeaturedStickerSet> FeaturedStickers { get; private set; }
 
