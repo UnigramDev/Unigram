@@ -98,7 +98,7 @@
                     Grid.Row="1"/>
 
                 <RichTextBlock
-                    x:Name="MessageControl"
+                    x:Name="Message"
                     common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
                     Style="{ThemeResource BodyRichTextBlockStyle}"
                     Foreground="{StaticResource MessageForegroundBrush}"
@@ -112,7 +112,7 @@
                 </RichTextBlock>
 
                 <controls:MediaControl
-                    x:Name="MediaControl"
+                    x:Name="Media"
                     Media="{x:Bind ConvertMedia(ViewModel.Media), Mode=OneWay}"
                     HorizontalContentAlignment="Stretch"
                     VerticalContentAlignment="Stretch"
