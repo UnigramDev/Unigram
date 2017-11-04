@@ -3456,7 +3456,7 @@ namespace Telegram.Api.Services.Updates
                         {
                             for (var i = _pts.Value + 1; i < ptsList[0]; i++)
                             {
-                                _lostPts[i] = new Tuple<DateTime, TLUpdatesState>(DateTime.Now, new TLUpdatesState { Seq = ClientSeq.Value, Pts = _pts.Value, Date = _date.Value, Qts = _qts.Value });
+                                _lostPts[i] = new Tuple<DateTime, TLUpdatesState>(DateTime.Now, new TLUpdatesState { Seq = ClientSeq ?? 0, Pts = _pts ?? 0, Date = _date ?? 0, Qts = _qts ?? 0 });
                             }
                         }
 
@@ -3482,7 +3482,7 @@ namespace Telegram.Api.Services.Updates
                 {
                     var lastPtsValue = ptsList.Last();
                     var maxPtsValue = Math.Max(lastPtsValue, _pts != null ? _pts.Value : -1);
-                    _pts = new int?(maxPtsValue);
+                    _pts = maxPtsValue;
                 }
 
                 if (_lostPts.Count > 0)

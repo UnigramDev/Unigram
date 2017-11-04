@@ -135,6 +135,8 @@ namespace Unigram.ViewModels
 
                         var clone = fwdMessage.Clone();
                         clone.Id = 0;
+                        clone.HasEditDate = false;
+                        clone.EditDate = null;
                         clone.HasReplyToMsgId = false;
                         clone.ReplyToMsgId = null;
                         clone.HasReplyMarkup = false;

@@ -99,6 +99,9 @@ namespace Unigram.Models
             }
         }
 
+        public virtual uint Width { get; }
+        public virtual uint Height { get; }
+
         protected Rect? _fullRectangle;
         protected Rect? _cropRectangle;
         public Rect? CropRectangle
@@ -158,6 +161,11 @@ namespace Unigram.Models
             if (_bitmap == null)
             {
                 _bitmap = await ImageHelper.GetPreviewBitmapAsync(File);
+            }
+
+            if (_bitmap == null)
+            {
+                _bitmap = new BitmapImage();
             }
 
             if (CropRectangle.HasValue)

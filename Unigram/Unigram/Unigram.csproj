@@ -20,7 +20,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
-    <AppxBundlePlatforms>x86|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>BCF3F68C8F50DE819284C634BE7D5030F61E2216</PackageCertificateThumbprint>
     <BuildAppxSideloadPackageForUap>False</BuildAppxSideloadPackageForUap>
   </PropertyGroup>
@@ -101,6 +101,7 @@
     <Compile Include="Common\AdminLogHelper.cs" />
     <Compile Include="Common\CameraRotationHelper.cs" />
     <Compile Include="Common\Dialogs\OutputTypingManager.cs" />
+    <Compile Include="Common\MosaicMedia.cs" />
     <Compile Include="Common\ImageLoader\ContentDrawer.cs" />
     <Compile Include="Common\ImageLoader\ImageLoader.cs" />
     <Compile Include="Common\ImageLoader\ManagedSurface.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Controls\DialogSearchToolBar.xaml.cs">
       <DependentUpon>DialogSearchToolBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GalleryTransportControls.cs" />
     <Compile Include="Controls\GroupedGridView.cs" />
     <Compile Include="Controls\GroupedListView.cs" />
     <Compile Include="Controls\ImageCropper.cs" />
@@ -130,6 +132,7 @@
     <Compile Include="Controls\Messages\EditedMessageBubble.xaml.cs">
       <DependentUpon>EditedMessageBubble.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MosaicRow.cs" />
     <Compile Include="Controls\NavigationView.cs" />
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
@@ -163,6 +166,8 @@
     <Compile Include="Controls\PeriodTimer.cs" />
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
+    <Compile Include="Controls\SelectGridView.cs" />
+    <Compile Include="Controls\SelectListView.cs" />
     <Compile Include="Controls\SelfDestructTimer.cs" />
     <Compile Include="Controls\AspectView.cs" />
     <Compile Include="Controls\StartupSwitch.xaml.cs">
@@ -275,6 +280,7 @@
     <Compile Include="Converters\UsernameConverter.cs" />
     <Compile Include="Converters\UsernameToLinkConverter.cs" />
     <Compile Include="Converters\VenueToGlyphConverter.cs" />
+    <Compile Include="Helpers\AudioGraphHelper.cs" />
     <Compile Include="Helpers\TLFileHelper.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\StorageDocument.cs" />
@@ -1745,6 +1751,9 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Portable.BouncyCastle">
+      <Version>1.8.1.3</Version>
     </PackageReference>
     <PackageReference Include="System.Reactive">
       <Version>3.1.1</Version>

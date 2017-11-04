@@ -193,6 +193,14 @@ namespace Unigram.Controls
             Document.Selection.StartPosition = Document.Selection.EndPosition;
         }
 
+        public event EventHandler<TappedRoutedEventArgs> Capture;
+
+        protected override void OnTapped(TappedRoutedEventArgs e)
+        {
+            Capture?.Invoke(this, e);
+            base.OnTapped(e);
+        }
+
         private async void OnPaste(object sender, TextControlPasteEventArgs e)
         {
             // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
@@ -221,6 +229,27 @@ namespace Unigram.Controls
                 Document.Selection.SetText(TextSetOptions.None, result);
                 Document.Selection.SetRange(start + result.Length, start + result.Length);
             }
+            else if (package.Contains(StandardDataFormats.Bitmap))
+            {
+                e.Handled = true;
+
+                var bitmap = await package.GetBitmapAsync();
+                var media = new ObservableCollection<StorageMedia>();
+                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                using (var stream = await bitmap.OpenReadAsync())
+                using (var reader = new DataReader(stream))
+                {
+                    await reader.LoadAsync((uint)stream.Size);
+                    var buffer = new byte[(int)stream.Size];
+                    reader.ReadBytes(buffer);
+                    await FileIO.WriteBytesAsync(cache, buffer);
+
+                    media.Add(await StoragePhoto.CreateAsync(cache, true));
+                }
+
+                ViewModel.SendMediaExecute(media, media[0]);
+            }
             else if (package.Contains(StandardDataFormats.StorageItems))
             {
                 e.Handled = true;
@@ -231,11 +260,6 @@ namespace Unigram.Controls
 
                 foreach (var file in items.OfType<StorageFile>())
                 {
-                    if (await file.SkipAsync())
-                    {
-                        continue;
-                    }
-
                     if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
@@ -263,24 +287,6 @@ namespace Unigram.Controls
                         ViewModel.SendFileCommand.Execute(file);
                     }
                 }
-            }
-            else if (package.Contains(StandardDataFormats.Bitmap))
-            {
-                e.Handled = true;
-
-                var bitmap = await package.GetBitmapAsync();
-                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
-
-                using (var stream = await bitmap.OpenReadAsync())
-                using (var reader = new DataReader(stream))
-                {
-                    await reader.LoadAsync((uint)stream.Size);
-                    var buffer = new byte[(int)stream.Size];
-                    reader.ReadBytes(buffer);
-                    await FileIO.WriteBytesAsync(cache, buffer);
-                }
-
-                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { await StoragePhoto.CreateAsync(cache, true) });
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))
             {
@@ -451,7 +457,7 @@ namespace Unigram.Controls
                     ViewModel.Aggregator.Publish("move_down");
                     e.Handled = true;
                 }
-                else if ((e.Key == VirtualKey.PageUp || e.Key == VirtualKey.Up) && Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
+                else if ((e.Key == VirtualKey.PageUp /*|| e.Key == VirtualKey.Up*/) && Document.Selection.StartPosition == 0 && ViewModel.Autocomplete == null)
                 {
                     var peer = new ListViewAutomationPeer(Messages);
                     var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
@@ -459,7 +465,7 @@ namespace Unigram.Controls
 
                     e.Handled = true;
                 }
-                else if (e.Key == VirtualKey.PageDown || e.Key == VirtualKey.Down && Document.Selection.StartPosition == Text.TrimEnd('\r', '\v').Length && ViewModel.Autocomplete == null)
+                else if ((e.Key == VirtualKey.PageDown /*|| e.Key == VirtualKey.Down*/) && Document.Selection.StartPosition == Text.TrimEnd('\r', '\v').Length && ViewModel.Autocomplete == null)
                 {
                     var peer = new ListViewAutomationPeer(Messages);
                     var provider = peer.GetPattern(PatternInterface.Scroll) as IScrollProvider;
@@ -843,21 +849,17 @@ namespace Unigram.Controls
                     entities.Add(entity);
                 }
 
-                //var matches = Regex.Matches(messageText, "@\\[(.*?)\\]\\((.*?)\\)");
-                //var offset = 0;
+                var matches = Regex.Matches(messageText, "\\[(.*?)\\]\\((.*?)\\)");
+                var offset = 0;
 
-                //foreach (Match match in matches)
-                //{
-                //    var user = InMemoryCacheService.Current.GetUser(match.Groups[2].Value) as TLUser;
-                //    if (user != null)
-                //    {
-                //        entities.Add(new TLInputMessageEntityMentionName { Offset = match.Index + offset, Length = match.Groups[1].Length, UserId = user.ToInputUser() });
+                foreach (Match match in matches)
+                {
+                    entities.Add(new TLMessageEntityTextUrl { Offset = match.Index + offset, Length = match.Groups[1].Length, Url = match.Groups[2].Value });
 
-                //        messageText = messageText.Remove(match.Index + offset, match.Length);
-                //        messageText = messageText.Insert(match.Index + offset, match.Groups[1].Value);
-                //        offset += match.Length - match.Groups[1].Length;
-                //    }
-                //}
+                    messageText = messageText.Remove(match.Index + offset, match.Length);
+                    messageText = messageText.Insert(match.Index + offset, match.Groups[1].Value);
+                    offset += match.Length - match.Groups[1].Length;
+                }
 
                 await ViewModel.SendMessageAsync(messageText, entities.OrderBy(x => x.Offset).ToList(), false);
             }

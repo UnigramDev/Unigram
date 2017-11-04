@@ -188,7 +188,7 @@
 
         <!-- Round video -->
         <DataTemplate x:Key="UserRoundVideoTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
+            <Grid Margin="{ThemeResource MessageContentMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
@@ -199,7 +199,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- TODO: not the right way -->
-                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -246,7 +246,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="FriendRoundVideoTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
+            <Grid Margin="{ThemeResource MessageContentMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -257,7 +257,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- TODO: not the right way -->
-                <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <Grid x:Name="MediaControl" ContextRequested="Message_ContextRequested" Grid.Row="1">
                     <Ellipse Fill="Black"/>
@@ -328,7 +328,7 @@
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
                                              Click="ProfileBubble_Click"/>
 
-                <Grid Margin="0,2" Grid.Column="1">
+                <Grid Margin="{ThemeResource MessageContentMargin}" Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
@@ -339,7 +339,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <!-- TODO: not the right way -->
-                    <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                    <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                     <Grid x:Name="MediaControl" ContextRequested="Message_ContextRequested" Grid.Row="1">
                         <Ellipse Fill="Black"/>
@@ -399,7 +399,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="UserStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
+            <Grid Margin="{ThemeResource MessageContentMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
@@ -410,7 +410,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- TODO: not the right way -->
-                <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <StackPanel Visibility="{x:Bind StickerReplyVisibility}"
                             Background="{ThemeResource MessageServiceBackgroundBrush}"
@@ -448,7 +448,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="FriendStickerTemplate" x:DataType="models:TLMessage">
-            <Grid Margin="0,2">
+            <Grid Margin="{ThemeResource MessageContentMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
@@ -459,7 +459,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <!-- TODO: not the right way -->
-                <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                 <Grid ContextRequested="Message_ContextRequested" Grid.Row="1">
                     <controls:ImageView
@@ -510,7 +510,7 @@
                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
                                              Click="ProfileBubble_Click"/>
 
-                <Grid Margin="0,2" Grid.Column="1">
+                <Grid Margin="{ThemeResource MessageContentMargin}" Grid.Column="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
@@ -521,7 +521,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <!-- TODO: not the right way -->
-                    <Border Height="6" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
+                    <Border Height="4" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
                     <Grid ContextRequested="Message_ContextRequested" Grid.Row="1">
                         <controls:ImageView
@@ -1591,8 +1591,9 @@
                       HorizontalScrollBarVisibility="Disabled"
                       HorizontalScrollMode="Disabled"
                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                      Visibility="Collapsed"
                       Grid.Row="4">
-            <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" AllowFocusOnInteraction="True" Margin="4,-2,4,0"/>
+            <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" AllowFocusOnInteraction="True" Margin="4,0,4,0"/>
         </ScrollViewer>
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">
@@ -1653,7 +1654,8 @@
                         PreventKeyboardDisplayOnProgrammaticFocus="True"
                         MinHeight="48"
                         MaxHeight="96"
-                        TextChanged="TextField_TextChanged"/>
+                        TextChanged="TextField_TextChanged"
+                        Capture="TextField_Tapped"/>
 
                     <controls:GlyphButton x:Name="ButtonAttach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">
                         <FlyoutBase.AttachedFlyout>
@@ -1767,6 +1769,19 @@
                                               Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               FontFamily="{ThemeResource TelegramThemeFontFamily}"
                                               VerticalAlignment="Bottom"/>
+                    </Border>
+
+                    <Border x:Name="btnMarkup" Grid.Column="1">
+                        <controls:GlyphToggleButton x:Name="ButtonMarkup"
+                                                    Click="Markup_Click"
+                                                    AllowFocusOnInteraction="False"
+                                                    CheckedGlyph="&#xE910;"
+                                                    UncheckedGlyph="&#xE90F;"
+                                                    IsChecked="True"
+                                                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                    Visibility="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                                                    FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                    VerticalAlignment="Bottom"/>
                     </Border>
 
                     <Border x:Name="btnStickers" Grid.Column="2">

@@ -723,11 +723,13 @@ namespace Telegram.Api.Services
                         // TODO: 24/04/2017 verify if this is really needed
                         if (message.Media is TLMessageMediaPhoto photoMedia)
                         {
+                            photoMedia.Photo.IsTransferring = false;
                             photoMedia.Photo.LastProgress = 0.0;
                             photoMedia.Photo.DownloadingProgress = 0.0;
                         }
                         else if (message.Media is TLMessageMediaDocument documentMedia)
                         {
+                            documentMedia.Document.IsTransferring = false;
                             documentMedia.Document.LastProgress = 0.0;
                             documentMedia.Document.DownloadingProgress = 0.0;
                         }
@@ -902,7 +904,7 @@ namespace Telegram.Api.Services
             //TLUtils.WriteLine(string.Format("{0} messages.getDialogs offset_date={1} offset_peer={2} offset_id={3} limit={4}", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture), offsetDate, offsetPeer, offsetId, limit), LogSeverity.Error);          
 
             const string caption = "messages.getDialogs";
-            SendInformativeMessage<TLMessagesDialogsBase>(caption, obj, result =>
+            GetDialogsAsyncInternal(obj, result =>
             {
                 var dialogsCache = new Dictionary<int, List<TLDialog>>();
                 foreach (var dialogBase in result.Dialogs)
@@ -967,7 +969,9 @@ namespace Telegram.Api.Services
 
                 var r = obj;
                 _cacheService.SyncDialogs(result, callback);
-            }, faultCallback);
+            },
+            () => { },
+            faultCallback);
         }
 
         private void GetChannelHistoryAsyncInternal(bool sync, TLPeerBase peer, TLMessagesMessagesBase result, Action<TLMessagesMessagesBase> callback)
@@ -1243,7 +1247,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesReadMessageContents { Id = id };
 
             const string caption = "messages.readMessageContents";
-            ReadMessageContentsAsyncInternal(obj,
+            SendInformativeMessage<TLMessagesAffectedMessages>(caption, obj,
                 result =>
                 {
                     var multiPts = result as ITLMultiPts;
@@ -1258,7 +1262,7 @@ namespace Telegram.Api.Services
 
                     callback?.Invoke(result);
                 },
-                () => { },
+                /*() => { },*/
                 faultCallback);
         }
 

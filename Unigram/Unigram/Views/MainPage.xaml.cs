@@ -750,11 +750,11 @@ namespace Unigram.Views
                 var channel = dialog.With as TLChannel;
                 if (channel != null)
                 {
-                    if (channel.IsCreator)
-                    {
-                        return channel.IsMegaGroup ? AppResources.DialogDeleteGroup : AppResources.DialogDeleteChannel;;
-                    }
-                    else
+                    //if (channel.IsCreator)
+                    //{
+                    //    return channel.IsMegaGroup ? AppResources.DialogDeleteGroup : AppResources.DialogDeleteChannel;;
+                    //}
+                    //else
                     {
                         return channel.IsMegaGroup ? AppResources.DialogLeaveGroup : AppResources.DialogLeaveChannel;
                     }

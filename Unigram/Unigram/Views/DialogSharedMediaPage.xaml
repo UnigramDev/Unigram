@@ -350,10 +350,10 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Button Command="{Binding MessagesForwardCommand}" Margin="12,0,4,0" Style="{StaticResource AccentButtonStyle}">
+                <Button Command="{x:Bind ViewModel.MessagesForwardCommand}" Margin="12,0,4,0" Style="{StaticResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Forward" VerticalAlignment="Center"/>
-                        <ContentControl Content="{Binding SelectedMessages.Count}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                        <ContentControl Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
                             <ContentControl.ContentTransitions>
                                 <TransitionCollection>
                                     <EntranceThemeTransition/>
@@ -365,10 +365,10 @@
                         </ContentControl>
                     </StackPanel>
                 </Button>
-                <Button Command="{Binding MessagesDeleteCommand}" Margin="4,0,12,0" Style="{StaticResource AccentButtonStyle}" Grid.Column="1">
+                <Button Command="{x:Bind ViewModel.MessagesDeleteCommand}" Margin="4,0,12,0" Style="{StaticResource AccentButtonStyle}" Grid.Column="1">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Delete" VerticalAlignment="Center"/>
-                        <ContentControl Content="{Binding SelectedMessages.Count}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                        <ContentControl Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
                             <ContentControl.ContentTransitions>
                                 <TransitionCollection>
                                     <EntranceThemeTransition/>

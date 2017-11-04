@@ -412,7 +412,7 @@ namespace Unigram.Controls.Views
             }
         }
 
-        private async void Crop_Click(object sender, RoutedEventArgs e)
+        private void Crop_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedItem is StorageMedia media)
             {
@@ -420,9 +420,8 @@ namespace Unigram.Controls.Views
 
                 if (media.Bitmap is SoftwareBitmapSource source)
                 {
-                    var props = await media.File.Properties.GetImagePropertiesAsync();
-                    var width = props.Width;
-                    var height = props.Height;
+                    var width = media.Width;
+                    var height = media.Height;
 
                     if (width > 1280 || height > 1280)
                     {
@@ -439,20 +438,19 @@ namespace Unigram.Controls.Views
                     Cropper.CropRectangle = media.CropRectangle ?? Rect.Empty;
 
                     CroppoBox.ItemsSource = ImageCropper.GetProportionsFor(width, height);
-                    CroppoBox.SelectedItem = Cropper.Proportions;
+                    CroppoBox.SelectedItem = media.CropProportions;
                 }
             }
         }
 
-        private async void Proportions_Click(object sender, RoutedEventArgs e)
+        private void Proportions_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedItem is StorageMedia media)
             {
                 if (media.CropProportions == ImageCroppingProportions.Custom)
                 {
-                    var props = await media.File.Properties.GetImagePropertiesAsync();
-                    var width = props.Width;
-                    var height = props.Height;
+                    var width = media.Width;
+                    var height = media.Height;
 
                     if (width > 1280 || height > 1280)
                     {

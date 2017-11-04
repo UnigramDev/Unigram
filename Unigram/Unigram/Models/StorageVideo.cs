@@ -44,6 +44,9 @@ namespace Unigram.Models
             LoadPreview();
         }
 
+        public override uint Width => Properties.Width;
+        public override uint Height => Properties.Height;
+
         public new static async Task<StorageVideo> CreateAsync(StorageFile file, bool selected)
         {
             try

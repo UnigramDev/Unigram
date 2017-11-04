@@ -167,6 +167,12 @@ namespace Unigram.Views
 
                 TextField.FocusMaybe(FocusState.Keyboard);
             }
+            else if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible && TextField.FocusState == FocusState.Unfocused)
+            {
+                CollapseMarkup(true);
+
+                TextField.FocusMaybe(FocusState.Keyboard);
+            }
         }
 
         //protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -186,20 +192,6 @@ namespace Unigram.Views
         //    base.OnNavigatedTo(e);
         //}
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
-        {
-            ViewModel.IsActive = true;
-
-            if (App.DataPackage != null)
-            {
-                var package = App.DataPackage;
-                App.DataPackage = null;
-                await HandlePackageAsync(package);
-            }
-
-            base.OnNavigatedTo(e);
-        }
-
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             //if (_panel != null && ViewModel.With != null)
@@ -215,16 +207,6 @@ namespace Unigram.Views
             //}
 
             base.OnNavigatingFrom(e);
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            if (e.NavigationMode != NavigationMode.Forward || e.SourcePageType != typeof(DialogPage) || e.Parameter != Frame.BackStack.Last()?.Parameter)
-            {
-                ViewModel.IsActive = false;
-            }
-
-            base.OnNavigatedFrom(e);
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -268,7 +250,7 @@ namespace Unigram.Views
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             InputPane.GetForCurrentView().Showing += InputPane_Showing;
             InputPane.GetForCurrentView().Hiding += InputPane_Hiding;
@@ -279,6 +261,13 @@ namespace Unigram.Views
             Messages.ScrollingHost.ViewChanged += OnViewChanged;
 
             TextField.FocusMaybe(FocusState.Keyboard);
+
+            if (App.DataPackage != null)
+            {
+                var package = App.DataPackage;
+                App.DataPackage = null;
+                await HandlePackageAsync(package);
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -313,6 +302,7 @@ namespace Unigram.Views
             _lastKnownKeyboardHeight = Math.Max(260, args.OccludedRect.Height);
 
             Collapse_Click(null, null);
+            CollapseMarkup(false);
         }
 
         private void InputPane_Hiding(InputPane sender, InputPaneVisibilityEventArgs args)
@@ -342,6 +332,12 @@ namespace Unigram.Views
                         Collapse_Click(null, null);
                     }
 
+                    args.Handled = true;
+                }
+
+                if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
+                {
+                    CollapseMarkup(false);
                     args.Handled = true;
                 }
 
@@ -387,6 +383,12 @@ namespace Unigram.Views
                 args.Handled = true;
             }
 
+            if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
+            {
+                CollapseMarkup(false);
+                args.Handled = true;
+            }
+
             if (ViewModel.SelectionMode != ListViewSelectionMode.None)
             {
                 ViewModel.SelectionMode = ListViewSelectionMode.None;
@@ -421,6 +423,7 @@ namespace Unigram.Views
             {
                 btnSendMessage.Visibility = Visibility.Collapsed;
                 btnCommands.Visibility = Visibility.Visible;
+                btnMarkup.Visibility = Visibility.Visible;
                 btnStickers.Visibility = Visibility.Visible;
                 btnVoiceMessage.Visibility = Visibility.Visible;
             }
@@ -428,8 +431,19 @@ namespace Unigram.Views
             {
                 btnSendMessage.Visibility = Visibility.Visible;
                 btnCommands.Visibility = Visibility.Collapsed;
+                btnMarkup.Visibility = Visibility.Collapsed;
                 btnStickers.Visibility = Visibility.Collapsed;
                 btnVoiceMessage.Visibility = Visibility.Collapsed;
+            }
+
+            if (StickersPanel.Visibility == Visibility.Visible)
+            {
+                Collapse_Click(StickersPanel, null);
+            }
+
+            if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
+            {
+                CollapseMarkup(false);
             }
         }
 
@@ -538,7 +552,25 @@ namespace Unigram.Views
 
         private async Task HandlePackageAsync(DataPackageView package)
         {
-            if (package.Contains(StandardDataFormats.StorageItems))
+            var boh = string.Join(", ", package.AvailableFormats);
+
+            if (package.Contains(StandardDataFormats.Bitmap))
+            {
+                var bitmap = await package.GetBitmapAsync();
+                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
+
+                using (var stream = await bitmap.OpenReadAsync())
+                using (var reader = new DataReader(stream))
+                {
+                    await reader.LoadAsync((uint)stream.Size);
+                    var buffer = new byte[(int)stream.Size];
+                    reader.ReadBytes(buffer);
+                    await FileIO.WriteBytesAsync(cache, buffer);
+                }
+
+                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { await StoragePhoto.CreateAsync(cache, true) });
+            }
+            else if (package.Contains(StandardDataFormats.StorageItems))
             {
                 var items = await package.GetStorageItemsAsync();
                 var media = new ObservableCollection<StorageMedia>();
@@ -546,11 +578,6 @@ namespace Unigram.Views
 
                 foreach (var file in items.OfType<StorageFile>())
                 {
-                    if (await file.SkipAsync())
-                    {
-                        continue;
-                    }
-
                     if (file.ContentType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/png", StringComparison.OrdinalIgnoreCase) ||
                         file.ContentType.Equals("image/bmp", StringComparison.OrdinalIgnoreCase) ||
@@ -578,22 +605,6 @@ namespace Unigram.Views
                         ViewModel.SendFileCommand.Execute(file);
                     }
                 }
-            }
-            else if (package.Contains(StandardDataFormats.Bitmap))
-            {
-                var bitmap = await package.GetBitmapAsync();
-                var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
-
-                using (var stream = await bitmap.OpenReadAsync())
-                using (var reader = new DataReader(stream))
-                {
-                    await reader.LoadAsync((uint)stream.Size);
-                    var buffer = new byte[(int)stream.Size];
-                    reader.ReadBytes(buffer);
-                    await FileIO.WriteBytesAsync(cache, buffer);
-                }
-
-                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { await StoragePhoto.CreateAsync(cache, true) });
             }
             //else if (e.DataView.Contains(StandardDataFormats.WebLink))
             //{
@@ -698,6 +709,58 @@ namespace Unigram.Views
             TextField.Focus(FocusState.Keyboard);
         }
 
+        private void Markup_Click(object sender, RoutedEventArgs e)
+        {
+            if (ReplyMarkupPanel.Visibility == Visibility.Visible)
+            {
+                CollapseMarkup(true);
+            }
+            else
+            {
+                ShowMarkup();
+            }
+        }
+
+        private void CollapseMarkup(bool keyboard)
+        {
+            ReplyMarkupPanel.Visibility = Visibility.Collapsed;
+            ButtonMarkup.IsChecked = false;
+
+            if (keyboard)
+            {
+                Focus(FocusState.Programmatic);
+                TextField.Focus(FocusState.Keyboard);
+
+                InputPane.GetForCurrentView().TryShow();
+            }
+        }
+
+        public void ShowMarkup()
+        {
+            ReplyMarkupPanel.Visibility = Visibility.Visible;
+            ButtonMarkup.IsChecked = true;
+
+            Focus(FocusState.Programmatic);
+            TextField.Focus(FocusState.Programmatic);
+
+            InputPane.GetForCurrentView().TryHide();
+        }
+
+        private void TextField_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (StickersPanel.Visibility == Visibility.Visible)
+            {
+                Collapse_Click(StickersPanel, null);
+            }
+            
+            if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
+            {
+                CollapseMarkup(false);
+            }
+
+            InputPane.GetForCurrentView().TryShow();
+        }
+
         private void ProfileBubble_Click(object sender, RoutedEventArgs e)
         {
             var control = sender as FrameworkElement;
@@ -710,7 +773,10 @@ namespace Unigram.Views
 
         private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ViewModel.SelectedItems = new List<TLMessageCommonBase>(Messages.SelectedItems.Cast<TLMessageCommonBase>());
+            if (ViewModel.SelectionMode == ListViewSelectionMode.Multiple)
+            {
+                ViewModel.SelectedItems = new List<TLMessageCommonBase>(Messages.SelectedItems.Cast<TLMessageCommonBase>());
+            }
         }
 
         #region Context menu
@@ -1036,7 +1102,7 @@ namespace Unigram.Views
 
         private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
-            Media.Download(sender, e);
+            Media.Download_Click(sender as FrameworkElement, e);
         }
 
         private async void Stickers_ItemClick(object sender, ItemClickEventArgs e)
@@ -1065,7 +1131,14 @@ namespace Unigram.Views
                 return;
             }
 
-            ViewModel.SendGifCommand.Execute(e.ClickedItem);
+            // I'd like to move this to StickersView
+            var document = e.ClickedItem as TLDocument;
+            if (document == null && e.ClickedItem is MosaicMediaPosition position)
+            {
+                document = position.Item as TLDocument;
+            }
+
+            ViewModel.SendGifCommand.Execute(document);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());

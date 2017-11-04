@@ -66,8 +66,6 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel : UnigramViewModelBase
     {
-        public bool IsActive { get; set; }
-
         public MessageCollection Items { get; private set; }
 
         private List<TLMessageCommonBase> _selectedItems = new List<TLMessageCommonBase>();
@@ -227,6 +225,14 @@ namespace Unigram.ViewModels
             //    SelectedMessages.Clear();
             //    SelectedMessages = null;
             //}
+        }
+
+        public bool IsActive
+        {
+            get
+            {
+                return NavigationService?.IsPeerActive(Peer) ?? false;
+            }
         }
 
         public DialogStickersViewModel Stickers { get { return _stickers; } }
@@ -904,10 +910,13 @@ namespace Unigram.ViewModels
             var obj = new TLMessagesGetHistory { Peer = Peer, OffsetId = 0, OffsetDate = dateOffset - 1, AddOffset = offset, Limit = limit, MaxId = 0, MinId = 0 };
             ProtoService.SendRequestAsync<TLMessagesMessagesBase>("messages.getHistory", obj, result =>
             {
-                BeginOnUIThread(async () =>
+                if (result.Messages.Count > 0)
                 {
-                    await LoadMessageSliceAsync(null, result.Messages[0].Id);
-                });
+                    BeginOnUIThread(async () =>
+                    {
+                        await LoadMessageSliceAsync(null, result.Messages[0].Id);
+                    });
+                }
             });
 
             //var result = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, dateOffset, 0, limit);
@@ -1963,7 +1972,7 @@ namespace Unigram.ViewModels
                     if (forwardMessages != null)
                     {
                         App.InMemoryState.ForwardMessages = null;
-                        await ForwardMessagesAsync(forwardMessages);
+                        ForwardMessages(forwardMessages);
                     }
                 });
             }
@@ -1972,12 +1981,12 @@ namespace Unigram.ViewModels
                 if (forwardMessages != null)
                 {
                     App.InMemoryState.ForwardMessages = null;
-                    await ForwardMessagesAsync(forwardMessages);
+                    ForwardMessages(forwardMessages);
                 }
             }
         }
 
-        public async Task ForwardMessagesAsync(IEnumerable<TLMessage> forwardMessages)
+        public void ForwardMessages(IEnumerable<TLMessage> forwardMessages)
         {
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
 
@@ -1989,6 +1998,8 @@ namespace Unigram.ViewModels
             {
                 var clone = fwdMessage.Clone();
                 clone.Id = 0;
+                clone.HasEditDate = false;
+                clone.EditDate = null;
                 clone.HasReplyToMsgId = false;
                 clone.ReplyToMsgId = null;
                 clone.HasReplyMarkup = false;
@@ -2368,7 +2379,7 @@ namespace Unigram.ViewModels
 
                 if (channel.IsBroadcast && full.HasParticipantsCount)
                 {
-                    return string.Format("{0} members", full.ParticipantsCount ?? 0);
+                    return string.Format("{0} subscribers", full.ParticipantsCount ?? 0);
                 }
                 else if (full.HasParticipantsCount)
                 {

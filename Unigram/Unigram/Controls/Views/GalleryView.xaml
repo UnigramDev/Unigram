@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Unigram.Controls"
+    xmlns:controls="using:Unigram.Controls"
     xmlns:viewModels="using:Unigram.ViewModels"
     xmlns:common="using:Unigram.Common"
     xmlns:selectors="using:Unigram.Selectors"
@@ -30,10 +31,11 @@
                             <Image
                                 Source="{TemplateBinding PosterSource}"
                                 Stretch="{TemplateBinding Stretch}" />
-                            <MediaPlayerPresenter x:Name="MediaPlayerPresenter"
-                                                  IsFullWindow="{TemplateBinding IsFullWindow}"
-                                                  Stretch="{TemplateBinding Stretch}"
-                                                  MediaPlayer="{TemplateBinding MediaPlayer}" />
+                            <controls:MediaPlayerView x:Name="MediaPlayerPresenter"
+                                                      IsFullWindow="{TemplateBinding IsFullWindow}"
+                                                      Stretch="{TemplateBinding Stretch}"
+                                                      MediaPlayer="{TemplateBinding MediaPlayer}"
+                                                      Constraint="{TemplateBinding Tag}"/>
                             <Grid x:Name="TimedTextSourcePresenter" />
                         </Grid>
                     </ControlTemplate>
@@ -42,86 +44,78 @@
         </Style>
     </Control.Resources>
 
-    <Grid x:Name="LayoutRoot" RequestedTheme="Dark">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Border x:Name="Layer" Background="Black" Grid.RowSpan="3"/>
+    <controls:GalleryTransportControls x:Name="Transport" RequestedTheme="Dark">
+        <controls:GalleryTransportControls.Content>
+            <Grid>
+                <Border x:Name="Layer" Background="Black" Grid.RowSpan="3"/>
+                    
+                <FlipView x:Name="Flip"
+                          x:DeferLoadStrategy="Lazy"
+                          Opacity="0"
+                          ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
+                          SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                          SelectionChanged="Flip_SelectionChanged"
+                          Background="Transparent"
+                          Grid.RowSpan="3">
+                    <FlipView.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:GalleryItem">
+                            <Grid HorizontalAlignment="Center"
+                                  VerticalAlignment="Center">
+                                <local:ImageView
+                                    x:Name="Surface"
+                                    Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
+                                    Constraint="{x:Bind Source}"
+                                    IsHitTestVisible="False"/>
+                                <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                                <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
+                            </Grid>
+                        </DataTemplate>
+                    </FlipView.ItemTemplate>
+                </FlipView>
 
-        <FlipView x:Name="Flip"
-                  x:DeferLoadStrategy="Lazy"
-                  Opacity="0"
-                  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
-                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-                  SelectionChanged="Flip_SelectionChanged"
-                  Background="Transparent"
-                  Grid.RowSpan="3">
-            <FlipView.ItemTemplate>
-                <DataTemplate x:DataType="viewModels:GalleryItem">
-                    <Grid HorizontalAlignment="Center"
-                          VerticalAlignment="Center">
-                        <local:ImageView
-                            x:Name="Surface"
-                            Source="{x:Bind Source, Converter={StaticResource DefaultPhotoConverter}}"
-                            Constraint="{x:Bind Source}"
-                            IsHitTestVisible="False"/>
-                        <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
-                        <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
-                    </Grid>
-                </DataTemplate>
-            </FlipView.ItemTemplate>
-        </FlipView>
+                <Grid x:Name="Surface" DataContext="{Binding FirstItem}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.RowSpan="3">
+                    <local:ImageView
+                        Loaded="ImageView_ImageOpened"
+                        Source="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                        Constraint="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}"
+                        Click="ImageView_Click" />
 
-        <Grid x:Name="Surface" DataContext="{Binding FirstItem}" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.RowSpan="3">
-            <local:ImageView
-                Loaded="ImageView_ImageOpened"
-                Source="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
-                Constraint="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}"
-                Click="ImageView_Click" />
-
-            <!--<local:TransferButton Completed="Download_Click" Transferable="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}" IsTransferring="{x:Bind ViewModel.FirstItem.Source.IsTransferring, Mode=OneWay}" Style="{StaticResource MediaTransferButtonStyle}"/>
-            <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{x:Bind ViewModel.FirstItem.Source.Progress, Mode=OneWay}" IsHitTestVisible="False"/>-->
-            <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
-            <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
-        </Grid>
-
-
-        <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">
-            <Grid.Background>
-                <SolidColorBrush Color="Black" Opacity="0.6"/>
-            </Grid.Background>
-            <Grid Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="{x:Bind ViewModel.SelectedIndex, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}"/>
-                <TextBlock VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1">
-                    <Run/>
-                    <Run Text="of"/>
-                </TextBlock>
-                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="2">
-                    <Run/>
-                    <Run Text="{x:Bind ViewModel.TotalItems, Mode=OneWay}"/>
-                </TextBlock>
+                    <!--<local:TransferButton Completed="Download_Click" Transferable="{x:Bind ViewModel.FirstItem.Source, Mode=OneWay}" IsTransferring="{x:Bind ViewModel.FirstItem.Source.IsTransferring, Mode=OneWay}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                         <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{x:Bind ViewModel.FirstItem.Source.Progress, Mode=OneWay}" IsHitTestVisible="False"/>-->
+                    <local:TransferButton Completed="Download_Click" Transferable="{Binding Source}" IsTransferring="{Binding Source.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                    <local:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Source.Progress}" IsHitTestVisible="False"/>
+                </Grid>
             </Grid>
+        </controls:GalleryTransportControls.Content>
+        <controls:GalleryTransportControls.Header>
+            <Grid x:Name="TopBar" Height="{ThemeResource AppBarThemeCompactHeight}">
+                <Grid Visibility="{x:Bind ViewModel.TotalItems, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{x:Bind ViewModel.SelectedIndex, Mode=OneWay}" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}"/>
+                    <TextBlock VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1">
+                        <Run/>
+                        <Run Text="of"/>
+                    </TextBlock>
+                    <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="2">
+                        <Run/>
+                        <Run Text="{x:Bind ViewModel.TotalItems, Mode=OneWay}"/>
+                    </TextBlock>
+                </Grid>
 
-            <local:GlyphButton Command="{x:Bind ViewModel.StickersCommand}"
-                               Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
-                               FontFamily="{StaticResource TelegramThemeFontFamily}"
-                               HorizontalAlignment="Right"
-                               Glyph="&#xE60E;"
-                               FontSize="24"/>
-        </Grid>
-
-        <Border Grid.Row="2">
+                <local:GlyphButton Command="{x:Bind ViewModel.StickersCommand}"
+                                   Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
+                                   FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                   HorizontalAlignment="Right"
+                                   Glyph="&#xE60E;"
+                                   FontSize="24"/>
+            </Grid>
+        </controls:GalleryTransportControls.Header>
+        <controls:GalleryTransportControls.Footer>
             <Grid x:Name="BotBar">
-                <Grid.Background>
-                    <SolidColorBrush Color="Black" Opacity="0.6"/>
-                </Grid.Background>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -133,8 +127,6 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <MediaTransportControls x:Name="Transport" Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.IsVideo, Mode=OneWay}" IsCompact="True" Grid.ColumnSpan="3"/>
-
                 <TextBlock Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
                            Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                            Style="{StaticResource BodyTextBlockStyle}"
@@ -142,10 +134,12 @@
                            Grid.ColumnSpan="3"
                            Grid.Row="1"/>
 
-                <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0,0,0" VerticalAlignment="Center" Grid.Row="2">
-                    <TextBlock Text="{x:Bind ViewModel.SelectedItem.From.DisplayName, Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
-                    <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}" Style="{StaticResource CaptionTextBlockStyle}"/>
-                </StackPanel>
+                <Border x:Name="Details" Grid.Row="2">
+                    <StackPanel Visibility="{x:Bind ViewModel.SelectedItem.From, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}" Padding="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="{x:Bind ConvertFrom(ViewModel.SelectedItem.From), Mode=OneWay}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind ConvertDate(ViewModel.SelectedItem.Date), Mode=OneWay, FallbackValue=ViewModel.SelectedItem.Date}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    </StackPanel>
+                </Border>
 
                 <local:GlyphButton
                     Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.IsShareEnabled, Mode=OneWay}"
@@ -184,6 +178,6 @@
                     </Button.Flyout>
                 </Button>
             </Grid>
-        </Border>
-    </Grid>
+        </controls:GalleryTransportControls.Footer>
+    </controls:GalleryTransportControls>
 </local:ContentDialogBase>

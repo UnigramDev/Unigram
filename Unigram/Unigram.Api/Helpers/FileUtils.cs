@@ -41,7 +41,12 @@ namespace Telegram.Api.Helpers
 
         public static Uri GetTempFileUri(string fileName)
         {
-            return new Uri($"ms-appdata:///local/{SettingsHelper.SessionGuid}/temp/{fileName}");
+            return new Uri(GetTempFileUrl(fileName));
+        }
+
+        public static string GetTempFileUrl(string fileName)
+        {
+            return $"ms-appdata:///local/{SettingsHelper.SessionGuid}/temp/{fileName}";
         }
 
         public static IAsyncOperation<StorageFile> CreateTempFileAsync(string fileName)

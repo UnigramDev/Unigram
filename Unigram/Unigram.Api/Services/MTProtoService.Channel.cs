@@ -36,7 +36,7 @@ namespace Telegram.Api.Services
             var obj = new TLChannelsReadMessageContents { Channel = inputChannel, Id = id };
 
             const string caption = "channels.readMessageContents";
-            ReadMessageContentsAsyncInternal(obj, callback, () => { }, faultCallback);
+            SendInformativeMessage(caption, obj, callback, /*() => { },*/ faultCallback);
         }
 
         public void GetAdminLogAsync(TLInputChannelBase inputChannel, string query, TLChannelAdminLogEventsFilter filter, TLVector<TLInputUserBase> admins, long maxId, long minId, int limit, Action<TLChannelsAdminLogResults> callback, Action<TLRPCError> faultCallback = null)
@@ -301,8 +301,6 @@ namespace Telegram.Api.Services
             SendInformativeMessage<TLUpdatesBase>(caption, obj,
                 result =>
                 {
-
-
                     var multiPts = result as ITLMultiPts;
                     if (multiPts != null)
                     {
