@@ -359,7 +359,7 @@ namespace Unigram.Controls.Messages
         /// </summary>
         public new event TypedEventHandler<FrameworkElement, object> Loading;
 
-        private FrameworkElement _stateControl;
+        private FrameworkElement _statusBar;
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -493,12 +493,12 @@ namespace Unigram.Controls.Messages
 
             Calculate:
 
-            if (_stateControl == null)
-                _stateControl = FindName("StatusControl") as FrameworkElement;
-            if (_stateControl.DesiredSize.IsEmpty)
-                _stateControl.Measure(availableSize);
+            if (_statusBar == null)
+                _statusBar = FindName("StatusBar") as FrameworkElement;
+            if (_statusBar.DesiredSize.IsEmpty)
+                _statusBar.Measure(availableSize);
 
-            width = Math.Max(_stateControl.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96) + sumWidth);
+            width = Math.Max(_statusBar.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96) + sumWidth);
 
             if (width > availableWidth || height > availableHeight)
             {
