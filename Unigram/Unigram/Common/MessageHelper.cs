@@ -539,11 +539,16 @@ namespace Unigram.Common
                 {
                     object data = text.Substring(entity.Offset, entity.Length);
 
-                    var hyper = new Hyperlink();
-                    hyper.Click += (s, args) => Hyperlink_Navigate(type, data, message);
-                    hyper.Inlines.Add(new Run { Text = (string)data });
-                    hyper.Foreground = foreground;
-                    paragraph.Inlines.Add(hyper);
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Click += (s, args) => Hyperlink_Navigate(type, data, message);
+                    hyperlink.Inlines.Add(new Run { Text = (string)data });
+                    hyperlink.Foreground = foreground;
+                    paragraph.Inlines.Add(hyperlink);
+
+                    if (entity is TLMessageEntityUrl)
+                    {
+                        SetEntity(hyperlink, (string)data);
+                    }
                 }
                 else if (type == TLType.MessageEntityTextUrl ||
                          type == TLType.MessageEntityMentionName ||
@@ -563,15 +568,16 @@ namespace Unigram.Common
                         data = ((TLInputMessageEntityMentionName)entity).UserId;
                     }
 
-                    var hyper = new Hyperlink();
-                    hyper.Click += (s, args) => Hyperlink_Navigate(type, data, message);
-                    hyper.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
-                    hyper.Foreground = foreground;
-                    paragraph.Inlines.Add(hyper);
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Click += (s, args) => Hyperlink_Navigate(type, data, message);
+                    hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                    hyperlink.Foreground = foreground;
+                    paragraph.Inlines.Add(hyperlink);
 
                     if (entity is TLMessageEntityTextUrl textUrl)
                     {
-                        ToolTipService.SetToolTip(hyper, textUrl.Url);
+                        SetEntity(hyperlink, textUrl.Url);
+                        ToolTipService.SetToolTip(hyperlink, textUrl.Url);
                     }
                 }
 
@@ -621,12 +627,28 @@ namespace Unigram.Common
                             label = label.Substring(0, 55) + "…";
                         }
 
+                        var navstr = match.Value.Substring(index);
+
                         var hyperlink = new Hyperlink();
-                        hyperlink.Click += (s, args) => Hyperlink_Legacy(match.Value.Substring(index), message as TLMessage);
+                        hyperlink.Click += (s, args) => Hyperlink_Legacy(navstr, message as TLMessage);
                         hyperlink.UnderlineStyle = UnderlineStyle.Single;
                         hyperlink.Foreground = foreground;
                         hyperlink.Inlines.Add(new Run { Text = label });
                         paragraph.Inlines.Add(hyperlink);
+
+                        if (navstr.StartsWith("@"))
+                        {
+                        }
+                        else if (navstr.StartsWith("#"))
+                        {
+                        }
+                        else if (navstr.StartsWith("/"))
+                        {
+                        }
+                        else if (!navstr.Contains("@"))
+                        {
+                            SetEntity(hyperlink, navstr);
+                        }
                     }
                 }
 
@@ -1610,6 +1632,40 @@ namespace Unigram.Common
 
             return null;
         }
+
+        private string GetLinkFromEntity(TLMessage message, TLMessageEntityBase entity)
+        {
+            if (entity is TLMessageEntityTextUrl textUrl)
+            {
+                return textUrl.Url;
+            }
+            else if (entity is TLMessageEntityUrl)
+            {
+                if (message.Message.Length < entity.Offset + entity.Length)
+                {
+                    return message.Message.Substring(entity.Offset, entity.Length);
+                }
+            }
+
+            return null;
+        }
+
+        #region Entity
+
+        public static string GetEntity(DependencyObject obj)
+        {
+            return (string)obj.GetValue(EntityProperty);
+        }
+
+        public static void SetEntity(DependencyObject obj, string value)
+        {
+            obj.SetValue(EntityProperty, value);
+        }
+
+        public static readonly DependencyProperty EntityProperty =
+            DependencyProperty.RegisterAttached("Entity", typeof(string), typeof(MessageHelper), new PropertyMetadata(null));
+
+        #endregion
     }
 
     public enum MessageCommandType
