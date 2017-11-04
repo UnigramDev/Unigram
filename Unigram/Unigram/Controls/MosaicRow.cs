@@ -30,7 +30,7 @@ namespace Unigram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            return new Size(availableSize.Width, 90);
+            return new Size(availableSize.Width, 80);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -42,7 +42,7 @@ namespace Unigram.Controls
                 var child = Children[i] as FrameworkElement;
                 var position = child.DataContext as MosaicMediaPosition;
 
-                child.Arrange(new Rect(left * finalSize.Width, 0, position.Width * finalSize.Width, 90));
+                child.Arrange(new Rect(left * finalSize.Width, 0, position.Width * finalSize.Width, 80));
                 left += position.Width;
             }
 
