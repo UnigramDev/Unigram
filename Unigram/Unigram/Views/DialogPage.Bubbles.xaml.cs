@@ -246,7 +246,7 @@ namespace Unigram.Views
                         root = grid.FindName("Bubble") as FrameworkElement;
                     }
 
-                    var media = root.FindName("MediaControl") as ContentControl;
+                    var media = root.FindName("Media") as ContentControl;
                     var panel = media.ContentTemplateRoot as FrameworkElement;
 
                     if (message.Media is TLMessageMediaWebPage)

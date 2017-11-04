@@ -270,7 +270,7 @@
                                     <!-- TODO: not the right way -->
                                     <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
-                                    <Grid x:Name="MediaControl" Grid.Row="1">
+                                    <Grid x:Name="Media" Grid.Row="1">
                                         <Ellipse Fill="Black"/>
                                         <controls:ImageView
                                             Source="{x:Bind ((tl:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
