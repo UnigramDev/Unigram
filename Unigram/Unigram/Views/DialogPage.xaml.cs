@@ -761,7 +761,7 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().TryShow();
         }
 
-        private void ProfileBubble_Click(object sender, RoutedEventArgs e)
+        private void Photo_Click(object sender, RoutedEventArgs e)
         {
             var control = sender as FrameworkElement;
             var message = control.DataContext as TLMessage;
