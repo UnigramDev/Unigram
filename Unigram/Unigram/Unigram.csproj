@@ -1797,10 +1797,6 @@
       <Project>{1b521e77-46bd-4d60-89f6-d68e9bb9abff}</Project>
       <Name>Unigram.Native</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Unigram.WebView\Unigram.Webview.csproj">
-      <Project>{ac06b3e5-5174-4381-a167-8f912d61f3de}</Project>
-      <Name>Unigram.Webview</Name>
-    </ProjectReference>
     <ProjectReference Include="..\UnigramHost\UnigramHost.vcxproj">
       <Project>{0dbcf059-2952-4809-9003-193ca0c6d499}</Project>
       <Name>UnigramHost</Name>
