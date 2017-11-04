@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram", "Unigram\Unigram.csproj", "{2235E8EE-374A-4E49-8050-9B701467775D}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -35,8 +35,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libopusfile", "Libraries\li
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native.Tasks", "Unigram.Native.Tasks\Unigram.Native.Tasks.vcxproj", "{CA0C2CC0-3D83-4556-A9A3-0923ECE8C1D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unigram.Webview", "Unigram.WebView\Unigram.Webview.csproj", "{AC06B3E5-5174-4381-A167-8F912D61F3DE}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Telegram.Api.Native", "Telegram.Api.Native\Telegram.Api.Native.vcxproj", "{6A7D27D0-36E8-4364-AC69-740B75EE653C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Unigram.Native.Shared", "Unigram.Native.Shared\Unigram.Native.Shared.vcxitems", "{C50F57B3-33E1-4235-9D02-0C9F1C4176A8}"
@@ -52,7 +50,6 @@ EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{1b521e77-46bd-4d60-89f6-d68e9bb9abff}*SharedItemsImports = 4
-		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{6a7d27d0-36e8-4364-ac69-740b75ee653c}*SharedItemsImports = 4
 		Unigram.Native.Shared\Unigram.Native.Shared.vcxitems*{c50f57b3-33e1-4235-9d02-0c9f1c4176a8}*SharedItemsImports = 9
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -190,18 +187,6 @@ Global
 		{CA0C2CC0-3D83-4556-A9A3-0923ECE8C1D3}.Release|x64.Build.0 = Release|x64
 		{CA0C2CC0-3D83-4556-A9A3-0923ECE8C1D3}.Release|x86.ActiveCfg = Release|Win32
 		{CA0C2CC0-3D83-4556-A9A3-0923ECE8C1D3}.Release|x86.Build.0 = Release|Win32
-		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Debug|ARM.ActiveCfg = Debug|ARM
-		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Debug|ARM.Build.0 = Debug|ARM
-		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Debug|x64.ActiveCfg = Debug|x64
-		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Debug|x64.Build.0 = Debug|x64
-		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Debug|x86.ActiveCfg = Debug|x86
-		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Debug|x86.Build.0 = Debug|x86
-		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Release|ARM.ActiveCfg = Release|ARM
-		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Release|ARM.Build.0 = Release|ARM
-		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Release|x64.ActiveCfg = Release|x64
-		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Release|x64.Build.0 = Release|x64
-		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Release|x86.ActiveCfg = Release|x86
-		{AC06B3E5-5174-4381-A167-8F912D61F3DE}.Release|x86.Build.0 = Release|x86
 		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|ARM.ActiveCfg = Debug|ARM
 		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|ARM.Build.0 = Debug|ARM
 		{6A7D27D0-36E8-4364-AC69-740B75EE653C}.Debug|x64.ActiveCfg = Debug|x64
