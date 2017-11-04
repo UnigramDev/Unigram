@@ -32,6 +32,8 @@ using Windows.UI.Xaml.Media.Imaging;
 using Unigram.Views.SignIn;
 using Telegram.Api.Aggregator;
 using Telegram.Api.Transport;
+using Windows.Foundation;
+using Windows.UI.Xaml.Input;
 
 namespace Unigram.Common
 {
@@ -358,7 +360,7 @@ namespace Unigram.Common
 
         private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var sender = d as TextBlock;
+            var sender = d as FrameworkElement;
             var newValue = e.NewValue as string;
             var oldValue = e.OldValue as string;
 
@@ -371,8 +373,18 @@ namespace Unigram.Common
             var paragraph = new Span();
             ReplaceAll(null, newValue, paragraph, foreground, true);
 
-            sender.Inlines.Clear();
-            sender.Inlines.Add(paragraph);
+            if (sender is TextBlock textBlock)
+            {
+                textBlock.Inlines.Clear();
+                textBlock.Inlines.Add(paragraph);
+            }
+            else if (sender is RichTextBlock richBlock)
+            {
+                var block = new Paragraph();
+                block.Inlines.Add(paragraph);
+                richBlock.Blocks.Clear();
+                richBlock.Blocks.Add(block);
+            }
         }
         #endregion
 
@@ -1651,6 +1663,70 @@ namespace Unigram.Common
         }
 
         #region Entity
+
+        public static void Hyperlink_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var text = sender as RichTextBlock;
+            if (args.TryGetPosition(sender, out Point point))
+            {
+                if (point.X < 0 || point.Y < 0)
+                {
+                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+                }
+
+                var hyperlink = text.GetHyperlinkFromPoint(point);
+                if (hyperlink == null)
+                {
+                    return;
+                }
+
+                var link = MessageHelper.GetEntity(hyperlink);
+                if (link == null)
+                {
+                    return;
+                }
+
+                var open = new MenuFlyoutItem { Text = "Open link", DataContext = link };
+                var copy = new MenuFlyoutItem { Text = "Copy link", DataContext = link };
+
+                open.Click += LinkOpen_Click;
+                copy.Click += LinkCopy_Click;
+
+                var flyout = new MenuFlyout();
+                flyout.Items.Add(open);
+                flyout.Items.Add(copy);
+                flyout.ShowAt(sender, point);
+
+                args.Handled = true;
+            }
+        }
+
+        private async static void LinkOpen_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            var entity = item.DataContext as string;
+
+            var url = entity;
+            if (entity.StartsWith("http") == false)
+            {
+                url = "http://" + url;
+            }
+
+            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+            {
+                await Launcher.LaunchUriAsync(uri);
+            }
+        }
+
+        private static void LinkCopy_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            var entity = item.DataContext as string;
+
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(entity);
+            ClipboardEx.TrySetContent(dataPackage);
+        }
 
         public static string GetEntity(DependencyObject obj)
         {

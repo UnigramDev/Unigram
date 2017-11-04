@@ -333,66 +333,7 @@ namespace Unigram.Controls.Messages
 
         protected void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var text = sender as RichTextBlock;
-            if (args.TryGetPosition(sender, out Point point))
-            {
-                if (point.X < 0 || point.Y < 0)
-                {
-                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
-                }
-
-                var hyperlink = text.GetHyperlinkFromPoint(point);
-                if (hyperlink == null)
-                {
-                    return;
-                }
-
-                var link = MessageHelper.GetEntity(hyperlink);
-                if (link == null)
-                {
-                    return;
-                }
-
-                var open = new MenuFlyoutItem { Text = "Open link", DataContext = link };
-                var copy = new MenuFlyoutItem { Text = "Copy link", DataContext = link };
-
-                open.Click += LinkOpen_Click;
-                copy.Click += LinkCopy_Click;
-
-                var flyout = new MenuFlyout();
-                flyout.Items.Add(open);
-                flyout.Items.Add(copy);
-                flyout.ShowAt(sender, point);
-
-                args.Handled = true;
-            }
-        }
-
-        private async void LinkOpen_Click(object sender, RoutedEventArgs e)
-        {
-            var item = sender as MenuFlyoutItem;
-            var entity = item.DataContext as string;
-
-            var url = entity;
-            if (entity.StartsWith("http") == false)
-            {
-                url = "http://" + url;
-            }
-
-            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
-            {
-                await Launcher.LaunchUriAsync(uri);
-            }
-        }
-
-        private void LinkCopy_Click(object sender, RoutedEventArgs e)
-        {
-            var item = sender as MenuFlyoutItem;
-            var entity = item.DataContext as string;
-
-            var dataPackage = new DataPackage();
-            dataPackage.SetText(entity);
-            ClipboardEx.TrySetContent(dataPackage);
+            MessageHelper.Hyperlink_ContextRequested(sender, args);
         }
 
         /// <summary>

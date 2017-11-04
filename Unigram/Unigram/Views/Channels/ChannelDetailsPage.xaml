@@ -78,7 +78,10 @@
                                 BorderThickness="0,0,0,1"
                                 Margin="12,0,0,0">
                         <TextBlock Text="About" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Margin="0,11,0,0"/>
-                        <TextBlock common:MessageHelper.Text="{x:Bind ViewModel.Full.About, Mode=OneWay}" IsTextSelectionEnabled="True" Padding="0,0,12,12" Style="{StaticResource BodyTextBlockStyle}"/>
+                        <RichTextBlock common:MessageHelper.Text="{x:Bind ViewModel.Full.About, Mode=OneWay}"
+                                       ContextRequested="About_ContextRequested"
+                                       Padding="0,0,12,12"
+                                       Style="{StaticResource BodyRichTextBlockStyle}"/>
                     </StackPanel>
 
                     <controls:HyperButton Tag="Link"
