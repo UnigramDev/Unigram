@@ -763,7 +763,7 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().TryShow();
         }
 
-        private void ProfileBubble_Click(object sender, RoutedEventArgs e)
+        private void Photo_Click(object sender, RoutedEventArgs e)
         {
             var control = sender as FrameworkElement;
             var message = control.DataContext as TLMessage;
@@ -1133,7 +1133,14 @@ namespace Unigram.Views
                 return;
             }
 
-            ViewModel.SendGifCommand.Execute(e.ClickedItem);
+            // I'd like to move this to StickersView
+            var document = e.ClickedItem as TLDocument;
+            if (document == null && e.ClickedItem is MosaicMediaPosition position)
+            {
+                document = position.Item as TLDocument;
+            }
+
+            ViewModel.SendGifCommand.Execute(document);
             ViewModel.StickerPack = null;
             TextField.SetText(null, null);
             Collapse_Click(null, new RoutedEventArgs());

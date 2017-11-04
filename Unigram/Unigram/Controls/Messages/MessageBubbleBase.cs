@@ -17,8 +17,10 @@ using Unigram.ViewModels;
 using Unigram.Views;
 using Unigram.Views.Chats;
 using Unigram.Views.Users;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Globalization.DateTimeFormatting;
+using Windows.System;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -319,8 +321,9 @@ namespace Unigram.Controls.Messages
             Context?.MessageShareCommand.Execute(ViewModel);
         }
 
-        protected void MessageControl_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        protected void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
+            var text = sender as RichTextBlock;
             if (args.TryGetPosition(sender, out Point point))
             {
                 if (point.X < 0 || point.Y < 0)
@@ -328,20 +331,58 @@ namespace Unigram.Controls.Messages
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                var text = sender as RichTextBlock;
                 var hyperlink = text.GetHyperlinkFromPoint(point);
-                if (hyperlink != null && hyperlink.NavigateUri != null)
+                if (hyperlink == null)
                 {
-                    var open = new MenuFlyoutItem { Text = "Open link" };
-                    var copy = new MenuFlyoutItem { Text = "Copy link" };
-
-                    var flyout = new MenuFlyout();
-                    flyout.Items.Add(open);
-                    flyout.Items.Add(copy);
-                    flyout.ShowAt(sender, point);
-                    args.Handled = true;
+                    return;
                 }
+
+                var link = MessageHelper.GetEntity(hyperlink);
+                if (link == null)
+                {
+                    return;
+                }
+
+                var open = new MenuFlyoutItem { Text = "Open link", DataContext = link };
+                var copy = new MenuFlyoutItem { Text = "Copy link", DataContext = link };
+
+                open.Click += LinkOpen_Click;
+                copy.Click += LinkCopy_Click;
+
+                var flyout = new MenuFlyout();
+                flyout.Items.Add(open);
+                flyout.Items.Add(copy);
+                flyout.ShowAt(sender, point);
+
+                args.Handled = true;
             }
+        }
+
+        private async void LinkOpen_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            var entity = item.DataContext as string;
+
+            var url = entity;
+            if (entity.StartsWith("http") == false)
+            {
+                url = "http://" + url;
+            }
+
+            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
+            {
+                await Launcher.LaunchUriAsync(uri);
+            }
+        }
+
+        private void LinkCopy_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            var entity = item.DataContext as string;
+
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(entity);
+            ClipboardEx.TrySetContent(dataPackage);
         }
 
         /// <summary>
@@ -349,7 +390,7 @@ namespace Unigram.Controls.Messages
         /// </summary>
         public new event TypedEventHandler<FrameworkElement, object> Loading;
 
-        private FrameworkElement _stateControl;
+        private FrameworkElement _statusBar;
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -483,12 +524,12 @@ namespace Unigram.Controls.Messages
 
             Calculate:
 
-            if (_stateControl == null)
-                _stateControl = FindName("StatusControl") as FrameworkElement;
-            if (_stateControl.DesiredSize.IsEmpty)
-                _stateControl.Measure(availableSize);
+            if (_statusBar == null)
+                _statusBar = FindName("StatusBar") as FrameworkElement;
+            if (_statusBar.DesiredSize.IsEmpty)
+                _statusBar.Measure(availableSize);
 
-            width = Math.Max(_stateControl.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96) + sumWidth);
+            width = Math.Max(_statusBar.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96) + sumWidth);
 
             if (width > availableWidth || height > availableHeight)
             {

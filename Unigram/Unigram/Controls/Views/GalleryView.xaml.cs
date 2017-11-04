@@ -396,6 +396,8 @@ namespace Unigram.Controls.Views
 
                 _mediaPlayer.Dispose();
                 _mediaPlayer = null;
+
+                OnSourceChanged();
             }
         }
 

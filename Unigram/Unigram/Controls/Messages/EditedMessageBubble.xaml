@@ -30,10 +30,16 @@
                     <VisualStateGroup>
                         <VisualState x:Name="FullMedia">
                             <VisualState.Setters>
-                                <Setter Target="StatusControl.Padding" Value="6,4,6,4"/>
-                                <Setter Target="StatusControl.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
-                                <Setter Target="StatusControl.Foreground" Value="White"/>
+                                <Setter Target="StatusBar.Padding" Value="6,4,6,4"/>
+                                <Setter Target="StatusBar.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
+                                <Setter Target="StatusBar.Foreground" Value="White"/>
                                 <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Hidden">
+                            <VisualState.Setters>
+                                <Setter Target="StatusBar.Opacity" Value="0"/>
+                                <Setter Target="StatusBar.IsHitTestVisible" Value="False"/>
                             </VisualState.Setters>
                         </VisualState>
                         <VisualState x:Name="Default"/>
@@ -70,20 +76,23 @@
                     </TextBlock>
                 </Border>
 
-
-                <TextBlock
-                    x:Name="MessageControl"
+                <RichTextBlock
+                    x:Name="Message"
                     common:MessageHelper.Message="{x:Bind ViewModel.Self, Mode=OneWay}"
-                    Style="{ThemeResource BodyTextBlockStyle}"
-                    Foreground="{ThemeResource MessageForegroundBrush}"
+                    Style="{ThemeResource BodyRichTextBlockStyle}"
+                    Foreground="{StaticResource MessageForegroundBrush}"
+                    ContextRequested="Message_ContextRequested"
                     Grid.Row="2">
-                    <TextBlock.Resources>
+                    <RichTextBlock.Resources>
                         <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
-                    </TextBlock.Resources>
-                </TextBlock>
+                    </RichTextBlock.Resources>
+                    <Paragraph>
+                        <Span/><InlineUIContainer><TextBlock x:Name="Placeholder" TextLineBounds="TrimToBaseline" Style="{StaticResource BodyTextBlockStyle}"/></InlineUIContainer>
+                    </Paragraph>
+                </RichTextBlock>
 
                 <controls:MediaControl
-                    x:Name="MediaControl"
+                    x:Name="Media"
                     Media="{x:Bind ConvertMedia(ViewModel.Media), Mode=OneWay}"
                     HorizontalContentAlignment="Stretch"
                     VerticalContentAlignment="Stretch"
@@ -91,8 +100,8 @@
                     ContentTemplateSelector="{StaticResource MediaTemplateSelector}"
                     Grid.Row="3"/>
 
-                <local:MessageStateControl
-                    x:Name="StatusControl"
+                <local:MessageStatusBar
+                    x:Name="StatusBar"
                     VerticalAlignment="Bottom"
                     HorizontalAlignment="Right"
                     Margin="0,0,-6,-2"

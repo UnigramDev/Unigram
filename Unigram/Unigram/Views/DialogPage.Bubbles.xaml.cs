@@ -246,7 +246,7 @@ namespace Unigram.Views
                         root = grid.FindName("Bubble") as FrameworkElement;
                     }
 
-                    var media = root.FindName("MediaControl") as ContentControl;
+                    var media = root.FindName("Media") as ContentControl;
                     var panel = media.ContentTemplateRoot as FrameworkElement;
 
                     if (message.Media is TLMessageMediaWebPage)
@@ -261,7 +261,7 @@ namespace Unigram.Views
 
                     if (panel is Grid final)
                     {
-                        news[fileName] = new MediaPlayerItem { Container = final, Watermark = message.Media is TLMessageMediaGame };
+                        news[FileUtils.GetTempFileUrl(fileName)] = new MediaPlayerItem { Container = final, Watermark = message.Media is TLMessageMediaGame };
                     }
                 }
             }
@@ -298,7 +298,7 @@ namespace Unigram.Views
                     var player = new MediaPlayer();
                     player.AutoPlay = true;
                     player.IsLoopingEnabled = true;
-                    player.Source = MediaSource.CreateFromUri(FileUtils.GetTempFileUri(item));
+                    player.Source = MediaSource.CreateFromUri(new Uri(item));
 
                     var presenter = new MediaPlayerView();
                     presenter.MediaPlayer = player;

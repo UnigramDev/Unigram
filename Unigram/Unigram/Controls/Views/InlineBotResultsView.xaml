@@ -86,10 +86,15 @@
 
         <DataTemplate x:Key="GifMediaTemplate" x:DataType="tl:TLBotInlineMediaResult">
             <Grid Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Height="96" Margin="4,8">
-                <controls:ImageView Source="{x:Bind Photo, Converter={StaticResource DefaultPhotoConverter}}"
-                                    Constraint="{x:Bind Photo}"
+                <controls:ImageView Source="{x:Bind Document, Converter={StaticResource DefaultPhotoConverter}}"
+                                    Constraint="{x:Bind Document}"
                                     IsHitTestVisible="False"
                                     Height="96"/>
+
+                <controls:TransferButton Transferable="{Binding Document}" IsTransferring="{Binding Document.IsTransferring}" IsHitTestVisible="False" Style="{StaticResource MediaTransferButtonStyle}"/>
+                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Document.Progress}" IsHitTestVisible="False"/>
+
+
                 <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
             </Grid>
         </DataTemplate>
@@ -279,13 +284,19 @@
                         Content="{x:Bind ViewModel.InlineBotResults.SwitchPM.Text, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.InlineBotResults.SwitchPM, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                         HorizontalAlignment="Stretch"/>
-                <controls:OrientableListView ItemsSource="{x:Bind ViewModel.InlineBotResults.Results, Mode=OneWay}"
+                <controls:OrientableListView x:Name="Items"
+                                             ItemsSource="{x:Bind ViewModel.InlineBotResults, Mode=OneWay}"
                                              IsHorizontal="{x:Bind ViewModel.InlineBotResults.IsGallery, Mode=OneWay}"
                                              ItemTemplateSelector="{StaticResource InlineBotResultTemplateSelector}"
                                              ItemClick="ListView_ItemClick"
                                              IsItemClickEnabled="True"
                                              SelectionMode="None"
                                              Grid.Row="1">
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsStackPanel Loaded="OnLoaded"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem" BasedOn="{StaticResource ZoomableListViewItemStyle}">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

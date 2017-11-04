@@ -128,7 +128,7 @@ namespace Unigram.Themes
             }
             else if (TLMessage.IsVideo(document) || TLMessage.IsRoundVideo(document) || TLMessage.IsGif(document) || message.IsPhoto())
             {
-                var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
+                var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("Media")) as FrameworkElement;
                 if (media == null)
                 {
                     media = element;
@@ -193,7 +193,7 @@ namespace Unigram.Themes
                 }
             }
 
-            var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
+            var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("Media")) as FrameworkElement;
             if (media == null)
             {
                 media = element;
