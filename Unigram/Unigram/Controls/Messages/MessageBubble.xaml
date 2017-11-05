@@ -140,6 +140,7 @@
                 Style="{ThemeResource BodyRichTextBlockStyle}"
                 Foreground="{StaticResource MessageForegroundBrush}"
                 ContextRequested="Message_ContextRequested"
+                ContextMenuOpening="Message_ContextMenuOpening"
                 Grid.Column="1"
                 Grid.Row="2">
                 <RichTextBlock.Resources>

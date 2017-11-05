@@ -81,6 +81,7 @@
                 Style="{ThemeResource BodyRichTextBlockStyle}"
                 Foreground="{StaticResource MessageForegroundBrush}"
                 ContextRequested="Message_ContextRequested"
+                ContextMenuOpening="Message_ContextMenuOpening"
                 Grid.Row="2">
                 <RichTextBlock.Resources>
                     <StaticResource x:Key="MessageHyperlinkForegroundBrush" ResourceKey="MessageHyperlinkForegroundBrush"/>
@@ -103,6 +104,7 @@
                 x:Name="StatusBar"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
+                SizeChanged="StatusBar_SizeChanged"
                 Margin="0,0,-6,-2"
                 Grid.Row="4"/>
         </Grid>
