@@ -283,7 +283,7 @@ namespace Unigram.Controls
                 }
 
                 left = (700d - left) / 700d * width;
-                top = message.IsFirst ? 6d : -top * height;
+                top = message == group.Messages[0] && message.IsFirst ? 6d : -top * height;
 
                 if (message.IsOut)
                 {
