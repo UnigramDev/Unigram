@@ -327,6 +327,11 @@ namespace Unigram.Controls.Messages
             MessageHelper.Hyperlink_ContextRequested(sender, args);
         }
 
+        protected void Message_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            e.Handled = true;
+        }
+
         /// <summary>
         /// x:Bind hack
         /// </summary>
