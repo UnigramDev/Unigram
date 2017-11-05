@@ -14,12 +14,8 @@ namespace Unigram.Selectors
     {
         public Dictionary<long, GroupedMessages> GroupedItems { get; set; }
 
-        //public Style ChatFriendMessageStyle { get; set; }
-
         public Style GroupStyle { get; set; }
-
         public Style MessageStyle { get; set; }
-
         public Style ServiceStyle { get; set; }
 
         protected override Style SelectStyleCore(object item, DependencyObject container)
@@ -51,8 +47,6 @@ namespace Unigram.Selectors
                 //{
                 //    return ChatFriendMessageStyle;
                 //}
-
-                return MessageStyle;
             }
 
             return MessageStyle;
