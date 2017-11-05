@@ -789,9 +789,6 @@ namespace Telegram.Api.Services
             var first = messages.FirstOrDefault();
             if (first != null)
             {
-                obj.GroupedId = first.GroupedId;
-                obj.HasGroupedId = first.HasGroupedId;
-
                 obj.ReplyToMsgId = first.ReplyToMsgId;
                 obj.HasReplyToMsgId = first.HasReplyToMsgId;
 

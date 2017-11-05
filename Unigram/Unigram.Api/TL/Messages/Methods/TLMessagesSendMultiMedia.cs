@@ -16,20 +16,17 @@ namespace Telegram.Api.TL.Messages.Methods
 			Background = (1 << 6),
 			ClearDraft = (1 << 7),
 			ReplyToMsgId = (1 << 0),
-			GroupedId = (1 << 8),
 		}
 
 		public bool IsSilent { get { return Flags.HasFlag(Flag.Silent); } set { Flags = value ? (Flags | Flag.Silent) : (Flags & ~Flag.Silent); } }
 		public bool IsBackground { get { return Flags.HasFlag(Flag.Background); } set { Flags = value ? (Flags | Flag.Background) : (Flags & ~Flag.Background); } }
 		public bool IsClearDraft { get { return Flags.HasFlag(Flag.ClearDraft); } set { Flags = value ? (Flags | Flag.ClearDraft) : (Flags & ~Flag.ClearDraft); } }
 		public bool HasReplyToMsgId { get { return Flags.HasFlag(Flag.ReplyToMsgId); } set { Flags = value ? (Flags | Flag.ReplyToMsgId) : (Flags & ~Flag.ReplyToMsgId); } }
-		public bool HasGroupedId { get { return Flags.HasFlag(Flag.GroupedId); } set { Flags = value ? (Flags | Flag.GroupedId) : (Flags & ~Flag.GroupedId); } }
 
 		public Flag Flags { get; set; }
 		public TLInputPeerBase Peer { get; set; }
 		public Int32? ReplyToMsgId { get; set; }
 		public TLVector<TLInputSingleMedia> MultiMedia { get; set; }
-		public Int64? GroupedId { get; set; }
 
 		public TLMessagesSendMultiMedia() { }
 		public TLMessagesSendMultiMedia(TLBinaryReader from)
@@ -45,25 +42,22 @@ namespace Telegram.Api.TL.Messages.Methods
 			Peer = TLFactory.Read<TLInputPeerBase>(from);
 			if (HasReplyToMsgId) ReplyToMsgId = from.ReadInt32();
 			MultiMedia = TLFactory.Read<TLVector<TLInputSingleMedia>>(from);
-			if (HasGroupedId) GroupedId = from.ReadInt64();
 		}
 
 		public override void Write(TLBinaryWriter to)
 		{
 			UpdateFlags();
 
-			to.Write(0x4BD55D58);
+			to.Write(0x2095512F);
 			to.Write((Int32)Flags);
 			to.WriteObject(Peer);
 			if (HasReplyToMsgId) to.Write(ReplyToMsgId.Value);
 			to.WriteObject(MultiMedia);
-			if (HasGroupedId) to.Write(GroupedId.Value);
 		}
 
 		private void UpdateFlags()
 		{
 			HasReplyToMsgId = ReplyToMsgId != null;
-			HasGroupedId = GroupedId != null;
 		}
 	}
 }

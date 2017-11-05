@@ -839,7 +839,7 @@ namespace Telegram.Api.TL
 		MessagesGetUnreadMentions = 0x46578472,
 		MessagesGetRecentLocations = 0x249431E2,
 		MessagesReadMentions = 0xF0189D3,
-		MessagesSendMultiMedia = 0x4BD55D58,
+		MessagesSendMultiMedia = 0x2095512F,
 		UpdatesGetState = 0xEDD4882A,
 		UpdatesGetDifference = 0x25939651,
 		UpdatesGetChannelDifference = 0x3173D78,

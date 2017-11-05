@@ -1292,19 +1292,14 @@ namespace Unigram.ViewModels
                 var response = await ProtoService.SendMultiMediaAsync(_peer, new TLVector<TLInputSingleMedia>(inputMedia), messages);
                 if (response.IsSucceeded && response.Result is TLUpdates updates)
                 {
-                    foreach (var update in updates.Updates.OfType<TLUpdateMessageID>())
-                    {
-                        var message = messages.FirstOrDefault(x => x.Id == update.Id);
-                        if (message == null)
-                        {
-                            continue;
-                        }
+                    var newGroupedId = messages[0].GroupedId ?? groupedId;
 
-                        group.Messages.Remove(update.RandomId);
-                        group.Messages.Add(message);
-                    }
-
+                    group = new GroupedMessages { GroupedId = newGroupedId };
+                    group.Messages.AddRange(messages);
                     group.Calculate();
+
+                    _groupedMessages[newGroupedId] = group;
+                    _groupedMessages.Remove(groupedId);
                 }
             });
         }

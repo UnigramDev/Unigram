@@ -705,6 +705,8 @@ namespace Telegram.Api.TL
             FromId = m.FromId;
             ToId = m.ToId;
             IsOut = m.IsOut;
+            GroupedId = m.GroupedId;
+            HasGroupedId = m.HasGroupedId;
             if (IsUnread != IsUnread)
             {
                 if (IsUnread)
