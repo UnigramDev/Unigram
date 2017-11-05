@@ -220,7 +220,8 @@
         <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                             Constraint="{Binding Media.Document}"
                             MaxWidth="{ThemeResource TelegramLightMediaMaxWidth}"
-                            MaxHeight="{ThemeResource TelegramLightMediaMaxHeight}"/>
+                            MaxHeight="{ThemeResource TelegramLightMediaMaxHeight}"
+                            Click="Sticker_Click"/>
     </DataTemplate>
 
     <DataTemplate x:Key="MediaContactTemplate">

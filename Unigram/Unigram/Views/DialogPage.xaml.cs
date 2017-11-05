@@ -759,7 +759,7 @@ namespace Unigram.Views
             {
                 Collapse_Click(StickersPanel, null);
             }
-            
+
             if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
             {
                 CollapseMarkup(false);
@@ -840,7 +840,7 @@ namespace Unigram.Views
 
             // Stickers
             // <MenuFlyoutItem Loaded="MessageAddSticker_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>
-            CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => StickerSet_Click(element, null)), messageCommon, AppResources.MessageAddSticker);
+            CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), messageCommon, AppResources.MessageAddSticker);
             CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, AppResources.MessageFaveSticker);
             CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, AppResources.MessageUnfaveSticker);
 
@@ -1157,7 +1157,7 @@ namespace Unigram.Views
             Media.Download_Click(sender as FrameworkElement, e);
         }
 
-        private async void Stickers_ItemClick(object sender, ItemClickEventArgs e)
+        public async void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
             var channel = ViewModel.With as TLChannel;
             if (channel != null && channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsSendStickers)
@@ -1174,7 +1174,7 @@ namespace Unigram.Views
             TextField.FocusMaybe(FocusState.Keyboard);
         }
 
-        private async void Gifs_ItemClick(object sender, ItemClickEventArgs e)
+        public async void Gifs_ItemClick(object sender, ItemClickEventArgs e)
         {
             var channel = ViewModel.With as TLChannel;
             if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendGifs)
@@ -1198,7 +1198,7 @@ namespace Unigram.Views
             TextField.FocusMaybe(FocusState.Keyboard);
         }
 
-        private async void StickerSet_Click(object sender, RoutedEventArgs e)
+        private async void Sticker_Click(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;
             var message = element.DataContext as TLMessage;

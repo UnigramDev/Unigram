@@ -76,6 +76,29 @@ namespace Unigram.Themes
             }
         }
 
+        private async void Sticker_Click(object sender, RoutedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+
+            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                var stickerAttribute = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                if (stickerAttribute != null && stickerAttribute.StickerSet.TypeId != TLType.InputStickerSetEmpty)
+                {
+                    var page = element.Ancestors<DialogPage>().FirstOrDefault() as DialogPage;
+                    if (page == null)
+                    {
+                        await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet, page.Stickers_ItemClick);
+                    }
+                    else
+                    {
+                        await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet);
+                    }
+                }
+            }
+        }
+
         private async void SingleMedia_Click(object sender, RoutedEventArgs e)
         {
             var image = sender as ImageView;
