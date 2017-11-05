@@ -1309,6 +1309,7 @@
         </Grid>
 
         <ScrollViewer x:Name="ReplyMarkupPanel"
+                      MaxHeight="260"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto"
                       HorizontalScrollBarVisibility="Disabled"
@@ -1316,7 +1317,7 @@
                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                       Visibility="Collapsed"
                       Grid.Row="4">
-            <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" ButtonClick="ReplyMarkup_ButtonClick" AllowFocusOnInteraction="True" Margin="4,0,4,0"/>
+            <controls:ReplyMarkupPanel ReplyMarkup="{x:Bind ViewModel.ReplyMarkup, Mode=OneWay}" AllowFocusOnInteraction="False" ButtonClick="ReplyMarkup_ButtonClick" Margin="4,0,4,0"/>
         </ScrollViewer>
 
         <Grid x:Name="KeyboardItems" Grid.Row="4">
@@ -1378,6 +1379,7 @@
                         MinHeight="48"
                         MaxHeight="96"
                         TextChanged="TextField_TextChanged"
+                        LostFocus="TextField_LostFocus"
                         Capture="TextField_Tapped"/>
 
                     <controls:GlyphButton x:Name="ButtonAttach" Click="Attach_Click" Glyph="&#xE16C;" AllowFocusOnInteraction="False" VerticalAlignment="Bottom" Grid.Row="1">

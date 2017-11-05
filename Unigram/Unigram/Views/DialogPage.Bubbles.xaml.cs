@@ -49,6 +49,7 @@ namespace Unigram.Views
     public partial class DialogPage : Page
     {
         private ItemsStackPanel _panel;
+        private Dictionary<string, MediaPlayerItem> _old = new Dictionary<string, MediaPlayerItem>();
 
         private async void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
@@ -191,8 +192,6 @@ namespace Unigram.Views
             }
         }
 
-        private Dictionary<string, MediaPlayerItem> _old = new Dictionary<string, MediaPlayerItem>();
-
         class MediaPlayerItem
         {
             public Grid Container { get; set; }
@@ -208,7 +207,7 @@ namespace Unigram.Views
                 return;
             }
 
-            var fileName = document.GetFileName();
+            var fileName = FileUtils.GetTempFileUrl(document.GetFileName());
             if (_old.ContainsKey(fileName))
             {
                 Play(new TLMessage[0], false);
@@ -311,6 +310,181 @@ namespace Unigram.Views
 
                 _old.Add(item, news[item]);
             }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        private Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
+        private Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            var typeName = SelectTemplateCore(args.Item);
+
+            Debug.Assert(_typeToItemHashSetMapping.ContainsKey(typeName), "The type of the item used with DataTemplateSelectorBehavior must have a DataTemplate mapping");
+            var relevantHashSet = _typeToItemHashSetMapping[typeName];
+
+            // args.ItemContainer is used to indicate whether the ListView is proposing an
+            // ItemContainer (ListViewItem) to use. If args.Itemcontainer != null, then there was a
+            // recycled ItemContainer available to be reused.
+            if (args.ItemContainer != null)
+            {
+                if (args.ItemContainer.Tag.Equals(typeName))
+                {
+                    // Suggestion matches what we want, so remove it from the recycle queue
+                    relevantHashSet.Remove(args.ItemContainer);
+#if ENABLE_DEBUG_SPEW
+                    Debug.WriteLine($"Removing (suggested) {args.ItemContainer.GetHashCode()} from {typeName}");
+#endif // ENABLE_DEBUG_SPEW
+                }
+                else
+                {
+                    // The ItemContainer's datatemplate does not match the needed
+                    // datatemplate.
+                    // Don't remove it from the recycle queue, since XAML will resuggest it later
+                    args.ItemContainer = null;
+                }
+            }
+
+            // If there was no suggested container or XAML's suggestion was a miss, pick one up from the recycle queue
+            // or create a new one
+            if (args.ItemContainer == null)
+            {
+                // See if we can fetch from the correct list.
+                if (relevantHashSet.Count > 0)
+                {
+                    // Unfortunately have to resort to LINQ here. There's no efficient way of getting an arbitrary
+                    // item from a hashset without knowing the item. Queue isn't usable for this scenario
+                    // because you can't remove a specific element (which is needed in the block above).
+                    args.ItemContainer = relevantHashSet.First();
+                    relevantHashSet.Remove(args.ItemContainer);
+#if ENABLE_DEBUG_SPEW
+                    Debug.WriteLine($"Removing (reused) {args.ItemContainer.GetHashCode()} from {typeName}");
+#endif // ENABLE_DEBUG_SPEW
+                }
+                else
+                {
+                    // There aren't any (recycled) ItemContainers available. So a new one
+                    // needs to be created.
+                    var item = CreateSelectorItem(typeName);
+                    item.Style = Messages.ItemContainerStyleSelector.SelectStyle(args.Item, item);
+                    args.ItemContainer = item;
+#if ENABLE_DEBUG_SPEW
+                    Debug.WriteLine($"Creating {args.ItemContainer.GetHashCode()} for {typeName}");
+#endif // ENABLE_DEBUG_SPEW
+                }
+            }
+
+            // Indicate to XAML that we picked a container for it
+            args.IsContainerPrepared = true;
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue == true)
+            {
+                // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
+                var tag = args.ItemContainer.Tag as string;
+
+#if ENABLE_DEBUG_SPEW
+                Debug.WriteLine($"Adding {args.ItemContainer.GetHashCode()} to {tag}");
+#endif // ENABLE_DEBUG_SPEW
+
+                var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
+
+#if ENABLE_DEBUG_SPEW
+                Debug.Assert(added == true, "Recycle queue should never have dupes. If so, we may be incorrectly reusing a container that is already in use!");
+#endif // ENABLE_DEBUG_SPEW
+            }
+        }
+
+        private SelectorItem CreateSelectorItem(string typeName)
+        {
+            SelectorItem item = new ListViewItem();
+            //item.ContentTemplate = _typeToTemplateMapping[typeName];
+            item.ContentTemplate = Resources[typeName] as DataTemplate;
+            item.Tag = typeName;
+            return item;
+        }
+
+        private string SelectTemplateCore(object item)
+        {
+            var messageBase = item as TLMessageBase;
+            if (messageBase == null || messageBase is TLMessageEmpty)
+            {
+                return "EmptyMessageTemplate";
+            }
+            else if (messageBase is TLMessage message)
+            {
+                if (message.HasGroupedId && message.GroupedId is long groupedId && ViewModel.GroupedItems != null && ViewModel.GroupedItems.TryGetValue(groupedId, out GroupedMessages group) && group.Messages.Count > 1)
+                {
+                    return message.Media is TLMessageMediaPhoto ? "GroupedPhotoTemplate" : "GroupedVideoTemplate";
+                }
+
+                if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
+                {
+                    return "ServiceMessageTemplate";
+                }
+                else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds && (documentMedia.Document is TLDocumentEmpty || !documentMedia.HasDocument))
+                {
+                    return "ServiceMessageTemplate";
+                }
+
+                if (message.IsSaved())
+                {
+                    return "ChatFriendMessageTemplate";
+                }
+
+                if (message.IsOut && !message.IsPost)
+                {
+                    return "UserMessageTemplate";
+                }
+                else if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
+                {
+                    return "ChatFriendMessageTemplate";
+                }
+
+                return "FriendMessageTemplate";
+            }
+            else if (messageBase is TLMessageService serviceMessage)
+            {
+                if (serviceMessage.Action is TLMessageActionChatEditPhoto)
+                {
+                    return "ServiceMessagePhotoTemplate";
+                }
+                else if (serviceMessage.Action is TLMessageActionHistoryClear)
+                {
+                    return "EmptyMessageTemplate";
+                }
+                else if (serviceMessage.Action is TLMessageActionDate)
+                {
+                    return "ServiceMessageDateTemplate";
+                }
+                else if (serviceMessage.Action is TLMessageActionUnreadMessages)
+                {
+                    //return ServiceMessageUnreadTemplate;
+                    return "ServiceMessageLocalTemplate";
+                }
+                else if (serviceMessage.Action is TLMessageActionPhoneCall)
+                {
+                    return serviceMessage.IsOut ? "ServiceUserCallTemplate" : "ServiceFriendCallTemplate";
+                }
+
+                return "ServiceMessageTemplate";
+            }
+
+            return "EmptyMessageTemplate";
         }
     }
 }

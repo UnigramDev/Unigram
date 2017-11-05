@@ -89,14 +89,28 @@ namespace Unigram.Views
 
             //NavigationCacheMode = NavigationCacheMode.Required;
 
+            //_typeToItemHashSetMapping.Add("GroupedPhotoTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("GroupedVideoTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ServiceMessageTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ChatFriendMessageTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("FriendMessageTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ServiceMessageLocalTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ServiceMessageDateTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ServiceUserCallTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ServiceFriendCallTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
+
+            //Messages.ChoosingItemContainer += OnChoosingItemContainer;
+            //Messages.ContainerContentChanging += OnContainerContentChanging;
+
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
 
             CheckMessageBoxEmpty();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
-
-            TextField.LostFocus += TextField_LostFocus;
 
             StickersPanel.StickerClick = Stickers_ItemClick;
             StickersPanel.GifClick = Gifs_ItemClick;
@@ -169,7 +183,7 @@ namespace Unigram.Views
             }
             else if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible && TextField.FocusState == FocusState.Unfocused)
             {
-                CollapseMarkup(true);
+                CollapseMarkup(false);
 
                 TextField.FocusMaybe(FocusState.Keyboard);
             }
@@ -696,6 +710,9 @@ namespace Unigram.Views
 
                 InputPane.GetForCurrentView().TryHide();
 
+                StickersPanel.MinHeight = 260;
+                StickersPanel.MaxHeight = 360;
+                StickersPanel.Height = _lastKnownKeyboardHeight;
                 StickersPanel.Visibility = Visibility.Visible;
                 StickersPanel.Refresh();
 
