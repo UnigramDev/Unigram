@@ -191,16 +191,19 @@ namespace Unigram.Controls.Messages
         private void StatusToFullMedia()
         {
             VisualStateManager.GoToState(LayoutRoot, "FullMedia", false);
+            VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
         }
 
         private void StatusToDefault()
         {
             VisualStateManager.GoToState(LayoutRoot, "Normal", false);
+            VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
         }
 
         private void StatusToHidden()
         {
             VisualStateManager.GoToState(LayoutRoot, "Hidden", false);
+            VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
         }
 
         #endregion

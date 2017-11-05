@@ -276,7 +276,7 @@ namespace Unigram.Controls.Messages
             {
                 paragraph.Visibility = Visibility.Collapsed;
                 admin.Visibility = Visibility.Collapsed;
-                parent.Visibility = message.HasReplyToMsgId ? Visibility.Visible : Visibility.Collapsed;
+                parent.Visibility = message.ReplyToMsgId.HasValue ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
