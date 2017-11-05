@@ -182,6 +182,15 @@ namespace Unigram.Common
                     SetDownloadSource(document, document, document.Size, PHASE_FULL);
                 }
             }
+            else if (TLMessage.IsRoundVideo(document))
+            {
+                SetSource(null, document.Thumb, PHASE_THUMBNAIL);
+
+                if (ApplicationSettings.Current.AutoDownload[_protoService.NetworkType].HasFlag(AutoDownloadType.Round))
+                {
+                    SetDownloadSource(document, document, document.Size, PHASE_FULL);
+                }
+            }
             else
             {
                 SetSource(null, document.Thumb, PHASE_THUMBNAIL);
