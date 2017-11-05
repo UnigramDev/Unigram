@@ -432,7 +432,7 @@
                                     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                     MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Game.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Game.Document}" IsTransferring="{Binding Media.Game.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                 <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Game.Document.Progress}" IsHitTestVisible="False"/>
 
                 <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,4" Margin="4">
@@ -464,7 +464,7 @@
                                     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                     MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Game.Photo}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Game.Photo}" IsTransferring="{Binding Media.Game.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                 <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Game.Photo.Progress}" IsHitTestVisible="False"/>
 
                 <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,4" Margin="4">
