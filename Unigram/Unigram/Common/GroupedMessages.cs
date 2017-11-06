@@ -20,7 +20,7 @@ namespace Unigram.Common
         public byte MinX { get; private set; }
         public byte MinY { get; private set; }
         public float ph { get; private set; }
-        public int pw { get; private set; }
+        public int pw { get; set; }
         public float[] SiblingHeights { get; set; }
         public int SpanSize { get; set; }
 
@@ -39,6 +39,7 @@ namespace Unigram.Common
 
     public class GroupedMessages
     {
+        private int _maxSizeWidth = 700;
         private List<MessageGroupedLayoutAttempt> _attempts;
         private List<GroupedMessagePosition> _posArray = new List<GroupedMessagePosition>();
 
@@ -87,6 +88,7 @@ namespace Unigram.Common
                 StringBuilder proportions = new StringBuilder();
                 float averageAspectRatio = 1.0f;
                 bool isOut = false;
+                byte maxX = 0;
                 int a = 0;
                 while (a < count)
                 {
@@ -177,7 +179,7 @@ namespace Unigram.Common
                         while (secondLine < croppedRatios.Length - firstLine)
                         {
                             int thirdLine = (croppedRatios.Length - firstLine) - secondLine;
-                            if (firstLine <= 4 && secondLine <= 4 && thirdLine <= 4)
+                            if (firstLine <= 4 && secondLine <= 4 && thirdLine <= 3)
                             {
                                 _attempts.Add(new MessageGroupedLayoutAttempt(firstLine, secondLine, thirdLine, MultiHeight(croppedRatios, 0, firstLine), MultiHeight(croppedRatios, firstLine, firstLine + secondLine), MultiHeight(croppedRatios, firstLine + secondLine, croppedRatios.Length)));
                             }
@@ -211,7 +213,7 @@ namespace Unigram.Common
                     {
                         int c = optimal.LineCounts[i];
                         float lineHeight = optimal.Heights[i];
-                        int spanLeft = 700;
+                        int spanLeft = _maxSizeWidth;
                         GroupedMessagePosition posToFix = null;
                         for (int k = 0; k < c; k++)
                         {
@@ -243,9 +245,11 @@ namespace Unigram.Common
                                     posToFix = pos;
                                 }
                             }
+                            maxX = (byte)Math.Max(maxX, k);
                             pos.Set(k, k, i, i, width, lineHeight / 814.0f, flags);
                             index++;
                         }
+                        posToFix.pw += spanLeft;
                         posToFix.SpanSize += spanLeft;
                         y += lineHeight;
                     }
@@ -266,17 +270,19 @@ namespace Unigram.Common
                                 height = Math.Min(814.0f, (float)Math.Round(Math.Min(((float)firstWidth) / position1.AspectRatio, ((float)secondWidth) / position2.AspectRatio))) / 814.0f;
                                 position1.Set(0, 0, 0, 0, firstWidth, height, 13);
                                 position2.Set(1, 1, 0, 0, secondWidth, height, 14);
+                                maxX = 1;
                             }
                         }
                         height = ((float)Math.Round(Math.Min(((float)350) / position1.AspectRatio, Math.Min(((float)350) / position2.AspectRatio, 814.0f)))) / 814.0f;
                         position1.Set(0, 0, 0, 0, 350, height, 13);
                         position2.Set(1, 1, 0, 0, 350, height, 14);
+                        maxX = 1;
                     }
                     else
                     {
                         height = ((float)Math.Round(Math.Min(700.0f / position1.AspectRatio, Math.Min(700.0f / position2.AspectRatio, 814.0f / 2.0f)))) / 814.0f;
-                        position1.Set(0, 0, 0, 0, 700, height, 7);
-                        position2.Set(0, 0, 1, 1, 700, height, 11);
+                        position1.Set(0, 0, 0, 0, _maxSizeWidth, height, 7);
+                        position2.Set(0, 0, 1, 1, _maxSizeWidth, height, 11);
                     }
                 }
                 else if (count == 3)
@@ -288,10 +294,11 @@ namespace Unigram.Common
                     if (proportions.ToString().Equals("www"))
                     {
                         float firstHeight = ((float)Math.Round(Math.Min(700.0f / position1.AspectRatio, 0.66f * 814.0f))) / 814.0f;
-                        position1.Set(0, 1, 0, 0, 700, firstHeight, 7);
+                        position1.Set(0, 1, 0, 0, _maxSizeWidth, firstHeight, 7);
                         secondHeight = Math.Min(814.0f - firstHeight, (float)Math.Round(Math.Min(((float)350) / position2.AspectRatio, ((float)350) / position3.AspectRatio))) / 814.0f;
                         position2.Set(0, 0, 1, 1, 350, secondHeight, 9);
                         position3.Set(1, 1, 1, 1, 350, secondHeight, 10);
+                        maxX = 1;
                     }
                     else
                     {
@@ -302,8 +309,8 @@ namespace Unigram.Common
                         int rightWidth = (int)Math.Min(700 - leftWidth, Math.Round(Math.Min(position3.AspectRatio * thirdHeight, position2.AspectRatio * secondHeight)));
                         position2.Set(1, 1, 0, 0, rightWidth, secondHeight / 814.0f, 6);
                         position3.Set(0, 1, 1, 1, rightWidth, thirdHeight / 814.0f, 10);
-                        position3.SpanSize = 700;
-                        position1.SiblingHeights = new float[] { thirdHeight, secondHeight };
+                        position3.SpanSize = _maxSizeWidth;
+                        position1.SiblingHeights = new float[] { thirdHeight / 814.0f, secondHeight / 814.0f };
                         if (isOut)
                         {
                             position1.SpanSize = 700 - rightWidth;
@@ -311,7 +318,7 @@ namespace Unigram.Common
                         else
                         {
                             position2.SpanSize = 700 - leftWidth;
-                            position3.LeftSpanOffset = rightWidth;
+                            position3.LeftSpanOffset = _maxSizeWidth;
                         }
                     }
                 }
@@ -326,7 +333,7 @@ namespace Unigram.Common
                     if (proportions.ToString().Equals("wwww"))
                     {
                         h0 = ((float)Math.Round(Math.Min(700.0f / position1.AspectRatio, 0.66f * 814.0f))) / 814.0f;
-                        position1.Set(0, 2, 0, 0, 700, h0, 7);
+                        position1.Set(0, 2, 0, 0, _maxSizeWidth, h0, 7);
                         float h = (float)Math.Round(700.0f / ((position2.AspectRatio + position3.AspectRatio) + position4.AspectRatio));
                         w0 = (int)(position2.AspectRatio * h);
                         int w1 = (int)(position3.AspectRatio * h);
@@ -335,6 +342,7 @@ namespace Unigram.Common
                         position2.Set(0, 0, 1, 1, w0, h, 9);
                         position3.Set(1, 1, 1, 1, w1, h, 8);
                         position4.Set(2, 2, 1, 1, w2, h, 10);
+                        maxX = 2;
                     }
                     else
                     {
@@ -347,9 +355,9 @@ namespace Unigram.Common
                         w = Math.Min(700 - w0, w);
                         position2.Set(1, 1, 0, 0, w, h0, 6);
                         position3.Set(0, 1, 1, 1, w, h1, 2);
-                        position3.SpanSize = 700;
+                        position3.SpanSize = _maxSizeWidth;
                         position4.Set(0, 1, 2, 2, w, h2, 10);
-                        position4.SpanSize = 700;
+                        position4.SpanSize = _maxSizeWidth;
                         if (isOut)
                         {
                             position1.SpanSize = 700 - w;
@@ -361,6 +369,7 @@ namespace Unigram.Common
                             position4.LeftSpanOffset = w0;
                         }
                         position1.SiblingHeights = new float[] { h0, h1, h2 };
+                        maxX = 1;
                     }
                 }
                 for (a = 0; a < count; a++)
@@ -368,7 +377,7 @@ namespace Unigram.Common
                     pos = _posArray[a];
                     if (isOut)
                     {
-                        if ((pos.Flags & 1) != 0)
+                        if (pos.MinX == 0)
                         {
                             pos.SpanSize += 300;
                         }
@@ -379,7 +388,7 @@ namespace Unigram.Common
                     }
                     else
                     {
-                        if ((pos.Flags & 2) != 0)
+                        if (pos.MaxX == maxX)
                         {
                             pos.SpanSize += 300;
                         }
