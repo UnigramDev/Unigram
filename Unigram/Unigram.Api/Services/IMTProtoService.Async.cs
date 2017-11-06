@@ -23,6 +23,8 @@ namespace Telegram.Api.Services
 {
     public partial interface IMTProtoService
     {
+        Task<MTProtoResponse<bool>> ResetSavedAsync();
+
         Task<MTProtoResponse<TLUpdatesBase>> SendMultiMediaAsync(TLInputPeerBase inputPeer, TLVector<TLInputSingleMedia> multiMedia, IList<TLMessage> messages);
 
         Task<MTProtoResponse<TLMessageMediaBase>> UploadMediaAsync(TLInputPeerBase inputPeer, TLInputMediaBase inputMedia, TLMessage message);

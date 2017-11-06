@@ -179,7 +179,7 @@ namespace Unigram.ViewModels
             var response = await ProtoService.LogOutAsync();
             if (response.IsSucceeded)
             {
-                await _contactsService.UnsyncContactsAsync();
+                await _contactsService.RemoveAsync();
 
                 SettingsHelper.IsAuthorized = false;
                 SettingsHelper.UserId = 0;
