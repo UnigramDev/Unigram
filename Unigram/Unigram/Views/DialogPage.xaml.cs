@@ -549,8 +549,14 @@ namespace Unigram.Views
                 flyout.Hide();
             }
 
-            ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia>(ViewModel.MediaLibrary), e.Item);
-            //ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
+            if (e.IsLocal)
+            {
+                ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia>(ViewModel.MediaLibrary), e.Item);
+            }
+            else
+            {
+                ViewModel.SendMediaExecute(new ObservableCollection<StorageMedia> { e.Item }, e.Item);
+            }
         }
 
         private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
@@ -578,6 +584,7 @@ namespace Unigram.Views
             if (package.Contains(StandardDataFormats.Bitmap))
             {
                 var bitmap = await package.GetBitmapAsync();
+                var media = new ObservableCollection<StorageMedia>();
                 var cache = await ApplicationData.Current.LocalFolder.CreateFileAsync("temp\\paste.jpg", CreationCollisionOption.ReplaceExisting);
 
                 using (var stream = await bitmap.OpenReadAsync())
@@ -587,9 +594,11 @@ namespace Unigram.Views
                     var buffer = new byte[(int)stream.Size];
                     reader.ReadBytes(buffer);
                     await FileIO.WriteBytesAsync(cache, buffer);
+
+                    media.Add(await StoragePhoto.CreateAsync(cache, true));
                 }
 
-                ViewModel.SendMediaCommand.Execute(new ObservableCollection<StorageMedia> { await StoragePhoto.CreateAsync(cache, true) });
+                ViewModel.SendMediaExecute(media, media[0]);
             }
             else if (package.Contains(StandardDataFormats.StorageItems))
             {
@@ -623,7 +632,7 @@ namespace Unigram.Views
                 {
                     foreach (var file in files)
                     {
-                        ViewModel.SendFileCommand.Execute(file);
+                        ViewModel.SendFileExecute(file);
                     }
                 }
             }

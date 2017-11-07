@@ -76,8 +76,8 @@ namespace Unigram.ViewModels
             });
         }
 
-        public RelayCommand<StorageFile> SendFileCommand { get; }
-        private async void SendFileExecute(StorageFile file)
+        public RelayCommand SendFileCommand { get; }
+        private async void SendFileExecute()
         {
             if (MediaLibrary.SelectedCount > 0)
             {
@@ -89,59 +89,26 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ObservableCollection<StorageFile> storages = null;
+            var picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+            picker.FileTypeFilter.Add("*");
 
-            if (file == null)
+            var files = await picker.PickMultipleFilesAsync();
+            if (files != null)
             {
-                var picker = new FileOpenPicker();
-                picker.ViewMode = PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-                picker.FileTypeFilter.Add("*");
-
-                var files = await picker.PickMultipleFilesAsync();
-                if (files != null)
+                foreach (var storage in files)
                 {
-                    storages = new ObservableCollection<StorageFile>(files);
-                }
-            }
-            else
-            {
-                storages = new ObservableCollection<StorageFile> { file };
-            }
-
-            if (storages != null && storages.Count > 0)
-            {
-                foreach (var storage in storages)
-                {
-                    //var props = await storage.Properties.GetVideoPropertiesAsync();
-                    //var width = props.Width;
-                    //var height = props.Height;
-                    //var x = 0d;
-                    //var y = 0d;
-
-                    //if (width > height) {
-                    //    x = (width - height) / 2;
-                    //    width = height;
-                    //}
-
-                    //if (height > width)
-                    //{
-                    //    y = (height - width) / 2;
-                    //    height = width;
-                    //}
-
-                    //var transform = new VideoTransformEffectDefinition();
-                    //transform.CropRectangle = new Windows.Foundation.Rect(x, y, width, height);
-                    //transform.OutputSize = new Windows.Foundation.Size(240, 240);
-
-                    //var profile = MediaEncodingProfile.CreateMp4(VideoEncodingQuality.Vga);
-                    //profile.Video.Width = 240;
-                    //profile.Video.Height = 240;
-                    //profile.Video.Bitrate = 300000;
-
-                    //await SendVideoAsync(storage, null, true, transform, profile);
                     await SendFileAsync(storage, null);
                 }
+            }
+        }
+
+        public async void SendFileExecute(StorageFile file)
+        {
+            if (file != null)
+            {
+                await SendFileAsync(file, null);
             }
         }
 
@@ -537,8 +504,8 @@ namespace Unigram.ViewModels
             });
         }
 
-        public RelayCommand<ObservableCollection<StorageMedia>> SendMediaCommand { get; }
-        private async void SendMediaExecute(ObservableCollection<StorageMedia> media)
+        public RelayCommand SendMediaCommand { get; }
+        private async void SendMediaExecute()
         {
             if (MediaLibrary.SelectedCount > 0)
             {
@@ -565,67 +532,28 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            ObservableCollection<StorageMedia> storages = media;
+            var picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.AddRange(Constants.MediaTypes);
 
-            if (media == null)
+            var files = await picker.PickMultipleFilesAsync();
+            if (files != null)
             {
-                var picker = new FileOpenPicker();
-                picker.ViewMode = PickerViewMode.Thumbnail;
-                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-                picker.FileTypeFilter.AddRange(Constants.MediaTypes);
+                var storages = new ObservableCollection<StorageMedia>();
 
-                var files = await picker.PickMultipleFilesAsync();
-                if (files != null)
+                foreach (var file in files)
                 {
-                    storages = new ObservableCollection<StorageMedia>();
-
-                    foreach (var file in files)
+                    var storage = await StorageMedia.CreateAsync(file, true);
+                    if (storage != null)
                     {
-                        var storage = await StorageMedia.CreateAsync(file, true);
-                        if (storage != null)
-                        {
-                            storages.Add(storage);
-                        }
+                        storages.Add(storage);
                     }
                 }
-            }
-            //else
-            //{
-            //    storages = new ObservableCollection<StorageMedia>(media);
-            //}
 
-            if (storages != null && storages.Count > 0)
-            {
-                var dialog = new SendMediaView { ViewModel = this, IsTTLEnabled = _peer is TLInputPeerUser };
-                dialog.SetItems(storages);
-                dialog.SelectedItem = storages[0];
-
-                var dialogResult = await dialog.ShowAsync();
-
-                TextField.FocusMaybe(FocusState.Keyboard);
-
-                if (dialogResult == ContentDialogBaseResult.OK)
+                if (storages.Count > 1)
                 {
-                    var items = dialog.SelectedItems.ToList();
-                    if (items.Count > 1 && dialog.IsGrouped)
-                    {
-                        await SendGroupedAsync(items);
-                    }
-                    else
-                    {
-                        foreach (var storage in items)
-                        {
-                            if (storage is StoragePhoto photo)
-                            {
-                                var storageFile = await photo.GetFileAsync();
-                                await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
-                            }
-                            else if (storage is StorageVideo video)
-                            {
-                                await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
-                            }
-                        }
-                    }
+                    SendMediaExecute(storages, storages[0]);
                 }
             }
         }

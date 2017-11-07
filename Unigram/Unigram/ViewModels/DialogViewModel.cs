@@ -181,8 +181,8 @@ namespace Unigram.ViewModels
 
             SendStickerCommand = new RelayCommand<TLDocument>(SendStickerExecute);
             SendGifCommand = new RelayCommand<TLDocument>(SendGifExecute);
-            SendFileCommand = new RelayCommand<StorageFile>(SendFileExecute);
-            SendMediaCommand = new RelayCommand<ObservableCollection<StorageMedia>>(SendMediaExecute);
+            SendFileCommand = new RelayCommand(SendFileExecute);
+            SendMediaCommand = new RelayCommand(SendMediaExecute);
             SendContactCommand = new RelayCommand(SendContactExecute);
             SendLocationCommand = new RelayCommand(SendLocationExecute);
 

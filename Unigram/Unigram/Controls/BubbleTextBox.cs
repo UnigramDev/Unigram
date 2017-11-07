@@ -284,7 +284,7 @@ namespace Unigram.Controls
                 {
                     foreach (var file in files)
                     {
-                        ViewModel.SendFileCommand.Execute(file);
+                        ViewModel.SendFileExecute(file);
                     }
                 }
             }
