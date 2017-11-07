@@ -206,9 +206,13 @@
             <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
             <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
 
-            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
+            <!--<Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4">
                 <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
-            </Border>
+            </Border>-->
+            <StackPanel Background="{ThemeResource MessageServiceBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Left" Padding="8,2,8,4" Margin="4" Orientation="Horizontal">
+                <TextBlock Text="{Binding Media.Document.Duration}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right" Margin="0,2,0,0"/>
+                <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
+            </StackPanel>
         </Grid>
     </DataTemplate>
 
@@ -216,7 +220,8 @@
         <controls:ImageView Source="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}"
                             Constraint="{Binding Media.Document}"
                             MaxWidth="{ThemeResource TelegramLightMediaMaxWidth}"
-                            MaxHeight="{ThemeResource TelegramLightMediaMaxHeight}"/>
+                            MaxHeight="{ThemeResource TelegramLightMediaMaxHeight}"
+                            Click="Sticker_Click"/>
     </DataTemplate>
 
     <DataTemplate x:Key="MediaContactTemplate">
@@ -427,7 +432,7 @@
                                     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                     MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Game.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Game.Document}" IsTransferring="{Binding Media.Game.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                 <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Game.Document.Progress}" IsHitTestVisible="False"/>
 
                 <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,4" Margin="4">
@@ -459,7 +464,7 @@
                                     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                     MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Game.Photo}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Game.Photo}" IsTransferring="{Binding Media.Game.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
                 <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Game.Photo.Progress}" IsHitTestVisible="False"/>
 
                 <Grid Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,8,4" Margin="4">

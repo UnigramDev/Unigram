@@ -50,7 +50,7 @@ namespace Unigram.Controls.Messages
 
         private Visibility UpdateFirst(bool isFirst)
         {
-            OnMessageChanged(HeaderLabel, AdminLabel);
+            OnMessageChanged(HeaderLabel, AdminLabel, Header);
             return isFirst ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -127,6 +127,14 @@ namespace Unigram.Controls.Messages
                     Grid.SetRow(StatusBar, caption ? 4 : 3);
                     Grid.SetRow(Message, caption ? 4 : 2);
                 }
+                else if (message.IsSticker() || message.IsRoundVideo())
+                {
+                    Media.Margin = new Thickness(-8, -4, -10, -6);
+                    Placeholder.Visibility = Visibility.Collapsed;
+                    StatusToEmbedMedia(message.IsOut);
+                    Grid.SetRow(StatusBar, 3);
+                    Grid.SetRow(Message, 2);
+                }
                 else if (message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaGame)
                 {
                     Media.Margin = new Thickness(0);
@@ -170,30 +178,31 @@ namespace Unigram.Controls.Messages
             }
         }
 
+        private void StatusToEmbedMedia(bool isOut)
+        {
+            VisualStateManager.GoToState(LayoutRoot, "LightMedia" + (isOut ? "Out" : string.Empty), false);
+            VisualStateManager.GoToState(Reply.Content as UserControl, "LightMedia", false);
+        }
+
         private void StatusToFullMedia()
         {
             VisualStateManager.GoToState(LayoutRoot, "FullMedia", false);
+            VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
         }
 
         private void StatusToDefault()
         {
-            VisualStateManager.GoToState(LayoutRoot, "Default", false);
+            VisualStateManager.GoToState(LayoutRoot, "Normal", false);
+            VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
         }
 
         private void StatusToHidden()
         {
             VisualStateManager.GoToState(LayoutRoot, "Hidden", false);
+            VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
         }
 
         #endregion
-
-        private void SwipeListViewItem_ItemSwipe(object sender, ItemSwipeEventArgs e)
-        {
-            if (e.Direction == SwipeListDirection.Right)
-            {
-                Context.MessageReplyCommand.Execute(ViewModel);
-            }
-        }
 
         private void StatusBar_SizeChanged(object sender, SizeChangedEventArgs e)
         {

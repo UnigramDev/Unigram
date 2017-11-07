@@ -1216,14 +1216,44 @@ namespace Telegram.Api.Services.Updates
                         ProcessNewMessageUpdate(updateNewChannelMessage.Message);
                     }
 
-                    _cacheService.SyncMessage(updateNewChannelMessage.Message, notifyNewMessage, notifyNewMessage,
-                        cachedMessage =>
-                        {
-                            if (notifyNewMessage)
+                    //_cacheService.SyncMessage(updateNewChannelMessage.Message, notifyNewMessage, notifyNewMessage,
+                    //    cachedMessage =>
+                    //    {
+                    //        if (notifyNewMessage)
+                    //        {
+                    //            Execute.BeginOnThreadPool(() => _eventAggregator.Publish(cachedMessage));
+                    //        }
+                    //    });
+
+                    if (commonMessage.RandomId.HasValue && commonMessage.RandomId != 0)
+                    {
+#if DEBUG
+                        Log.Write("TLUpdateNewChannelMessage " + updateNewChannelMessage.Message);
+#endif
+                        _cacheService.SyncSendingMessage(commonMessage, null,
+                            cachedMessage =>
                             {
-                                Execute.BeginOnThreadPool(() => _eventAggregator.Publish(cachedMessage));
-                            }
-                        });
+                                if (notifyNewMessage)
+                                {
+                                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(cachedMessage));
+                                }
+                            });
+                    }
+                    else
+                    {
+#if DEBUG
+                        Log.Write("TLUpdateNewChannelMessage " + updateNewChannelMessage.Message);
+#endif
+
+                        _cacheService.SyncMessage(updateNewChannelMessage.Message,
+                            cachedMessage =>
+                            {
+                                if (notifyNewMessage)
+                                {
+                                    Execute.BeginOnThreadPool(() => _eventAggregator.Publish(cachedMessage));
+                                }
+                            });
+                    }
                 }
 
                 return true;

@@ -45,7 +45,7 @@ namespace Unigram.Controls.Messages
 
         private Visibility UpdateFirst(bool isFirst)
         {
-            OnMessageChanged(HeaderLabel, HeaderLabel);
+            OnMessageChanged(HeaderLabel, HeaderLabel, null);
             return isFirst ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -181,5 +181,13 @@ namespace Unigram.Controls.Messages
         }
 
         #endregion
+
+        private void StatusBar_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width != e.PreviousSize.Width)
+            {
+                Placeholder.Width = e.NewSize.Width;
+            }
+        }
     }
 }

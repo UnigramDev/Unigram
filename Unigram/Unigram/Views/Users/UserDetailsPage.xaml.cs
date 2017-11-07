@@ -22,6 +22,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using Unigram.Common;
 
 namespace Unigram.Views.Users
 {
@@ -54,5 +55,19 @@ namespace Unigram.Views.Users
                 ViewModel.ToggleMuteCommand.Execute();
             }
         }
+
+        #region Context menu
+
+        private void About_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            MessageHelper.Hyperlink_ContextRequested(sender, args);
+        }
+
+        private void About_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        #endregion
     }
 }
