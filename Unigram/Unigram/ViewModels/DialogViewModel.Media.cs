@@ -614,6 +614,11 @@ namespace Unigram.ViewModels
         public async void SendMediaExecute(ObservableCollection<StorageMedia> media, StorageMedia selectedItem)
         {
             var storages = media;
+            if (!media.Contains(selectedItem))
+            {
+                storages.Insert(0, selectedItem);
+            }
+
             if (storages != null && storages.Count > 0)
             {
                 var dialog = new SendMediaView { ViewModel = this, Items = storages, SelectedItem = selectedItem, IsTTLEnabled = _peer is TLInputPeerUser };
