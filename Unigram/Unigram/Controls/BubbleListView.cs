@@ -264,7 +264,7 @@ namespace Unigram.Controls
                         top = pos.ph * 2 - position.ph;
                     }
 
-                    if (msgId <= messageId && position.SpanSize == 1000)
+                    if (msgId <= messageId && position.SpanSize == 700)
                     {
                         if (i == 1)
                         {
@@ -277,7 +277,7 @@ namespace Unigram.Controls
                     }
                 }
 
-                if (position.SpanSize == 1000)
+                if (position.SpanSize == 700)
                 {
                     left = message.IsOut ? 700d : position.pw;
                 }
