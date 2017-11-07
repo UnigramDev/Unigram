@@ -312,6 +312,7 @@ namespace Unigram.Views
             StickersPanel.Height = args.OccludedRect.Height;
             ReplyMarkupPanel.MaxHeight = args.OccludedRect.Height;
             //ReplyMarkupViewer.MaxHeight = args.OccludedRect.Height;
+            StickersPanel.Visibility = Visibility.Collapsed;
 
             _lastKnownKeyboardHeight = Math.Max(260, args.OccludedRect.Height);
 
@@ -708,6 +709,7 @@ namespace Unigram.Views
                 StickersPanel.Height = _lastKnownKeyboardHeight;
                 StickersPanel.Visibility = Visibility.Visible;
                 StickersPanel.Refresh();
+                _lastKnownKeyboardHeight = StickersPanel.Height;
 
                 ViewModel.OpenStickersCommand.Execute(null);
             }
