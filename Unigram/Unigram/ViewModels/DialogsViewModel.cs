@@ -865,6 +865,15 @@ namespace Unigram.ViewModels
                 //    return;
                 //}
 
+                if (e.Dialog.With is TLChannel channel)
+                {
+                    if (channel.IsLeft || channel.HasBannedRights)
+                    {
+                        Items.Remove(e.Dialog);
+                        return;
+                    }
+                }
+
                 var index = -1;
                 for (int i = 0; i < Items.Count; i++)
                 {

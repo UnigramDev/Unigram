@@ -925,7 +925,7 @@ namespace Unigram.Views
 
         private Visibility MessagePin_Loaded(TLMessageCommonBase messageCommon)
         {
-            if (messageCommon is TLMessage message && message.Parent is TLChannel channel && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPinMessages)) && !channel.IsBroadcast)
+            if (messageCommon is TLMessage message && message.Parent is TLChannel channel && (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPinMessages)))
             {
                 if (message.ToId is TLPeerChannel)
                 {
