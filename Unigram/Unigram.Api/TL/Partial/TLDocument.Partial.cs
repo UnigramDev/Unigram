@@ -26,15 +26,12 @@ namespace Telegram.Api.TL
                     return;
                 }
 
-                IsTransferring = true;
-
                 var operation = manager.DownloadFileAsync(FileName, DCId, ToInputFileLocation(), Size);
                 var download = await operation.AsTask(Download());
                 if (download != null)
                 {
-                    UploadingProgress = 0;
-                    DownloadingProgress = 1;
-                    IsTransferring = false;
+                    //UploadingProgress = 0;
+                    //DownloadingProgress = 0;
                     completed(this);
                 }
             }
@@ -45,16 +42,15 @@ namespace Telegram.Api.TL
             if (manager != null)
             {
                 manager.CancelDownloadFile(this);
-                DownloadingProgress = 0;
-                IsTransferring = false;
             }
 
             if (uploadManager != null)
             {
                 uploadManager.CancelUploadFile(Id);
-                UploadingProgress = 0;
-                IsTransferring = false;
             }
+
+            UploadingProgress = 0;
+            DownloadingProgress = 0;
         }
 
         private string _fileName;

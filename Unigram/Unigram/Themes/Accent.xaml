@@ -292,6 +292,8 @@
                                     Text="{TemplateBinding Glyph}"/>
                             </Border>
                         </Border>
+
+                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{TemplateBinding Progress}" IsHitTestVisible="False"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

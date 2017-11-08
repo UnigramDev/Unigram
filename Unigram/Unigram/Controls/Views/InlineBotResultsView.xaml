@@ -91,9 +91,11 @@
                                     IsHitTestVisible="False"
                                     Height="96"/>
 
-                <controls:TransferButton Transferable="{Binding Document}" IsTransferring="{Binding Document.IsTransferring}" IsHitTestVisible="False" Style="{StaticResource MediaTransferButtonStyle}"/>
-                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Document.Progress}" IsHitTestVisible="False"/>
-
+                <controls:TransferButton Transferable="{Binding Document}"
+                                         IsTransferring="{Binding Document.IsTransferring}"
+                                         Progress="{Binding Document.Progress}"
+                                         IsHitTestVisible="False"
+                                         Style="{StaticResource MediaTransferButtonStyle}"/>
 
                 <Rectangle Fill="Magenta" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="8" Height="8"/>
             </Grid>

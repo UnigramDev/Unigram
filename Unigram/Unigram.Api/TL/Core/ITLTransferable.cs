@@ -12,7 +12,7 @@ namespace Telegram.Api.TL
         double UploadingProgress { get; set; }
         double Progress { get; }
 
-        bool IsTransferring { get; set; }
+        bool IsTransferring { get; /*set;*/ }
 
         double LastProgress { get; set; }
 

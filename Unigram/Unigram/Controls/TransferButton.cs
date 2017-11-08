@@ -116,6 +116,19 @@ namespace Unigram.Controls
 
         #endregion
 
+        #region Progress
+
+        public double Progress
+        {
+            get { return (double)GetValue(ProgressProperty); }
+            set { SetValue(ProgressProperty, value); }
+        }
+
+        public static readonly DependencyProperty ProgressProperty =
+            DependencyProperty.Register("Progress", typeof(double), typeof(TransferButton), new PropertyMetadata(0.0));
+
+        #endregion
+
         #region IsTransferring
 
         public bool IsTransferring
@@ -181,9 +194,14 @@ namespace Unigram.Controls
         {
             if (photo.Full is TLPhotoSize photoSize)
             {
-                if (photo.IsTransferring || (photo.DownloadingProgress > 0 && photo.DownloadingProgress < 1) || (photo.UploadingProgress > 0 && photo.UploadingProgress < 1))
+                if (photo.DownloadingProgress > 0 && photo.DownloadingProgress < 1)
                 {
                     ContentVisibility = Visibility.Visible;
+                    Visibility = Visibility.Visible;
+                    return "\uE10A";
+                }
+                else if (photo.UploadingProgress > 0 && photo.UploadingProgress < 1)
+                {
                     Visibility = Visibility.Visible;
                     return "\uE10A";
                 }
@@ -214,9 +232,14 @@ namespace Unigram.Controls
             ContentVisibility = Visibility.Visible;
             Visibility = Visibility.Visible;
 
-            if (document.IsTransferring || (document.DownloadingProgress > 0 && document.DownloadingProgress < 1) || (document.UploadingProgress > 0 && document.UploadingProgress < 1))
+            if (document.DownloadingProgress > 0 && document.DownloadingProgress < 1)
             {
                 ContentVisibility = Visibility.Visible;
+                return "\uE10A";
+            }
+            else if (document.UploadingProgress > 0 && document.UploadingProgress < 1)
+            {
+                ContentVisibility = Visibility.Collapsed;
                 return "\uE10A";
             }
             else if (File.Exists(FileUtils.GetTempFileName(document.GetFileName())))

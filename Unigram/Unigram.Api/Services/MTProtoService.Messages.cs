@@ -734,13 +734,11 @@ namespace Telegram.Api.Services
                         // TODO: 24/04/2017 verify if this is really needed
                         if (message.Media is TLMessageMediaPhoto photoMedia)
                         {
-                            photoMedia.Photo.IsTransferring = false;
                             photoMedia.Photo.LastProgress = 0.0;
                             photoMedia.Photo.DownloadingProgress = 0.0;
                         }
                         else if (message.Media is TLMessageMediaDocument documentMedia)
                         {
-                            documentMedia.Document.IsTransferring = false;
                             documentMedia.Document.LastProgress = 0.0;
                             documentMedia.Document.DownloadingProgress = 0.0;
                         }
@@ -808,13 +806,11 @@ namespace Telegram.Api.Services
                             // TODO: 24/04/2017 verify if this is really needed
                             if (message.Media is TLMessageMediaPhoto photoMedia)
                             {
-                                photoMedia.Photo.IsTransferring = false;
                                 photoMedia.Photo.LastProgress = 0.0;
                                 photoMedia.Photo.DownloadingProgress = 0.0;
                             }
                             else if (message.Media is TLMessageMediaDocument documentMedia)
                             {
-                                documentMedia.Document.IsTransferring = false;
                                 documentMedia.Document.LastProgress = 0.0;
                                 documentMedia.Document.DownloadingProgress = 0.0;
                             }

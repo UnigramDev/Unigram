@@ -362,8 +362,11 @@
                         </Rectangle>
                         <HyperlinkButton Click="Media_Click" Content="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
-                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
-                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
+                        <controls:TransferButton Completed="Download_Click"
+                                                 Transferable="{Binding Media.Photo}"
+                                                 IsTransferring="{Binding Media.Photo.IsTransferring}"
+                                                 Progress="{Binding Media.Photo.Progress}"
+                                                 Style="{StaticResource MediaTransferButtonStyle}"/>
 
                         <messages:MessageStatusBar x:Name="Footer" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
                     </Grid>
@@ -403,12 +406,15 @@
                         </Rectangle>
                         <HyperlinkButton Click="Media_Click" Content="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
-                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}">
+                        <controls:TransferButton Completed="Download_Click"
+                                                 Transferable="{Binding Media.Document}"
+                                                 IsTransferring="{Binding Media.Document.IsTransferring}"
+                                                 Progress="{Binding Media.Document.Progress}"
+                                                 Style="{StaticResource MediaTransferButtonStyle}">
                             <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" Padding="8,4,8,4" Margin="4">
                                 <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
                             </Border>
                         </controls:TransferButton>
-                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
 
                         <messages:MessageStatusBar x:Name="Footer" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
                     </Grid>

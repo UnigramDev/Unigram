@@ -229,14 +229,13 @@ namespace Unigram.ViewModels
 
         private Progress<double> Upload(ITLTransferable document, Func<int, TLSendMessageActionBase> action, double delta = 0.0, double divider = 1.0)
         {
-            document.IsTransferring = true;
+            document.UploadingProgress = delta + double.Epsilon;
 
             return new Progress<double>((value) =>
             {
                 var local = value / divider;
 
                 document.UploadingProgress = delta + local;
-                document.IsTransferring = local < 1 && local > 0;
                 Debug.WriteLine(value);
 
                 OutputTypingManager.SetTyping(action((int)local * 100));
