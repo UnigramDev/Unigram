@@ -464,7 +464,7 @@ namespace Unigram.ViewModels
                 }
 
                 var fileId = TLLong.Random();
-                var upload = await _uploadVideoManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadVideoAction { Progress = progress }, 0.5, 2.0));
+                var upload = await _uploadVideoManager.UploadFileAsync(fileId, fileCache.Name).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadVideoAction { Progress = progress }, 0.5, 2.0));
                 if (upload != null)
                 {
                     var thumbFileId = TLLong.Random();
@@ -480,6 +480,11 @@ namespace Unigram.ViewModels
                             Attributes = document.Attributes,
                             TTLSeconds = ttlSeconds
                         };
+
+                        if (profile != null && profile.Audio == null)
+                        {
+                            inputMedia.IsNoSoundVideo = true;
+                        }
 
                         var result = await ProtoService.SendMediaAsync(_peer, inputMedia, message);
                     }
@@ -1449,7 +1454,7 @@ namespace Unigram.ViewModels
             }
 
             var fileId = TLLong.Random();
-            var upload = await _uploadVideoManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadVideoAction { Progress = progress }, 0.5, 2.0));
+            var upload = await _uploadVideoManager.UploadFileAsync(fileId, fileCache.Name).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadVideoAction { Progress = progress }, 0.5, 2.0));
             if (upload != null)
             {
                 var thumbFileId = TLLong.Random();
@@ -1464,6 +1469,11 @@ namespace Unigram.ViewModels
                         Caption = media.Caption,
                         Attributes = document.Attributes
                     };
+
+                    if (profile != null && profile.Audio == null)
+                    {
+                        inputMedia.IsNoSoundVideo = true;
+                    }
 
                     return await ProtoService.UploadMediaAsync(_peer, inputMedia, message);
                 }

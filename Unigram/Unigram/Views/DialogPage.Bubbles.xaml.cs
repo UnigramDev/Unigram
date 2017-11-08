@@ -296,7 +296,9 @@ namespace Unigram.Views
                 {
                     var player = new MediaPlayer();
                     player.AutoPlay = true;
+                    player.IsMuted = true;
                     player.IsLoopingEnabled = true;
+                    player.CommandManager.IsEnabled = false;
                     player.Source = MediaSource.CreateFromUri(new Uri(item));
 
                     var presenter = new MediaPlayerView();
