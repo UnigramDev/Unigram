@@ -86,8 +86,7 @@ namespace Telegram.Api.Services.Cache.Context
 	`migrated_to_id`	INTEGER,
 	`migrated_to_access_hash`	INTEGER,
     `admin_rights` INTEGER,
-    `banned_rights` INTEGER,
-    `participants_count` INTEGER,
+    `banned_rights` INTEGER
     PRIMARY KEY(`id`)
 );");
             Execute(database, "CREATE INDEX IF NOT EXISTS `Chats.title_index` ON `Chats` (`title`);");
@@ -133,12 +132,6 @@ namespace Telegram.Api.Services.Cache.Context
                 Execute(database, "ALTER TABLE `Dialogs` ADD COLUMN `index` INTEGER NOT NULL");
 
                 version = 8;
-            }
-            if (version < 9)
-            {
-                Execute(database, "ALTER TABLE `Chats` ADD COLUMN `participants_count` INTEGER NOT NULL");
-
-                version = 9;
             }
 
             SettingsHelper.DatabaseVersion = version;

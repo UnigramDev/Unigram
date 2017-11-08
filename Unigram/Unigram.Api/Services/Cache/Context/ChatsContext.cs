@@ -16,7 +16,7 @@ namespace Telegram.Api.Services.Cache.Context
         private const ulong PeerIdChatShift = 0x100000000UL;
         private const ulong PeerIdChannelShift = 0x200000000UL;
 
-        private readonly string _fields = "`id`,`index`,`access_hash`,`flags`,`title`,`username`,`version`,`participants_count`,`date`,`restriction_reason`,`photo_small_local_id`,`photo_small_secret`,`photo_small_volume_id`,`photo_small_dc_id`,`photo_big_local_id`,`photo_big_secret`,`photo_big_volume_id`,`photo_big_dc_id`,`migrated_to_id`,`migrated_to_access_hash`,`admin_rights`,`banned_rights`.`participants_count`";
+        private readonly string _fields = "`id`,`index`,`access_hash`,`flags`,`title`,`username`,`version`,`participants_count`,`date`,`restriction_reason`,`photo_small_local_id`,`photo_small_secret`,`photo_small_volume_id`,`photo_small_dc_id`,`photo_big_local_id`,`photo_big_secret`,`photo_big_volume_id`,`photo_big_dc_id`,`migrated_to_id`,`migrated_to_access_hash`,`admin_rights`,`banned_rights`";
         private readonly Database _database;
 
         public ChatsContext(Database database)
@@ -117,6 +117,13 @@ namespace Telegram.Api.Services.Cache.Context
                         var flags = (TLChannel.Flag)Sqlite3.sqlite3_column_int(statement, 3);
                         var access_hash = Sqlite3.sqlite3_column_int64(statement, 2);
                         var username = Sqlite3.sqlite3_column_text(statement, 5);
+
+                        int? participantsCount = null;
+                        if (flags.HasFlag(TLChannel.Flag.ParticipantsCount))
+                        {
+                            participantsCount = Sqlite3.sqlite3_column_int(statement, 7);
+                        }
+
                         var restriction_reason = Sqlite3.sqlite3_column_text(statement, 9);
 
                         TLChannelAdminRights adminRights = null;
@@ -129,12 +136,6 @@ namespace Telegram.Api.Services.Cache.Context
                         if (flags.HasFlag(TLChannel.Flag.AdminRights))
                         {
                             bannedRights = new TLChannelBannedRights { Flags = (TLChannelBannedRights.Flag)Sqlite3.sqlite3_column_int(statement, 21) };
-                        }
-
-                        int? participantsCount = null;
-                        if (flags.HasFlag(TLChannel.Flag.ParticipantsCount))
-                        {
-                            participantsCount = Sqlite3.sqlite3_column_int(statement, 22);
                         }
 
                         result = new TLChannel
@@ -165,7 +166,7 @@ namespace Telegram.Api.Services.Cache.Context
                 base[index] = value;
 
                 Statement statement;
-                Sqlite3.sqlite3_prepare_v2(_database, $"INSERT OR REPLACE INTO `Chats` ({_fields}) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", out statement);
+                Sqlite3.sqlite3_prepare_v2(_database, $"INSERT OR REPLACE INTO `Chats` ({_fields}) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", out statement);
 
                 if (value is TLChat chat)
                 {
@@ -244,7 +245,16 @@ namespace Telegram.Api.Services.Cache.Context
                     }
 
                     Sqlite3.sqlite3_bind_int(statement, 7, channel.Version);
-                    Sqlite3.sqlite3_bind_null(statement, 8);
+
+                    if (channel.HasParticipantsCount)
+                    {
+                        Sqlite3.sqlite3_bind_int(statement, 8, channel.ParticipantsCount ?? 0);
+                    }
+                    else
+                    {
+                        Sqlite3.sqlite3_bind_null(statement, 8);
+                    }
+
                     Sqlite3.sqlite3_bind_int(statement, 9, channel.Date);
                     Sqlite3.sqlite3_bind_null(statement, 10);
 
@@ -292,15 +302,6 @@ namespace Telegram.Api.Services.Cache.Context
                     else
                     {
                         Sqlite3.sqlite3_bind_null(statement, 22);
-                    }
-
-                    if (channel.HasParticipantsCount)
-                    {
-                        Sqlite3.sqlite3_bind_int(statement, 23, channel.ParticipantsCount ?? 0);
-                    }
-                    else
-                    {
-                        Sqlite3.sqlite3_bind_null(statement, 23);
                     }
                 }
 
