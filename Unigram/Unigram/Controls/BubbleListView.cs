@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinqToVisualTree;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -12,6 +13,7 @@ using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Converters;
 using Unigram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -230,19 +232,22 @@ namespace Unigram.Controls
             {
                 var messageId = message.RandomId ?? message.Id;
 
+                var photo = message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost);
+
                 var width = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 320);
                 var height = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 420);
 
                 container.HorizontalAlignment = message.IsOut ? HorizontalAlignment.Right : HorizontalAlignment.Left;
-                container.Padding = new Thickness();
-                container.Width = position.pw / 700d * width;
-                container.Height = position.ph * height;
+                container.Width = position.Width / 700d * width;
+                container.Height = position.Height * height;
 
                 container.Width -= 2;
                 container.Height -= 2;
 
-                var left = 700d;
-                var top = 0d;
+                double maxWidth = group.Width;
+
+                double left = group.Width;
+                double top = 0;
 
                 for (int i = 0; i < group.Messages.Count; i++)
                 {
@@ -252,37 +257,37 @@ namespace Unigram.Controls
 
                     if (msgId > messageId && pos.MinY == position.MinY && message.IsOut)
                     {
-                        left -= pos.pw;
+                        left -= pos.Width;
                     }
                     else if (msgId < messageId && pos.MinY == position.MinY && !message.IsOut)
                     {
-                        left -= pos.pw;
+                        left -= pos.Width;
                     }
 
                     if (msgId < messageId && pos.MinY == position.MinY)
                     {
-                        top = pos.ph * 2 - position.ph;
+                        top = pos.Height * 2 - position.Height;
                     }
 
-                    if (msgId <= messageId && position.SpanSize == 700)
+                    if (msgId <= messageId && (position.SpanSize == 700 || position.SpanSize == 1000))
                     {
                         if (i == 1)
                         {
-                            top = group.Positions[group.Messages[0]].ph * 2 - pos.ph;
+                            top = group.Positions[group.Messages[0]].Height * 2 - pos.Height;
                         }
                         else if (i > 1)
                         {
-                            top = top - group.Positions[group.Messages[i -1]].ph - pos.ph;
+                            top = top - group.Positions[group.Messages[i -1]].Height - pos.Height;
                         }
                     }
                 }
 
-                if (position.SpanSize == 700)
+                if (position.SpanSize == 700 || position.SpanSize == 1000)
                 {
-                    left = message.IsOut ? 700d : position.pw;
+                    left = message.IsOut ? maxWidth : position.Width;
                 }
 
-                left = (700d - left) / 700d * width;
+                left = (maxWidth - left) / 700d * width;
                 top = message == group.Messages[0] && message.IsFirst ? 6d : -top * height;
 
                 if (message.IsOut)
@@ -291,7 +296,27 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    container.Margin = new Thickness(12 + left, 2 + top, 2, position.IsLast ? 2 : 0);
+                    container.Margin = new Thickness(photo ? position.IsLast ? 0 : 52 + left : 12 + left, 2 + top, 2, position.IsLast ? 2 : 0);
+                }
+
+                if (message == group.Messages[0] && ((message.HasReplyToMsgId && message.ReplyToMsgId.HasValue) || (message.HasFwdFrom && message.FwdFrom != null) || (message.HasViaBotId && message.ViaBotId.HasValue)))
+                {
+                    var add = message.HasReplyToMsgId && message.ReplyToMsgId.HasValue ? 50 : 26;
+                    container.Padding = new Thickness(0, add, 0, 0);
+                    container.ContentMargin = new Thickness(0, -add, 0, 0);
+                    container.Height += add;
+                }
+                else if (position.IsLast && photo)
+                {
+                    var add = left + 52;
+                    container.Padding = new Thickness(add, 0, 0, 0);
+                    container.ContentMargin = new Thickness(-add, 0, 0, 0);
+                    container.Width += add;
+                }
+                else
+                {
+                    container.Padding = new Thickness();
+                    container.ContentMargin = new Thickness();
                 }
 
                 return true;

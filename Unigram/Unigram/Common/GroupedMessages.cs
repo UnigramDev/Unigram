@@ -19,8 +19,8 @@ namespace Unigram.Common
         public byte MaxY { get; private set; }
         public byte MinX { get; private set; }
         public byte MinY { get; private set; }
-        public float ph { get; private set; }
-        public int pw { get; set; }
+        public float Height { get; private set; }
+        public int Width { get; set; }
         public float[] SiblingHeights { get; set; }
         public int SpanSize { get; set; }
 
@@ -30,9 +30,9 @@ namespace Unigram.Common
             MaxX = (byte)maxX;
             MinY = (byte)minY;
             MaxY = (byte)maxY;
-            pw = w;
             SpanSize = w;
-            ph = h;
+            Width = w;
+            Height = h;
             Flags = (byte)flags;
         }
     }
@@ -44,6 +44,9 @@ namespace Unigram.Common
         private List<GroupedMessagePosition> _posArray = new List<GroupedMessagePosition>();
 
         public long GroupedId { get; set; }
+
+        public float Height { get; private set; }
+        public int Width { get; private set; }
 
         public UniqueList<long, TLMessage> Messages { get; } = new UniqueList<long, TLMessage>(x => x.RandomId ?? x.Id);
         public Dictionary<TLMessage, GroupedMessagePosition> Positions { get; } = new Dictionary<TLMessage, GroupedMessagePosition>();
@@ -249,7 +252,7 @@ namespace Unigram.Common
                             pos.Set(k, k, i, i, width, lineHeight / 814.0f, flags);
                             index++;
                         }
-                        posToFix.pw += spanLeft;
+                        posToFix.Width += spanLeft;
                         posToFix.SpanSize += spanLeft;
                         y += lineHeight;
                     }
@@ -399,6 +402,9 @@ namespace Unigram.Common
                     }
                 }
             }
+
+            Width = _posArray.Where(x => x.MinY == 0).Sum(x => x.Width);
+            Height = _posArray.Where(x => x.MinX == 0 && x.MaxX == 0).Sum(x => x.Height);
         }
 
         public static TLPhotoSizeBase GetClosestPhotoSizeWithSize(TLVector<TLPhotoSizeBase> sizes, int side)

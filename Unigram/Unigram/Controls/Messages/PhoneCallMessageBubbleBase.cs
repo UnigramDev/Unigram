@@ -36,7 +36,7 @@ namespace Unigram.Controls.Messages
                     var item = parent as BubbleListViewItem;
                     if (item != null)
                     {
-                        _context = item.Owner.DataContext as DialogViewModel;
+                        _context = item.Messages.DataContext as DialogViewModel;
                     }
                 }
 

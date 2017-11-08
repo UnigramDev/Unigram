@@ -1,4 +1,5 @@
 ﻿using Telegram.Api.TL;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
@@ -6,31 +7,29 @@ namespace Unigram.Controls
 {
     public class BubbleListViewItem : ListViewItem
     {
-        public readonly BubbleListView Owner;
+        public readonly BubbleListView Messages;
 
-        public BubbleListViewItem(BubbleListView owner)
+        public BubbleListViewItem(BubbleListView messages)
         {
-            Owner = owner;
-            //RegisterPropertyChangedCallback(IsSelectedProperty, OnIsSelectedChanged);
+            Messages = messages;
         }
 
-        //private void OnIsSelectedChanged(DependencyObject sender, DependencyProperty dp)
-        //{
-        //    if (!(Content is TLMessageService))
-        //    {
-        //        (Content as TLMessageBase).IsSelected = IsSelected;
+        #region ContentMargin
 
-        //        if (Owner.DataContext is DialogViewModel && Owner.SelectionMode == ListViewSelectionMode.Multiple)
-        //        {
-        //            (Owner.DataContext as DialogViewModel).MessagesDeleteCommand.RaiseCanExecuteChanged();
-        //            (Owner.DataContext as DialogViewModel).MessagesForwardCommand.RaiseCanExecuteChanged();
-        //        }
-        //    }
-        //}
+        public Thickness ContentMargin
+        {
+            get { return (Thickness)GetValue(ContentMarginProperty); }
+            set { SetValue(ContentMarginProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContentMarginProperty =
+            DependencyProperty.Register("ContentMargin", typeof(Thickness), typeof(BubbleListViewItem), new PropertyMetadata(default(Thickness)));
+
+        #endregion
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            if (Owner.SelectionMode == ListViewSelectionMode.Multiple)
+            if (Messages.SelectionMode == ListViewSelectionMode.Multiple)
             {
                 if (Content is TLMessageService serviceMessage && !(serviceMessage.Action is TLMessageActionPhoneCall))
                 {

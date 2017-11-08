@@ -1752,6 +1752,68 @@ namespace Unigram.Views
         {
             ViewModel.ReadMentionsCommand.Execute();
         }
+
+        private void Media_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            var message = sender.DataContext as TLMessage;
+            if (message == null)
+            {
+                return;
+            }
+
+            var groupedId = message.GroupedId ?? 0;
+
+            if (ViewModel.GroupedItems.TryGetValue(groupedId, out GroupedMessages group) &&
+                group.Positions.TryGetValue(message, out GroupedMessagePosition position) &&
+                group.Messages.Count > 1)
+            {
+                var background = sender.FindName("Background") as FrameworkElement;
+                var header = sender.FindName("Header") as FrameworkElement;
+                var footer = sender.FindName("Footer") as FrameworkElement;
+                var media = sender.FindName("Media") as FrameworkElement;
+
+                var width = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 320);
+                var height = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 420);
+
+                var maxWidth = group.Width / 700d * width;
+                var maxHeight = group.Height * height;
+
+                media.Width = position.Width / 700d * width;
+                media.Height = position.Height * height;
+
+                media.Width -= 2;
+                media.Height -= 2;
+
+                if (message == group.Messages[0] && ((message.HasReplyToMsgId && message.ReplyToMsgId.HasValue) || (message.HasFwdFrom && message.FwdFrom != null) || (message.HasViaBotId && message.ViaBotId.HasValue)))
+                {
+                    header.Width = maxWidth - 2;
+                    header.Margin = new Thickness(0, 0, -(maxWidth - (position.Width / 700d * width)), 0);
+
+                    var add = message.HasReplyToMsgId && message.ReplyToMsgId.HasValue ? 50 : 26;
+
+                    background.Width = maxWidth - 2;
+                    background.Height = maxHeight + add - 2;
+                    background.Margin = new Thickness(0, 0, -(maxWidth - (position.Width / 700d * width)), -(maxHeight + add - ((position.Height * height) + add)));
+
+                    header.Visibility = Visibility.Visible;
+                    background.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    header.Visibility = Visibility.Collapsed;
+                    background.Visibility = Visibility.Collapsed;
+                }
+
+                if (position.IsLast)
+                {
+                    footer.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    footer.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
     }
 
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading

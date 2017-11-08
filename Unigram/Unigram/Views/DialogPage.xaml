@@ -303,39 +303,116 @@
             <messages:PhoneCallMessageBubble ContextRequested="Message_ContextRequested"/>
         </DataTemplate>
 
-        <DataTemplate x:Key="GroupedPhotoTemplate" x:DataType="models:TLMessage">
-            <Grid x:Name="Media" Background="Black" ContextRequested="Message_ContextRequested">
-                <Rectangle>
-                    <Rectangle.Fill>
-                        <ImageBrush ImageSource="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                    </Rectangle.Fill>
-                </Rectangle>
-                <HyperlinkButton Click="Media_Click" Content="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                
-                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
-                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
+        <!--<DataTemplate x:Key="GroupedPhotoTemplate" x:DataType="models:TLMessage">
+            <Grid DataContextChanged="Media_DataContextChanged">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Border x:Name="Background" Background="{ThemeResource MessageBackgroundOutBrush}" Grid.RowSpan="2"/>
+                <StackPanel x:Name="Header" Padding="8,4,10,4">
+                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,0,0,2" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click"/>
+                </StackPanel>
+                <Grid x:Name="Media" Background="Black" ContextRequested="Message_ContextRequested" Grid.Row="1">
+                    <Rectangle>
+                        <Rectangle.Fill>
+                            <ImageBrush ImageSource="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <HyperlinkButton Click="Media_Click" Content="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
-                <messages:MessageStatusBar Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
+                    <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                    <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
+                
+                    <messages:MessageStatusBar x:Name="Footer" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
+                </Grid>
+            </Grid>
+        </DataTemplate>-->
+
+        <DataTemplate x:Key="GroupedPhotoTemplate" x:DataType="models:TLMessage">
+            <Grid DataContextChanged="Media_DataContextChanged" ContextRequested="Message_ContextRequested">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <controls:ProfilePictureView x:Phase="3"
+                                             x:Name="PhotoBubble"
+                                             Margin="12,0,0,2"
+                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
+                                             Source="{x:Bind Participant.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
+                                             Click="Photo_Click"/>
+
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Border x:Name="Background" Background="{ThemeResource MessageBackgroundOutBrush}" Grid.RowSpan="2"/>
+                    <StackPanel x:Name="Header" Padding="8,4,10,4">
+                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,0,0,2" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click"/>
+                    </StackPanel>
+                    <Grid x:Name="Media" Background="Black" Grid.Row="1">
+                        <Rectangle>
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <HyperlinkButton Click="Media_Click" Content="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
+                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
+
+                        <messages:MessageStatusBar x:Name="Footer" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
+                    </Grid>
+                </Grid>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="GroupedVideoTemplate" x:DataType="models:TLMessage">
-            <Grid x:Name="Media" Background="Black" ContextRequested="Message_ContextRequested">
-                <Rectangle>
-                    <Rectangle.Fill>
-                        <ImageBrush ImageSource="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                    </Rectangle.Fill>
-                </Rectangle>
-                <HyperlinkButton Click="Media_Click" Content="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Grid DataContextChanged="Media_DataContextChanged" ContextRequested="Message_ContextRequested">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <controls:ProfilePictureView x:Phase="3"
+                                             x:Name="PhotoBubble"
+                                             Margin="12,0,0,2"
+                                             Style="{StaticResource MessageBubbleProfilePictureStyle}"
+                                             Source="{x:Bind Participant.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
+                                             Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
+                                             Click="Photo_Click"/>
 
-                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}">
-                    <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" Padding="8,4,8,4" Margin="4">
-                        <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
-                    </Border>
-                </controls:TransferButton>
-                <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Border x:Name="Background" Background="{ThemeResource MessageBackgroundOutBrush}" Grid.RowSpan="2"/>
+                    <StackPanel x:Name="Header" Padding="8,4,10,4">
+                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,0,0,2" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click"/>
+                    </StackPanel>
+                    <Grid x:Name="Media" Background="Black" Grid.Row="1">
+                        <Rectangle>
+                            <Rectangle.Fill>
+                                <ImageBrush ImageSource="{Binding Media.Document, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <HyperlinkButton Click="Media_Click" Content="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
-                <messages:MessageStatusBar Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
+                        <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}">
+                            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}" CornerRadius="{ThemeResource MessageOverlayCornerRadius}" IsHitTestVisible="False" Padding="8,4,8,4" Margin="4">
+                                <TextBlock Text="{Binding Media.Document.Info}" Style="{ThemeResource CaptionTextBlockStyle}" Foreground="White" TextAlignment="Right"/>
+                            </Border>
+                        </controls:TransferButton>
+                        <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
+
+                        <messages:MessageStatusBar x:Name="Footer" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
+                    </Grid>
+                </Grid>
             </Grid>
         </DataTemplate>
 
@@ -1008,7 +1085,7 @@
                             </Style>
                         </selectors:MessageStyleSelector.ServiceStyle>
                         <selectors:MessageStyleSelector.GroupStyle>
-                            <Style TargetType="ListViewItem">
+                            <Style TargetType="controls:BubbleListViewItem">
                                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                 <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
                                 <Setter Property="Background" Value="Transparent"/>
@@ -1022,7 +1099,7 @@
                                 <Setter Property="MinHeight" Value="0"/>
                                 <Setter Property="Template">
                                     <Setter.Value>
-                                        <ControlTemplate TargetType="ListViewItem">
+                                        <ControlTemplate TargetType="controls:BubbleListViewItem">
                                             <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
                                                                    Control.IsTemplateFocusTarget="True"
                                                                    FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
@@ -1050,7 +1127,8 @@
                                                                    ReorderHintOffset="{ThemeResource GridViewItemReorderHintThemeOffset}"
                                                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                                   ContentMargin="{TemplateBinding Padding}"
+                                                                   ContentMargin="{TemplateBinding ContentMargin}"
+                                                                   Margin="{TemplateBinding Padding}"
                                                                    CheckMode="{ThemeResource GridViewItemCheckMode}" />
                                         </ControlTemplate>
                                     </Setter.Value>
