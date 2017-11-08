@@ -105,7 +105,10 @@ namespace Unigram.ViewModels
                 var collection = new BotResultsCollection(ProtoService, CurrentInlineBot.ToInputUser(), Peer, null, query);
                 var result = await collection.LoadMoreItemsAsync(0);
 
-                InlineBotResults = collection;
+                if (collection.Results != null)
+                {
+                    InlineBotResults = collection;
+                }
 
                 //var response = await ProtoService.GetInlineBotResultsAsync(CurrentInlineBot.ToInputUser(), Peer, null, query, string.Empty);
                 //if (response.IsSucceeded)
@@ -613,6 +616,8 @@ namespace Unigram.ViewModels
 
             _nextOffset = string.Empty;
         }
+
+        public TLMessagesBotResults Results => _results;
 
         public bool IsGallery => _results.IsGallery;
         public bool HasNextOffset => _results.HasNextOffset;
