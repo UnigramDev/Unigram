@@ -87,7 +87,7 @@ namespace Unigram.Themes
                 if (stickerAttribute != null && stickerAttribute.StickerSet.TypeId != TLType.InputStickerSetEmpty)
                 {
                     var page = element.Ancestors<DialogPage>().FirstOrDefault() as DialogPage;
-                    if (page == null)
+                    if (page != null)
                     {
                         await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet, page.Stickers_ItemClick);
                     }
