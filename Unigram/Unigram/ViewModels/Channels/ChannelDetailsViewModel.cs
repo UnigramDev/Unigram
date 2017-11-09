@@ -93,7 +93,7 @@ namespace Unigram.ViewModels.Channels
                         Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), null, full.ParticipantsCount);
                     }
 
-                    RaisePropertyChanged(() => AreNotificationsEnabled);
+                    RaisePropertyChanged(() => IsMuted);
                     RaisePropertyChanged(() => Participants);
 
                     Aggregator.Subscribe(this);
@@ -131,17 +131,22 @@ namespace Unigram.ViewModels.Channels
             }
         }
 
-        public bool AreNotificationsEnabled
+        public bool IsMuted
         {
             get
             {
-                var settings = _full?.NotifySettings as TLPeerNotifySettings;
-                if (settings != null)
+                var notifySettings = _full?.NotifySettings as TLPeerNotifySettings;
+                if (notifySettings == null)
                 {
-                    return settings.MuteUntil == 0;
+                    return false;
                 }
 
-                return false;
+                var clientDelta = MTProtoService.Current.ClientTicksDelta;
+                var utc0SecsLong = notifySettings.MuteUntil * 4294967296 - clientDelta;
+                var utc0SecsInt = utc0SecsLong / 4294967296.0;
+
+                var muteUntilDateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
+                return muteUntilDateTime > DateTime.Now;
             }
         }
 
@@ -156,7 +161,7 @@ namespace Unigram.ViewModels.Channels
             {
                 RaisePropertyChanged(() => Item);
                 RaisePropertyChanged(() => Full);
-                RaisePropertyChanged(() => AreNotificationsEnabled);
+                RaisePropertyChanged(() => IsMuted);
 
                 RaisePropertyChanged(() => IsInviteUsers);
                 RaisePropertyChanged(() => IsEditEnabled);
@@ -176,7 +181,7 @@ namespace Unigram.ViewModels.Channels
                     {
                         Full.NotifySettings = update.NotifySettings;
                         Full.RaisePropertyChanged(() => Full.NotifySettings);
-                        RaisePropertyChanged(() => AreNotificationsEnabled);
+                        RaisePropertyChanged(() => IsMuted);
 
                         //var notifySettings = updateNotifySettings.NotifySettings as TLPeerNotifySettings;
                         //if (notifySettings != null)
@@ -303,7 +308,7 @@ namespace Unigram.ViewModels.Channels
                 if (response.IsSucceeded)
                 {
                     notifySettings.MuteUntil = muteUntil;
-                    RaisePropertyChanged(() => AreNotificationsEnabled);
+                    RaisePropertyChanged(() => IsMuted);
                     Full.RaisePropertyChanged(() => Full.NotifySettings);
 
                     var dialog = CacheService.GetDialog(_item.ToPeer());

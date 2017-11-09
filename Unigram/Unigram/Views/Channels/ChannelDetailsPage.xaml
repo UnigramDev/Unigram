@@ -97,7 +97,7 @@
                                               Style="{StaticResource BadgeButtonStyle}"/>
 
                         <ToggleSwitch Header="Notifications"
-                                      IsOn="{x:Bind ViewModel.AreNotificationsEnabled, Mode=OneWay}"
+                                      IsOn="{x:Bind ViewModel.IsMuted, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                       Style="{ThemeResource CheckButtonStyle}"
                                       Toggled="Notifications_Toggled"/>
 
