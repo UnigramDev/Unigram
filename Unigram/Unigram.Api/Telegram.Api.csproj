@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Constants.Secret.cs" />
+    <Compile Include="Helpers\Markdown.cs" />
     <Compile Include="Helpers\PhoneNumber.cs" />
     <Compile Include="Services\Cache\Context\ChatsContext.cs" />
     <Compile Include="Services\Cache\Context\CreateDatabase.cs" />
