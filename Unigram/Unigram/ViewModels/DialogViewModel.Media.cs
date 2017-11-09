@@ -344,7 +344,7 @@ namespace Unigram.ViewModels
             });
         }
 
-        public async Task SendVideoAsync(StorageFile file, string caption, bool round, int? ttlSeconds = null, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        public async Task SendVideoAsync(StorageFile file, string caption, bool round, bool animated, int? ttlSeconds = null, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
         {
             if (_peer == null)
             {
@@ -410,7 +410,7 @@ namespace Unigram.ViewModels
                 }
             };
 
-            if (profile != null && profile.Audio == null)
+            if (profile != null && profile.Audio == null && animated)
             {
                 document.Attributes.Add(new TLDocumentAttributeAnimated());
             }
@@ -482,7 +482,7 @@ namespace Unigram.ViewModels
 
                         if (profile != null && profile.Audio == null)
                         {
-                            inputMedia.IsNoSoundVideo = true;
+                            inputMedia.IsNoSoundVideo = !animated;
                         }
 
                         var result = await ProtoService.SendMediaAsync(_peer, inputMedia, message);
@@ -528,7 +528,7 @@ namespace Unigram.ViewModels
                         }
                         else if (storage is StorageVideo video)
                         {
-                            await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
+                            await SendVideoAsync(storage.File, storage.Caption, false, video.IsMuted, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
                         }
                     }
                 }
@@ -593,7 +593,7 @@ namespace Unigram.ViewModels
                             }
                             else if (storage is StorageVideo video)
                             {
-                                await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
+                                await SendVideoAsync(storage.File, storage.Caption, false, video.IsMuted, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
                             }
                         }
                     }
@@ -1182,7 +1182,7 @@ namespace Unigram.ViewModels
                 }
                 else if (item is StorageVideo video)
                 {
-                    var op = await PrepareVideoAsync(video.File, video.Caption, false, groupedId, await video.GetEncodingAsync(), video.GetTransform());
+                    var op = await PrepareVideoAsync(video.File, video.Caption, false, video.IsMuted, groupedId, await video.GetEncodingAsync(), video.GetTransform());
                     if (op.message != null && op.operation != null)
                     {
                         operations.Add(op);
@@ -1335,7 +1335,7 @@ namespace Unigram.ViewModels
             return null;
         }
 
-        public async Task<(TLMessage message, Task operation)> PrepareVideoAsync(StorageFile file, string caption, bool round, long? groupedId, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        public async Task<(TLMessage message, Task operation)> PrepareVideoAsync(StorageFile file, string caption, bool round, bool animated, long? groupedId, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
         {
             var fileLocation = new TLFileLocation
             {
@@ -1397,7 +1397,7 @@ namespace Unigram.ViewModels
                 }
             };
 
-            if (profile != null && profile.Audio == null)
+            if (profile != null && profile.Audio == null && animated)
             {
                 document.Attributes.Add(new TLDocumentAttributeAnimated());
             }
@@ -1420,10 +1420,10 @@ namespace Unigram.ViewModels
                 Reply = null;
             }
 
-            return (message, UploadVideoAsync(message, fileName, desiredName, fileCache, profile, transform));
+            return (message, UploadVideoAsync(message, animated, fileName, desiredName, fileCache, profile, transform));
         }
 
-        private async Task<MTProtoResponse<TLMessageMediaBase>> UploadVideoAsync(TLMessage message, string fileName, string desiredName, StorageFile fileCache, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        private async Task<MTProtoResponse<TLMessageMediaBase>> UploadVideoAsync(TLMessage message, bool animated, string fileName, string desiredName, StorageFile fileCache, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
         {
             var media = message.Media as TLMessageMediaDocument;
             var document = media.Document as TLDocument;
@@ -1471,7 +1471,7 @@ namespace Unigram.ViewModels
 
                     if (profile != null && profile.Audio == null)
                     {
-                        inputMedia.IsNoSoundVideo = true;
+                        inputMedia.IsNoSoundVideo = !animated;
                     }
 
                     return await ProtoService.UploadMediaAsync(_peer, inputMedia, message);
