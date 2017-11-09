@@ -132,8 +132,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 086910;
-        public const string CurrentChangelog = "- Share your location with friends in real time with the new Live Locations. \n- Control whether new members in supergroups can see earlier message history.\n- Easily recognize messages from group admins by the new ‘admin’ badge.\n- Select and send multiple photos and videos from the attach flyout.\n- Send videos choosing compression level.\n- Launch Unigram when system starts.";
+        public const int CurrentVersion = 0108490;
+        public const string CurrentChangelog = "- Grouped Photos. Group media into an album when sharing multiple photos and videos. Choose the exact order of media you send.\n- Saved Messages. Bookmark messages by forwarding them to “Saved Messages”. Access them from the Chats list or Settings.\n- Better Search. Find bots and public channels faster by typing their titles in Search. Popular bots and channels are shown first.\n- Pinned Messages. If you are a channel admin, pin messages to focus your subscribers’ attention on important announcements.\n\nBonus Tracks: \n- Select text inside messages using your mouse\n- Right click on a link inside a message to copy it\n- Tons of bug fixes and improvements";
 
         private int? _appVersion;
         public int Version

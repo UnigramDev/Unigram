@@ -92,11 +92,11 @@ namespace Telegram.Api.Helpers
 
                             if (m == Mode.Pre)
                             {
-                                if (char.IsSeparator(message[i]))
+                                if (message.Length > i && char.IsSeparator(message[i]))
                                 {
                                     message = message.Remove(i, 1);
                                 }
-                                else if (i > 0 && char.IsSeparator(message[i - 1]))
+                                else if (message.Length > i && i > 0 && char.IsSeparator(message[i - 1]))
                                 {
                                     message = message.Remove(i - 1, 1);
                                 }

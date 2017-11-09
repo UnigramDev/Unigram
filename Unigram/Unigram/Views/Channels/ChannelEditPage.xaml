@@ -157,7 +157,7 @@
                     <TextBlock Text="You can choose sticker set which will be available for every member while in the group chat." Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
-                <StackPanel Margin="0,24,0,18">
+                <StackPanel Margin="0,24,0,0">
                     <controls:BadgeButton
                         Content="Admins"
                         Command="{x:Bind ViewModel.AdminsCommand}"
@@ -178,7 +178,7 @@
                         Style="{StaticResource BadgeButtonStyle}"/>
                 </StackPanel>
 
-                <StackPanel Margin="0,24,0,0" Visibility="{x:Bind ViewModel.Item.IsCreator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel Margin="0,24" Visibility="{x:Bind ViewModel.Item.IsCreator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <controls:BadgeButton
                         Content="Delete Channel"
                         Foreground="Red"

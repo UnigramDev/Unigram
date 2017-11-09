@@ -45,7 +45,7 @@ namespace Unigram.Controls
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private async void OnLoaded(object sender, RoutedEventArgs e)
         {
             var panel = ItemsPanelRoot as ItemsStackPanel;
             if (panel != null)
@@ -58,6 +58,16 @@ namespace Unigram.Controls
             }
 
             ViewModel.Items.CollectionChanged += OnCollectionChanged;
+
+            if (ScrollingHost.ScrollableHeight < 120 && Items.Count > 0)
+            {
+                if (!ViewModel.IsFirstSliceLoaded)
+                {
+                    await ViewModel.LoadPreviousSliceAsync(false, ItemsStack.LastVisibleIndex == ItemsStack.LastCacheIndex);
+                }
+
+                await ViewModel.LoadNextSliceAsync();
+            }
         }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
