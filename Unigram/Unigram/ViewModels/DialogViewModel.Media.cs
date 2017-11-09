@@ -47,6 +47,8 @@ namespace Unigram.ViewModels
 
         private void SendDocument(TLDocument document, string caption)
         {
+            caption = caption.Format();
+
             var media = new TLMessageMediaDocument { Document = document, Caption = caption };
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
@@ -118,6 +120,8 @@ namespace Unigram.ViewModels
             {
                 return;
             }
+
+            caption = caption.Format();
 
             var fileLocation = new TLFileLocation
             {
@@ -249,6 +253,8 @@ namespace Unigram.ViewModels
                 return;
             }
 
+            caption = caption.Format();
+
             var desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
@@ -350,6 +356,8 @@ namespace Unigram.ViewModels
             {
                 return;
             }
+
+            caption = caption.Format();
 
             var fileLocation = new TLFileLocation
             {
@@ -603,6 +611,8 @@ namespace Unigram.ViewModels
 
         private async Task SendPhotoAsync(StorageFile file, string caption, int? ttlSeconds = null)
         {
+            caption = caption.Format();
+
             var originalProps = await file.Properties.GetImagePropertiesAsync();
 
             var imageWidth = originalProps.Width;
@@ -722,6 +732,8 @@ namespace Unigram.ViewModels
 
         private async Task SendGifAsync(StorageFile file, string caption)
         {
+            caption = caption.Format();
+
             var fileLocation = new TLFileLocation
             {
                 VolumeId = TLLong.Random(),
@@ -816,6 +828,8 @@ namespace Unigram.ViewModels
 
         public async Task SendAudioAsync(StorageFile file, int duration, bool voice, string title, string performer, string caption)
         {
+            caption = caption.Format();
+
             var fileLocation = new TLFileLocation
             {
                 VolumeId = TLLong.Random(),
@@ -1238,6 +1252,8 @@ namespace Unigram.ViewModels
 
         private async Task<(TLMessage message, Task operation)> PreparePhotoAsync(StorageFile file, string caption, long? groupedId)
         {
+            caption = caption.Format();
+
             var originalProps = await file.Properties.GetImagePropertiesAsync();
 
             var imageWidth = originalProps.Width;
@@ -1337,6 +1353,8 @@ namespace Unigram.ViewModels
 
         public async Task<(TLMessage message, Task operation)> PrepareVideoAsync(StorageFile file, string caption, bool round, bool animated, long? groupedId, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
         {
+            caption = caption.Format();
+
             var fileLocation = new TLFileLocation
             {
                 VolumeId = TLLong.Random(),

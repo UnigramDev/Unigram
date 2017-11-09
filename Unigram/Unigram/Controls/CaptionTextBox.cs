@@ -81,8 +81,8 @@ namespace Unigram.Controls
                     var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
                     if (send)
                     {
-                        AcceptsReturn = false;
                         View?.Accept();
+                        AcceptsReturn = false;
                     }
                     else
                     {
@@ -94,8 +94,8 @@ namespace Unigram.Controls
                     var send = key.HasFlag(CoreVirtualKeyStates.Down) && ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
                     if (send)
                     {
-                        AcceptsReturn = false;
                         View?.Accept();
+                        AcceptsReturn = false;
                     }
                     else
                     {
