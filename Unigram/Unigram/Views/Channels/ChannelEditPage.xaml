@@ -177,6 +177,15 @@
                         Visibility="{x:Bind ViewModel.Full.HasParticipantsCount, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                         Style="{StaticResource BadgeButtonStyle}"/>
                 </StackPanel>
+
+                <StackPanel Margin="0,24,0,0" Visibility="{x:Bind ViewModel.Item.IsCreator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <controls:BadgeButton
+                        Content="Delete Channel"
+                        Foreground="Red"
+                        Command="{x:Bind ViewModel.DeleteCommand}"
+                        Style="{StaticResource BadgeButtonStyle}"/>
+                    <TextBlock Text="You will lose all messages in this channel." Margin="12,8,12,0" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>

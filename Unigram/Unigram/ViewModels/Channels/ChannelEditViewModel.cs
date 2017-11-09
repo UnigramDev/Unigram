@@ -9,6 +9,7 @@ using Telegram.Api.Aggregator;
 using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
+using Telegram.Api.Services.Cache.EventArgs;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
 using Unigram.Common;
@@ -36,6 +37,7 @@ namespace Unigram.ViewModels.Channels
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
             EditStickerSetCommand = new RelayCommand(EditStickerSetExecute);
             RevokeLinkCommand = new RelayCommand<TLChannel>(RevokeLinkExecute);
+            DeleteCommand = new RelayCommand(DeleteExecute);
         }
 
         public bool CanEditSignatures
@@ -414,6 +416,34 @@ namespace Unigram.ViewModels.Channels
 
                     HasTooMuchUsernames = false;
                     AdminedPublicChannels.Clear();
+                }
+            }
+        }
+
+        public RelayCommand DeleteCommand { get; }
+        private async void DeleteExecute()
+        {
+            var item = _item;
+            if (item == null)
+            {
+                return;
+            }
+
+            var message = item.IsMegaGroup ? "Wait! Deleting this group will remove all members and all messages will be lost.\r\n\r\nDelete the group anyway?" : "Wait! Deleting this channel will remove all members and all messages will be lost.\r\n\r\nDelete the channel anyway?";
+            var confirm = await TLMessageDialog.ShowAsync(message, "Delete", "Delete", "Cancel");
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var response = await ProtoService.DeleteChannelAsync(item);
+                if (response.IsSucceeded)
+                {
+                    var dialog = CacheService.GetDialog(item.ToPeer());
+                    if (dialog != null)
+                    {
+                        CacheService.DeleteDialog(dialog);
+                        Aggregator.Publish(new DialogRemovedEventArgs(dialog));
+                    }
+
+                    NavigationService.RemovePeerFromStack(item.ToPeer());
                 }
             }
         }
