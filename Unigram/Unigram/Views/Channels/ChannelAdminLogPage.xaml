@@ -10,6 +10,7 @@
     xmlns:tl="using:Telegram.Api.TL"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Loaded="OnLoaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -101,6 +102,7 @@
         </Grid>
 
         <controls:PaddedListView
+            x:Name="Messages"
             ItemsSource="{x:Bind ViewModel.Items}"
             SelectionMode="None"
             Grid.Row="1">
@@ -126,7 +128,7 @@
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
                                                              Click="Photo_Click"/>
-                                <messages:MessageBubble Grid.Column="1"/>
+                                <messages:MessageBubble x:Name="Bubble" Grid.Column="1"/>
                             </Grid>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.MessageTemplate>
@@ -143,7 +145,7 @@
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
                                                              Click="Photo_Click"/>
-                                <messages:EditedMessageBubble Grid.Column="1"/>
+                                <messages:EditedMessageBubble x:Name="Bubble" Grid.Column="1"/>
                             </Grid>
                         </DataTemplate>
                     </selectors:AdminLogTemplateSelector.EditedTemplate>

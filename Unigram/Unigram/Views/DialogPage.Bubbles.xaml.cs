@@ -46,7 +46,7 @@ using Unigram.Common;
 
 namespace Unigram.Views
 {
-    public partial class DialogPage : Page
+    public partial class DialogPage : Page, IGifPlayback
     {
         private ItemsStackPanel _panel;
         private Dictionary<string, MediaPlayerItem> _old = new Dictionary<string, MediaPlayerItem>();
@@ -488,5 +488,11 @@ namespace Unigram.Views
 
             return "EmptyMessageTemplate";
         }
+    }
+
+    public interface IGifPlayback
+    {
+        void Play(TLMessage message);
+        void Play(IEnumerable<TLMessage> items, bool auto);
     }
 }

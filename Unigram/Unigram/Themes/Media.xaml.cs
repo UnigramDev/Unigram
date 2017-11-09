@@ -141,7 +141,7 @@ namespace Unigram.Themes
                     return;
                 }
 
-                var page = bubble.Ancestors<DialogPage>().FirstOrDefault() as DialogPage;
+                var page = bubble.Ancestors<IGifPlayback>().FirstOrDefault() as IGifPlayback;
                 if (page == null)
                 {
                     return;
