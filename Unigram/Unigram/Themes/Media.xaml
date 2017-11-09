@@ -509,7 +509,7 @@
                 <TextBlock Text="{Binding Media.Description}" Style="{StaticResource BodyTextBlockStyle}"/>
             </StackPanel>
 
-            <messages:InvoiceStatusBar/>
+            <messages:InvoiceFooter/>
         </StackPanel>
     </DataTemplate>
 
@@ -529,7 +529,7 @@
                                     MaxWidth="{ThemeResource TelegramMediaMaxWidth}"
                                     MaxHeight="{ThemeResource TelegramMediaMaxHeight}"/>
 
-                <messages:InvoiceStatusBar Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4"/>
+                <messages:InvoiceFooter Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" VerticalAlignment="Top" HorizontalAlignment="Left" Padding="8,4,8,4" Margin="4"/>
             </Grid>
         </StackPanel>
     </DataTemplate>

@@ -135,11 +135,11 @@
     <Compile Include="Controls\Messages\EditedMessageBubble.xaml.cs">
       <DependentUpon>EditedMessageBubble.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\InvoiceStatusBar.xaml.cs">
-      <DependentUpon>InvoiceStatusBar.xaml</DependentUpon>
+    <Compile Include="Controls\Messages\InvoiceFooter.xaml.cs">
+      <DependentUpon>InvoiceFooter.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\MessageStatusBar.xaml.cs">
-      <DependentUpon>MessageStatusBar.xaml</DependentUpon>
+    <Compile Include="Controls\Messages\MessageFooter.xaml.cs">
+      <DependentUpon>MessageFooter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MosaicRow.cs" />
     <Compile Include="Controls\NavigationView.cs" />
@@ -1251,11 +1251,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Messages\InvoiceStatusBar.xaml">
+    <Page Include="Controls\Messages\InvoiceFooter.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Messages\MessageStatusBar.xaml">
+    <Page Include="Controls\Messages\MessageFooter.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

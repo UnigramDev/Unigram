@@ -303,33 +303,6 @@
             <messages:PhoneCallMessageBubble ContextRequested="Message_ContextRequested"/>
         </DataTemplate>
 
-        <!--<DataTemplate x:Key="GroupedPhotoTemplate" x:DataType="models:TLMessage">
-            <Grid DataContextChanged="Media_DataContextChanged">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Border x:Name="Background" Background="{ThemeResource MessageBackgroundOutBrush}" Grid.RowSpan="2"/>
-                <StackPanel x:Name="Header" Padding="8,4,10,4">
-                    <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,0,0,2" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
-                    <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click"/>
-                </StackPanel>
-                <Grid x:Name="Media" Background="Black" ContextRequested="Message_ContextRequested" Grid.Row="1">
-                    <Rectangle>
-                        <Rectangle.Fill>
-                            <ImageBrush ImageSource="{Binding Media.Photo, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center"/>
-                        </Rectangle.Fill>
-                    </Rectangle>
-                    <HyperlinkButton Click="Media_Click" Content="{x:Null}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-
-                    <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Photo}" IsTransferring="{Binding Media.Photo.IsTransferring}" Style="{StaticResource MediaTransferButtonStyle}"/>
-                    <controls:ProgressBarRing Background="Transparent" Foreground="White" Value="{Binding Media.Photo.Progress}" IsHitTestVisible="False"/>
-                
-                    <messages:MessageStatusBar x:Name="Footer" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
-                </Grid>
-            </Grid>
-        </DataTemplate>-->
-
         <DataTemplate x:Key="GroupedPhotoTemplate" x:DataType="models:TLMessage">
             <Grid DataContextChanged="Media_DataContextChanged" ContextRequested="Message_ContextRequested">
                 <Grid.ColumnDefinitions>
@@ -368,7 +341,7 @@
                                                  Progress="{Binding Media.Photo.Progress}"
                                                  Style="{StaticResource MediaTransferButtonStyle}"/>
 
-                        <messages:MessageStatusBar x:Name="Footer" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
+                        <messages:MessageFooter x:Name="Footer" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
                     </Grid>
                 </Grid>
             </Grid>
@@ -416,7 +389,7 @@
                             </Border>
                         </controls:TransferButton>
 
-                        <messages:MessageStatusBar x:Name="Footer" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
+                        <messages:MessageFooter x:Name="Footer" Background="{ThemeResource MessageOverlayBackgroundBrush}" Foreground="White" Padding="6,4,6,4" Margin="0,0,4,4"/>
                     </Grid>
                 </Grid>
             </Grid>

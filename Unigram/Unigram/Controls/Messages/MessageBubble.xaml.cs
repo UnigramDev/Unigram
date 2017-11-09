@@ -73,8 +73,8 @@ namespace Unigram.Controls.Messages
             {
                 Media.Margin = new Thickness(0);
                 Placeholder.Visibility = Visibility.Visible;
-                StatusToDefault();
-                Grid.SetRow(StatusBar, 2);
+                FooterToNormal();
+                Grid.SetRow(Footer, 2);
                 Grid.SetRow(Message, 2);
             }
             else if (message != null && message.Media != null)
@@ -114,37 +114,37 @@ namespace Unigram.Controls.Messages
 
                     if (caption)
                     {
-                        StatusToDefault();
+                        FooterToNormal();
                         bottom = 4;
                     }
                     else if (message.Media is TLMessageMediaGeoLive)
                     {
-                        StatusToHidden();
+                        FooterToHidden();
                     }
                     else
                     {
-                        StatusToFullMedia();
+                        FooterToMedia();
                     }
 
                     Media.Margin = new Thickness(left, top, right, bottom);
                     Placeholder.Visibility = caption ? Visibility.Visible : Visibility.Collapsed;
-                    Grid.SetRow(StatusBar, caption ? 4 : 3);
+                    Grid.SetRow(Footer, caption ? 4 : 3);
                     Grid.SetRow(Message, caption ? 4 : 2);
                 }
                 else if (message.IsSticker() || message.IsRoundVideo())
                 {
                     Media.Margin = new Thickness(-8, -4, -10, -6);
                     Placeholder.Visibility = Visibility.Collapsed;
-                    StatusToEmbedMedia(message.IsOut);
-                    Grid.SetRow(StatusBar, 3);
+                    FooterToLightMedia(message.IsOut);
+                    Grid.SetRow(Footer, 3);
                     Grid.SetRow(Message, 2);
                 }
                 else if (message.Media is TLMessageMediaWebPage || message.Media is TLMessageMediaGame)
                 {
                     Media.Margin = new Thickness(0);
                     Placeholder.Visibility = Visibility.Collapsed;
-                    StatusToDefault();
-                    Grid.SetRow(StatusBar, 4);
+                    FooterToNormal();
+                    Grid.SetRow(Footer, 4);
                     Grid.SetRow(Message, 2);
                 }
                 else if (message.Media is TLMessageMediaInvoice invoiceMedia)
@@ -153,8 +153,8 @@ namespace Unigram.Controls.Messages
 
                     Media.Margin = new Thickness(0);
                     Placeholder.Visibility = caption ? Visibility.Visible : Visibility.Collapsed;
-                    StatusToDefault();
-                    Grid.SetRow(StatusBar, caption ? 3 : 4);
+                    FooterToNormal();
+                    Grid.SetRow(Footer, caption ? 3 : 4);
                     Grid.SetRow(Message, 2);
                 }
                 else /*if (IsInlineMedia(message.Media))*/
@@ -167,48 +167,40 @@ namespace Unigram.Controls.Messages
 
                     Media.Margin = new Thickness(0, 4, 0, caption ? 8 : 2);
                     Placeholder.Visibility = caption ? Visibility.Visible : Visibility.Collapsed;
-                    StatusToDefault();
-                    Grid.SetRow(StatusBar, caption ? 4 : 3);
+                    FooterToNormal();
+                    Grid.SetRow(Footer, caption ? 4 : 3);
                     Grid.SetRow(Message, caption ? 4 : 2);
                 }
-                //else
-                //{
-                //    Debug.WriteLine("NE UNO NE L'ALTRO");
-                //    MediaControl.Margin = new Thickness(0);
-                //    StatusToDefault();
-                //    Grid.SetRow(StatusBar, 4);
-                //    Grid.SetRow(MessageControl, 2);
-                //}
             }
         }
 
-        private void StatusToEmbedMedia(bool isOut)
+        private void FooterToLightMedia(bool isOut)
         {
-            VisualStateManager.GoToState(LayoutRoot, "LightMedia" + (isOut ? "Out" : string.Empty), false);
-            VisualStateManager.GoToState(Reply.Content as UserControl, "LightMedia", false);
+            VisualStateManager.GoToState(LayoutRoot, "LightState" + (isOut ? "Out" : string.Empty), false);
+            VisualStateManager.GoToState(Reply.Content as UserControl, "LightState", false);
         }
 
-        private void StatusToFullMedia()
+        private void FooterToMedia()
         {
-            VisualStateManager.GoToState(LayoutRoot, "FullMedia", false);
+            VisualStateManager.GoToState(LayoutRoot, "MediaState", false);
             VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
         }
 
-        private void StatusToDefault()
+        private void FooterToHidden()
+        {
+            VisualStateManager.GoToState(LayoutRoot, "HiddenState", false);
+            VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
+        }
+
+        private void FooterToNormal()
         {
             VisualStateManager.GoToState(LayoutRoot, "Normal", false);
             VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
         }
 
-        private void StatusToHidden()
-        {
-            VisualStateManager.GoToState(LayoutRoot, "Hidden", false);
-            VisualStateManager.GoToState(Reply.Content as UserControl, "Normal", false);
-        }
-
         #endregion
 
-        private void StatusBar_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void Footer_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (e.NewSize.Width != e.PreviousSize.Width)
             {

@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class MessageStatusBar : HackedContentPresenter
+    public sealed partial class MessageFooter : HackedContentPresenter
     {
         public TLMessage ViewModel => DataContext as TLMessage;
 
@@ -28,7 +28,7 @@ namespace Unigram.Controls.Messages
 
         private TLMessage _oldValue;
 
-        public MessageStatusBar()
+        public MessageFooter()
         {
             InitializeComponent();
         }

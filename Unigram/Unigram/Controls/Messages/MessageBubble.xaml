@@ -30,11 +30,11 @@
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup>
                     <VisualState x:Name="Normal"/>
-                    <VisualState x:Name="LightMediaOut">
+                    <VisualState x:Name="LightStateOut">
                         <VisualState.Setters>
-                            <Setter Target="StatusBar.Padding" Value="6,4,6,4"/>
-                            <Setter Target="StatusBar.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
-                            <Setter Target="StatusBar.Foreground" Value="White"/>
+                            <Setter Target="Footer.Padding" Value="6,4,6,4"/>
+                            <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
+                            <Setter Target="Footer.Foreground" Value="White"/>
                             <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
                             <Setter Target="ContentPanel.Background" Value="Transparent"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
@@ -50,14 +50,14 @@
                             <Setter Target="Header.HorizontalAlignment" Value="Right"/>
                             <Setter Target="Message.(Grid.Column)" Value="2"/>
                             <Setter Target="Media.(Grid.Column)" Value="2"/>
-                            <Setter Target="StatusBar.(Grid.Column)" Value="2"/>
+                            <Setter Target="Footer.(Grid.Column)" Value="2"/>
                         </VisualState.Setters>
                     </VisualState>
-                    <VisualState x:Name="LightMedia">
+                    <VisualState x:Name="LightState">
                         <VisualState.Setters>
-                            <Setter Target="StatusBar.Padding" Value="6,4,6,4"/>
-                            <Setter Target="StatusBar.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
-                            <Setter Target="StatusBar.Foreground" Value="White"/>
+                            <Setter Target="Footer.Padding" Value="6,4,6,4"/>
+                            <Setter Target="Footer.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
+                            <Setter Target="Footer.Foreground" Value="White"/>
                             <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
                             <Setter Target="ContentPanel.Background" Value="Transparent"/>
                             <Setter Target="Header.Background" Value="{ThemeResource MessageServiceBackgroundBrush}"/>
@@ -73,21 +73,21 @@
                             <Setter Target="Header.HorizontalAlignment" Value="Left"/>
                             <Setter Target="Message.(Grid.Column)" Value="0"/>
                             <Setter Target="Media.(Grid.Column)" Value="0"/>
-                            <Setter Target="StatusBar.(Grid.Column)" Value="0"/>
+                            <Setter Target="Footer.(Grid.Column)" Value="0"/>
                         </VisualState.Setters>
                     </VisualState>
-                    <VisualState x:Name="FullMedia">
+                    <VisualState x:Name="MediaState">
                         <VisualState.Setters>
-                            <Setter Target="StatusBar.Padding" Value="6,4,6,4"/>
-                            <Setter Target="StatusBar.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
-                            <Setter Target="StatusBar.Foreground" Value="White"/>
+                            <Setter Target="Footer.Padding" Value="6,4,6,4"/>
+                            <Setter Target="Footer.Background" Value="{ThemeResource MessageOverlayBackgroundBrush}"/>
+                            <Setter Target="Footer.Foreground" Value="White"/>
                             <Setter Target="ContentPanel.BorderBrush" Value="Transparent"/>
                         </VisualState.Setters>
                     </VisualState>
-                    <VisualState x:Name="Hidden">
+                    <VisualState x:Name="HiddenState">
                         <VisualState.Setters>
-                            <Setter Target="StatusBar.Opacity" Value="0"/>
-                            <Setter Target="StatusBar.IsHitTestVisible" Value="False"/>
+                            <Setter Target="Footer.Opacity" Value="0"/>
+                            <Setter Target="Footer.IsHitTestVisible" Value="False"/>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -161,11 +161,11 @@
                 Grid.Column="1"
                 Grid.Row="3"/>
 
-            <local:MessageStatusBar
-                x:Name="StatusBar"
+            <local:MessageFooter
+                x:Name="Footer"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Right"
-                SizeChanged="StatusBar_SizeChanged"
+                SizeChanged="Footer_SizeChanged"
                 Margin="0,0,-6,-2"
                 Grid.Column="1"
                 Grid.Row="4"/>

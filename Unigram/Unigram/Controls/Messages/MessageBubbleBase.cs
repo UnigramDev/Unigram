@@ -347,7 +347,7 @@ namespace Unigram.Controls.Messages
         /// </summary>
         public new event TypedEventHandler<FrameworkElement, object> Loading;
 
-        private FrameworkElement _statusBar;
+        private FrameworkElement _footer;
 
         protected override Size MeasureOverride(Size availableSize)
         {
@@ -481,12 +481,12 @@ namespace Unigram.Controls.Messages
 
             Calculate:
 
-            if (_statusBar == null)
-                _statusBar = FindName("StatusBar") as FrameworkElement;
-            if (_statusBar.DesiredSize.IsEmpty)
-                _statusBar.Measure(availableSize);
+            if (_footer == null)
+                _footer = FindName("Footer") as FrameworkElement;
+            if (_footer.DesiredSize.IsEmpty)
+                _footer.Measure(availableSize);
 
-            width = Math.Max(_statusBar.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96) + sumWidth);
+            width = Math.Max(_footer.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96) + sumWidth);
 
             if (width > availableWidth || height > availableHeight)
             {
