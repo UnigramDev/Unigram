@@ -90,7 +90,7 @@ namespace Unigram.ViewModels.Channels
 
                     if (_item.IsMegaGroup)
                     {
-                        Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), null);
+                        Participants = new ItemsCollection(ProtoService, channel.ToInputChannel(), null, full.ParticipantsCount);
                     }
 
                     RaisePropertyChanged(() => AreNotificationsEnabled);
