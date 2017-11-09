@@ -55,87 +55,64 @@
                     <TextBlock Text="{x:Bind ViewModel.Item.User, Converter={StaticResource LastSeenConverter}}" Style="{StaticResource CaptionTextBlockStyle}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
                 </Grid>
 
-                <local:TableStackPanel x:Name="Group2"
-                                       Visibility="{x:Bind ViewModel.Channel.IsMegaGroup, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                       BorderThickness="0,0,0,1"
-                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                       Margin="0,24,0,0">
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsChangeInfo, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Header="Change Group Info"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsDeleteMessages, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Header="Delete Messages"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsBanUsers, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Header="Ban Users"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsInviteUsers, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Visibility="{x:Bind ViewModel.Channel.IsDemocracy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                                  Header="Add Users"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
-                    <!--<ToggleSwitch IsOn="{x:Bind ViewModel.IsInviteLink, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Header="Invite Users Via Link"
-                                  Style="{ThemeResource CheckButtonStyle}"/>-->
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsPinMessages, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Header="Pin Messages"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsAddAdmins, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Header="Add New Admins"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
-                </local:TableStackPanel>
+                <UserControl IsEnabled="{x:Bind ViewModel.Item.IsCanEdit, FallbackValue=False}">
+                    <StackPanel Visibility="{x:Bind ViewModel.Channel.IsMegaGroup, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" Margin="0,24,0,0">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsChangeInfo, Mode=TwoWay}"
+                                      Header="Change Group Info"
+                                      Style="{ThemeResource CheckButtonStyle}"/>
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsDeleteMessages, Mode=TwoWay}"
+                                      Header="Delete Messages"
+                                      Style="{ThemeResource CheckButtonStyle}"/>
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsBanUsers, Mode=TwoWay}"
+                                      Header="Ban Users"
+                                      Style="{ThemeResource CheckButtonStyle}"/>
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsInviteUsers, Mode=TwoWay}"
+                                      Visibility="{x:Bind ViewModel.Channel.IsDemocracy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                      Header="Add Users"
+                                      Style="{ThemeResource CheckButtonStyle}"/>
+                        <!--<ToggleSwitch IsOn="{x:Bind ViewModel.IsInviteLink, Mode=TwoWay}"
+                                      Header="Invite Users Via Link"
+                                      Style="{ThemeResource CheckButtonStyle}"/>-->
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsPinMessages, Mode=TwoWay}"
+                                      Header="Pin Messages"
+                                      Style="{ThemeResource CheckButtonStyle}"/>
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsAddAdmins, Mode=TwoWay}"
+                                      Header="Add New Admins"
+                                      Style="{ThemeResource CheckButtonStyle}"/>
+                    </StackPanel>
+                </UserControl>
 
-                <local:TableStackPanel x:Name="Group4"
-                                       Visibility="{x:Bind ViewModel.Channel.IsBroadcast, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                       BorderThickness="0,0,0,1"
-                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                       Margin="0,24,0,0">
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsChangeInfo, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Header="Change Channel Info"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsDeleteMessages, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Header="Post Messages"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsEditMessages, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Header="Edit Messages of Others"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsDeleteMessages, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Header="Delete Messages of Others"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsInviteUsers, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Visibility="{x:Bind ViewModel.Channel.IsDemocracy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                                  Header="Add Users"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsAddAdmins, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.Item.IsCanEdit}"
-                                  Header="Add New Admins"
-                                  Style="{ThemeResource CheckButtonStyle}"/>
-                </local:TableStackPanel>
+                <UserControl IsEnabled="{x:Bind ViewModel.Item.IsCanEdit, FallbackValue=False}">
+                    <StackPanel Visibility="{x:Bind ViewModel.Channel.IsBroadcast, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" Margin="0,24,0,0">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsChangeInfo, Mode=TwoWay}"
+                                      Header="Change Channel Info"
+                                      Style="{ThemeResource CheckButtonStyle}"/>
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsDeleteMessages, Mode=TwoWay}"
+                                      Header="Post Messages"
+                                      Style="{ThemeResource CheckButtonStyle}"/>
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsEditMessages, Mode=TwoWay}"
+                                      Header="Edit Messages of Others"
+                                      Style="{ThemeResource CheckButtonStyle}"/>
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsDeleteMessages, Mode=TwoWay}"
+                                      Header="Delete Messages of Others"
+                                      Style="{ThemeResource CheckButtonStyle}"/>
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsInviteUsers, Mode=TwoWay}"
+                                      Visibility="{x:Bind ViewModel.Channel.IsDemocracy, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                      Header="Add Users"
+                                      Style="{ThemeResource CheckButtonStyle}"/>
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.IsAddAdmins, Mode=TwoWay}"
+                                      Header="Add New Admins"
+                                      Style="{ThemeResource CheckButtonStyle}"/>
+                    </StackPanel>
+                </UserControl>
 
-                <local:TableStackPanel x:Name="Group3"
-                                       Visibility="{x:Bind ViewModel.IsAdminAlready, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                       BorderThickness="0,0,0,1"
-                                       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                       BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
-                                       Margin="0,24">
+                <StackPanel Visibility="{x:Bind ViewModel.IsAdminAlready, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" Margin="0,24">
                     <controls:HyperButton Command="{x:Bind ViewModel.DismissCommand}"
+                                          IsEnabled="{x:Bind ViewModel.Item.IsCanEdit, FallbackValue=False}"
                                           Content="Dismiss Admin"
                                           Style="{StaticResource HyperButtonStyle}"
                                           Foreground="Red"/>
-                </local:TableStackPanel>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
 
