@@ -872,6 +872,7 @@ namespace Unigram.Views
 
             CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, AppResources.MessageSaveGIF);
             CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, AppResources.MessageSaveMedia);
+            CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, AppResources.MessageSaveDownload);
 
             //sender.ContextFlyout = menu;
 
@@ -1117,6 +1118,27 @@ namespace Unigram.Views
         }
 
         private Visibility MessageSaveMedia_Loaded(TLMessageCommonBase messageCommon)
+        {
+            if (messageCommon is TLMessage message)
+            {
+                if (message.Media is TLMessageMediaPhoto photoMedia)
+                {
+                    return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else if (message.Media is TLMessageMediaDocument documentMedia)
+                {
+                    return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else if (message.Media is TLMessageMediaWebPage webPageMedia && webPageMedia.WebPage is TLWebPage webPage)
+                {
+                    return webPage.HasDocument || webPage.HasPhoto ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+
+            return Visibility.Collapsed;
+        }
+
+        private Visibility MessageSaveDownload_Loaded(TLMessageCommonBase messageCommon)
         {
             if (messageCommon is TLMessage message)
             {

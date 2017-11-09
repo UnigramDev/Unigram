@@ -1428,4 +1428,7 @@ Tap on a sticker to view and add the whole set.</value>
   <data name="MessageView" xml:space="preserve">
     <value>View in chat</value>
   </data>
+  <data name="MessageSaveDownload" xml:space="preserve">
+    <value>Save to Downloads</value>
+  </data>
 </root>

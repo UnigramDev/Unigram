@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/27/2017 13:29:03
+// 	Generated: 11/10/2017 00:04:21
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -3447,6 +3447,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessageView");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save to Downloads"
+        /// </summary>
+        public static string MessageSaveDownload
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSaveDownload");
             }
         }
     }

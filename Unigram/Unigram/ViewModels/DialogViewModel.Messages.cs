@@ -1293,13 +1293,39 @@ namespace Unigram.ViewModels
             var photo = message.GetPhoto();
             if (photo?.Full is TLPhotoSize photoSize)
             {
-                await TLFileHelper.SavePhotoAsync(photoSize, message.Date);
+                await TLFileHelper.SavePhotoAsync(photoSize, message.Date, false);
             }
 
             var document = message.GetDocument();
             if (document != null)
             {
-                await TLFileHelper.SaveDocumentAsync(document, message.Date);
+                await TLFileHelper.SaveDocumentAsync(document, message.Date, false);
+            }
+        }
+
+        #endregion
+
+        #region Save to Downloads
+
+        public RelayCommand<TLMessage> MessageSaveDownloadCommand { get; }
+        private async void MessageSaveDownloadExecute(TLMessage message)
+        {
+            if (message.IsSticker())
+            {
+                MessageSaveStickerExecute(message);
+                return;
+            }
+
+            var photo = message.GetPhoto();
+            if (photo?.Full is TLPhotoSize photoSize)
+            {
+                await TLFileHelper.SavePhotoAsync(photoSize, message.Date, true);
+            }
+
+            var document = message.GetDocument();
+            if (document != null)
+            {
+                await TLFileHelper.SaveDocumentAsync(document, message.Date, true);
             }
         }
 

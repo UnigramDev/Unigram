@@ -178,6 +178,7 @@ namespace Unigram.ViewModels
             MessageUnfaveStickerCommand = new RelayCommand<TLMessage>(MessageUnfaveStickerExecute);
             MessageSaveStickerCommand = new RelayCommand<TLMessage>(MessageSaveStickerExecute);
             MessageSaveMediaCommand = new RelayCommand<TLMessage>(MessageSaveMediaExecute);
+            MessageSaveDownloadCommand = new RelayCommand<TLMessage>(MessageSaveDownloadExecute);
             MessageSaveGIFCommand = new RelayCommand<TLMessage>(MessageSaveGIFExecute);
 
             SendStickerCommand = new RelayCommand<TLDocument>(SendStickerExecute);
