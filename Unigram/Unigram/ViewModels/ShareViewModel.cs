@@ -438,9 +438,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        private async Task<KeyedList<string, TLObject>> SearchLocalAsync(string query)
+        private async Task<KeyedList<string, TLObject>> SearchLocalAsync(string query1)
         {
-            if (string.IsNullOrWhiteSpace(query))
+            if (string.IsNullOrWhiteSpace(query1))
             {
                 return null;
             }
@@ -450,35 +450,30 @@ namespace Unigram.ViewModels
 
             if (dialogs != null && contacts != null)
             {
+                var query = LocaleHelper.GetQuery(query1);
+
                 var simple = new List<TLDialog>();
                 var parent = dialogs.Where(dialog =>
                 {
-                    var user = dialog.With as TLUser;
-                    if (user != null)
+                    if (dialog.With is TLUser user)
                     {
-                        return (user.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
-                               (user.HasUsername && user.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
+                        return user.IsLike(query, StringComparison.OrdinalIgnoreCase);
                     }
-
-                    var channel = dialog.With as TLChannel;
-                    if (channel != null)
+                    else if (dialog.With is TLChannel channel)
                     {
-                        return (channel.Title.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
-                               (channel.HasUsername && channel.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase));
+                        return channel.IsLike(query, StringComparison.OrdinalIgnoreCase);
                     }
-
-                    var chat = dialog.With as TLChat;
-                    if (chat != null)
+                    else if (dialog.With is TLChat chat)
                     {
-                        return (!chat.HasMigratedTo && chat.Title.IsLike(query, StringComparison.OrdinalIgnoreCase));
+                        return !chat.HasMigratedTo && chat.IsLike(query, StringComparison.OrdinalIgnoreCase);
                     }
-
-                    return false;
+                    else
+                    {
+                        return false;
+                    }
                 }).ToList();
 
-                var contactsResults = contacts.OfType<TLUser>().Where(x =>
-                    (x.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
-                    (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase)));
+                var contactsResults = contacts.OfType<TLUser>().Where(x => x.IsLike(query, StringComparison.OrdinalIgnoreCase));
 
                 foreach (var result in contactsResults)
                 {

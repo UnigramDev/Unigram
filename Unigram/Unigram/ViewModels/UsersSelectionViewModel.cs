@@ -133,8 +133,10 @@ namespace Unigram.ViewModels
             //SearchQuery = query;
         }
 
-        private async Task<KeyedList<string, TLObject>> SearchLocalAsync(string query)
+        private async Task<KeyedList<string, TLObject>> SearchLocalAsync(string query1)
         {
+            var query = LocaleHelper.GetQuery(query1);
+
             var dialogs = await Task.Run(() => CacheService.GetDialogs());
             var contacts = await Task.Run(() => CacheService.GetContacts());
 
@@ -143,9 +145,8 @@ namespace Unigram.ViewModels
                 var simple = new List<TLUser>();
 
                 var contactsResults = contacts.OfType<TLUser>().Where(x =>
-                    (SelectedItems.All(selectedUser => selectedUser.Id != x.Id)) && (
-                    (x.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
-                    (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase))));
+                    SelectedItems.All(selectedUser => selectedUser.Id != x.Id) &&
+                    x.IsLike(query, StringComparison.OrdinalIgnoreCase));
 
                 foreach (var result in contactsResults)
                 {
