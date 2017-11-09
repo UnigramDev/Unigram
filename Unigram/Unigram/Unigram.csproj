@@ -319,7 +319,6 @@
     <Compile Include="ViewModels\Channels\ChannelBannedRightsViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelKickedViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelDetailsViewModel.cs" />
-    <Compile Include="ViewModels\Channels\ChannelEditTypeViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelEditViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelManageViewModel.cs" />
     <Compile Include="ViewModels\Channels\ChannelParticipantsViewModel.cs" />
@@ -400,9 +399,6 @@
     </Compile>
     <Compile Include="Views\Channels\ChannelEditPage.xaml.cs">
       <DependentUpon>ChannelEditPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Channels\ChannelEditTypePage.xaml.cs">
-      <DependentUpon>ChannelEditTypePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Channels\ChannelBannedPage.xaml.cs">
       <DependentUpon>ChannelBannedPage.xaml</DependentUpon>
@@ -1475,10 +1471,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Channels\ChannelEditPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Channels\ChannelEditTypePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
