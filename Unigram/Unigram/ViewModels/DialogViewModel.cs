@@ -61,6 +61,7 @@ using Unigram.Views.Channels;
 using Telegram.Api.TL.Channels;
 using Windows.UI.StartScreen;
 using Unigram.Models;
+using Newtonsoft.Json;
 
 namespace Unigram.ViewModels
 {
@@ -1917,6 +1918,32 @@ namespace Unigram.ViewModels
 
                 return;
             }
+            else if (messageText.Equals("/tg_dialog", StringComparison.OrdinalIgnoreCase))
+            {
+                if (_dialog != null)
+                {
+                    var data = new
+                    {
+                        Flags = _dialog.Flags,
+                        Peer = _dialog.Peer,
+                        TopMessage = _dialog.TopMessage,
+                        ReadInboxMaxId = _dialog.ReadInboxMaxId,
+                        ReadOutboxMaxId = _dialog.ReadOutboxMaxId,
+                        UnreadCount = _dialog.UnreadCount,
+                        UnreadMentionsCount = _dialog.UnreadMentionsCount,
+                        NotifySettings = _dialog.NotifySettings,
+                        Pts = _dialog.Pts,
+                        Draft = _dialog.Draft,
+                    };
+
+                    var json = JsonConvert.SerializeObject(data, Formatting.Indented, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+                    json = json.Format();
+
+                    await SendMessageAsync(json, new List<TLMessageEntityBase> { new TLMessageEntityPre { Offset = 0, Length = json.Length } });
+                }
+
+                return;
+            }
 
             var date = TLUtils.DateToUniversalTimeTLInt(ProtoService.ClientTicksDelta, DateTime.Now);
             var message = TLUtils.GetMessage(SettingsHelper.UserId, Peer.ToPeer(), TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), null);
@@ -3338,7 +3365,7 @@ namespace Unigram.ViewModels
                 var saved2 = message2.IsSaved();
                 if (saved1 && saved2)
                 {
-                    return message1.FwdFrom.FromId == message2.FwdFrom.FromId && 
+                    return message1.FwdFrom.FromId == message2.FwdFrom.FromId &&
                            message1.FwdFrom.SavedFromPeer.Equals(message2.FwdFrom.SavedFromPeer);
                 }
                 else if (saved1 || saved2)
