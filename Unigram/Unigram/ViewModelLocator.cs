@@ -325,6 +325,7 @@ namespace Unigram
             ApplicationSettings.Current.AddOrUpdateValue("lastStickersLoadTimeFavs", 0L);
 
             Debug.WriteLine("!!! UNAUTHORIZED !!!");
+            Telegram.Logs.Log.Write(string.Format("Unauthorized method={0} error={1} authKeyId={2} {3}", e.MethodName, e.Error ?? (object)"null", e.AuthKeyId, Environment.StackTrace));
 
             Execute.BeginOnUIThread(() =>
             {
