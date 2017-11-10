@@ -1428,4 +1428,10 @@ Tap on a sticker to view and add the whole set.</value>
   <data name="MessageView" xml:space="preserve">
     <value>View in chat</value>
   </data>
+  <data name="AboutPage_FacebookLikeButton.Content" xml:space="preserve">
+    <value>Like Unigram on Facebook</value>
+  </data>
+  <data name="AboutPage_TwitterFollowButton.Content" xml:space="preserve">
+    <value>Follow Unigram on Twitter</value>
+  </data>
 </root>
