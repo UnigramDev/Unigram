@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 10/17/2017 10:39:13
+// 	Generated: 10/27/2017 13:29:03
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2406,138 +2406,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "**Unigram** is a Telegram Universal app built by the Windows Community, for the Windows Community"
-        /// </summary>
-        public static string IntroWizardPage1_Text
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage1_Text");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Unigram"
-        /// </summary>
-        public static string IntroWizardPage1_Title
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage1_Title");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "**Telegram** delivers messages faster\nthan any other application."
-        /// </summary>
-        public static string IntroWizardPage2_Text
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage2_Text");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Fast"
-        /// </summary>
-        public static string IntroWizardPage2_Title
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage2_Title");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "**Telegram** is free forever. No ads.\nNo subscription fees."
-        /// </summary>
-        public static string IntroWizardPage3_Text
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage3_Text");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Free"
-        /// </summary>
-        public static string IntroWizardPage3_Title
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage3_Title");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "**Telegram** has no limits on\nthe size of your media and chats."
-        /// </summary>
-        public static string IntroWizardPage4_Text
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage4_Text");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Powerful"
-        /// </summary>
-        public static string IntroWizardPage4_Title
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage4_Title");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "**Telegram** keeps your messages\nsafe from hacker attacks."
-        /// </summary>
-        public static string IntroWizardPage5_Text
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage5_Text");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Secure"
-        /// </summary>
-        public static string IntroWizardPage5_Title
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage5_Title");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "**Telegram** lets you access your\nmessages from multiple devices."
-        /// </summary>
-        public static string IntroWizardPage6_Text
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage6_Text");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Cloud-Based"
-        /// </summary>
-        public static string IntroWizardPage6_Title
-        {
-            get
-            {
-                return resourceLoader.GetString("IntroWizardPage6_Title");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Cancel"
         /// </summary>
         public static string Cancel
@@ -3194,6 +3062,391 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("ResetNotificationsDialogTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Too many attempts, please try again in {0}"
+        /// </summary>
+        public static string FloodWaitTime
+        {
+            get
+            {
+                return resourceLoader.GetString("FloodWaitTime");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only send messages to mutual contacts at the moment."
+        /// </summary>
+        public static string NobodyLikesSpam1
+        {
+            get
+            {
+                return resourceLoader.GetString("NobodyLikesSpam1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only add mutual contacts to groups at the moment."
+        /// </summary>
+        public static string NobodyLikesSpam2
+        {
+            get
+            {
+                return resourceLoader.GetString("NobodyLikesSpam2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add to Stickers"
+        /// </summary>
+        public static string MessageAddSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageAddSticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy text"
+        /// </summary>
+        public static string MessageCopy
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageCopy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy post link"
+        /// </summary>
+        public static string MessageCopyLinkBroadcast
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageCopyLinkBroadcast");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy message link"
+        /// </summary>
+        public static string MessageCopyLinkMegaGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageCopyLinkMegaGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete message"
+        /// </summary>
+        public static string MessageDelete
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageDelete");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit message"
+        /// </summary>
+        public static string MessageEdit
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageEdit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add to Favorites"
+        /// </summary>
+        public static string MessageFaveSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageFaveSticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward message"
+        /// </summary>
+        public static string MessageForward
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageForward");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pin message"
+        /// </summary>
+        public static string MessagePin
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reply"
+        /// </summary>
+        public static string MessageReply
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageReply");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save to GIFs"
+        /// </summary>
+        public static string MessageSaveGIF
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSaveGIF");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save file as..."
+        /// </summary>
+        public static string MessageSaveMedia
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSaveMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select message"
+        /// </summary>
+        public static string MessageSelect
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSelect");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove from Favorites"
+        /// </summary>
+        public static string MessageUnfaveSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageUnfaveSticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin message"
+        /// </summary>
+        public static string MessageUnpin
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageUnpin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy image"
+        /// </summary>
+        public static string MessageCopyMedia
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageCopyMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit permissions"
+        /// </summary>
+        public static string ParticipantEdit
+        {
+            get
+            {
+                return resourceLoader.GetString("ParticipantEdit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Promote"
+        /// </summary>
+        public static string ParticipantPromote
+        {
+            get
+            {
+                return resourceLoader.GetString("ParticipantPromote");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restrict"
+        /// </summary>
+        public static string ParticipantRestrict
+        {
+            get
+            {
+                return resourceLoader.GetString("ParticipantRestrict");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear history"
+        /// </summary>
+        public static string DialogClearHistory
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogClearHistory");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete conversation"
+        /// </summary>
+        public static string DialogDelete
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDelete");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete and exit"
+        /// </summary>
+        public static string DialogDeleteAndExit
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDeleteAndExit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete and stop"
+        /// </summary>
+        public static string DialogDeleteAndStop
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDeleteAndStop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete channel"
+        /// </summary>
+        public static string DialogDeleteChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDeleteChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete group"
+        /// </summary>
+        public static string DialogDeleteGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDeleteGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Leave channel"
+        /// </summary>
+        public static string DialogLeaveChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogLeaveChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Leave group"
+        /// </summary>
+        public static string DialogLeaveGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogLeaveGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable notifications"
+        /// </summary>
+        public static string DialogNotificationsDisable
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogNotificationsDisable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable notifications"
+        /// </summary>
+        public static string DialogNotificationsEnable
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogNotificationsEnable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pin to top"
+        /// </summary>
+        public static string DialogPin
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogPin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin from top"
+        /// </summary>
+        public static string DialogUnpin
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogUnpin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View in chat"
+        /// </summary>
+        public static string MessageView
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageView");
             }
         }
     }
