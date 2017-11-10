@@ -1391,6 +1391,18 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 	ComPtr<Connection> connection;
 	ReturnIfFailed(result, datacenterContext->Datacenter->GetGenericConnection(false, connection));
 
+	if (connection == nullptr)
+	{
+		if (datacenterContext->GenericRequests.empty())
+		{
+			return S_OK;
+		}
+		else
+		{
+			return E_FAIL;
+		}
+	}
+
 	INT64 lastRpcMessageId = 0;
 	bool requiresQuickAck = false;
 
