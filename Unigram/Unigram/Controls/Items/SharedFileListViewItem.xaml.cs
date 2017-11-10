@@ -163,8 +163,7 @@ namespace Unigram.Controls.Items
         private string UpdateTimeLabel(TLMessage message)
         {
             var clientDelta = MTProtoService.Current.ClientTicksDelta;
-            var utc0SecsLong = message.Date * 4294967296 - clientDelta;
-            var utc0SecsInt = utc0SecsLong / 4294967296.0;
+            var utc0SecsInt = message.Date - clientDelta / 4294967296.0;
             var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
 
             var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();

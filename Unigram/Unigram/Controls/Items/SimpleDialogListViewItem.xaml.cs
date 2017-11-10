@@ -133,8 +133,7 @@ namespace Unigram.Controls.Items
             if (topMessage != null)
             {
                 var clientDelta = MTProtoService.Current.ClientTicksDelta;
-                var utc0SecsLong = topMessage.Date * 4294967296 - clientDelta;
-                var utc0SecsInt = utc0SecsLong / 4294967296.0;
+                var utc0SecsInt = topMessage.Date - clientDelta / 4294967296.0;
                 var dateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
 
                 var cultureInfo = (CultureInfo)CultureInfo.CurrentUICulture.Clone();

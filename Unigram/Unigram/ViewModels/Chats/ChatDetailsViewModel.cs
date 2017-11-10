@@ -143,8 +143,7 @@ namespace Unigram.ViewModels.Chats
                 }
 
                 var clientDelta = MTProtoService.Current.ClientTicksDelta;
-                var utc0SecsLong = notifySettings.MuteUntil * 4294967296 - clientDelta;
-                var utc0SecsInt = utc0SecsLong / 4294967296.0;
+                var utc0SecsInt = notifySettings.MuteUntil - clientDelta / 4294967296.0;
 
                 var muteUntilDateTime = Utils.UnixTimestampToDateTime(utc0SecsInt);
                 return muteUntilDateTime > DateTime.Now;
