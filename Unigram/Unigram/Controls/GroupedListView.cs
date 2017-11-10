@@ -10,7 +10,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.Controls
 {
-    public class GroupedListView : ListView
+    public class GroupedListView : SelectListView
     {
         public ScrollViewer ScrollingHost { get; private set; }
         public ItemsStackPanel ItemsStack { get; private set; }

@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AUTH_REGION" xml:space="preserve">
+    <value>Daftar masuk dari perantis baru {0}, lokasi: {1}</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
+    <value>pos mesej suara</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_CONTACT" xml:space="preserve">
+    <value>pos kenalan</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
+    <value>pos dokumen</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
+    <value>jemput anda untuk bermain {1}</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
+    <value>pos peta</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>menyiarkan lokasi secara langsung</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
+    <value>pos GIF</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_NOTEXT" xml:space="preserve">
+    <value>pos mesej</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
+    <value>pos foto</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
+    <value>pos mesej video</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
+    <value>pos {1}sticker</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_TEXT" xml:space="preserve">
+    <value>{1} </value>
+  </data>
+  <data name="CHANNEL_MESSAGE_VIDEO" xml:space="preserve">
+    <value>pos video</value>
+  </data>
+  <data name="CHAT_ADD_MEMBER" xml:space="preserve">
+    <value>{0} jemput {2} ke group</value>
+  </data>
+  <data name="CHAT_ADD_YOU" xml:space="preserve">
+    <value>{0} jemput anda ke group</value>
+  </data>
+  <data name="CHAT_CREATED" xml:space="preserve">
+    <value>{0} jemput anda ke group</value>
+  </data>
+  <data name="CHAT_DELETE_MEMBER" xml:space="preserve">
+    <value>{0} keluarkan {2} dari group</value>
+  </data>
+  <data name="CHAT_DELETE_YOU" xml:space="preserve">
+    <value>{0} keluarkan anda dari group</value>
+  </data>
+  <data name="CHAT_LEFT" xml:space="preserve">
+    <value>{0} keluar dari group</value>
+  </data>
+  <data name="CHAT_MESSAGE_AUDIO" xml:space="preserve">
+    <value>{0} kirim mesej suara ke group</value>
+  </data>
+  <data name="CHAT_MESSAGE_CONTACT" xml:space="preserve">
+    <value>{0} kongsi kenalan di group</value>
+  </data>
+  <data name="CHAT_MESSAGE_DOC" xml:space="preserve">
+    <value>{0} kirim fail ke group</value>
+  </data>
+  <data name="CHAT_MESSAGE_FWDS" xml:space="preserve">
+    <value>{0} majukan {2} mesej ke group</value>
+  </data>
+  <data name="CHAT_MESSAGE_GAME" xml:space="preserve">
+    <value>{0} jemput group ini untuk bermain {2}</value>
+  </data>
+  <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
+    <value>{0} kirim peta ke group</value>
+  </data>
+  <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>{0} mula berkongsi lokasi secara langsung</value>
+  </data>
+  <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
+    <value>{0} kirim GIF ke group</value>
+  </data>
+  <data name="CHAT_MESSAGE_INVOICE" xml:space="preserve">
+    <value>{0} mengirim invois untuk {2} kepada group</value>
+  </data>
+  <data name="CHAT_MESSAGE_NOTEXT" xml:space="preserve">
+    <value>{0} kirim mesej ke group</value>
+  </data>
+  <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
+    <value>{0} kirim gambar ke group</value>
+  </data>
+  <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
+    <value>{0} kirim mesej video ke group</value>
+  </data>
+  <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
+    <value>{0} kirim {2}sticker ke group</value>
+  </data>
+  <data name="CHAT_MESSAGE_TEXT" xml:space="preserve">
+    <value>{0}: {2}</value>
+  </data>
+  <data name="CHAT_MESSAGE_VIDEO" xml:space="preserve">
+    <value>{0} kirim video ke group</value>
+  </data>
+  <data name="CHAT_PHOTO_EDITED" xml:space="preserve">
+    <value>{0} sunting gambar group</value>
+  </data>
+  <data name="CHAT_RETURNED" xml:space="preserve">
+    <value>{0} kembali ke group</value>
+  </data>
+  <data name="CHAT_TITLE_EDITED" xml:space="preserve">
+    <value>{0} sunting nama group</value>
+  </data>
+  <data name="CONTACT_JOINED" xml:space="preserve">
+    <value>{0} sertai Telegram!</value>
+  </data>
+  <data name="ENCRYPTED_MESSAGE" xml:space="preserve">
+    <value>Anda ada mesej baru{0}</value>
+  </data>
+  <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
+    <value>Permintaan penyulitan anda diterima{0}</value>
+  </data>
+  <data name="ENCRYPTION_REQUEST" xml:space="preserve">
+    <value>Minta penyulitan baru{0}</value>
+  </data>
+  <data name="LOCKED_MESSAGE" xml:space="preserve">
+    <value>Anda ada mesej baru{0}</value>
+  </data>
+  <data name="MESSAGE_AUDIO" xml:space="preserve">
+    <value>kirim mesej suara</value>
+  </data>
+  <data name="MESSAGE_CONTACT" xml:space="preserve">
+    <value>kongsi kenalan dengan anda </value>
+  </data>
+  <data name="MESSAGE_DOC" xml:space="preserve">
+    <value>kirim fail  </value>
+  </data>
+  <data name="MESSAGE_FWDS" xml:space="preserve">
+    <value>majukan kepada anda {1} mesej</value>
+  </data>
+  <data name="MESSAGE_GAME" xml:space="preserve">
+    <value>jemput anda untuk bermain {1}</value>
+  </data>
+  <data name="MESSAGE_GEO" xml:space="preserve">
+    <value>kirim peta</value>
+  </data>
+  <data name="MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>mula berkongsi lokasi secara langsung</value>
+  </data>
+  <data name="MESSAGE_GIF" xml:space="preserve">
+    <value>kirim GIF</value>
+  </data>
+  <data name="MESSAGE_INVOICE" xml:space="preserve">
+    <value>mengirim anda invois untuk {1}</value>
+  </data>
+  <data name="MESSAGE_NOTEXT" xml:space="preserve">
+    <value>kirim mesej</value>
+  </data>
+  <data name="MESSAGE_PHOTO" xml:space="preserve">
+    <value>kirim foto</value>
+  </data>
+  <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
+    <value>kirim foto musnah-sendiri </value>
+  </data>
+  <data name="MESSAGE_ROUND" xml:space="preserve">
+    <value>kirim mesej video</value>
+  </data>
+  <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
+    <value>ambil gambar skrin!</value>
+  </data>
+  <data name="MESSAGE_STICKER" xml:space="preserve">
+    <value>kirim anda {1}sticker</value>
+  </data>
+  <data name="MESSAGE_TEXT" xml:space="preserve">
+    <value>{1} </value>
+  </data>
+  <data name="MESSAGE_VIDEO" xml:space="preserve">
+    <value>kirim video</value>
+  </data>
+  <data name="MESSAGE_VIDEO_SECRET" xml:space="preserve">
+    <value>kirim video musnah-sendiri </value>
+  </data>
+  <data name="PHONE_CALL_MISSED" xml:space="preserve">
+    <value>Anda terlepas panggilan daripada {0}</value>
+  </data>
+  <data name="PHONE_CALL_REQUEST" xml:space="preserve">
+    <value>{0} memanggil anda</value>
+  </data>
+  <data name="PINNED_AUDIO" xml:space="preserve">
+    <value>tampal mesej suara</value>
+  </data>
+  <data name="PINNED_CONTACT" xml:space="preserve">
+    <value>tampal kenalan</value>
+  </data>
+  <data name="PINNED_DOC" xml:space="preserve">
+    <value>tampal fail</value>
+  </data>
+  <data name="PINNED_GAME" xml:space="preserve">
+    <value>tampal game</value>
+  </data>
+  <data name="PINNED_GEO" xml:space="preserve">
+    <value>tampal peta</value>
+  </data>
+  <data name="PINNED_GEOLIVE" xml:space="preserve">
+    <value>tampal lokasi secara langsung</value>
+  </data>
+  <data name="PINNED_GIF" xml:space="preserve">
+    <value>tampal GIF</value>
+  </data>
+  <data name="PINNED_INVOICE" xml:space="preserve">
+    <value>menampal invois</value>
+  </data>
+  <data name="PINNED_NOTEXT" xml:space="preserve">
+    <value>tampal mesej</value>
+  </data>
+  <data name="PINNED_PHOTO" xml:space="preserve">
+    <value>tampal foto </value>
+  </data>
+  <data name="PINNED_ROUND" xml:space="preserve">
+    <value>tampal mesej video</value>
+  </data>
+  <data name="PINNED_STICKER" xml:space="preserve">
+    <value>tampal {1}sticker</value>
+  </data>
+  <data name="PINNED_TEXT" xml:space="preserve">
+    <value>tampal "{1}"</value>
+  </data>
+  <data name="PINNED_VIDEO" xml:space="preserve">
+    <value>tampal video</value>
+  </data>
+</root>

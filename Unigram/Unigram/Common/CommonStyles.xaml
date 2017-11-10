@@ -2,12 +2,91 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="using:Unigram.Common"
                     xmlns:controls="using:Unigram.Controls">
-
+    
     <Style x:Key="SettingsGroupPanelStyle" TargetType="StackPanel">
         <Setter Property="Padding" Value="12,8,12,12"/>
         <Setter Property="BorderThickness" Value="0,0,0,1"/>
         <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}"/>
+    </Style>
+
+    <Style x:Key="IndicatorListViewItemStyle" TargetType="ListViewItem">
+        <Setter Property="Width" Value="20"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="MinWidth" Value="0"/>
+        <Setter Property="MinHeight" Value="0"/>
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="IsFocusEngagementEnabled" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <Grid Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="PointerOver"/>
+                                <VisualState x:Name="Selected">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="fillColor" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)" BeginTime="00:00:00" Duration="0" To="#3c3c3a"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PointerOverSelected">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="fillColor" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)" BeginTime="00:00:00" Duration="0" To="#3c3c3a"/>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PressedSelected">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="fillColor" Storyboard.TargetProperty="(Rectangle.Fill).(SolidColorBrush.Color)" BeginTime="00:00:00" Duration="0" To="#3c3c3a"/>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Ellipse x:Name="fillColor" IsHitTestVisible="False" Width="8" Height="8" Fill="#bfbfbf" Margin="4,0"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="IndicatorListViewStyle" TargetType="ListView">
+        <Setter Property="IsTabStop" Value="False"/>
+        <Setter Property="TabNavigation" Value="Once"/>
+        <Setter Property="IsSwipeEnabled" Value="True"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled"/>
+        <Setter Property="ScrollViewer.IsHorizontalRailEnabled" Value="False"/>
+        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled"/>
+        <Setter Property="ScrollViewer.IsVerticalRailEnabled" Value="True"/>
+        <Setter Property="ScrollViewer.ZoomMode" Value="Disabled"/>
+        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
+        <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="ItemContainerTransitions">
+            <Setter.Value>
+                <TransitionCollection>
+                    <AddDeleteThemeTransition/>
+                    <ContentThemeTransition/>
+                    <ReorderThemeTransition/>
+                    <EntranceThemeTransition IsStaggeringEnabled="False"/>
+                </TransitionCollection>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListView">
+                    <ItemsPresenter FooterTransitions="{TemplateBinding FooterTransitions}" FooterTemplate="{TemplateBinding FooterTemplate}" Footer="{TemplateBinding Footer}" HeaderTemplate="{TemplateBinding HeaderTemplate}" Header="{TemplateBinding Header}" HeaderTransitions="{TemplateBinding HeaderTransitions}" Padding="{TemplateBinding Padding}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="NavigationImageGlyphButtonStyle" TargetType="controls:GlyphButton">
@@ -1358,9 +1437,9 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <TextBlock x:Name="ContentPresenter" HorizontalAlignment="Center" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}">
-                            <Run Text="&#xE611;" FontFamily="{ThemeResource TelegramThemeFontFamily}" />
+                            <Run Text="&#xE611;" FontFamily="{StaticResource TelegramThemeFontFamily}" />
                             <Run Text="  INSTANT VIEW  " />
-                            <Run Text="&#xE611;" Foreground="{x:Null}" FontFamily="{ThemeResource TelegramThemeFontFamily}" />
+                            <Run Text="&#xE611;" Foreground="{x:Null}" FontFamily="{StaticResource TelegramThemeFontFamily}" />
                         </TextBlock>
                     </Grid>
                 </ControlTemplate>

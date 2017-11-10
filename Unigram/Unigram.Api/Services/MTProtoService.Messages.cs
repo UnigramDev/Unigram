@@ -115,12 +115,7 @@ namespace Telegram.Api.Services
             var obj = draft.ToSaveDraftObject(peer);
 
             const string caption = "messages.saveDraft";
-            SendInformativeMessage<bool>(caption, obj,
-                result =>
-                {
-                    callback?.Invoke(result);
-                },
-                faultCallback);
+            SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
         }
 
         public void GetPeerDialogsAsync(TLVector<TLInputPeerBase> peers, Action<TLMessagesPeerDialogs> callback, Action<TLRPCError> faultCallback = null)
@@ -136,7 +131,16 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesGetInlineBotResults { Flags = 0, Bot = bot, Peer = peer, GeoPoint = geoPoint, Query = query, Offset = offset };
 
             const string caption = "messages.getInlineBotResults";
-            SendInformativeMessage(caption, obj, callback, faultCallback);
+            SendInformativeMessage<TLMessagesBotResults>(caption, obj, 
+                result =>
+                {
+                    _cacheService.SyncUsers(result.Users,
+                        r =>
+                        {
+                            callback?.Invoke(result);
+                        });
+                },
+                faultCallback);
         }
 
         public void SetInlineBotResultsAsync(bool gallery, bool pr, long queryId, TLVector<TLInputBotInlineResultBase> results, int cacheTime, string nextOffset, TLInlineBotSwitchPM switchPM, Action<bool> callback, Action<TLRPCError> faultCallback = null)
@@ -730,11 +734,13 @@ namespace Telegram.Api.Services
                         // TODO: 24/04/2017 verify if this is really needed
                         if (message.Media is TLMessageMediaPhoto photoMedia)
                         {
+                            photoMedia.Photo.IsTransferring = false;
                             photoMedia.Photo.LastProgress = 0.0;
                             photoMedia.Photo.DownloadingProgress = 0.0;
                         }
                         else if (message.Media is TLMessageMediaDocument documentMedia)
                         {
+                            documentMedia.Document.IsTransferring = false;
                             documentMedia.Document.LastProgress = 0.0;
                             documentMedia.Document.DownloadingProgress = 0.0;
                         }
@@ -974,7 +980,8 @@ namespace Telegram.Api.Services
 
                 var r = obj;
                 _cacheService.SyncDialogs(result, callback);
-            }, faultCallback);
+            },
+            faultCallback, 3);
         }
 
         private void GetChannelHistoryAsyncInternal(bool sync, TLPeerBase peer, TLMessagesMessagesBase result, Action<TLMessagesMessagesBase> callback)
@@ -1250,7 +1257,7 @@ namespace Telegram.Api.Services
             var obj = new TLMessagesReadMessageContents { Id = id };
 
             const string caption = "messages.readMessageContents";
-            ReadMessageContentsAsyncInternal(obj,
+            SendInformativeMessage<TLMessagesAffectedMessages>(caption, obj,
                 result =>
                 {
                     var multiPts = result as ITLMultiPts;
@@ -1265,7 +1272,7 @@ namespace Telegram.Api.Services
 
                     callback?.Invoke(result);
                 },
-                () => { },
+                /*() => { },*/
                 faultCallback);
         }
 

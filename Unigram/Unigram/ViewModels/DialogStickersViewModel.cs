@@ -72,7 +72,7 @@ namespace Unigram.ViewModels
 
             Aggregator.Subscribe(this);
 
-            SavedGifs = new MvxObservableCollection<TLDocument>();
+            SavedGifs = new MvxObservableCollection<IList<MosaicMediaPosition>>();
             FeaturedStickers = new MvxObservableCollection<TLFeaturedStickerSet>();
             SavedStickers = new StickerSetCollection();
 
@@ -130,16 +130,16 @@ namespace Unigram.ViewModels
         private void ProcessRecentGifs()
         {
             var recent = _stickersService.GetRecentGifs();
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
-                SavedGifs.ReplaceWith(recent);
+                SavedGifs.ReplaceWith(MosaicMedia.Calculate(recent));
             });
         }
 
         private void ProcessRecentStickers()
         {
             var items = _stickersService.GetRecentStickers(StickerType.Image);
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 _recentSet.Documents = new TLVector<TLDocumentBase>(items);
                 CheckDocuments();
@@ -158,7 +158,7 @@ namespace Unigram.ViewModels
         private void ProcessFavedStickers()
         {
             var items = _stickersService.GetRecentStickers(StickerType.Fave);
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 _favedSet.Documents = new TLVector<TLDocumentBase>(items);
                 CheckDocuments();
@@ -179,7 +179,7 @@ namespace Unigram.ViewModels
             _stickers = true;
 
             var stickers = _stickersService.GetStickerSets(StickerType.Image);
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 SavedStickers.ReplaceWith(stickers);
 
@@ -217,7 +217,7 @@ namespace Unigram.ViewModels
             _featured = true;
             var stickers = _stickersService.GetFeaturedStickerSets();
             var unread = _stickersService.GetUnreadStickerSets();
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
 
                 FeaturedUnreadCount = unread.Count;
@@ -252,7 +252,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public MvxObservableCollection<TLDocument> SavedGifs { get; private set; }
+        public MvxObservableCollection<IList<MosaicMediaPosition>> SavedGifs { get; private set; }
 
         public MvxObservableCollection<TLFeaturedStickerSet> FeaturedStickers { get; private set; }
 
@@ -284,7 +284,7 @@ namespace Unigram.ViewModels
                     var result = _stickersService.GetGroupStickerSetById(channelFull.StickerSet);
                     if (result != null)
                     {
-                        Execute.BeginOnUIThread(() =>
+                        BeginOnUIThread(() =>
                         {
                             _groupSet.Documents = new TLVector<TLDocumentBase>(result.Documents);
 
@@ -406,7 +406,7 @@ namespace Unigram.ViewModels
                 //                            //}
 
                 //                            watch.Stop();
-                //                            Execute.BeginOnUIThread(async () =>
+                //                            Dispatch(async () =>
                 //                            {
                 //                                await new MessageDialog(watch.Elapsed.ToString()).ShowQueuedAsync();
                 //                            });
@@ -440,7 +440,7 @@ namespace Unigram.ViewModels
                 //var gifs = await _gifsService.GetSavedGifs();
                 //if (gifs.Key != SavedGifsHash || SavedGifs.Count == 0)
                 //{
-                //    Execute.BeginOnUIThread(() =>
+                //    Dispatch(() =>
                 //    {
                 //        SavedGifsHash = gifs.Key;
                 //        //SavedGifs.Clear();
@@ -559,6 +559,13 @@ namespace Unigram.ViewModels
             {
                 Set(ref _featuredUnreadCount, value);
             }
+        }
+
+        protected override void BeginOnUIThread(Action action)
+        {
+            // This is somehow needed because this viewmodel requires a Dispatcher
+            // in some situations where base one might be null.
+            Execute.BeginOnUIThread(action);
         }
     }
 

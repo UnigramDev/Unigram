@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -26,6 +26,9 @@ namespace Unigram.ViewModels.Settings
         {
             _cachedItems = new Dictionary<long, TLAuthorization>();
             Items = new SortedObservableCollection<TLAuthorization>(new TLAuthorizationComparer());
+
+            TerminateCommand = new RelayCommand<TLAuthorization>(TerminateExecute);
+            TerminateOthersCommand = new RelayCommand(TerminateOtherExecute);
         }
 
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -42,7 +45,7 @@ namespace Unigram.ViewModels.Settings
 
         public void Handle(TLUpdateServiceNotification update)
         {
-            Execute.BeginOnUIThread(async () =>
+            BeginOnUIThread(async () =>
             {
                 await UpdateSessionsAsync();
             });
@@ -109,7 +112,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<TLAuthorization> TerminateCommand => new RelayCommand<TLAuthorization>(TerminateExecute);
+        public RelayCommand<TLAuthorization> TerminateCommand { get; }
         private async void TerminateExecute(TLAuthorization session)
         {
             var terminate = await TLMessageDialog.ShowAsync("Terminate this session?", "Telegram", "Yes", "No");
@@ -127,7 +130,7 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
-        public RelayCommand TerminateOthersCommand => new RelayCommand(TerminateOtherExecute);
+        public RelayCommand TerminateOthersCommand { get; }
         private async void TerminateOtherExecute()
         {
             var terminate = await TLMessageDialog.ShowAsync("Are you sure you want to terminate all other sessions?", "Telegram", "Yes", "No");

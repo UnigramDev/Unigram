@@ -132,8 +132,8 @@ namespace Unigram.Common
 
         #region App version
 
-        public const int CurrentVersion = 086660;
-        public const string CurrentChangelog = "- Share your location with friends in real time with the new Live Locations. \n- Control whether new members in supergroups can see earlier message history.\n- Easily recognize messages from group admins by the new ‘admin’ badge.\n- Select and send multiple photos and videos from the attach flyout.\n- Send videos choosing compression level.";
+        public const int CurrentVersion = 086910;
+        public const string CurrentChangelog = "- Share your location with friends in real time with the new Live Locations. \n- Control whether new members in supergroups can see earlier message history.\n- Easily recognize messages from group admins by the new ‘admin’ badge.\n- Select and send multiple photos and videos from the attach flyout.\n- Send videos choosing compression level.\n- Launch Unigram when system starts.";
 
         private int? _appVersion;
         public int Version
@@ -186,6 +186,23 @@ namespace Unigram.Common
             }
         }
 
+        private int? _contactsSavedCount;
+        public int ContactsSavedCount
+        {
+            get
+            {
+                if (_contactsSavedCount == null)
+                    _contactsSavedCount = GetValueOrDefault("ContactsSavedCount", 0);
+
+                return _contactsSavedCount ?? 0;
+            }
+            set
+            {
+                _contactsSavedCount = value;
+                AddOrUpdateValue("ContactsSavedCount", value);
+            }
+        }
+
         private bool? _isSendByEnterEnabled;
         public bool IsSendByEnterEnabled
         {
@@ -234,6 +251,23 @@ namespace Unigram.Common
             {
                 _isContactsSyncEnabled = value;
                 AddOrUpdateValue("IsContactsSyncEnabled", value);
+            }
+        }
+
+        private bool? _isAutoPlayEnabled;
+        public bool IsAutoPlayEnabled
+        {
+            get
+            {
+                if (_isAutoPlayEnabled == null)
+                    _isAutoPlayEnabled = GetValueOrDefault("IsAutoPlayEnabled", true);
+
+                return _isAutoPlayEnabled ?? true;
+            }
+            set
+            {
+                _isAutoPlayEnabled = value;
+                AddOrUpdateValue("IsAutoPlayEnabled", value);
             }
         }
 

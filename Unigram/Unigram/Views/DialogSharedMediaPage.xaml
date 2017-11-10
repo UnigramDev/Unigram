@@ -23,13 +23,6 @@
             <Setter Property="Margin" Value="0"/>
         </Style>
 
-        <MenuFlyout x:Key="MessageMenuFlyout" Opening="MenuFlyout_Opening">
-            <MenuFlyoutItem Loaded="MessageGoto_Loaded" Command="{x:Bind ViewModel.MessageGotoCommand}" CommandParameter="{Binding}" Text="Go to message"/>
-            <MenuFlyoutItem Loaded="MessageDelete_Loaded" Command="{x:Bind ViewModel.MessageDeleteCommand}" CommandParameter="{Binding}" Text="Delete message"/>
-            <MenuFlyoutItem Loaded="MessageForward_Loaded" Command="{x:Bind ViewModel.MessageForwardCommand}" CommandParameter="{Binding}" Text="Forward message"/>
-            <MenuFlyoutItem Loaded="MessageSelect_Loaded" Command="{x:Bind ViewModel.MessageSelectCommand}" CommandParameter="{Binding}" Text="Select message"/>
-        </MenuFlyout>
-
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -126,14 +119,14 @@
                         <selectors:MediaTemplateSelector>
                             <selectors:MediaTemplateSelector.PhotoTemplate>
                                 <DataTemplate>
-                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextFlyout="{StaticResource MessageMenuFlyout}" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextRequested="Message_ContextRequested" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                                         <Image Source="{Binding Media.Photo.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
                                     </controls:SimpleHyperlinkButton>
                                 </DataTemplate>
                             </selectors:MediaTemplateSelector.PhotoTemplate>
                             <selectors:MediaTemplateSelector.VideoTemplate>
                                 <DataTemplate>
-                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextFlyout="{StaticResource MessageMenuFlyout}" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
+                                    <controls:SimpleHyperlinkButton Click="Photo_Click" ContextRequested="Message_ContextRequested" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}">
                                         <Image Source="{Binding Media.Document.Thumb, Converter={StaticResource DefaultPhotoConverter}}" Stretch="UniformToFill"/>
                                     </controls:SimpleHyperlinkButton>
                                 </DataTemplate>
@@ -227,7 +220,7 @@
                     </ListView.GroupStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <items:SharedFileListViewItem ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+                            <items:SharedFileListViewItem ContextRequested="Message_ContextRequested"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </controls:GroupedListView>
@@ -312,7 +305,7 @@
                     </ListView.GroupStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <items:SharedLinkListViewItem ContextFlyout="{StaticResource MessageMenuFlyout}"/>
+                            <items:SharedLinkListViewItem ContextRequested="Message_ContextRequested"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </controls:GroupedListView>
@@ -357,10 +350,10 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Button Command="{Binding MessagesForwardCommand}" Margin="12,0,4,0" Style="{StaticResource AccentButtonStyle}">
+                <Button Command="{x:Bind ViewModel.MessagesForwardCommand}" Margin="12,0,4,0" Style="{StaticResource AccentButtonStyle}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Forward" VerticalAlignment="Center"/>
-                        <ContentControl Content="{Binding SelectedMessages.Count}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                        <ContentControl Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
                             <ContentControl.ContentTransitions>
                                 <TransitionCollection>
                                     <EntranceThemeTransition/>
@@ -372,10 +365,10 @@
                         </ContentControl>
                     </StackPanel>
                 </Button>
-                <Button Command="{Binding MessagesDeleteCommand}" Margin="4,0,12,0" Style="{StaticResource AccentButtonStyle}" Grid.Column="1">
+                <Button Command="{x:Bind ViewModel.MessagesDeleteCommand}" Margin="4,0,12,0" Style="{StaticResource AccentButtonStyle}" Grid.Column="1">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Delete" VerticalAlignment="Center"/>
-                        <ContentControl Content="{Binding SelectedMessages.Count}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
+                        <ContentControl Content="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay}" Height="32" Padding="0,6,4,6" Margin="12,-6,0,-6">
                             <ContentControl.ContentTransitions>
                                 <TransitionCollection>
                                     <EntranceThemeTransition/>

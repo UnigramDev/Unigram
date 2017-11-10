@@ -32,7 +32,7 @@ namespace Unigram.Controls
                 {
                     JoinCommand?.Execute(null);
                 }
-                else if (channel.HasBannedRights && channel.BannedRights.IsViewMessages)
+                else if (channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsViewMessages)
                 {
                     DeleteAndExitCommand?.Execute(null);
                 }
@@ -40,7 +40,7 @@ namespace Unigram.Controls
                 {
                     if (channel.IsBroadcast)
                     {
-                        if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPostMessages))
+                        if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights != null && channel.AdminRights.IsPostMessages))
                         {
 
                         }
@@ -224,7 +224,7 @@ namespace Unigram.Controls
                     Content = channel.IsBroadcast ? "Join channel" : "Join";
                     return false;
                 }
-                else if (channel.HasBannedRights)
+                else if (channel.HasBannedRights && channel.BannedRights != null)
                 {
                     if (channel.BannedRights.IsViewMessages)
                     {
@@ -241,7 +241,7 @@ namespace Unigram.Controls
                 {
                     if (channel.IsBroadcast)
                     {
-                        if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights.IsPostMessages))
+                        if (channel.IsCreator || (channel.HasAdminRights && channel.AdminRights != null && channel.AdminRights.IsPostMessages))
                         {
                             return true;
                         }
@@ -250,15 +250,17 @@ namespace Unigram.Controls
                             var dialog = InMemoryCacheService.Current.GetDialog(channel.ToPeer());
                             if (dialog != null)
                             {
-                                var settings = dialog.NotifySettings as TLPeerNotifySettings;
-                                if (settings != null)
-                                {
-                                    Content = settings.MuteUntil > 0 ? "Unmute" : "Mute";
-                                }
-                                else
-                                {
-                                    Content = "Mute";
-                                }
+                                Content = dialog.IsMuted ? "Unmute" : "Mute";
+
+                                //var settings = dialog.NotifySettings as TLPeerNotifySettings;
+                                //if (settings != null)
+                                //{
+                                //    Content = settings.MuteUntil > 0 ? "Unmute" : "Mute";
+                                //}
+                                //else
+                                //{
+                                //    Content = "Mute";
+                                //}
                             }
 
                             return false;

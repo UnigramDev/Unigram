@@ -65,8 +65,7 @@
             <uap:DisplayName>Unigram</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>
-        <!-- Share Target temporarely disabled -->
-        <!--<uap:Extension Category="windows.shareTarget">
+        <uap:Extension Category="windows.shareTarget">
           <uap:ShareTarget>
             <uap:SupportedFileTypes>
               <uap:SupportsAnyFileType />
@@ -76,7 +75,7 @@
             <uap:DataFormat>StorageItems</uap:DataFormat>
             <uap:DataFormat>Bitmap</uap:DataFormat>
           </uap:ShareTarget>
-        </uap:Extension>-->
+        </uap:Extension>
         <uap:Extension Category="windows.voipCall" />
         <uap3:Extension Category="windows.appUriHandler">
           <uap3:AppUriHandler>
@@ -85,7 +84,7 @@
             <uap3:Host Name="telegram.dog" />
           </uap3:AppUriHandler>
         </uap3:Extension>
-        <uap4:Extension Category="windows.contactPanel" />
+        <!--<uap4:Extension Category="windows.contactPanel" />-->
         <uap5:Extension Category="windows.startupTask" Executable="Unigram.exe" EntryPoint="Unigram.App">
           <uap5:StartupTask TaskId="Telegram" Enabled="false" DisplayName="Unigram" />
         </uap5:Extension>

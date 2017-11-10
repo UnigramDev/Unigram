@@ -14,7 +14,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Text="Masks"/>
+        <controls:PageHeader x:Uid="SettingsMasksPage_Header" Text="Masks"/>
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}"
                   ItemTemplate="{StaticResource StickerSetItemTemplate}"
@@ -27,7 +27,8 @@
             <ListView.Header>
                 <StackPanel>
                     <controls:BadgeButton
-                        Content="Archived stickers"
+                        x:Uid="SettingsMasksPage_ArchivedStickers"
+                        Content="Archived Masks"
                         Click="ArchivedStickers_Click"
                         Badge="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.ArchivedStickersCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -40,6 +41,9 @@
                     <Setter Property="Padding" Value="12,0,0,0"/>
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.Footer>
+                <TextBlock x:Uid="SettingsMasksPage_Footer" Text="You can add masks to photos and videos you send. To do this, open the photo editor before sending a photo or video." Margin="12" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
+            </ListView.Footer>
         </ListView>
     </Grid>
 </Page>

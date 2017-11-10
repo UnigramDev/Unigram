@@ -39,10 +39,38 @@ namespace Unigram.Controls.Views
                 await Cropper.SetSourceAsync(file);
             };
         }
+        
+        public bool IsCropEnabled
+        {
+            get { return this.Cropper.IsCropEnabled; }
+            set { this.Cropper.IsCropEnabled = value; }
+        }
+
+        public ImageCroppingProportions CroppingProportions
+        {
+            get { return this.Cropper.Proportions; }
+            set { this.Cropper.Proportions = value; }
+        }
+
+        public Rect CropRectangle
+        {
+            get { return this.Cropper.CropRectangle; }
+        }
+
+        public int MaxZoomFactor
+        {
+            get { return this.Cropper.MaxZoomFactor; }
+            set { this.Cropper.MaxZoomFactor = value; }
+        }
+
+        public int ZoomFactor
+        {
+            get { return this.Cropper.CurrentZoomFactor; }
+        }
 
         private async void Accept_Click(object sender, RoutedEventArgs e)
         {
-            Result = await Cropper.CropAsync();
+            Result = await Cropper.CropAsync(640, 640);
             Hide(ContentDialogBaseResult.OK);
         }
 

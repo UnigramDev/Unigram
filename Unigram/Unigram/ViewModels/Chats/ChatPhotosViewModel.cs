@@ -30,6 +30,7 @@ namespace Unigram.ViewModels.Chats
             Items = new MvxObservableCollection<GalleryItem> { new GalleryPhotoItem(chatFull.ChatPhoto as TLPhoto, chat) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
+
             Initialize();
         }
 
@@ -112,7 +113,7 @@ namespace Unigram.ViewModels.Chats
             }
         }
 
-        public override bool CanGoto => true;
+        public override bool CanView => true;
     }
 
     //public class GalleryChatPhotoItem : GalleryItem

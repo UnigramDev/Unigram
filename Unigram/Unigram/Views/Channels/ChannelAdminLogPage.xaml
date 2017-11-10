@@ -125,7 +125,7 @@
                                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                                             Click="ProfileBubble_Click"/>
+                                                             Click="Photo_Click"/>
                                 <messages:MessageBubble Grid.Column="1"/>
                             </Grid>
                         </DataTemplate>
@@ -142,7 +142,7 @@
                                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                                             Click="ProfileBubble_Click"/>
+                                                             Click="Photo_Click"/>
                                 <messages:EditedMessageBubble Grid.Column="1"/>
                             </Grid>
                         </DataTemplate>
@@ -199,7 +199,7 @@
                                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                                             Click="ProfileBubble_Click"/>
+                                                             Click="Photo_Click"/>
 
                                 <Grid Margin="0,2" Grid.Column="1">
                                     <Grid.ColumnDefinitions>
@@ -223,7 +223,7 @@
                                             HorizontalAlignment="Left"
                                             Click="StickerSet_Click"/>
 
-                                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                                        <messages:MessageStatusBar Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                                     </Grid>
                                     
                                     <Border Visibility="{x:Bind StickerReplyVisibility}"
@@ -255,7 +255,7 @@
                                                              Style="{StaticResource MessageBubbleProfilePictureStyle}"
                                                              Source="{x:Bind From.PhotoSelf, Mode=OneWay, Converter={StaticResource DefaultPhotoConverter}}"
                                                              Visibility="{x:Bind (Visibility)IsLast, Mode=OneWay}"
-                                                             Click="ProfileBubble_Click"/>
+                                                             Click="Photo_Click"/>
 
                                 <Grid Margin="0,2" Grid.Column="1">
                                     <Grid.ColumnDefinitions>
@@ -270,7 +270,7 @@
                                     <!-- TODO: not the right way -->
                                     <Border Height="10" Visibility="{x:Bind (Visibility)IsFirst, Mode=OneWay}"/>
 
-                                    <Grid x:Name="MediaControl" Grid.Row="1">
+                                    <Grid x:Name="Media" Grid.Row="1">
                                         <Ellipse Fill="Black"/>
                                         <controls:ImageView
                                             Source="{x:Bind ((tl:TLMessageMediaDocument)Media).Document, Converter={StaticResource DefaultPhotoConverter}}"
@@ -288,7 +288,7 @@
                                             <Ellipse Visibility="{Binding IsMediaUnread, Converter={StaticResource BooleanToVisibilityConverter}}" Width="6" Height="6" Fill="White" Margin="6,2,0,0"/>
                                         </StackPanel>
 
-                                        <messages:MessageStateControl Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
+                                        <messages:MessageStatusBar Background="{ThemeResource MessageServiceBackgroundBrush}" Foreground="#FFFFFF" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="6,4,6,4" Margin="4"/>
                                     </Grid>
 
                                     <Border Visibility="{x:Bind StickerReplyVisibility}"

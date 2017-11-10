@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -26,6 +26,8 @@ namespace Unigram.ViewModels.Channels
             : base(protoService, cacheService, aggregator)
         {
             AdminedPublicChannels = new MvxObservableCollection<TLChannel>();
+
+            RevokeLinkCommand = new RelayCommand<TLChannel>(RevokeLinkExecute);
         }
 
         protected TLChannel _item;
@@ -114,7 +116,7 @@ namespace Unigram.ViewModels.Channels
 
         public MvxObservableCollection<TLChannel> AdminedPublicChannels { get; private set; }
 
-        public RelayCommand<TLChannel> RevokeLinkCommand => new RelayCommand<TLChannel>(RevokeLinkExecute);
+        public RelayCommand<TLChannel> RevokeLinkCommand { get; }
         private async void RevokeLinkExecute(TLChannel channel)
         {
             var dialog = new TLMessageDialog();

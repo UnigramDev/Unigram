@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -11,6 +11,7 @@ using Template10.Mvvm;
 using Unigram.Common;
 using Unigram.Controls;
 using Unigram.Controls.Views;
+using Unigram.Strings;
 using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.ViewModels.Settings
@@ -21,10 +22,12 @@ namespace Unigram.ViewModels.Settings
         {
             AutoDownloads = new ObservableCollection<SettingsDataAutoDownload>
             {
-                new SettingsDataAutoDownload(Strings.AppResources.WhenOnMobileData, NetworkType.Mobile),
-                new SettingsDataAutoDownload(Strings.AppResources.WhenOnWiFi, NetworkType.WiFi),
-                new SettingsDataAutoDownload(Strings.AppResources.WhenRoaming, NetworkType.Roaming),
+                new SettingsDataAutoDownload(AppResources.WhenOnMobileData, NetworkType.Mobile),
+                new SettingsDataAutoDownload(AppResources.WhenOnWiFi, NetworkType.WiFi),
+                new SettingsDataAutoDownload(AppResources.WhenRoaming, NetworkType.Roaming),
             };
+
+            AutoDownloadCommand = new RelayCommand<NetworkType>(AutoDownloadExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -39,7 +42,7 @@ namespace Unigram.ViewModels.Settings
 
         public ObservableCollection<SettingsDataAutoDownload> AutoDownloads { get; private set; }
 
-        public RelayCommand<NetworkType> AutoDownloadCommand => new RelayCommand<NetworkType>(AutoDownloadExecute);
+        public RelayCommand<NetworkType> AutoDownloadCommand { get; }
         private async void AutoDownloadExecute(NetworkType network)
         {
             var confirm = await SettingsDownloadView.Current.ShowAsync(ApplicationSettings.Current.AutoDownload[network]);

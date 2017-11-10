@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -30,14 +30,14 @@ namespace Unigram.ViewModels
 {
     public partial class DialogViewModel
     {
-        public RelayCommand<TLDocument> SendStickerCommand => new RelayCommand<TLDocument>(SendStickerExecute);
+        public RelayCommand<TLDocument> SendStickerCommand { get; }
         public void SendStickerExecute(TLDocument document)
         {
             SendDocument(document, null);
             Stickers.StickersService.AddRecentSticker(StickerType.Image, document, (int)(Utils.CurrentTimestamp / 1000), false);
         }
 
-        public RelayCommand<TLDocument> SendGifCommand => new RelayCommand<TLDocument>(SendGifExecute);
+        public RelayCommand<TLDocument> SendGifCommand { get; }
         public void SendGifExecute(TLDocument document)
         {
             SendDocument(document, null);
@@ -75,7 +75,7 @@ namespace Unigram.ViewModels
             });
         }
 
-        public RelayCommand<StorageFile> SendFileCommand => new RelayCommand<StorageFile>(SendFileExecute);
+        public RelayCommand<StorageFile> SendFileCommand { get; }
         private async void SendFileExecute(StorageFile file)
         {
             if (MediaLibrary.SelectedCount > 0)
@@ -165,7 +165,7 @@ namespace Unigram.ViewModels
             await file.CopyAndReplaceAsync(fileCache);
 
             var basicProps = await fileCache.GetBasicPropertiesAsync();
-            var thumbnail = await FileUtils.GetFileThumbnailAsync(file);
+            var thumbnail = await ImageHelper.GetFileThumbnailAsync(file);
             if (thumbnail as TLPhotoSize != null)
             {
                 await SendThumbnailFileAsync(file, fileLocation, fileName, basicProps, thumbnail as TLPhotoSize, fileCache, caption);
@@ -267,8 +267,8 @@ namespace Unigram.ViewModels
             {
                 var local = value / divider;
 
-                document.IsTransferring = local < 1 && local > 0;
                 document.UploadingProgress = delta + local;
+                document.IsTransferring = local < 1 && local > 0;
                 Debug.WriteLine(value);
 
                 OutputTypingManager.SetTyping(action((int)local * 100));
@@ -377,7 +377,7 @@ namespace Unigram.ViewModels
             });
         }
 
-        public async Task SendVideoAsync(StorageFile file, string caption, bool round, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        public async Task SendVideoAsync(StorageFile file, string caption, bool round, int? ttlSeconds = null, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
         {
             if (_peer == null)
             {
@@ -399,8 +399,8 @@ namespace Unigram.ViewModels
 
             var basicProps = await fileCache.GetBasicPropertiesAsync();
             var videoProps = await fileCache.Properties.GetVideoPropertiesAsync();
-            var thumbnailBase = await FileUtils.GetFileThumbnailAsync(file);
-            var thumbnail = thumbnailBase as TLPhotoSize;
+
+            var thumbnail = await ImageHelper.GetVideoThumbnailAsync(file, videoProps, transform) as TLPhotoSize;
             if (thumbnail == null)
             {
                 return;
@@ -451,7 +451,11 @@ namespace Unigram.ViewModels
             var media = new TLMessageMediaDocument
             {
                 Document = document,
-                Caption = caption
+                HasDocument = document != null,
+                Caption = caption,
+                HasCaption = caption != null,
+                TTLSeconds = ttlSeconds,
+                HasTTLSeconds = ttlSeconds != null
             };
 
             var message = TLUtils.GetMessage(SettingsHelper.UserId, _peer.ToPeer(), TLMessageState.Sending, true, true, date, string.Empty, media, TLLong.Random(), null);
@@ -479,20 +483,20 @@ namespace Unigram.ViewModels
                     }
 
                     var prepare = await transcoder.PrepareFileTranscodeAsync(fileCache, fileResult, profile);
-                    await prepare.TranscodeAsync().AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }, 0, 200.0));
+                    if (prepare.CanTranscode)
+                    {
+                        await prepare.TranscodeAsync().AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadVideoAction { Progress = progress }, 0, 200.0));
 
-                    //await fileCache.DeleteAsync();
-                    fileCache = fileResult;
-
-                    thumbnailBase = await FileUtils.GetFileThumbnailAsync(fileCache);
-                    thumbnail = thumbnailBase as TLPhotoSize;
-
-                    desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
-                    document.Thumb = thumbnail;
+                        if (prepare.FailureReason == TranscodeFailureReason.None)
+                        {
+                            //await fileCache.DeleteAsync();
+                            fileCache = fileResult;
+                        }
+                    }
                 }
 
                 var fileId = TLLong.Random();
-                var upload = await _uploadVideoManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadDocumentAction { Progress = progress }, 0.5, 2.0));
+                var upload = await _uploadVideoManager.UploadFileAsync(fileId, fileCache.Name, false).AsTask(Upload(media.Document as TLDocument, progress => new TLSendMessageUploadVideoAction { Progress = progress }, 0.5, 2.0));
                 if (upload != null)
                 {
                     var thumbFileId = TLLong.Random();
@@ -505,7 +509,8 @@ namespace Unigram.ViewModels
                             Thumb = thumbUpload.ToInputFile(),
                             MimeType = document.MimeType,
                             Caption = media.Caption,
-                            Attributes = document.Attributes
+                            Attributes = document.Attributes,
+                            TTLSeconds = ttlSeconds
                         };
 
                         var result = await ProtoService.SendMediaAsync(_peer, inputMedia, message);
@@ -531,7 +536,7 @@ namespace Unigram.ViewModels
             });
         }
 
-        public RelayCommand<ObservableCollection<StorageMedia>> SendMediaCommand => new RelayCommand<ObservableCollection<StorageMedia>>(SendMediaExecute);
+        public RelayCommand<ObservableCollection<StorageMedia>> SendMediaCommand { get; }
         private async void SendMediaExecute(ObservableCollection<StorageMedia> media)
         {
             if (MediaLibrary.SelectedCount > 0)
@@ -540,18 +545,17 @@ namespace Unigram.ViewModels
                 {
                     if (storage is StoragePhoto photo)
                     {
-                        await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
+                        var storageFile = await photo.GetFileAsync();
+                        await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
                     }
                     else if (storage is StorageVideo video)
                     {
-                        await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync());
+                        await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
                     }
                 }
 
                 return;
             }
-
-
 
             ObservableCollection<StorageMedia> storages = media;
 
@@ -595,11 +599,12 @@ namespace Unigram.ViewModels
                     {
                         if (storage is StoragePhoto photo)
                         {
-                            await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
+                            var storageFile = await photo.GetFileAsync();
+                            await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
                         }
                         else if (storage is StorageVideo video)
                         {
-                            await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync());
+                            await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
                         }
                     }
                 }
@@ -622,11 +627,12 @@ namespace Unigram.ViewModels
                     {
                         if (storage is StoragePhoto photo)
                         {
-                            await SendPhotoAsync(storage.File, storage.Caption, storage.TTLSeconds);
+                            var storageFile = await photo.GetFileAsync();
+                            await SendPhotoAsync(storageFile, storage.Caption, storage.TTLSeconds);
                         }
                         else if (storage is StorageVideo video)
                         {
-                            await SendVideoAsync(storage.File, storage.Caption, false, await video.GetEncodingAsync());
+                            await SendVideoAsync(storage.File, storage.Caption, false, storage.TTLSeconds, await video.GetEncodingAsync(), video.GetTransform());
                         }
                     }
                 }
@@ -769,7 +775,7 @@ namespace Unigram.ViewModels
 
             var basicProps = await fileCache.GetBasicPropertiesAsync();
             var imageProps = await fileCache.Properties.GetImagePropertiesAsync();
-            var thumbnailBase = await FileUtils.GetFileThumbnailAsync(file);
+            var thumbnailBase = await ImageHelper.GetFileThumbnailAsync(file);
             var thumbnail = thumbnailBase as TLPhotoSize;
 
             var desiredName = string.Format("{0}_{1}_{2}.jpg", thumbnail.Location.VolumeId, thumbnail.Location.LocalId, thumbnail.Location.Secret);
@@ -934,7 +940,7 @@ namespace Unigram.ViewModels
             });
         }
 
-        public RelayCommand SendContactCommand => new RelayCommand(SendContactExecute);
+        public RelayCommand SendContactCommand { get; }
         private async void SendContactExecute()
         {
             var picker = new ContactPicker();
@@ -1037,7 +1043,7 @@ namespace Unigram.ViewModels
             return tsc.Task;
         }
 
-        public RelayCommand SendLocationCommand => new RelayCommand(SendLocationExecute);
+        public RelayCommand SendLocationCommand { get; }
         private async void SendLocationExecute()
         {
             var page = new DialogSendLocationPage();

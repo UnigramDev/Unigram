@@ -27,16 +27,16 @@ namespace Unigram.ViewModels.Settings
             _type = type;
             _stickersService = stickersService;
 
-            aggregator.Subscribe(this);
-
             Items = new ItemsCollection(protoService, type);
+
+            Aggregator.Subscribe(this);
         }
 
         public void Handle(NeedReloadArchivedStickersEventArgs e)
         {
             if (e.Type == _type)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     Items.HasMoreItems = false;
                     Items.Clear();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -28,6 +28,8 @@ namespace Unigram.ViewModels
             Search = new ObservableCollection<KeyedList<string, TLObject>>();
             SelectedItems = new ObservableCollection<TLUser>();
             SelectedItems.CollectionChanged += OnCollectionChanged;
+
+            SendCommand = new RelayCommand(SendExecute, () => Minimum <= SelectedItems.Count && Maximum >= SelectedItems.Count);
         }
 
         private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -50,8 +52,10 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
+        public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            Items.Clear();
+
             var contacts = CacheService.GetContacts();
             foreach (var item in contacts.OfType<TLUser>())
             {
@@ -74,75 +78,14 @@ namespace Unigram.ViewModels
                 }
             }
 
-            //var input = string.Join(",", contacts.Select(x => x.Id).Union(new[] { SettingsHelper.UserId }).OrderBy(x => x));
-            //var hash = Utils.ComputeMD5(input);
-            //var hex = BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
-
-            var hash = CalculateContactsHash(contacts);
-
-            var response = await ProtoService.GetContactsAsync(hash);
-            if (response.IsSucceeded && response.Result is TLContactsContacts)
-            {
-                var result = response.Result as TLContactsContacts;
-                if (result != null)
-                {
-                    Items.Clear();
-
-                    foreach (var item in result.Users.OfType<TLUser>())
-                    {
-                        var user = item as TLUser;
-                        if (user.IsSelf)
-                        {
-                            continue;
-                        }
-
-                        if (Filter != null)
-                        {
-                            if (Filter(user))
-                            {
-                                Items.Add(user);
-                            }
-                        }
-                        else
-                        {
-                            Items.Add(user);
-                        }
-                    }
-                }
-            }
-        }
-
-        private int CalculateContactsHash(List<TLUserBase> arrayList)
-        {
-            if (arrayList == null)
-            {
-                return 0;
-            }
-
-            long acc = 0;
-            for (int i = 0; i < arrayList.Count; i++)
-            {
-                var user = arrayList[i];
-                if (user == null)
-                {
-                    continue;
-                }
-
-                int high_id = (int)(user.Id >> 32);
-                int lower_id = (int)user.Id;
-                acc = ((acc * 20261) + 0x80000000L + high_id) % 0x80000000L;
-                acc = ((acc * 20261) + 0x80000000L + lower_id) % 0x80000000L;
-            }
-
-            return (int)acc;
+            return Task.CompletedTask;
         }
 
         public SortedObservableCollection<TLUser> Items { get; private set; }
 
         public ObservableCollection<TLUser> SelectedItems { get; private set; }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => Minimum <= SelectedItems.Count && Maximum >= SelectedItems.Count);
+        public RelayCommand SendCommand { get; }
         protected virtual void SendExecute()
         {
 
@@ -200,8 +143,9 @@ namespace Unigram.ViewModels
                 var simple = new List<TLUser>();
 
                 var contactsResults = contacts.OfType<TLUser>().Where(x =>
+                    (SelectedItems.All(selectedUser => selectedUser.Id != x.Id)) && (
                     (x.FullName.IsLike(query, StringComparison.OrdinalIgnoreCase)) ||
-                    (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase)));
+                    (x.HasUsername && x.Username.StartsWith(query, StringComparison.OrdinalIgnoreCase))));
 
                 foreach (var result in contactsResults)
                 {
@@ -240,7 +184,7 @@ namespace Unigram.ViewModels
                             foreach (var peer in result.Result.Results)
                             {
                                 var item = result.Result.Users.FirstOrDefault(x => x.Id == peer.Id);
-                                if (item != null)
+                                if (item != null && SelectedItems.All(selectedUser => selectedUser.Id != item.Id))
                                 {
                                     parent.Add(item);
                                 }

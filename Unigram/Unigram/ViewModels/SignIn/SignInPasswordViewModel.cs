@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,6 +29,9 @@ namespace Unigram.ViewModels.SignIn
         public SignInPasswordViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator) 
             : base(protoService, cacheService, aggregator)
         {
+            SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
+            ForgotCommand = new RelayCommand(ForgotExecute);
+            ResetCommand = new RelayCommand(ResetExecute);
         }
 
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -86,8 +89,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        private RelayCommand _sendCommand;
-        public RelayCommand SendCommand => _sendCommand = _sendCommand ?? new RelayCommand(SendExecute, () => !IsLoading);
+        public RelayCommand SendCommand { get; }
         private async void SendExecute()
         {
             if (_parameters == null)
@@ -139,7 +141,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        public RelayCommand ForgotCommand => new RelayCommand(ForgotExecute);
+        public RelayCommand ForgotCommand { get; }
         private async void ForgotExecute()
         {
             if (_parameters == null)
@@ -170,7 +172,7 @@ namespace Unigram.ViewModels.SignIn
             }
         }
 
-        public RelayCommand ResetCommand => new RelayCommand(ResetExecute);
+        public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
             var confirm = await TLMessageDialog.ShowAsync("This action can't be undone.\n\nIf you reset your account, all your messages and chats will be deleted.", "Warning", "Reset", "Cancel");

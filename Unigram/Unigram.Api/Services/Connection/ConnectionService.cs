@@ -43,24 +43,7 @@ namespace Telegram.Api.Services.Connection
         {
             get
             {
-                if (_profile != null)
-                {
-                    var cost = _profile.GetConnectionCost();
-                    if (cost != null && cost.Roaming)
-                    {
-                        return NetworkType.Roaming;
-                    }
-                    else if (_profile != null && _profile.IsWwanConnectionProfile)
-                    {
-                        return NetworkType.Mobile;
-                    }
-                    else if (_profile != null && _profile.IsWlanConnectionProfile)
-                    {
-                        return NetworkType.WiFi;
-                    }
-                }
-
-                return NetworkType.WiFi;
+                return _networkType;
             }
         }
 
@@ -69,9 +52,37 @@ namespace Telegram.Api.Services.Connection
         private bool _isNetworkAwailable;
 
 #if WP8 || WIN_RT
+        private NetworkType _networkType;
         private ConnectionProfile _profile;
         private NetworkConnectivityLevel? _connectivityLevel;
 #endif
+
+        private void UpdateType()
+        {
+            try
+            {
+                if (_profile != null)
+                {
+                    var cost = _profile.GetConnectionCost();
+                    if (cost != null && cost.Roaming)
+                    {
+                        _networkType = NetworkType.Roaming;
+                    }
+                    else if (_profile != null && _profile.IsWwanConnectionProfile)
+                    {
+                        _networkType = NetworkType.Mobile;
+                    }
+                    else if (_profile != null && _profile.IsWlanConnectionProfile)
+                    {
+                        _networkType = NetworkType.WiFi;
+                    }
+                }
+            }
+            catch
+            {
+                _networkType = NetworkType.WiFi;
+            }
+        }
 
         public ConnectionService(IDeviceInfoService deviceInfoService)
         {
@@ -90,12 +101,14 @@ namespace Telegram.Api.Services.Connection
             _profile = NetworkInformation.GetInternetConnectionProfile();
             _connectivityLevel = _profile != null ? _profile.GetNetworkConnectivityLevel() : (NetworkConnectivityLevel?)null;
 
+            UpdateType();
+
             //var connectivityLevel = _profile.GetNetworkConnectivityLevel();
             //_profile.NetworkAdapter.IanaInterfaceType != 71 // mobile data
             //_profile.GetConnectionCost().Roaming;
 
             //Helpers.Execute.ShowDebugMessage(string.Format("InternetConnectionProfile={0}", _profile != null ? _profile.GetNetworkConnectivityLevel().ToString() : "null"));
-            
+
             // new solution
             NetworkInformation.NetworkStatusChanged += sender =>
             {
@@ -107,6 +120,8 @@ namespace Telegram.Api.Services.Connection
 
                 if (_profile != null)
                 {
+                    UpdateType();
+
                     if (_mtProtoService == null) return;
 
                     var activeTransport = _mtProtoService.GetActiveTransport();

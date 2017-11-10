@@ -53,7 +53,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;PREVIEW</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -64,7 +64,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
     <OutputPath>bin\ARM\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;PREVIEW</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -75,7 +75,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP;WIN_RT;PREVIEW</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -453,6 +453,7 @@
     <Compile Include="TL\Methods\TLRPCDropAnswer.cs" />
     <Compile Include="TL\Methods\TLSetClientDHParams.cs" />
     <Compile Include="TL\Partial\TLAuthorization.Partial.cs" />
+    <Compile Include="TL\Partial\TLBadMsgNotification.Partial.cs" />
     <Compile Include="TL\Partial\TLBadServerSalt.Partial.cs" />
     <Compile Include="TL\Partial\TLBotInlineResultBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannelAdminLogEvent.Partial.cs" />
@@ -469,6 +470,7 @@
     <Compile Include="TL\Partial\TLMessageMediaDocument.Partial.cs" />
     <Compile Include="TL\Partial\TLMessageMediaPhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLMessagesStickerSet.Partial.cs" />
+    <Compile Include="TL\Partial\TLMultiPts.cs" />
     <Compile Include="TL\Partial\TLPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannel.Partial.cs" />
     <Compile Include="TL\Partial\TLChat.Partial.cs" />
@@ -540,8 +542,6 @@
     <Compile Include="Services\MTProtoService.Users.cs" />
     <Compile Include="Services\ServiceBase.cs" />
     <Compile Include="Services\Updates\IUpdatesService.cs" />
-    <Compile Include="Services\Updates\ReceiveUpdatesEventArgs.cs" />
-    <Compile Include="Services\Updates\UpdatesBySeqComparer.cs" />
     <Compile Include="Services\Updates\UpdatesService.cs" />
     <Compile Include="TL\Core\ITLMultiPts.cs" />
     <Compile Include="TL\Core\TLBinaryReader.cs" />

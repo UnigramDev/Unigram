@@ -291,6 +291,19 @@ namespace Unigram.Common
             }
         }
 
+        public static bool IsPeerActive(this INavigationService service, TLInputPeerBase inputPeer)
+        {
+            if (service.CurrentPageType == typeof(DialogPage))
+            {
+                if (TryGetPeerFromParameter(service, service.CurrentPageParam, out TLPeerBase peer))
+                {
+                    return peer.Equals(inputPeer);
+                }
+            }
+
+            return false;
+        }
+
         public static TLPeerBase GetPeerFromBackStack(this INavigationService service)
         {
             if (service.CurrentPageType == typeof(DialogPage))

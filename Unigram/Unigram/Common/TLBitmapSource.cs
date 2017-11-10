@@ -152,18 +152,25 @@ namespace Unigram.Common
             }
             else if (TLMessage.IsGif(document))
             {
-                if (thumbnail)
-                {
-                    SetSource(null, document.Thumb, PHASE_THUMBNAIL);
-                    return;
-                }
+                //if (thumbnail)
+                //{
+                //    SetSource(null, document.Thumb, PHASE_THUMBNAIL);
+                //    return;
+                //}
 
-                _renderer = _animatedFactory.CreateRenderer(320, 320);
-                Image = _renderer.ImageSource;
+                //_renderer = _animatedFactory.CreateRenderer(320, 320);
+                //Image = _renderer.ImageSource;
 
-                if (TrySetAnimatedSource(document, PHASE_FULL) == false && ApplicationSettings.Current.AutoDownload[_protoService.NetworkType].HasFlag(AutoDownloadType.GIF))
+                //if (TrySetAnimatedSource(document, PHASE_FULL) == false && ApplicationSettings.Current.AutoDownload[_protoService.NetworkType].HasFlag(AutoDownloadType.GIF))
+                //{
+                //    SetAnimatedSource(document, document, document.Size, PHASE_FULL);
+                //}
+
+                SetSource(null, document.Thumb, PHASE_THUMBNAIL);
+
+                if (ApplicationSettings.Current.AutoDownload[_protoService.NetworkType].HasFlag(AutoDownloadType.GIF))
                 {
-                    SetAnimatedSource(document, document, document.Size, PHASE_FULL);
+                    SetDownloadSource(document, document, document.Size, PHASE_FULL);
                 }
             }
             else if (TLMessage.IsVideo(document))
@@ -172,7 +179,16 @@ namespace Unigram.Common
 
                 if (ApplicationSettings.Current.AutoDownload[_protoService.NetworkType].HasFlag(AutoDownloadType.Video))
                 {
-                    //SetSource(photo, photo.Full, PHASE_FULL);
+                    SetDownloadSource(document, document, document.Size, PHASE_FULL);
+                }
+            }
+            else if (TLMessage.IsRoundVideo(document))
+            {
+                SetSource(null, document.Thumb, PHASE_THUMBNAIL);
+
+                if (ApplicationSettings.Current.AutoDownload[_protoService.NetworkType].HasFlag(AutoDownloadType.Round))
+                {
+                    SetDownloadSource(document, document, document.Size, PHASE_FULL);
                 }
             }
             else
@@ -199,7 +215,7 @@ namespace Unigram.Common
                     var result = await _downloadWebFileManager.DownloadFileAsync(fileName, document.DCId, new TLInputWebFileLocation { Url = document.Url, AccessHash = document.AccessHash }, document.Size).AsTask(document.Download());
                     if (result != null && Phase <= PHASE_FULL)
                     {
-                        Execute.BeginOnUIThread(() =>
+                        _bitmapImage.BeginOnUIThread(() =>
                         {
                             _bitmapImage.UriSource = FileUtils.GetTempFileUri(fileName);
                         });
@@ -333,7 +349,7 @@ namespace Unigram.Common
                         {
                             Phase = phase;
 
-                            Execute.BeginOnUIThread(() =>
+                            _bitmapImage.BeginOnUIThread(() =>
                             {
                                 if (transferable != null)
                                 {
@@ -406,7 +422,7 @@ namespace Unigram.Common
                         {
                             Phase = phase;
 
-                            Execute.BeginOnUIThread(() =>
+                            _bitmapImage.BeginOnUIThread(() =>
                             {
                                 if (transferable != null)
                                 {
@@ -458,8 +474,15 @@ namespace Unigram.Common
                 var fileName = string.Format("{0}_{1}_{2}.jpg", location.VolumeId, location.LocalId, location.Secret);
                 if (File.Exists(FileUtils.GetTempFileName(fileName)))
                 {
-                    //Image.UriSource = FileUtils.GetTempFileUri(fileName);
-                    _bitmapImage.SetSource(WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName))));
+                    var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
+                    if (decoded != null)
+                    {
+                        _bitmapImage.SetSource(decoded);
+                    }
+                    else
+                    {
+                        _bitmapImage.UriSource = FileUtils.GetTempFileUri(fileName);
+                    }
                 }
                 else
                 {
@@ -468,15 +491,22 @@ namespace Unigram.Common
                         var result = await _downloadManager.DownloadFileAsync(location, fileSize).AsTask(transferable?.Download());
                         if (result != null && Phase <= phase)
                         {
-                            Execute.BeginOnUIThread(() =>
+                            _bitmapImage.BeginOnUIThread(() =>
                             {
                                 if (transferable != null)
                                 {
                                     transferable.IsTransferring = false;
                                 }
 
-                                //Image.UriSource = FileUtils.GetTempFileUri(fileName);
-                                _bitmapImage.SetSource(WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName))));
+                                var decoded = WebPImage.Encode(File.ReadAllBytes(FileUtils.GetTempFileName(fileName)));
+                                if (decoded != null)
+                                {
+                                    _bitmapImage.SetSource(decoded);
+                                }
+                                else
+                                {
+                                    _bitmapImage.UriSource = FileUtils.GetTempFileUri(fileName);
+                                }
                             });
                         }
                     });
@@ -544,6 +574,39 @@ namespace Unigram.Common
         }
 
         #endregion
+
+
+        private void SetDownloadSource(ITLTransferable transferable, TLDocument document, int fileSize, int phase)
+        {
+            if (phase >= Phase && document != null)
+            {
+                //Phase = phase;
+
+                var fileName = document.GetFileName();
+                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                {
+                }
+                else
+                {
+                    Execute.BeginOnThreadPool(async () =>
+                    {
+                        var result = await _downloadFileManager.DownloadFileAsync(fileName, document.DCId, document.ToInputFileLocation(), fileSize).AsTask(transferable?.Download());
+                        if (result != null && Phase <= phase)
+                        {
+                            Phase = phase;
+
+                            Execute.BeginOnUIThread(() =>
+                            {
+                                if (transferable != null)
+                                {
+                                    transferable.IsTransferring = false;
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        }
     }
 
     public static class LazyBitmapImage

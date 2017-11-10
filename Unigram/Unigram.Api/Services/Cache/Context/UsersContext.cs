@@ -16,6 +16,23 @@ namespace Telegram.Api.Services.Cache.Context
         public UsersContext(Database database)
         {
             _database = database;
+
+            using (Transaction())
+            {
+                Statement statement;
+                Sqlite3.sqlite3_prepare_v2(_database, $"SELECT {_fields} FROM `Users` WHERE `flags` & 2048 != 0", out statement);
+
+                while (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
+                {
+                    var item = GetItemFromStatement(ref statement);
+                    if (item != null)
+                    {
+                        base[item.Id] = item;
+                    }
+                }
+
+                Sqlite3.sqlite3_finalize(statement);
+            }
         }
 
         public IDisposable Transaction()
@@ -38,100 +55,7 @@ namespace Telegram.Api.Services.Cache.Context
                 TLUserBase result = null;
                 if (Sqlite3.sqlite3_step(statement) == SQLiteResult.Row)
                 {
-                    var flags = (TLUser.Flag)Sqlite3.sqlite3_column_int(statement, 2);
-                    var id = Sqlite3.sqlite3_column_int(statement, 0);
-
-                    long? access_hash = null;
-                    if (flags.HasFlag(TLUser.Flag.AccessHash))
-                    {
-                        access_hash = Sqlite3.sqlite3_column_int64(statement, 1);
-                    }
-
-                    var first_name = Sqlite3.sqlite3_column_text(statement, 3);
-                    var last_name = Sqlite3.sqlite3_column_text(statement, 4);
-                    var phone = Sqlite3.sqlite3_column_text(statement, 5);
-                    var username = Sqlite3.sqlite3_column_text(statement, 6);
-                    var restriction_reason = Sqlite3.sqlite3_column_text(statement, 7);
-
-                    int? bot_info_version = null;
-                    if (flags.HasFlag(TLUser.Flag.BotInfoVersion))
-                    {
-                        bot_info_version = Sqlite3.sqlite3_column_int(statement, 8);
-                    }
-
-                    var bot_inline_placeholder = Sqlite3.sqlite3_column_text(statement, 9);
-
-                    TLUserProfilePhotoBase photo = null;
-                    if (flags.HasFlag(TLUser.Flag.Photo))
-                    {
-                        var photo_id = Sqlite3.sqlite3_column_int64(statement, 10);
-                        var photo_small_local_id = Sqlite3.sqlite3_column_int(statement, 11);
-                        var photo_small_secret = Sqlite3.sqlite3_column_int64(statement, 12);
-                        var photo_small_volume_id = Sqlite3.sqlite3_column_int64(statement, 13);
-                        var photo_small_dc_id = Sqlite3.sqlite3_column_int(statement, 14);
-
-                        var photo_big_local_id = Sqlite3.sqlite3_column_int(statement, 15);
-                        var photo_big_secret = Sqlite3.sqlite3_column_int64(statement, 16);
-                        var photo_big_volume_id = Sqlite3.sqlite3_column_int64(statement, 17);
-                        var photo_big_dc_id = Sqlite3.sqlite3_column_int(statement, 18);
-
-                        photo = new TLUserProfilePhoto
-                        {
-                            PhotoId = photo_id,
-                            PhotoSmall = new TLFileLocation
-                            {
-                                LocalId = photo_small_local_id,
-                                Secret = photo_small_secret,
-                                VolumeId = photo_small_volume_id,
-                                DCId = photo_small_dc_id
-                            },
-                            PhotoBig = new TLFileLocation
-                            {
-                                LocalId = photo_big_local_id,
-                                Secret = photo_big_secret,
-                                VolumeId = photo_big_volume_id,
-                                DCId = photo_big_dc_id
-                            }
-                        };
-                    }
-
-                    TLUserStatusBase status = null;
-                    if (flags.HasFlag(TLUser.Flag.Status))
-                    {
-                        var status_type = (TLType)Sqlite3.sqlite3_column_int(statement, 19);
-                        if (status_type == TLType.UserStatusOffline)
-                        {
-                            var status_was_online = Sqlite3.sqlite3_column_int(statement, 20);
-                            status = new TLUserStatusOffline { WasOnline = status_was_online };
-                        }
-                        else if (status_type == TLType.UserStatusOnline)
-                        {
-                            var status_expires = Sqlite3.sqlite3_column_int(statement, 21);
-                            status = new TLUserStatusOnline { Expires = status_expires };
-                        }
-                        else
-                        {
-                            status = TLFactory.Read<TLUserStatusBase>(null, status_type);
-                        }
-                    }
-
-                    result = new TLUser
-                    {
-                        Id = id,
-                        AccessHash = access_hash,
-                        Flags = flags,
-                        FirstName = first_name,
-                        LastName = last_name,
-                        Phone = phone,
-                        Username = username,
-                        RestrictionReason = restriction_reason,
-                        BotInfoVersion = bot_info_version,
-                        BotInlinePlaceholder = bot_inline_placeholder,
-                        Photo = photo,
-                        Status = status
-                    };
-
-                    base[index] = result;
+                    base[index] = GetItemFromStatement(ref statement);
                 }
 
                 Sqlite3.sqlite3_finalize(statement);
@@ -278,6 +202,102 @@ namespace Telegram.Api.Services.Cache.Context
                     Sqlite3.sqlite3_finalize(statement);
                 }
             }
+        }
+
+        private TLUserBase GetItemFromStatement(ref Statement statement)
+        {
+            var flags = (TLUser.Flag)Sqlite3.sqlite3_column_int(statement, 2);
+            var id = Sqlite3.sqlite3_column_int(statement, 0);
+
+            long? access_hash = null;
+            if (flags.HasFlag(TLUser.Flag.AccessHash))
+            {
+                access_hash = Sqlite3.sqlite3_column_int64(statement, 1);
+            }
+
+            var first_name = Sqlite3.sqlite3_column_text(statement, 3);
+            var last_name = Sqlite3.sqlite3_column_text(statement, 4);
+            var phone = Sqlite3.sqlite3_column_text(statement, 5);
+            var username = Sqlite3.sqlite3_column_text(statement, 6);
+            var restriction_reason = Sqlite3.sqlite3_column_text(statement, 7);
+
+            int? bot_info_version = null;
+            if (flags.HasFlag(TLUser.Flag.BotInfoVersion))
+            {
+                bot_info_version = Sqlite3.sqlite3_column_int(statement, 8);
+            }
+
+            var bot_inline_placeholder = Sqlite3.sqlite3_column_text(statement, 9);
+
+            TLUserProfilePhotoBase photo = null;
+            if (flags.HasFlag(TLUser.Flag.Photo))
+            {
+                var photo_id = Sqlite3.sqlite3_column_int64(statement, 10);
+                var photo_small_local_id = Sqlite3.sqlite3_column_int(statement, 11);
+                var photo_small_secret = Sqlite3.sqlite3_column_int64(statement, 12);
+                var photo_small_volume_id = Sqlite3.sqlite3_column_int64(statement, 13);
+                var photo_small_dc_id = Sqlite3.sqlite3_column_int(statement, 14);
+
+                var photo_big_local_id = Sqlite3.sqlite3_column_int(statement, 15);
+                var photo_big_secret = Sqlite3.sqlite3_column_int64(statement, 16);
+                var photo_big_volume_id = Sqlite3.sqlite3_column_int64(statement, 17);
+                var photo_big_dc_id = Sqlite3.sqlite3_column_int(statement, 18);
+
+                photo = new TLUserProfilePhoto
+                {
+                    PhotoId = photo_id,
+                    PhotoSmall = new TLFileLocation
+                    {
+                        LocalId = photo_small_local_id,
+                        Secret = photo_small_secret,
+                        VolumeId = photo_small_volume_id,
+                        DCId = photo_small_dc_id
+                    },
+                    PhotoBig = new TLFileLocation
+                    {
+                        LocalId = photo_big_local_id,
+                        Secret = photo_big_secret,
+                        VolumeId = photo_big_volume_id,
+                        DCId = photo_big_dc_id
+                    }
+                };
+            }
+
+            TLUserStatusBase status = null;
+            if (flags.HasFlag(TLUser.Flag.Status))
+            {
+                var status_type = (TLType)Sqlite3.sqlite3_column_int(statement, 19);
+                if (status_type == TLType.UserStatusOffline)
+                {
+                    var status_was_online = Sqlite3.sqlite3_column_int(statement, 20);
+                    status = new TLUserStatusOffline { WasOnline = status_was_online };
+                }
+                else if (status_type == TLType.UserStatusOnline)
+                {
+                    var status_expires = Sqlite3.sqlite3_column_int(statement, 21);
+                    status = new TLUserStatusOnline { Expires = status_expires };
+                }
+                else
+                {
+                    status = TLFactory.Read<TLUserStatusBase>(null, status_type);
+                }
+            }
+
+            return new TLUser
+            {
+                Id = id,
+                AccessHash = access_hash,
+                Flags = flags,
+                FirstName = first_name,
+                LastName = last_name,
+                Phone = phone,
+                Username = username,
+                RestrictionReason = restriction_reason,
+                BotInfoVersion = bot_info_version,
+                BotInlinePlaceholder = bot_inline_placeholder,
+                Photo = photo,
+                Status = status
+            };
         }
     }
 }

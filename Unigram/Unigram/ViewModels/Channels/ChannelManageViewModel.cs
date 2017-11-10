@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +18,7 @@ namespace Unigram.ViewModels.Channels
         public ChannelManageViewModel(IMTProtoService protoService, ICacheService cacheService, ITelegramEventAggregator aggregator)
             : base(protoService, cacheService, aggregator)
         {
+            AdminLogCommand = new RelayCommand(AdminLogExecute);
         }
 
         protected TLChannel _item;
@@ -52,7 +53,7 @@ namespace Unigram.ViewModels.Channels
             return Task.CompletedTask;
         }
 
-        public RelayCommand AdminLogCommand => new RelayCommand(AdminLogExecute);
+        public RelayCommand AdminLogCommand { get; }
         private void AdminLogExecute()
         {
             if (_item == null)

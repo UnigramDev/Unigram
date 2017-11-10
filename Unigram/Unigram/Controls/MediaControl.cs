@@ -25,6 +25,7 @@ namespace Unigram.Controls
                 }
                 else
                 {
+                    Content = null;
                     Content = value;
                 }
 

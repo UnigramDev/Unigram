@@ -51,6 +51,19 @@ namespace Unigram.ViewModels.Settings
             }
         }
 
+        public bool IsAutoPlayEnabled
+        {
+            get
+            {
+                return ApplicationSettings.Current.IsAutoPlayEnabled;
+            }
+            set
+            {
+                ApplicationSettings.Current.IsAutoPlayEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool IsContactsSyncEnabled
         {
             get
@@ -97,11 +110,11 @@ namespace Unigram.ViewModels.Settings
                     var contacts = CacheService.GetContacts();
                     var response = new TLContactsContacts { Users = new TLVector<TLUserBase>(contacts) };
 
-                    await _contactsService.SyncContactsAsync(response);
+                    await _contactsService.ExportAsync(response);
                 }
                 else
                 {
-                    await _contactsService.UnsyncContactsAsync();
+                    await _contactsService.RemoveAsync();
                 }
             }
         }

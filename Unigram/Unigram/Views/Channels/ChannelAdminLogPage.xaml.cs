@@ -37,7 +37,7 @@ namespace Unigram.Views.Channels
             DataContext = UnigramContainer.Current.ResolveType<ChannelAdminLogViewModel>();
         }
 
-        private void ProfileBubble_Click(object sender, RoutedEventArgs e)
+        private void Photo_Click(object sender, RoutedEventArgs e)
         {
             var control = sender as FrameworkElement;
             var message = control.DataContext as TLMessage;
@@ -47,9 +47,9 @@ namespace Unigram.Views.Channels
             }
         }
 
-        private void Download_Click(object sender, Controls.TransferCompletedEventArgs e)
+        private void Download_Click(object sender, TransferCompletedEventArgs e)
         {
-            Media.Download(sender, e);
+            Media.Download_Click(sender as FrameworkElement, e);
         }
 
         private async void StickerSet_Click(object sender, RoutedEventArgs e)

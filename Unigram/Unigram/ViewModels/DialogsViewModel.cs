@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -60,6 +60,12 @@ namespace Unigram.ViewModels
             SearchTokens = new Dictionary<string, CancellationTokenSource>();
 
             Execute.BeginOnThreadPool(() => LoadFirstSlice());
+
+            DialogPinCommand = new RelayCommand<TLDialog>(DialogPinExecute);
+            DialogNotifyCommand = new RelayCommand<TLDialog>(DialogNotifyExecute);
+            DialogDeleteCommand = new RelayCommand<TLDialog>(DialogDeleteExecute);
+            DialogClearCommand = new RelayCommand<TLDialog>(DialogClearExecute);
+            DialogDeleteAndStopCommand = new RelayCommand<TLDialog>(DialogDeleteAndStopExecute);
         }
 
         public int PinnedDialogsIndex { get; set; }
@@ -114,7 +120,7 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     Items.ReplaceWith(items);
                     IsFirstPinned = Items.Any(x => x.IsPinned);
@@ -155,7 +161,7 @@ namespace Unigram.ViewModels
             //{
             //    var pinnedIndex = 0;
 
-            //    Execute.BeginOnUIThread(() =>
+            //    BeginOnUIThread(() =>
             //    {
             //        foreach (var item in result.Dialogs)
             //        {
@@ -206,13 +212,17 @@ namespace Unigram.ViewModels
                     }
                 }
 
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     Items.ReplaceWith(items);
                     IsFirstPinned = Items.Any(x => x.IsPinned);
                     PinnedDialogsIndex = pinnedIndex;
                     PinnedDialogsCountMax = config.PinnedDialogsCountMax;
                 });
+            }
+            else
+            {
+                await TLMessageDialog.ShowAsync("Failed fetching dialogs");
             }
 
             Aggregator.Subscribe(this);
@@ -272,7 +282,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 var dialog = Items.FirstOrDefault(x => x.Id == args.Dialog.Id);
                 if (dialog != null)
@@ -284,7 +294,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateUserName userName)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 for (int i = 0; i < Items.Count; i++)
                 {
@@ -308,7 +318,7 @@ namespace Unigram.ViewModels
             var dialogs = CacheService.GetDialogs();
             dialogs = ReorderDrafts(dialogs);
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 var items = new List<TLDialog>(dialogs.Count);
 
@@ -340,7 +350,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateContactLink update)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 for (int i = 0; i < Items.Count; i++)
                 {
@@ -361,7 +371,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 int msgId;
                 if (message.ToId is TLPeerUser)
@@ -391,7 +401,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 for (int i = 0; i < Items.Count; i++)
                 {
@@ -405,7 +415,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateDraftMessage update)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 TLDialog dialog = null;
                 for (int i = 0; i < Items.Count; i++)
@@ -440,7 +450,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateDialogPinned update)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 TLDialog dialog = null;
                 for (int i = 0; i < Items.Count; i++)
@@ -502,7 +512,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdatePinnedDialogs update)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 if (update.HasOrder)
                 {
@@ -534,7 +544,7 @@ namespace Unigram.ViewModels
 
         public void Handle(TLUpdateChannel update)
         {
-            Execute.BeginOnUIThread(delegate
+            BeginOnUIThread(delegate
             {
                 var dialog = Items.FirstOrDefault(x => x.Peer is TLPeerChannel && x.Peer.Id == update.ChannelId);
                 if (dialog != null)
@@ -548,7 +558,7 @@ namespace Unigram.ViewModels
         {
             if (update.IsPopup)
             {
-                Execute.BeginOnUIThread(async () =>
+                BeginOnUIThread(async () =>
                 {
                     await TLMessageDialog.ShowAsync(update.Message, "Telegram", "OK");
                 });
@@ -569,7 +579,7 @@ namespace Unigram.ViewModels
 
             //if (serviceNotification.Popup)
             //{
-            //    Execute.BeginOnUIThread(delegate
+            //    BeginOnUIThread(delegate
             //    {
             //        //MessageBox.Show(serviceNotification.Message.ToString(), AppResources.AppName, 0);
             //    });
@@ -629,7 +639,7 @@ namespace Unigram.ViewModels
             TLNotifyPeer notifyPeer = notifySettings.Peer as TLNotifyPeer;
             if (notifyPeer != null)
             {
-                Execute.BeginOnUIThread(() =>
+                BeginOnUIThread(() =>
                 {
                     for (int i = 0; i < Items.Count; i++)
                     {
@@ -648,7 +658,7 @@ namespace Unigram.ViewModels
 
         //private void HandleTypingCommon(TLUpdateTypingBase updateTyping, Dictionary<int, Telegram.Api.WindowsPhone.Tuple<TLDialog, InputTypingManager>> typingCache)
         //{
-        //    Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+        //    Telegram.Api.Helpers.BeginOnUIThread(delegate
         //    {
         //        TelegramTransitionFrame telegramTransitionFrame = Application.get_Current().get_RootVisual() as TelegramTransitionFrame;
         //        if (telegramTransitionFrame != null && !(telegramTransitionFrame.get_Content() is ShellView))
@@ -670,14 +680,14 @@ namespace Unigram.ViewModels
         //                    {
         //                        tuple = new Telegram.Api.WindowsPhone.Tuple<TLDialog, InputTypingManager>(dialog, new InputTypingManager(delegate (IList<Telegram.Api.WindowsPhone.Tuple<int, TLSendMessageActionBase>> users)
         //                        {
-        //                            Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+        //                            Telegram.Api.Helpers.BeginOnUIThread(delegate
         //                            {
         //                                dialog.TypingString = this.GetTypingString(dialog.Peer, users);
         //                                dialog.NotifyOfPropertyChange<string>(() => dialog.Self.TypingString);
         //                            });
         //                        }, delegate
         //                        {
-        //                            Telegram.Api.Helpers.Execute.BeginOnUIThread(delegate
+        //                            Telegram.Api.Helpers.BeginOnUIThread(delegate
         //                            {
         //                                dialog.TypingString = null;
         //                                dialog.NotifyOfPropertyChange<string>(() => dialog.Self.TypingString);
@@ -710,7 +720,7 @@ namespace Unigram.ViewModels
 
         private void OnTopMessageUpdated(object sender, TopMessageUpdatedEventArgs e)
         {
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 try
                 {
@@ -758,7 +768,7 @@ namespace Unigram.ViewModels
                         var already = Items.FirstOrDefault(x => x.Id == e.Dialog.Id);
                         if (already != null)
                         {
-                            //Execute.BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
+                            //BeginOnUIThread(async () => await new TLMessageDialog("Something is gone really wrong and the InMemoryCacheService is messed up.", "Warning").ShowQueuedAsync());
 
                             var index = Items.IndexOf(already);
 
@@ -841,7 +851,7 @@ namespace Unigram.ViewModels
                 return;
             }
 
-            Execute.BeginOnUIThread(() =>
+            BeginOnUIThread(() =>
             {
                 var index = -1;
                 for (int i = 0; i < Items.Count; i++)
@@ -1125,7 +1135,7 @@ namespace Unigram.ViewModels
 
         #region Commands
 
-        public RelayCommand<TLDialog> DialogPinCommand => new RelayCommand<TLDialog>(DialogPinExecute);
+        public RelayCommand<TLDialog> DialogPinCommand { get; }
         private async void DialogPinExecute(TLDialog dialog)
         {
             if (Items.Where(x => x.IsPinned).Count() == PinnedDialogsCountMax && !dialog.IsPinned)
@@ -1188,7 +1198,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLDialog> DialogNotifyCommand => new RelayCommand<TLDialog>(DialogNotifyExecute);
+        public RelayCommand<TLDialog> DialogNotifyCommand { get; }
         private async void DialogNotifyExecute(TLDialog dialog)
         {
             var notifySettings = dialog.NotifySettings as TLPeerNotifySettings;
@@ -1233,7 +1243,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLDialog> DialogDeleteCommand => new RelayCommand<TLDialog>(DialogDeleteExecute);
+        public RelayCommand<TLDialog> DialogDeleteCommand { get; }
         private async void DialogDeleteExecute(TLDialog dialog)
         {
             if (dialog.With is TLUser || dialog.With is TLChat || dialog.With is TLChatForbidden)
@@ -1244,31 +1254,34 @@ namespace Unigram.ViewModels
             {
                 var message = string.Empty;
                 var title = string.Empty;
-                if (channel.IsBroadcast)
-                {
-                    message = channel.IsCreator ? "Are you sure, you want to delete this channel?\r\n\r\nThis action cannot be undone." : "Are you sure you want to leave this channel?";
-                    title = channel.IsCreator ? "Delete" : "Leave";
-                }
-                else if (channel.IsMegaGroup)
-                {
-                    message = channel.IsCreator ? "Are you sure, you want to delete this group? All members will be removed and all messages will be lost.\r\n\r\nThis action cannot be undone." : "Are you sure you want to leave this group?";
-                    title = channel.IsCreator ? "Delete" : "Leave";
-                }
+                //if (channel.IsBroadcast)
+                //{
+                //    message = channel.IsCreator ? "Are you sure, you want to delete this channel?\r\n\r\nThis action cannot be undone." : "Are you sure you want to leave this channel?";
+                //    title = channel.IsCreator ? "Delete" : "Leave";
+                //}
+                //else if (channel.IsMegaGroup)
+                //{
+                //    message = channel.IsCreator ? "Are you sure, you want to delete this group? All members will be removed and all messages will be lost.\r\n\r\nThis action cannot be undone." : "Are you sure you want to leave this group?";
+                //    title = channel.IsCreator ? "Delete" : "Leave";
+                //}
+
+                message = channel.IsBroadcast ? "Are you sure you want to leave this channel?" : "Are you sure you want to leave this group?";
+                title = "Leave";
 
                 var confirm = await TLMessageDialog.ShowAsync(message, title, title, "Cancel");
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    Task<MTProtoResponse<TLUpdatesBase>> task;
-                    if (channel.IsCreator)
-                    {
-                        task = ProtoService.DeleteChannelAsync(channel);
-                    }
-                    else
-                    {
-                        task = ProtoService.LeaveChannelAsync(channel);
-                    }
+                    //Task<MTProtoResponse<TLUpdatesBase>> task;
+                    //if (channel.IsCreator)
+                    //{
+                    //    task = ProtoService.DeleteChannelAsync(channel);
+                    //}
+                    //else
+                    //{
+                    //    task = ProtoService.LeaveChannelAsync(channel);
+                    //}
 
-                    var response = await task;
+                    var response = await ProtoService.LeaveChannelAsync(channel);
                     if (response.IsSucceeded)
                     {
                         CacheService.DeleteDialog(dialog);
@@ -1280,7 +1293,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLDialog> DialogClearCommand => new RelayCommand<TLDialog>(DialogClearExecute);
+        public RelayCommand<TLDialog> DialogClearCommand { get; }
         private async void DialogClearExecute(TLDialog dialog)
         {
             if (dialog.With is TLUser || dialog.With is TLChat || dialog.With is TLChatForbidden)
@@ -1309,7 +1322,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public RelayCommand<TLDialog> DialogDeleteAndStopCommand => new RelayCommand<TLDialog>(DialogDeleteAndStopExecute);
+        public RelayCommand<TLDialog> DialogDeleteAndStopCommand { get; }
         private async void DialogDeleteAndStopExecute(TLDialog dialog)
         {
             if (dialog.With is TLUser user)
@@ -1419,5 +1432,12 @@ namespace Unigram.ViewModels
         }
 
         #endregion
+
+        protected override void BeginOnUIThread(Action action)
+        {
+            // This is somehow needed because this viewmodel requires a Dispatcher
+            // in some situations where base one might be null.
+            Execute.BeginOnUIThread(action);
+        }
     }
 }

@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AUTH_REGION" xml:space="preserve">
+    <value>Вход с нового устройства: {0}; местоположение: {1}</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
+    <value>В канале {0} новое голосовое сообщение</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_CONTACT" xml:space="preserve">
+    <value>В канал {0} отправили контакт</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
+    <value>В канале {0} новый файл</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
+    <value>приглашает вас сыграть в {1}</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
+    <value>В канал {0} отправили карту</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>начал(а) транслировать геопозицию</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
+    <value>В канале {0} новый GIF</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_NOTEXT" xml:space="preserve">
+    <value>Новое сообщение в канале {0}</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
+    <value>В канале {0} новая фотография</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
+    <value>В канале {0} новое видеосообщение</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
+    <value>В канал {0} отправили стикер {1}</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_TEXT" xml:space="preserve">
+    <value>{1}</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_VIDEO" xml:space="preserve">
+    <value>В канале {0} новое видео</value>
+  </data>
+  <data name="CHAT_ADD_MEMBER" xml:space="preserve">
+    <value>{0} пригласил(а) {2} в</value>
+  </data>
+  <data name="CHAT_ADD_YOU" xml:space="preserve">
+    <value>{0} пригласил(а) Вас в группу</value>
+  </data>
+  <data name="CHAT_CREATED" xml:space="preserve">
+    <value>{0} пригласил(а) Вас в группу</value>
+  </data>
+  <data name="CHAT_DELETE_MEMBER" xml:space="preserve">
+    <value>{0} исключил(а) {2} из</value>
+  </data>
+  <data name="CHAT_DELETE_YOU" xml:space="preserve">
+    <value>{0} исключил(а) Вас из группы</value>
+  </data>
+  <data name="CHAT_LEFT" xml:space="preserve">
+    <value>{0} покинул(а) группу</value>
+  </data>
+  <data name="CHAT_MESSAGE_AUDIO" xml:space="preserve">
+    <value>{0} отправил(а) голосовое сообщение в группу</value>
+  </data>
+  <data name="CHAT_MESSAGE_CONTACT" xml:space="preserve">
+    <value>{0} отправил(а) контакт в группу</value>
+  </data>
+  <data name="CHAT_MESSAGE_DOC" xml:space="preserve">
+    <value>{0} отправил(а) файл в группу</value>
+  </data>
+  <data name="CHAT_MESSAGE_FWDS" xml:space="preserve">
+    <value>{0} переслал(а) сообщения ({2}) в группу</value>
+  </data>
+  <data name="CHAT_MESSAGE_GAME" xml:space="preserve">
+    <value>{0} пригласил(а) группу сыграть в {2}</value>
+  </data>
+  <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
+    <value>{0} отправил(а) карту в группу</value>
+  </data>
+  <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>{0} начал(а) транслировать геопозицию в группе</value>
+  </data>
+  <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
+    <value>{0} отправил(а) GIF в группу</value>
+  </data>
+  <data name="CHAT_MESSAGE_INVOICE" xml:space="preserve">
+    <value>{0} отправил(а) счёт на {2} в группу</value>
+  </data>
+  <data name="CHAT_MESSAGE_NOTEXT" xml:space="preserve">
+    <value>{0} отправил(а) сообщение в группу</value>
+  </data>
+  <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
+    <value>{0} отправил(а) фото в группу</value>
+  </data>
+  <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
+    <value>{0} отправил(а) видеосообщение в группу</value>
+  </data>
+  <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
+    <value>{0} прислал(а) стикер {2} в группу</value>
+  </data>
+  <data name="CHAT_MESSAGE_TEXT" xml:space="preserve">
+    <value>{0}: {2}</value>
+  </data>
+  <data name="CHAT_MESSAGE_VIDEO" xml:space="preserve">
+    <value>{0} отправил(а) видео в группу</value>
+  </data>
+  <data name="CHAT_PHOTO_EDITED" xml:space="preserve">
+    <value>{0} изменил(а) фото группы</value>
+  </data>
+  <data name="CHAT_RETURNED" xml:space="preserve">
+    <value>{0} снова в</value>
+  </data>
+  <data name="CHAT_TITLE_EDITED" xml:space="preserve">
+    <value>{0} изменил(а) название группы</value>
+  </data>
+  <data name="CONTACT_JOINED" xml:space="preserve">
+    <value>{0} теперь в Telegram!</value>
+  </data>
+  <data name="ENCRYPTED_MESSAGE" xml:space="preserve">
+    <value>Вам пришло сообщение{0}</value>
+  </data>
+  <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
+    <value>Ваш секретный чат принят{0}</value>
+  </data>
+  <data name="ENCRYPTION_REQUEST" xml:space="preserve">
+    <value>Новый секретный чат {0}</value>
+  </data>
+  <data name="LOCKED_MESSAGE" xml:space="preserve">
+    <value>Вам пришло сообщение{0}</value>
+  </data>
+  <data name="MESSAGE_AUDIO" xml:space="preserve">
+    <value>прислал(а) голосовое сообщение</value>
+  </data>
+  <data name="MESSAGE_CONTACT" xml:space="preserve">
+    <value>прислал(а) контакт</value>
+  </data>
+  <data name="MESSAGE_DOC" xml:space="preserve">
+    <value>прислал(а) файл</value>
+  </data>
+  <data name="MESSAGE_FWDS" xml:space="preserve">
+    <value>переслал(а) вам сообщения ({1})</value>
+  </data>
+  <data name="MESSAGE_GAME" xml:space="preserve">
+    <value>приглашает вас сыграть в {1}</value>
+  </data>
+  <data name="MESSAGE_GEO" xml:space="preserve">
+    <value>прислал(а) карту</value>
+  </data>
+  <data name="MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>начал(а) транслировать геопозицию</value>
+  </data>
+  <data name="MESSAGE_GIF" xml:space="preserve">
+    <value>прислал(а) GIF</value>
+  </data>
+  <data name="MESSAGE_INVOICE" xml:space="preserve">
+    <value>отправил(а) вам счёт на {1}</value>
+  </data>
+  <data name="MESSAGE_NOTEXT" xml:space="preserve">
+    <value>прислал(а) вам сообщение</value>
+  </data>
+  <data name="MESSAGE_PHOTO" xml:space="preserve">
+    <value>прислал(а) фото</value>
+  </data>
+  <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
+    <value>прислал(а) вам самоуничтожающееся фото</value>
+  </data>
+  <data name="MESSAGE_ROUND" xml:space="preserve">
+    <value>прислал(а) видеосообщение</value>
+  </data>
+  <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
+    <value>сделал(а) скриншот</value>
+  </data>
+  <data name="MESSAGE_STICKER" xml:space="preserve">
+    <value>прислал(а) Вам стикер {1}</value>
+  </data>
+  <data name="MESSAGE_TEXT" xml:space="preserve">
+    <value>{1}</value>
+  </data>
+  <data name="MESSAGE_VIDEO" xml:space="preserve">
+    <value>прислал(а) видео</value>
+  </data>
+  <data name="MESSAGE_VIDEO_SECRET" xml:space="preserve">
+    <value>прислал(а) вам самоуничтожающееся видео</value>
+  </data>
+  <data name="PHONE_CALL_MISSED" xml:space="preserve">
+    <value>Вы пропустили звонок от {0}</value>
+  </data>
+  <data name="PHONE_CALL_REQUEST" xml:space="preserve">
+    <value>Вам звонит {0}</value>
+  </data>
+  <data name="PINNED_AUDIO" xml:space="preserve">
+    <value>закрепил(а) голосовое сообщение</value>
+  </data>
+  <data name="PINNED_CONTACT" xml:space="preserve">
+    <value>закрепил(а) контакт</value>
+  </data>
+  <data name="PINNED_DOC" xml:space="preserve">
+    <value>закрепил(а) файл</value>
+  </data>
+  <data name="PINNED_GAME" xml:space="preserve">
+    <value>закрепил(а) игру</value>
+  </data>
+  <data name="PINNED_GEO" xml:space="preserve">
+    <value>закрепил(а) карту</value>
+  </data>
+  <data name="PINNED_GEOLIVE" xml:space="preserve">
+    <value>закрепил(а) трансляцию геопозиции</value>
+  </data>
+  <data name="PINNED_GIF" xml:space="preserve">
+    <value>закрепил(а) GIF</value>
+  </data>
+  <data name="PINNED_INVOICE" xml:space="preserve">
+    <value>закрепил(а) счёт</value>
+  </data>
+  <data name="PINNED_NOTEXT" xml:space="preserve">
+    <value>закрепил(а) сообщение</value>
+  </data>
+  <data name="PINNED_PHOTO" xml:space="preserve">
+    <value>закрепил(а) фото</value>
+  </data>
+  <data name="PINNED_ROUND" xml:space="preserve">
+    <value>закрепил(а) видеосообщение</value>
+  </data>
+  <data name="PINNED_STICKER" xml:space="preserve">
+    <value>закрепил(а) стикер {1}</value>
+  </data>
+  <data name="PINNED_TEXT" xml:space="preserve">
+    <value>закрепил(а) "{1}"</value>
+  </data>
+  <data name="PINNED_VIDEO" xml:space="preserve">
+    <value>закрепил(а) видео</value>
+  </data>
+</root>

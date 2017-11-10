@@ -39,12 +39,17 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 using Unigram.Controls;
+using Telegram.Api;
+using Windows.Media.Core;
+using Windows.Media.Playback;
+using Unigram.Common;
 
 namespace Unigram.Views
 {
     public partial class DialogPage : Page
     {
         private ItemsStackPanel _panel;
+        private Dictionary<string, MediaPlayerItem> _old = new Dictionary<string, MediaPlayerItem>();
 
         private async void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
@@ -53,6 +58,10 @@ namespace Unigram.Views
                 if (ViewModel.IsFirstSliceLoaded)
                 {
                     ViewModel.UpdatingScrollMode = UpdatingScrollMode.KeepLastItemInView;
+                }
+                else
+                {
+                    ViewModel.UpdatingScrollMode = UpdatingScrollMode.ForceKeepItemsInView;
                 }
 
                 Arrow.Visibility = Visibility.Collapsed;
@@ -103,13 +112,17 @@ namespace Unigram.Views
                 var messageIds = new TLVector<int>();
                 var dialog = ViewModel.Dialog;
 
+                var messages = new List<TLMessage>(index1 - index0);
+                var auto = ApplicationSettings.Current.IsAutoPlayEnabled;
+                var news = new Dictionary<string, MediaPlayerItem>();
+
                 for (int i = index0; i <= index1; i++)
                 {
-                    var container = Messages.ContainerFromIndex(i);
+                    var container = Messages.ContainerFromIndex(i) as ListViewItem;
                     if (container != null)
                     {
                         var item = Messages.ItemFromContainer(container);
-                        if (item != null && item is TLMessageCommonBase commonMessage && !commonMessage.IsOut)
+                        if (item is TLMessageCommonBase commonMessage && !commonMessage.IsOut)
                         {
                             //if (commonMessage.IsUnread)
                             //{
@@ -131,8 +144,18 @@ namespace Unigram.Views
                                 messageIds.Add(commonMessage.Id);
                             }
                         }
+
+                        var message = item as TLMessage;
+                        if (message == null)
+                        {
+                            continue;
+                        }
+
+                        messages.Add(message);
                     }
                 }
+
+                Play(messages, auto);
 
                 if (messageIds.Count > 0)
                 {
@@ -145,92 +168,6 @@ namespace Unigram.Views
                         ViewModel.ProtoService.ReadMessageContentsAsync(messageIds, null);
                     }
                 }
-
-                #region OLD
-
-                //////Cache();
-                ////Cache(index0 + 1, index1);
-
-                ////var itemsPerGroup = 0;
-                ////var compositor = ElementCompositionPreview.GetElementVisual(lvDialogs);
-                ////var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(lvDialogs.ScrollingHost);
-
-                ////for (int i = index1; i >= index0; i--)
-                ////{
-                ////    var container = lvDialogs.ContainerFromIndex(i) as ListViewItem;
-                ////    if (container != null)
-                ////    {
-                ////        var item = container.Content as TLMessage;
-                ////        if (item != null && (item.IsFirst || i == index0) && (!item.IsOut || item.IsPost))
-                ////        {
-                ////            var text = "0";
-                ////            if (i == 0)
-                ////            {
-                ////                _wasFirst[i] = true;
-                ////                text = "Max(0, Reference.Y + Scrolling.Translation.Y)"; // Compression effect
-                ////                text = "0";
-                ////            }
-                ////            else if (i == index0 && itemsPerGroup > 0)
-                ////            {
-                ////                _wasFirst[i] = true;
-                ////                text = "0";
-                ////            }
-                ////            else if (i == index0)
-                ////            {
-                ////                _wasFirst[i] = true;
-                ////                text = "Min(0, Reference.Y + Scrolling.Translation.Y)";
-                ////            }
-                ////            else
-                ////            {
-                ////                text = "Reference.Y + Scrolling.Translation.Y";
-                ////            }
-
-                ////            var visual = ElementCompositionPreview.GetElementVisual(container);
-                ////            var offset = visual.Offset;
-                ////            if (offset.Y == 0)
-                ////            {
-                ////                var transform = container.TransformToVisual(lvDialogs);
-                ////                var point = transform.TransformPoint(new Point());
-                ////                offset = new Vector3(0, (float)point.Y, 0);
-                ////            }
-
-                ////            var expression = visual.Compositor.CreateExpressionAnimation(text);
-                ////            expression.SetVector3Parameter("Reference", offset); //visual.Offset);
-                ////            expression.SetReferenceParameter("Scrolling", props);
-
-                ////            if (_inUse.ContainsKey(i) && _wasFirst.ContainsKey(i) && i != index0)
-                ////            {
-                ////                _wasFirst.Remove(i);
-
-                ////                var border = _inUse[i] as Border;
-                ////                var ellipse = ElementCompositionPreview.GetElementVisual(border.Child);
-                ////                ellipse.StopAnimation("Offset.Y");
-                ////                ellipse.StartAnimation("Offset.Y", expression);
-                ////            }
-                ////            else if (!_inUse.ContainsKey(i))
-                ////            {
-                ////                var ellipse = Push(i, item.FromId ?? 0, item);
-                ////                ellipse.StopAnimation("Offset.Y");
-                ////                ellipse.StartAnimation("Offset.Y", expression);
-                ////            }
-
-                ////            itemsPerGroup = 0;
-                ////        }
-                ////        else if (item != null && item.IsOut)
-                ////        {
-
-                ////        }
-                ////        else
-                ////        {
-                ////            itemsPerGroup++;
-                ////        }
-                ////    }
-                ////}
-
-
-                #endregion
-
-                //Update();
             }
 
             if (show)
@@ -255,74 +192,289 @@ namespace Unigram.Views
             }
         }
 
-        private Color[] colors = new Color[]
+        class MediaPlayerItem
         {
-            Colors.Red,
-            Colors.Green,
-            Colors.Blue
-        };
-
-        private List<int> _items = new List<int>();
-        private Stack<UIElement> _cache = new Stack<UIElement>();
-        private Dictionary<int, bool> _wasFirst = new Dictionary<int, bool>();
-        private Dictionary<int, FrameworkElement> _inUse = new Dictionary<int, FrameworkElement>();
-
-        private void Cache(int first, int last)
-        {
-            _items.RemoveAll(x => x < first || x > last);
-
-            foreach (var item in _inUse.ToArray())
-            {
-                var message = item.Value.Tag as TLMessageBase;
-
-                if (item.Key < first || item.Key > last || !message.IsFirst)
-                {
-                    _cache.Push(item.Value);
-                    _inUse.Remove(item.Key);
-                    ////Headers.Children.Remove(item.Value);
-                }
-            }
+            public Grid Container { get; set; }
+            public MediaPlayerView Presenter { get; set; }
+            public bool Watermark { get; set; }
         }
 
-        public Visual Push(int index, int group, TLMessageBase message)
+        public void Play(TLMessage message)
         {
-            if (_cache.Count > 0)
+            var document = message.GetDocument();
+            if (document == null || !TLMessage.IsGif(document))
             {
-                var border = _cache.Pop() as Border;
-                var ellipse = border.Child as Ellipse;
-                ellipse.Fill = Convert.Bubble(group);
-                border.Tag = message;
+                return;
+            }
 
-                _inUse[index] = border;
-                ////Headers.Children.Add(border);
-
-                return ElementCompositionPreview.GetElementVisual(ellipse);
+            var fileName = FileUtils.GetTempFileUrl(document.GetFileName());
+            if (_old.ContainsKey(fileName))
+            {
+                Play(new TLMessage[0], false);
             }
             else
             {
-                var ellipse = new Ellipse();
-                ellipse.Fill = Convert.Bubble(group);
-                ellipse.Tag = group;
-
-                var border = new Border();
-                border.Width = 32;
-                border.Height = 32;
-                border.HorizontalAlignment = HorizontalAlignment.Left;
-                border.VerticalAlignment = VerticalAlignment.Top;
-                border.Margin = new Thickness(12, 18, 0, 0);
-                border.Child = ellipse;
-                border.Tag = message;
-
-                _inUse[index] = border;
-                ////Headers.Children.Add(border);
-
-                return ElementCompositionPreview.GetElementVisual(ellipse);
+                Play(new[] { message }, true);
             }
         }
 
-        //private void Headers_SizeChanged(object sender, SizeChangedEventArgs e)
-        //{
-        //    Headers.Clip.Rect = new Rect(0, 0, e.NewSize.Width, e.NewSize.Height);
-        //}
+        public void Play(IEnumerable<TLMessage> items, bool auto)
+        {
+            var news = new Dictionary<string, MediaPlayerItem>();
+
+            foreach (var message in items)
+            {
+                var container = Messages.ContainerFromItem(message) as ListViewItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
+                var document = message.GetDocument();
+                if (document == null || !TLMessage.IsGif(document))
+                {
+                    continue;
+                }
+
+                var fileName = document.GetFileName();
+                if (File.Exists(FileUtils.GetTempFileName(fileName)))
+                {
+                    var root = container.ContentTemplateRoot as FrameworkElement;
+                    if (root is Grid grid)
+                    {
+                        root = grid.FindName("Bubble") as FrameworkElement;
+                    }
+
+                    var media = root.FindName("Media") as ContentControl;
+                    var panel = media.ContentTemplateRoot as FrameworkElement;
+
+                    if (message.Media is TLMessageMediaWebPage)
+                    {
+                        media = panel.FindName("Media") as ContentControl;
+                        panel = media.ContentTemplateRoot as FrameworkElement;
+                    }
+                    else if (message.Media is TLMessageMediaGame)
+                    {
+                        panel = panel.FindName("Media") as FrameworkElement;
+                    }
+
+                    if (panel is Grid final)
+                    {
+                        news[FileUtils.GetTempFileUrl(fileName)] = new MediaPlayerItem { Container = final, Watermark = message.Media is TLMessageMediaGame };
+                    }
+                }
+            }
+
+            foreach (var item in _old.Keys.Except(news.Keys).ToList())
+            {
+                var presenter = _old[item].Presenter;
+                if (presenter != null && presenter.MediaPlayer != null)
+                {
+                    presenter.MediaPlayer.Source = null;
+                    presenter.MediaPlayer.Dispose();
+                    presenter.MediaPlayer = null;
+                }
+
+                var container = _old[item].Container;
+                if (container != null && presenter != null)
+                {
+                    container.Children.Remove(presenter);
+                }
+
+                _old.Remove(item);
+            }
+
+            if (!auto)
+            {
+                return;
+            }
+
+            foreach (var item in news.Keys.Except(_old.Keys).ToList())
+            {
+                var container = news[item].Container;
+                if (container != null && container.Children.Count < 5)
+                {
+                    var player = new MediaPlayer();
+                    player.AutoPlay = true;
+                    player.IsLoopingEnabled = true;
+                    player.Source = MediaSource.CreateFromUri(new Uri(item));
+
+                    var presenter = new MediaPlayerView();
+                    presenter.MediaPlayer = player;
+                    presenter.IsHitTestVisible = false;
+                    presenter.Constraint = container.DataContext;
+
+                    news[item].Presenter = presenter;
+                    container.Children.Insert(news[item].Watermark ? 3 : 3, presenter);
+                }
+
+                _old.Add(item, news[item]);
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        private Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
+        private Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            var typeName = SelectTemplateCore(args.Item);
+
+            Debug.Assert(_typeToItemHashSetMapping.ContainsKey(typeName), "The type of the item used with DataTemplateSelectorBehavior must have a DataTemplate mapping");
+            var relevantHashSet = _typeToItemHashSetMapping[typeName];
+
+            // args.ItemContainer is used to indicate whether the ListView is proposing an
+            // ItemContainer (ListViewItem) to use. If args.Itemcontainer != null, then there was a
+            // recycled ItemContainer available to be reused.
+            if (args.ItemContainer != null)
+            {
+                if (args.ItemContainer.Tag.Equals(typeName))
+                {
+                    // Suggestion matches what we want, so remove it from the recycle queue
+                    relevantHashSet.Remove(args.ItemContainer);
+#if ENABLE_DEBUG_SPEW
+                    Debug.WriteLine($"Removing (suggested) {args.ItemContainer.GetHashCode()} from {typeName}");
+#endif // ENABLE_DEBUG_SPEW
+                }
+                else
+                {
+                    // The ItemContainer's datatemplate does not match the needed
+                    // datatemplate.
+                    // Don't remove it from the recycle queue, since XAML will resuggest it later
+                    args.ItemContainer = null;
+                }
+            }
+
+            // If there was no suggested container or XAML's suggestion was a miss, pick one up from the recycle queue
+            // or create a new one
+            if (args.ItemContainer == null)
+            {
+                // See if we can fetch from the correct list.
+                if (relevantHashSet.Count > 0)
+                {
+                    // Unfortunately have to resort to LINQ here. There's no efficient way of getting an arbitrary
+                    // item from a hashset without knowing the item. Queue isn't usable for this scenario
+                    // because you can't remove a specific element (which is needed in the block above).
+                    args.ItemContainer = relevantHashSet.First();
+                    relevantHashSet.Remove(args.ItemContainer);
+#if ENABLE_DEBUG_SPEW
+                    Debug.WriteLine($"Removing (reused) {args.ItemContainer.GetHashCode()} from {typeName}");
+#endif // ENABLE_DEBUG_SPEW
+                }
+                else
+                {
+                    // There aren't any (recycled) ItemContainers available. So a new one
+                    // needs to be created.
+                    var item = CreateSelectorItem(typeName);
+                    item.Style = Messages.ItemContainerStyleSelector.SelectStyle(args.Item, item);
+                    args.ItemContainer = item;
+#if ENABLE_DEBUG_SPEW
+                    Debug.WriteLine($"Creating {args.ItemContainer.GetHashCode()} for {typeName}");
+#endif // ENABLE_DEBUG_SPEW
+                }
+            }
+
+            // Indicate to XAML that we picked a container for it
+            args.IsContainerPrepared = true;
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue == true)
+            {
+                // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
+                var tag = args.ItemContainer.Tag as string;
+
+#if ENABLE_DEBUG_SPEW
+                Debug.WriteLine($"Adding {args.ItemContainer.GetHashCode()} to {tag}");
+#endif // ENABLE_DEBUG_SPEW
+
+                var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
+
+#if ENABLE_DEBUG_SPEW
+                Debug.Assert(added == true, "Recycle queue should never have dupes. If so, we may be incorrectly reusing a container that is already in use!");
+#endif // ENABLE_DEBUG_SPEW
+            }
+        }
+
+        private SelectorItem CreateSelectorItem(string typeName)
+        {
+            SelectorItem item = new ListViewItem();
+            //item.ContentTemplate = _typeToTemplateMapping[typeName];
+            item.ContentTemplate = Resources[typeName] as DataTemplate;
+            item.Tag = typeName;
+            return item;
+        }
+
+        private string SelectTemplateCore(object item)
+        {
+            var messageBase = item as TLMessageBase;
+            if (messageBase == null || messageBase is TLMessageEmpty)
+            {
+                return "EmptyMessageTemplate";
+            }
+            else if (messageBase is TLMessage message)
+            {
+                if (message.Media is TLMessageMediaPhoto photoMedia && photoMedia.HasTTLSeconds && (photoMedia.Photo is TLPhotoEmpty || !photoMedia.HasPhoto))
+                {
+                    return "ServiceMessageTemplate";
+                }
+                else if (message.Media is TLMessageMediaDocument documentMedia && documentMedia.HasTTLSeconds && (documentMedia.Document is TLDocumentEmpty || !documentMedia.HasDocument))
+                {
+                    return "ServiceMessageTemplate";
+                }
+
+                if (message.IsOut && !message.IsPost)
+                {
+                    return "UserMessageTemplate";
+                }
+                else if (message.ToId is TLPeerChat || (message.ToId is TLPeerChannel && !message.IsPost))
+                {
+                    return "ChatFriendMessageTemplate";
+                }
+
+                return "FriendMessageTemplate";
+            }
+            else if (messageBase is TLMessageService serviceMessage)
+            {
+                if (serviceMessage.Action is TLMessageActionChatEditPhoto)
+                {
+                    return "ServiceMessagePhotoTemplate";
+                }
+                else if (serviceMessage.Action is TLMessageActionHistoryClear)
+                {
+                    return "EmptyMessageTemplate";
+                }
+                else if (serviceMessage.Action is TLMessageActionDate)
+                {
+                    return "ServiceMessageDateTemplate";
+                }
+                else if (serviceMessage.Action is TLMessageActionUnreadMessages)
+                {
+                    //return ServiceMessageUnreadTemplate;
+                    return "ServiceMessageLocalTemplate";
+                }
+                else if (serviceMessage.Action is TLMessageActionPhoneCall)
+                {
+                    return serviceMessage.IsOut ? "ServiceUserCallTemplate" : "ServiceFriendCallTemplate";
+                }
+
+                return "ServiceMessageTemplate";
+            }
+
+            return "EmptyMessageTemplate";
+        }
     }
 }

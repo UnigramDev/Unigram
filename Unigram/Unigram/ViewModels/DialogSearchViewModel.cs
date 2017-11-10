@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +22,11 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             _dialog = viewModel;
+
+            FilterCommand = new RelayCommand(FilterExecute);
+            NextCommand = new RelayCommand(NextExecute, NextCanExecute);
+            PreviousCommand = new RelayCommand(PreviousExecute, PreviousCanExecute);
+            SearchCommand = new RelayCommand<string>(SearchExecute);
         }
 
         public DialogViewModel Dialog
@@ -172,13 +177,13 @@ namespace Unigram.ViewModels
 
         #endregion
 
-        public RelayCommand FilterCommand => new RelayCommand(FilterExecute);
+        public RelayCommand FilterCommand { get; }
         private void FilterExecute()
         {
             IsFiltering = true;
         }
 
-        public RelayCommand<string> SearchCommand => new RelayCommand<string>(SearchExecute);
+        public RelayCommand<string> SearchCommand { get; }
         private async void SearchExecute(string query)
         {
             Query = query;
@@ -213,8 +218,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        private RelayCommand _nextCommand;
-        public RelayCommand NextCommand => _nextCommand = _nextCommand ?? new RelayCommand(NextExecute, NextCanExecute);
+        public RelayCommand NextCommand { get; }
         private async void NextExecute()
         {
             if (Items == null || SelectedIndex <= 1)
@@ -240,8 +244,7 @@ namespace Unigram.ViewModels
             return SelectedIndex > 1;
         }
 
-        private RelayCommand _previousCommand;
-        public RelayCommand PreviousCommand => _previousCommand = _previousCommand ?? new RelayCommand(PreviousExecute, PreviousCanExecute);
+        public RelayCommand PreviousCommand { get; }
         private async void PreviousExecute()
         {
             if (Items == null || SelectedIndex >= TotalItems)

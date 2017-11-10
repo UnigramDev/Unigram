@@ -19,7 +19,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader x:Uid="SettingsNotificationsPage_PageHeader" Text="Notifications and Sounds"/>
+        <controls:PageHeader x:Uid="SettingsNotificationsPage_Header" Text="Notifications and Sounds"/>
         
         <ScrollViewer x:Name="ScrollingHost"
                       Background="{ThemeResource TelegramBackgroundSubtitleBarBrush}"

@@ -75,33 +75,33 @@ namespace Unigram.Controls
                     return;
                 }
 
-                //// If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
-                //if (ApplicationSettings.Current.IsSendByEnterEnabled)
-                //{
-                //    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                //    if (send)
-                //    {
-                //        AcceptsReturn = false;
-                //        await SendAsync();
-                //    }
-                //    else
-                //    {
-                //        AcceptsReturn = true;
-                //    }
-                //}
-                //else
-                //{
-                //    var send = key.HasFlag(CoreVirtualKeyStates.Down) && ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
-                //    if (send)
-                //    {
-                //        AcceptsReturn = false;
-                //        await SendAsync();
-                //    }
-                //    else
-                //    {
-                //        AcceptsReturn = true;
-                //    }
-                //}
+                // If there is text and CTRL/Shift is not pressed, send message. Else allow new row.
+                if (ApplicationSettings.Current.IsSendByEnterEnabled)
+                {
+                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && !ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    if (send)
+                    {
+                        AcceptsReturn = false;
+                        View?.Accept();
+                    }
+                    else
+                    {
+                        AcceptsReturn = true;
+                    }
+                }
+                else
+                {
+                    var send = key.HasFlag(CoreVirtualKeyStates.Down) && ctrl.HasFlag(CoreVirtualKeyStates.Down) && !shift.HasFlag(CoreVirtualKeyStates.Down);
+                    if (send)
+                    {
+                        AcceptsReturn = false;
+                        View?.Accept();
+                    }
+                    else
+                    {
+                        AcceptsReturn = true;
+                    }
+                }
             }
         }
 
@@ -135,7 +135,10 @@ namespace Unigram.Controls
 
         private void OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            View.SelectedItem.Caption = Text.ToString();
+            if (View?.SelectedItem != null)
+            {
+                View.SelectedItem.Caption = Text.ToString();
+            }
         }
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)
@@ -146,7 +149,7 @@ namespace Unigram.Controls
             {
                 View.Autocomplete = GetUsernames(username);
             }
-            else if (BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(SelectionStart, text.Length)), out string replacement) && replacement.Length > 0 && ApplicationSettings.Current.IsReplaceEmojiEnabled)
+            else if (BubbleTextBox.SearchByEmoji(text.Substring(0, Math.Min(SelectionStart, text.Length)), out string replacement) && replacement.Length > 0)
             {
                 View.Autocomplete = EmojiSuggestion.GetSuggestions(replacement);
             }

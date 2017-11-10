@@ -762,40 +762,46 @@ Duration: {1}</value>
   <data name="AppDisplayName" xml:space="preserve">
     <value>Unigram (Alpha)</value>
   </data>
-  <data name="IntroWizardPage1_Text" xml:space="preserve">
-    <value>**Unigram** is a Telegram Universal app built by the Windows Community, for the Windows Community</value>
+  <data name="IntroPage_Wizard1_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
+    <value>The world's **fastest** messaging app.
+It is **free** and **secure**.</value>
   </data>
-  <data name="IntroWizardPage1_Title" xml:space="preserve">
-    <value>Unigram</value>
+  <data name="IntroPage_Wizard1_Title.Text" xml:space="preserve">
+    <value>Telegram</value>
   </data>
-  <data name="IntroWizardPage2_Text" xml:space="preserve">
-    <value>**Telegram** delivers messages faster\nthan any other application.</value>
+  <data name="IntroPage_Wizard2_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
+    <value>**Telegram** delivers messages faster
+than any other application.</value>
   </data>
-  <data name="IntroWizardPage2_Title" xml:space="preserve">
+  <data name="IntroPage_Wizard2_Title.Text" xml:space="preserve">
     <value>Fast</value>
   </data>
-  <data name="IntroWizardPage3_Text" xml:space="preserve">
-    <value>**Telegram** is free forever. No ads.\nNo subscription fees.</value>
+  <data name="IntroPage_Wizard3_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
+    <value>**Telegram** is free forever. No ads.
+No subscription fees.</value>
   </data>
-  <data name="IntroWizardPage3_Title" xml:space="preserve">
+  <data name="IntroPage_Wizard3_Title.Text" xml:space="preserve">
     <value>Free</value>
   </data>
-  <data name="IntroWizardPage4_Text" xml:space="preserve">
-    <value>**Telegram** has no limits on\nthe size of your media and chats.</value>
+  <data name="IntroPage_Wizard4_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
+    <value>**Telegram** has no limits on
+the size of your media and chats.</value>
   </data>
-  <data name="IntroWizardPage4_Title" xml:space="preserve">
+  <data name="IntroPage_Wizard4_Title.Text" xml:space="preserve">
     <value>Powerful</value>
   </data>
-  <data name="IntroWizardPage5_Text" xml:space="preserve">
-    <value>**Telegram** keeps your messages\nsafe from hacker attacks.</value>
+  <data name="IntroPage_Wizard5_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
+    <value>**Telegram** keeps your messages
+safe from hacker attacks.</value>
   </data>
-  <data name="IntroWizardPage5_Title" xml:space="preserve">
+  <data name="IntroPage_Wizard5_Title.Text" xml:space="preserve">
     <value>Secure</value>
   </data>
-  <data name="IntroWizardPage6_Text" xml:space="preserve">
-    <value>**Telegram** lets you access your\nmessages from multiple devices.</value>
+  <data name="IntroPage_Wizard6_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
+    <value>**Telegram** lets you access your
+messages from multiple devices.</value>
   </data>
-  <data name="IntroWizardPage6_Title" xml:space="preserve">
+  <data name="IntroPage_Wizard6_Title.Text" xml:space="preserve">
     <value>Cloud-Based</value>
   </data>
   <data name="IntroWizard_ContinueButton.Content" xml:space="preserve">
@@ -1254,5 +1260,172 @@ Duration: {1}</value>
   </data>
   <data name="ResetNotificationsDialogTitle" xml:space="preserve">
     <value>Confirm</value>
+  </data>
+  <data name="FloodWaitTime" xml:space="preserve">
+    <value>Too many attempts, please try again in {0}</value>
+  </data>
+  <data name="NobodyLikesSpam1" xml:space="preserve">
+    <value>Sorry, you can only send messages to mutual contacts at the moment.</value>
+    <comment>android</comment>
+  </data>
+  <data name="NobodyLikesSpam2" xml:space="preserve">
+    <value>Sorry, you can only add mutual contacts to groups at the moment.</value>
+    <comment>android</comment>
+  </data>
+  <data name="MessageAddSticker" xml:space="preserve">
+    <value>Add to Stickers</value>
+  </data>
+  <data name="MessageCopy" xml:space="preserve">
+    <value>Copy text</value>
+  </data>
+  <data name="MessageCopyLinkBroadcast" xml:space="preserve">
+    <value>Copy post link</value>
+  </data>
+  <data name="MessageCopyLinkMegaGroup" xml:space="preserve">
+    <value>Copy message link</value>
+  </data>
+  <data name="MessageDelete" xml:space="preserve">
+    <value>Delete message</value>
+  </data>
+  <data name="MessageEdit" xml:space="preserve">
+    <value>Edit message</value>
+  </data>
+  <data name="MessageFaveSticker" xml:space="preserve">
+    <value>Add to Favorites</value>
+  </data>
+  <data name="MessageForward" xml:space="preserve">
+    <value>Forward message</value>
+  </data>
+  <data name="MessagePin" xml:space="preserve">
+    <value>Pin message</value>
+  </data>
+  <data name="MessageReply" xml:space="preserve">
+    <value>Reply</value>
+  </data>
+  <data name="MessageSaveGIF" xml:space="preserve">
+    <value>Save to GIFs</value>
+  </data>
+  <data name="MessageSaveMedia" xml:space="preserve">
+    <value>Save file as...</value>
+  </data>
+  <data name="MessageSelect" xml:space="preserve">
+    <value>Select message</value>
+  </data>
+  <data name="MessageUnfaveSticker" xml:space="preserve">
+    <value>Remove from Favorites</value>
+  </data>
+  <data name="MessageUnpin" xml:space="preserve">
+    <value>Unpin message</value>
+  </data>
+  <data name="SettingsMasksArchivedPage_Footer.Text" xml:space="preserve">
+    <value>You can have up to 200 sets of masks.
+Unused sets are archived when you add more.</value>
+    <comment>ios</comment>
+  </data>
+  <data name="SettingsMasksArchivedPage_Header.Text" xml:space="preserve">
+    <value>Archived Masks</value>
+    <comment>StickerPacksSettings.ArchivedMasks</comment>
+  </data>
+  <data name="SettingsMasksPage_ArchivedStickers.Content" xml:space="preserve">
+    <value>Archived Masks</value>
+    <comment>StickerPacksSettings.ArchivedMasks</comment>
+  </data>
+  <data name="SettingsMasksPage_Footer.Text" xml:space="preserve">
+    <value>You can add masks to photos and videos you send. To do this, open the photo editor before sending a photo or video.</value>
+    <comment>MaskStickerSettings.Info</comment>
+  </data>
+  <data name="SettingsMasksPage_Header.Text" xml:space="preserve">
+    <value>Masks</value>
+    <comment>MaskStickerSettings.Title</comment>
+  </data>
+  <data name="SettingsStickersArchivedPage_Footer.Text" xml:space="preserve">
+    <value>You can have up to 200 sticker sets installed.
+Unused stickers are archived when you add more.</value>
+    <comment>StickerPacksSettings.ArchivedPacks.Info</comment>
+  </data>
+  <data name="SettingsStickersArchivedPage_Header.Text" xml:space="preserve">
+    <value>Archived Stickers</value>
+    <comment>StickerPacksSettings.ArchivedPacks</comment>
+  </data>
+  <data name="SettingsStickersFeaturedPage_Header.Text" xml:space="preserve">
+    <value>Trending Stickers</value>
+    <comment>StickerPacksSettings.FeaturedPacks</comment>
+  </data>
+  <data name="SettingsStickersPage_ArchivedStickers.Content" xml:space="preserve">
+    <value>Archived Stickers</value>
+    <comment>StickerPacksSettings.ArchivedPacks</comment>
+  </data>
+  <data name="SettingsStickersPage_FeaturedStickers.Content" xml:space="preserve">
+    <value>Trending Stickers</value>
+    <comment>StickerPacksSettings.FeaturedPacks</comment>
+  </data>
+  <data name="SettingsStickersPage_Footer.[using:Unigram.Common]MessageHelper.Text" xml:space="preserve">
+    <value>Artists are welcome to add their own sticker sets using our @stickers bot.
+
+Tap on a sticker to view and add the whole set.</value>
+    <comment>StickerPacksSettings.ManagingHelp</comment>
+  </data>
+  <data name="SettingsStickersPage_Header.Text" xml:space="preserve">
+    <value>Stickers</value>
+    <comment>ChatSettings.Stickers</comment>
+  </data>
+  <data name="SettingsStickersPage_Masks.Content" xml:space="preserve">
+    <value>Masks</value>
+    <comment>MaskStickerSettings.Title</comment>
+  </data>
+  <data name="MessageCopyMedia" xml:space="preserve">
+    <value>Copy image</value>
+  </data>
+  <data name="ParticipantEdit" xml:space="preserve">
+    <value>Edit permissions</value>
+  </data>
+  <data name="ParticipantPromote" xml:space="preserve">
+    <value>Promote</value>
+  </data>
+  <data name="ParticipantRestrict" xml:space="preserve">
+    <value>Restrict</value>
+  </data>
+  <data name="DialogClearHistory" xml:space="preserve">
+    <value>Clear history</value>
+  </data>
+  <data name="DialogDelete" xml:space="preserve">
+    <value>Delete conversation</value>
+  </data>
+  <data name="DialogDeleteAndExit" xml:space="preserve">
+    <value>Delete and exit</value>
+  </data>
+  <data name="DialogDeleteAndStop" xml:space="preserve">
+    <value>Delete and stop</value>
+  </data>
+  <data name="DialogDeleteChannel" xml:space="preserve">
+    <value>Delete channel</value>
+  </data>
+  <data name="DialogDeleteGroup" xml:space="preserve">
+    <value>Delete group</value>
+  </data>
+  <data name="DialogLeaveChannel" xml:space="preserve">
+    <value>Leave channel</value>
+  </data>
+  <data name="DialogLeaveGroup" xml:space="preserve">
+    <value>Leave group</value>
+  </data>
+  <data name="DialogNotificationsDisable" xml:space="preserve">
+    <value>Disable notifications</value>
+  </data>
+  <data name="DialogNotificationsEnable" xml:space="preserve">
+    <value>Enable notifications</value>
+  </data>
+  <data name="DialogPin" xml:space="preserve">
+    <value>Pin to top</value>
+  </data>
+  <data name="DialogUnpin" xml:space="preserve">
+    <value>Unpin from top</value>
+  </data>
+  <data name="SettingsGeneralPage_AutoPlayToggle.Header" xml:space="preserve">
+    <value>Autoplay GIFs</value>
+    <comment>ChatSettings.AutoPlayAnimations</comment>
+  </data>
+  <data name="MessageView" xml:space="preserve">
+    <value>View in chat</value>
   </data>
 </root>

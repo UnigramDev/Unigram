@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AUTH_REGION" xml:space="preserve">
+    <value>Logou de um novo dispositivo {0}, local: {1}</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_AUDIO" xml:space="preserve">
+    <value>postou uma mensagem de voz</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_CONTACT" xml:space="preserve">
+    <value>postou um contato</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_DOC" xml:space="preserve">
+    <value>postou um documento</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GAME" xml:space="preserve">
+    <value>te convidou para jogar {1}</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GEO" xml:space="preserve">
+    <value>postou um mapa</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>postou uma localização em tempo real</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_GIF" xml:space="preserve">
+    <value>postou um GIF</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_NOTEXT" xml:space="preserve">
+    <value>postou uma mensagem</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_PHOTO" xml:space="preserve">
+    <value>postou uma foto</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_ROUND" xml:space="preserve">
+    <value>postou uma mensagem de vídeo</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_STICKER" xml:space="preserve">
+    <value>postou um {1}sticker</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_TEXT" xml:space="preserve">
+    <value>{1}</value>
+  </data>
+  <data name="CHANNEL_MESSAGE_VIDEO" xml:space="preserve">
+    <value>postou um vídeo</value>
+  </data>
+  <data name="CHAT_ADD_MEMBER" xml:space="preserve">
+    <value>{0} convidou {2} para o grupo</value>
+  </data>
+  <data name="CHAT_ADD_YOU" xml:space="preserve">
+    <value>{0} convidou você para o grupo</value>
+  </data>
+  <data name="CHAT_CREATED" xml:space="preserve">
+    <value>{0} convidou você para o grupo</value>
+  </data>
+  <data name="CHAT_DELETE_MEMBER" xml:space="preserve">
+    <value>{0} removeu {2} do grupo</value>
+  </data>
+  <data name="CHAT_DELETE_YOU" xml:space="preserve">
+    <value>{0} removeu você do grupo</value>
+  </data>
+  <data name="CHAT_LEFT" xml:space="preserve">
+    <value>{0} saiu do grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_AUDIO" xml:space="preserve">
+    <value>{0} enviou uma mensagem de voz para o grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_CONTACT" xml:space="preserve">
+    <value>{0} compartilhou um contato no grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_DOC" xml:space="preserve">
+    <value>{0} enviou um arquivo para o grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_FWDS" xml:space="preserve">
+    <value>{0} encaminhou {2} mensagens para o grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_GAME" xml:space="preserve">
+    <value>{0} convidou o grupo para jogar {2}</value>
+  </data>
+  <data name="CHAT_MESSAGE_GEO" xml:space="preserve">
+    <value>{0} enviou uma localização para o grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>{0} começou a compartilhar a localização em tempo real</value>
+  </data>
+  <data name="CHAT_MESSAGE_GIF" xml:space="preserve">
+    <value>{0} enviou um GIF para o grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_INVOICE" xml:space="preserve">
+    <value>{0} enviou uma fatura para {2} ao grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_NOTEXT" xml:space="preserve">
+    <value>{0} enviou uma mensagem para o grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_PHOTO" xml:space="preserve">
+    <value>{0} enviou uma foto para o grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_ROUND" xml:space="preserve">
+    <value>{0} enviou uma mensagem de vídeo para o grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_STICKER" xml:space="preserve">
+    <value>{0} enviou um {2}sticker ao grupo</value>
+  </data>
+  <data name="CHAT_MESSAGE_TEXT" xml:space="preserve">
+    <value>{0}: {2}</value>
+  </data>
+  <data name="CHAT_MESSAGE_VIDEO" xml:space="preserve">
+    <value>{0} enviou um vídeo para o grupo</value>
+  </data>
+  <data name="CHAT_PHOTO_EDITED" xml:space="preserve">
+    <value>{0} alterou a foto do grupo</value>
+  </data>
+  <data name="CHAT_RETURNED" xml:space="preserve">
+    <value>{0} voltou para o grupo</value>
+  </data>
+  <data name="CHAT_TITLE_EDITED" xml:space="preserve">
+    <value>{0} alterou o nome do grupo</value>
+  </data>
+  <data name="CONTACT_JOINED" xml:space="preserve">
+    <value>{0} entrou para o Telegram!</value>
+  </data>
+  <data name="ENCRYPTED_MESSAGE" xml:space="preserve">
+    <value>Você tem uma nova mensagem{0}</value>
+  </data>
+  <data name="ENCRYPTION_ACCEPT" xml:space="preserve">
+    <value>Pedido de criptografia aceito{0}</value>
+  </data>
+  <data name="ENCRYPTION_REQUEST" xml:space="preserve">
+    <value>Nova criptografia solicitada{0}</value>
+  </data>
+  <data name="LOCKED_MESSAGE" xml:space="preserve">
+    <value>Você tem uma nova mensagem{0}</value>
+  </data>
+  <data name="MESSAGE_AUDIO" xml:space="preserve">
+    <value>enviou uma mensagem de voz</value>
+  </data>
+  <data name="MESSAGE_CONTACT" xml:space="preserve">
+    <value>compartilhou um contato</value>
+  </data>
+  <data name="MESSAGE_DOC" xml:space="preserve">
+    <value>enviou um arquivo</value>
+  </data>
+  <data name="MESSAGE_FWDS" xml:space="preserve">
+    <value>encaminhou para você {1} mensagens</value>
+  </data>
+  <data name="MESSAGE_GAME" xml:space="preserve">
+    <value>te convidou para jogar {1}</value>
+  </data>
+  <data name="MESSAGE_GEO" xml:space="preserve">
+    <value>enviou uma localização</value>
+  </data>
+  <data name="MESSAGE_GEOLIVE" xml:space="preserve">
+    <value>começou a compartilhar a localização em tempo real</value>
+  </data>
+  <data name="MESSAGE_GIF" xml:space="preserve">
+    <value>enviou um GIF</value>
+  </data>
+  <data name="MESSAGE_INVOICE" xml:space="preserve">
+    <value>te enviou uma fatura paga {1}</value>
+  </data>
+  <data name="MESSAGE_NOTEXT" xml:space="preserve">
+    <value>enviou uma mensagem</value>
+  </data>
+  <data name="MESSAGE_PHOTO" xml:space="preserve">
+    <value>enviou uma foto</value>
+  </data>
+  <data name="MESSAGE_PHOTO_SECRET" xml:space="preserve">
+    <value>enviou uma foto auto-destrutiva</value>
+  </data>
+  <data name="MESSAGE_ROUND" xml:space="preserve">
+    <value>enviou uma mensagem de vídeo</value>
+  </data>
+  <data name="MESSAGE_SCREENSHOT" xml:space="preserve">
+    <value>realizou uma captura de tela!</value>
+  </data>
+  <data name="MESSAGE_STICKER" xml:space="preserve">
+    <value>enviou {1}sticker</value>
+  </data>
+  <data name="MESSAGE_TEXT" xml:space="preserve">
+    <value>{1}</value>
+  </data>
+  <data name="MESSAGE_VIDEO" xml:space="preserve">
+    <value>enviou um vídeo</value>
+  </data>
+  <data name="MESSAGE_VIDEO_SECRET" xml:space="preserve">
+    <value>te enviou um vídeo auto-destrutivo</value>
+  </data>
+  <data name="PHONE_CALL_MISSED" xml:space="preserve">
+    <value>Você perdeu uma chamada de {0}</value>
+  </data>
+  <data name="PHONE_CALL_REQUEST" xml:space="preserve">
+    <value>{0} está te ligando</value>
+  </data>
+  <data name="PINNED_AUDIO" xml:space="preserve">
+    <value>fixou uma mensagem de voz</value>
+  </data>
+  <data name="PINNED_CONTACT" xml:space="preserve">
+    <value>fixou um contato</value>
+  </data>
+  <data name="PINNED_DOC" xml:space="preserve">
+    <value>fixou um arquivo</value>
+  </data>
+  <data name="PINNED_GAME" xml:space="preserve">
+    <value>fixou um jogo</value>
+  </data>
+  <data name="PINNED_GEO" xml:space="preserve">
+    <value>fixou um mapa</value>
+  </data>
+  <data name="PINNED_GEOLIVE" xml:space="preserve">
+    <value>fixou uma localização em tempo real</value>
+  </data>
+  <data name="PINNED_GIF" xml:space="preserve">
+    <value>fixou um GIF</value>
+  </data>
+  <data name="PINNED_INVOICE" xml:space="preserve">
+    <value>fixou uma fatura</value>
+  </data>
+  <data name="PINNED_NOTEXT" xml:space="preserve">
+    <value>fixou uma mensagem</value>
+  </data>
+  <data name="PINNED_PHOTO" xml:space="preserve">
+    <value>fixou uma foto</value>
+  </data>
+  <data name="PINNED_ROUND" xml:space="preserve">
+    <value>fixou uma mensagem de vídeo</value>
+  </data>
+  <data name="PINNED_STICKER" xml:space="preserve">
+    <value>fixou um {1}sticker</value>
+  </data>
+  <data name="PINNED_TEXT" xml:space="preserve">
+    <value>fixou "{1}"</value>
+  </data>
+  <data name="PINNED_VIDEO" xml:space="preserve">
+    <value>fixou um vídeo</value>
+  </data>
+</root>
