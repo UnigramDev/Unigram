@@ -10,6 +10,7 @@ using Telegram.Api.Helpers;
 using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.TL;
+using Template10.Common;
 using Unigram.Common;
 using Unigram.Converters;
 using Windows.ApplicationModel.Core;
@@ -456,7 +457,7 @@ namespace Unigram.Views
             {
                 var text = new TextBlock();
                 text.Text = result.Item1;
-                text.Margin = new Thickness(0, 16, 0, 0);
+                text.Margin = new Thickness(12, 16, 12, 0);
                 text.Style = Application.Current.Resources["BodyTextBlockStyle"] as Style;
 
                 var scroll = new ScrollViewer();
@@ -464,7 +465,7 @@ namespace Unigram.Views
                 scroll.VerticalScrollMode = ScrollMode.Auto;
                 scroll.Content = text;
 
-                var dialog = new ContentDialog();
+                var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
                 dialog.Title = $"libtgvoip v{result.Item2}";
                 dialog.Content = scroll;
                 dialog.PrimaryButtonText = "OK";

@@ -294,8 +294,9 @@ namespace Unigram.ViewModels.Users
                 stack.Children.Add(opt2);
                 stack.Children.Add(opt3);
                 stack.Children.Add(opt4);
-                stack.Margin = new Thickness(0, 16, 0, 0);
-                var dialog = new ContentDialog();
+                stack.Margin = new Thickness(12, 16, 12, 0);
+
+                var dialog = new ContentDialog { Style = BootStrapper.Current.Resources["ModernContentDialogStyle"] as Style };
                 dialog.Content = stack;
                 dialog.Title = "Resources.Report";
                 dialog.IsPrimaryButtonEnabled = true;
