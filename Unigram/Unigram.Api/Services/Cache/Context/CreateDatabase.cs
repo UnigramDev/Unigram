@@ -86,7 +86,7 @@ namespace Telegram.Api.Services.Cache.Context
 	`migrated_to_id`	INTEGER,
 	`migrated_to_access_hash`	INTEGER,
     `admin_rights` INTEGER,
-    `banned_rights` INTEGER
+    `banned_rights` INTEGER,
     PRIMARY KEY(`id`)
 );");
             Execute(database, "CREATE INDEX IF NOT EXISTS `Chats.title_index` ON `Chats` (`title`);");
