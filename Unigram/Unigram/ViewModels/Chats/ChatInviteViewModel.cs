@@ -133,7 +133,7 @@ namespace Unigram.ViewModels.Chats
                 {
                     var dialog = new TLMessageDialog();
                     dialog.Title = "Telegram";
-                    dialog.Message = AppResources.PeerFloodAddContact;
+                    dialog.Message = Strings.Resources.PeerFloodAddContact;
                     dialog.PrimaryButtonText = "More info";
                     dialog.SecondaryButtonText = "OK";
 
@@ -145,15 +145,15 @@ namespace Unigram.ViewModels.Chats
                 }
                 else if (response.Error.TypeEquals(TLErrorType.USERS_TOO_MUCH))
                 {
-                    await TLMessageDialog.ShowAsync(AppResources.UsersTooMuch, "Telegram", "OK");
+                    await TLMessageDialog.ShowAsync(Strings.Resources.UsersTooMuch, "Telegram", "OK");
                 }
                 else if (response.Error.TypeEquals(TLErrorType.BOTS_TOO_MUCH))
                 {
-                    await TLMessageDialog.ShowAsync(AppResources.BotsTooMuch, "Telegram", "OK");
+                    await TLMessageDialog.ShowAsync(Strings.Resources.BotsTooMuch, "Telegram", "OK");
                 }
                 else if (response.Error.TypeEquals(TLErrorType.USER_NOT_MUTUAL_CONTACT))
                 {
-                    await TLMessageDialog.ShowAsync(AppResources.UserNotMutualContact, "Telegram", "OK");
+                    await TLMessageDialog.ShowAsync(Strings.Resources.UserNotMutualContact, "Telegram", "OK");
                 }
 
                 Execute.ShowDebugMessage("channels.inviteToChannel error " + response.Error);

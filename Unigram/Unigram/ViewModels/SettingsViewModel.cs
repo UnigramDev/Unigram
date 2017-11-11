@@ -150,7 +150,7 @@ namespace Unigram.ViewModels
         public RelayCommand AskCommand { get; }
         private async void AskExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(AppResources.TGSupportDisclaimerDetails, AppResources.Telegram, AppResources.TGSupportDisclaimerPrimaryText, AppResources.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.TGSupportDisclaimerDetails, Strings.Resources.Telegram, Strings.Resources.TGSupportDisclaimerPrimaryText, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
@@ -168,7 +168,7 @@ namespace Unigram.ViewModels
         public RelayCommand LogoutCommand { get; }
         private async void LogoutExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(AppResources.TGLogoutText, AppResources.AppDisplayName, AppResources.OK, AppResources.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.TGLogoutText, Strings.Resources.AppDisplayName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -189,7 +189,7 @@ namespace Unigram.ViewModels
                 CacheService.ClearAsync();
                 CacheService.ClearConfigImportAsync();
 
-                await TLMessageDialog.ShowAsync(AppResources.TGLogoutSucceededDialogText, AppResources.AppDisplayName, AppResources.OK);
+                await TLMessageDialog.ShowAsync(Strings.Resources.TGLogoutSucceededDialogText, Strings.Resources.AppDisplayName, Strings.Resources.OK);
                 App.Current.Exit();
             }
             else

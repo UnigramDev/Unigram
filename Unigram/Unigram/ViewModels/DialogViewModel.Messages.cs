@@ -637,7 +637,7 @@ namespace Unigram.ViewModels
                     //this.IsWorking = false;
                     //if (error.CodeEquals(ErrorCode.BAD_REQUEST) && error.TypeEquals(ErrorType.MESSAGE_ID_INVALID))
                     //{
-                    //    MessageBox.Show(AppResources.EditMessageError, AppResources.Error, 0);
+                    //    MessageBox.Show(Strings.Resources.EditMessageError, Strings.Resources.Error, 0);
                     //    return;
                     //}
                     Execute.ShowDebugMessage("messages.getMessageEditData error " + response.Error);

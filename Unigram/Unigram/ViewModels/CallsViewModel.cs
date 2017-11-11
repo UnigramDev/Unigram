@@ -165,7 +165,7 @@ namespace Unigram.ViewModels
         {
             if (Failed)
             {
-                return AppResources.CallMissedShort;
+                return Strings.Resources.CallMissedShort;
             }
 
             var finalType = string.Empty;
@@ -217,7 +217,7 @@ namespace Unigram.ViewModels
 
                 var callDuration = action.Duration ?? 0;
                 var duration = missed || callDuration < 1 ? null : BindConvert.Current.CallShortDuration(callDuration);
-                finalType = duration != null ? string.Format(AppResources.CallTimeFormat, finalType, duration) : finalType;
+                finalType = duration != null ? string.Format(Strings.Resources.CallTimeFormat, finalType, duration) : finalType;
             }
 
             return finalType;
@@ -228,13 +228,13 @@ namespace Unigram.ViewModels
             switch (type)
             {
                 case TLCallDisplayType.Outgoing:
-                    return AppResources.CallOutgoingShort;
+                    return Strings.Resources.CallOutgoingShort;
                 case TLCallDisplayType.Incoming:
-                    return AppResources.CallIncomingShort;
+                    return Strings.Resources.CallIncomingShort;
                 case TLCallDisplayType.Cancelled:
-                    return AppResources.CallCanceledShort;
+                    return Strings.Resources.CallCanceledShort;
                 case TLCallDisplayType.Missed:
-                    return AppResources.CallMissedShort;
+                    return Strings.Resources.CallMissedShort;
                 default:
                     return null;
             }

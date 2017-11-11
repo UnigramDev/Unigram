@@ -151,7 +151,7 @@ namespace Unigram.ViewModels.Channels
                                 {
                                     WebPage = new TLWebPage
                                     {
-                                        SiteName = AppResources.EventLogPreviousGroupDescription,
+                                        SiteName = Strings.Resources.EventLogPreviousGroupDescription,
                                         Description = changeAbout.PrevValue,
                                         HasSiteName = true,
                                         HasDescription = true
@@ -186,7 +186,7 @@ namespace Unigram.ViewModels.Channels
                                 {
                                     WebPage = new TLWebPage
                                     {
-                                        SiteName = AppResources.EventLogPreviousLink,
+                                        SiteName = Strings.Resources.EventLogPreviousLink,
                                         Description = UsernameToLinkConverter.Convert(changeUsername.PrevValue),
                                         HasSiteName = true,
                                         HasDescription = true
@@ -284,7 +284,7 @@ namespace Unigram.ViewModels.Channels
                             message.HasEntities = true;
 
                             var whoUser = participantInvite.Participant.User;
-                            var str = AppResources.EventLogInvited;
+                            var str = Strings.Resources.EventLogInvited;
                             var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
                             var builder = new StringBuilder(string.Format(str, userName));
 
@@ -323,11 +323,11 @@ namespace Unigram.ViewModels.Channels
                                 string str;
                                 if (n == null || !(o == null || n.IsViewMessages))
                                 {
-                                    str = AppResources.EventLogChannelUnrestricted;
+                                    str = Strings.Resources.EventLogChannelUnrestricted;
                                 }
                                 else
                                 {
-                                    str = AppResources.EventLogChannelRestricted;
+                                    str = Strings.Resources.EventLogChannelRestricted;
                                 }
 
                                 var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
@@ -338,7 +338,7 @@ namespace Unigram.ViewModels.Channels
                                 StringBuilder builder;
                                 if (n == null || AdminLogHelper.IsBannedForever(n.UntilDate))
                                 {
-                                    var str = AppResources.EventLogRestricted;
+                                    var str = Strings.Resources.EventLogRestricted;
                                     var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
                                     builder = new StringBuilder(String.Format(str, userName));
                                 }
@@ -392,7 +392,7 @@ namespace Unigram.ViewModels.Channels
                                         }
                                     }
 
-                                    var str = AppResources.EventLogRestrictedUntil;
+                                    var str = Strings.Resources.EventLogRestrictedUntil;
                                     var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
                                     builder = new StringBuilder(String.Format(str, userName, bannedDuration));
                                 }
@@ -421,23 +421,23 @@ namespace Unigram.ViewModels.Channels
 
                                 if (o.IsViewMessages != n.IsViewMessages)
                                 {
-                                    AppendChange(n.IsViewMessages, AppResources.EventLogRestrictedReadMessages);
+                                    AppendChange(n.IsViewMessages, Strings.Resources.EventLogRestrictedReadMessages);
                                 }
                                 if (o.IsSendMessages != n.IsSendMessages)
                                 {
-                                    AppendChange(n.IsSendMessages, AppResources.EventLogRestrictedSendMessages);
+                                    AppendChange(n.IsSendMessages, Strings.Resources.EventLogRestrictedSendMessages);
                                 }
                                 if (!(o.IsSendStickers == n.IsSendStickers && o.IsSendInline == n.IsSendInline && o.IsSendGifs == n.IsSendGifs && o.IsSendGames == n.IsSendGames))
                                 {
-                                    AppendChange(n.IsSendStickers, AppResources.EventLogRestrictedSendStickers);
+                                    AppendChange(n.IsSendStickers, Strings.Resources.EventLogRestrictedSendStickers);
                                 }
                                 if (o.IsSendMedia != n.IsSendMedia)
                                 {
-                                    AppendChange(n.IsSendMedia, AppResources.EventLogRestrictedSendMedia);
+                                    AppendChange(n.IsSendMedia, Strings.Resources.EventLogRestrictedSendMedia);
                                 }
                                 if (o.IsEmbedLinks != n.IsEmbedLinks)
                                 {
-                                    AppendChange(n.IsEmbedLinks, AppResources.EventLogRestrictedSendEmbed);
+                                    AppendChange(n.IsEmbedLinks, Strings.Resources.EventLogRestrictedSendEmbed);
                                 }
 
                                 message.Message = builder.ToString();
@@ -459,7 +459,7 @@ namespace Unigram.ViewModels.Channels
                             message.HasEntities = true;
 
                             var whoUser = participantToggleAdmin.PrevParticipant.User;
-                            var str = AppResources.EventLogPromoted;
+                            var str = Strings.Resources.EventLogPromoted;
                             var userName = GetUserName(whoUser, message.Entities, str.IndexOf("{0}"));
                             var builder = new StringBuilder(string.Format(str, userName));
                             var added = false;
@@ -499,44 +499,44 @@ namespace Unigram.ViewModels.Channels
 
                             if (o.IsChangeInfo != n.IsChangeInfo)
                             {
-                                AppendChange(n.IsChangeInfo, _channel.IsMegaGroup ? AppResources.EventLogPromotedChangeGroupInfo : AppResources.EventLogPromotedChangeChannelInfo);
+                                AppendChange(n.IsChangeInfo, _channel.IsMegaGroup ? Strings.Resources.EventLogPromotedChangeGroupInfo : Strings.Resources.EventLogPromotedChangeChannelInfo);
                             }
 
                             if (!_channel.IsMegaGroup)
                             {
                                 if (o.IsPostMessages != n.IsPostMessages)
                                 {
-                                    AppendChange(n.IsPostMessages, AppResources.EventLogPromotedPostMessages);
+                                    AppendChange(n.IsPostMessages, Strings.Resources.EventLogPromotedPostMessages);
                                 }
                                 if (o.IsEditMessages != n.IsEditMessages)
                                 {
-                                    AppendChange(n.IsEditMessages, AppResources.EventLogPromotedEditMessages);
+                                    AppendChange(n.IsEditMessages, Strings.Resources.EventLogPromotedEditMessages);
                                 }
                             }
                             if (o.IsDeleteMessages != n.IsDeleteMessages)
                             {
-                                AppendChange(n.IsDeleteMessages, AppResources.EventLogPromotedDeleteMessages);
+                                AppendChange(n.IsDeleteMessages, Strings.Resources.EventLogPromotedDeleteMessages);
                             }
                             if (o.IsAddAdmins != n.IsAddAdmins)
                             {
-                                AppendChange(n.IsAddAdmins, AppResources.EventLogPromotedAddAdmins);
+                                AppendChange(n.IsAddAdmins, Strings.Resources.EventLogPromotedAddAdmins);
                             }
                             if (_channel.IsMegaGroup)
                             {
                                 if (o.IsBanUsers != n.IsBanUsers)
                                 {
-                                    AppendChange(n.IsBanUsers, AppResources.EventLogPromotedBanUsers);
+                                    AppendChange(n.IsBanUsers, Strings.Resources.EventLogPromotedBanUsers);
                                 }
                             }
                             if (o.IsInviteUsers != n.IsInviteUsers)
                             {
-                                AppendChange(n.IsInviteUsers, AppResources.EventLogPromotedAddUsers);
+                                AppendChange(n.IsInviteUsers, Strings.Resources.EventLogPromotedAddUsers);
                             }
                             if (_channel.IsMegaGroup)
                             {
                                 if (o.IsPinMessages != n.IsPinMessages)
                                 {
-                                    AppendChange(n.IsPinMessages, AppResources.EventLogPromotedPinMessages);
+                                    AppendChange(n.IsPinMessages, Strings.Resources.EventLogPromotedPinMessages);
                                 }
                             }
 
