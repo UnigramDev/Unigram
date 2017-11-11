@@ -133,7 +133,7 @@ namespace Unigram.Controls.Views
                 }
                 else
                 {
-                    link = UsernameToLinkConverter.Convert(link);
+                    link = MeUrlPrefixConverter.Convert(link);
                 }
 
                 string title = null;
@@ -155,7 +155,7 @@ namespace Unigram.Controls.Views
             {
                 if (message.ViaBot != null && message.ViaBot.Username != null)
                 {
-                    ViewModel.ShareLink = new Uri(UsernameToLinkConverter.Convert($"{message.From.Username}?game={gameMedia.Game.ShortName}"));
+                    ViewModel.ShareLink = new Uri(MeUrlPrefixConverter.Convert($"{message.From.Username}?game={gameMedia.Game.ShortName}"));
                     ViewModel.ShareTitle = gameMedia.Game.Title;
                 }
             }

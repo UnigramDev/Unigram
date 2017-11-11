@@ -278,11 +278,11 @@
     <Compile Include="Converters\MessageShortTTLConverter.cs" />
     <Compile Include="Converters\MessageToShareConverter.cs" />
     <Compile Include="Converters\MessageTTLConverter.cs" />
+    <Compile Include="Converters\MeUrlPrefixConverter.cs" />
     <Compile Include="Converters\PrivacyRuleToUsersConverter.cs" />
     <Compile Include="Converters\ProportionsToLabelConverter.cs" />
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
-    <Compile Include="Converters\UsernameToLinkConverter.cs" />
     <Compile Include="Converters\VenueToGlyphConverter.cs" />
     <Compile Include="Helpers\AudioGraphHelper.cs" />
     <Compile Include="Helpers\TLFileHelper.cs" />

@@ -608,7 +608,7 @@ namespace Unigram.ViewModels
             }
             else
             {
-                link = UsernameToLinkConverter.Convert(link);
+                link = MeUrlPrefixConverter.Convert(link);
             }
 
             var dataPackage = new DataPackage();

@@ -169,7 +169,7 @@ namespace Unigram.ViewModels.Channels
                             message.FromId = item.UserId;
                             message.ToId = _channel.ToPeer();
                             message.Date = item.Date;
-                            message.Message = string.IsNullOrEmpty(changeUsername.NewValue) ? string.Empty : UsernameToLinkConverter.Convert(changeUsername.NewValue);
+                            message.Message = string.IsNullOrEmpty(changeUsername.NewValue) ? string.Empty : MeUrlPrefixConverter.Convert(changeUsername.NewValue);
                             message.Entities = new TLVector<TLMessageEntityBase>();
                             message.HasMedia = true;
                             message.HasEntities = true;
@@ -187,7 +187,7 @@ namespace Unigram.ViewModels.Channels
                                     WebPage = new TLWebPage
                                     {
                                         SiteName = AppResources.EventLogPreviousLink,
-                                        Description = UsernameToLinkConverter.Convert(changeUsername.PrevValue),
+                                        Description = MeUrlPrefixConverter.Convert(changeUsername.PrevValue),
                                         HasSiteName = true,
                                         HasDescription = true
                                     }

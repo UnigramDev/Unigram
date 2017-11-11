@@ -8,7 +8,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Unigram.Converters
 {
-    public class UsernameToLinkConverter : IValueConverter
+    public class MeUrlPrefixConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -17,14 +17,19 @@ namespace Unigram.Converters
 
         public static string Convert(object value, bool shorty = false)
         {
-            if (value == null)
+            if (value as string == null)
             {
-                return "https://t.me/";
+                value = string.Empty;
             }
 
             var config = InMemoryCacheService.Current.GetConfig();
             if (config == null)
             {
+                if (shorty)
+                {
+                    return "t.me/" + value;
+                }
+
                 return "https://t.me/" + value;
             }
 

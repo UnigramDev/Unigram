@@ -334,7 +334,7 @@ namespace Unigram.ViewModels.Channels
             }
 
             var title = item.Title;
-            var link = new Uri(UsernameToLinkConverter.Convert(item.Username));
+            var link = new Uri(MeUrlPrefixConverter.Convert(item.Username));
 
             await ShareView.Current.ShowAsync(link, title);
         }
