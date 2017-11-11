@@ -308,6 +308,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>EventLog.resw</DependentUpon>
     </Compile>
+    <Compile Include="Strings\en\Gaming.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Gaming.resw</DependentUpon>
+    </Compile>
     <Compile Include="Strings\en\InAppBranding.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1161,6 +1166,11 @@
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>EventLog.cs</LastGenOutput>
+    </PRIResource>
+    <PRIResource Include="Strings\en\Gaming.resw">
+      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+      <Generator>ReswFileCodeGenerator</Generator>
+      <LastGenOutput>Gaming.cs</LastGenOutput>
     </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />

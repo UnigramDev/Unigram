@@ -52,21 +52,21 @@ namespace Unigram.Common
 
                         if (fromUserId == SettingsHelper.UserId)
                         {
-                            return ReplaceLinks(serviceMessage, won ? Strings.Resources.YourScoredAtGamePlural : Strings.Resources.YourScoredAtGame, new[] { value.ToString(), game.Title }, new[] { "tg-bold://", "tg-game://" }, useActiveLinks);
+                            return ReplaceLinks(serviceMessage, won ? Strings.Gaming.YourScoredAtGamePlural : Strings.Gaming.YourScoredAtGame, new[] { value.ToString(), game.Title }, new[] { "tg-bold://", "tg-game://" }, useActiveLinks);
                         }
 
-                        return ReplaceLinks(serviceMessage, won ? Strings.Resources.UserScoredAtGamePlural : Strings.Resources.UserScoredAtGame, new[] { fromUserFullName, value.ToString(), game.Title }, new[] { "tg-user://" + fromUserId, "tg-bold://", "tg-game://" }, useActiveLinks);
+                        return ReplaceLinks(serviceMessage, won ? Strings.Gaming.UserScoredAtGamePlural : Strings.Gaming.UserScoredAtGame, new[] { fromUserFullName, value.ToString(), game.Title }, new[] { "tg-user://" + fromUserId, "tg-bold://", "tg-game://" }, useActiveLinks);
                     }
 
                     if (fromUserId == SettingsHelper.UserId)
                     {
-                        return ReplaceLinks(serviceMessage, string.Format(won ? Strings.Resources.YourScoredPlural : Strings.Resources.YourScored, value));
+                        return ReplaceLinks(serviceMessage, string.Format(won ? Strings.Gaming.YourScoredPlural : Strings.Gaming.YourScored, value));
                     }
 
-                    return ReplaceLinks(serviceMessage, won ? Strings.Resources.UserScoredPlural : Strings.Resources.UserScored, new[] { fromUserFullName, value.ToString() }, new[] { "tg-user://" + fromUserId, "tg-bold://" }, useActiveLinks);
+                    return ReplaceLinks(serviceMessage, won ? Strings.Gaming.UserScoredPlural : Strings.Gaming.UserScored, new[] { fromUserFullName, value.ToString() }, new[] { "tg-user://" + fromUserId, "tg-bold://" }, useActiveLinks);
                 }
 
-                return ReplaceLinks(serviceMessage, won ? Strings.Resources.UserScoredPlural : Strings.Resources.UserScored, new[] { Strings.Nouns.UserNominativeSingular, value.ToString() }, new[] { "tg-bold://", "tg-bold://" }, useActiveLinks);
+                return ReplaceLinks(serviceMessage, won ? Strings.Gaming.UserScoredPlural : Strings.Gaming.UserScored, new[] { Strings.Nouns.UserNominativeSingular, value.ToString() }, new[] { "tg-bold://", "tg-bold://" }, useActiveLinks);
             });
             _actionsCache.Add(typeof(TLMessageActionChatCreate), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.Resources.MessageActionChatCreate, new[] { fromUserFullName, ((TLMessageActionChatCreate)action).Title }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
             _actionsCache.Add(typeof(TLMessageActionChatEditPhoto), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.Resources.MessageActionChatEditPhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks));

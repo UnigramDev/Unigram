@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/11/2017 18:48:29
+// 	Generated: 11/11/2017 18:58:11
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -489,94 +489,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("MessageActionYouSetMessageTTL");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} scored {1}"
-        /// </summary>
-        public static string UserScored
-        {
-            get
-            {
-                return resourceLoader.GetString("UserScored");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} scored {1} at {2}"
-        /// </summary>
-        public static string UserScoredAtGame
-        {
-            get
-            {
-                return resourceLoader.GetString("UserScoredAtGame");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} scored {1} at {2}"
-        /// </summary>
-        public static string UserScoredAtGamePlural
-        {
-            get
-            {
-                return resourceLoader.GetString("UserScoredAtGamePlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} scored {1}"
-        /// </summary>
-        public static string UserScoredPlural
-        {
-            get
-            {
-                return resourceLoader.GetString("UserScoredPlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You scored {0}"
-        /// </summary>
-        public static string YourScored
-        {
-            get
-            {
-                return resourceLoader.GetString("YourScored");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You scored {0} at {1}"
-        /// </summary>
-        public static string YourScoredAtGame
-        {
-            get
-            {
-                return resourceLoader.GetString("YourScoredAtGame");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You scored {0} at {1}"
-        /// </summary>
-        public static string YourScoredAtGamePlural
-        {
-            get
-            {
-                return resourceLoader.GetString("YourScoredAtGamePlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You scored {0}"
-        /// </summary>
-        public static string YourScoredPlural
-        {
-            get
-            {
-                return resourceLoader.GetString("YourScoredPlural");
             }
         }
         

@@ -241,30 +241,6 @@
   <data name="MessageActionYouSetMessageTTL" xml:space="preserve">
     <value>You set the self-destruct timer to {0}</value>
   </data>
-  <data name="UserScored" xml:space="preserve">
-    <value>{0} scored {1}</value>
-  </data>
-  <data name="UserScoredAtGame" xml:space="preserve">
-    <value>{0} scored {1} at {2}</value>
-  </data>
-  <data name="UserScoredAtGamePlural" xml:space="preserve">
-    <value>{0} scored {1} at {2}</value>
-  </data>
-  <data name="UserScoredPlural" xml:space="preserve">
-    <value>{0} scored {1}</value>
-  </data>
-  <data name="YourScored" xml:space="preserve">
-    <value>You scored {0}</value>
-  </data>
-  <data name="YourScoredAtGame" xml:space="preserve">
-    <value>You scored {0} at {1}</value>
-  </data>
-  <data name="YourScoredAtGamePlural" xml:space="preserve">
-    <value>You scored {0} at {1}</value>
-  </data>
-  <data name="YourScoredPlural" xml:space="preserve">
-    <value>You scored {0}</value>
-  </data>
   <data name="AreTyping" xml:space="preserve">
     <value>{0} are typing</value>
   </data>
