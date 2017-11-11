@@ -441,9 +441,8 @@
                 <ListView.Header>
                     <StackPanel Orientation="Horizontal">
                         <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.SavedGifs.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="0" Glyph="&#xE608;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
-                        <controls:PivotRadioButton SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" FontFamily="{StaticResource TelegramThemeFontFamily}" HorizontalContentAlignment="Right" VerticalContentAlignment="Top" Padding="4">
-                            <Grid Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" 
-                                  Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
+                        <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" FontFamily="{StaticResource TelegramThemeFontFamily}" HorizontalContentAlignment="Right" VerticalContentAlignment="Top" Padding="4">
+                            <Grid Background="{ThemeResource TelegramDialogUnreadBadgeBrush}"
                                   CornerRadius="10"
                                   MinWidth="20"
                                   Height="20">
@@ -461,8 +460,8 @@
                 </ListView.Header>
                 <ListView.Footer>
                     <StackPanel Orientation="Horizontal">
-                        <controls:GlyphButton Glyph="&#xE60D;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
-                        <controls:GlyphButton Glyph="&#xE115;"/>
+                        <controls:PivotRadioButton Visibility="{x:Bind ViewModel.Stickers.FeaturedUnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" SelectedValue="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}" Index="1" Glyph="&#xE60D;" FontFamily="{StaticResource TelegramThemeFontFamily}"/>
+                        <controls:GlyphButton Click="Settings_Click" Glyph="&#xE115;"/>
                     </StackPanel>
                 </ListView.Footer>
                 <ListView.ItemContainerTransitions>
