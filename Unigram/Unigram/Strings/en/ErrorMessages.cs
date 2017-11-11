@@ -44,11 +44,11 @@ namespace Unigram.Strings
             currentAssemblyName = currentAssemblySplit[1];
             if (executingAssemblyName.Equals(currentAssemblyName))
             {
-                resourceLoader = ResourceLoader.GetForCurrentView("ErrorMessages");
+                resourceLoader = ResourceLoader.GetForViewIndependentUse("ErrorMessages");
             }
             else
             {
-                resourceLoader = ResourceLoader.GetForCurrentView(currentAssemblyName + "/ErrorMessages");
+                resourceLoader = ResourceLoader.GetForViewIndependentUse(currentAssemblyName + "/ErrorMessages");
             }
         }
         

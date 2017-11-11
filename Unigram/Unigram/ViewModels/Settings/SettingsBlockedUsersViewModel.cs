@@ -109,8 +109,8 @@ namespace Unigram.ViewModels.Settings
             var dialog = new TLMessageDialog();
             dialog.Title = Strings.Resources.UnblockUserConfirmationDialogTitle;
             dialog.Message = Strings.Resources.UnblockUserConfirmationDialogText;
-            dialog.PrimaryButtonText = Strings.Resources.Yes;
-            dialog.SecondaryButtonText = Strings.Resources.No;
+            dialog.PrimaryButtonText = Strings.DialogResources.Yes;
+            dialog.SecondaryButtonText = Strings.DialogResources.No;
 
             var confirm = await dialog.ShowQueuedAsync();
             if (confirm == ContentDialogResult.Primary)

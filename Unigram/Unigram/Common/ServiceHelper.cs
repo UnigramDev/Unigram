@@ -172,7 +172,7 @@ namespace Unigram.Common
             {
                 if (message is TLMessageService serviceMessage && action is TLMessageActionPhoneCall phoneCallAction)
                 {
-                    var loader = ResourceLoader.GetForCurrentView("Resources");
+                    var loader = ResourceLoader.GetForViewIndependentUse("Resources");
                     var text = string.Empty;
 
                     var outgoing = serviceMessage.IsOut;
