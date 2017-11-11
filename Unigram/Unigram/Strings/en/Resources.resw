@@ -1461,4 +1461,7 @@ Tap on a sticker to view and add the whole set.</value>
   <data name="SignInPage_TitleLabel.Text" xml:space="preserve">
     <value>Your phone number</value>
   </data>
+  <data name="SignInPasswordPage_TitleLabel.Text" xml:space="preserve">
+    <value>Your password</value>
+  </data>
 </root>
