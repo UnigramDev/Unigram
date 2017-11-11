@@ -496,4 +496,10 @@ Tap on a sticker to view and add the whole set.</value>
   <data name="SignInPasswordPage_TitleLabel.Text" xml:space="preserve">
     <value>Your password</value>
   </data>
+  <data name="MainPage_NavigationNewChannel.Content" xml:space="preserve">
+    <value>New Channel</value>
+  </data>
+  <data name="MainPage_NavigationNewChat.Content" xml:space="preserve">
+    <value>New Group</value>
+  </data>
 </root>

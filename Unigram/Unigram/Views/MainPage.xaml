@@ -201,9 +201,9 @@
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Grid.Row="1">
         <controls:NavigationView x:Name="Navigation" ItemClick="NavigationView_ItemClick">
             <controls:NavigationView.MenuItems>
-                <controls:NavigationViewItem x:Name="NavigationNewChat" Content="New Group" Glyph="&#xE125;" />
+                <controls:NavigationViewItem x:Uid="MainPage_NavigationNewChat" x:Name="NavigationNewChat" Content="New Group" Glyph="&#xE125;" />
                 <!--<controls:NavigationViewItem Text="New Secret Chat" Glyph="&#xE125;" />-->
-                <controls:NavigationViewItem x:Name="NavigationNewChannel" Content="New Channel" Glyph="&#xE789;" />
+                <controls:NavigationViewItem x:Uid="MainPage_NavigationNewChannel" x:Name="NavigationNewChannel" Content="New Channel" Glyph="&#xE789;" />
                 <controls:NavigationViewItemSeparator/>
 
                 <controls:NavigationViewItem x:Name="NavigationChats" Content="Chats" IsChecked="True" Glyph="&#xE8BD;" />

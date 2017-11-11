@@ -1212,6 +1212,7 @@
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Settings.cs</LastGenOutput>
     </PRIResource>
+    <PRIResource Include="Strings\ja\Resources.resw" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
