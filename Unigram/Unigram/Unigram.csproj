@@ -377,6 +377,7 @@
     <Compile Include="ViewModels\StickerSetViewModel.cs" />
     <Compile Include="ViewModels\UsersSelectionViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
+    <Compile Include="ViewModels\Users\UserCreateViewModel.cs" />
     <Compile Include="Views\Channels\ChannelAdminLogPage.Bubbles.cs">
       <DependentUpon>ChannelAdminLogPage.xaml</DependentUpon>
     </Compile>
@@ -1091,11 +1092,11 @@
     <Compile Include="Views\Settings\SettingsWallPaperPage.xaml.cs">
       <DependentUpon>SettingsWallPaperPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ShareTargetPage.xaml.cs">
-      <DependentUpon>ShareTargetPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Users\UserCommonChatsPage.xaml.cs">
       <DependentUpon>UserCommonChatsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Users\UserCreatePage.xaml.cs">
+      <DependentUpon>UserCreatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Users\UserDetailsPage.xaml.cs">
       <DependentUpon>UserDetailsPage.xaml</DependentUpon>
@@ -1722,13 +1723,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ShareTargetPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Users\UserCommonChatsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Users\UserCreatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Users\UserDetailsPage.xaml">
       <SubType>Designer</SubType>

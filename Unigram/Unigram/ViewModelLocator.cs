@@ -116,12 +116,13 @@ namespace Unigram
             container.ContainerBuilder.RegisterType<DialogViewModel>(); //.WithParameter((a, b) => a.Name == "dispatcher", (a, b) => WindowWrapper.Current().Dispatcher);
             container.ContainerBuilder.RegisterType<DialogStickersViewModel>().SingleInstance();
             container.ContainerBuilder.RegisterType<UserDetailsViewModel>();
+            container.ContainerBuilder.RegisterType<UserCommonChatsViewModel>();
+            container.ContainerBuilder.RegisterType<UserCreateViewModel>();
             container.ContainerBuilder.RegisterType<ChannelManageViewModel>();
             container.ContainerBuilder.RegisterType<ChannelAdminLogViewModel>();
             container.ContainerBuilder.RegisterType<ChannelAdminLogFilterViewModel>();
             container.ContainerBuilder.RegisterType<ChannelAdminRightsViewModel>();
             container.ContainerBuilder.RegisterType<ChannelBannedRightsViewModel>();
-            container.ContainerBuilder.RegisterType<UserCommonChatsViewModel>();
             container.ContainerBuilder.RegisterType<ChatDetailsViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChatInviteViewModel>();// .SingleInstance();
             container.ContainerBuilder.RegisterType<ChatInviteLinkViewModel>();// .SingleInstance();

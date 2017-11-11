@@ -262,6 +262,7 @@
                                 </MenuFlyout>
                             </Button.Flyout>
                         </Button>
+                        <controls:GlyphButton x:Name="NewContact" Glyph="&#xE109;" Click="NewContact_Click" Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Grid.Column="1"/>
 
                         <controls:SearchTextBox x:Name="SearchDialogs"
                                                     Padding="60,3,6,5"
