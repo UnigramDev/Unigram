@@ -891,9 +891,6 @@ messages from multiple devices.</value>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="Telegram" xml:space="preserve">
-    <value>Telegram</value>
-  </data>
   <data name="TGLogoutSucceededDialogText" xml:space="preserve">
     <value>The app will be closed. Relaunch it to login again.</value>
   </data>

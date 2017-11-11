@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/11/2017 16:22:36
+// 	Generated: 11/11/2017 16:27:11
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2394,17 +2394,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Cancel");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Telegram"
-        /// </summary>
-        public static string Telegram
-        {
-            get
-            {
-                return resourceLoader.GetString("Telegram");
             }
         }
         

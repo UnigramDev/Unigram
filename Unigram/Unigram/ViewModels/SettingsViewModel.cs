@@ -150,7 +150,7 @@ namespace Unigram.ViewModels
         public RelayCommand AskCommand { get; }
         private async void AskExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.TGSupportDisclaimerDetails, Strings.Resources.Telegram, Strings.Resources.TGSupportDisclaimerPrimaryText, Strings.Resources.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.TGSupportDisclaimerDetails, Strings.InAppBranding.ServiceName, Strings.Resources.TGSupportDisclaimerPrimaryText, Strings.Resources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 await Launcher.LaunchUriAsync(new Uri("https://telegram.org/faq"));
