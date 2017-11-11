@@ -121,9 +121,6 @@
     <value>Type your reply here...</value>
     <comment>Toast notification reply placeholder</comment>
   </data>
-  <data name="UserRestrictionsUntilForever" xml:space="preserve">
-    <value>Forever</value>
-  </data>
   <data name="IntroPage_Wizard1_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
     <value>The world's **fastest** messaging service.
 It is **free** and **secure**.</value>
@@ -253,24 +250,6 @@ messages from multiple devices.</value>
   <data name="SettingsPage_WallpaperButton.Content" xml:space="preserve">
     <value>Chat Background</value>
   </data>
-  <data name="TGLogoutSucceededDialogText" xml:space="preserve">
-    <value>The app will be closed. Relaunch it to login again.</value>
-  </data>
-  <data name="TGLogoutText" xml:space="preserve">
-    <value>Are you sure you want to logout?</value>
-  </data>
-  <data name="TGSupportDisclaimerDetails" xml:space="preserve">
-    <value>Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while. Please take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions.</value>
-  </data>
-  <data name="TGSupportDisclaimerPrimaryText" xml:space="preserve">
-    <value>FAQ</value>
-  </data>
-  <data name="UnblockUserConfirmationDialogText" xml:space="preserve">
-    <value>Are you sure?</value>
-  </data>
-  <data name="UnblockUserConfirmationDialogTitle" xml:space="preserve">
-    <value>Unblock?</value>
-  </data>
   <data name="SettingsAccountsPage_Header.Text" xml:space="preserve">
     <value>Accounts management</value>
   </data>
@@ -382,15 +361,6 @@ messages from multiple devices.</value>
   <data name="SettingsDownloadView_SaveButton.Content" xml:space="preserve">
     <value>Save</value>
   </data>
-  <data name="WhenOnMobileData" xml:space="preserve">
-    <value>When using mobile data</value>
-  </data>
-  <data name="WhenOnWiFi" xml:space="preserve">
-    <value>When connected to Wi-Fi</value>
-  </data>
-  <data name="WhenRoaming" xml:space="preserve">
-    <value>When roaming</value>
-  </data>
   <data name="ProxyView_FieldCalls.Content" xml:space="preserve">
     <value>Use proxy for calls</value>
   </data>
@@ -424,44 +394,11 @@ messages from multiple devices.</value>
   <data name="ProxyView_Title.Text" xml:space="preserve">
     <value>Proxy Settings</value>
   </data>
-  <data name="ProxySettingsShareTitle" xml:space="preserve">
-    <value>Proxy Settings</value>
-  </data>
   <data name="ProxyView_Dialog.PrimaryButtonText" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="ProxyView_Dialog.SecondaryButtonText" xml:space="preserve">
     <value>Cancel</value>
-  </data>
-  <data name="AutoDownload_Audio" xml:space="preserve">
-    <value>Audio messages</value>
-  </data>
-  <data name="AutoDownload_Document" xml:space="preserve">
-    <value>Files</value>
-  </data>
-  <data name="AutoDownload_GIF" xml:space="preserve">
-    <value>GIFs</value>
-  </data>
-  <data name="AutoDownload_Music" xml:space="preserve">
-    <value>Music</value>
-  </data>
-  <data name="AutoDownload_None" xml:space="preserve">
-    <value>No media</value>
-  </data>
-  <data name="AutoDownload_Photo" xml:space="preserve">
-    <value>Photos</value>
-  </data>
-  <data name="AutoDownload_Round" xml:space="preserve">
-    <value>Video messages</value>
-  </data>
-  <data name="AutoDownload_Video" xml:space="preserve">
-    <value>Videos</value>
-  </data>
-  <data name="ResetNotificationsDialogBody" xml:space="preserve">
-    <value>Reset all notifications?</value>
-  </data>
-  <data name="ResetNotificationsDialogTitle" xml:space="preserve">
-    <value>Confirm</value>
   </data>
   <data name="SettingsMasksArchivedPage_Footer.Text" xml:space="preserve">
     <value>You can have up to 200 sets of masks.
@@ -518,15 +455,6 @@ Tap on a sticker to view and add the whole set.</value>
   <data name="SettingsStickersPage_Masks.Content" xml:space="preserve">
     <value>Masks</value>
     <comment>MaskStickerSettings.Title</comment>
-  </data>
-  <data name="ParticipantEdit" xml:space="preserve">
-    <value>Edit permissions</value>
-  </data>
-  <data name="ParticipantPromote" xml:space="preserve">
-    <value>Promote</value>
-  </data>
-  <data name="ParticipantRestrict" xml:space="preserve">
-    <value>Restrict</value>
   </data>
   <data name="SettingsGeneralPage_AutoPlayToggle.Header" xml:space="preserve">
     <value>Autoplay GIFs</value>

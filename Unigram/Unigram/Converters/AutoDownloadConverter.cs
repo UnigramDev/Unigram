@@ -16,16 +16,16 @@ namespace Unigram.Converters
             var flags = (AutoDownloadType)value;
             if (flags == 0)
             {
-                return Strings.Resources.AutoDownload_None;
+                return Strings.Settings.AutoDownload_None;
             }
 
             var text = string.Empty;
-            text = AppendFlag(flags, AutoDownloadType.Photo, text, Strings.Resources.AutoDownload_Photo);
-            text = AppendFlag(flags, AutoDownloadType.Audio, text, Strings.Resources.AutoDownload_Audio);
-            text = AppendFlag(flags, AutoDownloadType.Round, text, Strings.Resources.AutoDownload_Round);
-            text = AppendFlag(flags, AutoDownloadType.Video, text, Strings.Resources.AutoDownload_Video);
-            text = AppendFlag(flags, AutoDownloadType.Document, text, Strings.Resources.AutoDownload_Document);
-            text = AppendFlag(flags, AutoDownloadType.GIF, text, Strings.Resources.AutoDownload_GIF);
+            text = AppendFlag(flags, AutoDownloadType.Photo, text, Strings.Settings.AutoDownload_Photo);
+            text = AppendFlag(flags, AutoDownloadType.Audio, text, Strings.Settings.AutoDownload_Audio);
+            text = AppendFlag(flags, AutoDownloadType.Round, text, Strings.Settings.AutoDownload_Round);
+            text = AppendFlag(flags, AutoDownloadType.Video, text, Strings.Settings.AutoDownload_Video);
+            text = AppendFlag(flags, AutoDownloadType.Document, text, Strings.Settings.AutoDownload_Document);
+            text = AppendFlag(flags, AutoDownloadType.GIF, text, Strings.Settings.AutoDownload_GIF);
 
             return text;
         }

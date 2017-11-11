@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/11/2017 21:58:29
+// 	Generated: 11/11/2017 22:14:20
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -60,6 +60,17 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Cancel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to logout?"
+        /// </summary>
+        public static string ConfirmLogoutDialogText
+        {
+            get
+            {
+                return resourceLoader.GetString("ConfirmLogoutDialogText");
             }
         }
         
@@ -196,6 +207,17 @@ namespace Unigram.Strings
         }
         
         /// <summary>
+        /// Localized resource similar to "The app will be closed. Relaunch it to login again."
+        /// </summary>
+        public static string LoggedOutDialogText
+        {
+            get
+            {
+                return resourceLoader.GetString("LoggedOutDialogText");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "More info"
         /// </summary>
         public static string MoreInfo
@@ -225,6 +247,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("OK");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reset all notifications?"
+        /// </summary>
+        public static string ResetNotificationsDialogBody
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogBody");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Confirm"
+        /// </summary>
+        public static string ResetNotificationsDialogTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while. Please take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions."
+        /// </summary>
+        public static string SupportDisclaimerDialogText
+        {
+            get
+            {
+                return resourceLoader.GetString("SupportDisclaimerDialogText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "FAQ"
+        /// </summary>
+        public static string SupportDisclaimerPrimaryButtonText
+        {
+            get
+            {
+                return resourceLoader.GetString("SupportDisclaimerPrimaryButtonText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure?"
+        /// </summary>
+        public static string UserUnblockConfirmationText
+        {
+            get
+            {
+                return resourceLoader.GetString("UserUnblockConfirmationText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unblock?"
+        /// </summary>
+        public static string UserUnblockConfirmationTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("UserUnblockConfirmationTitle");
             }
         }
         

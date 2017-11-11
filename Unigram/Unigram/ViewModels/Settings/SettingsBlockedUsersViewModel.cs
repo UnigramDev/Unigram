@@ -107,8 +107,8 @@ namespace Unigram.ViewModels.Settings
         private async void UnblockExecute(TLUser user)
         {
             var dialog = new TLMessageDialog();
-            dialog.Title = Strings.Resources.UnblockUserConfirmationDialogTitle;
-            dialog.Message = Strings.Resources.UnblockUserConfirmationDialogText;
+            dialog.Title = Strings.DialogResources.UserUnblockConfirmationTitle;
+            dialog.Message = Strings.DialogResources.UserUnblockConfirmationText;
             dialog.PrimaryButtonText = Strings.DialogResources.Yes;
             dialog.SecondaryButtonText = Strings.DialogResources.No;
 
