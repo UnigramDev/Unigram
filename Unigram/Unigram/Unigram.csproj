@@ -303,10 +303,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ErrorMessages.resw</DependentUpon>
     </Compile>
-    <Compile Include="Strings\en\EventLog.cs">
+    <Compile Include="Strings\en\EventLogStrings.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>EventLog.resw</DependentUpon>
+      <DependentUpon>EventLogStrings.resw</DependentUpon>
     </Compile>
     <Compile Include="Strings\en\Gaming.cs">
       <AutoGen>True</AutoGen>
@@ -1167,10 +1167,10 @@
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Nouns.cs</LastGenOutput>
     </PRIResource>
-    <PRIResource Include="Strings\en\EventLog.resw">
+    <PRIResource Include="Strings\en\EventLogStrings.resw">
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
       <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>EventLog.cs</LastGenOutput>
+      <LastGenOutput>EventLogStrings.cs</LastGenOutput>
     </PRIResource>
     <PRIResource Include="Strings\en\Gaming.resw">
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>

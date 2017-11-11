@@ -75,7 +75,7 @@ namespace Unigram.Views.Channels
                 return;
             }
 
-            await TLMessageDialog.ShowAsync(channel.IsMegaGroup ? Strings.EventLog.EventLogInfoDetail : Strings.EventLog.EventLogInfoDetailChannel, Strings.EventLog.EventLogInfoTitle, "OK");
+            await TLMessageDialog.ShowAsync(channel.IsMegaGroup ? Strings.EventLogStrings.EventLogInfoDetail : Strings.EventLogStrings.EventLogInfoDetailChannel, Strings.EventLogStrings.EventLogInfoTitle, "OK");
         }
 
         private async void Settings_Click(object sender, RoutedEventArgs e)

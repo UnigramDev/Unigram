@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/11/2017 18:48:08
+// 	Generated: 11/11/2017 19:08:17
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -25,12 +25,12 @@ namespace Unigram.Strings
     using Windows.ApplicationModel.Resources;
     
     
-    public sealed partial class EventLog
+    public sealed partial class EventLogStrings
     {
         
         private static ResourceLoader resourceLoader;
         
-        static EventLog()
+        static EventLogStrings()
         {
             string executingAssemblyName;
             executingAssemblyName = Windows.UI.Xaml.Application.Current.GetType().AssemblyQualifiedName;
@@ -38,17 +38,17 @@ namespace Unigram.Strings
             executingAssemblySplit = executingAssemblyName.Split(',');
             executingAssemblyName = executingAssemblySplit[1];
             string currentAssemblyName;
-            currentAssemblyName = typeof(EventLog).AssemblyQualifiedName;
+            currentAssemblyName = typeof(EventLogStrings).AssemblyQualifiedName;
             string[] currentAssemblySplit;
             currentAssemblySplit = currentAssemblyName.Split(',');
             currentAssemblyName = currentAssemblySplit[1];
             if (executingAssemblyName.Equals(currentAssemblyName))
             {
-                resourceLoader = ResourceLoader.GetForCurrentView("EventLog");
+                resourceLoader = ResourceLoader.GetForCurrentView("EventLogStrings");
             }
             else
             {
-                resourceLoader = ResourceLoader.GetForCurrentView(currentAssemblyName + "/EventLog");
+                resourceLoader = ResourceLoader.GetForCurrentView(currentAssemblyName + "/EventLogStrings");
             }
         }
         
