@@ -24,12 +24,12 @@ namespace Unigram.ViewModels
             ContinueCommand = new RelayCommand(ContinueExecute /*, () => SelectedItem == Items.Last()*/);
 
             Items = new ObservableCollection<IntroPage>();
-            //Items.Add(new IntroPage { Title = AppResources.IntroWizardPage1_Title, Text = AppResources.IntroWizardPage1_Text });
-            //Items.Add(new IntroPage { Title = AppResources.IntroWizardPage2_Title, Text = AppResources.IntroWizardPage2_Text });
-            //Items.Add(new IntroPage { Title = AppResources.IntroWizardPage3_Title, Text = AppResources.IntroWizardPage3_Text });
-            //Items.Add(new IntroPage { Title = AppResources.IntroWizardPage4_Title, Text = AppResources.IntroWizardPage4_Text });
-            //Items.Add(new IntroPage { Title = AppResources.IntroWizardPage5_Title, Text = AppResources.IntroWizardPage5_Text });
-            //Items.Add(new IntroPage { Title = AppResources.IntroWizardPage6_Title, Text = AppResources.IntroWizardPage6_Text });
+            //Items.Add(new IntroPage { Title = Strings.Resources.IntroWizardPage1_Title, Text = Strings.Resources.IntroWizardPage1_Text });
+            //Items.Add(new IntroPage { Title = Strings.Resources.IntroWizardPage2_Title, Text = Strings.Resources.IntroWizardPage2_Text });
+            //Items.Add(new IntroPage { Title = Strings.Resources.IntroWizardPage3_Title, Text = Strings.Resources.IntroWizardPage3_Text });
+            //Items.Add(new IntroPage { Title = Strings.Resources.IntroWizardPage4_Title, Text = Strings.Resources.IntroWizardPage4_Text });
+            //Items.Add(new IntroPage { Title = Strings.Resources.IntroWizardPage5_Title, Text = Strings.Resources.IntroWizardPage5_Text });
+            //Items.Add(new IntroPage { Title = Strings.Resources.IntroWizardPage6_Title, Text = Strings.Resources.IntroWizardPage6_Text });
             //SelectedItem = Items[0];
         }
 

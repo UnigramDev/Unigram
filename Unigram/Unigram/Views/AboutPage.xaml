@@ -55,7 +55,7 @@
                             Padding="0,6"
                             Style="{ThemeResource TextBlockButtonStyle}"
                             Command="{x:Bind ViewModel.UsefulPrivacyCommand}"/>
-                <Button Content=""
+                <Button x:Uid="AboutPage_FAQButton" Content=""
                             Padding="0,6"
                             Style="{ThemeResource TextBlockButtonStyle}"
                             Command="{x:Bind ViewModel.UsefulFaqCommand}"/>
