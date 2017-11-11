@@ -270,7 +270,7 @@ namespace Unigram.Common
             }
 
             var paragraph = new Paragraph();
-            paragraph.Inlines.Add(new Run { Text = Resources.MessageActionEmpty });
+            paragraph.Inlines.Add(new Run { Text = Messages.MessageActionEmpty });
             sender.Blocks.Add(paragraph);
         }
 
@@ -286,7 +286,7 @@ namespace Unigram.Common
                 }
             }
 
-            return Strings.Resources.MessageActionEmpty;
+            return Strings.Messages.MessageActionEmpty;
         }
 
         public static Paragraph Convert(TLMessageService serviceMessage, bool useActiveLinks)
@@ -312,7 +312,7 @@ namespace Unigram.Common
             }
 
             var paragraph = new Paragraph();
-            paragraph.Inlines.Add(new Run { Text = Strings.Resources.MessageActionEmpty });
+            paragraph.Inlines.Add(new Run { Text = Strings.Messages.MessageActionEmpty });
             return paragraph;
         }
         #endregion

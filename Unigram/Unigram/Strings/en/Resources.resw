@@ -121,126 +121,6 @@
     <value>Type your reply here...</value>
     <comment>Toast notification reply placeholder</comment>
   </data>
-  <data name="MessageActionBroadcastCreate" xml:space="preserve">
-    <value>{0} created the broadcast "{1}"</value>
-  </data>
-  <data name="MessageActionChannelCreate" xml:space="preserve">
-    <value>Channel created</value>
-  </data>
-  <data name="MessageActionChannelDeletePhoto" xml:space="preserve">
-    <value>Channel photo removed</value>
-  </data>
-  <data name="MessageActionChannelEditPhoto" xml:space="preserve">
-    <value>Channel photo updated</value>
-  </data>
-  <data name="MessageActionChannelEditTitle" xml:space="preserve">
-    <value>Channel name changed to "{0}"</value>
-  </data>
-  <data name="MessageActionChannelMigrateFrom" xml:space="preserve">
-    <value>This group was upgraded to a supergroup.</value>
-  </data>
-  <data name="MessageActionChatActivate" xml:space="preserve">
-    <value>Chat was activated</value>
-  </data>
-  <data name="MessageActionChatAddSelf" xml:space="preserve">
-    <value>{0} joined the group</value>
-  </data>
-  <data name="MessageActionChatAddUser" xml:space="preserve">
-    <value>{0} added {1}</value>
-  </data>
-  <data name="MessageActionChatCreate" xml:space="preserve">
-    <value>{0} created the group "{1}"</value>
-  </data>
-  <data name="MessageActionChatDeactivate" xml:space="preserve">
-    <value>Chat was deactivated</value>
-  </data>
-  <data name="MessageActionChatDeletePhoto" xml:space="preserve">
-    <value>{0} removed group photo</value>
-  </data>
-  <data name="MessageActionChatDeleteUser" xml:space="preserve">
-    <value>{0} removed {1}</value>
-  </data>
-  <data name="MessageActionChatEditPhoto" xml:space="preserve">
-    <value>{0} updated group photo</value>
-  </data>
-  <data name="MessageActionChatEditTitle" xml:space="preserve">
-    <value>{0} changed group name to "{1}"</value>
-  </data>
-  <data name="MessageActionChatJoin" xml:space="preserve">
-    <value>{0} joined the group</value>
-  </data>
-  <data name="MessageActionChatJoinedByLink" xml:space="preserve">
-    <value>{0} joined the group via invite link</value>
-  </data>
-  <data name="MessageActionChatJoinSelf" xml:space="preserve">
-    <value>You joined the group</value>
-  </data>
-  <data name="MessageActionChatMigrateTo" xml:space="preserve">
-    <value>Chat migrated to supergroup "{0}"</value>
-  </data>
-  <data name="MessageActionDisableMessageTTL" xml:space="preserve">
-    <value>{0} disabled the self-destruct timer</value>
-  </data>
-  <data name="MessageActionEmpty" xml:space="preserve">
-    <value>Empty service message</value>
-  </data>
-  <data name="MessageActionLeftGroupSelf" xml:space="preserve">
-    <value>You left the group</value>
-  </data>
-  <data name="MessageActionPinContact" xml:space="preserve">
-    <value>a contact</value>
-  </data>
-  <data name="MessageActionPinFile" xml:space="preserve">
-    <value>a file</value>
-  </data>
-  <data name="MessageActionPinGame" xml:space="preserve">
-    <value>a game</value>
-  </data>
-  <data name="MessageActionPinGif" xml:space="preserve">
-    <value>a GIF</value>
-  </data>
-  <data name="MessageActionPinMap" xml:space="preserve">
-    <value>a map</value>
-  </data>
-  <data name="MessageActionPinMessage" xml:space="preserve">
-    <value>a message</value>
-  </data>
-  <data name="MessageActionPinPhoto" xml:space="preserve">
-    <value>a photo</value>
-  </data>
-  <data name="MessageActionPinSticker" xml:space="preserve">
-    <value>a {0}sticker</value>
-  </data>
-  <data name="MessageActionPinText" xml:space="preserve">
-    <value>{0} pinned "{1}"</value>
-  </data>
-  <data name="MessageActionPinTrack" xml:space="preserve">
-    <value>track</value>
-  </data>
-  <data name="MessageActionPinVideo" xml:space="preserve">
-    <value>a video</value>
-  </data>
-  <data name="MessageActionPinVoiceMessage" xml:space="preserve">
-    <value>a voice message</value>
-  </data>
-  <data name="MessageActionScreenshotMessages" xml:space="preserve">
-    <value>{0} took a screenshot!</value>
-  </data>
-  <data name="MessageActionSetMessageTTL" xml:space="preserve">
-    <value>{0} set the self-destruct timer to {1}</value>
-  </data>
-  <data name="MessageActionUserLeftGroup" xml:space="preserve">
-    <value>{0} left the group</value>
-  </data>
-  <data name="MessageActionYouDisableMessageTTL" xml:space="preserve">
-    <value>You disabled the self-destruct timer</value>
-  </data>
-  <data name="MessageActionYouScreenshotMessages" xml:space="preserve">
-    <value>You took a screenshot!</value>
-  </data>
-  <data name="MessageActionYouSetMessageTTL" xml:space="preserve">
-    <value>You set the self-destruct timer to {0}</value>
-  </data>
   <data name="AreTyping" xml:space="preserve">
     <value>{0} are typing</value>
   </data>
@@ -355,9 +235,6 @@
   <data name="CallTimeFormat" xml:space="preserve">
     <value>{0} ({1})</value>
   </data>
-  <data name="MessageActionPinInvoice" xml:space="preserve">
-    <value>an invoice</value>
-  </data>
   <data name="CallCanceledShort" xml:space="preserve">
     <value>Cancelled</value>
   </data>
@@ -370,9 +247,6 @@
   <data name="CallOutgoingShort" xml:space="preserve">
     <value>Outgoing</value>
   </data>
-  <data name="MessageActionChatMigrateToGeneric" xml:space="preserve">
-    <value>Chat migrated to supergroup</value>
-  </data>
   <data name="RecordingVideoMessage" xml:space="preserve">
     <value>Recording a video message</value>
   </data>
@@ -384,9 +258,6 @@
   </data>
   <data name="IsSendingVideoMessage" xml:space="preserve">
     <value>{0} is sending a video message</value>
-  </data>
-  <data name="MessageActionPin" xml:space="preserve">
-    <value>{0} pinned {1}</value>
   </data>
   <data name="UserRestrictionsUntilForever" xml:space="preserve">
     <value>Forever</value>
@@ -747,51 +618,6 @@ messages from multiple devices.</value>
   <data name="ResetNotificationsDialogTitle" xml:space="preserve">
     <value>Confirm</value>
   </data>
-  <data name="MessageAddSticker" xml:space="preserve">
-    <value>Add to Stickers</value>
-  </data>
-  <data name="MessageCopy" xml:space="preserve">
-    <value>Copy text</value>
-  </data>
-  <data name="MessageCopyLinkBroadcast" xml:space="preserve">
-    <value>Copy post link</value>
-  </data>
-  <data name="MessageCopyLinkMegaGroup" xml:space="preserve">
-    <value>Copy message link</value>
-  </data>
-  <data name="MessageDelete" xml:space="preserve">
-    <value>Delete message</value>
-  </data>
-  <data name="MessageEdit" xml:space="preserve">
-    <value>Edit message</value>
-  </data>
-  <data name="MessageFaveSticker" xml:space="preserve">
-    <value>Add to Favorites</value>
-  </data>
-  <data name="MessageForward" xml:space="preserve">
-    <value>Forward message</value>
-  </data>
-  <data name="MessagePin" xml:space="preserve">
-    <value>Pin message</value>
-  </data>
-  <data name="MessageReply" xml:space="preserve">
-    <value>Reply</value>
-  </data>
-  <data name="MessageSaveGIF" xml:space="preserve">
-    <value>Save to GIFs</value>
-  </data>
-  <data name="MessageSaveMedia" xml:space="preserve">
-    <value>Save file as...</value>
-  </data>
-  <data name="MessageSelect" xml:space="preserve">
-    <value>Select message</value>
-  </data>
-  <data name="MessageUnfaveSticker" xml:space="preserve">
-    <value>Remove from Favorites</value>
-  </data>
-  <data name="MessageUnpin" xml:space="preserve">
-    <value>Unpin message</value>
-  </data>
   <data name="SettingsMasksArchivedPage_Footer.Text" xml:space="preserve">
     <value>You can have up to 200 sets of masks.
 Unused sets are archived when you add more.</value>
@@ -848,9 +674,6 @@ Tap on a sticker to view and add the whole set.</value>
     <value>Masks</value>
     <comment>MaskStickerSettings.Title</comment>
   </data>
-  <data name="MessageCopyMedia" xml:space="preserve">
-    <value>Copy image</value>
-  </data>
   <data name="ParticipantEdit" xml:space="preserve">
     <value>Edit permissions</value>
   </data>
@@ -899,9 +722,6 @@ Tap on a sticker to view and add the whole set.</value>
   <data name="SettingsGeneralPage_AutoPlayToggle.Header" xml:space="preserve">
     <value>Autoplay GIFs</value>
     <comment>ChatSettings.AutoPlayAnimations</comment>
-  </data>
-  <data name="MessageView" xml:space="preserve">
-    <value>View in chat</value>
   </data>
   <data name="AboutPage_FacebookLikeButton.Content" xml:space="preserve">
     <value>Like Unigram on Facebook</value>

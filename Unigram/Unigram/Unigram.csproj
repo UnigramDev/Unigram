@@ -323,6 +323,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ManifestResources.resw</DependentUpon>
     </Compile>
+    <Compile Include="Strings\en\Messages.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Messages.resw</DependentUpon>
+    </Compile>
     <Compile Include="Strings\en\Nouns.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1171,6 +1176,11 @@
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Gaming.cs</LastGenOutput>
+    </PRIResource>
+    <PRIResource Include="Strings\en\Messages.resw">
+      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+      <Generator>ReswFileCodeGenerator</Generator>
+      <LastGenOutput>Messages.cs</LastGenOutput>
     </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
