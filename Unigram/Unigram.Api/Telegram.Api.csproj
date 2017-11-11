@@ -476,7 +476,6 @@
     <Compile Include="TL\Partial\TLPeerBase.Partial.cs" />
     <Compile Include="TL\Partial\TLChannel.Partial.cs" />
     <Compile Include="TL\Partial\TLChat.Partial.cs" />
-    <Compile Include="TL\Partial\TLChatPhoto.Partial.cs" />
     <Compile Include="TL\Partial\TLChatPhotoBase.Partial.cs" />
     <Compile Include="TL\Partial\TLConfig.Partial.cs" />
     <Compile Include="TL\Partial\TLContactsContactsBase.Partial.cs" />
