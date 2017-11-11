@@ -241,38 +241,38 @@ namespace Unigram.Converters
         {
             if (seconds < 60)
             {
-                var format = Strings.Statuses.CallSeconds_any;
+                var format = Strings.Resources.CallSeconds_any;
                 var number = seconds;
                 if (number == 1)
                 {
-                    format = Strings.Statuses.CallSeconds_1;
+                    format = Strings.Resources.CallSeconds_1;
                 }
                 else if (number == 2)
                 {
-                    format = Strings.Statuses.CallSeconds_2;
+                    format = Strings.Resources.CallSeconds_2;
                 }
                 else if (number == 4)
                 {
-                    format = Strings.Statuses.CallSeconds_3_10;
+                    format = Strings.Resources.CallSeconds_3_10;
                 }
 
                 return string.Format(format, number);
             }
             else if (seconds < 60 * 60)
             {
-                var format = Strings.Statuses.CallMinutes_any;
+                var format = Strings.Resources.CallMinutes_any;
                 var number = seconds / 60;
                 if (number == 1)
                 {
-                    format = Strings.Statuses.CallMinutes_1;
+                    format = Strings.Resources.CallMinutes_1;
                 }
                 else if (number == 2)
                 {
-                    format = Strings.Statuses.CallMinutes_2;
+                    format = Strings.Resources.CallMinutes_2;
                 }
                 else if (number == 4)
                 {
-                    format = Strings.Statuses.CallMinutes_3_10;
+                    format = Strings.Resources.CallMinutes_3_10;
                 }
 
                 return string.Format(format, number);
@@ -302,38 +302,38 @@ namespace Unigram.Converters
         {
             if (seconds < 60)
             {
-                var format = Strings.Statuses.CallShortSeconds_any;
+                var format = Strings.Resources.CallShortSeconds_any;
                 var number = seconds;
                 if (number == 1)
                 {
-                    format = Strings.Statuses.CallShortSeconds_1;
+                    format = Strings.Resources.CallShortSeconds_1;
                 }
                 else if (number == 2)
                 {
-                    format = Strings.Statuses.CallShortSeconds_2;
+                    format = Strings.Resources.CallShortSeconds_2;
                 }
                 else if (number == 4)
                 {
-                    format = Strings.Statuses.CallShortSeconds_3_10;
+                    format = Strings.Resources.CallShortSeconds_3_10;
                 }
 
                 return string.Format(format, number);
             }
             else
             {
-                var format = Strings.Statuses.CallShortMinutes_any;
+                var format = Strings.Resources.CallShortMinutes_any;
                 var number = seconds / 60;
                 if (number == 1)
                 {
-                    format = Strings.Statuses.CallShortMinutes_1;
+                    format = Strings.Resources.CallShortMinutes_1;
                 }
                 else if (number == 2)
                 {
-                    format = Strings.Statuses.CallShortMinutes_2;
+                    format = Strings.Resources.CallShortMinutes_2;
                 }
                 else if (number == 4)
                 {
-                    format = Strings.Statuses.CallShortMinutes_3_10;
+                    format = Strings.Resources.CallShortMinutes_3_10;
                 }
 
                 return string.Format(format, number);

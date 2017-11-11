@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/12/2017 10:20:45
+// 	Generated: 11/12/2017 10:56:55
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -49,6 +49,3363 @@ namespace Unigram.Strings
             else
             {
                 resourceLoader = ResourceLoader.GetForViewIndependentUse(currentAssemblyName + "/Resources");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user as an admin because they are in the blacklist and you can't unban them."
+        /// </summary>
+        public static string AddAdminErrorBlacklisted
+        {
+            get
+            {
+                return resourceLoader.GetString("AddAdminErrorBlacklisted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user as an admin because they are not a member of this group and you are not allowed to invite them."
+        /// </summary>
+        public static string AddAdminErrorNotAMember
+        {
+            get
+            {
+                return resourceLoader.GetString("AddAdminErrorNotAMember");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't ban this user because they are an admin in this group and you are not allowed to demote them."
+        /// </summary>
+        public static string AddBannedErrorAdmin
+        {
+            get
+            {
+                return resourceLoader.GetString("AddBannedErrorAdmin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} are typing"
+        /// </summary>
+        public static string AreTyping
+        {
+            get
+            {
+                return resourceLoader.GetString("AreTyping");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Audio messages"
+        /// </summary>
+        public static string AutoDownload_Audio
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_Audio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Files"
+        /// </summary>
+        public static string AutoDownload_Document
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_Document");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "GIFs"
+        /// </summary>
+        public static string AutoDownload_GIF
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_GIF");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Music"
+        /// </summary>
+        public static string AutoDownload_Music
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_Music");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No media"
+        /// </summary>
+        public static string AutoDownload_None
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_None");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Photos"
+        /// </summary>
+        public static string AutoDownload_Photo
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_Photo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Video messages"
+        /// </summary>
+        public static string AutoDownload_Round
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_Round");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Videos"
+        /// </summary>
+        public static string AutoDownload_Video
+        {
+            get
+            {
+                return resourceLoader.GetString("AutoDownload_Video");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, too many bots in this group."
+        /// </summary>
+        public static string BotsTooMuch
+        {
+            get
+            {
+                return resourceLoader.GetString("BotsTooMuch");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancelled Call"
+        /// </summary>
+        public static string CallCanceled
+        {
+            get
+            {
+                return resourceLoader.GetString("CallCanceled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancelled"
+        /// </summary>
+        public static string CallCanceledShort
+        {
+            get
+            {
+                return resourceLoader.GetString("CallCanceledShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Incoming Call"
+        /// </summary>
+        public static string CallIncoming
+        {
+            get
+            {
+                return resourceLoader.GetString("CallIncoming");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Incoming"
+        /// </summary>
+        public static string CallIncomingShort
+        {
+            get
+            {
+                return resourceLoader.GetString("CallIncomingShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minute"
+        /// </summary>
+        public static string CallMinutes_1
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMinutes_1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minutes"
+        /// </summary>
+        public static string CallMinutes_2
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMinutes_2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minutes"
+        /// </summary>
+        public static string CallMinutes_3_10
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMinutes_3_10");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minutes"
+        /// </summary>
+        public static string CallMinutes_any
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMinutes_any");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Missed Call"
+        /// </summary>
+        public static string CallMissed
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMissed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Missed"
+        /// </summary>
+        public static string CallMissedShort
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMissedShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Outgoing Call"
+        /// </summary>
+        public static string CallOutgoing
+        {
+            get
+            {
+                return resourceLoader.GetString("CallOutgoing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Outgoing"
+        /// </summary>
+        public static string CallOutgoingShort
+        {
+            get
+            {
+                return resourceLoader.GetString("CallOutgoingShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} second"
+        /// </summary>
+        public static string CallSeconds_1
+        {
+            get
+            {
+                return resourceLoader.GetString("CallSeconds_1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} seconds"
+        /// </summary>
+        public static string CallSeconds_2
+        {
+            get
+            {
+                return resourceLoader.GetString("CallSeconds_2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} seconds"
+        /// </summary>
+        public static string CallSeconds_3_10
+        {
+            get
+            {
+                return resourceLoader.GetString("CallSeconds_3_10");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} seconds"
+        /// </summary>
+        public static string CallSeconds_any
+        {
+            get
+            {
+                return resourceLoader.GetString("CallSeconds_any");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} min"
+        /// </summary>
+        public static string CallShortMinutes_1
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortMinutes_1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} min"
+        /// </summary>
+        public static string CallShortMinutes_2
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortMinutes_2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} min"
+        /// </summary>
+        public static string CallShortMinutes_3_10
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortMinutes_3_10");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} min"
+        /// </summary>
+        public static string CallShortMinutes_any
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortMinutes_any");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sec"
+        /// </summary>
+        public static string CallShortSeconds_1
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortSeconds_1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sec"
+        /// </summary>
+        public static string CallShortSeconds_2
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortSeconds_2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sec"
+        /// </summary>
+        public static string CallShortSeconds_3_10
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortSeconds_3_10");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sec"
+        /// </summary>
+        public static string CallShortSeconds_any
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortSeconds_any");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} ({1})"
+        /// </summary>
+        public static string CallTimeFormat
+        {
+            get
+            {
+                return resourceLoader.GetString("CallTimeFormat");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancel"
+        /// </summary>
+        public static string Cancel
+        {
+            get
+            {
+                return resourceLoader.GetString("Cancel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Link is invalid or expired."
+        /// </summary>
+        public static string CancelLinkExpired
+        {
+            get
+            {
+                return resourceLoader.GetString("CancelLinkExpired");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The number {0} is already connected to a Telegram account. Please delete that account before migrating to the new number."
+        /// </summary>
+        public static string ChangePhoneNumberOccupied
+        {
+            get
+            {
+                return resourceLoader.GetString("ChangePhoneNumberOccupied");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only add the first 200 members to a channel. Note that an unlimited number of people may join via the channel's link."
+        /// </summary>
+        public static string ChannelUserAddLimit
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelUserAddLimit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user to channels."
+        /// </summary>
+        public static string ChannelUserCantAdd
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelUserCantAdd");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, too many admins in this channel."
+        /// </summary>
+        public static string ChannelUserCantAdmin
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelUserCantAdmin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, too many bots in this channel."
+        /// </summary>
+        public static string ChannelUserCantBot
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelUserCantBot");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this user decided to leave this channel, so you cannot invite them back here."
+        /// </summary>
+        public static string ChannelUserLeftError
+        {
+            get
+            {
+                return resourceLoader.GetString("ChannelUserLeftError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Code expired, please login again"
+        /// </summary>
+        public static string CodeExpired
+        {
+            get
+            {
+                return resourceLoader.GetString("CodeExpired");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CompanyGenitivePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("CompanyGenitivePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to ""
+        /// </summary>
+        public static string CompanyGenitiveSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("CompanyGenitiveSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Members"
+        /// </summary>
+        public static string CompanyNominativePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("CompanyNominativePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Member"
+        /// </summary>
+        public static string CompanyNominativeSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("CompanyNominativeSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure you want to logout?"
+        /// </summary>
+        public static string ConfirmLogoutDialogText
+        {
+            get
+            {
+                return resourceLoader.GetString("ConfirmLogoutDialogText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't create a group with these users because of their privacy settings."
+        /// </summary>
+        public static string CreateGroupError
+        {
+            get
+            {
+                return resourceLoader.GetString("CreateGroupError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Clear history"
+        /// </summary>
+        public static string DialogClearHistory
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogClearHistory");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete conversation"
+        /// </summary>
+        public static string DialogDelete
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDelete");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete and exit"
+        /// </summary>
+        public static string DialogDeleteAndExit
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDeleteAndExit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete and stop"
+        /// </summary>
+        public static string DialogDeleteAndStop
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDeleteAndStop");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete channel"
+        /// </summary>
+        public static string DialogDeleteChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDeleteChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete group"
+        /// </summary>
+        public static string DialogDeleteGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogDeleteGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Leave channel"
+        /// </summary>
+        public static string DialogLeaveChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogLeaveChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Leave group"
+        /// </summary>
+        public static string DialogLeaveGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogLeaveGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Disable notifications"
+        /// </summary>
+        public static string DialogNotificationsDisable
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogNotificationsDisable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Enable notifications"
+        /// </summary>
+        public static string DialogNotificationsEnable
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogNotificationsEnable");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pin to top"
+        /// </summary>
+        public static string DialogPin
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogPin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin from top"
+        /// </summary>
+        public static string DialogUnpin
+        {
+            get
+            {
+                return resourceLoader.GetString("DialogUnpin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't edit this message."
+        /// </summary>
+        public static string EditMessageError
+        {
+            get
+            {
+                return resourceLoader.GetString("EditMessageError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "An error occurred."
+        /// </summary>
+        public static string ErrorOccurred
+        {
+            get
+            {
+                return resourceLoader.GetString("ErrorOccurred");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Event Log"
+        /// </summary>
+        public static string EventLog
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLog");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} added {1}"
+        /// </summary>
+        public static string EventLogAdded
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogAdded");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All admins"
+        /// </summary>
+        public static string EventLogAllAdmins
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogAllAdmins");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All events"
+        /// </summary>
+        public static string EventLogAllEvents
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogAllEvents");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} changed the channel link:"
+        /// </summary>
+        public static string EventLogChangedChannelLink
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogChangedChannelLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} changed the group link:"
+        /// </summary>
+        public static string EventLogChangedGroupLink
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogChangedGroupLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} changed group {1}"
+        /// </summary>
+        public static string EventLogChangedStickersSet
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogChangedStickersSet");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} joined the channel"
+        /// </summary>
+        public static string EventLogChannelJoined
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogChannelJoined");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "banned {0}"
+        /// </summary>
+        public static string EventLogChannelRestricted
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogChannelRestricted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "unbanned {0}"
+        /// </summary>
+        public static string EventLogChannelUnrestricted
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogChannelUnrestricted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} deleted this message:"
+        /// </summary>
+        public static string EventLogDeletedMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogDeletedMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} edited caption:"
+        /// </summary>
+        public static string EventLogEditedCaption
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedCaption");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} edited the channel description:"
+        /// </summary>
+        public static string EventLogEditedChannelDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedChannelDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} set a new channel photo"
+        /// </summary>
+        public static string EventLogEditedChannelPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedChannelPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} renamed the channel to "{1}""
+        /// </summary>
+        public static string EventLogEditedChannelTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedChannelTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} edited the group description:"
+        /// </summary>
+        public static string EventLogEditedGroupDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedGroupDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} set a new group photo"
+        /// </summary>
+        public static string EventLogEditedGroupPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedGroupPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} renamed the group to "{1}""
+        /// </summary>
+        public static string EventLogEditedGroupTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedGroupTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} edited this message:"
+        /// </summary>
+        public static string EventLogEditedMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You set new channel photo"
+        /// </summary>
+        public static string EventLogEditedYouChannelPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedYouChannelPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You renamed the channel to "%1$s""
+        /// </summary>
+        public static string EventLogEditedYouChannelTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedYouChannelTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You set new group photo"
+        /// </summary>
+        public static string EventLogEditedYouGroupPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedYouGroupPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You renamed the group to "%1$s""
+        /// </summary>
+        public static string EventLogEditedYouGroupTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEditedYouGroupTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "<b>No events here yet</b>\n\nThe group's members and admins\nhave not taken any service actions\nin the last 48 hours."
+        /// </summary>
+        public static string EventLogEmpty
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEmpty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "<b>No events here yet</b>\n\nThe channel's admins\nhave not taken any service actions\nin the last 48 hours."
+        /// </summary>
+        public static string EventLogEmptyChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEmptyChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "<b>No events found</b>\n\nNo recent events that match your query have been found."
+        /// </summary>
+        public static string EventLogEmptySearch
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEmptySearch");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No recent events that contain '<b>%1$s</b>' have been found."
+        /// </summary>
+        public static string EventLogEmptyTextSearch
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogEmptyTextSearch");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "All events"
+        /// </summary>
+        public static string EventLogFilterAll
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogFilterAll");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channel info"
+        /// </summary>
+        public static string EventLogFilterChannelInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogFilterChannelInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channel settings"
+        /// </summary>
+        public static string EventLogFilterChannelSettings
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogFilterChannelSettings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Deleted messages"
+        /// </summary>
+        public static string EventLogFilterDeletedMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogFilterDeletedMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edited messages"
+        /// </summary>
+        public static string EventLogFilterEditedMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogFilterEditedMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group info"
+        /// </summary>
+        public static string EventLogFilterGroupInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogFilterGroupInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Group settings"
+        /// </summary>
+        public static string EventLogFilterGroupSettings
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogFilterGroupSettings");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Leaving members"
+        /// </summary>
+        public static string EventLogFilterLeavingMembers
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogFilterLeavingMembers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New admins"
+        /// </summary>
+        public static string EventLogFilterNewAdmins
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogFilterNewAdmins");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New members"
+        /// </summary>
+        public static string EventLogFilterNewMembers
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogFilterNewMembers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "New restrictions"
+        /// </summary>
+        public static string EventLogFilterNewRestrictions
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogFilterNewRestrictions");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pinned messages"
+        /// </summary>
+        public static string EventLogFilterPinnedMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogFilterPinnedMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} joined the group"
+        /// </summary>
+        public static string EventLogGroupJoined
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogGroupJoined");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This is a list of all service actions taken by the group's members and admins in the last 48 hours."
+        /// </summary>
+        public static string EventLogInfoDetail
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogInfoDetail");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This is a list of all service actions taken by the channel's admins in the last 48 hours."
+        /// </summary>
+        public static string EventLogInfoDetailChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogInfoDetailChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "What is the Recent Actions?"
+        /// </summary>
+        public static string EventLogInfoTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogInfoTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "invited {0}"
+        /// </summary>
+        public static string EventLogInvited
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogInvited");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} left the group"
+        /// </summary>
+        public static string EventLogLeft
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogLeft");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} left the channel"
+        /// </summary>
+        public static string EventLogLeftChannel
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogLeftChannel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} left the group"
+        /// </summary>
+        public static string EventLogLeftGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogLeftGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Original caption"
+        /// </summary>
+        public static string EventLogOriginalCaption
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogOriginalCaption");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Empty"
+        /// </summary>
+        public static string EventLogOriginalCaptionEmpty
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogOriginalCaptionEmpty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Original message"
+        /// </summary>
+        public static string EventLogOriginalMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogOriginalMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned this message:"
+        /// </summary>
+        public static string EventLogPinnedMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPinnedMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Previous channel link"
+        /// </summary>
+        public static string EventLogPreviousChannelLink
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPreviousChannelLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Previous description"
+        /// </summary>
+        public static string EventLogPreviousGroupDescription
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPreviousGroupDescription");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Previous group link"
+        /// </summary>
+        public static string EventLogPreviousGroupLink
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPreviousGroupLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Previous link"
+        /// </summary>
+        public static string EventLogPreviousLink
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPreviousLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "changed privileges of {0}"
+        /// </summary>
+        public static string EventLogPromoted
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPromoted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add admins"
+        /// </summary>
+        public static string EventLogPromotedAddAdmins
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPromotedAddAdmins");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add users"
+        /// </summary>
+        public static string EventLogPromotedAddUsers
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPromotedAddUsers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Ban users"
+        /// </summary>
+        public static string EventLogPromotedBanUsers
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPromotedBanUsers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change channel Info"
+        /// </summary>
+        public static string EventLogPromotedChangeChannelInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPromotedChangeChannelInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Change group Info"
+        /// </summary>
+        public static string EventLogPromotedChangeGroupInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPromotedChangeGroupInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete messages"
+        /// </summary>
+        public static string EventLogPromotedDeleteMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPromotedDeleteMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit messages"
+        /// </summary>
+        public static string EventLogPromotedEditMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPromotedEditMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invite via link"
+        /// </summary>
+        public static string EventLogPromotedInviteLink
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPromotedInviteLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pin messages"
+        /// </summary>
+        public static string EventLogPromotedPinMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPromotedPinMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Post messages"
+        /// </summary>
+        public static string EventLogPromotedPostMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogPromotedPostMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} removed {1}"
+        /// </summary>
+        public static string EventLogRemoved
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRemoved");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} removed channel link"
+        /// </summary>
+        public static string EventLogRemovedChannelLink
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRemovedChannelLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} removed the channel photo"
+        /// </summary>
+        public static string EventLogRemovedChannelPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRemovedChannelPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} removed group link"
+        /// </summary>
+        public static string EventLogRemovedGroupLink
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRemovedGroupLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} removed the group photo"
+        /// </summary>
+        public static string EventLogRemovedGroupPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRemovedGroupPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} removed sticker set"
+        /// </summary>
+        public static string EventLogRemovedStickersSet
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRemovedStickersSet");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You removed channel photo"
+        /// </summary>
+        public static string EventLogRemovedYouChannelPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRemovedYouChannelPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You removed group photo"
+        /// </summary>
+        public static string EventLogRemovedYouGroupPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRemovedYouGroupPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "changed restrictions for {0} indefinitely"
+        /// </summary>
+        public static string EventLogRestricted
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRestricted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Read messages"
+        /// </summary>
+        public static string EventLogRestrictedReadMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRestrictedReadMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Embed links"
+        /// </summary>
+        public static string EventLogRestrictedSendEmbed
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRestrictedSendEmbed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send media"
+        /// </summary>
+        public static string EventLogRestrictedSendMedia
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRestrictedSendMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send messages"
+        /// </summary>
+        public static string EventLogRestrictedSendMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRestrictedSendMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send stickers & GIFs"
+        /// </summary>
+        public static string EventLogRestrictedSendStickers
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRestrictedSendStickers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "changed restrictions for {0}
+        ///
+        ///Duration: {1}"
+        /// </summary>
+        public static string EventLogRestrictedUntil
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogRestrictedUntil");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Selected events"
+        /// </summary>
+        public static string EventLogSelectedEvents
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogSelectedEvents");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} made group history hidden for new members"
+        /// </summary>
+        public static string EventLogToggledInvitesHistoryOff
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogToggledInvitesHistoryOff");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} made group history visible for new members"
+        /// </summary>
+        public static string EventLogToggledInvitesHistoryOn
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogToggledInvitesHistoryOn");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} disabled group invites"
+        /// </summary>
+        public static string EventLogToggledInvitesOff
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogToggledInvitesOff");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} enabled group invites"
+        /// </summary>
+        public static string EventLogToggledInvitesOn
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogToggledInvitesOn");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} disabled signatures"
+        /// </summary>
+        public static string EventLogToggledSignaturesOff
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogToggledSignaturesOff");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} enabled signatures"
+        /// </summary>
+        public static string EventLogToggledSignaturesOn
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogToggledSignaturesOn");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} unpinned message"
+        /// </summary>
+        public static string EventLogUnpinnedMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogUnpinnedMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You joined channel"
+        /// </summary>
+        public static string EventLogYouChannelJoined
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogYouChannelJoined");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You joined group"
+        /// </summary>
+        public static string EventLogYouGroupJoined
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogYouGroupJoined");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You left group"
+        /// </summary>
+        public static string EventLogYouLeft
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogYouLeft");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You changed privileges of un2 (%1$s)"
+        /// </summary>
+        public static string EventLogYouPromoted
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogYouPromoted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You changed restrictions for un2 (%1$s)"
+        /// </summary>
+        public static string EventLogYouRestricted
+        {
+            get
+            {
+                return resourceLoader.GetString("EventLogYouRestricted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Too many attempts, please try again later"
+        /// </summary>
+        public static string FloodWait
+        {
+            get
+            {
+                return resourceLoader.GetString("FloodWait");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Too many attempts, please try again in {0}"
+        /// </summary>
+        public static string FloodWaitTime
+        {
+            get
+            {
+                return resourceLoader.GetString("FloodWaitTime");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this group is full."
+        /// </summary>
+        public static string GroupUserAddLimit
+        {
+            get
+            {
+                return resourceLoader.GetString("GroupUserAddLimit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user to groups."
+        /// </summary>
+        public static string GroupUserCantAdd
+        {
+            get
+            {
+                return resourceLoader.GetString("GroupUserCantAdd");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, too many administrators in this group."
+        /// </summary>
+        public static string GroupUserCantAdmin
+        {
+            get
+            {
+                return resourceLoader.GetString("GroupUserCantAdmin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, too many bots in this group."
+        /// </summary>
+        public static string GroupUserCantBot
+        {
+            get
+            {
+                return resourceLoader.GetString("GroupUserCantBot");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this user decided to leave this group, so you cannot invite them back here."
+        /// </summary>
+        public static string GroupUserLeftError
+        {
+            get
+            {
+                return resourceLoader.GetString("GroupUserLeftError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invalid code"
+        /// </summary>
+        public static string InvalidCode
+        {
+            get
+            {
+                return resourceLoader.GetString("InvalidCode");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Invalid phone number"
+        /// </summary>
+        public static string InvalidPhoneNumber
+        {
+            get
+            {
+                return resourceLoader.GetString("InvalidPhoneNumber");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user to channels because of user's privacy settings."
+        /// </summary>
+        public static string InviteToChannelError
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteToChannelError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user to groups because of user's privacy settings."
+        /// </summary>
+        public static string InviteToGroupError
+        {
+            get
+            {
+                return resourceLoader.GetString("InviteToGroupError");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is playing a game"
+        /// </summary>
+        public static string IsPlayingGame
+        {
+            get
+            {
+                return resourceLoader.GetString("IsPlayingGame");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is recording a voice message"
+        /// </summary>
+        public static string IsRecordingAudio
+        {
+            get
+            {
+                return resourceLoader.GetString("IsRecordingAudio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is recording a video"
+        /// </summary>
+        public static string IsRecordingVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("IsRecordingVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is recording a video message"
+        /// </summary>
+        public static string IsRecordingVideoMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("IsRecordingVideoMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is sending a audio"
+        /// </summary>
+        public static string IsSendingAudio
+        {
+            get
+            {
+                return resourceLoader.GetString("IsSendingAudio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is sending a file"
+        /// </summary>
+        public static string IsSendingFile
+        {
+            get
+            {
+                return resourceLoader.GetString("IsSendingFile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is sending a photo"
+        /// </summary>
+        public static string IsSendingPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("IsSendingPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is sending a video"
+        /// </summary>
+        public static string IsSendingVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("IsSendingVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is sending a video message"
+        /// </summary>
+        public static string IsSendingVideoMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("IsSendingVideoMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} is typing"
+        /// </summary>
+        public static string IsTyping
+        {
+            get
+            {
+                return resourceLoader.GetString("IsTyping");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this group is already full."
+        /// </summary>
+        public static string JoinToGroupErrorFull
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinToGroupErrorFull");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this chat does not seem to exist."
+        /// </summary>
+        public static string JoinToGroupErrorNotExist
+        {
+            get
+            {
+                return resourceLoader.GetString("JoinToGroupErrorNotExist");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "The app will be closed. Relaunch it to login again."
+        /// </summary>
+        public static string LoggedOutDialogText
+        {
+            get
+            {
+                return resourceLoader.GetString("LoggedOutDialogText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} created the broadcast "{1}""
+        /// </summary>
+        public static string MessageActionBroadcastCreate
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionBroadcastCreate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channel created"
+        /// </summary>
+        public static string MessageActionChannelCreate
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChannelCreate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channel photo removed"
+        /// </summary>
+        public static string MessageActionChannelDeletePhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChannelDeletePhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channel photo updated"
+        /// </summary>
+        public static string MessageActionChannelEditPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChannelEditPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Channel name changed to "{0}""
+        /// </summary>
+        public static string MessageActionChannelEditTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChannelEditTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "This group was upgraded to a supergroup."
+        /// </summary>
+        public static string MessageActionChannelMigrateFrom
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChannelMigrateFrom");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat was activated"
+        /// </summary>
+        public static string MessageActionChatActivate
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatActivate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} joined the group"
+        /// </summary>
+        public static string MessageActionChatAddSelf
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatAddSelf");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} added {1}"
+        /// </summary>
+        public static string MessageActionChatAddUser
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatAddUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} created the group "{1}""
+        /// </summary>
+        public static string MessageActionChatCreate
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatCreate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat was deactivated"
+        /// </summary>
+        public static string MessageActionChatDeactivate
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatDeactivate");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} removed group photo"
+        /// </summary>
+        public static string MessageActionChatDeletePhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatDeletePhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} removed {1}"
+        /// </summary>
+        public static string MessageActionChatDeleteUser
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatDeleteUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} updated group photo"
+        /// </summary>
+        public static string MessageActionChatEditPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatEditPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} changed group name to "{1}""
+        /// </summary>
+        public static string MessageActionChatEditTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatEditTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} joined the group"
+        /// </summary>
+        public static string MessageActionChatJoin
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatJoin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} joined the group via invite link"
+        /// </summary>
+        public static string MessageActionChatJoinedByLink
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatJoinedByLink");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You joined the group"
+        /// </summary>
+        public static string MessageActionChatJoinSelf
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatJoinSelf");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat migrated to supergroup "{0}""
+        /// </summary>
+        public static string MessageActionChatMigrateTo
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatMigrateTo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Chat migrated to supergroup"
+        /// </summary>
+        public static string MessageActionChatMigrateToGeneric
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionChatMigrateToGeneric");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} disabled the self-destruct timer"
+        /// </summary>
+        public static string MessageActionDisableMessageTTL
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionDisableMessageTTL");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Empty service message"
+        /// </summary>
+        public static string MessageActionEmpty
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionEmpty");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You left the group"
+        /// </summary>
+        public static string MessageActionLeftGroupSelf
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionLeftGroupSelf");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned {1}"
+        /// </summary>
+        public static string MessageActionPin
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a contact"
+        /// </summary>
+        public static string MessageActionPinContact
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a file"
+        /// </summary>
+        public static string MessageActionPinFile
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinFile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a game"
+        /// </summary>
+        public static string MessageActionPinGame
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinGame");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a GIF"
+        /// </summary>
+        public static string MessageActionPinGif
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinGif");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "an invoice"
+        /// </summary>
+        public static string MessageActionPinInvoice
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinInvoice");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a map"
+        /// </summary>
+        public static string MessageActionPinMap
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinMap");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a message"
+        /// </summary>
+        public static string MessageActionPinMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a photo"
+        /// </summary>
+        public static string MessageActionPinPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a {0}sticker"
+        /// </summary>
+        public static string MessageActionPinSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinSticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} pinned "{1}""
+        /// </summary>
+        public static string MessageActionPinText
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "track"
+        /// </summary>
+        public static string MessageActionPinTrack
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinTrack");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a video"
+        /// </summary>
+        public static string MessageActionPinVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a voice message"
+        /// </summary>
+        public static string MessageActionPinVoiceMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionPinVoiceMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} took a screenshot!"
+        /// </summary>
+        public static string MessageActionScreenshotMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionScreenshotMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} set the self-destruct timer to {1}"
+        /// </summary>
+        public static string MessageActionSetMessageTTL
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionSetMessageTTL");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} left the group"
+        /// </summary>
+        public static string MessageActionUserLeftGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionUserLeftGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You disabled the self-destruct timer"
+        /// </summary>
+        public static string MessageActionYouDisableMessageTTL
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionYouDisableMessageTTL");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You took a screenshot!"
+        /// </summary>
+        public static string MessageActionYouScreenshotMessages
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionYouScreenshotMessages");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You set the self-destruct timer to {0}"
+        /// </summary>
+        public static string MessageActionYouSetMessageTTL
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageActionYouSetMessageTTL");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add to Stickers"
+        /// </summary>
+        public static string MessageAddSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageAddSticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy text"
+        /// </summary>
+        public static string MessageCopy
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageCopy");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy post link"
+        /// </summary>
+        public static string MessageCopyLinkBroadcast
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageCopyLinkBroadcast");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy message link"
+        /// </summary>
+        public static string MessageCopyLinkMegaGroup
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageCopyLinkMegaGroup");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Copy image"
+        /// </summary>
+        public static string MessageCopyMedia
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageCopyMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Delete message"
+        /// </summary>
+        public static string MessageDelete
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageDelete");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit message"
+        /// </summary>
+        public static string MessageEdit
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageEdit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Add to Favorites"
+        /// </summary>
+        public static string MessageFaveSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageFaveSticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forward message"
+        /// </summary>
+        public static string MessageForward
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageForward");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Pin message"
+        /// </summary>
+        public static string MessagePin
+        {
+            get
+            {
+                return resourceLoader.GetString("MessagePin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reply"
+        /// </summary>
+        public static string MessageReply
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageReply");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save to GIFs"
+        /// </summary>
+        public static string MessageSaveGIF
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSaveGIF");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Save file as..."
+        /// </summary>
+        public static string MessageSaveMedia
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSaveMedia");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Select message"
+        /// </summary>
+        public static string MessageSelect
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageSelect");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Remove from Favorites"
+        /// </summary>
+        public static string MessageUnfaveSticker
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageUnfaveSticker");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unpin message"
+        /// </summary>
+        public static string MessageUnpin
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageUnpin");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "View in chat"
+        /// </summary>
+        public static string MessageView
+        {
+            get
+            {
+                return resourceLoader.GetString("MessageView");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Months"
+        /// </summary>
+        public static string MonthGenitivePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("MonthGenitivePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Month"
+        /// </summary>
+        public static string MonthGenitiveSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("MonthGenitiveSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Months"
+        /// </summary>
+        public static string MonthNominativePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("MonthNominativePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Month"
+        /// </summary>
+        public static string MonthNominativeSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("MonthNominativeSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "More info"
+        /// </summary>
+        public static string MoreInfo
+        {
+            get
+            {
+                return resourceLoader.GetString("MoreInfo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "No"
+        /// </summary>
+        public static string No
+        {
+            get
+            {
+                return resourceLoader.GetString("No");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only send messages to mutual contacts at the moment."
+        /// </summary>
+        public static string NobodyLikesSpam1
+        {
+            get
+            {
+                return resourceLoader.GetString("NobodyLikesSpam1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only add mutual contacts to groups at the moment."
+        /// </summary>
+        public static string NobodyLikesSpam2
+        {
+            get
+            {
+                return resourceLoader.GetString("NobodyLikesSpam2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "OK"
+        /// </summary>
+        public static string OK
+        {
+            get
+            {
+                return resourceLoader.GetString("OK");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Edit permissions"
+        /// </summary>
+        public static string ParticipantEdit
+        {
+            get
+            {
+                return resourceLoader.GetString("ParticipantEdit");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Promote"
+        /// </summary>
+        public static string ParticipantPromote
+        {
+            get
+            {
+                return resourceLoader.GetString("ParticipantPromote");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Restrict"
+        /// </summary>
+        public static string ParticipantRestrict
+        {
+            get
+            {
+                return resourceLoader.GetString("ParticipantRestrict");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, the payment was declined."
+        /// </summary>
+        public static string PaymentFailed
+        {
+            get
+            {
+                return resourceLoader.GetString("PaymentFailed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, it is not possible to deliver to your address."
+        /// </summary>
+        public static string PaymentNoShippingMethod
+        {
+            get
+            {
+                return resourceLoader.GetString("PaymentNoShippingMethod");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, the payment was cancelled by the bot."
+        /// </summary>
+        public static string PaymentPrecheckoutFailed
+        {
+            get
+            {
+                return resourceLoader.GetString("PaymentPrecheckoutFailed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can only add mutual contacts to groups at the moment."
+        /// </summary>
+        public static string PeerFloodAddContact
+        {
+            get
+            {
+                return resourceLoader.GetString("PeerFloodAddContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Playing a game"
+        /// </summary>
+        public static string PlayingGame
+        {
+            get
+            {
+                return resourceLoader.GetString("PlayingGame");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Proxy Settings"
+        /// </summary>
+        public static string ProxySettingsShareTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ProxySettingsShareTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recording a video"
+        /// </summary>
+        public static string RecordingVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("RecordingVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recording a video message"
+        /// </summary>
+        public static string RecordingVideoMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("RecordingVideoMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Recording a voice message"
+        /// </summary>
+        public static string RecordingVoiceMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("RecordingVoiceMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Reset all notifications?"
+        /// </summary>
+        public static string ResetNotificationsDialogBody
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogBody");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Confirm"
+        /// </summary>
+        public static string ResetNotificationsDialogTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("ResetNotificationsDialogTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending an audio"
+        /// </summary>
+        public static string SendingAudio
+        {
+            get
+            {
+                return resourceLoader.GetString("SendingAudio");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending a file"
+        /// </summary>
+        public static string SendingFile
+        {
+            get
+            {
+                return resourceLoader.GetString("SendingFile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending a photo"
+        /// </summary>
+        public static string SendingPhoto
+        {
+            get
+            {
+                return resourceLoader.GetString("SendingPhoto");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending a video"
+        /// </summary>
+        public static string SendingVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("SendingVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sending a video message"
+        /// </summary>
+        public static string SendingVideoMessage
+        {
+            get
+            {
+                return resourceLoader.GetString("SendingVideoMessage");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Please note that Telegram Support is done by volunteers. We try to respond as quickly as possible, but it may take a while. Please take a look at the Telegram FAQ: it has important troubleshooting tips and answers to most questions."
+        /// </summary>
+        public static string SupportDisclaimerDialogText
+        {
+            get
+            {
+                return resourceLoader.GetString("SupportDisclaimerDialogText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "FAQ"
+        /// </summary>
+        public static string SupportDisclaimerPrimaryButtonText
+        {
+            get
+            {
+                return resourceLoader.GetString("SupportDisclaimerPrimaryButtonText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Typing"
+        /// </summary>
+        public static string Typing
+        {
+            get
+            {
+                return resourceLoader.GetString("Typing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Users"
+        /// </summary>
+        public static string UserGenitivePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("UserGenitivePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "User"
+        /// </summary>
+        public static string UserGenitiveSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("UserGenitiveSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this username is already taken."
+        /// </summary>
+        public static string UsernameInUse
+        {
+            get
+            {
+                return resourceLoader.GetString("UsernameInUse");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this username is invalid."
+        /// </summary>
+        public static string UsernameInvalid
+        {
+            get
+            {
+                return resourceLoader.GetString("UsernameInvalid");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Users"
+        /// </summary>
+        public static string UserNominativePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("UserNominativePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "User"
+        /// </summary>
+        public static string UserNominativeSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("UserNominativeSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user to groups."
+        /// </summary>
+        public static string UserNotMutualContact
+        {
+            get
+            {
+                return resourceLoader.GetString("UserNotMutualContact");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you are not allowed to do this."
+        /// </summary>
+        public static string UserRestricted
+        {
+            get
+            {
+                return resourceLoader.GetString("UserRestricted");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Forever"
+        /// </summary>
+        public static string UserRestrictionsUntilForever
+        {
+            get
+            {
+                return resourceLoader.GetString("UserRestrictionsUntilForever");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} scored {1}"
+        /// </summary>
+        public static string UserScored
+        {
+            get
+            {
+                return resourceLoader.GetString("UserScored");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} scored {1} at {2}"
+        /// </summary>
+        public static string UserScoredAtGame
+        {
+            get
+            {
+                return resourceLoader.GetString("UserScoredAtGame");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} scored {1} at {2}"
+        /// </summary>
+        public static string UserScoredAtGamePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("UserScoredAtGamePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} scored {1}"
+        /// </summary>
+        public static string UserScoredPlural
+        {
+            get
+            {
+                return resourceLoader.GetString("UserScoredPlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, this group is full."
+        /// </summary>
+        public static string UsersTooMuch
+        {
+            get
+            {
+                return resourceLoader.GetString("UsersTooMuch");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Are you sure?"
+        /// </summary>
+        public static string UserUnblockConfirmationText
+        {
+            get
+            {
+                return resourceLoader.GetString("UserUnblockConfirmationText");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Unblock?"
+        /// </summary>
+        public static string UserUnblockConfirmationTitle
+        {
+            get
+            {
+                return resourceLoader.GetString("UserUnblockConfirmationTitle");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "When using mobile data"
+        /// </summary>
+        public static string WhenOnMobileData
+        {
+            get
+            {
+                return resourceLoader.GetString("WhenOnMobileData");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "When connected to Wi-Fi"
+        /// </summary>
+        public static string WhenOnWiFi
+        {
+            get
+            {
+                return resourceLoader.GetString("WhenOnWiFi");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "When roaming"
+        /// </summary>
+        public static string WhenRoaming
+        {
+            get
+            {
+                return resourceLoader.GetString("WhenRoaming");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Years"
+        /// </summary>
+        public static string YearGenitivePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("YearGenitivePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Year"
+        /// </summary>
+        public static string YearGenitiveSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("YearGenitiveSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Years"
+        /// </summary>
+        public static string YearNominativePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("YearNominativePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Year"
+        /// </summary>
+        public static string YearNominativeSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("YearNominativeSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Yes"
+        /// </summary>
+        public static string Yes
+        {
+            get
+            {
+                return resourceLoader.GetString("Yes");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Sorry, you can't add this user or bot to groups because you've blocked them. Please unblock to proceed."
+        /// </summary>
+        public static string YouBlockedUser
+        {
+            get
+            {
+                return resourceLoader.GetString("YouBlockedUser");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You scored {0}"
+        /// </summary>
+        public static string YourScored
+        {
+            get
+            {
+                return resourceLoader.GetString("YourScored");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You scored {0} at {1}"
+        /// </summary>
+        public static string YourScoredAtGame
+        {
+            get
+            {
+                return resourceLoader.GetString("YourScoredAtGame");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You scored {0} at {1}"
+        /// </summary>
+        public static string YourScoredAtGamePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("YourScoredAtGamePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "You scored {0}"
+        /// </summary>
+        public static string YourScoredPlural
+        {
+            get
+            {
+                return resourceLoader.GetString("YourScoredPlural");
             }
         }
     }

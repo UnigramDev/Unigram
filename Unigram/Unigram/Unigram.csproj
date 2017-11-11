@@ -298,60 +298,15 @@
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\PushService.cs" />
-    <Compile Include="Strings\en\DialogResources.cs">
+    <Compile Include="Strings\en\Branding.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>DialogResources.resw</DependentUpon>
-    </Compile>
-    <Compile Include="Strings\en\ErrorMessages.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ErrorMessages.resw</DependentUpon>
-    </Compile>
-    <Compile Include="Strings\en\EventLogStrings.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>EventLogStrings.resw</DependentUpon>
-    </Compile>
-    <Compile Include="Strings\en\Gaming.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Gaming.resw</DependentUpon>
-    </Compile>
-    <Compile Include="Strings\en\InAppBranding.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>InAppBranding.resw</DependentUpon>
-    </Compile>
-    <Compile Include="Strings\en\ManifestResources.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ManifestResources.resw</DependentUpon>
-    </Compile>
-    <Compile Include="Strings\en\Messages.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Messages.resw</DependentUpon>
-    </Compile>
-    <Compile Include="Strings\en\Nouns.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Nouns.resw</DependentUpon>
+      <DependentUpon>Branding.resw</DependentUpon>
     </Compile>
     <Compile Include="Strings\en\Resources.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resw</DependentUpon>
-    </Compile>
-    <Compile Include="Strings\en\Settings.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Settings.resw</DependentUpon>
-    </Compile>
-    <Compile Include="Strings\en\Statuses.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Statuses.resw</DependentUpon>
     </Compile>
     <Compile Include="Triggers\DeviceFamilyTrigger.cs" />
     <Compile Include="Triggers\UserInteractionTrigger.cs" />
@@ -1160,59 +1115,12 @@
     <Content Include="Assets\Fonts\CamMDL2.ttf" />
     <Content Include="Assets\Fonts\PhtoMDL2.ttf" />
     <None Include="Assets\Fonts\Telegram.json" />
-    <PRIResource Include="Strings\en\ManifestResources.resw">
-      <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>ManifestResources.cs</LastGenOutput>
-      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-    </PRIResource>
-    <PRIResource Include="Strings\en\InAppBranding.resw">
-      <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>InAppBranding.cs</LastGenOutput>
-      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-    </PRIResource>
-    <PRIResource Include="Strings\ja\ManifestResources.resw" />
-    <PRIResource Include="Strings\ja\InAppBranding.resw" />
-    <PRIResource Include="Strings\en\ErrorMessages.resw">
+    <PRIResource Include="Strings\en\Branding.resw">
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
       <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>ErrorMessages.cs</LastGenOutput>
+      <LastGenOutput>Branding.cs</LastGenOutput>
     </PRIResource>
-    <PRIResource Include="Strings\en\Nouns.resw">
-      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-      <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>Nouns.cs</LastGenOutput>
-    </PRIResource>
-    <PRIResource Include="Strings\en\EventLogStrings.resw">
-      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-      <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>EventLogStrings.cs</LastGenOutput>
-    </PRIResource>
-    <PRIResource Include="Strings\en\Gaming.resw">
-      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-      <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>Gaming.cs</LastGenOutput>
-    </PRIResource>
-    <PRIResource Include="Strings\en\Messages.resw">
-      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-      <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>Messages.cs</LastGenOutput>
-    </PRIResource>
-    <PRIResource Include="Strings\en\Statuses.resw">
-      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-      <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>Statuses.cs</LastGenOutput>
-    </PRIResource>
-    <PRIResource Include="Strings\en\DialogResources.resw">
-      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-      <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>DialogResources.cs</LastGenOutput>
-    </PRIResource>
-    <PRIResource Include="Strings\en\Settings.resw">
-      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
-      <Generator>ReswFileCodeGenerator</Generator>
-      <LastGenOutput>Settings.cs</LastGenOutput>
-    </PRIResource>
-    <PRIResource Include="Strings\ja\Resources.resw" />
+    <PRIResource Include="Strings\ja\Branding.resw" />
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1882,7 +1790,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Unigram.Api\Telegram.Api.csproj">
       <Project>{b1979f0b-11e6-4759-a54d-853b13139aa0}</Project>
-      <Name>Unigram.Api</Name>
+      <Name>Telegram.Api</Name>
     </ProjectReference>
     <ProjectReference Include="..\Unigram.Core\Unigram.Core.csproj">
       <Project>{580d2885-8129-499e-9ffd-39ff1b586f18}</Project>

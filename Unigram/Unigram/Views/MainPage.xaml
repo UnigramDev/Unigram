@@ -262,7 +262,7 @@
                             </Button.Flyout>
                         </Button>
 
-                        <controls:SearchTextBox x:Name="SearchDialogs"
+                        <controls:SearchTextBox x:Uid="MainPage_SearchDialogs" x:Name="SearchDialogs"
                                                     Padding="60,3,6,5"
                                                     Background="{x:Null}"
                                                     BorderBrush="{x:Null}"

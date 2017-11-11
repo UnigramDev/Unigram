@@ -117,31 +117,31 @@ namespace Unigram.ViewModels
                         //case TLSendMessageChooseContactAction chooseContact:
                         //    return "";
                         case TLSendMessageGamePlayAction gamePlay:
-                            return Strings.Statuses.PlayingGame;
+                            return Strings.Resources.PlayingGame;
                         //case TLSendMessageGeoLocationAction geoLocation:
                         //    return "";
                         case TLSendMessageRecordAudioAction recordAudio:
-                            return Strings.Statuses.RecordingVoiceMessage;
+                            return Strings.Resources.RecordingVoiceMessage;
                         case TLSendMessageRecordRoundAction recordRound:
-                            return Strings.Statuses.RecordingVideoMessage;
+                            return Strings.Resources.RecordingVideoMessage;
                         case TLSendMessageRecordVideoAction recordVideo:
-                            return Strings.Statuses.RecordingVideo;
+                            return Strings.Resources.RecordingVideo;
                         //case TLSendMessageTypingAction typing:
-                        //    return Strings.Statuses.Typing;
+                        //    return Strings.Resources.Typing;
                         case TLSendMessageUploadAudioAction uploadAudio:
-                            return Strings.Statuses.SendingAudio;
+                            return Strings.Resources.SendingAudio;
                         case TLSendMessageUploadDocumentAction uploadDocument:
-                            return Strings.Statuses.SendingFile;
+                            return Strings.Resources.SendingFile;
                         case TLSendMessageUploadPhotoAction uploadPhoto:
-                            return Strings.Statuses.SendingPhoto;
+                            return Strings.Resources.SendingPhoto;
                         case TLSendMessageUploadRoundAction uploadRound:
-                            return Strings.Statuses.SendingVideoMessage;
+                            return Strings.Resources.SendingVideoMessage;
                         case TLSendMessageUploadVideoAction uploadVideo:
-                            return Strings.Statuses.SendingVideo;
+                            return Strings.Resources.SendingVideo;
                     }
                 }
 
-                return Strings.Statuses.Typing;
+                return Strings.Resources.Typing;
             }
 
             if (typingUsers.Count == 1)
@@ -164,37 +164,37 @@ namespace Unigram.ViewModels
                         //case TLSendMessageChooseContactAction chooseContact:
                         //    return "";
                         case TLSendMessageGamePlayAction gamePlay:
-                            return string.Format(Strings.Statuses.IsPlayingGame, userName);
+                            return string.Format(Strings.Resources.IsPlayingGame, userName);
                         //case TLSendMessageGeoLocationAction geoLocation:
                         //    return "";
                         case TLSendMessageRecordAudioAction recordAudio:
-                            return string.Format(Strings.Statuses.IsRecordingAudio, userName);
+                            return string.Format(Strings.Resources.IsRecordingAudio, userName);
                         case TLSendMessageRecordRoundAction recordRound:
-                            return string.Format(Strings.Statuses.IsRecordingVideoMessage, userName);
+                            return string.Format(Strings.Resources.IsRecordingVideoMessage, userName);
                         case TLSendMessageRecordVideoAction recordVideo:
-                            return string.Format(Strings.Statuses.IsRecordingVideo, userName);
+                            return string.Format(Strings.Resources.IsRecordingVideo, userName);
                         //case TLSendMessageTypingAction typing:
                         //    return string.Format(Strings.Resources.IsTyping, userName);
                         case TLSendMessageUploadAudioAction uploadAudio:
-                            return string.Format(Strings.Statuses.IsSendingAudio, userName);
+                            return string.Format(Strings.Resources.IsSendingAudio, userName);
                         case TLSendMessageUploadDocumentAction uploadDocument:
-                            return string.Format(Strings.Statuses.IsSendingFile, userName);
+                            return string.Format(Strings.Resources.IsSendingFile, userName);
                         case TLSendMessageUploadPhotoAction uploadPhoto:
-                            return string.Format(Strings.Statuses.IsSendingPhoto, userName);
+                            return string.Format(Strings.Resources.IsSendingPhoto, userName);
                         case TLSendMessageUploadRoundAction uploadRound:
-                            return string.Format(Strings.Statuses.IsSendingVideoMessage, userName);
+                            return string.Format(Strings.Resources.IsSendingVideoMessage, userName);
                         case TLSendMessageUploadVideoAction uploadVideo:
-                            return string.Format(Strings.Statuses.IsSendingVideo, userName);
+                            return string.Format(Strings.Resources.IsSendingVideo, userName);
                     }
                 }
 
-                return string.Format(Strings.Statuses.IsTyping, userName);
+                return string.Format(Strings.Resources.IsTyping, userName);
             }
             else
             {
                 if (typingUsers.Count > 3)
                 {
-                    return string.Format(Strings.Statuses.AreTyping, Language.Declension(typingUsers.Count, Strings.Nouns.CompanyNominativeSingular, Strings.Nouns.CompanyNominativePlural, Strings.Nouns.CompanyGenitiveSingular, Strings.Nouns.CompanyGenitivePlural, null, null));
+                    return string.Format(Strings.Resources.AreTyping, Language.Declension(typingUsers.Count, Strings.Resources.CompanyNominativeSingular, Strings.Resources.CompanyNominativePlural, Strings.Resources.CompanyGenitiveSingular, Strings.Resources.CompanyGenitivePlural, null, null));
                 }
 
                 var names = new List<string>(typingUsers.Count);
@@ -220,7 +220,7 @@ namespace Unigram.ViewModels
                     return null;
                 }
 
-                return string.Format(Strings.Statuses.AreTyping, string.Join(", ", names));
+                return string.Format(Strings.Resources.AreTyping, string.Join(", ", names));
             }
         }
     }

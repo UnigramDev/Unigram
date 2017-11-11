@@ -215,16 +215,16 @@ namespace Unigram.Common
 
             if (newMessage.Media == null || (newMessage.Media is TLMessageMediaEmpty) || (newMessage.Media is TLMessageMediaWebPage) || !string.IsNullOrEmpty(newMessage.Message))
             {
-                siteName.Text = Strings.EventLogStrings.EventLogOriginalMessages;
+                siteName.Text = Strings.Resources.EventLogOriginalMessages;
                 description.Text = oldMessage.Message;
             }
             else if (oldMessage.Media is ITLMessageMediaCaption captionMedia)
             {
-                siteName.Text = Strings.EventLogStrings.EventLogOriginalCaption;
+                siteName.Text = Strings.Resources.EventLogOriginalCaption;
 
                 if (string.IsNullOrEmpty(captionMedia.Caption))
                 {
-                    description.Text = Strings.EventLogStrings.EventLogOriginalCaptionEmpty;
+                    description.Text = Strings.Resources.EventLogOriginalCaptionEmpty;
                 }
                 else
                 {

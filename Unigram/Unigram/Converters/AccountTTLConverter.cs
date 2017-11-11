@@ -17,11 +17,11 @@ namespace Unigram.Converters
             if (days >= 365)
             {
                 var years = days / 365;
-                return Language.Declension(years, Strings.Nouns.YearNominativeSingular, Strings.Nouns.YearNominativePlural, Strings.Nouns.YearGenitiveSingular, Strings.Nouns.YearGenitivePlural, null, null);
+                return Language.Declension(years, Strings.Resources.YearNominativeSingular, Strings.Resources.YearNominativePlural, Strings.Resources.YearGenitiveSingular, Strings.Resources.YearGenitivePlural, null, null);
             }
 
             var months = days / 30;
-            return Language.Declension(months, Strings.Nouns.MonthNominativeSingular, Strings.Nouns.MonthNominativePlural, Strings.Nouns.MonthGenitiveSingular, Strings.Nouns.MonthGenitivePlural, null, null);
+            return Language.Declension(months, Strings.Resources.MonthNominativeSingular, Strings.Resources.MonthNominativePlural, Strings.Resources.MonthGenitiveSingular, Strings.Resources.MonthGenitivePlural, null, null);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

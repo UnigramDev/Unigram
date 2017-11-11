@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/11/2017 18:56:56
+// 	Generated: 11/12/2017 11:19:05
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -25,12 +25,12 @@ namespace Unigram.Strings
     using Windows.ApplicationModel.Resources;
     
     
-    public sealed partial class Gaming
+    public sealed partial class Branding
     {
         
         private static ResourceLoader resourceLoader;
         
-        static Gaming()
+        static Branding()
         {
             string executingAssemblyName;
             executingAssemblyName = Windows.UI.Xaml.Application.Current.GetType().AssemblyQualifiedName;
@@ -38,105 +38,83 @@ namespace Unigram.Strings
             executingAssemblySplit = executingAssemblyName.Split(',');
             executingAssemblyName = executingAssemblySplit[1];
             string currentAssemblyName;
-            currentAssemblyName = typeof(Gaming).AssemblyQualifiedName;
+            currentAssemblyName = typeof(Branding).AssemblyQualifiedName;
             string[] currentAssemblySplit;
             currentAssemblySplit = currentAssemblyName.Split(',');
             currentAssemblyName = currentAssemblySplit[1];
             if (executingAssemblyName.Equals(currentAssemblyName))
             {
-                resourceLoader = ResourceLoader.GetForViewIndependentUse("Gaming");
+                resourceLoader = ResourceLoader.GetForViewIndependentUse("Branding");
             }
             else
             {
-                resourceLoader = ResourceLoader.GetForViewIndependentUse(currentAssemblyName + "/Gaming");
+                resourceLoader = ResourceLoader.GetForViewIndependentUse(currentAssemblyName + "/Branding");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} scored {1}"
+        /// Localized resource similar to "Unigram"
         /// </summary>
-        public static string UserScored
+        public static string ApplicationDescription
         {
             get
             {
-                return resourceLoader.GetString("UserScored");
+                return resourceLoader.GetString("ApplicationDescription");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} scored {1} at {2}"
+        /// Localized resource similar to "Unigram (Alpha)"
         /// </summary>
-        public static string UserScoredAtGame
+        public static string ApplicationDisplayName
         {
             get
             {
-                return resourceLoader.GetString("UserScoredAtGame");
+                return resourceLoader.GetString("ApplicationDisplayName");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} scored {1} at {2}"
+        /// Localized resource similar to "Unigram"
         /// </summary>
-        public static string UserScoredAtGamePlural
+        public static string ApplicationName
         {
             get
             {
-                return resourceLoader.GetString("UserScoredAtGamePlural");
+                return resourceLoader.GetString("ApplicationName");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "{0} scored {1}"
+        /// Localized resource similar to "Unigram"
         /// </summary>
-        public static string UserScoredPlural
+        public static string PackageDisplayName
         {
             get
             {
-                return resourceLoader.GetString("UserScoredPlural");
+                return resourceLoader.GetString("PackageDisplayName");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "You scored {0}"
+        /// Localized resource similar to "Unigram, Inc."
         /// </summary>
-        public static string YourScored
+        public static string PublisherDisplayName
         {
             get
             {
-                return resourceLoader.GetString("YourScored");
+                return resourceLoader.GetString("PublisherDisplayName");
             }
         }
         
         /// <summary>
-        /// Localized resource similar to "You scored {0} at {1}"
+        /// Localized resource similar to "Telegram"
         /// </summary>
-        public static string YourScoredAtGame
+        public static string ServiceName
         {
             get
             {
-                return resourceLoader.GetString("YourScoredAtGame");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You scored {0} at {1}"
-        /// </summary>
-        public static string YourScoredAtGamePlural
-        {
-            get
-            {
-                return resourceLoader.GetString("YourScoredAtGamePlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "You scored {0}"
-        /// </summary>
-        public static string YourScoredPlural
-        {
-            get
-            {
-                return resourceLoader.GetString("YourScoredPlural");
+                return resourceLoader.GetString("ServiceName");
             }
         }
     }

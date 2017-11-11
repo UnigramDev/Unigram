@@ -22,9 +22,9 @@ namespace Unigram.ViewModels.Settings
         {
             AutoDownloads = new ObservableCollection<SettingsDataAutoDownload>
             {
-                new SettingsDataAutoDownload(Strings.Settings.WhenOnMobileData, NetworkType.Mobile),
-                new SettingsDataAutoDownload(Strings.Settings.WhenOnWiFi, NetworkType.WiFi),
-                new SettingsDataAutoDownload(Strings.Settings.WhenRoaming, NetworkType.Roaming),
+                new SettingsDataAutoDownload(Strings.Resources.WhenOnMobileData, NetworkType.Mobile),
+                new SettingsDataAutoDownload(Strings.Resources.WhenOnWiFi, NetworkType.WiFi),
+                new SettingsDataAutoDownload(Strings.Resources.WhenRoaming, NetworkType.Roaming),
             };
 
             AutoDownloadCommand = new RelayCommand<NetworkType>(AutoDownloadExecute);

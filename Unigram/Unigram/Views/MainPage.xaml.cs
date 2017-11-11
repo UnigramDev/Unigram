@@ -671,12 +671,12 @@ namespace Unigram.Views
             var element = sender as FrameworkElement;
             var dialog = element.DataContext as TLDialog;
 
-            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Dialogs.DialogPinCommand, dialog, dialog.IsPinned ? Strings.DialogResources.DialogUnpin : Strings.DialogResources.DialogPin);
-            CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Dialogs.DialogNotifyCommand, dialog, dialog.IsMuted ? Strings.DialogResources.DialogNotificationsEnable : Strings.DialogResources.DialogNotificationsDisable);
-            CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Dialogs.DialogClearCommand, dialog, Strings.DialogResources.DialogClearHistory);
+            CreateFlyoutItem(ref flyout, DialogPin_Loaded, ViewModel.Dialogs.DialogPinCommand, dialog, dialog.IsPinned ? Strings.Resources.DialogUnpin : Strings.Resources.DialogPin);
+            CreateFlyoutItem(ref flyout, DialogNotify_Loaded, ViewModel.Dialogs.DialogNotifyCommand, dialog, dialog.IsMuted ? Strings.Resources.DialogNotificationsEnable : Strings.Resources.DialogNotificationsDisable);
+            CreateFlyoutItem(ref flyout, DialogClear_Loaded, ViewModel.Dialogs.DialogClearCommand, dialog, Strings.Resources.DialogClearHistory);
             CreateFlyoutItem(ref flyout, DialogDelete_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, DialogDelete_Text(dialog));
-            CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Dialogs.DialogDeleteAndStopCommand, dialog, Strings.DialogResources.DialogDeleteAndStop);
-            CreateFlyoutItem(ref flyout, DialogDeleteAndExit_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, Strings.DialogResources.DialogDeleteAndExit);
+            CreateFlyoutItem(ref flyout, DialogDeleteAndStop_Loaded, ViewModel.Dialogs.DialogDeleteAndStopCommand, dialog, Strings.Resources.DialogDeleteAndStop);
+            CreateFlyoutItem(ref flyout, DialogDeleteAndExit_Loaded, ViewModel.Dialogs.DialogDeleteCommand, dialog, Strings.Resources.DialogDeleteAndExit);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
@@ -752,11 +752,11 @@ namespace Unigram.Views
                 {
                     //if (channel.IsCreator)
                     //{
-                    //    return channel.IsMegaGroup ? Strings.DialogResources.DialogDeleteGroup : Strings.DialogResources.DialogDeleteChannel;;
+                    //    return channel.IsMegaGroup ? Strings.Resources.DialogDeleteGroup : Strings.Resources.DialogDeleteChannel;;
                     //}
                     //else
                     {
-                        return channel.IsMegaGroup ? Strings.DialogResources.DialogLeaveGroup : Strings.DialogResources.DialogLeaveChannel;
+                        return channel.IsMegaGroup ? Strings.Resources.DialogLeaveGroup : Strings.Resources.DialogLeaveChannel;
                     }
                 }
             }
@@ -764,13 +764,13 @@ namespace Unigram.Views
             var userPeer = dialog.Peer as TLPeerUser;
             if (userPeer != null)
             {
-                return Strings.DialogResources.DialogDelete;
+                return Strings.Resources.DialogDelete;
             }
 
             var chatPeer = dialog.Peer as TLPeerChat;
             if (chatPeer != null)
             {
-                return Strings.DialogResources.DialogDelete;
+                return Strings.Resources.DialogDelete;
             }
 
             return null;

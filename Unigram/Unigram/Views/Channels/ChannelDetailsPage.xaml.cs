@@ -89,9 +89,9 @@ namespace Unigram.Views.Channels
             var element = sender as FrameworkElement;
             var participant = element.DataContext as TLChannelParticipantBase;
 
-            CreateFlyoutItem(ref flyout, ParticipantEdit_Loaded, ViewModel.ParticipantEditCommand, participant, Strings.Settings.ParticipantEdit);
-            CreateFlyoutItem(ref flyout, ParticipantPromote_Loaded, ViewModel.ParticipantPromoteCommand, participant, Strings.Settings.ParticipantPromote);
-            CreateFlyoutItem(ref flyout, ParticipantRestrict_Loaded, ViewModel.ParticipantRestrictCommand, participant, Strings.Settings.ParticipantRestrict);
+            CreateFlyoutItem(ref flyout, ParticipantEdit_Loaded, ViewModel.ParticipantEditCommand, participant, Strings.Resources.ParticipantEdit);
+            CreateFlyoutItem(ref flyout, ParticipantPromote_Loaded, ViewModel.ParticipantPromoteCommand, participant, Strings.Resources.ParticipantPromote);
+            CreateFlyoutItem(ref flyout, ParticipantRestrict_Loaded, ViewModel.ParticipantRestrictCommand, participant, Strings.Resources.ParticipantRestrict);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {
