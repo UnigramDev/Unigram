@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/11/2017 21:03:28
+// 	Generated: 11/11/2017 21:11:05
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -49,105 +49,6 @@ namespace Unigram.Strings
             else
             {
                 resourceLoader = ResourceLoader.GetForCurrentView(currentAssemblyName + "/Resources");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} are typing"
-        /// </summary>
-        public static string AreTyping
-        {
-            get
-            {
-                return resourceLoader.GetString("AreTyping");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Playing a game"
-        /// </summary>
-        public static string PlayingGame
-        {
-            get
-            {
-                return resourceLoader.GetString("PlayingGame");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Recording a video"
-        /// </summary>
-        public static string RecordingVideo
-        {
-            get
-            {
-                return resourceLoader.GetString("RecordingVideo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Recording a voice message"
-        /// </summary>
-        public static string RecordingVoiceMessage
-        {
-            get
-            {
-                return resourceLoader.GetString("RecordingVoiceMessage");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sending an audio"
-        /// </summary>
-        public static string SendingAudio
-        {
-            get
-            {
-                return resourceLoader.GetString("SendingAudio");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sending a file"
-        /// </summary>
-        public static string SendingFile
-        {
-            get
-            {
-                return resourceLoader.GetString("SendingFile");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sending a photo"
-        /// </summary>
-        public static string SendingPhoto
-        {
-            get
-            {
-                return resourceLoader.GetString("SendingPhoto");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sending a video"
-        /// </summary>
-        public static string SendingVideo
-        {
-            get
-            {
-                return resourceLoader.GetString("SendingVideo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Typing"
-        /// </summary>
-        public static string Typing
-        {
-            get
-            {
-                return resourceLoader.GetString("Typing");
             }
         }
         
@@ -423,28 +324,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("CallOutgoingShort");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Recording a video message"
-        /// </summary>
-        public static string RecordingVideoMessage
-        {
-            get
-            {
-                return resourceLoader.GetString("RecordingVideoMessage");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sending a video message"
-        /// </summary>
-        public static string SendingVideoMessage
-        {
-            get
-            {
-                return resourceLoader.GetString("SendingVideoMessage");
             }
         }
         

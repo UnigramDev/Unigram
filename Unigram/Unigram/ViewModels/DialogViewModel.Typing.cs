@@ -117,31 +117,31 @@ namespace Unigram.ViewModels
                         //case TLSendMessageChooseContactAction chooseContact:
                         //    return "";
                         case TLSendMessageGamePlayAction gamePlay:
-                            return Strings.Resources.PlayingGame;
+                            return Strings.Statuses.PlayingGame;
                         //case TLSendMessageGeoLocationAction geoLocation:
                         //    return "";
                         case TLSendMessageRecordAudioAction recordAudio:
-                            return Strings.Resources.RecordingVoiceMessage;
+                            return Strings.Statuses.RecordingVoiceMessage;
                         case TLSendMessageRecordRoundAction recordRound:
-                            return Strings.Resources.RecordingVideoMessage;
+                            return Strings.Statuses.RecordingVideoMessage;
                         case TLSendMessageRecordVideoAction recordVideo:
-                            return Strings.Resources.RecordingVideo;
+                            return Strings.Statuses.RecordingVideo;
                         //case TLSendMessageTypingAction typing:
-                        //    return Strings.Resources.Typing;
+                        //    return Strings.Statuses.Typing;
                         case TLSendMessageUploadAudioAction uploadAudio:
-                            return Strings.Resources.SendingAudio;
+                            return Strings.Statuses.SendingAudio;
                         case TLSendMessageUploadDocumentAction uploadDocument:
-                            return Strings.Resources.SendingFile;
+                            return Strings.Statuses.SendingFile;
                         case TLSendMessageUploadPhotoAction uploadPhoto:
-                            return Strings.Resources.SendingPhoto;
+                            return Strings.Statuses.SendingPhoto;
                         case TLSendMessageUploadRoundAction uploadRound:
-                            return Strings.Resources.SendingVideoMessage;
+                            return Strings.Statuses.SendingVideoMessage;
                         case TLSendMessageUploadVideoAction uploadVideo:
-                            return Strings.Resources.SendingVideo;
+                            return Strings.Statuses.SendingVideo;
                     }
                 }
 
-                return Strings.Resources.Typing;
+                return Strings.Statuses.Typing;
             }
 
             if (typingUsers.Count == 1)
@@ -194,7 +194,7 @@ namespace Unigram.ViewModels
             {
                 if (typingUsers.Count > 3)
                 {
-                    return string.Format(Strings.Resources.AreTyping, Language.Declension(typingUsers.Count, Strings.Nouns.CompanyNominativeSingular, Strings.Nouns.CompanyNominativePlural, Strings.Nouns.CompanyGenitiveSingular, Strings.Nouns.CompanyGenitivePlural, null, null));
+                    return string.Format(Strings.Statuses.AreTyping, Language.Declension(typingUsers.Count, Strings.Nouns.CompanyNominativeSingular, Strings.Nouns.CompanyNominativePlural, Strings.Nouns.CompanyGenitiveSingular, Strings.Nouns.CompanyGenitivePlural, null, null));
                 }
 
                 var names = new List<string>(typingUsers.Count);
@@ -220,7 +220,7 @@ namespace Unigram.ViewModels
                     return null;
                 }
 
-                return string.Format(Strings.Resources.AreTyping, string.Join(", ", names));
+                return string.Format(Strings.Statuses.AreTyping, string.Join(", ", names));
             }
         }
     }
