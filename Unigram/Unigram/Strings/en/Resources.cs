@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/11/2017 17:50:52
+// 	Generated: 11/11/2017 18:32:37
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2288,17 +2288,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Sorry, this group is full."
-        /// </summary>
-        public static string UsersTooMuch
-        {
-            get
-            {
-                return resourceLoader.GetString("UsersTooMuch");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "invited {0}"
         /// </summary>
         public static string EventLogInvited
@@ -2603,17 +2592,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("OK");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Sorry, you can't add this user or bot to groups because you've blocked them. Please unblock to proceed."
-        /// </summary>
-        public static string YouBlockedUser
-        {
-            get
-            {
-                return resourceLoader.GetString("YouBlockedUser");
             }
         }
         

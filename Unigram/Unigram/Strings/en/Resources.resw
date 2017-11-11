@@ -732,9 +732,6 @@ Duration: {1}</value>
   <data name="UserRestrictionsUntilForever" xml:space="preserve">
     <value>Forever</value>
   </data>
-  <data name="UsersTooMuch" xml:space="preserve">
-    <value>Sorry, this group is full.</value>
-  </data>
   <data name="EventLogInvited" xml:space="preserve">
     <value>invited {0}</value>
   </data>
@@ -1098,10 +1095,6 @@ messages from multiple devices.</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
-    <comment>android</comment>
-  </data>
-  <data name="YouBlockedUser" xml:space="preserve">
-    <value>Sorry, you can't add this user or bot to groups because you've blocked them. Please unblock to proceed.</value>
     <comment>android</comment>
   </data>
   <data name="ResetNotificationsDialogBody" xml:space="preserve">
