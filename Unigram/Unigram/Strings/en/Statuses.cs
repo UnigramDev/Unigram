@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/11/2017 21:11:05
+// 	Generated: 11/11/2017 21:22:01
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -60,6 +60,281 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AreTyping");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancelled Call"
+        /// </summary>
+        public static string CallCanceled
+        {
+            get
+            {
+                return resourceLoader.GetString("CallCanceled");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Cancelled"
+        /// </summary>
+        public static string CallCanceledShort
+        {
+            get
+            {
+                return resourceLoader.GetString("CallCanceledShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Incoming Call"
+        /// </summary>
+        public static string CallIncoming
+        {
+            get
+            {
+                return resourceLoader.GetString("CallIncoming");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Incoming"
+        /// </summary>
+        public static string CallIncomingShort
+        {
+            get
+            {
+                return resourceLoader.GetString("CallIncomingShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minute"
+        /// </summary>
+        public static string CallMinutes_1
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMinutes_1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minutes"
+        /// </summary>
+        public static string CallMinutes_2
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMinutes_2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minutes"
+        /// </summary>
+        public static string CallMinutes_3_10
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMinutes_3_10");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minutes"
+        /// </summary>
+        public static string CallMinutes_any
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMinutes_any");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Missed Call"
+        /// </summary>
+        public static string CallMissed
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMissed");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Missed"
+        /// </summary>
+        public static string CallMissedShort
+        {
+            get
+            {
+                return resourceLoader.GetString("CallMissedShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Outgoing Call"
+        /// </summary>
+        public static string CallOutgoing
+        {
+            get
+            {
+                return resourceLoader.GetString("CallOutgoing");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Outgoing"
+        /// </summary>
+        public static string CallOutgoingShort
+        {
+            get
+            {
+                return resourceLoader.GetString("CallOutgoingShort");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} second"
+        /// </summary>
+        public static string CallSeconds_1
+        {
+            get
+            {
+                return resourceLoader.GetString("CallSeconds_1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} seconds"
+        /// </summary>
+        public static string CallSeconds_2
+        {
+            get
+            {
+                return resourceLoader.GetString("CallSeconds_2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} seconds"
+        /// </summary>
+        public static string CallSeconds_3_10
+        {
+            get
+            {
+                return resourceLoader.GetString("CallSeconds_3_10");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} seconds"
+        /// </summary>
+        public static string CallSeconds_any
+        {
+            get
+            {
+                return resourceLoader.GetString("CallSeconds_any");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} min"
+        /// </summary>
+        public static string CallShortMinutes_1
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortMinutes_1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} min"
+        /// </summary>
+        public static string CallShortMinutes_2
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortMinutes_2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} min"
+        /// </summary>
+        public static string CallShortMinutes_3_10
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortMinutes_3_10");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} min"
+        /// </summary>
+        public static string CallShortMinutes_any
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortMinutes_any");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sec"
+        /// </summary>
+        public static string CallShortSeconds_1
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortSeconds_1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sec"
+        /// </summary>
+        public static string CallShortSeconds_2
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortSeconds_2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sec"
+        /// </summary>
+        public static string CallShortSeconds_3_10
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortSeconds_3_10");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} sec"
+        /// </summary>
+        public static string CallShortSeconds_any
+        {
+            get
+            {
+                return resourceLoader.GetString("CallShortSeconds_any");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} ({1})"
+        /// </summary>
+        public static string CallTimeFormat
+        {
+            get
+            {
+                return resourceLoader.GetString("CallTimeFormat");
             }
         }
         

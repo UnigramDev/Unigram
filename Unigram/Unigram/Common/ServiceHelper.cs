@@ -186,7 +186,7 @@ namespace Unigram.Common
                         duration = BindConvert.Current.CallDuration(phoneCallAction.Duration ?? 0);
                     }
 
-                    return ReplaceLinks(serviceMessage, missed || (phoneCallAction.Duration ?? 0) < 1 ? type : string.Format(Strings.Resources.CallTimeFormat, type, duration));
+                    return ReplaceLinks(serviceMessage, missed || (phoneCallAction.Duration ?? 0) < 1 ? type : string.Format(Strings.Statuses.CallTimeFormat, type, duration));
                 }
 
                 return null;
