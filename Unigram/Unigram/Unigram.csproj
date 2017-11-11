@@ -1136,7 +1136,6 @@
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-150.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\Logos\LockScreenLogo\LockScreenLogo.scale-400.png" />
-    <Content Include="Assets\Logos\Placeholder\Placeholder-2.png" />
     <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-100.png" />
     <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-125.png" />
     <Content Include="Assets\Logos\SplashScreen\SplashScreen.scale-150.png" />
