@@ -60,7 +60,7 @@ namespace Unigram.Services
             {
                 if (!error.ErrorMessage.Equals("MESSAGE_NOT_MODIFIED"))
                 {
-                    ShowSimpleAlert(Strings.Resources.EditMessageError);
+                    ShowSimpleAlert(Strings.ErrorMessages.EditMessageError);
                 }
             }
             else if (request == TLType.MessagesSendMessage ||
@@ -77,15 +77,15 @@ namespace Unigram.Services
             {
                 if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
                 {
-                    ShowSimpleAlert(Strings.Resources.FloodWait);
+                    ShowSimpleAlert(Strings.ErrorMessages.FloodWait);
                 }
                 else if (error.ErrorMessage.Equals("USERS_TOO_MUCH"))
                 {
-                    ShowSimpleAlert(Strings.Resources.JoinToGroupErrorFull);
+                    ShowSimpleAlert(Strings.ErrorMessages.JoinToGroupErrorFull);
                 }
                 else
                 {
-                    ShowSimpleAlert(Strings.Resources.JoinToGroupErrorNotExist);
+                    ShowSimpleAlert(Strings.ErrorMessages.JoinToGroupErrorNotExist);
                 }
             }
             else if (request == TLType.MessagesGetAttachedStickers)
@@ -96,15 +96,15 @@ namespace Unigram.Services
             {
                 if (error.ErrorMessage.Contains("PHONE_CODE_EMPTY") || error.ErrorMessage.Contains("PHONE_CODE_INVALID"))
                 {
-                    ShowSimpleAlert(Strings.Resources.InvalidCode);
+                    ShowSimpleAlert(Strings.ErrorMessages.InvalidCode);
                 }
                 else if (error.ErrorMessage.Contains("PHONE_CODE_EXPIRED"))
                 {
-                    ShowSimpleAlert(Strings.Resources.CodeExpired);
+                    ShowSimpleAlert(Strings.ErrorMessages.CodeExpired);
                 }
                 else if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
                 {
-                    ShowSimpleAlert(Strings.Resources.FloodWait);
+                    ShowSimpleAlert(Strings.ErrorMessages.FloodWait);
                 }
                 else
                 {
@@ -115,40 +115,40 @@ namespace Unigram.Services
             {
                 if (error.ErrorMessage.Contains("PHONE_NUMBER_INVALID"))
                 {
-                    ShowSimpleAlert(Strings.Resources.InvalidPhoneNumber);
+                    ShowSimpleAlert(Strings.ErrorMessages.InvalidPhoneNumber);
                 }
                 else if (error.ErrorMessage.Contains("PHONE_CODE_EMPTY") || error.ErrorMessage.Contains("PHONE_CODE_INVALID"))
                 {
-                    ShowSimpleAlert(Strings.Resources.InvalidCode);
+                    ShowSimpleAlert(Strings.ErrorMessages.InvalidCode);
                 }
                 else if (error.ErrorMessage.Contains("PHONE_CODE_EXPIRED"))
                 {
-                    ShowSimpleAlert(Strings.Resources.CodeExpired);
+                    ShowSimpleAlert(Strings.ErrorMessages.CodeExpired);
                 }
                 else if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
                 {
-                    ShowSimpleAlert(Strings.Resources.FloodWait);
+                    ShowSimpleAlert(Strings.ErrorMessages.FloodWait);
                 }
                 else if (error.ErrorCode != -1000)
                 {
-                    ShowSimpleAlert(Strings.Resources.ErrorOccurred + "\n" + error.ErrorMessage);
+                    ShowSimpleAlert(Strings.ErrorMessages.ErrorOccurred + "\n" + error.ErrorMessage);
                 }
             }
             else if (request == TLType.AccountSendConfirmPhoneCode)
             {
                 if (error.ErrorCode == 400)
                 {
-                    ShowSimpleAlert(Strings.Resources.CancelLinkExpired);
+                    ShowSimpleAlert(Strings.ErrorMessages.CancelLinkExpired);
                 }
                 else if (error.ErrorMessage != null)
                 {
                     if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
                     {
-                        ShowSimpleAlert(Strings.Resources.FloodWait);
+                        ShowSimpleAlert(Strings.ErrorMessages.FloodWait);
                     }
                     else
                     {
-                        ShowSimpleAlert(Strings.Resources.ErrorOccurred);
+                        ShowSimpleAlert(Strings.ErrorMessages.ErrorOccurred);
                     }
                 }
             }
@@ -156,19 +156,19 @@ namespace Unigram.Services
             {
                 if (error.ErrorMessage.Contains("PHONE_NUMBER_INVALID"))
                 {
-                    ShowSimpleAlert(Strings.Resources.InvalidPhoneNumber);
+                    ShowSimpleAlert(Strings.ErrorMessages.InvalidPhoneNumber);
                 }
                 else if (error.ErrorMessage.Contains("PHONE_CODE_EMPTY") || error.ErrorMessage.Contains("PHONE_CODE_INVALID"))
                 {
-                    ShowSimpleAlert(Strings.Resources.InvalidCode);
+                    ShowSimpleAlert(Strings.ErrorMessages.InvalidCode);
                 }
                 else if (error.ErrorMessage.Contains("PHONE_CODE_EXPIRED"))
                 {
-                    ShowSimpleAlert(Strings.Resources.CodeExpired);
+                    ShowSimpleAlert(Strings.ErrorMessages.CodeExpired);
                 }
                 else if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
                 {
-                    ShowSimpleAlert(Strings.Resources.FloodWait);
+                    ShowSimpleAlert(Strings.ErrorMessages.FloodWait);
                 }
                 else
                 {
@@ -179,27 +179,27 @@ namespace Unigram.Services
             {
                 if (error.ErrorMessage.Contains("PHONE_NUMBER_INVALID"))
                 {
-                    ShowSimpleAlert(Strings.Resources.InvalidPhoneNumber);
+                    ShowSimpleAlert(Strings.ErrorMessages.InvalidPhoneNumber);
                 }
                 else if (error.ErrorMessage.Contains("PHONE_CODE_EMPTY") || error.ErrorMessage.Contains("PHONE_CODE_INVALID"))
                 {
-                    ShowSimpleAlert(Strings.Resources.InvalidCode);
+                    ShowSimpleAlert(Strings.ErrorMessages.InvalidCode);
                 }
                 else if (error.ErrorMessage.Contains("PHONE_CODE_EXPIRED"))
                 {
-                    ShowSimpleAlert(Strings.Resources.CodeExpired);
+                    ShowSimpleAlert(Strings.ErrorMessages.CodeExpired);
                 }
                 else if (error.ErrorMessage.StartsWith("FLOOD_WAIT"))
                 {
-                    ShowSimpleAlert(Strings.Resources.FloodWait);
+                    ShowSimpleAlert(Strings.ErrorMessages.FloodWait);
                 }
                 else if (error.ErrorMessage.StartsWith("PHONE_NUMBER_OCCUPIED"))
                 {
-                    ShowSimpleAlert(string.Format(Strings.Resources.ChangePhoneNumberOccupied, (String)args[0]));
+                    ShowSimpleAlert(string.Format(Strings.ErrorMessages.ChangePhoneNumberOccupied, (String)args[0]));
                 }
                 else
                 {
-                    ShowSimpleAlert(Strings.Resources.ErrorOccurred);
+                    ShowSimpleAlert(Strings.ErrorMessages.ErrorOccurred);
                 }
             }
             else if (request == TLType.AccountUpdateUsername)
@@ -207,16 +207,16 @@ namespace Unigram.Services
                 switch (error.ErrorMessage)
                 {
                     case "USERNAME_INVALID":
-                        ShowSimpleAlert(Strings.Resources.UsernameInvalid);
+                        ShowSimpleAlert(Strings.ErrorMessages.UsernameInvalid);
                         break;
                     case "USERNAME_OCCUPIED":
-                        ShowSimpleAlert(Strings.Resources.UsernameInUse);
+                        ShowSimpleAlert(Strings.ErrorMessages.UsernameInUse);
                         break;
                     //case "USERNAMES_UNAVAILABLE":
                     //    ShowSimpleAlert(Strings.Resources.FeatureUnavailable);
                     //    break;
                     default:
-                        ShowSimpleAlert(Strings.Resources.ErrorOccurred);
+                        ShowSimpleAlert(Strings.ErrorMessages.ErrorOccurred);
                         break;
                 }
             }
@@ -224,11 +224,11 @@ namespace Unigram.Services
             {
                 if (error == null || error.ErrorMessage.StartsWith("FLOOD_WAIT"))
                 {
-                    ShowSimpleAlert(Strings.Resources.FloodWait);
+                    ShowSimpleAlert(Strings.ErrorMessages.FloodWait);
                 }
                 else
                 {
-                    ShowSimpleAlert(Strings.Resources.ErrorOccurred + "\n" + error.ErrorMessage);
+                    ShowSimpleAlert(Strings.ErrorMessages.ErrorOccurred + "\n" + error.ErrorMessage);
                 }
             }
             else if (request == TLType.AccountGetPassword || request == TLType.AccountGetTmpPassword)
@@ -247,10 +247,10 @@ namespace Unigram.Services
                 switch (error.ErrorMessage)
                 {
                     case "BOT_PRECHECKOUT_FAILED":
-                        ShowSimpleToast(Strings.Resources.PaymentPrecheckoutFailed);
+                        ShowSimpleToast(Strings.ErrorMessages.PaymentPrecheckoutFailed);
                         break;
                     case "PAYMENT_FAILED":
-                        ShowSimpleToast(Strings.Resources.PaymentFailed);
+                        ShowSimpleToast(Strings.ErrorMessages.PaymentFailed);
                         break;
                     default:
                         ShowSimpleToast(error.ErrorMessage);
@@ -262,7 +262,7 @@ namespace Unigram.Services
                 switch (error.ErrorMessage)
                 {
                     case "SHIPPING_NOT_AVAILABLE":
-                        ShowSimpleToast(Strings.Resources.PaymentNoShippingMethod);
+                        ShowSimpleToast(Strings.ErrorMessages.PaymentNoShippingMethod);
                         break;
                     default:
                         ShowSimpleToast(error.ErrorMessage);
@@ -318,11 +318,11 @@ namespace Unigram.Services
 
             if (reason == 0)
             {
-                dialog.Message = Strings.Resources.NobodyLikesSpam1;
+                dialog.Message = Strings.ErrorMessages.NobodyLikesSpam1;
             }
             else if (reason == 1)
             {
-                dialog.Message = Strings.Resources.NobodyLikesSpam2;
+                dialog.Message = Strings.ErrorMessages.NobodyLikesSpam2;
             }
             else if (reason == 2)
             {
@@ -365,7 +365,7 @@ namespace Unigram.Services
         private static String GetFloodWaitString(String error)
         {
             var time = error.ToInt32();
-            return string.Format(Strings.Resources.FloodWaitTime, BindConvert.Current.CallDuration(time));
+            return string.Format(Strings.ErrorMessages.FloodWaitTime, BindConvert.Current.CallDuration(time));
         }
 
         public static void ShowFloodWaitAlert(String error)
@@ -392,7 +392,7 @@ namespace Unigram.Services
             switch (error)
             {
                 case "PEER_FLOOD":
-                    dialog.Message = Strings.Resources.NobodyLikesSpam2;
+                    dialog.Message = Strings.ErrorMessages.NobodyLikesSpam2;
                     dialog.SecondaryButtonText = Strings.Resources.MoreInfo;
                     dialog.SecondaryButtonClick += (s, args) =>
                     {
@@ -402,44 +402,44 @@ namespace Unigram.Services
                 case "USER_BLOCKED":
                 case "USER_BOT":
                 case "USER_ID_INVALID":
-                    dialog.Message = channel ? Strings.Resources.ChannelUserCantAdd : Strings.Resources.GroupUserCantAdd;
+                    dialog.Message = channel ? Strings.ErrorMessages.ChannelUserCantAdd : Strings.ErrorMessages.GroupUserCantAdd;
                     break;
                 case "USERS_TOO_MUCH":
-                    dialog.Message = channel ? Strings.Resources.ChannelUserAddLimit : Strings.Resources.GroupUserAddLimit;
+                    dialog.Message = channel ? Strings.ErrorMessages.ChannelUserAddLimit : Strings.ErrorMessages.GroupUserAddLimit;
                     break;
                 case "USER_NOT_MUTUAL_CONTACT":
-                    dialog.Message = channel ? Strings.Resources.ChannelUserLeftError : Strings.Resources.GroupUserLeftError;
+                    dialog.Message = channel ? Strings.ErrorMessages.ChannelUserLeftError : Strings.ErrorMessages.GroupUserLeftError;
                     break;
                 case "ADMINS_TOO_MUCH":
-                    dialog.Message = channel ? Strings.Resources.ChannelUserCantAdmin : Strings.Resources.GroupUserCantAdmin;
+                    dialog.Message = channel ? Strings.ErrorMessages.ChannelUserCantAdmin : Strings.ErrorMessages.GroupUserCantAdmin;
                     break;
                 case "BOTS_TOO_MUCH":
-                    dialog.Message = channel ? Strings.Resources.ChannelUserCantBot : Strings.Resources.GroupUserCantBot;
+                    dialog.Message = channel ? Strings.ErrorMessages.ChannelUserCantBot : Strings.ErrorMessages.GroupUserCantBot;
                     break;
                 case "USER_PRIVACY_RESTRICTED":
-                    dialog.Message = channel ? Strings.Resources.InviteToChannelError : Strings.Resources.InviteToGroupError;
+                    dialog.Message = channel ? Strings.ErrorMessages.InviteToChannelError : Strings.ErrorMessages.InviteToGroupError;
                     break;
                 case "USERS_TOO_FEW":
-                    dialog.Message = Strings.Resources.CreateGroupError;
+                    dialog.Message = Strings.ErrorMessages.CreateGroupError;
                     break;
                 case "USER_RESTRICTED":
-                    dialog.Message = Strings.Resources.UserRestricted;
+                    dialog.Message = Strings.ErrorMessages.UserRestricted;
                     break;
                 case "YOU_BLOCKED_USER":
-                    dialog.Message = Strings.Resources.YouBlockedUser;
+                    dialog.Message = Strings.ErrorMessages.YouBlockedUser;
                     break;
                 case "CHAT_ADMIN_BAN_REQUIRED":
                 case "USER_KICKED":
-                    dialog.Message = Strings.Resources.AddAdminErrorBlacklisted;
+                    dialog.Message = Strings.ErrorMessages.AddAdminErrorBlacklisted;
                     break;
                 case "CHAT_ADMIN_INVITE_REQUIRED":
-                    dialog.Message = Strings.Resources.AddAdminErrorNotAMember;
+                    dialog.Message = Strings.ErrorMessages.AddAdminErrorNotAMember;
                     break;
                 case "USER_ADMIN_INVALID":
-                    dialog.Message = Strings.Resources.AddBannedErrorAdmin;
+                    dialog.Message = Strings.ErrorMessages.AddBannedErrorAdmin;
                     break;
                 default:
-                    dialog.Message = Strings.Resources.ErrorOccurred + "\n" + error;
+                    dialog.Message = Strings.ErrorMessages.ErrorOccurred + "\n" + error;
                     break;
             }
 

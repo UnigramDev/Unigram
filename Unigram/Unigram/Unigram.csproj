@@ -298,6 +298,11 @@
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\PushService.cs" />
+    <Compile Include="Strings\en\ErrorMessages.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ErrorMessages.resw</DependentUpon>
+    </Compile>
     <Compile Include="Strings\en\InAppBranding.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1129,6 +1134,13 @@
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>InAppBranding.cs</LastGenOutput>
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+    </PRIResource>
+    <PRIResource Include="Strings\ja\ManifestResources.resw" />
+    <PRIResource Include="Strings\ja\InAppBranding.resw" />
+    <PRIResource Include="Strings\en\ErrorMessages.resw">
+      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+      <Generator>ReswFileCodeGenerator</Generator>
+      <LastGenOutput>ErrorMessages.cs</LastGenOutput>
     </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
