@@ -51,10 +51,9 @@ namespace Unigram.Controls
             if (panel != null)
             {
                 ItemsStack = panel;
-                ItemsStack.ItemsUpdatingScrollMode = UpdatingScrollMode == UpdatingScrollMode.KeepItemsInView || UpdatingScrollMode == UpdatingScrollMode.ForceKeepItemsInView
-                    ? ItemsUpdatingScrollMode.KeepItemsInView
-                    : ItemsUpdatingScrollMode.KeepLastItemInView;
                 ItemsStack.SizeChanged += Panel_SizeChanged;
+
+                SetScrollMode();
             }
 
             ViewModel.Items.CollectionChanged += OnCollectionChanged;
@@ -183,48 +182,56 @@ namespace Unigram.Controls
             }
         }
 
-        #region UpdatingScrollMode
+        private ItemsUpdatingScrollMode? _pendingMode;
+        private bool? _pendingForce;
 
-        public UpdatingScrollMode UpdatingScrollMode
+        public void SetScrollMode()
         {
-            get { return (UpdatingScrollMode)GetValue(UpdatingScrollModeProperty); }
-            set { SetValue(UpdatingScrollModeProperty, value); }
-        }
-
-        public static readonly DependencyProperty UpdatingScrollModeProperty =
-            DependencyProperty.Register("UpdatingScrollMode", typeof(UpdatingScrollMode), typeof(BubbleListView), new PropertyMetadata(UpdatingScrollMode.KeepItemsInView, OnUpdatingScrollModeChanged));
-
-        private static void OnUpdatingScrollModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as BubbleListView;
-            if (sender.ItemsStack != null)
+            if (_pendingMode is ItemsUpdatingScrollMode mode && _pendingForce is bool force)
             {
-                var mode = (UpdatingScrollMode)e.NewValue;
-                if (mode == UpdatingScrollMode.ForceKeepItemsInView)
-                {
-                    sender.ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
-                }
-                else if (mode == UpdatingScrollMode.ForceKeepLastItemInView)
-                {
-                    sender.ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
-                }
-                else if (mode == UpdatingScrollMode.KeepItemsInView && sender.ScrollingHost.VerticalOffset < 120)
-                {
-                    sender.ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
-                }
-                else if (mode == UpdatingScrollMode.KeepLastItemInView && sender.ScrollingHost.ScrollableHeight - sender.ScrollingHost.VerticalOffset < 120)
-                {
-                    sender.ItemsStack.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
-                }
+                _pendingMode = null;
+                _pendingForce = null;
+
+                SetScrollMode(mode, force);
             }
         }
 
-        #endregion
+        public void SetScrollMode(ItemsUpdatingScrollMode mode, bool force)
+        {
+            var panel = ItemsPanelRoot as ItemsStackPanel;
+            if (panel == null)
+            {
+                _pendingMode = mode;
+                _pendingForce = force;
 
-        private int count;
+                return;
+            }
+
+            var scroll = ScrollingHost;
+            if (scroll == null)
+            {
+                _pendingMode = mode;
+                _pendingForce = force;
+
+                return;
+            }
+
+            if (mode == ItemsUpdatingScrollMode.KeepItemsInView && (force || scroll.VerticalOffset < 120))
+            {
+                Debug.WriteLine("Changed scrolling mode to KeepItemsInView");
+
+                panel.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+            }
+            else if (mode == ItemsUpdatingScrollMode.KeepLastItemInView && (force || scroll.ScrollableHeight - scroll.VerticalOffset < 120))
+            {
+                Debug.WriteLine("Changed scrolling mode to KeepLastItemInView");
+
+                panel.ItemsUpdatingScrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+            }
+        }
+
         protected override DependencyObject GetContainerForItemOverride()
         {
-            //Debug.WriteLine($"New listview item: {++count}");
             return new BubbleListViewItem(this);
         }
 
@@ -334,13 +341,5 @@ namespace Unigram.Controls
 
             return false;
         }
-    }
-
-    public enum UpdatingScrollMode
-    {
-        KeepItemsInView,
-        ForceKeepItemsInView,
-        KeepLastItemInView,
-        ForceKeepLastItemInView
     }
 }

@@ -872,7 +872,7 @@ namespace Unigram.Views
 
             CreateFlyoutItem(ref flyout, MessageSaveGIF_Loaded, ViewModel.MessageSaveGIFCommand, messageCommon, AppResources.MessageSaveGIF);
             CreateFlyoutItem(ref flyout, MessageSaveMedia_Loaded, ViewModel.MessageSaveMediaCommand, messageCommon, AppResources.MessageSaveMedia);
-            CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, AppResources.MessageSaveDownload);
+            //CreateFlyoutItem(ref flyout, MessageSaveDownload_Loaded, ViewModel.MessageSaveDownloadCommand, messageCommon, AppResources.MessageSaveDownload);
 
             //sender.ContextFlyout = menu;
 
@@ -1835,6 +1835,11 @@ namespace Unigram.Views
                     footer.Visibility = Visibility.Collapsed;
                 }
             }
+        }
+
+        private void ItemsStackPanel_Loading(FrameworkElement sender, object args)
+        {
+            Messages.SetScrollMode();
         }
     }
 

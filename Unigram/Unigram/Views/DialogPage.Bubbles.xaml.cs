@@ -55,14 +55,14 @@ namespace Unigram.Views
         {
             if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 120)
             {
-                if (ViewModel.IsFirstSliceLoaded)
-                {
-                    ViewModel.UpdatingScrollMode = UpdatingScrollMode.KeepLastItemInView;
-                }
-                else
-                {
-                    ViewModel.UpdatingScrollMode = UpdatingScrollMode.ForceKeepItemsInView;
-                }
+                //if (ViewModel.IsFirstSliceLoaded)
+                //{
+                //    Messages.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, false);
+                //}
+                //else
+                //{
+                //    Messages.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                //}
 
                 Arrow.Visibility = Visibility.Collapsed;
             }

@@ -480,19 +480,6 @@ namespace Unigram.ViewModels
             }
         }
 
-        private UpdatingScrollMode _updatingScrollMode;
-        public UpdatingScrollMode UpdatingScrollMode
-        {
-            get
-            {
-                return _updatingScrollMode;
-            }
-            set
-            {
-                Set(ref _updatingScrollMode, value);
-            }
-        }
-
         private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
         public ListViewSelectionMode SelectionMode
         {
@@ -618,7 +605,6 @@ namespace Unigram.ViewModels
 
             _isLoadingNextSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepLastItemInView : UpdatingScrollMode.KeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
@@ -640,6 +626,11 @@ namespace Unigram.ViewModels
             var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, 0, 0, maxId, limit);
             if (response.IsSucceeded)
             {
+                if (response.Result.Messages.Count > 0)
+                {
+                    ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
+                }
+
                 ProcessReplies(response.Result.Messages);
 
                 Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Replies processed");
@@ -691,7 +682,6 @@ namespace Unigram.ViewModels
 
             _isLoadingPreviousSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = force ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.KeepItemsInView;
 
             //if (last)
             //{
@@ -717,9 +707,14 @@ namespace Unigram.ViewModels
 
             maxId = Items.LastOrDefault()?.Id ?? 1;
 
-            var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -limit, 0, maxId, limit);
+            var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, -limit - 1, 0, maxId, limit);
             if (response.IsSucceeded)
             {
+                if (response.Result.Messages.Count > 0)
+                {
+                    ListField.SetScrollMode(response.Result.Messages.Count < limit ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, force);
+                }
+
                 ProcessReplies(response.Result.Messages);
 
                 //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
@@ -848,7 +843,6 @@ namespace Unigram.ViewModels
             IsLoading = true;
             IsLastSliceLoaded = false;
             IsFirstSliceLoaded = false;
-            UpdatingScrollMode = UpdatingScrollMode.ForceKeepItemsInView;
 
             Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
 
@@ -865,6 +859,11 @@ namespace Unigram.ViewModels
             var response = await ProtoService.GetHistoryAsync(Peer, Peer.ToPeer(), true, offset, 0, maxId, limit);
             if (response.IsSucceeded)
             {
+                if (response.Result.Messages.Count > 0)
+                {
+                    ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
+                }
+
                 ProcessReplies(response.Result.Messages);
 
                 //foreach (var item in result.Result.Messages.OrderByDescending(x => x.Date))
@@ -944,7 +943,6 @@ namespace Unigram.ViewModels
             _isLoadingNextSlice = true;
             _isLoadingPreviousSlice = true;
             IsLoading = true;
-            UpdatingScrollMode = _dialog?.UnreadCount > 0 ? UpdatingScrollMode.ForceKeepItemsInView : UpdatingScrollMode.ForceKeepLastItemInView;
 
             Debug.WriteLine("DialogViewModel: LoadFirstSliceAsync");
 
@@ -969,6 +967,11 @@ namespace Unigram.ViewModels
                     maxId = int.MaxValue;
                     offset = 0;
                     goto Retry;
+                }
+
+                if (response.Result.Messages.Count > 0)
+                {
+                    ListField.SetScrollMode(maxId == int.MaxValue ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
                 }
 
                 ProcessReplies(response.Result.Messages);
@@ -1035,7 +1038,7 @@ namespace Unigram.ViewModels
             //if (IsFirstSliceLoaded)
             {
                 ListField.ScrollToBottom();
-                UpdatingScrollMode = UpdatingScrollMode.ForceKeepLastItemInView;
+                ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
             }
         }
 
@@ -1204,6 +1207,15 @@ namespace Unigram.ViewModels
             //    messageId = storage;
             //}
             var dialog = _dialog;
+            //if (dialog == null)
+            //{
+            //    var response = await ProtoService.GetPeerDialogsAsync(new TLVector<TLInputPeerBase> { _peer });
+            //    if (response.IsSucceeded)
+            //    {
+            //        Dialog = response.Result.Dialogs.FirstOrDefault();
+            //        dialog = response.Result.Dialogs.FirstOrDefault();
+            //    }
+            //}
 
             //for (int i = 0; i < 200;)
             //{
@@ -1267,7 +1279,7 @@ namespace Unigram.ViewModels
                         IsLastSliceLoaded = false;
                         IsFirstSliceLoaded = false;
 
-                        UpdatingScrollMode = UpdatingScrollMode.ForceKeepLastItemInView;
+                        ListField.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                         Items.AddRange(history.Reverse());
                     }
                 }
