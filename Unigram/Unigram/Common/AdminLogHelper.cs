@@ -50,11 +50,11 @@ namespace Unigram.Common
                 var channel = InMemoryCacheService.Current.GetChat(message.ToId.Id) as TLChannel;
                 if (channel.IsMegaGroup)
                 {
-                    return ReplaceLinks(message, string.Format(Strings.Resources.EventLogEditedGroupTitle, "{0}", changeTitleAction.NewValue), new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, string.Format(Strings.EventLog.EventLogEditedGroupTitle, "{0}", changeTitleAction.NewValue), new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else
                 {
-                    return ReplaceLinks(message, string.Format(Strings.Resources.EventLogEditedChannelTitle, "{0}", changeTitleAction.NewValue), new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, string.Format(Strings.EventLog.EventLogEditedChannelTitle, "{0}", changeTitleAction.NewValue), new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
             });
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangeAbout), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
@@ -64,11 +64,11 @@ namespace Unigram.Common
                 var channel = InMemoryCacheService.Current.GetChat(message.ToId.Id) as TLChannel;
                 if (channel.IsMegaGroup)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogEditedGroupDescription, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogEditedGroupDescription, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogEditedChannelDescription, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogEditedChannelDescription, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
             });
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangeUsername), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
@@ -76,11 +76,11 @@ namespace Unigram.Common
                 var changeUsernameAction = action as TLChannelAdminLogEventActionChangeUsername;
                 if (string.IsNullOrEmpty(changeUsernameAction.NewValue))
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogRemovedGroupLink, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogRemovedGroupLink, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogChangedGroupLink, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogChangedGroupLink, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
             });
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangePhoto), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
@@ -91,11 +91,11 @@ namespace Unigram.Common
                 var channel = InMemoryCacheService.Current.GetChat(message.ToId.Id) as TLChannel;
                 if (channel.IsMegaGroup)
                 {
-                    return ReplaceLinks(message, empty ? Strings.Resources.EventLogRemovedGroupPhoto : Strings.Resources.EventLogEditedGroupPhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, empty ? Strings.EventLog.EventLogRemovedGroupPhoto : Strings.EventLog.EventLogEditedGroupPhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else
                 {
-                    return ReplaceLinks(message, empty ? Strings.Resources.EventLogRemovedChannelPhoto : Strings.Resources.EventLogEditedChannelPhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, empty ? Strings.EventLog.EventLogRemovedChannelPhoto : Strings.EventLog.EventLogEditedChannelPhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
             });
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionChangeStickerSet), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
@@ -106,29 +106,29 @@ namespace Unigram.Common
                 var oldStickerset = changeStickerSetAction.PrevStickerSet;
                 if (newStickerset == null || newStickerset is TLInputStickerSetEmpty)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogRemovedStickersSet, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogRemovedStickersSet, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else if (newStickerset is TLInputStickerSetShortName shortName)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogChangedStickersSet, new[] { fromUserFullName, "sticker set" }, new[] { "tg-user://" + fromUserId, "tg-stickers://" + shortName.ShortName }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogChangedStickersSet, new[] { fromUserFullName, "sticker set" }, new[] { "tg-user://" + fromUserId, "tg-stickers://" + shortName.ShortName }, useActiveLinks);
                 }
                 else if (newStickerset is TLInputStickerSetID id)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogChangedStickersSet, new[] { fromUserFullName, "sticker set" }, new[] { "tg-user://" + fromUserId, "tg-stickers://" + id.Id + "?" + id.AccessHash }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogChangedStickersSet, new[] { fromUserFullName, "sticker set" }, new[] { "tg-user://" + fromUserId, "tg-stickers://" + id.Id + "?" + id.AccessHash }, useActiveLinks);
                 }
 
-                return ReplaceLinks(message, Strings.Resources.EventLogChangedStickersSet, new[] { fromUserFullName, "sticker set" }, new[] { "tg-user://" + fromUserId, "tg-bold://" }, useActiveLinks);
+                return ReplaceLinks(message, Strings.EventLog.EventLogChangedStickersSet, new[] { fromUserFullName, "sticker set" }, new[] { "tg-user://" + fromUserId, "tg-bold://" }, useActiveLinks);
             });
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionToggleInvites), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
             {
                 var toggleInvitesAction = action as TLChannelAdminLogEventActionToggleInvites;
                 if (toggleInvitesAction.NewValue)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogToggledInvitesOn, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogToggledInvitesOn, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogToggledInvitesOff, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogToggledInvitesOff, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
             });
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionToggleSignatures), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
@@ -136,11 +136,11 @@ namespace Unigram.Common
                 var toggleSignaturesAction = action as TLChannelAdminLogEventActionToggleSignatures;
                 if (toggleSignaturesAction.NewValue)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogToggledSignaturesOn, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogToggledSignaturesOn, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogToggledSignaturesOff, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogToggledSignaturesOff, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
             });
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionTogglePreHistoryHidden), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
@@ -148,11 +148,11 @@ namespace Unigram.Common
                 var togglePreHistoryHiddenAction = action as TLChannelAdminLogEventActionTogglePreHistoryHidden;
                 if (togglePreHistoryHiddenAction.NewValue)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogToggledInvitesHistoryOn, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogToggledInvitesHistoryOn, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogToggledInvitesHistoryOff, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogToggledInvitesHistoryOff, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
             });
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionUpdatePinned), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
@@ -160,11 +160,11 @@ namespace Unigram.Common
                 var updatePinnedAction = action as TLChannelAdminLogEventActionUpdatePinned;
                 if (updatePinnedAction.Message is TLMessageEmpty)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogUnpinnedMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogUnpinnedMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogPinnedMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogPinnedMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
             });
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionEditMessage), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
@@ -174,24 +174,24 @@ namespace Unigram.Common
                 var newMessage = editMessageAction.NewMessage as TLMessage;
                 if (newMessage.Media == null || (newMessage.Media is TLMessageMediaEmpty) || (newMessage.Media is TLMessageMediaWebPage) || !string.IsNullOrEmpty(newMessage.Message))
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogEditedMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogEditedMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogEditedCaption, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogEditedCaption, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
             });
-            _actionsCache.Add(typeof(TLChannelAdminLogEventActionDeleteMessage), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.Resources.EventLogDeletedMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
+            _actionsCache.Add(typeof(TLChannelAdminLogEventActionDeleteMessage), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.EventLog.EventLogDeletedMessages, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionParticipantJoin), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
             {
                 var channel = InMemoryCacheService.Current.GetChat(message.ToId.Id) as TLChannel;
                 if (channel.IsMegaGroup)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogGroupJoined, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogGroupJoined, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogChannelJoined, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogChannelJoined, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
             });
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionParticipantLeave), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
@@ -199,11 +199,11 @@ namespace Unigram.Common
                 var channel = InMemoryCacheService.Current.GetChat(message.ToId.Id) as TLChannel;
                 if (channel.IsMegaGroup)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogLeftGroup, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogLeftGroup, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogLeftChannel, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogLeftChannel, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
             });
             _actionsCache.Add(typeof(TLChannelAdminLogEventActionParticipantInvite), (TLMessageService message, TLChannelAdminLogEventActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) =>
@@ -215,15 +215,15 @@ namespace Unigram.Common
                 var whoUser = participantInviteAction.Participant.User;
                 if (whoUser.Id != fromUserId)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogAdded, new[] { fromUserFullName, whoUser.FullName }, new[] { "tg-user://" + fromUserId, "tg-user://" + whoUser.Id }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogAdded, new[] { fromUserFullName, whoUser.FullName }, new[] { "tg-user://" + fromUserId, "tg-user://" + whoUser.Id }, useActiveLinks);
                 }
                 else if (channel.IsMegaGroup)
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogGroupJoined, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogGroupJoined, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
                 else
                 {
-                    return ReplaceLinks(message, Strings.Resources.EventLogChannelJoined, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
+                    return ReplaceLinks(message, Strings.EventLog.EventLogChannelJoined, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks);
                 }
             });
         }
@@ -293,7 +293,7 @@ namespace Unigram.Common
         {
             var fromId = serviceMessage.FromId;
             var user = InMemoryCacheService.Current.GetUser(fromId ?? 0);
-            var userFullName = user != null ? user.FullName : Strings.Resources.UserNominativeSingular;
+            var userFullName = user != null ? user.FullName : Strings.Nouns.UserNominativeSingular;
             var action = serviceMessage.Action;
 
             if (serviceMessage.ToId is TLPeerChannel)

@@ -303,6 +303,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ErrorMessages.resw</DependentUpon>
     </Compile>
+    <Compile Include="Strings\en\EventLog.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EventLog.resw</DependentUpon>
+    </Compile>
     <Compile Include="Strings\en\InAppBranding.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1151,6 +1156,11 @@
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Nouns.cs</LastGenOutput>
+    </PRIResource>
+    <PRIResource Include="Strings\en\EventLog.resw">
+      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+      <Generator>ReswFileCodeGenerator</Generator>
+      <LastGenOutput>EventLog.cs</LastGenOutput>
     </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />
