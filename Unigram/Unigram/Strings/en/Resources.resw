@@ -763,7 +763,7 @@ Duration: {1}</value>
     <value>Unigram (Alpha)</value>
   </data>
   <data name="IntroPage_Wizard1_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
-    <value>The world's **fastest** messaging app.
+    <value>The world's **fastest** messaging service.
 It is **free** and **secure**.</value>
   </data>
   <data name="IntroPage_Wizard1_Title.Text" xml:space="preserve">
@@ -1433,5 +1433,32 @@ Tap on a sticker to view and add the whole set.</value>
   </data>
   <data name="AboutPage_TwitterFollowButton.Content" xml:space="preserve">
     <value>Follow Unigram on Twitter</value>
+  </data>
+  <data name="IntroPage_StartButton.Content" xml:space="preserve">
+    <value>Start messaging</value>
+  </data>
+  <data name="SignInPage_CountriesList.Header" xml:space="preserve">
+    <value>Country:</value>
+  </data>
+  <data name="SignInPage_CountriesList.PlaceholderText" xml:space="preserve">
+    <value>Select your country...</value>
+  </data>
+  <data name="SignInPage_DetailsLabel.Text" xml:space="preserve">
+    <value>Please select the country you live in and enter your phone number</value>
+  </data>
+  <data name="SignInPage_HeaderLabel.Text" xml:space="preserve">
+    <value>Your phone number</value>
+  </data>
+  <data name="SignInPage_PhoneCodeTextBox.Header" xml:space="preserve">
+    <value>Code:</value>
+  </data>
+  <data name="SignInPage_PhoneNumberTextBox.Header" xml:space="preserve">
+    <value>Phone number:</value>
+  </data>
+  <data name="SignInPage_PhoneNumberTextBox.PlaceholderText" xml:space="preserve">
+    <value>Enter your phone number</value>
+  </data>
+  <data name="SignInPage_TitleLabel.Text" xml:space="preserve">
+    <value>Your phone number</value>
   </data>
 </root>
