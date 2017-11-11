@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/11/2017 18:59:34
+// 	Generated: 11/11/2017 21:03:28
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -60,94 +60,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AreTyping");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} is playing a game"
-        /// </summary>
-        public static string IsPlayingGame
-        {
-            get
-            {
-                return resourceLoader.GetString("IsPlayingGame");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} is recording a voice message"
-        /// </summary>
-        public static string IsRecordingAudio
-        {
-            get
-            {
-                return resourceLoader.GetString("IsRecordingAudio");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} is recording a video"
-        /// </summary>
-        public static string IsRecordingVideo
-        {
-            get
-            {
-                return resourceLoader.GetString("IsRecordingVideo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} is sending a audio"
-        /// </summary>
-        public static string IsSendingAudio
-        {
-            get
-            {
-                return resourceLoader.GetString("IsSendingAudio");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} is sending a file"
-        /// </summary>
-        public static string IsSendingFile
-        {
-            get
-            {
-                return resourceLoader.GetString("IsSendingFile");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} is sending a photo"
-        /// </summary>
-        public static string IsSendingPhoto
-        {
-            get
-            {
-                return resourceLoader.GetString("IsSendingPhoto");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} is sending a video"
-        /// </summary>
-        public static string IsSendingVideo
-        {
-            get
-            {
-                return resourceLoader.GetString("IsSendingVideo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} is typing"
-        /// </summary>
-        public static string IsTyping
-        {
-            get
-            {
-                return resourceLoader.GetString("IsTyping");
             }
         }
         
@@ -533,28 +445,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SendingVideoMessage");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} is recording a video message"
-        /// </summary>
-        public static string IsRecordingVideoMessage
-        {
-            get
-            {
-                return resourceLoader.GetString("IsRecordingVideoMessage");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "{0} is sending a video message"
-        /// </summary>
-        public static string IsSendingVideoMessage
-        {
-            get
-            {
-                return resourceLoader.GetString("IsSendingVideoMessage");
             }
         }
         

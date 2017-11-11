@@ -124,30 +124,6 @@
   <data name="AreTyping" xml:space="preserve">
     <value>{0} are typing</value>
   </data>
-  <data name="IsPlayingGame" xml:space="preserve">
-    <value>{0} is playing a game</value>
-  </data>
-  <data name="IsRecordingAudio" xml:space="preserve">
-    <value>{0} is recording a voice message</value>
-  </data>
-  <data name="IsRecordingVideo" xml:space="preserve">
-    <value>{0} is recording a video</value>
-  </data>
-  <data name="IsSendingAudio" xml:space="preserve">
-    <value>{0} is sending a audio</value>
-  </data>
-  <data name="IsSendingFile" xml:space="preserve">
-    <value>{0} is sending a file</value>
-  </data>
-  <data name="IsSendingPhoto" xml:space="preserve">
-    <value>{0} is sending a photo</value>
-  </data>
-  <data name="IsSendingVideo" xml:space="preserve">
-    <value>{0} is sending a video</value>
-  </data>
-  <data name="IsTyping" xml:space="preserve">
-    <value>{0} is typing</value>
-  </data>
   <data name="PlayingGame" xml:space="preserve">
     <value>Playing a game</value>
   </data>
@@ -252,12 +228,6 @@
   </data>
   <data name="SendingVideoMessage" xml:space="preserve">
     <value>Sending a video message</value>
-  </data>
-  <data name="IsRecordingVideoMessage" xml:space="preserve">
-    <value>{0} is recording a video message</value>
-  </data>
-  <data name="IsSendingVideoMessage" xml:space="preserve">
-    <value>{0} is sending a video message</value>
   </data>
   <data name="UserRestrictionsUntilForever" xml:space="preserve">
     <value>Forever</value>

@@ -164,31 +164,31 @@ namespace Unigram.ViewModels
                         //case TLSendMessageChooseContactAction chooseContact:
                         //    return "";
                         case TLSendMessageGamePlayAction gamePlay:
-                            return string.Format(Strings.Resources.IsPlayingGame, userName);
+                            return string.Format(Strings.Statuses.IsPlayingGame, userName);
                         //case TLSendMessageGeoLocationAction geoLocation:
                         //    return "";
                         case TLSendMessageRecordAudioAction recordAudio:
-                            return string.Format(Strings.Resources.IsRecordingAudio, userName);
+                            return string.Format(Strings.Statuses.IsRecordingAudio, userName);
                         case TLSendMessageRecordRoundAction recordRound:
-                            return string.Format(Strings.Resources.IsRecordingVideoMessage, userName);
+                            return string.Format(Strings.Statuses.IsRecordingVideoMessage, userName);
                         case TLSendMessageRecordVideoAction recordVideo:
-                            return string.Format(Strings.Resources.IsRecordingVideo, userName);
+                            return string.Format(Strings.Statuses.IsRecordingVideo, userName);
                         //case TLSendMessageTypingAction typing:
                         //    return string.Format(Strings.Resources.IsTyping, userName);
                         case TLSendMessageUploadAudioAction uploadAudio:
-                            return string.Format(Strings.Resources.IsSendingAudio, userName);
+                            return string.Format(Strings.Statuses.IsSendingAudio, userName);
                         case TLSendMessageUploadDocumentAction uploadDocument:
-                            return string.Format(Strings.Resources.IsSendingFile, userName);
+                            return string.Format(Strings.Statuses.IsSendingFile, userName);
                         case TLSendMessageUploadPhotoAction uploadPhoto:
-                            return string.Format(Strings.Resources.IsSendingPhoto, userName);
+                            return string.Format(Strings.Statuses.IsSendingPhoto, userName);
                         case TLSendMessageUploadRoundAction uploadRound:
-                            return string.Format(Strings.Resources.IsSendingVideoMessage, userName);
+                            return string.Format(Strings.Statuses.IsSendingVideoMessage, userName);
                         case TLSendMessageUploadVideoAction uploadVideo:
-                            return string.Format(Strings.Resources.IsSendingVideo, userName);
+                            return string.Format(Strings.Statuses.IsSendingVideo, userName);
                     }
                 }
 
-                return string.Format(Strings.Resources.IsTyping, userName);
+                return string.Format(Strings.Statuses.IsTyping, userName);
             }
             else
             {
