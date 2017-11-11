@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/11/2017 15:49:11
+// 	Generated: 11/11/2017 16:11:42
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -2387,17 +2387,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Unigram (Alpha)"
-        /// </summary>
-        public static string AppDisplayName
-        {
-            get
-            {
-                return resourceLoader.GetString("AppDisplayName");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "Cancel"
         /// </summary>
         public static string Cancel
@@ -2669,17 +2658,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("AddBannedErrorAdmin");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Telegram"
-        /// </summary>
-        public static string AppName
-        {
-            get
-            {
-                return resourceLoader.GetString("AppName");
             }
         }
         

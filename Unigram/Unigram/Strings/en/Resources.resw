@@ -759,9 +759,6 @@ Duration: {1}</value>
   <data name="EventLogToggledInvitesHistoryOn" xml:space="preserve">
     <value>{0} made group history visible for new members</value>
   </data>
-  <data name="AppDisplayName" xml:space="preserve">
-    <value>Unigram (Alpha)</value>
-  </data>
   <data name="IntroPage_Wizard1_Text.[using:Unigram.Common]TextBlockHelper.Markdown" xml:space="preserve">
     <value>The world's **fastest** messaging service.
 It is **free** and **secure**.</value>
@@ -1121,10 +1118,6 @@ messages from multiple devices.</value>
   </data>
   <data name="AddBannedErrorAdmin" xml:space="preserve">
     <value>Sorry, you can't ban this user because they are an admin in this group and you are not allowed to demote them.</value>
-    <comment>android</comment>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Telegram</value>
     <comment>android</comment>
   </data>
   <data name="CancelLinkExpired" xml:space="preserve">

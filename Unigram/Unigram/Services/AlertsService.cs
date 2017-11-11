@@ -304,7 +304,7 @@ namespace Unigram.Services
         private static async void ShowPeerFloodAlert(int reason)
         {
             var dialog = new TLMessageDialog();
-            dialog.Title = Strings.Resources.AppName;
+            dialog.Title = InAppBranding.ServiceName;
             dialog.PrimaryButtonText = Strings.Resources.OK;
 
             if (reason != 2)
@@ -355,7 +355,7 @@ namespace Unigram.Services
             }
 
             var dialog = new TLMessageDialog();
-            dialog.Title = Strings.Resources.AppName;
+            dialog.Title = InAppBranding.ServiceName;
             dialog.Message = text;
             dialog.PrimaryButtonText = Strings.Resources.OK;
 
@@ -386,7 +386,7 @@ namespace Unigram.Services
             }
 
             var dialog = new TLMessageDialog();
-            dialog.Title = Strings.Resources.AppName;
+            dialog.Title = InAppBranding.ServiceName;
             dialog.PrimaryButtonText = Strings.Resources.OK;
 
             switch (error)

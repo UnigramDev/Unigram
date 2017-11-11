@@ -168,7 +168,7 @@ namespace Unigram.ViewModels
         public RelayCommand LogoutCommand { get; }
         private async void LogoutExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.TGLogoutText, Strings.Resources.AppDisplayName, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.TGLogoutText, Strings.InAppBranding.AppName, Strings.Resources.OK, Strings.Resources.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -189,7 +189,7 @@ namespace Unigram.ViewModels
                 CacheService.ClearAsync();
                 CacheService.ClearConfigImportAsync();
 
-                await TLMessageDialog.ShowAsync(Strings.Resources.TGLogoutSucceededDialogText, Strings.Resources.AppDisplayName, Strings.Resources.OK);
+                await TLMessageDialog.ShowAsync(Strings.Resources.TGLogoutSucceededDialogText, Strings.InAppBranding.AppName, Strings.Resources.OK);
                 App.Current.Exit();
             }
             else
