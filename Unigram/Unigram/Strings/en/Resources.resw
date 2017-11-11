@@ -328,9 +328,6 @@ messages from multiple devices.</value>
   <data name="SettingsPage_WallpaperButton.Content" xml:space="preserve">
     <value>Chat Background</value>
   </data>
-  <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
   <data name="TGLogoutSucceededDialogText" xml:space="preserve">
     <value>The app will be closed. Relaunch it to login again.</value>
   </data>
@@ -343,17 +340,11 @@ messages from multiple devices.</value>
   <data name="TGSupportDisclaimerPrimaryText" xml:space="preserve">
     <value>FAQ</value>
   </data>
-  <data name="No" xml:space="preserve">
-    <value>No</value>
-  </data>
   <data name="UnblockUserConfirmationDialogText" xml:space="preserve">
     <value>Are you sure?</value>
   </data>
   <data name="UnblockUserConfirmationDialogTitle" xml:space="preserve">
     <value>Unblock?</value>
-  </data>
-  <data name="Yes" xml:space="preserve">
-    <value>Yes</value>
   </data>
   <data name="SettingsAccountsPage_Header.Text" xml:space="preserve">
     <value>Accounts management</value>
@@ -541,14 +532,6 @@ messages from multiple devices.</value>
   <data name="AutoDownload_Video" xml:space="preserve">
     <value>Videos</value>
   </data>
-  <data name="MoreInfo" xml:space="preserve">
-    <value>More info</value>
-    <comment>android</comment>
-  </data>
-  <data name="OK" xml:space="preserve">
-    <value>OK</value>
-    <comment>android</comment>
-  </data>
   <data name="ResetNotificationsDialogBody" xml:space="preserve">
     <value>Reset all notifications?</value>
   </data>
@@ -619,42 +602,6 @@ Tap on a sticker to view and add the whole set.</value>
   </data>
   <data name="ParticipantRestrict" xml:space="preserve">
     <value>Restrict</value>
-  </data>
-  <data name="DialogClearHistory" xml:space="preserve">
-    <value>Clear history</value>
-  </data>
-  <data name="DialogDelete" xml:space="preserve">
-    <value>Delete conversation</value>
-  </data>
-  <data name="DialogDeleteAndExit" xml:space="preserve">
-    <value>Delete and exit</value>
-  </data>
-  <data name="DialogDeleteAndStop" xml:space="preserve">
-    <value>Delete and stop</value>
-  </data>
-  <data name="DialogDeleteChannel" xml:space="preserve">
-    <value>Delete channel</value>
-  </data>
-  <data name="DialogDeleteGroup" xml:space="preserve">
-    <value>Delete group</value>
-  </data>
-  <data name="DialogLeaveChannel" xml:space="preserve">
-    <value>Leave channel</value>
-  </data>
-  <data name="DialogLeaveGroup" xml:space="preserve">
-    <value>Leave group</value>
-  </data>
-  <data name="DialogNotificationsDisable" xml:space="preserve">
-    <value>Disable notifications</value>
-  </data>
-  <data name="DialogNotificationsEnable" xml:space="preserve">
-    <value>Enable notifications</value>
-  </data>
-  <data name="DialogPin" xml:space="preserve">
-    <value>Pin to top</value>
-  </data>
-  <data name="DialogUnpin" xml:space="preserve">
-    <value>Unpin from top</value>
   </data>
   <data name="SettingsGeneralPage_AutoPlayToggle.Header" xml:space="preserve">
     <value>Autoplay GIFs</value>

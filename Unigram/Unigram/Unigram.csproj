@@ -298,6 +298,11 @@
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\PushService.cs" />
+    <Compile Include="Strings\en\DialogResources.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DialogResources.resw</DependentUpon>
+    </Compile>
     <Compile Include="Strings\en\ErrorMessages.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1191,6 +1196,11 @@
       <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
       <Generator>ReswFileCodeGenerator</Generator>
       <LastGenOutput>Statuses.cs</LastGenOutput>
+    </PRIResource>
+    <PRIResource Include="Strings\en\DialogResources.resw">
+      <CustomToolNamespace>Unigram.Strings</CustomToolNamespace>
+      <Generator>ReswFileCodeGenerator</Generator>
+      <LastGenOutput>DialogResources.cs</LastGenOutput>
     </PRIResource>
     <None Include="Unigram_StoreKey.pfx" />
     <None Include="Unigram_TemporaryKey.pfx" />

@@ -305,11 +305,11 @@ namespace Unigram.Services
         {
             var dialog = new TLMessageDialog();
             dialog.Title = InAppBranding.ServiceName;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.PrimaryButtonText = Strings.DialogResources.OK;
 
             if (reason != 2)
             {
-                dialog.SecondaryButtonText = Strings.Resources.MoreInfo;
+                dialog.SecondaryButtonText = Strings.DialogResources.MoreInfo;
                 dialog.SecondaryButtonClick += (s, args) =>
                 {
                     MessageHelper.NavigateToUsername("spambot", null, null, null);
@@ -357,7 +357,7 @@ namespace Unigram.Services
             var dialog = new TLMessageDialog();
             dialog.Title = InAppBranding.ServiceName;
             dialog.Message = text;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.PrimaryButtonText = Strings.DialogResources.OK;
 
             await dialog.ShowQueuedAsync();
         }
@@ -387,13 +387,13 @@ namespace Unigram.Services
 
             var dialog = new TLMessageDialog();
             dialog.Title = InAppBranding.ServiceName;
-            dialog.PrimaryButtonText = Strings.Resources.OK;
+            dialog.PrimaryButtonText = Strings.DialogResources.OK;
 
             switch (error)
             {
                 case "PEER_FLOOD":
                     dialog.Message = Strings.ErrorMessages.NobodyLikesSpam2;
-                    dialog.SecondaryButtonText = Strings.Resources.MoreInfo;
+                    dialog.SecondaryButtonText = Strings.DialogResources.MoreInfo;
                     dialog.SecondaryButtonClick += (s, args) =>
                     {
                         MessageHelper.NavigateToUsername("spambot", null, null, null);

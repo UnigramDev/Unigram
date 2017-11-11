@@ -294,7 +294,7 @@ namespace Unigram.ViewModels.Settings
         public RelayCommand ResetCommand { get; }
         private async void ResetExecute()
         {
-            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetNotificationsDialogBody, Strings.Resources.ResetNotificationsDialogTitle, Strings.Resources.OK, Strings.Resources.Cancel);
+            var confirm = await TLMessageDialog.ShowAsync(Strings.Resources.ResetNotificationsDialogBody, Strings.Resources.ResetNotificationsDialogTitle, Strings.DialogResources.OK, Strings.DialogResources.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
                 _suppressUpdating = true;
