@@ -810,10 +810,6 @@ messages from multiple devices.</value>
   <data name="AboutPage_ThanksLabel.Text" xml:space="preserve">
     <value>Thank you for using Unigram! We wouldn't have been able to get this far without all help of the community.</value>
   </data>
-  <data name="AboutPage_AppNameLabel.Text" xml:space="preserve">
-    <value>Unigram</value>
-    <comment>App name label in AboutPage</comment>
-  </data>
   <data name="AboutPage_ChangelogButton.Content" xml:space="preserve">
     <value>Changelog</value>
   </data>
