@@ -206,7 +206,7 @@
                 <controls:NavigationViewItem x:Uid="MainPage_NavigationNewChannel" x:Name="NavigationNewChannel" Content="New Channel" Glyph="&#xE789;" />
                 <controls:NavigationViewItemSeparator/>
 
-                <controls:NavigationViewItem x:Name="NavigationChats" Content="Chats" IsChecked="True" Glyph="&#xE8BD;" />
+                <controls:NavigationViewItem x:Uid="MainPage_NavigationChats" x:Name="NavigationChats" Content="Chats" IsChecked="True" Glyph="&#xE8BD;" />
                 <controls:NavigationViewItem x:Name="NavigationContacts" Content="Contacts" Glyph="&#xE8D4;" />
                 <controls:NavigationViewItem x:Name="NavigationCalls" Content="Calls" Glyph="&#xE717;" />
                 <!--<controls:NavigationViewItem Text="Invite Friends" Glyph="&#xE789;" />-->

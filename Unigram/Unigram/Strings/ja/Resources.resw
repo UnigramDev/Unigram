@@ -135,4 +135,10 @@
   <data name="SettingsPage_PhoneButton.Tag" xml:space="preserve">
     <value>電話番号</value>
   </data>
+  <data name="SettingsPage_UsernameButton.Tag" xml:space="preserve">
+    <value>ユーザー名</value>
+  </data>
+  <data name="SettingsPage_WallpaperButton.Content" xml:space="preserve">
+    <value>チャットの背景</value>
+  </data>
 </root>
