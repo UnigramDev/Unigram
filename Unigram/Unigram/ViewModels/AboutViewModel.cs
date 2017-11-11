@@ -43,6 +43,8 @@ namespace Unigram.ViewModels
 
         public string Version { get; } = GetVersion();
 
+        public string AppName => Strings.Branding.ApplicationName;
+
         #region Useful
 
         public RelayCommand UsefulPrivacyCommand { get; }

@@ -158,11 +158,11 @@ namespace Unigram.Views
             var messageCommon = element.DataContext as TLMessageCommonBase;
             var channel = messageCommon.Parent as TLChannel;
 
-            CreateFlyoutItem(ref flyout, MessageView_Loaded, ViewModel.MessageViewCommand, messageCommon, AppResources.MessageView);
-            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, AppResources.MessageDelete);
-            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, AppResources.MessageForward);
-            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, AppResources.MessageSelect);
-            CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, messageCommon, AppResources.MessageSaveMedia);
+            CreateFlyoutItem(ref flyout, MessageView_Loaded, ViewModel.MessageViewCommand, messageCommon, Strings.Resources.MessageView);
+            CreateFlyoutItem(ref flyout, MessageDelete_Loaded, ViewModel.MessageDeleteCommand, messageCommon, Strings.Resources.MessageDelete);
+            CreateFlyoutItem(ref flyout, MessageForward_Loaded, ViewModel.MessageForwardCommand, messageCommon, Strings.Resources.MessageForward);
+            CreateFlyoutItem(ref flyout, MessageSelect_Loaded, ViewModel.MessageSelectCommand, messageCommon, Strings.Resources.MessageSelect);
+            CreateFlyoutItem(ref flyout, MessageSave_Loaded, ViewModel.MessageSaveCommand, messageCommon, Strings.Resources.MessageSaveMedia);
 
             if (flyout.Items.Count > 0 && args.TryGetPosition(sender, out Point point))
             {

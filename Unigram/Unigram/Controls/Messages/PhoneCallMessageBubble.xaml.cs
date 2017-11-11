@@ -39,7 +39,7 @@ namespace Unigram.Controls.Messages
         {
             if (message.Action is TLMessageActionPhoneCall phoneCallAction)
             {
-                var loader = ResourceLoader.GetForCurrentView("Resources");
+                var loader = ResourceLoader.GetForViewIndependentUse("Resources");
 
                 var outgoing = message.IsOut;
                 var missed = phoneCallAction.Reason is TLPhoneCallDiscardReasonMissed || phoneCallAction.Reason is TLPhoneCallDiscardReasonBusy;

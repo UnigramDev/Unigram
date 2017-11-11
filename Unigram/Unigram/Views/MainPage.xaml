@@ -201,12 +201,12 @@
     <controls:MasterDetailView x:Name="MasterDetail" ViewStateChanged="OnStateChanged" Grid.Row="1">
         <controls:NavigationView x:Name="Navigation" ItemClick="NavigationView_ItemClick">
             <controls:NavigationView.MenuItems>
-                <controls:NavigationViewItem x:Name="NavigationNewChat" Content="New Group" Glyph="&#xE125;" />
+                <controls:NavigationViewItem x:Uid="MainPage_NavigationNewChat" x:Name="NavigationNewChat" Content="New Group" Glyph="&#xE125;" />
                 <!--<controls:NavigationViewItem Text="New Secret Chat" Glyph="&#xE125;" />-->
-                <controls:NavigationViewItem x:Name="NavigationNewChannel" Content="New Channel" Glyph="&#xE789;" />
+                <controls:NavigationViewItem x:Uid="MainPage_NavigationNewChannel" x:Name="NavigationNewChannel" Content="New Channel" Glyph="&#xE789;" />
                 <controls:NavigationViewItemSeparator/>
 
-                <controls:NavigationViewItem x:Name="NavigationChats" Content="Chats" IsChecked="True" Glyph="&#xE8BD;" />
+                <controls:NavigationViewItem x:Uid="MainPage_NavigationChats" x:Name="NavigationChats" Content="Chats" IsChecked="True" Glyph="&#xE8BD;" />
                 <controls:NavigationViewItem x:Name="NavigationContacts" Content="Contacts" Glyph="&#xE8D4;" />
                 <controls:NavigationViewItem x:Name="NavigationCalls" Content="Calls" Glyph="&#xE717;" />
                 <!--<controls:NavigationViewItem Text="Invite Friends" Glyph="&#xE789;" />-->
@@ -262,7 +262,7 @@
                             </Button.Flyout>
                         </Button>
 
-                        <controls:SearchTextBox x:Name="SearchDialogs"
+                        <controls:SearchTextBox x:Uid="MainPage_SearchDialogs" x:Name="SearchDialogs"
                                                     Padding="60,3,6,5"
                                                     Background="{x:Null}"
                                                     BorderBrush="{x:Null}"
