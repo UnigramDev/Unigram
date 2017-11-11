@@ -119,6 +119,7 @@
   </resheader>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
+    <comment>Cancel button text resource</comment>
   </data>
   <data name="DialogClearHistory" xml:space="preserve">
     <value>Clear history</value>
@@ -161,6 +162,7 @@
   </data>
   <data name="No" xml:space="preserve">
     <value>No</value>
+    <comment>No button text resource</comment>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
