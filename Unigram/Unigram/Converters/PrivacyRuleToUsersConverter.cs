@@ -16,7 +16,7 @@ namespace Unigram.Converters
             var count = System.Convert.ToInt32(value);
             if (count > 0)
             {
-                return Language.Declension(count, Strings.Resources.UserNominativeSingular, Strings.Resources.UserNominativePlural, Strings.Resources.UserGenitiveSingular, Strings.Resources.UserGenitivePlural, null, null);
+                return Language.Declension(count, Strings.Nouns.UserNominativeSingular, Strings.Nouns.UserNominativePlural, Strings.Nouns.UserGenitiveSingular, Strings.Nouns.UserGenitivePlural, null, null);
             }
 
             return "Add Users";

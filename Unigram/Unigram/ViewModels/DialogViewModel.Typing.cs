@@ -194,7 +194,7 @@ namespace Unigram.ViewModels
             {
                 if (typingUsers.Count > 3)
                 {
-                    return string.Format(Strings.Resources.AreTyping, Language.Declension(typingUsers.Count, Strings.Resources.CompanyNominativeSingular, Strings.Resources.CompanyNominativePlural, Strings.Resources.CompanyGenitiveSingular, Strings.Resources.CompanyGenitivePlural, null, null));
+                    return string.Format(Strings.Resources.AreTyping, Language.Declension(typingUsers.Count, Strings.Nouns.CompanyNominativeSingular, Strings.Nouns.CompanyNominativePlural, Strings.Nouns.CompanyGenitiveSingular, Strings.Nouns.CompanyGenitivePlural, null, null));
                 }
 
                 var names = new List<string>(typingUsers.Count);

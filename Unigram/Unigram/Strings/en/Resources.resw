@@ -253,12 +253,6 @@
   <data name="UserScoredPlural" xml:space="preserve">
     <value>{0} scored {1}</value>
   </data>
-  <data name="UserNominativePlural" xml:space="preserve">
-    <value>Users</value>
-  </data>
-  <data name="UserNominativeSingular" xml:space="preserve">
-    <value>User</value>
-  </data>
   <data name="YourScored" xml:space="preserve">
     <value>You scored {0}</value>
   </data>
@@ -321,18 +315,6 @@
   </data>
   <data name="Typing" xml:space="preserve">
     <value>Typing</value>
-  </data>
-  <data name="CompanyGenitivePlural" xml:space="preserve">
-    <value />
-  </data>
-  <data name="CompanyGenitiveSingular" xml:space="preserve">
-    <value />
-  </data>
-  <data name="CompanyNominativePlural" xml:space="preserve">
-    <value>Members</value>
-  </data>
-  <data name="CompanyNominativeSingular" xml:space="preserve">
-    <value>Member</value>
   </data>
   <data name="CallMinutes_1" xml:space="preserve">
     <value>{0} minute</value>
@@ -426,36 +408,6 @@
   </data>
   <data name="IsSendingVideoMessage" xml:space="preserve">
     <value>{0} is sending a video message</value>
-  </data>
-  <data name="MonthGenitivePlural" xml:space="preserve">
-    <value>Months</value>
-  </data>
-  <data name="MonthGenitiveSingular" xml:space="preserve">
-    <value>Month</value>
-  </data>
-  <data name="MonthNominativePlural" xml:space="preserve">
-    <value>Months</value>
-  </data>
-  <data name="MonthNominativeSingular" xml:space="preserve">
-    <value>Month</value>
-  </data>
-  <data name="YearGenitivePlural" xml:space="preserve">
-    <value>Years</value>
-  </data>
-  <data name="YearGenitiveSingular" xml:space="preserve">
-    <value>Year</value>
-  </data>
-  <data name="YearNominativePlural" xml:space="preserve">
-    <value>Years</value>
-  </data>
-  <data name="YearNominativeSingular" xml:space="preserve">
-    <value>Year</value>
-  </data>
-  <data name="UserGenitivePlural" xml:space="preserve">
-    <value>Users</value>
-  </data>
-  <data name="UserGenitiveSingular" xml:space="preserve">
-    <value>User</value>
   </data>
   <data name="MessageActionPin" xml:space="preserve">
     <value>{0} pinned {1}</value>

@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/11/2017 18:32:37
+// 	Generated: 11/11/2017 18:36:27
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -537,28 +537,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Users"
-        /// </summary>
-        public static string UserNominativePlural
-        {
-            get
-            {
-                return resourceLoader.GetString("UserNominativePlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "User"
-        /// </summary>
-        public static string UserNominativeSingular
-        {
-            get
-            {
-                return resourceLoader.GetString("UserNominativeSingular");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "You scored {0}"
         /// </summary>
         public static string YourScored
@@ -786,50 +764,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("Typing");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CompanyGenitivePlural
-        {
-            get
-            {
-                return resourceLoader.GetString("CompanyGenitivePlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to ""
-        /// </summary>
-        public static string CompanyGenitiveSingular
-        {
-            get
-            {
-                return resourceLoader.GetString("CompanyGenitiveSingular");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Members"
-        /// </summary>
-        public static string CompanyNominativePlural
-        {
-            get
-            {
-                return resourceLoader.GetString("CompanyNominativePlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Member"
-        /// </summary>
-        public static string CompanyNominativeSingular
-        {
-            get
-            {
-                return resourceLoader.GetString("CompanyNominativeSingular");
             }
         }
         
@@ -1171,116 +1105,6 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("IsSendingVideoMessage");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Months"
-        /// </summary>
-        public static string MonthGenitivePlural
-        {
-            get
-            {
-                return resourceLoader.GetString("MonthGenitivePlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Month"
-        /// </summary>
-        public static string MonthGenitiveSingular
-        {
-            get
-            {
-                return resourceLoader.GetString("MonthGenitiveSingular");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Months"
-        /// </summary>
-        public static string MonthNominativePlural
-        {
-            get
-            {
-                return resourceLoader.GetString("MonthNominativePlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Month"
-        /// </summary>
-        public static string MonthNominativeSingular
-        {
-            get
-            {
-                return resourceLoader.GetString("MonthNominativeSingular");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Years"
-        /// </summary>
-        public static string YearGenitivePlural
-        {
-            get
-            {
-                return resourceLoader.GetString("YearGenitivePlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Year"
-        /// </summary>
-        public static string YearGenitiveSingular
-        {
-            get
-            {
-                return resourceLoader.GetString("YearGenitiveSingular");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Years"
-        /// </summary>
-        public static string YearNominativePlural
-        {
-            get
-            {
-                return resourceLoader.GetString("YearNominativePlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Year"
-        /// </summary>
-        public static string YearNominativeSingular
-        {
-            get
-            {
-                return resourceLoader.GetString("YearNominativeSingular");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Users"
-        /// </summary>
-        public static string UserGenitivePlural
-        {
-            get
-            {
-                return resourceLoader.GetString("UserGenitivePlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "User"
-        /// </summary>
-        public static string UserGenitiveSingular
-        {
-            get
-            {
-                return resourceLoader.GetString("UserGenitiveSingular");
             }
         }
         

@@ -66,7 +66,7 @@ namespace Unigram.Common
                     return ReplaceLinks(serviceMessage, won ? Strings.Resources.UserScoredPlural : Strings.Resources.UserScored, new[] { fromUserFullName, value.ToString() }, new[] { "tg-user://" + fromUserId, "tg-bold://" }, useActiveLinks);
                 }
 
-                return ReplaceLinks(serviceMessage, won ? Strings.Resources.UserScoredPlural : Strings.Resources.UserScored, new[] { Strings.Resources.UserNominativeSingular, value.ToString() }, new[] { "tg-bold://", "tg-bold://" }, useActiveLinks);
+                return ReplaceLinks(serviceMessage, won ? Strings.Resources.UserScoredPlural : Strings.Resources.UserScored, new[] { Strings.Nouns.UserNominativeSingular, value.ToString() }, new[] { "tg-bold://", "tg-bold://" }, useActiveLinks);
             });
             _actionsCache.Add(typeof(TLMessageActionChatCreate), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.Resources.MessageActionChatCreate, new[] { fromUserFullName, ((TLMessageActionChatCreate)action).Title }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
             _actionsCache.Add(typeof(TLMessageActionChatEditPhoto), (TLMessageService message, TLMessageActionBase action, int fromUserId, string fromUserFullName, bool useActiveLinks) => ReplaceLinks(message, Strings.Resources.MessageActionChatEditPhoto, new[] { fromUserFullName }, new[] { "tg-user://" + fromUserId }, useActiveLinks));
@@ -300,7 +300,7 @@ namespace Unigram.Common
         {
             var fromId = serviceMessage.FromId;
             var user = InMemoryCacheService.Current.GetUser(fromId) as TLUser;
-            var username = user != null ? user.FullName : Strings.Resources.UserNominativeSingular;
+            var username = user != null ? user.FullName : Strings.Nouns.UserNominativeSingular;
             var action = serviceMessage.Action;
             if (action != null && _actionsCache.ContainsKey(action.GetType()))
             {
@@ -316,7 +316,7 @@ namespace Unigram.Common
         {
             var fromId = serviceMessage.FromId;
             var user = InMemoryCacheService.Current.GetUser(fromId ?? 0);
-            var userFullName = user != null ? user.FullName : Strings.Resources.UserNominativeSingular;
+            var userFullName = user != null ? user.FullName : Strings.Nouns.UserNominativeSingular;
             var action = serviceMessage.Action;
 
             if (serviceMessage.ToId is TLPeerChannel)
