@@ -16,7 +16,7 @@
     MaxWidth="{ThemeResource MessageMaxWidth}">
 
     <!-- TODO: not the right way -->
-    <Border Height="4" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
+    <Border Height="2" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay}"/>
 
     <UserControl x:Name="LayoutRoot">
         <Grid x:Name="ContentPanel"

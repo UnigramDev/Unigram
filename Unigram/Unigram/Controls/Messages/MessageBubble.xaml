@@ -18,7 +18,7 @@
     Unloaded="OnUnloaded">
 
     <!-- TODO: not the right way -->
-    <Border Height="4" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay, FallbackValue=Collapsed}"/>
+    <Border Height="2" Visibility="{x:Bind UpdateFirst(ViewModel.IsFirst), Mode=OneWay, FallbackValue=Collapsed}"/>
 
     <UserControl x:Name="LayoutRoot">
         <Grid x:Name="ContentPanel"
