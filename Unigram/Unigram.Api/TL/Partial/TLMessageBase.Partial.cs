@@ -339,7 +339,7 @@ namespace Telegram.Api.TL
 
         public static bool IsGif(TLVector<TLDocumentAttributeBase> attributes, int size)
         {
-            if (size > 0 && size < 10383360)
+            if (/*size > 0 &&*/ size < 10383360)
             {
                 var animated = attributes.OfType<TLDocumentAttributeAnimated>().FirstOrDefault();
                 var video = attributes.OfType<TLDocumentAttributeVideo>().FirstOrDefault();
@@ -786,7 +786,7 @@ namespace Telegram.Api.TL
                     if (oldMediaDocument.Document == null || oldMediaDocument.Document.GetType() != newMediaDocument.Document.GetType())
                     {
                         Media = m.Media;
-                        RaisePropertyChanged("Media");
+                        RaisePropertyChanged(() => Media);
                     }
                     else
                     {
@@ -802,7 +802,7 @@ namespace Telegram.Api.TL
                             var file = Media.File;
 #endif
                             Media = m.Media;
-                            RaisePropertyChanged("Media");
+                            RaisePropertyChanged(() => Media);
                             //Media.IsoFileName = isoFileName;
 #if WP8
                             _media.File = file;

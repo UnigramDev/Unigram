@@ -8,7 +8,9 @@ using Telegram.Api.Helpers;
 using Telegram.Api.TL;
 using Unigram.Converters;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
+using Windows.System;
 
 namespace Unigram.Helpers
 {
@@ -24,10 +26,27 @@ namespace Unigram.Helpers
 
                 if (downloads)
                 {
-                    var folder = await DownloadsFolder.CreateFolderAsync("Unigram", CreationCollisionOption.OpenIfExists);
-                    var result = await FileUtils.GetTempFileAsync(fileName);
+                    StorageFile file;
+                    if (StorageApplicationPermissions.FutureAccessList.ContainsItem(fileName))
+                    {
+                        file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(fileName);
+                    }
+                    else
+                    {
+                        file = await DownloadsFolder.CreateFileAsync(resultName, CreationCollisionOption.GenerateUniqueName);
+                        var result = await FileUtils.GetTempFileAsync(fileName);
 
-                    await result.CopyAsync(folder, resultName, NameCollisionOption.GenerateUniqueName);
+                        var boh = file.Path.ToString();
+                        var folder = await StorageFolder.GetFolderFromPathAsync(Path.GetDirectoryName(boh));
+
+                        await result.CopyAndReplaceAsync(file);
+                        StorageApplicationPermissions.FutureAccessList.AddOrReplace(fileName, file);
+                    }
+
+                    //var options = new FolderLauncherOptions();
+                    //options.ItemsToSelect.Add(file);
+
+                    //await Launcher.LaunchFolderAsync(file.)
                 }
                 else
                 {

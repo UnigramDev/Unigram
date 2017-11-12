@@ -222,7 +222,14 @@ namespace Unigram.ViewModels
             }
             else
             {
-                await TLMessageDialog.ShowAsync("Failed fetching dialogs");
+                BeginOnUIThread(async () =>
+                {
+                    var confirm = await TLMessageDialog.ShowAsync("Failed fetching dialogs, press OK to retry.", "Telegram", "OK", "Cancel");
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        Execute.BeginOnThreadPool(LoadFirstSlice);
+                    }
+                });
             }
 
             Aggregator.Subscribe(this);
