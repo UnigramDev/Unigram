@@ -18,17 +18,38 @@ using Windows.UI.Xaml.Media;
 
 namespace Unigram.Controls
 {
-    public class DialogsListView : ListView
+    public class DialogListView : ListView
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
 
-        public DialogsListView()
+        public DialogListView()
         {
+            ContainerContentChanging += OnContainerContentChanging;
+
             DragItemsStarting += OnDragItemsStarting;
             DragItemsCompleted += OnDragItemsCompleted;
             DragEnter += OnDragEnter;
             DragOver += OnDragOver;
             Drop += OnDrop;
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            args.RegisterUpdateCallback(OnUpdateCallback);
+        }
+
+        private void OnUpdateCallback(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            var content = args.ItemContainer.ContentTemplateRoot as UserControl;
+            if (content != null)
+            {
+                VisualStateManager.GoToState(content, args.ItemContainer.IsSelected ? "Selected" : "Normal", false);
+            }
+        }
+
+        protected override DependencyObject GetContainerForItemOverride()
+        {
+            return new DialogListViewItem();
         }
 
         #region Drag & Drop

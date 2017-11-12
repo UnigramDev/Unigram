@@ -118,6 +118,8 @@
     <Compile Include="Controls\CaptionTextBox.cs" />
     <Compile Include="Controls\ChannelStickersButton.cs" />
     <Compile Include="Controls\DialogBackgroundPresenter.cs" />
+    <Compile Include="Controls\DialogListView.cs" />
+    <Compile Include="Controls\DialogListViewItem.cs" />
     <Compile Include="Controls\DialogSearchToolBar.xaml.cs">
       <DependentUpon>DialogSearchToolBar.xaml</DependentUpon>
     </Compile>
@@ -848,7 +850,6 @@
     <Content Include="Assets\Fonts\Telegram.ttf" />
     <Compile Include="Common\Language.cs" />
     <Compile Include="Controls\BubbleBottomButton.cs" />
-    <Compile Include="Controls\DialogsListView.cs" />
     <Compile Include="Controls\GlyphToggleButton.cs" />
     <Compile Include="Controls\ProgressShape.cs" />
     <Compile Include="Controls\ProgressVoice.cs" />

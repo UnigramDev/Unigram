@@ -68,6 +68,24 @@
     </UserControl.Resources>
 
     <Grid Padding="12,6" Background="Transparent">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Normal"/>
+                <VisualState x:Name="Selected">
+                    <VisualState.Setters>
+                        <Setter Target="fiType.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>
+                        <Setter Target="TitleLabel.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>
+                        <Setter Target="MutedIcon.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>
+                        <Setter Target="StateIcon.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>
+                        <Setter Target="TimeLabel.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>
+                        <Setter Target="FromLabel.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>
+                        <Setter Target="DraftLabel.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>
+                        <Setter Target="BriefLabel.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>
+                        <Setter Target="TypingLabel.Foreground" Value="{ThemeResource ListViewItemForegroundSelected}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition />
@@ -110,7 +128,8 @@
                            FontSize="16"
                            Margin="0,0,4,1"
                            Grid.Column="0"/>
-                <TextBlock Text="{x:Bind ViewModel.With.DisplayName, Mode=OneWay}"
+                <TextBlock x:Name="TitleLabel"
+                           Text="{x:Bind ViewModel.With.DisplayName, Mode=OneWay}"
                            Grid.Column="1"
                            MaxLines="1"
                            TextWrapping="NoWrap"
@@ -120,7 +139,8 @@
                     <Path Width="10" Height="10" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z" Fill="{ThemeResource TelegramDialogVerifiedBackgroundBrush}" StrokeThickness="0" />
                     <Path Width="16" Height="16" Stretch="Uniform" Data="F1M33,0L23,3 12.999,0 9,9 0,13 2.999,23 0,33 9,37 12.999,46 23,43 33,46 37,37 46,33 43,23 46,13 37,9z M31.485,14.514L35.727,18.757 23.707,30.778 19.464,35.021 15.221,30.778 10.271,25.828 14.514,21.586 19.464,26.535z" Fill="{ThemeResource TelegramDialogVerifiedForegroundBrush}" StrokeThickness="0" />
                 </Grid>
-                <FontIcon Glyph="&#xE198;"
+                <FontIcon x:Name="MutedIcon"
+                          Glyph="&#xE198;"
                           Visibility="{x:Bind (Visibility)ViewModel.IsMuted, Mode=OneWay}"
                           Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                           VerticalAlignment="Bottom"
@@ -163,10 +183,11 @@
                 <ToolTipService.ToolTip>
                     <ToolTip Opened="ToolTip_Opened"/>
                 </ToolTipService.ToolTip>
-                <Run x:Name="FromLabel" Foreground="{ThemeResource TelegramDialogLabelFromBrush}"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
+                <Run x:Name="FromLabel" Foreground="{ThemeResource TelegramDialogLabelFromBrush}"/><Run x:Name="DraftLabel" Foreground="Red"/><Run x:Name="BriefLabel" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
             </TextBlock>
 
-            <TextBlock Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}"
+            <TextBlock x:Name="TypingLabel"
+                       Visibility="{x:Bind (Visibility)ViewModel.IsTyping, Mode=OneWay}"
                        Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
                        Style="{StaticResource BodyTextBlockStyle}"
                        TextWrapping="NoWrap"

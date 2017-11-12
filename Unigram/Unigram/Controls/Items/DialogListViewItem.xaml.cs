@@ -69,6 +69,7 @@ namespace Unigram.Controls.Items
                 SavedMessages.Visibility = ViewModel.With is TLUser user2 && user2.IsSelf ? Visibility.Visible : Visibility.Collapsed;
 
                 FromLabel.Text = UpdateFromLabel(ViewModel);
+                DraftLabel.Text = UpdateDraftLabel(ViewModel);
                 BriefLabel.Text = UpdateBriefLabel(ViewModel);
                 UpdateTimeLabel();
                 //UpdateStateIcon();
@@ -84,6 +85,7 @@ namespace Unigram.Controls.Items
             if (e.PropertyName == "Self")
             {
                 FromLabel.Text = UpdateFromLabel(ViewModel);
+                DraftLabel.Text = UpdateDraftLabel(ViewModel);
                 BriefLabel.Text = UpdateBriefLabel(ViewModel);
                 UpdateTimeLabel();
                 //UpdateStateIcon();
@@ -93,6 +95,7 @@ namespace Unigram.Controls.Items
             else if (e.PropertyName == "TopMessageItem")
             {
                 FromLabel.Text = UpdateFromLabel(ViewModel);
+                DraftLabel.Text = UpdateDraftLabel(ViewModel);
                 BriefLabel.Text = UpdateBriefLabel(ViewModel);
                 UpdateTimeLabel();
                 //UpdateStateIcon();
@@ -205,12 +208,21 @@ namespace Unigram.Controls.Items
             return string.Empty;
         }
 
+        private string UpdateDraftLabel(TLDialog dialog)
+        {
+            if (dialog.Draft is TLDraftMessage draft && !string.IsNullOrWhiteSpace(draft.Message))
+            {
+                return "Draft: ";
+            }
+
+            return string.Empty;
+        }
+
         private string UpdateFromLabel(TLDialog dialog)
         {
             if (dialog.Draft is TLDraftMessage draft && !string.IsNullOrWhiteSpace(draft.Message))
             {
-                FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelDraftBrush"] as SolidColorBrush;
-                return "Draft: ";
+                return string.Empty;
             }
 
             if (dialog.TopMessageItem is TLMessage message)
@@ -219,8 +231,6 @@ namespace Unigram.Controls.Items
 
                 if (message.ShowFrom)
                 {
-                    FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelFromBrush"] as SolidColorBrush;
-
                     var from = message.FromId;
                     if (from != null)
                     {
@@ -390,7 +400,6 @@ namespace Unigram.Controls.Items
             }
             else if (dialog.TopMessageItem is TLMessageService messageService)
             {
-                FromLabel.Foreground = Application.Current.Resources["TelegramDialogLabelFromBrush"] as SolidColorBrush;
                 return ServiceHelper.Convert(messageService);
             }
 
