@@ -30,18 +30,30 @@ namespace Unigram.Core.Models
 
             foreach (Country c in Countries)
             {
-                switch (c.Code)
+                try
                 {
-                    case "ic":
-                        {
-                            c.DisplayName = new GeographicRegion("IS").DisplayName;
-                            break;
-                        }
-                    default:
-                        {
-                            c.DisplayName = new GeographicRegion(c.Code.ToUpper()).DisplayName;
-                            break;
-                        }
+                    switch (c.Code)
+                    {
+                        case "ic":
+                            {
+                                c.DisplayName = new GeographicRegion("IS").DisplayName;
+                                break;
+                            }
+                        default:
+                            {
+                                c.DisplayName = new GeographicRegion(c.Code.ToUpper()).DisplayName;
+                                break;
+                            }
+                    }
+                }
+                catch
+                {
+                    
+                }
+                
+                if (string.IsNullOrWhiteSpace(c.DisplayName))
+                {
+                    c.DisplayName = c.Name;
                 }
             }
 
