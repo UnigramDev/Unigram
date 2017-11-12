@@ -201,6 +201,11 @@ namespace Unigram.Controls.Views
             return null;
         }
 
+        private string ConvertGrouped(bool grouped)
+        {
+            return grouped ? "Show photos as one message" : "Show photos as separate messages";
+        }
+
         private bool ConvertSelected(StorageMedia media)
         {
             return SelectedItems.Contains(media);
@@ -604,5 +609,21 @@ namespace Unigram.Controls.Views
         {
             Select_Click(null, null);
         }
+    }
+
+    public class HeaderFlipView : FlipView
+    {
+        #region Content
+
+        public object Content
+        {
+            get { return (object)GetValue(ContentProperty); }
+            set { SetValue(ContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContentProperty =
+            DependencyProperty.Register("Content", typeof(object), typeof(HeaderFlipView), new PropertyMetadata(null));
+
+        #endregion
     }
 }
