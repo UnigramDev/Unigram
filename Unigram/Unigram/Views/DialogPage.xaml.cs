@@ -1845,8 +1845,12 @@ namespace Unigram.Views
 
     public class MediaLibraryCollection : IncrementalCollection<StorageMedia>, ISupportIncrementalLoading
     {
+        public StorageLibrary Library { get; private set; }
         public StorageFileQueryResult Query { get; private set; }
-        public uint StartIndex { get; private set; }
+
+        private readonly StorageMediaComparer _comparer;
+
+        private uint _startIndex;
 
         public MediaLibraryCollection()
         {
@@ -1855,12 +1859,19 @@ namespace Unigram.Views
                 return;
             }
 
-            var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
-            queryOptions.FolderDepth = FolderDepth.Deep;
+            _comparer = new StorageMediaComparer();
 
-            Query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
-            Query.ContentsChanged += OnContentsChanged;
-            StartIndex = 0;
+            Task.Run(async () =>
+            {
+                Library = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
+                Library.ChangeTracker.Enable();
+
+                var queryOptions = new QueryOptions(CommonFileQuery.OrderByDate, Constants.MediaTypes);
+                queryOptions.FolderDepth = FolderDepth.Deep;
+
+                Query = KnownFolders.PicturesLibrary.CreateFileQueryWithOptions(queryOptions);
+                Query.ContentsChanged += OnContentsChanged;
+            });
         }
 
         private int _selectedCount;
@@ -1872,24 +1883,118 @@ namespace Unigram.Views
             }
         }
 
-        private void OnContentsChanged(IStorageQueryResultBase sender, object args)
+        private async void OnContentsChanged(IStorageQueryResultBase sender, object args)
         {
-            Execute.BeginOnUIThread(() =>
+            var reader = Library.ChangeTracker.GetChangeReader();
+            var changes = await reader.ReadBatchAsync();
+
+            foreach (StorageLibraryChange change in changes)
             {
-                StartIndex = 0;
-                Clear();
-                UpdateCount();
-            });
+                if (change.ChangeType == StorageLibraryChangeType.ChangeTrackingLost)
+                {
+                    // Change tracker is in an invalid state and must be reset
+                    // This should be a very rare case, but must be handled
+                    Library.ChangeTracker.Reset();
+                    return;
+                }
+                if (change.IsOfType(StorageItemTypes.File))
+                {
+                    await ProcessFileChange(change);
+                }
+                else if (change.IsOfType(StorageItemTypes.Folder))
+                {
+                    // No-op; not interested in folders
+                }
+                else
+                {
+                    if (change.ChangeType == StorageLibraryChangeType.Deleted)
+                    {
+                        //UnknownItemRemoved(change.Path);
+                    }
+                }
+            }
+
+            // Mark that all the changes have been seen and for the change tracker
+            // to never return these changes again
+            await reader.AcceptChangesAsync();
+        }
+
+        private async Task ProcessFileChange(StorageLibraryChange change)
+        {
+            switch (change.ChangeType)
+            {
+                // New File in the Library
+                case StorageLibraryChangeType.Created:
+                case StorageLibraryChangeType.MovedIntoLibrary:
+                case StorageLibraryChangeType.MovedOrRenamed:
+                    if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var file = (StorageFile)(await change.GetStorageItemAsync());
+
+                        Execute.BeginOnUIThread(async () =>
+                        {
+                            var storage = await StorageMedia.CreateAsync(file, false);
+                            if (storage != null)
+                            {
+                                var array = this.ToArray();
+                                var index = Array.BinarySearch(array, storage, _comparer);
+                                if (index < 0) index = ~index;
+
+                                // Insert only if newer than the last item
+                                if (index < array.Length || !HasMoreItems)
+                                {
+                                    _startIndex++;
+
+                                    Insert(index, storage);
+                                    storage.PropertyChanged += OnPropertyChanged;
+                                }
+                            }
+                        });
+                    }
+                    break;
+                // File Removed From Library
+                case StorageLibraryChangeType.Deleted:
+                case StorageLibraryChangeType.MovedOutOfLibrary:
+                    if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        Execute.BeginOnUIThread(() =>
+                        {
+                            var already = this.FirstOrDefault(x => x.File.Path.Equals(change.Path));
+                            if (already != null)
+                            {
+                                _startIndex--;
+
+                                Remove(already);
+                                UpdateSelected();
+                            }
+                        });
+                    }
+                    break;
+                // Modified Contents
+                case StorageLibraryChangeType.ContentsChanged:
+                    if (Constants.MediaTypes.Any(x => change.Path.EndsWith(x, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        var file = (StorageFile)(await change.GetStorageItemAsync());
+
+                        // Update thumbnail maybe
+                    }
+                    break;
+                // Ignored Cases
+                case StorageLibraryChangeType.EncryptionChanged:
+                case StorageLibraryChangeType.ContentsReplaced:
+                case StorageLibraryChangeType.IndexingStatusChanged:
+                default:
+                    // These are safe to ignore in this application
+                    break;
+            }
         }
 
         public override async Task<IList<StorageMedia>> LoadDataAsync()
         {
             var items = new List<StorageMedia>();
-            uint resultCount = 0;
-            var result = await Query.GetFilesAsync(StartIndex, 10);
-            StartIndex += (uint)result.Count;
+            var result = await Query.GetFilesAsync(_startIndex, 10);
 
-            resultCount = (uint)result.Count;
+            _startIndex += (uint)result.Count;
 
             foreach (var file in result)
             {
@@ -1908,14 +2013,22 @@ namespace Unigram.Views
         {
             if (e.PropertyName.Equals("IsSelected"))
             {
-                UpdateCount();
+                UpdateSelected();
             }
         }
 
-        private void UpdateCount()
+        private void UpdateSelected()
         {
             _selectedCount = this.Count(x => x.IsSelected);
             OnPropertyChanged(new PropertyChangedEventArgs("SelectedCount"));
+        }
+
+        class StorageMediaComparer : IComparer<StorageMedia>
+        {
+            public int Compare(StorageMedia x, StorageMedia y)
+            {
+                return y.Basic.ItemDate.CompareTo(x.Basic.ItemDate);
+            }
         }
     }
 }

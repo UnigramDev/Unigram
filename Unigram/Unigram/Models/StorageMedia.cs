@@ -15,14 +15,17 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Unigram.Models
 {
-    public class StorageMedia : BindableBase
+    public abstract class StorageMedia : BindableBase
     {
-        public StorageMedia(StorageFile file)
+        public StorageMedia(StorageFile file, BasicProperties basic)
         {
             File = file;
+            Basic = basic;
         }
 
         public StorageFile File { get; private set; }
+
+        public BasicProperties Basic { get; private set; }
 
         protected BitmapImage _thumbnail;
         public BitmapImage Thumbnail
@@ -180,13 +183,7 @@ namespace Unigram.Models
             RaisePropertyChanged(() => Preview);
         }
 
-        public virtual StorageMedia Clone()
-        {
-            var item = new StorageMedia(File);
-            item._thumbnail = _thumbnail;
-
-            return item;
-        }
+        public abstract StorageMedia Clone();
 
         public virtual void Reset()
         {

@@ -19,7 +19,7 @@ namespace Unigram.Models
         private BasicProperties _basic;
 
         public StoragePhoto(StorageFile file, BasicProperties basic, ImageProperties props)
-            : base(file)
+            : base(file, basic)
         {
             _fullRectangle = new Rect(0, 0, props.Width, props.Height);
             _basic = basic;
