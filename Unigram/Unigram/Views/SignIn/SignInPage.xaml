@@ -56,7 +56,7 @@
                 <ComboBox.ItemTemplate>
                     <DataTemplate x:DataType="models:Country">
                         <TextBlock Style="{StaticResource BodyTextBlockStyle}">
-                            <Run Text="{x:Bind Name}"/>
+                            <Run Text="{x:Bind DisplayName}"/>
                             <Run Text="+" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/><Run Text="{x:Bind PhoneCode}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
                         </TextBlock>
                     </DataTemplate>
