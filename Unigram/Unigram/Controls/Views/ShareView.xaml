@@ -866,17 +866,18 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
             <Border x:Name="LineBottom" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="2"/>
 
-            <!--<Button Command="{x:Bind ViewModel.SendCommand}"
-                 Content="{x:Bind ConvertIsInstalled(ViewModel.StickerSet.IsInstalled, ViewModel.StickerSet.IsArchived, ViewModel.StickerSet.IsOfficial, ViewModel.StickerSet.IsMasks), Mode=OneWay}" 
-                 Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                 HorizontalAlignment="Stretch" 
-                 Margin="12,8,4,8"/>-->
+            <Border Visibility="{x:Bind ViewModel.SelectedItems.Count, Mode=OneWay,Converter={StaticResource BooleanToVisibilityConverter}}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="12,8,12,0" Grid.ColumnSpan="2">
+                <TextBox Text="{x:Bind ViewModel.Comment, Mode=TwoWay}" PlaceholderText="Write a comment..."/>
+            </Border>
 
-            <Button Command="{x:Bind ViewModel.SendCommand}" Content="Share" HorizontalAlignment="Stretch" Margin="12,8,4,8"/>
-
-            <Button Click="Close_Click" Content="Close" HorizontalAlignment="Stretch" Margin="4,8,12,8" Padding="24,4,24,4" Grid.Column="1"/>
+            <Button Command="{x:Bind ViewModel.SendCommand}" Content="Share" HorizontalAlignment="Stretch" Margin="12,8,4,8" Grid.Row="1"/>
+            <Button Click="Close_Click" Content="Close" HorizontalAlignment="Stretch" Margin="4,8,12,8" Padding="24,4,24,4" Grid.Column="1" Grid.Row="1"/>
         </Grid>
     </Grid>
 </controls:ContentDialogBase>

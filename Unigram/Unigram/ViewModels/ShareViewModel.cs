@@ -25,7 +25,7 @@ namespace Unigram.ViewModels
         {
             Items = new MvxObservableCollection<ITLDialogWith>();
             GroupedItems = new MvxObservableCollection<ShareViewModel> { this };
-            SelectedItems = new List<ITLDialogWith>();
+            SelectedItems = new MvxObservableCollection<ITLDialogWith>();
 
             SendCommand = new RelayCommand(SendExecute, () => SelectedItems?.Count > 0);
         }
@@ -97,8 +97,8 @@ namespace Unigram.ViewModels
             return _dialogs;
         }
 
-        private List<ITLDialogWith> _selectedItems = new List<ITLDialogWith>();
-        public List<ITLDialogWith> SelectedItems
+        private MvxObservableCollection<ITLDialogWith> _selectedItems = new MvxObservableCollection<ITLDialogWith>();
+        public MvxObservableCollection<ITLDialogWith> SelectedItems
         {
             get
             {
@@ -108,6 +108,19 @@ namespace Unigram.ViewModels
             {
                 Set(ref _selectedItems, value);
                 SendCommand?.RaiseCanExecuteChanged();
+            }
+        }
+
+        private string _comment;
+        public string Comment
+        {
+            get
+            {
+                return _comment;
+            }
+            set
+            {
+                Set(ref _comment, value);
             }
         }
 
@@ -196,6 +209,7 @@ namespace Unigram.ViewModels
                 {
                     TLInputPeerBase toPeer = dialog.ToInputPeer();
                     TLInputPeerBase fromPeer = null;
+                    TLMessage comment = null;
 
                     var msgs = new TLVector<TLMessage>();
                     var msgIds = new TLVector<int>();
@@ -326,8 +340,29 @@ namespace Unigram.ViewModels
                         msgIds.Add(fwdMessage.Id);
                     }
 
+                    if (!string.IsNullOrEmpty(_comment))
+                    {
+                        comment = TLUtils.GetMessage(SettingsHelper.UserId, toPeer.ToPeer(), TLMessageState.Sending, true, true, date, _comment, new TLMessageMediaEmpty(), TLLong.Random(), null);
+                        msgs.Insert(0, comment);
+                    }
+
                     CacheService.SyncSendingMessages(msgs, null, async (m) =>
                     {
+                        if (comment != null)
+                        {
+                            msgs.Remove(comment);
+
+                            var result = await ProtoService.SendMessageAsync(comment, null);
+                            if (result.IsSucceeded)
+                            {
+
+                            }
+                            else
+                            {
+
+                            }
+                        }
+
                         var response = await ProtoService.ForwardMessagesAsync(toPeer, fromPeer, msgIds, msgs, IsWithMyScore);
                         if (response.IsSucceeded)
                         {
@@ -335,6 +370,10 @@ namespace Unigram.ViewModels
                             {
                                 Aggregator.Publish(i);
                             }
+                        }
+                        else
+                        {
+
                         }
                     });
                 }
@@ -354,14 +393,41 @@ namespace Unigram.ViewModels
 
                 foreach (var dialog in dialogs)
                 {
-                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.ToPeer(), TLMessageState.Sending, true, true, date, null, new TLMessageMediaEmpty(), TLLong.Random(), null);
+                    TLMessage comment = null;
+                    var msgs = new TLVector<TLMessage>();
 
-                    CacheService.SyncSendingMessage(message, null, async (m) =>
+                    if (!string.IsNullOrEmpty(_comment))
                     {
+                        comment = TLUtils.GetMessage(SettingsHelper.UserId, dialog.ToPeer(), TLMessageState.Sending, true, true, date, _comment, new TLMessageMediaEmpty(), TLLong.Random(), null);
+                        msgs.Insert(0, comment);
+                    }
+
+                    var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.ToPeer(), TLMessageState.Sending, true, true, date, null, new TLMessageMediaEmpty(), TLLong.Random(), null);
+                    msgs.Add(message);
+
+                    CacheService.SyncSendingMessages(msgs, null, async (m) =>
+                    {
+                        if (comment != null)
+                        {
+                            msgs.Remove(comment);
+
+                            var result = await ProtoService.SendMessageAsync(comment, null);
+                            if (result.IsSucceeded)
+                            {
+                            }
+                            else
+                            {
+
+                            }
+                        }
+
                         var response = await ProtoService.SendMediaAsync(dialog.ToInputPeer(), _inputMedia, message);
                         if (response.IsSucceeded)
                         {
-                            Aggregator.Publish(m);
+                            foreach (var i in m)
+                            {
+                                Aggregator.Publish(i);
+                            }
                         }
                     });
                 }
@@ -372,15 +438,42 @@ namespace Unigram.ViewModels
             {
                 foreach (var dialog in dialogs)
                 {
+                    TLMessage comment = null;
+                    var msgs = new TLVector<TLMessage>();
+
+                    if (!string.IsNullOrEmpty(_comment))
+                    {
+                        comment = TLUtils.GetMessage(SettingsHelper.UserId, dialog.ToPeer(), TLMessageState.Sending, true, true, date, _comment, new TLMessageMediaEmpty(), TLLong.Random(), null);
+                        msgs.Insert(0, comment);
+                    }
+
                     var messageText = ShareLink.ToString();
                     var message = TLUtils.GetMessage(SettingsHelper.UserId, dialog.ToPeer(), TLMessageState.Sending, true, true, date, messageText, new TLMessageMediaEmpty(), TLLong.Random(), null);
+                    msgs.Add(message);
 
-                    CacheService.SyncSendingMessage(message, null, async (m) =>
+                    CacheService.SyncSendingMessages(msgs, null, async (m) =>
                     {
+                        if (comment != null)
+                        {
+                            msgs.Remove(comment);
+
+                            var result = await ProtoService.SendMessageAsync(comment, null);
+                            if (result.IsSucceeded)
+                            {
+                            }
+                            else
+                            {
+
+                            }
+                        }
+
                         var response = await ProtoService.SendMessageAsync(message, () => { message.State = TLMessageState.Confirmed; });
                         if (response.IsSucceeded)
                         {
-                            Aggregator.Publish(m);
+                            foreach (var i in m)
+                            {
+                                Aggregator.Publish(i);
+                            }
                         }
                     });
                 }

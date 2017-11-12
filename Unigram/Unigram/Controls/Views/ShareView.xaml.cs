@@ -116,6 +116,7 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLMessage message, bool withMyScore = false)
         {
+            ViewModel.Comment = null;
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
             ViewModel.Messages = new[] { message };
@@ -165,6 +166,7 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(IEnumerable<TLMessage> messages, bool withMyScore = false)
         {
+            ViewModel.Comment = null;
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
             ViewModel.Messages = messages;
@@ -176,6 +178,7 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(Uri link, string title)
         {
+            ViewModel.Comment = null;
             ViewModel.ShareLink = link;
             ViewModel.ShareTitle = title;
             ViewModel.Messages = null;
@@ -187,6 +190,7 @@ namespace Unigram.Controls.Views
 
         public IAsyncOperation<ContentDialogBaseResult> ShowAsync(TLInputMediaBase inputMedia)
         {
+            ViewModel.Comment = null;
             ViewModel.ShareLink = null;
             ViewModel.ShareTitle = null;
             ViewModel.Messages = null;
