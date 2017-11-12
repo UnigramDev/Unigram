@@ -51,12 +51,12 @@
                       Header="Country:"
                       MinWidth="280"
                       PlaceholderText="Select your country..."
-                      HorizontalAlignment="Stretch"                      
+                      HorizontalAlignment="Stretch"
                       Grid.Row="2">
                 <ComboBox.ItemTemplate>
                     <DataTemplate x:DataType="models:Country">
                         <TextBlock Style="{StaticResource BodyTextBlockStyle}">
-                            <Run Text="{x:Bind DisplayName}"/>
+                            <Run Text="{x:Bind Name}"/>
                             <Run Text="+" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/><Run Text="{x:Bind PhoneCode}" Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"/>
                         </TextBlock>
                     </DataTemplate>
