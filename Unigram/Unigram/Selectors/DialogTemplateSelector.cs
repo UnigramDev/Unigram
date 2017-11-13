@@ -16,7 +16,12 @@ namespace Unigram.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            if (item is TLDialog dialog && dialog.With is TLUser user)
+            if (item is TLDialog dialog && dialog.With is TLUser inner)
+            {
+                return inner.IsSelf ? SelfTemplate ?? ItemTemplate : ItemTemplate;
+            }
+
+            if (item is TLUser user)
             {
                 return user.IsSelf ? SelfTemplate ?? ItemTemplate : ItemTemplate;
             }
