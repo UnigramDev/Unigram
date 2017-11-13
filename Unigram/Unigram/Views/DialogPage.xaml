@@ -1293,17 +1293,18 @@
                                                 Text="{x:Bind ConvertSelectedCount(ViewModel.MediaLibrary.SelectedCount, x:False), Mode=OneWay}"
                                                 Tag="&#xE160;"
                                                 Command="{x:Bind ViewModel.SendFileCommand}"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                <MenuFlyoutItem x:Uid="DialogPage_SendLocationFlyoutItem" Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Text="Location"
                                                 Tag="&#xE1C4;"
                                                 IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                                 Command="{x:Bind ViewModel.SendLocationCommand}"/>
                                 <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                                x:Uid="DialogPage_SendContactFlyoutItem"
                                                 Text="Contact"
                                                 Tag="&#xE187;"
                                                 IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
                                                 Command="{x:Bind ViewModel.SendContactCommand}"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                <MenuFlyoutItem x:Uid="DialogPage_SendShrugFlyoutItem" Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Text="¯\_(ツ)_/¯"
                                                 Tag="&#xE8BD;"
                                                 IsEnabled="{x:Bind ViewModel.MediaLibrary.SelectedCount, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"

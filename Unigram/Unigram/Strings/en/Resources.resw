@@ -1494,6 +1494,15 @@ Duration: {1}</value>
   <data name="DialogPage_SearchFlyoutItem.Text" xml:space="preserve">
     <value>Search</value>
   </data>
+  <data name="DialogPage_SendContactFlyoutItem.Text" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="DialogPage_SendLocationFlyoutItem.Text" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="DialogPage_SendShrugFlyoutItem.Text" xml:space="preserve">
+    <value>¯\_(ツ)_/¯</value>
+  </data>
   <data name="DialogPage_ShareContactFlyoutItem.Text" xml:space="preserve">
     <value>Share my contact</value>
   </data>
