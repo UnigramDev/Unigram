@@ -759,33 +759,33 @@
                                   Height="{ThemeResource AppBarExpandButtonCircleDiameter}" />
                         <Button.Flyout>
                             <MenuFlyout>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                <MenuFlyoutItem x:Uid="DialogPage_SearchFlyoutItem" Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Command="{x:Bind ViewModel.SearchCommand}"
                                                 Text="Search"
                                                 Tag="&#xE11A;"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                <MenuFlyoutItem x:Uid="DialogPage_ManageFlyoutItem" Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Click="Manage_Click"
                                                 Text="Manage"
                                                 Tag="&#xE133;"
                                                 MinWidth="120"/>
 
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                <MenuFlyoutItem x:Uid="DialogPage_ShareContactFlyoutItem" Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Command="{x:Bind ViewModel.ShareContactCommand}"
                                                 Visibility="{x:Bind (Visibility)ViewModel.IsShareContactAvailable, Mode=OneWay}"
                                                 Tag="&#xE8D4;"
                                                 Text="Share my contact"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                <MenuFlyoutItem x:Uid="DialogPage_AddToContactFlyoutItem"  Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Command="{x:Bind ViewModel.AddContactCommand}"
                                                 Visibility="{x:Bind (Visibility)ViewModel.IsAddContactAvailable, Mode=OneWay}"
                                                 Tag="&#xE8D4;"
                                                 Text="Add to contacts"/>
 
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                <MenuFlyoutItem x:Uid="DialogPage_PinChatFlyoutItem" Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Command="{x:Bind ViewModel.PinChatCommand}"
                                                 Visibility="{x:Bind (Visibility)ViewModel.CanPinChat, Mode=OneWay}"
                                                 Tag="&#xE718;"
                                                 Text="Pin to Start"/>
-                                <MenuFlyoutItem Style="{StaticResource IconMenuFlyoutItemStyle}"
+                                <MenuFlyoutItem x:Uid="DialogPage_UnpinChatFlyoutItem"  Style="{StaticResource IconMenuFlyoutItemStyle}"
                                                 Command="{x:Bind ViewModel.UnpinChatCommand}"
                                                 Visibility="{x:Bind (Visibility)ViewModel.CanUnpinChat, Mode=OneWay}"
                                                 Tag="&#xE77A;"

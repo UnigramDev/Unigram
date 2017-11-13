@@ -1476,6 +1476,24 @@ Duration: {1}</value>
     <value>chat with yourself</value>
     <comment>Conversation.CloudStorage.ChatStatus</comment>
   </data>
+  <data name="DialogPage_AddToContactsFlyoutItem.Text" xml:space="preserve">
+    <value>Add to contacts</value>
+  </data>
+  <data name="DialogPage_ManageFlyoutItem.Text" xml:space="preserve">
+    <value>Manage</value>
+  </data>
+  <data name="DialogPage_PinChatFlyoutItem.Text" xml:space="preserve">
+    <value>Pin to Start</value>
+  </data>
+  <data name="DialogPage_SearchFlyoutItem.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="DialogPage_ShareContactFlyoutItem.Text" xml:space="preserve">
+    <value>Share my contact</value>
+  </data>
+  <data name="DialogPage_UnpinChatFlyoutItem.Text" xml:space="preserve">
+    <value>Unpin from Start</value>
+  </data>
   <data name="GenericBotStatus" xml:space="preserve">
     <value>bot</value>
     <comment>Bot.GenericBotStatus</comment>
