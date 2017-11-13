@@ -106,9 +106,9 @@ namespace Unigram.ViewModels
             }
         }
 
-        public async void SendFileExecute(StorageFile file)
+        public async void SendFileExecute(IList<StorageFile> files)
         {
-            if (file != null)
+            foreach (var file in files)
             {
                 await SendFileAsync(file, null);
             }

@@ -282,10 +282,7 @@ namespace Unigram.Controls
                 }
                 else if (files.Count > 0)
                 {
-                    foreach (var file in files)
-                    {
-                        ViewModel.SendFileExecute(file);
-                    }
+                    ViewModel.SendFileExecute(files);
                 }
             }
             else if (package.Contains(StandardDataFormats.Text) && package.Contains("application/x-tl-field-tags"))

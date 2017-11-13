@@ -630,10 +630,7 @@ namespace Unigram.Views
                 }
                 else if (files.Count > 0)
                 {
-                    foreach (var file in files)
-                    {
-                        ViewModel.SendFileExecute(file);
-                    }
+                    ViewModel.SendFileExecute(files);
                 }
             }
             //else if (e.DataView.Contains(StandardDataFormats.WebLink))
