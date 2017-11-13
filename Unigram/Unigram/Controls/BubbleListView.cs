@@ -255,7 +255,7 @@ namespace Unigram.Controls
                 var height = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 420);
 
                 container.HorizontalAlignment = message.IsOut ? HorizontalAlignment.Right : HorizontalAlignment.Left;
-                container.Width = position.Width / 700d * width;
+                container.Width = position.Width / 800d * width;
                 container.Height = position.Height * height;
 
                 container.Width -= 2;
@@ -286,7 +286,7 @@ namespace Unigram.Controls
                         top = pos.Height * 2 - position.Height;
                     }
 
-                    if (msgId <= messageId && (position.SpanSize == 700 || position.SpanSize == 1000))
+                    if (msgId <= messageId && (position.SpanSize == 800 || position.SpanSize == 1000))
                     {
                         if (i == 1)
                         {
@@ -299,13 +299,13 @@ namespace Unigram.Controls
                     }
                 }
 
-                if (position.SpanSize == 700 || position.SpanSize == 1000)
+                if (position.SpanSize == 800 || position.SpanSize == 1000)
                 {
                     left = message.IsOut ? maxWidth : position.Width;
                 }
 
-                left = (maxWidth - left) / 700d * width;
-                top = message == group.Messages[0] && message.IsFirst ? 6d : -top * height;
+                left = (maxWidth - left) / 800d * width;
+                top = message == group.Messages[0] && message.IsFirst ? 4d : -top * height;
 
                 if (message.IsOut)
                 {

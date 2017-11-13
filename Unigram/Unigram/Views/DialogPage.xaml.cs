@@ -1797,10 +1797,10 @@ namespace Unigram.Views
                 var width = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 320);
                 var height = Math.Min(Math.Max(ActualWidth, 320) - 12 - 52, 420);
 
-                var maxWidth = group.Width / 700d * width;
+                var maxWidth = group.Width / 800d * width;
                 var maxHeight = group.Height * height;
 
-                media.Width = position.Width / 700d * width;
+                media.Width = position.Width / 800d * width;
                 media.Height = position.Height * height;
 
                 media.Width -= 2;
@@ -1809,13 +1809,13 @@ namespace Unigram.Views
                 if (message == group.Messages[0] && ((message.HasReplyToMsgId && message.ReplyToMsgId.HasValue) || (message.HasFwdFrom && message.FwdFrom != null) || (message.HasViaBotId && message.ViaBotId.HasValue)))
                 {
                     header.Width = maxWidth - 2;
-                    header.Margin = new Thickness(0, 0, -(maxWidth - (position.Width / 700d * width)), 0);
+                    header.Margin = new Thickness(0, 0, -(maxWidth - (position.Width / 800d * width)), 0);
 
                     var add = message.HasReplyToMsgId && message.ReplyToMsgId.HasValue ? 50 : 26;
 
                     background.Width = maxWidth - 2;
                     background.Height = maxHeight + add - 2;
-                    background.Margin = new Thickness(0, 0, -(maxWidth - (position.Width / 700d * width)), -(maxHeight + add - ((position.Height * height) + add)));
+                    background.Margin = new Thickness(0, 0, -(maxWidth - (position.Width / 800d * width)), -(maxHeight + add - ((position.Height * height) + add)));
 
                     header.Visibility = Visibility.Visible;
                     background.Visibility = Visibility.Visible;
