@@ -324,7 +324,7 @@
                     </Grid.RowDefinitions>
                     <Border x:Name="Background" Background="{ThemeResource MessageBackgroundBrush}" Grid.RowSpan="2"/>
                     <StackPanel x:Name="Header" Padding="8,4,10,4">
-                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,0,0,2" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,0,0,2" HorizontalAlignment="Left" FontWeight="SemiBold" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                         <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click"/>
                     </StackPanel>
                     <Grid x:Name="Media" Background="Black" Grid.Row="1">
@@ -368,7 +368,7 @@
                     </Grid.RowDefinitions>
                     <Border x:Name="Background" Background="{ThemeResource MessageBackgroundBrush}" Grid.RowSpan="2"/>
                     <StackPanel x:Name="Header" Padding="8,4,10,4">
-                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,0,0,2" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,0,0,2" HorizontalAlignment="Left" FontWeight="SemiBold" Foreground="{ThemeResource MessageHeaderForegroundBrush}" Style="{StaticResource CaptionTextBlockStyle}"/>
                         <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click"/>
                     </StackPanel>
                     <Grid x:Name="Media" Background="Black" Grid.Row="1">

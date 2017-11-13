@@ -110,21 +110,21 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBlock x:Name="HeaderLabel"
-                            Margin="0,0,0,2"
-                            Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                            RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            FontWeight="SemiBold"
-                            Visibility="Collapsed"/>
+                           Margin="0,0,0,2"
+                           Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                           RequestedTheme="{ThemeResource MessageTextBlockTheme}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           FontWeight="SemiBold"
+                           Visibility="Collapsed"/>
 
                 <TextBlock x:Name="AdminLabel"
-                            Text="admin"
-                            Margin="0,0,0,2"
-                            Foreground="{ThemeResource MessageSubtleLabelBrush}"
-                            RequestedTheme="{ThemeResource MessageTextBlockTheme}"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            HorizontalAlignment="Right"
-                            Visibility="Collapsed"/>
+                           Text="admin"
+                           Margin="0,0,0,2"
+                           Foreground="{ThemeResource MessageSubtleLabelBrush}"
+                           RequestedTheme="{ThemeResource MessageTextBlockTheme}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           HorizontalAlignment="Right"
+                           Visibility="Collapsed"/>
 
                 <local:MessageReference
                     x:Name="Reply"

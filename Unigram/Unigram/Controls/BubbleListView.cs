@@ -286,7 +286,7 @@ namespace Unigram.Controls
                         top = pos.Height * 2 - position.Height;
                     }
 
-                    if (msgId <= messageId && (position.SpanSize == 800 || position.SpanSize == 1000))
+                    if (msgId <= messageId && i > 0 && (position.SpanSize == 800 || position.SpanSize == 1000) && ((position.Flags & 1) == 0 || (position.Flags & 2) == 0))
                     {
                         if (i == 1)
                         {
@@ -294,7 +294,7 @@ namespace Unigram.Controls
                         }
                         else if (i > 1)
                         {
-                            top = top - group.Positions[group.Messages[i -1]].Height - pos.Height;
+                            top = top - group.Positions[group.Messages[i - 1]].Height - pos.Height;
                         }
                     }
                 }
