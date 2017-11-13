@@ -37,6 +37,11 @@ HRESULT MessageError::RuntimeClassInitialize(HRESULT error)
 	}
 	else
 	{
+		if (text[length - 2] == '\r' && text[length - 1] == '\n')
+		{
+			length -= 2;
+		}
+
 		ReturnIfFailed(result, m_text.Set(text, length));
 		LocalFree(text);
 	}

@@ -13,6 +13,9 @@
     <Filter Include="Threading">
       <UniqueIdentifier>{255b15bd-8927-419e-86b3-5ee095a518aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Diagnostics">
+      <UniqueIdentifier>{f9285d2e-ab07-4d57-a610-d38ee95a1333}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -48,9 +51,11 @@
     </ClCompile>
     <ClCompile Include="MessageResponse.cpp" />
     <ClCompile Include="MessageError.cpp" />
-    <ClCompile Include="MethodDebug.cpp" />
     <ClCompile Include="ProxySettings.cpp" />
     <ClCompile Include="UserConfiguration.cpp" />
+    <ClCompile Include="MethodLogger.cpp">
+      <Filter>Diagnostics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -100,12 +105,17 @@
     </ClInclude>
     <ClInclude Include="MessageResponse.h" />
     <ClInclude Include="MessageError.h" />
-    <ClInclude Include="MethodDebug.h" />
     <ClInclude Include="ProxySettings.h" />
     <ClInclude Include="UserConfiguration.h" />
     <ClInclude Include="DebugCriticalSection.h" />
     <ClInclude Include="ThreadpoolObject.h">
       <Filter>Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="MethodLogger.h">
+      <Filter>Diagnostics</Filter>
+    </ClInclude>
+    <ClInclude Include="LoggingProvider.h">
+      <Filter>Diagnostics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

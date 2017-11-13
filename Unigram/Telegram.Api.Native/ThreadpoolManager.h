@@ -2,8 +2,10 @@
 #include <wrl.h>
 #include <functional>
 #include "MultiThreadObject.h"
+#include "LoggingProvider.h"
 
 using namespace Microsoft::WRL;
+using Telegram::Api::Native::Diagnostics::LoggingProvider;
 
 namespace Telegram
 {
@@ -20,7 +22,7 @@ namespace Telegram
 			}
 
 			
-			class ThreadpoolManager abstract : public virtual MultiThreadObject
+			class ThreadpoolManager abstract : public virtual MultiThreadObject, public virtual LoggingProvider
 			{
 				template<typename EventTraits, bool ownsHandle>
 				friend class Details::ThreadpoolObjectT;

@@ -17,7 +17,7 @@
 #include "Wrappers\OpenSSL.h"
 #include "Helpers\COMHelper.h"
 
-#include "MethodDebug.h"
+#include "MethodLogger.h"
 
 #define ENCRYPT_KEY_IV_PARAM 0
 #define DECRYPT_KEY_IV_PARAM 8

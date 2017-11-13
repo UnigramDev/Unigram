@@ -19,7 +19,7 @@
 #include "Collections.h"
 #include "Helpers\COMHelper.h"
 
-#include "MethodDebug.h"
+#include "MethodLogger.h"
 
 #define FLAGS_GET_CONNECTIONSTATE(flags) static_cast<ConnectionState>((flags) & ConnectionManagerFlag::ConnectionState)
 #define FLAGS_SET_CONNECTIONSTATE(flags, connectionState) ((flags) & ~ConnectionManagerFlag::ConnectionState) | static_cast<ConnectionManagerFlag>(connectionState)
@@ -94,6 +94,8 @@ ConnectionManager::~ConnectionManager()
 
 HRESULT ConnectionManager::RuntimeClassInitialize(UINT32 minimumThreadCount, UINT32 maximumThreadCount)
 {
+	LOG_TRACE_METHOD(this);
+
 	WSADATA wsaData;
 	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
 	{
@@ -373,22 +375,12 @@ HRESULT ConnectionManager::get_Datacenters(__FIVectorView_1_Telegram__CApi__CNat
 
 HRESULT ConnectionManager::get_Logger(ILogger** value)
 {
-	if (value == nullptr)
-	{
-		return E_POINTER;
-	}
-
-	auto lock = LockCriticalSection();
-
-	return m_logger.CopyTo(value);
+	return LoggingProvider::get_Logger(value);
 }
 
 HRESULT ConnectionManager::put_Logger(ILogger* value)
 {
-	auto lock = LockCriticalSection();
-
-	m_logger = value;
-	return S_OK;
+	return LoggingProvider::put_Logger(value);
 }
 
 HRESULT ConnectionManager::SendRequest(ITLObject* object, ISendRequestCompletedCallback* onCompleted, IRequestQuickAckReceivedCallback* onQuickAckReceived, ConnectionType connectionType, INT32* value)
@@ -1355,6 +1347,8 @@ HRESULT ConnectionManager::ProcessRequest(MessageRequest* request, ProcessReques
 
 HRESULT ConnectionManager::ProcessContextRequests(ProcessRequestsContext* context)
 {
+	LOG_TRACE_METHOD(this);
+
 	HRESULT result = S_OK;
 	bool updateDatacenters = false;
 
@@ -1396,6 +1390,18 @@ HRESULT ConnectionManager::ProcessDatacenterRequests(DatacenterRequestContext co
 	HRESULT result;
 	ComPtr<Connection> connection;
 	ReturnIfFailed(result, datacenterContext->Datacenter->GetGenericConnection(false, connection));
+
+	if (connection == nullptr)
+	{
+		if (datacenterContext->GenericRequests.empty())
+		{
+			return S_OK;
+		}
+		else
+		{
+			return E_FAIL;
+		}
+	}
 
 	INT64 lastRpcMessageId = 0;
 	bool requiresQuickAck = false;
