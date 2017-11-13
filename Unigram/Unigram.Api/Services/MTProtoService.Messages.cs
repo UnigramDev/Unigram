@@ -970,7 +970,7 @@ namespace Telegram.Api.Services
                 var r = obj;
                 _cacheService.SyncDialogs(result, callback);
             },
-            faultCallback, 3);
+            faultCallback);
         }
 
         private void GetChannelHistoryAsyncInternal(bool sync, TLPeerBase peer, TLMessagesMessagesBase result, Action<TLMessagesMessagesBase> callback)
