@@ -924,7 +924,7 @@ namespace Telegram.Api.Services.Cache
             return resultMsgs;
         }
 
-        public IList<TLMessageBase> GetHistory(TLPeerBase peer, int limit = Constants.CachedMessagesCount)
+        public IList<TLMessageBase> GetHistory(TLPeerBase peer, int limit = Constants.CachedMessagesCount, Func<TLMessageBase, bool> predicate = null)
         {
             var result = new List<TLMessageBase>();
 
@@ -964,16 +964,21 @@ namespace Telegram.Api.Services.Cache
                 TLUtils.WriteException(e);
             }
 
-           // TLUtils.WritePerformance(string.Format("GetCachedHistory time ({0}): {1}", _database.CountRecords<TLMessageBase>(), timer.Elapsed));
+            if (predicate != null)
+            {
+                return msgs.Where(predicate).OrderByDescending(x => x.Id).Take(limit).ToList();
+            }
+
+            // TLUtils.WritePerformance(string.Format("GetCachedHistory time ({0}): {1}", _database.CountRecords<TLMessageBase>(), timer.Elapsed));
             return msgs.OrderByDescending(x => x.Id).Take(limit).ToList();
         }
 
-        public void GetHistoryAsync(TLPeerBase peer, Action<IList<TLMessageBase>> callback, int limit = Constants.CachedMessagesCount)
+        public void GetHistoryAsync(TLPeerBase peer, Action<IList<TLMessageBase>> callback, int limit = Constants.CachedMessagesCount, Func<TLMessageBase, bool> predicate = null)
         {
             Execute.BeginOnThreadPool(
                 () =>
                 {
-                    var history = GetHistory(peer, limit);
+                    var history = GetHistory(peer, limit, predicate);
                     callback?.Invoke(history);
                 });
         }

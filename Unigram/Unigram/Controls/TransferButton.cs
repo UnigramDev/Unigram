@@ -252,7 +252,7 @@ namespace Unigram.Controls
                     return "\uE60D";
                 }
 
-                if (TLMessage.IsVideo(document) || TLMessage.IsRoundVideo(document) || TLMessage.IsMusic(document))
+                if (TLMessage.IsVideo(document) || TLMessage.IsRoundVideo(document) || TLMessage.IsMusic(document) || TLMessage.IsVoice(document))
                 {
                     return "\uE102";
                 }

@@ -133,6 +133,9 @@
       <DependentUpon>SharedLinkListViewItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MediaPlayerView.cs" />
+    <Compile Include="Controls\Media\VoiceMediaView.xaml.cs">
+      <DependentUpon>VoiceMediaView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\HistoryCallMessageControlBase.cs" />
     <Compile Include="Controls\Messages\EditedMessageBubble.xaml.cs">
       <DependentUpon>EditedMessageBubble.xaml</DependentUpon>
@@ -169,6 +172,9 @@
     <Compile Include="Controls\Payments\CardTextBox.cs" />
     <Compile Include="Controls\Payments\DateTextBox.cs" />
     <Compile Include="Controls\PeriodTimer.cs" />
+    <Compile Include="Controls\PlaybackHeader.xaml.cs">
+      <DependentUpon>PlaybackHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PrivacyRadioButton.cs" />
     <Compile Include="Controls\DialogSearchTextBox.cs" />
     <Compile Include="Controls\SelectGridView.cs" />
@@ -286,7 +292,6 @@
     <Compile Include="Converters\StickerToEmojiConverter.cs" />
     <Compile Include="Converters\UsernameConverter.cs" />
     <Compile Include="Converters\VenueToGlyphConverter.cs" />
-    <Compile Include="Helpers\AudioGraphHelper.cs" />
     <Compile Include="Helpers\TLFileHelper.cs" />
     <Compile Include="Models\Country.cs" />
     <Compile Include="Models\StorageDocument.cs" />
@@ -304,6 +309,7 @@
     <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
     <Compile Include="Selectors\WallPaperTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
+    <Compile Include="Services\PlaybackService.cs" />
     <Compile Include="Services\PushService.cs" />
     <Compile Include="Strings\en\Resources.cs">
       <AutoGen>True</AutoGen>
@@ -509,6 +515,7 @@
     <Compile Include="Views\Settings\SettingsStickersArchivedPage.xaml.cs">
       <DependentUpon>SettingsStickersArchivedPage.xaml</DependentUpon>
     </Compile>
+    <Content Include="Assets\Audio\silence.mp3" />
     <Content Include="Assets\Audio\voip_busy.mp3" />
     <Content Include="Assets\Audio\voip_connecting.mp3" />
     <Content Include="Assets\Audio\voip_end.mp3" />
@@ -935,9 +942,6 @@
       <DependentUpon>SharedFileListViewItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MediaControl.cs" />
-    <Compile Include="Controls\Media\VoiceMediaControl.xaml.cs">
-      <DependentUpon>VoiceMediaControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Messages\MessageBubble.xaml.cs">
       <DependentUpon>MessageBubble.xaml</DependentUpon>
     </Compile>
@@ -1248,6 +1252,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Media\VoiceMediaView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Messages\EditedMessageBubble.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1259,6 +1267,10 @@
     <Page Include="Controls\Messages\MessageFooter.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\PlaybackHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\StartupSwitch.xaml">
       <SubType>Designer</SubType>
@@ -1297,10 +1309,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Items\SharedFileListViewItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Media\VoiceMediaControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

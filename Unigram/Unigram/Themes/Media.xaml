@@ -262,7 +262,7 @@
 
     <DataTemplate x:Key="MediaAudioTemplate">
         <Grid>
-            <local:VoiceMediaControl/>
+            <local:VoiceMediaView/>
         </Grid>
     </DataTemplate>
 

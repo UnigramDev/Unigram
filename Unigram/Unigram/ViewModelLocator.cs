@@ -82,6 +82,7 @@ namespace Unigram
             //container.ContainerBuilder.RegisterType<GifsService>().As<IGifsService>().SingleInstance();
             container.ContainerBuilder.RegisterType<StickersService>().As<IStickersService>().SingleInstance();
             container.ContainerBuilder.RegisterType<StatsService>().As<IStatsService>().SingleInstance();
+            container.ContainerBuilder.RegisterType<PlaybackService>().As<IPlaybackService>().SingleInstance();
             container.ContainerBuilder.RegisterType<AppUpdateService>().As<IAppUpdateService>().SingleInstance();
 
             // Disabled due to crashes on Mobile: 

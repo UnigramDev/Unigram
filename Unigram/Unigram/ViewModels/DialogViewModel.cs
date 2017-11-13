@@ -241,7 +241,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public DialogStickersViewModel Stickers { get { return _stickers; } }
+        public DialogStickersViewModel Stickers => _stickers;
 
         private TLDialog _dialog;
         public TLDialog Dialog
