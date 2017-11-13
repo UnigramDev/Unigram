@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation.Metadata;
 
-namespace Unigram.Webview
+namespace Unigram.Tasks
 {
     public delegate void TelegramGameProxyDelegate(bool withMyScore);
 

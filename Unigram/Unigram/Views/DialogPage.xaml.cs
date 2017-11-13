@@ -89,14 +89,28 @@ namespace Unigram.Views
 
             //NavigationCacheMode = NavigationCacheMode.Required;
 
+            //_typeToItemHashSetMapping.Add("GroupedPhotoTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("GroupedVideoTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ServiceMessageTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("UserMessageTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ChatFriendMessageTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("FriendMessageTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ServiceMessageLocalTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ServiceMessageDateTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ServiceUserCallTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("ServiceFriendCallTemplate", new HashSet<SelectorItem>());
+            //_typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
+
+            //Messages.ChoosingItemContainer += OnChoosingItemContainer;
+            //Messages.ContainerContentChanging += OnContainerContentChanging;
+
             ViewModel.TextField = TextField;
             ViewModel.ListField = Messages;
 
             CheckMessageBoxEmpty();
 
             ViewModel.PropertyChanged += OnPropertyChanged;
-
-            TextField.LostFocus += TextField_LostFocus;
 
             StickersPanel.StickerClick = Stickers_ItemClick;
             StickersPanel.GifClick = Gifs_ItemClick;
@@ -169,7 +183,7 @@ namespace Unigram.Views
             }
             else if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible && TextField.FocusState == FocusState.Unfocused)
             {
-                CollapseMarkup(true);
+                CollapseMarkup(false);
 
                 TextField.FocusMaybe(FocusState.Keyboard);
             }
@@ -689,6 +703,9 @@ namespace Unigram.Views
 
                 InputPane.GetForCurrentView().TryHide();
 
+                StickersPanel.MinHeight = 260;
+                StickersPanel.MaxHeight = 360;
+                StickersPanel.Height = _lastKnownKeyboardHeight;
                 StickersPanel.Visibility = Visibility.Visible;
                 StickersPanel.Refresh();
 
@@ -752,7 +769,7 @@ namespace Unigram.Views
             {
                 Collapse_Click(StickersPanel, null);
             }
-            
+
             if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
             {
                 CollapseMarkup(false);
@@ -761,7 +778,7 @@ namespace Unigram.Views
             InputPane.GetForCurrentView().TryShow();
         }
 
-        private void ProfileBubble_Click(object sender, RoutedEventArgs e)
+        private void Photo_Click(object sender, RoutedEventArgs e)
         {
             var control = sender as FrameworkElement;
             var message = control.DataContext as TLMessage;
@@ -802,7 +819,7 @@ namespace Unigram.Views
 
             // Stickers
             // <MenuFlyoutItem Loaded="MessageAddSticker_Loaded" Click="StickerSet_Click" Text="Add to Stickers"/>
-            CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => StickerSet_Click(element, null)), messageCommon, AppResources.MessageAddSticker);
+            CreateFlyoutItem(ref flyout, MessageAddSticker_Loaded, new RelayCommand(() => Sticker_Click(element, null)), messageCommon, AppResources.MessageAddSticker);
             CreateFlyoutItem(ref flyout, MessageFaveSticker_Loaded, ViewModel.MessageFaveStickerCommand, messageCommon, AppResources.MessageFaveSticker);
             CreateFlyoutItem(ref flyout, MessageUnfaveSticker_Loaded, ViewModel.MessageUnfaveStickerCommand, messageCommon, AppResources.MessageUnfaveSticker);
 
@@ -990,6 +1007,15 @@ namespace Unigram.Views
         {
             if (messageCommon is TLMessage message)
             {
+                if (message.Media is TLMessageMediaPhoto photoMedia)
+                {
+                    return photoMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                }
+                else if (message.Media is TLMessageMediaDocument documentMedia)
+                {
+                    return documentMedia.HasTTLSeconds ? Visibility.Collapsed : Visibility.Visible;
+                }
+
                 return ViewModel.SelectionMode == ListViewSelectionMode.None ? Visibility.Visible : Visibility.Collapsed;
             }
 
@@ -1105,7 +1131,7 @@ namespace Unigram.Views
             Media.Download_Click(sender as FrameworkElement, e);
         }
 
-        private async void Stickers_ItemClick(object sender, ItemClickEventArgs e)
+        public async void Stickers_ItemClick(object sender, ItemClickEventArgs e)
         {
             var channel = ViewModel.With as TLChannel;
             if (channel != null && channel.HasBannedRights && channel.BannedRights != null && channel.BannedRights.IsSendStickers)
@@ -1122,7 +1148,7 @@ namespace Unigram.Views
             TextField.FocusMaybe(FocusState.Keyboard);
         }
 
-        private async void Gifs_ItemClick(object sender, ItemClickEventArgs e)
+        public async void Gifs_ItemClick(object sender, ItemClickEventArgs e)
         {
             var channel = ViewModel.With as TLChannel;
             if (channel != null && channel.HasBannedRights && channel.BannedRights.IsSendGifs)
@@ -1146,7 +1172,7 @@ namespace Unigram.Views
             TextField.FocusMaybe(FocusState.Keyboard);
         }
 
-        private async void StickerSet_Click(object sender, RoutedEventArgs e)
+        private async void Sticker_Click(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;
             var message = element.DataContext as TLMessage;

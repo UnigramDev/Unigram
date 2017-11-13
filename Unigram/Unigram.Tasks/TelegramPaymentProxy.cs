@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Foundation.Metadata;
 
-namespace Unigram.Webview
+namespace Unigram.Tasks
 {
     public delegate void TelegramPaymentProxyDelegate(string title, string credentials);
 

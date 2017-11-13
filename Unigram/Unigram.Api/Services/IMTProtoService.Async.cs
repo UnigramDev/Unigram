@@ -23,6 +23,8 @@ namespace Telegram.Api.Services
 {
     public partial interface IMTProtoService
     {
+        Task<MTProtoResponse<bool>> ResetSavedAsync();
+
         Task<MTProtoResponse<TLMessagesAffectedHistory>> ReadMentionsAsync(TLInputPeerBase inputPeer);
 
         Task<MTProtoResponse<TLUpdatesBase>> TogglePreHistoryHiddenAsync(TLInputChannelBase channel, bool enabled);

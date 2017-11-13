@@ -99,6 +99,8 @@
     <Compile Include="NotificationTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InteractiveTask.cs" />
+    <Compile Include="TelegramGameProxy.cs" />
+    <Compile Include="TelegramPaymentProxy.cs" />
     <Compile Include="TLPush.cs" />
     <Compile Include="TLPushUtils.cs" />
     <Compile Include="VoIPServiceTask.cs" />

@@ -24,6 +24,20 @@ namespace Telegram.Api.Services
     public partial class MTProtoService
     {
         [DebuggerStepThrough]
+        public Task<MTProtoResponse<bool>> ResetSavedAsync()
+        {
+            var tsc = new TaskCompletionSource<MTProtoResponse<bool>>();
+            ResetSavedAsync((callback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(callback));
+            }, (faultCallback) =>
+            {
+                tsc.TrySetResult(new MTProtoResponse<bool>(faultCallback));
+            });
+            return tsc.Task;
+        }
+
+        [DebuggerStepThrough]
         public Task<MTProtoResponse<TLMessagesAffectedHistory>> ReadMentionsAsync(TLInputPeerBase inputPeer)
         {
             var tsc = new TaskCompletionSource<MTProtoResponse<TLMessagesAffectedHistory>>();

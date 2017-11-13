@@ -10,12 +10,20 @@ namespace Telegram.Api.Services
 {
     public partial class MTProtoService
     {
+        public void ResetSavedAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null)
+        {
+            var obj = new TLContactsResetSaved();
+
+            const string caption = "contacts.resetSaved";
+            SendInformativeMessage(caption, obj, callback, faultCallback);
+        }
+
         public void ResetTopPeerRatingAsync(TLTopPeerCategoryBase category, TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null)
         {
             var obj = new TLContactsResetTopPeerRating { Category = category, Peer = peer };
 
             const string caption = "contacts.resetTopPeerRating";
-            SendInformativeMessage<bool>(caption, obj, callback, faultCallback);
+            SendInformativeMessage(caption, obj, callback, faultCallback);
         }
 
         public void GetTopPeersAsync(TLContactsGetTopPeers.Flag flags, int offset, int limit, int hash, Action<TLContactsTopPeersBase> callback, Action<TLRPCError> faultCallback = null)

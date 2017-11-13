@@ -76,6 +76,29 @@ namespace Unigram.Themes
             }
         }
 
+        private async void Sticker_Click(object sender, RoutedEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            var message = element.DataContext as TLMessage;
+
+            if (message?.Media is TLMessageMediaDocument documentMedia && documentMedia.Document is TLDocument document)
+            {
+                var stickerAttribute = document.Attributes.OfType<TLDocumentAttributeSticker>().FirstOrDefault();
+                if (stickerAttribute != null && stickerAttribute.StickerSet.TypeId != TLType.InputStickerSetEmpty)
+                {
+                    var page = element.Ancestors<DialogPage>().FirstOrDefault() as DialogPage;
+                    if (page == null)
+                    {
+                        await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet, page.Stickers_ItemClick);
+                    }
+                    else
+                    {
+                        await StickerSetView.Current.ShowAsync(stickerAttribute.StickerSet);
+                    }
+                }
+            }
+        }
+
         private async void SingleMedia_Click(object sender, RoutedEventArgs e)
         {
             var image = sender as ImageView;
@@ -128,7 +151,7 @@ namespace Unigram.Themes
             }
             else if (TLMessage.IsVideo(document) || TLMessage.IsRoundVideo(document) || TLMessage.IsGif(document) || message.IsPhoto())
             {
-                var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
+                var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("Media")) as FrameworkElement;
                 if (media == null)
                 {
                     media = element;
@@ -193,7 +216,7 @@ namespace Unigram.Themes
                 }
             }
 
-            var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("MediaControl")) as FrameworkElement;
+            var media = element.Ancestors().FirstOrDefault(x => x is FrameworkElement && ((FrameworkElement)x).Name.Equals("Media")) as FrameworkElement;
             if (media == null)
             {
                 media = element;

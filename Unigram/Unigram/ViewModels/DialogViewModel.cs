@@ -653,10 +653,8 @@ namespace Unigram.ViewModels
 
                 Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Items added");
 
-                //foreach (var item in result.Result.Messages.OrderBy(x => x.Date))
-                for (int i = response.Result.Messages.Count - 1; i >= 0; i--)
+                foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
                 {
-                    var item = response.Result.Messages[i];
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
                     {
@@ -734,7 +732,7 @@ namespace Unigram.ViewModels
                     //InsertMessage(item as TLMessageCommonBase);
                 }
 
-                foreach (var item in response.Result.Messages.OrderBy(x => x.Date))
+                foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
                 {
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
@@ -873,7 +871,10 @@ namespace Unigram.ViewModels
                     }
 
                     Items.Add(item);
+                }
 
+                foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
+                {
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)
                     {
@@ -998,7 +999,7 @@ namespace Unigram.ViewModels
                     Items.Add(item);
                 }
 
-                foreach (var item in response.Result.Messages.OrderBy(x => x.Date))
+                foreach (var item in response.Result.Messages.OrderByDescending(x => x.Date))
                 {
                     var message = item as TLMessage;
                     if (message != null && !message.IsOut && message.HasFromId && message.HasReplyMarkup && message.ReplyMarkup != null)

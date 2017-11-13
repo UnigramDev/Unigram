@@ -204,7 +204,7 @@ namespace Telegram.Api.Services.Cache
 
             try
             {
-                contacts = _database.UsersContext.Values.OfType<TLUser>().Where(x => x != null && (x.IsContact || x.IsSelf)).Cast<TLUserBase>().ToList();
+                contacts = _database.UsersContext.Values.OfType<TLUser>().Where(x => x != null && (x.IsContact /*|| x.IsSelf*/)).Cast<TLUserBase>().ToList();
                 //contacts = _database.UsersContext.Values.Where(x => x.Contact != null).ToList();
 
             }
@@ -3334,7 +3334,6 @@ namespace Telegram.Api.Services.Cache
                 }
             }
 
-
             foreach (var user in contacts.Users)
             {
                 TLUserBase cachedUser = null;
@@ -3375,6 +3374,7 @@ namespace Telegram.Api.Services.Cache
             }
 
             result.Imported = contacts.Imported;
+            result.PopularInvites = contacts.PopularInvites;
         }
 
         public void SyncContacts(TLContactsContactsBase contacts, Action<TLContactsContactsBase> callback)
@@ -3454,6 +3454,7 @@ namespace Telegram.Api.Services.Cache
             }
 
             result.Contacts = contacts.Contacts;
+            result.SavedCount = contacts.SavedCount;
         }
 
         #endregion

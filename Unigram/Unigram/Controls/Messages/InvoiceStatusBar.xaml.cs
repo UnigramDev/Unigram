@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Unigram.Controls.Messages
 {
-    public sealed partial class InvoiceStatusControl : HackedContentPresenter
+    public sealed partial class InvoiceStatusBar : HackedContentPresenter
     {
         public TLMessage Message => DataContext as TLMessage;
         public TLMessageMediaInvoice ViewModel => Message?.Media as TLMessageMediaInvoice;
@@ -28,7 +28,7 @@ namespace Unigram.Controls.Messages
 
         private TLMessageMediaInvoice _oldValue;
 
-        public InvoiceStatusControl()
+        public InvoiceStatusBar()
         {
             InitializeComponent();
 

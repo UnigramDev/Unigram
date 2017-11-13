@@ -186,6 +186,23 @@ namespace Unigram.Common
             }
         }
 
+        private int? _contactsSavedCount;
+        public int ContactsSavedCount
+        {
+            get
+            {
+                if (_contactsSavedCount == null)
+                    _contactsSavedCount = GetValueOrDefault("ContactsSavedCount", 0);
+
+                return _contactsSavedCount ?? 0;
+            }
+            set
+            {
+                _contactsSavedCount = value;
+                AddOrUpdateValue("ContactsSavedCount", value);
+            }
+        }
+
         private bool? _isSendByEnterEnabled;
         public bool IsSendByEnterEnabled
         {

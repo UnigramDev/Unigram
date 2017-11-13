@@ -205,6 +205,7 @@ namespace Telegram.Api.Services
         void ReorderPinnedDialogsAsync(TLVector<TLInputPeerBase> order, bool force, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
         // contacts
+        void ResetSavedAsync(Action<bool> callback, Action<TLRPCError> faultCallback = null);
         void GetTopPeersAsync(TLContactsGetTopPeers.Flag flags, int offset, int limit, int hash, Action<TLContactsTopPeersBase> callback, Action<TLRPCError> faultCallback = null);
         void ResetTopPeerRatingAsync(TLTopPeerCategoryBase category, TLInputPeerBase peer, Action<bool> callback, Action<TLRPCError> faultCallback = null);
 
