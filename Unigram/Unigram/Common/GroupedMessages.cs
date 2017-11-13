@@ -101,6 +101,9 @@ namespace Unigram.Common
                 return;
             }
 
+            int totalWidth = 0;
+            float totalHeight = 0.0f;
+
             int firstSpanAdditionalSize = 200;
             float maxSizeHeight = 814.0f;
             StringBuilder proportions = new StringBuilder();
@@ -188,6 +191,9 @@ namespace Unigram.Common
                         float height = (float)Math.Round(Math.Min(_maxSizeWidth / position1.AspectRatio, Math.Min(_maxSizeWidth / position2.AspectRatio, maxSizeHeight / 2.0f))) / maxSizeHeight;
                         position1.Set(0, 0, 0, 0, _maxSizeWidth, height, POSITION_FLAG_LEFT | POSITION_FLAG_RIGHT | POSITION_FLAG_TOP);
                         position2.Set(0, 0, 1, 1, _maxSizeWidth, height, POSITION_FLAG_LEFT | POSITION_FLAG_RIGHT | POSITION_FLAG_BOTTOM);
+
+                        totalWidth = _maxSizeWidth;
+                        totalHeight = height * 2;
                     }
                     else if (pString.Equals("ww") || pString.Equals("qq"))
                     {
@@ -196,6 +202,9 @@ namespace Unigram.Common
                         position1.Set(0, 0, 0, 0, width, height, POSITION_FLAG_LEFT | POSITION_FLAG_BOTTOM | POSITION_FLAG_TOP);
                         position2.Set(1, 1, 0, 0, width, height, POSITION_FLAG_RIGHT | POSITION_FLAG_BOTTOM | POSITION_FLAG_TOP);
                         maxX = 1;
+
+                        totalWidth = width + width;
+                        totalHeight = height;
                     }
                     else
                     {
@@ -212,6 +221,9 @@ namespace Unigram.Common
                         position1.Set(0, 0, 0, 0, firstWidth, height, POSITION_FLAG_LEFT | POSITION_FLAG_BOTTOM | POSITION_FLAG_TOP);
                         position2.Set(1, 1, 0, 0, secondWidth, height, POSITION_FLAG_RIGHT | POSITION_FLAG_BOTTOM | POSITION_FLAG_TOP);
                         maxX = 1;
+
+                        totalWidth = firstWidth + secondWidth;
+                        totalHeight = height;
                     }
                 }
                 else if (count == 3)
@@ -246,6 +258,9 @@ namespace Unigram.Common
                         }
                         HasSibling = true;
                         maxX = 1;
+
+                        totalWidth = leftWidth + rightWidth;
+                        totalHeight = 1.0f;
                     }
                     else
                     {
@@ -257,6 +272,9 @@ namespace Unigram.Common
                         position2.Set(0, 0, 1, 1, width, secondHeight, POSITION_FLAG_LEFT | POSITION_FLAG_BOTTOM);
                         position3.Set(1, 1, 1, 1, width, secondHeight, POSITION_FLAG_RIGHT | POSITION_FLAG_BOTTOM);
                         maxX = 1;
+
+                        totalWidth = _maxSizeWidth;
+                        totalHeight = firstHeight + secondHeight;
                     }
                 }
                 else if (count == 4)
@@ -280,6 +298,9 @@ namespace Unigram.Common
                         position3.Set(1, 1, 1, 1, w1, h, POSITION_FLAG_BOTTOM);
                         position4.Set(2, 2, 1, 1, w2, h, POSITION_FLAG_RIGHT | POSITION_FLAG_BOTTOM);
                         maxX = 2;
+
+                        totalWidth = _maxSizeWidth;
+                        totalHeight = h0 + h;
                     }
                     else
                     {
@@ -312,6 +333,9 @@ namespace Unigram.Common
                         position1.SiblingHeights = new float[] { h0, h1, h2 };
                         HasSibling = true;
                         maxX = 1;
+
+                        totalWidth = w + w0;
+                        totalHeight = h0 + h1 + h2;
                     }
                 }
             }
@@ -465,6 +489,9 @@ namespace Unigram.Common
                     posToFix.SpanSize += spanLeft;
                     y += lineHeight;
                 }
+
+                totalWidth = _maxSizeWidth;
+                totalHeight = y / maxSizeHeight;
             }
             int avatarOffset = 108;
             for (int a = 0; a < count; a++)
@@ -517,8 +544,8 @@ namespace Unigram.Common
                 //}
             }
 
-            Width = _posArray.Where(x => x.MinY == 0).Sum(x => x.Width);
-            Height = _posArray.Where(x => x.MinX == 0 && x.MaxX == 0).Sum(x => x.Height);
+            Width = totalWidth;
+            Height = totalHeight;
         }
 
         public static TLPhotoSizeBase GetClosestPhotoSizeWithSize(TLVector<TLPhotoSizeBase> sizes, int side)

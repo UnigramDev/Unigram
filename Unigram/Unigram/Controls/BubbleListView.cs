@@ -305,7 +305,7 @@ namespace Unigram.Controls
                 }
 
                 left = (maxWidth - left) / 800d * width;
-                top = message == group.Messages[0] && message.IsFirst ? 4d : -top * height;
+                top = message == group.Messages[0] ? message.IsFirst ? 2d : -2d : -top * height;
 
                 if (message.IsOut)
                 {
@@ -313,7 +313,7 @@ namespace Unigram.Controls
                 }
                 else
                 {
-                    container.Margin = new Thickness(photo ? position.IsLast ? 0 : 52 + left : 12 + left, 2 + top, 2, position.IsLast ? 2 : 0);
+                    container.Margin = new Thickness(photo ? position.IsLast ? 0 : 52 + left : 12 + left, 2 + top, 2, position.IsLast ? 4 : 0);
                 }
 
                 if (message == group.Messages[0] && ((message.HasReplyToMsgId && message.ReplyToMsgId.HasValue) || (message.HasFwdFrom && message.FwdFrom != null) || (message.HasViaBotId && message.ViaBotId.HasValue)))

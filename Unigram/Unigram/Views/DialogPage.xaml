@@ -322,7 +322,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Border x:Name="Background" Background="{ThemeResource MessageBackgroundOutBrush}" Grid.RowSpan="2"/>
+                    <Border x:Name="Background" Background="{ThemeResource MessageBackgroundBrush}" Grid.RowSpan="2"/>
                     <StackPanel x:Name="Header" Padding="8,4,10,4">
                         <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,0,0,2" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                         <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click"/>
@@ -366,7 +366,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Border x:Name="Background" Background="{ThemeResource MessageBackgroundOutBrush}" Grid.RowSpan="2"/>
+                    <Border x:Name="Background" Background="{ThemeResource MessageBackgroundBrush}" Grid.RowSpan="2"/>
                     <StackPanel x:Name="Header" Padding="8,4,10,4">
                         <TextBlock common:MessageHelper.Header="{x:Bind}" Margin="0,0,0,2" HorizontalAlignment="Left" FontWeight="SemiBold" Style="{StaticResource CaptionTextBlockStyle}"/>
                         <messages:MessageReference Message="{x:Bind Reply, Mode=OneWay}" Click="Reply_Click"/>

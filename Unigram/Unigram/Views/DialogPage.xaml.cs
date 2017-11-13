@@ -1772,6 +1772,11 @@ namespace Unigram.Views
             ViewModel.ReadMentionsCommand.Execute();
         }
 
+        private void Media_Loaded(object sender, RoutedEventArgs e)
+        {
+            Media_DataContextChanged(sender as FrameworkElement, null);
+        }
+
         private void Media_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             var message = sender.DataContext as TLMessage;
@@ -1805,6 +1810,24 @@ namespace Unigram.Views
 
                 if (message == group.Messages[0] && ((message.HasReplyToMsgId && message.ReplyToMsgId.HasValue) || (message.HasFwdFrom && message.FwdFrom != null) || (message.HasViaBotId && message.ViaBotId.HasValue)))
                 {
+                    var refresh = false;
+                    if (message.IsOut && sender.Resources.MergedDictionaries.IsEmpty())
+                    {
+                        sender.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/AccentOut.xaml") });
+                        refresh = true;
+                    }
+                    else if (!message.IsOut && sender.Resources.MergedDictionaries.Count > 0)
+                    {
+                        sender.Resources.MergedDictionaries.Clear();
+                        refresh = true;
+                    }
+
+                    if (refresh)
+                    { 
+                        sender.RequestedTheme = ElementTheme.Dark;
+                        sender.RequestedTheme = ElementTheme.Default;
+                    }
+
                     header.Width = maxWidth - 2;
                     header.Margin = new Thickness(0, 0, -(maxWidth - (position.Width / 800d * width)), 0);
 
