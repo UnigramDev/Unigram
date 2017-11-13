@@ -72,20 +72,20 @@ namespace Unigram.Converters
         {
             if (user.Id == 777000)
             {
-                return "Service notifications";
+                return Strings.Resources.ServiceNotificationsLabel;
             }
             else if (user.IsBot)
             {
                 if (details)
                 {
-                    return "Bot";
+                    return Strings.Resources.GenericBotStatus;
                 }
 
-                return user.IsBotChatHistory ? "Has access to messages" : "Has no access to messages";
+                return user.IsBotChatHistory ? Strings.Resources.BotStatusReadsGroupHistory : Strings.Resources.BotStatusDoesNotReadGroupHistory;
             }
             else if (user.IsSelf && details)
             {
-                return "Chat with yourself";
+                return Strings.Resources.CloudStorageChatStatus;
             }
 
             if (user.HasStatus && user.Status != null)
@@ -98,25 +98,25 @@ namespace Unigram.Converters
                         var time = string.Empty;
                         if (details)
                         {
-                            time = ((now.Date == seen.Date) ? "today at " : (((now.Date - seen.Date) == new TimeSpan(1, 0, 0, 0)) ? "yesterday at " : BindConvert.Current.ShortDate.Format(seen) + " ")) + BindConvert.Current.ShortTime.Format(seen);
+                            time = ((now.Date == seen.Date) ? Strings.Resources.LastSeenToday : (((now.Date - seen.Date) == new TimeSpan(1, 0, 0, 0)) ? Strings.Resources.LastSeenYesterdayAt : BindConvert.Current.ShortDate.Format(seen) + " ")) + BindConvert.Current.ShortTime.Format(seen);
                         }
                         else
                         {
-                            time = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? "moments ago" : (now - seen).Minutes.ToString() + ((now - seen).Minutes.ToString() == "1" ? " minute ago" : " minutes ago")) : ((now - seen).Hours.ToString()) + (((now - seen).Hours.ToString()) == "1" ? (" hour ago") : (" hours ago"))) : now.Date - seen.Date == new TimeSpan(24, 0, 0) ? "yesterday " + BindConvert.Current.ShortTime.Format(seen) : BindConvert.Current.ShortDate.Format(seen);
+                            time = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? Strings.Resources.LastSeenMomentsAgo : (now - seen).Minutes.ToString() + ((now - seen).Minutes.ToString() == "1" ? Strings.Resources.LastSeenMinutesSingular : Strings.Resources.LastSeenMinutesPlural)) : ((now - seen).Hours.ToString()) + (((now - seen).Hours.ToString()) == "1" ? (Strings.Resources.LastSeenHoursSingular) : (Strings.Resources.LastSeenHoursPlural))) : now.Date - seen.Date == new TimeSpan(24, 0, 0) ? Strings.Resources.LastSeenYesterday + BindConvert.Current.ShortTime.Format(seen) : BindConvert.Current.ShortDate.Format(seen);
                         }
 
-                        return string.Format("Last seen {0}", time);
+                        return string.Format("{0} {1}", Strings.Resources.LastSeen, time);
                     case TLUserStatusOnline online:
-                        return "online";
+                        return Strings.Resources.UserOnline;
                     case TLUserStatusRecently recently:
-                        return "Last seen recently";
+                        return Strings.Resources.LastSeenRecently;
                     case TLUserStatusLastWeek lastWeek:
-                        return "Last seen within a week";
+                        return Strings.Resources.LastSeenWithinWeek;
                     case TLUserStatusLastMonth lastMonth:
-                        return "Last seen within a month";
+                        return Strings.Resources.LastSeenWithinMonth;
                     case TLUserStatusEmpty empty:
                     default:
-                        return "Last seen a long time ago";
+                        return Strings.Resources.LastSeenLongTimeAgo;
                 }
             }
 
