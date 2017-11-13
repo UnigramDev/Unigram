@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/14/2017 10:29:41
+// 	Generated: 11/14/2017 10:41:29
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -3604,6 +3604,28 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("LastSeenYesterdayAt");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} members"
+        /// </summary>
+        public static string StatusMembers
+        {
+            get
+            {
+                return resourceLoader.GetString("StatusMembers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} members, {1} online"
+        /// </summary>
+        public static string StatusOnline
+        {
+            get
+            {
+                return resourceLoader.GetString("StatusOnline");
             }
         }
         

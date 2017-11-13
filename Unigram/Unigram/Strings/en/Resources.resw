@@ -1530,6 +1530,14 @@ Duration: {1}</value>
     <value>yesterday at </value>
     <comment>Time.YesterdayAt</comment>
   </data>
+  <data name="StatusMembers" xml:space="preserve">
+    <value>{0} members</value>
+    <comment>Conversation.StatusMembers</comment>
+  </data>
+  <data name="StatusOnline" xml:space="preserve">
+    <value>{0} members, {1} online</value>
+    <comment>Conversation.StatusMembers</comment>
+  </data>
   <data name="UserOnline" xml:space="preserve">
     <value>online</value>
     <comment>Presence.online</comment>
