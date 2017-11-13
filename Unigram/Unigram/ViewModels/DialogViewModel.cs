@@ -2523,7 +2523,7 @@ namespace Unigram.ViewModels
                 }
             }
         }
-
+        
         #endregion
 
         #region Toggle mute

@@ -1578,4 +1578,22 @@ Duration: {1}</value>
     <value>online</value>
     <comment>Presence.online</comment>
   </data>
+  <data name="SendAsFile" xml:space="preserve">
+    <value>Send as File</value>
+  </data>
+  <data name="SendAsFiles" xml:space="preserve">
+    <value>Send as Files</value>
+  </data>
+  <data name="SendFile" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="SendMultipleMedias" xml:space="preserve">
+    <value>Send {0} items</value>
+  </data>
+  <data name="SendOneItem" xml:space="preserve">
+    <value>Send 1 item</value>
+  </data>
+  <data name="SendPhotoVideo" xml:space="preserve">
+    <value>Photo or Video</value>
+  </data>
 </root>

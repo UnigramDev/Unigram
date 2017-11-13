@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/14/2017 12:09:22
+// 	Generated: 11/14/2017 12:22:30
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -3637,6 +3637,72 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("UserOnline");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send as File"
+        /// </summary>
+        public static string SendAsFile
+        {
+            get
+            {
+                return resourceLoader.GetString("SendAsFile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send as Files"
+        /// </summary>
+        public static string SendAsFiles
+        {
+            get
+            {
+                return resourceLoader.GetString("SendAsFiles");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "File"
+        /// </summary>
+        public static string SendFile
+        {
+            get
+            {
+                return resourceLoader.GetString("SendFile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send {0} items"
+        /// </summary>
+        public static string SendMultipleMedias
+        {
+            get
+            {
+                return resourceLoader.GetString("SendMultipleMedias");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send 1 item"
+        /// </summary>
+        public static string SendOneItem
+        {
+            get
+            {
+                return resourceLoader.GetString("SendOneItem");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Photo or Video"
+        /// </summary>
+        public static string SendPhotoVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("SendPhotoVideo");
             }
         }
     }
