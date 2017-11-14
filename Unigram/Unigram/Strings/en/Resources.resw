@@ -174,6 +174,7 @@ messages from multiple devices.</value>
   </data>
   <data name="AboutPage_ChangelogButton.Content" xml:space="preserve">
     <value>Changelog</value>
+    <comment>C</comment>
   </data>
   <data name="AboutPage_FAQButton.Content" xml:space="preserve">
     <value>Frequently Asked Questions</value>
@@ -1458,5 +1459,133 @@ Duration: {1}</value>
   </data>
   <data name="YourScoredPlural" xml:space="preserve">
     <value>You scored {0}</value>
+  </data>
+  <data name="ServiceNotificationsLabel" xml:space="preserve">
+    <value>Service Notifications</value>
+    <comment>Core.ServiceUserStatus</comment>
+  </data>
+  <data name="BotStatusDoesNotReadGroupHistory" xml:space="preserve">
+    <value>has no access to messages</value>
+    <comment>Bot.GroupStatusDoesNotReadHistory</comment>
+  </data>
+  <data name="BotStatusReadsGroupHistory" xml:space="preserve">
+    <value>has access to messages</value>
+    <comment>Bot.GroupStatusReadsHistory</comment>
+  </data>
+  <data name="CloudStorageChatStatus" xml:space="preserve">
+    <value>chat with yourself</value>
+    <comment>Conversation.CloudStorage.ChatStatus</comment>
+  </data>
+  <data name="DialogPage_AddToContactsFlyoutItem.Text" xml:space="preserve">
+    <value>Add to contacts</value>
+  </data>
+  <data name="DialogPage_btnPinnedMessage.Title" xml:space="preserve">
+    <value>Pinned message</value>
+  </data>
+  <data name="DialogPage_ManageFlyoutItem.Text" xml:space="preserve">
+    <value>Manage</value>
+  </data>
+  <data name="DialogPage_PinChatFlyoutItem.Text" xml:space="preserve">
+    <value>Pin to Start</value>
+  </data>
+  <data name="DialogPage_ReportSpamTextBlock.Text" xml:space="preserve">
+    <value>Report spam</value>
+  </data>
+  <data name="DialogPage_SearchFlyoutItem.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="DialogPage_SendContactFlyoutItem.Text" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="DialogPage_SendLocationFlyoutItem.Text" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="DialogPage_SendShrugFlyoutItem.Text" xml:space="preserve">
+    <value>¯\_(ツ)_/¯</value>
+  </data>
+  <data name="DialogPage_ShareContactFlyoutItem.Text" xml:space="preserve">
+    <value>Share my contact</value>
+  </data>
+  <data name="DialogPage_TextField.PlaceholderText" xml:space="preserve">
+    <value>Enter your message...</value>
+  </data>
+  <data name="DialogPage_UnpinChatFlyoutItem.Text" xml:space="preserve">
+    <value>Unpin from Start</value>
+  </data>
+  <data name="GenericBotStatus" xml:space="preserve">
+    <value>bot</value>
+    <comment>Bot.GenericBotStatus</comment>
+  </data>
+  <data name="StatusMembers" xml:space="preserve">
+    <value>{0} members</value>
+    <comment>Conversation.StatusMembers</comment>
+  </data>
+  <data name="StatusOnline" xml:space="preserve">
+    <value>{0} members, {1} online</value>
+    <comment>Conversation.StatusMembers</comment>
+  </data>
+  <data name="UserOnline" xml:space="preserve">
+    <value>online</value>
+    <comment>Presence.online</comment>
+  </data>
+  <data name="SendAsFile" xml:space="preserve">
+    <value>Send as File</value>
+  </data>
+  <data name="SendAsFiles" xml:space="preserve">
+    <value>Send as Files</value>
+  </data>
+  <data name="SendFile" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="SendMultipleMedias" xml:space="preserve">
+    <value>Send {0} items</value>
+  </data>
+  <data name="SendOneItem" xml:space="preserve">
+    <value>Send 1 item</value>
+  </data>
+  <data name="SendPhotoVideo" xml:space="preserve">
+    <value>Photo or Video</value>
+  </data>
+  <data name="ALongTimeAgo" xml:space="preserve">
+    <value>a long time ago</value>
+  </data>
+  <data name="LastSeen1" xml:space="preserve">
+    <value>Last seen {0}</value>
+  </data>
+  <data name="Recently" xml:space="preserve">
+    <value>recently</value>
+  </data>
+  <data name="WithinAMonth" xml:space="preserve">
+    <value>within a month ago</value>
+  </data>
+  <data name="WithinAWeek" xml:space="preserve">
+    <value>within a week ago</value>
+  </data>
+  <data name="HourPlural" xml:space="preserve">
+    <value>{0} hours</value>
+  </data>
+  <data name="HourSingular" xml:space="preserve">
+    <value>{0} hour</value>
+  </data>
+  <data name="LastSeen2" xml:space="preserve">
+    <value>Last seen {0} at {1}</value>
+  </data>
+  <data name="LastSeen3" xml:space="preserve">
+    <value>Last seen {0} ago</value>
+  </data>
+  <data name="MinutePlural" xml:space="preserve">
+    <value>{0} minutes</value>
+  </data>
+  <data name="MinuteSingular" xml:space="preserve">
+    <value>{0} minute</value>
+  </data>
+  <data name="MomentsAgo" xml:space="preserve">
+    <value>moments ago</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>today</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>yesterday</value>
   </data>
 </root>

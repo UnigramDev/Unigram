@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/12/2017 10:56:55
+// 	Generated: 11/14/2017 19:15:36
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -3406,6 +3406,314 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("YourScoredPlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Service Notifications"
+        /// </summary>
+        public static string ServiceNotificationsLabel
+        {
+            get
+            {
+                return resourceLoader.GetString("ServiceNotificationsLabel");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "has no access to messages"
+        /// </summary>
+        public static string BotStatusDoesNotReadGroupHistory
+        {
+            get
+            {
+                return resourceLoader.GetString("BotStatusDoesNotReadGroupHistory");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "has access to messages"
+        /// </summary>
+        public static string BotStatusReadsGroupHistory
+        {
+            get
+            {
+                return resourceLoader.GetString("BotStatusReadsGroupHistory");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "chat with yourself"
+        /// </summary>
+        public static string CloudStorageChatStatus
+        {
+            get
+            {
+                return resourceLoader.GetString("CloudStorageChatStatus");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "bot"
+        /// </summary>
+        public static string GenericBotStatus
+        {
+            get
+            {
+                return resourceLoader.GetString("GenericBotStatus");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} members"
+        /// </summary>
+        public static string StatusMembers
+        {
+            get
+            {
+                return resourceLoader.GetString("StatusMembers");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} members, {1} online"
+        /// </summary>
+        public static string StatusOnline
+        {
+            get
+            {
+                return resourceLoader.GetString("StatusOnline");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "online"
+        /// </summary>
+        public static string UserOnline
+        {
+            get
+            {
+                return resourceLoader.GetString("UserOnline");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send as File"
+        /// </summary>
+        public static string SendAsFile
+        {
+            get
+            {
+                return resourceLoader.GetString("SendAsFile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send as Files"
+        /// </summary>
+        public static string SendAsFiles
+        {
+            get
+            {
+                return resourceLoader.GetString("SendAsFiles");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "File"
+        /// </summary>
+        public static string SendFile
+        {
+            get
+            {
+                return resourceLoader.GetString("SendFile");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send {0} items"
+        /// </summary>
+        public static string SendMultipleMedias
+        {
+            get
+            {
+                return resourceLoader.GetString("SendMultipleMedias");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Send 1 item"
+        /// </summary>
+        public static string SendOneItem
+        {
+            get
+            {
+                return resourceLoader.GetString("SendOneItem");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Photo or Video"
+        /// </summary>
+        public static string SendPhotoVideo
+        {
+            get
+            {
+                return resourceLoader.GetString("SendPhotoVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a long time ago"
+        /// </summary>
+        public static string ALongTimeAgo
+        {
+            get
+            {
+                return resourceLoader.GetString("ALongTimeAgo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Last seen {0}"
+        /// </summary>
+        public static string LastSeen1
+        {
+            get
+            {
+                return resourceLoader.GetString("LastSeen1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "recently"
+        /// </summary>
+        public static string Recently
+        {
+            get
+            {
+                return resourceLoader.GetString("Recently");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "within a month ago"
+        /// </summary>
+        public static string WithinAMonth
+        {
+            get
+            {
+                return resourceLoader.GetString("WithinAMonth");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "within a week ago"
+        /// </summary>
+        public static string WithinAWeek
+        {
+            get
+            {
+                return resourceLoader.GetString("WithinAWeek");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} hours"
+        /// </summary>
+        public static string HourPlural
+        {
+            get
+            {
+                return resourceLoader.GetString("HourPlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} hour"
+        /// </summary>
+        public static string HourSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("HourSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Last seen {0} at {1}"
+        /// </summary>
+        public static string LastSeen2
+        {
+            get
+            {
+                return resourceLoader.GetString("LastSeen2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Last seen {0} ago"
+        /// </summary>
+        public static string LastSeen3
+        {
+            get
+            {
+                return resourceLoader.GetString("LastSeen3");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minutes"
+        /// </summary>
+        public static string MinutePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("MinutePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minute"
+        /// </summary>
+        public static string MinuteSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("MinuteSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "moments ago"
+        /// </summary>
+        public static string MomentsAgo
+        {
+            get
+            {
+                return resourceLoader.GetString("MomentsAgo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "today"
+        /// </summary>
+        public static string Today
+        {
+            get
+            {
+                return resourceLoader.GetString("Today");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "yesterday"
+        /// </summary>
+        public static string Yesterday
+        {
+            get
+            {
+                return resourceLoader.GetString("Yesterday");
             }
         }
     }

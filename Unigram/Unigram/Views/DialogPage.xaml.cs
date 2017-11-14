@@ -1478,11 +1478,11 @@ namespace Unigram.Views
             if (items)
             {
                 // TODO: Send 1 Photo/Video
-                return count > 0 ? count > 1 ? $"Send {count} Items" : "Send 1 Item" : "Photo or Video";
+                return count > 0 ? count > 1 ? string.Format(Strings.Resources.SendMultipleMedias, count) : Strings.Resources.SendOneItem : Strings.Resources.SendPhotoVideo;
             }
             else
             {
-                return count > 0 ? count > 1 ? $"Send as Files" : "Send as File" : "File";
+                return count > 0 ? count > 1 ? Strings.Resources.SendAsFiles : Strings.Resources.SendAsFile : Strings.Resources.SendFile;
             }
         }
 
