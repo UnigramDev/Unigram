@@ -1561,4 +1561,31 @@ Duration: {1}</value>
   <data name="WithinAWeek" xml:space="preserve">
     <value>within a week ago</value>
   </data>
+  <data name="HourPlural" xml:space="preserve">
+    <value>{0} hours</value>
+  </data>
+  <data name="HourSingular" xml:space="preserve">
+    <value>{0} hour</value>
+  </data>
+  <data name="LastSeen2" xml:space="preserve">
+    <value>Last seen {0} at {1}</value>
+  </data>
+  <data name="LastSeen3" xml:space="preserve">
+    <value>Last seen {0} {1} ago</value>
+  </data>
+  <data name="MinutePlural" xml:space="preserve">
+    <value>{0} minutes</value>
+  </data>
+  <data name="MinuteSingular" xml:space="preserve">
+    <value>{0} minute</value>
+  </data>
+  <data name="MomentsAgo" xml:space="preserve">
+    <value>moments ago</value>
+  </data>
+  <data name="Today" xml:space="preserve">
+    <value>today</value>
+  </data>
+  <data name="Yesterday" xml:space="preserve">
+    <value>yesterday</value>
+  </data>
 </root>

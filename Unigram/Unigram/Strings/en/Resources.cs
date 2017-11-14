@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/14/2017 16:49:41
+// 	Generated: 11/14/2017 17:08:57
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -3615,6 +3615,105 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("WithinAWeek");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} hours"
+        /// </summary>
+        public static string HourPlural
+        {
+            get
+            {
+                return resourceLoader.GetString("HourPlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} hour"
+        /// </summary>
+        public static string HourSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("HourSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Last seen {0} at {1}"
+        /// </summary>
+        public static string LastSeen2
+        {
+            get
+            {
+                return resourceLoader.GetString("LastSeen2");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Last seen {0} {1} ago"
+        /// </summary>
+        public static string LastSeen3
+        {
+            get
+            {
+                return resourceLoader.GetString("LastSeen3");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minutes"
+        /// </summary>
+        public static string MinutePlural
+        {
+            get
+            {
+                return resourceLoader.GetString("MinutePlural");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "{0} minute"
+        /// </summary>
+        public static string MinuteSingular
+        {
+            get
+            {
+                return resourceLoader.GetString("MinuteSingular");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "moments ago"
+        /// </summary>
+        public static string MomentsAgo
+        {
+            get
+            {
+                return resourceLoader.GetString("MomentsAgo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "today"
+        /// </summary>
+        public static string Today
+        {
+            get
+            {
+                return resourceLoader.GetString("Today");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "yesterday"
+        /// </summary>
+        public static string Yesterday
+        {
+            get
+            {
+                return resourceLoader.GetString("Yesterday");
             }
         }
     }

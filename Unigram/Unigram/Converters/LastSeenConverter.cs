@@ -95,7 +95,11 @@ namespace Unigram.Converters
                     case TLUserStatusOffline offline:
                         var now = DateTime.Now;
                         var seen = TLUtils.ToDateTime(offline.WasOnline);
-                        var time = string.Empty;
+                        if (details)
+                        {
+                            return string.Format(Strings.Resources.LastSeen2, ((now.Date == seen.Date) ? Strings.Resources.Today : (((now.Date - seen.Date) == new TimeSpan(1, 0, 0, 0)) ? Strings.Resources.Yesterday : BindConvert.Current.ShortDate.Format(seen))), BindConvert.Current.ShortTime.Format(seen));
+                        }
+
                         break;
                     case TLUserStatusOnline online:
                         return Strings.Resources.UserOnline;
