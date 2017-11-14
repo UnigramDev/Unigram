@@ -96,32 +96,23 @@ namespace Unigram.Converters
                         var now = DateTime.Now;
                         var seen = TLUtils.ToDateTime(offline.WasOnline);
                         var time = string.Empty;
-                        if (details)
-                        {
-                            time = ((now.Date == seen.Date) ? Strings.Resources.LastSeenToday : (((now.Date - seen.Date) == new TimeSpan(1, 0, 0, 0)) ? Strings.Resources.LastSeenYesterdayAt : BindConvert.Current.ShortDate.Format(seen) + " ")) + BindConvert.Current.ShortTime.Format(seen);
-                        }
-                        else
-                        {
-                            time = (now.Date == seen.Date) ? ((now - seen).Hours < 1 ? ((now - seen).Minutes < 1 ? Strings.Resources.LastSeenMomentsAgo : (now - seen).Minutes.ToString() + ((now - seen).Minutes.ToString() == "1" ? Strings.Resources.LastSeenMinutesSingular : Strings.Resources.LastSeenMinutesPlural)) : ((now - seen).Hours.ToString()) + (((now - seen).Hours.ToString()) == "1" ? (Strings.Resources.LastSeenHoursSingular) : (Strings.Resources.LastSeenHoursPlural))) : now.Date - seen.Date == new TimeSpan(24, 0, 0) ? Strings.Resources.LastSeenYesterday + BindConvert.Current.ShortTime.Format(seen) : BindConvert.Current.ShortDate.Format(seen);
-                        }
-
-                        return string.Format("{0} {1}", Strings.Resources.LastSeen, time);
+                        break;
                     case TLUserStatusOnline online:
                         return Strings.Resources.UserOnline;
                     case TLUserStatusRecently recently:
-                        return Strings.Resources.LastSeenRecently;
+                        return string.Format(Strings.Resources.LastSeen1, Strings.Resources.Recently);
                     case TLUserStatusLastWeek lastWeek:
-                        return Strings.Resources.LastSeenWithinWeek;
+                        return string.Format(Strings.Resources.LastSeen1, Strings.Resources.WithinAWeek);
                     case TLUserStatusLastMonth lastMonth:
-                        return Strings.Resources.LastSeenWithinMonth;
+                        return string.Format(Strings.Resources.LastSeen1, Strings.Resources.WithinAMonth);
                     case TLUserStatusEmpty empty:
                     default:
-                        return Strings.Resources.LastSeenLongTimeAgo;
+                        return string.Format(Strings.Resources.LastSeen1, Strings.Resources.ALongTimeAgo);
                 }
             }
 
             // Debugger.Break();
-            return "Last seen a long time ago";
+            return string.Format(Strings.Resources.LastSeen1, Strings.Resources.ALongTimeAgo);
         }
     }
 }

@@ -1516,56 +1516,6 @@ Duration: {1}</value>
     <value>bot</value>
     <comment>Bot.GenericBotStatus</comment>
   </data>
-  <data name="LastSeen" xml:space="preserve">
-    <value>Last seen</value>
-  </data>
-  <data name="LastSeenHoursPlural" xml:space="preserve">
-    <value> hours ago</value>
-    <comment>LastSeen.HoursAgo</comment>
-  </data>
-  <data name="LastSeenHoursSingular" xml:space="preserve">
-    <value> hour ago</value>
-    <comment>LastSeen.HoursAgo</comment>
-  </data>
-  <data name="LastSeenLongTimeAgo" xml:space="preserve">
-    <value>Last seen a long time ago</value>
-    <comment>LastSeen.ALongTimeAgo</comment>
-  </data>
-  <data name="LastSeenMinutesPlural" xml:space="preserve">
-    <value> minutes ago</value>
-    <comment>LastSeen.MinutesAgo</comment>
-  </data>
-  <data name="LastSeenMinutesSingular" xml:space="preserve">
-    <value> minute ago</value>
-    <comment>LastSeen.MinutesAgo</comment>
-  </data>
-  <data name="LastSeenMomentsAgo" xml:space="preserve">
-    <value>moments ago</value>
-  </data>
-  <data name="LastSeenRecently" xml:space="preserve">
-    <value>Last seen recently</value>
-    <comment>LastSeen.Lately</comment>
-  </data>
-  <data name="LastSeenToday" xml:space="preserve">
-    <value>today at </value>
-    <comment>Time.TodayAt</comment>
-  </data>
-  <data name="LastSeenWithinMonth" xml:space="preserve">
-    <value>Last seen within a month</value>
-    <comment>LastSeen.WithinAMonth</comment>
-  </data>
-  <data name="LastSeenWithinWeek" xml:space="preserve">
-    <value>Last seen within a week</value>
-    <comment>LastSeen.WithinAWeek</comment>
-  </data>
-  <data name="LastSeenYesterday" xml:space="preserve">
-    <value>yesterday </value>
-    <comment>LastSeen.YesterdayAt</comment>
-  </data>
-  <data name="LastSeenYesterdayAt" xml:space="preserve">
-    <value>yesterday at </value>
-    <comment>Time.YesterdayAt</comment>
-  </data>
   <data name="StatusMembers" xml:space="preserve">
     <value>{0} members</value>
     <comment>Conversation.StatusMembers</comment>
@@ -1595,5 +1545,20 @@ Duration: {1}</value>
   </data>
   <data name="SendPhotoVideo" xml:space="preserve">
     <value>Photo or Video</value>
+  </data>
+  <data name="ALongTimeAgo" xml:space="preserve">
+    <value>a long time ago</value>
+  </data>
+  <data name="LastSeen1" xml:space="preserve">
+    <value>Last seen {0}</value>
+  </data>
+  <data name="Recently" xml:space="preserve">
+    <value>recently</value>
+  </data>
+  <data name="WithinAMonth" xml:space="preserve">
+    <value>within a month ago</value>
+  </data>
+  <data name="WithinAWeek" xml:space="preserve">
+    <value>within a week ago</value>
   </data>
 </root>

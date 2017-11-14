@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/14/2017 12:22:30
+// 	Generated: 11/14/2017 16:49:41
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -3465,149 +3465,6 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Last seen"
-        /// </summary>
-        public static string LastSeen
-        {
-            get
-            {
-                return resourceLoader.GetString("LastSeen");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to " hours ago"
-        /// </summary>
-        public static string LastSeenHoursPlural
-        {
-            get
-            {
-                return resourceLoader.GetString("LastSeenHoursPlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to " hour ago"
-        /// </summary>
-        public static string LastSeenHoursSingular
-        {
-            get
-            {
-                return resourceLoader.GetString("LastSeenHoursSingular");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Last seen a long time ago"
-        /// </summary>
-        public static string LastSeenLongTimeAgo
-        {
-            get
-            {
-                return resourceLoader.GetString("LastSeenLongTimeAgo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to " minutes ago"
-        /// </summary>
-        public static string LastSeenMinutesPlural
-        {
-            get
-            {
-                return resourceLoader.GetString("LastSeenMinutesPlural");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to " minute ago"
-        /// </summary>
-        public static string LastSeenMinutesSingular
-        {
-            get
-            {
-                return resourceLoader.GetString("LastSeenMinutesSingular");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "moments ago"
-        /// </summary>
-        public static string LastSeenMomentsAgo
-        {
-            get
-            {
-                return resourceLoader.GetString("LastSeenMomentsAgo");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Last seen recently"
-        /// </summary>
-        public static string LastSeenRecently
-        {
-            get
-            {
-                return resourceLoader.GetString("LastSeenRecently");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "today at "
-        /// </summary>
-        public static string LastSeenToday
-        {
-            get
-            {
-                return resourceLoader.GetString("LastSeenToday");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Last seen within a month"
-        /// </summary>
-        public static string LastSeenWithinMonth
-        {
-            get
-            {
-                return resourceLoader.GetString("LastSeenWithinMonth");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "Last seen within a week"
-        /// </summary>
-        public static string LastSeenWithinWeek
-        {
-            get
-            {
-                return resourceLoader.GetString("LastSeenWithinWeek");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "yesterday "
-        /// </summary>
-        public static string LastSeenYesterday
-        {
-            get
-            {
-                return resourceLoader.GetString("LastSeenYesterday");
-            }
-        }
-        
-        /// <summary>
-        /// Localized resource similar to "yesterday at "
-        /// </summary>
-        public static string LastSeenYesterdayAt
-        {
-            get
-            {
-                return resourceLoader.GetString("LastSeenYesterdayAt");
-            }
-        }
-        
-        /// <summary>
         /// Localized resource similar to "{0} members"
         /// </summary>
         public static string StatusMembers
@@ -3703,6 +3560,61 @@ namespace Unigram.Strings
             get
             {
                 return resourceLoader.GetString("SendPhotoVideo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "a long time ago"
+        /// </summary>
+        public static string ALongTimeAgo
+        {
+            get
+            {
+                return resourceLoader.GetString("ALongTimeAgo");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "Last seen {0}"
+        /// </summary>
+        public static string LastSeen1
+        {
+            get
+            {
+                return resourceLoader.GetString("LastSeen1");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "recently"
+        /// </summary>
+        public static string Recently
+        {
+            get
+            {
+                return resourceLoader.GetString("Recently");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "within a month ago"
+        /// </summary>
+        public static string WithinAMonth
+        {
+            get
+            {
+                return resourceLoader.GetString("WithinAMonth");
+            }
+        }
+        
+        /// <summary>
+        /// Localized resource similar to "within a week ago"
+        /// </summary>
+        public static string WithinAWeek
+        {
+            get
+            {
+                return resourceLoader.GetString("WithinAWeek");
             }
         }
     }
