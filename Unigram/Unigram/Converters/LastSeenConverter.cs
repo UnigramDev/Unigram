@@ -95,6 +95,8 @@ namespace Unigram.Converters
                     case TLUserStatusOffline offline:
                         var now = DateTime.Now;
                         var seen = TLUtils.ToDateTime(offline.WasOnline);
+
+                        var duration = (now - seen);
                         if (details)
                         {
                             return string.Format(Strings.Resources.LastSeen2, ((now.Date == seen.Date) ? Strings.Resources.Today : (((now.Date - seen.Date) == new TimeSpan(1, 0, 0, 0)) ? Strings.Resources.Yesterday : BindConvert.Current.ShortDate.Format(seen))), BindConvert.Current.ShortTime.Format(seen));
@@ -103,21 +105,24 @@ namespace Unigram.Converters
                         {
                             if (now.Date == seen.Date)
                             {
-                                if ((now - seen).Hours < 1)
+                                if (duration.Hours < 1)
                                 {
-                                    if ((now - seen).Minutes < 1)
+                                    if (duration.Minutes < 1)
                                     {
                                         return string.Format(Strings.Resources.LastSeen1, Strings.Resources.MomentsAgo);
                                     }
                                     else
                                     {
-                                        return string.Format(Strings.Resources.LastSeen3, (now - seen).Minutes, (((now - seen).Minutes == 1) ? Strings.Resources.MinuteSingular : Strings.Resources.MinutePlural));
+                                        string minutes = string.Format(duration.Minutes == 1 ? Strings.Resources.MinuteSingular : Strings.Resources.MinutePlural, duration.Minutes);
+                                        return string.Format(Strings.Resources.LastSeen3, minutes);
                                     }
                                 }
                                 else
                                 {
-                                    return string.Format(Strings.Resources.LastSeen3, (now - seen).Hours, (((now - seen).Hours == 1) ? Strings.Resources.HourSingular : Strings.Resources.HourPlural));
+                                    string hours = string.Format(duration.Hours == 1 ? Strings.Resources.HourSingular : Strings.Resources.HourPlural, duration.Hours);
+                                    return string.Format(Strings.Resources.LastSeen3, hours);
                                 }
+
                             }
                             else if ((now.Date - seen.Date) == new TimeSpan(24, 0, 0))
                             {
@@ -128,8 +133,6 @@ namespace Unigram.Converters
                                 return string.Format(Strings.Resources.LastSeen1, BindConvert.Current.ShortDate.Format(seen));
                             }
                         }
-
-                        break;
                     case TLUserStatusOnline online:
                         return Strings.Resources.UserOnline;
                     case TLUserStatusRecently recently:

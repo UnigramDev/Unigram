@@ -1571,7 +1571,7 @@ Duration: {1}</value>
     <value>Last seen {0} at {1}</value>
   </data>
   <data name="LastSeen3" xml:space="preserve">
-    <value>Last seen {0} {1} ago</value>
+    <value>Last seen {0} ago</value>
   </data>
   <data name="MinutePlural" xml:space="preserve">
     <value>{0} minutes</value>

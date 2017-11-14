@@ -17,7 +17,7 @@
 // 	This code contains a helper class exposing property representations
 // 	of the string resources defined in the specified .ResW file
 // 
-// 	Generated: 11/14/2017 17:08:57
+// 	Generated: 11/14/2017 19:15:36
 // </auto-generatedInfo>
 // --------------------------------------------------------------------------------------------------
 namespace Unigram.Strings
@@ -3652,7 +3652,7 @@ namespace Unigram.Strings
         }
         
         /// <summary>
-        /// Localized resource similar to "Last seen {0} {1} ago"
+        /// Localized resource similar to "Last seen {0} ago"
         /// </summary>
         public static string LastSeen3
         {
