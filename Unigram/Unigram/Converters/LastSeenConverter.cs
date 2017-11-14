@@ -99,6 +99,35 @@ namespace Unigram.Converters
                         {
                             return string.Format(Strings.Resources.LastSeen2, ((now.Date == seen.Date) ? Strings.Resources.Today : (((now.Date - seen.Date) == new TimeSpan(1, 0, 0, 0)) ? Strings.Resources.Yesterday : BindConvert.Current.ShortDate.Format(seen))), BindConvert.Current.ShortTime.Format(seen));
                         }
+                        else
+                        {
+                            if (now.Date == seen.Date)
+                            {
+                                if ((now - seen).Hours < 1)
+                                {
+                                    if ((now - seen).Minutes < 1)
+                                    {
+                                        return string.Format(Strings.Resources.LastSeen1, Strings.Resources.MomentsAgo);
+                                    }
+                                    else
+                                    {
+                                        return string.Format(Strings.Resources.LastSeen3, (now - seen).Minutes, (((now - seen).Minutes == 1) ? Strings.Resources.MinuteSingular : Strings.Resources.MinutePlural));
+                                    }
+                                }
+                                else
+                                {
+                                    return string.Format(Strings.Resources.LastSeen3, (now - seen).Hours, (((now - seen).Hours == 1) ? Strings.Resources.HourSingular : Strings.Resources.HourPlural));
+                                }
+                            }
+                            else if ((now.Date - seen.Date) == new TimeSpan(24, 0, 0))
+                            {
+                                return string.Format(Strings.Resources.LastSeen1, Strings.Resources.Yesterday);
+                            }
+                            else
+                            {
+                                return string.Format(Strings.Resources.LastSeen1, BindConvert.Current.ShortDate.Format(seen));
+                            }
+                        }
 
                         break;
                     case TLUserStatusOnline online:
