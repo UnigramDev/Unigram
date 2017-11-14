@@ -19,8 +19,8 @@
 
         <Button Click="View_Click" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Style="{StaticResource EmptyButtonStyle}" Grid.ColumnSpan="3">
             <TextBlock TextAlignment="Center" Style="{StaticResource CaptionTextBlockStyle}">
-                            <Run Text="{x:Bind ConvertFrom(Playback.CurrentItem), Mode=OneWay}" FontWeight="SemiBold"/>
-                            <Run Text="{x:Bind ConvertDate(Playback.CurrentItem), Mode=OneWay}"/>
+                <Run x:Name="TitleLabel" FontWeight="SemiBold"/>
+                <Run x:Name="SubtitleLabel"/>
             </TextBlock>
         </Button>
 

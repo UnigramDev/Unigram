@@ -127,7 +127,7 @@
             <controls:GlyphHyperlinkButton x:Name="PlaybackButton" Click="Toggle_Click" Glyph="&#xE118;" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
         </Grid>
 
-        <Grid Margin="12,0,0,0" Grid.Column="1">
+        <Grid Margin="8,0,0,0" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>

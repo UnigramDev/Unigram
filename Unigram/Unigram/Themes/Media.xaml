@@ -17,18 +17,7 @@
 
     <DataTemplate x:Key="MediaMusicTemplate">
         <Grid MinWidth="220">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid Width="48" Height="48" CornerRadius="24" Background="{ThemeResource MessageMediaBackgroundBrush}" VerticalAlignment="Top">
-                <controls:TransferButton Completed="Download_Click" Transferable="{Binding Media.Document}" IsTransferring="{Binding Media.Document.IsTransferring}" Foreground="{ThemeResource MessageMediaForegroundBrush}" CornerRadius="24"/>
-                <controls:ProgressBarRing Background="Transparent" Foreground="{ThemeResource MessageMediaForegroundBrush}" Value="{Binding Media.Document.Progress}" IsHitTestVisible="False"/>
-            </Grid>
-            <StackPanel Margin="8,0,0,2" VerticalAlignment="Center" Grid.Column="1">
-                <TextBlock Text="{Binding Media.Document.Title}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource BaseTextBlockStyle}"/>
-                <TextBlock Text="{Binding Media.Document.Duration}" Foreground="{ThemeResource MessageForegroundBrush}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" Style="{ThemeResource CaptionTextBlockStyle}"/>
-            </StackPanel>
+            <local:MusicMediaView/>
         </Grid>
     </DataTemplate>
 

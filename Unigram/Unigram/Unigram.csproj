@@ -133,6 +133,12 @@
       <DependentUpon>SharedLinkListViewItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MediaPlayerView.cs" />
+    <Compile Include="Controls\Media\MusicMediaView.xaml.cs">
+      <DependentUpon>MusicMediaView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Media\MusicPlaybackItem.xaml.cs">
+      <DependentUpon>MusicPlaybackItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Media\VoiceMediaView.xaml.cs">
       <DependentUpon>VoiceMediaView.xaml</DependentUpon>
     </Compile>
@@ -225,6 +231,9 @@
     </Compile>
     <Compile Include="Controls\Views\JoinChatView.xaml.cs">
       <DependentUpon>JoinChatView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Views\PlaybackView.xaml.cs">
+      <DependentUpon>PlaybackView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Views\ProxyView.xaml.cs">
       <DependentUpon>ProxyView.xaml</DependentUpon>
@@ -354,6 +363,7 @@
     <Compile Include="ViewModels\Payments\PaymentFormStep5ViewModel.cs" />
     <Compile Include="ViewModels\Payments\PaymentFormViewModelBase.cs" />
     <Compile Include="ViewModels\Payments\PaymentReceiptViewModel.cs" />
+    <Compile Include="ViewModels\PlaybackViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsDataAndStorageViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsGeneralViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
@@ -1252,6 +1262,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Media\MusicMediaView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Media\MusicPlaybackItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Media\VoiceMediaView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1375,6 +1393,10 @@
     <Page Include="Controls\TabHeaderStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Views\PlaybackView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\ProxyView.xaml">
       <SubType>Designer</SubType>

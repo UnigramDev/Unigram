@@ -12,14 +12,22 @@ using Telegram.Api.Services;
 using Telegram.Api.Services.Cache;
 using Telegram.Api.Services.FileManager;
 using Telegram.Api.TL;
+using Windows.Devices.Enumeration;
+using Windows.Devices.Sensors;
+using Windows.Foundation.Metadata;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.Phone.Media.Devices;
 
 namespace Unigram.Services
 {
     public interface IPlaybackService : INotifyPropertyChanged
     {
+        IReadOnlyList<TLMessage> Items { get; }
+
         MediaPlaybackSession Session { get; }
+        MediaPlaybackList List { get; }
+
         TLMessage CurrentItem { get; }
 
         void Pause();
@@ -44,6 +52,8 @@ namespace Unigram.Services
 
         private Dictionary<MediaPlaybackItem, TLMessage> _mapping;
         private Dictionary<TLMessage, MediaPlaybackItem> _inverse;
+
+        private List<TLMessage> _items;
         private Queue<TLMessage> _queue;
 
         public PlaybackService(IMTProtoService protoService, ICacheService cacheService, IDownloadAudioFileManager downloadManager, ITelegramEventAggregator aggregator)
@@ -63,11 +73,40 @@ namespace Unigram.Services
             _inverse = new Dictionary<TLMessage, MediaPlaybackItem>();
         }
 
+        #region Proximity
+
+        private ProximitySensor _sensor;
+        private ProximitySensorDisplayOnOffController _controller;
+
+        private async Task AttachAsync()
+        {
+            if (ApiInformation.IsApiContractPresent("Windows.Phone.PhoneContract", 1))
+            {
+                var devices = await DeviceInformation.FindAllAsync(ProximitySensor.GetDeviceSelector());
+                if (devices.Count > 0)
+                {
+                    _sensor = ProximitySensor.FromId(devices[0].Id);
+                    _sensor.ReadingChanged += OnReadingChanged;
+
+                    _controller = _sensor.CreateDisplayOnOffController();
+                }
+            }
+        }
+
+        private void OnReadingChanged(ProximitySensor sender, ProximitySensorReadingChangedEventArgs args)
+        {
+            AudioRoutingManager.GetDefault().SetAudioEndpoint(args.Reading.IsDetected ? AudioRoutingEndpoint.Earpiece : AudioRoutingEndpoint.Speakerphone);
+        }
+
+        #endregion
+
         private void OnCurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
         {
             if (args.NewItem == null)
             {
                 Execute.BeginOnUIThread(() => CurrentItem = null);
+                Dispose();
+
                 Debug.WriteLine("PlaybackService: Playback completed");
             }
             else if (_mapping.TryGetValue(args.NewItem, out TLMessage message))
@@ -97,7 +136,10 @@ namespace Unigram.Services
             Dispose();
         }
 
+        public IReadOnlyList<TLMessage> Items => _items ?? (IReadOnlyList<TLMessage>)new TLMessage[0];
+
         public MediaPlaybackSession Session => _mediaPlayer.PlaybackSession;
+        public MediaPlaybackList List => _playlist;
 
         private TLMessage _currentItem;
         public TLMessage CurrentItem
@@ -146,12 +188,13 @@ namespace Unigram.Services
 
             Dispose();
 
+            var voice = message.IsVoice();
             var peer = message.Parent?.ToInputPeer();
             if (peer != null)
             {
-                var filter = message.IsVoice()
+                var filter = voice
                     ? new Func<TLMessageBase, bool>(x => x.Id > message.Id && x is TLMessage xm && xm.IsVoice())
-                    : new Func<TLMessageBase, bool>(x => x.Id > message.Id && x is TLMessage xm && xm.IsMusic());
+                    : new Func<TLMessageBase, bool>(x => x.Id < message.Id && x is TLMessage xm && xm.IsMusic());
 
                 //var response = await _protoService.SearchAsync(peer, null, null, filter, message.Date + 1, int.MaxValue, 0, 0, 50);
                 //if (response.IsSucceeded)
@@ -161,10 +204,26 @@ namespace Unigram.Services
 
                 _cacheService.GetHistoryAsync(message.Parent.ToPeer(), result =>
                 {
+                    var items = result.OfType<TLMessage>();
+                    if (voice)
+                    {
+                        items = items.Reverse();
+                    }
+
                     _queue = new Queue<TLMessage>(result.OfType<TLMessage>().Reverse());
+                    _items = new List<TLMessage>(new[] { message }.Union(items));
 
                 }, predicate: filter);
             }
+
+            _mediaPlayer.CommandManager.IsEnabled = !voice;
+            _mediaPlayer.AudioDeviceType = voice ? MediaPlayerAudioDeviceType.Communications : MediaPlayerAudioDeviceType.Multimedia;
+            _mediaPlayer.AudioCategory = voice ? MediaPlayerAudioCategory.Communications : MediaPlayerAudioCategory.Media;
+
+            //if (voice)
+            //{
+            //    await AttachAsync();
+            //}
 
             Enqueue(message, true);
         }
@@ -218,6 +277,18 @@ namespace Unigram.Services
                 _queue.Clear();
                 _queue = null;
             }
+
+            //if (_controller != null)
+            //{
+            //    _controller.Dispose();
+            //    _controller = null;
+            //}
+
+            //if (_sensor != null)
+            //{
+            //    _sensor.ReadingChanged -= OnReadingChanged;
+            //    _sensor = null;
+            //}
         }
 
         private void MarkAsRead(TLMessage message)

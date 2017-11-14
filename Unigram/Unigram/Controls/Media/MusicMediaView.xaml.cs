@@ -1,24 +1,32 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Unigram.Controls.Media
 {
-    public sealed partial class VoiceMediaView : UserControl
+    public sealed partial class MusicMediaView : UserControl
     {
         public TLMessage ViewModel => DataContext as TLMessage;
 
-        public VoiceMediaView()
+        public MusicMediaView()
         {
             InitializeComponent();
 
@@ -88,8 +96,6 @@ namespace Unigram.Controls.Media
             if (DataContext is TLMessage message && Equals(_playbackService.CurrentItem, message))
             {
                 DurationLabel.Text = _playbackService.Session.Position.ToString("mm\\:ss") + " / " + _playbackService.Session.NaturalDuration.ToString("mm\\:ss");
-                Slide.Maximum = _playbackService.Session.NaturalDuration.TotalMilliseconds;
-                Slide.Value = _playbackService.Session.Position.TotalMilliseconds;
             }
         }
 
@@ -101,8 +107,6 @@ namespace Unigram.Controls.Media
                 if (audioAttribute != null)
                 {
                     DurationLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
-                    Slide.Maximum = int.MaxValue;
-                    Slide.Value = message.IsMediaUnread && !message.IsOut ? int.MaxValue : 0;
                 }
             }
         }

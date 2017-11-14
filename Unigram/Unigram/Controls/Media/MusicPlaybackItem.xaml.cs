@@ -1,24 +1,32 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Api.TL;
 using Unigram.Common;
 using Unigram.Services;
 using Unigram.Views;
 using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace Unigram.Controls.Media
 {
-    public sealed partial class VoiceMediaView : UserControl
+    public sealed partial class MusicPlaybackItem : UserControl
     {
         public TLMessage ViewModel => DataContext as TLMessage;
 
-        public VoiceMediaView()
+        public MusicPlaybackItem()
         {
             InitializeComponent();
 
@@ -59,22 +67,13 @@ namespace Unigram.Controls.Media
             this.BeginOnUIThread(UpdateGlyph);
         }
 
-        private void OnPositionChanged(MediaPlaybackSession sender, object args)
-        {
-            this.BeginOnUIThread(UpdatePosition);
-        }
-
         private void UpdateGlyph()
         {
-            _playbackService.Session.PositionChanged -= OnPositionChanged;
-
             if (DataContext is TLMessage message && Equals(_playbackService.CurrentItem, message))
             {
                 PlaybackPanel.Visibility = Visibility.Visible;
                 PlaybackButton.Glyph = _playbackService.Session.PlaybackState == MediaPlaybackState.Playing ? "\uE103" : "\uE102";
-                UpdatePosition();
-
-                _playbackService.Session.PositionChanged += OnPositionChanged;
+                UpdateDuration();
             }
             else
             {
@@ -83,27 +82,33 @@ namespace Unigram.Controls.Media
             }
         }
 
-        private void UpdatePosition()
-        {
-            if (DataContext is TLMessage message && Equals(_playbackService.CurrentItem, message))
-            {
-                DurationLabel.Text = _playbackService.Session.Position.ToString("mm\\:ss") + " / " + _playbackService.Session.NaturalDuration.ToString("mm\\:ss");
-                Slide.Maximum = _playbackService.Session.NaturalDuration.TotalMilliseconds;
-                Slide.Value = _playbackService.Session.Position.TotalMilliseconds;
-            }
-        }
-
         private void UpdateDuration()
         {
             if (DataContext is TLMessage message && message.Media is TLMessageMediaDocument mediaDocument && mediaDocument.Document is TLDocument document)
             {
-                var audioAttribute = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
-                if (audioAttribute != null)
+                var audio = document.Attributes.OfType<TLDocumentAttributeAudio>().FirstOrDefault();
+                if (audio == null)
                 {
-                    DurationLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
-                    Slide.Maximum = int.MaxValue;
-                    Slide.Value = message.IsMediaUnread && !message.IsOut ? int.MaxValue : 0;
+                    return;
                 }
+
+                if (audio.HasPerformer && audio.HasTitle)
+                {
+                    TitleLabel.Text = audio.Title;
+                    SubtitleLabel.Text = audio.Performer;
+                }
+                else if (audio.HasPerformer && !audio.HasTitle)
+                {
+                    TitleLabel.Text = "Unknown Track";
+                    SubtitleLabel.Text = audio.Performer;
+                }
+                else if (audio.HasTitle && !audio.HasPerformer)
+                {
+                    TitleLabel.Text = "Unknown Track";
+                    SubtitleLabel.Text = string.Empty;
+                }
+
+                //DurationLabel.Text = TimeSpan.FromSeconds(audioAttribute.Duration).ToString("mm\\:ss");
             }
         }
 
