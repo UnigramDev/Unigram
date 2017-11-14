@@ -285,6 +285,8 @@ namespace Unigram.Controls
             Container = (Border)GetTemplateChild("Container");
             BackgroundElement = (Border)GetTemplateChild("BackgroundElement");
 
+            OnVisibleBoundsChanged(_applicationView, null);
+
             Container.Tapped += Outside_Tapped;
             BackgroundElement.Tapped += Inside_Tapped;
         }

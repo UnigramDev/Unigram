@@ -17,8 +17,6 @@
     mc:Ignorable="d">
 
     <controls:ContentDialogBase.Resources>
-        <CollectionViewSource x:Name="ViewSource" Source="{x:Bind ViewModel.GroupedItems, Mode=OneWay}" ItemsPath="Items" IsSourceGrouped="True"/>
-
         <Style TargetType="GridViewItem" x:Key="GridViewItemExpandedStyle">
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
             <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
@@ -747,7 +745,7 @@
 
         <controls:GroupedGridView
             x:Name="List"
-            ItemsSource="{x:Bind ViewSource.View}"
+            ItemsSource="{x:Bind ViewModel.Items}"
             SelectionMode="Multiple"
             Padding="12,0"
             Loaded="GridView_Loaded"
@@ -780,67 +778,32 @@
                 </selectors:DialogTemplateSelector>
             </GridView.ItemTemplateSelector>
             <GridView.Header>
-                <Border x:Name="Header" Background="Transparent" Tapped="LightDismiss_Tapped"/>
+                <StackPanel>
+                    <Border x:Name="Header" Background="Transparent" Tapped="LightDismiss_Tapped"/>
+                    <Border Margin="-12,0">
+                        <Grid x:Name="GroupHeader"
+                              Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
+                                  Height="{ThemeResource AppBarThemeCompactHeight}" 
+                                  Loaded="GroupHeader_Loaded">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <controls:SearchTextBox TextChanged="Query_Changed" PlaceholderText="Share to" Style="{StaticResource DialogTextBoxStyle}" Grid.ColumnSpan="3"/>
+
+                            <controls:GlyphButton Click="CopyLink_Click" Glyph="&#xE167;" Visibility="{x:Bind (Visibility)ViewModel.IsCopyLinkEnabled, Mode=OneWay}" Grid.Column="2"/>
+                            <!--<controls:GlyphButton Click="CopyLink_Click" Glyph="&#xE72D;" Visibility="{x:Bind (Visibility)IsCopyLinkEnabled, Mode=OneWay}" Grid.Column="2"/>-->
+                            
+                            <Border x:Name="LineAccent" BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
+                            <Border x:Name="LineTop" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
             </GridView.Header>
             <GridView.Footer>
                 <Border Height="12"/>
             </GridView.Footer>
-            <GridView.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.HeaderTemplate>
-                        <DataTemplate x:DataType="viewModels:ShareViewModel">
-                            <Grid Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"
-                                  Height="{ThemeResource AppBarThemeCompactHeight}" 
-                                  Loaded="GroupHeader_Loaded"
-                                  VerticalAlignment="Bottom" 
-                                  Margin="-12,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Border x:Name="LineAccent" BorderBrush="{ThemeResource SystemControlForegroundAccentBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
-                                <Border x:Name="LineTop" BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}" IsHitTestVisible="False" Grid.ColumnSpan="3"/>
-
-                                <controls:SearchTextBox TextChanged="Query_Changed" PlaceholderText="Share to" Style="{StaticResource DialogTextBoxStyle}" Grid.ColumnSpan="3"/>
-
-                                <controls:GlyphButton Click="CopyLink_Click" Glyph="&#xE167;" Visibility="{x:Bind (Visibility)IsCopyLinkEnabled, Mode=OneWay}" Grid.Column="2"/>
-                                <!--<controls:GlyphButton Click="CopyLink_Click" Glyph="&#xE72D;" Visibility="{x:Bind (Visibility)IsCopyLinkEnabled, Mode=OneWay}" Grid.Column="2"/>-->
-                            </Grid>
-                        </DataTemplate>
-                    </GroupStyle.HeaderTemplate>
-                    <GroupStyle.HeaderContainerStyle>
-                        <Style TargetType="GridViewHeaderItem">
-                            <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltMediumHighBrush}" />
-                            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                            <Setter Property="FontSize" Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
-                            <Setter Property="Margin" Value="0,0,0,0"/>
-                            <Setter Property="Padding" Value="0,0,0,0"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="VerticalContentAlignment" Value="Top" />
-                            <Setter Property="MinHeight" Value="0"/>
-                            <Setter Property="UseSystemFocusVisuals" Value="True" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="GridViewHeaderItem">
-                                        <Border Background="{TemplateBinding Background}"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}">
-                                            <ContentPresenter x:Name="ContentPresenter"
-                                                              Margin="{TemplateBinding Padding}"
-                                                              Content="{TemplateBinding Content}"
-                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.HeaderContainerStyle>
-                </GroupStyle>
-            </GridView.GroupStyle>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem" BasedOn="{StaticResource GridViewItemExpandedStyle}">
                     <Setter Property="Margin" Value="0"/>
@@ -854,7 +817,7 @@
             </GridView.ItemContainerTransitions>
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ItemsWrapGrid Orientation="Horizontal"  Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
+                    <ItemsWrapGrid Orientation="Horizontal" Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}" Canvas.ZIndex="-1"/>
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
         </controls:GroupedGridView>

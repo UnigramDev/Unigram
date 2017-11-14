@@ -24,7 +24,6 @@ namespace Unigram.ViewModels
             : base(protoService, cacheService, aggregator)
         {
             Items = new MvxObservableCollection<ITLDialogWith>();
-            GroupedItems = new MvxObservableCollection<ForwardViewModel> { this };
 
             SendCommand = new RelayCommand(SendExecute, () => SelectedItem != null);
         }
@@ -97,7 +96,6 @@ namespace Unigram.ViewModels
         //public DialogsViewModel Dialogs { get; private set; }
 
         public MvxObservableCollection<ITLDialogWith> Items { get; private set; }
-        public MvxObservableCollection<ForwardViewModel> GroupedItems { get; private set; }
 
 
 

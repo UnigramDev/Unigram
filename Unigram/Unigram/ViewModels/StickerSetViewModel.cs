@@ -12,6 +12,7 @@ using Telegram.Api.TL;
 using Telegram.Api.TL.Messages;
 using Template10.Utils;
 using Unigram.Common;
+using Unigram.Core.Common;
 using Unigram.Services;
 using Windows.UI.Xaml.Navigation;
 
@@ -28,7 +29,7 @@ namespace Unigram.ViewModels
             _stickersService = stickersService;
             _stickers = stickers;
 
-            Items = new ObservableCollection<TLMessagesStickerSet>();
+            Items = new MvxObservableCollection<TLDocumentBase>();
 
             SendCommand = new RelayCommand(SendExecute);
         }
@@ -43,8 +44,7 @@ namespace Unigram.ViewModels
                 if (response.IsSucceeded)
                 {
                     StickerSet = response.Result.Set;
-                    Items.Clear();
-                    Items.Add(response.Result);
+                    Items.ReplaceWith(response.Result.Documents);
 
                     IsLoading = false;
 
@@ -59,9 +59,8 @@ namespace Unigram.ViewModels
                 }
                 else
                 {
-                    StickerSet = new TLStickerSet();
+                    StickerSet = new TLStickerSet { Title = "Sticker pack not found." };
                     Items.Clear();
-                    Items.Add(new TLMessagesStickerSet { Set = new TLStickerSet { Title = "Sticker pack not found." } });
 
                     //IsLoading = false;
                 }
@@ -81,7 +80,7 @@ namespace Unigram.ViewModels
             }
         }
 
-        public ObservableCollection<TLMessagesStickerSet> Items { get; private set; }
+        public MvxObservableCollection<TLDocumentBase> Items { get; private set; }
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
