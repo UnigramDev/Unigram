@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Resources;
 
 namespace Unigram.Common
 {
@@ -15,11 +16,15 @@ namespace Unigram.Common
         private const int QUANTITY_FEW = 0x0008;
         private const int QUANTITY_MANY = 0x0010;
 
-        private static Dictionary<string, PluralRules> _allRules = new Dictionary<string, PluralRules>();
+        private static readonly Dictionary<string, PluralRules> _allRules = new Dictionary<string, PluralRules>();
+        private static readonly ResourceLoader _loader;
+
         private static PluralRules _currentRules;
 
         static LocaleHelper()
         {
+            _loader = ResourceLoader.GetForViewIndependentUse("Android");
+
             AddRules(new String[]{"bem", "brx", "da", "de", "el", "en", "eo", "es", "et", "fi", "fo", "gl", "he", "iw", "it", "nb",
                 "nl", "nn", "no", "sv", "af", "bg", "bn", "ca", "eu", "fur", "fy", "gu", "ha", "is", "ku",
                 "lb", "ml", "mr", "nah", "ne", "om", "or", "pa", "pap", "ps", "so", "sq", "sw", "ta", "te",
@@ -53,14 +58,14 @@ namespace Unigram.Common
             }
         }
 
-        public static string Pluralize(string key, int count)
+        public static string Declension(string key, int count)
         {
             if (_currentRules == null)
             {
                 _currentRules = _allRules["en"];
             }
 
-            return key + StringForQuantity(_currentRules.QuantityForNumber(count));
+            return string.Format(_loader.GetString(key + StringForQuantity(_currentRules.QuantityForNumber(count))), count);
         }
 
         private static string StringForQuantity(int quantity)
