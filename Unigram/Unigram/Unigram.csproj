@@ -483,9 +483,6 @@
     <Compile Include="Views\PhoneCallPage.xaml.cs">
       <DependentUpon>PhoneCallPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PlaygroundPage2.xaml.cs">
-      <DependentUpon>PlaygroundPage2.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Settings\SettingsGeneralPage.xaml.cs">
       <DependentUpon>SettingsGeneralPage.xaml</DependentUpon>
     </Compile>
@@ -1086,9 +1083,6 @@
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PlaygroundPage.xaml.cs">
-      <DependentUpon>PlaygroundPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
@@ -1640,10 +1634,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PlaygroundPage2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Settings\SettingsGeneralPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1705,10 +1695,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PlaygroundPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
