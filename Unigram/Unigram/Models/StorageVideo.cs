@@ -60,7 +60,12 @@ namespace Unigram.Models
                 var basic = await file.GetBasicPropertiesAsync();
                 var video = await file.Properties.GetVideoPropertiesAsync();
 
-                return new StorageVideo(file, basic, video, profile) { IsSelected = selected };
+                if (video.Width > 0 && video.Height > 0)
+                {
+                    return new StorageVideo(file, basic, video, profile) { IsSelected = selected };
+                }
+
+                return null;
             }
             catch
             {
